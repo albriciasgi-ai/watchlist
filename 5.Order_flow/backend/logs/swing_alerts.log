@@ -13243,3 +13243,4 @@
 2026-02-04 14:22:06 | ERROR | ALERT_ERROR | BNBUSDT | All connection attempts failed
 2026-02-04 14:23:58 | INFO | SIGNAL_DETECTED | BTCUSDT | SWING_HIGH | price=73484.00 | direction=SHORT | volume_zscore=0.00 | interval=1
 2026-02-04 14:24:01 | ERROR | ALERT_ERROR | BTCUSDT | All connection attempts failed
+2026-02-12 18:59:59 | INFO | BLOCKED_HISTORICAL | KASUSDT | SWING_LOW | price=0.03 | signal_ts=1770681600 | service_start=1770934535

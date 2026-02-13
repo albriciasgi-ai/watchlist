@@ -13,6 +13,7 @@ import hmac
 import hashlib
 import time
 import json
+import logging
 import httpx
 import asyncio
 from typing import Optional, Dict, Any
@@ -20,6 +21,8 @@ from decimal import Decimal
 from datetime import datetime, timezone
 
 from .rate_limiter import get_rate_limiter, RateLimiter
+
+logger = logging.getLogger("bybit_client")
 
 
 class BybitClient:
@@ -70,7 +73,7 @@ class BybitClient:
         self._request_count = 0
         self._total_request_time_ms = 0.0
 
-        print(f"[BYBIT] Client initialized: {self.base_url} (mode: {self.mode})")
+        logger.info(f"[BYBIT] Client initialized: {self.base_url} (mode: {self.mode})")
 
     async def _get_client(self) -> httpx.AsyncClient:
         """Get or create the HTTP client with connection pooling"""
@@ -95,7 +98,7 @@ class BybitClient:
                 limits=limits,
                 http2=False  # HTTP/1.1 is more reliable for trading APIs
             )
-            print(f"[BYBIT] HTTP client created with connection pooling")
+            logger.info(f"[BYBIT] HTTP client created with connection pooling")
 
         return self._http_client
 
@@ -104,7 +107,7 @@ class BybitClient:
         if self._http_client and not self._http_client.is_closed:
             await self._http_client.aclose()
             self._http_client = None
-            print(f"[BYBIT] HTTP client closed")
+            logger.info(f"[BYBIT] HTTP client closed")
 
     async def _get_server_time(self, client: httpx.AsyncClient) -> int:
         """Get server time from Bybit"""
@@ -116,10 +119,10 @@ class BybitClient:
             data = response.json()
             if data.get("retCode") == 0:
                 server_time = int(data["result"]["timeNano"]) // 1000000  # Convert to ms
-                print(f"[SYNC] Server time fetched in {elapsed_ms:.0f}ms")
+                logger.debug(f"[BYBIT] Server time fetched in {elapsed_ms:.0f}ms")
                 return server_time
         except Exception as e:
-            print(f"[ERROR] Error getting server time: {e}")
+            logger.error(f"[BYBIT] Error getting server time: {e}")
         return int(time.time() * 1000)
 
     async def _sync_time(self, client: httpx.AsyncClient) -> None:
@@ -130,7 +133,7 @@ class BybitClient:
             local_time = int(time.time() * 1000)
             self.time_offset = server_time - local_time
             self.last_sync = current_time
-            print(f"[SYNC] Time synced: offset = {self.time_offset}ms")
+            logger.debug(f"[BYBIT] Time synced: offset = {self.time_offset}ms")
 
     def _get_timestamp(self) -> int:
         """Get current timestamp adjusted with offset"""
@@ -174,7 +177,7 @@ class BybitClient:
                 # Acquire rate limit token
                 wait_time = await self._rate_limiter.acquire()
                 if wait_time > 0:
-                    print(f"[RATE] Waited {wait_time*1000:.0f}ms for rate limit")
+                    logger.info(f"[BYBIT] [RATE] Waited {wait_time*1000:.0f}ms for rate limit")
 
                 timestamp = self._get_timestamp()
                 start_time = time.monotonic()
@@ -216,19 +219,19 @@ class BybitClient:
                 # Log request details
                 ret_code = data.get("retCode", -1)
                 status_symbol = "OK" if ret_code == 0 else "ERR"
-                print(f"[{status_symbol}] {method} {endpoint} -> {ret_code} ({elapsed_ms:.0f}ms)")
+                logger.info(f"[BYBIT] [{status_symbol}] {method} {endpoint} -> retCode={ret_code} ({elapsed_ms:.0f}ms)")
 
                 # Log API errors for debugging
                 if ret_code != 0:
                     error_msg = data.get("retMsg", "Unknown error")
-                    print(f"   Error: {error_msg}")
+                    logger.warning(f"[BYBIT] API Error: {error_msg} (retCode={ret_code})")
 
                     # Report error to rate limiter
                     self._rate_limiter.report_error(ret_code)
 
                     # Handle rate limit error
                     if ret_code == 10006:  # Too many visits
-                        print(f"[RATE] Rate limit hit! Backing off...")
+                        logger.warning(f"[BYBIT] [RATE] Rate limit hit! Backing off...")
                         await self._rate_limiter.wait_for_backoff()
                         continue  # Retry
                 else:
@@ -236,7 +239,7 @@ class BybitClient:
 
                 # Check for timestamp errors and resync
                 if ret_code == 10002:  # Timestamp error
-                    print(f"[WARNING] Timestamp error, resyncing... (attempt {attempt + 1})")
+                    logger.warning(f"[BYBIT] Timestamp error, resyncing... (attempt {attempt + 1})")
                     self.last_sync = 0  # Force resync
                     await self._sync_time(client)
                     await asyncio.sleep(0.5)
@@ -245,21 +248,21 @@ class BybitClient:
                 return data
 
             except httpx.TimeoutException as e:
-                print(f"[TIMEOUT] {method} {endpoint} timed out (attempt {attempt + 1}/{max_retries})")
+                logger.warning(f"[BYBIT] TIMEOUT {method} {endpoint} (attempt {attempt + 1}/{max_retries})")
                 if attempt < max_retries - 1:
                     await asyncio.sleep(1.0 * (attempt + 1))
                 else:
                     return {"retCode": -2, "retMsg": f"Timeout after {max_retries} attempts"}
 
             except httpx.ConnectError as e:
-                print(f"[CONNECT] Connection error to {endpoint} (attempt {attempt + 1}/{max_retries}): {e}")
+                logger.error(f"[BYBIT] Connection error to {endpoint} (attempt {attempt + 1}/{max_retries}): {e}")
                 if attempt < max_retries - 1:
                     await asyncio.sleep(2.0 * (attempt + 1))
                 else:
                     return {"retCode": -3, "retMsg": f"Connection error: {str(e)}"}
 
             except Exception as e:
-                print(f"[ERROR] Request error (attempt {attempt + 1}/{max_retries}): {e}")
+                logger.error(f"[BYBIT] Request error (attempt {attempt + 1}/{max_retries}): {e}")
                 if attempt < max_retries - 1:
                     await asyncio.sleep(1.0 * (attempt + 1))
                 else:
@@ -293,75 +296,70 @@ class BybitClient:
                         self._position_mode = "one_way"
                     else:
                         self._position_mode = "hedge"
-                    print(f"[BYBIT] Position mode detected from position: {self._position_mode} (posIdx={pos_idx})")
+                    logger.info(f"[BYBIT] Position mode detected from position: {self._position_mode} (posIdx={pos_idx})")
                     return self._position_mode
         except Exception as e:
-            print(f"[BYBIT] Error checking positions: {e}")
+            logger.error(f"[BYBIT] Error checking positions: {e}")
 
-        # Strategy 2: Use switch-mode to set one-way mode (mode=0)
-        # If it succeeds, account is now in one-way mode
-        # If it fails with "position mode not modified" type errors, we know the current mode
+        # Strategy 2: Detectar modo actual SIN intentar cambiar
+        # Probamos switch a hedge (mode=3): si ya esta en hedge, falla con "not modified"
         try:
-            print(f"[BYBIT] No positions found, trying switch-mode to detect/set mode...")
+            logger.info(f"[BYBIT] No positions found, detecting mode via switch-mode probe...")
+
+            # Probar con mode=3 (hedge) para ver si ya esta en hedge
             switch_result = await self._make_request("POST", "/v5/position/switch-mode", {
+                "category": category,
+                "coin": "USDT",
+                "mode": 3,  # Hedge mode
+            })
+            ret_code = switch_result.get("retCode", -1)
+            ret_msg = switch_result.get("retMsg", "")
+            logger.info(f"[BYBIT] switch-mode(3) probe: retCode={ret_code}, retMsg={ret_msg}")
+
+            if ret_code == 110025 or "not modified" in ret_msg.lower() or "same" in ret_msg.lower():
+                # Ya esta en hedge mode
+                self._position_mode = "hedge"
+                logger.info(f"[BYBIT] Position mode confirmed: hedge (already set)")
+                return self._position_mode
+            elif ret_code == 0:
+                # Se pudo cambiar a hedge - probablemente estaba en one_way.
+                # Dejamos en hedge (el usuario quiere hedge mode).
+                self._position_mode = "hedge"
+                logger.info(f"[BYBIT] Position mode switched to hedge")
+                return self._position_mode
+
+            # Si el probe de hedge fallo por otra razon, probar one_way
+            switch_result2 = await self._make_request("POST", "/v5/position/switch-mode", {
                 "category": category,
                 "coin": "USDT",
                 "mode": 0,  # One-way mode
             })
+            ret_code2 = switch_result2.get("retCode", -1)
+            ret_msg2 = switch_result2.get("retMsg", "")
+            logger.info(f"[BYBIT] switch-mode(0) probe: retCode={ret_code2}, retMsg={ret_msg2}")
 
-            ret_code = switch_result.get("retCode", -1)
-            ret_msg = switch_result.get("retMsg", "")
-            print(f"[BYBIT] switch-mode(0) response: retCode={ret_code}, retMsg={ret_msg}")
+            if ret_code2 == 110025 or "not modified" in ret_msg2.lower() or "same" in ret_msg2.lower():
+                self._position_mode = "one_way"
+                logger.info(f"[BYBIT] Position mode confirmed: one_way (already set)")
+                return self._position_mode
+            elif ret_code2 == 0:
+                # Se pudo cambiar a one_way - dejamos como esta
+                self._position_mode = "one_way"
+                logger.info(f"[BYBIT] Position mode set to one_way")
+                return self._position_mode
 
-            if ret_code == 0:
-                # Successfully set to one-way mode
-                self._position_mode = "one_way"
-                print(f"[BYBIT] Position mode set to one_way via switch-mode")
+            # Si hay posiciones abiertas que impiden cambiar, intentar detectar de nuevo
+            if "position" in ret_msg.lower() or "position" in ret_msg2.lower():
+                logger.warning(f"[BYBIT] Can't switch mode (open positions), defaulting to hedge")
+                self._position_mode = "hedge"
                 return self._position_mode
-            elif ret_code == 110025 or "not modified" in ret_msg.lower() or "same" in ret_msg.lower():
-                # Already in one-way mode
-                self._position_mode = "one_way"
-                print(f"[BYBIT] Position mode confirmed: one_way (already set)")
-                return self._position_mode
-            elif "position" in ret_msg.lower() and ("exist" in ret_msg.lower() or "open" in ret_msg.lower()):
-                # Can't switch because there are open positions - try to detect from them
-                print(f"[BYBIT] Can't switch mode (open positions), defaulting to one_way")
-                self._position_mode = "one_way"
-                return self._position_mode
-            else:
-                # Unknown error - try setting hedge mode to see if that works
-                print(f"[BYBIT] switch-mode(0) failed, trying mode=3 (hedge)...")
-                switch_result2 = await self._make_request("POST", "/v5/position/switch-mode", {
-                    "category": category,
-                    "coin": "USDT",
-                    "mode": 3,  # Hedge mode
-                })
-                ret_code2 = switch_result2.get("retCode", -1)
-                ret_msg2 = switch_result2.get("retMsg", "")
-                print(f"[BYBIT] switch-mode(3) response: retCode={ret_code2}, retMsg={ret_msg2}")
-
-                if ret_code2 == 0:
-                    # Was able to switch to hedge mode - switch back to one-way
-                    self._position_mode = "hedge"
-                    print(f"[BYBIT] Account was in hedge mode. Switching back to one-way...")
-                    await self._make_request("POST", "/v5/position/switch-mode", {
-                        "category": category,
-                        "coin": "USDT",
-                        "mode": 0,
-                    })
-                    self._position_mode = "one_way"
-                    return self._position_mode
-                elif ret_code2 == 110025 or "not modified" in ret_msg2.lower():
-                    self._position_mode = "hedge"
-                    print(f"[BYBIT] Position mode confirmed: hedge (already set)")
-                    return self._position_mode
 
         except Exception as e:
-            print(f"[BYBIT] Error in switch-mode detection: {e}")
+            logger.error(f"[BYBIT] Error in switch-mode detection: {e}")
 
-        # Fallback: assume one-way (most common mode)
-        print(f"[BYBIT] Could not detect position mode, defaulting to one_way")
-        self._position_mode = "one_way"
+        # Fallback: assume hedge (user already enabled it)
+        logger.warning(f"[BYBIT] Could not detect position mode, defaulting to hedge")
+        self._position_mode = "hedge"
         return self._position_mode
 
     def _get_position_configs(self, side: str) -> list:
@@ -408,8 +406,7 @@ class BybitClient:
             data = response.json()
 
             if data.get("retCode") != 0:
-                print(f"[ERR] GET /v5/market/instruments-info -> {data.get('retCode')} ({elapsed_ms:.0f}ms)")
-                print(f"   Error: {data.get('retMsg')}")
+                logger.error(f"[BYBIT] GET /v5/market/instruments-info -> retCode={data.get('retCode')} ({elapsed_ms:.0f}ms) Error: {data.get('retMsg')}")
                 return {"success": False, "error": data.get("retMsg", "Unknown error")}
 
             # Extract the instrument info from response
@@ -417,7 +414,7 @@ class BybitClient:
             instruments = result.get("list", [])
 
             if not instruments:
-                print(f"[WARNING] No instrument found for {symbol}")
+                logger.warning(f"[BYBIT] No instrument found for {symbol}")
                 return {"success": False, "error": f"Symbol {symbol} not found"}
 
             instrument = instruments[0]
@@ -445,14 +442,12 @@ class BybitClient:
                 "maxLeverage": leverage_filter.get("maxLeverage"),
             }
 
-            print(f"[OK] GET /v5/market/instruments-info -> {symbol} ({elapsed_ms:.0f}ms)")
-            print(f"   qtyStep={info['qtyStep']}, tickSize={info['tickSize']}, "
-                  f"minQty={info['minOrderQty']}, maxQty={info['maxMktOrderQty'] or info['maxOrderQty']}")
+            logger.info(f"[BYBIT] Instrument info {symbol} ({elapsed_ms:.0f}ms): qtyStep={info['qtyStep']}, tickSize={info['tickSize']}, minQty={info['minOrderQty']}, maxQty={info['maxMktOrderQty'] or info['maxOrderQty']}")
 
             return info
 
         except Exception as e:
-            print(f"[ERROR] Failed to get instrument info for {symbol}: {e}")
+            logger.error(f"[BYBIT] Failed to get instrument info for {symbol}: {e}")
             return {"success": False, "error": str(e)}
 
     async def get_last_price(self, symbol: str, category: str = "linear") -> Optional[Decimal]:
@@ -477,10 +472,10 @@ class BybitClient:
                 if tickers:
                     last_price = tickers[0].get("lastPrice", "0")
                     return Decimal(str(last_price))
-            print(f"[WARNING] Could not get last price for {symbol}: {result.get('retMsg', 'Unknown')}")
+            logger.warning(f"[BYBIT] Could not get last price for {symbol}: {result.get('retMsg', 'Unknown')}")
             return None
         except Exception as e:
-            print(f"[WARNING] Error getting last price for {symbol}: {e}")
+            logger.error(f"[BYBIT] Error getting last price for {symbol}: {e}")
             return None
 
     async def place_market_order(
@@ -499,7 +494,7 @@ class BybitClient:
             qty: Quantity as string (formatted to StepSize)
             category: "linear" for USDT perpetual
         """
-        print(f"[ORDER] Placing Market Order: {side} {symbol} qty={qty}")
+        logger.info(f"[BYBIT] [ORDER] Placing Market Order: {side} {symbol} qty={qty}")
 
         # retCodes that indicate positionIdx mismatch (should try next config)
         POSITION_MODE_ERRORS = {10001, 110025, 110026}
@@ -533,17 +528,17 @@ class BybitClient:
                 "orderLinkId": order_link_id
             }
 
-            print(f"[DEBUG] Market order attempt {attempt_num+1}/{len(position_configs)} with positionIdx={pos_idx} (mode={self._position_mode})")
+            logger.debug(f"[BYBIT] Market order attempt {attempt_num+1}/{len(position_configs)} positionIdx={pos_idx} (mode={self._position_mode})")
 
             result = await self._make_request("POST", "/v5/order/create", params)
             ret_code = result.get("retCode")
             ret_msg = result.get("retMsg", "")
 
-            print(f"[DEBUG] Market order response: retCode={ret_code}, retMsg={ret_msg}")
+            logger.debug(f"[BYBIT] Market order response: retCode={ret_code}, retMsg={ret_msg}")
 
             if ret_code == 0:
                 order_id = result["result"]["orderId"]
-                print(f"[OK] Market Order placed: {order_id} (positionIdx: {pos_idx})")
+                logger.info(f"[BYBIT] [OK] Market Order placed: orderId={order_id} (positionIdx={pos_idx})")
                 self._position_idx_cache[cache_key] = pos_idx
                 # Confirm position mode from successful attempt
                 if pos_idx == 0:
@@ -555,15 +550,15 @@ class BybitClient:
                 last_error = ret_msg
                 is_pos_error = ret_code in POSITION_MODE_ERRORS or "position" in last_error.lower()
                 if not is_pos_error:
-                    print(f"[ERROR] Market Order failed (NOT positionIdx issue): {last_error} (retCode={ret_code})")
+                    logger.error(f"[BYBIT] Market Order failed (NOT positionIdx issue): {last_error} (retCode={ret_code})")
                     return result
-                print(f"[DEBUG] positionIdx={pos_idx} mismatch (retCode={ret_code}: {ret_msg}), trying next...")
+                logger.debug(f"[BYBIT] positionIdx={pos_idx} mismatch (retCode={ret_code}: {ret_msg}), trying next...")
                 # Invalidate cache for this key
                 self._position_idx_cache.pop(cache_key, None)
                 self._position_mode = None  # Reset so next attempt reconsiders
 
         # All attempts failed
-        print(f"[ERROR] Market Order failed after all {len(position_configs)} positionIdx attempts: {last_error}")
+        logger.error(f"[BYBIT] Market Order failed after all {len(position_configs)} positionIdx attempts: {last_error}")
         return {"retCode": -1, "retMsg": last_error or "All position index attempts failed"}
 
     async def place_order_with_tpsl(
@@ -595,17 +590,11 @@ class BybitClient:
             Dict with order result
         """
         order_type_display = order_type.upper()
-        print(f"[ORDER+TPSL] Placing {order_type_display} Order with TP/SL: {side} {symbol} qty={qty}")
-        if limit_price:
-            print(f"   Limit Price: {limit_price}")
-        if take_profit:
-            print(f"   Take Profit: {take_profit}")
-        if stop_loss:
-            print(f"   Stop Loss: {stop_loss}")
+        logger.info(f"[BYBIT] [ORDER+TPSL] Placing {order_type_display} {side} {symbol} qty={qty} TP={take_profit} SL={stop_loss}{' limit=' + str(limit_price) if limit_price else ''}")
 
         # Validate limit order has price
         if order_type.upper() == "LIMIT" and not limit_price:
-            print(f"[ERROR] Limit order requires limit_price")
+            logger.error(f"[BYBIT] Limit order requires limit_price")
             return {"retCode": -1, "retMsg": "Limit order requires limit_price"}
 
         # retCodes that indicate positionIdx mismatch (should try next config)
@@ -645,7 +634,7 @@ class BybitClient:
             if order_type.upper() == "LIMIT" and limit_price:
                 params["price"] = limit_price
 
-            print(f"[DEBUG] {order_type_display}+TPSL attempt {attempt_num+1}/{len(position_configs)} with positionIdx={pos_idx} (mode={self._position_mode})")
+            logger.debug(f"[BYBIT] {order_type_display}+TPSL attempt {attempt_num+1}/{len(position_configs)} positionIdx={pos_idx} (mode={self._position_mode})")
 
             # Add Take Profit if provided
             if take_profit:
@@ -667,11 +656,11 @@ class BybitClient:
             ret_code = result.get("retCode")
             ret_msg = result.get("retMsg", "")
 
-            print(f"[DEBUG] {order_type_display}+TPSL response: retCode={ret_code}, retMsg={ret_msg}")
+            logger.debug(f"[BYBIT] {order_type_display}+TPSL response: retCode={ret_code}, retMsg={ret_msg}")
 
             if ret_code == 0:
                 order_id = result["result"]["orderId"]
-                print(f"[OK] {order_type_display} Order with TP/SL placed: {order_id} (positionIdx: {pos_idx})")
+                logger.info(f"[BYBIT] [OK] {order_type_display}+TPSL placed: orderId={order_id} (positionIdx={pos_idx})")
                 self._position_idx_cache[cache_key] = pos_idx
                 if pos_idx == 0:
                     self._position_mode = "one_way"
@@ -682,14 +671,14 @@ class BybitClient:
                 last_error = ret_msg
                 is_pos_error = ret_code in POSITION_MODE_ERRORS or "position" in last_error.lower()
                 if not is_pos_error:
-                    print(f"[ERROR] {order_type_display} Order with TP/SL failed (NOT positionIdx issue): {last_error} (retCode={ret_code})")
+                    logger.error(f"[BYBIT] {order_type_display}+TPSL failed (NOT positionIdx issue): {last_error} (retCode={ret_code})")
                     return result
-                print(f"[DEBUG] positionIdx={pos_idx} mismatch (retCode={ret_code}: {ret_msg}), trying next...")
+                logger.debug(f"[BYBIT] positionIdx={pos_idx} mismatch (retCode={ret_code}: {ret_msg}), trying next...")
                 self._position_idx_cache.pop(cache_key, None)
                 self._position_mode = None
 
         # All attempts failed
-        print(f"[ERROR] {order_type_display} Order with TP/SL failed after all {len(position_configs)} positionIdx attempts: {last_error}")
+        logger.error(f"[BYBIT] {order_type_display}+TPSL failed after all {len(position_configs)} positionIdx attempts: {last_error}")
         return {"retCode": -1, "retMsg": last_error or "All position index attempts failed"}
 
     async def place_stop_loss_order(
@@ -742,14 +731,14 @@ class BybitClient:
             "positionIdx": pos_idx
         }
 
-        print(f"[SL] Placing Stop Loss: {side} {symbol} @ {trigger_price} (posIdx={pos_idx})")
+        logger.info(f"[BYBIT] [SL] Placing Stop Loss: {side} {symbol} @ {trigger_price} (posIdx={pos_idx})")
         result = await self._make_request("POST", "/v5/order/create", params)
 
         if result.get("retCode") == 0:
             order_id = result["result"]["orderId"]
-            print(f"[OK] Stop Loss placed: {order_id}")
+            logger.info(f"[BYBIT] [OK] Stop Loss placed: orderId={order_id}")
         else:
-            print(f"[ERROR] Stop Loss failed: {result.get('retMsg')} (retCode={result.get('retCode')})")
+            logger.error(f"[BYBIT] Stop Loss failed: {result.get('retMsg')} (retCode={result.get('retCode')})")
 
         return result
 
@@ -796,24 +785,32 @@ class BybitClient:
             "positionIdx": pos_idx
         }
 
-        print(f"[TP] Placing Take Profit: {side} {symbol} @ {price} (posIdx={pos_idx})")
+        logger.info(f"[BYBIT] [TP] Placing Take Profit: {side} {symbol} @ {price} (posIdx={pos_idx})")
         result = await self._make_request("POST", "/v5/order/create", params)
 
         if result.get("retCode") == 0:
             order_id = result["result"]["orderId"]
-            print(f"[OK] Take Profit placed: {order_id}")
+            logger.info(f"[BYBIT] [OK] Take Profit placed: orderId={order_id}")
         else:
-            print(f"[ERROR] Take Profit failed: {result.get('retMsg')} (retCode={result.get('retCode')})")
+            logger.error(f"[BYBIT] Take Profit failed: {result.get('retMsg')} (retCode={result.get('retCode')})")
 
         return result
 
     async def get_position(
         self,
         symbol: str,
-        category: str = "linear"
+        category: str = "linear",
+        side_filter: str = None
     ) -> Dict[str, Any]:
         """
-        Get current position for a symbol
+        Get current position for a symbol.
+        In hedge mode, a symbol can have up to 2 positions (Buy + Sell).
+
+        Args:
+            symbol: Trading pair
+            category: "linear" or "inverse"
+            side_filter: "Buy" or "Sell" - in hedge mode, only return position for this side.
+                         If None, returns the first non-empty position found.
 
         Returns:
             Dict with position info including size, side, entry price, SL/TP
@@ -827,8 +824,26 @@ class BybitClient:
 
         if result.get("retCode") == 0:
             positions = result["result"]["list"]
+
+            # En hedge mode, filtrar por side si se especifica
+            matched_pos = None
             if positions:
-                pos = positions[0]
+                if side_filter and self._position_mode == "hedge":
+                    for p in positions:
+                        p_size = float(p.get("size", "0"))
+                        p_side = p.get("side", "")
+                        if p_size > 0 and p_side == side_filter:
+                            matched_pos = p
+                            break
+                else:
+                    # one_way o sin filtro: primer position con size > 0
+                    for p in positions:
+                        if float(p.get("size", "0")) > 0 and p.get("side", ""):
+                            matched_pos = p
+                            break
+
+            if matched_pos:
+                pos = matched_pos
                 size = float(pos.get("size", "0"))
                 side = pos.get("side", "")
                 entry_price = pos.get("avgPrice", "0")
@@ -838,13 +853,11 @@ class BybitClient:
                 liq_price = pos.get("liqPrice", "0")
 
                 # Extraer SL/TP de la respuesta de Bybit
-                # Bybit devuelve "0" o "0.00" cuando no hay SL/TP configurado
                 stop_loss_raw = pos.get("stopLoss", "0")
                 take_profit_raw = pos.get("takeProfit", "0")
                 trailing_stop_raw = pos.get("trailingStop", "0")
                 tpsl_mode = pos.get("tpslMode", "")
 
-                # Convertir a float, None si es 0 o invalido
                 def parse_price(val):
                     try:
                         f = float(val) if val else 0

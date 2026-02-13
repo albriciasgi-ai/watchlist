@@ -1,6 +1,103 @@
 {
   "symbol": "BTCUSDT",
-  "shapes": [],
-  "updated_at": "2026-02-07T21:34:49.640185+00:00",
-  "total_shapes": 0
+  "shapes": [
+    {
+      "type": "vertical",
+      "id": "vertical_1770641511122_0.3062043458822634",
+      "price": 68777.35625,
+      "time": 1770635520000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1770641995478_0.2579797887642352",
+      "price": 69101.86789772728,
+      "time": 1770641040000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1770645048701_0.15979254701301304",
+      "price": 69283.48607954546,
+      "time": 1770632100000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "horizontal",
+      "id": "horizontal_1770645057158_0.9045558579981756",
+      "price": 69174.67301914254,
+      "time": 1770631680000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1770645093376_0.5145343033275731",
+      "price1": 69039.78295454546,
+      "time1": 1770638700000,
+      "price2": 69044.21392045454,
+      "time2": 1770639240000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "trendline",
+      "id": "trendline_1770645104646_0.034802793130771725",
+      "price1": 69194.86676136364,
+      "time1": 1770640860000,
+      "price2": 69194.86676136364,
+      "time2": 1770642300000,
+      "style": {
+        "color": "#3B82F6",
+        "lineWidth": 2,
+        "dash": []
+      }
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1770827524337_0.4073109077800301",
+      "price": 66696.78723404255,
+      "time": 1770827460000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
+    }
+  ],
+  "updated_at": "2026-02-13T21:06:42.731899+00:00",
+  "total_shapes": 7
 }

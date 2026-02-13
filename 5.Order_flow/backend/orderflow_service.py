@@ -164,6 +164,10 @@ class OrderFlowService:
         # Task de limpieza periodica
         self._cleanup_task: Optional[asyncio.Task] = None
 
+        # Buffer de volumenes para calcular z-score (rolling 20 velas)
+        # { "BTCUSDT_1": deque([vol1, vol2, ...], maxlen=20) }
+        self._volume_buffers: Dict[str, deque] = defaultdict(lambda: deque(maxlen=20))
+
         logger.info("[ORDERFLOW_SERVICE] Inicializado")
 
     def _load_config(self):
@@ -535,6 +539,17 @@ class OrderFlowService:
             # Serializar footprint
             footprint_dict = footprint.to_dict()
 
+            # Calcular volume z-score (rolling 20 velas)
+            vol = footprint_dict.get("total_volume", 0)
+            vol_buf = self._volume_buffers[key]
+            if len(vol_buf) >= 2:
+                mean_v = sum(vol_buf) / len(vol_buf)
+                std_v = (sum((v - mean_v) ** 2 for v in vol_buf) / len(vol_buf)) ** 0.5
+                footprint_dict["volume_zscore"] = round((vol - mean_v) / std_v, 2) if std_v > 0 else 0.0
+            else:
+                footprint_dict["volume_zscore"] = 0.0
+            vol_buf.append(vol)
+
             # Guardar en memoria
             self._footprints[key].append(footprint_dict)
             self._footprints_completed += 1
@@ -776,8 +791,132 @@ class OrderFlowService:
             except Exception as e:
                 logger.warning(f"[ORDERFLOW_SERVICE] Error obteniendo del Cloud: {e}")
 
-        # Retornar los ultimos N footprints (ya son diccionarios)
-        return footprints[-limit:]
+        # Enriquecer footprints que no tengan imbalances/stacked_imbalances calculados
+        # (footprints historicos del disco o cloud pueden no tenerlos)
+        threshold = self.config.imbalance_threshold
+        min_levels = self.config.stacked_min_levels
+        result = footprints[-limit:]
+        enriched_count = 0
+        for fp in result:
+            if 'imbalances' not in fp or 'stacked_imbalances' not in fp:
+                levels = fp.get('levels', [])
+                if levels:
+                    imb, stacked = self._calculate_imbalances_from_levels(
+                        levels, threshold, min_levels
+                    )
+                    if 'imbalances' not in fp:
+                        fp['imbalances'] = imb
+                    if 'stacked_imbalances' not in fp:
+                        fp['stacked_imbalances'] = stacked
+                    enriched_count += 1
+                else:
+                    if 'imbalances' not in fp:
+                        fp['imbalances'] = []
+                    if 'stacked_imbalances' not in fp:
+                        fp['stacked_imbalances'] = []
+
+        if enriched_count > 0:
+            logger.info(
+                f"[ORDERFLOW_SERVICE] Enriched {enriched_count}/{len(result)} footprints "
+                f"with imbalances/stacked for {key}"
+            )
+
+        return result
+
+    @staticmethod
+    def _calculate_imbalances_from_levels(
+        levels: List[dict], threshold: float = 3.0, min_consecutive: int = 3
+    ) -> tuple:
+        """
+        Calcula imbalances y stacked imbalances a partir de los niveles de un footprint.
+        Usado para enriquecer footprints historicos que no tienen estos campos.
+
+        Returns:
+            (imbalances_list, stacked_imbalances_list)
+        """
+        imbalances = []
+        # Pass 1: detect individual imbalances
+        for i, level in enumerate(levels):
+            bid = level.get('bid_volume', 0) or 0
+            ask = level.get('ask_volume', 0) or 0
+            total = bid + ask
+            if total == 0:
+                continue
+            min_vol = min(bid, ask)
+            max_vol = max(bid, ask)
+            if min_vol <= 0:
+                continue  # skip infinite ratio
+            ratio = max_vol / min_vol
+            if ratio >= threshold:
+                direction = "BUY" if ask > bid else "SELL"
+                imbalances.append({
+                    "level_index": i,
+                    "type": direction,
+                    "ratio": round(ratio, 2),
+                    "price_min": level.get('price_min'),
+                    "price_max": level.get('price_max'),
+                    "price_mid": level.get('price_mid',
+                        (level.get('price_min', 0) + level.get('price_max', 0)) / 2)
+                })
+
+        # Pass 2: detect stacked imbalances (consecutive same-direction)
+        stacked = []
+        current_streak = []
+        current_direction = None
+        imb_set = {ib['level_index']: ib for ib in imbalances}
+
+        for i, level in enumerate(levels):
+            if i in imb_set:
+                direction = imb_set[i]['type']
+                if direction == current_direction:
+                    current_streak.append(i)
+                else:
+                    if len(current_streak) >= min_consecutive:
+                        stacked.append(
+                            OrderFlowService._build_stacked_from_levels(
+                                current_streak, current_direction, levels, imb_set
+                            )
+                        )
+                    current_streak = [i]
+                    current_direction = direction
+            else:
+                if len(current_streak) >= min_consecutive:
+                    stacked.append(
+                        OrderFlowService._build_stacked_from_levels(
+                            current_streak, current_direction, levels, imb_set
+                        )
+                    )
+                current_streak = []
+                current_direction = None
+
+        if len(current_streak) >= min_consecutive:
+            stacked.append(
+                OrderFlowService._build_stacked_from_levels(
+                    current_streak, current_direction, levels, imb_set
+                )
+            )
+
+        return imbalances, stacked
+
+    @staticmethod
+    def _build_stacked_from_levels(
+        streak: list, direction: str, levels: list, imb_set: dict
+    ) -> dict:
+        """Construye dict de stacked imbalance desde niveles ya calculados."""
+        ratios = [imb_set[i]['ratio'] for i in streak if i in imb_set]
+        avg_ratio = sum(ratios) / len(ratios) if ratios else 0
+        start_price = levels[streak[0]].get('price_min', 0)
+        end_price = levels[streak[-1]].get('price_max', 0)
+        return {
+            "type": "STACKED_IMBALANCE",
+            "direction": direction,
+            "levels": streak.copy(),
+            "levels_count": len(streak),
+            "start_price": start_price,
+            "end_price": end_price,
+            "mid_price": round((start_price + end_price) / 2, 4),
+            "avg_ratio": round(avg_ratio, 2)
+        }
 
     def get_status(self) -> dict:
         """Retorna el estado del servicio."""

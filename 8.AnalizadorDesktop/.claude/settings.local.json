@@ -11,7 +11,15 @@
       "Bash(nul)",
       "Bash(tasklist /FI 'IMAGENAME eq python.exe' 2)",
       "Bash(curl:*)",
-      "Bash(npx vite build:*)"
+      "Bash(npx vite build:*)",
+      "Bash(dir:*)",
+      "Bash(netstat:*)",
+      "Bash(npm run build:*)",
+      "Bash(cmd /c:*)",
+      "Bash(.venvScriptspython.exe -c \"import zone_vp_service; print(''OK'')\")",
+      "Bash(.venvScriptspython.exe -c \"import zone_vp_scanner; print(''OK'')\")",
+      "Bash(.venvScriptspython.exe -c \"from zone_vp_scanner import backtest_vp; print(''OK'')\")",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []

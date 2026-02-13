@@ -1,0 +1,160 @@
+ [Preload] Order Flow Desktop - Script cargado correctamente
+ [Preload] Electron: 33.4.11
+ [Preload] Chrome: 130.0.6723.191
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ ✅ [12:33:55 a. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+ [OrderFlow] [BTCUSDT] CONSTRUCTOR: interval=1, days=1, historyHours=24
+ [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [PollingCoordinator] Started
+ ✅ [12:33:55 a. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ ✅ [12:33:55 a. m.] [VWAP] [BTCUSDT] Config changed (vwapType=rolling), refetching...
+ [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (1461 velas)
+ [CandleCache] OK VALIDATION BTCUSDT@1: 1461 velas sin gaps
+ [CandleCache] BTCUSDT@1 - Cache valido: 1461 velas, sin gaps significativos
+ [BTCUSDT] Carga INCREMENTAL: desde 12/2/2026, 11:35:00 p.m. (1461 velas en cache)
+ [CacheCleanup] Complete: 0/1 candles, 0/0 indicators removed
+ [OrderFlow] [BTCUSDT] INITIAL LOAD: 666 footprints
+ [OrderFlow] [BTCUSDT] FOOTPRINT RANGES:
+   Total: 666 footprints
+   Rango completo: 12/2/2026, 12:32:00 p.m. -> 13/2/2026, 12:32:00 a.m.
+   Grupos contiguos: 2
+     Grupo 1: 12/2/2026, 12:32:00 p.m. -> 12/2/2026, 11:35:00 p.m. (664 fps, 663 min)
+     >>> GAP: 56 minutos <<<
+     Grupo 2: 13/2/2026, 12:31:00 a.m. -> 13/2/2026, 12:32:00 a.m. (2 fps, 1 min)
+ [PollingCoordinator] Registered: OrderFlow_BTCUSDT (interval: 5000ms, priority: 1)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [CandleCache] OK CACHE-ANTES-MERGE BTCUSDT: 1461 velas sin gaps
+ [CandleCache] OK BACKEND-NUEVAS BTCUSDT: 59 velas sin gaps
+ [CandleCache] 🔄 Merge: 1461 cached + 59 new = 1519 total
+ [BTCUSDT] Incremental: +59 velas nuevas = 1519 total
+ [CandleCache] OK MERGED BTCUSDT: 1519 velas sin gaps
+ [BTCUSDT] ✅ Histórico final: 1519 velas
+ [OrderFlow] [BTCUSDT] FIRST RENDER: 666 fps, candleWidth=1.0px, minCandleWidth=20, mode=DOTS (zoomed out)
+ ✅ [12:33:58 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1518 velas, memoria: 1/4)
+ [OrderFlow] [BTCUSDT] +1 footprints (total: 667)
+ [CandleCache] ✅ BTCUSDT@1 - guardado (1519 velas, memoria: 1/4)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ ✅ [12:34:01 a. m.] [VWAP] [BTCUSDT] VWAP loaded: 1441 points (rolling, 1 days)
+ ✅ [12:34:01 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ ✅ [12:34:02 a. m.] [VWAP] [BTCUSDT] VWAP loaded: 1441 points (rolling, 1 days)
+ ✅ [12:34:02 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ ✅ [12:34:03 a. m.] [VWAP] [BTCUSDT] VWAP loaded: 1441 points (rolling, 1 days)
+ ✅ [12:34:03 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [12:34:03 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 60000ms, priority: 2)
+Logger.js:100 ✅ [12:34:03 a. m.] [VWAP] [BTCUSDT] VWAP polling started (interval: 60000ms)
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [12:34:04 a. m.] [VWAP] [BTCUSDT] VWAP loaded: 1441 points (rolling, 1 days)
+Logger.js:100 ✅ [12:34:04 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [12:34:04 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 2 indicadores
+Logger.js:100 ✅ [12:34:04 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [12:34:04 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [12:34:04 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [12:34:04 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+Logger.js:100 ✅ [12:34:04 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1441 points
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+SymbolList.jsx:79 [Prefetch] Activado (10s despues de carga)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [12:34:30 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [12:34:34 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [12:34:40 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [12:34:43 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+Logger.js:100 ✅ [12:34:46 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+Logger.js:100 ✅ [12:34:55 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1520)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@1 - guardado (1520 velas, memoria: 1/4)
+Logger.js:100 ✅ [12:35:02 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1442 points
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1521)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: VWAP_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:273 [OrderFlow] [BTCUSDT] +1 footprints (total: 668)
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1521)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [12:35:04 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1442 points
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1521)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [12:35:04 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() called after polling
+PollingCoordinator.js:227 [PollingCoordinator] Completed: VWAP_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2159 [BTCUSDT] 🔄 requestRedraw called (candles: 1521)
+MiniChart.jsx:2161 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1521)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ ✅ [12:35:26 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1442

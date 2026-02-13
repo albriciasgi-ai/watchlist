@@ -847,39 +847,19 @@ class RealtimePatternService:
             logger.error(f"Error evaluating pending trades: {e}")
 
     async def _send_trade_outcome_alert(self, alert, outcome: str, outcome_timestamp: int):
-        """Send trade outcome notification to trading bot"""
+        """Log trade outcome (NO enviar al TradingBot para evitar alertas fantasma)."""
         try:
-            outcome_data = {
-                'type': 'TRADE_OUTCOME',
-                'symbol': alert.symbol,
-                'interval': alert.interval,
-                'alertId': alert.id,
-                'pattern': {
-                    'patternType': alert.pattern_type,
-                    'direction': alert.direction,
-                    'entry': alert.entry,
-                    'stopLoss': alert.stop_loss,
-                    'takeProfit': alert.take_profit,
-                    'confidence': alert.confidence
-                },
-                'outcome': outcome,
-                'outcomeTimestamp': outcome_timestamp,
-                'originalTimestamp': alert.timestamp,
-                'metadata': {
-                    'source': 'backend_realtime',
-                    'indicator': alert.indicator
-                }
-            }
-
-            await self.alert_sender.send_rejection_pattern_alert(
-                symbol=alert.symbol,
-                interval=alert.interval,
-                pattern=outcome_data.get('pattern', {})
+            # Solo loguear el resultado del trade. NO enviar via alert_sender
+            # porque alert_sender.send_rejection_pattern_alert() no incluye
+            # campo 'source' en el payload y el TradingBot lo interpreta como
+            # una alerta WATCHLIST nueva con price=0, generando errores.
+            logger.info(
+                f"[OUTCOME] {alert.symbol} | {outcome} | "
+                f"pattern={alert.pattern_type} | direction={alert.direction} | "
+                f"entry={alert.entry} | sl={alert.stop_loss} | tp={alert.take_profit}"
             )
-            logger.info(f"[OUTCOME] Sent trade outcome alert: {alert.symbol} {outcome}")
-
         except Exception as e:
-            logger.error(f"Error sending trade outcome alert: {e}")
+            logger.error(f"Error logging trade outcome: {e}")
 
     async def _cleanup_loop(self):
         """Periodic cleanup of old data"""

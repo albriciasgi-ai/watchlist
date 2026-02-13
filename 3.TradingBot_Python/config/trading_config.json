@@ -3,7 +3,7 @@
     {
       "symbol": "BTCUSDT",
       "category": "linear",
-      "risk_amount": 3.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.022,
       "take_profit_percent": 0.045,
       "leverage": 10,
@@ -16,7 +16,7 @@
     {
       "symbol": "ETHUSDT",
       "category": "linear",
-      "risk_amount": 2.1,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.023,
       "take_profit_percent": 0.04,
       "leverage": 10,
@@ -29,7 +29,7 @@
     {
       "symbol": "SOLUSDT",
       "category": "linear",
-      "risk_amount": 2.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -41,7 +41,7 @@
     {
       "symbol": "ADAUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -53,7 +53,7 @@
     {
       "symbol": "AVAXUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -65,7 +65,7 @@
     {
       "symbol": "GALAUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -77,7 +77,7 @@
     {
       "symbol": "INJUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -89,7 +89,7 @@
     {
       "symbol": "IOTAUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -101,7 +101,7 @@
     {
       "symbol": "TRXUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -113,7 +113,7 @@
     {
       "symbol": "UNIUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -125,7 +125,7 @@
     {
       "symbol": "XRPUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -137,7 +137,7 @@
     {
       "symbol": "CAKEUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -149,7 +149,7 @@
     {
       "symbol": "POLUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -161,7 +161,7 @@
     {
       "symbol": "MUBARAKUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -173,7 +173,7 @@
     {
       "symbol": "HIFIUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -185,7 +185,7 @@
     {
       "symbol": "ARBUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.01,
       "take_profit_percent": 0.02,
       "leverage": 10,
@@ -197,7 +197,7 @@
     {
       "symbol": "DOGEUSDT",
       "category": "linear",
-      "risk_amount": 3.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.022000000000000002,
       "take_profit_percent": 0.045,
       "leverage": 10,
@@ -209,7 +209,7 @@
     {
       "symbol": "PAXGUSDT",
       "category": "linear",
-      "risk_amount": 3.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.022000000000000002,
       "take_profit_percent": 0.045,
       "leverage": 10,
@@ -221,7 +221,7 @@
     {
       "symbol": "SUIUSDT",
       "category": "linear",
-      "risk_amount": 3.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.022000000000000002,
       "take_profit_percent": 0.045,
       "leverage": 10,
@@ -233,7 +233,7 @@
     {
       "symbol": "ATOMUSDT",
       "category": "linear",
-      "risk_amount": 1.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.02,
       "take_profit_percent": 0.04,
       "leverage": 10,
@@ -245,7 +245,7 @@
     {
       "symbol": "RUNEUSDT",
       "category": "linear",
-      "risk_amount": 10.0,
+      "risk_amount": 4.7,
       "stop_loss_percent": 0.02,
       "take_profit_percent": 0.04,
       "leverage": 10,

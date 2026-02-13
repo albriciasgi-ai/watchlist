@@ -67,6 +67,11 @@ class IndicatorManager {
     this._lastRealtimeZoneFingerprint = ''; // Para detectar cambios
     this._zoneMetricsTimerId = null;
 
+    // VP Zone polling (Volume Profile scanner)
+    this._vpZoneTimerId = null;
+    this._vpZoneEnabled = false;
+    this._lastVPZoneFingerprint = '';
+
     log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
@@ -1251,8 +1256,9 @@ class IndicatorManager {
   destroy() {
     log.debug(`[${this.symbol}] 🧹 IndicatorManager destruido`);
 
-    // Detener polling de zonas realtime y metricas
+    // Detener polling de zonas realtime, VP y metricas
     this.stopRealtimeZonePolling();
+    this.stopVPZonePolling();
     this._stopZoneMetricsPolling();
 
     // Destroy all indicators (stops pending fetches)
@@ -1315,11 +1321,12 @@ class IndicatorManager {
    */
   async _checkAndStartRealtimeZonePolling() {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/zones/realtime/status`);
+      // Intentar v2 primero
+      const res = await fetch(`${API_BASE_URL}/api/zones/v2/status`);
       if (!res.ok) return;
       const data = await res.json();
       if (data.success && data.running) {
-        log.info(`[${this.symbol}] Servicio realtime de zonas activo - iniciando polling`);
+        log.info(`[${this.symbol}] Servicio Zone Detector v2 activo - iniciando polling`);
         this.startRealtimeZonePolling();
       }
     } catch (e) {
@@ -1335,6 +1342,8 @@ class IndicatorManager {
     this.stopRealtimeZonePolling();
     this._realtimeZoneEnabled = true;
     this._lastRealtimeZoneFingerprint = '';
+
+    // NO limpiar zonas manuales - se gestionan por separado via _manualZones/_realtimeZones
 
     log.info(`[${this.symbol}] Realtime zone polling iniciado (cada ${intervalMs / 1000}s)`);
 
@@ -1367,7 +1376,7 @@ class IndicatorManager {
     if (!this._realtimeZoneEnabled || !this.zoneVisualizerIndicator) return;
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/zones/realtime/zones/${this.symbol}`);
+      const res = await fetch(`${API_BASE_URL}/api/zones/v2/zones/${this.symbol}`);
       if (!res.ok) return;
 
       const data = await res.json();
@@ -1376,9 +1385,9 @@ class IndicatorManager {
       const zones = data.zones || [];
 
       // Generar fingerprint para detectar cambios (count + resultados + timestamps)
-      const fingerprint = zones.map(z => `${z.start_timestamp}_${z.trade_result}`).join('|');
+      const fingerprint = zones.map(z => `${z.start_timestamp}_${z.trade_result}_${z.state}`).join('|');
       if (fingerprint !== this._lastRealtimeZoneFingerprint) {
-        log.info(`[${this.symbol}] Realtime zones actualizadas: ${zones.length} zonas`);
+        log.info(`[${this.symbol}] Realtime zones v2 actualizadas: ${zones.length} zonas`);
         this._lastRealtimeZoneFingerprint = fingerprint;
         this.zoneVisualizerIndicator.setRealtimeZones(zones);
 
@@ -1415,7 +1424,7 @@ class IndicatorManager {
   }
 
   /**
-   * Fetch metricas por candle del Zone Detector (ATR, Band, TTM, BBWP).
+   * Fetch diagnosticos v2 del Zone Detector (6 barras: ATR, OUT, BODY, RNG, BARS, TTM).
    */
   async _fetchZoneMetrics() {
     if (!this.zoneVisualizerIndicator) return;
@@ -1431,6 +1440,86 @@ class IndicatorManager {
       }
     } catch (e) {
       // Silenciar errores
+    }
+  }
+
+  // =============================================
+  // VP ZONE POLLING (Volume Profile Scanner)
+  // =============================================
+
+  /**
+   * Auto-detect si el servicio VP Zone Scanner esta corriendo.
+   */
+  async _checkAndStartVPZonePolling() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/zones/vp/status`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.success && data.running) {
+        log.info(`[${this.symbol}] Servicio VP Zone Scanner activo - iniciando polling`);
+        this.startVPZonePolling();
+      }
+    } catch (e) {
+      // Backend no disponible - no hacer nada
+    }
+  }
+
+  /**
+   * Inicia polling de zonas VP detectadas en tiempo real.
+   */
+  startVPZonePolling(intervalMs = 15000) {
+    this.stopVPZonePolling();
+    this._vpZoneEnabled = true;
+    this._lastVPZoneFingerprint = '';
+
+    log.info(`[${this.symbol}] VP zone polling iniciado (cada ${intervalMs / 1000}s)`);
+
+    this._fetchVPZones();
+
+    this._vpZoneTimerId = setInterval(() => {
+      if (document.visibilityState === 'hidden') return;
+      this._fetchVPZones();
+    }, intervalMs);
+  }
+
+  /**
+   * Detiene polling de zonas VP.
+   */
+  stopVPZonePolling() {
+    if (this._vpZoneTimerId) {
+      clearInterval(this._vpZoneTimerId);
+      this._vpZoneTimerId = null;
+    }
+    this._vpZoneEnabled = false;
+  }
+
+  /**
+   * Fetch zonas VP del backend y actualiza el ZoneVisualizer.
+   */
+  async _fetchVPZones() {
+    if (!this._vpZoneEnabled || !this.zoneVisualizerIndicator) return;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/zones/vp/zones/${this.symbol}`);
+      if (!res.ok) return;
+
+      const data = await res.json();
+      if (!data.success) return;
+
+      const zones = data.zones || [];
+
+      const fingerprint = zones.map(z => `${z.start_timestamp}_${z.trade_result}_${z.d_score}`).join('|');
+      if (fingerprint !== this._lastVPZoneFingerprint) {
+        log.info(`[${this.symbol}] VP zones actualizadas: ${zones.length} zonas`);
+        this._lastVPZoneFingerprint = fingerprint;
+        this.zoneVisualizerIndicator.setVPZones(zones);
+
+        if (this.requestRedraw) {
+          this.requestRedraw();
+        }
+      }
+    } catch (e) {
+      // Silenciar errores de red
     }
   }
 
@@ -1451,6 +1540,9 @@ class IndicatorManager {
 
     // Auto-detectar si el servicio realtime de zonas esta corriendo
     this._checkAndStartRealtimeZonePolling();
+
+    // Auto-detectar si el servicio VP Zone Scanner esta corriendo
+    this._checkAndStartVPZonePolling();
 
     // Polling independiente de metricas del Zone Detector (cada 30s)
     this._startZoneMetricsPolling();
@@ -1771,7 +1863,7 @@ class IndicatorManager {
     try {
       // Timeout largo: optimizacion puede tardar muchos minutos con muchas combinaciones
       const controller = new AbortController();
-      const timeoutMs = 60 * 60 * 1000; // 60 minutos max
+      const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas max
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       const response = await fetch(`${API_BASE_URL}/api/zones/optimize`, {
@@ -1802,7 +1894,117 @@ class IndicatorManager {
       log.error(`[${this.symbol}] Error en optimizacion:`, error.message);
       let errMsg = error.message || 'Error de conexion';
       if (error.name === 'AbortError') {
-        errMsg = 'Timeout: la optimizacion tardo mas de 60 minutos.';
+        errMsg = 'Timeout: la optimizacion tardo mas de 10 horas.';
+      }
+      if (onError) onError(errMsg);
+    }
+  }
+
+  // ============================================================
+  // Backtest & Optimizacion V2
+  // ============================================================
+
+  async backtestV2(opts = {}) {
+    const { days, config = {} } = opts;
+    try {
+      const requestBody = {
+        symbol: this.symbol,
+        interval: this.interval,
+        days: days || this.days,
+        config,
+      };
+      console.log(`[${this.symbol}] [backtestV2] POST /api/zones/v2/backtest`, {
+        symbol: requestBody.symbol,
+        interval: requestBody.interval,
+        days: requestBody.days,
+        configKeys: Object.keys(config),
+      });
+
+      const response = await fetch(`${API_BASE_URL}/api/zones/v2/backtest`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+      const result = await response.json();
+
+      console.log(`[${this.symbol}] [backtestV2] Respuesta: success=${result.success}, zones=${result.zones?.length || 0}, candles=${result.candles || '?'}`);
+      return result;
+    } catch (error) {
+      console.error(`[${this.symbol}] [backtestV2] ERROR:`, error);
+      return { success: false, error: error.message || 'Error de conexion' };
+    }
+  }
+
+  async estimateOptimizationV2(opts = {}) {
+    const { days, base_config = {}, param_ranges = {} } = opts;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/zones/v2/optimize-estimate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          symbol: this.symbol,
+          interval: this.interval,
+          days: days || this.days,
+          base_config,
+          param_ranges,
+        })
+      });
+      return await response.json();
+    } catch (error) {
+      return { success: false, error: error.message || 'Error de conexion' };
+    }
+  }
+
+  async optimizeV2(opts = {}) {
+    const {
+      days, base_config = {}, param_ranges = {},
+      metric = 'expectancy', top_n = 15,
+      onComplete, onError
+    } = opts;
+
+    log.info(`[${this.symbol}] V2 Optimizacion: ${Object.keys(param_ranges).length} params, metric=${metric}`);
+
+    try {
+      const controller = new AbortController();
+      const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      const response = await fetch(`${API_BASE_URL}/api/zones/v2/optimize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          symbol: this.symbol,
+          interval: this.interval,
+          days: days || this.days,
+          base_config,
+          param_ranges,
+          metric,
+          top_n,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const errMsg = errData.error || `HTTP ${response.status}`;
+        if (onError) onError(errMsg);
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        log.info(`[${this.symbol}] V2 Optimizacion completada: ${data.total_combos} combos en ${data.elapsed}s`);
+        if (onComplete) onComplete(data);
+      } else {
+        if (onError) onError(data.error || 'Error desconocido');
+      }
+    } catch (error) {
+      log.error(`[${this.symbol}] Error en V2 optimizacion:`, error.message);
+      let errMsg = error.message || 'Error de conexion';
+      if (error.name === 'AbortError') {
+        errMsg = 'Timeout: la optimizacion tardo mas de 10 horas.';
       }
       if (onError) onError(errMsg);
     }

@@ -4290,6 +4290,76 @@ if (fingerprint !== this._lastRealtimeZoneFingerprint) {
 
 **Problema conocido:** `_send_alert()` en `zone_service.py` envia `custom_stop_loss` y `custom_take_profit` pero no `order_type`, lo cual puede causar inconsistencia de TP/SL en ordenes market.
 
+## Fixes Febrero 2026 (sesion 2)
+
+### Bug 1: Zonas historicas WIN/LOSS se re-registraban como OPEN
+
+**Archivo:** `zone_service.py` linea ~897
+
+**Causa:** La condicion `zone.trade_result not in ("SKIPPED", "NO_ENTRY", "")` permitia que zonas con resultado WIN o LOSS se re-registraran como trades abiertos.
+
+**Fix:** Cambiar a `zone.trade_result == "OPEN"` - solo registrar como open trade si el detector explicitamente lo marca como OPEN.
+
+### Bug 2: Pending INSTANT_BREAKOUT con SL/TP absurdos
+
+**Archivo:** `zone_service.py` en `_check_pending_breakouts()`
+
+**Causa:** Cuando el precio se alejaba mucho de la zona y luego habia breakout, el entry price estaba muy lejos del zone edge, generando SL/TP con distancias absurdas.
+
+**Fix:** Validacion de proximidad - si `distance_pct` entre entry y zone edge supera `max_price_range_pct`, se bloquea con log `BLOCKED_FAR_ENTRY`.
+
+### Bug 3: Multiples trades abiertos en modo sequential
+
+**Archivo:** `zone_service.py` en `_register_open_trades()` y `_check_pending_breakouts()`
+
+**Causa:** No se verificaba si ya habia un trade abierto antes de abrir otro en modo sequential.
+
+**Fix:**
+- `_register_open_trades()`: Si `position_mode == "sequential"` y ya hay trades abiertos, bloquea con `BLOCKED_SEQUENTIAL`
+- `_check_pending_breakouts()`: Misma verificacion al inicio, bloquea con `BLOCKED_SEQUENTIAL_PENDING`
+
+### Pausa de re-deteccion historica
+
+**Archivos:** `zone_service.py`, `main.py`, `ZoneDetectorSettings.jsx`
+
+Boton toggle que pausa `_detect_and_alert()` sin detener el tracking de trades ni pending breakouts.
+
+- **Backend:** `self.detection_paused` flag (runtime, no persistido)
+- **Endpoint:** `POST /api/zones/realtime/pause-detection` (toggle)
+- **UI:** Boton naranja prominente "DETECCION PAUSADA - Click para reanudar"
+- Cuando pausado: `_update_open_trades()` y `_check_pending_breakouts()` siguen corriendo
+
+### Boton "Detectar ahora (1 vez)"
+
+**Archivos:** `zone_service.py`, `main.py`, `ZoneDetectorSettings.jsx`
+
+Ejecuta `_detect_and_alert()` una sola vez sin cambiar el estado de pausa. Permite descubrir pending zones cuando la re-deteccion continua esta pausada.
+
+- **Backend:** `run_detection_once()` retorna resultados por simbolo (pending/baseline antes y despues)
+- **Endpoint:** `POST /api/zones/realtime/detect-now`
+- **UI:** Boton azul visible solo cuando la deteccion esta pausada
+
+### Metodo de deteccion configurable
+
+**Archivos:** `zone_service.py`, `ZoneDetectorSettings.jsx`
+
+El metodo de deteccion (`trading_zones` o `atr_dynamic`) ahora es configurable desde la UI y se persiste en `zone_realtime_config.json`.
+
+**Problema resuelto:** Las barras de metricas usaban `atr_dynamic` pero el servicio realtime tenia hardcodeado `"trading_zones"`. Las zonas detectadas por las metricas no coincidian con las del servicio.
+
+**Cambios:**
+- `ZoneServiceConfig`: nuevo campo `detection_method` + params `atr_dyn_*`
+- `_detect_and_alert()` y `_initial_detection()`: usan `self.config.detection_method` en vez de hardcode
+- `_build_detection_params()`: incluye params de ATR Dynamic
+- Frontend `handleRealtimeConfigSave`: envia `detection_method` y `atr_dyn_*` al backend
+
+### Endpoints nuevos
+
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/api/zones/realtime/pause-detection` | POST | Toggle pausa de re-deteccion |
+| `/api/zones/realtime/detect-now` | POST | Ejecutar deteccion una sola vez |
+
 ---
 
 # OPTIMIZADOR DE PARAMETROS - GRID SEARCH (Febrero 2026)

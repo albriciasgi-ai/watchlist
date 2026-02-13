@@ -14,6 +14,7 @@ import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import ZoneDetectorSettings from "./ZoneDetectorSettings";
+import VPZoneScannerSettings from "./VPZoneScannerSettings";
 import wsManager from "./WebSocketManager";
 import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
 import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
@@ -171,9 +172,11 @@ const SingleSymbolAnalyzer = () => {
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
   const [showSR2Settings, setShowSR2Settings] = useState(false);
   const [showZoneDetectorSettings, setShowZoneDetectorSettings] = useState(false);
+  const [showVPZoneScannerSettings, setShowVPZoneScannerSettings] = useState(false);
 
   // Estado de deteccion realtime de zonas (para indicador visual fuera del modal)
   const [zoneRealtimeActive, setZoneRealtimeActive] = useState(false);
+  const [vpRealtimeActive, setVpRealtimeActive] = useState(false);
   const zoneRealtimePollingRef = useRef(null);
 
   // Estado de alertas swing detector (para indicador visual fuera del modal)
@@ -812,6 +815,44 @@ const SingleSymbolAnalyzer = () => {
               />
             )}
           </button>
+          <button
+            className={`zone-detector-toggle ${showVPZoneScannerSettings ? 'active' : ''}`}
+            onClick={() => {
+              if (indicatorManagerRef.current) {
+                // noop - manager already set
+              }
+              setShowVPZoneScannerSettings(true);
+            }}
+            title="VP Zone Scanner (Volume Profile)"
+            style={{
+              padding: '8px 12px',
+              backgroundColor: showVPZoneScannerSettings ? '#0056D2' : '#4A6FA5',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '13px',
+              position: 'relative'
+            }}
+          >
+            📊 VP Zones
+            {vpRealtimeActive && (
+              <span
+                title="VP Scanner realtime activo"
+                style={{
+                  position: 'absolute',
+                  top: '-3px',
+                  right: '-3px',
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  backgroundColor: '#0056D2',
+                  border: '2px solid #1a1a2e',
+                  animation: 'zoneRealtimePulse 2s ease-in-out infinite'
+                }}
+              />
+            )}
+          </button>
         </div>
       </div>
 
@@ -1190,6 +1231,15 @@ const SingleSymbolAnalyzer = () => {
           }
         }}
         onRealtimeChange={(active) => setZoneRealtimeActive(active)}
+      />
+
+      <VPZoneScannerSettings
+        isOpen={showVPZoneScannerSettings}
+        onClose={() => setShowVPZoneScannerSettings(false)}
+        indicatorManager={indicatorManagerRef.current}
+        symbol={symbol}
+        interval={interval}
+        onRealtimeChange={(active) => setVpRealtimeActive(active)}
       />
     </div>
   );

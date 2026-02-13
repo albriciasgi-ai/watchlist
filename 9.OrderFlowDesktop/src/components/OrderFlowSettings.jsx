@@ -13,6 +13,20 @@ import IntegrityPanel from './IntegrityPanel';
  * - Stacked imbalance settings
  * - Alert configuration
  */
+// Helper: "r,g,b" -> "#rrggbb"
+const rgbToHex = (rgbStr) => {
+  const parts = rgbStr.split(',').map(s => parseInt(s.trim()));
+  return '#' + parts.map(v => v.toString(16).padStart(2, '0')).join('');
+};
+
+// Helper: "#rrggbb" -> "r,g,b"
+const hexToRgb = (hex) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `${r},${g},${b}`;
+};
+
 const OrderFlowSettings = ({
   config,
   onConfigChange,
@@ -32,7 +46,13 @@ const OrderFlowSettings = ({
     minCandleWidth: 8,
     minCandleWidthFull: 60,
     opacity: 0.9,
-    historyHours: 24
+    historyHours: 24,
+    stackedLineWidth: 2,
+    stackedLineExtend: 3,
+    stackedBuyColor: '38,166,154',
+    stackedSellColor: '239,83,80',
+    stackedOpacity: 0.7,
+    stackedMinVolumeZScore: 0
   };
 
   const [localConfig, setLocalConfig] = useState(config || defaultConfig);
@@ -415,6 +435,204 @@ const OrderFlowSettings = ({
           />
           Highlight imbalances
         </label>
+
+        {/* Stacked Imbalance Visual Settings - visible only when imbalances enabled */}
+        {localConfig.showImbalances !== false && (
+          <div style={{
+            marginBottom: '12px',
+            marginLeft: '4px',
+            padding: '10px',
+            background: '#ECEFF1',
+            borderRadius: '6px',
+            border: '1px solid #CFD8DC'
+          }}>
+            <div style={{ fontWeight: 'bold', fontSize: '12px', marginBottom: '10px', color: '#455A64' }}>
+              Stacked Imbalance - Visual
+            </div>
+
+            {/* Line Width */}
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ display: 'block', marginBottom: '2px', fontSize: '11px' }}>
+                Grosor: {localConfig.stackedLineWidth || 2}px
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="6"
+                value={localConfig.stackedLineWidth || 2}
+                onChange={(e) => handleConfigChange('stackedLineWidth', parseInt(e.target.value))}
+                style={{ width: '100%' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#888' }}>
+                <span>1</span>
+                <span>6</span>
+              </div>
+            </div>
+
+            {/* Line Extension */}
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ display: 'block', marginBottom: '2px', fontSize: '11px' }}>
+                Extension: {localConfig.stackedLineExtend || 3}x ancho vela
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="8"
+                value={localConfig.stackedLineExtend || 3}
+                onChange={(e) => handleConfigChange('stackedLineExtend', parseInt(e.target.value))}
+                style={{ width: '100%' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#888' }}>
+                <span>1x (solo vela)</span>
+                <span>8x</span>
+              </div>
+            </div>
+
+            {/* Opacity */}
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ display: 'block', marginBottom: '2px', fontSize: '11px' }}>
+                Opacidad: {Math.round((localConfig.stackedOpacity != null ? localConfig.stackedOpacity : 0.7) * 100)}%
+              </label>
+              <input
+                type="range"
+                min="10"
+                max="100"
+                step="5"
+                value={Math.round((localConfig.stackedOpacity != null ? localConfig.stackedOpacity : 0.7) * 100)}
+                onChange={(e) => handleConfigChange('stackedOpacity', parseInt(e.target.value) / 100)}
+                style={{ width: '100%' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#888' }}>
+                <span>10%</span>
+                <span>100%</span>
+              </div>
+            </div>
+
+            {/* Colors - full spectrum picker */}
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              {/* BUY Color */}
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', marginBottom: '4px', fontSize: '11px' }}>
+                  Color BUY
+                </label>
+                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                  <input
+                    type="color"
+                    value={rgbToHex(localConfig.stackedBuyColor || '38,166,154')}
+                    onChange={(e) => handleConfigChange('stackedBuyColor', hexToRgb(e.target.value))}
+                    style={{ width: '36px', height: '28px', border: '1px solid #999', borderRadius: '4px', cursor: 'pointer', padding: 0 }}
+                  />
+                  <span style={{ fontSize: '10px', color: '#666' }}>
+                    {localConfig.stackedBuyColor || '38,166,154'}
+                  </span>
+                </div>
+              </div>
+
+              {/* SELL Color */}
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', marginBottom: '4px', fontSize: '11px' }}>
+                  Color SELL
+                </label>
+                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                  <input
+                    type="color"
+                    value={rgbToHex(localConfig.stackedSellColor || '239,83,80')}
+                    onChange={(e) => handleConfigChange('stackedSellColor', hexToRgb(e.target.value))}
+                    style={{ width: '36px', height: '28px', border: '1px solid #999', borderRadius: '4px', cursor: 'pointer', padding: 0 }}
+                  />
+                  <span style={{ fontSize: '10px', color: '#666' }}>
+                    {localConfig.stackedSellColor || '239,83,80'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Volume Z-Score Filter */}
+            <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+              <label style={{ display: 'block', marginBottom: '2px', fontSize: '11px' }}>
+                Filtro Volumen Z-Score: {(localConfig.stackedMinVolumeZScore || 0).toFixed(1)}
+                {(localConfig.stackedMinVolumeZScore || 0) <= 0 ? ' (sin filtro)' : ''}
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="3"
+                step="0.1"
+                value={localConfig.stackedMinVolumeZScore || 0}
+                onChange={(e) => handleConfigChange('stackedMinVolumeZScore', parseFloat(e.target.value))}
+                style={{ width: '100%' }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#888' }}>
+                <span>0 (todos)</span>
+                <span>1.0</span>
+                <span>2.0</span>
+                <span>3.0</span>
+              </div>
+              <div style={{ fontSize: '9px', color: '#78909C', marginTop: '2px' }}>
+                Filtra stacked imbalances de velas con volumen bajo. Mayor valor = menos imbalances mostrados.
+              </div>
+            </div>
+
+            {/* Preview - extended cells */}
+            <div style={{
+              marginTop: '10px',
+              padding: '8px',
+              background: '#263238',
+              borderRadius: '4px',
+              display: 'flex',
+              gap: '16px',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {/* BUY preview: extended cell + line */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                <div style={{
+                  width: '14px',
+                  height: '16px',
+                  background: `rgba(${localConfig.stackedBuyColor || '38,166,154'}, ${(localConfig.stackedOpacity != null ? localConfig.stackedOpacity : 0.7) * 0.6})`,
+                  border: `1px solid rgba(${localConfig.stackedBuyColor || '38,166,154'}, 0.8)`,
+                  borderRadius: '1px'
+                }} />
+                <div style={{
+                  width: '24px',
+                  height: '16px',
+                  background: `rgba(${localConfig.stackedBuyColor || '38,166,154'}, ${(localConfig.stackedOpacity != null ? localConfig.stackedOpacity : 0.7) * 0.4})`,
+                  border: `2px solid rgba(${localConfig.stackedBuyColor || '38,166,154'}, 0.95)`,
+                  borderRadius: '1px'
+                }} />
+                <div style={{
+                  width: '30px',
+                  height: `${Math.max(2, localConfig.stackedLineWidth || 2)}px`,
+                  background: `rgba(${localConfig.stackedBuyColor || '38,166,154'}, ${localConfig.stackedOpacity != null ? localConfig.stackedOpacity : 0.7})`
+                }} />
+                <span style={{ fontSize: '10px', color: '#90A4AE', marginLeft: '2px' }}>BUY</span>
+              </div>
+              {/* SELL preview: line + extended cell */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                <span style={{ fontSize: '10px', color: '#90A4AE', marginRight: '2px' }}>SELL</span>
+                <div style={{
+                  width: '30px',
+                  height: `${Math.max(2, localConfig.stackedLineWidth || 2)}px`,
+                  background: `rgba(${localConfig.stackedSellColor || '239,83,80'}, ${localConfig.stackedOpacity != null ? localConfig.stackedOpacity : 0.7})`
+                }} />
+                <div style={{
+                  width: '24px',
+                  height: '16px',
+                  background: `rgba(${localConfig.stackedSellColor || '239,83,80'}, ${(localConfig.stackedOpacity != null ? localConfig.stackedOpacity : 0.7) * 0.4})`,
+                  border: `2px solid rgba(${localConfig.stackedSellColor || '239,83,80'}, 0.95)`,
+                  borderRadius: '1px'
+                }} />
+                <div style={{
+                  width: '14px',
+                  height: '16px',
+                  background: `rgba(${localConfig.stackedSellColor || '239,83,80'}, ${(localConfig.stackedOpacity != null ? localConfig.stackedOpacity : 0.7) * 0.6})`,
+                  border: `1px solid rgba(${localConfig.stackedSellColor || '239,83,80'}, 0.8)`,
+                  borderRadius: '1px'
+                }} />
+              </div>
+            </div>
+          </div>
+        )}
 
         <label style={{
           display: 'flex',

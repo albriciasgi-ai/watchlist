@@ -17378,3 +17378,105 @@ httpx.ReadTimeout
 2026-02-08 21:34:58,749 | INFO | services.position_monitor | Closed journal entry b90f53af-d5d7-4f08-8ae8-b08c667875b5: PnL $0.35 (0.15%) [0.35R]
 2026-02-08 21:34:58,749 | INFO | services.position_monitor | Closed 10 orphan entries during initial sync
 2026-02-08 21:43:07,675 | WARNING | services.position_monitor | TradingBot read timeout
+2026-02-09 06:13:14,564 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 68641.2
+2026-02-09 06:13:14,564 | INFO | services.position_monitor |   SL: 68962.2, TP: 68033.3
+2026-02-09 06:13:14,678 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-09 06:13:14,681 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (SHORT), raw_source=zone_detector
+2026-02-09 06:13:14,681 | INFO | services.position_monitor |   Risk calculated from SL: $0.32
+2026-02-09 06:13:14,682 | INFO | services.position_monitor |   R:R ratio: 1.89
+2026-02-09 06:13:14,685 | INFO | store.journal_store | Created journal entry: c97256dd-e931-4936-a2ba-f49b5e9c1ce5 - BTCUSDT short
+2026-02-09 06:13:14,691 | INFO | services.position_monitor | Created journal entry c97256dd-e931-4936-a2ba-f49b5e9c1ce5 for BTCUSDT (source: analizador)
+2026-02-09 06:13:15,758 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 06:13:15,763 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\c97256dd-e931-4936-a2ba-f49b5e9c1ce5_entry_20260209_061314.png (symbol: BTCUSDT)
+2026-02-09 06:13:15,767 | INFO | store.journal_store | Updated journal entry: c97256dd-e931-4936-a2ba-f49b5e9c1ce5
+2026-02-09 06:13:15,771 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/c97256dd-e931-4936-a2ba-f49b5e9c1ce5_entry_20260209_061314.png
+2026-02-09 06:31:00,265 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-09 06:31:01,508 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-09 06:31:01,512 | INFO | services.position_monitor |   Exit by SL: exit=68964.2000 vs sl=68962.2000 (diff=0.00%)
+2026-02-09 06:31:01,512 | INFO | services.position_monitor | R-Multiple calculated: -1.24R
+2026-02-09 06:31:01,517 | INFO | store.journal_store | Updated journal entry: c97256dd-e931-4936-a2ba-f49b5e9c1ce5
+2026-02-09 06:31:02,554 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 06:31:02,559 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\c97256dd-e931-4936-a2ba-f49b5e9c1ce5_exit_20260209_063101.png (symbol: BTCUSDT)
+2026-02-09 06:31:02,565 | INFO | store.journal_store | Updated journal entry: c97256dd-e931-4936-a2ba-f49b5e9c1ce5
+2026-02-09 06:31:02,570 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/c97256dd-e931-4936-a2ba-f49b5e9c1ce5_exit_20260209_063101.png
+2026-02-09 06:31:02,570 | INFO | services.position_monitor | Closed journal entry c97256dd-e931-4936-a2ba-f49b5e9c1ce5: PnL $-0.40 (-0.47%) [-1.24R]
+2026-02-09 07:12:18,794 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 69156.8
+2026-02-09 07:12:18,794 | INFO | services.position_monitor |   SL: 68672.0, TP: 69763.4
+2026-02-09 07:12:18,892 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-09 07:12:18,895 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (LONG), raw_source=zone_detector
+2026-02-09 07:12:18,896 | INFO | services.position_monitor |   Risk calculated from SL: $0.48
+2026-02-09 07:12:18,896 | INFO | services.position_monitor |   R:R ratio: 1.25
+2026-02-09 07:12:18,900 | INFO | store.journal_store | Created journal entry: 29aaa3f0-bc07-409f-b639-cfc7e7d8214a - BTCUSDT long
+2026-02-09 07:12:18,905 | INFO | services.position_monitor | Created journal entry 29aaa3f0-bc07-409f-b639-cfc7e7d8214a for BTCUSDT (source: analizador)
+2026-02-09 07:12:19,938 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 07:12:19,942 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\29aaa3f0-bc07-409f-b639-cfc7e7d8214a_entry_20260209_071218.png (symbol: BTCUSDT)
+2026-02-09 07:12:19,949 | INFO | store.journal_store | Updated journal entry: 29aaa3f0-bc07-409f-b639-cfc7e7d8214a
+2026-02-09 07:12:19,953 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/29aaa3f0-bc07-409f-b639-cfc7e7d8214a_entry_20260209_071218.png
+2026-02-09 08:55:41,581 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-09 08:55:41,931 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-09 08:55:41,935 | INFO | services.position_monitor |   Exit by SL: exit=68671.5000 vs sl=68672.0000 (diff=0.00%)
+2026-02-09 08:55:41,935 | INFO | services.position_monitor | R-Multiple calculated: -1.16R
+2026-02-09 08:55:41,939 | INFO | store.journal_store | Updated journal entry: 29aaa3f0-bc07-409f-b639-cfc7e7d8214a
+2026-02-09 08:55:43,025 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 08:55:43,030 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\29aaa3f0-bc07-409f-b639-cfc7e7d8214a_exit_20260209_085541.png (symbol: BTCUSDT)
+2026-02-09 08:55:43,038 | INFO | store.journal_store | Updated journal entry: 29aaa3f0-bc07-409f-b639-cfc7e7d8214a
+2026-02-09 08:55:43,042 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/29aaa3f0-bc07-409f-b639-cfc7e7d8214a_exit_20260209_085541.png
+2026-02-09 08:55:43,043 | INFO | services.position_monitor | Closed journal entry 29aaa3f0-bc07-409f-b639-cfc7e7d8214a: PnL $-0.56 (-0.70%) [-1.16R]
+2026-02-09 08:58:18,098 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 68732.9
+2026-02-09 08:58:18,098 | INFO | services.position_monitor |   SL: 69105.8, TP: 68392.7
+2026-02-09 08:58:18,187 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-09 08:58:18,190 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (SHORT), raw_source=zone_detector
+2026-02-09 08:58:18,191 | INFO | services.position_monitor |   Risk calculated from SL: $0.37
+2026-02-09 08:58:18,191 | INFO | services.position_monitor |   R:R ratio: 0.91
+2026-02-09 08:58:18,195 | INFO | store.journal_store | Created journal entry: d6ff5499-6187-4673-9b27-231038697b87 - BTCUSDT short
+2026-02-09 08:58:18,212 | INFO | services.position_monitor | Created journal entry d6ff5499-6187-4673-9b27-231038697b87 for BTCUSDT (source: analizador)
+2026-02-09 08:58:19,209 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 08:58:19,214 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\d6ff5499-6187-4673-9b27-231038697b87_entry_20260209_085818.png (symbol: BTCUSDT)
+2026-02-09 08:58:19,220 | INFO | store.journal_store | Updated journal entry: d6ff5499-6187-4673-9b27-231038697b87
+2026-02-09 08:58:19,225 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/d6ff5499-6187-4673-9b27-231038697b87_entry_20260209_085818.png
+2026-02-09 09:08:04,852 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-09 09:08:05,772 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-09 09:08:05,776 | INFO | services.position_monitor |   Exit by TP: exit=68387.4000 vs tp=68392.7000 (diff=0.01%)
+2026-02-09 09:08:05,777 | INFO | services.position_monitor | R-Multiple calculated: 0.72R
+2026-02-09 09:08:05,780 | INFO | store.journal_store | Updated journal entry: d6ff5499-6187-4673-9b27-231038697b87
+2026-02-09 09:08:06,904 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 09:08:06,910 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\d6ff5499-6187-4673-9b27-231038697b87_exit_20260209_090805.png (symbol: BTCUSDT)
+2026-02-09 09:08:06,914 | INFO | store.journal_store | Updated journal entry: d6ff5499-6187-4673-9b27-231038697b87
+2026-02-09 09:08:06,931 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/d6ff5499-6187-4673-9b27-231038697b87_exit_20260209_090805.png
+2026-02-09 09:08:06,931 | INFO | services.position_monitor | Closed journal entry d6ff5499-6187-4673-9b27-231038697b87: PnL $0.27 (0.50%) [0.72R]
+2026-02-09 09:10:26,301 | INFO | services.position_monitor | New position detected: BTCUSDT Sell @ 68506.7
+2026-02-09 09:10:26,301 | INFO | services.position_monitor |   SL: 68884.2, TP: 67687.0
+2026-02-09 09:10:26,410 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-09 09:10:26,414 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (SHORT), raw_source=zone_detector
+2026-02-09 09:10:26,414 | INFO | services.position_monitor |   Risk calculated from SL: $0.38
+2026-02-09 09:10:26,414 | INFO | services.position_monitor |   R:R ratio: 2.17
+2026-02-09 09:10:26,418 | INFO | store.journal_store | Created journal entry: 6018f818-da25-4112-aa76-77cfe34297a3 - BTCUSDT short
+2026-02-09 09:10:26,423 | INFO | services.position_monitor | Created journal entry 6018f818-da25-4112-aa76-77cfe34297a3 for BTCUSDT (source: analizador)
+2026-02-09 09:10:27,482 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 09:10:27,487 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\6018f818-da25-4112-aa76-77cfe34297a3_entry_20260209_091026.png (symbol: BTCUSDT)
+2026-02-09 09:10:27,493 | INFO | store.journal_store | Updated journal entry: 6018f818-da25-4112-aa76-77cfe34297a3
+2026-02-09 09:10:27,499 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/6018f818-da25-4112-aa76-77cfe34297a3_entry_20260209_091026.png
+2026-02-09 09:25:32,292 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-09 09:25:33,195 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-09 09:25:33,198 | INFO | services.position_monitor |   Exit by SL: exit=68884.2000 vs sl=68884.2000 (diff=0.00%)
+2026-02-09 09:25:33,199 | INFO | services.position_monitor | R-Multiple calculated: -1.20R
+2026-02-09 09:25:33,203 | INFO | store.journal_store | Updated journal entry: 6018f818-da25-4112-aa76-77cfe34297a3
+2026-02-09 09:25:34,250 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 09:25:34,257 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\6018f818-da25-4112-aa76-77cfe34297a3_exit_20260209_092533.png (symbol: BTCUSDT)
+2026-02-09 09:25:34,262 | INFO | store.journal_store | Updated journal entry: 6018f818-da25-4112-aa76-77cfe34297a3
+2026-02-09 09:25:34,266 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/6018f818-da25-4112-aa76-77cfe34297a3_exit_20260209_092533.png
+2026-02-09 09:25:34,266 | INFO | services.position_monitor | Closed journal entry 6018f818-da25-4112-aa76-77cfe34297a3: PnL $-0.45 (-0.55%) [-1.20R]
+2026-02-09 09:38:17,214 | INFO | services.position_monitor | New position detected: BTCUSDT Buy @ 69287.0
+2026-02-09 09:38:17,215 | INFO | services.position_monitor |   SL: 68724.1, TP: 70478.4
+2026-02-09 09:38:17,328 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/alerts/recent?minutes=30 "HTTP/1.1 200 OK"
+2026-02-09 09:38:17,332 | INFO | services.position_monitor | Matched alert: source=analizador, pattern=ZONE_BREAKOUT_VA_BREAKOUT (LONG), raw_source=zone_detector
+2026-02-09 09:38:17,333 | INFO | services.position_monitor |   Risk calculated from SL: $0.56
+2026-02-09 09:38:17,333 | INFO | services.position_monitor |   R:R ratio: 2.12
+2026-02-09 09:38:17,337 | INFO | store.journal_store | Created journal entry: 1475c4ab-57f9-4cb8-bbed-206b9baa64b7 - BTCUSDT long
+2026-02-09 09:38:17,342 | INFO | services.position_monitor | Created journal entry 1475c4ab-57f9-4cb8-bbed-206b9baa64b7 for BTCUSDT (source: analizador)
+2026-02-09 09:38:18,429 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-09 09:38:18,433 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\1475c4ab-57f9-4cb8-bbed-206b9baa64b7_entry_20260209_093817.png (symbol: BTCUSDT)
+2026-02-09 09:38:18,437 | INFO | store.journal_store | Updated journal entry: 1475c4ab-57f9-4cb8-bbed-206b9baa64b7
+2026-02-09 09:38:18,442 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/1475c4ab-57f9-4cb8-bbed-206b9baa64b7_entry_20260209_093817.png
+2026-02-09 10:11:35,895 | INFO | services.position_monitor | Starting reconciliation...
+2026-02-09 10:11:45,979 | INFO | services.position_monitor | Reconciliation complete: {'orphan_entries_closed': 0, 'untracked_positions_created': 0, 'errors': []}

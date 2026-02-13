@@ -629,13 +629,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       if (vwapInd.showTTMSqueeze) totalActiveBars++;
     }
 
-    // Contar barras Zone Detector activas
+    // Contar barras Zone Detector v2 activas (6 barras diagnosticas)
     const zoneVis = indicatorManagerRef.current?.getZoneVisualizerIndicator();
     if (zoneVis && zoneVis.enabled && zoneVis._metricsMap.size > 0) {
-      const layers = zoneVis._activeLayers || {};
-      if (layers.primary) totalActiveBars++;
-      if (layers.ttm_squeeze) totalActiveBars++;
-      if (layers.bbwp) totalActiveBars++;
+      totalActiveBars += zoneVis.getActiveMetricsBarCount();
     }
 
     // barsSpace = barras + gaps + margen sup(5) + separador VWAP/Zone(4) + time labels(15)
@@ -645,9 +642,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       if (vwapBars > 0) barsGroups++;
     }
     if (zoneVis && zoneVis.enabled && zoneVis._metricsMap.size > 0) {
-      const layers = zoneVis._activeLayers || {};
-      const zoneBars = (layers.primary ? 1 : 0) + (layers.ttm_squeeze ? 1 : 0) + (layers.bbwp ? 1 : 0);
-      if (zoneBars > 0) barsGroups++;
+      if (zoneVis.getActiveMetricsBarCount() > 0) barsGroups++;
     }
     const separatorSpace = barsGroups > 1 ? 4 : 0;
     const barsSpace = totalActiveBars > 0
@@ -2234,8 +2229,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         externalIndicatorManager.navigateToTimestamp = (timestamp) => {
           const candles = candlesRef.current;
           if (!candles || candles.length === 0) return;
-          const idx = candles.findIndex(c => c.timestamp >= timestamp);
-          if (idx === -1) return;
+          let idx = candles.findIndex(c => c.timestamp >= timestamp);
+          // Si timestamp esta antes de todas las velas, navegar al inicio
+          if (idx === -1) {
+            if (timestamp < candles[0].timestamp) {
+              idx = 0;
+            } else {
+              idx = candles.length - 1;
+            }
+          }
           const chartWidth = canvasRef.current?.width || 800;
           const barWidth = Math.max(2, Math.min(40, 8 * viewStateRef.current.zoom));
           const candlesPerScreen = Math.floor(chartWidth / barWidth);
@@ -2268,8 +2270,15 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       indicatorManagerRef.current.navigateToTimestamp = (timestamp) => {
         const candles = candlesRef.current;
         if (!candles || candles.length === 0) return;
-        const idx = candles.findIndex(c => c.timestamp >= timestamp);
-        if (idx === -1) return;
+        let idx = candles.findIndex(c => c.timestamp >= timestamp);
+        // Si timestamp esta antes de todas las velas, navegar al inicio
+        if (idx === -1) {
+          if (timestamp < candles[0].timestamp) {
+            idx = 0;
+          } else {
+            idx = candles.length - 1;
+          }
+        }
         const chartWidth = canvasRef.current?.width || 800;
         const barWidth = Math.max(2, Math.min(40, 8 * viewStateRef.current.zoom));
         const candlesPerScreen = Math.floor(chartWidth / barWidth);

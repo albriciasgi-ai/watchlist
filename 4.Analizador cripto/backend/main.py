@@ -28,6 +28,21 @@ for logger_name in ['uvicorn', 'uvicorn.error', 'uvicorn.access']:
     uvicorn_logger.handlers = []
     uvicorn_logger.addHandler(stdout_handler)
 
+# --- TEMPORAL: Silenciar loggers no relevantes para debugging de Zone Detector ---
+# Solo queremos ver logs de zone_service, zone_detector y zone_alerts
+for quiet_logger_name in [
+    'swing_service', 'swing_detector',
+    'vwap_service',
+    'websocket_manager',
+    'realtime_pattern_service',
+    'pattern_state_manager',
+    'config_store',
+    'httpx',
+    'httpcore',
+    'asyncio',
+]:
+    logging.getLogger(quiet_logger_name).setLevel(logging.WARNING)
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -59,6 +74,11 @@ from zone_detector import ZoneDetector, ZoneDetectionParams
 
 # Zone realtime service imports
 from zone_service import get_zone_service
+from zone_realtime_v2 import get_zone_service_v2, backtest_v2, ZoneV2Config
+
+# Zone VP (Volume Profile) scanner imports
+from zone_vp_service import get_vp_zone_service
+from zone_vp_scanner import backtest_vp, VPScannerConfig
 
 app = FastAPI(
     title="Crypto Watchlist Backend",
@@ -108,6 +128,19 @@ MAX_DAYS_ZONES = {
     "240": 1095,  # 4 horas -> max 1095 dias
     "D": 2000,    # 1 dia -> max 2000 dias
     "W": 1000,    # 1 semana -> max 1000 dias
+}
+
+# Estado global de optimizacion VP (para consulta de progreso)
+_vp_optimize_progress = {
+    "running": False,
+    "current": 0,
+    "total": 0,
+    "elapsed": 0,
+    "avg_per_combo": 0,
+    "estimated_remaining": 0,
+    "symbol": "",
+    "metric": "",
+    "best_so_far": None,
 }
 
 def load_cache(symbol: str, interval: str, indicator: str):
@@ -6058,8 +6091,23 @@ async def update_zone_realtime_config(request: Request):
                 zone_service._known_zones.clear()
                 zone_service._candle_buffers.clear()
                 zone_service._recent_zones.clear()
+                zone_service._baseline_zones.clear()
                 await zone_service.start()
                 print("[ZONE_REALTIME] Servicio reiniciado por cambio de interval/symbols")
+            else:
+                # Si cambiaron parametros de deteccion, recalcular baseline sin reiniciar
+                detection_keys = {
+                    "consol_min_bars", "consol_max_bars", "consol_max_range_pct",
+                    "consol_atr_ratio", "consol_body_ratio", "consol_max_outside_bars",
+                    "breakout_search_bars", "entry_mode", "sl_mode", "sl_poc_buffer_pct",
+                    "swing_bars", "max_price_range_pct", "vp_bins_per_zone", "position_mode",
+                    "use_atr_band", "atr_band_period", "atr_band_multiplier", "atr_band_ma_period",
+                    "use_reentry", "max_reentry_bars", "use_ttm_prefilter",
+                    "use_bbwp_scoring", "use_inside_pct_filter", "tp_rr_ratio",
+                }
+                if detection_keys.intersection(set(result.get("updated", []))):
+                    await zone_service.reanalyze()
+                    print("[ZONE_REALTIME] Baseline recalculado por cambio de parametros de deteccion")
 
         return {"success": True, **result, "status": zone_service.get_status()}
     except Exception as e:
@@ -6130,6 +6178,45 @@ async def clear_zone_realtime_cooldowns():
         zone_service.clear_cooldowns()
         return {"success": True, "message": "Cooldowns limpiados"}
     except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/realtime/pause-detection")
+async def toggle_zone_detection_pause():
+    """
+    Toggle pausa de re-deteccion historica.
+    Cuando pausado: NO ejecuta _detect_and_alert() en cada vela,
+    pero SI sigue tracking open trades y chequeando pending breakouts.
+    """
+    try:
+        zone_service = get_zone_service()
+        zone_service.detection_paused = not zone_service.detection_paused
+        state = "PAUSADA" if zone_service.detection_paused else "ACTIVA"
+        print(f"[ZONE_REALTIME] Deteccion {state}")
+        return {
+            "success": True,
+            "detection_paused": zone_service.detection_paused,
+            "message": f"Deteccion {state}"
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/realtime/detect-now")
+async def run_zone_detection_once():
+    """
+    Ejecuta deteccion de zonas UNA sola vez, sin cambiar el estado de pausa.
+    Util para descubrir pending zones cuando la re-deteccion continua esta pausada.
+    """
+    try:
+        zone_service = get_zone_service()
+        if not zone_service.running:
+            return {"success": False, "error": "Servicio no esta corriendo"}
+
+        results = await zone_service.run_detection_once()
+        return {"success": True, "results": results}
+    except Exception as e:
+        logger.error(f"[ZONE] Error en detect-now: {e}")
         return {"success": False, "error": str(e)}
 
 
@@ -6330,5 +6417,882 @@ async def delete_zone_preset(name: str):
         del presets[name]
         _save_zone_presets(presets)
         return {"success": True, "message": f"Preset '{name}' eliminado"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+# ============================================================
+# Zone Detector V2 - Realtime Incremental
+# ============================================================
+
+@app.get("/api/zones/v2/status")
+async def get_zone_v2_status():
+    """Estado del servicio Zone Detector V2."""
+    try:
+        svc = get_zone_service_v2()
+        return {"success": True, **svc.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/v2/config")
+async def update_zone_v2_config(request: Request):
+    """Actualiza configuracion del Zone Detector V2."""
+    try:
+        body = await request.json()
+        svc = get_zone_service_v2()
+        was_running = svc.running
+
+        result = svc.update_config(body)
+        now_enabled = svc.config.enabled
+
+        if now_enabled and not was_running:
+            await svc.start()
+        elif not now_enabled and was_running:
+            await svc.stop()
+
+        restart_keys = {"interval", "symbols", "warmup_candles"}
+        detection_keys = {
+            "atr_period", "ma_period", "multiplier", "max_outside_bars",
+            "min_bars", "max_range_pct", "body_ratio", "max_outside_count",
+            "use_ttm", "ttm_atr_length", "ttm_kc_multiplier", "ttm_min_squeeze_bars",
+            "breakout_confirm_bars", "tp_rr_ratio", "sl_buffer_pct",
+            "position_mode", "sl_mode", "sl_poc_buffer_pct", "vp_bins_per_zone",
+            "grace_bars",
+        }
+        updated_set = set(result.get("updated", []))
+        if was_running and now_enabled and restart_keys.intersection(updated_set):
+            await svc.stop()
+            svc._detectors.clear()
+            await svc.start()
+        elif was_running and now_enabled and detection_keys.intersection(updated_set):
+            # Parametros de deteccion cambiaron: resetear detectores sin stop/start
+            await svc.reset()
+
+        return {"success": True, **result, "status": svc.get_status()}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/v2/start")
+async def start_zone_v2():
+    """Inicia el Zone Detector V2."""
+    try:
+        svc = get_zone_service_v2()
+        if svc.running:
+            return {"success": True, "message": "Ya esta corriendo"}
+        svc.config.enabled = True
+        svc._save_config()
+        await svc.start()
+        return {"success": True, "message": "Servicio V2 iniciado", "status": svc.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/v2/stop")
+async def stop_zone_v2():
+    """Detiene el Zone Detector V2."""
+    try:
+        svc = get_zone_service_v2()
+        if not svc.running:
+            return {"success": True, "message": "Ya esta detenido"}
+        svc.config.enabled = False
+        svc._save_config()
+        await svc.stop()
+        return {"success": True, "message": "Servicio V2 detenido"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/v2/zones/{symbol}")
+async def get_zone_v2_zones(symbol: str):
+    """Retorna zonas del Zone Detector V2 para un simbolo."""
+    try:
+        svc = get_zone_service_v2()
+        zones = svc.get_zones(symbol.upper())
+        return {"success": True, "symbol": symbol.upper(), "count": len(zones), "zones": zones}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/v2/diagnostics/{symbol}")
+async def get_zone_v2_diagnostics(symbol: str):
+    """Retorna diagnosticos por vela (barras azul/gris) del Zone Detector V2."""
+    try:
+        svc = get_zone_service_v2()
+        diag = svc.get_diagnostics(symbol.upper())
+        return {"success": True, "symbol": symbol.upper(), **diag}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/v2/reset")
+async def reset_zone_v2():
+    """Resetea detectores y recarga warmup."""
+    try:
+        svc = get_zone_service_v2()
+        await svc.reset()
+        return {"success": True, "message": "Detectores reseteados", "status": svc.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/v2/clear-cooldowns")
+async def clear_zone_v2_cooldowns():
+    """Limpia cooldowns del Zone Detector V2."""
+    try:
+        svc = get_zone_service_v2()
+        svc.clear_cooldowns()
+        return {"success": True, "message": "Cooldowns V2 limpiados"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/v2/backtest")
+async def run_v2_backtest(request: Request):
+    """
+    Ejecuta backtest historico usando el motor V2 (incremental, vela a vela).
+    Retorna zonas con trades para visualizar en el chart.
+    """
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        config_overrides = body.get("config", {})
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, lambda: backtest_v2(candles, config_overrides))
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "days": days,
+            "candles": len(candles),
+            **result,
+        }
+
+    except Exception as e:
+        print(f"[V2 BACKTEST ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/v2/optimize-estimate")
+async def optimize_v2_estimate(request: Request):
+    """Estima tiempo de optimizacion V2 ejecutando 2 combos de prueba."""
+    import itertools
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        base_config = body.get("base_config", {})
+        param_ranges = body.get("param_ranges", {})
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        # Generar valores para contar combinaciones
+        param_names = []
+        param_values_list = []
+        for name, range_spec in param_ranges.items():
+            pmin = range_spec.get("min", 0)
+            pmax = range_spec.get("max", 1)
+            pstep = range_spec.get("step", 1)
+            vals = []
+            v = pmin
+            while v <= pmax + pstep * 0.001:
+                vals.append(round(v, 4))
+                v += pstep
+            if len(vals) > 20:
+                step_idx = max(1, len(vals) // 20)
+                vals = vals[::step_idx][:20]
+            param_names.append(name)
+            param_values_list.append(vals)
+
+        total_combos = 1
+        for vals in param_values_list:
+            total_combos *= len(vals)
+
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+
+        all_combos = list(itertools.product(*param_values_list))
+        sample_combos = all_combos[:min(2, len(all_combos))]
+
+        def run_sample():
+            times = []
+            for combo in sample_combos:
+                combo_dict = dict(zip(param_names, combo))
+                merged = dict(base_config)
+                merged.update(combo_dict)
+                t0 = _time.time()
+                backtest_v2(candles, merged)
+                times.append(_time.time() - t0)
+            return times
+
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        sample_times = await loop.run_in_executor(None, run_sample)
+
+        avg_per_combo = sum(sample_times) / len(sample_times) if sample_times else 0
+        estimated_total = avg_per_combo * total_combos + _fetch_elapsed
+
+        return {
+            "success": True,
+            "total_combos": total_combos,
+            "candles": len(candles),
+            "fetch_time": round(_fetch_elapsed, 1),
+            "avg_per_combo": round(avg_per_combo, 3),
+            "estimated_seconds": round(estimated_total, 1),
+            "sample_combos_run": len(sample_times),
+        }
+
+    except Exception as e:
+        print(f"[V2 OPTIMIZE-ESTIMATE ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/v2/optimize")
+async def optimize_v2_params(request: Request):
+    """
+    Optimizacion V2 por grid search.
+    Ejecuta backtest_v2 con todas las combinaciones y retorna las mejores.
+    """
+    import itertools
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        base_config = body.get("base_config", {})
+        param_ranges = body.get("param_ranges", {})
+        metric = body.get("metric", "expectancy")
+        top_n = body.get("top_n", 15)
+
+        print(f"[{symbol}] [V2 OPTIMIZE] === INICIO ===")
+        print(f"[{symbol}] [V2 OPTIMIZE] interval={interval}, days={days}, metric={metric}")
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        param_names = []
+        param_values_list = []
+        for name, range_spec in param_ranges.items():
+            pmin = range_spec.get("min", 0)
+            pmax = range_spec.get("max", 1)
+            pstep = range_spec.get("step", 1)
+            vals = []
+            v = pmin
+            while v <= pmax + pstep * 0.001:
+                vals.append(round(v, 4))
+                v += pstep
+            if len(vals) > 20:
+                step_idx = max(1, len(vals) // 20)
+                vals = vals[::step_idx][:20]
+            param_names.append(name)
+            param_values_list.append(vals)
+            print(f"[{symbol}] [V2 OPTIMIZE] {name}: {vals} ({len(vals)} values)")
+
+        if not param_names:
+            return {"success": False, "error": "No se especificaron rangos de parametros"}
+
+        total_combos = 1
+        for vals in param_values_list:
+            total_combos *= len(vals)
+
+        if total_combos > 5000:
+            return {"success": False, "error": f"Demasiadas combinaciones ({total_combos}). Max: 5000"}
+
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+        print(f"[{symbol}] [V2 OPTIMIZE] {len(candles)} velas en {_fetch_elapsed:.1f}s")
+
+        all_combos = list(itertools.product(*param_values_list))
+
+        def run_all_combos():
+            results = []
+            _opt_start = _time.time()
+
+            for i, combo in enumerate(all_combos):
+                combo_dict = dict(zip(param_names, combo))
+                try:
+                    merged = dict(base_config)
+                    merged.update(combo_dict)
+                    result = backtest_v2(candles, merged)
+                    stats = result['stats']
+                    stats['params'] = combo_dict
+                    results.append(stats)
+
+                    if (i + 1) % 10 == 0:
+                        elapsed = _time.time() - _opt_start
+                        print(f"[{symbol}] [V2 OPTIMIZE] Progreso: {i+1}/{total_combos} ({elapsed:.1f}s)")
+                except Exception as e:
+                    print(f"[{symbol}] [V2 OPTIMIZE] Error combo {combo_dict}: {e}")
+
+            results.sort(key=lambda r: r.get(metric, 0), reverse=True)
+            _total_elapsed = _time.time() - _opt_start
+            return results, _total_elapsed
+
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        results, total_elapsed = await loop.run_in_executor(None, run_all_combos)
+
+        top_results = results[:top_n]
+
+        print(f"[{symbol}] [V2 OPTIMIZE] Completado: {total_combos} combos en {total_elapsed:.1f}s")
+        if top_results:
+            best = top_results[0]
+            print(f"[{symbol}] [V2 OPTIMIZE] MEJOR: {metric}={best.get(metric, 0)} | "
+                  f"WR={best['win_rate']}% | PnL={best['total_pnl_r']}R | params={best['params']}")
+
+        return {
+            "success": True,
+            "total_combos": total_combos,
+            "elapsed": round(total_elapsed, 1),
+            "fetch_time": round(_fetch_elapsed, 1),
+            "candles": len(candles),
+            "metric": metric,
+            "results": top_results,
+            "all_results_count": len(results),
+        }
+
+    except Exception as e:
+        print(f"[V2 OPTIMIZE ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+# =============================================
+# ZONE VP SCANNER - DETECCION POR VOLUME PROFILE
+# =============================================
+
+@app.get("/api/zones/vp/status")
+async def get_vp_zone_status():
+    """Estado del servicio VP Zone Scanner."""
+    try:
+        vp_service = get_vp_zone_service()
+        return {"success": True, **vp_service.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/config")
+async def update_vp_zone_config(request: Request):
+    """Actualiza configuracion del VP Zone Scanner."""
+    try:
+        body = await request.json()
+        vp_service = get_vp_zone_service()
+
+        was_running = vp_service.running
+
+        vp_service.update_config(body)
+
+        now_enabled = vp_service.config.enabled
+
+        # Si se acaba de habilitar y no estaba corriendo, iniciar
+        if now_enabled and not was_running:
+            await vp_service.start()
+            print("[VP_ZONE] Servicio iniciado via config update")
+
+        # Si se acaba de deshabilitar y estaba corriendo, detener
+        if not now_enabled and was_running:
+            await vp_service.stop()
+            print("[VP_ZONE] Servicio detenido via config update")
+
+        # Si estaba corriendo y sigue, re-analizar por si cambiaron params
+        if was_running and now_enabled:
+            await vp_service.reanalyze()
+            print("[VP_ZONE] Re-analisis por cambio de config")
+
+        return {"success": True, "status": vp_service.get_status()}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/start")
+async def start_vp_zone_service():
+    """Inicia el servicio VP Zone Scanner."""
+    try:
+        vp_service = get_vp_zone_service()
+        if vp_service.running:
+            return {"success": True, "message": "Ya esta corriendo"}
+        await vp_service.start()
+        return {"success": True, "message": "VP Zone Scanner iniciado", "status": vp_service.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/stop")
+async def stop_vp_zone_service():
+    """Detiene el servicio VP Zone Scanner."""
+    try:
+        vp_service = get_vp_zone_service()
+        if not vp_service.running:
+            return {"success": True, "message": "Ya esta detenido"}
+        await vp_service.stop()
+        return {"success": True, "message": "VP Zone Scanner detenido"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/vp/zones/{symbol}")
+async def get_vp_zones(symbol: str):
+    """Retorna zonas VP detectadas para un simbolo (polling frontend)."""
+    try:
+        vp_service = get_vp_zone_service()
+        zones = vp_service.get_zones(symbol.upper())
+        return {"success": True, "symbol": symbol.upper(), "count": len(zones), "zones": zones}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/reanalyze")
+async def reanalyze_vp_zones():
+    """Re-analiza el historico con la configuracion actual."""
+    try:
+        vp_service = get_vp_zone_service()
+        if not vp_service.running:
+            return {"success": False, "error": "Servicio no esta corriendo"}
+        await vp_service.reanalyze()
+        return {"success": True, "message": "Re-analisis completado", "status": vp_service.get_status()}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/backtest")
+async def backtest_vp_zones(request: Request):
+    """
+    Backtest historico de zonas VP.
+    Ejecuta scan_zones + simulacion de trades sobre datos historicos.
+    """
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "60")
+        days = body.get("days", 30)
+        config_overrides = body.get("config", {})
+
+        print(f"[{symbol}] [VP BACKTEST] interval={interval}, days={days}")
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+        print(f"[{symbol}] [VP BACKTEST] {len(candles)} velas en {_fetch_elapsed:.1f}s")
+
+        def run_backtest():
+            return backtest_vp(candles, config_overrides)
+
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, run_backtest)
+
+        print(f"[{symbol}] [VP BACKTEST] {result['stats']['total_zones']} zonas, "
+              f"WR={result['stats']['win_rate']}%, PnL={result['stats']['total_pnl_r']}R")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "days": days,
+            "candles_count": len(candles),
+            "fetch_time": round(_fetch_elapsed, 1),
+            **result,
+        }
+
+    except Exception as e:
+        print(f"[VP BACKTEST ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/optimize-estimate")
+async def estimate_vp_optimization(request: Request):
+    """
+    Estima el tiempo de optimizacion VP ejecutando 2 combos de prueba.
+    """
+    import itertools
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        base_config = body.get("base_config", {})
+        param_ranges = body.get("param_ranges", {})
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        # Generar valores para cada parametro
+        param_names = []
+        param_values_list = []
+        for name, range_spec in param_ranges.items():
+            pmin = range_spec.get("min", 0)
+            pmax = range_spec.get("max", 1)
+            pstep = range_spec.get("step", 1)
+            vals = []
+            v = pmin
+            while v <= pmax + pstep * 0.001:
+                vals.append(round(v, 4))
+                v += pstep
+            if len(vals) > 20:
+                step_idx = max(1, len(vals) // 20)
+                vals = vals[::step_idx][:20]
+            param_names.append(name)
+            param_values_list.append(vals)
+
+        if not param_names:
+            return {"success": False, "error": "No se especificaron rangos de parametros"}
+
+        total_combos = 1
+        for vals in param_values_list:
+            total_combos *= len(vals)
+
+        if total_combos > 5000:
+            return {"success": False, "error": f"Demasiadas combinaciones ({total_combos}). Max: 5000"}
+
+        # Fetch datos
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+
+        # Ejecutar muestras representativas para estimar tiempo
+        all_combos = list(itertools.product(*param_values_list))
+        n_samples = min(max(5, total_combos // 20), 10, total_combos)
+        if total_combos <= n_samples:
+            sample_indices = list(range(total_combos))
+        else:
+            step = total_combos / n_samples
+            sample_indices = [int(i * step) for i in range(n_samples)]
+        sample_combos = [all_combos[idx] for idx in sample_indices]
+
+        def run_samples():
+            times = []
+            for combo in sample_combos:
+                combo_dict = dict(zip(param_names, combo))
+                merged = dict(base_config)
+                merged.update(combo_dict)
+                t0 = _time.time()
+                backtest_vp(candles, merged)
+                times.append(_time.time() - t0)
+            return sum(times) / len(times)
+
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        avg_per_combo = await loop.run_in_executor(None, run_samples)
+
+        estimated_seconds = avg_per_combo * total_combos
+
+        return {
+            "success": True,
+            "total_combos": total_combos,
+            "candles": len(candles),
+            "fetch_time": round(_fetch_elapsed, 1),
+            "avg_per_combo": round(avg_per_combo, 3),
+            "estimated_seconds": round(estimated_seconds, 1),
+            "sample_combos_run": len(sample_combos),
+        }
+
+    except Exception as e:
+        print(f"[VP OPTIMIZE-ESTIMATE ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/optimize")
+async def optimize_vp_params(request: Request):
+    """
+    Optimizacion VP por grid search.
+    Ejecuta backtest_vp con todas las combinaciones y retorna las mejores.
+    """
+    import itertools
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        base_config = body.get("base_config", {})
+        param_ranges = body.get("param_ranges", {})
+        metric = body.get("metric", "expectancy")
+        top_n = body.get("top_n", 15)
+
+        print(f"[{symbol}] [VP OPTIMIZE] === INICIO ===")
+        print(f"[{symbol}] [VP OPTIMIZE] interval={interval}, days={days}, metric={metric}")
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        param_names = []
+        param_values_list = []
+        for name, range_spec in param_ranges.items():
+            pmin = range_spec.get("min", 0)
+            pmax = range_spec.get("max", 1)
+            pstep = range_spec.get("step", 1)
+            vals = []
+            v = pmin
+            while v <= pmax + pstep * 0.001:
+                vals.append(round(v, 4))
+                v += pstep
+            if len(vals) > 20:
+                step_idx = max(1, len(vals) // 20)
+                vals = vals[::step_idx][:20]
+            param_names.append(name)
+            param_values_list.append(vals)
+            print(f"[{symbol}] [VP OPTIMIZE] {name}: {vals} ({len(vals)} values)")
+
+        if not param_names:
+            return {"success": False, "error": "No se especificaron rangos de parametros"}
+
+        total_combos = 1
+        for vals in param_values_list:
+            total_combos *= len(vals)
+
+        if total_combos > 5000:
+            return {"success": False, "error": f"Demasiadas combinaciones ({total_combos}). Max: 5000"}
+
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+        print(f"[{symbol}] [VP OPTIMIZE] {len(candles)} velas en {_fetch_elapsed:.1f}s")
+
+        all_combos = list(itertools.product(*param_values_list))
+
+        # Inicializar progreso global
+        _vp_optimize_progress["running"] = True
+        _vp_optimize_progress["current"] = 0
+        _vp_optimize_progress["total"] = total_combos
+        _vp_optimize_progress["elapsed"] = 0
+        _vp_optimize_progress["avg_per_combo"] = 0
+        _vp_optimize_progress["estimated_remaining"] = 0
+        _vp_optimize_progress["symbol"] = symbol
+        _vp_optimize_progress["metric"] = metric
+        _vp_optimize_progress["best_so_far"] = None
+
+        def run_all_combos():
+            global _vp_optimize_progress
+            results = []
+            _opt_start = _time.time()
+            best_metric_val = float('-inf')
+
+            for i, combo in enumerate(all_combos):
+                combo_dict = dict(zip(param_names, combo))
+                try:
+                    merged = dict(base_config)
+                    merged.update(combo_dict)
+                    result = backtest_vp(candles, merged)
+                    stats = result['stats']
+                    stats['params'] = combo_dict
+                    results.append(stats)
+
+                    # Track mejor resultado hasta ahora
+                    val = stats.get(metric, 0)
+                    if val > best_metric_val:
+                        best_metric_val = val
+                        _vp_optimize_progress["best_so_far"] = {
+                            "value": round(val, 3),
+                            "win_rate": stats.get("win_rate", 0),
+                            "total_pnl_r": stats.get("total_pnl_r", 0),
+                            "total_zones": stats.get("total_zones", 0),
+                        }
+
+                except Exception as e:
+                    print(f"[{symbol}] [VP OPTIMIZE] Error combo {combo_dict}: {e}")
+
+                # Actualizar progreso cada combo
+                elapsed = _time.time() - _opt_start
+                done = i + 1
+                avg = elapsed / done
+                remaining = avg * (total_combos - done)
+                _vp_optimize_progress["current"] = done
+                _vp_optimize_progress["elapsed"] = round(elapsed, 1)
+                _vp_optimize_progress["avg_per_combo"] = round(avg, 2)
+                _vp_optimize_progress["estimated_remaining"] = round(remaining, 1)
+
+                if done % 10 == 0:
+                    print(f"[{symbol}] [VP OPTIMIZE] Progreso: {done}/{total_combos} ({elapsed:.1f}s, ~{remaining:.0f}s restante)")
+
+            results.sort(key=lambda r: r.get(metric, 0), reverse=True)
+            _total_elapsed = _time.time() - _opt_start
+            _vp_optimize_progress["running"] = False
+            return results, _total_elapsed
+
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        results, total_elapsed = await loop.run_in_executor(None, run_all_combos)
+
+        top_results = results[:top_n]
+
+        print(f"[{symbol}] [VP OPTIMIZE] Completado: {total_combos} combos en {total_elapsed:.1f}s")
+        if top_results:
+            best = top_results[0]
+            print(f"[{symbol}] [VP OPTIMIZE] MEJOR: {metric}={best.get(metric, 0)} | "
+                  f"WR={best.get('win_rate', 0)}% | PnL={best.get('total_pnl_r', 0)}R | params={best['params']}")
+
+        return {
+            "success": True,
+            "total_combos": total_combos,
+            "elapsed": round(total_elapsed, 1),
+            "fetch_time": round(_fetch_elapsed, 1),
+            "candles": len(candles),
+            "metric": metric,
+            "results": top_results,
+            "all_results_count": len(results),
+        }
+
+    except Exception as e:
+        _vp_optimize_progress["running"] = False
+        print(f"[VP OPTIMIZE ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/vp/optimize-progress")
+async def get_vp_optimize_progress():
+    """Retorna el estado actual de la optimizacion VP en curso."""
+    return _vp_optimize_progress
+
+
+# ============================================================
+# VP Zone Scanner Presets (persistencia en archivo JSON)
+# Estructura: { "fixed_window": { "nombre": {...} }, "progressive": { "nombre": {...} } }
+# ============================================================
+
+_VP_PRESETS_FILE = Path("config") / "vp_zone_presets.json"
+
+
+def _load_vp_presets() -> dict:
+    if _VP_PRESETS_FILE.exists():
+        try:
+            data = json.loads(_VP_PRESETS_FILE.read_text(encoding="utf-8"))
+            # Asegurar estructura base
+            if "fixed_window" not in data:
+                data["fixed_window"] = {}
+            if "progressive" not in data:
+                data["progressive"] = {}
+            return data
+        except Exception:
+            return {"fixed_window": {}, "progressive": {}}
+    return {"fixed_window": {}, "progressive": {}}
+
+
+def _save_vp_presets(presets: dict):
+    _VP_PRESETS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    _VP_PRESETS_FILE.write_text(
+        json.dumps(presets, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+
+@app.get("/api/zones/vp/presets")
+async def get_vp_presets(mode: str = None):
+    """Retorna presets VP. Si mode se especifica, solo los de ese modo."""
+    try:
+        presets = _load_vp_presets()
+        if mode and mode in presets:
+            return {"success": True, "presets": presets[mode], "mode": mode}
+        return {"success": True, "presets": presets}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/presets/{mode}/{name}")
+async def save_vp_preset(mode: str, name: str, request: Request):
+    """Guarda un preset VP bajo el modo especificado (fixed_window o progressive)."""
+    try:
+        if mode not in ("fixed_window", "progressive"):
+            return {"success": False, "error": f"Modo invalido: {mode}. Usar 'fixed_window' o 'progressive'"}
+        body = await request.json()
+        presets = _load_vp_presets()
+        presets[mode][name] = {
+            "params": body.get("params", {}),
+            "zoneDays": body.get("zoneDays"),
+            "savedAt": body.get("savedAt", ""),
+        }
+        _save_vp_presets(presets)
+        return {"success": True, "message": f"Preset '{name}' guardado en modo {mode}"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.delete("/api/zones/vp/presets/{mode}/{name}")
+async def delete_vp_preset(mode: str, name: str):
+    """Elimina un preset VP por modo y nombre."""
+    try:
+        if mode not in ("fixed_window", "progressive"):
+            return {"success": False, "error": f"Modo invalido: {mode}"}
+        presets = _load_vp_presets()
+        if name not in presets.get(mode, {}):
+            return {"success": False, "error": f"Preset '{name}' no existe en modo {mode}"}
+        del presets[mode][name]
+        _save_vp_presets(presets)
+        return {"success": True, "message": f"Preset '{name}' eliminado de modo {mode}"}
     except Exception as e:
         return {"success": False, "error": str(e)}

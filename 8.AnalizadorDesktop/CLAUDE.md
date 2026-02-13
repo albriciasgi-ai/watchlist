@@ -823,6 +823,59 @@ Esto permite detectar cuando un trade OPEN pasa a WIN/LOSS sin que cambie la can
 
 **CRITICO:** Nunca usar `setZones()` para zonas realtime. Esto sobrescribe las zonas manuales. Siempre usar `setRealtimeZones()` para zonas del polling y `setZones()` solo para el boton "Detectar zonas".
 
+### Fixes Febrero 2026 (sesion 2)
+
+#### Bug 1: Zonas historicas WIN/LOSS re-registradas como OPEN
+
+**Archivo:** `4.Analizador cripto/backend/zone_service.py` linea ~897
+
+Condicion cambiada de `zone.trade_result not in ("SKIPPED", "NO_ENTRY", "")` a `zone.trade_result == "OPEN"`. Solo zonas marcadas explicitamente como OPEN se registran como trades abiertos.
+
+#### Bug 2: Pending INSTANT_BREAKOUT con SL/TP absurdos
+
+**Archivo:** `zone_service.py` en `_check_pending_breakouts()`
+
+Validacion de proximidad: si la distancia entre entry price y zone edge supera `max_price_range_pct`, se bloquea (`BLOCKED_FAR_ENTRY`).
+
+#### Bug 3: Multiples trades abiertos en modo sequential
+
+**Archivo:** `zone_service.py` en `_register_open_trades()` y `_check_pending_breakouts()`
+
+Verificacion de trades abiertos existentes antes de abrir nuevos en `position_mode == "sequential"`. Logs: `BLOCKED_SEQUENTIAL` y `BLOCKED_SEQUENTIAL_PENDING`.
+
+#### Pausa de re-deteccion historica
+
+Toggle que pausa `_detect_and_alert()` sin detener tracking de trades ni pending breakouts.
+
+| Archivo | Cambio |
+|---------|--------|
+| `zone_service.py` | `self.detection_paused` flag + logica en `_on_candle_close` |
+| `main.py` | `POST /api/zones/realtime/pause-detection` (toggle) |
+| `ZoneDetectorSettings.jsx` | Boton naranja prominente + banner explicativo |
+
+#### Boton "Detectar ahora (1 vez)"
+
+Ejecuta `_detect_and_alert()` una sola vez SIN cambiar el estado de pausa.
+
+| Archivo | Cambio |
+|---------|--------|
+| `zone_service.py` | Metodo `run_detection_once()` |
+| `main.py` | `POST /api/zones/realtime/detect-now` |
+| `ZoneDetectorSettings.jsx` | Boton azul visible solo cuando deteccion esta pausada |
+
+#### Metodo de deteccion configurable
+
+**Problema:** Las barras de metricas usaban `atr_dynamic` pero el servicio realtime tenia hardcodeado `"trading_zones"`. Las zonas detectadas no coincidian.
+
+**Fix:** `detection_method` es ahora campo de `ZoneServiceConfig` y se persiste en `zone_realtime_config.json`. Tanto `_detect_and_alert()` como `_initial_detection()` usan el metodo configurado. Frontend envia `detection_method` y params `atr_dyn_*` al guardar config realtime.
+
+#### Endpoints nuevos
+
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/api/zones/realtime/pause-detection` | POST | Toggle pausa de re-deteccion |
+| `/api/zones/realtime/detect-now` | POST | Ejecutar deteccion una sola vez |
+
 ---
 
 ## OPTIMIZADOR DE PARAMETROS - GRID SEARCH (Febrero 2026)

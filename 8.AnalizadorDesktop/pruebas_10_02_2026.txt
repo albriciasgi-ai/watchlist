@@ -1,0 +1,26 @@
+1. probar alertas en tiempo real
+
+
+En el gráfico se ve que la entrada ocurrió en la flecha que dice Ea pero al estar escogido el parámetro de breakout del área de valor, debería haberlo hecho en la flecha del Ee.
+De esta forma, el stoploss quedó muy grande y no se alcanza. Sin embargo, al haber escogido el método del breakout del área de valor y el stoploss después del POC, el stoploss % hubiera sido muy pequeño y hubiera logrado el takeprofit con facilidad.
+
+Además entró en el trade a la séptima vela después de hacer el breakout del límite superior de la zona. Porqué se demoró tanto?
+
+Otra pregunta: porqué identifica la zona en donde está la flecha vertical naranja pero la dibuja varias velas atrás (eso me parece bien)?
+
+Otra pregunta: actualmente está funcional el envío de alertas en tiempo real al puerto 5000? Quiero empezar a probar eso.
+
+
+
+
+===============
+===============
+
+
+Haciendo pruebas:
+1. Zona identificada bien
+2. Volume profile bien
+3. Alerta enviada bien
+4. La compra se hizo después del # de candles xa confirmar el breakout (revisar si es mejor dejarla sin esas candles
+
+Falta ver con el ttm squeeze

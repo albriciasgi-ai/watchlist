@@ -1,0 +1,520 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:10000 (Press CTRL+C to quit)
+INFO:     Started reloader process [20796] using WatchFiles
+2026-02-09 14:58:10 - uvicorn.error - INFO - Started server process [15608]
+2026-02-09 14:58:10 - uvicorn.error - INFO - Started server process [15608]
+2026-02-09 14:58:10 - uvicorn.error - INFO - Waiting for application startup.
+2026-02-09 14:58:10 - uvicorn.error - INFO - Waiting for application startup.
+2026-02-09 14:58:11 - alert_sender - INFO - [STARTUP] Alert sender started. Target: http://localhost:5000
+2026-02-09 14:58:11 - alert_sender - INFO - [QUEUE] Alert queue processor started
+2026-02-09 14:58:13 - alert_sender - WARNING - [WARN] Alert service not reachable at http://localhost:5000
+2026-02-09 14:58:13 - alert_sender - INFO - [TIP] Alert service is optional. Alerts will be logged locally.
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+[STARTUP] Swing config loaded: 13 symbols, interval=1m
+[STARTUP] Real-time pattern detection service started
+[STARTUP] Monitoring symbols: ['BTCUSDT', 'ETHUSDT', 'XRPUSDT', 'TRXUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'SOLUSDT', 'ADAUSDT', 'DOGEUSDT', 'PAXGUSDT', 'BNBUSDT', 'POLUSDT']
+[STARTUP] Initial interval: ['60']
+[STARTUP] VWAP service started
+2026-02-09 14:58:19 - zone_service - INFO - [ZONE] Config cargada: 1 simbolos, interval=1
+2026-02-09 14:58:21 - zone_service - INFO - [ZONE] Iniciado - 1 simbolos @ 1m, ventana=500
+[STARTUP] Zone detector realtime service started - 1 symbols @ 1m
+2026-02-09 14:58:21 - uvicorn.error - INFO - Application startup complete.
+2026-02-09 14:58:21 - uvicorn.error - INFO - Application startup complete.
+2026-02-09 14:58:21 - websocket_manager - ERROR - [WS_SUBSCRIPTION] FAILED: error:already subscribed,topic:kline.1.BTCUSDT - data={'success': False, 'ret_msg': 'error:already subscribed,topic:kline.1.BTCUSDT', 'conn_id': 'd50fjg97jutk09hgtbig-btey2', 'req_id': '', 'op': 'subscribe'}
+2026-02-09 14:58:22 - zone_service - INFO - [ZONE] Cargando historico para 1 simbolos...
+2026-02-09 14:58:22 - zone_service - INFO - [ZONE] BTCUSDT: Buffer WS tiene 1 velas, necesita 500. Cargando de API...
+2026-02-09 14:58:22 - uvicorn.access - INFO - 127.0.0.1:54642 - "GET /api/status HTTP/1.1" 200
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] BTCUSDT: 500 velas cargadas
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] ====== DETECCION INICIAL BTCUSDT ======
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] BTCUSDT: 500 velas disponibles para deteccion inicial
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] BTCUSDT: Params: method=trading_zones min_bars=8 max_bars=50 max_range=6% atr_ratio=0.6 body_ratio=0.5 entry_mode=va_breakout sl_mode=zone_opposite position_mode=sequential tp_rr=1.0
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] ===== VERSION 3.0 (5 capas opcionales) =====
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: ATR global = 97.16, velas = 500
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] Config: entry_mode=va_breakout, position_mode=sequential, swing_bars=5, sl_mode=zone_opposite
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] Capa 3 TTM Pre-filter: ON (8 regiones de squeeze encontradas)
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] Capas v3.0 activas: Reentry(3), TTM_Squeeze
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: Encontradas 4 consolidaciones
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: 4 despues de deduplicacion
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] position_mode='sequential' (type=str)
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#0 TRADE: LOSS -1.0R | dir=UP | entry=02/09 07:41 | close=02/09 08:05 | bars=25
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#1 SKIP: entry=02/09 08:04 <= trade_close_prev=02/09 08:05
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#2 OK: entry=02/09 08:12 > trade_close_prev=02/09 08:05
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#2 TRADE: LOSS -1.0R | dir=UP | entry=02/09 08:12 | close=02/09 08:50 | bars=39
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#3 SKIP: entry=02/09 08:50 <= trade_close_prev=02/09 08:50
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] Trading Zones RESULTADOS (mode=va_breakout, pos=sequential, sl=zone_opposite):
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT]   Total zonas: 4
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT]   Wins: 0, Losses: 2, Skipped: 2
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT]   Win Rate: 0.0%
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT]   Total P&L: -2.0R
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT]   Expectancy: -1.000R por trade
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] TIMELINE TRADES ACTIVOS (mode=sequential)
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT]  TL# | Result |   Dir |     Entry Date |     Close Date |     Entry$ |        SL$ |        TP$ |    PnL | Overlap?
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] -----+--------+-------+----------------+----------------+------------+------------+------------+--------+-----------
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT]    1 |   LOSS |    UP |    02/09 07:41 |    02/09 08:05 |   69195.20 |   68946.20 |   69444.20 |  -1.0R |
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT]    3 |   LOSS |    UP |    02/09 08:12 |    02/09 08:50 |   69247.80 |   68899.80 |   69595.80 |  -1.0R |
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] [OK] Sin solapamientos entre trades activos
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 14:58:23 - zone_detector - INFO - [ZONE_DETECT] Deduplicacion: 4 -> 4 zonas
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] BTCUSDT: detect_zones() retorno 4 zonas en 53ms
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] BTCUSDT: Clasificacion: 4 breakouts reales, 0 pendientes
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE]   BASELINE: UP | result=LOSS | entry=69195.20 | score=63.2
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE]   BASELINE: UP | result=LOSS | entry=69247.80 | score=63.0
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE]   BASELINE: DOWN | result=SKIPPED | entry=68953.50 | score=0.0
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE]   BASELINE: DOWN | result=SKIPPED | entry=68868.10 | score=0.0
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] BTCUSDT: Baseline guardado con 4 zonas historicas
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] BTCUSDT: Deteccion inicial -> 4 zonas, 4 con breakout real, 0 pendientes
+2026-02-09 14:58:23 - zone_service - INFO - [ZONE] Historico cargado para todos los simbolos
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:27 - uvicorn.access - INFO - 127.0.0.1:54658 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:58:28 - uvicorn.access - INFO - 127.0.0.1:54661 - "GET /api/zones/presets HTTP/1.1" 200
+2026-02-09 14:58:28 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 14:58:28 - uvicorn.access - INFO - 127.0.0.1:54658 - "OPTIONS /api/realtime/set-interval HTTP/1.1" 200
+2026-02-09 14:58:28 - uvicorn.access - INFO - 127.0.0.1:54661 - "GET /api/swing/status HTTP/1.1" 200
+[VWAP] BTCUSDT: Reloading - interval=1, days=1, vwapType=rolling
+2026-02-09 14:58:28 - uvicorn.access - INFO - 127.0.0.1:54663 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 14:58:28 - uvicorn.access - INFO - 127.0.0.1:54660 - "OPTIONS /api/historical/BTCUSDT?interval=1&since_timestamp=1770666780000&t=1770667107609 HTTP/1.1" 200
+2026-02-09 14:58:28 - uvicorn.access - INFO - 127.0.0.1:54662 - "GET /api/status HTTP/1.1" 200
+2026-02-09 14:58:28 - uvicorn.access - INFO - 127.0.0.1:54661 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL INCREMENTAL: desde 1770666780000 (~15 velas esperadas) @ 1
+[BTCUSDT] [DATA] Necesita 15 velas, max_requests=600
+2026-02-09 14:58:30 - uvicorn.access - INFO - 127.0.0.1:54659 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+[BTCUSDT] [DATA] Request #1: +6 velas (total: 6/15)
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:30 - uvicorn.access - INFO - 127.0.0.1:54659 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[BTCUSDT] [DATA] Request #2: 0 velas (fin de datos)
+[BTCUSDT] [DATA] Completado: 6 velas en 2 requests
+[BTCUSDT] Historical: [OK] Devolviendo 6 velas (esperadas: 15)
+2026-02-09 14:58:30 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/historical/BTCUSDT?interval=1&since_timestamp=1770666780000&t=1770667107609 HTTP/1.1" 200
+2026-02-09 14:58:31 - uvicorn.access - INFO - 127.0.0.1:54659 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 14:58:31 - uvicorn.access - INFO - 127.0.0.1:54659 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:33 - uvicorn.access - INFO - 127.0.0.1:54659 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:58:34 - uvicorn.access - INFO - 127.0.0.1:54658 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+2026-02-09 14:58:34 - uvicorn.access - INFO - 127.0.0.1:54659 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+2026-02-09 14:58:34 - uvicorn.access - INFO - 127.0.0.1:54658 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[REALTIME] Active interval changed: ['60'] -> ['1']
+2026-02-09 14:58:34 - uvicorn.access - INFO - 127.0.0.1:54663 - "POST /api/realtime/set-interval HTTP/1.1" 200
+2026-02-09 14:58:36 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:36 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:39 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:42 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:58:42 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 14:58:42 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:45 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:58:46 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:48 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:51 - uvicorn.access - INFO - 127.0.0.1:54660 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:58:52 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:54 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:58:57 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:58:57 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 14:58:57 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/status HTTP/1.1" 200
+2026-02-09 14:58:57 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 14:58:57 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 14:58:57 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:00 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:01 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:01 - zone_service - INFO - [ZONE] === CANDLE CLOSE #1 === BTCUSDT @ 14:58:00 | O=71019.40 H=71065.50 L=70822.50 C=70910.90 V=159
+2026-02-09 14:59:03 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:03 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:06 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:09 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:11 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:12 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:12 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 14:59:12 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:15 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:16 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:18 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:21 - uvicorn.access - INFO - 127.0.0.1:54677 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:23 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:24 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:27 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:28 - uvicorn.access - INFO - 127.0.0.1:54678 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 14:59:28 - uvicorn.access - INFO - 127.0.0.1:54680 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 14:59:28 - uvicorn.access - INFO - 127.0.0.1:54678 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 14:59:28 - uvicorn.access - INFO - 127.0.0.1:54684 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-09 14:59:28 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/status HTTP/1.1" 200
+2026-02-09 14:59:29 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:30 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:30 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+2026-02-09 14:59:31 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:33 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:36 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:39 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:41 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:42 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:42 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 14:59:42 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-09 14:59:45 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:45 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:46 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:48 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:51 - uvicorn.access - INFO - 127.0.0.1:54671 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:54 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:54 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:55 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 14:59:57 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 14:59:57 - uvicorn.access - INFO - 127.0.0.1:54687 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 14:59:57 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/status HTTP/1.1" 200
+2026-02-09 14:59:57 - uvicorn.access - INFO - 127.0.0.1:54687 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 14:59:57 - uvicorn.access - INFO - 127.0.0.1:54687 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 14:59:57 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:00 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:01 - uvicorn.access - INFO - 127.0.0.1:54687 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE] === CANDLE CLOSE #2 === BTCUSDT @ 14:59:00 | O=70910.90 H=70940.00 L=70881.50 C=70933.40 V=44
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE] BTCUSDT: Estado pre-proceso: buffer=501 velas | baseline=4 | pending=0 | open_trades=0
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE] BTCUSDT: _detect_and_alert() con 500 velas (ventana=500, method=trading_zones)
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] ===== VERSION 3.0 (5 capas opcionales) =====
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: ATR global = 106.32, velas = 500
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] Config: entry_mode=va_breakout, position_mode=sequential, swing_bars=5, sl_mode=zone_opposite
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] Capa 3 TTM Pre-filter: ON (8 regiones de squeeze encontradas)
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] Capas v3.0 activas: Reentry(3), TTM_Squeeze
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: Encontradas 4 consolidaciones
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: 4 despues de deduplicacion
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] position_mode='sequential' (type=str)
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#0 TRADE: LOSS -1.0R | dir=UP | entry=02/09 07:41 | close=02/09 08:05 | bars=25
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#1 SKIP: entry=02/09 08:04 <= trade_close_prev=02/09 08:05
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#2 OK: entry=02/09 08:12 > trade_close_prev=02/09 08:05
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#2 TRADE: LOSS -1.0R | dir=UP | entry=02/09 08:12 | close=02/09 08:50 | bars=39
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#3 SKIP: entry=02/09 08:48 <= trade_close_prev=02/09 08:50
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] Trading Zones RESULTADOS (mode=va_breakout, pos=sequential, sl=zone_opposite):
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT]   Total zonas: 4
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT]   Wins: 0, Losses: 2, Skipped: 2
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT]   Win Rate: 0.0%
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT]   Total P&L: -2.0R
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT]   Expectancy: -1.000R por trade
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] TIMELINE TRADES ACTIVOS (mode=sequential)
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT]  TL# | Result |   Dir |     Entry Date |     Close Date |     Entry$ |        SL$ |        TP$ |    PnL | Overlap?
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] -----+--------+-------+----------------+----------------+------------+------------+------------+--------+-----------
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT]    1 |   LOSS |    UP |    02/09 07:41 |    02/09 08:05 |   69195.20 |   68946.20 |   69444.20 |  -1.0R |
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT]    3 |   LOSS |    UP |    02/09 08:12 |    02/09 08:50 |   69247.80 |   68899.80 |   69595.80 |  -1.0R |
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] [OK] Sin solapamientos entre trades activos
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 15:00:02 - zone_detector - INFO - [ZONE_DETECT] Deduplicacion: 4 -> 4 zonas
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE] BTCUSDT: detect_zones() retorno 4 zonas en 52ms
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE] BTCUSDT: Separacion: 4 breakouts reales + 0 pendientes (sin breakout)
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE]   BREAKOUT: dir=UP entry=69195.20 sl=68946.20 tp=69444.20 result=LOSS score=63.2 range=[68901.00-69150.00]
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE]   BREAKOUT: dir=UP entry=69247.80 sl=68899.80 tp=69595.80 result=LOSS score=63.0 range=[68883.20-69231.20]
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE]   BREAKOUT: dir=DOWN entry=68953.50 sl=0.00 tp=0.00 result=SKIPPED score=0.0 range=[68964.60-69166.50]
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE]   BREAKOUT: dir=DOWN entry=68977.40 sl=0.00 tp=0.00 result=SKIPPED score=0.0 range=[69005.60-69237.60]
+2026-02-09 15:00:02 - zone_alerts - INFO - BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68977.40 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE] BTCUSDT: +1 NUEVAS zonas al baseline (total: 5)
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE] BTCUSDT: Frontend zones: 5 total (5 baseline + 0 pending)
+2026-02-09 15:00:02 - zone_service - INFO - [ZONE] BTCUSDT: Resultado: frontend_zones=5 (baseline=5 + pending=0) | open_trades=0
+2026-02-09 15:00:02 - uvicorn.access - INFO - 127.0.0.1:54687 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:03 - uvicorn.access - INFO - 127.0.0.1:54687 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:05 - uvicorn.access - INFO - 127.0.0.1:54687 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:06 - uvicorn.access - INFO - 127.0.0.1:54687 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:07 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:09 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:12 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:12 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:00:12 - uvicorn.access - INFO - 127.0.0.1:52757 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-09 15:00:15 - uvicorn.access - INFO - 127.0.0.1:52757 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:15 - uvicorn.access - INFO - 127.0.0.1:52757 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:16 - uvicorn.access - INFO - 127.0.0.1:52757 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:18 - uvicorn.access - INFO - 127.0.0.1:52757 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:21 - uvicorn.access - INFO - 127.0.0.1:52757 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:22 - uvicorn.access - INFO - 127.0.0.1:52757 - "OPTIONS /api/zones/presets/vp_5_rr_1 HTTP/1.1" 200
+2026-02-09 15:00:22 - uvicorn.access - INFO - 127.0.0.1:52758 - "POST /api/zones/presets/vp_5_rr_1 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:24 - uvicorn.access - INFO - 127.0.0.1:52758 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:24 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+2026-02-09 15:00:25 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:27 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:28 - uvicorn.access - INFO - 127.0.0.1:52758 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:00:28 - uvicorn.access - INFO - 127.0.0.1:52785 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:00:28 - uvicorn.access - INFO - 127.0.0.1:52786 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-09 15:00:28 - uvicorn.access - INFO - 127.0.0.1:52758 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:00:28 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/status HTTP/1.1" 200
+2026-02-09 15:00:28 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:30 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:31 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+2026-02-09 15:00:31 - uvicorn.access - INFO - 127.0.0.1:52758 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:33 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:35 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:36 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:39 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:41 - uvicorn.access - INFO - 127.0.0.1:52784 - "OPTIONS /api/zones/detect HTTP/1.1" 200
+[BTCUSDT] [ZONES] === INICIO DETECCION v3.0 ===
+[BTCUSDT] [ZONES] interval=1, days=1, velas esperadas=~1440
+[BTCUSDT] [ZONES] Params: {'detection_method': 'atr_dynamic', 'consol_min_bars': 8, 'consol_max_bars': 50, 'consol_max_range_pct': 6, 'consol_atr_ratio': 0.6, 'consol_body_ratio': 0.5, 'consol_max_outside_bars': 3, 'lookforward_bars': 100, 'max_price_range_pct': 6, 'entry_mode': 'va_breakout', 'position_mode': 'sequential', 'swing_bars': 5, 'sl_mode': 'zone_opposite', 'atr_dyn_period': 100, 'atr_dyn_ma_period': 20, 'atr_dyn_min_bars': 20, 'atr_dyn_multiplier': 1.5, 'atr_dyn_max_breakout': 5, 'atr_dyn_merge_overlap': True, 'use_atr_band': False, 'atr_band_period': 200, 'atr_band_multiplier': 1, 'atr_band_ma_period': 20, 'use_reentry': True, 'max_reentry_bars': 3, 'use_ttm_prefilter': True, 'ttm_atr_length': 30, 'ttm_kc_multiplier': 1, 'ttm_min_squeeze_bars': 10, 'use_bbwp_scoring': False, 'bbwp_lookback': 252, 'bbwp_squeeze_threshold': 20, 'bbwp_history_days': 0, 'use_inside_pct_filter': False, 'min_inside_pct': 70, 'min_score_filter': 30, 'use_continuation_score': False, 'tp_rr_ratio': 1, 'sl_poc_buffer_pct': 50, 'vp_bins_per_zone': 30}
+[BTCUSDT] [ZONES] Descargando velas de Bybit (1 dias)...
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=1, aplicando límite -> days_to_fetch=1 (máx: 1) @ 1
+[BTCUSDT] [DATA] Necesita 1440 velas, max_requests=600
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:42 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:42 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:00:42 - uvicorn.access - INFO - 127.0.0.1:52784 - "GET /api/swing/status HTTP/1.1" 200
+[BTCUSDT] [DATA] Request #1: +1000 velas (total: 1000/1440)
+2026-02-09 15:00:45 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=trading_zones&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=2&consol_body_ratio=0.5&atr_dyn_period=200&atr_dyn_ma_period=20&atr_dyn_multiplier=1&use_ttm_prefilter=false&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=20&ttm_kc_multiplier=1.5&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+2026-02-09 15:00:45 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[BTCUSDT] [DATA] Request #2: +440 velas (total: 1440/1440)
+[BTCUSDT] [DATA] Completado: 1440 velas en 2 requests
+[BTCUSDT] Historical: [OK] Devolviendo 1440 velas (esperadas: 1440)
+[BTCUSDT] [ZONES] 1440 velas obtenidas en 4.3s (esperadas: ~1440)
+[BTCUSDT] [ZONES] Metodo de deteccion: atr_dynamic
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] atr_dynamic TTM Prefilter: 31 regiones de squeeze
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] ============================================================
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] atr_dynamic: ANALISIS DE SECCIONES AZULES
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Params: ma_period=20, min_bars=20, max_breakout=5, mult=1.5
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Total velas: 1440, start_index: 100
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Secciones con count_outside==0: 38
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rangos crudos detectados: 13
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #0: idx 117-163 (38 velas) 02/08 21:58 - 02/08 22:44 precio 70646.20 - 70955.00
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #1: idx 221-319 (97 velas) 02/08 23:42 - 02/09 01:20 precio 70094.50 - 70795.99
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #2: idx 349-397 (49 velas) 02/09 01:50 - 02/09 02:38 precio 70139.12 - 70596.45
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #3: idx 398-615 (173 velas) 02/09 02:39 - 02/09 06:16 precio 70512.42 - 71406.00
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #4: idx 626-695 (59 velas) 02/09 06:27 - 02/09 07:36 precio 70356.30 - 70809.93
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #5: idx 697-739 (40 velas) 02/09 07:38 - 02/09 08:20 precio 70286.90 - 70581.80
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #6: idx 758-816 (55 velas) 02/09 08:39 - 02/09 09:37 precio 69666.50 - 70093.30
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #7: idx 817-853 (35 velas) 02/09 09:38 - 02/09 10:14 precio 69394.80 - 69753.64
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #8: idx 890-1066 (169 velas) 02/09 10:51 - 02/09 13:47 precio 68541.30 - 69237.60
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #9: idx 1174-1241 (63 velas) 02/09 15:35 - 02/09 16:42 precio 69039.37 - 69830.00
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #10: idx 1244-1293 (49 velas) 02/09 16:45 - 02/09 17:34 precio 69804.54 - 70343.82
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #11: idx 1298-1339 (37 velas) 02/09 17:39 - 02/09 18:20 precio 70367.80 - 70989.00
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Rango #12: idx 1340-1439 (92 velas) 02/09 18:21 - 02/09 20:00 precio 70083.52 - 71075.48
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] ============================================================
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] atr_dynamic: 13 rangos crudos detectados (post-merge)
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] atr_dynamic: 12 rangos despues de filtros v3.0
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] _simulate_trades: position_mode='sequential'
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] SCORE OK: 62.8 >= 30 | zona 02/08 23:42-02/09 01:20 | breakout=UP result=LOSS | momentum=30.0 compression=20.9 vol=12.0 bbwp=0.0 cont=0.0 | body_ratio=0.80 range_pct=1.00%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] SCORE OK: 43.5 >= 30 | zona 02/09 01:50-02/09 02:38 | breakout=UP result=WIN | momentum=10.9 compression=22.3 vol=10.3 bbwp=0.0 cont=0.0 | body_ratio=0.27 range_pct=0.65%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] SCORE OK: 48.1 >= 30 | zona 02/09 02:39-02/09 06:16 | breakout=DOWN result=WIN | momentum=17.8 compression=19.8 vol=10.6 bbwp=0.0 cont=0.0 | body_ratio=0.45 range_pct=1.26%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] SCORE OK: 62.7 >= 30 | zona 02/09 06:27-02/09 07:36 | breakout=DOWN result=WIN | momentum=30.0 compression=22.3 vol=10.4 bbwp=0.0 cont=0.0 | body_ratio=1.83 range_pct=0.64%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] SCORE OK: 64.0 >= 30 | zona 02/09 08:39-02/09 09:37 | breakout=DOWN result=WIN | momentum=30.0 compression=22.5 vol=11.6 bbwp=0.0 cont=0.0 | body_ratio=1.80 range_pct=0.61%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] SCORE OK: 62.0 >= 30 | zona 02/09 10:51-02/09 13:47 | breakout=DOWN result=WIN | momentum=30.0 compression=20.8 vol=11.3 bbwp=0.0 cont=0.0 | body_ratio=1.36 range_pct=1.01%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] SCORE OK: 40.2 >= 30 | zona 02/09 15:35-02/09 16:42 | breakout=UP result=WIN | momentum=7.4 compression=20.3 vol=12.6 bbwp=0.0 cont=0.0 | body_ratio=0.18 range_pct=1.14%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] SCORE OK: 66.7 >= 30 | zona 02/09 16:45-02/09 17:34 | breakout=UP result=OPEN | momentum=30.0 compression=21.8 vol=14.9 bbwp=0.0 cont=0.0 | body_ratio=2.53 range_pct=0.77%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] atr_dynamic RESULTADOS (mode=va_breakout, pos=sequential, sl=zone_opposite):
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Total zonas: 12
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Wins: 6, Losses: 1, Skipped: 4
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Win Rate: 85.7%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Total P&L: +5.0R
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Expectancy: 0.714R por trade
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT]   Min Score Filter: 30%
+2026-02-09 15:00:45 - zone_detector - INFO - [ZONE_DETECT] Deduplicacion: 12 -> 12 zonas
+[BTCUSDT] [ZONES] 12 zonas detectadas en 0.2s (total: 4.5s)
+2026-02-09 15:00:45 - uvicorn.access - INFO - 127.0.0.1:52789 - "POST /api/zones/detect HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:45 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:46 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:48 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:51 - uvicorn.access - INFO - 127.0.0.1:52789 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=6&consol_body_ratio=0.5&atr_dyn_period=100&atr_dyn_ma_period=20&atr_dyn_multiplier=1.5&use_ttm_prefilter=true&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=30&ttm_kc_multiplier=1&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:51 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:54 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[ZONE_REALTIME] Deteccion PAUSADA
+2026-02-09 15:00:54 - uvicorn.access - INFO - 127.0.0.1:54679 - "POST /api/zones/realtime/pause-detection HTTP/1.1" 200
+2026-02-09 15:00:55 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:00:57 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:00:57 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:00:57 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/status HTTP/1.1" 200
+2026-02-09 15:00:57 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:00:57 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:00:57 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:00 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:01 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:01 - zone_service - INFO - [ZONE] === CANDLE CLOSE #3 === BTCUSDT @ 15:00:00 | O=70933.40 H=70933.90 L=70865.40 C=70865.40 V=55
+2026-02-09 15:01:01 - zone_service - INFO - [ZONE] BTCUSDT: Estado pre-proceso: buffer=502 velas | baseline=5 | pending=0 | open_trades=0
+2026-02-09 15:01:01 - zone_service - INFO - [ZONE] BTCUSDT: DETECCION PAUSADA - saltando _detect_and_alert()
+2026-02-09 15:01:01 - zone_service - INFO - [ZONE] BTCUSDT: Resultado: frontend_zones=5 (baseline=5 + pending=0) | open_trades=0
+2026-02-09 15:01:02 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:03 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE] BTCUSDT: _detect_and_alert() con 500 velas (ventana=500, method=trading_zones)
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] ===== VERSION 3.0 (5 capas opcionales) =====
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: ATR global = 107.04, velas = 500
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] Config: entry_mode=va_breakout, position_mode=sequential, swing_bars=5, sl_mode=zone_opposite
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] Capa 3 TTM Pre-filter: ON (8 regiones de squeeze encontradas)
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] Capas v3.0 activas: Reentry(3), TTM_Squeeze
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: Encontradas 4 consolidaciones
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] Trading Zones: 4 despues de deduplicacion
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] position_mode='sequential' (type=str)
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#0 TRADE: LOSS -1.0R | dir=UP | entry=02/09 07:41 | close=02/09 08:05 | bars=25
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#1 SKIP: entry=02/09 08:04 <= trade_close_prev=02/09 08:05
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#2 OK: entry=02/09 08:12 > trade_close_prev=02/09 08:05
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#2 TRADE: LOSS -1.0R | dir=UP | entry=02/09 08:12 | close=02/09 08:50 | bars=39
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] [SEQ] Zona#3 SKIP: entry=02/09 08:48 <= trade_close_prev=02/09 08:50
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] Trading Zones RESULTADOS (mode=va_breakout, pos=sequential, sl=zone_opposite):
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT]   Total zonas: 4
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT]   Wins: 0, Losses: 2, Skipped: 2
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT]   Win Rate: 0.0%
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT]   Total P&L: -2.0R
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT]   Expectancy: -1.000R por trade
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] TIMELINE TRADES ACTIVOS (mode=sequential)
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT]  TL# | Result |   Dir |     Entry Date |     Close Date |     Entry$ |        SL$ |        TP$ |    PnL | Overlap?
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] -----+--------+-------+----------------+----------------+------------+------------+------------+--------+-----------
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT]    1 |   LOSS |    UP |    02/09 07:41 |    02/09 08:05 |   69195.20 |   68946.20 |   69444.20 |  -1.0R |
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT]    3 |   LOSS |    UP |    02/09 08:12 |    02/09 08:50 |   69247.80 |   68899.80 |   69595.80 |  -1.0R |
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] [OK] Sin solapamientos entre trades activos
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] ================================================================================
+2026-02-09 15:01:04 - zone_detector - INFO - [ZONE_DETECT] Deduplicacion: 4 -> 4 zonas
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE] BTCUSDT: detect_zones() retorno 4 zonas en 52ms
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE] BTCUSDT: Separacion: 4 breakouts reales + 0 pendientes (sin breakout)
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE]   BREAKOUT: dir=UP entry=69195.20 sl=68946.20 tp=69444.20 result=LOSS score=63.2 range=[68901.00-69150.00]
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE]   BREAKOUT: dir=UP entry=69247.80 sl=68899.80 tp=69595.80 result=LOSS score=63.0 range=[68883.20-69231.20]
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE]   BREAKOUT: dir=DOWN entry=68953.50 sl=0.00 tp=0.00 result=SKIPPED score=0.0 range=[68964.60-69166.50]
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE]   BREAKOUT: dir=DOWN entry=68977.40 sl=0.00 tp=0.00 result=SKIPPED score=0.0 range=[69005.60-69237.60]
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE] BTCUSDT: Sin nuevos breakouts (baseline=5 sin cambios)
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE] BTCUSDT: Frontend zones: 5 total (5 baseline + 0 pending)
+2026-02-09 15:01:04 - zone_service - INFO - [ZONE] BTCUSDT: DETECT-NOW completado: pending 0->0, baseline 5->5
+2026-02-09 15:01:04 - uvicorn.access - INFO - 127.0.0.1:52804 - "POST /api/zones/realtime/detect-now HTTP/1.1" 200
+2026-02-09 15:01:04 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:04 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:01:05 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:06 - uvicorn.access - INFO - 127.0.0.1:52804 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:07 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=6&consol_body_ratio=0.5&atr_dyn_period=100&atr_dyn_ma_period=20&atr_dyn_multiplier=1.5&use_ttm_prefilter=true&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=30&ttm_kc_multiplier=1&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:09 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:12 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:12 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:01:12 - uvicorn.access - INFO - 127.0.0.1:52809 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-09 15:01:15 - uvicorn.access - INFO - 127.0.0.1:52809 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:15 - uvicorn.access - INFO - 127.0.0.1:52809 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:16 - uvicorn.access - INFO - 127.0.0.1:52809 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:18 - uvicorn.access - INFO - 127.0.0.1:52809 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:21 - uvicorn.access - INFO - 127.0.0.1:52809 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:23 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=6&consol_body_ratio=0.5&atr_dyn_period=100&atr_dyn_ma_period=20&atr_dyn_multiplier=1.5&use_ttm_prefilter=true&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=30&ttm_kc_multiplier=1&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:24 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:27 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:28 - uvicorn.access - INFO - 127.0.0.1:54679 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:01:28 - uvicorn.access - INFO - 127.0.0.1:56272 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-09 15:01:28 - uvicorn.access - INFO - 127.0.0.1:56271 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:01:28 - uvicorn.access - INFO - 127.0.0.1:56273 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:01:28 - uvicorn.access - INFO - 127.0.0.1:56270 - "GET /api/status HTTP/1.1" 200
+2026-02-09 15:01:28 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:30 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:31 - uvicorn.access - INFO - 127.0.0.1:56270 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:31 - uvicorn.access - INFO - 127.0.0.1:56270 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:33 - uvicorn.access - INFO - 127.0.0.1:56270 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:36 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=6&consol_body_ratio=0.5&atr_dyn_period=100&atr_dyn_ma_period=20&atr_dyn_multiplier=1.5&use_ttm_prefilter=true&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=30&ttm_kc_multiplier=1&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:36 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:39 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:42 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:42 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:01:42 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:45 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:46 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:48 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:51 - uvicorn.access - INFO - 127.0.0.1:52810 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:53 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=6&consol_body_ratio=0.5&atr_dyn_period=100&atr_dyn_ma_period=20&atr_dyn_multiplier=1.5&use_ttm_prefilter=true&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=30&ttm_kc_multiplier=1&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:54 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:01:57 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:01:57 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:01:57 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/status HTTP/1.1" 200
+2026-02-09 15:01:57 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:01:57 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:01:57 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:00 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:02:01 - uvicorn.access - INFO - 127.0.0.1:56283 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:02:03 - zone_service - INFO - [ZONE] === CANDLE CLOSE #4 === BTCUSDT @ 15:01:00 | O=70865.40 H=70865.40 L=70728.60 C=70794.80 V=70
+2026-02-09 15:02:03 - zone_service - INFO - [ZONE] BTCUSDT: Estado pre-proceso: buffer=503 velas | baseline=5 | pending=0 | open_trades=0
+2026-02-09 15:02:03 - zone_service - INFO - [ZONE] BTCUSDT: DETECCION PAUSADA - saltando _detect_and_alert()
+2026-02-09 15:02:03 - zone_service - INFO - [ZONE] BTCUSDT: Resultado: frontend_zones=5 (baseline=5 + pending=0) | open_trades=0
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:03 - uvicorn.access - INFO - 127.0.0.1:56283 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:02:03 - uvicorn.access - INFO - 127.0.0.1:56283 - "GET /api/vwap-service/data/BTCUSDT?days=1&interval=1&vwapType=rolling&rollingPeriod=200 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:06 - uvicorn.access - INFO - 127.0.0.1:56283 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:02:07 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=6&consol_body_ratio=0.5&atr_dyn_period=100&atr_dyn_ma_period=20&atr_dyn_multiplier=1.5&use_ttm_prefilter=true&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=30&ttm_kc_multiplier=1&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:09 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:12 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:02:12 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:02:12 - uvicorn.access - INFO - 127.0.0.1:56284 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:15 - uvicorn.access - INFO - 127.0.0.1:56284 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:02:16 - uvicorn.access - INFO - 127.0.0.1:56284 - "GET /api/zones/realtime/zones/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:18 - uvicorn.access - INFO - 127.0.0.1:56284 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:21 - uvicorn.access - INFO - 127.0.0.1:56284 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:02:24 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/zones/realtime/metrics/BTCUSDT?interval=1&days=1&detection_method=atr_dynamic&consol_min_bars=8&consol_atr_ratio=0.6&consol_max_range_pct=6&consol_body_ratio=0.5&atr_dyn_period=100&atr_dyn_ma_period=20&atr_dyn_multiplier=1.5&use_ttm_prefilter=true&use_bbwp_scoring=false&atr_band_ma_period=20&ttm_atr_length=30&ttm_kc_multiplier=1&bbwp_lookback=252&bbwp_squeeze_threshold=20 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:24 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 6 shapes for BTCUSDT
+2026-02-09 15:02:27 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-09 15:02:28 - uvicorn.access - INFO - 127.0.0.1:56286 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:02:28 - uvicorn.access - INFO - 127.0.0.1:56424 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-09 15:02:28 - uvicorn.access - INFO - 127.0.0.1:56423 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-09 15:02:28 - uvicorn.access - INFO - 127.0.0.1:56286 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-09 15:02:28 - uvicorn.access - INFO - 127.0.0.1:56277 - "GET /api/status HTTP/1.1" 200
+2026-02-09 15:02:29 - uvicorn.access - INFO - 127.0.0.1:56285 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200l
+
+
+
+

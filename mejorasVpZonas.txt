@@ -1,0 +1,15 @@
+1. zonas con más rango que el definido por el usuario: se dejó en 0,5% y una está con 0,8% y otra con 0,7%
+2. Hay unos trades que quedan abiertos aunque el precio haya pasado por el takeprofit/stoploss.
+3. Aparece un rango bien identificado pero el trade no existe aunque dice que es un loss y parece ser porque el trade anterior que tiene el error de no haberse cerrado, podría bloquear la apertura de la nueva posición porque está en modo sequential.
+4. La simulación del backtesting se hizo para 7 días y desde el 9 de febrero a las 10 am no identificó más zonas aunque hay muchas fácilmente identificables a simple vista.
+5. Necesitamos logging detallado de cada zona y del proceso de detección para hacer debugging
+
+
+
+===========
+===========
+Cuando hay un breakout, una estrategia puede ser coger en el swing y apuntarle al poc, por el reingreso a la zona
+Otra estrategia puede ser la de comprar en la confirmación del swing una vez que haya reingresado en el value area para retestarla (viene a retestar el POC)
+
+
+Está dando mejores resultados al hacer el breakout de la zona, no del value area

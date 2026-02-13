@@ -1,0 +1,41 @@
+● Claro. Las 6 barras son condiciones que el mercado debe cumplir al mismo tiempo para que el detector identifique una zona de consolidación
+  (rango lateral). Piensa en ellas como 6 "semáforos" que deben estar todos en verde (azul) para que se forme una zona.
+
+  ---
+  1. ATR — ¿El precio está dentro de la banda de volatilidad?
+
+  Se calcula una media móvil (SMA) del precio y se le suma/resta el ATR (Average True Range) multiplicado por un factor. Esto crea una banda
+  superior e inferior. Si el cierre de la vela está dentro de esa banda → azul. Si se sale → gris. Significa que el precio no se está moviendo
+  de forma extrema.
+
+  2. OUT — ¿Hay pocas velas escapándose del rango?
+
+  Cuenta cuántas velas recientes cerraron fuera de la banda ATR en una ventana móvil. Si ese conteo es 0 (ninguna se escapó) → azul. Si hay
+  velas que se salieron → gris. Confirma que el precio se mantiene contenido, no solo en esta vela sino en las últimas N velas.
+
+  3. BODY — ¿Las velas son pequeñas?
+
+  Mide el ratio entre el cuerpo de la vela (|open - close|) y su rango total (high - low). Si el cuerpo es pequeño relativo al rango → azul.
+  Velas con cuerpo grande (tendenciales) → gris. En consolidación las velas tienden a ser indecisas, con mechas largas y cuerpos chicos.
+
+  4. RNG — ¿El rango acumulado es estrecho?
+
+  Mide el porcentaje entre el precio máximo y mínimo de todas las velas que llevan cumpliendo condiciones consecutivamente. Si ese rango es
+  menor al % máximo configurado → azul. Si el rango se amplía demasiado → gris. Asegura que la zona no sea demasiado ancha para ser tradeable.
+
+  5. BARS — ¿Se acumularon suficientes velas consecutivas?
+
+  Es un acumulador. Cuenta cuántas velas seguidas tienen las condiciones anteriores (ATR + OUT + BODY + RNG, y TTM si está activado) todas en
+  azul. Cuando ese conteo alcanza el mínimo configurado (min_bars) → azul. Si alguna condición falla, el conteo se resetea a 0. Es la
+  confirmación de que la consolidación lleva suficiente tiempo.
+
+  6. TTM — ¿Hay squeeze de volatilidad? (opcional)
+
+  Detecta cuando las Bandas de Bollinger se meten dentro de los Keltner Channels. Esto indica que la volatilidad se está comprimiendo, que es un
+   precursor clásico de un movimiento fuerte (breakout). Azul = squeeze activo (volatilidad comprimida). Gris = sin squeeze.
+
+  ---
+  ¿Cuándo aparece una zona?
+
+  Cuando las 6 barras (o 5 sin TTM) están azul durante suficientes velas consecutivas → el detector marca una zona BUILDING. Cuando alguna barra
+   se pone gris → la zona pasa a COMPLETE y espera el breakout.

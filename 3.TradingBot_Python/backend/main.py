@@ -3,7 +3,7 @@ Trading Bot Backend - Main Application
 FastAPI server with WebSocket support for real-time updates
 """
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
@@ -12,7 +12,7 @@ from decimal import Decimal
 import json
 import asyncio
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date
 
 from trading.bybit_client import BybitClient
 from trading.order_manager import OrderManager
@@ -144,6 +144,11 @@ class AppState:
         self.order_history: List[Dict[str, Any]] = []  # Store order history (persistent)
         # Bot settings - configurable execution method
         self.use_integrated_tpsl: bool = False  # False = 3-call method (default), True = integrated method
+        # Daily risk tracking
+        self.daily_risk_limit: float = 0.0  # 0 = no limit
+        self.daily_risk_used: float = 0.0  # accumulated risk today
+        self.daily_risk_date: str = ""  # date string YYYY-MM-DD
+        self.daily_risk_trades: int = 0  # trades count today
 
     def load_config(self):
         """Load trading configuration from JSON"""
@@ -247,20 +252,40 @@ class AppState:
                 with open(self.bot_settings_file, 'r') as f:
                     settings = json.load(f)
                     self.use_integrated_tpsl = settings.get("use_integrated_tpsl", False)
+                    self.daily_risk_limit = settings.get("daily_risk_limit", 0.0)
+                    # Restore daily counters only if same day
+                    saved_date = settings.get("daily_risk_date", "")
+                    today = date.today().isoformat()
+                    if saved_date == today:
+                        self.daily_risk_used = settings.get("daily_risk_used", 0.0)
+                        self.daily_risk_trades = settings.get("daily_risk_trades", 0)
+                        self.daily_risk_date = saved_date
+                    else:
+                        self.daily_risk_date = today
+                        self.daily_risk_used = 0.0
+                        self.daily_risk_trades = 0
                     method = "Integrated (1 call)" if self.use_integrated_tpsl else "Sequential (3 calls)"
                     self.log("info", f"Loaded bot settings: execution method = {method}")
+                    if self.daily_risk_limit > 0:
+                        self.log("info", f"[RISK] Daily limit: ${self.daily_risk_limit:.2f} | "
+                                 f"Used today: ${self.daily_risk_used:.2f} ({self.daily_risk_trades} trades)")
             except Exception as e:
                 self.log("error", f"Failed to load bot settings: {str(e)}")
                 self.use_integrated_tpsl = False
         else:
             self.use_integrated_tpsl = False
+            self.daily_risk_date = date.today().isoformat()
 
     def save_bot_settings(self):
         """Save bot settings to JSON file"""
         try:
             self.bot_settings_file.parent.mkdir(parents=True, exist_ok=True)
             settings = {
-                "use_integrated_tpsl": self.use_integrated_tpsl
+                "use_integrated_tpsl": self.use_integrated_tpsl,
+                "daily_risk_limit": self.daily_risk_limit,
+                "daily_risk_date": self.daily_risk_date,
+                "daily_risk_used": self.daily_risk_used,
+                "daily_risk_trades": self.daily_risk_trades
             }
             with open(self.bot_settings_file, 'w') as f:
                 json.dump(settings, f, indent=2)
@@ -292,6 +317,44 @@ class AppState:
         self.order_history = []
         self.save_order_history()
         self.log("info", "Order history cleared by user")
+
+    def _reset_daily_risk_if_new_day(self):
+        """Reset daily risk counters if it's a new day"""
+        today = date.today().isoformat()
+        if self.daily_risk_date != today:
+            if self.daily_risk_used > 0:
+                self.log("info", f"[RISK] New day detected. Previous day ({self.daily_risk_date}): "
+                         f"{self.daily_risk_trades} trades, ${self.daily_risk_used:.2f} risked")
+            self.daily_risk_date = today
+            self.daily_risk_used = 0.0
+            self.daily_risk_trades = 0
+            self.save_bot_settings()
+
+    def check_daily_risk_limit(self, risk_amount: float) -> Dict[str, Any]:
+        """Check if a new trade would exceed the daily risk limit"""
+        self._reset_daily_risk_if_new_day()
+        if self.daily_risk_limit <= 0:
+            return {"allowed": True}
+        remaining = self.daily_risk_limit - self.daily_risk_used
+        if risk_amount > remaining:
+            return {
+                "allowed": False,
+                "limit": self.daily_risk_limit,
+                "used": self.daily_risk_used,
+                "remaining": remaining,
+                "requested": risk_amount,
+                "trades_today": self.daily_risk_trades
+            }
+        return {"allowed": True, "remaining": remaining - risk_amount}
+
+    def record_daily_risk(self, risk_amount: float):
+        """Record risk used by a trade"""
+        self._reset_daily_risk_if_new_day()
+        self.daily_risk_used += risk_amount
+        self.daily_risk_trades += 1
+        self.save_bot_settings()
+        self.log("info", f"[RISK] Daily risk: ${self.daily_risk_used:.2f} / "
+                 f"${self.daily_risk_limit:.2f} ({self.daily_risk_trades} trades)")
 
     def log(self, level: str, message: str, data: Optional[Dict] = None):
         """Add log entry and broadcast to WebSocket clients"""
@@ -731,12 +794,18 @@ async def sync_all_precision():
 
 @app.get("/api/settings")
 async def get_bot_settings():
-    """Get bot settings including execution method"""
+    """Get bot settings including execution method and daily risk"""
+    state._reset_daily_risk_if_new_day()
     return {
         "success": True,
         "use_integrated_tpsl": state.use_integrated_tpsl,
         "execution_method": "integrated" if state.use_integrated_tpsl else "sequential",
-        "description": "Integrated sends Market/Limit + TP/SL in 1 API call. Sequential sends 3 separate calls."
+        "description": "Integrated sends Market/Limit + TP/SL in 1 API call. Sequential sends 3 separate calls.",
+        "daily_risk_limit": state.daily_risk_limit,
+        "daily_risk_used": state.daily_risk_used,
+        "daily_risk_trades": state.daily_risk_trades,
+        "daily_risk_date": state.daily_risk_date,
+        "daily_risk_remaining": max(0, state.daily_risk_limit - state.daily_risk_used) if state.daily_risk_limit > 0 else None
     }
 
 
@@ -767,6 +836,76 @@ async def set_execution_method(use_integrated: bool):
         }
     except Exception as e:
         state.log("error", f"Failed to set execution method: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/settings/daily-risk-limit")
+async def set_daily_risk_limit(request: Request):
+    """Set the maximum daily risk amount in USDT. 0 = no limit."""
+    try:
+        body = await request.json()
+        limit = float(body.get("daily_risk_limit", 0))
+        old_limit = state.daily_risk_limit
+        state.daily_risk_limit = max(0.0, limit)
+        state.save_bot_settings()
+        if state.daily_risk_limit > 0:
+            state.log("success", f"[RISK] Daily risk limit set: ${state.daily_risk_limit:.2f} (was ${old_limit:.2f})")
+        else:
+            state.log("info", "[RISK] Daily risk limit disabled")
+        return {
+            "success": True,
+            "daily_risk_limit": state.daily_risk_limit,
+            "daily_risk_used": state.daily_risk_used,
+            "daily_risk_trades": state.daily_risk_trades
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/settings/daily-risk-reset")
+async def reset_daily_risk():
+    """Manually reset daily risk counters"""
+    old_used = state.daily_risk_used
+    old_trades = state.daily_risk_trades
+    state.daily_risk_used = 0.0
+    state.daily_risk_trades = 0
+    state.daily_risk_date = date.today().isoformat()
+    state.save_bot_settings()
+    state.log("info", f"[RISK] Daily risk counters reset manually (was ${old_used:.2f}, {old_trades} trades)")
+    return {
+        "success": True,
+        "daily_risk_used": 0.0,
+        "daily_risk_trades": 0,
+        "message": "Daily risk counters reset"
+    }
+
+
+@app.post("/api/config/update-risk-all")
+async def update_risk_amount_all(request: Request):
+    """Update risk_amount for ALL configured symbols at once"""
+    try:
+        body = await request.json()
+        risk_amount = float(body.get("risk_amount", 0))
+        if risk_amount <= 0:
+            raise HTTPException(status_code=400, detail="Risk amount must be > 0")
+        updated = []
+        for symbol, config in state.trading_config.items():
+            config["risk_amount"] = risk_amount
+            updated.append(symbol)
+        # Save to file
+        config_path = Path("../config/trading_config.json")
+        with open(config_path, 'w') as f:
+            json.dump({"coins": list(state.trading_config.values())}, f, indent=2)
+        state.log("success", f"[RISK] Risk amount set to ${risk_amount:.2f} for {len(updated)} symbols")
+        return {
+            "success": True,
+            "risk_amount": risk_amount,
+            "updated_symbols": updated,
+            "count": len(updated)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -974,6 +1113,7 @@ async def process_alert(req: AlertRequest):
                             "status": "partial" if partial else "success"
                         }
                         state.add_order_to_history(order_history_entry)
+                        state.record_daily_risk(float(config["risk_amount"]))
 
                     state.log("info", f"[LOCK] Released lock for {symbol}")
 
@@ -1062,7 +1202,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
         # Detect source and parse accordingly
         source = request.get("source", "WATCHLIST")
         is_swing_detector = source == "SWING_DETECTOR"
-        is_zone_detector = source == "ZONE_DETECTOR"
+        is_zone_detector = source in ("ZONE_DETECTOR", "ZONE_DETECTOR_V2")
 
         if is_swing_detector or is_zone_detector:
             # SwingDetector format: {source, symbol, interval, pattern: {patternType, price, direction, ...}}
@@ -1121,6 +1261,16 @@ async def process_watchlist_alert(request: Dict[str, Any]):
 
         price = Decimal(str(price))
 
+        # Guard: rechazar alertas con precio <= 0 (alertas fantasma o mal formadas)
+        if price <= 0:
+            state.log("warning", f"Alert rejected: {symbol} {side} price={price} (invalid price <= 0)")
+            log_received_alert(symbol, side, pattern, float(price), confidence, "REJECTED_INVALID_PRICE", source)
+            return {
+                "success": False,
+                "message": f"Invalid price: {price} (must be > 0)",
+                "symbol": symbol
+            }
+
         # Log with explicit timestamp for debugging alert timing
         received_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         state.log("info", f"[{received_at}] {source} alert: {symbol} {side} @ {price} | {pattern} | Conf: {confidence}%")
@@ -1149,26 +1299,89 @@ async def process_watchlist_alert(request: Dict[str, Any]):
             state.log("info", f"Acquired lock for {symbol}, processing {source} alert...")
 
             # Check for existing position
-            position = await state.bybit_client.get_position(symbol)
+            # En hedge mode, pasar side_filter para solo bloquear si hay posicion del MISMO side
+            # (permite tener LONG + SHORT simultaneos)
+            state.log("info", f"[BYBIT] Checking position for {symbol} side_filter={side}...")
+            position = await state.bybit_client.get_position(symbol, side_filter=side)
             if not position.get("success"):
                 error_msg = f"Failed to check position: {position.get('error', 'Unknown')}"
                 state.log("error", error_msg)
                 raise HTTPException(status_code=500, detail=error_msg)
 
+            state.log("info", f"[BYBIT] Position check result: hasPosition={position.get('hasPosition')} "
+                      f"size={position.get('size', 0)} side={position.get('side', 'N/A')} "
+                      f"entryPrice={position.get('entryPrice', 'N/A')} leverage={position.get('leverage', 'N/A')} "
+                      f"unrealizedPnl={position.get('unrealizedPnl', 'N/A')}")
+
             if position.get("hasPosition"):
-                state.log("warning", f"Position already exists for {symbol}, skipping")
+                state.log("warning", f"Position already exists for {symbol} {side}: "
+                          f"size={position.get('size')} entry=${position.get('entryPrice')} "
+                          f"SL={position.get('stopLoss')} TP={position.get('takeProfit')} "
+                          f"PnL={position.get('unrealizedPnl')}, skipping alert")
                 log_received_alert(symbol, side, pattern, float(price), confidence, "SKIPPED_POSITION_EXISTS", source)
                 return {
                     "success": False,
-                    "message": f"Position already exists for {symbol}",
+                    "message": f"Position already exists for {symbol} {side}",
                     "symbol": symbol,
                     "skipped": True
                 }
 
-            # Calculate quantity
+            # Extract SL/TP from alert BEFORE calculating quantity
+            # so we can use alert SL% for dynamic position sizing
+            sl_distance = request.get("sl_distance")
+            tp_distance = request.get("tp_distance")
+            custom_sl = request.get("custom_stop_loss")
+            custom_tp = request.get("custom_take_profit")
+
+            # Derive effective SL% from alert data for position sizing
+            effective_sl_percent = Decimal(str(config["stop_loss_percent"]))
+            sl_source_label = "config default"
+
+            if sl_distance is not None and float(sl_distance) > 0 and price > 0:
+                # SL distance in USD -> derive SL%
+                sl_pct_from_alert = Decimal(str(sl_distance)) / price
+                if sl_pct_from_alert > Decimal("0.0005"):  # Min 0.05% guard
+                    effective_sl_percent = sl_pct_from_alert
+                    sl_source_label = f"alert sl_distance ({float(sl_pct_from_alert)*100:.3f}%)"
+                else:
+                    state.log("warning", f"[RISK] Alert SL% too small ({float(sl_pct_from_alert)*100:.4f}%), using config default")
+            elif custom_sl is not None and float(custom_sl) > 0 and price > 0:
+                # Custom SL absolute price -> derive SL%
+                sl_pct_from_alert = abs(price - Decimal(str(custom_sl))) / price
+                if sl_pct_from_alert > Decimal("0.0005"):  # Min 0.05% guard
+                    effective_sl_percent = sl_pct_from_alert
+                    sl_source_label = f"alert custom_sl ({float(sl_pct_from_alert)*100:.3f}%)"
+                else:
+                    state.log("warning", f"[RISK] Alert SL% too small ({float(sl_pct_from_alert)*100:.4f}%), using config default")
+
+            # Calculate risk amount
+            risk_amount = Decimal(str(config["risk_amount"]))
+
+            # Check daily risk limit BEFORE executing
+            daily_check = state.check_daily_risk_limit(float(risk_amount))
+            if not daily_check["allowed"]:
+                msg = (f"Daily risk limit reached: ${daily_check['used']:.2f} / ${daily_check['limit']:.2f} "
+                       f"({daily_check['trades_today']} trades). Requested: ${daily_check['requested']:.2f}")
+                state.log("warning", f"[RISK] {msg}")
+                log_received_alert(symbol, side, pattern, float(price), confidence, "BLOCKED_DAILY_LIMIT", source)
+                await state.broadcast_event("daily_limit_reached", {
+                    "symbol": symbol, "side": side, "limit": daily_check["limit"],
+                    "used": daily_check["used"], "trades": daily_check["trades_today"]
+                })
+                return {
+                    "success": False,
+                    "message": msg,
+                    "symbol": symbol,
+                    "blocked_by": "daily_risk_limit"
+                }
+
+            # Calculate quantity with effective SL%
+            state.log("info", f"[RISK] Calculating qty: risk_amount=${risk_amount} "
+                      f"sl%={float(effective_sl_percent)*100:.3f}% ({sl_source_label}) price={price} "
+                      f"step_size={config['step_size']} min_qty={config['min_qty']} max_qty={config['max_qty']}")
             risk_calc = state.risk_calculator.calculate_quantity(
-                risk_amount=Decimal(str(config["risk_amount"])),
-                stop_loss_percent=Decimal(str(config["stop_loss_percent"])),
+                risk_amount=risk_amount,
+                stop_loss_percent=effective_sl_percent,
                 current_price=price,
                 min_qty=Decimal(str(config["min_qty"])),
                 max_qty=Decimal(str(config["max_qty"])),
@@ -1182,16 +1395,21 @@ async def process_watchlist_alert(request: Dict[str, Any]):
 
             quantity = risk_calc["quantity"]
             config["current_price"] = float(price)
+            state.log("info", f"[RISK] Result: qty={quantity} (value ~${float(quantity * price):.2f} USDT)")
 
-            # Check for custom SL/TP from alert (e.g. from Zone Detector)
-            custom_sl = request.get("custom_stop_loss")
-            custom_tp = request.get("custom_take_profit")
-            if custom_sl is not None:
-                config["custom_stop_loss"] = float(custom_sl)
-                state.log("info", f"[CUSTOM SL] Using custom stop loss: ${float(custom_sl)}")
-            if custom_tp is not None:
-                config["custom_take_profit"] = float(custom_tp)
-                state.log("info", f"[CUSTOM TP] Using custom take profit: ${float(custom_tp)}")
+            # Apply SL/TP to config for order_manager
+            if sl_distance is not None or tp_distance is not None:
+                config["sl_distance"] = float(sl_distance) if sl_distance else None
+                config["tp_distance"] = float(tp_distance) if tp_distance else None
+                state.log("info", f"[CUSTOM SL] Using SL distance: {config.get('sl_distance')}")
+                state.log("info", f"[CUSTOM TP] Using TP distance: {config.get('tp_distance')}")
+            elif custom_sl is not None or custom_tp is not None:
+                if custom_sl is not None:
+                    config["custom_stop_loss"] = float(custom_sl)
+                    state.log("info", f"[CUSTOM SL] Using custom stop loss: ${float(custom_sl)}")
+                if custom_tp is not None:
+                    config["custom_take_profit"] = float(custom_tp)
+                    state.log("info", f"[CUSTOM TP] Using custom take profit: ${float(custom_tp)}")
 
             # Check for limit price in request
             order_type = request.get("order_type", "Market")
@@ -1237,12 +1455,23 @@ async def process_watchlist_alert(request: Dict[str, Any]):
             success_status = result.get("success", False)
             partial = result.get("partial", False)
 
+            # Log detallado del resultado incluyendo respuesta de Bybit
+            timing = result.get("timing", {})
+            state.log("info", f"[BYBIT] Order result: success={success_status} method={result.get('method', '?')} "
+                      f"timing={timing.get('total_ms', 0):.0f}ms "
+                      f"order_ms={timing.get('order_ms', 0):.0f}ms")
+            if result.get("integrated_order"):
+                order_resp = result["integrated_order"]
+                state.log("info", f"[BYBIT] API Response: retCode={order_resp.get('retCode')} "
+                          f"retMsg={order_resp.get('retMsg', '')} "
+                          f"orderId={order_resp.get('result', {}).get('orderId', 'N/A')}")
+
             # Enhanced logging
             if success_status and partial:
                 state.log("warning", f"[PARTIAL] {symbol}: Market Order executed but SL/TP failed")
                 log_received_alert(symbol, side, pattern, float(price), confidence, "PARTIAL", source)
             elif success_status:
-                state.log("success", f"[SUCCESS] {symbol}: Trade completed successfully! Pattern: {pattern}")
+                state.log("success", f"[SUCCESS] {symbol}: Trade completed! {side} qty={quantity} @ ~${price} | SL/TP applied | Pattern: {pattern}")
                 log_received_alert(symbol, side, pattern, float(price), confidence, "SUCCESS", source)
             else:
                 state.log("error", f"[FAILED] {symbol}: Trade failed - {result.get('error', 'Unknown error')}")
@@ -1256,14 +1485,16 @@ async def process_watchlist_alert(request: Dict[str, Any]):
                     "entry_price": float(price),
                     "quantity_coin": float(quantity),
                     "quantity_usdt": float(quantity * price),
-                    "stop_loss": float(custom_sl) if custom_sl else float(risk_calc.get("stop_loss_price", 0)),
-                    "take_profit": float(custom_tp) if custom_tp else float(risk_calc.get("take_profit_price", 0)),
+                    "stop_loss": float(sl_distance) if sl_distance else (float(custom_sl) if custom_sl else float(risk_calc.get("stop_loss_price", 0))),
+                    "take_profit": float(tp_distance) if tp_distance else (float(custom_tp) if custom_tp else float(risk_calc.get("take_profit_price", 0))),
+                    "sl_mode": "distance" if sl_distance else ("custom" if custom_sl else "percent"),
                     "pattern": pattern,
                     "confidence": confidence,
                     "source": source,
                     "status": "partial" if partial else "success"
                 }
                 state.add_order_to_history(order_history_entry)
+                state.record_daily_risk(float(risk_amount))
 
             state.log("info", f"[LOCK] Released lock for {symbol}")
 
@@ -1379,13 +1610,13 @@ async def manual_trade(req: ManualTradeRequest):
 
 
 @app.get("/api/position/{symbol}")
-async def get_position(symbol: str):
-    """Get current position for a symbol"""
+async def get_position(symbol: str, side: str = None):
+    """Get current position for a symbol. In hedge mode, use ?side=Buy or ?side=Sell."""
     try:
         if not state.bybit_client:
             raise HTTPException(status_code=400, detail="Credentials not configured")
 
-        position = await state.bybit_client.get_position(symbol)
+        position = await state.bybit_client.get_position(symbol, side_filter=side)
         return position
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -1455,24 +1686,45 @@ async def get_all_positions():
             }
 
         positions = []
+        is_hedge = state.bybit_client._position_mode == "hedge" if state.bybit_client else False
         for symbol in state.trading_config.keys():
             try:
-                position = await state.bybit_client.get_position(symbol)
-                if position.get("success") and position.get("hasPosition"):
-                    positions.append({
-                        "symbol": symbol,
-                        "side": position.get("side"),
-                        "size": position.get("size"),
-                        "entryPrice": position.get("entryPrice"),
-                        "markPrice": position.get("markPrice"),
-                        "unrealizedPnl": position.get("unrealizedPnl"),
-                        "leverage": position.get("leverage"),
-                        "positionValue": position.get("positionValue"),
-                        "takeProfit": position.get("takeProfit"),
-                        "stopLoss": position.get("stopLoss"),
-                        "createdTime": position.get("createdTime"),
-                        "updatedTime": position.get("updatedTime")
-                    })
+                if is_hedge:
+                    # En hedge mode, buscar posiciones Buy y Sell por separado
+                    for side_check in ["Buy", "Sell"]:
+                        position = await state.bybit_client.get_position(symbol, side_filter=side_check)
+                        if position.get("success") and position.get("hasPosition"):
+                            positions.append({
+                                "symbol": symbol,
+                                "side": position.get("side"),
+                                "size": position.get("size"),
+                                "entryPrice": position.get("entryPrice"),
+                                "markPrice": position.get("markPrice"),
+                                "unrealizedPnl": position.get("unrealizedPnl"),
+                                "leverage": position.get("leverage"),
+                                "positionValue": position.get("positionValue"),
+                                "takeProfit": position.get("takeProfit"),
+                                "stopLoss": position.get("stopLoss"),
+                                "createdTime": position.get("createdTime"),
+                                "updatedTime": position.get("updatedTime")
+                            })
+                else:
+                    position = await state.bybit_client.get_position(symbol)
+                    if position.get("success") and position.get("hasPosition"):
+                        positions.append({
+                            "symbol": symbol,
+                            "side": position.get("side"),
+                            "size": position.get("size"),
+                            "entryPrice": position.get("entryPrice"),
+                            "markPrice": position.get("markPrice"),
+                            "unrealizedPnl": position.get("unrealizedPnl"),
+                            "leverage": position.get("leverage"),
+                            "positionValue": position.get("positionValue"),
+                            "takeProfit": position.get("takeProfit"),
+                            "stopLoss": position.get("stopLoss"),
+                            "createdTime": position.get("createdTime"),
+                            "updatedTime": position.get("updatedTime")
+                        })
             except Exception as e:
                 state.log("warning", f"Failed to get position for {symbol}: {e}")
 

@@ -13,17 +13,19 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     // Zonas a renderizar (combinacion de manuales + realtime)
     this.zones = [];
     this._manualZones = [];   // Zonas de "Detectar zonas" (boton manual)
-    this._realtimeZones = []; // Zonas del servicio realtime
+    this._realtimeZones = []; // Zonas del servicio realtime (V2 engine)
+    this._vpZones = [];       // Zonas del VP Zone Scanner (Volume Profile)
 
-    // Metricas por candle para barras horizontales
-    this._metricsMap = new Map(); // timestamp -> {primary, ttm_squeeze, bbwp}
-    this._activeLayers = {};     // Que capas estan activas en el config
-    this._methodLabel = "";      // "CONSOL" o "IN RANGE"
+    // Metricas por candle para barras horizontales (v2: 6 barras diagnosticas)
+    this._metricsMap = new Map(); // timestamp -> {atr_range, count_outside, body_ratio, range_pct, min_bars, ttm_squeeze}
+    this._activeLayers = {};     // Que capas estan activas
+    this._useTtm = false;        // Si TTM esta habilitado en el servicio v2
     this._lastMetricsFetch = 0;
-    this._metricsFetchInterval = 30000; // Polling cada 30s
+    this._metricsFetchInterval = 15000; // Polling cada 15s (sincronizado con zonas)
     this._isFetchingMetrics = false;
     this.metricsBarHeight = 8;
     this._detectionParams = {};  // Params del ZoneDetectorSettings para enviar al endpoint
+    this._useV2 = true;          // Usar endpoints v2 (nuevo detector incremental)
 
     // Configuracion visual
     this.config = {
@@ -45,6 +47,11 @@ class ZoneVisualizerIndicator extends IndicatorBase {
         trading_win: { fill: 'rgba(0, 200, 100, 0.25)', border: '#00C864' },
         trading_loss: { fill: 'rgba(255, 50, 50, 0.25)', border: '#FF3232' },
         trading_open: { fill: 'rgba(255, 200, 0, 0.20)', border: '#FFC800' },
+        // VP Zone Scanner colores
+        vp_zone: { fill: 'rgba(0, 86, 210, 0.20)', border: '#0056D2' },
+        vp_win: { fill: 'rgba(0, 180, 100, 0.25)', border: '#00B464' },
+        vp_loss: { fill: 'rgba(210, 50, 50, 0.25)', border: '#D23232' },
+        vp_open: { fill: 'rgba(0, 86, 210, 0.15)', border: '#0056D2' },
         default: { fill: 'rgba(128, 128, 128, 0.15)', border: '#808080' }
       },
       tradeableHighlight: { fill: 'rgba(74, 165, 74, 0.25)', border: '#4aa54a' }
@@ -54,7 +61,7 @@ class ZoneVisualizerIndicator extends IndicatorBase {
   }
 
   /**
-   * Combina zonas manuales + realtime, deduplicando por start_timestamp + end_timestamp
+   * Combina zonas manuales + realtime + VP, deduplicando por start_timestamp + end_timestamp
    */
   _mergeZones() {
     this._skipLogged = false;
@@ -62,20 +69,30 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     this._noRenderLogged = false;
 
     // Manuales tienen prioridad (incluyen volume profile)
-    const manualKeys = new Set();
+    const allKeys = new Set();
     const merged = [];
 
     for (const z of this._manualZones) {
       const key = `${z.start_timestamp}_${z.end_timestamp}`;
-      manualKeys.add(key);
+      allKeys.add(key);
       merged.push({ ...z, _debugLogged: false, _skippedLogged: false, _priceCheckLogged: false, _yErrorLogged: false, _yRangeLogged: false });
     }
 
     // Agregar realtime que no esten ya en manuales
     for (const z of this._realtimeZones) {
       const key = `${z.start_timestamp}_${z.end_timestamp}`;
-      if (!manualKeys.has(key)) {
+      if (!allKeys.has(key)) {
+        allKeys.add(key);
         merged.push({ ...z, _source: 'realtime', _debugLogged: false, _skippedLogged: false, _priceCheckLogged: false, _yErrorLogged: false, _yRangeLogged: false });
+      }
+    }
+
+    // Agregar VP zones que no esten ya
+    for (const z of this._vpZones) {
+      const key = `${z.start_timestamp}_${z.end_timestamp}`;
+      if (!allKeys.has(key)) {
+        allKeys.add(key);
+        merged.push({ ...z, _source: 'vp', _debugLogged: false, _skippedLogged: false, _priceCheckLogged: false, _yErrorLogged: false, _yRangeLogged: false });
       }
     }
 
@@ -103,6 +120,16 @@ class ZoneVisualizerIndicator extends IndicatorBase {
   }
 
   /**
+   * Establece zonas del VP Zone Scanner (Volume Profile)
+   * @param {Array} zones - Array de zonas VP
+   */
+  setVPZones(zones) {
+    this._vpZones = zones || [];
+    this._mergeZones();
+    console.log(`[${this.symbol}] ZoneVisualizer: ${this._vpZones.length} zonas VP (total: ${this.zones.length})`);
+  }
+
+  /**
    * Agrega zonas sin reemplazar las existentes
    * @param {Array} zones - Array de zonas a agregar
    */
@@ -118,6 +145,7 @@ class ZoneVisualizerIndicator extends IndicatorBase {
   clearZones() {
     this._manualZones = [];
     this._realtimeZones = [];
+    this._vpZones = [];
     this.zones = [];
     console.log(`[${this.symbol}] ZoneVisualizer: Zonas limpiadas`);
   }
@@ -197,9 +225,14 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       if (rendered) renderedCount++;
     }
 
-    // Log si no se renderizó ninguna zona
-    if (renderedCount === 0 && !this._noRenderLogged) {
-      console.warn(`[${this.symbol}] ⚠️ ZoneVisualizer: 0 de ${this.zones.length} zonas renderizadas`);
+    // Log si no se renderizaron todas las zonas
+    if (!this._noRenderLogged && this.zones.length > 0) {
+      if (renderedCount < this.zones.length) {
+        const visRange = visibleCandles && visibleCandles.length > 0
+          ? `visible: ${new Date(visibleCandles[0].timestamp).toLocaleString()} - ${new Date(visibleCandles[visibleCandles.length - 1].timestamp).toLocaleString()}`
+          : 'no visible candles';
+        console.warn(`[${this.symbol}] ZoneVisualizer: ${renderedCount}/${this.zones.length} zonas renderizadas (${visRange}). Haga scroll/zoom para ver las demas.`);
+      }
       this._noRenderLogged = true;
     }
 
@@ -223,11 +256,34 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     const zoneIndex = zone.timeline_index || (this.zones.indexOf(zone) + 1);
 
     // --- RECTANGULO 1: Zona de consolidacion ---
-    const yZoneTop = priceToY(zone.max_price);
-    const yZoneBottom = priceToY(zone.min_price);
+    // VP zones: usar full_range para el rectangulo principal
+    const isVP = zone._source === 'vp';
+    const hasFullRange = isVP && zone.full_range_min != null && zone.full_range_max != null;
+    const rectTop = hasFullRange ? zone.full_range_max : zone.max_price;
+    const rectBot = hasFullRange ? zone.full_range_min : zone.min_price;
+    const yZoneTop = priceToY(rectTop);
+    const yZoneBottom = priceToY(rectBot);
 
     if (yZoneTop === undefined || yZoneBottom === undefined || isNaN(yZoneTop) || isNaN(yZoneBottom)) {
       return false;
+    }
+
+    const isPending = zone.trade_result === 'PENDING' || zone.trade_result === 'BUILDING';
+
+    // Verificar interseccion temporal con velas visibles ANTES de calcular X
+    const isOpenOrPending = isPending || zone.trade_result === 'OPEN';
+    if (visibleCandles && visibleCandles.length > 0 && zone.start_timestamp && zone.end_timestamp) {
+      const visFirstTs = visibleCandles[0].timestamp;
+      const visLastTs = visibleCandles[visibleCandles.length - 1].timestamp;
+      // Considerar el rango extendido: consolidacion + trade
+      // Para zonas OPEN/PENDING, se extienden hasta el presente (no tienen close_timestamp)
+      const zoneLatestTs = isOpenOrPending
+        ? Infinity
+        : (zone.trade_close_timestamp || zone.entry_timestamp || zone.end_timestamp);
+      // Si la zona termina antes del rango visible o comienza despues, skip
+      if (zoneLatestTs < visFirstTs || zone.start_timestamp > visLastTs) {
+        return false;
+      }
     }
 
     // Calcular X de la consolidacion
@@ -238,7 +294,7 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       const cx1 = timeToX(zone.start_timestamp);
       const cx2 = timeToX(zone.end_timestamp);
       if (cx1 !== null && cx1 !== undefined) xZoneStart = Math.max(boundsX, cx1);
-      if (cx2 !== null && cx2 !== undefined) xZoneEnd = Math.min(boundsX + boundsWidth, cx2);
+      if (cx2 !== null && cx2 !== undefined) xZoneEnd = Math.max(xZoneStart + 1, Math.min(boundsX + boundsWidth, cx2));
     }
 
     // Clamp Y a area visible
@@ -249,13 +305,39 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       return false;
     }
 
-    // Dibujar consolidacion: azul semi-transparente
-    ctx.fillStyle = 'rgba(100, 140, 200, 0.12)';
+    // Colores de consolidacion: cyan para PENDING, azul VP para VP zones, azul gris para V2
+    const consolFill = isPending ? 'rgba(0, 200, 220, 0.15)'
+      : isVP ? 'rgba(0, 86, 210, 0.15)' : 'rgba(100, 140, 200, 0.12)';
+    const consolBorder = isPending ? 'rgba(0, 200, 220, 0.7)'
+      : isVP ? 'rgba(0, 86, 210, 0.6)' : 'rgba(100, 140, 200, 0.5)';
+    const consolVert = isPending ? 'rgba(0, 200, 220, 0.5)'
+      : isVP ? 'rgba(0, 86, 210, 0.4)' : 'rgba(100, 140, 200, 0.4)';
+
+    // Dibujar consolidacion
+    ctx.fillStyle = consolFill;
     ctx.fillRect(xZoneStart, yTop, xZoneEnd - xZoneStart, yBot - yTop);
 
+    // Para PENDING: extender zona a la derecha hasta el borde del chart (zona "viva")
+    if (isPending && xZoneEnd < boundsX + boundsWidth) {
+      ctx.fillStyle = 'rgba(0, 200, 220, 0.06)';
+      ctx.fillRect(xZoneEnd, yTop, (boundsX + boundsWidth) - xZoneEnd, yBot - yTop);
+
+      // Lineas horizontales extendidas (punteadas finas)
+      ctx.strokeStyle = 'rgba(0, 200, 220, 0.35)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(xZoneEnd, yTop);
+      ctx.lineTo(boundsX + boundsWidth, yTop);
+      ctx.moveTo(xZoneEnd, yBot);
+      ctx.lineTo(boundsX + boundsWidth, yBot);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
     // Bordes punteados de la consolidacion
-    ctx.strokeStyle = 'rgba(100, 140, 200, 0.5)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = consolBorder;
+    ctx.lineWidth = isPending ? 1.5 : 1;
     ctx.setLineDash([3, 3]);
     ctx.beginPath();
     ctx.moveTo(xZoneStart, yTop);
@@ -266,7 +348,7 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     ctx.setLineDash([]);
 
     // Lineas verticales de la consolidacion
-    ctx.strokeStyle = 'rgba(100, 140, 200, 0.4)';
+    ctx.strokeStyle = consolVert;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(xZoneStart, yTop);
@@ -274,6 +356,133 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     ctx.moveTo(xZoneEnd, yTop);
     ctx.lineTo(xZoneEnd, yBot);
     ctx.stroke();
+
+    // --- OVERLAY VALUE AREA (naranja translucido dentro del rect azul) ---
+    if (isVP && hasFullRange) {
+      const yVATop = priceToY(zone.max_price);
+      const yVABot = priceToY(zone.min_price);
+      if (yVATop !== undefined && yVABot !== undefined && !isNaN(yVATop) && !isNaN(yVABot)) {
+        const vaTop = Math.max(Math.min(yVATop, yVABot), boundsY);
+        const vaBot = Math.min(Math.max(yVATop, yVABot), boundsY + boundsHeight);
+        if (vaTop < vaBot) {
+          ctx.fillStyle = 'rgba(255, 160, 40, 0.18)';
+          ctx.fillRect(xZoneStart, vaTop, xZoneEnd - xZoneStart, vaBot - vaTop);
+          // Bordes naranja finos del VA
+          ctx.strokeStyle = 'rgba(255, 160, 40, 0.5)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 2]);
+          ctx.beginPath();
+          ctx.moveTo(xZoneStart, vaTop);
+          ctx.lineTo(xZoneEnd, vaTop);
+          ctx.moveTo(xZoneStart, vaBot);
+          ctx.lineTo(xZoneEnd, vaBot);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+    }
+
+    // --- VOLUME PROFILE dentro de la zona ---
+    if (zone.volume_profile && zone.volume_profile.bins && zone.volume_profile.bins.length > 0) {
+      const vp = zone.volume_profile;
+      const vpBins = vp.bins;
+      const vpPriceLow = vp.price_low;
+      const vpPriceHigh = vp.price_high;
+      const pocPrice = vp.poc_price;
+      const vahPrice = vp.vah_price;
+      const valPrice = vp.val_price;
+
+      if (vpPriceHigh > vpPriceLow) {
+        const vpMaxWidth = (xZoneEnd - xZoneStart) * 0.4; // Max 40% del ancho de la zona
+
+        // Dibujar cada bin como barra horizontal
+        const binHeight = (yBot - yTop) / vpBins.length;
+
+        for (let i = 0; i < vpBins.length; i++) {
+          const bin = vpBins[i];
+          if (bin.volume_norm <= 0) continue;
+
+          const binY = priceToY(bin.price);
+          if (binY === undefined || isNaN(binY)) continue;
+
+          const barWidth = bin.volume_norm * vpMaxWidth;
+          const barY = binY - binHeight / 2;
+          const clampedBarY = Math.max(barY, boundsY);
+          const clampedHeight = Math.min(binHeight, boundsY + boundsHeight - clampedBarY);
+
+          if (clampedHeight <= 0) continue;
+
+          // Color: VA bins en azul, fuera de VA en gris, POC bin en amarillo
+          const isPocBin = Math.abs(bin.price - pocPrice) < (vpPriceHigh - vpPriceLow) / vpBins.length;
+          if (isPocBin) {
+            ctx.fillStyle = 'rgba(255, 220, 50, 0.45)';
+          } else if (bin.in_va) {
+            ctx.fillStyle = 'rgba(70, 130, 230, 0.30)';
+          } else {
+            ctx.fillStyle = 'rgba(120, 120, 140, 0.20)';
+          }
+
+          // Dibujar desde el borde izquierdo de la zona hacia la derecha
+          ctx.fillRect(xZoneStart, clampedBarY, barWidth, clampedHeight);
+        }
+
+        // Linea POC: amarilla punteada
+        const yPOC = priceToY(pocPrice);
+        if (yPOC !== undefined && !isNaN(yPOC) && yPOC >= boundsY && yPOC <= boundsY + boundsHeight) {
+          ctx.strokeStyle = 'rgba(255, 220, 50, 0.9)';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath();
+          ctx.moveTo(xZoneStart, yPOC);
+          ctx.lineTo(xZoneEnd, yPOC);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Label POC
+          ctx.font = 'bold 9px Arial';
+          ctx.fillStyle = 'rgba(255, 220, 50, 1)';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('POC', xZoneEnd - 2, yPOC);
+        }
+
+        // Lineas VAH/VAL: azul claro punteadas
+        const yVAH = priceToY(vahPrice);
+        const yVAL = priceToY(valPrice);
+
+        ctx.strokeStyle = 'rgba(70, 130, 230, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 3]);
+
+        if (yVAH !== undefined && !isNaN(yVAH) && yVAH >= boundsY && yVAH <= boundsY + boundsHeight) {
+          ctx.beginPath();
+          ctx.moveTo(xZoneStart, yVAH);
+          ctx.lineTo(xZoneEnd, yVAH);
+          ctx.stroke();
+
+          ctx.font = '8px Arial';
+          ctx.fillStyle = 'rgba(70, 130, 230, 0.8)';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('VAH', xZoneEnd - 2, yVAH);
+        }
+
+        if (yVAL !== undefined && !isNaN(yVAL) && yVAL >= boundsY && yVAL <= boundsY + boundsHeight) {
+          ctx.beginPath();
+          ctx.moveTo(xZoneStart, yVAL);
+          ctx.lineTo(xZoneEnd, yVAL);
+          ctx.stroke();
+
+          ctx.font = '8px Arial';
+          ctx.fillStyle = 'rgba(70, 130, 230, 0.8)';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('VAL', xZoneEnd - 2, yVAL);
+        }
+
+        ctx.setLineDash([]);
+      }
+    }
 
     // --- RECTANGULO 2: Trade (entry -> TP/SL) ---
     if (zone.entry_price && zone.sl_price && zone.tp_price && zone.entry_timestamp) {
@@ -326,9 +535,9 @@ class ZoneVisualizerIndicator extends IndicatorBase {
             ctx.strokeRect(xTradeStart, yTradeTop, tradeWidth, tradeHeight);
             ctx.setLineDash([]);
 
-            // Linea de ENTRY: blanca punteada
+            // Linea de ENTRY: negra punteada
             const yEntryClamp = Math.max(Math.min(yEntry, boundsY + boundsHeight), boundsY);
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([4, 4]);
             ctx.beginPath();
@@ -356,18 +565,20 @@ class ZoneVisualizerIndicator extends IndicatorBase {
             ctx.lineTo(xTradeEnd, ySLClamp);
             ctx.stroke();
 
-            // Labels de TP y SL al lado derecho
+            // Labels de TP y SL al lado derecho (con numero de zona)
             ctx.font = 'bold 10px Arial';
             ctx.textAlign = 'right';
             ctx.textBaseline = 'middle';
 
-            // Label TP
+            // Label TP con numero de zona
+            const tpLabel = `#${zoneIndex} TP`;
             ctx.fillStyle = 'rgba(0, 200, 80, 1)';
-            ctx.fillText('TP', xTradeEnd - 3, yTPClamp);
+            ctx.fillText(tpLabel, xTradeEnd - 3, yTPClamp);
 
-            // Label SL
+            // Label SL con numero de zona
+            const slLabel = `#${zoneIndex} SL`;
             ctx.fillStyle = 'rgba(220, 40, 40, 1)';
-            ctx.fillText('SL', xTradeEnd - 3, ySLClamp);
+            ctx.fillText(slLabel, xTradeEnd - 3, ySLClamp);
           }
         }
       }
@@ -377,8 +588,24 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     if (this.config.showLabels) {
       const isWin = zone.trade_result === 'WIN';
       const isOpen = zone.trade_result === 'OPEN';
-      const labelColor = isOpen ? '#FFB300' : (isWin ? '#00C864' : '#FF3232');
-      const resultText = isOpen ? 'O' : (isWin ? 'W' : 'L');
+      const isBuilding = zone.trade_result === 'BUILDING';
+      let labelColor, resultText;
+      if (isBuilding) {
+        labelColor = '#00BCD4';
+        resultText = 'B';
+      } else if (isPending) {
+        labelColor = '#00D4E0';
+        resultText = 'P';
+      } else if (isOpen) {
+        labelColor = '#FFB300';
+        resultText = 'O';
+      } else if (isWin) {
+        labelColor = '#00C864';
+        resultText = 'W';
+      } else {
+        labelColor = '#FF3232';
+        resultText = 'L';
+      }
       const labelText = `#${zoneIndex} ${resultText}`;
 
       ctx.font = 'bold 13px Arial';
@@ -461,56 +688,48 @@ class ZoneVisualizerIndicator extends IndicatorBase {
   }
 
   /**
-   * Obtiene metricas por candle del backend (primary, TTM, BBWP)
-   * Envia los parametros de deteccion para que el backend adapte la banda primaria.
+   * Obtiene diagnosticos por candle del backend v2 (6 condiciones).
+   * Endpoint: GET /api/zones/v2/diagnostics/{symbol}
    */
   async fetchMetrics() {
     if (this._isFetchingMetrics) return;
     this._isFetchingMetrics = true;
 
     try {
-      const p = this._detectionParams || {};
-      const params = new URLSearchParams({
-        interval: this.interval,
-        days: this.days,
-        detection_method: p.detection_method || 'trading_zones',
-        consol_min_bars: p.consol_min_bars || 8,
-        consol_atr_ratio: p.consol_atr_ratio || 0.6,
-        consol_max_range_pct: p.consol_max_range_pct || 2.0,
-        consol_body_ratio: p.consol_body_ratio || 0.5,
-        atr_dyn_period: p.atr_dyn_period || 200,
-        atr_dyn_ma_period: p.atr_dyn_ma_period || 20,
-        atr_dyn_multiplier: p.atr_dyn_multiplier || 1.0,
-        use_ttm_prefilter: p.use_ttm_prefilter || false,
-        use_bbwp_scoring: p.use_bbwp_scoring || false,
-        atr_band_ma_period: p.atr_band_ma_period || 20,
-        ttm_atr_length: p.ttm_atr_length || 20,
-        ttm_kc_multiplier: p.ttm_kc_multiplier || 1.5,
-        bbwp_lookback: p.bbwp_lookback || 252,
-        bbwp_squeeze_threshold: p.bbwp_squeeze_threshold || 20,
-      });
-      const url = `${API_BASE_URL}/api/zones/realtime/metrics/${this.symbol}?${params}`;
+      const url = `${API_BASE_URL}/api/zones/v2/diagnostics/${this.symbol}`;
       const res = await fetch(url);
       if (!res.ok) return;
 
       const data = await res.json();
       if (!data.success || !data.timestamps) return;
 
-      // Construir mapa por timestamp
+      // Construir mapa por timestamp con las 6 condiciones diagnosticas
       this._metricsMap.clear();
       const ts = data.timestamps;
       for (let i = 0; i < ts.length; i++) {
         this._metricsMap.set(ts[i], {
-          primary: data.primary ? data.primary[i] || false : false,
+          atr_range: data.atr_range ? data.atr_range[i] || false : false,
+          count_outside: data.count_outside ? data.count_outside[i] || false : false,
+          body_ratio: data.body_ratio ? data.body_ratio[i] || false : false,
+          range_pct: data.range_pct ? data.range_pct[i] || false : false,
+          min_bars: data.min_bars ? data.min_bars[i] || false : false,
           ttm_squeeze: data.ttm_squeeze ? data.ttm_squeeze[i] || false : false,
-          bbwp: data.bbwp ? data.bbwp[i] || false : false,
         });
       }
-      this._activeLayers = data.active_layers || {};
-      this._methodLabel = data.method_label || '';
+      this._useTtm = data.use_ttm || false;
+
+      // Construir activeLayers basado en los datos recibidos
+      this._activeLayers = {
+        atr_range: true,
+        count_outside: true,
+        body_ratio: true,
+        range_pct: true,
+        min_bars: true,
+        ttm_squeeze: this._useTtm,
+      };
       this._lastMetricsFetch = Date.now();
     } catch (err) {
-      // Silencioso - el servicio puede no estar corriendo
+      // Silencioso - el servicio v2 puede no estar corriendo
     } finally {
       this._isFetchingMetrics = false;
     }
@@ -518,13 +737,17 @@ class ZoneVisualizerIndicator extends IndicatorBase {
 
   /**
    * Retorna cuantas barras activas hay (para calcular altura total)
+   * v2: 5 barras fijas + 1 opcional (TTM)
    */
   getActiveMetricsBarCount() {
     let count = 0;
     const l = this._activeLayers;
-    if (l.primary) count++;
+    if (l.atr_range) count++;
+    if (l.count_outside) count++;
+    if (l.body_ratio) count++;
+    if (l.range_pct) count++;
+    if (l.min_bars) count++;
     if (l.ttm_squeeze) count++;
-    if (l.bbwp) count++;
     return count;
   }
 
@@ -558,15 +781,16 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     const barGap = 2;
     const layers = this._activeLayers;
 
-    let activeCount = 0;
+    // v2: 6 barras diagnosticas en orden logico
     const layerOrder = [];
-    // Orden: banda primaria (adapta label segun metodo), luego capas opcionales
-    const primaryLabel = this._methodLabel || 'ZONE';
-    if (layers.primary) { layerOrder.push({ key: 'primary', label: primaryLabel }); activeCount++; }
-    if (layers.ttm_squeeze) { layerOrder.push({ key: 'ttm_squeeze', label: 'TTM' }); activeCount++; }
-    if (layers.bbwp) { layerOrder.push({ key: 'bbwp', label: 'BBWP' }); activeCount++; }
+    if (layers.atr_range)     layerOrder.push({ key: 'atr_range',     label: 'ATR' });
+    if (layers.count_outside) layerOrder.push({ key: 'count_outside', label: 'OUT' });
+    if (layers.body_ratio)    layerOrder.push({ key: 'body_ratio',    label: 'BODY' });
+    if (layers.range_pct)     layerOrder.push({ key: 'range_pct',     label: 'RNG' });
+    if (layers.min_bars)      layerOrder.push({ key: 'min_bars',      label: 'BARS' });
+    if (layers.ttm_squeeze)   layerOrder.push({ key: 'ttm_squeeze',   label: 'TTM' });
 
-    if (activeCount === 0) return 0;
+    if (layerOrder.length === 0) return 0;
 
     let currentY = startY;
 
@@ -575,7 +799,7 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       currentY += barHeight + barGap;
     }
 
-    return (barHeight * activeCount) + (barGap * (activeCount - 1));
+    return (barHeight * layerOrder.length) + (barGap * (layerOrder.length - 1));
   }
 
   /**
@@ -605,18 +829,25 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       }
     });
 
-    // Label a la izquierda
-    const fontSize = Math.min(12, Math.max(8, Math.floor(barHeight * 0.6)));
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.lineWidth = 2;
+    // Label sobre el inicio de la barra (dentro del area visible)
+    const fontSize = Math.max(7, Math.min(10, barHeight));
     ctx.font = `bold ${fontSize}px monospace`;
     ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
 
-    const labelX = x - 35;
     const labelY = barY + (barHeight / 2);
+    const labelX = x + 3;
+    const textW = ctx.measureText(label).width;
 
+    // Fondo semitransparente para legibilidad
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(labelX - 1, barY, textW + 4, barHeight);
+
+    // Texto blanco con outline negro
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.9)';
+    ctx.lineWidth = 2;
     ctx.strokeText(label, labelX, labelY);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
     ctx.fillText(label, labelX, labelY);
   }
 }

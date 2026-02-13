@@ -1106,6 +1106,129 @@
 }
 
 /* ===========================
+   Risk Management Modal
+   =========================== */
+
+.risk-modal {
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.risk-modal .modal-body {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.risk-modal .modal-header,
+.risk-modal .modal-footer {
+  flex-shrink: 0;
+}
+
+.risk-section {
+  padding: 16px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-small);
+  border: 1px solid var(--border-color);
+}
+
+.risk-section-title {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.risk-checkbox-row {
+  margin: 8px 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--blue);
+  cursor: pointer;
+}
+
+.daily-progress-section {
+  margin-top: 4px;
+}
+
+.daily-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.daily-limit-reached {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.daily-progress-bar {
+  height: 10px;
+  background: var(--bg-tertiary);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.daily-progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.daily-progress-fill.limit-warning {
+  background: var(--yellow);
+}
+
+.daily-progress-fill.limit-reached {
+  background: var(--red);
+}
+
+.daily-progress-stats {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.daily-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.daily-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.daily-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ===========================
    Utility Classes
    =========================== */
 

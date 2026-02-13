@@ -5,8 +5,11 @@
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, asdict
 from datetime import datetime
+import logging
 import numpy as np
 from collections import defaultdict
+
+logger = logging.getLogger("zone_detector")
 
 
 @dataclass
@@ -236,7 +239,7 @@ class ZoneDetector:
             if zone.price_range_pct <= params.max_price_range_pct:
                 filtered_zones.append(zone)
             else:
-                print(f"[ZoneDetector] Descartando zona {zone.id} - rango={zone.price_range_pct:.2f}% > máx={params.max_price_range_pct}%")
+                logger.debug(f"[ZONE_DETECT] Descartando zona {zone.id} - rango={zone.price_range_pct:.2f}% > max={params.max_price_range_pct}%")
 
         # 🎯 NUEVO: Eliminar zonas duplicadas o muy similares
         deduplicated_zones = self._deduplicate_zones(filtered_zones)
@@ -257,7 +260,7 @@ class ZoneDetector:
             try:
                 results[method] = self.detect_zones(candles, method, params)
             except Exception as e:
-                print(f"[ZoneDetector] Error en método {method}: {e}")
+                logger.error(f"[ZONE_DETECT] Error en metodo {method}: {e}")
                 results[method] = []
         return results
 
@@ -830,7 +833,7 @@ class ZoneDetector:
             return []
 
         avg_price = np.mean([(c['high'] + c['low']) / 2 for c in candles])
-        print(f"[ZoneDetector] Consolidation v2: ATR global = {global_atr:.2f}, precio promedio = {avg_price:.2f}")
+        logger.info(f"[ZONE_DETECT] Consolidation v2: ATR global = {global_atr:.2f}, precio promedio = {avg_price:.2f}")
 
         found_ranges = []
         i = 0
@@ -921,7 +924,7 @@ class ZoneDetector:
             else:
                 i += 1
 
-        print(f"[ZoneDetector] Consolidation v2: Encontradas {len(found_ranges)} consolidaciones")
+        logger.info(f"[ZONE_DETECT] Consolidation v2: Encontradas {len(found_ranges)} consolidaciones")
 
         # Eliminar rangos que se solapan mucho (mantener el de mejor score)
         found_ranges.sort(key=lambda x: x['score'], reverse=True)
@@ -942,7 +945,7 @@ class ZoneDetector:
             if not overlaps:
                 selected_ranges.append(r)
 
-        print(f"[ZoneDetector] Consolidation v2: Seleccionadas {len(selected_ranges)} después de deduplicación")
+        logger.info(f"[ZONE_DETECT] Consolidation v2: Seleccionadas {len(selected_ranges)} despues de deduplicacion")
 
         # Crear zonas a partir de los rangos seleccionados
         for r in selected_ranges:
@@ -997,7 +1000,7 @@ class ZoneDetector:
             Lista de TradingZone ordenadas por trading_score descendente
         """
         if len(candles) < params.consol_min_bars + 20:
-            print(f"[ZoneDetector] Trading Zones: Insuficientes velas ({len(candles)})")
+            logger.warning(f"[ZONE_DETECT] Trading Zones: Insuficientes velas ({len(candles)})")
             return []
 
         trading_zones = []
@@ -1010,9 +1013,9 @@ class ZoneDetector:
         # Pre-calcular ATR rolling
         atr_values = self._calculate_rolling_atr_for_trading(candles, 14)
 
-        print(f"[ZoneDetector] ===== VERSION 3.0 (5 capas opcionales) =====")
-        print(f"[ZoneDetector] Trading Zones: ATR global = {global_atr:.2f}, velas = {len(candles)}")
-        print(f"[ZoneDetector] Config: entry_mode={params.entry_mode}, position_mode={params.position_mode}, swing_bars={params.swing_bars}, sl_mode={params.sl_mode}")
+        logger.info(f"[ZONE_DETECT] ===== VERSION 3.0 (5 capas opcionales) =====")
+        logger.info(f"[ZONE_DETECT] Trading Zones: ATR global = {global_atr:.2f}, velas = {len(candles)}")
+        logger.info(f"[ZONE_DETECT] Config: entry_mode={params.entry_mode}, position_mode={params.position_mode}, swing_bars={params.swing_bars}, sl_mode={params.sl_mode}")
 
         # --- Pre-calculos condicionales v3.0 ---
         # Solo calculamos lo que el usuario habilito
@@ -1040,7 +1043,7 @@ class ZoneDetector:
                 else:
                     atr_band_upper.append(0.0)
                     atr_band_lower.append(0.0)
-            print(f"[ZoneDetector] Capa 1 ATR Band: ON (period={params.atr_band_period}, mult={params.atr_band_multiplier}, ma={params.atr_band_ma_period})")
+            logger.info(f"[ZONE_DETECT] Capa 1 ATR Band: ON (period={params.atr_band_period}, mult={params.atr_band_multiplier}, ma={params.atr_band_ma_period})")
 
         # Capa 3: TTM Squeeze pre-filtro -> regiones donde buscar
         squeeze_regions = None  # None = buscar en todo el rango
@@ -1053,7 +1056,7 @@ class ZoneDetector:
                 params.ttm_atr_length, params.ttm_kc_multiplier
             )
             squeeze_regions = self._find_squeeze_regions(squeeze_vals, params.ttm_min_squeeze_bars)
-            print(f"[ZoneDetector] Capa 3 TTM Pre-filter: ON ({len(squeeze_regions)} regiones de squeeze encontradas)")
+            logger.info(f"[ZONE_DETECT] Capa 3 TTM Pre-filter: ON ({len(squeeze_regions)} regiones de squeeze encontradas)")
 
         # Capa 4: BBWP scoring (pre-calculo)
         bbwp_values = []
@@ -1064,7 +1067,7 @@ class ZoneDetector:
             bbwp_values = self._calculate_bbwp_values(
                 candles, bb_sma_values, bb_std_values, params.bbwp_lookback
             )
-            print(f"[ZoneDetector] Capa 4 BBWP Scoring: ON (lookback={params.bbwp_lookback}, threshold={params.bbwp_squeeze_threshold})")
+            logger.info(f"[ZONE_DETECT] Capa 4 BBWP Scoring: ON (lookback={params.bbwp_lookback}, threshold={params.bbwp_squeeze_threshold})")
 
         # Log capas habilitadas
         layers_on = []
@@ -1074,9 +1077,9 @@ class ZoneDetector:
         if params.use_bbwp_scoring: layers_on.append("BBWP_Score")
         if params.use_inside_pct_filter: layers_on.append(f"InsidePct({params.min_inside_pct}%)")
         if layers_on:
-            print(f"[ZoneDetector] Capas v3.0 activas: {', '.join(layers_on)}")
+            logger.info(f"[ZONE_DETECT] Capas v3.0 activas: {', '.join(layers_on)}")
         else:
-            print(f"[ZoneDetector] Capas v3.0: ninguna activa (modo clasico)")
+            logger.info(f"[ZONE_DETECT] Capas v3.0: ninguna activa (modo clasico)")
 
         found_ranges = []
         i = 0
@@ -1200,7 +1203,7 @@ class ZoneDetector:
                 else:
                     i += 1
 
-        print(f"[ZoneDetector] Trading Zones: Encontradas {len(found_ranges)} consolidaciones")
+        logger.info(f"[ZONE_DETECT] Trading Zones: Encontradas {len(found_ranges)} consolidaciones")
 
         # Eliminar rangos que se solapan mucho
         found_ranges.sort(key=lambda x: x['consol_length'], reverse=True)
@@ -1221,7 +1224,7 @@ class ZoneDetector:
             if not overlaps:
                 selected_ranges.append(r)
 
-        print(f"[ZoneDetector] Trading Zones: {len(selected_ranges)} despues de deduplicacion")
+        logger.info(f"[ZONE_DETECT] Trading Zones: {len(selected_ranges)} despues de deduplicacion")
 
         # Ordenar por tiempo para que sequential funcione correctamente
         selected_ranges.sort(key=lambda x: x['start_idx'])
@@ -1233,7 +1236,7 @@ class ZoneDetector:
 
         all_volumes = [c['volume'] for c in candles]
 
-        print(f"[ZoneDetector] position_mode='{params.position_mode}' (type={type(params.position_mode).__name__})")
+        logger.info(f"[ZONE_DETECT] position_mode='{params.position_mode}' (type={type(params.position_mode).__name__})")
 
         for zone_num, r in enumerate(selected_ranges):
             zone_candles = candles[r['start_idx']:r['end_idx']]
@@ -1349,7 +1352,7 @@ class ZoneDetector:
                     from datetime import datetime
                     entry_dt = datetime.fromtimestamp(check_ts / 1000).strftime('%m/%d %H:%M') if check_ts else '?'
                     cls_dt = datetime.fromtimestamp(current_trade_close_ts / 1000).strftime('%m/%d %H:%M')
-                    print(f"[SEQ] Zona#{zone_num} SKIP: entry={entry_dt} <= trade_close_prev={cls_dt}")
+                    logger.info(f"[ZONE_DETECT] [SEQ] Zona#{zone_num} SKIP: entry={entry_dt} <= trade_close_prev={cls_dt}")
                     touches = self._count_touches_in_range(zone_candles, zone_low, zone_high)
                     trading_zone = self._build_trading_zone(
                         zone_low, zone_high, start_ts, end_ts, touches, duration_hours,
@@ -1368,7 +1371,7 @@ class ZoneDetector:
                     from datetime import datetime
                     entry_dt = datetime.fromtimestamp(check_ts / 1000).strftime('%m/%d %H:%M') if check_ts else '?'
                     cls_dt = datetime.fromtimestamp(current_trade_close_ts / 1000).strftime('%m/%d %H:%M')
-                    print(f"[SEQ] Zona#{zone_num} OK: entry={entry_dt} > trade_close_prev={cls_dt}")
+                    logger.info(f"[ZONE_DETECT] [SEQ] Zona#{zone_num} OK: entry={entry_dt} > trade_close_prev={cls_dt}")
 
             if not entry_found:
                 # No se encontro swing de confirmacion
@@ -1407,7 +1410,7 @@ class ZoneDetector:
 
                 from datetime import datetime
                 e_dt = datetime.fromtimestamp(entry_ts / 1000).strftime('%m/%d %H:%M') if entry_ts else '?'
-                print(f"[SL_MODE] Zona#{zone_num} swing_previous: dir={breakout_direction} entry={entry_price:.2f} sl={sl_price:.2f} tp={tp_price:.2f} R={r_distance:.2f} RR={_rr} ({e_dt})")
+                logger.info(f"[ZONE_DETECT] [SL] Zona#{zone_num} swing_previous: dir={breakout_direction} entry={entry_price:.2f} sl={sl_price:.2f} tp={tp_price:.2f} R={r_distance:.2f} RR={_rr} ({e_dt})")
             else:
                 # zone_opposite: SL al lado opuesto del rango (1R = zone_height)
                 r_distance = zone_height
@@ -1425,21 +1428,21 @@ class ZoneDetector:
             _rr = params.tp_rr_ratio
             if breakout_direction == "UP":
                 if sl_price >= entry_price:
-                    print(f"[SL_FIX] Zona#{zone_num} UP: SL={sl_price:.2f} >= entry={entry_price:.2f}, corrigiendo")
+                    logger.warning(f"[ZONE_DETECT] [SL_FIX] Zona#{zone_num} UP: SL={sl_price:.2f} >= entry={entry_price:.2f}, corrigiendo")
                     sl_price = entry_price - zone_height
                     r_distance = zone_height
                     tp_price = entry_price + (zone_height * _rr)
                 if tp_price <= entry_price:
-                    print(f"[SL_FIX] Zona#{zone_num} UP: TP={tp_price:.2f} <= entry={entry_price:.2f}, corrigiendo")
+                    logger.warning(f"[ZONE_DETECT] [SL_FIX] Zona#{zone_num} UP: TP={tp_price:.2f} <= entry={entry_price:.2f}, corrigiendo")
                     tp_price = entry_price + (r_distance * _rr)
             else:
                 if sl_price <= entry_price:
-                    print(f"[SL_FIX] Zona#{zone_num} DOWN: SL={sl_price:.2f} <= entry={entry_price:.2f}, corrigiendo")
+                    logger.warning(f"[ZONE_DETECT] [SL_FIX] Zona#{zone_num} DOWN: SL={sl_price:.2f} <= entry={entry_price:.2f}, corrigiendo")
                     sl_price = entry_price + zone_height
                     r_distance = zone_height
                     tp_price = entry_price - (zone_height * _rr)
                 if tp_price >= entry_price:
-                    print(f"[SL_FIX] Zona#{zone_num} DOWN: TP={tp_price:.2f} >= entry={entry_price:.2f}, corrigiendo")
+                    logger.warning(f"[ZONE_DETECT] [SL_FIX] Zona#{zone_num} DOWN: TP={tp_price:.2f} >= entry={entry_price:.2f}, corrigiendo")
                     tp_price = entry_price - (r_distance * _rr)
 
             # --- Metricas de momentum ---
@@ -1552,7 +1555,7 @@ class ZoneDetector:
                 from datetime import datetime
                 entry_dt = datetime.fromtimestamp(entry_ts / 1000).strftime('%m/%d %H:%M') if entry_ts else '?'
                 close_dt = datetime.fromtimestamp(trade_close_ts / 1000).strftime('%m/%d %H:%M') if trade_close_ts else '?'
-                print(f"[SEQ] Zona#{zone_num} TRADE: {trade_result} {trade_pnl_r:+.1f}R | dir={breakout_direction} | entry={entry_dt} | close={close_dt} | bars={bars_to_close}")
+                logger.info(f"[ZONE_DETECT] [SEQ] Zona#{zone_num} TRADE: {trade_result} {trade_pnl_r:+.1f}R | dir={breakout_direction} | entry={entry_dt} | close={close_dt} | bars={bars_to_close}")
                 current_trade_close_ts = trade_close_ts
 
             # Estadisticas
@@ -1614,12 +1617,12 @@ class ZoneDetector:
         total_pnl = sum(tz.trade_pnl_r for tz in trading_zones if tz.trade_result in ("WIN", "LOSS"))
         expectancy = total_pnl / total_closed if total_closed > 0 else 0
 
-        print(f"[ZoneDetector] Trading Zones RESULTADOS (mode={params.entry_mode}, pos={params.position_mode}, sl={params.sl_mode}):")
-        print(f"  - Total zonas: {len(trading_zones)}")
-        print(f"  - Wins: {stats['wins']}, Losses: {stats['losses']}, Skipped: {stats['skipped']}")
-        print(f"  - Win Rate: {win_rate:.1f}%")
-        print(f"  - Total P&L: {total_pnl:+.1f}R")
-        print(f"  - Expectancy: {expectancy:.3f}R por trade")
+        logger.info(f"[ZONE_DETECT] Trading Zones RESULTADOS (mode={params.entry_mode}, pos={params.position_mode}, sl={params.sl_mode}):")
+        logger.info(f"[ZONE_DETECT]   Total zonas: {len(trading_zones)}")
+        logger.info(f"[ZONE_DETECT]   Wins: {stats['wins']}, Losses: {stats['losses']}, Skipped: {stats['skipped']}")
+        logger.info(f"[ZONE_DETECT]   Win Rate: {win_rate:.1f}%")
+        logger.info(f"[ZONE_DETECT]   Total P&L: {total_pnl:+.1f}R")
+        logger.info(f"[ZONE_DETECT]   Expectancy: {expectancy:.3f}R por trade")
 
         # =====================================================================
         # ASIGNAR timeline_index cronologico a cada zona
@@ -1635,11 +1638,11 @@ class ZoneDetector:
         # Esto muestra la secuencia REAL de posiciones abiertas/cerradas
         # =====================================================================
         active_trades = [tz for tz in zones_by_time if tz.trade_result in ("WIN", "LOSS")]
-        print(f"\n{'='*110}")
-        print(f"[TIMELINE] TRADES ACTIVOS en orden cronologico (mode={params.position_mode})")
-        print(f"{'='*110}")
-        print(f"{'TL#':>4} | {'Result':>6} | {'Dir':>5} | {'Entry Date':>14} | {'Close Date':>14} | {'Entry$':>10} | {'SL$':>10} | {'TP$':>10} | {'PnL':>6} | Overlap?")
-        print(f"{'-'*4}-+-{'-'*6}-+-{'-'*5}-+-{'-'*14}-+-{'-'*14}-+-{'-'*10}-+-{'-'*10}-+-{'-'*10}-+-{'-'*6}-+-{'-'*10}")
+        logger.info(f"[ZONE_DETECT] {'='*80}")
+        logger.info(f"[ZONE_DETECT] TIMELINE TRADES ACTIVOS (mode={params.position_mode})")
+        logger.info(f"[ZONE_DETECT] {'='*80}")
+        logger.info(f"[ZONE_DETECT] {'TL#':>4} | {'Result':>6} | {'Dir':>5} | {'Entry Date':>14} | {'Close Date':>14} | {'Entry$':>10} | {'SL$':>10} | {'TP$':>10} | {'PnL':>6} | Overlap?")
+        logger.info(f"[ZONE_DETECT] {'-'*4}-+-{'-'*6}-+-{'-'*5}-+-{'-'*14}-+-{'-'*14}-+-{'-'*10}-+-{'-'*10}-+-{'-'*10}-+-{'-'*6}-+-{'-'*10}")
 
         prev_close_ts = 0
         overlap_count = 0
@@ -1653,16 +1656,16 @@ class ZoneDetector:
                     overlap_flag = "OVERLAP!"
                     overlap_count += 1
 
-            print(f"{tz.timeline_index:>4} | {tz.trade_result:>6} | {tz.breakout_direction:>5} | {et:>14} | {tc:>14} | {tz.entry_price:>10.2f} | {tz.sl_price:>10.2f} | {tz.tp_price:>10.2f} | {tz.trade_pnl_r:>+5.1f}R | {overlap_flag}")
+            logger.info(f"[ZONE_DETECT] {tz.timeline_index:>4} | {tz.trade_result:>6} | {tz.breakout_direction:>5} | {et:>14} | {tc:>14} | {tz.entry_price:>10.2f} | {tz.sl_price:>10.2f} | {tz.tp_price:>10.2f} | {tz.trade_pnl_r:>+5.1f}R | {overlap_flag}")
 
             if tz.trade_close_timestamp > 0:
                 prev_close_ts = tz.trade_close_timestamp
 
         if overlap_count > 0:
-            print(f"\n*** ALERTA: {overlap_count} SOLAPAMIENTO(S) DETECTADO(S) ***")
+            logger.warning(f"[ZONE_DETECT] *** ALERTA: {overlap_count} SOLAPAMIENTO(S) DETECTADO(S) ***")
         else:
-            print(f"\n[OK] Sin solapamientos entre trades activos")
-        print(f"{'='*110}\n")
+            logger.info(f"[ZONE_DETECT] [OK] Sin solapamientos entre trades activos")
+        logger.info(f"[ZONE_DETECT] {'='*80}")
 
         # Retornar ordenado por tiempo (timeline_index ya asignado)
         return zones_by_time
@@ -1938,7 +1941,7 @@ class ZoneDetector:
         min_coverage = int(n * 0.8)  # Al menos 80% del dataset
         if effective_lookback < min_coverage:
             effective_lookback = min_coverage
-            print(f"[ZoneDetector] BBWP auto-escalado: lookback {lookback} -> {effective_lookback} "
+            logger.info(f"[ZONE_DETECT] BBWP auto-escalado: lookback {lookback} -> {effective_lookback} "
                   f"(80% de {n} velas)")
 
         # Primero calcular bandwidth para cada vela
@@ -2026,7 +2029,7 @@ class ZoneDetector:
 
         min_candles = max(atr_period, ma_period) + 50
         if len(candles) < min_candles:
-            print(f"[ZoneDetector] atr_dynamic: No hay suficientes velas ({len(candles)} < {min_candles})")
+            logger.warning(f"[ZONE_DETECT] atr_dynamic: No hay suficientes velas ({len(candles)} < {min_candles})")
             return []
 
         # 1. Calcular ATR y SMA
@@ -2049,7 +2052,7 @@ class ZoneDetector:
                 params.ttm_atr_length, params.ttm_kc_multiplier
             )
             squeeze_regions = self._find_squeeze_regions(squeeze_values, params.ttm_min_squeeze_bars)
-            print(f"[ZoneDetector] atr_dynamic TTM Prefilter: {len(squeeze_regions)} regiones de squeeze")
+            logger.info(f"[ZONE_DETECT] atr_dynamic TTM Prefilter: {len(squeeze_regions)} regiones de squeeze")
 
         if params.use_bbwp_scoring:
             bbwp_values = self._calculate_bbwp_values(
@@ -2191,7 +2194,7 @@ class ZoneDetector:
                             if current_range['candle_count'] >= min_bars:
                                 raw_ranges.append(current_range)
                             else:
-                                print(f"[ZoneDetector] DEBUG DESCARTADO por min_bars: "
+                                logger.debug(f"[ZONE_DETECT] Descartado por min_bars: "
                                       f"{current_range['candle_count']} < {min_bars} velas, "
                                       f"periodo {_ts_to_str(current_range['start_ts'])} - {_ts_to_str(current_range['end_ts'])}")
                             current_range = None
@@ -2224,18 +2227,17 @@ class ZoneDetector:
         if current_range and current_range['candle_count'] >= min_bars:
             raw_ranges.append(current_range)
         elif current_range:
-            print(f"[ZoneDetector] DEBUG DESCARTADO ultimo rango por min_bars: "
+            logger.debug(f"[ZONE_DETECT] Descartado ultimo rango por min_bars: "
                   f"{current_range['candle_count']} < {min_bars} velas, "
                   f"periodo {_ts_to_str(current_range['start_ts'])} - {_ts_to_str(current_range['end_ts'])}")
 
         # --- DEBUG: Imprimir todas las secciones azules vs rangos detectados ---
-        print(f"\n{'='*80}")
-        print(f"[ZoneDetector] DEBUG atr_dynamic: ANALISIS DE SECCIONES AZULES")
-        print(f"  Params: ma_period={ma_period}, min_bars={min_bars}, max_breakout={max_breakout}, mult={multiplier}")
-        print(f"  Total velas: {len(candles)}, start_index: {start_index}")
-        print(f"  Secciones con count_outside==0: {len(debug_sections)}")
-        print(f"  Rangos crudos detectados: {len(raw_ranges)}")
-        print(f"")
+        logger.info(f"[ZONE_DETECT] {'='*60}")
+        logger.info(f"[ZONE_DETECT] atr_dynamic: ANALISIS DE SECCIONES AZULES")
+        logger.info(f"[ZONE_DETECT]   Params: ma_period={ma_period}, min_bars={min_bars}, max_breakout={max_breakout}, mult={multiplier}")
+        logger.info(f"[ZONE_DETECT]   Total velas: {len(candles)}, start_index: {start_index}")
+        logger.info(f"[ZONE_DETECT]   Secciones con count_outside==0: {len(debug_sections)}")
+        logger.info(f"[ZONE_DETECT]   Rangos crudos detectados: {len(raw_ranges)}")
 
         # Crear set de rangos detectados para marcar cuales secciones fueron capturadas
         range_intervals = []
@@ -2265,24 +2267,23 @@ class ZoneDetector:
                 else:
                     reason = f" (revisar: {sec['length']} velas >= {min_bars} min_bars)"
 
-            print(f"  Seccion #{si}: idx {sec['start_idx']}-{sec['end_idx']} "
+            logger.debug(f"[ZONE_DETECT]   Seccion #{si}: idx {sec['start_idx']}-{sec['end_idx']} "
                   f"({sec['length']} velas) "
                   f"{_ts_to_str(sec['start_ts'])} - {_ts_to_str(sec['end_ts'])} "
                   f"{status}{reason}")
 
-        print(f"")
         for ri, r in enumerate(raw_ranges):
-            print(f"  Rango #{ri}: idx {r['start_idx']}-{r['end_idx']} "
+            logger.info(f"[ZONE_DETECT]   Rango #{ri}: idx {r['start_idx']}-{r['end_idx']} "
                   f"({r['candle_count']} velas) "
                   f"{_ts_to_str(r['start_ts'])} - {_ts_to_str(r['end_ts'])} "
                   f"precio {r['low']:.2f} - {r['high']:.2f}")
-        print(f"{'='*80}\n")
+        logger.info(f"[ZONE_DETECT] {'='*60}")
 
         # 3. Post-proceso: Merge rangos solapados
         if merge_overlap and len(raw_ranges) > 1:
             raw_ranges = self._merge_overlapping_atr_ranges(raw_ranges)
 
-        print(f"[ZoneDetector] atr_dynamic: {len(raw_ranges)} rangos crudos detectados (post-merge)")
+        logger.info(f"[ZONE_DETECT] atr_dynamic: {len(raw_ranges)} rangos crudos detectados (post-merge)")
 
         # 3.5. Filtrar por detection_start_idx (BBWP extendido)
         # Solo conservar zonas que terminen dentro del rango de deteccion solicitado
@@ -2291,9 +2292,9 @@ class ZoneDetector:
             raw_ranges = [r for r in raw_ranges if r['end_idx'] >= detection_start_idx]
             filtered_out = pre_filter_count - len(raw_ranges)
             if filtered_out > 0:
-                print(f"[ZoneDetector] BBWP historial: {filtered_out} rangos descartados "
+                logger.info(f"[ZONE_DETECT] BBWP historial: {filtered_out} rangos descartados "
                       f"(anteriores a idx {detection_start_idx} = {_ts_to_str(candles[detection_start_idx]['timestamp'])})")
-            print(f"[ZoneDetector] atr_dynamic: {len(raw_ranges)} rangos en ventana de deteccion")
+            logger.info(f"[ZONE_DETECT] atr_dynamic: {len(raw_ranges)} rangos en ventana de deteccion")
 
         # 4. Filtrar rangos y preparar para simulacion de trades
         filtered_ranges = []
@@ -2310,7 +2311,7 @@ class ZoneDetector:
                         in_squeeze = True
                         break
                 if not in_squeeze:
-                    print(f"[ZoneDetector] DEBUG FILTRADO por TTM: rango "
+                    logger.debug(f"[ZONE_DETECT] Filtrado por TTM: rango "
                           f"{_ts_to_str(r['start_ts'])} - {_ts_to_str(r['end_ts'])} "
                           f"no se solapa con ninguna squeeze region")
                     continue
@@ -2327,14 +2328,14 @@ class ZoneDetector:
                         inside_count += 1
                 inside_pct = (inside_count / len(zone_candles)) * 100 if zone_candles else 0
                 if inside_pct < params.min_inside_pct:
-                    print(f"[ZoneDetector] DEBUG FILTRADO por inside_pct: "
+                    logger.debug(f"[ZONE_DETECT] Filtrado por inside_pct: "
                           f"{inside_pct:.1f}% < {params.min_inside_pct}% en rango "
                           f"{_ts_to_str(r['start_ts'])} - {_ts_to_str(r['end_ts'])}")
                     continue
 
             filtered_ranges.append(r)
 
-        print(f"[ZoneDetector] atr_dynamic: {len(filtered_ranges)} rangos despues de filtros v3.0")
+        logger.info(f"[ZONE_DETECT] atr_dynamic: {len(filtered_ranges)} rangos despues de filtros v3.0")
 
         # 5. Simular trades igual que trading_zones
         return self._simulate_trades_for_ranges(
@@ -2470,7 +2471,7 @@ class ZoneDetector:
         # Ordenar rangos por tiempo
         sorted_ranges = sorted(ranges, key=lambda x: x.get('start_idx', 0))
 
-        print(f"[ZoneDetector] _simulate_trades: position_mode='{params.position_mode}'")
+        logger.info(f"[ZONE_DETECT] _simulate_trades: position_mode='{params.position_mode}'")
 
         for zone_num, r in enumerate(sorted_ranges):
             start_idx = r.get('start_idx', 0)
@@ -2809,7 +2810,7 @@ class ZoneDetector:
                         bbwp_bonus = (params.bbwp_squeeze_threshold - avg_bbwp) / params.bbwp_squeeze_threshold * 15
                         base_score += bbwp_bonus
                     hist_info = f", history_days={params.bbwp_history_days}" if params.bbwp_history_days > 0 else ""
-                    print(f"[ZoneDetector] BBWP DEBUG zona {_ts_to_str(start_ts)}: "
+                    logger.debug(f"[ZONE_DETECT] BBWP zona {_ts_to_str(start_ts)}: "
                           f"avg_bbwp={avg_bbwp:.1f}, threshold={params.bbwp_squeeze_threshold}, "
                           f"bonus={bbwp_bonus:.1f}, lookback={params.bbwp_lookback}, "
                           f"vals_count={len(zone_bbwp_vals)}, "
@@ -2820,7 +2821,7 @@ class ZoneDetector:
             if params.min_score_filter > 0 and base_score < params.min_score_filter:
                 stats["filtered"] = stats.get("filtered", 0) + 1
                 bbwp_bonus_dbg = base_score - (momentum_score + continuation_score + compression_score + volume_bonus)
-                print(f"[ZoneDetector] SCORE FILTRADO: {base_score:.1f} < {params.min_score_filter} | "
+                logger.info(f"[ZONE_DETECT] SCORE FILTRADO: {base_score:.1f} < {params.min_score_filter} | "
                       f"zona {_ts_to_str(start_ts)}-{_ts_to_str(end_ts)} | "
                       f"breakout={breakout_direction} result={trade_result} | "
                       f"momentum={momentum_score:.1f} compression={compression_score:.1f} "
@@ -2839,7 +2840,7 @@ class ZoneDetector:
             # Score final = base_score (NO aplicamos ajuste por resultado)
             trading_score = base_score
             bbwp_bonus_dbg = base_score - (momentum_score + continuation_score + compression_score + volume_bonus)
-            print(f"[ZoneDetector] SCORE OK: {base_score:.1f} >= {params.min_score_filter} | "
+            logger.info(f"[ZONE_DETECT] SCORE OK: {base_score:.1f} >= {params.min_score_filter} | "
                   f"zona {_ts_to_str(start_ts)}-{_ts_to_str(end_ts)} | "
                   f"breakout={breakout_direction} result={trade_result} | "
                   f"momentum={momentum_score:.1f} compression={compression_score:.1f} "
@@ -2871,14 +2872,14 @@ class ZoneDetector:
         expectancy = total_pnl / total_closed if total_closed > 0 else 0
 
         filtered_count = stats.get("filtered", 0)
-        print(f"[ZoneDetector] {method_name} RESULTADOS (mode={params.entry_mode}, pos={params.position_mode}, sl={params.sl_mode}):")
-        print(f"  - Total zonas: {len(trading_zones)}" + (f" (filtradas por score: {filtered_count})" if filtered_count > 0 else ""))
-        print(f"  - Wins: {stats['wins']}, Losses: {stats['losses']}, Skipped: {stats['skipped']}")
-        print(f"  - Win Rate: {win_rate:.1f}%")
-        print(f"  - Total P&L: {total_pnl:+.1f}R")
-        print(f"  - Expectancy: {expectancy:.3f}R por trade")
+        logger.info(f"[ZONE_DETECT] {method_name} RESULTADOS (mode={params.entry_mode}, pos={params.position_mode}, sl={params.sl_mode}):")
+        logger.info(f"[ZONE_DETECT]   Total zonas: {len(trading_zones)}" + (f" (filtradas por score: {filtered_count})" if filtered_count > 0 else ""))
+        logger.info(f"[ZONE_DETECT]   Wins: {stats['wins']}, Losses: {stats['losses']}, Skipped: {stats['skipped']}")
+        logger.info(f"[ZONE_DETECT]   Win Rate: {win_rate:.1f}%")
+        logger.info(f"[ZONE_DETECT]   Total P&L: {total_pnl:+.1f}R")
+        logger.info(f"[ZONE_DETECT]   Expectancy: {expectancy:.3f}R por trade")
         if params.min_score_filter > 0:
-            print(f"  - Min Score Filter: {params.min_score_filter}%")
+            logger.info(f"[ZONE_DETECT]   Min Score Filter: {params.min_score_filter}%")
 
         # Asignar timeline_index cronologico
         zones_by_time = sorted(trading_zones, key=lambda z: z.entry_timestamp if z.entry_timestamp > 0 else z.start_timestamp)
@@ -3132,14 +3133,14 @@ class ZoneDetector:
                 # Si hay suficiente overlap en ambas dimensiones, es duplicado
                 if price_overlap >= 0.5 and time_overlap >= 0.3:
                     is_duplicate = True
-                    print(f"[ZoneDetector] Descartando zona duplicada {zone.id} "
+                    logger.debug(f"[ZONE_DETECT] Descartando zona duplicada {zone.id} "
                           f"(precio_overlap={price_overlap:.1%}, tiempo_overlap={time_overlap:.1%})")
                     break
 
             if not is_duplicate:
                 deduplicated.append(zone)
 
-        print(f"[ZoneDetector] Deduplicación: {len(zones)} -> {len(deduplicated)} zonas")
+        logger.info(f"[ZONE_DETECT] Deduplicacion: {len(zones)} -> {len(deduplicated)} zonas")
         return deduplicated
 
     def _calculate_range_overlap(

@@ -218,6 +218,67 @@ class Footprint:
                 })
         return result
 
+    def get_stacked_imbalances(self, min_consecutive: int = 3,
+                                threshold: float = 3.0) -> List[dict]:
+        """Detecta stacked imbalances (3+ niveles consecutivos con ratio >= threshold
+        en la misma direccion) para serializacion en la API."""
+        stacked = []
+        current_streak = []
+        current_direction = None
+
+        for i, level in enumerate(self.levels):
+            if level.total_volume == 0:
+                if len(current_streak) >= min_consecutive:
+                    stacked.append(self._build_stacked_dict(current_streak, current_direction))
+                current_streak = []
+                current_direction = None
+                continue
+
+            ratio = level.imbalance_ratio
+            if ratio == float('inf') or ratio == float('-inf'):
+                if len(current_streak) >= min_consecutive:
+                    stacked.append(self._build_stacked_dict(current_streak, current_direction))
+                current_streak = []
+                current_direction = None
+                continue
+
+            if ratio >= threshold:
+                direction = "BUY" if level.ask_volume > level.bid_volume else "SELL"
+                if direction == current_direction:
+                    current_streak.append(i)
+                else:
+                    if len(current_streak) >= min_consecutive:
+                        stacked.append(self._build_stacked_dict(current_streak, current_direction))
+                    current_streak = [i]
+                    current_direction = direction
+            else:
+                if len(current_streak) >= min_consecutive:
+                    stacked.append(self._build_stacked_dict(current_streak, current_direction))
+                current_streak = []
+                current_direction = None
+
+        if len(current_streak) >= min_consecutive:
+            stacked.append(self._build_stacked_dict(current_streak, current_direction))
+        return stacked
+
+    def _build_stacked_dict(self, streak: List[int], direction: str) -> dict:
+        """Construye el dict de un stacked imbalance para serializacion."""
+        ratios = [self.levels[i].imbalance_ratio for i in streak
+                  if self.levels[i].imbalance_ratio != float('inf')]
+        avg_ratio = sum(ratios) / len(ratios) if ratios else 0
+        return {
+            "type": "STACKED_IMBALANCE",
+            "direction": direction,
+            "levels": streak.copy(),
+            "levels_count": len(streak),
+            "start_price": self.levels[streak[0]].price_min,
+            "end_price": self.levels[streak[-1]].price_max,
+            "mid_price": round(
+                (self.levels[streak[0]].price_min + self.levels[streak[-1]].price_max) / 2, 4
+            ),
+            "avg_ratio": round(avg_ratio, 2)
+        }
+
     def to_dict(self) -> dict:
         """Serializa el footprint a diccionario para la API."""
         return {
@@ -235,7 +296,8 @@ class Footprint:
             "poc_price": self.poc_price,
             "total_delta": round(self.total_delta, 4),
             "total_volume": round(self.total_volume, 4),
-            "imbalances": self.get_imbalances()
+            "imbalances": self.get_imbalances(),
+            "stacked_imbalances": self.get_stacked_imbalances()
         }
 
 

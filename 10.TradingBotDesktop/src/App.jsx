@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Activity, Settings, TrendingUp, AlertCircle, FileText } from 'lucide-react'
+import { Activity, Settings, TrendingUp, AlertCircle, FileText, Shield } from 'lucide-react'
 import './App.css'
 import { WS_URL, API_BASE_URL } from './config'
 import CredentialsPanel from './components/CredentialsPanel'
@@ -9,12 +9,14 @@ import AlertPanel from './components/AlertPanel'
 import LogsPanel from './components/LogsPanel'
 import PositionsPanel from './components/PositionsPanel'
 import OrdersPanel from './components/OrdersPanel'
+import RiskManagementModal from './components/RiskManagementModal'
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isConnected, setIsConnected] = useState(false)
   const [logs, setLogs] = useState([])
   const [ws, setWs] = useState(null)
+  const [showRiskModal, setShowRiskModal] = useState(false)
   const [stats, setStats] = useState({
     credentialsConfigured: false,
     symbolsConfigured: 0,
@@ -118,6 +120,15 @@ function App() {
           </div>
 
           <div className="header-right">
+            <button
+              className="risk-mgmt-btn"
+              onClick={() => setShowRiskModal(true)}
+              title="Risk Management"
+            >
+              <Shield size={18} />
+              Risk
+            </button>
+
             <div className="status-badge">
               <div className={`status-dot ${isConnected ? 'connected' : 'disconnected'}`} />
               {isConnected ? 'Connected' : 'Disconnected'}
@@ -210,6 +221,12 @@ function App() {
       <footer className="footer">
         <p>Trading Bot Desktop v1.0.0 | Built with React + FastAPI + Bybit API{isElectron ? ' | Electron' : ''}</p>
       </footer>
+
+      {/* Risk Management Modal */}
+      <RiskManagementModal
+        isOpen={showRiskModal}
+        onClose={() => setShowRiskModal(false)}
+      />
     </div>
   )
 }

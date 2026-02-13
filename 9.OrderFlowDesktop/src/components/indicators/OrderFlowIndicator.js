@@ -87,10 +87,8 @@ class OrderFlowIndicator extends IndicatorBase {
         const merged = { ...defaults, ...parsed };
         // Force enabled if it was somehow disabled
         merged.enabled = true;
-        // Force update minCandleWidth if it was set to old value (15)
-        if (merged.minCandleWidth === 15) {
-          merged.minCandleWidth = defaults.minCandleWidth;
-        }
+        // Always force minCandleWidth to default (8) - old persisted values (15, 20) block rendering
+        merged.minCandleWidth = defaults.minCandleWidth;
         if (merged.minCandleWidthFull === 80) {
           merged.minCandleWidthFull = defaults.minCandleWidthFull;
         }
@@ -119,7 +117,13 @@ class OrderFlowIndicator extends IndicatorBase {
       minCandleWidth: 8,      // Minimum width for basic display (reduced from 15)
       minCandleWidthFull: 60, // Width needed for full text display (reduced from 80)
       opacity: 0.9,
-      historyHours: 24        // Horas de historico de footprints (aumentado de 12 a 24)
+      historyHours: 24,       // Horas de historico de footprints (aumentado de 12 a 24)
+      stackedLineWidth: 2,    // Grosor de lineas de stacked imbalance (1-6)
+      stackedLineExtend: 3,   // Multiplicador de extension de linea (1=ancho vela, 5=5x ancho vela)
+      stackedBuyColor: '38,166,154',   // RGB del color BUY (verde)
+      stackedSellColor: '239,83,80',   // RGB del color SELL (rojo)
+      stackedOpacity: 0.7,     // Opacidad de las lineas stacked (0.1 - 1.0)
+      stackedMinVolumeZScore: 0 // Filtro minimo de volume z-score para stacked (0 = sin filtro)
     };
   }
 
@@ -417,20 +421,20 @@ class OrderFlowIndicator extends IndicatorBase {
 
     const candleWidth = bounds.width / visibleCandles.length;
 
-    // Minimum width check - if too small, don't render Order Flow
-    if (candleWidth < this.config.minCandleWidth) return;
+    // One-shot diagnostic log for first render with footprints
+    if (!this._loggedFirstRender && this.footprints.length > 0) {
+      this._loggedFirstRender = true;
+      const mode = candleWidth < this.config.minCandleWidth ? 'DOTS (zoomed out)' : 'FOOTPRINT (zoomed in)';
+      console.log(`[OrderFlow] [${this.symbol}] FIRST RENDER: ${this.footprints.length} fps, candleWidth=${candleWidth.toFixed(1)}px, minCandleWidth=${this.config.minCandleWidth}, mode=${mode}`);
+    }
+
+    // Minimum width check - if too small for full footprint, render imbalance dots instead
+    if (candleWidth < this.config.minCandleWidth) {
+      this.renderImbalanceMarkers(ctx, bounds, visibleCandles, priceContext, candleWidth);
+      return;
+    }
 
     const fullMode = candleWidth >= this.config.minCandleWidthFull;
-
-    // DEBUG: Verificar priceContext
-    if (priceContext) {
-      const { minPrice, maxPrice } = priceContext;
-      const range = maxPrice - minPrice;
-      // Log solo si el rango parece anormal (muy grande o muy pequeno)
-      if (range > 10000 || range < 1) {
-        console.warn(`[OrderFlow] PRICE RANGE ANOMALY: min=${minPrice}, max=${maxPrice}, range=${range}`);
-      }
-    }
 
     // Price to Y conversion
     const priceToY = (price) => {
@@ -590,7 +594,7 @@ class OrderFlowIndicator extends IndicatorBase {
 
     // 2. Draw Footprint (Bid | Ask) - center
     if (this.config.showFootprint) {
-      this.renderFootprint(ctx, footprint, footprintX, footprintWidth, priceToY, fullMode, candle);
+      this.renderFootprint(ctx, footprint, footprintX, footprintWidth, priceToY, fullMode, candle, unitX);
     }
 
     // 3. Draw Volume Profile bars (rightmost)
@@ -697,11 +701,28 @@ class OrderFlowIndicator extends IndicatorBase {
   /**
    * Render Footprint (Bid | Ask volumes per level)
    */
-  renderFootprint(ctx, footprint, x, width, priceToY, fullMode, candle) {
+  renderFootprint(ctx, footprint, x, width, priceToY, fullMode, candle, unitX) {
     const levels = footprint.levels;
     const pocIndex = footprint.poc_index;
     const imbalances = footprint.imbalances || [];
     const imbalanceSet = new Set(imbalances.map(ib => ib.level_index));
+
+    // Build stacked imbalance lookup: level_index -> direction
+    // Apply volume z-score filter: skip stacked imbalances from low-volume candles
+    const stackedImbalances = footprint.stacked_imbalances || [];
+    const minZScore = this.config.stackedMinVolumeZScore || 0;
+    const fpZScore = footprint.volume_zscore != null ? footprint.volume_zscore : 0;
+    const passesVolumeFilter = minZScore <= 0 || fpZScore >= minZScore;
+
+    const stackedSet = new Map(); // level_index -> direction
+    if (passesVolumeFilter) {
+      for (const si of stackedImbalances) {
+        const siLevels = si.levels || [];
+        for (const lvIdx of siLevels) {
+          stackedSet.set(lvIdx, si.direction);
+        }
+      }
+    }
 
     const halfWidth = width / 2;
     const levelGap = 1;
@@ -752,8 +773,40 @@ class OrderFlowIndicator extends IndicatorBase {
         ctx.fillRect(x, textY - 1, width, 2);
       }
 
-      // Imbalance border
-      if (this.config.showImbalances && imbalanceSet.has(i)) {
+      // Stacked imbalance - colored cell extended to the left (past the candle)
+      if (this.config.showImbalances && stackedSet.has(i)) {
+        const stackDir = stackedSet.get(i);
+        const rgb = stackDir === 'BUY'
+          ? (this.config.stackedBuyColor || '38,166,154')
+          : (this.config.stackedSellColor || '239,83,80');
+        const opacity = this.config.stackedOpacity != null ? this.config.stackedOpacity : 0.7;
+        const cellH = levelHeight - levelGap;
+
+        // Color the cell background with user color
+        ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.4})`;
+        ctx.fillRect(x, bgY, width, cellH);
+
+        // Colored border
+        ctx.strokeStyle = `rgba(${rgb}, 0.95)`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, bgY, width, cellH);
+
+        // Extend colored strip to the LEFT past the candle
+        // unitX is the start of the entire order flow unit
+        if (unitX != null) {
+          const extendLeft = x - unitX; // distance from footprint to unit start
+          if (extendLeft > 0) {
+            ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.6})`;
+            ctx.fillRect(unitX, bgY, extendLeft, cellH);
+            // Border on the extended strip
+            ctx.strokeStyle = `rgba(${rgb}, ${opacity * 0.8})`;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(unitX, bgY, extendLeft, cellH);
+          }
+        }
+      }
+      // Simple imbalance border (yellow) - only if NOT part of a stacked
+      else if (this.config.showImbalances && imbalanceSet.has(i)) {
         ctx.strokeStyle = this.colors.IMBALANCE_BORDER;
         ctx.lineWidth = 2;
         ctx.strokeRect(x, bgY, width, levelHeight - levelGap);
@@ -940,6 +993,82 @@ class OrderFlowIndicator extends IndicatorBase {
     console.log('\n[DEBUG FOOTPRINT] Analisis completado');
     return analysis;
   }
+
+  /**
+   * Renders horizontal lines for stacked imbalances when zoomed out (candleWidth < minCandleWidth).
+   * Each individual level of a stacked imbalance gets a horizontal line at its price.
+   * BUY imbalances = green line, SELL imbalances = red line.
+   * Line width is configurable via stackedLineWidth.
+   */
+  renderImbalanceMarkers(ctx, bounds, visibleCandles, priceContext, candleWidth) {
+    if (!priceContext || !priceContext.priceToY) return;
+    if (!this.footprints || this.footprints.length === 0) return;
+
+    ctx.save();
+
+    // Build footprint map for fast lookup
+    const fpMap = new Map();
+    for (const fp of this.footprints) {
+      fpMap.set(fp.candle_timestamp, fp);
+    }
+
+    const { x: boundsX } = bounds;
+    const lineWidth = this.config.stackedLineWidth || 2;
+    const extend = this.config.stackedLineExtend || 3;
+    const buyRgb = this.config.stackedBuyColor || '38,166,154';
+    const sellRgb = this.config.stackedSellColor || '239,83,80';
+    const baseOpacity = this.config.stackedOpacity != null ? this.config.stackedOpacity : 0.7;
+    const minZScore = this.config.stackedMinVolumeZScore || 0;
+
+    // Line extends beyond candle: centered on candle, total width = candleWidth * extend
+    const totalLineWidth = candleWidth * extend;
+    const extraHalf = (totalLineWidth - candleWidth) / 2;
+
+    for (let i = 0; i < visibleCandles.length; i++) {
+      const candle = visibleCandles[i];
+      const fp = this._findFootprintForCandle(candle.timestamp, fpMap);
+      if (!fp || !fp.stacked_imbalances || fp.stacked_imbalances.length === 0) continue;
+
+      // Volume z-score filter: skip footprints from low-volume candles
+      if (minZScore > 0) {
+        const fpZScore = fp.volume_zscore != null ? fp.volume_zscore : 0;
+        if (fpZScore < minZScore) continue;
+      }
+
+      const candleX = boundsX + (i * candleWidth);
+      const levels = fp.levels || [];
+
+      // Line start/end with extension, clamped to chart bounds
+      const lineStartX = Math.max(boundsX, candleX - extraHalf);
+      const lineEndX = Math.min(boundsX + bounds.width, candleX + candleWidth + extraHalf);
+
+      for (const si of fp.stacked_imbalances) {
+        const siLevels = si.levels || [];
+        if (siLevels.length === 0) continue;
+
+        const rgb = si.direction === 'BUY' ? buyRgb : sellRgb;
+        ctx.strokeStyle = `rgba(${rgb}, ${baseOpacity})`;
+        ctx.lineWidth = lineWidth;
+
+        // Draw a horizontal line at each level's price_mid
+        for (const lvIdx of siLevels) {
+          const level = levels[lvIdx];
+          if (!level) continue;
+
+          const priceMid = level.price_mid || ((level.price_min + level.price_max) / 2);
+          const y = priceContext.priceToY(priceMid);
+
+          ctx.beginPath();
+          ctx.moveTo(lineStartX, y);
+          ctx.lineTo(lineEndX, y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    ctx.restore();
+  }
+
 }
 
 export default OrderFlowIndicator;

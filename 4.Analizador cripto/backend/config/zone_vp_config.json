@@ -1,0 +1,27 @@
+{
+  "enabled": true,
+  "symbols": [
+    "BTCUSDT"
+  ],
+  "interval": "1",
+  "window_size": 30,
+  "window_step": 5,
+  "bins": 50,
+  "va_percent": 0.7,
+  "min_d_score": 40,
+  "include_pb_shapes": true,
+  "min_zone_candles": 10,
+  "merge_gap": 3,
+  "max_range_pct": 2,
+  "lookforward_bars": 100,
+  "tp_rr_ratio": 2,
+  "sl_buffer_pct": 0.1,
+  "sl_mode": "below_va",
+  "entry_mode": "zone",
+  "breakout_confirm_bars": 0,
+  "position_mode": "sequential",
+  "alerts_enabled": true,
+  "alert_target_url": "http://localhost:5000/api/watchlist-alert",
+  "cooldown_minutes": 5,
+  "warmup_candles": 50
+}
