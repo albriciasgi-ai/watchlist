@@ -1111,6 +1111,10 @@ const SingleSymbolAnalyzer = () => {
                   if (ofIndicator) {
                     ofIndicator.updateConfig(config);
                     setOrderFlowConfig({ ...config });
+                    // Forzar redraw del grafico para aplicar cambios visuales inmediatamente
+                    if (manager.requestRedraw) {
+                      manager.requestRedraw();
+                    }
                   }
                 }}
               />

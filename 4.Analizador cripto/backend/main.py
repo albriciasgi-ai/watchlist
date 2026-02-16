@@ -78,7 +78,13 @@ from zone_realtime_v2 import get_zone_service_v2, backtest_v2, ZoneV2Config
 
 # Zone VP (Volume Profile) scanner imports
 from zone_vp_service import get_vp_zone_service
-from zone_vp_scanner import backtest_vp, VPScannerConfig
+from zone_vp_scanner import (
+    backtest_vp, VPScannerConfig, simulate_strategy_only,
+    get_strategy_param_defs, scan_zones, scan_zones_progressive,
+    save_zone_cache, load_zone_cache, is_strategy_only_change,
+    get_detection_param_names, _simulate_trades,
+    save_incremental_state, load_incremental_state, delete_incremental_state,
+)
 
 app = FastAPI(
     title="Crypto Watchlist Backend",
@@ -101,10 +107,14 @@ CACHE_DIR.mkdir(exist_ok=True)
 # Cache reducido a 30 minutos para datos más frescos
 CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 
+# Cache en memoria para velas historicas (evita re-descargar de Bybit)
+# Key: "{symbol}_{interval}", Value: {"candles": [...], "timestamp": time.time(), "days": N}
+_historical_candles_cache: dict = {}
+
 # Límites máximos de días por timeframe
 MAX_DAYS_BY_INTERVAL = {
-    "1": 7,       # 1 min -> max 7 dias
-    "3": 21,      # 3 min -> max 21 dias
+    "1": 400,     # 1 min -> max 400 dias (~576k velas) - con streaming SSE
+    "3": 400,     # 3 min -> max 400 dias
     "5": 400,     # 5 min -> max 400 dias (~115k velas) - con streaming SSE
     "15": 180,    # 15 min -> max 180 dias
     "30": 360,    # 30 min -> max 360 dias
@@ -132,6 +142,60 @@ MAX_DAYS_ZONES = {
 
 # Estado global de optimizacion VP (para consulta de progreso)
 _vp_optimize_progress = {
+    "running": False,
+    "phase": "",  # "estimating" | "running" | ""
+    "current": 0,
+    "total": 0,
+    "elapsed": 0,
+    "avg_per_combo": 0,
+    "estimated_remaining": 0,
+    "symbol": "",
+    "metric": "",
+    "best_so_far": None,
+    "est_current": 0,    # Sample actual durante estimacion
+    "est_total": 0,      # Total samples en estimacion
+    "est_elapsed": 0,    # Tiempo transcurrido en estimacion
+}
+
+# Estado global de backtest VP (para barra de progreso)
+_vp_backtest_progress = {
+    "running": False,
+    "phase": "",          # "fetching" | "detecting" | "simulating" | "done"
+    "current": 0,
+    "total": 0,
+    "elapsed": 0,
+    "estimated_remaining": 0,
+    "zones_found": 0,
+    "symbol": "",
+}
+
+# Estado global de deteccion incremental VP (reciente->antiguo, con stop/resume)
+_vp_incremental = {
+    "running": False,
+    "paused": False,
+    "stop_requested": False,
+    "phase": "",             # "fetching" | "detecting" | "done" | "stopped" | "paused"
+    "current_chunk": 0,
+    "total_chunks": 0,
+    "windows_done": 0,
+    "windows_total": 0,
+    "elapsed": 0,
+    "estimated_remaining": 0,
+    "symbol": "",
+    "start_time": 0,
+    # Zonas acumuladas (con trades simulados)
+    "zones": [],
+    # Metadata para resume
+    "candles": None,         # Referencia a las velas (no serializable, solo en memoria)
+    "config_overrides": None,
+    "interval": "",
+    "days": 0,
+    "chunks_completed": [],  # Indices de chunks ya procesados
+    "chunk_boundaries": [],  # [(start_idx, end_idx), ...] de cada chunk
+}
+
+# Estado global de optimizacion de estrategia VP (zonas fijas)
+_vp_strat_optimize_progress = {
     "running": False,
     "current": 0,
     "total": 0,
@@ -348,15 +412,145 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
             start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
             print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
 
+            # Verificar cache en memoria (solo para llamadas internas como backtest/optimize)
+            # TTL largo (2h) + carga incremental si expiro
+            _CACHE_TTL = 7200  # 2 horas
+            if skip_day_limit:
+                cache_key = f"{symbol}_{interval_final}"
+                cached = _historical_candles_cache.get(cache_key)
+                if cached:
+                    cache_age = time.time() - cached["timestamp"]
+                    cached_candles = cached["candles"]
+                    has_enough = len(cached_candles) >= total_candles_needed * 0.8
+
+                    if has_enough and cache_age < _CACHE_TTL:
+                        # Cache fresco - usar directamente
+                        if len(cached_candles) > total_candles_needed * 1.1:
+                            result_candles = cached_candles[-total_candles_needed:]
+                        else:
+                            result_candles = cached_candles
+                        print(f"[{symbol}] [DATA] MEMORY CACHE HIT: {len(result_candles)} velas "
+                              f"(necesarias ~{total_candles_needed}, edad={cache_age:.0f}s)")
+                        now_colombia = datetime.now(COLOMBIA_TZ)
+                        return {
+                            "symbol": symbol, "interval": interval_final,
+                            "data": result_candles, "success": True,
+                            "total_candles": len(result_candles),
+                            "requested_candles": total_candles_needed,
+                            "updated": int(time.time() * 1000),
+                            "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
+                            "timezone": "America/Bogota (UTC-5)",
+                            "days_requested": days, "days_fetched": days_to_fetch,
+                            "max_days_allowed": max_days_allowed,
+                            "incremental": False, "since_timestamp": None,
+                            "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
+                            "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
+                            "from_cache": True,
+                        }
+
+                    if has_enough and cache_age >= _CACHE_TTL:
+                        # Cache expirado pero con datos suficientes - carga incremental
+                        last_ts = cached_candles[-1]["timestamp"]
+                        print(f"[{symbol}] [DATA] CACHE EXPIRED ({cache_age:.0f}s) - carga incremental desde {last_ts}")
+                        try:
+                            inc_url = (
+                                "https://api.bybit.com/v5/market/kline?"
+                                f"category=linear&symbol={symbol}&interval={interval_final}"
+                                f"&start={last_ts + interval_minutes * 60 * 1000}&limit=1000"
+                            )
+                            async with httpx.AsyncClient(timeout=30) as inc_client:
+                                inc_r = await inc_client.get(inc_url)
+                                inc_data = inc_r.json()
+                            if inc_data.get("retCode") == 0:
+                                new_raw = inc_data["result"]["list"]
+                                if new_raw:
+                                    new_raw.reverse()
+                                    new_candles = []
+                                    for c in new_raw:
+                                        ts_ms = int(c[0])
+                                        if ts_ms > last_ts:
+                                            new_candles.append({
+                                                "timestamp": ts_ms,
+                                                "open": float(c[1]), "high": float(c[2]),
+                                                "low": float(c[3]), "close": float(c[4]),
+                                                "volume": float(c[5]),
+                                                "in_progress": False,
+                                            })
+                                    if new_candles:
+                                        merged = cached_candles + new_candles
+                                        # Actualizar cache con datos frescos
+                                        _historical_candles_cache[cache_key] = {
+                                            "candles": merged,
+                                            "timestamp": time.time(),
+                                            "days": cached.get("days", days_to_fetch),
+                                        }
+                                        print(f"[{symbol}] [DATA] INCREMENTAL MERGE: +{len(new_candles)} velas "
+                                              f"(total: {len(merged)})")
+                                        if len(merged) > total_candles_needed * 1.1:
+                                            result_candles = merged[-total_candles_needed:]
+                                        else:
+                                            result_candles = merged
+                                    else:
+                                        # Sin velas nuevas, renovar TTL
+                                        _historical_candles_cache[cache_key]["timestamp"] = time.time()
+                                        result_candles = cached_candles
+                                        print(f"[{symbol}] [DATA] INCREMENTAL: sin velas nuevas, TTL renovado")
+                                else:
+                                    _historical_candles_cache[cache_key]["timestamp"] = time.time()
+                                    result_candles = cached_candles
+                                    print(f"[{symbol}] [DATA] INCREMENTAL: lista vacia, TTL renovado")
+
+                                if len(result_candles) > total_candles_needed * 1.1:
+                                    result_candles = result_candles[-total_candles_needed:]
+                                now_colombia = datetime.now(COLOMBIA_TZ)
+                                return {
+                                    "symbol": symbol, "interval": interval_final,
+                                    "data": result_candles, "success": True,
+                                    "total_candles": len(result_candles),
+                                    "requested_candles": total_candles_needed,
+                                    "updated": int(time.time() * 1000),
+                                    "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
+                                    "timezone": "America/Bogota (UTC-5)",
+                                    "days_requested": days, "days_fetched": days_to_fetch,
+                                    "max_days_allowed": max_days_allowed,
+                                    "incremental": True, "since_timestamp": last_ts,
+                                    "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
+                                    "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
+                                    "from_cache": True,
+                                }
+                        except Exception as inc_err:
+                            # Si falla incremental, usar cache viejo renovando TTL
+                            print(f"[{symbol}] [DATA] INCREMENTAL FAILED: {inc_err} - usando cache viejo")
+                            _historical_candles_cache[cache_key]["timestamp"] = time.time()
+                            result_candles = cached_candles
+                            if len(result_candles) > total_candles_needed * 1.1:
+                                result_candles = result_candles[-total_candles_needed:]
+                            now_colombia = datetime.now(COLOMBIA_TZ)
+                            return {
+                                "symbol": symbol, "interval": interval_final,
+                                "data": result_candles, "success": True,
+                                "total_candles": len(result_candles),
+                                "requested_candles": total_candles_needed,
+                                "updated": int(time.time() * 1000),
+                                "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
+                                "timezone": "America/Bogota (UTC-5)",
+                                "days_requested": days, "days_fetched": days_to_fetch,
+                                "max_days_allowed": max_days_allowed,
+                                "incremental": False, "since_timestamp": None,
+                                "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
+                                "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
+                                "from_cache": True,
+                            }
+
         # CRÍTICO: Limitar a 1000 velas por request (máximo de Bybit)
         limit_per_request = min(1000, total_candles_needed)
 
         all_candles = []
         current_start = start_ms
         
-        async with httpx.AsyncClient(timeout=60) as client:
+        async with httpx.AsyncClient(timeout=30) as client:
             request_count = 0
-            max_requests = 600  # 600 requests x 1000 velas = 600,000 velas max (~400 dias en 1min)
+            max_requests = 120  # 120 requests x 1000 velas = 120,000 velas max
             consecutive_errors = 0
             max_consecutive_errors = 3
 
@@ -466,6 +660,19 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
 
         print(f"[{symbol}] Historical: [OK] Devolviendo {len(candles)} velas (esperadas: {total_candles_needed})")
 
+        # Guardar en cache en memoria (para reutilizar en backtest sin re-descargar)
+        if since_timestamp is None and len(candles) > 0:
+            cache_key = f"{symbol}_{interval_final}"
+            existing = _historical_candles_cache.get(cache_key)
+            # Solo actualizar si tenemos mas velas que lo cacheado
+            if not existing or len(candles) >= len(existing.get("candles", [])):
+                _historical_candles_cache[cache_key] = {
+                    "candles": candles,
+                    "timestamp": time.time(),
+                    "days": days_to_fetch,
+                }
+                print(f"[{symbol}] [CACHE] Guardadas {len(candles)} velas en memoria ({cache_key})")
+
         return {
             "symbol": symbol,
             "interval": interval_final,
@@ -535,7 +742,7 @@ async def get_historical_stream(symbol: str, interval: str = "15", days: int = 3
 
             async with httpx.AsyncClient(timeout=60) as client:
                 request_count = 0
-                max_requests = 120  # 120 requests x 1000 = 120,000 velas max (~416 dias en 5min)
+                max_requests = 600  # 600 requests x 1000 = 600,000 velas max (~400 dias en 1min)
                 consecutive_errors = 0
                 max_consecutive_errors = 3
 
@@ -603,6 +810,18 @@ async def get_historical_stream(symbol: str, interval: str = "15", days: int = 3
 
             if len(candles) > total_candles_needed:
                 candles = candles[-total_candles_needed:]
+
+            # Guardar en cache en memoria (para reutilizar en backtest)
+            if len(candles) > 0:
+                cache_key = f"{symbol}_{interval_final}"
+                existing = _historical_candles_cache.get(cache_key)
+                if not existing or len(candles) >= len(existing.get("candles", [])):
+                    _historical_candles_cache[cache_key] = {
+                        "candles": candles,
+                        "timestamp": time.time(),
+                        "days": days_to_fetch,
+                    }
+                    print(f"[{symbol}] [CACHE] SSE: Guardadas {len(candles)} velas en memoria ({cache_key})")
 
             # Enviar datos finales
             yield f"data: {json.dumps({'type': 'complete', 'total_candles': len(candles), 'data': candles})}\n\n"
@@ -4277,20 +4496,20 @@ async def get_vwap_service_data(
         vwap_service = get_vwap_service()
 
         # Max days per interval (matches frontend DAYS_OPTIONS_BY_INTERVAL)
-        MAX_DAYS_BY_INTERVAL = {
-            "1": 5,
-            "3": 10,
-            "5": 30,
-            "15": 90,
-            "30": 150,
-            "60": 360,
-            "120": 540,
-            "240": 720,
-            "D": 1440,
-            "W": 730
+        MAX_DAYS_BY_INTERVAL_VWAP = {
+            "1": 400,
+            "3": 400,
+            "5": 400,
+            "15": 180,
+            "30": 360,
+            "60": 730,
+            "120": 730,
+            "240": 1095,
+            "D": 2000,
+            "W": 1000
         }
 
-        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 360)
+        max_days = MAX_DAYS_BY_INTERVAL_VWAP.get(interval, 360)
         days_to_load = min(days, max_days)
 
         # Check current state
@@ -6899,20 +7118,134 @@ async def reanalyze_vp_zones():
         return {"success": False, "error": str(e)}
 
 
+def _fetch_candles_sync(symbol: str, interval: str, days: int, progress_dict: dict) -> list:
+    """
+    Descarga velas historicas de forma SINCRONA (para usar en thread pool).
+    Actualiza progress_dict durante la descarga para que el polling funcione.
+    """
+    import time as _time
+    import httpx as _httpx
+
+    interval_clean = (
+        interval.replace("m", "").replace("h", "").replace("d", "D").replace("w", "W")
+    )
+    if "h" in interval.lower() and interval_clean.isdigit():
+        interval_clean = str(int(interval_clean) * 60)
+    interval_final = INTERVAL_MAP.get(interval_clean, "15")
+    interval_minutes = get_interval_minutes(interval_final)
+
+    now_ms = int(_time.time() * 1000)
+    end_ms = now_ms + (10 * 60 * 1000)
+    start_ms = now_ms - (days * 24 * 60 * 60 * 1000)
+    total_candles_needed = int((days * 24 * 60) / interval_minutes)
+
+    limit_per_request = min(1000, total_candles_needed)
+    total_requests_est = max(1, (total_candles_needed + limit_per_request - 1) // limit_per_request)
+
+    progress_dict["phase"] = "fetching"
+    progress_dict["total"] = total_requests_est
+    progress_dict["current"] = 0
+
+    all_candles = []
+    current_start = start_ms
+    max_requests = 600
+    consecutive_errors = 0
+
+    print(f"[{symbol}] [VP BACKTEST FETCH] Necesita ~{total_candles_needed} velas ({total_requests_est} requests est.)")
+
+    with _httpx.Client(timeout=60) as client:
+        request_count = 0
+        while len(all_candles) < total_candles_needed and request_count < max_requests:
+            request_count += 1
+            candles_remaining = total_candles_needed - len(all_candles)
+            fetch_limit = min(limit_per_request, candles_remaining)
+
+            url = (
+                "https://api.bybit.com/v5/market/kline?"
+                f"category=linear&symbol={symbol}&interval={interval_final}"
+                f"&start={current_start}&limit={fetch_limit}"
+            )
+
+            try:
+                r = client.get(url)
+                data = r.json()
+                consecutive_errors = 0
+            except Exception as e:
+                consecutive_errors += 1
+                print(f"[{symbol}] [VP BACKTEST FETCH] Request #{request_count}: ERROR ({e}) - {consecutive_errors}/3")
+                if consecutive_errors >= 3:
+                    break
+                _time.sleep(1)
+                continue
+
+            if data.get("retCode") != 0:
+                print(f"[{symbol}] [VP BACKTEST FETCH] Bybit error: {data.get('retMsg')}")
+                break
+
+            batch = data["result"]["list"]
+            if not batch:
+                break
+
+            batch.reverse()
+            all_candles.extend(batch)
+
+            # Actualizar progreso
+            progress_dict["current"] = request_count
+            progress_dict["total"] = total_requests_est
+
+            if request_count <= 3 or request_count % 20 == 0:
+                print(f"[{symbol}] [VP BACKTEST FETCH] Request #{request_count}/{total_requests_est}: "
+                      f"{len(all_candles)}/{total_candles_needed} velas")
+
+            last_ts = int(batch[-1][0])
+            current_start = last_ts + (interval_minutes * 60 * 1000)
+            if current_start >= end_ms or len(all_candles) >= total_candles_needed:
+                break
+
+            _time.sleep(0.05)
+
+    print(f"[{symbol}] [VP BACKTEST FETCH] Completado: {len(all_candles)} velas en {request_count} requests")
+
+    # Convertir a formato dict
+    current_time_utc = int(_time.time() * 1000)
+    candles = []
+    for c in all_candles:
+        ts_ms = int(c[0])
+        interval_ms = interval_minutes * 60 * 1000
+        time_diff_minutes = (current_time_utc - ts_ms) / (1000 * 60)
+        candles.append({
+            "timestamp": ts_ms,
+            "open": float(c[1]),
+            "high": float(c[2]),
+            "low": float(c[3]),
+            "close": float(c[4]),
+            "volume": float(c[5]),
+            "in_progress": time_diff_minutes < interval_minutes,
+        })
+
+    return candles
+
+
 @app.post("/api/zones/vp/backtest")
 async def backtest_vp_zones(request: Request):
     """
     Backtest historico de zonas VP.
     Ejecuta scan_zones + simulacion de trades sobre datos historicos.
+    Si hay zonas cacheadas en disco y solo cambiaron params de estrategia,
+    salta la deteccion y solo re-simula trades (segundos en vez de horas).
+    Todo corre en thread pool para no bloquear el event loop.
     """
     import time as _time
+    import asyncio as _asyncio
 
+    global _vp_backtest_progress
     try:
         body = await request.json()
         symbol = body.get("symbol", "BTCUSDT")
         interval = body.get("interval", "60")
         days = body.get("days", 30)
         config_overrides = body.get("config", {})
+        force_redetect = body.get("force_redetect", False)
 
         print(f"[{symbol}] [VP BACKTEST] interval={interval}, days={days}")
 
@@ -6920,24 +7253,305 @@ async def backtest_vp_zones(request: Request):
         if days > max_days:
             days = max_days
 
-        _fetch_start = _time.time()
-        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
-        _fetch_elapsed = _time.time() - _fetch_start
+        # Inicializar progreso
+        _vp_backtest_progress["running"] = True
+        _vp_backtest_progress["phase"] = "fetching"
+        _vp_backtest_progress["current"] = 0
+        _vp_backtest_progress["total"] = 0
+        _vp_backtest_progress["elapsed"] = 0
+        _vp_backtest_progress["estimated_remaining"] = 0
+        _vp_backtest_progress["zones_found"] = 0
+        _vp_backtest_progress["symbol"] = symbol
+        _vp_backtest_progress["start_time"] = _time.time()
 
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+        # Resolver interval final
+        interval_clean = (
+            interval.replace("m", "").replace("h", "").replace("d", "D").replace("w", "W")
+        )
+        if "h" in interval.lower() and interval_clean.isdigit():
+            interval_clean = str(int(interval_clean) * 60)
+        interval_final = INTERVAL_MAP.get(interval_clean, "15")
 
-        candles = historical['data']
-        print(f"[{symbol}] [VP BACKTEST] {len(candles)} velas en {_fetch_elapsed:.1f}s")
+        # =====================================================================
+        # FAST PATH: Verificar cache de zonas en disco
+        # Si solo cambiaron params de estrategia, reusar zonas detectadas
+        # =====================================================================
+        zone_cache = None
+        if not force_redetect:
+            zone_cache = load_zone_cache(config_overrides, symbol, interval_final, days)
+
+        if zone_cache and not force_redetect:
+            cached_zones = zone_cache.get('zones', [])
+            cached_det_params = zone_cache.get('detection_params', {})
+
+            if is_strategy_only_change(config_overrides, cached_det_params):
+                print(f"[{symbol}] [VP BACKTEST] ZONE CACHE HIT: {len(cached_zones)} zonas, "
+                      f"solo re-simulando estrategia...")
+                _vp_backtest_progress["phase"] = "simulating"
+                _vp_backtest_progress["zones_found"] = len(cached_zones)
+                _vp_backtest_progress["current"] = 0
+                _vp_backtest_progress["total"] = len(cached_zones)
+
+                # Necesitamos las velas para simular trades
+                cache_key = f"{symbol}_{interval_final}"
+                cached_candles = _historical_candles_cache.get(cache_key)
+                candles = None
+                _fetch_elapsed = 0
+
+                if cached_candles:
+                    cache_age = _time.time() - cached_candles["timestamp"]
+                    interval_minutes = get_interval_minutes(interval_final)
+                    needed_candles = int((days * 24 * 60) / interval_minutes)
+                    if (len(cached_candles["candles"]) >= needed_candles * 0.8
+                            and cache_age < 600):
+                        candles = cached_candles["candles"]
+                        if len(candles) > needed_candles * 1.1:
+                            candles = candles[-needed_candles:]
+
+                if candles is None:
+                    def run_fetch():
+                        return _fetch_candles_sync(
+                            symbol, interval, days, _vp_backtest_progress)
+                    loop = _asyncio.get_event_loop()
+                    _fs = _time.time()
+                    candles = await loop.run_in_executor(None, run_fetch)
+                    _fetch_elapsed = _time.time() - _fs
+                    if not candles:
+                        _vp_backtest_progress["running"] = False
+                        _vp_backtest_progress["phase"] = ""
+                        return {"success": False,
+                                "error": "No se pudieron obtener datos historicos"}
+                    _historical_candles_cache[cache_key] = {
+                        "candles": candles, "timestamp": _time.time(), "days": days}
+
+                # Simular trades con los params actuales sobre las zonas cacheadas
+                _candles_for_sim = candles
+                _zones_for_sim = cached_zones
+
+                def run_resimulate():
+                    import copy
+                    cfg = VPScannerConfig()
+                    if config_overrides:
+                        for key, val in config_overrides.items():
+                            if hasattr(cfg, key):
+                                expected_type = type(getattr(cfg, key))
+                                if expected_type == bool and not isinstance(val, bool):
+                                    val = bool(val)
+                                elif expected_type == int and isinstance(val, float):
+                                    val = int(val)
+                                elif expected_type == float and isinstance(val, int):
+                                    val = float(val)
+                                setattr(cfg, key, val)
+                    zones_copy = copy.deepcopy(_zones_for_sim)
+                    # Filtrar por d_score
+                    if cfg.min_d_score > 0:
+                        zones_copy = [z for z in zones_copy
+                                      if z.get('d_score', 0) >= cfg.min_d_score]
+                    zones_with_trades = _simulate_trades(zones_copy, _candles_for_sim, cfg)
+                    # Calcular stats (igual que backtest_vp)
+                    all_trades = []
+                    for z in zones_with_trades:
+                        if z.get('mr_trades'):
+                            for t in z['mr_trades']:
+                                all_trades.append(t)
+                        elif z.get('trade_result') in ('WIN', 'LOSS', 'OPEN'):
+                            all_trades.append(z)
+                    resolved = [t for t in all_trades
+                                if t.get('trade_result') in ('WIN', 'LOSS')]
+                    wins = [t for t in resolved if t['trade_result'] == 'WIN']
+                    losses = [t for t in resolved if t['trade_result'] == 'LOSS']
+                    total_closed = len(wins) + len(losses)
+                    total_pnl_r = sum(t.get('trade_pnl_r', 0) for t in resolved)
+                    win_rate = (len(wins) / total_closed * 100) if total_closed > 0 else 0
+                    expectancy = (total_pnl_r / total_closed) if total_closed > 0 else 0
+                    gross_profit = sum(t.get('trade_pnl_r', 0) for t in wins)
+                    gross_loss = abs(sum(t.get('trade_pnl_r', 0) for t in losses))
+                    profit_factor = (gross_profit / gross_loss) if gross_loss > 0 else (
+                        99.9 if gross_profit > 0 else 0)
+                    # Max drawdown
+                    trades_sorted = sorted(resolved,
+                                           key=lambda t: t.get('entry_timestamp', 0))
+                    max_equity = 0.0
+                    max_dd = 0.0
+                    equity = 0.0
+                    for t in trades_sorted:
+                        equity += t.get('trade_pnl_r', 0)
+                        if equity > max_equity:
+                            max_equity = equity
+                        dd = max_equity - equity
+                        if dd > max_dd:
+                            max_dd = dd
+                    # Equity curve
+                    equity_curve = []
+                    running_equity = 0.0
+                    for t in trades_sorted:
+                        running_equity += t.get('trade_pnl_r', 0)
+                        equity_curve.append({
+                            'timestamp': t.get('exit_timestamp', t.get('entry_timestamp', 0)),
+                            'equity': round(running_equity, 2),
+                        })
+                    return {
+                        'zones': zones_with_trades,
+                        'stats': {
+                            'entry_strategy': cfg.entry_strategy,
+                            'total_zones': len(zones_with_trades),
+                            'total_trades': len(all_trades),
+                            'wins': len(wins),
+                            'losses': len(losses),
+                            'open': len([t for t in all_trades
+                                        if t.get('trade_result') == 'OPEN']),
+                            'total_closed': total_closed,
+                            'win_rate': round(win_rate, 1),
+                            'total_pnl_r': round(total_pnl_r, 2),
+                            'expectancy': round(expectancy, 3),
+                            'profit_factor': round(profit_factor, 2),
+                            'max_drawdown_r': round(max_dd, 2),
+                        },
+                        'equity_curve': equity_curve,
+                    }
+
+                loop = _asyncio.get_event_loop()
+                _sim_start = _time.time()
+                result = await loop.run_in_executor(None, run_resimulate)
+                _sim_elapsed = _time.time() - _sim_start
+
+                _vp_backtest_progress["phase"] = "done"
+                _vp_backtest_progress["running"] = False
+
+                _total = _fetch_elapsed + _sim_elapsed
+                print(f"[{symbol}] [VP BACKTEST] FAST PATH: {_total:.1f}s "
+                      f"(fetch={_fetch_elapsed:.1f}s + sim={_sim_elapsed:.1f}s) | "
+                      f"{result['stats']['total_zones']} zonas, "
+                      f"WR={result['stats']['win_rate']}%, "
+                      f"PnL={result['stats']['total_pnl_r']}R")
+
+                # Guardar estado completo (con trades) para restaurar al recargar
+                try:
+                    save_incremental_state({
+                        "symbol": symbol,
+                        "interval": interval_final,
+                        "days": days,
+                        "config_overrides": config_overrides,
+                        "zones": result.get('zones', []),
+                        "chunks_completed": [0],
+                        "chunk_boundaries": [(0, len(_candles_for_sim))],
+                        "total_chunks": 1,
+                        "phase": "done",
+                        "elapsed": round(_total, 1),
+                    })
+                except Exception as e:
+                    print(f"[{symbol}] [INC_CACHE] Error guardando fast-path: {e}")
+
+                return {
+                    "success": True,
+                    "symbol": symbol,
+                    "interval": interval,
+                    "days": days,
+                    "candles_count": len(_candles_for_sim),
+                    "fetch_time": round(_fetch_elapsed, 1),
+                    "from_zone_cache": True,
+                    **result,
+                }
+
+        # =====================================================================
+        # FULL PATH: Deteccion completa + simulacion (sin cache o params cambiados)
+        # =====================================================================
+
+        # 1) Intentar usar cache de velas en memoria
+        cache_key = f"{symbol}_{interval_final}"
+        cached = _historical_candles_cache.get(cache_key)
+        candles = None
+        _fetch_elapsed = 0
+
+        if cached:
+            cache_age = _time.time() - cached["timestamp"]
+            cached_candles = cached["candles"]
+            interval_minutes = get_interval_minutes(interval_final)
+            needed_candles = int((days * 24 * 60) / interval_minutes)
+
+            # Usar cache si: tiene >= 80% de las velas necesarias y tiene < 10 min
+            if len(cached_candles) >= needed_candles * 0.8 and cache_age < 600:
+                # Recortar si tiene demasiadas velas (usuario pidio menos dias)
+                if len(cached_candles) > needed_candles * 1.1:
+                    candles = cached_candles[-needed_candles:]
+                else:
+                    candles = cached_candles
+                print(f"[{symbol}] [VP BACKTEST] CANDLE CACHE HIT: {len(candles)} velas "
+                      f"(necesarias ~{needed_candles}, edad={cache_age:.0f}s)")
+            else:
+                print(f"[{symbol}] [VP BACKTEST] CANDLE CACHE MISS: cached={len(cached_candles)} "
+                      f"(necesarias ~{needed_candles}), edad={cache_age:.0f}s")
+
+        # 2) Si no hay cache, descargar en thread pool
+        if candles is None:
+            def run_fetch():
+                return _fetch_candles_sync(symbol, interval, days, _vp_backtest_progress)
+
+            loop = _asyncio.get_event_loop()
+            _fetch_start = _time.time()
+            candles = await loop.run_in_executor(None, run_fetch)
+            _fetch_elapsed = _time.time() - _fetch_start
+
+            if not candles:
+                _vp_backtest_progress["running"] = False
+                _vp_backtest_progress["phase"] = ""
+                return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+            # Guardar en cache para futuras consultas
+            _historical_candles_cache[cache_key] = {
+                "candles": candles,
+                "timestamp": _time.time(),
+                "days": days,
+            }
+            print(f"[{symbol}] [VP BACKTEST] {len(candles)} velas descargadas en {_fetch_elapsed:.1f}s")
+
+        # 3) Deteccion + simulacion en thread pool
+        _vp_backtest_progress["phase"] = "detecting"
+        _vp_backtest_progress["total"] = len(candles)
+        _vp_backtest_progress["current"] = 0
+
+        _candles_for_bt = candles  # Captura para closure
 
         def run_backtest():
-            return backtest_vp(candles, config_overrides)
+            return backtest_vp(_candles_for_bt, config_overrides, progress_dict=_vp_backtest_progress)
 
-        import asyncio as _asyncio
         loop = _asyncio.get_event_loop()
+        _bt_start = _time.time()
         result = await loop.run_in_executor(None, run_backtest)
+        _bt_elapsed = _time.time() - _bt_start
 
-        print(f"[{symbol}] [VP BACKTEST] {result['stats']['total_zones']} zonas, "
+        # 4) Guardar zonas detectadas en disco para futuros fast-paths
+        try:
+            save_zone_cache(
+                result.get('zones', []), config_overrides,
+                symbol, interval_final, days, len(_candles_for_bt))
+        except Exception as e:
+            print(f"[{symbol}] [ZONE_CACHE] Error guardando: {e}")
+
+        # 5) Guardar estado completo (con trades) para restaurar al recargar app
+        try:
+            save_incremental_state({
+                "symbol": symbol,
+                "interval": interval_final,
+                "days": days,
+                "config_overrides": config_overrides,
+                "zones": result.get('zones', []),
+                "chunks_completed": [0],
+                "chunk_boundaries": [(0, len(_candles_for_bt))],
+                "total_chunks": 1,
+                "phase": "done",
+                "elapsed": round(_bt_elapsed, 1),
+            })
+        except Exception as e:
+            print(f"[{symbol}] [INC_CACHE] Error guardando backtest completo: {e}")
+
+        _vp_backtest_progress["phase"] = "done"
+        _vp_backtest_progress["running"] = False
+
+        _total_elapsed = _fetch_elapsed + _bt_elapsed
+        print(f"[{symbol}] [VP BACKTEST] FULL PATH: {_total_elapsed:.1f}s "
+              f"(fetch={_fetch_elapsed:.1f}s + backtest={_bt_elapsed:.1f}s) | "
+              f"{result['stats']['total_zones']} zonas, "
               f"WR={result['stats']['win_rate']}%, PnL={result['stats']['total_pnl_r']}R")
 
         return {
@@ -6945,16 +7559,640 @@ async def backtest_vp_zones(request: Request):
             "symbol": symbol,
             "interval": interval,
             "days": days,
-            "candles_count": len(candles),
+            "candles_count": len(_candles_for_bt),
             "fetch_time": round(_fetch_elapsed, 1),
+            "from_zone_cache": False,
             **result,
         }
 
     except Exception as e:
+        _vp_backtest_progress["running"] = False
+        _vp_backtest_progress["phase"] = ""
         print(f"[VP BACKTEST ERROR] {str(e)}")
         import traceback
         traceback.print_exc()
         return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/vp/backtest-progress")
+async def get_vp_backtest_progress():
+    """Retorna el estado actual del backtest VP en curso."""
+    import time as _t
+    result = dict(_vp_backtest_progress)
+    # Calcular elapsed en tiempo real durante fetching (donde scan_zones aun no actualiza)
+    if result.get("running") and result.get("start_time"):
+        result["elapsed"] = round(_t.time() - result["start_time"], 1)
+    result.pop("start_time", None)  # No enviar al frontend
+    return result
+
+
+@app.get("/api/zones/vp/detection-params")
+async def get_vp_detection_params():
+    """Retorna la lista de parametros que afectan la deteccion de zonas."""
+    return {
+        "detection_params": get_detection_param_names(),
+        "strategy_params": list(get_strategy_param_defs().keys()),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Deteccion incremental VP: reciente -> antiguo, con stop/resume
+# ---------------------------------------------------------------------------
+
+def _run_chunk_detection(candles_chunk, all_candles, config_overrides, chunk_idx, total_chunks):
+    """
+    Ejecuta deteccion + simulacion sobre un chunk de velas.
+    Retorna lista de zonas con trades simulados.
+    """
+    import copy as _copy
+
+    cfg = VPScannerConfig()
+    if config_overrides:
+        for key, val in config_overrides.items():
+            if hasattr(cfg, key):
+                expected_type = type(getattr(cfg, key))
+                if expected_type == bool and not isinstance(val, bool):
+                    val = bool(val)
+                elif expected_type == int and isinstance(val, float):
+                    val = int(val)
+                elif expected_type == float and isinstance(val, int):
+                    val = float(val)
+                setattr(cfg, key, val)
+
+    if len(candles_chunk) < cfg.window_size:
+        return []
+
+    # Detectar zonas en este chunk (sin progress_dict para no interferir)
+    if cfg.detection_mode == 'progressive':
+        zones = scan_zones_progressive(candles_chunk, cfg, progress_dict=None)
+    else:
+        zones = scan_zones(candles_chunk, cfg, progress_dict=None)
+
+    # Filtrar por d_score
+    if cfg.min_d_score > 0:
+        zones = [z for z in zones if z.get('d_score', 0) >= cfg.min_d_score]
+
+    if not zones:
+        return []
+
+    # Simular trades usando TODAS las velas (para que lookforward funcione correctamente)
+    zones = _simulate_trades(zones, all_candles, cfg)
+    return zones
+
+
+@app.post("/api/zones/vp/incremental-start")
+async def start_incremental_detection(request: Request):
+    """
+    Inicia deteccion incremental de zonas VP.
+    Procesa chunks desde el mas reciente al mas antiguo.
+    El frontend hace polling a /incremental-status para obtener zonas parciales.
+    """
+    import time as _time
+    import asyncio as _asyncio
+
+    global _vp_incremental
+
+    # Si ya hay una corriendo, no permitir otra
+    if _vp_incremental["running"] and not _vp_incremental["stop_requested"]:
+        return {"success": False, "error": "Ya hay una deteccion en curso"}
+
+    body = await request.json()
+    symbol = body.get("symbol", "BTCUSDT")
+    interval = body.get("interval", "60")
+    days = body.get("days", 30)
+    config_overrides = body.get("config", {})
+    chunk_days = body.get("chunk_days", 30)  # Dias por chunk
+
+    max_days = MAX_DAYS_ZONES.get(interval, 30)
+    if days > max_days:
+        days = max_days
+
+    # Calcular chunks (de reciente a antiguo)
+    total_chunks = max(1, math.ceil(days / chunk_days))
+
+    # Reset estado
+    _vp_incremental["running"] = True
+    _vp_incremental["paused"] = False
+    _vp_incremental["stop_requested"] = False
+    _vp_incremental["phase"] = "fetching"
+    _vp_incremental["current_chunk"] = 0
+    _vp_incremental["total_chunks"] = total_chunks
+    _vp_incremental["windows_done"] = 0
+    _vp_incremental["windows_total"] = 0
+    _vp_incremental["elapsed"] = 0
+    _vp_incremental["estimated_remaining"] = 0
+    _vp_incremental["symbol"] = symbol
+    _vp_incremental["start_time"] = _time.time()
+    _vp_incremental["zones"] = []
+    _vp_incremental["candles"] = None
+    _vp_incremental["config_overrides"] = config_overrides
+    _vp_incremental["interval"] = interval
+    _vp_incremental["days"] = days
+    _vp_incremental["chunks_completed"] = []
+    _vp_incremental["chunk_boundaries"] = []
+
+    print(f"[{symbol}] [VP INCREMENTAL] Iniciando: {days} dias, {total_chunks} chunks "
+          f"de ~{chunk_days} dias c/u, interval={interval}")
+
+    # Descargar velas (async, en thread pool)
+    interval_clean = (
+        interval.replace("m", "").replace("h", "").replace("d", "D").replace("w", "W")
+    )
+    if "h" in interval.lower() and interval_clean.isdigit():
+        interval_clean = str(int(interval_clean) * 60)
+    interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+    # Intentar cache de velas en memoria
+    cache_key = f"{symbol}_{interval_final}"
+    cached = _historical_candles_cache.get(cache_key)
+    candles = None
+
+    if cached:
+        cache_age = _time.time() - cached["timestamp"]
+        cached_candles = cached["candles"]
+        interval_minutes = get_interval_minutes(interval_final)
+        needed_candles = int((days * 24 * 60) / interval_minutes)
+        if len(cached_candles) >= needed_candles * 0.8 and cache_age < 600:
+            if len(cached_candles) > needed_candles * 1.1:
+                candles = cached_candles[-needed_candles:]
+            else:
+                candles = cached_candles
+            print(f"[{symbol}] [VP INCREMENTAL] CANDLE CACHE HIT: {len(candles)} velas")
+
+    if candles is None:
+        _vp_incremental["phase"] = "fetching"
+
+        def run_fetch():
+            return _fetch_candles_sync(symbol, interval, days, _vp_incremental)
+
+        loop = _asyncio.get_event_loop()
+        candles = await loop.run_in_executor(None, run_fetch)
+        if not candles:
+            _vp_incremental["running"] = False
+            _vp_incremental["phase"] = ""
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        _historical_candles_cache[cache_key] = {
+            "candles": candles, "timestamp": _time.time(), "days": days}
+        print(f"[{symbol}] [VP INCREMENTAL] {len(candles)} velas descargadas")
+
+    _vp_incremental["candles"] = candles
+
+    # Calcular limites de cada chunk (de reciente a antiguo)
+    interval_minutes = get_interval_minutes(interval_final)
+    candles_per_chunk = max(100, int((chunk_days * 24 * 60) / interval_minutes))
+    n = len(candles)
+    boundaries = []
+    for c_idx in range(total_chunks):
+        end_idx = n - (c_idx * candles_per_chunk)
+        start_idx = max(0, end_idx - candles_per_chunk)
+        if start_idx >= end_idx:
+            break
+        boundaries.append((start_idx, end_idx))
+    _vp_incremental["chunk_boundaries"] = boundaries
+    _vp_incremental["total_chunks"] = len(boundaries)
+
+    # Iniciar procesamiento en background
+    _vp_incremental["phase"] = "detecting"
+
+    async def process_chunks():
+        import time as _t
+        global _vp_incremental
+        try:
+            all_candles = _vp_incremental["candles"]
+            cfg_overrides = _vp_incremental["config_overrides"]
+
+            for c_idx, (start_idx, end_idx) in enumerate(boundaries):
+                # Verificar stop/pause
+                if _vp_incremental["stop_requested"]:
+                    _vp_incremental["phase"] = "stopped"
+                    _vp_incremental["running"] = False
+                    print(f"[{symbol}] [VP INCREMENTAL] DETENIDO en chunk {c_idx+1}/{len(boundaries)}")
+                    try:
+                        save_incremental_state(_vp_incremental)
+                    except Exception as e:
+                        print(f"[{symbol}] [INC_CACHE] Error guardando al detener: {e}")
+                    return
+
+                while _vp_incremental["paused"]:
+                    await _asyncio.sleep(0.5)
+                    if _vp_incremental["stop_requested"]:
+                        _vp_incremental["phase"] = "stopped"
+                        _vp_incremental["running"] = False
+                        try:
+                            save_incremental_state(_vp_incremental)
+                        except Exception as e:
+                            print(f"[{symbol}] [INC_CACHE] Error guardando al detener (pausa): {e}")
+                        return
+
+                if c_idx in _vp_incremental["chunks_completed"]:
+                    continue  # Ya procesado (resume)
+
+                _vp_incremental["current_chunk"] = c_idx + 1
+                chunk_candles = all_candles[start_idx:end_idx]
+
+                print(f"[{symbol}] [VP INCREMENTAL] Chunk {c_idx+1}/{len(boundaries)}: "
+                      f"velas [{start_idx}:{end_idx}] ({len(chunk_candles)} velas)")
+
+                # Correr deteccion en thread pool
+                loop = _asyncio.get_event_loop()
+                new_zones = await loop.run_in_executor(
+                    None,
+                    lambda: _run_chunk_detection(
+                        chunk_candles, all_candles, cfg_overrides,
+                        c_idx, len(boundaries)))
+
+                if new_zones:
+                    _vp_incremental["zones"].extend(new_zones)
+                    print(f"[{symbol}] [VP INCREMENTAL] Chunk {c_idx+1}: "
+                          f"+{len(new_zones)} zonas (total: {len(_vp_incremental['zones'])})")
+
+                _vp_incremental["chunks_completed"].append(c_idx)
+                _vp_incremental["elapsed"] = round(
+                    _t.time() - _vp_incremental["start_time"], 1)
+
+                # Estimar restante
+                chunks_done = len(_vp_incremental["chunks_completed"])
+                chunks_left = len(boundaries) - chunks_done
+                if chunks_done > 0:
+                    avg_time = _vp_incremental["elapsed"] / chunks_done
+                    _vp_incremental["estimated_remaining"] = round(avg_time * chunks_left, 1)
+
+            # Completado
+            _vp_incremental["phase"] = "done"
+            _vp_incremental["running"] = False
+            total_elapsed = _t.time() - _vp_incremental["start_time"]
+            total_zones = len(_vp_incremental["zones"])
+            print(f"[{symbol}] [VP INCREMENTAL] COMPLETADO: {total_zones} zonas "
+                  f"en {total_elapsed:.1f}s")
+
+            # Guardar en cache de zonas (sin trades para deteccion futura)
+            try:
+                save_zone_cache(
+                    _vp_incremental["zones"], cfg_overrides,
+                    symbol, interval_final, days, len(all_candles))
+            except Exception as e:
+                print(f"[{symbol}] [ZONE_CACHE] Error guardando: {e}")
+
+            # Guardar estado incremental completo (con trades)
+            try:
+                save_incremental_state(_vp_incremental)
+            except Exception as e:
+                print(f"[{symbol}] [INC_CACHE] Error guardando al completar: {e}")
+
+        except Exception as e:
+            _vp_incremental["running"] = False
+            _vp_incremental["phase"] = "error"
+            print(f"[{symbol}] [VP INCREMENTAL ERROR] {e}")
+            import traceback
+            traceback.print_exc()
+
+    _asyncio.create_task(process_chunks())
+
+    return {
+        "success": True,
+        "symbol": symbol,
+        "total_chunks": len(boundaries),
+        "candles_count": len(candles),
+        "chunk_days": chunk_days,
+    }
+
+
+@app.get("/api/zones/vp/incremental-status")
+async def get_incremental_status():
+    """Retorna estado actual + zonas parciales de la deteccion incremental."""
+    import time as _t
+    result = {
+        "running": _vp_incremental["running"],
+        "paused": _vp_incremental["paused"],
+        "phase": _vp_incremental["phase"],
+        "current_chunk": _vp_incremental["current_chunk"],
+        "total_chunks": _vp_incremental["total_chunks"],
+        "chunks_completed": len(_vp_incremental["chunks_completed"]),
+        "zones_count": len(_vp_incremental["zones"]),
+        "symbol": _vp_incremental["symbol"],
+    }
+    if _vp_incremental.get("start_time") and _vp_incremental["running"]:
+        result["elapsed"] = round(_t.time() - _vp_incremental["start_time"], 1)
+    else:
+        result["elapsed"] = _vp_incremental.get("elapsed", 0)
+    result["estimated_remaining"] = _vp_incremental.get("estimated_remaining", 0)
+    return result
+
+
+@app.get("/api/zones/vp/incremental-zones")
+async def get_incremental_zones(since: int = 0):
+    """
+    Retorna las zonas detectadas hasta ahora.
+    since=N retorna solo zonas desde el indice N (para actualizacion incremental).
+    """
+    all_zones = _vp_incremental.get("zones", [])
+    if since > 0 and since < len(all_zones):
+        return {
+            "zones": all_zones[since:],
+            "total": len(all_zones),
+            "offset": since,
+        }
+    return {
+        "zones": all_zones,
+        "total": len(all_zones),
+        "offset": 0,
+    }
+
+
+@app.post("/api/zones/vp/incremental-stop")
+async def stop_incremental_detection():
+    """Detiene la deteccion incremental, conservando las zonas ya detectadas."""
+    global _vp_incremental
+    if _vp_incremental["running"]:
+        _vp_incremental["stop_requested"] = True
+        print(f"[{_vp_incremental['symbol']}] [VP INCREMENTAL] Stop solicitado")
+        return {"success": True, "message": "Stop solicitado, zonas parciales conservadas"}
+    return {"success": True, "message": "No hay deteccion en curso"}
+
+
+@app.post("/api/zones/vp/incremental-pause")
+async def pause_incremental_detection():
+    """Pausa/reanuda la deteccion incremental."""
+    global _vp_incremental
+    if not _vp_incremental["running"]:
+        return {"success": False, "message": "No hay deteccion en curso"}
+
+    _vp_incremental["paused"] = not _vp_incremental["paused"]
+    state = "pausada" if _vp_incremental["paused"] else "reanudada"
+    if _vp_incremental["paused"]:
+        _vp_incremental["phase"] = "paused"
+    else:
+        _vp_incremental["phase"] = "detecting"
+    print(f"[{_vp_incremental['symbol']}] [VP INCREMENTAL] Deteccion {state}")
+    return {"success": True, "paused": _vp_incremental["paused"]}
+
+
+@app.post("/api/zones/vp/incremental-resume")
+async def resume_incremental_detection():
+    """
+    Retoma la deteccion incremental desde donde se detuvo.
+    Reutiliza las velas ya descargadas y los chunks ya procesados.
+    """
+    import time as _time
+    import asyncio as _asyncio
+
+    global _vp_incremental
+
+    if _vp_incremental["running"]:
+        return {"success": False, "error": "Ya hay una deteccion en curso"}
+
+    if _vp_incremental["phase"] != "stopped":
+        return {"success": False, "error": "No hay deteccion detenida para retomar"}
+
+    if _vp_incremental["candles"] is None:
+        return {"success": False, "error": "Velas no disponibles, inicie una nueva deteccion"}
+
+    symbol = _vp_incremental["symbol"]
+    boundaries = _vp_incremental["chunk_boundaries"]
+    completed = set(_vp_incremental["chunks_completed"])
+    remaining = [i for i in range(len(boundaries)) if i not in completed]
+
+    if not remaining:
+        return {"success": False, "error": "Todos los chunks ya fueron procesados"}
+
+    _vp_incremental["running"] = True
+    _vp_incremental["stop_requested"] = False
+    _vp_incremental["paused"] = False
+    _vp_incremental["phase"] = "detecting"
+    _vp_incremental["start_time"] = _time.time()
+
+    print(f"[{symbol}] [VP INCREMENTAL] RETOMANDO: {len(remaining)} chunks pendientes, "
+          f"{len(_vp_incremental['zones'])} zonas acumuladas")
+
+    async def process_remaining():
+        import time as _t
+        global _vp_incremental
+        try:
+            all_candles = _vp_incremental["candles"]
+            cfg_overrides = _vp_incremental["config_overrides"]
+            interval_clean = (
+                _vp_incremental["interval"].replace("m", "").replace("h", "")
+                .replace("d", "D").replace("w", "W"))
+            if "h" in _vp_incremental["interval"].lower() and interval_clean.isdigit():
+                interval_clean = str(int(interval_clean) * 60)
+            interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+            for c_idx in remaining:
+                if _vp_incremental["stop_requested"]:
+                    _vp_incremental["phase"] = "stopped"
+                    _vp_incremental["running"] = False
+                    try:
+                        save_incremental_state(_vp_incremental)
+                    except Exception as e:
+                        print(f"[{symbol}] [INC_CACHE] Error guardando al detener (resume): {e}")
+                    return
+
+                while _vp_incremental["paused"]:
+                    await _asyncio.sleep(0.5)
+                    if _vp_incremental["stop_requested"]:
+                        _vp_incremental["phase"] = "stopped"
+                        _vp_incremental["running"] = False
+                        try:
+                            save_incremental_state(_vp_incremental)
+                        except Exception as e:
+                            print(f"[{symbol}] [INC_CACHE] Error guardando al detener (pausa): {e}")
+                        return
+
+                start_idx, end_idx = boundaries[c_idx]
+                _vp_incremental["current_chunk"] = c_idx + 1
+                chunk_candles = all_candles[start_idx:end_idx]
+
+                print(f"[{symbol}] [VP INCREMENTAL RESUME] Chunk {c_idx+1}/{len(boundaries)}: "
+                      f"{len(chunk_candles)} velas")
+
+                loop = _asyncio.get_event_loop()
+                new_zones = await loop.run_in_executor(
+                    None,
+                    lambda ci=c_idx: _run_chunk_detection(
+                        all_candles[boundaries[ci][0]:boundaries[ci][1]],
+                        all_candles, cfg_overrides, ci, len(boundaries)))
+
+                if new_zones:
+                    _vp_incremental["zones"].extend(new_zones)
+
+                _vp_incremental["chunks_completed"].append(c_idx)
+                _vp_incremental["elapsed"] = round(
+                    _t.time() - _vp_incremental["start_time"], 1)
+
+                chunks_done_now = len([r for r in remaining
+                                       if r in _vp_incremental["chunks_completed"]])
+                chunks_left = len(remaining) - chunks_done_now
+                if chunks_done_now > 0:
+                    avg = _vp_incremental["elapsed"] / chunks_done_now
+                    _vp_incremental["estimated_remaining"] = round(avg * chunks_left, 1)
+
+            _vp_incremental["phase"] = "done"
+            _vp_incremental["running"] = False
+            total_zones = len(_vp_incremental["zones"])
+            print(f"[{symbol}] [VP INCREMENTAL] COMPLETADO: {total_zones} zonas")
+
+            try:
+                save_zone_cache(
+                    _vp_incremental["zones"], cfg_overrides,
+                    symbol, interval_final, _vp_incremental["days"],
+                    len(all_candles))
+            except Exception as e:
+                print(f"[{symbol}] [ZONE_CACHE] Error guardando: {e}")
+
+            try:
+                save_incremental_state(_vp_incremental)
+            except Exception as e:
+                print(f"[{symbol}] [INC_CACHE] Error guardando al completar (resume): {e}")
+
+        except Exception as e:
+            _vp_incremental["running"] = False
+            _vp_incremental["phase"] = "error"
+            print(f"[{symbol}] [VP INCREMENTAL ERROR] {e}")
+            import traceback
+            traceback.print_exc()
+
+    _asyncio.create_task(process_remaining())
+
+    return {
+        "success": True,
+        "remaining_chunks": len(remaining),
+        "zones_so_far": len(_vp_incremental["zones"]),
+    }
+
+
+@app.get("/api/zones/vp/incremental-saved")
+async def check_incremental_saved(symbol: str = "BTCUSDT", interval: str = "60",
+                                   days: int = 30):
+    """
+    Verifica si hay un estado incremental guardado en disco para estos params.
+    El frontend usa esto al abrir el modal para ofrecer cargar zonas previas.
+    """
+    # Necesitamos los config_overrides actuales del frontend;
+    # Como GET no tiene body, usamos query params basicos y buscamos
+    # todos los archivos incrementales para este symbol/interval/days
+    import os
+    import json
+
+    cache_dir = os.path.join(os.path.dirname(__file__), "zones_cache", "incremental")
+    if not os.path.exists(cache_dir):
+        return {"found": False}
+
+    prefix = f"inc_{symbol}_{interval}_{days}d_"
+    matches = []
+    for fname in os.listdir(cache_dir):
+        if fname.startswith(prefix) and fname.endswith(".json"):
+            filepath = os.path.join(cache_dir, fname)
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                n_zones = len(data.get('zones', []))
+                n_done = len(data.get('chunks_completed', []))
+                n_total = data.get('total_chunks', 0)
+                is_complete = n_done >= n_total and n_total > 0
+                age_hours = (time.time() - data.get('timestamp', 0)) / 3600
+                matches.append({
+                    'filename': fname,
+                    'fingerprint': data.get('fingerprint', ''),
+                    'zones_count': n_zones,
+                    'chunks_completed': n_done,
+                    'total_chunks': n_total,
+                    'is_complete': is_complete,
+                    'age_hours': round(age_hours, 1),
+                    'timestamp': data.get('timestamp', 0),
+                    'detection_params': data.get('detection_params', {}),
+                })
+            except Exception:
+                continue
+
+    if not matches:
+        return {"found": False}
+
+    # Retornar el mas reciente
+    matches.sort(key=lambda m: m['timestamp'], reverse=True)
+    best = matches[0]
+    return {
+        "found": True,
+        "zones_count": best['zones_count'],
+        "chunks_completed": best['chunks_completed'],
+        "total_chunks": best['total_chunks'],
+        "is_complete": best['is_complete'],
+        "age_hours": best['age_hours'],
+        "fingerprint": best['fingerprint'],
+        "detection_params": best['detection_params'],
+    }
+
+
+@app.post("/api/zones/vp/incremental-load")
+async def load_incremental_from_disk(request: Request):
+    """
+    Carga estado incremental guardado al _vp_incremental en memoria.
+    El frontend llama esto para restaurar zonas previas.
+    """
+    body = await request.json()
+    symbol = body.get("symbol", "BTCUSDT")
+    interval = body.get("interval", "60")
+    days = body.get("days", 30)
+    config_overrides = body.get("config", {})
+
+    saved = load_incremental_state(config_overrides, symbol, interval, days)
+    if not saved:
+        # Buscar cualquier match por prefix (sin fingerprint exacto)
+        import os
+        import json
+        cache_dir = os.path.join(os.path.dirname(__file__), "zones_cache", "incremental")
+        prefix = f"inc_{symbol}_{interval}_{days}d_"
+        best = None
+        best_ts = 0
+        if os.path.exists(cache_dir):
+            for fname in os.listdir(cache_dir):
+                if fname.startswith(prefix) and fname.endswith(".json"):
+                    filepath = os.path.join(cache_dir, fname)
+                    try:
+                        with open(filepath, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                        ts = data.get('timestamp', 0)
+                        if ts > best_ts:
+                            best = data
+                            best_ts = ts
+                    except Exception:
+                        continue
+        if not best:
+            return {"success": False, "error": "No hay estado guardado para estos parametros"}
+        saved = best
+
+    zones = saved.get('zones', [])
+    chunks_completed = saved.get('chunks_completed', [])
+    total_chunks = saved.get('total_chunks', 0)
+    is_complete = len(chunks_completed) >= total_chunks and total_chunks > 0
+
+    # Restaurar al estado en memoria
+    global _vp_incremental
+    _vp_incremental["zones"] = zones
+    _vp_incremental["chunks_completed"] = chunks_completed
+    _vp_incremental["chunk_boundaries"] = saved.get('chunk_boundaries', [])
+    _vp_incremental["total_chunks"] = total_chunks
+    _vp_incremental["symbol"] = symbol
+    _vp_incremental["interval"] = interval
+    _vp_incremental["days"] = days
+    _vp_incremental["config_overrides"] = saved.get('config_overrides', config_overrides)
+    _vp_incremental["phase"] = "done" if is_complete else "stopped"
+    _vp_incremental["running"] = False
+    _vp_incremental["paused"] = False
+    _vp_incremental["stop_requested"] = False
+    _vp_incremental["elapsed"] = saved.get('elapsed', 0)
+
+    print(f"[{symbol}] [INC_CACHE] Restaurado: {len(zones)} zonas, "
+          f"chunks {len(chunks_completed)}/{total_chunks}")
+
+    return {
+        "success": True,
+        "zones_count": len(zones),
+        "chunks_completed": len(chunks_completed),
+        "total_chunks": total_chunks,
+        "is_complete": is_complete,
+        "zones": zones,
+    }
 
 
 @app.post("/api/zones/vp/optimize-estimate")
@@ -7025,15 +8263,38 @@ async def estimate_vp_optimization(request: Request):
             sample_indices = [int(i * step) for i in range(n_samples)]
         sample_combos = [all_combos[idx] for idx in sample_indices]
 
+        # Inicializar progreso de estimacion
+        _vp_optimize_progress["running"] = True
+        _vp_optimize_progress["phase"] = "estimating"
+        _vp_optimize_progress["est_current"] = 0
+        _vp_optimize_progress["est_total"] = len(sample_combos)
+        _vp_optimize_progress["est_elapsed"] = 0
+        _vp_optimize_progress["symbol"] = symbol
+        _vp_optimize_progress["total"] = total_combos
+
         def run_samples():
+            global _vp_optimize_progress
             times = []
-            for combo in sample_combos:
+            _est_start = _time.time()
+            for i, combo in enumerate(sample_combos):
                 combo_dict = dict(zip(param_names, combo))
                 merged = dict(base_config)
                 merged.update(combo_dict)
                 t0 = _time.time()
                 backtest_vp(candles, merged)
-                times.append(_time.time() - t0)
+                elapsed_sample = _time.time() - t0
+                times.append(elapsed_sample)
+                # Actualizar progreso de estimacion
+                _vp_optimize_progress["est_current"] = i + 1
+                _vp_optimize_progress["est_elapsed"] = round(_time.time() - _est_start, 1)
+                if i + 1 < len(sample_combos):
+                    avg_so_far = sum(times) / len(times)
+                    _vp_optimize_progress["estimated_remaining"] = round(
+                        avg_so_far * (len(sample_combos) - (i + 1)), 1)
+                print(f"[{symbol}] [VP ESTIMATE] Sample {i+1}/{len(sample_combos)}: "
+                      f"{elapsed_sample:.1f}s ({_vp_optimize_progress['est_elapsed']:.0f}s total)")
+            _vp_optimize_progress["phase"] = ""
+            _vp_optimize_progress["running"] = False
             return sum(times) / len(times)
 
         import asyncio as _asyncio
@@ -7222,6 +8483,349 @@ async def get_vp_optimize_progress():
 
 
 # ============================================================
+# Strategy-only optimization (zonas fijas, varia solo params de trading)
+# ============================================================
+
+@app.get("/api/zones/vp/strategy-params")
+async def get_vp_strategy_params():
+    """Retorna las definiciones de parametros de estrategia optimizables."""
+    return {"success": True, "params": get_strategy_param_defs()}
+
+
+@app.post("/api/zones/vp/optimize-strategy-estimate")
+async def estimate_vp_strategy_optimization(request: Request):
+    """
+    Estima tiempo de optimizacion de estrategia:
+    1. Detecta zonas UNA vez
+    2. Ejecuta muestras de simulate_strategy_only
+    3. Extrapola tiempo total
+    """
+    import itertools
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        base_config = body.get("base_config", {})
+        param_ranges = body.get("param_ranges", {})
+        entry_strategies = body.get("entry_strategies", None)  # lista de estrategias a probar
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        # Generar valores para cada parametro
+        param_names = []
+        param_values_list = []
+        for name, range_spec in param_ranges.items():
+            if range_spec.get('type') == 'enum':
+                vals = range_spec.get('values', [])
+            else:
+                pmin = range_spec.get("min", 0)
+                pmax = range_spec.get("max", 1)
+                pstep = range_spec.get("step", 1)
+                vals = []
+                v = pmin
+                while v <= pmax + pstep * 0.001:
+                    vals.append(round(v, 4))
+                    v += pstep
+                if len(vals) > 20:
+                    step_idx = max(1, len(vals) // 20)
+                    vals = vals[::step_idx][:20]
+            if vals:
+                param_names.append(name)
+                param_values_list.append(vals)
+
+        # Si se especifican multiples estrategias, agregarlas como dimension
+        if entry_strategies and len(entry_strategies) > 1:
+            param_names.append('entry_strategy')
+            param_values_list.append(entry_strategies)
+
+        if not param_names:
+            return {"success": False, "error": "No se especificaron rangos de parametros"}
+
+        total_combos = 1
+        for vals in param_values_list:
+            total_combos *= len(vals)
+
+        if total_combos > 10000:
+            return {"success": False, "error": f"Demasiadas combinaciones ({total_combos}). Max: 10000"}
+
+        # Fetch datos
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+
+        # Detectar zonas UNA vez
+        _detect_start = _time.time()
+        cfg = VPScannerConfig()
+        for key, val in base_config.items():
+            if hasattr(cfg, key):
+                setattr(cfg, key, val)
+
+        if cfg.detection_mode == 'progressive':
+            base_zones = scan_zones_progressive(candles, cfg)
+        else:
+            base_zones = scan_zones(candles, cfg)
+
+        # Filtro d_score
+        if cfg.min_d_score > 0:
+            base_zones = [z for z in base_zones if z.get('d_score', 0) >= cfg.min_d_score]
+
+        _detect_elapsed = _time.time() - _detect_start
+
+        # Ejecutar muestras
+        all_combos = list(itertools.product(*param_values_list))
+        n_samples = min(max(5, total_combos // 20), 10, total_combos)
+        if total_combos <= n_samples:
+            sample_indices = list(range(total_combos))
+        else:
+            step = total_combos / n_samples
+            sample_indices = [int(i * step) for i in range(n_samples)]
+        sample_combos = [all_combos[idx] for idx in sample_indices]
+
+        def run_samples():
+            times = []
+            for combo in sample_combos:
+                combo_dict = dict(zip(param_names, combo))
+                merged = dict(base_config)
+                merged.update(combo_dict)
+                t0 = _time.time()
+                simulate_strategy_only(base_zones, candles, merged)
+                times.append(_time.time() - t0)
+            return sum(times) / len(times) if times else 0
+
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        avg_per_combo = await loop.run_in_executor(None, run_samples)
+
+        estimated_seconds = avg_per_combo * total_combos
+
+        return {
+            "success": True,
+            "total_combos": total_combos,
+            "candles": len(candles),
+            "zones_detected": len(base_zones),
+            "fetch_time": round(_fetch_elapsed, 1),
+            "detect_time": round(_detect_elapsed, 1),
+            "avg_per_combo": round(avg_per_combo, 4),
+            "estimated_seconds": round(estimated_seconds, 1),
+            "sample_combos_run": len(sample_combos),
+        }
+
+    except Exception as e:
+        print(f"[VP STRAT-OPT-ESTIMATE ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/zones/vp/optimize-strategy")
+async def optimize_vp_strategy(request: Request):
+    """
+    Optimizacion de estrategia con zonas fijas:
+    1. Detecta zonas UNA vez
+    2. Grid search variando solo parametros de trading
+    3. Retorna top N resultados
+    """
+    import itertools
+    import time as _time
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "5")
+        days = body.get("days", 120)
+        base_config = body.get("base_config", {})
+        param_ranges = body.get("param_ranges", {})
+        entry_strategies = body.get("entry_strategies", None)
+        metric = body.get("metric", "expectancy")
+        top_n = body.get("top_n", 15)
+
+        print(f"[{symbol}] [VP STRAT-OPT] === INICIO ===")
+        print(f"[{symbol}] [VP STRAT-OPT] interval={interval}, days={days}, metric={metric}")
+
+        max_days = MAX_DAYS_ZONES.get(interval, 30)
+        if days > max_days:
+            days = max_days
+
+        # Generar combinaciones
+        param_names = []
+        param_values_list = []
+        for name, range_spec in param_ranges.items():
+            if range_spec.get('type') == 'enum':
+                vals = range_spec.get('values', [])
+            else:
+                pmin = range_spec.get("min", 0)
+                pmax = range_spec.get("max", 1)
+                pstep = range_spec.get("step", 1)
+                vals = []
+                v = pmin
+                while v <= pmax + pstep * 0.001:
+                    vals.append(round(v, 4))
+                    v += pstep
+                if len(vals) > 20:
+                    step_idx = max(1, len(vals) // 20)
+                    vals = vals[::step_idx][:20]
+            if vals:
+                param_names.append(name)
+                param_values_list.append(vals)
+                print(f"[{symbol}] [VP STRAT-OPT] {name}: {vals} ({len(vals)} values)")
+
+        if entry_strategies and len(entry_strategies) > 1:
+            param_names.append('entry_strategy')
+            param_values_list.append(entry_strategies)
+            print(f"[{symbol}] [VP STRAT-OPT] entry_strategy: {entry_strategies}")
+
+        if not param_names:
+            return {"success": False, "error": "No se especificaron rangos de parametros"}
+
+        total_combos = 1
+        for vals in param_values_list:
+            total_combos *= len(vals)
+
+        if total_combos > 10000:
+            return {"success": False, "error": f"Demasiadas combinaciones ({total_combos}). Max: 10000"}
+
+        # Fetch datos
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+
+        # Detectar zonas UNA vez
+        _detect_start = _time.time()
+        cfg = VPScannerConfig()
+        for key, val in base_config.items():
+            if hasattr(cfg, key):
+                setattr(cfg, key, val)
+
+        if cfg.detection_mode == 'progressive':
+            base_zones = scan_zones_progressive(candles, cfg)
+        else:
+            base_zones = scan_zones(candles, cfg)
+
+        if cfg.min_d_score > 0:
+            pre_filter = len(base_zones)
+            base_zones = [z for z in base_zones if z.get('d_score', 0) >= cfg.min_d_score]
+            print(f"[{symbol}] [VP STRAT-OPT] Filtro d_score>={cfg.min_d_score}: {pre_filter} -> {len(base_zones)}")
+
+        _detect_elapsed = _time.time() - _detect_start
+        print(f"[{symbol}] [VP STRAT-OPT] Zonas detectadas: {len(base_zones)} en {_detect_elapsed:.1f}s")
+        print(f"[{symbol}] [VP STRAT-OPT] {len(candles)} velas, fetch={_fetch_elapsed:.1f}s")
+
+        all_combos = list(itertools.product(*param_values_list))
+
+        # Inicializar progreso
+        _vp_strat_optimize_progress["running"] = True
+        _vp_strat_optimize_progress["current"] = 0
+        _vp_strat_optimize_progress["total"] = total_combos
+        _vp_strat_optimize_progress["elapsed"] = 0
+        _vp_strat_optimize_progress["avg_per_combo"] = 0
+        _vp_strat_optimize_progress["estimated_remaining"] = 0
+        _vp_strat_optimize_progress["symbol"] = symbol
+        _vp_strat_optimize_progress["metric"] = metric
+        _vp_strat_optimize_progress["best_so_far"] = None
+
+        def run_all_combos():
+            global _vp_strat_optimize_progress
+            results = []
+            _opt_start = _time.time()
+            best_metric_val = float('-inf')
+
+            for i, combo in enumerate(all_combos):
+                combo_dict = dict(zip(param_names, combo))
+                try:
+                    merged = dict(base_config)
+                    merged.update(combo_dict)
+                    stats = simulate_strategy_only(base_zones, candles, merged)
+                    stats['params'] = combo_dict
+                    results.append(stats)
+
+                    val = stats.get(metric, 0)
+                    if val > best_metric_val:
+                        best_metric_val = val
+                        _vp_strat_optimize_progress["best_so_far"] = {
+                            "value": round(val, 3),
+                            "win_rate": stats.get("win_rate", 0),
+                            "total_pnl_r": stats.get("total_pnl_r", 0),
+                            "total_zones": stats.get("total_zones", 0),
+                            "entry_strategy": stats.get("entry_strategy", ""),
+                        }
+
+                except Exception as e:
+                    print(f"[{symbol}] [VP STRAT-OPT] Error combo {combo_dict}: {e}")
+
+                elapsed = _time.time() - _opt_start
+                done = i + 1
+                avg = elapsed / done
+                remaining = avg * (total_combos - done)
+                _vp_strat_optimize_progress["current"] = done
+                _vp_strat_optimize_progress["elapsed"] = round(elapsed, 1)
+                _vp_strat_optimize_progress["avg_per_combo"] = round(avg, 3)
+                _vp_strat_optimize_progress["estimated_remaining"] = round(remaining, 1)
+
+                if done % 20 == 0:
+                    print(f"[{symbol}] [VP STRAT-OPT] Progreso: {done}/{total_combos} "
+                          f"({elapsed:.1f}s, ~{remaining:.0f}s restante)")
+
+            results.sort(key=lambda r: r.get(metric, 0), reverse=True)
+            _total_elapsed = _time.time() - _opt_start
+            _vp_strat_optimize_progress["running"] = False
+            return results, _total_elapsed
+
+        import asyncio as _asyncio
+        loop = _asyncio.get_event_loop()
+        results, total_elapsed = await loop.run_in_executor(None, run_all_combos)
+
+        top_results = results[:top_n]
+
+        print(f"[{symbol}] [VP STRAT-OPT] Completado: {total_combos} combos en {total_elapsed:.1f}s")
+        if top_results:
+            best = top_results[0]
+            print(f"[{symbol}] [VP STRAT-OPT] MEJOR: {metric}={best.get(metric, 0)} | "
+                  f"WR={best.get('win_rate', 0)}% | PnL={best.get('total_pnl_r', 0)}R | "
+                  f"strategy={best.get('entry_strategy', '')} | params={best['params']}")
+
+        return {
+            "success": True,
+            "total_combos": total_combos,
+            "elapsed": round(total_elapsed, 1),
+            "fetch_time": round(_fetch_elapsed, 1),
+            "detect_time": round(_detect_elapsed, 1),
+            "zones_detected": len(base_zones),
+            "candles": len(candles),
+            "metric": metric,
+            "results": top_results,
+            "all_results_count": len(results),
+        }
+
+    except Exception as e:
+        _vp_strat_optimize_progress["running"] = False
+        print(f"[VP STRAT-OPT ERROR] {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/zones/vp/optimize-strategy-progress")
+async def get_vp_strat_optimize_progress():
+    """Retorna el estado actual de la optimizacion de estrategia VP en curso."""
+    return _vp_strat_optimize_progress
+
+
+# ============================================================
 # VP Zone Scanner Presets (persistencia en archivo JSON)
 # Estructura: { "fixed_window": { "nombre": {...} }, "progressive": { "nombre": {...} } }
 # ============================================================
@@ -7295,4 +8899,453 @@ async def delete_vp_preset(mode: str, name: str):
         _save_vp_presets(presets)
         return {"success": True, "message": f"Preset '{name}' eliminado de modo {mode}"}
     except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+# ---------------------------------------------------------------------------
+# VP PERIODIC BACKTEST - Endpoints
+# ---------------------------------------------------------------------------
+
+@app.post("/api/vp-periodic/backtest")
+async def vp_periodic_backtest(request: Request):
+    """
+    Ejecuta backtest de estrategias VP Periodic + VWAP sobre datos historicos.
+    Retorna trades en formato compatible con ZoneVisualizerIndicator.
+
+    Body:
+        symbol: str (ej: BTCUSDT)
+        interval: str (ej: "1", "5", "60")
+        days: int (ej: 400)
+        strategy: str (poc_bounce | va_breakout | rejection_confluence)
+        params: dict (vp_period, tp_rr, bins, etc.)
+    """
+    import time as _time
+    from backtest_vp_periodic import run_backtest as _vp_run_backtest
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "1")
+        days = body.get("days", 400)
+        strategy = body.get("strategy", "poc_bounce")
+        params = body.get("params", {})
+
+        logger.info(f"[VP_PERIODIC_BACKTEST] {symbol} | {interval}min | {days}d | strategy={strategy} | params={params}")
+
+        t0 = _time.time()
+
+        # 1. Obtener velas historicas (usa cache de get_historical)
+        candles_data = await get_historical(symbol, interval, days, skip_day_limit=True)
+        if not candles_data or not candles_data.get("data"):
+            return {"success": False, "error": "No se pudieron obtener velas historicas"}
+
+        candles = candles_data["data"]
+        t_fetch = _time.time() - t0
+        logger.info(f"[VP_PERIODIC_BACKTEST] {len(candles)} velas cargadas en {t_fetch:.1f}s")
+
+        # 2. Ejecutar backtest en thread pool (CPU-bound)
+        import asyncio
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, _vp_run_backtest, candles, strategy, params)
+
+        elapsed = _time.time() - t0
+        logger.info(f"[VP_PERIODIC_BACKTEST] Completado en {elapsed:.1f}s | {result.get('metrics', {}).get('closed', 0)} trades cerrados")
+
+        if not result.get('success'):
+            return result
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "interval": interval,
+            "days": days,
+            "strategy": strategy,
+            "params_used": params,
+            "zones": result['zones'],
+            "stats": result['metrics'],
+            "candles_count": result['candles_count'],
+            "segments_count": result['segments_count'],
+            "elapsed_seconds": round(elapsed, 1),
+        }
+
+    except Exception as e:
+        logger.error(f"[VP_PERIODIC_BACKTEST] Error: {e}", exc_info=True)
+        return {"success": False, "error": str(e)}
+
+
+@app.get("/api/vp-periodic/backtest-stream")
+async def vp_periodic_backtest_stream(
+    request: Request,
+    symbol: str = "BTCUSDT",
+    interval: str = "1",
+    days: int = 400,
+    strategy: str = "poc_bounce",
+    params_json: str = "{}"
+):
+    """
+    SSE endpoint para backtest VP Periodic con progreso en tiempo real.
+    Usa cache en memoria si las velas ya fueron cargadas por el chart.
+    """
+    import time as _time
+    import queue
+    from backtest_vp_periodic import run_backtest as _vp_run_backtest
+
+    try:
+        bt_params = json.loads(params_json)
+    except json.JSONDecodeError:
+        bt_params = {}
+
+    async def generate():
+        try:
+            t0 = _time.time()
+
+            # Verificar cache primero para informar al usuario
+            interval_final = INTERVAL_MAP.get(interval, interval)
+            cache_key = f"{symbol}_{interval_final}"
+            cached = _historical_candles_cache.get(cache_key)
+            has_cache = False
+            if cached and len(cached.get("candles", [])) > 0:
+                has_cache = True
+
+            if has_cache:
+                n_cached = len(cached["candles"])
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 5, 'message': f'Usando {n_cached:,} velas en cache...'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 0, 'message': f'Descargando {days} dias de {symbol}...'})}\n\n"
+
+            # Obtener velas (usa cache interno si disponible)
+            candles_data = await get_historical(symbol, interval, days, skip_day_limit=True)
+            if not candles_data or not candles_data.get("data"):
+                yield f"data: {json.dumps({'type': 'error', 'message': 'No se pudieron obtener velas historicas'})}\n\n"
+                return
+
+            candles = candles_data["data"]
+            t_fetch = _time.time() - t0
+            src = "cache" if candles_data.get("from_cache") else "Bybit API"
+            print(f"[VP_BACKTEST_SSE] {len(candles)} velas de {src} en {t_fetch:.1f}s")
+
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetched', 'percent': 8, 'message': f'{len(candles):,} velas ({src}, {t_fetch:.1f}s)'})}\n\n"
+
+            # Ejecutar backtest en thread pool con cola de progreso
+            progress_queue = queue.Queue()
+
+            def on_progress(phase, percent, message):
+                progress_queue.put({'phase': phase, 'percent': percent, 'message': message})
+
+            loop = asyncio.get_event_loop()
+            import concurrent.futures
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+            future = loop.run_in_executor(executor, _vp_run_backtest, candles, strategy, bt_params, on_progress)
+
+            # Drenar cola de progreso mientras corre
+            while not future.done():
+                await asyncio.sleep(0.2)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            # Drenar progreso restante
+            while not progress_queue.empty():
+                try:
+                    prog = progress_queue.get_nowait()
+                    yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                except queue.Empty:
+                    break
+
+            result = await future
+            elapsed = _time.time() - t0
+            print(f"[VP_BACKTEST_SSE] Completado en {elapsed:.1f}s")
+
+            if not result.get('success'):
+                yield f"data: {json.dumps({'type': 'error', 'message': result.get('error', 'Error desconocido')})}\n\n"
+                return
+
+            final = {
+                'type': 'result',
+                'success': True,
+                'symbol': symbol,
+                'interval': interval,
+                'days': days,
+                'strategy': strategy,
+                'params_used': bt_params,
+                'zones': result['zones'],
+                'stats': result['metrics'],
+                'candles_count': result['candles_count'],
+                'segments_count': result['segments_count'],
+                'elapsed_seconds': round(elapsed, 1),
+            }
+            yield f"data: {json.dumps(final)}\n\n"
+
+        except Exception as e:
+            import traceback
+            print(f"[VP_BACKTEST_SSE] Error: {e}")
+            traceback.print_exc()
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
+
+@app.get("/api/vp-periodic/strategies")
+async def vp_periodic_strategies():
+    """Retorna las estrategias disponibles con sus parametros."""
+    return {
+        "success": True,
+        "strategies": {
+            "poc_bounce": {
+                "name": "POC Bounce",
+                "description": "Mean reversion al POC. Entra cuando precio cruza POC, filtrado por VWAP.",
+                "params": {
+                    "vp_period": {"default": 240, "min": 60, "max": 1440, "step": 60, "label": "VP Period (velas)"},
+                    "tp_rr": {"default": 2.0, "min": 0.5, "max": 5.0, "step": 0.5, "label": "TP (R:R)"},
+                    "bins": {"default": 50, "min": 20, "max": 100, "step": 10, "label": "VP Bins"},
+                }
+            },
+            "va_breakout": {
+                "name": "VA Breakout",
+                "description": "Breakout del Value Area. Entra tras N cierres fuera del VA, confirmado por VWAP sigma.",
+                "params": {
+                    "vp_period": {"default": 480, "min": 60, "max": 1440, "step": 60, "label": "VP Period (velas)"},
+                    "tp_rr": {"default": 3.0, "min": 1.0, "max": 5.0, "step": 0.5, "label": "TP (R:R)"},
+                    "confirm_bars": {"default": 2, "min": 1, "max": 5, "step": 1, "label": "Confirm Bars"},
+                    "min_va_width_pct": {"default": 0.3, "min": 0.1, "max": 2.0, "step": 0.1, "label": "Min VA Width %"},
+                    "bins": {"default": 50, "min": 20, "max": 100, "step": 10, "label": "VP Bins"},
+                }
+            },
+            "rejection_confluence": {
+                "name": "Rejection Confluence",
+                "description": "Rechazo en VAH/VAL + confluencia con VWAP sigma bands + vela de rechazo.",
+                "params": {
+                    "vp_period": {"default": 240, "min": 60, "max": 1440, "step": 60, "label": "VP Period (velas)"},
+                    "tolerance_pct": {"default": 0.1, "min": 0.05, "max": 0.5, "step": 0.05, "label": "Tolerance %"},
+                    "wick_ratio": {"default": 0.6, "min": 0.3, "max": 0.9, "step": 0.1, "label": "Wick Ratio"},
+                    "bins": {"default": 50, "min": 20, "max": 100, "step": 10, "label": "VP Bins"},
+                }
+            },
+        }
+    }
+
+
+# ===========================================================================
+# STRATEGY BUILDER (Modular Backtest Engine)
+# ===========================================================================
+
+@app.get("/api/strategy-builder/backtest-stream")
+async def strategy_builder_backtest_stream(
+    request: Request,
+    symbol: str = "BTCUSDT",
+    interval: str = "1",
+    days: int = 400,
+    config_json: str = "{}"
+):
+    """
+    SSE endpoint para backtest modular del Strategy Builder con progreso en tiempo real.
+    """
+    import time as _time
+    import queue
+    from strategy_engine import run_modular_backtest as _sb_run_backtest
+
+    try:
+        strategy_config = json.loads(config_json)
+    except json.JSONDecodeError:
+        strategy_config = {}
+
+    async def generate():
+        try:
+            t0 = _time.time()
+
+            # Verificar cache
+            interval_final = INTERVAL_MAP.get(interval, interval)
+            cache_key = f"{symbol}_{interval_final}"
+            cached = _historical_candles_cache.get(cache_key)
+            has_cache = cached and len(cached.get("candles", [])) > 0
+
+            if has_cache:
+                n_cached = len(cached["candles"])
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 3, 'message': f'Usando {n_cached:,} velas en cache...'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 0, 'message': f'Descargando {days} dias de {symbol}...'})}\n\n"
+
+            candles_data = await get_historical(symbol, interval, days, skip_day_limit=True)
+            if not candles_data or not candles_data.get("data"):
+                yield f"data: {json.dumps({'type': 'error', 'message': 'No se pudieron obtener velas historicas'})}\n\n"
+                return
+
+            candles = candles_data["data"]
+            t_fetch = _time.time() - t0
+            src = "cache" if candles_data.get("from_cache") else "Bybit API"
+            print(f"[SB_BACKTEST_SSE] {len(candles)} velas de {src} en {t_fetch:.1f}s")
+
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetched', 'percent': 5, 'message': f'{len(candles):,} velas ({src}, {t_fetch:.1f}s)'})}\n\n"
+
+            # Ejecutar backtest en thread pool con cola de progreso
+            progress_queue = queue.Queue()
+
+            def on_progress(phase, percent, message):
+                progress_queue.put({'phase': phase, 'percent': percent, 'message': message})
+
+            loop = asyncio.get_event_loop()
+            import concurrent.futures
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+            future = loop.run_in_executor(executor, _sb_run_backtest, candles, strategy_config, on_progress)
+
+            # Drenar cola de progreso mientras corre
+            while not future.done():
+                await asyncio.sleep(0.2)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            # Drenar progreso restante
+            while not progress_queue.empty():
+                try:
+                    prog = progress_queue.get_nowait()
+                    yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                except queue.Empty:
+                    break
+
+            result = await future
+            elapsed = _time.time() - t0
+            print(f"[SB_BACKTEST_SSE] Completado en {elapsed:.1f}s")
+
+            if not result.get('success'):
+                yield f"data: {json.dumps({'type': 'error', 'message': result.get('error', 'Error desconocido')})}\n\n"
+                return
+
+            final = {
+                'type': 'result',
+                'success': True,
+                'symbol': symbol,
+                'interval': interval,
+                'days': days,
+                'zones': result['zones'],
+                'stats': result['metrics'],
+                'trades': result.get('trades', []),
+                'candles_count': result['candles_count'],
+                'levels_count': result.get('levels_count', 0),
+                'elapsed_seconds': round(elapsed, 1),
+            }
+            yield f"data: {json.dumps(final)}\n\n"
+
+        except Exception as e:
+            import traceback
+            print(f"[SB_BACKTEST_SSE] Error: {e}")
+            traceback.print_exc()
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
+
+@app.post("/api/strategy-builder/optimize-estimate")
+async def strategy_builder_optimize_estimate(request: Request):
+    """
+    Ejecuta 2 combos de prueba y extrapola el tiempo total de optimizacion.
+    """
+    import time as _time
+    from strategy_engine import estimate_modular_optimization
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "1")
+        days = body.get("days", 400)
+        strategy_config = body.get("config", {})
+        param_ranges = body.get("param_ranges", {})
+
+        print(f"[{symbol}] [SB_OPTIMIZE_EST] Estimando: {len(param_ranges)} params")
+
+        # Descargar velas
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+        print(f"[{symbol}] [SB_OPTIMIZE_EST] {len(candles)} velas en {_fetch_elapsed:.1f}s")
+
+        # Ejecutar estimacion en thread pool
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(
+            None, estimate_modular_optimization, candles, strategy_config, param_ranges
+        )
+
+        result['fetch_time'] = round(_fetch_elapsed, 2)
+        return result
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/strategy-builder/optimize")
+async def strategy_builder_optimize(request: Request):
+    """
+    Grid search completo para optimizacion de parametros del Strategy Builder.
+    Ejecuta en thread pool para no bloquear el event loop.
+    """
+    import time as _time
+    from strategy_engine import run_modular_optimization
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "1")
+        days = body.get("days", 400)
+        strategy_config = body.get("config", {})
+        param_ranges = body.get("param_ranges", {})
+        metric = body.get("metric", "expectancy")
+        top_n = body.get("top_n", 15)
+
+        print(f"[{symbol}] [SB_OPTIMIZE] === INICIO OPTIMIZACION ===")
+        print(f"[{symbol}] [SB_OPTIMIZE] {len(param_ranges)} params, metric={metric}")
+
+        # Descargar velas
+        _fetch_start = _time.time()
+        historical = await get_historical(symbol, interval, days, skip_day_limit=True)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+        print(f"[{symbol}] [SB_OPTIMIZE] {len(candles)} velas en {_fetch_elapsed:.1f}s")
+
+        # Ejecutar grid search en thread pool
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(
+            None, run_modular_optimization, candles, strategy_config,
+            param_ranges, metric, top_n
+        )
+
+        result['fetch_time'] = round(_fetch_elapsed, 2)
+        print(f"[{symbol}] [SB_OPTIMIZE] Completado: {result.get('total_combos', 0)} combos en {result.get('elapsed', 0)}s")
+        return result
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         return {"success": False, "error": str(e)}

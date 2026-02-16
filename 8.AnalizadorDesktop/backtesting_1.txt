@@ -1,0 +1,83 @@
+ Aquí están los resultados completos del backtest. BTCUSDT 1min, 400 días (576,000
+   velas):
+
+  Resultados VP Periodic Backtest
+
+  S1: POC Bounce (5 variaciones)
+
+  | Variacion   | Trades | Win Rate | PnL (R) | Expectancy | PF   | Max DD | Avg
+  Bars |
+  |-------------|--------|----------|---------|------------|------|--------|-------
+  ---|
+  | VP120 RR2   | 2,068  | 33.1%    | -16.0R  | -0.008     | 0.99 | 46.0R  | 167
+     |
+  | VP240 RR2   | 1,242  | 32.7%    | -23.0R  | -0.019     | 0.97 | 69.0R  | 252
+     |
+  | VP240 RR1.5 | 1,444  | 39.9%    | -4.0R   | -0.003     | 1.00 | 54.5R  | 193
+     |
+  | VP480 RR2   | 717    | 34.7%    | +30.0R  | 0.042      | 1.06 | 31.0R  | 417
+     |
+  | VP480 RR3   | 589    | 24.8%    | -4.0R   | -0.007     | 0.99 | 49.0R  | 592
+     |
+
+  Mejor variacion: VP480 RR2 (+30R, expectancy +0.042)
+
+  ---
+  S2: VA Breakout (5 variaciones)
+
+  | Variacion    | Trades | Win Rate | PnL (R) | Expectancy | PF   | Max DD | Avg
+  Bars |
+  |--------------|--------|----------|---------|------------|------|--------|------
+  ----|
+  | VP240 RR2 C2 | 358    | 32.5%    | -9.0R   | -0.025     | 0.96 | 29.0R  | 1,543
+      |
+  | VP480 RR3 C2 | 146    | 28.3%    | +19.0R  | 0.131      | 1.18 | 17.0R  | 3,800
+      |
+  | VP480 RR2 C3 | 310    | 30.1%    | -30.0R  | -0.097     | 0.86 | 43.0R  | 1,760
+      |
+  | VP960 RR3 C2 | 75     | 37.8%    | +38.0R  | 0.514      | 1.83 | 8.0R   | 7,546
+      |
+  | VP960 RR2 C3 | 155    | 35.7%    | +11.0R  | 0.071      | 1.11 | 17.0R  | 3,582
+      |
+
+  Mejor variacion: VP960 RR3 C2 (+38R, expectancy +0.514, PF 1.83, DD solo 8R)
+
+  ---
+  S3: Rejection Confluence (5 variaciones)
+
+  | Variacion        | Trades | Win Rate | PnL (R) | Expectancy | PF   | Max DD |
+  Avg Bars |
+  |------------------|--------|----------|---------|------------|------|--------|--
+  --------|
+  | VP120 T0.1 W0.6  | 2,099  | 39.1%    | +26.0R  | 0.012      | 1.02 | 60.4R  |
+  13       |
+  | VP240 T0.1 W0.6  | 1,750  | 35.8%    | +165.3R | 0.094      | 1.15 | 42.7R  |
+  18       |
+  | VP240 T0.15 W0.5 | 2,567  | 36.5%    | +235.1R | 0.092      | 1.14 | 49.8R  |
+  17       |
+  | VP480 T0.1 W0.6  | 1,296  | 31.6%    | +9.1R   | 0.007      | 1.01 | 79.1R  |
+  22       |
+  | VP480 T0.15 W0.5 | 1,890  | 32.2%    | +72.0R  | 0.038      | 1.06 | 97.1R  |
+  21       |
+
+  Mejor por PnL total: VP240 T0.15 W0.5 (+235R, 2,567 trades)
+  Mejor por expectancy: VP240 T0.1 W0.6 (+165R, expectancy 0.094)
+
+  ---
+  Top 3 Global
+
+  | Rank | Estrategia                     | PnL (R) | Expectancy | PF   | Max DD |
+  |------|--------------------------------|---------|------------|------|--------|
+  | 1    | S3: Rejection VP240 T0.15 W0.5 | +235.1R | 0.092      | 1.14 | 49.8R  |
+  | 2    | S3: Rejection VP240 T0.1 W0.6  | +165.3R | 0.094      | 1.15 | 42.7R  |
+  | 3    | S2: VA Breakout VP960 RR3 C2   | +38.0R  | 0.514      | 1.83 | 8.0R   |
+
+  Observaciones clave:
+  - S3 Rejection Confluence es la estrategia más rentable en PnL absoluto (muchos
+  trades, avg_bars ~17 = entradas/salidas rápidas)
+  - S2 VA Breakout VP960 RR3 C2 tiene la mejor expectancy por trade (0.514R) y
+  mejor Profit Factor (1.83) con drawdown mínimo, pero solo 75 trades en 400 días
+  - S1 POC Bounce solo fue rentable con VP480 RR2, y marginalmente
+  
+  
+  Mirar la opción de entrar por debajo del POC pero con el vWAP subiendo xa un LONG

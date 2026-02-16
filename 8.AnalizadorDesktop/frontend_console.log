@@ -1,0 +1,59 @@
+VM342 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:61 [Preload] Script cargado correctamente
+VM342 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:62 [Preload] Plataforma: win32
+VM342 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:63 [Preload] Electron: 33.4.11
+chunk-ZFBEYDM4.js?v=0d753ea7:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+config.js:19 [Config] API_BASE_URL: http://localhost:10000
+config.js:20 [Config] Electron: Si
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
+main.jsx:15 ====================================
+main.jsx:16 Analizador Desktop - Frontend
+main.jsx:17 ====================================
+main.jsx:21 [Electron] Ejecutando en Electron
+main.jsx:22 [Electron] Versiones: {node: '20.18.3', chrome: '130.0.6723.191', electron: '33.4.11'}
+main.jsx:23 [Electron] Plataforma: win32
+main.jsx:28 [App] Backend esperado en: http://localhost:10000
+ZoneDetectorSettings.jsx:96 [ZoneDetector] interval=1, maxDays=400
+MiniChart.jsx:275 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:2275 [BTCUSDT] 🚀 Componente montado, iniciando...
+IndicatorManager.js:147 [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ZoneVisualizerIndicator.js:60 [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+PollingCoordinator.js:49 [PollingCoordinator] Started
+Logger.js:100 ✅ [4:47:14 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManager.js:443 [BTCUSDT] [SWING] toggleIndicator(Swing Detector, false): found=false, totalIndicators=3
+CandleCache.js:79 [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (129601 velas)
+CandleCache.js:264 [CandleCache] OK VALIDATION BTCUSDT@1: 129601 velas sin gaps
+MiniChart.jsx:1323 [BTCUSDT] Carga INCREMENTAL: desde 15/2/2026, 4:46:00 p.m. (129601 velas en cache, 100%)
+robustness.js:415 [CacheCleanup] Complete: 0/4 candles, 0/1 indicators removed
+WebSocketManager.js:61 WebSocket Manager conectado [1]
+WebSocketManager.js:79 ✓ Suscrito: 
+SymbolList.jsx:75 [Prefetch] Activado (10s despues de carga)
+CandleCache.js:192 [CandleCache] 🔄 Merge: 129601 cached + 1 new = 129601 total
+MiniChart.jsx:1389 [BTCUSDT] ✅ Incremental: +1 velas nuevas = 129601 total
+MiniChart.jsx:1413 [BTCUSDT] ✅ Histórico final: 129601 velas
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.127, chartWidth=815, mostrando=799, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ZoneVisualizerIndicator.js:176 [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+Logger.js:100 ✅ [4:47:53 p. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 3 indicadores
+IndicatorManager.js:1572 [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
+Logger.js:100 ✅ [4:47:53 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 60000ms, priority: 2)
+Logger.js:100 ✅ [4:47:53 p. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.127, chartWidth=815, mostrando=799, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND

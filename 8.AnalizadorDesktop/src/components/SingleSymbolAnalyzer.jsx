@@ -15,6 +15,8 @@ import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import ZoneDetectorSettings from "./ZoneDetectorSettings";
 import VPZoneScannerSettings from "./VPZoneScannerSettings";
+import VPPeriodicBacktestSettings from "./VPPeriodicBacktestSettings";
+import StrategyBuilder from "./StrategyBuilder";
 import wsManager from "./WebSocketManager";
 import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
 import { useGlobalAlerts } from "../hooks/useGlobalAlerts";
@@ -50,10 +52,10 @@ const DEFAULT_DAYS_BY_INTERVAL = {
   "W": 730
 };
 
-// Limites maximos de dias por timeframe (sincronizado con ZoneDetectorSettings)
+// Limites maximos de dias por timeframe (sincronizado con ZoneDetectorSettings y backend)
 const MAX_DAYS_BY_INTERVAL = {
-  "1": 7,
-  "3": 21,
+  "1": 400,
+  "3": 400,
   "5": 400,
   "15": 180,
   "30": 360,
@@ -66,8 +68,8 @@ const MAX_DAYS_BY_INTERVAL = {
 
 // Opciones de dias por timeframe (extendidas para backtesting)
 const DAYS_OPTIONS_BY_INTERVAL = {
-  "1": [1, 2, 3, 5, 7],
-  "3": [1, 2, 5, 7, 14, 21],
+  "1": [1, 2, 3, 5, 7, 14, 30, 60, 90, 120, 180, 240, 300, 365, 400],
+  "3": [1, 2, 5, 7, 14, 30, 60, 90, 120, 180, 240, 300, 365, 400],
   "5": [1, 2, 5, 7, 14, 30, 60, 90, 120, 180, 240, 300, 365, 400],
   "15": [1, 2, 5, 7, 14, 30, 60, 90, 120, 180],
   "30": [1, 2, 5, 7, 14, 30, 60, 90, 120, 180, 270, 360],
@@ -108,7 +110,8 @@ const SingleSymbolAnalyzer = () => {
     "Double Top/Bottom": false,
     "Support & Resistance": false,
     "S&R v2": true,
-    "Swing Detector": false
+    "Swing Detector": false,
+    "VP Periodic": false
   };
 
   const [indicatorStates, setIndicatorStates] = useState(() => {
@@ -173,6 +176,25 @@ const SingleSymbolAnalyzer = () => {
   const [showSR2Settings, setShowSR2Settings] = useState(false);
   const [showZoneDetectorSettings, setShowZoneDetectorSettings] = useState(false);
   const [showVPZoneScannerSettings, setShowVPZoneScannerSettings] = useState(false);
+  const [showVPPeriodicBacktest, setShowVPPeriodicBacktest] = useState(false);
+  const [showStrategyBuilder, setShowStrategyBuilder] = useState(false);
+  const [showVPPeriodicSettings, setShowVPPeriodicSettings] = useState(false);
+  const [vpPeriodicConfig, setVpPeriodicConfig] = useState(() => {
+    const saved = localStorage.getItem('vpPeriodicConfig');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
+    }
+    return {
+      periodCandles: 240,
+      rows: 50,
+      valueAreaPercent: 70,
+      histogramMaxWidth: 30,
+      showPOC: true,
+      showVAHVAL: true,
+      showLabels: true,
+      useGradient: true
+    };
+  });
 
   // Estado de deteccion realtime de zonas (para indicador visual fuera del modal)
   const [zoneRealtimeActive, setZoneRealtimeActive] = useState(false);
@@ -501,6 +523,19 @@ const SingleSymbolAnalyzer = () => {
       symbol: symbol
     });
   };
+
+  // Handler para VP Periodic config
+  const handleVpPeriodicConfigChange = useCallback((newConfig) => {
+    setVpPeriodicConfig(newConfig);
+    localStorage.setItem('vpPeriodicConfig', JSON.stringify(newConfig));
+    // Aplicar al indicador si existe
+    if (indicatorManagerRef.current) {
+      const vpPeriodic = indicatorManagerRef.current.indicators.find(ind => ind.name === 'VP Periodic');
+      if (vpPeriodic) {
+        vpPeriodic.updateConfig(newConfig);
+      }
+    }
+  }, []);
 
   // Handlers para abrir Settings modals - reciben el indicatorManager desde MiniChart
   const handleOpenRangeDetectionSettings = useCallback((manager, candles) => {
@@ -853,6 +888,38 @@ const SingleSymbolAnalyzer = () => {
               />
             )}
           </button>
+          <button
+            className={`zone-detector-toggle ${showVPPeriodicBacktest ? 'active' : ''}`}
+            onClick={() => setShowVPPeriodicBacktest(true)}
+            title="VP Periodic Backtest"
+            style={{
+              padding: '8px 12px',
+              backgroundColor: showVPPeriodicBacktest ? '#4FC3F7' : '#4A6FA5',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '13px',
+            }}
+          >
+            VP Backtest
+          </button>
+          <button
+            className={`zone-detector-toggle ${showStrategyBuilder ? 'active' : ''}`}
+            onClick={() => setShowStrategyBuilder(true)}
+            title="Strategy Builder - Backtester modular"
+            style={{
+              padding: '8px 12px',
+              backgroundColor: showStrategyBuilder ? '#9C27B0' : '#6A1B9A',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '13px',
+            }}
+          >
+            Strategy
+          </button>
         </div>
       </div>
 
@@ -876,6 +943,17 @@ const SingleSymbolAnalyzer = () => {
             title="Configurar Volume Profile"
           >
             VP Config
+          </button>
+        )}
+
+        {indicatorStates["VP Periodic"] && (
+          <button
+            onClick={() => setShowVPPeriodicSettings(true)}
+            className="vp-settings-btn"
+            title="Configurar VP Periodic"
+            style={{ marginLeft: '4px' }}
+          >
+            VP Periodic Config
           </button>
         )}
 
@@ -910,6 +988,7 @@ const SingleSymbolAnalyzer = () => {
             days={days}
             indicatorStates={indicatorStates}
             vpConfig={vpConfig}
+            vpPeriodicConfig={vpPeriodicConfig}
             vpFixedRange={vpFixedRange}
             oiMode={oiMode}
             onOpenVpSettings={() => setShowVpSettings(true)}
@@ -972,6 +1051,82 @@ const SingleSymbolAnalyzer = () => {
                 onApplyToAllChange={() => {}}
                 currentSymbol={symbol}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showVPPeriodicSettings && (
+        <div className="modal-overlay" onClick={() => setShowVPPeriodicSettings(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '420px' }}>
+            <div className="modal-header">
+              <h3>VP Periodic - Configuracion</h3>
+              <button className="modal-close-btn" onClick={() => setShowVPPeriodicSettings(false)}>X</button>
+            </div>
+            <div className="modal-body" style={{ padding: '15px' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', fontSize: '13px' }}>
+                  <span>Periodo (velas por perfil)</span>
+                  <span style={{ color: '#FF9800', fontWeight: 600 }}>{vpPeriodicConfig.periodCandles}</span>
+                </label>
+                <input type="range" min={10} max={1440} step={10} value={vpPeriodicConfig.periodCandles}
+                  onChange={e => handleVpPeriodicConfigChange({ ...vpPeriodicConfig, periodCandles: parseInt(e.target.value) })}
+                  style={{ width: '100%' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#888' }}>
+                  <span>10</span>
+                  <span>En 1min: {vpPeriodicConfig.periodCandles} velas = {(vpPeriodicConfig.periodCandles / 60).toFixed(1)}h</span>
+                  <span>1440</span>
+                </div>
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', fontSize: '13px' }}>
+                  <span>Filas (resolucion)</span>
+                  <span style={{ color: '#FF9800', fontWeight: 600 }}>{vpPeriodicConfig.rows}</span>
+                </label>
+                <input type="range" min={10} max={200} step={5} value={vpPeriodicConfig.rows}
+                  onChange={e => handleVpPeriodicConfigChange({ ...vpPeriodicConfig, rows: parseInt(e.target.value) })}
+                  style={{ width: '100%' }} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', fontSize: '13px' }}>
+                  <span>Value Area %</span>
+                  <span style={{ color: '#FF9800', fontWeight: 600 }}>{vpPeriodicConfig.valueAreaPercent}%</span>
+                </label>
+                <input type="range" min={50} max={95} step={1} value={vpPeriodicConfig.valueAreaPercent}
+                  onChange={e => handleVpPeriodicConfigChange({ ...vpPeriodicConfig, valueAreaPercent: parseInt(e.target.value) })}
+                  style={{ width: '100%' }} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', fontSize: '13px' }}>
+                  <span>Ancho histograma %</span>
+                  <span style={{ color: '#FF9800', fontWeight: 600 }}>{vpPeriodicConfig.histogramMaxWidth}%</span>
+                </label>
+                <input type="range" min={10} max={80} step={5} value={vpPeriodicConfig.histogramMaxWidth}
+                  onChange={e => handleVpPeriodicConfigChange({ ...vpPeriodicConfig, histogramMaxWidth: parseInt(e.target.value) })}
+                  style={{ width: '100%' }} />
+              </div>
+              <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', fontSize: '13px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <input type="checkbox" checked={vpPeriodicConfig.showPOC}
+                    onChange={e => handleVpPeriodicConfigChange({ ...vpPeriodicConfig, showPOC: e.target.checked })} />
+                  POC
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <input type="checkbox" checked={vpPeriodicConfig.showVAHVAL}
+                    onChange={e => handleVpPeriodicConfigChange({ ...vpPeriodicConfig, showVAHVAL: e.target.checked })} />
+                  VAH/VAL
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <input type="checkbox" checked={vpPeriodicConfig.showLabels}
+                    onChange={e => handleVpPeriodicConfigChange({ ...vpPeriodicConfig, showLabels: e.target.checked })} />
+                  Labels
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <input type="checkbox" checked={vpPeriodicConfig.useGradient}
+                    onChange={e => handleVpPeriodicConfigChange({ ...vpPeriodicConfig, useGradient: e.target.checked })} />
+                  Gradiente
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -1236,10 +1391,27 @@ const SingleSymbolAnalyzer = () => {
       <VPZoneScannerSettings
         isOpen={showVPZoneScannerSettings}
         onClose={() => setShowVPZoneScannerSettings(false)}
+        onOpen={() => setShowVPZoneScannerSettings(true)}
         indicatorManager={indicatorManagerRef.current}
         symbol={symbol}
         interval={interval}
         onRealtimeChange={(active) => setVpRealtimeActive(active)}
+      />
+
+      <VPPeriodicBacktestSettings
+        isOpen={showVPPeriodicBacktest}
+        onClose={() => setShowVPPeriodicBacktest(false)}
+        symbol={symbol}
+        interval={interval}
+        indicatorManager={indicatorManagerRef.current}
+      />
+
+      <StrategyBuilder
+        isOpen={showStrategyBuilder}
+        onClose={() => setShowStrategyBuilder(false)}
+        symbol={symbol}
+        interval={interval}
+        indicatorManager={indicatorManagerRef.current}
       />
     </div>
   );

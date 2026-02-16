@@ -189,6 +189,12 @@ class Rectangle {
       if (this.timeStart > this.timeEnd) {
         [this.timeStart, this.timeEnd] = [this.timeEnd, this.timeStart];
       }
+
+      // Sincronizar price1/time1/price2/time2 para que serialize() guarde valores correctos
+      this.price1 = this.priceHigh;
+      this.time1 = this.timeStart;
+      this.price2 = this.priceLow;
+      this.time2 = this.timeEnd;
     }
   }
 

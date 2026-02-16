@@ -1,0 +1,13 @@
+1. VWAP bajando
+2. Haber cruzado un nivel importante (POC, resistencia, etc)
+3. que al tratar de retestar se genere un double top
+4. Abrir short
+
+Mirar si es factible con el swing high detector.
+
+Hace falta tener en cuenta el volumen xa los movimientos, aparte de si sube o baja.
+
+No hemos considerado la liquidez en la estrategia, evaluar cómo tenerla en cuenta.
+
+Ahora no está tomando el cuenta que el vwap está subiendo entonces abre shorts en el momento equivocado.
+En la lista de trades no dice si fue win/loss ni tiene la fecha del trade, al hacer click no manda para allá.

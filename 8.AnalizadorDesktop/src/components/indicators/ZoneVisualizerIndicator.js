@@ -15,6 +15,7 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     this._manualZones = [];   // Zonas de "Detectar zonas" (boton manual)
     this._realtimeZones = []; // Zonas del servicio realtime (V2 engine)
     this._vpZones = [];       // Zonas del VP Zone Scanner (Volume Profile)
+    this._strategyZones = []; // Zonas del Strategy Builder (modular backtest)
 
     // Metricas por candle para barras horizontales (v2: 6 barras diagnosticas)
     this._metricsMap = new Map(); // timestamp -> {atr_range, count_outside, body_ratio, range_pct, min_bars, ttm_squeeze}
@@ -52,6 +53,11 @@ class ZoneVisualizerIndicator extends IndicatorBase {
         vp_win: { fill: 'rgba(0, 180, 100, 0.25)', border: '#00B464' },
         vp_loss: { fill: 'rgba(210, 50, 50, 0.25)', border: '#D23232' },
         vp_open: { fill: 'rgba(0, 86, 210, 0.15)', border: '#0056D2' },
+        // Strategy Builder colores
+        sb_zone: { fill: 'rgba(128, 0, 200, 0.18)', border: '#8000C8' },
+        sb_win: { fill: 'rgba(0, 180, 100, 0.25)', border: '#00B464' },
+        sb_loss: { fill: 'rgba(210, 50, 50, 0.25)', border: '#D23232' },
+        sb_open: { fill: 'rgba(128, 0, 200, 0.12)', border: '#8000C8' },
         default: { fill: 'rgba(128, 128, 128, 0.15)', border: '#808080' }
       },
       tradeableHighlight: { fill: 'rgba(74, 165, 74, 0.25)', border: '#4aa54a' }
@@ -96,6 +102,15 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       }
     }
 
+    // Agregar Strategy Builder zones que no esten ya
+    for (const z of this._strategyZones) {
+      const key = `${z.start_timestamp}_${z.end_timestamp}`;
+      if (!allKeys.has(key)) {
+        allKeys.add(key);
+        merged.push({ ...z, _source: 'strategy', _debugLogged: false, _skippedLogged: false, _priceCheckLogged: false, _yErrorLogged: false, _yRangeLogged: false });
+      }
+    }
+
     this.zones = merged;
   }
 
@@ -130,6 +145,16 @@ class ZoneVisualizerIndicator extends IndicatorBase {
   }
 
   /**
+   * Establece zonas del Strategy Builder (modular backtest)
+   * @param {Array} zones - Array de zonas del strategy builder
+   */
+  setStrategyZones(zones) {
+    this._strategyZones = zones || [];
+    this._mergeZones();
+    console.log(`[${this.symbol}] ZoneVisualizer: ${this._strategyZones.length} zonas Strategy Builder (total: ${this.zones.length})`);
+  }
+
+  /**
    * Agrega zonas sin reemplazar las existentes
    * @param {Array} zones - Array de zonas a agregar
    */
@@ -146,6 +171,7 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     this._manualZones = [];
     this._realtimeZones = [];
     this._vpZones = [];
+    this._strategyZones = [];
     this.zones = [];
     console.log(`[${this.symbol}] ZoneVisualizer: Zonas limpiadas`);
   }
@@ -245,10 +271,8 @@ class ZoneVisualizerIndicator extends IndicatorBase {
    * @returns {boolean} true si se renderizo, false si se salto
    */
   _renderZoneOverlay(ctx, zone, visibleCandles, allCandles, bounds, priceContext) {
-    // No renderizar zonas sin trade (SKIPPED, NO_ENTRY)
-    if (zone.trade_result === 'SKIPPED' || zone.trade_result === 'NO_ENTRY') {
-      return false;
-    }
+    const isNoTrade = zone.trade_result === 'SKIPPED' || zone.trade_result === 'NO_ENTRY'
+      || zone.trade_result === 'NO_BREAKOUT';
 
     const { x: boundsX, y: boundsY, width: boundsWidth, height: boundsHeight } = bounds;
     const { priceToY, timeToX, minPrice, maxPrice } = priceContext;
@@ -275,11 +299,19 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     if (visibleCandles && visibleCandles.length > 0 && zone.start_timestamp && zone.end_timestamp) {
       const visFirstTs = visibleCandles[0].timestamp;
       const visLastTs = visibleCandles[visibleCandles.length - 1].timestamp;
-      // Considerar el rango extendido: consolidacion + trade
-      // Para zonas OPEN/PENDING, se extienden hasta el presente (no tienen close_timestamp)
-      const zoneLatestTs = isOpenOrPending
+      // Considerar el rango extendido: consolidacion + trade(s)
+      // Para zonas OPEN/PENDING, se extienden hasta el presente
+      let zoneLatestTs = isOpenOrPending
         ? Infinity
         : (zone.trade_close_timestamp || zone.entry_timestamp || zone.end_timestamp);
+      // Para mean reversion con multiples trades, buscar el timestamp mas lejano
+      if (zone.mr_trades && zone.mr_trades.length > 0) {
+        for (const t of zone.mr_trades) {
+          const tEnd = t.trade_close_timestamp || t.entry_timestamp || 0;
+          if (tEnd > zoneLatestTs) zoneLatestTs = tEnd;
+          if (t.trade_result === 'OPEN') { zoneLatestTs = Infinity; break; }
+        }
+      }
       // Si la zona termina antes del rango visible o comienza despues, skip
       if (zoneLatestTs < visFirstTs || zone.start_timestamp > visLastTs) {
         return false;
@@ -301,19 +333,30 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     const yTop = Math.max(Math.min(yZoneTop, yZoneBottom), boundsY);
     const yBot = Math.min(Math.max(yZoneTop, yZoneBottom), boundsY + boundsHeight);
 
-    if (yTop >= yBot || xZoneStart >= xZoneEnd) {
-      return false;
-    }
+    // Consolidacion visible verticalmente? (si no, los trades aun pueden serlo)
+    const consolVisibleV = yTop < yBot;
 
-    // Colores de consolidacion: cyan para PENDING, azul VP para VP zones, azul gris para V2
-    const consolFill = isPending ? 'rgba(0, 200, 220, 0.15)'
-      : isVP ? 'rgba(0, 86, 210, 0.15)' : 'rgba(100, 140, 200, 0.12)';
-    const consolBorder = isPending ? 'rgba(0, 200, 220, 0.7)'
-      : isVP ? 'rgba(0, 86, 210, 0.6)' : 'rgba(100, 140, 200, 0.5)';
-    const consolVert = isPending ? 'rgba(0, 200, 220, 0.5)'
-      : isVP ? 'rgba(0, 86, 210, 0.4)' : 'rgba(100, 140, 200, 0.4)';
+    // Si la consolidacion esta fuera del area visible horizontal, NO salir
+    // porque los trades pueden estar en el area visible
+    const consolVisible = xZoneStart < xZoneEnd && consolVisibleV;
 
-    // Dibujar consolidacion
+    // Colores de consolidacion: gris para sin trade, cyan para PENDING, azul VP, purpura SB, azul gris V2
+    const isStrategy = zone._source === 'strategy';
+    const consolFill = isNoTrade ? 'rgba(130, 130, 130, 0.10)'
+      : isPending ? 'rgba(0, 200, 220, 0.15)'
+      : isVP ? 'rgba(0, 86, 210, 0.15)'
+      : isStrategy ? 'rgba(128, 0, 200, 0.15)' : 'rgba(100, 140, 200, 0.12)';
+    const consolBorder = isNoTrade ? 'rgba(130, 130, 130, 0.45)'
+      : isPending ? 'rgba(0, 200, 220, 0.7)'
+      : isVP ? 'rgba(0, 86, 210, 0.6)'
+      : isStrategy ? 'rgba(128, 0, 200, 0.6)' : 'rgba(100, 140, 200, 0.5)';
+    const consolVert = isNoTrade ? 'rgba(130, 130, 130, 0.35)'
+      : isPending ? 'rgba(0, 200, 220, 0.5)'
+      : isVP ? 'rgba(0, 86, 210, 0.4)'
+      : isStrategy ? 'rgba(128, 0, 200, 0.4)' : 'rgba(100, 140, 200, 0.4)';
+
+    // Dibujar consolidacion (solo si visible horizontalmente)
+    if (consolVisible) {
     ctx.fillStyle = consolFill;
     ctx.fillRect(xZoneStart, yTop, xZoneEnd - xZoneStart, yBot - yTop);
 
@@ -483,11 +526,44 @@ class ZoneVisualizerIndicator extends IndicatorBase {
         ctx.setLineDash([]);
       }
     }
+    } // end if (consolVisible)
 
-    // --- RECTANGULO 2: Trade (entry -> TP/SL) ---
-    if (zone.entry_price && zone.sl_price && zone.tp_price && zone.entry_timestamp) {
-      const isWin = zone.trade_result === 'WIN';
-      const isOpen = zone.trade_result === 'OPEN';
+    // --- LINEA VERTICAL: Vela de deteccion (donde la zona se confirmo) ---
+    if (zone.detection_timestamp && timeToX) {
+      const xDetection = timeToX(zone.detection_timestamp);
+      if (xDetection >= boundsX && xDetection <= boundsX + boundsWidth) {
+        ctx.beginPath();
+        ctx.setLineDash([4, 3]);
+        ctx.strokeStyle = 'rgba(255, 165, 0, 0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.moveTo(xDetection, yZoneTop);
+        ctx.lineTo(xDetection, yZoneBottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Label
+        ctx.font = 'bold 9px Arial';
+        ctx.fillStyle = 'rgba(255, 165, 0, 0.9)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('D', xDetection, yZoneTop - 2);
+      }
+    }
+
+    // --- RECTANGULO 2: Trade(s) (entry -> TP/SL) ---
+    // Mean reversion puede tener multiples sub-trades (mr_trades)
+    const tradesToDraw = (zone.mr_trades && zone.mr_trades.length > 0)
+      ? zone.mr_trades
+      : (zone.entry_price && zone.sl_price && zone.tp_price && zone.entry_timestamp)
+        ? [zone]
+        : [];
+
+    for (let tIdx = 0; tIdx < tradesToDraw.length; tIdx++) {
+      const trade = tradesToDraw[tIdx];
+      if (!trade.entry_price || !trade.sl_price || !trade.tp_price || !trade.entry_timestamp) continue;
+
+      const isWin = trade.trade_result === 'WIN';
+      const isOpen = trade.trade_result === 'OPEN';
 
       // Colores segun estado
       const tradeColors = isOpen
@@ -501,21 +577,19 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       let xTradeEnd = boundsX + boundsWidth;
 
       if (timeToX) {
-        const tx1 = timeToX(zone.entry_timestamp);
+        const tx1 = timeToX(trade.entry_timestamp);
         if (tx1 !== null && tx1 !== undefined) xTradeStart = Math.max(boundsX, tx1);
 
-        if (!isOpen && zone.trade_close_timestamp) {
-          const tx2 = timeToX(zone.trade_close_timestamp);
+        if (!isOpen && trade.trade_close_timestamp) {
+          const tx2 = timeToX(trade.trade_close_timestamp);
           if (tx2 !== null && tx2 !== undefined) xTradeEnd = Math.min(boundsX + boundsWidth, tx2);
         }
-        // Si OPEN, xTradeEnd queda al borde derecho del chart
       }
 
       if (xTradeStart < xTradeEnd) {
-        // Y del trade: entre SL y TP
-        const yEntry = priceToY(zone.entry_price);
-        const ySL = priceToY(zone.sl_price);
-        const yTP = priceToY(zone.tp_price);
+        const yEntry = priceToY(trade.entry_price);
+        const ySL = priceToY(trade.sl_price);
+        const yTP = priceToY(trade.tp_price);
 
         if (yEntry !== undefined && ySL !== undefined && yTP !== undefined) {
           const yTradeTop = Math.max(Math.min(ySL, yTP), boundsY);
@@ -524,11 +598,9 @@ class ZoneVisualizerIndicator extends IndicatorBase {
           const tradeHeight = yTradeBot - yTradeTop;
 
           if (tradeHeight > 0 && tradeWidth > 0) {
-            // Fill del trade
             ctx.fillStyle = tradeColors.fill;
             ctx.fillRect(xTradeStart, yTradeTop, tradeWidth, tradeHeight);
 
-            // Borde del trade (punteado si OPEN)
             ctx.strokeStyle = tradeColors.border;
             ctx.lineWidth = 1;
             ctx.setLineDash(isOpen ? [4, 4] : []);
@@ -565,20 +637,17 @@ class ZoneVisualizerIndicator extends IndicatorBase {
             ctx.lineTo(xTradeEnd, ySLClamp);
             ctx.stroke();
 
-            // Labels de TP y SL al lado derecho (con numero de zona)
+            // Labels de TP y SL
             ctx.font = 'bold 10px Arial';
             ctx.textAlign = 'right';
             ctx.textBaseline = 'middle';
 
-            // Label TP con numero de zona
-            const tpLabel = `#${zoneIndex} TP`;
+            const tradeLabel = tradesToDraw.length > 1 ? `#${zoneIndex}.${tIdx + 1}` : `#${zoneIndex}`;
             ctx.fillStyle = 'rgba(0, 200, 80, 1)';
-            ctx.fillText(tpLabel, xTradeEnd - 3, yTPClamp);
+            ctx.fillText(`${tradeLabel} TP`, xTradeEnd - 3, yTPClamp);
 
-            // Label SL con numero de zona
-            const slLabel = `#${zoneIndex} SL`;
             ctx.fillStyle = 'rgba(220, 40, 40, 1)';
-            ctx.fillText(slLabel, xTradeEnd - 3, ySLClamp);
+            ctx.fillText(`${tradeLabel} SL`, xTradeEnd - 3, ySLClamp);
           }
         }
       }
@@ -590,7 +659,10 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       const isOpen = zone.trade_result === 'OPEN';
       const isBuilding = zone.trade_result === 'BUILDING';
       let labelColor, resultText;
-      if (isBuilding) {
+      if (isNoTrade) {
+        labelColor = '#888888';
+        resultText = '-';
+      } else if (isBuilding) {
         labelColor = '#00BCD4';
         resultText = 'B';
       } else if (isPending) {
@@ -617,11 +689,14 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       const labelWidth = textMetrics.width + padding * 2;
       const labelHeight = 19;
 
+      // Usar yTop clampeado si la consolidacion esta fuera del viewport vertical
+      const labelY = consolVisibleV ? yTop : Math.max(boundsY, Math.min(boundsY + boundsHeight - labelHeight - 4, Math.min(yZoneTop, yZoneBottom)));
+
       ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
-      ctx.fillRect(xZoneStart + 2, yTop + 2, labelWidth, labelHeight);
+      ctx.fillRect(xZoneStart + 2, labelY + 2, labelWidth, labelHeight);
 
       ctx.fillStyle = labelColor;
-      ctx.fillText(labelText, xZoneStart + 2 + padding, yTop + 5);
+      ctx.fillText(labelText, xZoneStart + 2 + padding, labelY + 5);
     }
 
     return true;

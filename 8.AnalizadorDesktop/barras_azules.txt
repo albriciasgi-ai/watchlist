@@ -39,3 +39,24 @@
 
   Cuando las 6 barras (o 5 sin TTM) están azul durante suficientes velas consecutivas → el detector marca una zona BUILDING. Cuando alguna barra
    se pone gris → la zona pasa a COMPLETE y espera el breakout.
+   
+   
+   
+   ==================
+   ==================
+   
+   ● Aquí están los valores para pruebas rápidas:
+
+  | Parámetro        | Valor rápido | Default |
+  |------------------|--------------|---------|
+  | min_bars         | 3            | 8       |
+  | multiplier       | 2.0          | 2       |
+  | max_range_pct    | 8.0          | 6.0     |
+  | body_ratio       | 0.7          | 0.5     |
+  | max_outside_bars | 8            | 8       |
+  | use_ttm          | Off          | Off     |
+
+  Los más importantes para acelerar la detección son min_bars=3 (solo 3 velas consecutivas para formar zona) y max_range_pct=8 y body_ratio=0.7
+  (condiciones más relajadas para que pasen más velas).
+
+  Aplica estos valores desde el modal y dale "Aplicar Config".

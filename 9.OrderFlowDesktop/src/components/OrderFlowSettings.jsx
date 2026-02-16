@@ -1,5 +1,5 @@
 // src/components/OrderFlowSettings.jsx
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { API_BASE_URL } from '../config.js';
 import IntegrityPanel from './IntegrityPanel';
 
@@ -121,12 +121,34 @@ const OrderFlowSettings = ({
     }
   };
 
-  // Handle frontend display config changes (immediate)
+  // Debounce ref for redraw - preview updates instantly, chart redraws debounced
+  const redrawTimerRef = useRef(null);
+  const pendingConfigRef = useRef(null);
+
+  // Handle frontend display config changes (preview instant, chart debounced)
   const handleConfigChange = (key, value) => {
     const newConfig = { ...localConfig, [key]: value };
     setLocalConfig(newConfig);
-    onConfigChange(newConfig);
+    pendingConfigRef.current = newConfig;
+    // Debounce the onConfigChange to avoid expensive redraws on every slider tick
+    if (redrawTimerRef.current) clearTimeout(redrawTimerRef.current);
+    redrawTimerRef.current = setTimeout(() => {
+      if (pendingConfigRef.current) {
+        onConfigChange(pendingConfigRef.current);
+        pendingConfigRef.current = null;
+      }
+    }, 150);
   };
+
+  // Cleanup: flush pending config on unmount so changes are not lost
+  useEffect(() => {
+    return () => {
+      if (redrawTimerRef.current) clearTimeout(redrawTimerRef.current);
+      if (pendingConfigRef.current && onConfigChange) {
+        onConfigChange(pendingConfigRef.current);
+      }
+    };
+  }, []);
 
   // Handle backend config changes (batched)
   const handleBackendConfigUpdate = useCallback((updates) => {

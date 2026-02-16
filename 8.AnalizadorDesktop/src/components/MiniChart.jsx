@@ -110,7 +110,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenSR2Settings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, swingAlertsActive = false, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpPeriodicConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenSR2Settings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, swingAlertsActive = false, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null); // 🎯 VIRTUALIZACIÓN: Ref para el contenedor principal
 
@@ -152,6 +152,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const measurementToolRef = useRef(null); // MeasurementTool para mediciones temporales
   const lastTextBoxClickTimeRef = useRef(0); // Para detectar doble-click en TextBox
   const lastTextBoxClickedIdRef = useRef(null); // ID del TextBox clickeado
+  const pendingVPFixedFromRectRef = useRef(false); // Flag: auto-crear VP Fixed al terminar rectangulo
 
   // Usar drawing manager externo si está disponible (para compartir entre grid y fullscreen)
   const drawingManagerRef = externalDrawingManager ? { current: externalDrawingManager } : internalDrawingManagerRef;
@@ -257,7 +258,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const chartWidth = rect.width - 75;
       const targetCandles = 1222;
       const calculatedZoom = chartWidth / (targetCandles * 8);
-      viewStateRef.current.zoom = Math.max(0.1, Math.min(5, calculatedZoom));
+      viewStateRef.current.zoom = Math.max(0.02, Math.min(5, calculatedZoom));
       viewStateRef.current.zoomAutoFixed = true; // Marcar como calculado
 
       log.debug(`[${symbol}] 🎯 Fullscreen: zoom ajustado a ${viewStateRef.current.zoom.toFixed(2)} para ~${targetCandles} velas`);
@@ -409,6 +410,33 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
   }, [drawingMode, mousePos]);
 
+  // Callback para DrawingToolManager cuando se agrega un shape
+  const onShapeAddedCallback = () => {
+    saveDrawingsInline();
+    drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+
+    // Auto-crear VP Fixed si el usuario dibujo un rectangulo desde el modal
+    if (pendingVPFixedFromRectRef.current) {
+      pendingVPFixedFromRectRef.current = false;
+      const mgr = internalDrawingManagerRef.current;
+      if (mgr && mgr.shapes && mgr.shapes.length > 0) {
+        const lastShape = mgr.shapes[mgr.shapes.length - 1];
+        if (lastShape && lastShape.type === 'rectangle') {
+          const tStart = Math.min(lastShape.time1, lastShape.time2);
+          const tEnd = Math.max(lastShape.time1, lastShape.time2);
+          const rectId = lastShape.id;
+          setDrawingMode(false);
+          setSelectedDrawingTool('select');
+          setTimeout(() => {
+            handleCreateFixedRangeProfile(tStart, tEnd, false, rectId);
+          }, 50);
+        }
+      }
+    }
+  };
+  const onShapeAddedRef = useRef(onShapeAddedCallback);
+  onShapeAddedRef.current = onShapeAddedCallback;
+
   // 🎨 Inicializar DrawingToolManager y MeasurementTool cuando se activa el modo dibujo
   useEffect(() => {
     if (drawingMode && !externalDrawingManager) {
@@ -418,12 +446,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           symbol,
           interval,
           setSelectedDrawingTool,
-          () => {
-            // Callback cuando se agrega un shape - guardar y forzar re-render
-            saveDrawingsInline();
-            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-          }
+          () => onShapeAddedRef.current()
         );
+      } else {
+        // Actualizar callback por si cambio el contexto
+        internalDrawingManagerRef.current.onShapeAdded = () => onShapeAddedRef.current();
       }
       // 🔄 FIX: SIEMPRE cargar dibujos al entrar al modo dibujo (no solo la primera vez)
       // Esto asegura que el manager tenga los shapes más recientes del servidor
@@ -452,6 +479,28 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         log.info(`[MiniChart] 🔄 Exiting drawing mode - saving shapes`);
         // saveDrawingsInline() ya sincroniza drawingsRef, guarda al servidor y fuerza re-render
         saveDrawingsInline();
+
+        // Sincronizar VP Fixed Range vinculados a rectangulos que pudieron haber sido modificados
+        if (indicatorManagerRef.current) {
+          const shapes = drawingManagerRef.current.shapes || [];
+          let anyUpdated = false;
+          shapes.forEach(shape => {
+            if (shape.type === 'rectangle') {
+              const newStart = Math.min(shape.time1, shape.time2);
+              const newEnd = Math.max(shape.time1, shape.time2);
+              const updated = indicatorManagerRef.current.updateFixedRangeByRect(
+                shape.id, newStart, newEnd
+              );
+              if (updated) anyUpdated = true;
+            }
+          });
+          if (anyUpdated) {
+            indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
+            const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
+            setFixedRangeProfiles(profiles);
+            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          }
+        }
       }
     }
     prevDrawingModeRef.current = drawingMode;
@@ -702,7 +751,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const chartWidth = width - marginLeft - marginRight;
 
     // ✅ FIX: Zoom manual con rueda del mouse
-    const minCandleWidth = 1;  // Permitir zoom out hasta 1px por vela
+    const minCandleWidth = 0.5;  // Permitir zoom out x3 (~3000 velas en pantalla)
     const maxCandleWidth = 15;
     let candlesPerScreen, barWidth;
 
@@ -727,7 +776,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       // Calcular zoom para mostrar ~60% de las velas disponibles o 800 velas, lo que sea menor
       const targetCandles = Math.min(displayCandles.length * 0.6, chartWidth > 1000 ? 1500 : 800);
       const calculatedZoom = chartWidth / (targetCandles * 8);
-      const newZoom = Math.max(0.1, Math.min(5, calculatedZoom));
+      const newZoom = Math.max(0.02, Math.min(5, calculatedZoom));
 
       // Solo corregir si el zoom calculado es significativamente diferente
       if (Math.abs(newZoom - viewStateRef.current.zoom) > 0.05) {
@@ -1402,7 +1451,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
             // targetCandles = chartWidth / (8 * zoom)
             // zoom = chartWidth / (targetCandles * 8)
             const calculatedZoom = chartWidth / (targetCandles * 8);
-            viewStateRef.current.zoom = Math.max(0.1, Math.min(5, calculatedZoom));
+            viewStateRef.current.zoom = Math.max(0.02, Math.min(5, calculatedZoom));
             viewStateRef.current.zoomAutoFixed = true; // Marcar como calculado
 
             log.debug(`[${symbol}] 🎯 Zoom inicial ajustado: ${viewStateRef.current.zoom.toFixed(2)} para mostrar ~${targetCandles} velas (chartWidth=${chartWidth})`);
@@ -1816,15 +1865,31 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     // 🎨 Modo dibujo: delegar al DrawingToolManager
     if (drawingMode && drawingManagerRef.current && scaleConverterRef.current) {
       // Verificar si hay un shape siendo arrastrado/redimensionado
-      const wasModifying = drawingManagerRef.current.selectedShape &&
+      const modifiedShape = drawingManagerRef.current.selectedShape &&
         (drawingManagerRef.current.selectedShape.isDragging ||
-         drawingManagerRef.current.selectedShape.isResizing);
+         drawingManagerRef.current.selectedShape.isResizing)
+        ? drawingManagerRef.current.selectedShape : null;
 
       drawingManagerRef.current.handleMouseUp(scaleConverterRef.current);
 
       // Si se estaba modificando un shape, guardar al servidor
-      if (wasModifying) {
+      if (modifiedShape) {
         saveDrawingsInline();
+
+        // Si el shape modificado es un rectangulo vinculado a un VP Fixed, actualizar timestamps
+        if (modifiedShape.type === 'rectangle' && indicatorManagerRef.current) {
+          const newStart = Math.min(modifiedShape.time1, modifiedShape.time2);
+          const newEnd = Math.max(modifiedShape.time1, modifiedShape.time2);
+          const updated = indicatorManagerRef.current.updateFixedRangeByRect(
+            modifiedShape.id, newStart, newEnd
+          );
+          if (updated) {
+            indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
+            const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
+            setFixedRangeProfiles(profiles);
+            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          }
+        }
       }
     }
 
@@ -1953,8 +2018,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     // Zoom horizontal normal (zoom in/out de velas)
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
     const oldZoom = viewStateRef.current.zoom;
-    // Permitir más compresión (min 0.1) para ver más velas y más contexto
-    const newZoom = Math.max(0.1, Math.min(5, oldZoom * zoomFactor));
+    // Permitir mas compresion (min 0.02) para ver mas velas y contexto amplio
+    const newZoom = Math.max(0.02, Math.min(5, oldZoom * zoomFactor));
     viewStateRef.current.zoom = newZoom;
     viewStateRef.current.userZoomed = true; // Marcar que el usuario hizo zoom manualmente
 
@@ -1962,7 +2027,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     if (canvas) {
       const rect = canvas.getBoundingClientRect();
       const chartWidth = rect.width - 75;
-      const candlesPerScreen = Math.floor(chartWidth / (8 * newZoom));
+      // Usar mismo clamp que drawChart: minCandleWidth=0.5
+      const effectiveBarWidth = Math.max(0.5, Math.min(15, 8 * newZoom));
+      const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
       const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
       viewStateRef.current.offset = Math.min(viewStateRef.current.offset, maxOffset);
     }
@@ -2037,9 +2104,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   // ==================== FIXED RANGE PROFILES ====================
   
-  const handleCreateFixedRangeProfile = (startTimestamp, endTimestamp, applyToAll = false) => {
+  const handleCreateFixedRangeProfile = (startTimestamp, endTimestamp, applyToAll = false, sourceRectId = null) => {
     if (indicatorManagerRef.current) {
-      const rangeId = indicatorManagerRef.current.createFixedRangeProfile(startTimestamp, endTimestamp);
+      const rangeId = indicatorManagerRef.current.createFixedRangeProfile(startTimestamp, endTimestamp, sourceRectId);
       const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
       setFixedRangeProfiles(profiles);
 
@@ -2159,6 +2226,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     }
   }, [vpConfig]);
+
+  useEffect(() => {
+    if (indicatorManagerRef.current && vpPeriodicConfig) {
+      indicatorManagerRef.current.applyConfig("VP Periodic", vpPeriodicConfig);
+      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+    }
+  }, [vpPeriodicConfig]);
 
   useEffect(() => {
     if (indicatorManagerRef.current && indicatorManagerRef.current.days !== parseInt(days)) {
@@ -2321,6 +2395,10 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       if (vpConfig) {
         indicatorManagerRef.current.applyConfig("Volume Profile", vpConfig);
         indicatorManagerRef.current.setIndicatorMode("Volume Profile", vpConfig.mode);
+      }
+
+      if (vpPeriodicConfig) {
+        indicatorManagerRef.current.applyConfig("VP Periodic", vpPeriodicConfig);
       }
 
       // 📊 Configurar modo de Open Interest
@@ -3178,6 +3256,13 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               onConfigureProfile={handleConfigureFixedRangeProfile}
               onDeleteAllProfiles={handleDeleteAllFixedRangeProfiles}
               onDeleteAllProfilesGlobal={handleDeleteAllFixedRangeProfilesGlobal}
+              chartRectangles={(drawingsRef.current || []).filter(s => s && s.type === 'rectangle')}
+              onStartDrawRectangle={() => {
+                pendingVPFixedFromRectRef.current = true;
+                setShowFixedRangeManager(false);
+                setDrawingMode(true);
+                setSelectedDrawingTool('rectangle');
+              }}
             />
           </div>
         </div>

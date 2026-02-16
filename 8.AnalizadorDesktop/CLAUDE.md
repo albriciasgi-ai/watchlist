@@ -1060,3 +1060,247 @@ async def handler():
 **Resultados TTM no cambian nada:**
 - Verificar que `use_ttm_prefilter` esta activado en el modal
 - Si esta desactivado, los parametros TTM se ignoran en la deteccion
+
+---
+
+## VP PERIODIC BACKTEST (Febrero 2026)
+
+Sistema de backtesting de estrategias basadas en Volume Profile Periodic + VWAP Session.
+
+### Arquitectura
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                  VP PERIODIC BACKTEST                         │
+├──────────────────────────────────────────────────────────────┤
+│                                                               │
+│  FRONTEND                                                     │
+│  ┌───────────────────────────────────────────────────────┐   │
+│  │ VPPeriodicBacktestSettings.jsx                        │   │
+│  │   - Selector de estrategia (3 estrategias)            │   │
+│  │   - Sliders de parametros por estrategia              │   │
+│  │   - Barra de progreso visual (SSE)                    │   │
+│  │   - Tabla de resultados (metricas)                    │   │
+│  └───────────────────┬───────────────────────────────────┘   │
+│                      │                                        │
+│  ┌───────────────────┴───────────────────────────────────┐   │
+│  │ IndicatorManager.runVPPeriodicBacktest()              │   │
+│  │   - Conecta via EventSource (SSE)                     │   │
+│  │   - Recibe progreso y resultado                       │   │
+│  │   - Llama zoneVisualizerIndicator.setVPZones()        │   │
+│  └───────────────────────────────────────────────────────┘   │
+│                                                               │
+│  BACKEND                                                      │
+│  ┌───────────────────────────────────────────────────────┐   │
+│  │ GET /api/vp-periodic/backtest-stream (SSE)            │   │
+│  │   - Verifica cache de velas (2h TTL)                  │   │
+│  │   - Ejecuta run_backtest() en thread pool             │   │
+│  │   - Comunica progreso via queue.Queue                 │   │
+│  │   - Envia eventos: progress, result, error            │   │
+│  └───────────────────┬───────────────────────────────────┘   │
+│                      │                                        │
+│  ┌───────────────────┴───────────────────────────────────┐   │
+│  │ backtest_vp_periodic.py                               │   │
+│  │   - compute_vwap_session(): VWAP con bandas sigma     │   │
+│  │   - compute_volume_profile(): POC, VAH, VAL           │   │
+│  │   - strategy_poc_bounce()                             │   │
+│  │   - strategy_va_breakout()                            │   │
+│  │   - strategy_rejection_confluence()                   │   │
+│  │   - calculate_metrics(): WR, PF, Expectancy, DD      │   │
+│  └───────────────────────────────────────────────────────┘   │
+│                                                               │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Archivos del Sistema
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `4.Analizador cripto/backend/backtest_vp_periodic.py` | Motor de backtest: 3 estrategias, VP, VWAP, metricas |
+| `4.Analizador cripto/backend/main.py` (SSE endpoint) | `GET /api/vp-periodic/backtest-stream` con progreso |
+| `src/components/VPPeriodicBacktestSettings.jsx` | Modal UI: estrategia, params, progreso, resultados |
+| `src/components/indicators/IndicatorManager.js` | `runVPPeriodicBacktest()` via EventSource SSE |
+| `src/components/indicators/ZoneVisualizerIndicator.js` | Renderiza trades como zonas VP via `setVPZones()` |
+
+### Estrategias
+
+| Estrategia | Logica | Parametros |
+|------------|--------|------------|
+| `poc_bounce` | Mean reversion al POC filtrado por VWAP | vp_period, tp_rr, bins |
+| `va_breakout` | Breakout del Value Area + VWAP sigma | vp_period, tp_rr, confirm_bars, min_va_width_pct, bins |
+| `rejection_confluence` | Rechazo VAH/VAL + confluencia VWAP + vela rechazo | vp_period, tolerance_pct, wick_ratio, bins |
+
+### Endpoint SSE
+
+```
+GET /api/vp-periodic/backtest-stream?symbol=BTCUSDT&interval=1&days=400&strategy=poc_bounce&params_json={...}
+```
+
+**Eventos:**
+- `progress`: `{phase, percent, message}` - Actualiza barra de progreso
+- `result`: `{zones, stats, candles_count, elapsed_seconds}` - Resultado final
+- `error`: `{message}` - Error
+
+**Fases:** fetching(0-8%) → vwap(10%) → strategy(30%) → metrics(70%) → zones(80%) → done(100%)
+
+### Cache de Velas
+
+El endpoint usa `get_historical(skip_day_limit=True)` con cache en memoria:
+- **TTL 2 horas**: Cache fresco retorna directo
+- **Cache expirado**: Carga incremental (solo velas nuevas desde ultimo timestamp)
+- **Sin cache**: Descarga completa de Bybit
+
+### Frontend - Barra de Progreso
+
+```jsx
+// VPPeriodicBacktestSettings.jsx
+{progress && (
+  <div style={{ width: '100%', height: '22px', background: '#12122A', borderRadius: '11px' }}>
+    <div style={{
+      width: `${progress.percent}%`,
+      background: 'linear-gradient(90deg, #1E88E5, #4FC3F7)',
+      transition: 'width 0.4s ease',
+    }} />
+    <span>{progress.percent}%</span>
+  </div>
+)}
+```
+
+### Frontend - Conexion SSE
+
+```javascript
+// IndicatorManager.js - runVPPeriodicBacktest()
+const eventSource = new EventSource(url);
+eventSource.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === 'progress') onProgress(data);
+  else if (data.type === 'result') {
+    eventSource.close();
+    this.zoneVisualizerIndicator.setVPZones(data.zones);
+    resolve({ success: true, ...data });
+  }
+};
+```
+
+### Troubleshooting
+
+**Error "No se pudo conectar al backend":**
+- Verificar backend corriendo en puerto 10000
+- Si se modifico codigo, reiniciar backend (matar proceso viejo: `taskkill /F /IM python.exe`)
+- Revisar consola backend por errores Python
+
+**Backtest tarda mucho:**
+- Primera ejecucion descarga velas de Bybit (~1-2 min para 400 dias en 1min)
+- Siguientes usan cache en memoria (instantaneo si <2h)
+- Cache expirado solo descarga velas nuevas (incremental)
+
+**Barra de progreso no aparece:**
+- Verificar que el frontend usa endpoint SSE (no POST)
+- Revisar consola browser por errores EventSource
+
+**Trades no se ven en el chart:**
+- Verificar que ZoneVisualizerIndicator esta habilitado
+- Las zonas VP usan `_source: 'vp'` para no mezclarse con zonas manuales/realtime
+
+---
+
+## MODULAR STRATEGY BUILDER (Febrero 2026)
+
+Sistema de backtesting modular sin codigo. El usuario compone estrategias combinando 5 bloques independientes: Niveles, Senal de Entrada, Filtros de Contexto, Risk Management y Exit Rules.
+
+### Archivos
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `4.Analizador cripto/backend/strategy_engine.py` | Motor completo (~1722 lineas) |
+| `src/components/StrategyBuilder.jsx` | UI completa (~750 lineas) |
+| `src/components/SingleSymbolAnalyzer.jsx` | Boton "Strategy" + integracion |
+| `src/components/indicators/IndicatorManager.js` | 3 metodos de comunicacion con backend |
+| `src/components/indicators/ZoneVisualizerIndicator.js` | Fuente `_strategyZones` + colores purpura |
+
+### 5 Bloques
+
+1. **Level Sources** (5): vp_periodic, sr_v2, vwap_bands, swing_levels, dtb_neckline
+2. **Entry Signals** (8): price_touch, swing_confirm, breakout_close, rejection_candle, pattern_match, squeeze_release, cvd_divergence, dtb_confirm
+3. **Context Filters** (8, AND logic): vwap_trend, vwap_position, ttm_squeeze, bbwp_range, volume_zscore, cvd_trend, dtb_bias, direction
+4. **Risk Management**: SL (4 metodos), TP (5 metodos), max trades por segmento, trailing stop
+5. **Exit Rules** (4, OR logic): vwap_reverse, reenter_zone, squeeze_activate, timeout
+
+### Endpoints API
+
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/api/strategy-builder/backtest-stream` | GET (SSE) | Backtest con progreso en tiempo real |
+| `/api/strategy-builder/optimize-estimate` | POST | Estima tiempo del grid search |
+| `/api/strategy-builder/optimize` | POST | Grid search completo |
+
+### Confluencia Multi-Source
+
+- Modo `any`: Cualquier nivel individual puede disparar entrada
+- Modo `score`: Requiere min_confluence_score (15 pts por fuente unica cerca del precio, max 100)
+
+### Visualizacion en Chart
+
+Zonas del Strategy Builder se renderizan con colores purpura (`_source: 'strategy'`).
+
+ZoneVisualizerIndicator mantiene 4 fuentes independientes:
+- `_manualZones` - Boton "Detectar zonas"
+- `_realtimeZones` - Polling realtime
+- `_vpZones` - VP Periodic Backtest
+- `_strategyZones` - Strategy Builder
+
+### Grid Search Optimizer
+
+Optimiza parametros de cualquier bloque activo usando path-based injection (ej: `level.vp_periodic.period`, `risk.tp_params.rr`).
+
+- Max 5,000 combinaciones, max 20 valores por parametro
+- Metricas: expectancy, total_pnl_r, win_rate, profit_factor
+- UI de 2 pasos: estimar → confirmar → ejecutar → tabla de resultados con "Aplicar"
+
+### Estructura de Config
+
+```json
+{
+  "level_sources": [{"source": "vp_periodic", "enabled": true, "params": {"period": 240, "bins": 50}}],
+  "entry_signal": {"signal_type": "price_touch", "params": {"tolerance_pct": 0.15}},
+  "context_filters": [{"filter_type": "direction", "enabled": true, "params": {"allowed": "both"}}],
+  "risk": {
+    "sl_method": "below_level", "sl_params": {"buffer_pct": 0.1},
+    "tp_method": "rr_fixed", "tp_params": {"rr": 2.0},
+    "max_trades_per_segment": 1, "trailing_stop": false
+  },
+  "exit_rules": [],
+  "confluence_mode": "any",
+  "min_confluence_score": 0,
+  "vwap_period": 20
+}
+```
+
+### Bugs Corregidos (Febrero 2026)
+
+1. **`resolve_trade` no existia** - Llamaba funcion inexistente sin exit rules. Fix: reutilizar `resolve_trade_with_exit_rules()` con lista vacia.
+2. **Zona visual min/max incorrectos para SHORT** - Fix: `min(sl, tp, entry)` y `max(sl, tp, entry)`.
+
+### Troubleshooting Strategy Builder
+
+**Boton "Strategy" no aparece:**
+- Verificar import en `SingleSymbolAnalyzer.jsx`
+- Verificar `showStrategyBuilder` state y `setShowStrategyBuilder` handler
+
+**Backtest retorna 0 trades:**
+- Activar al menos 1 Level Source
+- Reducir tolerancia del entry signal
+- Probar sin context filters primero
+- Aumentar dias de datos
+
+**Error silencioso:**
+- Revisar consola backend: `[SB_BACKTEST_SSE]`
+- Verificar que `strategy_engine.py` importa correctamente
+
+**Zonas purpura no aparecen:**
+- Verificar que ZoneVisualizerIndicator esta habilitado
+- Verificar `setStrategyZones()` se llama con zonas del resultado
+
+### Leccion Aprendida
+
+**CRITICO:** La funcion `resolve_trade_with_exit_rules()` funciona para ambos casos (con y sin exit rules). Pasar `exit_rules=[]` la hace funcionar como resolve_trade simple. No crear funciones separadas.

@@ -1,5 +1,5 @@
 {
-  "enabled": false,
+  "enabled": true,
   "symbols": [
     "BTCUSDT",
     "ETHUSDT",
@@ -16,7 +16,7 @@
     "POLUSDT"
   ],
   "interval": "1",
-  "days": 1,
+  "days": 5,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -39,12 +39,12 @@
     },
     "BTCUSDT": {
       "volumeFilter": {
-        "enabled": false,
-        "minZScore": 1.5,
-        "lookbackBars": 50
+        "enabled": true,
+        "minZScore": 2,
+        "lookbackBars": 100
       },
       "swingBars": 5,
-      "days": 1,
+      "days": 5,
       "cooldownMinutes": 20,
       "alertsEnabled": false
     },

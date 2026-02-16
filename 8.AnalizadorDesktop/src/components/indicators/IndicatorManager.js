@@ -20,6 +20,7 @@ import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator"; // Updated: m
 import SwingDetectorIndicator from "./SwingDetectorIndicator";
 import SupportResistance2Indicator from "./SupportResistance2Indicator";
 import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator";
+import VolumeProfilePeriodicIndicator from "./VolumeProfilePeriodicIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
 import { API_BASE_URL } from "../../config";
 import Logger from '../../utils/Logger.js';
@@ -152,6 +153,12 @@ class IndicatorManager {
       this.indicators.push(new SupportResistance2Indicator(this.symbol, this.interval, this.days));
     }
 
+    // VP Periodic - solo si habilitado
+    if (indicatorStates['VP Periodic'] === true) {
+      log.debug(`[${this.symbol}] Creando VP Periodic`);
+      this.indicators.push(new VolumeProfilePeriodicIndicator(this.symbol, this.interval, this.days));
+    }
+
     // Zone Visualizer - siempre disponible (las zonas se cargan bajo demanda)
     this.zoneVisualizerIndicator = new ZoneVisualizerIndicator(this.symbol, this.interval, this.days);
     this.zoneVisualizerIndicator.enabled = true;
@@ -211,6 +218,8 @@ class IndicatorManager {
         return new SwingDetectorIndicator(this.symbol, this.interval, this.days);
       case 'S&R v2':
         return new SupportResistance2Indicator(this.symbol, this.interval, this.days);
+      case 'VP Periodic':
+        return new VolumeProfilePeriodicIndicator(this.symbol, this.interval, this.days);
       default:
         log.warn(`[${this.symbol}] Unknown indicator: ${name}`);
         return null;
@@ -613,14 +622,15 @@ class IndicatorManager {
 
   // ==================== FIXED RANGE PROFILES ====================
 
-  createFixedRangeProfile(startTimestamp, endTimestamp) {
+  createFixedRangeProfile(startTimestamp, endTimestamp, sourceRectId = null) {
     const rangeId = `range_${Date.now()}`;
-    
+
     const newProfile = {
       rangeId: rangeId,
       symbol: this.symbol,
       startTimestamp: startTimestamp,
       endTimestamp: endTimestamp,
+      sourceRectId: sourceRectId,
       enabled: true,
       rows: 50,
       valueAreaPercent: 70,
@@ -630,7 +640,7 @@ class IndicatorManager {
       valueAreaColor: "#FF9800",
       pocColor: "#F44336",
       vahValColor: "#9C27B0",
-      rangeShadeColor: "#CCCCCC", 
+      rangeShadeColor: "#CCCCCC",
       enableClusterDetection: true,
       clusterThreshold: 1.5,
       clusterColor: "#4CAF50"
@@ -712,14 +722,44 @@ class IndicatorManager {
     if (profile) {
       Object.assign(profile, config);
     }
-    
+
     // ✅ NUEVO: Actualizar en instancia
     const indicator = this.fixedRangeIndicators.find(ind => ind.rangeId === rangeId);
     if (indicator) {
       indicator.loadFromData(profile);
     }
-    
+
     log.debug(`[${this.symbol}] ⚙️ Fixed Range configurado: ${rangeId}`);
+  }
+
+  /**
+   * Actualiza timestamps de un VP Fixed vinculado a un rectangulo.
+   * Invalida el perfil calculado para forzar recalculo en el proximo render.
+   * @returns {boolean} true si se actualizo algun perfil
+   */
+  updateFixedRangeByRect(rectId, newStartTimestamp, newEndTimestamp) {
+    const profile = this.fixedRangeProfiles.find(
+      p => p.sourceRectId === rectId && p.symbol === this.symbol
+    );
+    if (!profile) return false;
+
+    // No recalcular si los timestamps no cambiaron
+    if (profile.startTimestamp === newStartTimestamp && profile.endTimestamp === newEndTimestamp) {
+      return false;
+    }
+
+    profile.startTimestamp = newStartTimestamp;
+    profile.endTimestamp = newEndTimestamp;
+
+    const indicator = this.fixedRangeIndicators.find(
+      ind => ind.rangeId === profile.rangeId
+    );
+    if (indicator) {
+      indicator.setTimeRange(newStartTimestamp, newEndTimestamp);
+    }
+
+    log.debug(`[${this.symbol}] Fixed Range ${profile.rangeId} actualizado por rect ${rectId}`);
+    return true;
   }
 
   saveFixedRangeProfilesToStorage() {
@@ -1892,6 +1932,315 @@ class IndicatorManager {
       }
     } catch (error) {
       log.error(`[${this.symbol}] Error en optimizacion:`, error.message);
+      let errMsg = error.message || 'Error de conexion';
+      if (error.name === 'AbortError') {
+        errMsg = 'Timeout: la optimizacion tardo mas de 10 horas.';
+      }
+      if (onError) onError(errMsg);
+    }
+  }
+
+  // ============================================================
+  // VP Periodic Backtest
+  // ============================================================
+
+  /**
+   * Ejecuta backtest de estrategia VP Periodic + VWAP.
+   * @param {object} params - { days, strategy, vp_period, tp_rr, bins, ... }
+   * @returns {Promise<object>} - { success, zones, stats, candles_count }
+   */
+  async runVPPeriodicBacktest(params = {}) {
+    if (!this.zoneVisualizerIndicator) {
+      log.warn(`[${this.symbol}] ZoneVisualizer no inicializado`);
+      return { success: false, error: 'ZoneVisualizer no inicializado' };
+    }
+
+    const requestDays = params.days || this.days;
+    const strategy = params.strategy || 'poc_bounce';
+    const onProgress = params._onProgress || null;
+
+    // Construir params de la estrategia (sin keys internas)
+    const strategyParams = {};
+    const internalKeys = ['days', 'strategy', '_onProgress'];
+    for (const [key, val] of Object.entries(params)) {
+      if (!internalKeys.includes(key)) {
+        strategyParams[key] = val;
+      }
+    }
+
+    log.info(`[${this.symbol}] VP Periodic Backtest SSE: strategy=${strategy}, days=${requestDays}`);
+    if (onProgress) onProgress({ phase: 'connecting', percent: 0, message: 'Conectando con backend...' });
+
+    return new Promise((resolve) => {
+      try {
+        const queryParams = new URLSearchParams({
+          symbol: this.symbol,
+          interval: this.interval,
+          days: requestDays.toString(),
+          strategy,
+          params_json: JSON.stringify(strategyParams),
+        });
+
+        const url = `${API_BASE_URL}/api/vp-periodic/backtest-stream?${queryParams}`;
+        const eventSource = new EventSource(url);
+        let resolved = false;
+
+        const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas
+        const timeoutId = setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            eventSource.close();
+            resolve({ success: false, error: 'Timeout: el backtest tardo demasiado.' });
+          }
+        }, timeoutMs);
+
+        eventSource.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'progress') {
+              if (onProgress) {
+                onProgress({
+                  phase: data.phase,
+                  percent: data.percent || 0,
+                  message: data.message || '',
+                });
+              }
+            } else if (data.type === 'result') {
+              clearTimeout(timeoutId);
+              eventSource.close();
+              resolved = true;
+
+              if (data.success && data.zones) {
+                this.zoneVisualizerIndicator.setVPZones(data.zones);
+                log.info(`[${this.symbol}] VP Periodic: ${data.zones.length} zonas (${data.candles_count || '?'} velas)`);
+
+                resolve({
+                  success: true,
+                  zones: data.zones,
+                  stats: data.stats,
+                  candles_count: data.candles_count,
+                  segments_count: data.segments_count,
+                  elapsed_seconds: data.elapsed_seconds,
+                });
+              } else {
+                resolve({ success: false, error: data.error || 'Error desconocido' });
+              }
+            } else if (data.type === 'error') {
+              clearTimeout(timeoutId);
+              eventSource.close();
+              resolved = true;
+              resolve({ success: false, error: data.message || 'Error en el servidor' });
+            }
+          } catch (parseErr) {
+            log.error(`[${this.symbol}] Error parseando SSE:`, parseErr);
+          }
+        };
+
+        eventSource.onerror = () => {
+          if (!resolved) {
+            clearTimeout(timeoutId);
+            eventSource.close();
+            resolved = true;
+            resolve({
+              success: false,
+              error: `No se pudo conectar al backend (${API_BASE_URL}). Verifica que este corriendo.`
+            });
+          }
+        };
+      } catch (error) {
+        log.error(`[${this.symbol}] Error en runVPPeriodicBacktest:`, error.message || error);
+        resolve({ success: false, error: error.message || 'Error desconocido' });
+      }
+    });
+  }
+
+  // ============================================================
+  // Strategy Builder (Modular Backtest Engine)
+  // ============================================================
+
+  /**
+   * Ejecuta backtest modular del Strategy Builder via SSE con progreso.
+   * @param {Object} params - { days, config, _onProgress }
+   *   config: { level_sources, entry_signal, context_filters, risk, exit_rules, ... }
+   */
+  async runStrategyBuilderBacktest(params = {}) {
+    if (!this.zoneVisualizerIndicator) {
+      log.warn(`[${this.symbol}] ZoneVisualizer no inicializado`);
+      return { success: false, error: 'ZoneVisualizer no inicializado' };
+    }
+
+    const requestDays = params.days || this.days;
+    const strategyConfig = params.config || {};
+    const onProgress = params._onProgress || null;
+
+    log.info(`[${this.symbol}] Strategy Builder Backtest SSE: days=${requestDays}`);
+    if (onProgress) onProgress({ phase: 'connecting', percent: 0, message: 'Conectando con backend...' });
+
+    return new Promise((resolve) => {
+      try {
+        const queryParams = new URLSearchParams({
+          symbol: this.symbol,
+          interval: this.interval,
+          days: requestDays.toString(),
+          config_json: JSON.stringify(strategyConfig),
+        });
+
+        const url = `${API_BASE_URL}/api/strategy-builder/backtest-stream?${queryParams}`;
+        const eventSource = new EventSource(url);
+        let resolved = false;
+
+        const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas
+        const timeoutId = setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            eventSource.close();
+            resolve({ success: false, error: 'Timeout: el backtest tardo demasiado.' });
+          }
+        }, timeoutMs);
+
+        eventSource.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'progress') {
+              if (onProgress) {
+                onProgress({
+                  phase: data.phase,
+                  percent: data.percent || 0,
+                  message: data.message || '',
+                });
+              }
+            } else if (data.type === 'result') {
+              clearTimeout(timeoutId);
+              eventSource.close();
+              resolved = true;
+
+              if (data.success && data.zones) {
+                // Usar _strategyZones en ZoneVisualizer
+                this.zoneVisualizerIndicator.setStrategyZones(data.zones);
+                log.info(`[${this.symbol}] Strategy Builder: ${data.zones.length} trades (${data.candles_count || '?'} velas)`);
+
+                resolve({
+                  success: true,
+                  zones: data.zones,
+                  trades: data.trades || [],
+                  stats: data.stats,
+                  candles_count: data.candles_count,
+                  levels_count: data.levels_count,
+                  elapsed_seconds: data.elapsed_seconds,
+                });
+              } else {
+                resolve({ success: false, error: data.error || 'Error desconocido' });
+              }
+            } else if (data.type === 'error') {
+              clearTimeout(timeoutId);
+              eventSource.close();
+              resolved = true;
+              resolve({ success: false, error: data.message || 'Error en el servidor' });
+            }
+          } catch (parseErr) {
+            log.error(`[${this.symbol}] Error parseando SSE:`, parseErr);
+          }
+        };
+
+        eventSource.onerror = () => {
+          if (!resolved) {
+            clearTimeout(timeoutId);
+            eventSource.close();
+            resolved = true;
+            resolve({
+              success: false,
+              error: `No se pudo conectar al backend (${API_BASE_URL}). Verifica que este corriendo.`
+            });
+          }
+        };
+      } catch (error) {
+        log.error(`[${this.symbol}] Error en runStrategyBuilderBacktest:`, error.message || error);
+        resolve({ success: false, error: error.message || 'Error desconocido' });
+      }
+    });
+  }
+
+  /**
+   * Estima el tiempo de optimizacion del Strategy Builder.
+   */
+  async estimateStrategyOptimization(opts = {}) {
+    const { days, config = {}, param_ranges = {} } = opts;
+
+    const requestBody = {
+      symbol: this.symbol,
+      interval: this.interval,
+      days: days || this.days,
+      config,
+      param_ranges
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/strategy-builder/optimize-estimate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+      return await response.json();
+    } catch (error) {
+      return { success: false, error: error.message || 'Error de conexion' };
+    }
+  }
+
+  /**
+   * Ejecuta optimizacion grid search del Strategy Builder.
+   */
+  async optimizeStrategyBuilder(opts = {}) {
+    const {
+      days, config = {}, param_ranges = {},
+      metric = 'expectancy', top_n = 15,
+      onComplete, onError
+    } = opts;
+
+    const requestBody = {
+      symbol: this.symbol,
+      interval: this.interval,
+      days: days || this.days,
+      config,
+      param_ranges,
+      metric,
+      top_n
+    };
+
+    log.info(`[${this.symbol}] SB Optimization: ${Object.keys(param_ranges).length} params, metric=${metric}`);
+
+    try {
+      const controller = new AbortController();
+      const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas max
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      const response = await fetch(`${API_BASE_URL}/api/strategy-builder/optimize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const errMsg = errData.error || `HTTP ${response.status}`;
+        if (onError) onError(errMsg);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        log.info(`[${this.symbol}] SB Optimization completada: ${data.total_combos} combos en ${data.elapsed}s`);
+        if (onComplete) onComplete(data);
+      } else {
+        if (onError) onError(data.error || 'Error desconocido');
+      }
+    } catch (error) {
+      log.error(`[${this.symbol}] Error en SB optimization:`, error.message);
       let errMsg = error.message || 'Error de conexion';
       if (error.name === 'AbortError') {
         errMsg = 'Timeout: la optimizacion tardo mas de 10 horas.';

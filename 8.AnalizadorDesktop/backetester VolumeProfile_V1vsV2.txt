@@ -1,0 +1,39 @@
+  Diferencias fundamentales V1 vs V2
+
+  1. Procesamiento
+
+  - V1: Batch — recibe todas las velas de golpe y escanea de principio a fin
+  - V2: Incremental — procesa vela por vela, manteniendo estado (igual que en tiempo real)
+
+  2. Condiciones para considerar una vela "dentro" de zona
+
+  V1 usa high/low de la vela vs los límites de la zona. Si la vela toca el rango, se considera dentro. Es más permisivo.
+
+  V2 evalúa 6 condiciones simultáneas (ALL must pass):
+  1. atr_range: El close está dentro de SMA ± ATR×mult
+  2. count_outside: En las últimas ma_period velas, pocas cerraron fuera del rango
+  3. body_ratio: El cuerpo de la vela no excede 50% del rango total
+  4. range_pct: El rango acumulado de la zona no excede max_range_pct
+  5. min_bars: Se llevan ≥N velas consecutivas cumpliendo las 4 anteriores
+  6. ttm_squeeze (opcional): Bollinger dentro de Keltner
+
+  3. Salida de zona
+
+  - V1: Gradual — permite consol_max_outside_bars velas afuera consecutivas + re-entry si el precio vuelve
+  - V2: Inmediata — la primera vela que falla cualquiera de las 6 condiciones termina la zona. No hay re-entry.
+
+  4. Confirmación de breakout
+
+  - V1: 1 vela con close fuera del rango = breakout confirmado
+  - V2: 3 velas consecutivas (default) con close fuera = breakout confirmado
+
+  5. Resultado práctico
+
+  Con los mismos parámetros numéricos:
+  - V1 detecta más zonas (más permisivo, permite re-entry, breakout inmediato)
+  - V2 detecta menos zonas pero de mayor calidad (condiciones más estrictas, sin re-entry, breakout confirmado)
+
+  ---
+  En resumen: V2 es más conservador y estricto. Dado que el botón "Detectar Zonas" y el servicio realtime ahora ambos usan V2, los resultados
+  históricos van a coincidir con lo que verías en tiempo real. El optimizador V1 usa el motor viejo, así que sus resultados optimizados no
+  aplican al motor actual.

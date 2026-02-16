@@ -65,6 +65,32 @@ class VPScannerConfig:
     breakout_confirm_bars: int = 0  # 0 = entrada en close de vela de breakout
     position_mode: str = "sequential"
 
+    # Estrategia de trading
+    entry_strategy: str = "breakout"  # "breakout" | "retest" | "mean_reversion"
+
+    # --- Mean Reversion ---
+    mr_target: str = "poc"         # TP target: "poc" | "opposite_va" | "opposite_zone"
+    mr_entry_zone: str = "va"      # Trigger entry at: "va" (VAH/VAL) | "zone" (full range)
+    mr_confirm: str = "rejection"  # "touch" | "rejection" | "swing"
+    mr_swing_bars: int = 3           # Para confirm=swing: N velas a cada lado
+    mr_sl_mode: str = "beyond_zone"  # "beyond_zone" (full range + buffer) | "beyond_va" (VA + buffer)
+    mr_sl_buffer_pct: float = 0.15   # Buffer extra para SL en mean reversion (%)
+    mr_min_zone_candles: int = 15    # Min velas de consolidacion antes de buscar entries
+    mr_max_trades_per_zone: int = 3  # Max trades dentro de una misma zona
+
+    # --- Retest (Breakout + Pullback) ---
+    rt_max_bars: int = 30            # Max velas para esperar retest despues del breakout
+    rt_level: str = "va"             # Nivel de retest: "va" | "zone" | "poc"
+    rt_confirm: str = "rejection"    # "touch" | "rejection" | "swing"
+    rt_swing_bars: int = 3           # Para confirm=swing: N velas a cada lado
+    rt_sl_mode: str = "below_retest" # "below_retest" | "below_va" | "below_zone"
+    rt_must_reenter: bool = True     # La vela de retest debe cerrar dentro de la zona/VA
+
+    # --- Breakout refinado ---
+    bo_volume_filter: bool = False   # Filtrar por volumen en vela de breakout
+    bo_volume_zscore: float = 1.0    # Z-score minimo de volumen para breakout valido
+    bo_momentum_bars: int = 0        # Velas previas para evaluar momentum (0=deshabilitado)
+
     # Alertas
     alerts_enabled: bool = True
     alert_target_url: str = "http://localhost:5000/api/watchlist-alert"
@@ -79,6 +105,8 @@ class VPScannerConfig:
     prog_range_pct: float = 1.5    # Rango % maximo para considerar vela "dentro" de zona
     prog_stop_mode: str = "breakout"  # "breakout" o "degradation"
     prog_degrade_bars: int = 5     # Velas consecutivas con d_score bajando para cerrar
+    prog_close_outside_bars: int = 3  # Cierres consecutivos fuera de referencia para cerrar zona
+    prog_close_reference: str = "va"   # "va" (Value Area) o "zone" (full range)
     prog_thickness_metric: str = "kurtosis"  # "kurtosis" o "poc_ratio"
 
 
@@ -429,7 +457,8 @@ def trim_pb_to_d(profile: Dict, shape_info: Dict) -> Optional[Dict]:
 # Zone Scanner (Backtest - ventana deslizante)
 # ---------------------------------------------------------------------------
 
-def scan_zones(candles: List[Dict], config: VPScannerConfig) -> List[Dict]:
+def scan_zones(candles: List[Dict], config: VPScannerConfig,
+               progress_dict: Dict = None) -> List[Dict]:
     """
     Escanea el historico con ventana deslizante buscando perfiles D.
     Fusiona ventanas contiguas con alto d_score en una sola zona.
@@ -453,11 +482,31 @@ def scan_zones(candles: List[Dict], config: VPScannerConfig) -> List[Dict]:
     skip_score = 0
     accepted = 0
 
+    import time as _scan_time
+    _scan_start = _scan_time.time()
     logger.info(f"[VP_SCAN] Inicio: {len(candles)} velas, window={config.window_size}, "
                 f"step={step}, total_windows={total_windows}, "
                 f"max_range={config.max_range_pct}%, min_d_score={config.min_d_score}")
+    print(f"[VP_SCAN] Inicio: {len(candles)} velas, {total_windows} ventanas a procesar...")
 
+    _w_count = 0
     for w in range(0, len(candles) - config.window_size + 1, step):
+        _w_count += 1
+        if _w_count % 200 == 0 or _w_count == total_windows:
+            _elapsed = _scan_time.time() - _scan_start
+            _pct = _w_count * 100 // max(total_windows, 1)
+            print(f"[VP_SCAN] Progreso: {_w_count}/{total_windows} ventanas "
+                  f"({_pct}%), "
+                  f"aceptadas={accepted}, {_elapsed:.1f}s")
+            if progress_dict:
+                progress_dict["current"] = _w_count
+                progress_dict["total"] = total_windows
+                progress_dict["elapsed"] = round(_elapsed, 1)
+                progress_dict["zones_found"] = accepted
+                if _w_count > 0:
+                    avg_per_w = _elapsed / _w_count
+                    progress_dict["estimated_remaining"] = round(
+                        avg_per_w * (total_windows - _w_count), 1)
         window = candles[w:w + config.window_size]
 
         # Filtro rapido: rango de precio
@@ -535,12 +584,17 @@ def scan_zones(candles: List[Dict], config: VPScannerConfig) -> List[Dict]:
                 'total_volume': vp['total_volume'],
             },
             'volume_profile': _build_vp_for_frontend(vp),
+            # Indice donde la zona fue detectada por primera vez (fin de esta ventana)
+            'detection_candle_idx': w + config.window_size - 1,
         })
 
+    _scan_elapsed = _scan_time.time() - _scan_start
     logger.info(f"[VP_SCAN] Ventanas: {total_windows} total, "
                 f"skip_range={skip_range} ({skip_range*100//max(total_windows,1)}%), "
                 f"skip_volume={skip_volume}, skip_score={skip_score}, "
                 f"accepted={accepted} -> {len(raw_hits)} raw_hits")
+    print(f"[VP_SCAN] Escaneo completado en {_scan_elapsed:.1f}s: "
+          f"{accepted} aceptadas de {total_windows} ventanas, {len(raw_hits)} raw_hits")
 
     if not raw_hits:
         logger.info(f"[VP_SCAN] 0 raw_hits - no se detectaron zonas. "
@@ -552,21 +606,12 @@ def scan_zones(candles: List[Dict], config: VPScannerConfig) -> List[Dict]:
 
     logger.info(f"[VP_SCAN] Merge: {len(raw_hits)} hits -> {len(merged_zones)} zonas fusionadas")
 
-    # Paso 3: Simular trades (breakout + SL/TP)
-    zones_with_trades = _simulate_trades(merged_zones, candles, config)
-
-    # Logging: resumen de trades
-    results_summary = {}
-    for z in zones_with_trades:
-        r = z.get('trade_result', 'UNKNOWN')
-        results_summary[r] = results_summary.get(r, 0) + 1
-    logger.info(f"[VP_SCAN] Trades: {results_summary}")
-
-    return zones_with_trades
+    return merged_zones
 
 
 def scan_zones_progressive(candles: List[Dict],
-                           config: VPScannerConfig) -> List[Dict]:
+                           config: VPScannerConfig,
+                           progress_dict: Dict = None) -> List[Dict]:
     """
     Deteccion progresiva de zonas VP.
     En vez de ventana fija, crece la ventana vela a vela mientras el perfil
@@ -577,9 +622,8 @@ def scan_zones_progressive(candles: List[Dict],
     2. Expandir ventana mientras precio siga dentro del rango
     3. Calcular VP acumulado y d_score en cada expansion
     4. Cerrar zona por breakout o degradacion
-    5. Pasar zonas a _simulate_trades() igual que el metodo fijo
 
-    Returns: lista de zonas con trades simulados (mismo formato que scan_zones).
+    Returns: lista de zonas detectadas (sin trades simulados).
     """
     n = len(candles)
     min_c = max(config.prog_min_candles, 10)
@@ -597,7 +641,30 @@ def scan_zones_progressive(candles: List[Dict],
     zones = []
     i = 0  # Indice de inicio de busqueda
 
+    import time as _prog_time
+    _prog_start = _prog_time.time()
+    _prog_last_print = _prog_start
+    print(f"[VP_PROG] Inicio: {n} velas, min_candles={min_c}, "
+          f"range_pct={config.prog_range_pct}%")
+
     while i <= n - min_c:
+        # Progreso periodico (cada 5 segundos)
+        _prog_now = _prog_time.time()
+        if _prog_now - _prog_last_print >= 5.0:
+            _prog_elapsed = _prog_now - _prog_start
+            _prog_pct = i * 100 // max(n, 1)
+            print(f"[VP_PROG] Progreso: vela {i}/{n} ({_prog_pct}%), "
+                  f"zonas={len(zones)}, {_prog_elapsed:.1f}s")
+            _prog_last_print = _prog_now
+            if progress_dict:
+                progress_dict["current"] = i
+                progress_dict["total"] = n
+                progress_dict["elapsed"] = round(_prog_elapsed, 1)
+                progress_dict["zones_found"] = len(zones)
+                if i > 0:
+                    avg_per_candle = _prog_elapsed / i
+                    progress_dict["estimated_remaining"] = round(
+                        avg_per_candle * (n - i), 1)
         # --- Fase 1: buscar inicio de consolidacion ---
         # Tomar ventana minima y verificar si el rango es aceptable
         window = candles[i:i + min_c]
@@ -635,6 +702,13 @@ def scan_zones_progressive(candles: List[Dict],
         best_vp = vp
         best_shape = shape
         consecutive_degrade = 0
+        consecutive_close_outside = 0
+        max_close_outside = max(config.prog_close_outside_bars, 1)
+        use_zone_ref = config.prog_close_reference == 'zone'
+
+        # VA actual (del VP inicial)
+        current_vah = vp['vah_price']
+        current_val = vp['val_price']
 
         j = zone_end + 1
         while j < n:
@@ -651,6 +725,24 @@ def scan_zones_progressive(candles: List[Dict],
                 # Vela sale del rango -> breakout natural
                 break
 
+            # Check: cierre fuera de referencia (VA o zona completa)
+            if use_zone_ref:
+                close_high = win_max
+                close_low = win_min
+            else:
+                close_high = current_vah
+                close_low = current_val
+
+            if c['close'] > close_high or c['close'] < close_low:
+                consecutive_close_outside += 1
+                if consecutive_close_outside >= max_close_outside:
+                    ref_label = 'zone' if use_zone_ref else 'VA'
+                    logger.debug(f"[VP_PROG] Zona cerrada: {consecutive_close_outside} "
+                                 f"cierres consecutivos fuera de {ref_label} en idx={j}")
+                    break
+            else:
+                consecutive_close_outside = 0
+
             # Vela dentro del rango: expandir
             win_min = new_min
             win_max = new_max
@@ -666,6 +758,10 @@ def scan_zones_progressive(candles: List[Dict],
 
             shape = classify_shape(vp)
             d_score_history.append(shape['d_score'])
+
+            # Actualizar VA actual con el VP recalculado
+            current_vah = vp['vah_price']
+            current_val = vp['val_price']
 
             # Trackear mejor score
             if shape['d_score'] > best_d_score:
@@ -776,6 +872,20 @@ def scan_zones_progressive(candles: List[Dict],
             zone_poc = final_vp['poc']['price']
             source_shape = 'D'
 
+        # detection_candle_idx: la primera vela donde la zona fue "detectable"
+        # En progresivo, la zona necesita prog_min_candles para ser evaluada
+        # Buscamos el primer momento en d_score_history donde supero min_d_score
+        det_offset = 0
+        for dsi, ds_val in enumerate(d_score_history):
+            if ds_val >= config.min_d_score:
+                det_offset = dsi
+                break
+        else:
+            det_offset = len(d_score_history) - 1
+        # El d_score_history[0] corresponde a zone_start + min_c - 1
+        # Cada entry posterior es zone_start + min_c - 1 + offset
+        detection_idx = zone_start + min_c - 1 + det_offset
+
         zone_dict = {
             'window_start': zone_start,
             'window_end': final_end,
@@ -801,6 +911,7 @@ def scan_zones_progressive(candles: List[Dict],
             'progressive_quality': progressive_quality,
             'd_score_history': d_score_history,
             'detection_mode': 'progressive',
+            'detection_candle_idx': detection_idx,
         }
         zones.append(zone_dict)
 
@@ -813,21 +924,15 @@ def scan_zones_progressive(candles: List[Dict],
         # Avanzar despues de la zona (no solapar)
         i = final_end + 1
 
+    _prog_elapsed = _prog_time.time() - _prog_start
     logger.info(f"[VP_PROG] Total: {len(zones)} zonas detectadas de {n} velas")
+    print(f"[VP_PROG] Completado en {_prog_elapsed:.1f}s: "
+          f"{len(zones)} zonas de {n} velas")
 
     if not zones:
         return []
 
-    # Simular trades (reutiliza misma funcion que fixed_window)
-    zones_with_trades = _simulate_trades(zones, candles, config)
-
-    results_summary = {}
-    for z in zones_with_trades:
-        r = z.get('trade_result', 'UNKNOWN')
-        results_summary[r] = results_summary.get(r, 0) + 1
-    logger.info(f"[VP_PROG] Trades: {results_summary}")
-
-    return zones_with_trades
+    return zones
 
 
 def _merge_raw_hits(raw_hits: List[Dict], candles: List[Dict],
@@ -862,6 +967,7 @@ def _merge_raw_hits(raw_hits: List[Dict], candles: List[Dict],
             # Preferir D sobre P/b_trimmed
             if hit['shape_type'] == 'D':
                 current['shape_type'] = 'D'
+            # detection_candle_idx se mantiene del primer hit (ya esta en current)
         else:
             # Nueva zona
             merged.append(current)
@@ -948,193 +1054,801 @@ def _merge_raw_hits(raw_hits: List[Dict], candles: List[Dict],
 
 def _simulate_trades(zones: List[Dict], candles: List[Dict],
                      config: VPScannerConfig) -> List[Dict]:
-    """Simula trades despues del breakout de cada zona."""
-    results = []
-    open_trade = None  # Para sequential mode
+    """Despacha simulacion de trades segun entry_strategy."""
+    import time as _sim_time
+    logger.info(f"[VP_TRADES] Simulando {len(zones)} zonas, strategy={config.entry_strategy}, "
+                f"mode={config.position_mode}, sl_mode={config.sl_mode}, tp_rr={config.tp_rr_ratio}")
+    print(f"[VP_TRADES] Simulando {len(zones)} zonas, strategy={config.entry_strategy}...")
 
-    logger.info(f"[VP_TRADES] Simulando {len(zones)} zonas, "
-                f"mode={config.position_mode}, entry_mode={config.entry_mode}, "
-                f"sl_mode={config.sl_mode}, lookforward={config.lookforward_bars}, "
-                f"confirm_bars={config.breakout_confirm_bars}, tp_rr={config.tp_rr_ratio}")
+    _sim_start = _sim_time.time()
+    if config.entry_strategy == 'mean_reversion':
+        result = _simulate_mean_reversion(zones, candles, config)
+    elif config.entry_strategy == 'retest':
+        result = _simulate_retest(zones, candles, config)
+    else:
+        result = _simulate_breakout(zones, candles, config)
 
-    # confirm_bars=0 significa entrar en el close de la misma vela de breakout
-    need_confirm = max(0, config.breakout_confirm_bars)
+    _sim_elapsed = _sim_time.time() - _sim_start
+    wins = sum(1 for z in result if z.get('trade_result') == 'WIN')
+    losses = sum(1 for z in result if z.get('trade_result') == 'LOSS')
+    print(f"[VP_TRADES] Simulacion completada en {_sim_elapsed:.1f}s: "
+          f"{wins}W / {losses}L de {len(result)} zonas")
+    return result
 
-    from datetime import datetime, timezone as tz_utc
-    _fmt = lambda ts: datetime.fromtimestamp(ts / 1000, tz=tz_utc.utc).strftime('%m/%d %H:%M') if ts else '?'
 
-    for zone_idx, zone in enumerate(zones):
-        zone_end_idx = zone['window_end']
-        zone_start_idx = zone['window_start']
-        zone_id = f"vp_{zone['start_timestamp']}_{zone_idx}"
-        zone['id'] = zone_id
-        zone['source'] = 'vp_scanner'
+# ---------------------------------------------------------------------------
+# Helpers compartidos entre estrategias
+# ---------------------------------------------------------------------------
 
-        # Determinar limites de breakout segun entry_mode
-        if config.entry_mode == 'zone':
-            bo_high = zone.get('full_range_max', zone['max_price'])
-            bo_low = zone.get('full_range_min', zone['min_price'])
+def _resolve_trade(candles: List[Dict], entry_idx: int, entry_price: float,
+                   sl_price: float, tp_price: float,
+                   direction: str) -> Tuple[str, float, Optional[int]]:
+    """Monitorea SL/TP desde entry_idx+1 hasta el final.
+    Returns: (result, pnl_r, close_ts)"""
+    tp_rr = abs(tp_price - entry_price) / abs(entry_price - sl_price) if abs(entry_price - sl_price) > 0 else 2.0
+
+    for j in range(entry_idx + 1, len(candles)):
+        tc = candles[j]
+        if direction == 'UP':
+            hit_tp = tc['high'] >= tp_price
+            hit_sl = tc['low'] <= sl_price
         else:
-            # "va" (default) - Breakout del Value Area
-            bo_high = zone['max_price']
-            bo_low = zone['min_price']
+            hit_tp = tc['low'] <= tp_price
+            hit_sl = tc['high'] >= sl_price
 
-        zone_high = zone['max_price']  # VA limits (para SL)
-        zone_low = zone['min_price']
-        zone_range = zone_high - zone_low
+        if hit_sl and hit_tp:
+            if direction == 'UP':
+                hit_sl_first = tc['open'] <= sl_price
+            else:
+                hit_sl_first = tc['open'] >= sl_price
+            if hit_sl_first:
+                hit_tp = False
+            else:
+                hit_sl = False
 
-        if zone_range <= 0:
+        if hit_tp:
+            return 'WIN', round(tp_rr, 2), tc['timestamp']
+        elif hit_sl:
+            return 'LOSS', -1.0, tc['timestamp']
+
+    return 'OPEN', 0.0, None
+
+
+def _calc_risk_and_sl(config: VPScannerConfig, zone: Dict,
+                      entry_price: float, direction: str,
+                      sl_mode: str = None, buffer_pct: float = None) -> Tuple[float, float]:
+    """Calcula risk y sl_price basado en sl_mode.
+    Returns: (risk, sl_price)"""
+    _sl_mode = sl_mode or config.sl_mode
+    _buffer_pct = buffer_pct if buffer_pct is not None else config.sl_buffer_pct
+
+    zone_high = zone['max_price']
+    zone_low = zone['min_price']
+    zone_range = zone_high - zone_low
+    poc = zone['poc_price']
+
+    if _sl_mode == 'beyond_poc':
+        buf = 1.0 + _buffer_pct / 100.0
+        if direction == 'UP':
+            risk = (entry_price - poc) * buf
+        else:
+            risk = (poc - entry_price) * buf
+    elif _sl_mode == 'below_va' or _sl_mode == 'beyond_va':
+        buf = 1.0 + _buffer_pct / 100.0
+        if direction == 'UP':
+            risk = (entry_price - zone_low) * buf
+        else:
+            risk = (zone_high - entry_price) * buf
+    elif _sl_mode == 'beyond_zone' or _sl_mode == 'below_zone' or _sl_mode == 'zone_opposite':
+        full_low = zone.get('full_range_min', zone_low)
+        full_high = zone.get('full_range_max', zone_high)
+        full_range = full_high - full_low
+        if direction == 'UP':
+            risk = entry_price - full_low + full_range * _buffer_pct / 100
+        else:
+            risk = full_high - entry_price + full_range * _buffer_pct / 100
+    else:
+        # Default: below_va
+        buf = 1.0 + _buffer_pct / 100.0
+        if direction == 'UP':
+            risk = (entry_price - zone_low) * buf
+        else:
+            risk = (zone_high - entry_price) * buf
+
+    if risk <= 0:
+        risk = zone_range * 0.5
+
+    if direction == 'UP':
+        sl_price = entry_price - risk
+    else:
+        sl_price = entry_price + risk
+
+    return risk, sl_price
+
+
+def _zone_search_bounds(zone: Dict, config: VPScannerConfig, total_candles: int):
+    """Calcula indices de busqueda dentro/despues de la zona."""
+    zone_start_idx = zone['window_start']
+    zone_end_idx = zone['window_end']
+    detection_idx = zone.get('detection_candle_idx', zone_end_idx)
+    if config.detection_mode == 'progressive':
+        min_consol = max(config.prog_min_candles, config.min_zone_candles, 10)
+    else:
+        min_consol = max(config.min_zone_candles, 10)
+    # No buscar entries antes de la deteccion de la zona
+    search_start = max(zone_start_idx + min_consol, detection_idx)
+    search_end = min(zone_end_idx + config.lookforward_bars, total_candles)
+    return zone_start_idx, zone_end_idx, search_start, search_end
+
+
+def _clip_zone_at_breakout(zone: Dict, breakout_candle_idx: int, candles: List[Dict],
+                           config: VPScannerConfig) -> bool:
+    """Recorta zona al breakout y revalida VP. Returns True si zona valida, False si descartar."""
+    zone_start_idx = zone['window_start']
+    if breakout_candle_idx <= zone_start_idx:
+        return True
+
+    consol_last_idx = breakout_candle_idx - 1
+    if consol_last_idx < zone_start_idx:
+        return True
+
+    zone['end_timestamp'] = candles[consol_last_idx]['timestamp']
+    zone['window_end'] = consol_last_idx
+
+    consol_candles = candles[zone_start_idx:consol_last_idx + 1]
+    if len(consol_candles) < 5:
+        return True
+
+    consol_vp = compute_volume_profile(consol_candles, bins=config.bins, va_percent=config.va_percent)
+    zone['volume_profile'] = _build_vp_for_frontend(consol_vp)
+    zone['min_price'] = consol_vp['val_price']
+    zone['max_price'] = consol_vp['vah_price']
+    zone['poc_price'] = consol_vp['poc']['price']
+    zone['full_range_min'] = consol_vp['min_price']
+    zone['full_range_max'] = consol_vp['max_price']
+    zone['candle_count'] = len(consol_candles)
+
+    cut_shape = classify_shape(consol_vp)
+    zone['shape_type'] = cut_shape['shape_type']
+    zone['d_score'] = cut_shape['d_score']
+    zone['shape_metrics'] = cut_shape
+
+    is_d_cut = cut_shape['shape_type'] == 'D' and cut_shape['d_score'] >= config.min_d_score
+    is_pb_cut_ok = False
+
+    if not is_d_cut and cut_shape['shape_type'] in ('P', 'b'):
+        if config.include_pb_shapes:
+            cut_trim = trim_pb_to_d(consol_vp, cut_shape)
+            if cut_trim:
+                adj = int(cut_shape['d_score'] * 0.7 + 20)
+                if adj >= config.min_d_score:
+                    is_pb_cut_ok = True
+                    zone['min_price'] = cut_trim['min_price']
+                    zone['max_price'] = cut_trim['max_price']
+                    zone['poc_price'] = cut_trim['poc_price']
+                    zone['d_score'] = adj
+                    zone['shape_type'] = f"{cut_shape['shape_type']}_trimmed"
+
+    return is_d_cut or is_pb_cut_ok
+
+
+def _calc_volume_zscore(candles: List[Dict], idx: int, lookback: int = 20) -> float:
+    """Calcula z-score de volumen de la vela idx vs las anteriores."""
+    start = max(0, idx - lookback)
+    vols = [c.get('volume', 0) for c in candles[start:idx]]
+    if len(vols) < 5:
+        return 0.0
+    mean_v = sum(vols) / len(vols)
+    if mean_v <= 0:
+        return 0.0
+    variance = sum((v - mean_v) ** 2 for v in vols) / len(vols)
+    std_v = variance ** 0.5
+    if std_v <= 0:
+        return 0.0
+    return (candles[idx].get('volume', 0) - mean_v) / std_v
+
+
+def _prepare_zone_common(zone: Dict, zone_idx: int, strategy: str,
+                         candles: List[Dict], config: VPScannerConfig
+                         ) -> Optional[Dict]:
+    """Preparacion comun para las 3 estrategias:
+    - Asigna id, source, entry_strategy
+    - Calcula detection_timestamp
+    - Busca breakout y recorta zona (clip)
+    - Retorna info del breakout o None si zona invalida post-clip
+
+    Returns dict con:
+        breakout_found, breakout_idx, breakout_dir,
+        zone_start_idx, zone_end_idx, detection_idx,
+        bo_high, bo_low, zone_high, zone_low, poc,
+        full_high, full_low, zone_range
+    O None si la zona debe descartarse (shape invalida post-clip).
+    """
+    zone_id = f"vp_{zone['start_timestamp']}_{zone_idx}"
+    zone['id'] = zone_id
+    zone['source'] = 'vp_scanner'
+    zone['entry_strategy'] = strategy
+
+    zone_start_idx, zone_end_idx, search_start, search_end = \
+        _zone_search_bounds(zone, config, len(candles))
+
+    detection_idx = zone.get('detection_candle_idx', zone_end_idx)
+    if detection_idx < len(candles):
+        zone['detection_timestamp'] = candles[detection_idx]['timestamp']
+
+    if config.entry_mode == 'zone':
+        bo_high = zone.get('full_range_max', zone['max_price'])
+        bo_low = zone.get('full_range_min', zone['min_price'])
+    else:
+        bo_high = zone['max_price']
+        bo_low = zone['min_price']
+
+    zone_high = zone['max_price']
+    zone_low = zone['min_price']
+    zone_range = zone_high - zone_low
+
+    if zone_range <= 0:
+        zone['trade_result'] = 'SKIPPED'
+        zone['trade_pnl_r'] = 0
+        return None
+
+    # Buscar breakout (compartido entre las 3 estrategias)
+    need_confirm = max(0, config.breakout_confirm_bars)
+    breakout_found = False
+    confirm_count = 0
+    breakout_dir = None
+    breakout_idx = None
+
+    for i in range(search_start, search_end):
+        c = candles[i]
+        if c['close'] > bo_high:
+            if breakout_dir == 'UP':
+                confirm_count += 1
+            else:
+                breakout_dir = 'UP'
+                confirm_count = 1
+        elif c['close'] < bo_low:
+            if breakout_dir == 'DOWN':
+                confirm_count += 1
+            else:
+                breakout_dir = 'DOWN'
+                confirm_count = 1
+        else:
+            confirm_count = 0
+            breakout_dir = None
+
+        if breakout_dir and confirm_count >= max(1, need_confirm):
+            breakout_idx = i
+            breakout_found = True
+            break
+
+    # Clip de zona al breakout (recalcula VP, d_score, limites)
+    if breakout_found:
+        if not _clip_zone_at_breakout(zone, breakout_idx, candles, config):
             zone['trade_result'] = 'SKIPPED'
             zone['trade_pnl_r'] = 0
+            zone['skip_reason'] = 'shape_invalid_after_cut'
+            return None
+        zone['breakout_direction'] = breakout_dir
+        zone['breakout_timestamp'] = candles[breakout_idx]['timestamp']
+        # Actualizar limites post-clip
+        zone_end_idx = zone['window_end']
+        zone_high = zone['max_price']
+        zone_low = zone['min_price']
+        zone_range = zone_high - zone_low
+        bo_high = zone.get('full_range_max', zone_high) if config.entry_mode == 'zone' else zone_high
+        bo_low = zone.get('full_range_min', zone_low) if config.entry_mode == 'zone' else zone_low
+
+    poc = zone['poc_price']
+    full_high = zone.get('full_range_max', zone_high)
+    full_low = zone.get('full_range_min', zone_low)
+
+    return {
+        'breakout_found': breakout_found,
+        'breakout_idx': breakout_idx,
+        'breakout_dir': breakout_dir,
+        'zone_start_idx': zone_start_idx,
+        'zone_end_idx': zone_end_idx,
+        'search_start': search_start,
+        'search_end': search_end,
+        'detection_idx': detection_idx,
+        'bo_high': bo_high,
+        'bo_low': bo_low,
+        'zone_high': zone_high,
+        'zone_low': zone_low,
+        'poc': poc,
+        'full_high': full_high,
+        'full_low': full_low,
+        'zone_range': zone_range,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Estrategia 1: BREAKOUT (original, con filtros refinados)
+# ---------------------------------------------------------------------------
+
+def _simulate_breakout(zones: List[Dict], candles: List[Dict],
+                       config: VPScannerConfig) -> List[Dict]:
+    """Simula trades de breakout (estrategia original, con filtros opcionales)."""
+    results = []
+    open_trade = None
+    _total_zones = len(zones)
+
+    for zone_idx, zone in enumerate(zones):
+        if _total_zones > 20 and (zone_idx + 1) % 50 == 0:
+            print(f"[VP_BO] Zona {zone_idx + 1}/{_total_zones}...")
+        info = _prepare_zone_common(zone, zone_idx, 'breakout', candles, config)
+        if info is None:
             results.append(zone)
             continue
 
-        # ===================================================================
-        # FIX: Buscar breakout DENTRO de la zona, no solo despues.
-        # Las ultimas velas de la ventana pueden ya estar rompiendo el VA.
-        # Empezamos a buscar despues de un minimo de velas de consolidacion
-        # para que haya suficiente base antes del breakout.
-        # ===================================================================
-        breakout_found = False
-        confirm_count = 0
-        breakout_dir = None
+        if not info['breakout_found']:
+            zone['trade_result'] = 'NO_BREAKOUT'
+            zone['trade_pnl_r'] = 0
+            zone['state'] = 'COMPLETE'
+            results.append(zone)
+            continue
 
-        # Minimo de velas de consolidacion antes de buscar breakout
-        # En modo progresivo, respetar prog_min_candles como minimo de consolidacion
-        if config.detection_mode == 'progressive':
-            min_consol = max(config.prog_min_candles, config.min_zone_candles, 10)
+        breakout_idx = info['breakout_idx']
+        breakout_dir = info['breakout_dir']
+        search_start = info['search_start']
+
+        # Filtros adicionales de breakout (volumen y momentum)
+        skip_trade = False
+
+        if config.position_mode == 'sequential' and open_trade is not None:
+            zone['trade_result'] = 'SKIPPED'
+            zone['trade_pnl_r'] = 0
+            zone['skip_reason'] = 'sequential_blocked'
+            results.append(zone)
+            continue
+
+        if config.bo_volume_filter:
+            vscore = _calc_volume_zscore(candles, breakout_idx, 20)
+            if vscore < config.bo_volume_zscore:
+                logger.info(f"[VP_BO] #{zone_idx} breakout filtrado por volumen "
+                            f"(zscore={vscore:.2f} < {config.bo_volume_zscore})")
+                skip_trade = True
+
+        if not skip_trade and config.bo_momentum_bars > 0:
+            mo_start = max(search_start, breakout_idx - config.bo_momentum_bars)
+            closes = [candles[k]['close'] for k in range(mo_start, breakout_idx)]
+            if len(closes) >= 3:
+                trend = closes[-1] - closes[0]
+                if (breakout_dir == 'UP' and trend < 0) or \
+                   (breakout_dir == 'DOWN' and trend > 0):
+                    logger.info(f"[VP_BO] #{zone_idx} breakout filtrado por momentum "
+                                f"(dir={breakout_dir}, trend={trend:.2f})")
+                    skip_trade = True
+
+        if skip_trade:
+            zone['trade_result'] = 'SKIPPED'
+            zone['trade_pnl_r'] = 0
+            zone['skip_reason'] = 'filter_rejected'
+            results.append(zone)
+            continue
+
+        # Ejecutar trade de breakout
+        c = candles[breakout_idx]
+        entry_price = c['close']
+        entry_ts = c['timestamp']
+
+        risk, sl_price = _calc_risk_and_sl(config, zone, entry_price, breakout_dir)
+
+        if breakout_dir == 'UP':
+            tp_price = entry_price + risk * config.tp_rr_ratio
         else:
-            min_consol = max(config.min_zone_candles, 10)
-        search_start = zone_start_idx + min_consol
-        search_end = min(zone_end_idx + config.lookforward_bars, len(candles))
+            tp_price = entry_price - risk * config.tp_rr_ratio
 
-        logger.info(f"[VP_TRADE] #{zone_idx} zone=[{zone_start_idx}-{zone_end_idx}] "
-                    f"search=[{search_start}-{search_end}] "
-                    f"end_ts={_fmt(candles[zone_end_idx]['timestamp'] if zone_end_idx < len(candles) else 0)} "
-                    f"bo_high={bo_high:.2f} bo_low={bo_low:.2f} "
-                    f"VA=[{zone_low:.2f}-{zone_high:.2f}] "
-                    f"full=[{zone.get('full_range_min', 0):.2f}-{zone.get('full_range_max', 0):.2f}] "
-                    f"entry_mode={config.entry_mode} confirm={need_confirm}")
+        trade_result, trade_pnl_r, close_ts = \
+            _resolve_trade(candles, breakout_idx, entry_price, sl_price, tp_price, breakout_dir)
 
-        _bars_searched = 0
-        for i in range(search_start, search_end):
+        zone['entry_price'] = entry_price
+        zone['entry_timestamp'] = entry_ts
+        zone['sl_price'] = sl_price
+        zone['tp_price'] = tp_price
+        zone['risk'] = risk
+        zone['trade_result'] = trade_result
+        zone['trade_pnl_r'] = trade_pnl_r
+        zone['trade_close_timestamp'] = close_ts
+        zone['state'] = 'RESOLVED' if trade_result in ('WIN', 'LOSS') else 'OPEN'
+
+        if trade_result == 'OPEN':
+            open_trade = zone
+        elif trade_result in ('WIN', 'LOSS'):
+            open_trade = None
+
+        results.append(zone)
+
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Estrategia 2: MEAN REVERSION (rebote dentro de la zona)
+# ---------------------------------------------------------------------------
+
+def _simulate_mean_reversion(zones: List[Dict], candles: List[Dict],
+                             config: VPScannerConfig) -> List[Dict]:
+    """Simula trades de mean reversion: comprar en VAL, vender en VAH (o POC)."""
+    results = []
+    open_trade = None
+
+    logger.info(f"[VP_MR] Mean reversion: target={config.mr_target}, "
+                f"entry_zone={config.mr_entry_zone}, confirm={config.mr_confirm}, "
+                f"max_trades/zone={config.mr_max_trades_per_zone}")
+    _total_zones = len(zones)
+
+    for zone_idx, zone in enumerate(zones):
+        if _total_zones > 20 and (zone_idx + 1) % 50 == 0:
+            print(f"[VP_MR] Zona {zone_idx + 1}/{_total_zones}...")
+        info = _prepare_zone_common(zone, zone_idx, 'mean_reversion', candles, config)
+        if info is None:
+            results.append(zone)
+            continue
+
+        # Limites de entry segun mr_entry_zone (post-clip)
+        if config.mr_entry_zone == 'zone':
+            entry_high = zone.get('full_range_max', zone['max_price'])
+            entry_low = zone.get('full_range_min', zone['min_price'])
+        else:
+            entry_high = info['zone_high']  # VAH
+            entry_low = info['zone_low']    # VAL
+
+        poc = info['poc']
+        zone_high = info['zone_high']
+        zone_low = info['zone_low']
+        full_high = info['full_high']
+        full_low = info['full_low']
+        zone_range = info['zone_range']
+        zone_start_idx = info['zone_start_idx']
+        zone_end_idx = info['zone_end_idx']
+        detection_idx = info['detection_idx']
+
+        # Buscar entries SOLO dentro de la zona y SOLO despues de que fue detectada
+        earliest_entry = max(
+            zone_start_idx + max(config.mr_min_zone_candles, 10),
+            detection_idx
+        )
+        search_start = earliest_entry
+        # Mean reversion opera SOLO dentro de la zona (post-clip)
+        search_end = min(zone_end_idx, len(candles))
+
+        mr_trades = []
+        trades_in_zone = 0
+        cooldown_until_idx = 0
+
+        # Para swing confirmation: rastrear extremos de toques
+        swing_candidate_dir = None    # 'UP' o 'DOWN'
+        swing_extreme_idx = -1        # indice de la vela con el extremo
+        swing_extreme_val = 0         # valor del extremo (low o high)
+
+        i = search_start
+        while i < search_end and trades_in_zone < config.mr_max_trades_per_zone:
             c = candles[i]
-            _bars_searched += 1
 
-            if c['close'] > bo_high:
-                if breakout_dir == 'UP':
-                    confirm_count += 1
-                else:
-                    breakout_dir = 'UP'
-                    confirm_count = 1
-            elif c['close'] < bo_low:
-                if breakout_dir == 'DOWN':
-                    confirm_count += 1
-                else:
-                    breakout_dir = 'DOWN'
-                    confirm_count = 1
+            if config.position_mode == 'sequential' and open_trade is not None:
+                i += 1
+                continue
+
+            if i < cooldown_until_idx:
+                i += 1
+                continue
+
+            if c['close'] > full_high or c['close'] < full_low:
+                # Breakout - resetear swing candidate
+                swing_candidate_dir = None
+                i += 1
+                continue
+
+            trade_dir = None
+            entry_idx = i  # por defecto, entrada en la vela actual
+
+            if config.mr_confirm == 'swing':
+                # --- SWING CONFIRMATION ---
+                # Fase 1: Detectar toque y rastrear extremo
+                if c['low'] <= entry_low:
+                    if swing_candidate_dir != 'UP' or c['low'] < swing_extreme_val:
+                        swing_candidate_dir = 'UP'
+                        swing_extreme_idx = i
+                        swing_extreme_val = c['low']
+                elif c['high'] >= entry_high:
+                    if swing_candidate_dir != 'DOWN' or c['high'] > swing_extreme_val:
+                        swing_candidate_dir = 'DOWN'
+                        swing_extreme_idx = i
+                        swing_extreme_val = c['high']
+
+                # Fase 2: Verificar si el swing se confirmo
+                swing_n = config.mr_swing_bars
+                if swing_candidate_dir and swing_extreme_idx >= 0 and i >= swing_extreme_idx + swing_n:
+                    is_swing = True
+                    for s in range(1, swing_n + 1):
+                        check_idx = swing_extreme_idx + s
+                        if check_idx >= len(candles):
+                            is_swing = False
+                            break
+                        if swing_candidate_dir == 'UP':
+                            if candles[check_idx]['low'] < swing_extreme_val:
+                                is_swing = False
+                                break
+                        else:
+                            if candles[check_idx]['high'] > swing_extreme_val:
+                                is_swing = False
+                                break
+
+                    if is_swing:
+                        trade_dir = swing_candidate_dir
+                        entry_idx = swing_extreme_idx + swing_n
+                        swing_candidate_dir = None
+                        swing_extreme_idx = -1
             else:
-                confirm_count = 0
-                breakout_dir = None
+                # --- TOUCH / REJECTION ---
+                if c['low'] <= entry_low:
+                    if config.mr_confirm == 'touch':
+                        trade_dir = 'UP'
+                    elif config.mr_confirm == 'rejection':
+                        if c['close'] > entry_low and c['close'] < entry_high:
+                            trade_dir = 'UP'
 
-            # confirm_bars=0 o 1: entra en la primera vela que cierra fuera
-            # confirm_bars=2+: espera N cierres consecutivos fuera, entra en la vela N
-            confirmed = confirm_count >= max(1, need_confirm)
-            if breakout_dir and confirmed:
-                # Sequential mode: no abrir si hay trade abierto
+                elif c['high'] >= entry_high:
+                    if config.mr_confirm == 'touch':
+                        trade_dir = 'DOWN'
+                    elif config.mr_confirm == 'rejection':
+                        if c['close'] < entry_high and c['close'] > entry_low:
+                            trade_dir = 'DOWN'
+
+            if trade_dir:
+                entry_price = candles[entry_idx]['close']
+                entry_ts = candles[entry_idx]['timestamp']
+
+                if config.mr_target == 'poc':
+                    tp_price = poc
+                elif config.mr_target == 'opposite_va':
+                    tp_price = zone_high if trade_dir == 'UP' else zone_low
+                else:  # opposite_zone
+                    tp_price = full_high if trade_dir == 'UP' else full_low
+
+                risk, sl_price = _calc_risk_and_sl(
+                    config, zone, entry_price, trade_dir,
+                    sl_mode=config.mr_sl_mode, buffer_pct=config.mr_sl_buffer_pct)
+
+                if trade_dir == 'UP' and tp_price <= entry_price:
+                    tp_price = entry_price + zone_range * 0.3
+                elif trade_dir == 'DOWN' and tp_price >= entry_price:
+                    tp_price = entry_price - zone_range * 0.3
+
+                trade_result, trade_pnl_r, close_ts = \
+                    _resolve_trade(candles, entry_idx, entry_price, sl_price, tp_price, trade_dir)
+
+                mr_trade = {
+                    'direction': trade_dir,
+                    'entry_price': entry_price,
+                    'entry_timestamp': entry_ts,
+                    'sl_price': sl_price,
+                    'tp_price': tp_price,
+                    'risk': risk,
+                    'trade_result': trade_result,
+                    'trade_pnl_r': trade_pnl_r,
+                    'trade_close_timestamp': close_ts,
+                }
+                mr_trades.append(mr_trade)
+                trades_in_zone += 1
+
+                if trade_result == 'OPEN':
+                    open_trade = mr_trade
+                elif trade_result in ('WIN', 'LOSS'):
+                    open_trade = None
+                    if close_ts:
+                        for skip_j in range(i + 1, len(candles)):
+                            if candles[skip_j]['timestamp'] >= close_ts:
+                                i = skip_j
+                                cooldown_until_idx = skip_j + 3
+                                break
+
+            i += 1
+
+        # Guardar resultados en la zona
+        if mr_trades:
+            best = mr_trades[0]
+            zone['entry_price'] = best['entry_price']
+            zone['entry_timestamp'] = best['entry_timestamp']
+            zone['sl_price'] = best['sl_price']
+            zone['tp_price'] = best['tp_price']
+            zone['risk'] = best['risk']
+            zone['trade_close_timestamp'] = best['trade_close_timestamp']
+            zone['state'] = 'RESOLVED'
+
+            zone['mr_trades'] = mr_trades
+
+            total_pnl = sum(t['trade_pnl_r'] for t in mr_trades)
+            resolved_trades = [t for t in mr_trades if t['trade_result'] in ('WIN', 'LOSS')]
+            zone_wins = sum(1 for t in resolved_trades if t['trade_result'] == 'WIN')
+
+            zone['trade_result'] = 'WIN' if total_pnl > 0 else ('LOSS' if total_pnl < 0 else 'OPEN')
+            zone['trade_pnl_r'] = round(total_pnl, 2)
+            zone['mr_trade_count'] = len(mr_trades)
+            zone['mr_win_count'] = zone_wins
+        else:
+            zone['trade_result'] = 'NO_ENTRY'
+            zone['trade_pnl_r'] = 0
+            zone['state'] = 'COMPLETE'
+
+        results.append(zone)
+
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Estrategia 3: RETEST (breakout + pullback a la zona)
+# ---------------------------------------------------------------------------
+
+def _simulate_retest(zones: List[Dict], candles: List[Dict],
+                     config: VPScannerConfig) -> List[Dict]:
+    """Simula trades de retest: espera breakout, luego pullback a la zona antes de entrar."""
+    results = []
+    open_trade = None
+
+    logger.info(f"[VP_RT] Retest: level={config.rt_level}, confirm={config.rt_confirm}, "
+                f"max_bars={config.rt_max_bars}, sl_mode={config.rt_sl_mode}")
+    _total_zones = len(zones)
+
+    for zone_idx, zone in enumerate(zones):
+        if _total_zones > 20 and (zone_idx + 1) % 50 == 0:
+            print(f"[VP_RT] Zona {zone_idx + 1}/{_total_zones}...")
+        info = _prepare_zone_common(zone, zone_idx, 'retest', candles, config)
+        if info is None:
+            results.append(zone)
+            continue
+
+        if not info['breakout_found']:
+            zone['trade_result'] = 'NO_BREAKOUT'
+            zone['trade_pnl_r'] = 0
+            zone['state'] = 'COMPLETE'
+            results.append(zone)
+            continue
+
+        breakout_idx = info['breakout_idx']
+        breakout_dir = info['breakout_dir']
+        zone_high = info['zone_high']
+        zone_low = info['zone_low']
+        poc = info['poc']
+        full_high = info['full_high']
+        full_low = info['full_low']
+        zone_range = info['zone_range']
+
+        # Determinar nivel de retest
+        if config.rt_level == 'poc':
+            rt_target = poc
+        elif config.rt_level == 'zone':
+            rt_target = full_high if breakout_dir == 'UP' else full_low
+        else:  # "va" default
+            rt_target = zone_high if breakout_dir == 'UP' else zone_low
+
+        # FASE 2: Buscar retest (pullback al nivel)
+        retest_start = breakout_idx + 1
+        retest_end = min(breakout_idx + 1 + config.rt_max_bars, len(candles))
+
+        retest_found = False
+        retest_low = float('inf')
+        retest_high = float('-inf')
+        retest_low_idx = -1
+        retest_high_idx = -1
+
+        for k in range(retest_start, retest_end):
+            rc = candles[k]
+
+            # Rastrear extremos del pullback
+            if rc['low'] < retest_low:
+                retest_low = rc['low']
+                retest_low_idx = k
+            if rc['high'] > retest_high:
+                retest_high = rc['high']
+                retest_high_idx = k
+
+            touched_level = False
+            if breakout_dir == 'UP':
+                touched_level = rc['low'] <= rt_target
+            else:
+                touched_level = rc['high'] >= rt_target
+
+            if not touched_level:
+                continue
+
+            # Nivel tocado - verificar confirmacion
+            entry_ok = False
+            entry_idx = k
+
+            if config.rt_confirm == 'touch':
+                entry_ok = True
+
+            elif config.rt_confirm == 'rejection':
+                if breakout_dir == 'UP':
+                    # La vela toca rt_target por abajo pero cierra por encima
+                    entry_ok = rc['close'] > rt_target
+                    if config.rt_must_reenter:
+                        entry_ok = entry_ok and rc['close'] > zone_low
+                else:
+                    entry_ok = rc['close'] < rt_target
+                    if config.rt_must_reenter:
+                        entry_ok = entry_ok and rc['close'] < zone_high
+
+            elif config.rt_confirm == 'swing':
+                # Buscar swing low (UP) o swing high (DOWN) confirmado por N velas
+                swing_n = config.rt_swing_bars
+                if breakout_dir == 'UP':
+                    # Buscar el swing low del pullback
+                    # Necesitamos esperar swing_n velas despues del minimo
+                    if retest_low_idx >= 0 and k >= retest_low_idx + swing_n:
+                        # Verificar que todas las N velas despues del minimo tienen lows mayores
+                        is_swing = True
+                        for s in range(1, swing_n + 1):
+                            check_idx = retest_low_idx + s
+                            if check_idx >= len(candles):
+                                is_swing = False
+                                break
+                            if candles[check_idx]['low'] < retest_low:
+                                is_swing = False
+                                break
+                        if is_swing:
+                            entry_ok = True
+                            entry_idx = retest_low_idx + swing_n  # Entrar en la vela de confirmacion
+                else:
+                    if retest_high_idx >= 0 and k >= retest_high_idx + swing_n:
+                        is_swing = True
+                        for s in range(1, swing_n + 1):
+                            check_idx = retest_high_idx + s
+                            if check_idx >= len(candles):
+                                is_swing = False
+                                break
+                            if candles[check_idx]['high'] > retest_high:
+                                is_swing = False
+                                break
+                        if is_swing:
+                            entry_ok = True
+                            entry_idx = retest_high_idx + swing_n
+
+            if entry_ok:
+                # Sequential check
                 if config.position_mode == 'sequential' and open_trade is not None:
                     zone['trade_result'] = 'SKIPPED'
                     zone['trade_pnl_r'] = 0
                     zone['skip_reason'] = 'sequential_blocked'
-                    logger.info(f"[VP_TRADE] #{zone_idx} SKIPPED (sequential bloqueado por "
-                                f"trade abierto: {open_trade.get('id', '?')}, "
-                                f"estado={open_trade.get('trade_result', '?')})")
-                    breakout_found = True
+                    retest_found = True
                     break
 
-                entry_price = c['close']
-                entry_ts = c['timestamp']
+                entry_price = candles[entry_idx]['close']
+                entry_ts = candles[entry_idx]['timestamp']
 
-                # Calcular SL segun sl_mode
-                poc = zone['poc_price']
-
-                if config.sl_mode == 'beyond_poc':
-                    # SL detras del POC (mas agresivo)
-                    buffer = 1.0 + config.sl_buffer_pct / 100.0
+                # Calcular SL segun rt_sl_mode
+                if config.rt_sl_mode == 'below_retest':
+                    buffer_pct = config.sl_buffer_pct
                     if breakout_dir == 'UP':
-                        risk = (entry_price - poc) * buffer
+                        # SL debajo del punto mas bajo del pullback
+                        risk = (entry_price - retest_low) * (1.0 + buffer_pct / 100.0)
                     else:
-                        risk = (poc - entry_price) * buffer
-                elif config.sl_mode == 'below_va':
-                    # SL detras del Value Area
-                    buffer = 1.0 + config.sl_buffer_pct / 100.0
+                        risk = (retest_high - entry_price) * (1.0 + buffer_pct / 100.0)
+                    if risk <= 0:
+                        risk = zone_range * 0.3
                     if breakout_dir == 'UP':
-                        risk = (entry_price - zone_low) * buffer
+                        sl_price = entry_price - risk
                     else:
-                        risk = (zone_high - entry_price) * buffer
+                        sl_price = entry_price + risk
                 else:
-                    # zone_opposite: SL al otro extremo de la zona completa
-                    full_low = zone.get('full_range_min', zone_low)
-                    full_high = zone.get('full_range_max', zone_high)
-                    full_range = full_high - full_low
-                    if breakout_dir == 'UP':
-                        risk = entry_price - full_low + full_range * config.sl_buffer_pct / 100
-                    else:
-                        risk = full_high - entry_price + full_range * config.sl_buffer_pct / 100
-
-                if risk <= 0:
-                    risk = zone_range * 0.5
+                    # Usar modos estandar
+                    risk, sl_price = _calc_risk_and_sl(
+                        config, zone, entry_price, breakout_dir,
+                        sl_mode=config.rt_sl_mode, buffer_pct=config.sl_buffer_pct)
 
                 if breakout_dir == 'UP':
-                    sl_price = entry_price - risk
                     tp_price = entry_price + risk * config.tp_rr_ratio
                 else:
-                    sl_price = entry_price + risk
                     tp_price = entry_price - risk * config.tp_rr_ratio
 
-                # Monitorear trade - SL/TP escanea TODAS las velas restantes,
-                # no solo las del lookforward de breakout
-                trade_result = 'OPEN'
-                trade_pnl_r = 0.0
-                close_ts = None
+                trade_result, trade_pnl_r, close_ts = \
+                    _resolve_trade(candles, entry_idx, entry_price, sl_price, tp_price, breakout_dir)
 
-                for j in range(i + 1, len(candles)):
-                    tc = candles[j]
-                    hit_tp = False
-                    hit_sl = False
-
-                    if breakout_dir == 'UP':
-                        hit_tp = tc['high'] >= tp_price
-                        hit_sl = tc['low'] <= sl_price
-                    else:
-                        hit_tp = tc['low'] <= tp_price
-                        hit_sl = tc['high'] >= sl_price
-
-                    if hit_sl and hit_tp:
-                        if breakout_dir == 'UP':
-                            hit_sl_first = tc['open'] <= sl_price
-                        else:
-                            hit_sl_first = tc['open'] >= sl_price
-                        if hit_sl_first:
-                            hit_tp = False
-                        else:
-                            hit_sl = False
-
-                    if hit_tp:
-                        trade_result = 'WIN'
-                        trade_pnl_r = config.tp_rr_ratio
-                        close_ts = tc['timestamp']
-                        break
-                    elif hit_sl:
-                        trade_result = 'LOSS'
-                        trade_pnl_r = -1.0
-                        close_ts = tc['timestamp']
-                        break
-
-                zone['breakout_direction'] = breakout_dir
-                zone['breakout_timestamp'] = c['timestamp']
                 zone['entry_price'] = entry_price
                 zone['entry_timestamp'] = entry_ts
+                zone['retest_timestamp'] = candles[k]['timestamp']
                 zone['sl_price'] = sl_price
                 zone['tp_price'] = tp_price
                 zone['risk'] = risk
@@ -1143,91 +1857,20 @@ def _simulate_trades(zones: List[Dict], candles: List[Dict],
                 zone['trade_close_timestamp'] = close_ts
                 zone['state'] = 'RESOLVED' if trade_result in ('WIN', 'LOSS') else 'OPEN'
 
-                # Recortar end_timestamp de la zona a la vela anterior al breakout
-                # para que el rectangulo visual termine donde acaba la consolidacion real
-                if i > zone_start_idx:
-                    breakout_candle_idx = i
-                    consol_last_idx = breakout_candle_idx - 1
-                    if consol_last_idx >= zone_start_idx:
-                        zone['end_timestamp'] = candles[consol_last_idx]['timestamp']
-                        zone['window_end'] = consol_last_idx
-
-                        # Recalcular VP solo con velas de consolidacion (sin post-breakout)
-                        # para que el perfil visual coincida con el rectangulo
-                        consol_candles = candles[zone_start_idx:consol_last_idx + 1]
-                        if len(consol_candles) >= 5:
-                            consol_vp = compute_volume_profile(
-                                consol_candles, bins=config.bins,
-                                va_percent=config.va_percent)
-                            zone['volume_profile'] = _build_vp_for_frontend(consol_vp)
-                            # Actualizar limites VA al VP recortado
-                            zone['min_price'] = consol_vp['val_price']
-                            zone['max_price'] = consol_vp['vah_price']
-                            zone['poc_price'] = consol_vp['poc']['price']
-                            zone['full_range_min'] = consol_vp['min_price']
-                            zone['full_range_max'] = consol_vp['max_price']
-                            zone['candle_count'] = len(consol_candles)
-
-                            # Re-clasificar forma con VP recortado
-                            cut_shape = classify_shape(consol_vp)
-                            zone['shape_type'] = cut_shape['shape_type']
-                            zone['d_score'] = cut_shape['d_score']
-                            zone['shape_metrics'] = cut_shape
-
-                            # Validar forma post-recorte
-                            is_d_cut = cut_shape['shape_type'] == 'D' and cut_shape['d_score'] >= config.min_d_score
-                            is_pb_cut_ok = False
-
-                            if not is_d_cut and cut_shape['shape_type'] in ('P', 'b'):
-                                if config.include_pb_shapes:
-                                    cut_trim = trim_pb_to_d(consol_vp, cut_shape)
-                                    if cut_trim:
-                                        adj = int(cut_shape['d_score'] * 0.7 + 20)
-                                        if adj >= config.min_d_score:
-                                            is_pb_cut_ok = True
-                                            zone['min_price'] = cut_trim['min_price']
-                                            zone['max_price'] = cut_trim['max_price']
-                                            zone['poc_price'] = cut_trim['poc_price']
-                                            zone['d_score'] = adj
-                                            zone['shape_type'] = f"{cut_shape['shape_type']}_trimmed"
-
-                            if not is_d_cut and not is_pb_cut_ok:
-                                # Perfil recortado no es D valido -> descartar zona
-                                zone['trade_result'] = 'SKIPPED'
-                                zone['trade_pnl_r'] = 0
-                                zone['skip_reason'] = 'shape_invalid_after_cut'
-                                logger.info(f"[VP_TRADE] #{zone_idx} SKIPPED post-cut: "
-                                            f"shape={cut_shape['shape_type']} "
-                                            f"d_score={cut_shape['d_score']} "
-                                            f"(include_pb={config.include_pb_shapes})")
-                                breakout_found = True
-                                break
-
-                # Logging por trade
-                bars_to_close = (j - i) if close_ts else 'N/A'
-                bars_searched = i - search_start + 1
-                logger.info(f"[VP_TRADE] #{zone_idx} {breakout_dir} entry={entry_price:.2f} "
-                            f"SL={sl_price:.2f} TP={tp_price:.2f} risk={risk:.2f} "
-                            f"-> {trade_result} (pnl={trade_pnl_r:+.1f}R, bars_to_close={bars_to_close}, "
-                            f"bars_searched={bars_searched})")
-
-                # Manejar sequential
                 if trade_result == 'OPEN':
                     open_trade = zone
-                    logger.warning(f"[VP_TRADE] #{zone_idx} quedo OPEN - no hay mas velas para resolver "
-                                   f"(entry_idx={i}, total_candles={len(candles)})")
                 elif trade_result in ('WIN', 'LOSS'):
                     open_trade = None
 
-                breakout_found = True
+                retest_found = True
+                logger.info(f"[VP_RT] #{zone_idx} {breakout_dir} retest entry={entry_price:.2f} "
+                            f"SL={sl_price:.2f} TP={tp_price:.2f} -> {trade_result}")
                 break
 
-        if not breakout_found:
-            zone['trade_result'] = 'NO_BREAKOUT'
+        if not retest_found:
+            zone['trade_result'] = 'NO_RETEST'
             zone['trade_pnl_r'] = 0
             zone['state'] = 'COMPLETE'
-            logger.info(f"[VP_TRADE] #{zone_idx} NO_BREAKOUT en {search_end - search_start} velas buscadas "
-                        f"(zona: {zone['min_price']:.2f}-{zone['max_price']:.2f})")
 
         results.append(zone)
 
@@ -1693,13 +2336,15 @@ class IncrementalVPScanner:
 # Backtest wrapper (identico al V2)
 # ---------------------------------------------------------------------------
 
-def backtest_vp(candles: List[Dict], config_overrides: Dict = None) -> Dict:
+def backtest_vp(candles: List[Dict], config_overrides: Dict = None,
+                progress_dict: Dict = None) -> Dict:
     """
     Ejecuta backtest historico usando el scanner VP.
 
     Args:
         candles: Lista de velas OHLCV ordenadas por timestamp asc
         config_overrides: Parametros a sobreescribir
+        progress_dict: Diccionario compartido para reportar progreso al frontend
 
     Returns:
         Dict con zones, stats, equity_curve
@@ -1718,53 +2363,82 @@ def backtest_vp(candles: List[Dict], config_overrides: Dict = None) -> Dict:
                     val = float(val)
                 setattr(cfg, key, val)
 
-    logger.info(f"[VP_BACKTEST] Config: include_pb_shapes={cfg.include_pb_shapes}, "
+    import time as _bt_time
+    _bt_start = _bt_time.time()
+
+    logger.info(f"[VP_BACKTEST] Config: strategy={cfg.entry_strategy}, "
+                f"include_pb_shapes={cfg.include_pb_shapes}, "
                 f"entry_mode={cfg.entry_mode}, sl_mode={cfg.sl_mode}, "
                 f"min_d_score={cfg.min_d_score}, detection_mode={cfg.detection_mode}")
+    print(f"[VP_BACKTEST] Inicio: {len(candles)} velas, "
+          f"mode={cfg.detection_mode}, strategy={cfg.entry_strategy}")
 
-    # Seleccionar metodo de deteccion
+    # Seleccionar metodo de deteccion (solo detecta zonas, NO simula trades)
+    _det_start = _bt_time.time()
     if cfg.detection_mode == 'progressive':
-        zones = scan_zones_progressive(candles, cfg)
+        zones = scan_zones_progressive(candles, cfg, progress_dict=progress_dict)
     else:
-        zones = scan_zones(candles, cfg)
+        zones = scan_zones(candles, cfg, progress_dict=progress_dict)
+    _det_elapsed = _bt_time.time() - _det_start
+    print(f"[VP_BACKTEST] Deteccion completada en {_det_elapsed:.1f}s: {len(zones)} zonas")
 
-    # Filtrar score
+    # Filtrar score ANTES de simular trades (usa d_score original de deteccion)
     if cfg.min_d_score > 0:
+        pre_filter = len(zones)
         zones = [z for z in zones if z.get('d_score', 0) >= cfg.min_d_score]
+        if pre_filter != len(zones):
+            logger.info(f"[VP_BACKTEST] Filtro d_score>={cfg.min_d_score}: "
+                        f"{pre_filter} -> {len(zones)} zonas")
 
-    # Estadisticas
-    resolved = [z for z in zones if z.get('trade_result') in ('WIN', 'LOSS')]
-    open_trades = [z for z in zones if z.get('trade_result') == 'OPEN']
-    wins = [z for z in resolved if z['trade_result'] == 'WIN']
-    losses = [z for z in resolved if z['trade_result'] == 'LOSS']
+    # Simular trades sobre las zonas filtradas
+    if progress_dict:
+        progress_dict["phase"] = "simulating"
+        progress_dict["zones_found"] = len(zones)
+        progress_dict["current"] = 0
+        progress_dict["total"] = len(zones)
+    zones = _simulate_trades(zones, candles, cfg)
+
+    # Estadisticas - expandir sub-trades de mean_reversion para conteo individual
+    all_trades = []
+    for z in zones:
+        if z.get('mr_trades'):
+            for t in z['mr_trades']:
+                all_trades.append(t)
+        elif z.get('trade_result') in ('WIN', 'LOSS', 'OPEN'):
+            all_trades.append(z)
+
+    resolved = [t for t in all_trades if t.get('trade_result') in ('WIN', 'LOSS')]
+    open_trades_list = [t for t in all_trades if t.get('trade_result') == 'OPEN']
+    wins = [t for t in resolved if t['trade_result'] == 'WIN']
+    losses = [t for t in resolved if t['trade_result'] == 'LOSS']
 
     total_closed = len(wins) + len(losses)
-    total_pnl_r = sum(z.get('trade_pnl_r', 0) for z in resolved)
+    total_pnl_r = sum(t.get('trade_pnl_r', 0) for t in resolved)
     win_rate = (len(wins) / total_closed * 100) if total_closed > 0 else 0
     expectancy = (total_pnl_r / total_closed) if total_closed > 0 else 0
 
-    gross_profit = sum(z.get('trade_pnl_r', 0) for z in wins)
-    gross_loss = abs(sum(z.get('trade_pnl_r', 0) for z in losses))
+    gross_profit = sum(t.get('trade_pnl_r', 0) for t in wins)
+    gross_loss = abs(sum(t.get('trade_pnl_r', 0) for t in losses))
     profit_factor = (gross_profit / gross_loss) if gross_loss > 0 else (
         99.9 if gross_profit > 0 else 0)
 
     # Equity curve & max drawdown
     trades_sorted = sorted(resolved,
-                           key=lambda z: z.get('entry_timestamp', 0))
+                           key=lambda t: t.get('entry_timestamp', 0))
     max_equity = 0.0
     max_drawdown = 0.0
     equity = 0.0
     equity_curve = []
-    for z in trades_sorted:
-        equity += z.get('trade_pnl_r', 0)
+    for t in trades_sorted:
+        equity += t.get('trade_pnl_r', 0)
         if equity > max_equity:
             max_equity = equity
         dd = max_equity - equity
         if dd > max_drawdown:
             max_drawdown = dd
         equity_curve.append({
-            'timestamp': z.get('trade_close_timestamp',
-                               z.get('entry_timestamp', 0)),
+            'timestamp': t.get('trade_close_timestamp',
+                               t.get('entry_timestamp', 0)),
             'equity': round(equity, 2),
         })
 
@@ -1775,13 +2449,20 @@ def backtest_vp(candles: List[Dict], config_overrides: Dict = None) -> Dict:
     # Combined: zones * avg_progressive_quality
     zones_x_quality = round(len(zones) * avg_pq, 1)
 
+    _bt_total = _bt_time.time() - _bt_start
+    print(f"[VP_BACKTEST] COMPLETADO en {_bt_total:.1f}s: "
+          f"{len(zones)} zonas, {len(wins)}W/{len(losses)}L, "
+          f"WR={round(win_rate, 1)}%, PnL={round(total_pnl_r, 2)}R")
+
     return {
         'zones': zones,
         'stats': {
+            'entry_strategy': cfg.entry_strategy,
             'total_zones': len(zones),
+            'total_trades': len(all_trades),
             'wins': len(wins),
             'losses': len(losses),
-            'open': len(open_trades),
+            'open': len(open_trades_list),
             'total_closed': total_closed,
             'win_rate': round(win_rate, 1),
             'total_pnl_r': round(total_pnl_r, 2),
@@ -1794,3 +2475,431 @@ def backtest_vp(candles: List[Dict], config_overrides: Dict = None) -> Dict:
         'equity_curve': equity_curve,
         'candles_processed': len(candles),
     }
+
+
+# ---------------------------------------------------------------------------
+# Strategy-only optimization (zonas fijas, varía solo parámetros de trading)
+# ---------------------------------------------------------------------------
+
+# Parámetros de trading que NO afectan la detección de zonas
+_STRATEGY_PARAM_DEFS = {
+    # --- Comunes ---
+    'entry_mode':             {'type': 'enum', 'values': ['zone', 'va']},
+    'sl_mode':                {'type': 'enum', 'values': ['beyond_poc', 'below_va', 'zone_opposite']},
+    'tp_rr_ratio':            {'type': 'range', 'min': 1.0, 'max': 5.0, 'step': 0.5},
+    'sl_buffer_pct':          {'type': 'range', 'min': 0.0, 'max': 0.5, 'step': 0.05},
+    'lookforward_bars':       {'type': 'range', 'min': 50, 'max': 300, 'step': 25},
+    'breakout_confirm_bars':  {'type': 'range', 'min': 0, 'max': 5, 'step': 1},
+    'position_mode':          {'type': 'enum', 'values': ['sequential', 'concurrent']},
+    # --- Breakout ---
+    'bo_volume_zscore':       {'type': 'range', 'min': 0.5, 'max': 3.0, 'step': 0.25},
+    'bo_momentum_bars':       {'type': 'range', 'min': 0, 'max': 20, 'step': 2},
+    # --- Retest ---
+    'rt_max_bars':            {'type': 'range', 'min': 5, 'max': 100, 'step': 5},
+    'rt_level':               {'type': 'enum', 'values': ['va', 'zone', 'poc']},
+    'rt_confirm':             {'type': 'enum', 'values': ['touch', 'rejection', 'swing']},
+    'rt_swing_bars':          {'type': 'range', 'min': 2, 'max': 10, 'step': 1},
+    'rt_sl_mode':             {'type': 'enum', 'values': ['below_retest', 'beyond_poc', 'below_va', 'below_zone']},
+    'rt_must_reenter':        {'type': 'enum', 'values': [True, False]},
+    # --- Mean Reversion ---
+    'mr_target':              {'type': 'enum', 'values': ['poc', 'opposite_va', 'opposite_zone']},
+    'mr_entry_zone':          {'type': 'enum', 'values': ['va', 'zone']},
+    'mr_confirm':             {'type': 'enum', 'values': ['touch', 'rejection', 'swing']},
+    'mr_swing_bars':          {'type': 'range', 'min': 2, 'max': 10, 'step': 1},
+    'mr_sl_mode':             {'type': 'enum', 'values': ['beyond_zone', 'beyond_va']},
+    'mr_sl_buffer_pct':       {'type': 'range', 'min': 0.05, 'max': 0.5, 'step': 0.05},
+    'mr_min_zone_candles':    {'type': 'range', 'min': 5, 'max': 50, 'step': 5},
+    'mr_max_trades_per_zone': {'type': 'range', 'min': 1, 'max': 10, 'step': 1},
+}
+
+
+def simulate_strategy_only(base_zones: List[Dict], candles: List[Dict],
+                           config_overrides: Dict) -> Dict:
+    """
+    Simula trades sobre zonas pre-detectadas (no modifica la deteccion).
+    Hace deep copy de las zonas para no contaminar el original.
+
+    Args:
+        base_zones: Zonas detectadas (no se modifican)
+        candles: Velas OHLCV
+        config_overrides: Parametros de trading a aplicar
+
+    Returns:
+        Dict con stats (sin zones para reducir memoria en grid search)
+    """
+    import copy
+
+    cfg = VPScannerConfig()
+    if config_overrides:
+        for key, val in config_overrides.items():
+            if hasattr(cfg, key):
+                expected_type = type(getattr(cfg, key))
+                if expected_type == bool and not isinstance(val, bool):
+                    val = bool(val)
+                elif expected_type == int and isinstance(val, float):
+                    val = int(val)
+                elif expected_type == float and isinstance(val, int):
+                    val = float(val)
+                setattr(cfg, key, val)
+
+    # Deep copy para no modificar las zonas originales
+    zones = copy.deepcopy(base_zones)
+
+    # Solo simular trades (las zonas ya vienen detectadas)
+    zones = _simulate_trades(zones, candles, cfg)
+
+    # Estadisticas
+    all_trades = []
+    for z in zones:
+        if z.get('mr_trades'):
+            for t in z['mr_trades']:
+                all_trades.append(t)
+        elif z.get('trade_result') in ('WIN', 'LOSS', 'OPEN'):
+            all_trades.append(z)
+
+    resolved = [t for t in all_trades if t.get('trade_result') in ('WIN', 'LOSS')]
+    wins = [t for t in resolved if t['trade_result'] == 'WIN']
+    losses = [t for t in resolved if t['trade_result'] == 'LOSS']
+
+    total_closed = len(wins) + len(losses)
+    total_pnl_r = sum(t.get('trade_pnl_r', 0) for t in resolved)
+    win_rate = (len(wins) / total_closed * 100) if total_closed > 0 else 0
+    expectancy = (total_pnl_r / total_closed) if total_closed > 0 else 0
+
+    gross_profit = sum(t.get('trade_pnl_r', 0) for t in wins)
+    gross_loss = abs(sum(t.get('trade_pnl_r', 0) for t in losses))
+    profit_factor = (gross_profit / gross_loss) if gross_loss > 0 else (
+        99.9 if gross_profit > 0 else 0)
+
+    # Max drawdown
+    trades_sorted = sorted(resolved, key=lambda t: t.get('entry_timestamp', 0))
+    max_equity = 0.0
+    max_drawdown = 0.0
+    equity = 0.0
+    for t in trades_sorted:
+        equity += t.get('trade_pnl_r', 0)
+        if equity > max_equity:
+            max_equity = equity
+        dd = max_equity - equity
+        if dd > max_drawdown:
+            max_drawdown = dd
+
+    return {
+        'entry_strategy': cfg.entry_strategy,
+        'total_zones': len(zones),
+        'total_trades': len(all_trades),
+        'wins': len(wins),
+        'losses': len(losses),
+        'open': len([t for t in all_trades if t.get('trade_result') == 'OPEN']),
+        'total_closed': total_closed,
+        'win_rate': round(win_rate, 1),
+        'total_pnl_r': round(total_pnl_r, 2),
+        'expectancy': round(expectancy, 3),
+        'profit_factor': round(profit_factor, 2),
+        'max_drawdown_r': round(max_drawdown, 2),
+    }
+
+
+def get_strategy_param_defs() -> Dict:
+    """Retorna las definiciones de parametros de estrategia optimizables."""
+    return _STRATEGY_PARAM_DEFS
+
+
+# ---------------------------------------------------------------------------
+# Zone Cache en disco (evita re-deteccion cuando solo cambian params de estrategia)
+# ---------------------------------------------------------------------------
+
+# Parametros que afectan la DETECCION de zonas (no la simulacion de trades)
+_DETECTION_PARAMS = [
+    'window_size', 'window_step', 'bins', 'va_percent', 'min_d_score',
+    'include_pb_shapes', 'min_zone_candles', 'merge_gap', 'max_range_pct',
+    'warmup_candles',
+    # Deteccion progresiva
+    'detection_mode', 'prog_min_candles', 'prog_range_pct', 'prog_stop_mode',
+    'prog_degrade_bars', 'prog_close_outside_bars', 'prog_close_reference',
+    'prog_thickness_metric',
+]
+
+
+def _get_detection_fingerprint(config_overrides: Dict, symbol: str,
+                               interval: str, days: int) -> str:
+    """
+    Genera un hash unico basado en los parametros de deteccion + datos.
+    Si este hash coincide con uno guardado, las zonas se pueden reusar.
+    """
+    import hashlib
+    import json
+
+    # Extraer solo los params de deteccion del config
+    cfg = VPScannerConfig()
+    if config_overrides:
+        for key, val in config_overrides.items():
+            if hasattr(cfg, key):
+                setattr(cfg, key, val)
+
+    det_values = {}
+    for p in _DETECTION_PARAMS:
+        det_values[p] = getattr(cfg, p, None)
+
+    # Incluir datos del dataset (misma moneda, intervalo y dias = mismas velas)
+    det_values['_symbol'] = symbol
+    det_values['_interval'] = interval
+    det_values['_days'] = days
+
+    fingerprint_str = json.dumps(det_values, sort_keys=True, default=str)
+    return hashlib.sha256(fingerprint_str.encode()).hexdigest()[:16]
+
+
+def _get_zone_cache_dir() -> str:
+    """Retorna el directorio para almacenar cache de zonas."""
+    import os
+    cache_dir = os.path.join(os.path.dirname(__file__), "zones_cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    return cache_dir
+
+
+def save_zone_cache(zones: List[Dict], config_overrides: Dict,
+                    symbol: str, interval: str, days: int,
+                    candles_count: int) -> str:
+    """
+    Guarda las zonas detectadas (SIN datos de trade) a disco.
+    Retorna el path del archivo guardado.
+    """
+    import json
+    import os
+
+    fingerprint = _get_detection_fingerprint(config_overrides, symbol, interval, days)
+    cache_dir = _get_zone_cache_dir()
+    filename = f"{symbol}_{interval}_{days}d_{fingerprint}.json"
+    filepath = os.path.join(cache_dir, filename)
+
+    # Limpiar campos de trade de las zonas (solo guardar datos de deteccion)
+    clean_zones = []
+    trade_fields = [
+        'trade_result', 'trade_pnl_r', 'r_multiple', 'entry_price',
+        'exit_price', 'sl_price', 'tp_price', 'entry_timestamp',
+        'exit_timestamp', 'trade_close_timestamp', 'bars_to_close',
+        'breakout_direction', 'breakout_price', 'breakout_timestamp',
+        'reached_2r', 'reached_3r', 'trading_score', 'mr_trades',
+        'entry_bar_index', 'exit_bar_index',
+    ]
+    for z in zones:
+        clean = {k: v for k, v in z.items() if k not in trade_fields}
+        clean_zones.append(clean)
+
+    cache_data = {
+        'fingerprint': fingerprint,
+        'symbol': symbol,
+        'interval': interval,
+        'days': days,
+        'candles_count': candles_count,
+        'zones_count': len(clean_zones),
+        'timestamp': time.time(),
+        'detection_params': {p: config_overrides.get(p, getattr(VPScannerConfig(), p, None))
+                             for p in _DETECTION_PARAMS},
+        'zones': clean_zones,
+    }
+
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(cache_data, f, ensure_ascii=False)
+
+    size_kb = os.path.getsize(filepath) / 1024
+    logger.info(f"[ZONE_CACHE] Guardado: {filename} ({len(clean_zones)} zonas, {size_kb:.0f}KB)")
+    print(f"[ZONE_CACHE] Guardado: {filename} ({len(clean_zones)} zonas, {size_kb:.0f}KB)")
+    return filepath
+
+
+def load_zone_cache(config_overrides: Dict, symbol: str,
+                    interval: str, days: int) -> Optional[Dict]:
+    """
+    Intenta cargar zonas cacheadas que coincidan con los params de deteccion.
+    Retorna dict con 'zones' y metadata si hay match, None si no.
+    """
+    import json
+    import os
+
+    fingerprint = _get_detection_fingerprint(config_overrides, symbol, interval, days)
+    cache_dir = _get_zone_cache_dir()
+    filename = f"{symbol}_{interval}_{days}d_{fingerprint}.json"
+    filepath = os.path.join(cache_dir, filename)
+
+    if not os.path.exists(filepath):
+        logger.info(f"[ZONE_CACHE] MISS: {filename} no existe")
+        print(f"[ZONE_CACHE] MISS: {filename}")
+        return None
+
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            cache_data = json.load(f)
+
+        # Verificar integridad basica
+        if cache_data.get('fingerprint') != fingerprint:
+            logger.warning(f"[ZONE_CACHE] Fingerprint mismatch en {filename}")
+            os.remove(filepath)
+            return None
+
+        age_hours = (time.time() - cache_data.get('timestamp', 0)) / 3600
+        zones = cache_data.get('zones', [])
+        logger.info(f"[ZONE_CACHE] HIT: {filename} ({len(zones)} zonas, {age_hours:.1f}h)")
+        print(f"[ZONE_CACHE] HIT: {filename} ({len(zones)} zonas, {age_hours:.1f}h de antiguedad)")
+        return cache_data
+
+    except Exception as e:
+        logger.error(f"[ZONE_CACHE] Error leyendo {filename}: {e}")
+        return None
+
+
+def is_strategy_only_change(current_overrides: Dict, cached_detection_params: Dict) -> bool:
+    """
+    Compara params actuales vs los de deteccion cacheados.
+    Retorna True si solo cambiaron params de estrategia (no de deteccion).
+    """
+    cfg_current = VPScannerConfig()
+    if current_overrides:
+        for key, val in current_overrides.items():
+            if hasattr(cfg_current, key):
+                setattr(cfg_current, key, val)
+
+    for p in _DETECTION_PARAMS:
+        current_val = getattr(cfg_current, p, None)
+        cached_val = cached_detection_params.get(p)
+        # Comparar con tolerancia para floats
+        if isinstance(current_val, float) and isinstance(cached_val, float):
+            if abs(current_val - cached_val) > 1e-9:
+                return False
+        elif current_val != cached_val:
+            return False
+    return True
+
+
+def get_detection_param_names() -> List[str]:
+    """Retorna la lista de nombres de parametros que afectan la deteccion."""
+    return list(_DETECTION_PARAMS)
+
+
+# ---------------------------------------------------------------------------
+# Persistencia de estado incremental (zonas parciales/completas con trades)
+# ---------------------------------------------------------------------------
+
+def _get_incremental_cache_dir() -> str:
+    """Retorna el directorio para almacenar estado incremental."""
+    import os
+    cache_dir = os.path.join(os.path.dirname(__file__), "zones_cache", "incremental")
+    os.makedirs(cache_dir, exist_ok=True)
+    return cache_dir
+
+
+def save_incremental_state(state: Dict) -> str:
+    """
+    Guarda el estado incremental a disco (zonas CON datos de trade).
+    Se llama al detener, pausar o completar una deteccion incremental.
+    Retorna el path del archivo guardado.
+    """
+    import json
+    import os
+
+    symbol = state.get("symbol", "UNKNOWN")
+    interval = state.get("interval", "60")
+    days = state.get("days", 0)
+    config_overrides = state.get("config_overrides", {})
+
+    fingerprint = _get_detection_fingerprint(config_overrides, symbol, interval, days)
+    cache_dir = _get_incremental_cache_dir()
+    filename = f"inc_{symbol}_{interval}_{days}d_{fingerprint}.json"
+    filepath = os.path.join(cache_dir, filename)
+
+    save_data = {
+        'fingerprint': fingerprint,
+        'symbol': symbol,
+        'interval': interval,
+        'days': days,
+        'config_overrides': config_overrides,
+        'zones': state.get("zones", []),
+        'chunks_completed': state.get("chunks_completed", []),
+        'chunk_boundaries': state.get("chunk_boundaries", []),
+        'total_chunks': state.get("total_chunks", 0),
+        'phase': state.get("phase", "stopped"),
+        'elapsed': state.get("elapsed", 0),
+        'timestamp': time.time(),
+        'detection_params': {p: config_overrides.get(p, getattr(VPScannerConfig(), p, None))
+                             for p in _DETECTION_PARAMS},
+    }
+
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(save_data, f, ensure_ascii=False)
+
+    size_kb = os.path.getsize(filepath) / 1024
+    n_zones = len(save_data['zones'])
+    n_done = len(save_data['chunks_completed'])
+    n_total = save_data['total_chunks']
+    logger.info(f"[INC_CACHE] Guardado: {filename} ({n_zones} zonas, "
+                f"chunks {n_done}/{n_total}, {size_kb:.0f}KB)")
+    print(f"[INC_CACHE] Guardado: {filename} ({n_zones} zonas, "
+          f"chunks {n_done}/{n_total}, {size_kb:.0f}KB)")
+    return filepath
+
+
+def load_incremental_state(config_overrides: Dict, symbol: str,
+                           interval: str, days: int) -> Optional[Dict]:
+    """
+    Carga estado incremental guardado que coincida con los params de deteccion.
+    Retorna dict con zonas, chunks_completed, etc. si hay match, None si no.
+    """
+    import json
+    import os
+
+    fingerprint = _get_detection_fingerprint(config_overrides, symbol, interval, days)
+    cache_dir = _get_incremental_cache_dir()
+    filename = f"inc_{symbol}_{interval}_{days}d_{fingerprint}.json"
+    filepath = os.path.join(cache_dir, filename)
+
+    if not os.path.exists(filepath):
+        logger.info(f"[INC_CACHE] MISS: {filename}")
+        print(f"[INC_CACHE] MISS: {filename}")
+        return None
+
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        # Verificar fingerprint
+        if data.get('fingerprint') != fingerprint:
+            logger.warning(f"[INC_CACHE] Fingerprint mismatch en {filename}")
+            os.remove(filepath)
+            return None
+
+        age_hours = (time.time() - data.get('timestamp', 0)) / 3600
+        n_zones = len(data.get('zones', []))
+        n_done = len(data.get('chunks_completed', []))
+        n_total = data.get('total_chunks', 0)
+        is_complete = n_done >= n_total and n_total > 0
+
+        logger.info(f"[INC_CACHE] HIT: {filename} ({n_zones} zonas, "
+                    f"chunks {n_done}/{n_total}, {age_hours:.1f}h, "
+                    f"complete={is_complete})")
+        print(f"[INC_CACHE] HIT: {filename} ({n_zones} zonas, "
+              f"chunks {n_done}/{n_total}, {age_hours:.1f}h)")
+
+        data['is_complete'] = is_complete
+        return data
+
+    except Exception as e:
+        logger.error(f"[INC_CACHE] Error leyendo {filename}: {e}")
+        return None
+
+
+def delete_incremental_state(config_overrides: Dict, symbol: str,
+                             interval: str, days: int) -> bool:
+    """Elimina estado incremental guardado."""
+    import os
+
+    fingerprint = _get_detection_fingerprint(config_overrides, symbol, interval, days)
+    cache_dir = _get_incremental_cache_dir()
+    filename = f"inc_{symbol}_{interval}_{days}d_{fingerprint}.json"
+    filepath = os.path.join(cache_dir, filename)
+
+    if os.path.exists(filepath):
+        os.remove(filepath)
+        print(f"[INC_CACHE] Eliminado: {filename}")
+        return True
+    return False

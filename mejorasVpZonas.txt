@@ -13,3 +13,16 @@ Otra estrategia puede ser la de comprar en la confirmación del swing una vez qu
 
 
 Está dando mejores resultados al hacer el breakout de la zona, no del value area
+
+
+Y si hacemos una detección diferente, donde la D se vaya formando y abultando con el tiempo, no necesariamente hasta el breakout. Sólo se tomaría el breakout cuando ya tenga la D gordita.
+
+
+==========
+
+1.Que primero detecte las zonas más recientes, puede arrancar en el último mes e ir avanzando hasta la fecha actual. Que se puede minimizar el modal para poder ir viendo las zonas mientras detecta las otras
+2.Que también guarde las zonas en la tabla del modal, sin calcular el total de trades ganadores (porque no tenemos las zonas completas), pero las cifras de cada zona sí se tienen.
+3.Que tenga la opción de un botón de detener detección pero que al hacerlo grafique las zonas que ya están y no se pierda el trabajo. Que luego se pueda retomar para continuar con la detección.
+
+
+Descargando datos historicos...

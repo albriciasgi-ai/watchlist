@@ -1,0 +1,78 @@
+ FASE 4: UI Frontend (StrategyBuilder.jsx) — ~900 líneas
+
+     Layout del Modal
+
+     ┌─ STRATEGY BUILDER ─────────────────────────────────────────────────┐
+     │                                                                     │
+     │  [Símbolo] [Timeframe] [Días: ===120===]                           │
+     │                                                                     │
+     │  ▼ 1. NIVELES DE REFERENCIA                                        │
+     │  ┌──────────────────────────────────────────────────────────────┐  │
+     │  │ ☑ VP Periodic   Period:[240]  Bins:[50]                      │  │
+     │  │ ☑ S&R v2        SwingBars:[3]  MinTouches:[2]  ClustDist:[0.3]│ │
+     │  │ ☐ VWAP Bands    (usa el periodo global)                      │  │
+     │  │ ☐ Swing H/L     SwingBars:[5]                                │  │
+     │  │ ☐ Range Limits   (ATR based)                                 │  │
+     │  │ ☐ DTB Neckline  MinConf:[60]                                 │  │
+     │  │                                                               │  │
+     │  │ Confluencia: ○ Cualquiera  ● Score mín: [==25==]             │  │
+     │  └──────────────────────────────────────────────────────────────┘  │
+     │                                                                     │
+     │  ▼ 2. SEÑAL DE ENTRADA                                             │
+     │  ┌──────────────────────────────────────────────────────────────┐  │
+     │  │ ● Swing Confirmation   Bars:[3]                               │  │
+     │  │ ○ Price Touch           Tolerance:[0.1%]                      │  │
+     │  │ ○ Breakout Close        Confirm:[2]                           │  │
+     │  │ ○ Rejection Candle      WickRatio:[0.6]                       │  │
+     │  │ ○ Pattern Match         [Hammer ▼]  MinConf:[60]              │  │
+     │  │ ○ Squeeze Release                                             │  │
+     │  │ ○ CVD Divergence        Lookback:[20]                         │  │
+     │  │ ○ Double Top/Bottom     MinConf:[60]                          │  │
+     │  └──────────────────────────────────────────────────────────────┘  │
+     │                                                                     │
+     │  ▼ 3. FILTROS DE CONTEXTO                                          │
+     │  ┌──────────────────────────────────────────────────────────────┐  │
+     │  │ ☑ VWAP Trend        Lookback:[10]                             │  │
+     │  │ ☐ VWAP Position     Ref:[VWAP ▼]                              │  │
+     │  │ ☐ TTM Squeeze       Require:[Sí ▼]                            │  │
+     │  │ ☑ BBWP Range        Min:[0]  Max:[50]                         │  │
+     │  │ ☐ Volume Z-Score    Min:[1.5]                                 │  │
+     │  │ ☐ CVD Trend         Lookback:[20]                             │  │
+     │  │ ☐ DTB Bias          Lookback:[50]  MinConf:[60]               │  │
+     │  │ Dirección: ● Both  ○ Long  ○ Short                            │  │
+     │  └──────────────────────────────────────────────────────────────┘  │
+     │                                                                     │
+     │  ▼ 4. GESTIÓN DE RIESGO                                            │
+     │  ┌──────────────────────────────────────────────────────────────┐  │
+     │  │ SL: ● Below Level [0.1%]  ○ Below Swing  ○ S&R  ○ ATR ○ %  │  │
+     │  │ TP: ● R:R [2.0]  ○ Nivel opuesto  ○ Next Swing  ○ ATR  ○ % │  │
+     │  │ Max trades/segmento: [1]   ☐ Trailing Stop                   │  │
+     │  └──────────────────────────────────────────────────────────────┘  │
+     │                                                                     │
+     │  ▼ 5. EXIT RULES (opcional)                                        │
+     │  ┌──────────────────────────────────────────────────────────────┐  │
+     │  │ ☐ VWAP trend se invierte                                      │  │
+     │  │ ☐ Precio re-entra a zona                                     │  │
+     │  │ ☐ Squeeze se activa                                           │  │
+     │  │ ☐ CVD diverge en contra                                       │  │
+     │  │ ☐ Timeout: [50] velas                                        │  │
+     │  └──────────────────────────────────────────────────────────────┘  │
+     │                                                                     │
+     │  VWAP Rolling Period: [====20====]  (global para niveles+filtros)  │
+     │                                                                     │
+     │  [💾 Guardar] [📂 Cargar] [▶ Ejecutar] [⚡ Optimizar] [🗑 Clear]  │
+     │                                                                     │
+     │  ── RESULTADOS ──────────────────────────────────────────────────  │
+     │  WR: 62%  PnL: +18.5R  Expect: 0.74  PF: 1.85  DD: -4.2R        │
+     │  ┌─ trades ──────────────────────────────────────────────────────┐ │
+     │  │ #1 LONG  15/01 08:00  Entry:95200  SL:94800  TP:96000  +2.0R │ │
+     │  │ #2 SHORT 15/01 14:00  Entry:96500  SL:97000  TP:95500  +2.0R │ │
+     │  └───────────────────────────────────────────────────────────────┘ │
+     │                                                                     │
+     │  ── OPTIMIZADOR ─────────────────────────────────────────────────  │
+     │  Parámetros a optimizar: ☑ vp_period ☑ swing_bars ☐ tp_rr ...    │
+     │  Métrica: [Expectancy ▼]  [Estimar] [Ejecutar]                    │
+     │  ┌─ Top 15 ─────────────────────────────────────────────────────┐ │
+     │  │ #  WR%   PnL    Expect  PF    DD    Params...    [Aplicar]   │ │
+     │  └──────────────────────────────────────────────────────────────┘ │
+     └─────────────────────────────────────────────────────────────────────┘

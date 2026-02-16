@@ -769,13 +769,13 @@ const VWAPSettings = ({
               <input
                 type="number"
                 min="5"
-                max="200"
+                max="12000"
                 step="5"
                 value={getRollingPeriodValue()}
                 onChange={(e) => {
                   const newValue = parseInt(e.target.value);
-                  if (newValue >= 5 && newValue <= 200) {
-                    console.log('[VWAPSettings] ✏️ Rolling period manual input:', newValue);
+                  if (newValue >= 5 && newValue <= 12000) {
+                    console.log('[VWAPSettings] Rolling period manual input:', newValue);
                     handleConfigChange('rollingPeriod', newValue);
                   }
                 }}
@@ -792,15 +792,15 @@ const VWAPSettings = ({
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#666', marginTop: '8px', padding: '8px', background: 'white', borderRadius: '4px' }}>
-              <span>📉 5 (muy corto)</span>
-              <span>📊 50 (medio)</span>
-              <span>📈 200 (largo)</span>
+              <span>5 (muy corto)</span>
+              <span>200 (medio)</span>
+              <span>12000 (multi-TF)</span>
             </div>
             <p style={{ fontSize: '12px', color: '#666', marginTop: '8px', marginBottom: '0' }}>
-              💡 <strong>Número de velas en la ventana móvil.</strong><br/>
-              • Valores bajos (5-20): más sensible a cambios recientes, más reactivo<br/>
-              • Valores medios (40-80): balance entre sensibilidad y estabilidad<br/>
-              • Valores altos (100-200): más suavizado, menos ruido
+              Numero de velas en la ventana movil.<br/>
+              Valores bajos (5-50): reactivo al precio reciente<br/>
+              Valores medios (100-500): balance entre sensibilidad y estabilidad<br/>
+              Valores altos (1000+): equivale a VWAP de TF superior (ej: 12000 en 1m = 200 en 1h)
             </p>
           </div>
         )}

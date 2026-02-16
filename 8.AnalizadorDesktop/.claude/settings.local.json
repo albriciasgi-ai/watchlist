@@ -1,25 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python:*)",
-      "Bash(tasklist /FI 'IMAGENAME eq python.exe' /FI 'WINDOWTITLE eq *uvicorn*' 2)",
-      "Bash(findstr:*)",
-      "Bash(npx eslint:*)",
-      "Bash(node -e:*)",
-      "Bash(if exist node_modules.vite rmdir /s /q node_modules.vite)",
-      "WebSearch",
-      "Bash(nul)",
-      "Bash(tasklist /FI 'IMAGENAME eq python.exe' 2)",
-      "Bash(curl:*)",
-      "Bash(npx vite build:*)",
-      "Bash(dir:*)",
-      "Bash(netstat:*)",
-      "Bash(npm run build:*)",
-      "Bash(cmd /c:*)",
-      "Bash(.venvScriptspython.exe -c \"import zone_vp_service; print(''OK'')\")",
-      "Bash(.venvScriptspython.exe -c \"import zone_vp_scanner; print(''OK'')\")",
-      "Bash(.venvScriptspython.exe -c \"from zone_vp_scanner import backtest_vp; print(''OK'')\")",
-      "Bash(tasklist:*)"
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"import py_compile; py_compile.compile(''backtest_vp_periodic.py'', doraise=True); print(''OK backtest_vp_periodic.py'')\")",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"import py_compile; py_compile.compile(''strategy_engine.py'', doraise=True); print(''OK strategy_engine.py'')\")",
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"import py_compile; py_compile.compile(''main.py'', doraise=True); print(''OK main.py'')\")",
+      "Bash(npx vite build)"
     ],
     "deny": [],
     "ask": []
