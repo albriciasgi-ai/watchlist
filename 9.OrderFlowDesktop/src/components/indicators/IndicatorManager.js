@@ -20,8 +20,10 @@ import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator"; // Updated: m
 import SwingDetectorIndicator from "./SwingDetectorIndicator";
 import SupportResistance2Indicator from "./SupportResistance2Indicator";
 import OrderFlowIndicator from "./OrderFlowIndicator";
+import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
 import Logger from '../../utils/Logger.js';
+import { API_BASE_URL } from '../../config.js';
 
 // Logger instance
 const log = new Logger('Manager', { level: 'info' });
@@ -56,6 +58,12 @@ class IndicatorManager {
 
     // ✅ NUEVO: Referencia a las velas históricas (necesario para fetchData en DBT)
     this.allCandles = null;
+
+    // Strategy Builder abort controllers
+    this._sbAbortController = null;
+    this._sbResumeTimerId = null;
+    this._autoOptAbortController = null;
+    this._autoOptResumeTimerId = null;
 
     log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
 
@@ -145,6 +153,12 @@ class IndicatorManager {
       log.debug(`[${this.symbol}] Creando Order Flow`);
       this.indicators.push(new OrderFlowIndicator(this.symbol, this.interval, this.days));
     }
+
+    // Zone Visualizer - siempre disponible (las zonas se cargan bajo demanda)
+    this.zoneVisualizerIndicator = new ZoneVisualizerIndicator(this.symbol, this.interval, this.days);
+    this.zoneVisualizerIndicator.enabled = true;
+    this.indicators.push(this.zoneVisualizerIndicator);
+    log.debug(`[${this.symbol}] Zone Visualizer creado (siempre disponible)`);
 
     // Asignar referencia al manager a todos los indicadores
     this.indicators.forEach(indicator => {
@@ -1856,6 +1870,397 @@ class IndicatorManager {
     }
 
     return result;
+  }
+
+  // ================================================================
+  // STRATEGY BUILDER METHODS
+  // ================================================================
+
+  /**
+   * Pausa todo el polling para liberar conexiones HTTP durante backtest
+   */
+  pauseAllPolling() {
+    // Cancelar resume pendiente de backtest anterior
+    if (this._sbResumeTimerId) {
+      clearTimeout(this._sbResumeTimerId);
+      this._sbResumeTimerId = null;
+    }
+    this.stopAllPolling();
+    log.info(`[${this.symbol}] Polling pausado para backtest`);
+  }
+
+  /**
+   * Resume todo el polling despues de backtest
+   */
+  resumeAllPolling() {
+    this.startAllPolling();
+    log.info(`[${this.symbol}] Polling resumido despues de backtest`);
+  }
+
+  /**
+   * Ejecuta backtest del Strategy Builder via POST SSE stream
+   */
+  async runStrategyBuilderBacktest(params = {}) {
+    if (!this.zoneVisualizerIndicator) {
+      log.warn(`[${this.symbol}] ZoneVisualizer no inicializado`);
+      return { success: false, error: 'ZoneVisualizer no inicializado' };
+    }
+
+    // Abortar backtest previo si existe
+    if (this._sbAbortController) {
+      try { this._sbAbortController.abort(); } catch (_) {}
+      this._sbAbortController = null;
+    }
+
+    if (this._sbResumeTimerId) {
+      clearTimeout(this._sbResumeTimerId);
+      this._sbResumeTimerId = null;
+    }
+
+    const requestDays = params.days || this.days;
+    const strategyConfig = params.config || {};
+    const onProgress = params._onProgress || null;
+
+    log.info(`[${this.symbol}] SB Backtest START: days=${requestDays}, interval=${this.interval}`);
+    if (onProgress) onProgress({ phase: 'connecting', percent: 0, message: 'Conectando con backend...' });
+
+    this.pauseAllPolling();
+
+    const delayedResume = () => {
+      if (this._sbResumeTimerId) clearTimeout(this._sbResumeTimerId);
+      this._sbResumeTimerId = setTimeout(() => {
+        this._sbResumeTimerId = null;
+        this.resumeAllPolling();
+      }, 2000);
+    };
+
+    const controller = new AbortController();
+    this._sbAbortController = controller;
+
+    try {
+      log.info(`[${this.symbol}] SB: POST /api/strategy-builder/backtest-stream`);
+
+      const response = await fetch(`${API_BASE_URL}/api/strategy-builder/backtest-stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          symbol: this.symbol,
+          interval: this.interval,
+          days: requestDays,
+          config: strategyConfig,
+        }),
+        signal: controller.signal,
+      });
+
+      log.info(`[${this.symbol}] SB: Response status=${response.status}`);
+
+      if (!response.ok) {
+        delayedResume();
+        this._sbAbortController = null;
+        return { success: false, error: `Error HTTP ${response.status} del backend` };
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let finalResult = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+
+          try {
+            const data = JSON.parse(trimmed.slice(6));
+
+            if (data.type === 'progress') {
+              if (onProgress) {
+                onProgress({
+                  phase: data.phase,
+                  percent: data.percent || 0,
+                  message: data.message || '',
+                });
+              }
+            } else if (data.type === 'result') {
+              if (data.success && data.zones) {
+                this.zoneVisualizerIndicator.setStrategyZones(data.zones);
+                log.info(`[${this.symbol}] SB DONE: ${data.zones.length} trades (${data.candles_count || '?'} velas, ${data.elapsed_seconds}s)`);
+                finalResult = {
+                  success: true,
+                  zones: data.zones,
+                  trades: data.trades || [],
+                  stats: data.stats,
+                  candles_count: data.candles_count,
+                  levels_count: data.levels_count,
+                  elapsed_seconds: data.elapsed_seconds,
+                  filter_stats: data.filter_stats || null,
+                };
+              } else {
+                finalResult = { success: false, error: data.error || 'Error desconocido' };
+              }
+            } else if (data.type === 'error') {
+              finalResult = { success: false, error: data.message || 'Error en el servidor' };
+            }
+          } catch (_parseErr) {
+            // Linea no parseable, ignorar
+          }
+        }
+
+        if (finalResult) break;
+      }
+
+      delayedResume();
+      this._sbAbortController = null;
+      return finalResult || { success: false, error: 'Stream termino sin resultado' };
+
+    } catch (error) {
+      this._sbAbortController = null;
+      delayedResume();
+
+      if (error.name === 'AbortError') {
+        log.info(`[${this.symbol}] SB: Backtest cancelado`);
+        return { success: false, error: 'Backtest cancelado' };
+      }
+
+      log.error(`[${this.symbol}] SB ERROR: ${error.message || error}`);
+      return { success: false, error: error.message || 'Error de conexion con backend' };
+    }
+  }
+
+  /**
+   * Estima tiempo de optimizacion del Strategy Builder
+   */
+  async estimateStrategyOptimization(opts = {}) {
+    const { days, config = {}, param_ranges = {} } = opts;
+
+    const requestBody = {
+      symbol: this.symbol,
+      interval: this.interval,
+      days: days || this.days,
+      config,
+      param_ranges
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/strategy-builder/optimize-estimate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+      return await response.json();
+    } catch (error) {
+      return { success: false, error: error.message || 'Error de conexion' };
+    }
+  }
+
+  /**
+   * Ejecuta grid search de optimizacion del Strategy Builder
+   */
+  async optimizeStrategyBuilder(opts = {}) {
+    const {
+      days, config = {}, param_ranges = {},
+      metric = 'expectancy', top_n = 15,
+      onComplete, onError
+    } = opts;
+
+    const requestBody = {
+      symbol: this.symbol,
+      interval: this.interval,
+      days: days || this.days,
+      config,
+      param_ranges,
+      metric,
+      top_n
+    };
+
+    log.info(`[${this.symbol}] SB Optimization: ${Object.keys(param_ranges).length} params, metric=${metric}`);
+
+    try {
+      const controller = new AbortController();
+      const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas max
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      const response = await fetch(`${API_BASE_URL}/api/strategy-builder/optimize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const errMsg = errData.error || `HTTP ${response.status}`;
+        if (onError) onError(errMsg);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        log.info(`[${this.symbol}] SB Optimization completada: ${data.total_combos} combos en ${data.elapsed}s`);
+        if (onComplete) onComplete(data);
+      } else {
+        if (onError) onError(data.error || 'Error desconocido');
+      }
+    } catch (error) {
+      log.error(`[${this.symbol}] Error en SB optimization:`, error.message);
+      let errMsg = error.message || 'Error de conexion';
+      if (error.name === 'AbortError') {
+        errMsg = 'Timeout: la optimizacion tardo mas de 10 horas.';
+      }
+      if (onError) onError(errMsg);
+    }
+  }
+
+  /**
+   * Ejecuta auto-optimizacion 3 fases del Strategy Builder via POST SSE
+   */
+  async autoOptimizeStrategy(params = {}) {
+    const {
+      days = 365,
+      interval,
+      ranking_metric = 'recovery_factor',
+      top_n = 20,
+      min_trades = 15,
+      onProgress,
+      onComplete,
+      onError
+    } = params;
+
+    // Abortar previo si existe
+    if (this._autoOptAbortController) {
+      try { this._autoOptAbortController.abort(); } catch (_) {}
+      this._autoOptAbortController = null;
+    }
+
+    if (this._autoOptResumeTimerId) {
+      clearTimeout(this._autoOptResumeTimerId);
+      this._autoOptResumeTimerId = null;
+    }
+
+    log.info(`[${this.symbol}] AUTO-OPT START: ${interval || this.interval} x ${days}d, metric=${ranking_metric}`);
+    if (onProgress) onProgress({ phase: 'connecting', percent: 0, message: 'Conectando con backend...' });
+
+    this.pauseAllPolling();
+
+    const delayedResume = () => {
+      if (this._autoOptResumeTimerId) clearTimeout(this._autoOptResumeTimerId);
+      this._autoOptResumeTimerId = setTimeout(() => {
+        this._autoOptResumeTimerId = null;
+        this.resumeAllPolling();
+      }, 2000);
+    };
+
+    const controller = new AbortController();
+    this._autoOptAbortController = controller;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/strategy-builder/auto-optimize-stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          symbol: this.symbol,
+          interval: interval || this.interval,
+          days,
+          ranking_metric,
+          top_n,
+          min_trades,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        delayedResume();
+        this._autoOptAbortController = null;
+        const errMsg = `Error HTTP ${response.status}`;
+        if (onError) onError(errMsg);
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+
+          try {
+            const data = JSON.parse(trimmed.slice(6));
+
+            if (data.type === 'progress') {
+              if (onProgress) {
+                onProgress({
+                  phase: data.phase,
+                  percent: data.percent || 0,
+                  message: data.message || '',
+                });
+              }
+            } else if (data.type === 'result') {
+              delayedResume();
+              this._autoOptAbortController = null;
+              if (data.success && onComplete) {
+                log.info(`[${this.symbol}] AUTO-OPT DONE: ${data.total_backtests} backtests, ${data.results?.length || 0} results in ${data.elapsed_seconds}s`);
+                onComplete(data);
+              } else if (onError) {
+                onError(data.error || 'Error desconocido');
+              }
+              return;
+            } else if (data.type === 'error') {
+              delayedResume();
+              this._autoOptAbortController = null;
+              if (onError) onError(data.message || 'Error en el servidor');
+              return;
+            }
+          } catch (_parseErr) {
+            // Linea no parseable, ignorar
+          }
+        }
+      }
+
+      delayedResume();
+      this._autoOptAbortController = null;
+      if (onError) onError('Stream termino sin resultado');
+
+    } catch (error) {
+      this._autoOptAbortController = null;
+      delayedResume();
+      let errMsg = error.message || 'Error de conexion';
+      if (error.name === 'AbortError') {
+        errMsg = 'Auto-optimizacion cancelada';
+      }
+      log.error(`[${this.symbol}] AUTO-OPT ERROR: ${errMsg}`);
+      if (onError) onError(errMsg);
+    }
+  }
+
+  /**
+   * Cancela auto-optimizacion en curso
+   */
+  cancelAutoOptimize() {
+    if (this._autoOptAbortController) {
+      try { this._autoOptAbortController.abort(); } catch (_) {}
+      this._autoOptAbortController = null;
+    }
   }
 }
 

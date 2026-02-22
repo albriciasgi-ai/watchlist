@@ -4637,7 +4637,7 @@ def build_segment_lookup(segments, total_candles, vp_period):
 
 # MODULAR STRATEGY BUILDER (Febrero 2026)
 
-Sistema de backtesting modular sin codigo donde el usuario compone estrategias combinando 5 bloques independientes.
+Sistema de backtesting modular sin codigo donde el usuario compone estrategias combinando 5 bloques independientes. Documentacion completa en `4.Analizador cripto/STRATEGY_BUILDER.md`.
 
 ## Concepto
 
@@ -4648,106 +4648,131 @@ El Strategy Builder permite crear estrategias de trading combinando:
 4. **Risk Management** (SL/TP)
 5. **Exit Rules** (salidas adaptativas antes de SL/TP)
 
+**Principio fundamental:** Cada bloque es independiente. Puedes cambiar la fuente de niveles sin tocar la senal de entrada, o cambiar el SL sin modificar los filtros.
+
+**Anti look-ahead:** Todos los indicadores y niveles se calculan SOLO con datos disponibles hasta el momento de la vela actual.
+
 ## Archivos del Sistema
 
 ### Backend (`4.Analizador cripto/backend/`)
 
 | Archivo | Descripcion |
 |---------|-------------|
-| `strategy_engine.py` | Motor completo (~1722 lineas): niveles, senales, filtros, SL/TP, exit rules, backtest, optimizer |
-| `main.py` (lineas 9137+) | 3 endpoints: backtest-stream (SSE), optimize-estimate, optimize |
+| `strategy_engine.py` | Motor completo (~2091 lineas): 6 level sources, 8 senales, 9 filtros, SL/TP, exit rules, backtest, optimizer |
+| `main.py` (lineas 9137+) | 3 endpoints: backtest-stream (POST SSE via fetch+ReadableStream), optimize-estimate, optimize |
 
 ### Frontend (`8.AnalizadorDesktop/src/components/`)
 
 | Archivo | Descripcion |
 |---------|-------------|
-| `StrategyBuilder.jsx` | UI completa (~750 lineas): 5 bloques, backtest SSE, resultados, optimizer |
+| `StrategyBuilder.jsx` | UI completa (~2063 lineas): 5 bloques, backtest SSE, presets, optimizer, realtime, VP Zone Cache |
 | `SingleSymbolAnalyzer.jsx` | Boton "Strategy" purpura + integracion del componente |
 | `indicators/IndicatorManager.js` | 3 metodos: runStrategyBuilderBacktest, estimateStrategyOptimization, optimizeStrategyBuilder |
 | `indicators/ZoneVisualizerIndicator.js` | Soporte `_strategyZones` como fuente independiente + colores purpura |
 
 ## Arquitectura de 5 Bloques
 
-### Bloque 1: Level Sources (Fuentes de Niveles)
+### Bloque 1: Level Sources (6 fuentes de niveles)
 
 Cada fuente produce objetos `Level(price, type, source, strength, valid_from_idx, valid_until_idx)`.
 
-| Fuente | Descripcion | Anti Look-Ahead |
-|--------|-------------|-----------------|
-| `vp_periodic` | POC, VAH, VAL por segmento VP | Niveles activos solo despues de que el segmento cierra |
-| `sr_v2` | Swing points clusterizados | Recalcula cada N velas |
-| `vwap_bands` | VWAP + bandas sigma | Dinamico, se recalcula cada vela |
-| `swing_levels` | Swing Highs/Lows como S/R | Solo validos despues de confirmacion |
-| `dtb_neckline` | Necklines de Double Top/Bottom | Solo despues de formacion completa |
+| Fuente | Descripcion | Parametros clave | Anti Look-Ahead |
+|--------|-------------|------------------|-----------------|
+| `vp_periodic` | POC, VAH, VAL por segmento VP | `period` (50-1000), `bins` (20-100), `use_poc/vah/val`, `lookback_segments` (0-10) | Niveles activos solo despues de que el segmento cierra |
+| `vp_zones` | VP Zone Scanner (perfiles D, P, b) | `detection_mode` (fixed_window/progressive), `window_size`, `bins`, `min_d_score`, `include_pb_shapes`, `max_range_pct` | Solo zonas completamente formadas. Usa cache en disco |
+| `sr_v2` | Swing points clusterizados | `swing_bars` (2-10), `cluster_distance_pct` (0.1-2.0), `min_touches` (1-5), `max_levels`, `recalc_every` | Recalcula cada N velas con datos hasta ese punto |
+| `vwap_bands` | VWAP + bandas sigma (5 niveles por vela) | Usa `vwap_period` global | Dinamico, se recalcula cada vela |
+| `swing_levels` | Swing Highs/Lows individuales como S/R | `swing_bars` (2-15) | Solo validos despues de confirmacion (i + swing_bars) |
+| `dtb_neckline` | Necklines de Double Top/Bottom | `candles_per_extreme`, `price_margin_pct`, `min_candles_between` | Solo despues de formacion completa |
+
+**VP Periodic vs VP Zones:**
+- VP Periodic divide el historico en segmentos regulares de N velas. Rapido y predecible.
+- VP Zones escanea buscando perfiles tipo D/P/b con ventana deslizante. Mas preciso pero mas lento. Tiene cache en disco (`zones_cache/`).
 
 ### Bloque 2: Entry Signals (8 tipos)
 
-| Senal | Descripcion |
-|-------|-------------|
-| `price_touch` | Precio toca un nivel (tolerancia configurable) |
-| `swing_confirm` | Swing H/L confirmado cerca de nivel |
-| `breakout_close` | Cierre arriba/abajo de nivel |
-| `rejection_candle` | Hammer/Shooting Star cerca de nivel |
-| `pattern_match` | Patron especifico (hammer, engulfing, doji) |
-| `squeeze_release` | Liberacion de TTM Squeeze cerca de nivel |
-| `cvd_divergence` | Divergencia CVD vs precio cerca de nivel |
-| `dtb_confirm` | Confirmacion de Double Top/Bottom |
+Solo una senal puede estar activa a la vez. Busca en los niveles activos del Bloque 1 para determinar la direccion.
 
-### Bloque 3: Context Filters (8 tipos, AND logic)
+| Senal | Parametros | Logica |
+|-------|-----------|--------|
+| `price_touch` | `tolerance_pct` (0.05-1.0) | Precio toca nivel y cierra del lado correcto |
+| `swing_confirm` | `swing_bars` (2-10), `tolerance_pct` | Swing H/L confirmado cerca de nivel |
+| `breakout_close` | `confirm_bars` (1-5), `tolerance_pct` | N cierres consecutivos al otro lado de nivel |
+| `rejection_candle` | `wick_ratio` (0.6-5.0), `tolerance_pct` | Vela con wick largo rechazando nivel |
+| `pattern_match` | `pattern_type` (engulfing/doji/any), `tolerance_pct` | Patron de velas clasico cerca de nivel |
+| `squeeze_release` | (sin parametros) | TTM Squeeze pasa de activo a inactivo. Direccion por pendiente VWAP |
+| `cvd_divergence` | `lookback` (10-50) | Divergencia precio vs CVD acumulado |
+| `dtb_confirm` | `lookback` (10-100), `min_confidence` (30-90) | Confirmacion de Double Top/Bottom |
 
-| Filtro | Descripcion |
-|--------|-------------|
-| `vwap_trend` | VWAP subiendo/bajando segun direccion |
-| `vwap_position` | Precio arriba/abajo de VWAP segun direccion |
-| `ttm_squeeze` | Requiere squeeze activo/inactivo |
-| `bbwp_range` | BBWP dentro de rango especificado |
-| `volume_zscore` | Volumen minimo (z-score) |
-| `cvd_trend` | CVD alineado con direccion del trade |
-| `dtb_bias` | Sesgo de Double Top/Bottom patterns |
-| `direction` | Filtro LONG/SHORT/BOTH |
+### Bloque 3: Context Filters (9 tipos, AND logic)
+
+Todos los filtros habilitados deben pasar para que la senal se ejecute.
+
+| Filtro | Parametros | Logica |
+|--------|-----------|--------|
+| `vwap_trend` | `lookback` (5-1000), `min_diff_pct` (0-2.0) | VWAP subiendo = solo LONG, bajando = solo SHORT |
+| `vwap_position` | `mode` (trend/counter), `long_ref`, `short_ref` | Precio arriba/abajo de VWAP o banda sigma. `long_ref`/`short_ref` seleccionan referencia: vwap, upper_1..3, lower_1..3 |
+| `ttm_squeeze` | `require_squeeze` (on/off) | on=solo durante squeeze, off=solo sin squeeze |
+| `bbwp_range` | `min_val` (0-100), `max_val` (0-100) | BBWP dentro del rango especificado |
+| `volume_zscore` | `min_zscore` (0.5-4.0), `lookback` (10-50) | Volumen actual > N desviaciones de la media |
+| `cvd_trend` | `lookback` (10-50) | CVD alineado con direccion del trade |
+| `dtb_bias` | `lookback` (10-100), `min_confidence` (30-90) | DTB reciente sesga direccion permitida |
+| `direction` | `allowed` (both/long/short) | Filtro global de direccion |
+| `vp_shape` | `allowed_shapes` (all/D/P/b/P_trimmed/b_trimmed/thin) | Filtra niveles VP por forma del perfil. Solo aplica a niveles con source `vp_*` o `vpz_*` |
 
 ### Bloque 4: Risk Management
 
 **Stop Loss (4 metodos):**
-| Metodo | Descripcion |
-|--------|-------------|
-| `below_level` | SL debajo/arriba del nivel que disparo la senal + buffer |
-| `below_swing` | SL en ultimo swing low/high + buffer |
-| `atr_multiple` | SL a N x ATR del entry |
-| `fixed_pct` | SL a % fijo del entry |
+
+| Metodo | Parametros | Logica |
+|--------|-----------|--------|
+| `below_level` | `buffer_pct` (0.01-1.0) | SL debajo/arriba del nivel que disparo la senal + buffer % |
+| `below_swing` | `buffer_pct` (0.01-1.0) | SL en ultimo swing low (LONG) o swing high (SHORT) + buffer. Si la senal vino de `swing_confirm`, usa el `pivot_price` directamente |
+| `atr_multiple` | `atr_multiplier` (0.5-5.0) | SL a N x ATR(14) del precio de entrada |
+| `fixed_pct` | `fixed_pct` (0.1-5.0) | SL a porcentaje fijo del precio de entrada |
 
 **Take Profit (5 metodos):**
-| Metodo | Descripcion |
-|--------|-------------|
-| `rr_fixed` | TP a ratio R:R fijo (ej: 2R) |
-| `opposite_level` | TP en nivel opuesto mas cercano |
-| `next_swing` | TP en proximo swing contrario |
-| `atr_multiple` | TP a N x ATR |
-| `fixed_pct` | TP a % fijo |
+
+| Metodo | Parametros | Logica |
+|--------|-----------|--------|
+| `rr_fixed` | `rr` (0.5-10.0) | TP = entry + (riesgo * rr) |
+| `opposite_level` | `fallback_rr` (1.0-5.0) | TP en nivel opuesto mas cercano. Fallback a R:R si no hay nivel o < 0.5R |
+| `next_swing` | `fallback_rr` (1.0-5.0) | TP en ultimo swing contrario. Fallback a R:R si < 0.5R |
+| `atr_multiple` | `atr_multiplier` (1.0-10.0) | TP a N x ATR(14) del entry |
+| `fixed_pct` | `fixed_pct` (0.5-10.0) | TP a porcentaje fijo del entry |
+
+**Otros parametros de riesgo:**
+
+| Parametro | Rango | Default | Que hace |
+|-----------|-------|---------|----------|
+| `max_trades_per_segment` | 1-10 | 1 | Maximo de trades por segmento VP o fuente de nivel (misma direccion) |
+| `cooldown_bars` | 0-500 | 0 | Velas de espera GLOBAL despues de abrir un trade. 0=desactivado |
 
 ### Bloque 5: Exit Rules (4 tipos, OR logic)
 
-| Regla | Descripcion |
-|-------|-------------|
-| `vwap_reverse` | Cerrar si precio cruza VWAP en contra |
-| `reenter_zone` | Cerrar si precio re-entra a la zona del nivel |
-| `squeeze_activate` | Cerrar si se activa nuevo TTM Squeeze |
-| `timeout` | Cerrar despues de N velas |
+Cierran el trade ANTES de alcanzar SL o TP. Basta con que UNA regla se active.
+
+| Regla | Parametros | Logica |
+|-------|-----------|--------|
+| `vwap_reverse` | `lookback` (3-30) | Cierra si VWAP gira en contra (LONG: VWAP actual < VWAP hace N velas) |
+| `reenter_zone` | ninguno | Cierra si precio vuelve al nivel de la senal (LONG: cierra debajo del nivel) |
+| `squeeze_activate` | ninguno | Cierra si se activa nuevo TTM Squeeze mientras trade abierto |
+| `timeout` | `max_bars` (10-500) | Cierra despues de N velas sin alcanzar TP ni SL |
 
 ## Confluencia Multi-Source
 
 | Modo | Descripcion |
 |------|-------------|
 | `any` | Cualquier nivel individual puede disparar entrada |
-| `score` | Requiere min_confluence_score (15 pts por fuente unica cerca del precio, max 100) |
+| `score` | Score = min(100, fuentes_unicas_cerca * 15). Requiere min_confluence_score. 2 fuentes = 30 pts, 3 fuentes = 45 pts |
 
 ## Endpoints API
 
 | Endpoint | Metodo | Descripcion |
 |----------|--------|-------------|
-| `/api/strategy-builder/backtest-stream` | GET (SSE) | Backtest con progreso en tiempo real |
-| `/api/strategy-builder/optimize-estimate` | POST | Estima tiempo del grid search |
-| `/api/strategy-builder/optimize` | POST | Grid search completo |
+| `/api/strategy-builder/backtest-stream` | POST (SSE) | Backtest con progreso en tiempo real. Config va en body JSON, respuesta es SSE stream leido con fetch+ReadableStream (no EventSource) |
+| `/api/strategy-builder/optimize-estimate` | POST | Estima tiempo del grid search (ejecuta 2 combos de prueba) |
+| `/api/strategy-builder/optimize` | POST | Grid search completo en thread pool |
 
 ### Formato SSE del Backtest
 
@@ -4755,7 +4780,7 @@ Cada fuente produce objetos `Level(price, type, source, strength, valid_from_idx
 data: {"type": "progress", "phase": "fetching", "percent": 0, "message": "Descargando..."}
 data: {"type": "progress", "phase": "indicators", "percent": 10, "message": "Calculando VP..."}
 data: {"type": "progress", "phase": "backtest", "percent": 50, "message": "Vela 500/1000..."}
-data: {"type": "result", "data": {trades, zones, metrics, ...}}
+data: {"type": "result", "data": {trades, zones, metrics, filter_stats, ...}}
 ```
 
 ## Estructura de Config (JSON)
@@ -4763,19 +4788,22 @@ data: {"type": "result", "data": {trades, zones, metrics, ...}}
 ```json
 {
   "level_sources": [
-    {"source": "vp_periodic", "enabled": true, "params": {"period": 240, "bins": 50}}
+    {"source": "vp_periodic", "enabled": true, "params": {"period": 240, "bins": 50}},
+    {"source": "vp_zones", "enabled": false, "params": {"detection_mode": "fixed_window", "window_size": 30}}
   ],
   "entry_signal": {
     "signal_type": "price_touch",
     "params": {"tolerance_pct": 0.15}
   },
   "context_filters": [
-    {"filter_type": "direction", "enabled": true, "params": {"allowed": "both"}}
+    {"filter_type": "direction", "enabled": true, "params": {"allowed": "both"}},
+    {"filter_type": "vp_shape", "enabled": false, "params": {"allowed_shapes": ["all"]}}
   ],
   "risk": {
     "sl_method": "below_level", "sl_params": {"buffer_pct": 0.1},
     "tp_method": "rr_fixed", "tp_params": {"rr": 2.0},
-    "max_trades_per_segment": 1, "trailing_stop": false
+    "max_trades_per_segment": 1,
+    "cooldown_bars": 0
   },
   "exit_rules": [],
   "confluence_mode": "any",
@@ -4783,6 +4811,44 @@ data: {"type": "result", "data": {trades, zones, metrics, ...}}
   "vwap_period": 20
 }
 ```
+
+## Cache de Velas (Persistencia en Disco)
+
+El sistema usa 3 niveles de cache para evitar descargar velas repetidamente:
+
+1. **Memoria** (Dict Python, TTL 2h): Acceso instantaneo, se pierde al reiniciar
+2. **Disco** (`candle_cache/*.json.gz`): Persistente, gzip comprimido, sobrevive reinicios
+3. **Bybit API**: Descarga completa, hasta 600,000 velas por request
+
+**Flujo:** Primera ejecucion descarga de Bybit (1-2 min). Siguientes ejecuciones leen de disco (~1-2s) o memoria (instantaneo). Carga incremental cuando faltan solo velas recientes.
+
+**VP Zone Cache:** Cache separado en `zones_cache/` para zonas VP pre-calculadas. Evita recalcular zonas con los mismos parametros.
+
+## Sistema de Presets
+
+Los presets guardan toda la configuracion del Strategy Builder (5 bloques + parametros generales).
+
+- **Backend-based:** Se persisten via API (no localStorage)
+- **Guardar:** Nombre + click "Guardar"
+- **Cargar:** Dropdown → "Cargar" → todos los bloques se restauran
+- **Eliminar:** Boton X al lado del preset
+
+## Diagnostico con Filter Stats
+
+El backtest retorna `filter_stats` que muestra donde se filtraron las senales:
+
+| Contador | Significado |
+|----------|-------------|
+| `signals_generated` | Total de senales detectadas (antes de filtros) |
+| `filtered_direction` | Bloqueadas por filtro de direccion |
+| `filtered_confluence` | Score de confluencia insuficiente |
+| `filtered_max_trades_seg` | Bloqueadas por max_trades_per_segment |
+| `filtered_cooldown` | Bloqueadas por cooldown_bars activo |
+| `filtered_context.{tipo}` | Bloqueadas por cada filtro de contexto especifico |
+| `filtered_sl_invalid` | SL no se pudo calcular |
+| `filtered_tp_invalid` | TP no se pudo calcular |
+| `filtered_sl_direction` | SL calculado en direccion incorrecta |
+| `trades_opened` | Trades que pasaron TODOS los filtros |
 
 ## Visualizacion en Chart
 
@@ -4792,9 +4858,9 @@ Las zonas del Strategy Builder se renderizan con colores purpura (`_source: 'str
 |----------|-------|
 | Consolidacion fill | `rgba(128, 0, 200, 0.15)` |
 | Consolidacion border | `rgba(128, 0, 200, 0.6)` |
-| Trade WIN | Verde (compartido con VP) |
-| Trade LOSS | Rojo (compartido con VP) |
-| Trade OPEN | Amarillo (compartido) |
+| Trade WIN | Verde |
+| Trade LOSS | Rojo |
+| Trade OPEN | Amarillo, borde discontinuo |
 
 ZoneVisualizerIndicator mantiene 4 fuentes independientes:
 - `_manualZones` - Boton "Detectar zonas"
@@ -4804,27 +4870,83 @@ ZoneVisualizerIndicator mantiene 4 fuentes independientes:
 
 ## Grid Search Optimizer
 
-Permite optimizar parametros de cualquier bloque:
+Parametros optimizables se generan dinamicamente segun bloques activos. Formato path-based:
 
 ```
-Parametros optimizables (path-based):
-- level.vp_periodic.period
-- level.vp_periodic.bins
-- level.sr_v2.swing_bars
-- entry.params.tolerance_pct
-- risk.sl_params.buffer_pct
-- risk.tp_params.rr
-- (cualquier parametro de cualquier bloque activo)
+level.vp_periodic.period, level.vp_periodic.bins, level.sr_v2.swing_bars,
+entry.params.tolerance_pct, risk.sl_params.buffer_pct, risk.tp_params.rr,
+vwap_period, (cualquier parametro numerico de bloque activo)
 ```
 
-**Limites:** Max 5,000 combinaciones, max 20 valores por parametro.
+**Flujo:** Estimar (2 combos prueba) → Confirmar → Ejecutar → Tabla Top 15 → "Aplicar"
+
+**Limites:** Max 5,000 combinaciones, max 20 valores por parametro. Timeout 60 min.
 
 **Metricas:** expectancy, total_pnl_r, win_rate, profit_factor.
 
+## Dias de Historico
+
+| Intervalo | Max dias |
+|-----------|----------|
+| 1 min | 400 |
+| 3 min | 400 |
+| 5 min | 400 |
+| 15 min | 180 |
+| 30 min | 360 |
+| 1 hora | 730 |
+| 2 horas | 730 |
+| 4 horas | 1095 |
+| Diario | 2000 |
+| Semanal | 1000 |
+
+## Arquitectura Tecnica
+
+### Backend: strategy_engine.py (~2091 lineas)
+
+```
+run_modular_backtest(candles, config, progress_callback, symbol, interval, days)
+    |
+    ├── compute_vp_levels()           # VP Periodic
+    ├── compute_vp_zone_levels()      # VP Zones (con cache disco)
+    ├── compute_sr_levels()           # S&R v2
+    ├── compute_vwap_band_levels()    # VWAP Bands
+    ├── compute_swing_as_levels()     # Swing Levels
+    ├── compute_dtb_levels()          # DTB Neckline
+    |
+    ├── Para cada vela:
+    |   ├── Filtrar niveles validos en este indice
+    |   ├── Evaluar entry signal -> genera senal con direccion
+    |   ├── Filtrar por direction, confluence, max_trades, cooldown
+    |   ├── Aplicar context filters (AND logic, incluyendo vp_shape)
+    |   ├── Calcular SL y TP
+    |   └── Si todo pasa: abrir trade
+    |
+    ├── resolve_trade_with_exit_rules()  # Simular cada trade
+    ├── calculate_metrics()              # Metricas finales
+    └── Construir zonas para chart
+```
+
+### Frontend: StrategyBuilder.jsx (~2063 lineas)
+
+```
+StrategyBuilder.handleRunBacktest()
+    |
+    ├── buildConfigPayload(state)  # ~30 useState hooks -> JSON config
+    |
+    ├── manager.runStrategyBuilderBacktest({days, config, onProgress})
+    |   └── fetch POST /api/strategy-builder/backtest-stream (config en body JSON)
+    |       → response.body.getReader() + TextDecoder (ReadableStream)
+    |       ├── progress events -> setProgress({phase, percent, message})
+    |       └── result event -> setResult({zones, stats, filter_stats})
+    |   (NO usa EventSource - evita limite de 6 conexiones de Chromium)
+    |
+    └── manager.zoneVisualizerIndicator.setStrategyZones(zones)
+```
+
 ## Bugs Corregidos (Febrero 2026)
 
-1. **`resolve_trade` no existia** - El motor llamaba a `resolve_trade()` sin exit rules, pero la funcion nunca fue definida. Fix: reutilizar `resolve_trade_with_exit_rules()` con lista vacia.
-2. **Zona visual min/max incorrectos** - Para trades SHORT, `min(sl, entry)` no incluia el TP. Fix: `min(sl, tp, entry)` y `max(sl, tp, entry)`.
+1. **`resolve_trade` no existia** - Fix: reutilizar `resolve_trade_with_exit_rules()` con lista vacia.
+2. **Zona visual min/max incorrectos para SHORT** - Fix: `min(sl, tp, entry)` y `max(sl, tp, entry)`.
 
 ## Troubleshooting
 
@@ -4837,13 +4959,635 @@ Parametros optimizables (path-based):
 - Reducir tolerancia del entry signal
 - Probar sin context filters primero
 - Aumentar dias de datos historicos
+- Revisar `filter_stats` para ver donde se pierden senales
 
-**Error silencioso (0 trades sin error):**
-- Puede ser que el config JSON se construyo mal
-- Revisar consola backend por logs `[SB_BACKTEST_SSE]`
-- Verificar que `strategy_engine.py` no tiene errores de import
+**Backtest tarda mucho:**
+- Primera ejecucion descarga de Bybit (1-2 min). Siguientes usan cache disco (instantaneo)
+- VP Zones es pesado - considerar VP Periodic
+- Reducir dias para iteraciones rapidas
 
 **Zonas no se ven en chart:**
 - Verificar que ZoneVisualizerIndicator esta habilitado
 - Las zonas usan `_source: 'strategy'` (purpura)
 - Verificar `setStrategyZones()` se llama con las zonas del resultado
+
+---
+
+# STRATEGY BUILDER REALTIME SERVICE (Febrero 2026)
+
+Servicio de ejecucion en tiempo real de estrategias del Strategy Builder. Permite que el usuario active una estrategia configurada y la ejecute en vivo, generando alertas al TradingBot cuando se detectan senales validas.
+
+## Concepto y Diferencia con Backtest
+
+| Aspecto | Backtest (SSE) | Realtime Service |
+|---------|---------------|------------------|
+| Ejecucion | Unica, sobre historico | Continua, vela a vela |
+| Niveles | Se calculan sobre todo el dataset | Se pre-calculan una vez y se extienden incrementalmente |
+| SL/TP | Se resuelve con lookforward (mira futuro) | Se monitorea vela a vela (no mira futuro) |
+| Alertas | No envia | Envia al TradingBot (puerto 5000) |
+| UI | Boton "Run Backtest" | Toggle "Realtime" ON/OFF |
+
+## Principio Arquitectonico
+
+**Los niveles NO se re-detectan en cada vela.** Se pre-calculan al activar y se extienden incrementalmente solo cuando corresponde:
+
+| Fuente de Niveles | Cuando se Recalcula |
+|-------------------|---------------------|
+| `vp_periodic` | Al completarse un nuevo segmento (cada `period` velas) |
+| `sr_v2` | Cada N velas (`sr_recalc_every`, default 100) |
+| `vwap_bands` | Cada vela (VWAP es dinamico por naturaleza) |
+| `swing_levels` | Cada N velas con check de confirmacion |
+| `dtb_neckline` | Cada N velas (`dtb_recalc_every`, default 50) |
+| `vp_zones` | Al completarse un nuevo segmento VP (usa cache de VP Zone) |
+
+La evaluacion de senales es O(L) por vela, donde L = numero de niveles activos.
+
+## Archivos del Sistema
+
+### Backend (`4.Analizador cripto/backend/`)
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `strategy_realtime_service.py` | Servicio completo (~1317 lineas): config, niveles, senales, trades, alertas |
+| `config/strategy_rt_config.json` | Configuracion persistente del servicio |
+| `logs/strategy_rt_alerts.log` | Log de alertas enviadas/bloqueadas |
+| `main.py` (lineas 9530+) | 6 endpoints API para el servicio realtime |
+
+### Frontend (`8.AnalizadorDesktop/src/components/`)
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `StrategyBuilder.jsx` | UI: boton "Realtime", panel de estado, toggle, stats |
+
+## Clases y Estructura
+
+### StrategyRTConfig
+
+```python
+@dataclass
+class StrategyRTConfig:
+    enabled: bool = False
+    symbols: List[str] = ["BTCUSDT"]
+    interval: str = "5"
+    window_candles: int = 2000          # Historico para calcular niveles
+    strategy: Dict = {}                 # Mismo formato que Strategy Builder config
+    alertsEnabled: bool = True
+    alertTargetUrl: str = "http://localhost:5000/api/watchlist-alert"
+    cooldownMinutes: int = 30
+    dtb_recalc_every: int = 50          # Re-detectar DTB cada N velas
+    sr_recalc_every: int = 100          # Re-detectar S&R cada N velas
+```
+
+### RTLevel
+
+```python
+@dataclass
+class RTLevel:
+    price: float
+    level_type: str       # 'support' | 'resistance'
+    source: str           # 'vp_periodic' | 'sr_v2' | 'vwap_bands' | 'swing_levels' | 'dtb_neckline' | 'vp_zones'
+    strength: float = 1.0
+    valid_from_idx: int = 0
+    valid_until_idx: Optional[int] = None
+    extra: Dict = {}
+```
+
+### StrategyRealtimeService (Singleton)
+
+```python
+class StrategyRealtimeService:
+    # Estado interno por simbolo:
+    _candle_buffers: Dict[str, List[Dict]]     # Buffer de velas
+    _levels: Dict[str, List[RTLevel]]          # Niveles pre-calculados
+    _vwap_state: Dict[str, Dict]               # Estado VWAP rolling
+    _dtb_patterns: Dict[str, List[Dict]]       # Patrones DTB detectados
+    _open_trades: Dict[str, List[Dict]]        # Trades abiertos
+    _trade_history: Dict[str, List[Dict]]      # Historial de trades cerrados
+    _cooldowns: Dict[str, float]               # Cooldowns activos
+    _recent_signals: Dict[str, List[Dict]]     # Senales para polling frontend
+
+    # Contadores para recalculo periodico:
+    _candle_count: Dict[str, int]
+    _last_vp_seg_end: Dict[str, int]
+    _last_sr_recalc: Dict[str, int]
+    _last_dtb_recalc: Dict[str, int]
+    _last_swing_check: Dict[str, int]
+```
+
+## Flujo Completo
+
+```
+1. ACTIVACION (desde StrategyBuilder.jsx)
+   POST /api/strategy-builder/realtime/toggle {enabled: true, strategy: {...}, symbols: [...]}
+      ↓
+2. STARTUP
+   StrategyRealtimeService.start()
+   → Registra listener en WebSocket (add_candle_close_listener)
+   → Suscribe simbolos al WebSocket
+   → asyncio.create_task(_initialize())
+      ↓
+3. INICIALIZACION (background, una vez)
+   _initialize() → para cada simbolo:
+      _init_symbol()
+        → Fetch historico desde Bybit API (window_candles velas)
+        → Preload al buffer del WebSocket
+        → _precompute_levels() → calcula TODOS los niveles del historico
+      ↓
+4. POR CADA CIERRE DE VELA (tiempo real)
+   _sync_candle_close_handler() → _on_candle_close()
+      ↓
+   a) Agrega vela al buffer
+   b) _update_levels_incremental() → recalcula solo lo necesario
+   c) _check_open_trades() → verifica SL/TP hit vela a vela
+   d) _check_exit_rules() → evalua reglas de salida adaptativas
+   e) _evaluate_entry() → evalua senal de entrada contra niveles activos
+      ↓
+5. SI HAY SENAL VALIDA
+   → Calcula SL/TP segun risk management configurado
+   → Verifica cooldown (por symbol + direction)
+   → Abre trade → _send_alert() al TradingBot (puerto 5000)
+      ↓
+6. MONITOREO DE TRADES
+   En cada vela subsecuente:
+   → _check_open_trades(): SL hit? TP hit? → cierra trade
+   → _check_exit_rules(): timeout? vwap_reverse? → cierra trade anticipadamente
+```
+
+## Endpoints API
+
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/api/strategy-builder/realtime/toggle` | POST | Activa/desactiva servicio. Acepta strategy, symbols, interval, alertsEnabled, cooldownMinutes |
+| `/api/strategy-builder/realtime/status` | GET | Estado completo: running, stats, open trades, niveles activos, buffers |
+| `/api/strategy-builder/realtime/config` | POST | Actualiza config. Si strategy cambio, reinicia servicio automaticamente |
+| `/api/strategy-builder/realtime/signals/{symbol}` | GET | Senales recientes para un simbolo |
+| `/api/strategy-builder/realtime/trades/{symbol}` | GET | Trades abiertos y historial (ultimos 50) |
+| `/api/strategy-builder/realtime/clear-cooldowns` | POST | Limpia todos los cooldowns (para testing) |
+
+## Formato de Respuesta de Status
+
+```json
+{
+  "success": true,
+  "running": true,
+  "enabled": true,
+  "symbols": ["BTCUSDT"],
+  "interval": "5",
+  "alertsEnabled": true,
+  "strategy_name": "Mi Estrategia",
+  "stats": {
+    "candles_processed": 150,
+    "signals_generated": 5,
+    "signals_filtered": 3,
+    "alerts_sent": 2,
+    "alerts_blocked_cooldown": 1,
+    "trades_opened": 2,
+    "trades_closed": 1,
+    "start_time": 1708000000
+  },
+  "open_trades": {
+    "BTCUSDT": [{
+      "direction": "LONG",
+      "entry_price": 95000.0,
+      "sl_price": 94500.0,
+      "tp_price": 96000.0,
+      "partial_pnl_r": 0.5,
+      "entry_ts": 1708001000000
+    }]
+  },
+  "levels": {
+    "BTCUSDT": { "total": 45, "active": 12 }
+  },
+  "buffers": {
+    "BTCUSDT": 2150
+  }
+}
+```
+
+## Formato de Alerta al TradingBot
+
+```json
+{
+  "source": "STRATEGY_BUILDER",
+  "symbol": "BTCUSDT",
+  "interval": "5",
+  "pattern": {
+    "patternType": "STRATEGY_SIGNAL",
+    "price": 95000.0,
+    "confidence": 75,
+    "timestamp": 1708001000000,
+    "direction": "LONG",
+    "signalType": "price_touch",
+    "levelSource": "vp_periodic",
+    "levelPrice": 95050.0
+  },
+  "custom_stop_loss": 94500.0,
+  "custom_take_profit": 96000.0
+}
+```
+
+## Metodos Clave del Servicio
+
+### Pre-calculo de Niveles
+
+```python
+def _precompute_levels(self, symbol: str):
+    """
+    Calcula TODOS los niveles a partir del historico.
+    Se ejecuta UNA VEZ al iniciar el servicio.
+    Soporta las 6 fuentes de niveles del Strategy Builder.
+    """
+```
+
+### Actualizacion Incremental
+
+```python
+def _update_levels_incremental(self, symbol: str, new_candle: Dict):
+    """
+    Actualiza niveles SOLO cuando es necesario:
+    - VP Periodic: nuevo segmento completado (cada 'period' velas)
+    - SR v2: cada sr_recalc_every velas
+    - VWAP bands: cada vela (recalcula VWAP y bandas sigma)
+    - Swing levels: cada N velas (check confirmacion)
+    - DTB neckline: cada dtb_recalc_every velas
+    - VP Zones: cuando hay nuevo segmento VP (usa cache)
+    """
+```
+
+### Evaluacion de Entrada
+
+```python
+async def _evaluate_entry(self, symbol: str, candle: Dict, idx: int):
+    """
+    Evalua si la vela actual genera una senal de entrada.
+    1. Obtiene niveles activos para el indice actual
+    2. Evalua senal (price_touch, breakout_close, etc.) contra cada nivel
+    3. Aplica filtros de contexto (VWAP trend, TTM squeeze, etc.)
+    4. Si pasa: calcula SL/TP, verifica cooldown, abre trade
+    """
+```
+
+### Monitoreo de Trades
+
+```python
+def _check_open_trades(self, symbol: str, candle: Dict):
+    """
+    Verifica SL/TP hit para trades abiertos.
+    Evalua HIGH y LOW de la vela contra SL y TP del trade.
+    Si SL hit: cierra con PnL negativo.
+    Si TP hit: cierra con PnL positivo.
+    """
+
+def _check_exit_rules(self, symbol: str, candle: Dict, idx: int):
+    """
+    Evalua reglas de salida adaptativas (OR logic):
+    - vwap_reverse: precio cruza VWAP en contra
+    - reenter_zone: precio re-entra a la zona del nivel
+    - squeeze_activate: nuevo TTM Squeeze se activa
+    - timeout: han pasado N velas desde la entrada
+    """
+```
+
+## Sistema de Cooldowns
+
+- Cooldowns separados por `{symbol}_{direction}` (ej: `BTCUSDT_LONG`, `BTCUSDT_SHORT`)
+- Configurable en minutos desde el panel o la API
+- Se puede limpiar manualmente via endpoint o boton en UI
+- Los cooldowns son in-memory (no se persisten al reiniciar)
+
+## Integracion con el Frontend (StrategyBuilder.jsx)
+
+### Estado React
+
+```javascript
+const [showRealtime, setShowRealtime] = useState(false);
+const [rtStatus, setRtStatus] = useState(null);
+const [rtLoading, setRtLoading] = useState(false);
+const rtPollRef = useRef(null);
+```
+
+### Polling de Estado
+
+Cuando el panel Realtime esta abierto, se hace polling cada 5 segundos:
+
+```javascript
+useEffect(() => {
+  if (!isOpen || !showRealtime) return;
+  fetchRtStatus();
+  rtPollRef.current = setInterval(fetchRtStatus, 5000);
+  return () => clearInterval(rtPollRef.current);
+}, [isOpen, showRealtime]);
+```
+
+### Toggle Realtime
+
+Al activar, envia la estrategia actual (construida con `buildConfigPayload()`) junto con el simbolo e intervalo activos:
+
+```javascript
+const handleToggleRealtime = async () => {
+  const body = { enabled: !isRunning };
+  if (!isRunning) {
+    body.strategy = buildConfigPayload();
+    body.symbols = [symbol];
+    body.interval = interval;
+  }
+  await fetch(`/api/strategy-builder/realtime/toggle`, { method: 'POST', body });
+};
+```
+
+### Panel de Realtime
+
+El panel muestra cuando esta activo:
+- **Stats grid**: Velas procesadas, senales generadas, senales filtradas, alertas enviadas
+- **Niveles por simbolo**: Total y activos
+- **Trades abiertos**: Entry, SL, TP, PnL parcial (en R) con colores verde/rojo
+- **Uptime**: Tiempo desde el inicio del servicio
+- **Boton "Limpiar Cooldowns"**: Para testing
+
+Cuando no esta activo muestra mensaje informativo con instrucciones.
+
+### Boton en la Barra de Acciones
+
+- Color naranja cuando el servicio esta detenido
+- Color verde cuando esta corriendo
+- Texto "RT ON" cuando activo, "Realtime" cuando inactivo
+
+## Archivos de Log
+
+### `logs/strategy_rt_alerts.log`
+
+```
+2026-02-16 15:30:45 | INFO | SIGNAL | BTCUSDT | LONG | price_touch @ vp_periodic:95000.00 | idx=2150
+2026-02-16 15:30:45 | INFO | ALERT_SENT | BTCUSDT | LONG | entry=95000.00 sl=94500.00 tp=96000.00
+2026-02-16 15:35:22 | INFO | BLOCKED_COOLDOWN | BTCUSDT | LONG | remaining=1478s
+2026-02-16 15:40:00 | INFO | TRADE_CLOSED | BTCUSDT | TP_HIT | pnl_r=2.0
+2026-02-16 15:40:00 | ERROR | ALERT_TIMEOUT | BTCUSDT | Trading Bot not responding
+```
+
+## Integracion con Startup/Shutdown del Backend
+
+```python
+# En main.py - startup_event()
+strat_rt = get_strategy_rt_service()
+if strat_rt.config.enabled:
+    await strat_rt.start()
+
+# En main.py - shutdown_event()
+strat_rt = get_strategy_rt_service()
+await strat_rt.stop()
+```
+
+## Troubleshooting
+
+**Servicio no inicia:**
+- Verificar que hay una estrategia configurada (`strategy` no vacio en config)
+- Verificar que WebSocket Manager esta disponible
+- Revisar logs backend por `[STRAT_RT]`
+
+**0 senales generadas:**
+- Verificar que los niveles se pre-calcularon: status muestra `levels.total > 0`
+- Verificar que la senal de entrada coincide con los niveles activos
+- Probar con tolerancia mas amplia en el entry signal
+- Verificar que los filtros de contexto no estan bloqueando todas las senales
+
+**Alertas no llegan al TradingBot:**
+- Verificar `alertsEnabled: true` en config
+- Verificar que TradingBot corre en puerto 5000
+- Revisar `logs/strategy_rt_alerts.log` por errores TIMEOUT
+- Verificar cooldowns: puede estar bloqueado
+
+**Niveles no se actualizan:**
+- El servicio actualiza niveles incrementalmente, no en cada vela
+- VP Periodic: solo cuando se completa un nuevo segmento
+- SR v2: cada `sr_recalc_every` velas (default 100)
+- Verificar contadores en logs
+
+**Stats muestran "signals_filtered" alto:**
+- Los filtros de contexto estan bloqueando senales
+- Desactivar filtros temporalmente para diagnosticar
+- Revisar que la direccion del filtro coincide con la senal
+
+**Config se pierde al reiniciar:**
+- Config se persiste en `config/strategy_rt_config.json`
+- Si el archivo no existe, se usan defaults (enabled=false)
+- Verificar permisos de escritura en el directorio config/
+
+---
+
+# FIX: SEGUNDO BACKTEST BLOQUEA LA APP (Febrero 2026)
+
+## Problema
+
+El primer backtest del Strategy Builder se ejecutaba correctamente (~12.9s), pero al intentar un segundo backtest la aplicacion se congelaba completamente.
+
+## Causa Raiz
+
+**Cascada de fallos** que se acumulaban despues del primer backtest:
+
+1. **Servicios no deseados corriendo**: Strategy RT y Real-time Pattern Detection auto-iniciaban en startup, procesando cada vela y consumiendo recursos del event loop
+2. **Polling de drawings cada 3s**: Inundaba el backend con `GET /api/drawings/BTCUSDT` constantemente (10+ requests/segundo en momentos pico)
+3. **VWAP reload sin cooldown**: Despues del primer backtest, el endpoint VWAP detectaba `needs_more_data` y disparaba `reload_symbol_data()` en cada polling, cada uno haciendo request a Bybit API, causando rate limit
+4. **Fetches VWAP concurrentes**: Sin guard contra solapamiento, multiples fetches del frontend llegaban al backend simultaneamente, amplificando el rate limit
+
+### Secuencia del bloqueo
+
+```
+Primer backtest completa OK
+    ↓
+VWAP polling detecta needs_more_data → multiples reloads simultaneos
+    ↓
+Bybit API: "Too many visits. Exceeded the API Rate Limit"
+    ↓
+VWAP fetch errors → frontend reintenta en siguiente poll → mas errors
+    ↓
+Drawings polling cada 3s agrega carga constante
+    ↓
+Strategy RT procesando cada vela agrega mas carga
+    ↓
+Event loop saturado → segundo backtest no puede conectar SSE
+    ↓
+App congelada
+```
+
+## Fixes Aplicados
+
+### 1. Drawings polling 3s → 30s
+
+**Archivo:** `8.AnalizadorDesktop/src/components/MiniChart.jsx`
+
+```javascript
+// ANTES: 3000ms (3 segundos)
+// DESPUES: 30000ms (30 segundos) - suficiente para sincronizacion
+const syncInterval = setInterval(() => {
+  if (!drawingMode) {
+    loadDrawings(true);
+  }
+}, 30000);
+```
+
+### 2. VWAP reload cooldown (30s por simbolo)
+
+**Archivo:** `4.Analizador cripto/backend/main.py`
+
+```python
+_vwap_reload_cooldown: Dict[str, float] = {}
+_VWAP_RELOAD_COOLDOWN_SECS = 30
+
+@app.get("/api/vwap-service/data/{symbol}")
+async def get_vwap_service_data(...):
+    if config_changed or needs_more_data:
+        now = time.time()
+        last_reload = _vwap_reload_cooldown.get(symbol, 0)
+        if now - last_reload < _VWAP_RELOAD_COOLDOWN_SECS:
+            pass  # En cooldown - retornar datos existentes
+        else:
+            _vwap_reload_cooldown[symbol] = now
+            await vwap_service.reload_symbol_data(...)
+```
+
+### 3. Guard contra VWAP fetches concurrentes
+
+**Archivo:** `8.AnalizadorDesktop/src/components/indicators/VWAPIndicator.js`
+
+```javascript
+constructor() {
+  this._fetching = false;
+}
+
+async fetchData(skipCache = false) {
+  if (this._fetching) return false;  // Skip si ya hay fetch en curso
+  this._fetching = true;
+  try {
+    // ... fetch ...
+  } finally {
+    this._fetching = false;
+  }
+}
+```
+
+### 4. Servicios desactivados en startup (sesion anterior)
+
+**Archivo:** `4.Analizador cripto/backend/main.py` (startup_event)
+
+- Real-time pattern service: SKIPPED (deprecated)
+- Strategy RT service: force `enabled=false` en startup, debe iniciarse manualmente desde frontend
+
+**CRITICO:** El backend debe reiniciarse para que estos cambios tomen efecto.
+
+## Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `8.AnalizadorDesktop/src/components/MiniChart.jsx` | Drawings polling 3s → 30s |
+| `4.Analizador cripto/backend/main.py` | VWAP reload cooldown 30s, cleanup import |
+| `8.AnalizadorDesktop/src/components/indicators/VWAPIndicator.js` | `_fetching` guard |
+
+## Leccion Aprendida
+
+**Cascadas de rate limit**: Un solo endpoint sin cooldown puede causar una cascada que bloquea toda la aplicacion. Siempre agregar cooldowns a endpoints que llaman APIs externas (Bybit) y guards contra requests concurrentes en el frontend.
+
+**Reiniciar backend**: Los cambios en `main.py` no toman efecto hasta reiniciar el proceso de uvicorn. Si el log muestra servicios que deberian estar desactivados, el backend NO fue reiniciado.
+
+---
+
+# FIX: RESULTADOS DE BACKTEST NO DETERMINISTICOS (Febrero 2026)
+
+## Problema
+
+El Strategy Builder producia resultados diferentes con los mismos parametros. Ejecutar un backtest con parametros A, cambiar a B, y volver a A daba resultados distintos (ej: 30% win rate → 12% win rate). El cambio afectaba TODOS los trades, no solo los ultimos.
+
+## Causa Raiz
+
+**Cascada de 3 factores** que hacian que el array de velas cambiara de tamano entre ejecuciones:
+
+### Factor 1: Cache incremental de velas
+
+El sistema de cache de 3 niveles (memoria → disco → Bybit API) usaba merge incremental. Despues de la primera ejecucion, el cache en memoria podia tener 5-10 velas extras respecto a la descarga original. Esto cambiaba `len(candles)`.
+
+### Factor 2: VP Periodic sensible a indices
+
+VP Periodic usa `range(0, len(candles), period)` para crear segmentos. Si `len(candles)` cambia, TODOS los segmentos se desplazan. Esto cambia las zonas POC/VAH/VAL y por lo tanto los niveles para TODAS las entradas.
+
+```python
+# Con 57600 velas y period=240:
+# Segmentos: [0:240], [240:480], [480:720], ...
+
+# Con 57605 velas (5 extras del cache):
+# Segmentos: [0:240], [240:480], [480:720], ..., [57360:57605]
+# ¡Pero si se trimea al 110%: candles[-target:] cambia indices base!
+```
+
+### Factor 3: VP Zone Cache sin candles_count
+
+El fingerprint del cache de VP Zones no incluia la cantidad de velas. Dos ejecuciones con diferente `len(candles)` pero mismos parametros generaban el mismo fingerprint, retornando zonas calculadas con un array de tamano diferente.
+
+## Fixes Implementados
+
+### Fix 1: Trimming Determinista
+
+**Archivos:** `4.Analizador cripto/backend/main.py` (3 endpoints)
+
+Antes de pasar las velas al motor de backtest, se trimea al numero exacto calculado:
+
+```python
+# En backtest-stream, optimize-estimate, optimize
+_int_minutes = interval_min_map.get(interval, 1)
+_target_candles = int((int(days) * 24 * 60) / _int_minutes)
+if _target_candles > 0 and len(candles) > _target_candles:
+    candles = candles[-_target_candles:]
+```
+
+Esto garantiza que sin importar cuantas velas tenga el cache, siempre se usan exactamente las mismas.
+
+### Fix 2: candles_count en Fingerprint VP Zone Cache
+
+**Archivos:** `4.Analizador cripto/backend/zone_vp_scanner.py`
+
+Se agrego `candles_count` al fingerprint SHA256 del cache de zonas VP:
+
+```python
+def _get_detection_fingerprint(config_overrides, symbol, interval, days, candles_count=0):
+    det_values['_candles_count'] = candles_count
+    fingerprint_str = json.dumps(det_values, sort_keys=True, default=str)
+    return hashlib.sha256(fingerprint_str.encode()).hexdigest()[:16]
+```
+
+Ahora `load_zone_cache` y `save_zone_cache` incluyen `candles_count`, invalidando caches cuando el array cambia de tamano.
+
+### Fix 3: Hash Diagnostico en UI
+
+**Archivos:** `main.py` (SSE result), `StrategyBuilder.jsx` (checkbox + badge)
+
+Se calcula un hash MD5 del array de velas (len + first_ts + last_ts) y se muestra en la UI:
+
+```python
+import hashlib as _hl
+_candle_hash = _hl.md5(f"{len(candles)}_{first_ts}_{last_ts}".encode()).hexdigest()[:8]
+```
+
+En el frontend, un checkbox "Mostrar hash de determinismo" muestra un badge purpura con el hash. Mismo hash = mismas velas = resultados identicos.
+
+## Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `4.Analizador cripto/backend/main.py` | Trimming determinista en 3 endpoints SB + candle_hash en SSE result + candles_count en load_zone_cache VP |
+| `4.Analizador cripto/backend/zone_vp_scanner.py` | candles_count en fingerprint, save_zone_cache, load_zone_cache |
+| `4.Analizador cripto/backend/strategy_engine.py` | Pasa len(candles) a load_zone_cache en compute_vp_zone_levels |
+| `8.AnalizadorDesktop/src/components/StrategyBuilder.jsx` | Estado showDebugHash, checkbox, badge hash purpura |
+
+## Limpieza de Cache
+
+Despues de aplicar el fix, los archivos viejos en `zones_cache/` tienen fingerprints sin `candles_count` y nunca haran match. Se eliminaron ~31 archivos (~5MB) de `zones_cache/` y `zones_cache/incremental/`.
+
+## Verificacion
+
+1. Ejecutar backtest con parametros A → anotar hash (ej: `#c9a8cc6a`)
+2. Cambiar parametros a B → ejecutar
+3. Volver a parametros A → ejecutar
+4. Verificar que hash es identico al paso 1
+5. Verificar que metricas (WR%, PnL, trades) son identicas
+
+## Leccion Aprendida
+
+**Indices como estado global**: Cuando un sistema usa indices de array como referencia (como `valid_from_idx` en Level dataclass), el tamano del array se convierte en estado global implicito. Cualquier variacion en el tamano del array desplaza TODAS las referencias, causando resultados completamente diferentes. La solucion es garantizar un tamano de array determinista ANTES de cualquier procesamiento.

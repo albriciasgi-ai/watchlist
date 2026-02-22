@@ -1,0 +1,323 @@
+ [Preload] Script cargado correctamente
+ [Preload] Plataforma: win32
+ [Preload] Electron: 33.4.11
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ [Config] API_BASE_URL: http://127.0.0.1:10000
+ [Config] Electron: Si
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ ====================================
+ Analizador Desktop - Frontend
+ ====================================
+ [Electron] Ejecutando en Electron
+ [Electron] Versiones: Object
+ [Electron] Plataforma: win32
+ [App] Backend esperado en: http://localhost:10000
+ [ZoneDetector] interval=1, maxDays=400
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [PollingCoordinator] Started
+ ✅ [7:37:48 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] [SWING] toggleIndicator(Swing Detector, false): found=false, totalIndicators=3
+ [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (129598 velas)
+ [CandleCache] Limpiando cache con gaps para forzar recarga completa...
+ [CandleCache] 🗑️ BTCUSDT@1 - cache limpiado
+ [BTCUSDT] Carga COMPLETA: 90 dias @ 1
+ [BTCUSDT] 📊 Usando carga con streaming (129700 velas estimadas)
+ [BTCUSDT] 📊 Iniciando carga STREAM: 90 dias @ 1
+ [CacheCleanup] Complete: 0/2 candles, 0/1 indicators removed
+ WebSocket Manager conectado [1]
+ ✓ Suscrito: 
+ [Prefetch] Activado (10s despues de carga)
+ [BTCUSDT] drawChart: 2 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [HealthCheck] Backend reconnected
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 2 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 3 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 3 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 4 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 4 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 5 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 5 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 6 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:1328 [BTCUSDT] Carga COMPLETA: 90 dias @ 1
+MiniChart.jsx:1336 [BTCUSDT] 📊 Usando carga con streaming (129700 velas estimadas)
+MiniChart.jsx:1245 [BTCUSDT] 📊 Iniciando carga STREAM: 90 dias @ 1
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 6 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 7 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 7 velas disponibles, zoom=1.000, chartWidth=1229, mostrando=153, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:1262 [BTCUSDT] ✅ Stream completado: 129600 velas
+MiniChart.jsx:1394 [BTCUSDT] ✅ Completa: 129600 velas
+MiniChart.jsx:1413 [BTCUSDT] ✅ Histórico final: 129601 velas
+Logger.js:100 ✅ [7:44:07 p. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 3 indicadores
+IndicatorManager.js:1590 [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
+Logger.js:100 ✅ [7:44:07 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 60000ms, priority: 2)
+Logger.js:100 ✅ [7:44:07 p. m.] [Manager] [BTCUSDT] Polling iniciado para todos los indicadores
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+Logger.js:100 ✅ [7:44:41 p. m.] [Manager] [BTCUSDT] Strategy Builder Backtest SSE: days=7
+Logger.js:100 ✅ [7:44:41 p. m.] [Manager] [BTCUSDT] PAUSE: Pausando todo el polling (backtest en curso)
+PollingCoordinator.js:117 [PollingCoordinator] Unregistered: VWAP_BTCUSDT
+Logger.js:100 ✅ [7:44:41 p. m.] [Manager] [BTCUSDT] PAUSE: Todo el polling pausado
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+Logger.js:100 ✅ [7:44:48 p. m.] [Manager] [BTCUSDT] RESUME: Reanudando polling (backtest terminado)
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 60000ms, priority: 2)
+Logger.js:100 ✅ [7:44:48 p. m.] [Manager] [BTCUSDT] RESUME: Polling reanudado
+ZoneVisualizerIndicator.js:154 [BTCUSDT] ZoneVisualizer: 13 zonas Strategy Builder (total: 13)
+Logger.js:100 ✅ [7:44:48 p. m.] [Manager] [BTCUSDT] Strategy Builder: 13 trades (10080 velas)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ZoneVisualizerIndicator.js:216 [BTCUSDT] 🎯 ZoneVisualizer.renderOverlay: Renderizando 13 zonas
+ZoneVisualizerIndicator.js:217 [BTCUSDT] 🎯 priceContext: Object
+ZoneVisualizerIndicator.js:223 [BTCUSDT] 🎯 visibleCandles range: Object
+ZoneVisualizerIndicator.js:233 [BTCUSDT] 🎯 Primera zona: Object
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+Logger.js:100 ✅ [7:45:30 p. m.] [Manager] [BTCUSDT] Strategy Builder Backtest SSE: days=400
+Logger.js:100 ✅ [7:45:30 p. m.] [Manager] [BTCUSDT] PAUSE: Pausando todo el polling (backtest en curso)
+PollingCoordinator.js:117 [PollingCoordinator] Unregistered: VWAP_BTCUSDT
+Logger.js:100 ✅ [7:45:30 p. m.] [Manager] [BTCUSDT] PAUSE: Todo el polling pausado
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+CandleCache.js:68 [CandleCache] 💾 BTCUSDT@1 - desde memoria (129601 velas)
+CandleCache.js:264 [CandleCache] OK VALIDATION BTCUSDT@1: 129601 velas sin gaps
+MiniChart.jsx:1323 [BTCUSDT] Carga INCREMENTAL: desde 17/2/2026, 7:46:00 p.m. (129601 velas en cache, 100%)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=1229, mostrando=1500, userZoomed=false
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.102, chartWidth=697, mostrando=850, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND

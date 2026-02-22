@@ -17480,3 +17480,57 @@ httpx.ReadTimeout
 2026-02-09 09:38:18,442 | INFO | services.position_monitor | Entry screenshot saved: screenshots/BTCUSDT/1475c4ab-57f9-4cb8-bbed-206b9baa64b7_entry_20260209_093817.png
 2026-02-09 10:11:35,895 | INFO | services.position_monitor | Starting reconciliation...
 2026-02-09 10:11:45,979 | INFO | services.position_monitor | Reconciliation complete: {'orphan_entries_closed': 0, 'untracked_positions_created': 0, 'errors': []}
+2026-02-21 16:56:15,937 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-21 16:56:18,272 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-21 16:56:18,389 | INFO | store.journal_store | Database initialized at data/journal.db
+2026-02-21 16:56:18,410 | INFO | main | ============================================================
+2026-02-21 16:56:18,411 | INFO | main | Trading Journal Backend starting...
+2026-02-21 16:56:18,411 | INFO | main | Database: data/journal.db
+2026-02-21 16:56:18,411 | INFO | main | Screenshots: screenshots/
+2026-02-21 16:56:18,411 | INFO | main | ============================================================
+2026-02-21 16:56:18,890 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/status "HTTP/1.1 200 OK"
+2026-02-21 16:56:18,893 | INFO | services.screenshot_service | AnalizadorDesktop screenshot server: available=True, symbol=BTCUSDT
+2026-02-21 16:56:21,311 | INFO | services.screenshot_service | Screenshot service initialized: AnalizadorDesktop (http://127.0.0.1:5180), mplfinance fallback
+2026-02-21 16:56:21,685 | INFO | services.position_monitor | Loaded 1 existing open entries from database
+2026-02-21 16:56:21,685 | INFO | services.position_monitor | Position monitor started (interval: 5.0s)
+2026-02-21 16:56:21,685 | INFO | main | Position monitor ENABLED
+2026-02-21 16:56:21,686 | INFO | main | All services started successfully
+2026-02-21 16:56:38,101 | INFO | services.position_monitor | Synced 0 positions from TradingBot
+2026-02-21 16:56:38,101 | INFO | services.position_monitor | Orphan entry detected during sync: BTCUSDT (no active position)
+2026-02-21 16:56:38,101 | INFO | services.position_monitor | Position closed: BTCUSDT
+2026-02-21 16:56:39,015 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5000/api/position-history/BTCUSDT?limit=1 "HTTP/1.1 200 OK"
+2026-02-21 16:56:39,019 | INFO | services.position_monitor |   Exit manual: exit=67853.6000, sl=68724.1000, tp=70478.4000
+2026-02-21 16:56:39,020 | INFO | services.position_monitor | R-Multiple calculated: -10.13R
+2026-02-21 16:56:39,029 | INFO | store.journal_store | Updated journal entry: 1475c4ab-57f9-4cb8-bbed-206b9baa64b7
+2026-02-21 16:56:40,152 | INFO | httpx | HTTP Request: GET http://127.0.0.1:5180/screenshot?symbol=BTCUSDT "HTTP/1.1 200 OK"
+2026-02-21 16:56:40,156 | INFO | services.screenshot_service | AnalizadorDesktop screenshot saved: screenshots\BTCUSDT\1475c4ab-57f9-4cb8-bbed-206b9baa64b7_exit_20260221_165639.png (symbol: BTCUSDT)
+2026-02-21 16:56:40,162 | INFO | store.journal_store | Updated journal entry: 1475c4ab-57f9-4cb8-bbed-206b9baa64b7
+2026-02-21 16:56:40,167 | INFO | services.position_monitor | Exit screenshot saved: screenshots/BTCUSDT/1475c4ab-57f9-4cb8-bbed-206b9baa64b7_exit_20260221_165639.png
+2026-02-21 16:56:40,167 | INFO | services.position_monitor | Closed journal entry 1475c4ab-57f9-4cb8-bbed-206b9baa64b7: PnL $-5.70 (-2.07%) [-10.13R]
+2026-02-21 16:56:40,167 | INFO | services.position_monitor | Closed 1 orphan entries during initial sync
+2026-02-21 18:16:22,344 | INFO | store.journal_store | Deleted journal entry: fd36f8d8-f4af-477a-b037-a9a41afc26f2
+2026-02-21 18:16:22,352 | INFO | store.journal_store | Deleted journal entry: 7788a44f-85b0-4a60-b2d0-cb45cf055dc1
+2026-02-21 18:16:22,359 | INFO | store.journal_store | Deleted journal entry: 5ac0dd95-ed81-453f-b2bf-c3cb25afe27b
+2026-02-21 18:16:22,368 | INFO | store.journal_store | Deleted journal entry: b65171f1-d23d-4b65-a9f5-7d98b9c3af20
+2026-02-21 18:16:22,375 | INFO | store.journal_store | Deleted journal entry: e2934261-6af8-4275-8c36-e79eb14905e1
+2026-02-21 18:16:22,381 | INFO | store.journal_store | Deleted journal entry: d0c835a5-5882-4dc0-a862-e4964124a153
+2026-02-21 18:16:22,388 | INFO | store.journal_store | Deleted journal entry: 18f92ccd-22f5-41e4-bd12-fc6b21d8a335
+2026-02-21 18:16:22,395 | INFO | store.journal_store | Deleted journal entry: de879379-68cb-4bfe-a0d4-7bda35ca0ebd
+2026-02-21 18:16:22,402 | INFO | store.journal_store | Deleted journal entry: b90f53af-d5d7-4f08-8ae8-b08c667875b5
+2026-02-21 18:16:22,409 | INFO | store.journal_store | Deleted journal entry: 509f3101-afeb-4b5a-8549-62f22b3facf2
+2026-02-21 18:16:22,415 | INFO | store.journal_store | Deleted journal entry: 443624d8-23f3-4e65-8854-21e91023b5ad
+2026-02-21 18:16:22,421 | INFO | store.journal_store | Deleted journal entry: 70d39c94-60be-45c5-a4f6-6156ef7c74a0
+2026-02-21 18:16:22,427 | INFO | store.journal_store | Deleted journal entry: c567454e-7d63-485f-9533-e4939e59d3f3
+2026-02-21 18:16:22,433 | INFO | store.journal_store | Deleted journal entry: cd6324b5-7c69-46a9-85fd-bbf36c520f05
+2026-02-21 18:16:22,439 | INFO | store.journal_store | Deleted journal entry: bd2a31f1-ecc1-4ac7-81ee-181302c56e3a
+2026-02-21 18:16:22,445 | INFO | store.journal_store | Deleted journal entry: 6f76102c-4afc-4439-aba3-0922d61804c2
+2026-02-21 18:16:22,451 | INFO | store.journal_store | Deleted journal entry: 66ba1912-c7ed-4608-adfc-8f333780b187
+2026-02-21 18:16:22,457 | INFO | store.journal_store | Deleted journal entry: 98152e00-acf1-4d91-9941-d91470b496fc
+2026-02-21 18:16:22,463 | INFO | store.journal_store | Deleted journal entry: 04273fab-16c0-4537-8ca3-4f50d11d2b5c
+2026-02-21 18:16:22,470 | INFO | store.journal_store | Deleted journal entry: 57dc58ba-27e3-45f1-a6d1-0db54e08b6cf
+2026-02-21 18:16:22,476 | INFO | store.journal_store | Deleted journal entry: 1475c4ab-57f9-4cb8-bbed-206b9baa64b7
+2026-02-21 18:16:22,482 | INFO | store.journal_store | Deleted journal entry: 6018f818-da25-4112-aa76-77cfe34297a3
+2026-02-21 18:16:22,488 | INFO | store.journal_store | Deleted journal entry: d6ff5499-6187-4673-9b27-231038697b87
+2026-02-21 18:16:22,494 | INFO | store.journal_store | Deleted journal entry: 29aaa3f0-bc07-409f-b639-cfc7e7d8214a
+2026-02-21 18:16:22,509 | INFO | store.journal_store | Deleted journal entry: c97256dd-e931-4936-a2ba-f49b5e9c1ce5
+2026-02-21 18:16:22,514 | INFO | store.journal_store | Deleted journal entry: b79176fc-9803-4152-ba18-6f0856f7e6f8

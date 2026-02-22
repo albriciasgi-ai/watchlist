@@ -1,0 +1,125 @@
+127.0.0.1:10000/api/drawings/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [7:37:50 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2560:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+error @ Logger.js:88
+127.0.0.1:10000/api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SymbolList.jsx:239 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:213:30
+    at SymbolList.jsx:247:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+(anonymous) @ SymbolList.jsx:239
+127.0.0.1:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+127.0.0.1:10000/api/zones/presets:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+ZoneDetectorSettings.jsx:225 [ZoneDetector] Error cargando presets del backend: TypeError: Failed to fetch
+    at ZoneDetectorSettings.jsx:219:27
+    at ZoneDetectorSettings.jsx:227:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+(anonymous) @ ZoneDetectorSettings.jsx:225
+127.0.0.1:10000/api/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+robustness.js:195 [HealthCheck] Backend disconnected: Failed to fetch
+checkBackendHealth @ robustness.js:195
+127.0.0.1:10000/api/realtime/set-interval:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/zones/realtime/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/vwap-service/data/BTCUSDT?days=90&interval=1&vwapType=rolling&rollingPeriod=1200:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+MiniChart.jsx:1278 [BTCUSDT] ❌ Error conexion SSE: Event
+eventSource.onerror @ MiniChart.jsx:1278
+MiniChart.jsx:1513 [BTCUSDT] Error cargando histórico Error: Error de conexion SSE
+    at eventSource.onerror (MiniChart.jsx:1281:16)
+loadHistoricalData @ MiniChart.jsx:1513
+127.0.0.1:10000/api/historical-stream/BTCUSDT?interval=1&days=90:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+127.0.0.1:10000/api/vwap-service/data/BTCUSDT?days=90&interval=1&vwapType=rolling&rollingPeriod=1200:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/zones/realtime/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+robustness.js:195 [HealthCheck] Backend disconnected: signal is aborted without reason
+checkBackendHealth @ robustness.js:195

@@ -5276,3 +5276,869 @@ async def get_support_resistance_v2(
             "success": False,
             "error": str(e)
         }
+
+
+# ===========================================================================
+# STRATEGY BUILDER - Infrastructure
+# ===========================================================================
+
+import gzip
+import hashlib
+
+# Cache en memoria para backtests (TTL largo, evita re-descargar velas)
+_sb_historical_cache: dict = {}
+
+# Cache en disco (persistente, sobrevive reinicios)
+_SB_CANDLE_CACHE_DIR = Path("candle_cache")
+_SB_CANDLE_CACHE_DIR.mkdir(exist_ok=True)
+
+
+def _sb_disk_cache_path(symbol: str, interval: str) -> Path:
+    return _SB_CANDLE_CACHE_DIR / f"{symbol}_{interval}.json.gz"
+
+
+def _sb_load_disk_cache(symbol: str, interval: str):
+    path = _sb_disk_cache_path(symbol, interval)
+    if not path.exists():
+        return None
+    try:
+        with gzip.open(path, 'rt', encoding='utf-8') as f:
+            data = json.load(f)
+        candles = data.get("candles", [])
+        if candles:
+            print(f"[{symbol}] [SB_DISK_CACHE] Cargadas {len(candles)} velas desde disco ({interval})")
+        return candles
+    except Exception as e:
+        print(f"[{symbol}] [SB_DISK_CACHE] Error leyendo cache: {e}")
+        try:
+            path.unlink()
+        except Exception:
+            pass
+        return None
+
+
+def _sb_save_disk_cache(symbol: str, interval: str, candles: list):
+    if not candles:
+        return
+    path = _sb_disk_cache_path(symbol, interval)
+    try:
+        data = {
+            "symbol": symbol,
+            "interval": interval,
+            "candles": candles,
+            "saved_at": time.time(),
+            "count": len(candles),
+        }
+        with gzip.open(path, 'wt', encoding='utf-8') as f:
+            json.dump(data, f)
+        size_mb = path.stat().st_size / (1024 * 1024)
+        print(f"[{symbol}] [SB_DISK_CACHE] Guardadas {len(candles)} velas en disco ({interval}, {size_mb:.1f} MB)")
+    except Exception as e:
+        print(f"[{symbol}] [SB_DISK_CACHE] Error guardando cache: {e}")
+
+
+def _sb_download_candles_sync(
+    symbol: str,
+    interval: str,
+    start_ts: int,
+    end_ts: int,
+    max_requests: int,
+    interval_minutes: int,
+    label: str = "SB_DOWNLOAD",
+    progress_callback=None,
+    total_expected: int = 0,
+):
+    """
+    Descarga velas de Bybit de forma SINCRONA (para usar con run_in_executor).
+    """
+    candles = []
+    current_start = start_ts
+    request_count = 0
+    consecutive_errors = 0
+    max_consecutive_errors = 3
+    interval_ms = interval_minutes * 60 * 1000
+
+    with httpx.Client(timeout=30) as client:
+        while request_count < max_requests:
+            if end_ts and current_start >= end_ts:
+                break
+            request_count += 1
+
+            url = (
+                "https://api.bybit.com/v5/market/kline?"
+                f"category=linear&symbol={symbol}&interval={interval}"
+                f"&start={current_start}&limit=1000"
+            )
+
+            try:
+                r = client.get(url)
+                data = r.json()
+                consecutive_errors = 0
+            except (httpx.ReadTimeout, httpx.ConnectTimeout, httpx.PoolTimeout) as te:
+                consecutive_errors += 1
+                print(f"[{symbol}] [{label}] Request #{request_count}: TIMEOUT ({type(te).__name__}) "
+                      f"- error {consecutive_errors}/{max_consecutive_errors}")
+                if consecutive_errors >= max_consecutive_errors:
+                    print(f"[{symbol}] [{label}] Demasiados timeouts, usando {len(candles)} velas")
+                    break
+                time.sleep(1)
+                continue
+            except Exception as e:
+                consecutive_errors += 1
+                print(f"[{symbol}] [{label}] Request #{request_count}: ERROR ({type(e).__name__}: {e}) "
+                      f"- error {consecutive_errors}/{max_consecutive_errors}")
+                if consecutive_errors >= max_consecutive_errors:
+                    print(f"[{symbol}] [{label}] Demasiados errores, usando {len(candles)} velas")
+                    break
+                time.sleep(1)
+                continue
+
+            if data.get("retCode") != 0:
+                print(f"[{symbol}] [{label}] Bybit error: {data.get('retMsg')}")
+                break
+
+            batch = data["result"]["list"]
+            if not batch:
+                if request_count <= 5:
+                    print(f"[{symbol}] [{label}] Request #{request_count}: 0 velas (fin de datos)")
+                break
+
+            batch.reverse()
+
+            current_time_utc = int(time.time() * 1000)
+            for c in batch:
+                ts_ms = int(c[0])
+                time_diff = (current_time_utc - ts_ms) / (1000 * 60)
+                candles.append({
+                    "timestamp": ts_ms,
+                    "open": float(c[1]), "high": float(c[2]),
+                    "low": float(c[3]), "close": float(c[4]),
+                    "volume": float(c[5]),
+                    "in_progress": time_diff < interval_minutes,
+                })
+
+            last_batch_ts = int(batch[-1][0])
+            current_start = last_batch_ts + interval_ms
+
+            if request_count <= 5 or request_count % 50 == 0:
+                print(f"[{symbol}] [{label}] Request #{request_count}: "
+                      f"+{len(batch)} velas (total: {len(candles)})")
+
+            if progress_callback and (request_count <= 3 or request_count % 5 == 0):
+                try:
+                    total = total_expected if total_expected > 0 else max(1, len(candles))
+                    pct = min(100, int(len(candles) / total * 100))
+                    progress_callback(len(candles), total, pct)
+                except Exception:
+                    pass
+
+            time.sleep(0.05)
+
+    print(f"[{symbol}] [{label}] Completado: {len(candles)} velas en {request_count} requests")
+    return candles
+
+
+_SB_INTERVAL_MIN_MAP = {
+    "1": 1, "3": 3, "5": 5, "15": 15, "30": 30,
+    "60": 60, "120": 120, "240": 240, "360": 360,
+    "720": 720, "D": 1440, "W": 10080,
+}
+
+
+async def _sb_get_historical(symbol: str, interval: str, days: int, progress_callback=None):
+    """
+    Obtiene velas historicas para Strategy Builder.
+    Bypass de MAX_DAYS_BY_INTERVAL. Cache en memoria (2h TTL) + disco (gzip).
+    Retorna dict compatible con get_historical: {success, data, total_candles, from_cache, ...}
+    """
+    _CACHE_TTL = 7200  # 2 horas
+
+    interval_final = INTERVAL_MAP.get(interval, interval)
+    interval_minutes = get_interval_minutes(interval_final)
+    total_candles_needed = int((int(days) * 24 * 60) / interval_minutes)
+
+    now_ms = int(time.time() * 1000)
+    end_ms = now_ms + (10 * 60 * 1000)
+    start_ms = now_ms - (int(days) * 24 * 60 * 60 * 1000)
+
+    cache_key = f"{symbol}_{interval_final}"
+
+    # 1. Cache en memoria (mas rapido)
+    cached = _sb_historical_cache.get(cache_key)
+    if cached:
+        cache_age = time.time() - cached["timestamp"]
+        cached_candles = cached["candles"]
+        has_enough = len(cached_candles) >= total_candles_needed * 0.8
+
+        if has_enough and cache_age < _CACHE_TTL:
+            result_candles = cached_candles[-total_candles_needed:] if len(cached_candles) > total_candles_needed * 1.1 else cached_candles
+            print(f"[{symbol}] [SB_DATA] MEMORY CACHE HIT: {len(result_candles)} velas (edad={cache_age:.0f}s)")
+            return {"success": True, "data": result_candles, "total_candles": len(result_candles),
+                    "from_cache": True, "symbol": symbol, "interval": interval_final}
+
+        if has_enough and cache_age >= _CACHE_TTL:
+            # Carga incremental desde ultimo timestamp
+            last_ts = cached_candles[-1]["timestamp"]
+            inc_start = last_ts + (interval_minutes * 60 * 1000)
+            print(f"[{symbol}] [SB_DATA] CACHE EXPIRED ({cache_age:.0f}s) - carga incremental")
+            try:
+                loop = asyncio.get_event_loop()
+                new_candles = await loop.run_in_executor(
+                    None, _sb_download_candles_sync,
+                    symbol, interval_final, inc_start, end_ms,
+                    5, interval_minutes, "SB_INC", None, 0,
+                )
+                if new_candles:
+                    merged = cached_candles + new_candles
+                    _sb_historical_cache[cache_key] = {"candles": merged, "timestamp": time.time()}
+                    _sb_save_disk_cache(symbol, interval_final, merged)
+                    result_candles = merged[-total_candles_needed:] if len(merged) > total_candles_needed * 1.1 else merged
+                    print(f"[{symbol}] [SB_DATA] INCREMENTAL MERGE: +{len(new_candles)} (total: {len(merged)})")
+                else:
+                    _sb_historical_cache[cache_key]["timestamp"] = time.time()
+                    result_candles = cached_candles
+                return {"success": True, "data": result_candles, "total_candles": len(result_candles),
+                        "from_cache": True, "symbol": symbol, "interval": interval_final}
+            except Exception as e:
+                print(f"[{symbol}] [SB_DATA] INCREMENTAL FAILED: {e} - usando cache viejo")
+                _sb_historical_cache[cache_key]["timestamp"] = time.time()
+                result_candles = cached_candles[-total_candles_needed:] if len(cached_candles) > total_candles_needed * 1.1 else cached_candles
+                return {"success": True, "data": result_candles, "total_candles": len(result_candles),
+                        "from_cache": True, "symbol": symbol, "interval": interval_final}
+
+    # 2. Cache en disco (sobrevive reinicios)
+    disk_candles = _sb_load_disk_cache(symbol, interval_final)
+    if disk_candles and len(disk_candles) >= total_candles_needed * 0.8:
+        _sb_historical_cache[cache_key] = {"candles": disk_candles, "timestamp": time.time()}
+        result_candles = disk_candles[-total_candles_needed:] if len(disk_candles) > total_candles_needed * 1.1 else disk_candles
+        print(f"[{symbol}] [SB_DATA] DISK CACHE HIT: {len(result_candles)} velas")
+        # Carga incremental desde disco
+        last_ts = disk_candles[-1]["timestamp"]
+        inc_start = last_ts + (interval_minutes * 60 * 1000)
+        if now_ms - last_ts > interval_minutes * 60 * 1000 * 2:
+            try:
+                loop = asyncio.get_event_loop()
+                new_candles = await loop.run_in_executor(
+                    None, _sb_download_candles_sync,
+                    symbol, interval_final, inc_start, end_ms,
+                    5, interval_minutes, "SB_DISK_INC", None, 0,
+                )
+                if new_candles:
+                    merged = disk_candles + new_candles
+                    _sb_historical_cache[cache_key] = {"candles": merged, "timestamp": time.time()}
+                    _sb_save_disk_cache(symbol, interval_final, merged)
+                    result_candles = merged[-total_candles_needed:] if len(merged) > total_candles_needed * 1.1 else merged
+            except Exception:
+                pass
+        return {"success": True, "data": result_candles, "total_candles": len(result_candles),
+                "from_cache": True, "symbol": symbol, "interval": interval_final}
+
+    # 3. Descarga completa desde Bybit API
+    print(f"[{symbol}] [SB_DATA] FULL DOWNLOAD: {days} dias @ {interval_final} (~{total_candles_needed} velas)")
+    max_requests = max(10, (total_candles_needed // 1000) + 5)
+    max_requests = min(max_requests, 600)
+
+    loop = asyncio.get_event_loop()
+    import functools
+    _dl_fn = functools.partial(
+        _sb_download_candles_sync,
+        symbol, interval_final, start_ms, end_ms,
+        max_requests, interval_minutes, "SB_FULL",
+        progress_callback, total_candles_needed,
+    )
+    candles = await loop.run_in_executor(None, _dl_fn)
+
+    if not candles:
+        return {"success": False, "data": [], "error": "No se pudieron descargar velas"}
+
+    # Guardar en ambos caches
+    _sb_historical_cache[cache_key] = {"candles": candles, "timestamp": time.time()}
+    _sb_save_disk_cache(symbol, interval_final, candles)
+
+    result_candles = candles[-total_candles_needed:] if len(candles) > total_candles_needed * 1.1 else candles
+    print(f"[{symbol}] [SB_DATA] Downloaded: {len(result_candles)} velas")
+    return {"success": True, "data": result_candles, "total_candles": len(result_candles),
+            "from_cache": False, "symbol": symbol, "interval": interval_final}
+
+
+# ===========================================================================
+# STRATEGY BUILDER - Backtest SSE Endpoint
+# ===========================================================================
+
+@app.post("/api/strategy-builder/backtest-stream")
+async def strategy_builder_backtest_stream_post(request: Request):
+    """
+    POST SSE endpoint para backtest del Strategy Builder.
+    Recibe config en el body JSON y retorna SSE stream.
+    El frontend lee con fetch() + ReadableStream (no EventSource).
+    """
+    import time as _time
+    import queue
+    import concurrent.futures
+    import functools
+    import sys
+    from strategy_engine import run_modular_backtest as _sb_run_backtest
+    from starlette.responses import StreamingResponse
+
+    body = await request.json()
+    symbol = body.get("symbol", "BTCUSDT")
+    interval = body.get("interval", "1")
+    days = body.get("days", 400)
+    strategy_config = body.get("config", {})
+    print(f"[SB_BACKTEST_SSE] POST REQUEST: {symbol} @ {interval} x {days} dias", flush=True)
+
+    async def generate():
+        executor = None
+        try:
+            t0 = _time.time()
+
+            print(f"[SB_BACKTEST_SSE] GENERATE INICIO: {symbol} @ {interval} x {days} dias", flush=True)
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'connecting', 'percent': 0, 'message': 'Conectado, preparando...'})}\n\n"
+
+            interval_final = INTERVAL_MAP.get(interval, interval)
+            cache_key = f"{symbol}_{interval_final}"
+            cached = _sb_historical_cache.get(cache_key)
+            has_cache = cached and len(cached.get("candles", [])) > 0
+
+            progress_queue = queue.Queue()
+
+            if has_cache:
+                n_cached = len(cached["candles"])
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 3, 'message': f'Usando {n_cached:,} velas en cache...'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 0, 'message': f'Descargando {days} dias de {symbol}...'})}\n\n"
+
+            def download_progress(loaded, total, pct):
+                progress_queue.put({
+                    'phase': 'fetching',
+                    'percent': min(4, pct),
+                    'message': f'Descargando: {loaded:,}/{total:,} velas ({pct}%)'
+                })
+
+            fetch_task = asyncio.create_task(
+                _sb_get_historical(symbol, interval, days, progress_callback=download_progress)
+            )
+
+            while not fetch_task.done():
+                if await request.is_disconnected():
+                    print(f"[SB_BACKTEST_SSE] Cliente desconectado durante descarga")
+                    fetch_task.cancel()
+                    return
+                await asyncio.sleep(0.3)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            candles_data = fetch_task.result()
+            if not candles_data or not candles_data.get("data"):
+                yield f"data: {json.dumps({'type': 'error', 'message': 'No se pudieron obtener velas historicas'})}\n\n"
+                return
+
+            candles = candles_data["data"]
+
+            # FIX DETERMINISMO: recortar al tamano exacto esperado
+            _int_minutes = _SB_INTERVAL_MIN_MAP.get(interval_final, 1)
+            _target_candles = int((int(days) * 24 * 60) / _int_minutes)
+            _raw_count = len(candles)
+            if _target_candles > 0 and len(candles) > _target_candles:
+                candles = candles[-_target_candles:]
+            first_ts = candles[0]["timestamp"] if candles else 0
+            last_ts = candles[-1]["timestamp"] if candles else 0
+            _candle_hash = hashlib.md5(f"{len(candles)}_{first_ts}_{last_ts}".encode()).hexdigest()[:8]
+            print(f"[SB_BACKTEST_SSE] DETERMINISTIC TRIM: {_raw_count} -> {len(candles)} velas "
+                  f"(target={_target_candles}, hash={_candle_hash})", flush=True)
+
+            t_fetch = _time.time() - t0
+            src = "cache" if candles_data.get("from_cache") else "Bybit API"
+            print(f"[SB_BACKTEST_SSE] {len(candles)} velas de {src} en {t_fetch:.1f}s", flush=True)
+
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetched', 'percent': 5, 'message': f'{len(candles):,} velas ({src}, {t_fetch:.1f}s)'})}\n\n"
+
+            def on_progress(phase, percent, message):
+                progress_queue.put({'phase': phase, 'percent': percent, 'message': message})
+
+            loop = asyncio.get_event_loop()
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+            _sb_run_fn = functools.partial(
+                _sb_run_backtest, candles, strategy_config, on_progress,
+                symbol=symbol, interval=interval_final, days=int(days),
+            )
+            future = loop.run_in_executor(executor, _sb_run_fn)
+
+            while not future.done():
+                if await request.is_disconnected():
+                    print(f"[SB_BACKTEST_SSE] Cliente desconectado, cancelando...")
+                    future.cancel()
+                    return
+                await asyncio.sleep(0.2)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            while not progress_queue.empty():
+                try:
+                    prog = progress_queue.get_nowait()
+                    yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                except queue.Empty:
+                    break
+
+            result = await future
+            elapsed = _time.time() - t0
+            print(f"[SB_BACKTEST_SSE] Completado en {elapsed:.1f}s", flush=True)
+
+            if not result.get('success'):
+                yield f"data: {json.dumps({'type': 'error', 'message': result.get('error', 'Error desconocido')})}\n\n"
+                return
+
+            final = {
+                'type': 'result',
+                'success': True,
+                'symbol': symbol,
+                'interval': interval,
+                'days': days,
+                'zones': result['zones'],
+                'stats': result['metrics'],
+                'trades': result.get('trades', []),
+                'candles_count': result['candles_count'],
+                'levels_count': result.get('levels_count', 0),
+                'elapsed_seconds': round(elapsed, 1),
+                'filter_stats': result.get('filter_stats'),
+                'candle_hash': _candle_hash,
+            }
+            yield f"data: {json.dumps(final)}\n\n"
+
+        except Exception as e:
+            import traceback
+            print(f"[SB_BACKTEST_SSE] Error: {e}", flush=True)
+            traceback.print_exc()
+            sys.stdout.flush()
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        finally:
+            if executor:
+                executor.shutdown(wait=False)
+
+    from starlette.responses import StreamingResponse
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
+
+# ===========================================================================
+# STRATEGY BUILDER - Optimize Estimate
+# ===========================================================================
+
+@app.post("/api/strategy-builder/optimize-estimate")
+async def strategy_builder_optimize_estimate(request: Request):
+    """Ejecuta 2 combos de prueba y extrapola el tiempo total de optimizacion."""
+    import time as _time
+    from strategy_engine import estimate_modular_optimization
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "1")
+        days = body.get("days", 400)
+        strategy_config = body.get("config", {})
+        param_ranges = body.get("param_ranges", {})
+
+        print(f"[{symbol}] [SB_OPTIMIZE_EST] Estimando: {len(param_ranges)} params")
+
+        _fetch_start = _time.time()
+        historical = await _sb_get_historical(symbol, interval, days)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+
+        # FIX DETERMINISMO
+        interval_final = INTERVAL_MAP.get(interval, interval)
+        _im = _SB_INTERVAL_MIN_MAP.get(interval_final, 1)
+        _tc = int((int(days) * 24 * 60) / _im)
+        if _tc > 0 and len(candles) > _tc:
+            candles = candles[-_tc:]
+        print(f"[{symbol}] [SB_OPTIMIZE_EST] {len(candles)} velas (target={_tc}) en {_fetch_elapsed:.1f}s")
+
+        loop = asyncio.get_event_loop()
+        import functools
+        _est_fn = functools.partial(
+            estimate_modular_optimization, candles, strategy_config, param_ranges,
+            symbol=symbol, interval=interval_final, days=int(days),
+        )
+        result = await loop.run_in_executor(None, _est_fn)
+
+        result['fetch_time'] = round(_fetch_elapsed, 2)
+        return result
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+# ===========================================================================
+# STRATEGY BUILDER - Optimize (Grid Search)
+# ===========================================================================
+
+@app.post("/api/strategy-builder/optimize")
+async def strategy_builder_optimize(request: Request):
+    """Grid search completo para optimizacion de parametros del Strategy Builder."""
+    import time as _time
+    from strategy_engine import run_modular_optimization
+
+    try:
+        body = await request.json()
+        symbol = body.get("symbol", "BTCUSDT")
+        interval = body.get("interval", "1")
+        days = body.get("days", 400)
+        strategy_config = body.get("config", {})
+        param_ranges = body.get("param_ranges", {})
+        metric = body.get("metric", "expectancy")
+        top_n = body.get("top_n", 15)
+
+        print(f"[{symbol}] [SB_OPTIMIZE] === INICIO OPTIMIZACION ===")
+        print(f"[{symbol}] [SB_OPTIMIZE] {len(param_ranges)} params, metric={metric}")
+
+        _fetch_start = _time.time()
+        historical = await _sb_get_historical(symbol, interval, days)
+        _fetch_elapsed = _time.time() - _fetch_start
+
+        if not historical.get('success') or not historical.get('data'):
+            return {"success": False, "error": "No se pudieron obtener datos historicos"}
+
+        candles = historical['data']
+
+        # FIX DETERMINISMO
+        interval_final = INTERVAL_MAP.get(interval, interval)
+        _im = _SB_INTERVAL_MIN_MAP.get(interval_final, 1)
+        _tc = int((int(days) * 24 * 60) / _im)
+        if _tc > 0 and len(candles) > _tc:
+            candles = candles[-_tc:]
+        print(f"[{symbol}] [SB_OPTIMIZE] {len(candles)} velas (target={_tc}) en {_fetch_elapsed:.1f}s")
+
+        loop = asyncio.get_event_loop()
+        import functools
+        _opt_fn = functools.partial(
+            run_modular_optimization, candles, strategy_config,
+            param_ranges, metric, top_n,
+            symbol=symbol, interval=interval_final, days=int(days),
+        )
+        result = await loop.run_in_executor(None, _opt_fn)
+
+        result['fetch_time'] = round(_fetch_elapsed, 2)
+        print(f"[{symbol}] [SB_OPTIMIZE] Completado: {result.get('total_combos', 0)} combos en {result.get('elapsed', 0)}s")
+        return result
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"success": False, "error": str(e)}
+
+
+# ===========================================================================
+# STRATEGY BUILDER - Auto-Optimize SSE
+# ===========================================================================
+
+@app.post("/api/strategy-builder/auto-optimize-stream")
+async def strategy_builder_auto_optimize_stream(request: Request):
+    """
+    Auto-optimize SSE endpoint - 3 fases: categorical sweep, combo generation, numeric tuning.
+    Recibe {symbol, interval, days, ranking_metric, top_n, min_trades} en body JSON.
+    """
+    import time as _time
+    import queue
+    import concurrent.futures
+    import functools
+    from strategy_engine import run_auto_optimize as _auto_opt
+    from starlette.responses import StreamingResponse
+
+    body = await request.json()
+    symbol = body.get("symbol", "BTCUSDT")
+    interval = body.get("interval", "60")
+    days = body.get("days", 365)
+    ranking_metric = body.get("ranking_metric", "recovery_factor")
+    top_n = body.get("top_n", 20)
+    min_trades = body.get("min_trades", 15)
+    print(f"[{symbol}] [AUTO_OPT_SSE] POST REQUEST: {interval} x {days} dias, metric={ranking_metric}, min_trades={min_trades}", flush=True)
+
+    async def generate():
+        executor = None
+        try:
+            t0 = _time.time()
+            progress_queue = queue.Queue()
+
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'connecting', 'percent': 0, 'message': 'Conectado, preparando...'})}\n\n"
+
+            interval_final = INTERVAL_MAP.get(interval, interval)
+            cache_key = f"{symbol}_{interval_final}"
+            cached = _sb_historical_cache.get(cache_key)
+            has_cache = cached and len(cached.get("candles", [])) > 0
+
+            if has_cache:
+                n_cached = len(cached["candles"])
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 1, 'message': f'Usando {n_cached:,} velas en cache...'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 0, 'message': f'Descargando {days} dias de {symbol}...'})}\n\n"
+
+            def download_progress(loaded, total, pct):
+                progress_queue.put({
+                    'phase': 'fetching',
+                    'percent': min(3, pct),
+                    'message': f'Descargando: {loaded:,}/{total:,} velas ({pct}%)'
+                })
+
+            fetch_task = asyncio.create_task(
+                _sb_get_historical(symbol, interval, days, progress_callback=download_progress)
+            )
+
+            while not fetch_task.done():
+                if await request.is_disconnected():
+                    print(f"[{symbol}] [AUTO_OPT_SSE] Cliente desconectado durante descarga")
+                    fetch_task.cancel()
+                    return
+                await asyncio.sleep(0.3)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            candles_data = fetch_task.result()
+            if not candles_data or not candles_data.get("data"):
+                yield f"data: {json.dumps({'type': 'error', 'message': 'No se pudieron obtener velas historicas'})}\n\n"
+                return
+
+            candles = candles_data["data"]
+
+            # FIX DETERMINISMO
+            _int_minutes = _SB_INTERVAL_MIN_MAP.get(interval_final, 1)
+            _tc = int((int(days) * 24 * 60) / _int_minutes)
+            _raw_count = len(candles)
+            if _tc > 0 and len(candles) > _tc:
+                candles = candles[-_tc:]
+            print(f"[{symbol}] [AUTO_OPT_SSE] TRIM: {_raw_count} -> {len(candles)} velas (target={_tc})", flush=True)
+
+            t_fetch = _time.time() - t0
+            src = "cache" if candles_data.get("from_cache") else "Bybit API"
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetched', 'percent': 4, 'message': f'{len(candles):,} velas ({src}, {t_fetch:.1f}s)'})}\n\n"
+
+            def on_progress(phase, percent, message):
+                progress_queue.put({'phase': phase, 'percent': percent, 'message': message})
+
+            loop = asyncio.get_event_loop()
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+            _opt_fn = functools.partial(
+                _auto_opt, candles, on_progress,
+                symbol=symbol, interval=interval_final, days=int(days),
+                ranking_metric=ranking_metric, top_n=top_n,
+                min_trades=min_trades,
+            )
+            future = loop.run_in_executor(executor, _opt_fn)
+
+            while not future.done():
+                if await request.is_disconnected():
+                    print(f"[{symbol}] [AUTO_OPT_SSE] Cliente desconectado, cancelando...")
+                    future.cancel()
+                    return
+                await asyncio.sleep(0.3)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            while not progress_queue.empty():
+                try:
+                    prog = progress_queue.get_nowait()
+                    yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                except queue.Empty:
+                    break
+
+            result = await future
+            elapsed = _time.time() - t0
+            print(f"[{symbol}] [AUTO_OPT_SSE] Completado: {result.get('total_backtests', 0)} backtests en {elapsed:.1f}s", flush=True)
+
+            if not result.get('success'):
+                yield f"data: {json.dumps({'type': 'error', 'message': result.get('error', 'Error desconocido')})}\n\n"
+                return
+
+            final = {
+                'type': 'result',
+                'success': True,
+                'symbol': symbol,
+                'interval': interval,
+                'days': days,
+                'total_backtests': result['total_backtests'],
+                'elapsed_seconds': round(elapsed, 1),
+                'ranking_metric': ranking_metric,
+                'candles_count': result['candles'],
+                'phase1_summary': result.get('phase1_summary', {}),
+                'results': result['results'],
+                'all_results': result.get('all_results', []),
+            }
+            yield f"data: {json.dumps(final)}\n\n"
+
+        except Exception as e:
+            import traceback
+            print(f"[{symbol}] [AUTO_OPT_SSE] Error: {e}", flush=True)
+            traceback.print_exc()
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        finally:
+            if executor:
+                executor.shutdown(wait=False)
+
+    from starlette.responses import StreamingResponse
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
+
+# ===========================================================================
+# STRATEGY BUILDER - Presets
+# ===========================================================================
+
+_SB_PRESETS_FILE = Path("config") / "strategy_builder_presets.json"
+
+
+def _load_sb_presets() -> dict:
+    if _SB_PRESETS_FILE.exists():
+        try:
+            return json.loads(_SB_PRESETS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_sb_presets(presets: dict):
+    _SB_PRESETS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    _SB_PRESETS_FILE.write_text(
+        json.dumps(presets, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+
+@app.get("/api/strategy-builder/presets")
+async def get_sb_presets():
+    """Lista todos los presets del Strategy Builder."""
+    try:
+        presets = _load_sb_presets()
+        return {"success": True, "presets": presets}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/strategy-builder/presets/{name}")
+async def save_sb_preset(name: str, request: Request):
+    """Guarda un preset del Strategy Builder con nombre dado."""
+    try:
+        body = await request.json()
+        presets = _load_sb_presets()
+        presets[name] = {
+            "config": body.get("config", {}),
+            "days": body.get("days"),
+            "vwapPeriod": body.get("vwapPeriod"),
+            "savedAt": body.get("savedAt", ""),
+        }
+        _save_sb_presets(presets)
+        return {"success": True, "message": f"Preset '{name}' guardado"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.delete("/api/strategy-builder/presets/{name}")
+async def delete_sb_preset(name: str):
+    """Elimina un preset del Strategy Builder."""
+    try:
+        presets = _load_sb_presets()
+        if name not in presets:
+            return {"success": False, "error": f"Preset '{name}' no existe"}
+        del presets[name]
+        _save_sb_presets(presets)
+        return {"success": True, "message": f"Preset '{name}' eliminado"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+# ===========================================================================
+# STRATEGY BUILDER - VP Zone Cache Browser
+# ===========================================================================
+
+@app.get("/api/strategy-builder/vp-zone-caches")
+async def list_vp_zone_caches(symbol: str = "", interval: str = ""):
+    """
+    Lista todos los archivos de cache de zonas VP disponibles en disco.
+    """
+    import os
+
+    cache_dir = os.path.join(os.path.dirname(__file__), "zones_cache")
+    if not os.path.exists(cache_dir):
+        return {"success": True, "caches": []}
+
+    results = []
+    for fname in os.listdir(cache_dir):
+        if not fname.endswith(".json"):
+            continue
+        if os.path.isdir(os.path.join(cache_dir, fname)):
+            continue
+
+        filepath = os.path.join(cache_dir, fname)
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            c_symbol = data.get('symbol', '')
+            c_interval = data.get('interval', '')
+            c_days = data.get('days', 0)
+            c_zones = len(data.get('zones', []))
+            c_candles = data.get('candles_count', 0)
+            c_timestamp = data.get('timestamp', 0)
+            c_fingerprint = data.get('fingerprint', '')
+            c_det_params = data.get('detection_params', {})
+
+            if symbol and c_symbol != symbol:
+                continue
+            if interval:
+                interval_clean = INTERVAL_MAP.get(interval, interval)
+                if c_interval != interval_clean:
+                    continue
+
+            age_hours = (time.time() - c_timestamp) / 3600
+
+            results.append({
+                'filename': fname,
+                'symbol': c_symbol,
+                'interval': c_interval,
+                'days': c_days,
+                'zones_count': c_zones,
+                'candles_count': c_candles,
+                'fingerprint': c_fingerprint,
+                'age_hours': round(age_hours, 1),
+                'timestamp': c_timestamp,
+                'detection_params': c_det_params,
+            })
+
+        except Exception:
+            continue
+
+    results.sort(key=lambda r: r['timestamp'], reverse=True)
+    return {"success": True, "caches": results}

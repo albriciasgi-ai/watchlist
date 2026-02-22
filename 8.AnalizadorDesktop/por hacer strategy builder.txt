@@ -1,0 +1,14 @@
+mirar cómo incluir el volumen para los movimientos que definan la verdadera tendencia
+
+El neckline en el dtb no se utiliza. Sería más bien la confirmación del extremo del Double top/bottom
+No están funcionando bien los filtros del vwap, revisar cada opción.
+Falta ponerle la inteligencia de identificar los tipos de perfiles
+Aumentar la altura el volumen
+Indicador de volumen de respuesta
+Cómo incluir el timeframe + alto en el análisis? Sería buena incluir un ejercicio de análisis para
+poder tener en cuenta el proceso completo y tenerlo en el strategy builder. Que siempre siga el mismo proceso.
+
+Qué necesitamos para que puden hacerse las compras desde el strategy builder si ya no tenemos claude?
+1. Verificar que cada filtro funcione. PAra esto necesitamos buen logging de backtesting.
+2. activar el servicio de alertas desde el builder (se puede hacer como por estrategia y que se puedan activar)--OK
+3. permitir activar las estrategias para otras monedas al tiempo

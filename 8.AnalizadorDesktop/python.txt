@@ -1,0 +1,5 @@
+para ver los procesos de python:
+tasklist | findstr python
+
+para matar los procesos de python:
+taskkill /F /IM python.exe

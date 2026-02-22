@@ -984,7 +984,21 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const freshPriceContext = {
         minPrice,
         maxPrice,
-        priceToY: (price) => marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset
+        priceToY: (price) => marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset,
+        timeToX: (timestamp) => {
+          if (displayCandles.length === 0) return null;
+          let closestIndex = 0;
+          let minDiff = Math.abs(displayCandles[0].timestamp - timestamp);
+          for (let i = 1; i < displayCandles.length; i++) {
+            const diff = Math.abs(displayCandles[i].timestamp - timestamp);
+            if (diff < minDiff) {
+              minDiff = diff;
+              closestIndex = i;
+            }
+          }
+          const relativeIndex = closestIndex - startIdx;
+          return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
+        }
       };
 
       indicatorManagerRef.current.renderOverlays(

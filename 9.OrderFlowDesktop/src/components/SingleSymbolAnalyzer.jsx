@@ -14,6 +14,7 @@ import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import OrderFlowSettings from "./OrderFlowSettings";
+import StrategyBuilder from "./StrategyBuilder";
 import ConnectionStatus from "./ConnectionStatus";
 import IntegrityStatus from "./IntegrityStatus";
 import wsManager from "./WebSocketManager";
@@ -180,6 +181,7 @@ const SingleSymbolAnalyzer = () => {
   const [showSR2Settings, setShowSR2Settings] = useState(false);
   const [showOrderFlowSettings, setShowOrderFlowSettings] = useState(false);
   const [orderFlowConfig, setOrderFlowConfig] = useState(null);
+  const [showStrategyBuilder, setShowStrategyBuilder] = useState(false);
 
   // Trading Panel state
   const [isTradingPanelOpen, setIsTradingPanelOpen] = useState(false);
@@ -735,6 +737,15 @@ const SingleSymbolAnalyzer = () => {
           >
             📊 Trading
           </button>
+
+          <button
+            className={`trading-panel-toggle ${showStrategyBuilder ? 'active' : ''}`}
+            onClick={() => setShowStrategyBuilder(!showStrategyBuilder)}
+            title="Strategy Builder"
+            style={showStrategyBuilder ? { background: '#00796B', borderColor: '#00897B' } : { background: '#004D40', borderColor: '#00695C' }}
+          >
+            Strategy
+          </button>
         </div>
       </div>
 
@@ -1121,6 +1132,16 @@ const SingleSymbolAnalyzer = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {showStrategyBuilder && (
+        <StrategyBuilder
+          isOpen={showStrategyBuilder}
+          onClose={() => setShowStrategyBuilder(false)}
+          symbol={symbol}
+          interval={interval}
+          days={days}
+        />
       )}
     </div>
   );

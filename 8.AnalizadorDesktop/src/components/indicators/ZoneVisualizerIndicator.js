@@ -28,6 +28,35 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     this._detectionParams = {};  // Params del ZoneDetectorSettings para enviar al endpoint
     this._useV2 = true;          // Usar endpoints v2 (nuevo detector incremental)
 
+    // VP Profiles para visualizacion (perfiles VP Periodic y VP Zones)
+    this._vpProfiles = [];
+    this._showVPProfiles = false;
+    this._vpProfilesLogged = false;
+
+    // Gaussian Channel para visualizacion
+    this._gcChannel = null;   // {points: [{ts, f, h, l}]}
+    this._gcChannelLogged = false;
+
+    // Strategy Builder diagnostics (semaforo de debugging)
+    this._sbDiagnosticsMap = new Map(); // timestamp -> {has_level, entry_signal, direction_ok, confluence_ok, context_ok, sl_valid, tp_valid, trade_opened}
+    this._sbDiagRenderLogged = false;
+    this._sbDiagKeys = ['has_level', 'entry_signal', 'direction_ok', 'confluence_ok', 'context_ok', 'sl_valid', 'tp_valid', 'trade_opened'];
+    this._sbDiagLabels = {
+      'has_level': 'LVL',
+      'entry_signal': 'SIG',
+      'direction_ok': 'DIR',
+      'confluence_ok': 'CONF',
+      'context_ok': 'CTX',
+      'sl_valid': 'SL',
+      'tp_valid': 'TP',
+      'trade_opened': 'TRADE',
+    };
+    this._sbDiagColors = {
+      pass: 'rgba(0, 200, 100, 0.85)',    // Verde brillante
+      fail: 'rgba(80, 80, 80, 0.25)',      // Gris oscuro
+      trade: 'rgba(255, 215, 0, 0.95)',    // Dorado para trade abierto
+    };
+
     // Configuracion visual
     this.config = {
       showZones: true,
@@ -172,6 +201,8 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     this._realtimeZones = [];
     this._vpZones = [];
     this._strategyZones = [];
+    this._vpProfiles = [];
+    this._vpProfilesLogged = false;
     this.zones = [];
     console.log(`[${this.symbol}] ZoneVisualizer: Zonas limpiadas`);
   }
@@ -262,7 +293,223 @@ class ZoneVisualizerIndicator extends IndicatorBase {
       this._noRenderLogged = true;
     }
 
+    // Renderizar perfiles VP si estan habilitados
+    if (this._showVPProfiles && this._vpProfiles.length > 0) {
+      this._renderVPProfiles(ctx, visibleCandles, bounds, priceContext);
+    }
+
+    // Renderizar Gaussian Channel si hay datos
+    if (this._gcChannel && this._gcChannel.points && this._gcChannel.points.length > 0) {
+      this._renderGCChannel(ctx, visibleCandles, bounds, priceContext);
+    }
+
     ctx.restore();
+  }
+
+  /**
+   * Renderiza perfiles VP como rectangulos VAL-VAH con lineas POC/VAH/VAL.
+   * VP Periodic = azul, VP Zones = verde.
+   */
+  _renderVPProfiles(ctx, visibleCandles, bounds, priceContext) {
+    const { priceToY, timeToX } = priceContext;
+    if (!timeToX || !priceToY) return;
+
+    const visFirstTs = visibleCandles && visibleCandles.length > 0 ? visibleCandles[0].timestamp : 0;
+    const visLastTs = visibleCandles && visibleCandles.length > 0 ? visibleCandles[visibleCandles.length - 1].timestamp : Infinity;
+
+    let profilesRendered = 0;
+
+    for (const p of this._vpProfiles) {
+      // Verificar interseccion temporal con velas visibles
+      if (p.end_ts < visFirstTs || p.start_ts > visLastTs) continue;
+
+      const x1 = timeToX(p.start_ts);
+      const x2 = timeToX(p.end_ts);
+      if (x1 === undefined || x2 === undefined) continue;
+
+      const xLeft = Math.min(x1, x2);
+      const xRight = Math.max(x1, x2);
+      const rectW = Math.max(xRight - xLeft, 2);
+
+      const yVAH = priceToY(p.vah);
+      const yVAL = priceToY(p.val);
+      const yPOC = priceToY(p.poc);
+      if (yVAH === undefined || yVAL === undefined || yPOC === undefined) continue;
+
+      const yTop = Math.min(yVAH, yVAL);
+      const yBot = Math.max(yVAH, yVAL);
+      const rectH = Math.max(yBot - yTop, 1);
+
+      const isVPZones = p.source === 'vp_zones';
+
+      // Colores: VP Periodic = azul, VP Zones = verde
+      const fillColor = isVPZones ? 'rgba(0, 180, 100, 0.08)' : 'rgba(50, 120, 220, 0.08)';
+      const borderColor = isVPZones ? 'rgba(0, 180, 100, 0.35)' : 'rgba(50, 120, 220, 0.35)';
+      const pocColor = isVPZones ? 'rgba(0, 220, 120, 0.80)' : 'rgba(70, 150, 255, 0.80)';
+      const vahValColor = isVPZones ? 'rgba(0, 180, 100, 0.45)' : 'rgba(50, 120, 220, 0.45)';
+
+      // Rectangulo fill VAL-VAH
+      ctx.fillStyle = fillColor;
+      ctx.fillRect(xLeft, yTop, rectW, rectH);
+
+      // Borde del rectangulo
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = 0.5;
+      ctx.setLineDash([4, 4]);
+      ctx.strokeRect(xLeft, yTop, rectW, rectH);
+      ctx.setLineDash([]);
+
+      // Linea POC (mas gruesa y solida)
+      ctx.strokeStyle = pocColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(xLeft, yPOC);
+      ctx.lineTo(xLeft + rectW, yPOC);
+      ctx.stroke();
+
+      // Lineas VAH y VAL (mas finas, discontinuas)
+      ctx.strokeStyle = vahValColor;
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([3, 3]);
+
+      ctx.beginPath();
+      ctx.moveTo(xLeft, yVAH);
+      ctx.lineTo(xLeft + rectW, yVAH);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(xLeft, yVAL);
+      ctx.lineTo(xLeft + rectW, yVAL);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+
+      // Labels en el borde izquierdo
+      ctx.font = '9px monospace';
+      ctx.textAlign = 'left';
+      const labelX = xLeft + 3;
+
+      // Label POC
+      ctx.fillStyle = pocColor;
+      ctx.fillText(`POC ${p.poc.toFixed(0)}`, labelX, yPOC - 3);
+
+      // Label VAH
+      ctx.fillStyle = vahValColor;
+      ctx.fillText(`VAH ${p.vah.toFixed(0)}`, labelX, yVAH - 3);
+
+      // Label VAL
+      ctx.fillText(`VAL ${p.val.toFixed(0)}`, labelX, yVAL + 11);
+
+      // Label de source + shape para VP Zones
+      if (isVPZones && p.shape_type) {
+        const shapeLabel = `${p.shape_type} (D:${p.d_score || 0})`;
+        ctx.fillStyle = 'rgba(0, 180, 100, 0.6)';
+        ctx.fillText(shapeLabel, labelX, yTop - 3);
+      }
+
+      profilesRendered++;
+    }
+
+    if (profilesRendered > 0 && !this._vpProfilesLogged) {
+      console.log(`[${this.symbol}] VP Profiles: ${profilesRendered}/${this._vpProfiles.length} perfiles renderizados`);
+      this._vpProfilesLogged = true;
+    }
+  }
+
+  /**
+   * Renderiza el Gaussian Channel como 3 lineas sobre el chart de precios.
+   * - Linea central (filt): naranja, solida
+   * - Banda superior (hband): cyan, discontinua
+   * - Banda inferior (lband): cyan, discontinua
+   * - Fill entre bandas: cyan semitransparente
+   */
+  _renderGCChannel(ctx, visibleCandles, bounds, priceContext) {
+    const { priceToY, timeToX } = priceContext;
+    if (!timeToX || !priceToY) return;
+
+    const points = this._gcChannel.points;
+    if (!points || points.length < 2) return;
+
+    const visFirstTs = visibleCandles && visibleCandles.length > 0 ? visibleCandles[0].timestamp : 0;
+    const visLastTs = visibleCandles && visibleCandles.length > 0 ? visibleCandles[visibleCandles.length - 1].timestamp : Infinity;
+
+    // Filtrar puntos que estan en el rango visible (con 1 punto extra a cada lado para continuidad)
+    let startIdx = 0;
+    let endIdx = points.length - 1;
+    for (let i = 0; i < points.length; i++) {
+      if (points[i].ts >= visFirstTs) { startIdx = Math.max(0, i - 1); break; }
+    }
+    for (let i = points.length - 1; i >= 0; i--) {
+      if (points[i].ts <= visLastTs) { endIdx = Math.min(points.length - 1, i + 1); break; }
+    }
+
+    if (startIdx >= endIdx) return;
+
+    // Convertir a coordenadas de pantalla
+    const screenPoints = [];
+    for (let i = startIdx; i <= endIdx; i++) {
+      const p = points[i];
+      const x = timeToX(p.ts);
+      if (x === undefined) continue;
+      const yF = priceToY(p.f);
+      const yH = priceToY(p.h);
+      const yL = priceToY(p.l);
+      if (yF === undefined || yH === undefined || yL === undefined) continue;
+      screenPoints.push({ x, yF, yH, yL });
+    }
+
+    if (screenPoints.length < 2) return;
+
+    // 1. Fill entre bandas (area semitransparente)
+    ctx.fillStyle = 'rgba(0, 200, 220, 0.06)';
+    ctx.beginPath();
+    // Linea superior (hband) de izquierda a derecha
+    ctx.moveTo(screenPoints[0].x, screenPoints[0].yH);
+    for (let i = 1; i < screenPoints.length; i++) {
+      ctx.lineTo(screenPoints[i].x, screenPoints[i].yH);
+    }
+    // Linea inferior (lband) de derecha a izquierda
+    for (let i = screenPoints.length - 1; i >= 0; i--) {
+      ctx.lineTo(screenPoints[i].x, screenPoints[i].yL);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // 2. Banda superior (hband) - linea cyan discontinua
+    ctx.strokeStyle = 'rgba(0, 200, 220, 0.55)';
+    ctx.lineWidth = 1.0;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(screenPoints[0].x, screenPoints[0].yH);
+    for (let i = 1; i < screenPoints.length; i++) {
+      ctx.lineTo(screenPoints[i].x, screenPoints[i].yH);
+    }
+    ctx.stroke();
+
+    // 3. Banda inferior (lband) - linea cyan discontinua
+    ctx.beginPath();
+    ctx.moveTo(screenPoints[0].x, screenPoints[0].yL);
+    for (let i = 1; i < screenPoints.length; i++) {
+      ctx.lineTo(screenPoints[i].x, screenPoints[i].yL);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 4. Linea central (filt) - naranja solida, mas gruesa
+    ctx.strokeStyle = 'rgba(255, 160, 0, 0.80)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(screenPoints[0].x, screenPoints[0].yF);
+    for (let i = 1; i < screenPoints.length; i++) {
+      ctx.lineTo(screenPoints[i].x, screenPoints[i].yF);
+    }
+    ctx.stroke();
+
+    // Log una vez
+    if (!this._gcChannelLogged) {
+      console.log(`[${this.symbol}] GC Channel: ${screenPoints.length} puntos renderizados de ${points.length} totales`);
+      this._gcChannelLogged = true;
+    }
   }
 
   /**
@@ -637,6 +884,38 @@ class ZoneVisualizerIndicator extends IndicatorBase {
             ctx.lineTo(xTradeEnd, ySLClamp);
             ctx.stroke();
 
+            // --- Linea de NIVEL ORIGEN (debug): cyan, 10 barras antes del entry ---
+            if (zone.level_price && timeToX) {
+              const yLevel = priceToY(zone.level_price);
+              if (yLevel !== undefined) {
+                const yLevelClamp = Math.max(Math.min(yLevel, boundsY + boundsHeight), boundsY);
+                // Calcular ancho de 10 barras segun interval
+                const intervalMinutes = { '1': 1, '3': 3, '5': 5, '15': 15, '30': 30, '60': 60, '120': 120, '240': 240, '360': 360, '720': 720, 'D': 1440, 'W': 10080 };
+                const barMs = (intervalMinutes[this.interval] || 1) * 60000;
+                const levelLineStart = timeToX(trade.entry_timestamp - barMs * 10);
+                const xLevelStart = (levelLineStart !== null && levelLineStart !== undefined)
+                  ? Math.max(boundsX, levelLineStart)
+                  : Math.max(boundsX, xTradeStart - 80);
+
+                ctx.strokeStyle = 'rgba(0, 200, 255, 0.95)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 3]);
+                ctx.beginPath();
+                ctx.moveTo(xLevelStart, yLevelClamp);
+                ctx.lineTo(xTradeStart + 20, yLevelClamp);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Label del nivel origen
+                const srcLabel = (zone.level_source || '').replace('vp_periodic', 'VP').replace('sr_v2', 'SR').replace('vwap_bands', 'VWAP').replace('swing_levels', 'SW').replace('dtb_neckline', 'DTB').replace('vp_zones', 'VPZ');
+                ctx.font = 'bold 9px Arial';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'bottom';
+                ctx.fillStyle = 'rgba(0, 200, 255, 1)';
+                ctx.fillText(`${srcLabel} ${zone.level_price.toFixed(1)}`, xLevelStart + 2, yLevelClamp - 2);
+              }
+            }
+
             // Labels de TP y SL
             ctx.font = 'bold 10px Arial';
             ctx.textAlign = 'right';
@@ -924,6 +1203,221 @@ class ZoneVisualizerIndicator extends IndicatorBase {
     ctx.strokeText(label, labelX, labelY);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
     ctx.fillText(label, labelX, labelY);
+  }
+
+  // ==========================================================
+  // Strategy Builder - Semaforo de debugging
+  // ==========================================================
+
+  /**
+   * Establece los diagnosticos del Strategy Builder.
+   * @param {Object} diagData - {timestamps: [], flags: {key: [bool]}, keys: [string]}
+   */
+  setSBDiagnostics(diagData) {
+    this._sbDiagnosticsMap.clear();
+    this._sbDiagRenderLogged = false;
+    if (!diagData || !diagData.timestamps || !diagData.flags) return;
+
+    const ts = diagData.timestamps;
+    const flags = diagData.flags;
+    const keys = diagData.keys || this._sbDiagKeys;
+
+    for (let i = 0; i < ts.length; i++) {
+      const entry = {};
+      for (const k of keys) {
+        entry[k] = flags[k] ? (flags[k][i] || false) : false;
+      }
+      this._sbDiagnosticsMap.set(ts[i], entry);
+    }
+    // Contar cuantas velas tienen al menos 1 flag true
+    let withTrue = 0;
+    for (let j = 0; j < ts.length; j++) {
+      for (const k of keys) {
+        if (flags[k] && flags[k][j]) { withTrue++; break; }
+      }
+    }
+    console.log(`[${this.symbol}] SB DIAGNOSTICS LOADED: ${ts.length} velas con datos, ${withTrue} con al menos 1 TRUE. Map size=${this._sbDiagnosticsMap.size}`);
+  }
+
+  /**
+   * Limpia los diagnosticos del Strategy Builder.
+   */
+  clearSBDiagnostics() {
+    this._sbDiagnosticsMap.clear();
+  }
+
+  // ==========================================================
+  // VP Profiles visualization
+  // ==========================================================
+
+  /**
+   * Establece perfiles VP para visualizacion en el chart.
+   * @param {Array} profiles - [{source, start_ts, end_ts, poc, vah, val, shape_type?, d_score?}]
+   */
+  setVPProfiles(profiles) {
+    this._vpProfiles = profiles || [];
+    console.log(`[${this.symbol}] VP Profiles: ${this._vpProfiles.length} perfiles cargados`);
+  }
+
+  /**
+   * Toggle visibilidad de perfiles VP.
+   */
+  setShowVPProfiles(show) {
+    this._showVPProfiles = !!show;
+  }
+
+  /**
+   * Establece datos del Gaussian Channel para visualizacion.
+   * @param {Object|null} gcData - {points: [{ts, f, h, l}]} o null para limpiar
+   */
+  setGCChannel(gcData) {
+    this._gcChannel = gcData;
+    this._gcChannelLogged = false;
+    if (gcData && gcData.points) {
+      console.log(`[${this.symbol}] GC Channel: ${gcData.points.length} puntos cargados`);
+    }
+  }
+
+  /**
+   * Limpia perfiles VP.
+   */
+  clearVPProfiles() {
+    this._vpProfiles = [];
+  }
+
+  /**
+   * Retorna cuantas barras de diagnostico SB hay activas (8 fijas).
+   */
+  getSBDiagnosticsBarCount() {
+    if (this._sbDiagnosticsMap.size === 0) return 0;
+    return this._sbDiagKeys.length; // 8 barras
+  }
+
+  /**
+   * Retorna la altura total de las barras de diagnostico SB.
+   */
+  getSBDiagnosticsHeight() {
+    const count = this.getSBDiagnosticsBarCount();
+    if (count === 0) return 0;
+    const barHeight = 20;
+    const barGap = 2;
+    const titleH = 18;
+    return titleH + (barHeight * count) + (barGap * (count - 1));
+  }
+
+  /**
+   * Renderiza las barras de diagnostico del Strategy Builder.
+   * Patron identico a renderMetricsBars() pero con colores verdes/grises.
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {number} x - Posicion X (marginLeft)
+   * @param {number} startY - Posicion Y donde comienzan
+   * @param {number} width - Ancho disponible
+   * @param {number} candleWidth - Ancho de cada vela
+   * @param {Array} visibleCandles
+   * @returns {number} Altura total ocupada
+   */
+  renderSBDiagnosticsBars(ctx, x, startY, width, candleWidth, visibleCandles) {
+    if (!visibleCandles || visibleCandles.length === 0) return 0;
+    if (this._sbDiagnosticsMap.size === 0) return 0;
+
+    const barHeight = 20;
+    const barGap = 2;
+    const passColor = this._sbDiagColors.pass;
+    const failColor = this._sbDiagColors.fail;
+    const tradeColor = this._sbDiagColors.trade;
+
+    // Fondo semitransparente para separar visualmente del chart
+    const titleH = 18;
+    const totalH = titleH + (barHeight * this._sbDiagKeys.length) + (barGap * (this._sbDiagKeys.length - 1));
+
+    ctx.fillStyle = 'rgba(10, 8, 30, 0.92)';
+    ctx.fillRect(x, startY, width, totalH);
+
+    // Linea separadora superior purpura
+    ctx.strokeStyle = 'rgba(180, 130, 255, 0.8)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, startY);
+    ctx.lineTo(x + width, startY);
+    ctx.stroke();
+
+    // Titulo del bloque
+    ctx.font = 'bold 12px monospace';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(180, 130, 255, 0.95)';
+    ctx.fillText('SB DIAGNOSTICS', x + 5, startY + 3);
+
+    let currentY = startY + titleH;
+
+    // Ancho minimo para que velas con datos sean visibles
+    const minBlockPx = Math.max(4, candleWidth * 2);
+
+    // Contar matches para debug (solo una vez)
+    let matchCount = 0;
+    let firstMatch = false;
+
+    for (let ki = 0; ki < this._sbDiagKeys.length; ki++) {
+      const key = this._sbDiagKeys[ki];
+      const label = this._sbDiagLabels[key] || key;
+
+      // Fondo de la fila
+      ctx.fillStyle = ki % 2 === 0 ? 'rgba(30, 25, 50, 0.5)' : 'rgba(45, 38, 65, 0.5)';
+      ctx.fillRect(x, currentY, width, barHeight);
+
+      // Pintar solo velas que TIENEN datos diagnosticos
+      visibleCandles.forEach((candle, i) => {
+        const diag = this._sbDiagnosticsMap.get(candle.timestamp);
+        if (!diag) return;
+
+        if (ki === 0) matchCount++;
+
+        const candleX = x + (i * candleWidth);
+        let color;
+        if (key === 'trade_opened' && diag[key]) {
+          color = tradeColor;
+        } else if (diag[key]) {
+          color = passColor;
+        } else {
+          color = failColor;
+        }
+
+        ctx.fillStyle = color;
+        const blockW = Math.max(candleWidth, minBlockPx);
+        ctx.fillRect(candleX, currentY, blockW, barHeight);
+      });
+
+      // Label a la izquierda con contraste
+      ctx.font = 'bold 11px monospace';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';
+
+      const labelY = currentY + (barHeight / 2);
+      const labelX = x + 4;
+      const textW = ctx.measureText(label).width;
+
+      // Fondo del label
+      ctx.fillStyle = 'rgba(10, 8, 30, 0.92)';
+      ctx.fillRect(labelX - 2, currentY + 1, textW + 8, barHeight - 2);
+
+      // Texto con borde
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.95)';
+      ctx.lineWidth = 3;
+      ctx.strokeText(label, labelX, labelY);
+      ctx.fillStyle = '#fff';
+      ctx.fillText(label, labelX, labelY);
+
+      currentY += barHeight + barGap;
+    }
+
+    // Debug: log una sola vez si hay matches (evitar spam)
+    if (!this._sbDiagRenderLogged && matchCount > 0) {
+      console.log(`[${this.symbol}] SB DIAG RENDER: startY=${startY}, totalH=${totalH}, matchedCandles=${matchCount}/${visibleCandles.length}, barHeight=${barHeight}`);
+      this._sbDiagRenderLogged = true;
+    }
+
+    return totalH;
   }
 }
 

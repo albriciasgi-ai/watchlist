@@ -39,7 +39,8 @@ SYMBOLS = os.environ.get("SYMBOLS", "BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT").s
 INTERVAL = os.environ.get("INTERVAL", "1")
 
 # Dias maximos a mantener (limpieza automatica)
-MAX_DAYS = int(os.environ.get("MAX_DAYS", "30"))
+# 365 dias = ~2.5 GB para 21 simbolos a 1 min (cabe en volumen de 6 GB)
+MAX_DAYS = int(os.environ.get("MAX_DAYS", "365"))
 
 # Instancia del collector
 collector: Optional[FootprintCollector] = None

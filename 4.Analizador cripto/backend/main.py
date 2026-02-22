@@ -50,6 +50,8 @@ import httpx
 import asyncio
 import time
 import json
+import gzip
+import queue
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
@@ -75,6 +77,9 @@ from zone_detector import ZoneDetector, ZoneDetectionParams
 # Zone realtime service imports
 from zone_service import get_zone_service
 from zone_realtime_v2 import get_zone_service_v2, backtest_v2, ZoneV2Config
+
+# Strategy Realtime Service imports
+from strategy_realtime_service import get_strategy_rt_service
 
 # Zone VP (Volume Profile) scanner imports
 from zone_vp_service import get_vp_zone_service
@@ -111,7 +116,189 @@ CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 # Key: "{symbol}_{interval}", Value: {"candles": [...], "timestamp": time.time(), "days": N}
 _historical_candles_cache: dict = {}
 
-# Límites máximos de días por timeframe
+# Cache PERSISTENTE en disco para velas historicas (sobrevive reinicios)
+# Formato: candle_cache/{symbol}_{interval}.json.gz (JSON comprimido con gzip)
+CANDLE_CACHE_DIR = Path("candle_cache")
+CANDLE_CACHE_DIR.mkdir(exist_ok=True)
+
+
+def _disk_cache_path(symbol: str, interval: str) -> Path:
+    return CANDLE_CACHE_DIR / f"{symbol}_{interval}.json.gz"
+
+
+def _load_disk_cache(symbol: str, interval: str):
+    """Carga velas desde cache en disco. Retorna lista de velas o None."""
+    path = _disk_cache_path(symbol, interval)
+    if not path.exists():
+        return None
+    try:
+        with gzip.open(path, 'rt', encoding='utf-8') as f:
+            data = json.load(f)
+        candles = data.get("candles", [])
+        if candles:
+            print(f"[{symbol}] [DISK_CACHE] Cargadas {len(candles)} velas desde disco ({interval})")
+        return candles
+    except Exception as e:
+        print(f"[{symbol}] [DISK_CACHE] Error leyendo cache: {e}")
+        try:
+            path.unlink()
+        except Exception:
+            pass
+        return None
+
+
+def _save_disk_cache(symbol: str, interval: str, candles: list):
+    """Guarda velas en cache de disco (gzip comprimido)."""
+    if not candles:
+        return
+    path = _disk_cache_path(symbol, interval)
+    try:
+        data = {
+            "symbol": symbol,
+            "interval": interval,
+            "candles": candles,
+            "saved_at": time.time(),
+            "count": len(candles),
+        }
+        with gzip.open(path, 'wt', encoding='utf-8') as f:
+            json.dump(data, f)
+        size_mb = path.stat().st_size / (1024 * 1024)
+        print(f"[{symbol}] [DISK_CACHE] Guardadas {len(candles)} velas en disco ({interval}, {size_mb:.1f} MB)")
+    except Exception as e:
+        print(f"[{symbol}] [DISK_CACHE] Error guardando cache: {e}")
+
+
+# ============================================================================
+# FIX 8: Descarga sincrona de velas en thread pool (no bloquea event loop)
+# ============================================================================
+# CRITICO: httpx.AsyncClient.get() dentro del event loop de uvicorn compite
+# con TODOS los requests del servidor (polling, SSE, health checks).
+# Esto causa degradacion de 833 velas/sec a 7 velas/sec (120x mas lento).
+# La solucion: usar httpx.Client (sincrono) dentro de run_in_executor(),
+# que ejecuta en un thread separado sin tocar el event loop.
+# ============================================================================
+
+def _download_candles_sync(
+    symbol: str,
+    interval: str,
+    start_ts: int,
+    end_ts: int,
+    max_requests: int,
+    interval_minutes: int,
+    label: str = "DOWNLOAD",
+    stop_before_ts: int = None,
+    progress_callback=None,
+    total_expected: int = 0,
+):
+    """
+    Descarga velas de Bybit de forma SINCRONA (para usar con run_in_executor).
+    No toca el event loop de asyncio.
+
+    Args:
+        symbol: Par de trading (ej: BTCUSDT)
+        interval: Timeframe (ej: "1", "5", "60")
+        start_ts: Timestamp de inicio en ms
+        end_ts: Timestamp de fin en ms
+        max_requests: Maximo de requests HTTP
+        interval_minutes: Minutos por vela
+        label: Etiqueta para logs
+        stop_before_ts: Si se especifica, solo incluir velas con ts < stop_before_ts
+        progress_callback: Funcion callback(loaded, total, pct) thread-safe para reportar progreso
+        total_expected: Total de velas esperadas (para calcular porcentaje)
+    Returns:
+        Lista de dicts de velas crudas [{timestamp, open, high, low, close, volume, in_progress}, ...]
+    """
+    candles = []
+    current_start = start_ts
+    request_count = 0
+    consecutive_errors = 0
+    max_consecutive_errors = 3
+    interval_ms = interval_minutes * 60 * 1000
+
+    with httpx.Client(timeout=30) as client:
+        while request_count < max_requests:
+            if end_ts and current_start >= end_ts:
+                break
+            request_count += 1
+
+            url = (
+                "https://api.bybit.com/v5/market/kline?"
+                f"category=linear&symbol={symbol}&interval={interval}"
+                f"&start={current_start}&limit=1000"
+            )
+
+            try:
+                r = client.get(url)
+                data = r.json()
+                consecutive_errors = 0
+            except (httpx.ReadTimeout, httpx.ConnectTimeout, httpx.PoolTimeout) as te:
+                consecutive_errors += 1
+                print(f"[{symbol}] [{label}] Request #{request_count}: TIMEOUT ({type(te).__name__}) "
+                      f"- error {consecutive_errors}/{max_consecutive_errors}")
+                if consecutive_errors >= max_consecutive_errors:
+                    print(f"[{symbol}] [{label}] Demasiados timeouts, usando {len(candles)} velas")
+                    break
+                time.sleep(1)
+                continue
+            except Exception as e:
+                consecutive_errors += 1
+                print(f"[{symbol}] [{label}] Request #{request_count}: ERROR ({type(e).__name__}: {e}) "
+                      f"- error {consecutive_errors}/{max_consecutive_errors}")
+                if consecutive_errors >= max_consecutive_errors:
+                    print(f"[{symbol}] [{label}] Demasiados errores, usando {len(candles)} velas")
+                    break
+                time.sleep(1)
+                continue
+
+            if data.get("retCode") != 0:
+                print(f"[{symbol}] [{label}] Bybit error: {data.get('retMsg')}")
+                break
+
+            batch = data["result"]["list"]
+            if not batch:
+                if request_count <= 5:
+                    print(f"[{symbol}] [{label}] Request #{request_count}: 0 velas (fin de datos)")
+                break
+
+            batch.reverse()
+
+            current_time_utc = int(time.time() * 1000)
+            for c in batch:
+                ts_ms = int(c[0])
+                if stop_before_ts and ts_ms >= stop_before_ts:
+                    continue
+                time_diff = (current_time_utc - ts_ms) / (1000 * 60)
+                candles.append({
+                    "timestamp": ts_ms,
+                    "open": float(c[1]), "high": float(c[2]),
+                    "low": float(c[3]), "close": float(c[4]),
+                    "volume": float(c[5]),
+                    "in_progress": time_diff < interval_minutes,
+                })
+
+            last_batch_ts = int(batch[-1][0])
+            current_start = last_batch_ts + interval_ms
+
+            if request_count <= 5 or request_count % 50 == 0:
+                print(f"[{symbol}] [{label}] Request #{request_count}: "
+                      f"+{len(batch)} velas (total: {len(candles)})")
+
+            # Reportar progreso via callback (thread-safe si el caller lo garantiza)
+            if progress_callback and (request_count <= 3 or request_count % 5 == 0):
+                try:
+                    total = total_expected if total_expected > 0 else max(1, len(candles))
+                    pct = min(100, int(len(candles) / total * 100))
+                    progress_callback(len(candles), total, pct)
+                except Exception:
+                    pass
+
+            time.sleep(0.05)
+
+    print(f"[{symbol}] [{label}] Completado: {len(candles)} velas en {request_count} requests")
+    return candles
+
+
+# Limites maximos de dias por timeframe
 MAX_DAYS_BY_INTERVAL = {
     "1": 400,     # 1 min -> max 400 dias (~576k velas) - con streaming SSE
     "3": 400,     # 3 min -> max 400 dias
@@ -358,7 +545,7 @@ def get_interval_minutes(interval: str) -> int:
         return int(interval)
 
 @app.get("/api/historical/{symbol}")
-async def get_historical(symbol: str, interval: str = "15", days: int = 30, since_timestamp: int = None, skip_day_limit: bool = False):
+async def get_historical(symbol: str, interval: str = "15", days: int = 30, since_timestamp: int = None, skip_day_limit: bool = False, progress_callback=None):
     """
     Obtiene datos históricos de velas.
 
@@ -370,6 +557,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
                        Si se provee, ignora 'days' y obtiene velas desde ese timestamp hasta ahora.
                        Útil para carga incremental (solo pedir datos nuevos).
     - skip_day_limit: Si True, no aplica MAX_DAYS_BY_INTERVAL (usado por zone detection que ya valido con MAX_DAYS_ZONES).
+    - progress_callback: (OPCIONAL) Callable(loaded, total, percent) para reportar progreso de descarga.
     """
     try:
         interval_clean = (
@@ -410,7 +598,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
             minutes_in_period = days_to_fetch * 24 * 60
             total_candles_needed = int(minutes_in_period / interval_minutes)
             start_ms = now_ms - (days_to_fetch * 24 * 60 * 60 * 1000)
-            print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}")
+            print(f"[{symbol}] [DATA] HISTORICAL: Recibido days={days}, aplicando límite -> days_to_fetch={days_to_fetch} (máx: {max_days_allowed}) @ {interval_final}", flush=True)
 
             # Verificar cache en memoria (solo para llamadas internas como backtest/optimize)
             # TTL largo (2h) + carga incremental si expiro
@@ -453,71 +641,54 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
                         last_ts = cached_candles[-1]["timestamp"]
                         print(f"[{symbol}] [DATA] CACHE EXPIRED ({cache_age:.0f}s) - carga incremental desde {last_ts}")
                         try:
-                            inc_url = (
-                                "https://api.bybit.com/v5/market/kline?"
-                                f"category=linear&symbol={symbol}&interval={interval_final}"
-                                f"&start={last_ts + interval_minutes * 60 * 1000}&limit=1000"
+                            # FIX 8b: Carga incremental en thread pool (no bloquea event loop)
+                            inc_start_ts_mem = last_ts + (interval_minutes * 60 * 1000)
+                            loop_inc_mem = asyncio.get_event_loop()
+                            new_candles = await loop_inc_mem.run_in_executor(
+                                None,
+                                _download_candles_sync,
+                                symbol, interval_final, inc_start_ts_mem, end_ms,
+                                5, interval_minutes,
+                                "MEM_CACHE_INC", None, None, 0,
                             )
-                            async with httpx.AsyncClient(timeout=30) as inc_client:
-                                inc_r = await inc_client.get(inc_url)
-                                inc_data = inc_r.json()
-                            if inc_data.get("retCode") == 0:
-                                new_raw = inc_data["result"]["list"]
-                                if new_raw:
-                                    new_raw.reverse()
-                                    new_candles = []
-                                    for c in new_raw:
-                                        ts_ms = int(c[0])
-                                        if ts_ms > last_ts:
-                                            new_candles.append({
-                                                "timestamp": ts_ms,
-                                                "open": float(c[1]), "high": float(c[2]),
-                                                "low": float(c[3]), "close": float(c[4]),
-                                                "volume": float(c[5]),
-                                                "in_progress": False,
-                                            })
-                                    if new_candles:
-                                        merged = cached_candles + new_candles
-                                        # Actualizar cache con datos frescos
-                                        _historical_candles_cache[cache_key] = {
-                                            "candles": merged,
-                                            "timestamp": time.time(),
-                                            "days": cached.get("days", days_to_fetch),
-                                        }
-                                        print(f"[{symbol}] [DATA] INCREMENTAL MERGE: +{len(new_candles)} velas "
-                                              f"(total: {len(merged)})")
-                                        if len(merged) > total_candles_needed * 1.1:
-                                            result_candles = merged[-total_candles_needed:]
-                                        else:
-                                            result_candles = merged
-                                    else:
-                                        # Sin velas nuevas, renovar TTL
-                                        _historical_candles_cache[cache_key]["timestamp"] = time.time()
-                                        result_candles = cached_candles
-                                        print(f"[{symbol}] [DATA] INCREMENTAL: sin velas nuevas, TTL renovado")
-                                else:
-                                    _historical_candles_cache[cache_key]["timestamp"] = time.time()
-                                    result_candles = cached_candles
-                                    print(f"[{symbol}] [DATA] INCREMENTAL: lista vacia, TTL renovado")
-
-                                if len(result_candles) > total_candles_needed * 1.1:
-                                    result_candles = result_candles[-total_candles_needed:]
-                                now_colombia = datetime.now(COLOMBIA_TZ)
-                                return {
-                                    "symbol": symbol, "interval": interval_final,
-                                    "data": result_candles, "success": True,
-                                    "total_candles": len(result_candles),
-                                    "requested_candles": total_candles_needed,
-                                    "updated": int(time.time() * 1000),
-                                    "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
-                                    "timezone": "America/Bogota (UTC-5)",
-                                    "days_requested": days, "days_fetched": days_to_fetch,
-                                    "max_days_allowed": max_days_allowed,
-                                    "incremental": True, "since_timestamp": last_ts,
-                                    "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
-                                    "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
-                                    "from_cache": True,
+                            if new_candles:
+                                merged = cached_candles + new_candles
+                                _historical_candles_cache[cache_key] = {
+                                    "candles": merged,
+                                    "timestamp": time.time(),
+                                    "days": cached.get("days", days_to_fetch),
                                 }
+                                if skip_day_limit:
+                                    _save_disk_cache(symbol, interval_final, merged)
+                                print(f"[{symbol}] [DATA] INCREMENTAL MERGE: +{len(new_candles)} velas "
+                                      f"(total: {len(merged)})")
+                                if len(merged) > total_candles_needed * 1.1:
+                                    result_candles = merged[-total_candles_needed:]
+                                else:
+                                    result_candles = merged
+                            else:
+                                _historical_candles_cache[cache_key]["timestamp"] = time.time()
+                                result_candles = cached_candles
+                                print(f"[{symbol}] [DATA] INCREMENTAL: sin velas nuevas, TTL renovado")
+
+                            if len(result_candles) > total_candles_needed * 1.1:
+                                result_candles = result_candles[-total_candles_needed:]
+                            now_colombia = datetime.now(COLOMBIA_TZ)
+                            return {
+                                "symbol": symbol, "interval": interval_final,
+                                "data": result_candles, "success": True,
+                                "total_candles": len(result_candles),
+                                "requested_candles": total_candles_needed,
+                                "updated": int(time.time() * 1000),
+                                "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
+                                "timezone": "America/Bogota (UTC-5)",
+                                "days_requested": days, "days_fetched": days_to_fetch,
+                                "max_days_allowed": max_days_allowed,
+                                "incremental": True, "since_timestamp": last_ts,
+                                "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
+                                "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
+                                "from_cache": True,
+                            }
                         except Exception as inc_err:
                             # Si falla incremental, usar cache viejo renovando TTL
                             print(f"[{symbol}] [DATA] INCREMENTAL FAILED: {inc_err} - usando cache viejo")
@@ -542,111 +713,272 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
                                 "from_cache": True,
                             }
 
-        # CRÍTICO: Limitar a 1000 velas por request (máximo de Bybit)
-        limit_per_request = min(1000, total_candles_needed)
+        # === CACHE EN DISCO (persistente, sobrevive reinicios) ===
+        # Solo para backtests (skip_day_limit=True) y sin since_timestamp
+        if skip_day_limit and since_timestamp is None:
+            disk_candles = _load_disk_cache(symbol, interval_final)
+            if disk_candles and len(disk_candles) > 0:
+                disk_last_ts = disk_candles[-1]["timestamp"]
+                disk_first_ts = disk_candles[0]["timestamp"]
+                needed_start_ts = start_ms
 
-        all_candles = []
-        current_start = start_ms
-        
-        async with httpx.AsyncClient(timeout=30) as client:
-            request_count = 0
-            max_requests = 120  # 120 requests x 1000 velas = 120,000 velas max
-            consecutive_errors = 0
-            max_consecutive_errors = 3
+                # Verificar si el disco cubre el rango temporal solicitado
+                disk_covers_start = disk_first_ts <= needed_start_ts + (interval_minutes * 60 * 1000 * 5)
 
-            print(f"[{symbol}] [DATA] Necesita {total_candles_needed} velas, max_requests={max_requests}")
+                if disk_covers_start and len(disk_candles) >= total_candles_needed * 0.8:
+                    # Disco tiene suficientes datos - carga incremental solo velas nuevas
+                    print(f"[{symbol}] [DISK_CACHE] HIT: {len(disk_candles)} velas en disco, "
+                          f"necesarias ~{total_candles_needed}, cargando incremental...")
+                    try:
+                        # FIX 8b: Carga incremental desde disco en thread pool (no bloquea event loop)
+                        inc_start_ts_disk = disk_last_ts + (interval_minutes * 60 * 1000)
+                        loop_inc_disk = asyncio.get_event_loop()
+                        new_candles_from_api = await loop_inc_disk.run_in_executor(
+                            None,
+                            _download_candles_sync,
+                            symbol, interval_final, inc_start_ts_disk, end_ms,
+                            20, interval_minutes,
+                            "DISK_CACHE_INC", None, None, 0,
+                        )
 
-            while len(all_candles) < total_candles_needed and request_count < max_requests:
-                request_count += 1
-                candles_remaining = total_candles_needed - len(all_candles)
-                fetch_limit = min(limit_per_request, candles_remaining)
+                        # Merge disco + nuevas
+                        merged = disk_candles + new_candles_from_api
+                        # Deduplicar por timestamp
+                        seen_ts = set()
+                        deduped = []
+                        for c in merged:
+                            if c["timestamp"] not in seen_ts:
+                                seen_ts.add(c["timestamp"])
+                                deduped.append(c)
+                        deduped.sort(key=lambda x: x["timestamp"])
+                        merged = deduped
 
-                url = (
-                    "https://api.bybit.com/v5/market/kline?"
-                    f"category=linear&symbol={symbol}&interval={interval_final}"
-                    f"&start={current_start}&limit={fetch_limit}"
-                )
+                        print(f"[{symbol}] [DISK_CACHE] INCREMENTAL: +{len(new_candles_from_api)} nuevas "
+                              f"(total: {len(merged)})")
 
-                try:
-                    r = await client.get(url)
-                    data = r.json()
-                    consecutive_errors = 0  # Reset en exito
-                except (httpx.ReadTimeout, httpx.ConnectTimeout, httpx.PoolTimeout) as te:
-                    consecutive_errors += 1
-                    print(f"[{symbol}] [DATA] Request #{request_count}: TIMEOUT ({type(te).__name__}) - error {consecutive_errors}/{max_consecutive_errors}")
-                    if consecutive_errors >= max_consecutive_errors:
-                        print(f"[{symbol}] [DATA] Demasiados errores consecutivos, usando {len(all_candles)} velas disponibles")
-                        break
-                    await asyncio.sleep(1)  # Esperar antes de reintentar
-                    continue
-                except Exception as e:
-                    consecutive_errors += 1
-                    print(f"[{symbol}] [DATA] Request #{request_count}: ERROR ({type(e).__name__}: {e}) - error {consecutive_errors}/{max_consecutive_errors}")
-                    if consecutive_errors >= max_consecutive_errors:
-                        print(f"[{symbol}] [DATA] Demasiados errores consecutivos, usando {len(all_candles)} velas disponibles")
-                        break
-                    await asyncio.sleep(1)
-                    continue
+                        # Guardar merged en AMBOS caches
+                        cache_key = f"{symbol}_{interval_final}"
+                        _historical_candles_cache[cache_key] = {
+                            "candles": merged,
+                            "timestamp": time.time(),
+                            "days": days_to_fetch,
+                        }
+                        _save_disk_cache(symbol, interval_final, merged)
 
-                if data.get("retCode") != 0:
-                    print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
-                    break
+                        if len(merged) > total_candles_needed * 1.1:
+                            result_candles = merged[-total_candles_needed:]
+                        else:
+                            result_candles = merged
+                        now_colombia = datetime.now(COLOMBIA_TZ)
+                        return {
+                            "symbol": symbol, "interval": interval_final,
+                            "data": result_candles, "success": True,
+                            "total_candles": len(result_candles),
+                            "requested_candles": total_candles_needed,
+                            "updated": int(time.time() * 1000),
+                            "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
+                            "timezone": "America/Bogota (UTC-5)",
+                            "days_requested": days, "days_fetched": days_to_fetch,
+                            "max_days_allowed": max_days_allowed,
+                            "incremental": True, "since_timestamp": disk_last_ts,
+                            "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
+                            "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
+                            "from_cache": True, "cache_source": "disk",
+                        }
+                    except Exception as disk_inc_err:
+                        print(f"[{symbol}] [DISK_CACHE] Incremental fallido: {disk_inc_err} - "
+                              f"usando disco directo ({len(disk_candles)} velas)")
+                        # Usar cache de disco tal cual
+                        cache_key = f"{symbol}_{interval_final}"
+                        _historical_candles_cache[cache_key] = {
+                            "candles": disk_candles,
+                            "timestamp": time.time(),
+                            "days": days_to_fetch,
+                        }
+                        if len(disk_candles) > total_candles_needed * 1.1:
+                            result_candles = disk_candles[-total_candles_needed:]
+                        else:
+                            result_candles = disk_candles
+                        now_colombia = datetime.now(COLOMBIA_TZ)
+                        return {
+                            "symbol": symbol, "interval": interval_final,
+                            "data": result_candles, "success": True,
+                            "total_candles": len(result_candles),
+                            "requested_candles": total_candles_needed,
+                            "updated": int(time.time() * 1000),
+                            "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
+                            "timezone": "America/Bogota (UTC-5)",
+                            "days_requested": days, "days_fetched": days_to_fetch,
+                            "max_days_allowed": max_days_allowed,
+                            "incremental": False, "since_timestamp": None,
+                            "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
+                            "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
+                            "from_cache": True, "cache_source": "disk",
+                        }
 
-                batch_candles = data["result"]["list"]
-                if not batch_candles:
-                    print(f"[{symbol}] [DATA] Request #{request_count}: 0 velas (fin de datos)")
-                    break
+                elif len(disk_candles) > 0:
+                    # Disco tiene datos parciales - REUTILIZAR y solo descargar lo faltante
+                    if disk_first_ts > needed_start_ts:
+                        # Necesitamos datos MAS ANTIGUOS que lo que hay en disco
+                        # Descargar solo desde needed_start_ts hasta disk_first_ts, luego merge
+                        gap_candles_needed = int((disk_first_ts - needed_start_ts) / (interval_minutes * 60 * 1000))
+                        print(f"[{symbol}] [DISK_CACHE] PARTIAL MERGE: disco tiene {len(disk_candles)} velas, "
+                              f"faltan ~{gap_candles_needed} velas anteriores - descargando solo lo faltante")
+                        try:
+                            # FIX 8: Gap download en thread pool
+                            gap_max_requests = min(600, (gap_candles_needed // 1000) + 10)
+                            loop_pm = asyncio.get_event_loop()
+                            gap_candles = await loop_pm.run_in_executor(
+                                None,
+                                _download_candles_sync,
+                                symbol, interval_final, needed_start_ts, end_ms,
+                                gap_max_requests, interval_minutes,
+                                "PARTIAL_MERGE_GAP", disk_first_ts, None,
+                            )
+                            print(f"[{symbol}] [DISK_CACHE] Gap download completado: {len(gap_candles)} velas (thread pool)")
 
-                batch_candles.reverse()
-                all_candles.extend(batch_candles)
+                            # Tambien descargar velas nuevas despues del disco (en thread pool)
+                            inc_start_ts = disk_last_ts + (interval_minutes * 60 * 1000)
+                            new_candles = await loop_pm.run_in_executor(
+                                None,
+                                _download_candles_sync,
+                                symbol, interval_final, inc_start_ts, end_ms,
+                                20, interval_minutes,
+                                "PARTIAL_MERGE_INC", None, None,
+                            )
 
-                if request_count <= 5 or request_count % 10 == 0:
-                    print(f"[{symbol}] [DATA] Request #{request_count}: +{len(batch_candles)} velas (total: {len(all_candles)}/{total_candles_needed})")
+                            # MERGE: gap_candles + disk_candles + new_candles
+                            merged = gap_candles + disk_candles + new_candles
+                            # Deduplicar por timestamp
+                            seen_ts = set()
+                            deduped = []
+                            for c in merged:
+                                if c["timestamp"] not in seen_ts:
+                                    seen_ts.add(c["timestamp"])
+                                    deduped.append(c)
+                            deduped.sort(key=lambda x: x["timestamp"])
+                            merged = deduped
 
-                last_candle_ts = int(batch_candles[-1][0])
-                current_start = last_candle_ts + (interval_minutes * 60 * 1000)
+                            print(f"[{symbol}] [DISK_CACHE] PARTIAL MERGE OK: "
+                                  f"{len(gap_candles)} antiguas + {len(disk_candles)} disco + "
+                                  f"{len(new_candles)} nuevas = {len(merged)} total")
 
-                if current_start >= end_ms:
-                    print(f"[{symbol}] [DATA] Fin: alcanzado end_ms en request #{request_count}")
-                    break
+                            # Guardar merged en ambos caches
+                            cache_key_m = f"{symbol}_{interval_final}"
+                            _historical_candles_cache[cache_key_m] = {
+                                "candles": merged,
+                                "timestamp": time.time(),
+                                "days": days_to_fetch,
+                            }
+                            _save_disk_cache(symbol, interval_final, merged)
 
-                # Si ya tenemos suficientes velas, salir
-                if len(all_candles) >= total_candles_needed:
-                    break
+                            if len(merged) > total_candles_needed * 1.1:
+                                result_candles = merged[-total_candles_needed:]
+                            else:
+                                result_candles = merged
+                            now_colombia = datetime.now(COLOMBIA_TZ)
+                            return {
+                                "symbol": symbol, "interval": interval_final,
+                                "data": result_candles, "success": True,
+                                "total_candles": len(result_candles),
+                                "requested_candles": total_candles_needed,
+                                "updated": int(time.time() * 1000),
+                                "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
+                                "timezone": "America/Bogota (UTC-5)",
+                                "days_requested": days, "days_fetched": days_to_fetch,
+                                "max_days_allowed": max_days_allowed,
+                                "incremental": True, "since_timestamp": None,
+                                "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
+                                "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
+                                "from_cache": True, "cache_source": "disk_partial_merge",
+                            }
+                        except Exception as merge_err:
+                            print(f"[{symbol}] [DISK_CACHE] Partial merge failed: {merge_err} - "
+                                  f"descarga completa como fallback")
+                            # Caer al download completo (abajo)
 
-                await asyncio.sleep(0.1)
+                    else:
+                        # Disco cubre el inicio pero no tiene suficientes velas
+                        # FIX 4: Usar disco como base + descargar incrementalmente lo que falta
+                        #         (en vez de descargar todo desde cero)
+                        shortfall = total_candles_needed - len(disk_candles)
+                        print(f"[{symbol}] [DISK_CACHE] PARTIAL EXTEND: {len(disk_candles)} velas en disco "
+                              f"(necesarias: {total_candles_needed}, faltan ~{shortfall}) - descarga incremental")
+                        try:
+                            # FIX 8: PARTIAL EXTEND en thread pool
+                            inc_start_ts = disk_last_ts + (interval_minutes * 60 * 1000)
+                            max_inc_reqs = min(600, (shortfall // 1000) + 10)
+                            loop_pe = asyncio.get_event_loop()
+                            new_candles_from_api = await loop_pe.run_in_executor(
+                                None,
+                                _download_candles_sync,
+                                symbol, interval_final, inc_start_ts, end_ms,
+                                max_inc_reqs, interval_minutes,
+                                "PARTIAL_EXTEND", None, None,
+                            )
 
-            print(f"[{symbol}] [DATA] Completado: {len(all_candles)} velas en {request_count} requests")
+                            # Merge disco + nuevas
+                            merged = disk_candles + new_candles_from_api
+                            seen_ts = set()
+                            deduped = []
+                            for c in merged:
+                                if c["timestamp"] not in seen_ts:
+                                    seen_ts.add(c["timestamp"])
+                                    deduped.append(c)
+                            deduped.sort(key=lambda x: x["timestamp"])
+                            merged = deduped
 
-        candles = []
-        current_time_utc = int(time.time() * 1000)
-        
-        for c in all_candles:
-            ts_ms = int(c[0])
-            
-            open_ = float(c[1])
-            high = float(c[2])
-            low = float(c[3])
-            close = float(c[4])
-            volume = float(c[5])
-            
-            ts_seconds = ts_ms / 1000
-            dt_utc = datetime.fromtimestamp(ts_seconds, tz=timezone.utc)
-            dt_colombia = dt_utc.astimezone(COLOMBIA_TZ)
-            
-            time_diff_minutes = (current_time_utc - ts_ms) / (1000 * 60)
-            is_in_progress = time_diff_minutes < interval_minutes
-            
-            candles.append({
-                "timestamp": ts_ms,
-                "open": open_,
-                "high": high,
-                "low": low,
-                "close": close,
-                "volume": volume,
-                "in_progress": is_in_progress,
-                "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
-            })
+                            print(f"[{symbol}] [DISK_CACHE] PARTIAL EXTEND OK: "
+                                  f"{len(disk_candles)} disco + {len(new_candles_from_api)} nuevas = {len(merged)} total")
+
+                            # Guardar en ambos caches
+                            cache_key_pe = f"{symbol}_{interval_final}"
+                            _historical_candles_cache[cache_key_pe] = {
+                                "candles": merged,
+                                "timestamp": time.time(),
+                                "days": days_to_fetch,
+                            }
+                            _save_disk_cache(symbol, interval_final, merged)
+
+                            if len(merged) > total_candles_needed * 1.1:
+                                result_candles = merged[-total_candles_needed:]
+                            else:
+                                result_candles = merged
+                            now_colombia = datetime.now(COLOMBIA_TZ)
+                            return {
+                                "symbol": symbol, "interval": interval_final,
+                                "data": result_candles, "success": True,
+                                "total_candles": len(result_candles),
+                                "requested_candles": total_candles_needed,
+                                "updated": int(time.time() * 1000),
+                                "updated_colombia": now_colombia.strftime("%Y-%m-%d %H:%M:%S"),
+                                "timezone": "America/Bogota (UTC-5)",
+                                "days_requested": days, "days_fetched": days_to_fetch,
+                                "max_days_allowed": max_days_allowed,
+                                "incremental": True, "since_timestamp": disk_last_ts,
+                                "first_candle_timestamp": result_candles[0]["timestamp"] if result_candles else None,
+                                "last_candle_timestamp": result_candles[-1]["timestamp"] if result_candles else None,
+                                "from_cache": True, "cache_source": "disk_partial_extend",
+                            }
+                        except Exception as ext_err:
+                            print(f"[{symbol}] [DISK_CACHE] Partial extend failed: {ext_err} - "
+                                  f"descarga completa como fallback")
+                            # Caer al download completo (abajo)
+
+        # FIX 8: Descarga COMPLETA en thread pool (no bloquea event loop)
+        max_requests = 600  # 600 requests x 1000 velas = 600,000 velas max
+        print(f"[{symbol}] [DATA] Necesita {total_candles_needed} velas, max_requests={max_requests} (thread pool)")
+
+        loop = asyncio.get_event_loop()
+        downloaded_candles = await loop.run_in_executor(
+            None,
+            _download_candles_sync,
+            symbol, interval_final, start_ms, end_ms,
+            max_requests, interval_minutes, "DATA", None,
+            progress_callback, total_candles_needed,
+        )
+
+        candles = downloaded_candles  # Ya son dicts procesados por _download_candles_sync
 
         # CRÍTICO: Limitar resultado final al número exacto de velas solicitadas
         if len(candles) > total_candles_needed:
@@ -672,6 +1004,9 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
                     "days": days_to_fetch,
                 }
                 print(f"[{symbol}] [CACHE] Guardadas {len(candles)} velas en memoria ({cache_key})")
+                # Tambien guardar en disco para persistencia entre reinicios
+                if skip_day_limit:
+                    _save_disk_cache(symbol, interval_final, candles)
 
         return {
             "symbol": symbol,
@@ -822,6 +1157,7 @@ async def get_historical_stream(symbol: str, interval: str = "15", days: int = 3
                         "days": days_to_fetch,
                     }
                     print(f"[{symbol}] [CACHE] SSE: Guardadas {len(candles)} velas en memoria ({cache_key})")
+                    _save_disk_cache(symbol, interval_final, candles)
 
             # Enviar datos finales
             yield f"data: {json.dumps({'type': 'complete', 'total_candles': len(candles), 'data': candles})}\n\n"
@@ -979,14 +1315,23 @@ async def clear_cache():
     try:
         cache_files = list(CACHE_DIR.glob("*.json"))
         deleted_count = 0
-        
+
         for cache_file in cache_files:
             cache_file.unlink()
             deleted_count += 1
-        
+
+        # Limpiar cache de velas en disco
+        candle_files = list(CANDLE_CACHE_DIR.glob("*.json.gz"))
+        for cf in candle_files:
+            cf.unlink()
+            deleted_count += 1
+
+        # Limpiar cache de velas en memoria
+        _historical_candles_cache.clear()
+
         return {
             "success": True,
-            "message": f"Cache limpiado: {deleted_count} archivos eliminados",
+            "message": f"Cache limpiado: {deleted_count} archivos eliminados (incluye velas persistentes)",
             "deleted_files": deleted_count
         }
     except Exception as e:
@@ -994,6 +1339,63 @@ async def clear_cache():
             "success": False,
             "error": str(e)
         }
+
+
+@app.get("/api/candle-cache/status")
+async def candle_cache_status():
+    """Estado del cache persistente de velas en disco."""
+    try:
+        entries = []
+        total_size = 0
+        for path in sorted(CANDLE_CACHE_DIR.glob("*.json.gz")):
+            size = path.stat().st_size
+            total_size += size
+            name = path.stem.replace('.json', '')  # Remove .json from .json.gz
+            parts = name.rsplit('_', 1)
+            symbol = parts[0] if len(parts) == 2 else name
+            interval = parts[1] if len(parts) == 2 else '?'
+            # Leer count sin descomprimir todo
+            try:
+                with gzip.open(path, 'rt', encoding='utf-8') as f:
+                    header = f.read(200)
+                    import re
+                    m = re.search(r'"count":\s*(\d+)', header)
+                    count = int(m.group(1)) if m else '?'
+            except Exception:
+                count = '?'
+            entries.append({
+                "symbol": symbol,
+                "interval": interval,
+                "candles": count,
+                "size_mb": round(size / (1024 * 1024), 2),
+                "file": path.name,
+            })
+
+        # Tambien info del cache en memoria
+        memory_entries = []
+        for key, val in _historical_candles_cache.items():
+            age = time.time() - val.get("timestamp", 0)
+            memory_entries.append({
+                "key": key,
+                "candles": len(val.get("candles", [])),
+                "age_seconds": round(age),
+                "days": val.get("days"),
+            })
+
+        return {
+            "success": True,
+            "disk": {
+                "entries": entries,
+                "total_files": len(entries),
+                "total_size_mb": round(total_size / (1024 * 1024), 2),
+            },
+            "memory": {
+                "entries": memory_entries,
+                "total_entries": len(memory_entries),
+            },
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 @app.post("/api/upload-cache/{symbol}")
 async def upload_cache(symbol: str, interval: str, data: dict):
@@ -2829,9 +3231,10 @@ async def startup_event():
     """Initialize services on startup"""
     from alert_sender import initialize_alert_sender
     await initialize_alert_sender()
-    print("[STARTUP] Backend started successfully")
-    print("[STARTUP] Alert sender initialized")
-    print("[STARTUP] Proximity alerts system ready")
+    import os as _os
+    print(f"[STARTUP] Backend started successfully (PID={_os.getpid()})", flush=True)
+    print("[STARTUP] Alert sender initialized", flush=True)
+    print("[STARTUP] Proximity alerts system ready", flush=True)
 
     # Start swing detector service FIRST (it loads config with all symbols)
     swing_service = None
@@ -2846,19 +3249,11 @@ async def startup_event():
         swing_symbols = ["BTCUSDT", "ETHUSDT"]
         swing_interval = "1"
 
-    # Start real-time pattern detection service with ALL symbols from swing config
-    try:
-        realtime_service = get_realtime_pattern_service()
-        # Use swing symbols but start with 60m interval for realtime patterns
-        # The swing service will add its own interval subscription
-        intervals = ["60"]  # Realtime patterns use 1h, swing detector will add "1"
-        await realtime_service.start(swing_symbols, intervals)
-        print("[STARTUP] Real-time pattern detection service started")
-        print(f"[STARTUP] Monitoring symbols: {swing_symbols}")
-        print(f"[STARTUP] Initial interval: {intervals}")
-    except Exception as e:
-        print(f"[STARTUP] Warning: Could not start real-time service: {e}")
-        print("[STARTUP] Real-time detection disabled - install websockets: pip install websockets>=12.0")
+    # Real-time pattern detection service (DTB, Rejection) - DISABLED
+    # These patterns are deprecated. The service consumed resources for 13 symbols
+    # without providing value. The user can start it manually if needed.
+    # The WebSocket manager will be started by the Swing service or VWAP service below.
+    print("[STARTUP] Real-time pattern detection service SKIPPED (deprecated - DTB/Rejection disabled)")
 
     # Now start swing detector service (WebSocket already running with all symbols)
     if swing_service and swing_service.config.enabled:
@@ -2888,6 +3283,18 @@ async def startup_event():
             print("[STARTUP] Zone detector realtime service disabled (enable from frontend)")
     except Exception as e:
         print(f"[STARTUP] Warning: Could not start zone realtime service: {e}")
+
+    # Strategy Builder realtime service - NEVER auto-start on startup
+    # The user must start it manually from the frontend after configuring parameters
+    try:
+        strat_rt = get_strategy_rt_service()
+        # Force disabled on startup regardless of config file
+        if strat_rt.config.enabled:
+            strat_rt.config.enabled = False
+            strat_rt._save_config()
+        print("[STARTUP] Strategy RT service loaded (start manually from frontend)")
+    except Exception as e:
+        print(f"[STARTUP] Warning: Could not load strategy RT service: {e}")
 
 
 @app.on_event("shutdown")
@@ -2927,6 +3334,14 @@ async def shutdown_event():
         print("[SHUTDOWN] Zone detector realtime service stopped")
     except Exception as e:
         print(f"[SHUTDOWN] Warning: Error stopping zone realtime service: {e}")
+
+    # Stop Strategy Builder realtime service
+    try:
+        strat_rt = get_strategy_rt_service()
+        await strat_rt.stop()
+        print("[SHUTDOWN] Strategy RT service stopped")
+    except Exception as e:
+        print(f"[SHUTDOWN] Warning: Error stopping strategy RT service: {e}")
 
     # Save config store
     try:
@@ -4479,6 +4894,10 @@ async def update_vwap_service_config(request: Request):
         }
 
 
+# Cooldown para evitar reloads repetidos del VWAP (rate limit protection)
+_vwap_reload_cooldown: Dict[str, float] = {}
+_VWAP_RELOAD_COOLDOWN_SECS = 30  # Minimo 30s entre reloads del mismo simbolo
+
 @app.get("/api/vwap-service/data/{symbol}")
 async def get_vwap_service_data(
     symbol: str,
@@ -4531,15 +4950,23 @@ async def get_vwap_service_data(
         needs_more_data = len(current_data) < candles_needed * 0.9
 
         if config_changed or needs_more_data:
-            # Update config if params provided
-            if vwapType:
-                vwap_service.config.vwapType = vwapType
-            if rollingPeriod:
-                vwap_service.config.rollingPeriod = rollingPeriod
+            # Cooldown: evitar reloads repetidos que causan rate limit en Bybit API
+            now = time.time()
+            last_reload = _vwap_reload_cooldown.get(symbol, 0)
+            if now - last_reload < _VWAP_RELOAD_COOLDOWN_SECS:
+                # En cooldown - retornar datos existentes sin recargar
+                pass
+            else:
+                _vwap_reload_cooldown[symbol] = now
+                # Update config if params provided
+                if vwapType:
+                    vwap_service.config.vwapType = vwapType
+                if rollingPeriod:
+                    vwap_service.config.rollingPeriod = rollingPeriod
 
-            print(f"[VWAP] {symbol}: Reloading - interval={interval}, days={days_to_load}, vwapType={vwap_service.config.vwapType}")
-            await vwap_service.reload_symbol_data(symbol, days_to_load, interval)
-            current_data = vwap_service.get_vwap_data(symbol)
+                print(f"[VWAP] {symbol}: Reloading - interval={interval}, days={days_to_load}, vwapType={vwap_service.config.vwapType}")
+                await vwap_service.reload_symbol_data(symbol, days_to_load, interval)
+                current_data = vwap_service.get_vwap_data(symbol)
 
         return {
             "success": True,
@@ -7276,9 +7703,12 @@ async def backtest_vp_zones(request: Request):
         # FAST PATH: Verificar cache de zonas en disco
         # Si solo cambiaron params de estrategia, reusar zonas detectadas
         # =====================================================================
+        # Calcular target_candles para fingerprint determinista del cache
+        _im_vp = get_interval_minutes(interval_final)
+        _target_candles_vp = int((days * 24 * 60) / _im_vp) if _im_vp > 0 else 0
         zone_cache = None
         if not force_redetect:
-            zone_cache = load_zone_cache(config_overrides, symbol, interval_final, days)
+            zone_cache = load_zone_cache(config_overrides, symbol, interval_final, days, candles_count=_target_candles_vp)
 
         if zone_cache and not force_redetect:
             cached_zones = zone_cache.get('zones', [])
@@ -7309,6 +7739,18 @@ async def backtest_vp_zones(request: Request):
                             candles = candles[-needed_candles:]
 
                 if candles is None:
+                    # Intentar cache de disco antes de descargar
+                    disk_candles = _load_disk_cache(symbol, interval_final)
+                    if disk_candles:
+                        interval_minutes = get_interval_minutes(interval_final)
+                        needed_candles = int((days * 24 * 60) / interval_minutes)
+                        if len(disk_candles) >= needed_candles * 0.8:
+                            candles = disk_candles
+                            _historical_candles_cache[cache_key] = {
+                                "candles": candles, "timestamp": _time.time(), "days": days}
+                            print(f"[{symbol}] [VP BACKTEST] DISK CACHE HIT: {len(candles)} velas")
+
+                if candles is None:
                     def run_fetch():
                         return _fetch_candles_sync(
                             symbol, interval, days, _vp_backtest_progress)
@@ -7323,6 +7765,7 @@ async def backtest_vp_zones(request: Request):
                                 "error": "No se pudieron obtener datos historicos"}
                     _historical_candles_cache[cache_key] = {
                         "candles": candles, "timestamp": _time.time(), "days": days}
+                    _save_disk_cache(symbol, interval_final, candles)
 
                 # Simular trades con los params actuales sobre las zonas cacheadas
                 _candles_for_sim = candles
@@ -7482,7 +7925,19 @@ async def backtest_vp_zones(request: Request):
                 print(f"[{symbol}] [VP BACKTEST] CANDLE CACHE MISS: cached={len(cached_candles)} "
                       f"(necesarias ~{needed_candles}), edad={cache_age:.0f}s")
 
-        # 2) Si no hay cache, descargar en thread pool
+        # 2) Si no hay cache en memoria, intentar disco
+        if candles is None:
+            disk_candles = _load_disk_cache(symbol, interval_final)
+            if disk_candles:
+                interval_minutes = get_interval_minutes(interval_final)
+                needed_candles = int((days * 24 * 60) / interval_minutes)
+                if len(disk_candles) >= needed_candles * 0.8:
+                    candles = disk_candles
+                    _historical_candles_cache[cache_key] = {
+                        "candles": candles, "timestamp": _time.time(), "days": days}
+                    print(f"[{symbol}] [VP BACKTEST] DISK CACHE HIT: {len(candles)} velas")
+
+        # 3) Si no hay cache en disco, descargar en thread pool
         if candles is None:
             def run_fetch():
                 return _fetch_candles_sync(symbol, interval, days, _vp_backtest_progress)
@@ -7503,6 +7958,7 @@ async def backtest_vp_zones(request: Request):
                 "timestamp": _time.time(),
                 "days": days,
             }
+            _save_disk_cache(symbol, interval_final, candles)
             print(f"[{symbol}] [VP BACKTEST] {len(candles)} velas descargadas en {_fetch_elapsed:.1f}s")
 
         # 3) Deteccion + simulacion en thread pool
@@ -7720,6 +8176,18 @@ async def start_incremental_detection(request: Request):
             print(f"[{symbol}] [VP INCREMENTAL] CANDLE CACHE HIT: {len(candles)} velas")
 
     if candles is None:
+        # Intentar cache de disco antes de descargar
+        disk_candles = _load_disk_cache(symbol, interval_final)
+        if disk_candles:
+            interval_minutes = get_interval_minutes(interval_final)
+            needed_candles = int((days * 24 * 60) / interval_minutes)
+            if len(disk_candles) >= needed_candles * 0.8:
+                candles = disk_candles
+                _historical_candles_cache[cache_key] = {
+                    "candles": candles, "timestamp": _time.time(), "days": days}
+                print(f"[{symbol}] [VP INCREMENTAL] DISK CACHE HIT: {len(candles)} velas")
+
+    if candles is None:
         _vp_incremental["phase"] = "fetching"
 
         def run_fetch():
@@ -7734,6 +8202,7 @@ async def start_incremental_detection(request: Request):
 
         _historical_candles_cache[cache_key] = {
             "candles": candles, "timestamp": _time.time(), "days": days}
+        _save_disk_cache(symbol, interval_final, candles)
         print(f"[{symbol}] [VP INCREMENTAL] {len(candles)} velas descargadas")
 
     _vp_incremental["candles"] = candles
@@ -8988,6 +9457,7 @@ async def vp_periodic_backtest_stream(
     """
     import time as _time
     import queue
+    import concurrent.futures
     from backtest_vp_periodic import run_backtest as _vp_run_backtest
 
     try:
@@ -8996,6 +9466,7 @@ async def vp_periodic_backtest_stream(
         bt_params = {}
 
     async def generate():
+        executor = None
         try:
             t0 = _time.time()
 
@@ -9007,14 +9478,43 @@ async def vp_periodic_backtest_stream(
             if cached and len(cached.get("candles", [])) > 0:
                 has_cache = True
 
+            # Cola de progreso compartida entre descarga y backtest
+            progress_queue = queue.Queue()
+
             if has_cache:
                 n_cached = len(cached["candles"])
                 yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 5, 'message': f'Usando {n_cached:,} velas en cache...'})}\n\n"
             else:
                 yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 0, 'message': f'Descargando {days} dias de {symbol}...'})}\n\n"
 
-            # Obtener velas (usa cache interno si disponible)
-            candles_data = await get_historical(symbol, interval, days, skip_day_limit=True)
+            # Callback de progreso para la descarga de velas
+            def download_progress(loaded, total, pct):
+                progress_queue.put({
+                    'phase': 'fetching',
+                    'percent': min(7, pct),
+                    'message': f'Descargando: {loaded:,}/{total:,} velas ({pct}%)'
+                })
+
+            # Lanzar descarga como tarea concurrente para poder drenar progreso
+            fetch_task = asyncio.create_task(
+                get_historical(symbol, interval, days, skip_day_limit=True, progress_callback=download_progress)
+            )
+
+            # Drenar progreso de descarga mientras se ejecuta
+            while not fetch_task.done():
+                if await request.is_disconnected():
+                    print(f"[VP_BACKTEST_SSE] Cliente desconectado durante descarga")
+                    fetch_task.cancel()
+                    return
+                await asyncio.sleep(0.3)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            candles_data = fetch_task.result()
             if not candles_data or not candles_data.get("data"):
                 yield f"data: {json.dumps({'type': 'error', 'message': 'No se pudieron obtener velas historicas'})}\n\n"
                 return
@@ -9027,18 +9527,19 @@ async def vp_periodic_backtest_stream(
             yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetched', 'percent': 8, 'message': f'{len(candles):,} velas ({src}, {t_fetch:.1f}s)'})}\n\n"
 
             # Ejecutar backtest en thread pool con cola de progreso
-            progress_queue = queue.Queue()
-
             def on_progress(phase, percent, message):
                 progress_queue.put({'phase': phase, 'percent': percent, 'message': message})
 
             loop = asyncio.get_event_loop()
-            import concurrent.futures
             executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
             future = loop.run_in_executor(executor, _vp_run_backtest, candles, strategy, bt_params, on_progress)
 
-            # Drenar cola de progreso mientras corre
+            # Drenar cola de progreso mientras corre, verificando desconexion del cliente
             while not future.done():
+                if await request.is_disconnected():
+                    print(f"[VP_BACKTEST_SSE] Cliente desconectado, cancelando...")
+                    future.cancel()
+                    return
                 await asyncio.sleep(0.2)
                 while not progress_queue.empty():
                     try:
@@ -9084,6 +9585,9 @@ async def vp_periodic_backtest_stream(
             print(f"[VP_BACKTEST_SSE] Error: {e}")
             traceback.print_exc()
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        finally:
+            if executor:
+                executor.shutdown(wait=False)
 
     return StreamingResponse(
         generate(),
@@ -9140,29 +9644,36 @@ async def vp_periodic_strategies():
 # STRATEGY BUILDER (Modular Backtest Engine)
 # ===========================================================================
 
-@app.get("/api/strategy-builder/backtest-stream")
-async def strategy_builder_backtest_stream(
-    request: Request,
-    symbol: str = "BTCUSDT",
-    interval: str = "1",
-    days: int = 400,
-    config_json: str = "{}"
-):
+@app.post("/api/strategy-builder/backtest-stream")
+async def strategy_builder_backtest_stream_post(request: Request):
     """
-    SSE endpoint para backtest modular del Strategy Builder con progreso en tiempo real.
+    POST SSE endpoint para backtest del Strategy Builder.
+    Recibe config en el body JSON y retorna SSE stream.
+    El frontend lee con fetch() + ReadableStream (no EventSource).
     """
     import time as _time
     import queue
+    import concurrent.futures
+    import functools
+    import sys
     from strategy_engine import run_modular_backtest as _sb_run_backtest
 
-    try:
-        strategy_config = json.loads(config_json)
-    except json.JSONDecodeError:
-        strategy_config = {}
+    body = await request.json()
+    symbol = body.get("symbol", "BTCUSDT")
+    interval = body.get("interval", "1")
+    days = body.get("days", 400)
+    strategy_config = body.get("config", {})
+    print(f"[SB_BACKTEST_SSE] POST REQUEST: {symbol} @ {interval} x {days} dias", flush=True)
 
     async def generate():
+        executor = None
         try:
             t0 = _time.time()
+
+            # Yield inmediato para establecer conexion SSE lo antes posible
+            # Esto evita que el EventSource quede en CONNECTING si el event loop esta ocupado
+            print(f"[SB_BACKTEST_SSE] GENERATE INICIO: {symbol} @ {interval} x {days} dias", flush=True)
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'connecting', 'percent': 0, 'message': 'Conectado, preparando...'})}\n\n"
 
             # Verificar cache
             interval_final = INTERVAL_MAP.get(interval, interval)
@@ -9170,37 +9681,99 @@ async def strategy_builder_backtest_stream(
             cached = _historical_candles_cache.get(cache_key)
             has_cache = cached and len(cached.get("candles", [])) > 0
 
+            # Cola de progreso compartida entre descarga y backtest
+            progress_queue = queue.Queue()
+
             if has_cache:
                 n_cached = len(cached["candles"])
                 yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 3, 'message': f'Usando {n_cached:,} velas en cache...'})}\n\n"
             else:
                 yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 0, 'message': f'Descargando {days} dias de {symbol}...'})}\n\n"
 
-            candles_data = await get_historical(symbol, interval, days, skip_day_limit=True)
+            # Callback de progreso para la descarga de velas
+            def download_progress(loaded, total, pct):
+                progress_queue.put({
+                    'phase': 'fetching',
+                    'percent': min(4, pct),
+                    'message': f'Descargando: {loaded:,}/{total:,} velas ({pct}%)'
+                })
+
+            # Lanzar descarga como tarea concurrente para poder drenar progreso
+            fetch_task = asyncio.create_task(
+                get_historical(symbol, interval, days, skip_day_limit=True, progress_callback=download_progress)
+            )
+
+            # Drenar progreso de descarga mientras se ejecuta
+            while not fetch_task.done():
+                if await request.is_disconnected():
+                    print(f"[SB_BACKTEST_SSE] Cliente desconectado durante descarga")
+                    fetch_task.cancel()
+                    return
+                await asyncio.sleep(0.3)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            candles_data = fetch_task.result()
             if not candles_data or not candles_data.get("data"):
                 yield f"data: {json.dumps({'type': 'error', 'message': 'No se pudieron obtener velas historicas'})}\n\n"
                 return
 
             candles = candles_data["data"]
+
+            # === FIX DETERMINISMO ===
+            # El cache incremental puede retornar cantidades ligeramente
+            # distintas de velas entre ejecuciones (ej: 115200 vs 115230).
+            # Esto desplaza indices de VP Periodic y VP Zones, causando
+            # resultados muy distintos con mismos parametros.
+            # Solucion: recortar SIEMPRE al mismo tamano determinista.
+            interval_min_map = {
+                "1": 1, "3": 3, "5": 5, "15": 15, "30": 30,
+                "60": 60, "120": 120, "240": 240, "360": 360,
+                "720": 720, "D": 1440, "W": 10080,
+            }
+            _int_final = INTERVAL_MAP.get(interval, interval)
+            _int_minutes = interval_min_map.get(_int_final, 1)
+            _target_candles = int((int(days) * 24 * 60) / _int_minutes)
+            _raw_count = len(candles)
+            if _target_candles > 0 and len(candles) > _target_candles:
+                candles = candles[-_target_candles:]
+            first_ts = candles[0]["timestamp"] if candles else 0
+            last_ts = candles[-1]["timestamp"] if candles else 0
+            # Hash rapido para verificar determinismo entre ejecuciones
+            import hashlib as _hl
+            _candle_hash = _hl.md5(f"{len(candles)}_{first_ts}_{last_ts}".encode()).hexdigest()[:8]
+            print(f"[SB_BACKTEST_SSE] DETERMINISTIC TRIM: {_raw_count} -> {len(candles)} velas "
+                  f"(target={_target_candles}, first_ts={first_ts}, last_ts={last_ts}, "
+                  f"hash={_candle_hash})", flush=True)
+
             t_fetch = _time.time() - t0
             src = "cache" if candles_data.get("from_cache") else "Bybit API"
-            print(f"[SB_BACKTEST_SSE] {len(candles)} velas de {src} en {t_fetch:.1f}s")
+            print(f"[SB_BACKTEST_SSE] {len(candles)} velas de {src} en {t_fetch:.1f}s", flush=True)
 
             yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetched', 'percent': 5, 'message': f'{len(candles):,} velas ({src}, {t_fetch:.1f}s)'})}\n\n"
 
             # Ejecutar backtest en thread pool con cola de progreso
-            progress_queue = queue.Queue()
-
             def on_progress(phase, percent, message):
                 progress_queue.put({'phase': phase, 'percent': percent, 'message': message})
 
             loop = asyncio.get_event_loop()
-            import concurrent.futures
             executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
-            future = loop.run_in_executor(executor, _sb_run_backtest, candles, strategy_config, on_progress)
+            _sb_run_fn = functools.partial(
+                _sb_run_backtest, candles, strategy_config, on_progress,
+                symbol=symbol, interval=interval_final, days=int(days),
+            )
+            future = loop.run_in_executor(executor, _sb_run_fn)
 
-            # Drenar cola de progreso mientras corre
+            # Drenar cola de progreso mientras corre, verificando desconexion del cliente
             while not future.done():
+                if await request.is_disconnected():
+                    print(f"[SB_BACKTEST_SSE] Cliente desconectado, cancelando...")
+                    future.cancel()
+                    return
                 await asyncio.sleep(0.2)
                 while not progress_queue.empty():
                     try:
@@ -9219,7 +9792,7 @@ async def strategy_builder_backtest_stream(
 
             result = await future
             elapsed = _time.time() - t0
-            print(f"[SB_BACKTEST_SSE] Completado en {elapsed:.1f}s")
+            print(f"[SB_BACKTEST_SSE] Completado en {elapsed:.1f}s", flush=True)
 
             if not result.get('success'):
                 yield f"data: {json.dumps({'type': 'error', 'message': result.get('error', 'Error desconocido')})}\n\n"
@@ -9237,14 +9810,23 @@ async def strategy_builder_backtest_stream(
                 'candles_count': result['candles_count'],
                 'levels_count': result.get('levels_count', 0),
                 'elapsed_seconds': round(elapsed, 1),
+                'filter_stats': result.get('filter_stats'),
+                'candle_hash': _candle_hash,
+                'diagnostics': result.get('diagnostics'),
+                'vp_profiles': result.get('vp_profiles', []),
+                'gc_channel': result.get('gc_channel'),
             }
             yield f"data: {json.dumps(final)}\n\n"
 
         except Exception as e:
             import traceback
-            print(f"[SB_BACKTEST_SSE] Error: {e}")
+            print(f"[SB_BACKTEST_SSE] Error: {e}", flush=True)
             traceback.print_exc()
+            sys.stdout.flush()
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        finally:
+            if executor:
+                executor.shutdown(wait=False)
 
     return StreamingResponse(
         generate(),
@@ -9284,13 +9866,27 @@ async def strategy_builder_optimize_estimate(request: Request):
             return {"success": False, "error": "No se pudieron obtener datos historicos"}
 
         candles = historical['data']
-        print(f"[{symbol}] [SB_OPTIMIZE_EST] {len(candles)} velas en {_fetch_elapsed:.1f}s")
+
+        # FIX DETERMINISMO: recortar al tamano exacto esperado
+        _int_min_map = {"1": 1, "3": 3, "5": 5, "15": 15, "30": 30,
+                        "60": 60, "120": 120, "240": 240, "360": 360,
+                        "720": 720, "D": 1440, "W": 10080}
+        _if = INTERVAL_MAP.get(interval, interval)
+        _im = _int_min_map.get(_if, 1)
+        _tc = int((int(days) * 24 * 60) / _im)
+        if _tc > 0 and len(candles) > _tc:
+            candles = candles[-_tc:]
+        print(f"[{symbol}] [SB_OPTIMIZE_EST] {len(candles)} velas (target={_tc}) en {_fetch_elapsed:.1f}s")
 
         # Ejecutar estimacion en thread pool
+        interval_final = INTERVAL_MAP.get(interval, interval)
         loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
-            None, estimate_modular_optimization, candles, strategy_config, param_ranges
+        import functools
+        _est_fn = functools.partial(
+            estimate_modular_optimization, candles, strategy_config, param_ranges,
+            symbol=symbol, interval=interval_final, days=int(days),
         )
+        result = await loop.run_in_executor(None, _est_fn)
 
         result['fetch_time'] = round(_fetch_elapsed, 2)
         return result
@@ -9332,14 +9928,28 @@ async def strategy_builder_optimize(request: Request):
             return {"success": False, "error": "No se pudieron obtener datos historicos"}
 
         candles = historical['data']
-        print(f"[{symbol}] [SB_OPTIMIZE] {len(candles)} velas en {_fetch_elapsed:.1f}s")
+
+        # FIX DETERMINISMO: recortar al tamano exacto esperado
+        _int_min_map = {"1": 1, "3": 3, "5": 5, "15": 15, "30": 30,
+                        "60": 60, "120": 120, "240": 240, "360": 360,
+                        "720": 720, "D": 1440, "W": 10080}
+        _if = INTERVAL_MAP.get(interval, interval)
+        _im = _int_min_map.get(_if, 1)
+        _tc = int((int(days) * 24 * 60) / _im)
+        if _tc > 0 and len(candles) > _tc:
+            candles = candles[-_tc:]
+        print(f"[{symbol}] [SB_OPTIMIZE] {len(candles)} velas (target={_tc}) en {_fetch_elapsed:.1f}s")
 
         # Ejecutar grid search en thread pool
+        interval_final = INTERVAL_MAP.get(interval, interval)
         loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
-            None, run_modular_optimization, candles, strategy_config,
-            param_ranges, metric, top_n
+        import functools
+        _opt_fn = functools.partial(
+            run_modular_optimization, candles, strategy_config,
+            param_ranges, metric, top_n,
+            symbol=symbol, interval=interval_final, days=int(days),
         )
+        result = await loop.run_in_executor(None, _opt_fn)
 
         result['fetch_time'] = round(_fetch_elapsed, 2)
         print(f"[{symbol}] [SB_OPTIMIZE] Completado: {result.get('total_combos', 0)} combos en {result.get('elapsed', 0)}s")
@@ -9349,3 +9959,393 @@ async def strategy_builder_optimize(request: Request):
         import traceback
         traceback.print_exc()
         return {"success": False, "error": str(e)}
+
+
+@app.post("/api/strategy-builder/auto-optimize-stream")
+async def strategy_builder_auto_optimize_stream(request: Request):
+    """
+    Auto-optimize SSE endpoint - 3 fases: categorical sweep, combo generation, numeric tuning.
+    Recibe {symbol, interval, days, ranking_metric, top_n} en body JSON.
+    Retorna SSE stream con progreso y resultados.
+    Frontend lee con fetch() + ReadableStream (no EventSource).
+    """
+    import time as _time
+    import queue
+    import concurrent.futures
+    import functools
+    from strategy_engine import run_auto_optimize as _auto_opt
+
+    body = await request.json()
+    symbol = body.get("symbol", "BTCUSDT")
+    interval = body.get("interval", "60")
+    days = body.get("days", 365)
+    ranking_metric = body.get("ranking_metric", "recovery_factor")
+    top_n = body.get("top_n", 20)
+    min_trades = body.get("min_trades", 15)
+    print(f"[{symbol}] [AUTO_OPT_SSE] POST REQUEST: {interval} x {days} dias, metric={ranking_metric}, min_trades={min_trades}", flush=True)
+
+    async def generate():
+        executor = None
+        try:
+            t0 = _time.time()
+            progress_queue = queue.Queue()
+
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'connecting', 'percent': 0, 'message': 'Conectado, preparando...'})}\n\n"
+
+            # Verificar cache
+            interval_final = INTERVAL_MAP.get(interval, interval)
+            cache_key = f"{symbol}_{interval_final}"
+            cached = _historical_candles_cache.get(cache_key)
+            has_cache = cached and len(cached.get("candles", [])) > 0
+
+            if has_cache:
+                n_cached = len(cached["candles"])
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 1, 'message': f'Usando {n_cached:,} velas en cache...'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetching', 'percent': 0, 'message': f'Descargando {days} dias de {symbol}...'})}\n\n"
+
+            # Callback de progreso para descarga
+            def download_progress(loaded, total, pct):
+                progress_queue.put({
+                    'phase': 'fetching',
+                    'percent': min(3, pct),
+                    'message': f'Descargando: {loaded:,}/{total:,} velas ({pct}%)'
+                })
+
+            fetch_task = asyncio.create_task(
+                get_historical(symbol, interval, days, skip_day_limit=True, progress_callback=download_progress)
+            )
+
+            while not fetch_task.done():
+                if await request.is_disconnected():
+                    print(f"[{symbol}] [AUTO_OPT_SSE] Cliente desconectado durante descarga")
+                    fetch_task.cancel()
+                    return
+                await asyncio.sleep(0.3)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            candles_data = fetch_task.result()
+            if not candles_data or not candles_data.get("data"):
+                yield f"data: {json.dumps({'type': 'error', 'message': 'No se pudieron obtener velas historicas'})}\n\n"
+                return
+
+            candles = candles_data["data"]
+
+            # FIX DETERMINISMO: recortar al tamano exacto esperado
+            _int_min_map = {"1": 1, "3": 3, "5": 5, "15": 15, "30": 30,
+                            "60": 60, "120": 120, "240": 240, "360": 360,
+                            "720": 720, "D": 1440, "W": 10080}
+            _if = INTERVAL_MAP.get(interval, interval)
+            _im = _int_min_map.get(_if, 1)
+            _tc = int((int(days) * 24 * 60) / _im)
+            _raw_count = len(candles)
+            if _tc > 0 and len(candles) > _tc:
+                candles = candles[-_tc:]
+            print(f"[{symbol}] [AUTO_OPT_SSE] TRIM: {_raw_count} -> {len(candles)} velas (target={_tc})", flush=True)
+
+            t_fetch = _time.time() - t0
+            src = "cache" if candles_data.get("from_cache") else "Bybit API"
+            yield f"data: {json.dumps({'type': 'progress', 'phase': 'fetched', 'percent': 4, 'message': f'{len(candles):,} velas ({src}, {t_fetch:.1f}s)'})}\n\n"
+
+            # Callback de progreso para auto-optimize
+            def on_progress(phase, percent, message):
+                progress_queue.put({'phase': phase, 'percent': percent, 'message': message})
+
+            loop = asyncio.get_event_loop()
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+            _opt_fn = functools.partial(
+                _auto_opt, candles, on_progress,
+                symbol=symbol, interval=interval_final, days=int(days),
+                ranking_metric=ranking_metric, top_n=top_n,
+                min_trades=min_trades,
+            )
+            future = loop.run_in_executor(executor, _opt_fn)
+
+            while not future.done():
+                if await request.is_disconnected():
+                    print(f"[{symbol}] [AUTO_OPT_SSE] Cliente desconectado, cancelando...")
+                    future.cancel()
+                    return
+                await asyncio.sleep(0.3)
+                while not progress_queue.empty():
+                    try:
+                        prog = progress_queue.get_nowait()
+                        yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                    except queue.Empty:
+                        break
+
+            # Drenar progreso restante
+            while not progress_queue.empty():
+                try:
+                    prog = progress_queue.get_nowait()
+                    yield f"data: {json.dumps({'type': 'progress', **prog})}\n\n"
+                except queue.Empty:
+                    break
+
+            result = await future
+            elapsed = _time.time() - t0
+            print(f"[{symbol}] [AUTO_OPT_SSE] Completado: {result.get('total_backtests', 0)} backtests en {elapsed:.1f}s", flush=True)
+
+            if not result.get('success'):
+                yield f"data: {json.dumps({'type': 'error', 'message': result.get('error', 'Error desconocido')})}\n\n"
+                return
+
+            final = {
+                'type': 'result',
+                'success': True,
+                'symbol': symbol,
+                'interval': interval,
+                'days': days,
+                'total_backtests': result['total_backtests'],
+                'elapsed_seconds': round(elapsed, 1),
+                'ranking_metric': ranking_metric,
+                'candles_count': result['candles'],
+                'phase1_summary': result.get('phase1_summary', {}),
+                'results': result['results'],
+                'all_results': result.get('all_results', []),
+            }
+            yield f"data: {json.dumps(final)}\n\n"
+
+        except Exception as e:
+            import traceback
+            print(f"[{symbol}] [AUTO_OPT_SSE] Error: {e}", flush=True)
+            traceback.print_exc()
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        finally:
+            if executor:
+                executor.shutdown(wait=False)
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
+
+# ===========================================================================
+# STRATEGY BUILDER - Presets
+# ===========================================================================
+
+_SB_PRESETS_FILE = Path("config") / "strategy_builder_presets.json"
+
+
+def _load_sb_presets() -> dict:
+    if _SB_PRESETS_FILE.exists():
+        try:
+            return json.loads(_SB_PRESETS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_sb_presets(presets: dict):
+    _SB_PRESETS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    _SB_PRESETS_FILE.write_text(
+        json.dumps(presets, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+
+@app.get("/api/strategy-builder/presets")
+async def get_sb_presets():
+    """Lista todos los presets del Strategy Builder."""
+    try:
+        presets = _load_sb_presets()
+        return {"success": True, "presets": presets}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/strategy-builder/presets/{name}")
+async def save_sb_preset(name: str, request: Request):
+    """Guarda un preset del Strategy Builder con nombre dado."""
+    try:
+        body = await request.json()
+        presets = _load_sb_presets()
+        presets[name] = {
+            "config": body.get("config", {}),
+            "days": body.get("days"),
+            "vwapPeriod": body.get("vwapPeriod"),
+            "savedAt": body.get("savedAt", ""),
+        }
+        _save_sb_presets(presets)
+        return {"success": True, "message": f"Preset '{name}' guardado"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@app.delete("/api/strategy-builder/presets/{name}")
+async def delete_sb_preset(name: str):
+    """Elimina un preset del Strategy Builder."""
+    try:
+        presets = _load_sb_presets()
+        if name not in presets:
+            return {"success": False, "error": f"Preset '{name}' no existe"}
+        del presets[name]
+        _save_sb_presets(presets)
+        return {"success": True, "message": f"Preset '{name}' eliminado"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+# ===========================================================================
+# STRATEGY BUILDER - VP Zone Cache Browser
+# ===========================================================================
+
+@app.get("/api/strategy-builder/vp-zone-caches")
+async def list_vp_zone_caches(symbol: str = "", interval: str = ""):
+    """
+    Lista todos los archivos de cache de zonas VP disponibles en disco.
+    El frontend usa esto para mostrar al usuario que caches existen
+    y permitirle seleccionar uno en vez de re-escanear.
+    """
+    import os
+
+    cache_dir = os.path.join(os.path.dirname(__file__), "zones_cache")
+    if not os.path.exists(cache_dir):
+        return {"success": True, "caches": []}
+
+    results = []
+    for fname in os.listdir(cache_dir):
+        if not fname.endswith(".json"):
+            continue
+        # Formato: {SYMBOL}_{INTERVAL}_{DAYS}d_{FINGERPRINT}.json
+        # Ignorar subdirectorio incremental/
+        if os.path.isdir(os.path.join(cache_dir, fname)):
+            continue
+
+        filepath = os.path.join(cache_dir, fname)
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            c_symbol = data.get('symbol', '')
+            c_interval = data.get('interval', '')
+            c_days = data.get('days', 0)
+            c_zones = len(data.get('zones', []))
+            c_candles = data.get('candles_count', 0)
+            c_timestamp = data.get('timestamp', 0)
+            c_fingerprint = data.get('fingerprint', '')
+            c_det_params = data.get('detection_params', {})
+
+            # Filtrar por symbol/interval si se proveen
+            if symbol and c_symbol != symbol:
+                continue
+            if interval:
+                interval_clean = INTERVAL_MAP.get(interval, interval)
+                if c_interval != interval_clean:
+                    continue
+
+            age_hours = (time.time() - c_timestamp) / 3600
+
+            results.append({
+                'filename': fname,
+                'symbol': c_symbol,
+                'interval': c_interval,
+                'days': c_days,
+                'zones_count': c_zones,
+                'candles_count': c_candles,
+                'fingerprint': c_fingerprint,
+                'age_hours': round(age_hours, 1),
+                'timestamp': c_timestamp,
+                'detection_params': c_det_params,
+            })
+
+        except Exception:
+            continue
+
+    # Ordenar por mas reciente primero
+    results.sort(key=lambda r: r['timestamp'], reverse=True)
+    return {"success": True, "caches": results}
+
+
+# =====================================================================
+# Strategy Builder Realtime Service Endpoints
+# =====================================================================
+
+@app.post("/api/strategy-builder/realtime/toggle")
+async def toggle_strategy_rt(request: Request):
+    """Activa o desactiva el servicio realtime del Strategy Builder."""
+    body = await request.json()
+    strat_rt = get_strategy_rt_service()
+
+    enabled = body.get("enabled", not strat_rt.config.enabled)
+    strategy = body.get("strategy", None)
+    symbols = body.get("symbols", None)
+    interval_val = body.get("interval", None)
+    alerts_enabled = body.get("alertsEnabled", None)
+    cooldown = body.get("cooldownMinutes", None)
+
+    # Update config fields
+    strat_rt.config.enabled = enabled
+    if strategy is not None:
+        strat_rt.config.strategy = strategy
+    if symbols is not None:
+        strat_rt.config.symbols = symbols
+    if interval_val is not None:
+        strat_rt.config.interval = str(interval_val)
+    if alerts_enabled is not None:
+        strat_rt.config.alertsEnabled = alerts_enabled
+    if cooldown is not None:
+        strat_rt.config.cooldownMinutes = cooldown
+
+    strat_rt._save_config()
+
+    if enabled:
+        if not strat_rt.running:
+            await strat_rt.start()
+    else:
+        if strat_rt.running:
+            await strat_rt.stop()
+
+    return {
+        "success": True,
+        "enabled": strat_rt.config.enabled,
+        "running": strat_rt.running,
+    }
+
+
+@app.get("/api/strategy-builder/realtime/status")
+async def strategy_rt_status():
+    """Estado del servicio realtime del Strategy Builder."""
+    strat_rt = get_strategy_rt_service()
+    return {"success": True, **strat_rt.get_status()}
+
+
+@app.post("/api/strategy-builder/realtime/config")
+async def update_strategy_rt_config(request: Request):
+    """Actualiza la configuracion del servicio realtime."""
+    body = await request.json()
+    strat_rt = get_strategy_rt_service()
+    await strat_rt.update_config(body)
+    return {"success": True, "config": strat_rt.config.to_dict()}
+
+
+@app.get("/api/strategy-builder/realtime/signals/{symbol}")
+async def get_strategy_rt_signals(symbol: str):
+    """Senales recientes del servicio realtime para un simbolo."""
+    strat_rt = get_strategy_rt_service()
+    return {"success": True, "signals": strat_rt.get_signals(symbol)}
+
+
+@app.get("/api/strategy-builder/realtime/trades/{symbol}")
+async def get_strategy_rt_trades(symbol: str):
+    """Trades abiertos y cerrados del servicio realtime."""
+    strat_rt = get_strategy_rt_service()
+    return {"success": True, **strat_rt.get_trades(symbol)}
+
+
+@app.post("/api/strategy-builder/realtime/clear-cooldowns")
+async def clear_strategy_rt_cooldowns():
+    """Limpia todos los cooldowns del servicio realtime."""
+    strat_rt = get_strategy_rt_service()
+    await strat_rt.clear_cooldowns()
+    return {"success": True}

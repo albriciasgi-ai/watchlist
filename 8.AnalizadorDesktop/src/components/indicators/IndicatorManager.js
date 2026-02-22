@@ -73,6 +73,9 @@ class IndicatorManager {
     this._vpZoneEnabled = false;
     this._lastVPZoneFingerprint = '';
 
+    // Flag para bloquear startAllPolling() durante backtests largos
+    this._backtestInProgress = false;
+
     log.debug(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
@@ -311,8 +314,6 @@ class IndicatorManager {
 
         // VWAP - Prioridad 1
         if (indicator.name === "VWAP") {
-          let needsRefetch = false;
-
           if (indicator.interval !== this.interval) {
             if (indicator.setInterval) {
               indicator.setInterval(this.interval);
@@ -320,7 +321,6 @@ class IndicatorManager {
               indicator.interval = this.interval;
               indicator.lastFetchTime = 0;
             }
-            needsRefetch = true;
           }
 
           if (indicator.days !== this.days) {
@@ -330,10 +330,10 @@ class IndicatorManager {
               indicator.days = this.days;
               indicator.lastFetchTime = 0;
             }
-            needsRefetch = true;
           }
 
-          if (needsRefetch && indicator.fetchData) {
+          // Always fetch VWAP (initial load when dataMap is empty, or after interval/days change)
+          if (indicator.fetchData) {
             priority1.push({ indicator, name: "VWAP" });
           }
         }
@@ -1296,6 +1296,16 @@ class IndicatorManager {
   destroy() {
     log.debug(`[${this.symbol}] 🧹 IndicatorManager destruido`);
 
+    // Cerrar EventSources de backtest si estan activos
+    if (this._sbEventSource) {
+      try { this._sbEventSource.close(); } catch (_) {}
+      this._sbEventSource = null;
+    }
+    if (this._vpEventSource) {
+      try { this._vpEventSource.close(); } catch (_) {}
+      this._vpEventSource = null;
+    }
+
     // Detener polling de zonas realtime, VP y metricas
     this.stopRealtimeZonePolling();
     this.stopVPZonePolling();
@@ -1567,6 +1577,14 @@ class IndicatorManager {
    * 🚀 Inicia polling en todos los indicadores después de carga completa
    */
   startAllPolling() {
+    // CRITICO: No reiniciar polling si hay un backtest en curso
+    // Esto evita que el VWAP stream u otras cargas reactiven el polling
+    // y saturen el backend durante backtests de 400+ dias
+    if (this._backtestInProgress) {
+      log.warn(`[${this.symbol}] startAllPolling() BLOQUEADO: backtest en curso`);
+      return;
+    }
+
     log.info(`[${this.symbol}] startAllPolling() llamado - ${this.indicators.length} indicadores`);
     const swingInd = this.indicators.find(i => i.name === 'Swing Detector');
     console.log(`[${this.symbol}] [SWING] startAllPolling(): Swing Detector ${swingInd ? `found (enabled=${swingInd.enabled}, hasStartPolling=${!!swingInd.startPollingIfReady})` : 'NOT FOUND'}`);
@@ -1587,14 +1605,14 @@ class IndicatorManager {
     // Polling independiente de metricas del Zone Detector (cada 30s)
     this._startZoneMetricsPolling();
 
-    log.info(`[${this.symbol}] 🚀 Polling iniciado para todos los indicadores`);
+    log.info(`[${this.symbol}] Polling iniciado para todos los indicadores`);
   }
 
   /**
    * 🛑 Detiene polling en todos los indicadores (cuando chart no es visible)
    */
   stopAllPolling() {
-    log.info(`[${this.symbol}] 🛑 stopAllPolling() llamado - ${this.indicators.length} indicadores`);
+    log.info(`[${this.symbol}] stopAllPolling() llamado - ${this.indicators.length} indicadores`);
     this.indicators.forEach(indicator => {
       if (indicator.stopPolling) {
         log.info(`[${this.symbol}] -> Llamando stopPolling() para ${indicator.name}`);
@@ -1602,7 +1620,70 @@ class IndicatorManager {
       }
     });
     this._stopZoneMetricsPolling();
-    log.info(`[${this.symbol}] 🛑 Polling detenido para todos los indicadores`);
+    log.info(`[${this.symbol}] Polling detenido para todos los indicadores`);
+  }
+
+  /**
+   * Pausa TODO el polling del frontend para liberar el event loop del backend
+   * durante backtests largos. Esto evita que requests de polling compitan
+   * con la descarga de velas historicas.
+   */
+  pauseAllPolling() {
+    // Cancelar resume pendiente de backtest anterior
+    if (this._sbResumeTimerId) {
+      clearTimeout(this._sbResumeTimerId);
+      this._sbResumeTimerId = null;
+    }
+    if (this._pollingPaused) return;
+    this._pollingPaused = true;
+    this._backtestInProgress = true; // Bloquear startAllPolling() externo
+    log.info(`[${this.symbol}] PAUSE: Pausando todo el polling (backtest en curso)`);
+
+    // Pausar indicadores individuales
+    this.indicators.forEach(indicator => {
+      if (indicator.stopPolling) {
+        indicator.stopPolling();
+      }
+    });
+
+    // Pausar polling de zonas realtime
+    this.stopRealtimeZonePolling();
+
+    // Pausar polling VP zones
+    this.stopVPZonePolling();
+
+    // Pausar polling de metricas
+    this._stopZoneMetricsPolling();
+
+    log.info(`[${this.symbol}] PAUSE: Todo el polling pausado`);
+  }
+
+  /**
+   * Reanuda todo el polling despues de que el backtest termina.
+   */
+  resumeAllPolling() {
+    if (!this._pollingPaused) return;
+    this._pollingPaused = false;
+    this._backtestInProgress = false; // Desbloquear startAllPolling()
+    log.info(`[${this.symbol}] RESUME: Reanudando polling (backtest terminado)`);
+
+    // Reiniciar polling de indicadores
+    this.indicators.forEach(indicator => {
+      if (indicator.startPollingIfReady) {
+        indicator.startPollingIfReady();
+      }
+    });
+
+    // Reiniciar polling de zonas realtime
+    this._checkAndStartRealtimeZonePolling();
+
+    // Reiniciar polling VP zones
+    this._checkAndStartVPZonePolling();
+
+    // Reiniciar polling de metricas
+    this._startZoneMetricsPolling();
+
+    log.info(`[${this.symbol}] RESUME: Polling reanudado`);
   }
 
   /**
@@ -1955,6 +2036,12 @@ class IndicatorManager {
       return { success: false, error: 'ZoneVisualizer no inicializado' };
     }
 
+    // Cerrar EventSource previo si existe (evita conexiones SSE colgadas)
+    if (this._vpEventSource) {
+      try { this._vpEventSource.close(); } catch (_) {}
+      this._vpEventSource = null;
+    }
+
     const requestDays = params.days || this.days;
     const strategy = params.strategy || 'poc_bounce';
     const onProgress = params._onProgress || null;
@@ -1971,6 +2058,9 @@ class IndicatorManager {
     log.info(`[${this.symbol}] VP Periodic Backtest SSE: strategy=${strategy}, days=${requestDays}`);
     if (onProgress) onProgress({ phase: 'connecting', percent: 0, message: 'Conectando con backend...' });
 
+    // Pausar TODO el polling para liberar el event loop del backend
+    this.pauseAllPolling();
+
     return new Promise((resolve) => {
       try {
         const queryParams = new URLSearchParams({
@@ -1983,18 +2073,43 @@ class IndicatorManager {
 
         const url = `${API_BASE_URL}/api/vp-periodic/backtest-stream?${queryParams}`;
         const eventSource = new EventSource(url);
+        this._vpEventSource = eventSource;
         let resolved = false;
+        let receivedFirstMessage = false;
+
+        const cleanup = () => {
+          try { eventSource.close(); } catch (_) {}
+          if (this._vpEventSource === eventSource) {
+            this._vpEventSource = null;
+          }
+          // Reanudar polling al terminar el backtest
+          this.resumeAllPolling();
+        };
 
         const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas
         const timeoutId = setTimeout(() => {
           if (!resolved) {
             resolved = true;
-            eventSource.close();
+            cleanup();
             resolve({ success: false, error: 'Timeout: el backtest tardo demasiado.' });
           }
         }, timeoutMs);
 
+        // Timeout de conexion inicial: si no recibimos nada en 30s, reintentar
+        const connectTimeoutId = setTimeout(() => {
+          if (!receivedFirstMessage && !resolved) {
+            log.warn(`[${this.symbol}] VP SSE: No se recibio respuesta en 30s, reintentando...`);
+            try { eventSource.close(); } catch (_) {}
+            const retrySource = new EventSource(url);
+            this._vpEventSource = retrySource;
+            retrySource.onmessage = eventSource.onmessage;
+            retrySource.onerror = eventSource.onerror;
+          }
+        }, 30000);
+
         eventSource.onmessage = (event) => {
+          receivedFirstMessage = true;
+          clearTimeout(connectTimeoutId);
           try {
             const data = JSON.parse(event.data);
 
@@ -2008,7 +2123,7 @@ class IndicatorManager {
               }
             } else if (data.type === 'result') {
               clearTimeout(timeoutId);
-              eventSource.close();
+              cleanup();
               resolved = true;
 
               if (data.success && data.zones) {
@@ -2028,7 +2143,7 @@ class IndicatorManager {
               }
             } else if (data.type === 'error') {
               clearTimeout(timeoutId);
-              eventSource.close();
+              cleanup();
               resolved = true;
               resolve({ success: false, error: data.message || 'Error en el servidor' });
             }
@@ -2040,7 +2155,8 @@ class IndicatorManager {
         eventSource.onerror = () => {
           if (!resolved) {
             clearTimeout(timeoutId);
-            eventSource.close();
+            clearTimeout(connectTimeoutId);
+            cleanup();
             resolved = true;
             resolve({
               success: false,
@@ -2050,6 +2166,7 @@ class IndicatorManager {
         };
       } catch (error) {
         log.error(`[${this.symbol}] Error en runVPPeriodicBacktest:`, error.message || error);
+        this.resumeAllPolling();
         resolve({ success: false, error: error.message || 'Error desconocido' });
       }
     });
@@ -2070,38 +2187,92 @@ class IndicatorManager {
       return { success: false, error: 'ZoneVisualizer no inicializado' };
     }
 
+    // Abortar backtest previo si existe
+    if (this._sbAbortController) {
+      try { this._sbAbortController.abort(); } catch (_) {}
+      this._sbAbortController = null;
+    }
+
+    // Cancelar resume pendiente de un backtest anterior
+    if (this._sbResumeTimerId) {
+      clearTimeout(this._sbResumeTimerId);
+      this._sbResumeTimerId = null;
+    }
+
     const requestDays = params.days || this.days;
     const strategyConfig = params.config || {};
     const onProgress = params._onProgress || null;
 
-    log.info(`[${this.symbol}] Strategy Builder Backtest SSE: days=${requestDays}`);
+    // Limpiar resultados anteriores ANTES de iniciar nuevo backtest
+    this.zoneVisualizerIndicator.setStrategyZones([]);
+    this.zoneVisualizerIndicator.clearSBDiagnostics();
+    this.requestRedraw();
+
+    log.info(`[${this.symbol}] SB Backtest START: days=${requestDays}, interval=${this.interval}`);
     if (onProgress) onProgress({ phase: 'connecting', percent: 0, message: 'Conectando con backend...' });
 
-    return new Promise((resolve) => {
-      try {
-        const queryParams = new URLSearchParams({
+    // Pausar TODO el polling para liberar conexiones HTTP
+    this.pauseAllPolling();
+
+    const delayedResume = () => {
+      if (this._sbResumeTimerId) clearTimeout(this._sbResumeTimerId);
+      this._sbResumeTimerId = setTimeout(() => {
+        this._sbResumeTimerId = null;
+        this.resumeAllPolling();
+      }, 2000);
+    };
+
+    // AbortController para poder cancelar el fetch
+    const controller = new AbortController();
+    this._sbAbortController = controller;
+
+    try {
+      // POST que retorna SSE stream - leemos con fetch + ReadableStream
+      // NO usa EventSource (que solo soporta GET y compite por limite de 6 conexiones)
+      log.info(`[${this.symbol}] SB: POST /api/strategy-builder/backtest-stream`);
+
+      const response = await fetch(`${API_BASE_URL}/api/strategy-builder/backtest-stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           symbol: this.symbol,
           interval: this.interval,
-          days: requestDays.toString(),
-          config_json: JSON.stringify(strategyConfig),
-        });
+          days: requestDays,
+          config: strategyConfig,
+        }),
+        signal: controller.signal,
+      });
 
-        const url = `${API_BASE_URL}/api/strategy-builder/backtest-stream?${queryParams}`;
-        const eventSource = new EventSource(url);
-        let resolved = false;
+      log.info(`[${this.symbol}] SB: Response status=${response.status}`);
 
-        const timeoutMs = 10 * 60 * 60 * 1000; // 10 horas
-        const timeoutId = setTimeout(() => {
-          if (!resolved) {
-            resolved = true;
-            eventSource.close();
-            resolve({ success: false, error: 'Timeout: el backtest tardo demasiado.' });
-          }
-        }, timeoutMs);
+      if (!response.ok) {
+        delayedResume();
+        this._sbAbortController = null;
+        return { success: false, error: `Error HTTP ${response.status} del backend` };
+      }
 
-        eventSource.onmessage = (event) => {
+      // Leer el stream SSE linea por linea con ReadableStream
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let finalResult = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // Procesar lineas completas (formato SSE: "data: {...}\n\n")
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+
           try {
-            const data = JSON.parse(event.data);
+            const data = JSON.parse(trimmed.slice(6));
 
             if (data.type === 'progress') {
               if (onProgress) {
@@ -2112,16 +2283,26 @@ class IndicatorManager {
                 });
               }
             } else if (data.type === 'result') {
-              clearTimeout(timeoutId);
-              eventSource.close();
-              resolved = true;
-
               if (data.success && data.zones) {
-                // Usar _strategyZones en ZoneVisualizer
                 this.zoneVisualizerIndicator.setStrategyZones(data.zones);
-                log.info(`[${this.symbol}] Strategy Builder: ${data.zones.length} trades (${data.candles_count || '?'} velas)`);
-
-                resolve({
+                // Cargar diagnostics del semaforo si vienen
+                if (data.diagnostics) {
+                  this.zoneVisualizerIndicator.setSBDiagnostics(data.diagnostics);
+                }
+                // Cargar perfiles VP para visualizacion
+                if (data.vp_profiles && data.vp_profiles.length > 0) {
+                  this.zoneVisualizerIndicator.setVPProfiles(data.vp_profiles);
+                  log.info(`[${this.symbol}] VP Profiles: ${data.vp_profiles.length} perfiles cargados`);
+                }
+                // Cargar Gaussian Channel para visualizacion
+                if (data.gc_channel && data.gc_channel.points) {
+                  this.zoneVisualizerIndicator.setGCChannel(data.gc_channel);
+                  log.info(`[${this.symbol}] GC Channel: ${data.gc_channel.points.length} puntos cargados`);
+                } else {
+                  this.zoneVisualizerIndicator.setGCChannel(null);
+                }
+                log.info(`[${this.symbol}] SB DONE: ${data.zones.length} trades (${data.candles_count || '?'} velas, ${data.elapsed_seconds}s)`);
+                finalResult = {
                   success: true,
                   zones: data.zones,
                   trades: data.trades || [],
@@ -2129,37 +2310,40 @@ class IndicatorManager {
                   candles_count: data.candles_count,
                   levels_count: data.levels_count,
                   elapsed_seconds: data.elapsed_seconds,
-                });
+                  filter_stats: data.filter_stats || null,
+                  diagnostics: data.diagnostics || null,
+                  vp_profiles: data.vp_profiles || [],
+                };
               } else {
-                resolve({ success: false, error: data.error || 'Error desconocido' });
+                finalResult = { success: false, error: data.error || 'Error desconocido' };
               }
             } else if (data.type === 'error') {
-              clearTimeout(timeoutId);
-              eventSource.close();
-              resolved = true;
-              resolve({ success: false, error: data.message || 'Error en el servidor' });
+              finalResult = { success: false, error: data.message || 'Error en el servidor' };
             }
-          } catch (parseErr) {
-            log.error(`[${this.symbol}] Error parseando SSE:`, parseErr);
+          } catch (_parseErr) {
+            // Linea no parseable, ignorar
           }
-        };
+        }
 
-        eventSource.onerror = () => {
-          if (!resolved) {
-            clearTimeout(timeoutId);
-            eventSource.close();
-            resolved = true;
-            resolve({
-              success: false,
-              error: `No se pudo conectar al backend (${API_BASE_URL}). Verifica que este corriendo.`
-            });
-          }
-        };
-      } catch (error) {
-        log.error(`[${this.symbol}] Error en runStrategyBuilderBacktest:`, error.message || error);
-        resolve({ success: false, error: error.message || 'Error desconocido' });
+        if (finalResult) break;
       }
-    });
+
+      delayedResume();
+      this._sbAbortController = null;
+      return finalResult || { success: false, error: 'Stream termino sin resultado' };
+
+    } catch (error) {
+      this._sbAbortController = null;
+      delayedResume();
+
+      if (error.name === 'AbortError') {
+        log.info(`[${this.symbol}] SB: Backtest cancelado`);
+        return { success: false, error: 'Backtest cancelado' };
+      }
+
+      log.error(`[${this.symbol}] SB ERROR: ${error.message || error}`);
+      return { success: false, error: error.message || 'Error de conexion con backend' };
+    }
   }
 
   /**
@@ -2246,6 +2430,148 @@ class IndicatorManager {
         errMsg = 'Timeout: la optimizacion tardo mas de 10 horas.';
       }
       if (onError) onError(errMsg);
+    }
+  }
+
+  /**
+   * Auto-optimizacion en 3 fases del Strategy Builder.
+   * Usa fetch POST + ReadableStream (no EventSource).
+   */
+  async autoOptimizeStrategy(params = {}) {
+    const {
+      days = 365,
+      interval,
+      ranking_metric = 'recovery_factor',
+      top_n = 20,
+      min_trades = 15,
+      onProgress,
+      onComplete,
+      onError
+    } = params;
+
+    // Abortar previo si existe
+    if (this._autoOptAbortController) {
+      try { this._autoOptAbortController.abort(); } catch (_) {}
+      this._autoOptAbortController = null;
+    }
+
+    if (this._autoOptResumeTimerId) {
+      clearTimeout(this._autoOptResumeTimerId);
+      this._autoOptResumeTimerId = null;
+    }
+
+    log.info(`[${this.symbol}] AUTO-OPT START: ${interval || this.interval} x ${days}d, metric=${ranking_metric}`);
+    if (onProgress) onProgress({ phase: 'connecting', percent: 0, message: 'Conectando con backend...' });
+
+    this.pauseAllPolling();
+
+    const delayedResume = () => {
+      if (this._autoOptResumeTimerId) clearTimeout(this._autoOptResumeTimerId);
+      this._autoOptResumeTimerId = setTimeout(() => {
+        this._autoOptResumeTimerId = null;
+        this.resumeAllPolling();
+      }, 2000);
+    };
+
+    const controller = new AbortController();
+    this._autoOptAbortController = controller;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/strategy-builder/auto-optimize-stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          symbol: this.symbol,
+          interval: interval || this.interval,
+          days,
+          ranking_metric,
+          top_n,
+          min_trades,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        delayedResume();
+        this._autoOptAbortController = null;
+        const errMsg = `Error HTTP ${response.status}`;
+        if (onError) onError(errMsg);
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data: ')) continue;
+
+          try {
+            const data = JSON.parse(trimmed.slice(6));
+
+            if (data.type === 'progress') {
+              if (onProgress) {
+                onProgress({
+                  phase: data.phase,
+                  percent: data.percent || 0,
+                  message: data.message || '',
+                });
+              }
+            } else if (data.type === 'result') {
+              delayedResume();
+              this._autoOptAbortController = null;
+              if (data.success && onComplete) {
+                log.info(`[${this.symbol}] AUTO-OPT DONE: ${data.total_backtests} backtests, ${data.results?.length || 0} results in ${data.elapsed_seconds}s`);
+                onComplete(data);
+              } else if (onError) {
+                onError(data.error || 'Error desconocido');
+              }
+              return;
+            } else if (data.type === 'error') {
+              delayedResume();
+              this._autoOptAbortController = null;
+              if (onError) onError(data.message || 'Error en el servidor');
+              return;
+            }
+          } catch (_parseErr) {
+            // Linea no parseable, ignorar
+          }
+        }
+      }
+
+      delayedResume();
+      this._autoOptAbortController = null;
+      if (onError) onError('Stream termino sin resultado');
+
+    } catch (error) {
+      this._autoOptAbortController = null;
+      delayedResume();
+      let errMsg = error.message || 'Error de conexion';
+      if (error.name === 'AbortError') {
+        errMsg = 'Auto-optimizacion cancelada';
+      }
+      log.error(`[${this.symbol}] AUTO-OPT ERROR: ${errMsg}`);
+      if (onError) onError(errMsg);
+    }
+  }
+
+  /**
+   * Cancela una auto-optimizacion en curso.
+   */
+  cancelAutoOptimize() {
+    if (this._autoOptAbortController) {
+      try { this._autoOptAbortController.abort(); } catch (_) {}
+      this._autoOptAbortController = null;
     }
   }
 

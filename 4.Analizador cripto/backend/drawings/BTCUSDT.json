@@ -2,33 +2,48 @@
   "symbol": "BTCUSDT",
   "shapes": [
     {
-      "type": "tpsl",
-      "id": "tpsl_1771192237367_0.7931332285513559",
-      "entryPrice": 70164.78283303,
-      "tpPrice": 71465.9646512118,
-      "slPrice": 69530.87374212091,
-      "time": 1770675600000,
-      "widthTime": 6720000
+      "type": "horizontal",
+      "id": "horizontal_1771721289355_0.9553408837089072",
+      "price": 91899.88397623698,
+      "time": 1768820400000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
     },
     {
-      "type": "tpsl-short",
-      "id": "tpsl_short_1771194252037_0.2753063653741299",
-      "entryPrice": 75202.16609339385,
-      "tpPrice": 71563.62876529957,
-      "slPrice": 76415.01186942529,
-      "time": 1770234660000,
-      "widthTime": 39360000
+      "type": "horizontal",
+      "id": "horizontal_1771721300389_0.24442841173100316",
+      "price": 71036.76068856574,
+      "time": 1770616800000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
     },
     {
-      "type": "tpsl-short",
-      "id": "tpsl_short_1771212348393_0.49347790043380324",
-      "entryPrice": 68850.24642658234,
-      "tpPrice": 68167.17350991566,
-      "slPrice": 69139.869343249,
-      "time": 1771206540000,
-      "widthTime": 10320000
+      "type": "horizontal",
+      "id": "horizontal_1771721307137_0.203908365825606",
+      "price": 65734.05018628263,
+      "time": 1770976800000,
+      "style": {
+        "color": "#8B5CF6",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
     }
   ],
-  "updated_at": "2026-02-16T04:34:11.809595+00:00",
+  "updated_at": "2026-02-22T00:48:29.259871+00:00",
   "total_shapes": 3
 }

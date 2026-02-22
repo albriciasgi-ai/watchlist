@@ -6,8 +6,8 @@
  */
 
 // URL base del backend API
-// En Electron, siempre nos conectamos al backend local
-export const API_BASE_URL = "http://localhost:10000";
+// En Electron, siempre nos conectamos al backend local (127.0.0.1 en vez de localhost para evitar problemas IPv6)
+export const API_BASE_URL = "http://127.0.0.1:10000";
 
 // Detectar si estamos en Electron
 export const isElectron = () => {

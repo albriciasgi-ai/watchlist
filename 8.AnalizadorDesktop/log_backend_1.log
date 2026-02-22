@@ -1,0 +1,298 @@
+2026-02-17 16:22:45 - uvicorn.error - INFO - Started server process [16144]
+2026-02-17 16:22:45 - uvicorn.error - INFO - Started server process [16144]
+2026-02-17 16:22:45 - uvicorn.error - INFO - Waiting for application startup.
+2026-02-17 16:22:45 - uvicorn.error - INFO - Waiting for application startup.
+2026-02-17 16:22:45 - alert_sender - INFO - [STARTUP] Alert sender started. Target: http://localhost:5000
+2026-02-17 16:22:45 - alert_sender - INFO - [QUEUE] Alert queue processor started
+2026-02-17 16:22:47 - alert_sender - WARNING - [WARN] Alert service not reachable at http://localhost:5000
+2026-02-17 16:22:47 - alert_sender - INFO - [TIP] Alert service is optional. Alerts will be logged locally.
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+[STARTUP] Swing config loaded: 13 symbols, interval=1m
+[STARTUP] Real-time pattern detection service SKIPPED (deprecated - DTB/Rejection disabled)
+2026-02-17 16:22:54 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+[STARTUP] Swing detector service started - monitoring 13 symbols @ 1m
+[STARTUP] VWAP service started
+2026-02-17 16:23:28 - zone_service - INFO - [ZONE] Config cargada: 1 simbolos, interval=1
+[STARTUP] Zone detector realtime service disabled (enable from frontend)
+2026-02-17 16:23:28 - strategy_rt - INFO - [STRAT_RT] Config cargada: 1 simbolos
+[STARTUP] Strategy RT service loaded (start manually from frontend)
+2026-02-17 16:23:28 - uvicorn.error - INFO - Application startup complete.
+2026-02-17 16:23:28 - uvicorn.error - INFO - Application startup complete.
+2026-02-17 16:23:28 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:10000 (Press CTRL+C to quit)
+2026-02-17 16:23:28 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:10000 (Press CTRL+C to quit)
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:23:28 - uvicorn.access - INFO - 127.0.0.1:53896 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:23:28 - uvicorn.access - INFO - 127.0.0.1:53896 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:23:28 - uvicorn.access - INFO - 127.0.0.1:53896 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:23:28 - uvicorn.access - INFO - 127.0.0.1:53896 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:23:28 - uvicorn.access - INFO - 127.0.0.1:53896 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:23:28 - uvicorn.access - INFO - 127.0.0.1:53896 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:23:41 - uvicorn.access - INFO - 127.0.0.1:53891 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:23:41 - uvicorn.access - INFO - 127.0.0.1:53892 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:23:56 - uvicorn.access - INFO - 127.0.0.1:53894 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:23:56 - uvicorn.access - INFO - 127.0.0.1:53895 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:23:56 - uvicorn.access - INFO - 127.0.0.1:53900 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:23:56 - uvicorn.access - INFO - 127.0.0.1:53901 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:23:56 - uvicorn.access - INFO - 127.0.0.1:53895 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:23:56 - uvicorn.access - INFO - 127.0.0.1:53899 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:23:58 - uvicorn.access - INFO - 127.0.0.1:53893 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+2026-02-17 16:24:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+[VWAP] BTCUSDT: Reloading - interval=1, days=90, vwapType=rolling
+2026-02-17 16:24:11 - uvicorn.access - INFO - 127.0.0.1:62566 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:24:11 - uvicorn.access - INFO - 127.0.0.1:62567 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:24:26 - uvicorn.access - INFO - 127.0.0.1:62569 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:24:26 - uvicorn.access - INFO - 127.0.0.1:62570 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:24:26 - uvicorn.access - INFO - 127.0.0.1:62571 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:24:26 - uvicorn.access - INFO - 127.0.0.1:62570 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:24:26 - uvicorn.access - INFO - 127.0.0.1:62570 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:24:26 - uvicorn.access - INFO - 127.0.0.1:62571 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:24:27 - uvicorn.access - INFO - 127.0.0.1:62571 - "GET /api/strategy-builder/presets HTTP/1.1" 200
+2026-02-17 16:24:41 - uvicorn.access - INFO - 127.0.0.1:62573 - "GET /api/strategy-builder/backtest-stream?symbol=BTCUSDT&interval=1&days=7&config_json=%7B%22level_sources%22%3A%5B%7B%22source%22%3A%22vp_periodic%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22period%22%3A960%2C%22bins%22%3A50%2C%22use_poc%22%3Atrue%2C%22use_vah%22%3Atrue%2C%22use_val%22%3Atrue%2C%22lookback_segments%22%3A1%7D%7D%5D%2C%22entry_signal%22%3A%7B%22signal_type%22%3A%22price_touch%22%2C%22params%22%3A%7B%22tolerance_pct%22%3A0.3%2C%22swing_bars%22%3A3%2C%22wick_body_ratio%22%3A2%2C%22pattern_type%22%3A%22any%22%2C%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%2C%22context_filters%22%3A%5B%7B%22filter_type%22%3A%22vwap_position%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22mode%22%3A%22counter%22%2C%22long_ref%22%3A%22upper_2%22%2C%22short_ref%22%3A%22lower_2%22%7D%7D%2C%7B%22filter_type%22%3A%22dtb_bias%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%5D%2C%22risk%22%3A%7B%22sl_method%22%3A%22below_level%22%2C%22sl_params%22%3A%7B%22buffer_pct%22%3A0.26%7D%2C%22tp_method%22%3A%22rr_fixed%22%2C%22tp_params%22%3A%7B%22rr%22%3A4%7D%2C%22max_trades_per_segment%22%3A1%2C%22cooldown_bars%22%3A305%2C%22trailing_stop%22%3Afalse%7D%2C%22exit_rules%22%3A%5B%5D%2C%22confluence_mode%22%3A%22any%22%2C%22min_confluence_score%22%3A0%2C%22vwap_period%22%3A1205%7D HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=7, aplicando límite -> days_to_fetch=7 (máx: 7) @ 1
+[BTCUSDT] [DISK_CACHE] Cargadas 129731 velas desde disco (1)
+[BTCUSDT] [DISK_CACHE] HIT: 129731 velas en disco, necesarias ~10080, cargando incremental...
+2026-02-17 16:24:41 - uvicorn.access - INFO - 127.0.0.1:62574 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:24:41 - uvicorn.access - INFO - 127.0.0.1:62575 - "GET /api/swing/status HTTP/1.1" 200
+[BTCUSDT] [DISK_CACHE] INCREMENTAL: +294 nuevas (total: 130025, reqs: 2)
+[BTCUSDT] [DISK_CACHE] Guardadas 130025 velas en disco (1, 2.5 MB)
+[SB_BACKTEST_SSE] 10080 velas de cache en 4.5s
+[SB_BACKTEST] Filter stats: signals=1906, dir=0, conf=0, maxSeg=1412, context={}, slInv=0, slDir=0, tpInv=0, opened=13
+[SB_BACKTEST_SSE] Completado en 12.0s
+2026-02-17 16:24:53 - zone_v2 - INFO - [ZONE_V2] Config cargada: ['BTCUSDT'] @ 1
+2026-02-17 16:24:53 - uvicorn.access - INFO - 127.0.0.1:62573 - "GET /api/zones/v2/status HTTP/1.1" 200
+2026-02-17 16:24:53 - zone_vp_service - INFO - [VP_SERVICE] Config cargada: 1 simbolos, interval=1
+2026-02-17 16:24:53 - uvicorn.access - INFO - 127.0.0.1:62577 - "GET /api/zones/vp/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:24:56 - uvicorn.access - INFO - 127.0.0.1:62577 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:24:56 - uvicorn.access - INFO - 127.0.0.1:62578 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:24:56 - uvicorn.access - INFO - 127.0.0.1:62577 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:24:56 - uvicorn.access - INFO - 127.0.0.1:62580 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:24:56 - uvicorn.access - INFO - 127.0.0.1:62578 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:24:56 - uvicorn.access - INFO - 127.0.0.1:62579 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:25:00 - uvicorn.access - INFO - 127.0.0.1:62573 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+2026-02-17 16:25:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:25:11 - uvicorn.access - INFO - 127.0.0.1:62585 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:25:11 - uvicorn.access - INFO - 127.0.0.1:62586 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:25:23 - uvicorn.access - INFO - 127.0.0.1:62587 - "GET /api/zones/v2/diagnostics/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:25:26 - uvicorn.access - INFO - 127.0.0.1:62587 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:25:26 - uvicorn.access - INFO - 127.0.0.1:62588 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:25:26 - uvicorn.access - INFO - 127.0.0.1:62588 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:25:26 - uvicorn.access - INFO - 127.0.0.1:62589 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:25:26 - uvicorn.access - INFO - 127.0.0.1:62589 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:25:26 - uvicorn.access - INFO - 127.0.0.1:62588 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:25:41 - uvicorn.access - INFO - 127.0.0.1:62590 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:25:41 - uvicorn.access - INFO - 127.0.0.1:62591 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:25:53 - uvicorn.access - INFO - 127.0.0.1:62592 - "GET /api/zones/v2/diagnostics/BTCUSDT HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:25:56 - uvicorn.access - INFO - 127.0.0.1:62592 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:25:56 - uvicorn.access - INFO - 127.0.0.1:62594 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:25:56 - uvicorn.access - INFO - 127.0.0.1:62592 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:25:56 - uvicorn.access - INFO - 127.0.0.1:62594 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:25:56 - uvicorn.access - INFO - 127.0.0.1:62596 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:25:56 - uvicorn.access - INFO - 127.0.0.1:62595 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:25:58 - uvicorn.access - INFO - 127.0.0.1:62593 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+2026-02-17 16:26:00 - swing_alerts - INFO - BLOCKED_HISTORICAL | ADAUSDT | SWING_LOW | price=0.28 | signal_ts=1771363260 | service_start=1771363368
+2026-02-17 16:26:00 - swing_alerts - INFO - BLOCKED_HISTORICAL | DOGEUSDT | SWING_LOW | price=0.10 | signal_ts=1771363260 | service_start=1771363368
+2026-02-17 16:26:01 - swing_alerts - INFO - BLOCKED_HISTORICAL | XRPUSDT | SWING_LOW | price=1.48 | signal_ts=1771363260 | service_start=1771363368
+2026-02-17 16:26:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:26:11 - uvicorn.access - INFO - 127.0.0.1:62599 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:26:11 - uvicorn.access - INFO - 127.0.0.1:62600 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:26:14 - uvicorn.access - INFO - 127.0.0.1:62600 - "GET /api/strategy-builder/backtest-stream?symbol=BTCUSDT&interval=1&days=7&config_json=%7B%22level_sources%22%3A%5B%7B%22source%22%3A%22vp_periodic%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22period%22%3A960%2C%22bins%22%3A50%2C%22use_poc%22%3Atrue%2C%22use_vah%22%3Atrue%2C%22use_val%22%3Atrue%2C%22lookback_segments%22%3A1%7D%7D%5D%2C%22entry_signal%22%3A%7B%22signal_type%22%3A%22price_touch%22%2C%22params%22%3A%7B%22tolerance_pct%22%3A0.3%2C%22swing_bars%22%3A3%2C%22wick_body_ratio%22%3A2%2C%22pattern_type%22%3A%22any%22%2C%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%2C%22context_filters%22%3A%5B%7B%22filter_type%22%3A%22vwap_position%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22mode%22%3A%22counter%22%2C%22long_ref%22%3A%22upper_2%22%2C%22short_ref%22%3A%22lower_2%22%7D%7D%2C%7B%22filter_type%22%3A%22dtb_bias%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%5D%2C%22risk%22%3A%7B%22sl_method%22%3A%22below_swing%22%2C%22sl_params%22%3A%7B%22buffer_pct%22%3A0.1%7D%2C%22tp_method%22%3A%22rr_fixed%22%2C%22tp_params%22%3A%7B%22rr%22%3A4%7D%2C%22max_trades_per_segment%22%3A1%2C%22cooldown_bars%22%3A305%2C%22trailing_stop%22%3Afalse%7D%2C%22exit_rules%22%3A%5B%5D%2C%22confluence_mode%22%3A%22any%22%2C%22min_confluence_score%22%3A0%2C%22vwap_period%22%3A1205%7D HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=7, aplicando límite -> days_to_fetch=7 (máx: 7) @ 1
+[BTCUSDT] [DATA] MEMORY CACHE HIT: 10080 velas (necesarias ~10080, edad=92s)
+[SB_BACKTEST_SSE] 10080 velas de cache en 0.3s
+[SB_BACKTEST] Filter stats: signals=1906, dir=0, conf=0, maxSeg=1411, context={}, slInv=0, slDir=1, tpInv=0, opened=13
+[SB_BACKTEST_SSE] Completado en 7.0s
+2026-02-17 16:26:21 - uvicorn.access - INFO - 127.0.0.1:62600 - "GET /api/zones/v2/status HTTP/1.1" 200
+2026-02-17 16:26:21 - uvicorn.access - INFO - 127.0.0.1:62601 - "GET /api/zones/vp/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:26:26 - uvicorn.access - INFO - 127.0.0.1:62601 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:26:26 - uvicorn.access - INFO - 127.0.0.1:62601 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:26:26 - uvicorn.access - INFO - 127.0.0.1:62601 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:26:26 - uvicorn.access - INFO - 127.0.0.1:62600 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:26:26 - uvicorn.access - INFO - 127.0.0.1:62600 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:26:26 - uvicorn.access - INFO - 127.0.0.1:62601 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:26:37 - uvicorn.access - INFO - 127.0.0.1:62602 - "GET /api/strategy-builder/backtest-stream?symbol=BTCUSDT&interval=1&days=7&config_json=%7B%22level_sources%22%3A%5B%7B%22source%22%3A%22vp_periodic%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22period%22%3A960%2C%22bins%22%3A50%2C%22use_poc%22%3Atrue%2C%22use_vah%22%3Atrue%2C%22use_val%22%3Atrue%2C%22lookback_segments%22%3A1%7D%7D%5D%2C%22entry_signal%22%3A%7B%22signal_type%22%3A%22price_touch%22%2C%22params%22%3A%7B%22tolerance_pct%22%3A0.3%2C%22swing_bars%22%3A3%2C%22wick_body_ratio%22%3A2%2C%22pattern_type%22%3A%22any%22%2C%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%2C%22context_filters%22%3A%5B%7B%22filter_type%22%3A%22vwap_position%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22mode%22%3A%22counter%22%2C%22long_ref%22%3A%22upper_2%22%2C%22short_ref%22%3A%22lower_2%22%7D%7D%2C%7B%22filter_type%22%3A%22dtb_bias%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%5D%2C%22risk%22%3A%7B%22sl_method%22%3A%22below_level%22%2C%22sl_params%22%3A%7B%22buffer_pct%22%3A0.1%7D%2C%22tp_method%22%3A%22rr_fixed%22%2C%22tp_params%22%3A%7B%22rr%22%3A4%7D%2C%22max_trades_per_segment%22%3A1%2C%22cooldown_bars%22%3A250%2C%22trailing_stop%22%3Afalse%7D%2C%22exit_rules%22%3A%5B%5D%2C%22confluence_mode%22%3A%22any%22%2C%22min_confluence_score%22%3A0%2C%22vwap_period%22%3A1205%7D HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=7, aplicando límite -> days_to_fetch=7 (máx: 7) @ 1
+[BTCUSDT] [DATA] MEMORY CACHE HIT: 10080 velas (necesarias ~10080, edad=114s)
+[SB_BACKTEST_SSE] 10080 velas de cache en 0.3s
+2026-02-17 16:26:41 - uvicorn.access - INFO - 127.0.0.1:62603 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:26:41 - uvicorn.access - INFO - 127.0.0.1:62604 - "GET /api/swing/status HTTP/1.1" 200
+[SB_BACKTEST] Filter stats: signals=1906, dir=0, conf=0, maxSeg=1536, context={}, slInv=0, slDir=0, tpInv=0, opened=14
+[SB_BACKTEST_SSE] Completado en 6.9s
+2026-02-17 16:26:43 - uvicorn.access - INFO - 127.0.0.1:62602 - "GET /api/zones/v2/status HTTP/1.1" 200
+2026-02-17 16:26:43 - uvicorn.access - INFO - 127.0.0.1:62604 - "GET /api/zones/vp/status HTTP/1.1" 200
+2026-02-17 16:26:53 - uvicorn.access - INFO - 127.0.0.1:62606 - "GET /api/strategy-builder/backtest-stream?symbol=BTCUSDT&interval=1&days=7&config_json=%7B%22level_sources%22%3A%5B%7B%22source%22%3A%22vp_periodic%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22period%22%3A960%2C%22bins%22%3A50%2C%22use_poc%22%3Atrue%2C%22use_vah%22%3Atrue%2C%22use_val%22%3Atrue%2C%22lookback_segments%22%3A1%7D%7D%5D%2C%22entry_signal%22%3A%7B%22signal_type%22%3A%22price_touch%22%2C%22params%22%3A%7B%22tolerance_pct%22%3A0.3%2C%22swing_bars%22%3A3%2C%22wick_body_ratio%22%3A2%2C%22pattern_type%22%3A%22any%22%2C%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%2C%22context_filters%22%3A%5B%7B%22filter_type%22%3A%22vwap_position%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22mode%22%3A%22counter%22%2C%22long_ref%22%3A%22upper_2%22%2C%22short_ref%22%3A%22lower_2%22%7D%7D%2C%7B%22filter_type%22%3A%22dtb_bias%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%5D%2C%22risk%22%3A%7B%22sl_method%22%3A%22below_swing%22%2C%22sl_params%22%3A%7B%22buffer_pct%22%3A0.1%7D%2C%22tp_method%22%3A%22rr_fixed%22%2C%22tp_params%22%3A%7B%22rr%22%3A4%7D%2C%22max_trades_per_segment%22%3A1%2C%22cooldown_bars%22%3A250%2C%22trailing_stop%22%3Afalse%7D%2C%22exit_rules%22%3A%5B%5D%2C%22confluence_mode%22%3A%22any%22%2C%22min_confluence_score%22%3A0%2C%22vwap_period%22%3A1205%7D HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=7, aplicando límite -> days_to_fetch=7 (máx: 7) @ 1
+[BTCUSDT] [DATA] MEMORY CACHE HIT: 10080 velas (necesarias ~10080, edad=131s)
+[SB_BACKTEST_SSE] 10080 velas de cache en 0.3s
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:26:56 - uvicorn.access - INFO - 127.0.0.1:62607 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:26:57 - uvicorn.access - INFO - 127.0.0.1:62609 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:26:58 - uvicorn.access - INFO - 127.0.0.1:62607 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:26:58 - uvicorn.access - INFO - 127.0.0.1:62609 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:26:58 - uvicorn.access - INFO - 127.0.0.1:62607 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:26:58 - uvicorn.access - INFO - 127.0.0.1:62610 - "GET /api/status HTTP/1.1" 200
+[SB_BACKTEST] Filter stats: signals=1906, dir=0, conf=0, maxSeg=1535, context={}, slInv=0, slDir=1, tpInv=0, opened=14
+2026-02-17 16:27:00 - uvicorn.access - INFO - 127.0.0.1:62608 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+[SB_BACKTEST_SSE] Completado en 7.2s
+2026-02-17 16:27:00 - uvicorn.access - INFO - 127.0.0.1:62606 - "GET /api/zones/v2/status HTTP/1.1" 200
+2026-02-17 16:27:00 - uvicorn.access - INFO - 127.0.0.1:62608 - "GET /api/zones/vp/status HTTP/1.1" 200
+2026-02-17 16:27:01 - swing_alerts - INFO - SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=15.71 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-17 16:27:01 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | TRBUSDT | SWING_LOW | price=15.71
+2026-02-17 16:27:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:27:01 - swing_alerts - INFO - SIGNAL_DETECTED | POLUSDT | SWING_LOW | price=0.11 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-17 16:27:01 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | POLUSDT | SWING_LOW | price=0.11
+2026-02-17 16:27:11 - uvicorn.access - INFO - 127.0.0.1:62612 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:27:11 - uvicorn.access - INFO - 127.0.0.1:62613 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:27:11 - uvicorn.access - INFO - 127.0.0.1:62613 - "GET /api/strategy-builder/backtest-stream?symbol=BTCUSDT&interval=1&days=7&config_json=%7B%22level_sources%22%3A%5B%7B%22source%22%3A%22vp_periodic%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22period%22%3A960%2C%22bins%22%3A50%2C%22use_poc%22%3Atrue%2C%22use_vah%22%3Atrue%2C%22use_val%22%3Atrue%2C%22lookback_segments%22%3A1%7D%7D%5D%2C%22entry_signal%22%3A%7B%22signal_type%22%3A%22price_touch%22%2C%22params%22%3A%7B%22tolerance_pct%22%3A0.3%2C%22swing_bars%22%3A3%2C%22wick_body_ratio%22%3A2%2C%22pattern_type%22%3A%22any%22%2C%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%2C%22context_filters%22%3A%5B%7B%22filter_type%22%3A%22vwap_position%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22mode%22%3A%22counter%22%2C%22long_ref%22%3A%22upper_2%22%2C%22short_ref%22%3A%22lower_2%22%7D%7D%2C%7B%22filter_type%22%3A%22dtb_bias%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%5D%2C%22risk%22%3A%7B%22sl_method%22%3A%22atr_multiple%22%2C%22sl_params%22%3A%7B%22atr_multiplier%22%3A1.5%7D%2C%22tp_method%22%3A%22rr_fixed%22%2C%22tp_params%22%3A%7B%22rr%22%3A4%7D%2C%22max_trades_per_segment%22%3A1%2C%22cooldown_bars%22%3A250%2C%22trailing_stop%22%3Afalse%7D%2C%22exit_rules%22%3A%5B%5D%2C%22confluence_mode%22%3A%22any%22%2C%22min_confluence_score%22%3A0%2C%22vwap_period%22%3A1205%7D HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=7, aplicando límite -> days_to_fetch=7 (máx: 7) @ 1
+[BTCUSDT] [DATA] MEMORY CACHE HIT: 10080 velas (necesarias ~10080, edad=149s)
+[SB_BACKTEST_SSE] 10080 velas de cache en 0.3s
+[SB_BACKTEST] Filter stats: signals=1906, dir=0, conf=0, maxSeg=1536, context={}, slInv=0, slDir=0, tpInv=0, opened=14
+[SB_BACKTEST_SSE] Completado en 6.9s
+2026-02-17 16:27:18 - uvicorn.access - INFO - 127.0.0.1:62613 - "GET /api/zones/v2/status HTTP/1.1" 200
+2026-02-17 16:27:18 - uvicorn.access - INFO - 127.0.0.1:62615 - "GET /api/zones/vp/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:27:26 - uvicorn.access - INFO - 127.0.0.1:62616 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:27:26 - uvicorn.access - INFO - 127.0.0.1:62617 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:27:26 - uvicorn.access - INFO - 127.0.0.1:62617 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:27:26 - uvicorn.access - INFO - 127.0.0.1:62618 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:27:26 - uvicorn.access - INFO - 127.0.0.1:62618 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:27:26 - uvicorn.access - INFO - 127.0.0.1:62617 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:27:41 - uvicorn.access - INFO - 127.0.0.1:62619 - "GET /api/strategy-builder/backtest-stream?symbol=BTCUSDT&interval=1&days=400&config_json=%7B%22level_sources%22%3A%5B%7B%22source%22%3A%22vp_periodic%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22period%22%3A960%2C%22bins%22%3A50%2C%22use_poc%22%3Atrue%2C%22use_vah%22%3Atrue%2C%22use_val%22%3Atrue%2C%22lookback_segments%22%3A1%7D%7D%5D%2C%22entry_signal%22%3A%7B%22signal_type%22%3A%22price_touch%22%2C%22params%22%3A%7B%22tolerance_pct%22%3A0.3%2C%22swing_bars%22%3A3%2C%22wick_body_ratio%22%3A2%2C%22pattern_type%22%3A%22any%22%2C%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%2C%22context_filters%22%3A%5B%7B%22filter_type%22%3A%22vwap_position%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22mode%22%3A%22counter%22%2C%22long_ref%22%3A%22upper_2%22%2C%22short_ref%22%3A%22lower_2%22%7D%7D%2C%7B%22filter_type%22%3A%22dtb_bias%22%2C%22enabled%22%3Atrue%2C%22params%22%3A%7B%22lookback%22%3A50%2C%22min_confidence%22%3A50%7D%7D%5D%2C%22risk%22%3A%7B%22sl_method%22%3A%22atr_multiple%22%2C%22sl_params%22%3A%7B%22atr_multiplier%22%3A1.5%7D%2C%22tp_method%22%3A%22rr_fixed%22%2C%22tp_params%22%3A%7B%22rr%22%3A4%7D%2C%22max_trades_per_segment%22%3A1%2C%22cooldown_bars%22%3A250%2C%22trailing_stop%22%3Afalse%7D%2C%22exit_rules%22%3A%5B%5D%2C%22confluence_mode%22%3A%22any%22%2C%22min_confluence_score%22%3A0%2C%22vwap_period%22%3A1205%7D HTTP/1.1" 200
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=400, aplicando límite -> days_to_fetch=400 (máx: 400) @ 1
+[BTCUSDT] [DISK_CACHE] Cargadas 130025 velas desde disco (1)
+[BTCUSDT] [DISK_CACHE] PARTIAL MERGE: disco tiene 130025 velas, faltan ~445972 velas anteriores - descargando solo lo faltante
+2026-02-17 16:27:42 - uvicorn.access - INFO - 127.0.0.1:62620 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:27:42 - uvicorn.access - INFO - 127.0.0.1:62621 - "GET /api/swing/status HTTP/1.1" 200
+[BTCUSDT] [DISK_CACHE] Gap download #1: +1000 velas (gap total: 1000)
+[BTCUSDT] [DISK_CACHE] Gap download #2: +1000 velas (gap total: 2000)
+[BTCUSDT] [DISK_CACHE] Gap download #3: +1000 velas (gap total: 3000)
+[BTCUSDT] [DISK_CACHE] Gap download #4: +1000 velas (gap total: 4000)
+[BTCUSDT] [DISK_CACHE] Gap download #5: +1000 velas (gap total: 5000)
+2026-02-17 16:27:56 - uvicorn.access - INFO - 127.0.0.1:62623 - "GET /api/historical-stream/BTCUSDT?interval=1&days=90 HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:27:56 - uvicorn.access - INFO - 127.0.0.1:62624 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:27:57 - uvicorn.access - INFO - 127.0.0.1:62626 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:27:57 - uvicorn.access - INFO - 127.0.0.1:62626 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:27:57 - uvicorn.access - INFO - 127.0.0.1:62624 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:27:57 - uvicorn.access - INFO - 127.0.0.1:62626 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:27:57 - uvicorn.access - INFO - 127.0.0.1:62624 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:27:57 - uvicorn.access - INFO - 127.0.0.1:62625 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+2026-02-17 16:28:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:28:11 - uvicorn.access - INFO - 127.0.0.1:62630 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:28:11 - uvicorn.access - INFO - 127.0.0.1:62631 - "GET /api/swing/status HTTP/1.1" 200
+[BTCUSDT] [DISK_CACHE] Gap download #50: +1000 velas (gap total: 50000)
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:28:26 - uvicorn.access - INFO - 127.0.0.1:62632 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:28:26 - uvicorn.access - INFO - 127.0.0.1:62633 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:28:26 - uvicorn.access - INFO - 127.0.0.1:62633 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:28:26 - uvicorn.access - INFO - 127.0.0.1:62634 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:28:26 - uvicorn.access - INFO - 127.0.0.1:62634 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:28:26 - uvicorn.access - INFO - 127.0.0.1:62633 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:28:41 - uvicorn.access - INFO - 127.0.0.1:62635 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:28:41 - uvicorn.access - INFO - 127.0.0.1:62635 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:28:56 - uvicorn.access - INFO - 127.0.0.1:62636 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:28:56 - uvicorn.access - INFO - 127.0.0.1:62638 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:28:56 - uvicorn.access - INFO - 127.0.0.1:62638 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:28:56 - uvicorn.access - INFO - 127.0.0.1:62636 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:28:56 - uvicorn.access - INFO - 127.0.0.1:62638 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:28:56 - uvicorn.access - INFO - 127.0.0.1:62636 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:28:58 - uvicorn.access - INFO - 127.0.0.1:62637 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+2026-02-17 16:29:00 - swing_alerts - INFO - SIGNAL_DETECTED | ETHUSDT | SWING_LOW | price=1993.29 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-17 16:29:00 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | ETHUSDT | SWING_LOW | price=1993.29
+2026-02-17 16:29:01 - swing_alerts - INFO - SIGNAL_DETECTED | SOLUSDT | SWING_LOW | price=84.94 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-17 16:29:01 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | SOLUSDT | SWING_LOW | price=84.94
+2026-02-17 16:29:01 - swing_alerts - INFO - SIGNAL_DETECTED | SUIUSDT | SWING_LOW | price=0.97 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-17 16:29:01 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | SUIUSDT | SWING_LOW | price=0.97
+2026-02-17 16:29:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+[BTCUSDT] [DISK_CACHE] Gap download #100: +1000 velas (gap total: 100000)
+2026-02-17 16:29:11 - uvicorn.access - INFO - 127.0.0.1:62641 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:29:11 - uvicorn.access - INFO - 127.0.0.1:62642 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:29:26 - uvicorn.access - INFO - 127.0.0.1:62643 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:29:26 - uvicorn.access - INFO - 127.0.0.1:62644 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:29:26 - uvicorn.access - INFO - 127.0.0.1:62645 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:29:26 - uvicorn.access - INFO - 127.0.0.1:62644 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:29:26 - uvicorn.access - INFO - 127.0.0.1:62644 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:29:26 - uvicorn.access - INFO - 127.0.0.1:62645 - "GET /api/swing/status HTTP/1.1" 200
+[BTCUSDT] [DISK_CACHE] Gap download #150: +1000 velas (gap total: 150000)
+2026-02-17 16:29:38 - uvicorn.access - INFO - 127.0.0.1:62623 - "GET /api/zones/v2/diagnostics/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:29:38 - uvicorn.access - INFO - 127.0.0.1:62646 - "GET /api/zones/v2/status HTTP/1.1" 200
+2026-02-17 16:29:38 - uvicorn.access - INFO - 127.0.0.1:62647 - "GET /api/zones/vp/status HTTP/1.1" 200
+2026-02-17 16:29:41 - uvicorn.access - INFO - 127.0.0.1:62647 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:29:41 - uvicorn.access - INFO - 127.0.0.1:62646 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:29:56 - uvicorn.access - INFO - 127.0.0.1:62650 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:29:56 - uvicorn.access - INFO - 127.0.0.1:62652 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:29:56 - uvicorn.access - INFO - 127.0.0.1:62650 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:29:56 - uvicorn.access - INFO - 127.0.0.1:62652 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:29:56 - uvicorn.access - INFO - 127.0.0.1:62650 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:29:56 - uvicorn.access - INFO - 127.0.0.1:62653 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:29:57 - uvicorn.access - INFO - 127.0.0.1:62651 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+2026-02-17 16:30:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+[BTCUSDT] [DISK_CACHE] Gap download #200: +1000 velas (gap total: 200000)
+2026-02-17 16:30:08 - uvicorn.access - INFO - 127.0.0.1:62655 - "GET /api/zones/v2/diagnostics/BTCUSDT HTTP/1.1" 200
+[BTCUSDT] [DISK_CACHE] PARTIAL MERGE OK: 203000 antiguas + 130025 disco + 0 nuevas = 333025 total
+[BTCUSDT] [DISK_CACHE] Guardadas 333025 velas en disco (1, 6.6 MB)
+2026-02-17 16:30:16 - uvicorn.access - INFO - 127.0.0.1:62655 - "GET /api/zones/realtime/status HTTP/1.1" 200
+[SB_BACKTEST_SSE] 333025 velas de cache en 155.2s
+2026-02-17 16:30:16 - uvicorn.access - INFO - 127.0.0.1:62657 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:30:26 - uvicorn.access - INFO - 127.0.0.1:62658 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:30:27 - uvicorn.access - INFO - 127.0.0.1:62659 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:30:27 - uvicorn.access - INFO - 127.0.0.1:62661 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:30:27 - uvicorn.access - INFO - 127.0.0.1:62658 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:30:27 - uvicorn.access - INFO - 127.0.0.1:62659 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:30:28 - uvicorn.access - INFO - 127.0.0.1:62660 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:30:39 - uvicorn.access - INFO - 127.0.0.1:62662 - "GET /api/zones/v2/diagnostics/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:30:41 - uvicorn.access - INFO - 127.0.0.1:62662 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:30:41 - uvicorn.access - INFO - 127.0.0.1:62663 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:30:56 - uvicorn.access - INFO - 127.0.0.1:62664 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:30:57 - uvicorn.access - INFO - 127.0.0.1:62666 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:30:58 - uvicorn.access - INFO - 127.0.0.1:62664 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:30:58 - uvicorn.access - INFO - 127.0.0.1:62666 - "GET /api/swing/status HTTP/1.1" 200
+2026-02-17 16:30:58 - uvicorn.access - INFO - 127.0.0.1:62664 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:30:58 - uvicorn.access - INFO - 127.0.0.1:62667 - "GET /api/status HTTP/1.1" 200
+2026-02-17 16:31:00 - uvicorn.access - INFO - 127.0.0.1:62665 - "GET /api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT HTTP/1.1" 200
+2026-02-17 16:31:01 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:35:59 - uvicorn.access - INFO - 127.0.0.1:53893 - "GET /api/vwap-service/data/BTCUSDT?days=90&interval=1&vwapType=rolling&rollingPeriod=1200 HTTP/1.1" 200
+2026-02-17 16:36:05 - uvicorn.access - INFO - 127.0.0.1:62665 - "GET /api/zones/v2/diagnostics/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:36:05 - uvicorn.access - INFO - 127.0.0.1:62667 - "GET /api/zones/realtime/status HTTP/1.1" 200
+2026-02-17 16:36:05 - uvicorn.access - INFO - 127.0.0.1:62664 - "GET /api/swing/status HTTP/1.1" 200
+[DRAWINGS] [OK] Loaded 3 shapes for BTCUSDT
+2026-02-17 16:36:05 - uvicorn.access - INFO - 127.0.0.1:62666 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200
+2026-02-17 16:36:12 - swing_alerts - INFO - SIGNAL_DETECTED | SUIUSDT | SWING_HIGH | price=0.97 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-17 16:36:12 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | SUIUSDT | SWING_HIGH | price=0.97
+2026-02-17 16:36:12 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:36:12 - swing_alerts - INFO - SIGNAL_DETECTED | PAXGUSDT | SWING_HIGH | price=4886.70 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-17 16:36:12 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:36:12 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | PAXGUSDT | SWING_HIGH | price=4886.70
+[SB_BACKTEST] Filter stats: signals=88400, dir=0, conf=0, maxSeg=79710, context={}, slInv=0, slDir=0, tpInv=0, opened=491
+2026-02-17 16:39:08 - uvicorn.access - INFO - 127.0.0.1:53893 - "GET /api/realtime/alerts/history?limit=100 HTTP/1.1" 200
+2026-02-17 16:41:22 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:41:22 - websocket_manager - WARNING - Connection seems stale, reconnecting...
+2026-02-17 16:43:36 - swing_alerts - INFO - SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=15.69 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-17 16:43:36 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | TRBUSDT | SWING_LOW | price=15.69
+2026-02-17 16:43:36 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:45:55 - swing_alerts - INFO - SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=15.69 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-17 16:45:55 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | TRBUSDT | SWING_LOW | price=15.69
+2026-02-17 16:45:55 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:48:17 - swing_alerts - INFO - SIGNAL_DETECTED | TRBUSDT | SWING_LOW | price=15.69 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-17 16:48:17 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | TRBUSDT | SWING_LOW | price=15.69
+2026-02-17 16:48:17 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+[SB_BACKTEST_SSE] Completado en 1236.4s
+2026-02-17 16:50:40 - swing_alerts - INFO - SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=1994.76 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-17 16:50:40 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | ETHUSDT | SWING_HIGH | price=1994.76
+2026-02-17 16:50:40 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+2026-02-17 16:53:00 - swing_alerts - INFO - SIGNAL_DETECTED | ETHUSDT | SWING_HIGH | price=1994.76 | direction=SHORT | volume_zscore=0.00 | interval=1
+2026-02-17 16:53:00 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | ETHUSDT | SWING_HIGH | price=1994.76
+2026-02-17 16:53:00 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5

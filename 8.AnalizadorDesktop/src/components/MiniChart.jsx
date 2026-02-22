@@ -697,7 +697,14 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpPeriod
     const barsSpace = totalActiveBars > 0
       ? 5 + (totalActiveBars * barH) + (Math.max(0, totalActiveBars - 1) * barGap) + separatorSpace
       : 0;
-    const timeAxisHeight = Math.max(25, barsSpace + 18);
+
+    // Espacio adicional para SB Diagnostics (semaforo de debugging)
+    let sbDiagSpace = 0;
+    if (zoneVis && zoneVis.enabled && zoneVis._sbDiagnosticsMap.size > 0) {
+      sbDiagSpace = zoneVis.getSBDiagnosticsHeight() + 6; // +6 separador
+    }
+
+    const timeAxisHeight = Math.max(25, barsSpace + sbDiagSpace + 18);
 
     const baseVolumeHeight = 50;
     const minPriceChartHeight = 180;
@@ -1100,6 +1107,20 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpPeriod
         visibleCandles
       );
       totalBarsHeight += zoneBarsH + (totalBarsHeight > 0 && zoneBarsH > 0 ? 4 : 0);
+    }
+
+    // ✅ Draw Strategy Builder diagnostics bars (semaforo de debugging)
+    if (zoneVisualizer && zoneVisualizer.enabled && zoneVisualizer._sbDiagnosticsMap.size > 0) {
+      const sbBarsStartY = barsStartY + totalBarsHeight + (totalBarsHeight > 0 ? 6 : 0);
+      const sbBarsH = zoneVisualizer.renderSBDiagnosticsBars(
+        ctx,
+        marginLeft,
+        sbBarsStartY,
+        width - marginLeft - marginRight,
+        barWidth,
+        visibleCandles
+      );
+      totalBarsHeight += sbBarsH + (totalBarsHeight > 0 && sbBarsH > 0 ? 6 : 0);
     }
 
     const timeStep = Math.max(Math.floor(visibleCandles.length / 5), 1);
@@ -2554,17 +2575,17 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpPeriod
   }, [symbol, interval, days, indicatorStates, externalIndicatorManager]);
 
   // 🎨 FIX: Cargar dibujos SOLO cuando cambia el símbolo (evita parpadeo al toggle indicadores)
-  // 🔄 SYNC: Polling cada 3s para detectar cambios desde otras apps (Watchlist)
+  // 🔄 SYNC: Polling cada 30s para detectar cambios (reducido de 3s para evitar inundar backend)
   useEffect(() => {
     // Carga inicial
     loadDrawings();
 
-    // Polling para sincronizar con otras apps (solo cuando NO estamos en modo dibujo)
+    // Polling para sincronizar (solo cuando NO estamos en modo dibujo)
     const syncInterval = setInterval(() => {
       if (!drawingMode) {
         loadDrawings(true); // checkTimestampOnly = true
       }
-    }, 3000);
+    }, 30000); // 30s en vez de 3s - suficiente para sincronizacion
 
     return () => clearInterval(syncInterval);
   }, [symbol, drawingMode]);

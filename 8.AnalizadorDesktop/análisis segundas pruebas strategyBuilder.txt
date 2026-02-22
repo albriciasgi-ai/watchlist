@@ -1,0 +1,91 @@
+ Análisis de Resultados: Auto-Optimización BTCUSDT 1H 365d
+
+  El problema central: el "efecto 4 trades"
+
+  Los 20 mejores resultados son idénticos en estructura: todos tienen 4 trades, 100% WR, 0 MaxDD, score=79.92. Esto
+  es un falso positivo masivo. Hay 95 combinaciones con exactamente 4 trades en la hoja completa. El optimizer las
+  favorece porque:
+
+  1. MaxDD = 0 → recovery_factor = 99.9 (cap) → score = 99.9 × 0.8 = 79.92
+  2. La penalización × 0.8 por <10 trades es insignificante vs el beneficio de 0 drawdown
+  3. Cualquier estrategia que gane 4/4 con 0 DD obtiene el score máximo posible
+
+  Lo que dice la Fase 1 (datos individuales reales):
+
+  Nivel más prometedor: vp_periodic genera 99 trades (estadísticamente significativo), pero con el baseline
+  (price_touch + below_level + rr_fixed) pierde -9R. Sin embargo, sr_v2 (75% WR, 4 trades) y vwap_bands (60% WR, 10
+  trades) muestran potencial real.
+
+  Mejor Take Profit: next_swing destaca enormemente — 99 trades, 40.4% WR, +68.5R PnL, MaxDD=8R, RecFactor=8.56. Es
+  el único TP consistentemente rentable con muchos trades.
+
+  Mejor filtro: volume_zscore — 79 trades, 40.5% WR, +17R, PF=1.36. Reduce trades malos significativamente.
+
+  Mejor exit: squeeze_activate — 99 trades, 40.4% WR, +0.06R. Marginal pero al menos no destruye rentabilidad.
+
+  Mejor SL: below_swing y fixed_pct son similares, ambos marginalmente positivos con 97-99 trades.
+
+  Las combinaciones REALMENTE interesantes (10+ trades):
+
+  | Combo                                                                          | Trades | WR%   | PnL(R) |
+  Expect | PF   | MaxDD |
+  |--------------------------------------------------------------------------------|--------|-------|--------|------
+  --|------|-------|
+  | sr_v2+vp_zones, swing_confirm, fixed_pct, rr_fixed, timeout, bbwp_range        | 12     | 75%   | 15.0   | 1.25
+    | 6.0  | 3.0   |
+  | sr_v2+vp_zones, swing_confirm, fixed_pct, next_swing, timeout, -               | 12     | 83.3% | 14.23  | 1.186
+    | 8.12 | 2.0   |
+  | sr_v2+vwap_bands, swing_confirm, fixed_pct, next_swing, timeout, volume_zscore | 14     | 71.4% | 13.26  | 0.947
+    | 4.32 | 1.0   |
+  | sr_v2+vp_zones, rejection_candle, fixed_pct, next_swing, reenter_zone, -       | 12     | 58.3% | 11.68  | 0.973
+    | 8.44 | 0.66  |
+  | vwap_bands, swing_confirm, fixed_pct, rr_fixed, -, vwap_trend                  | 10     | 70%   | 11.0   | 1.1
+    | 4.67 | 2.0   |
+
+  Estas son las estrategias reales que deberían estar en el top, no las de 4 trades.
+
+  ---
+  Problemas concretos del _score_result() y propuesta de mejoras:
+
+  Problema 1: RecoveryFactor con MaxDD=0 explota a 99.9
+
+  Cuando hay 0 pérdidas, MaxDD=0, y RecoveryFactor se capa a 99.9. Eso aplasta cualquier estrategia genuina con 10+
+  trades y DD real.
+
+  Fix: Imponer un trade count mínimo más alto o un penalizador proporcional al bajo número de trades:
+  Si closed < 15: factor = (closed / 15)^2
+  score = val * factor
+  Así 4 trades → factor = (4/15)² = 0.071 → score 99.9 × 0.071 = 7.1 (razonable).
+
+  Problema 2: La base de Fase 1 usa vp_periodic + price_touch
+
+  vp_periodic con price_touch genera 99 trades pero pierde -9R. Esto contamina la evaluación de SL, TP, Exits y
+  Filters porque TODOS se prueban sobre esa base perdedora. Un TP brillante como next_swing muestra +68.5R sobre esa
+   base, pero un SL o filtro bueno puede lucir malo porque la base ya era negativa.
+
+  Fix: Usar una base adaptativa: después de evaluar levels y entries individualmente, re-evaluar SL/TP/Exits/Filters
+   con la mejor combinación level+entry encontrada, no siempre con vp_periodic + price_touch.
+
+  Problema 3: La Fase 2 combina top 3 de cada categoría pero el criterio de selección arrastra el sesgo de 4 trades
+
+  Los "top 3" levels son sr_v2 (4 trades), vwap_bands (10 trades), vp_zones (8 trades). Como sr_v2 tiene el score
+  más alto (por los 4 trades), domina las combinaciones. Pero vp_periodic con 99 trades tiene mucha más información
+  estadística.
+
+  Fix: En la selección de top-N para Fase 2, incluir candidatos de alta actividad (top por número de trades con PnL
+  positivo) además de los top por score. Esto garantiza diversidad.
+
+  Problema 4: No hay desempate entre estrategias con mismo score
+
+  20 estrategias con score=79.92 son indistinguibles. No hay criterio secundario.
+
+  Fix: Desempate por PnL total, luego por expectancy, luego por número de trades.
+
+  ---
+  Resumen de mejoras propuestas (en orden de impacto):
+
+  1. Penalización de trades escasos mucho más agresiva: factor = min(1.0, (closed/MIN_TRADES)²) con MIN_TRADES=15-20
+  2. Base adaptativa en Fase 1: Re-evaluar SL/TP/Exit/Filter con la mejor combo level+entry encontrada
+  3. Pool de diversidad en Fase 2: Incluir candidatos por volumen de trades, no solo por score
+  4. Desempate multi-criterio: score → PnL → expectancy → trades
+  5. Umbral mínimo de trades configurable por usuario: Poder decir "solo quiero ver estrategias con 10+ trades"

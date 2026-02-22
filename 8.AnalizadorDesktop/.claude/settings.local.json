@@ -1,10 +1,20 @@
 {
   "permissions": {
     "allow": [
-      "Bash(\".venv\\Scripts\\python.exe\" -c \"import py_compile; py_compile.compile(''backtest_vp_periodic.py'', doraise=True); print(''OK backtest_vp_periodic.py'')\")",
-      "Bash(\".venv\\Scripts\\python.exe\" -c \"import py_compile; py_compile.compile(''strategy_engine.py'', doraise=True); print(''OK strategy_engine.py'')\")",
-      "Bash(\".venv\\Scripts\\python.exe\" -c \"import py_compile; py_compile.compile(''main.py'', doraise=True); print(''OK main.py'')\")",
-      "Bash(npx vite build)"
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\pip.exe\" install openpyxl -q)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\":*)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -m pip install openpyxl -q)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import openpyxl; print(''OK'')\")",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import py_compile; py_compile.compile(''C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/4.Analizador cripto/backend/strategy_engine.py'', doraise=True); print(''OK - Sin errores de sintaxis'')\")",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import sys; sys.path.insert(0, ''C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/4.Analizador cripto/backend''); from strategy_engine import run_modular_backtest, compute_sr_levels, compute_vp_levels; print(''OK - Imports correctos'')\")",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import sys; sys.path.insert(0, ''C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/4.Analizador cripto/backend''); from strategy_engine import run_modular_backtest; print(''OK - Imports correctos'')\")",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import sys; sys.path.insert(0, ''C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/4.Analizador cripto/backend''); from strategy_engine import run_modular_backtest, run_modular_optimization; print(''OK - Imports correctos'')\")",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c:*)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import py_compile; py_compile.compile(''C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/4.Analizador cripto/backend/main.py'', doraise=True); print(''OK - Sin errores de sintaxis'')\")",
+      "WebFetch(domain:medium.com)",
+      "WebSearch",
+      "WebFetch(domain:www.fmz.com)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import sys; sys.path.insert(0, ''C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/4.Analizador cripto/backend''); from strategy_engine import run_modular_backtest, compute_gaussian_channel, compute_gaussian_channel_levels, signal_band_crossover, filter_gaussian_trend; print(''OK - Todas las funciones importan correctamente'')\")"
     ],
     "deny": [],
     "ask": []

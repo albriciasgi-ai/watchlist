@@ -1,59 +1,185 @@
-VM342 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:61 [Preload] Script cargado correctamente
-VM342 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:62 [Preload] Plataforma: win32
-VM342 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\8.AnalizadorDesktop\electron\preload.js:63 [Preload] Electron: 33.4.11
-chunk-ZFBEYDM4.js?v=0d753ea7:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
-config.js:19 [Config] API_BASE_URL: http://localhost:10000
-config.js:20 [Config] Electron: Si
-Logger.js:266 💡 Debug utilities available:
-Logger.js:267    window.toggleDebugMode() - Toggle all logs
-Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
-ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
-main.jsx:15 ====================================
-main.jsx:16 Analizador Desktop - Frontend
-main.jsx:17 ====================================
-main.jsx:21 [Electron] Ejecutando en Electron
-main.jsx:22 [Electron] Versiones: {node: '20.18.3', chrome: '130.0.6723.191', electron: '33.4.11'}
-main.jsx:23 [Electron] Plataforma: win32
-main.jsx:28 [App] Backend esperado en: http://localhost:10000
-ZoneDetectorSettings.jsx:96 [ZoneDetector] interval=1, maxDays=400
-MiniChart.jsx:275 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
-MiniChart.jsx:2275 [BTCUSDT] 🚀 Componente montado, iniciando...
-IndicatorManager.js:147 [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
-ZoneVisualizerIndicator.js:60 [BTCUSDT] ZoneVisualizerIndicator: Inicializado
-robustness.js:230 [HealthCheck] Started (interval: 30000ms)
-robustness.js:496 [Robustness] Initialized
-PollingCoordinator.js:49 [PollingCoordinator] Started
-Logger.js:100 ✅ [4:47:14 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
-IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
-IndicatorManager.js:443 [BTCUSDT] [SWING] toggleIndicator(Swing Detector, false): found=false, totalIndicators=3
-CandleCache.js:79 [CandleCache] 💾 BTCUSDT@1 - desde IndexedDB (129601 velas)
-CandleCache.js:264 [CandleCache] OK VALIDATION BTCUSDT@1: 129601 velas sin gaps
-MiniChart.jsx:1323 [BTCUSDT] Carga INCREMENTAL: desde 15/2/2026, 4:46:00 p.m. (129601 velas en cache, 100%)
-robustness.js:415 [CacheCleanup] Complete: 0/4 candles, 0/1 indicators removed
-WebSocketManager.js:61 WebSocket Manager conectado [1]
-WebSocketManager.js:79 ✓ Suscrito: 
-SymbolList.jsx:75 [Prefetch] Activado (10s despues de carga)
-CandleCache.js:192 [CandleCache] 🔄 Merge: 129601 cached + 1 new = 129601 total
-MiniChart.jsx:1389 [BTCUSDT] ✅ Incremental: +1 velas nuevas = 129601 total
-MiniChart.jsx:1413 [BTCUSDT] ✅ Histórico final: 129601 velas
-MiniChart.jsx:765 [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.127, chartWidth=815, mostrando=799, userZoomed=false
-IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
-ZoneVisualizerIndicator.js:176 [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
-Logger.js:100 ✅ [4:47:53 p. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 3 indicadores
-IndicatorManager.js:1572 [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
-Logger.js:100 ✅ [4:47:53 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
-PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 60000ms, priority: 2)
-Logger.js:100 ✅ [4:47:53 p. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
-CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
-IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
-IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
-CandleCache.js:164 [CandleCache] ✅ BTCUSDT@1 - guardado (129601 velas, memoria: 1/4)
-IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
-IndicatorManager.js:523 [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
- [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
- [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
- [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
- [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
- [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
- [BTCUSDT] drawChart: 129602 velas disponibles, zoom=0.127, chartWidth=815, mostrando=799, userZoomed=false
- [BTCUSDT] [RENDER] renderOverlays: 3 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:14:39 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2560:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+error @ Logger.js:88
+127.0.0.1:10000/api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SymbolList.jsx:239 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:213:30
+    at SymbolList.jsx:247:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+(anonymous) @ SymbolList.jsx:239
+127.0.0.1:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+127.0.0.1:10000/api/zones/presets:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+ZoneDetectorSettings.jsx:225 [ZoneDetector] Error cargando presets del backend: TypeError: Failed to fetch
+    at ZoneDetectorSettings.jsx:219:27
+    at ZoneDetectorSettings.jsx:227:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+(anonymous) @ ZoneDetectorSettings.jsx:225
+127.0.0.1:10000/api/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+robustness.js:195 [HealthCheck] Backend disconnected: Failed to fetch
+checkBackendHealth @ robustness.js:195
+127.0.0.1:10000/api/realtime/set-interval:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/zones/realtime/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/vwap-service/data/BTCUSDT?days=90&interval=1&vwapType=rolling&rollingPeriod=1200:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+MiniChart.jsx:1278 [BTCUSDT] ❌ Error conexion SSE: Event
+eventSource.onerror @ MiniChart.jsx:1278
+MiniChart.jsx:1513 [BTCUSDT] Error cargando histórico Error: Error de conexion SSE
+    at eventSource.onerror (MiniChart.jsx:1281:16)
+loadHistoricalData @ MiniChart.jsx:1513
+127.0.0.1:10000/api/historical-stream/BTCUSDT?interval=1&days=90:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=0d753ea7:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=0d753ea7:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=0d753ea7:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=0d753ea7:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=0d753ea7:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=0d753ea7:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=0d753ea7:19447:22)
+    at chunk-ZFBEYDM4.js?v=0d753ea7:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:14:41 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2565:9
+error @ Logger.js:88
+127.0.0.1:10000/api/vwap-service/data/BTCUSDT?days=90&interval=1&vwapType=rolling&rollingPeriod=1200:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:14:45 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2565:9
+error @ Logger.js:88
+127.0.0.1:10000/api/vwap-service/data/BTCUSDT?days=90&interval=1&vwapType=rolling&rollingPeriod=1200:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:14:48 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2565:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:14:51 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2565:9
+error @ Logger.js:88
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:14:54 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2565:9
+error @ Logger.js:88
+127.0.0.1:10000/api/zones/realtime/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:14:57 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2565:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:582
+BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [9:15:00 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2565:9
+error @ Logger.js:88
+loadDrawings @ MiniChart.jsx:582

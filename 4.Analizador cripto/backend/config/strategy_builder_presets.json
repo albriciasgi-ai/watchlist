@@ -1,0 +1,2013 @@
+{
+  "Primera_prueba": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 960,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 80,
+          "include_pb_shapes": false,
+          "max_range_pct": 2,
+          "detection_mode": "progressive",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "price_touch",
+      "entrySignalParams": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": true,
+        "dtb_bias": true
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 510,
+          "min_diff_pct": 0.5
+        },
+        "vwap_position": {
+          "mode": "counter",
+          "long_ref": "upper_2",
+          "short_ref": "lower_2"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.26
+      },
+      "tpMethod": "rr_fixed",
+      "tpParams": {
+        "rr": 4
+      },
+      "maxTradesPerSegment": 1,
+      "trailingStop": false,
+      "exitRules": {
+        "reenter_zone": false,
+        "vwap_reverse": false,
+        "squeeze_activate": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 1205,
+      "days": 7
+    },
+    "days": 7,
+    "vwapPeriod": 1205,
+    "savedAt": "2026-02-17T01:47:43.809Z"
+  },
+  "segunda_prueba": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 460,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 80,
+          "include_pb_shapes": false,
+          "max_range_pct": 2,
+          "detection_mode": "progressive",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "price_touch",
+      "entrySignalParams": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": true,
+        "dtb_bias": true,
+        "vp_shape": true
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 510,
+          "min_diff_pct": 0.5
+        },
+        "vwap_position": {
+          "mode": "counter",
+          "long_ref": "upper_2",
+          "short_ref": "lower_2"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "D"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.26
+      },
+      "tpMethod": "rr_fixed",
+      "tpParams": {
+        "rr": 4
+      },
+      "maxTradesPerSegment": 1,
+      "cooldownBars": 95,
+      "trailingStop": false,
+      "exitRules": {
+        "reenter_zone": false,
+        "vwap_reverse": false,
+        "squeeze_activate": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 205,
+      "days": 201
+    },
+    "days": 201,
+    "vwapPeriod": 205,
+    "savedAt": "2026-02-18T05:09:37.806Z"
+  },
+  "???": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 460,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 80,
+          "include_pb_shapes": false,
+          "max_range_pct": 2,
+          "detection_mode": "progressive",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "swing_confirm",
+      "entrySignalParams": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": true,
+        "dtb_bias": true,
+        "vp_shape": true
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 510,
+          "min_diff_pct": 0.5
+        },
+        "vwap_position": {
+          "mode": "counter",
+          "long_ref": "upper_2",
+          "short_ref": "lower_2"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "D"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.26
+      },
+      "tpMethod": "rr_fixed",
+      "tpParams": {
+        "rr": 4
+      },
+      "maxTradesPerSegment": 1,
+      "cooldownBars": 95,
+      "trailingStop": false,
+      "exitRules": {
+        "reenter_zone": false,
+        "vwap_reverse": false,
+        "squeeze_activate": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 205,
+      "days": 195
+    },
+    "days": 195,
+    "vwapPeriod": 205,
+    "savedAt": "2026-02-18T05:34:39.229Z"
+  },
+  "5min_1": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 100,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 80,
+          "include_pb_shapes": false,
+          "max_range_pct": 2,
+          "detection_mode": "progressive",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "swing_confirm",
+      "entrySignalParams": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {
+        "vwap_trend": true,
+        "vwap_position": true,
+        "dtb_bias": true,
+        "vp_shape": true,
+        "volume_zscore": true
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 510,
+          "min_diff_pct": 0.5
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "P",
+            "b",
+            "thin"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.1
+      },
+      "tpMethod": "rr_fixed",
+      "tpParams": {
+        "rr": 10
+      },
+      "maxTradesPerSegment": 1,
+      "cooldownBars": 110,
+      "trailingStop": false,
+      "exitRules": {
+        "reenter_zone": false,
+        "vwap_reverse": false,
+        "squeeze_activate": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 205,
+      "days": 196
+    },
+    "days": 196,
+    "vwapPeriod": 205,
+    "savedAt": "2026-02-18T17:02:21.337Z"
+  },
+  "1h": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 50,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 5
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 80,
+          "include_pb_shapes": false,
+          "max_range_pct": 2,
+          "detection_mode": "progressive",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "swing_confirm",
+      "entrySignalParams": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {
+        "vwap_trend": true,
+        "vwap_position": false,
+        "dtb_bias": true,
+        "vp_shape": true
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 20,
+          "min_diff_pct": 0.5
+        },
+        "vwap_position": {
+          "mode": "counter",
+          "long_ref": "upper_2",
+          "short_ref": "lower_2"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "D",
+            "P",
+            "b"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.26
+      },
+      "tpMethod": "rr_fixed",
+      "tpParams": {
+        "rr": 10
+      },
+      "maxTradesPerSegment": 1,
+      "cooldownBars": 30,
+      "trailingStop": false,
+      "exitRules": {
+        "reenter_zone": false,
+        "vwap_reverse": false,
+        "squeeze_activate": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 50,
+      "days": 401
+    },
+    "days": 401,
+    "vwapPeriod": 50,
+    "savedAt": "2026-02-18T18:48:07.320Z"
+  },
+  "1h_2": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 50,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 5
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 80,
+          "include_pb_shapes": false,
+          "max_range_pct": 2,
+          "detection_mode": "progressive",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "swing_confirm",
+      "entrySignalParams": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {
+        "vwap_trend": true,
+        "vwap_position": false,
+        "dtb_bias": true,
+        "vp_shape": true,
+        "cvd_trend": true,
+        "volume_zscore": false,
+        "bbwp_range": false,
+        "ttm_squeeze": false
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 20,
+          "min_diff_pct": 0.5
+        },
+        "vwap_position": {
+          "mode": "counter",
+          "long_ref": "upper_2",
+          "short_ref": "lower_2"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 20
+        },
+        "volume_zscore": {
+          "min_zscore": 1,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 50
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "D",
+            "b",
+            "P"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.26
+      },
+      "tpMethod": "rr_fixed",
+      "tpParams": {
+        "rr": 10
+      },
+      "maxTradesPerSegment": 1,
+      "cooldownBars": 30,
+      "trailingStop": false,
+      "exitRules": {
+        "reenter_zone": false,
+        "vwap_reverse": false,
+        "squeeze_activate": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 50,
+      "days": 401
+    },
+    "days": 401,
+    "vwapPeriod": 50,
+    "savedAt": "2026-02-18T20:19:38.605Z"
+  },
+  "1minuto_1": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 460,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 80,
+          "include_pb_shapes": false,
+          "max_range_pct": 2,
+          "detection_mode": "progressive",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "swing_confirm",
+      "entrySignalParams": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": true,
+        "dtb_bias": true,
+        "vp_shape": true,
+        "cvd_trend": true
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 510,
+          "min_diff_pct": 0.5
+        },
+        "vwap_position": {
+          "mode": "counter",
+          "long_ref": "upper_2",
+          "short_ref": "lower_2"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 50
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "D",
+            "b",
+            "P"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.26
+      },
+      "tpMethod": "rr_fixed",
+      "tpParams": {
+        "rr": 10
+      },
+      "maxTradesPerSegment": 1,
+      "cooldownBars": 95,
+      "trailingStop": false,
+      "exitRules": {
+        "reenter_zone": false,
+        "vwap_reverse": false,
+        "squeeze_activate": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 205,
+      "days": 195
+    },
+    "days": 195,
+    "vwapPeriod": 205,
+    "savedAt": "2026-02-18T20:32:27.519Z"
+  },
+  "auto-optimi_1": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": false,
+        "vp_zones": false,
+        "sr_v2": false,
+        "vwap_bands": true,
+        "swing_levels": false,
+        "dtb_neckline": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 240,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 40,
+          "include_pb_shapes": true,
+          "max_range_pct": 2,
+          "detection_mode": "fixed_window",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "squeeze_release",
+      "entrySignalParams": {},
+      "contextFilters": {
+        "vwap_trend": true,
+        "vwap_position": false,
+        "ttm_squeeze": false,
+        "bbwp_range": false,
+        "volume_zscore": false,
+        "cvd_trend": false,
+        "dtb_bias": false,
+        "direction": true,
+        "vp_shape": false
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 10,
+          "min_diff_pct": 0
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "fixed_pct",
+      "slParams": {
+        "fixed_pct": 1
+      },
+      "tpMethod": "next_swing",
+      "tpParams": {
+        "fallback_rr": 2
+      },
+      "maxTradesPerSegment": 8,
+      "cooldownBars": 0,
+      "trailingStop": false,
+      "exitRules": {
+        "vwap_reverse": false,
+        "reenter_zone": false,
+        "squeeze_activate": false,
+        "timeout": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 20,
+      "days": 365
+    },
+    "days": 365,
+    "vwapPeriod": 20,
+    "savedAt": "2026-02-19T07:53:29.841Z"
+  },
+  "auto-optimi_2": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 240,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 40,
+          "include_pb_shapes": true,
+          "max_range_pct": 2,
+          "detection_mode": "fixed_window",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "price_touch",
+      "entrySignalParams": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {},
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 10,
+          "min_diff_pct": 0
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.1
+      },
+      "tpMethod": "next_swing",
+      "tpParams": {
+        "fallback_rr": 5
+      },
+      "maxTradesPerSegment": 1,
+      "cooldownBars": 0,
+      "trailingStop": false,
+      "exitRules": {},
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 20,
+      "diagLevelProximityPct": 0.15,
+      "days": 90
+    },
+    "days": 90,
+    "vwapPeriod": 20,
+    "savedAt": "2026-02-21T18:39:43.738Z"
+  },
+  "1": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false,
+        "sr_v2": true,
+        "vwap_bands": false,
+        "swing_levels": false,
+        "dtb_neckline": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 180,
+          "bins": 30,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 40,
+          "include_pb_shapes": true,
+          "max_range_pct": 2,
+          "detection_mode": "fixed_window",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "price_touch",
+      "entrySignalParams": {
+        "tolerance_pct": 0.15
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": false,
+        "ttm_squeeze": false,
+        "bbwp_range": false,
+        "volume_zscore": false,
+        "cvd_trend": false,
+        "dtb_bias": false,
+        "direction": true,
+        "vp_shape": false
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 10,
+          "min_diff_pct": 0
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "below_swing",
+      "slParams": {
+        "buffer_pct": 0.1
+      },
+      "tpMethod": "next_swing",
+      "tpParams": {
+        "fallback_rr": 4
+      },
+      "maxTradesPerSegment": 2,
+      "cooldownBars": 0,
+      "trailingStop": false,
+      "exitRules": {
+        "vwap_reverse": false,
+        "reenter_zone": false,
+        "squeeze_activate": false,
+        "timeout": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 20,
+      "days": 180
+    },
+    "days": 180,
+    "vwapPeriod": 20,
+    "savedAt": "2026-02-20T04:23:05.527Z"
+  },
+  "2": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false,
+        "sr_v2": true,
+        "vwap_bands": false,
+        "swing_levels": false,
+        "dtb_neckline": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 180,
+          "bins": 30,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 40,
+          "include_pb_shapes": true,
+          "max_range_pct": 2,
+          "detection_mode": "fixed_window",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "price_touch",
+      "entrySignalParams": {
+        "tolerance_pct": 0.15
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": false,
+        "ttm_squeeze": false,
+        "bbwp_range": false,
+        "volume_zscore": false,
+        "cvd_trend": false,
+        "dtb_bias": false,
+        "direction": true,
+        "vp_shape": false
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 10,
+          "min_diff_pct": 0
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "below_swing",
+      "slParams": {
+        "buffer_pct": 0.1
+      },
+      "tpMethod": "next_swing",
+      "tpParams": {
+        "fallback_rr": 4
+      },
+      "maxTradesPerSegment": 2,
+      "cooldownBars": 0,
+      "trailingStop": false,
+      "exitRules": {
+        "vwap_reverse": false,
+        "reenter_zone": false,
+        "squeeze_activate": false,
+        "timeout": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 20,
+      "days": 180
+    },
+    "days": 180,
+    "vwapPeriod": 20,
+    "savedAt": "2026-02-20T04:23:38.869Z"
+  },
+  "3": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false,
+        "sr_v2": false,
+        "vwap_bands": true,
+        "swing_levels": false,
+        "dtb_neckline": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 180,
+          "bins": 30,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 40,
+          "include_pb_shapes": true,
+          "max_range_pct": 2,
+          "detection_mode": "fixed_window",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "price_touch",
+      "entrySignalParams": {
+        "tolerance_pct": 0.15
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": false,
+        "ttm_squeeze": false,
+        "bbwp_range": false,
+        "volume_zscore": false,
+        "cvd_trend": false,
+        "dtb_bias": false,
+        "direction": true,
+        "vp_shape": false
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 10,
+          "min_diff_pct": 0
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "below_swing",
+      "slParams": {
+        "buffer_pct": 0.1
+      },
+      "tpMethod": "next_swing",
+      "tpParams": {
+        "fallback_rr": 4
+      },
+      "maxTradesPerSegment": 2,
+      "cooldownBars": 0,
+      "trailingStop": false,
+      "exitRules": {
+        "vwap_reverse": false,
+        "reenter_zone": false,
+        "squeeze_activate": false,
+        "timeout": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 10,
+      "days": 180
+    },
+    "days": 180,
+    "vwapPeriod": 10,
+    "savedAt": "2026-02-20T04:23:55.732Z"
+  },
+  "4": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false,
+        "sr_v2": false,
+        "vwap_bands": false,
+        "swing_levels": false,
+        "dtb_neckline": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 180,
+          "bins": 30,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 40,
+          "include_pb_shapes": true,
+          "max_range_pct": 2,
+          "detection_mode": "fixed_window",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "price_touch",
+      "entrySignalParams": {
+        "tolerance_pct": 0.15
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": false,
+        "ttm_squeeze": false,
+        "bbwp_range": false,
+        "volume_zscore": false,
+        "cvd_trend": false,
+        "dtb_bias": false,
+        "direction": true,
+        "vp_shape": false
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 10,
+          "min_diff_pct": 0
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "below_swing",
+      "slParams": {
+        "buffer_pct": 0.1
+      },
+      "tpMethod": "next_swing",
+      "tpParams": {
+        "fallback_rr": 4
+      },
+      "maxTradesPerSegment": 2,
+      "cooldownBars": 0,
+      "trailingStop": false,
+      "exitRules": {
+        "vwap_reverse": false,
+        "reenter_zone": false,
+        "squeeze_activate": false,
+        "timeout": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 20,
+      "days": 180
+    },
+    "days": 180,
+    "vwapPeriod": 20,
+    "savedAt": "2026-02-20T04:24:14.410Z"
+  },
+  "5": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": true,
+        "vp_zones": false,
+        "sr_v2": true,
+        "vwap_bands": false,
+        "swing_levels": false,
+        "dtb_neckline": false
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 240,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 40,
+          "include_pb_shapes": true,
+          "max_range_pct": 2,
+          "detection_mode": "fixed_window",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        }
+      },
+      "entrySignalType": "price_touch",
+      "entrySignalParams": {
+        "tolerance_pct": 0.15
+      },
+      "contextFilters": {
+        "vwap_trend": false,
+        "vwap_position": false,
+        "ttm_squeeze": false,
+        "bbwp_range": false,
+        "volume_zscore": false,
+        "cvd_trend": false,
+        "dtb_bias": false,
+        "direction": true,
+        "vp_shape": false
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 10,
+          "min_diff_pct": 0
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "both"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "below_level",
+      "slParams": {
+        "buffer_pct": 0.1
+      },
+      "tpMethod": "next_swing",
+      "tpParams": {
+        "fallback_rr": 2
+      },
+      "maxTradesPerSegment": 2,
+      "cooldownBars": 0,
+      "trailingStop": false,
+      "exitRules": {
+        "vwap_reverse": false,
+        "reenter_zone": false,
+        "squeeze_activate": false,
+        "timeout": false
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 20,
+      "days": 180
+    },
+    "days": 180,
+    "vwapPeriod": 20,
+    "savedAt": "2026-02-20T04:24:52.238Z"
+  },
+  "gaussian_1": {
+    "config": {
+      "levelSources": {
+        "vp_periodic": false,
+        "gaussian_channel": true
+      },
+      "levelParams": {
+        "vp_periodic": {
+          "period": 240,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        },
+        "vp_zones": {
+          "window_size": 30,
+          "window_step": 5,
+          "bins": 50,
+          "va_percent": 0.7,
+          "min_d_score": 40,
+          "include_pb_shapes": true,
+          "max_range_pct": 2,
+          "detection_mode": "fixed_window",
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true
+        },
+        "sr_v2": {
+          "swing_bars": 3,
+          "cluster_distance_pct": 0.3,
+          "min_touches": 2,
+          "max_levels": 10,
+          "recalc_every": 100
+        },
+        "vwap_bands": {},
+        "swing_levels": {
+          "swing_bars": 5
+        },
+        "dtb_neckline": {
+          "candles_per_extreme": 5,
+          "price_margin_pct": 2,
+          "min_candles_between": 10
+        },
+        "gaussian_channel": {
+          "period": 144
+        }
+      },
+      "entrySignalType": "band_crossover",
+      "entrySignalParams": {
+        "tolerance_pct": 0.05,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      },
+      "contextFilters": {
+        "gaussian_trend": true,
+        "direction": true
+      },
+      "filterParams": {
+        "vwap_trend": {
+          "lookback": 10,
+          "min_diff_pct": 0
+        },
+        "vwap_position": {
+          "mode": "trend",
+          "long_ref": "vwap",
+          "short_ref": "vwap"
+        },
+        "ttm_squeeze": {
+          "require_squeeze": true
+        },
+        "bbwp_range": {
+          "min_val": 0,
+          "max_val": 50
+        },
+        "volume_zscore": {
+          "min_zscore": 1.5,
+          "lookback": 20
+        },
+        "cvd_trend": {
+          "lookback": 20
+        },
+        "dtb_bias": {
+          "lookback": 50,
+          "min_confidence": 50
+        },
+        "direction": {
+          "allowed": "long"
+        },
+        "vp_shape": {
+          "allowed_shapes": [
+            "all"
+          ]
+        }
+      },
+      "slMethod": "atr_multiple",
+      "slParams": {
+        "atr_multiplier": 1.5
+      },
+      "tpMethod": "rr_fixed",
+      "tpParams": {
+        "rr": 3
+      },
+      "maxTradesPerSegment": 1,
+      "cooldownBars": 10,
+      "trailingStop": false,
+      "exitRules": {
+        "reenter_zone": true
+      },
+      "exitRuleParams": {
+        "vwap_reverse": {
+          "lookback": 10
+        },
+        "reenter_zone": {},
+        "squeeze_activate": {},
+        "timeout": {
+          "max_bars": 50
+        }
+      },
+      "confluenceMode": "any",
+      "minConfluenceScore": 0,
+      "vwapPeriod": 20,
+      "diagLevelProximityPct": 0.15,
+      "days": 90
+    },
+    "days": 90,
+    "vwapPeriod": 20,
+    "savedAt": "2026-02-21T20:03:46.437Z"
+  }
+}

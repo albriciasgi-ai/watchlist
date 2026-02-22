@@ -25,3 +25,815 @@
 2026-02-08 23:07:03 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +2 trades | total_tracking=4
 2026-02-08 23:08:03 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=5
 2026-02-09 05:45:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1
+2026-02-09 05:54:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=2
+2026-02-09 06:13:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=68652.60 | sl=68962.24 | tp=68033.33 | score=67.5 | mode=pending_monitor
+2026-02-09 06:13:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 06:13:03 | INFO | ALERT_SENT | BTCUSDT | SHORT | entry=68652.60 | sl=68962.24 | tp=68033.33
+2026-02-09 06:14:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=68681.00 | sl=68941.49 | tp=68160.03 | score=48.9 | mode=pending_monitor
+2026-02-09 06:14:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=4
+2026-02-09 06:14:01 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SHORT | remaining=240s
+2026-02-09 06:15:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=68576.20 | sl=69002.33 | tp=67723.94 | score=48.3 | mode=pending_monitor
+2026-02-09 06:15:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=5
+2026-02-09 06:15:01 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SHORT | remaining=180s
+2026-02-09 06:16:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=68567.30 | sl=69000.43 | tp=67701.05 | score=66.5 | mode=pending_monitor
+2026-02-09 06:16:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=6
+2026-02-09 06:16:01 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SHORT | remaining=120s
+2026-02-09 06:31:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68652.60 | sl=68962.24 | tp=68033.33
+2026-02-09 06:31:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68681.00 | sl=68941.49 | tp=68160.03
+2026-02-09 07:05:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68576.20 | sl=69002.33 | tp=67723.94
+2026-02-09 07:05:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68567.30 | sl=69000.43 | tp=67701.05
+2026-02-09 07:12:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 07:12:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69035.80 | sl=68672.00 | tp=69763.40 | score=62.1 | mode=va_breakout
+2026-02-09 07:12:04 | INFO | ALERT_SENT | BTCUSDT | LONG | entry=69035.80 | sl=68672.00 | tp=69763.40
+2026-02-09 07:41:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69135.50 | sl=69015.51 | tp=69375.48 | score=39.0 | mode=pending_monitor
+2026-02-09 07:41:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=4
+2026-02-09 07:41:02 | INFO | ALERT_REJECTED | BTCUSDT | LONG | reason=Position already exists for BTCUSDT
+2026-02-09 07:41:02 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=69135.50 | (ver lineas anteriores para detalle)
+2026-02-09 07:42:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69195.20 | sl=68996.68 | tp=69592.25 | score=64.4 | mode=pending_monitor
+2026-02-09 07:42:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=5
+2026-02-09 07:42:03 | INFO | ALERT_REJECTED | BTCUSDT | LONG | reason=Position already exists for BTCUSDT
+2026-02-09 07:42:03 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=69195.20 | (ver lineas anteriores para detalle)
+2026-02-09 07:43:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69138.00 | sl=69029.09 | tp=69355.81 | score=64.0 | mode=pending_monitor
+2026-02-09 07:43:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=6
+2026-02-09 07:43:02 | INFO | ALERT_REJECTED | BTCUSDT | LONG | reason=Position already exists for BTCUSDT
+2026-02-09 07:43:02 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=69138.00 | (ver lineas anteriores para detalle)
+2026-02-09 07:44:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69136.90 | sl=69029.64 | tp=69351.41 | score=62.9 | mode=pending_monitor
+2026-02-09 07:44:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=7
+2026-02-09 07:44:03 | INFO | ALERT_REJECTED | BTCUSDT | LONG | reason=Position already exists for BTCUSDT
+2026-02-09 07:44:03 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=69136.90 | (ver lineas anteriores para detalle)
+2026-02-09 07:51:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=UP | entry=69138.00 | sl=69029.09 | tp=69355.81
+2026-02-09 07:51:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=UP | entry=69136.90 | sl=69029.64 | tp=69351.41
+2026-02-09 07:52:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=UP | entry=69135.50 | sl=69015.51 | tp=69375.48
+2026-02-09 07:52:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=UP | entry=69195.20 | sl=68996.68 | tp=69592.25
+2026-02-09 08:13:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68953.50 | sl=69155.40 | tp=68549.70 | score=63.5 | mode=va_breakout
+2026-02-09 08:13:03 | INFO | ALERT_REJECTED | BTCUSDT | SHORT | reason=Position already exists for BTCUSDT
+2026-02-09 08:13:03 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=68953.50 | (ver lineas anteriores para detalle)
+2026-02-09 08:56:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=UP | entry=69035.80 | sl=68672.00 | tp=69763.40
+2026-02-09 08:58:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 08:58:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68868.10 | sl=69105.80 | tp=68392.70 | score=63.3 | mode=va_breakout
+2026-02-09 08:58:04 | INFO | ALERT_SENT | BTCUSDT | SHORT | entry=68868.10 | sl=69105.80 | tp=68392.70
+2026-02-09 08:59:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=4
+2026-02-09 08:59:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68868.10 | sl=69170.70 | tp=68262.90 | score=62.9 | mode=va_breakout
+2026-02-09 08:59:01 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SHORT | remaining=240s
+2026-02-09 09:01:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68977.40 | sl=69209.40 | tp=68513.40 | score=63.3 | mode=va_breakout
+2026-02-09 09:01:01 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SHORT | remaining=120s
+2026-02-09 09:08:02 | INFO | TRADE_RESOLVED | BTCUSDT | WIN | dir=DOWN | entry=68868.10 | sl=69105.80 | tp=68392.70
+2026-02-09 09:10:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=68485.20 | sl=68884.28 | tp=67687.04 | score=40.0 | mode=pending_monitor
+2026-02-09 09:10:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=4
+2026-02-09 09:10:03 | INFO | ALERT_SENT | BTCUSDT | SHORT | entry=68485.20 | sl=68884.28 | tp=67687.04
+2026-02-09 09:13:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=68368.90 | sl=68952.84 | tp=67201.03 | score=40.1 | mode=pending_monitor
+2026-02-09 09:13:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=5
+2026-02-09 09:13:01 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SHORT | remaining=120s
+2026-02-09 09:14:01 | INFO | TRADE_RESOLVED | BTCUSDT | WIN | dir=DOWN | entry=69239.20 | sl=69699.10 | tp=68319.40
+2026-02-09 09:14:01 | INFO | TRADE_RESOLVED | BTCUSDT | WIN | dir=DOWN | entry=69239.20 | sl=69699.10 | tp=68319.40
+2026-02-09 09:14:01 | INFO | TRADE_RESOLVED | BTCUSDT | WIN | dir=DOWN | entry=68868.10 | sl=69170.70 | tp=68262.90
+2026-02-09 09:14:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 09:14:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68760.30 | sl=69181.50 | tp=67917.90 | score=62.4 | mode=va_breakout
+2026-02-09 09:14:01 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SHORT | remaining=60s
+2026-02-09 09:15:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=68567.00 | sl=68853.79 | tp=67993.43 | score=39.8 | mode=pending_monitor
+2026-02-09 09:15:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=4
+2026-02-09 09:15:01 | INFO | BLOCKED_COOLDOWN | BTCUSDT | SHORT | remaining=0s
+2026-02-09 09:26:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68485.20 | sl=68884.28 | tp=67687.04
+2026-02-09 09:26:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68567.00 | sl=68853.79 | tp=67993.43
+2026-02-09 09:28:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68368.90 | sl=68952.84 | tp=67201.03
+2026-02-09 09:35:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=2
+2026-02-09 09:38:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68760.30 | sl=69181.50 | tp=67917.90
+2026-02-09 09:38:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68760.30 | sl=69191.30 | tp=67898.30
+2026-02-09 09:38:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69308.90 | sl=68724.15 | tp=70478.40 | score=45.5 | mode=pending_monitor
+2026-02-09 09:38:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1
+2026-02-09 09:38:03 | INFO | ALERT_SENT | BTCUSDT | LONG | entry=69308.90 | sl=68724.15 | tp=70478.40
+2026-02-09 09:38:03 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=2
+2026-02-09 09:38:03 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=68930.00 | sl=68207.30 | tp=70375.40 | score=53.1 | mode=va_breakout
+2026-02-09 09:38:03 | INFO | BLOCKED_COOLDOWN | BTCUSDT | LONG | remaining=298s
+2026-02-09 10:01:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 10:01:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69449.60 | sl=68552.10 | tp=71244.60 | score=60.8 | mode=va_breakout
+2026-02-09 10:01:03 | INFO | ALERT_REJECTED | BTCUSDT | LONG | reason=Position already exists for BTCUSDT
+2026-02-09 10:01:03 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=69449.60 | (ver lineas anteriores para detalle)
+2026-02-09 10:35:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=68997.80 | sl=68638.39 | tp=69357.21 | score=38.4 | mode=pending_monitor
+2026-02-09 10:35:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1
+2026-02-09 10:35:03 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 10:35:03 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=68997.80 | (ver lineas anteriores para detalle)
+2026-02-09 10:38:01 | INFO | TRADE_RESOLVED | BTCUSDT | WIN | dir=UP | entry=68997.80 | sl=68638.39 | tp=69357.21
+2026-02-09 11:00:01 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69533.00 | sl=68370.79 | tp=70695.21 | score=38.5 | mode=pending_monitor
+2026-02-09 11:00:01 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1
+2026-02-09 11:00:05 | INFO | ALERT_SENT | BTCUSDT | LONG | entry=69533.00 | sl_dist=1162.21 | tp_dist=1162.21
+2026-02-09 11:21:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69333.30 | sl=68470.64 | tp=70195.96 | score=38.2 | mode=pending_monitor
+2026-02-09 11:21:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1
+2026-02-09 11:21:06 | INFO | ALERT_SENT | BTCUSDT | LONG | entry=69333.30 | sl_dist=862.66 | tp_dist=862.66
+2026-02-09 11:22:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69357.70 | sl=68458.43 | tp=70256.96 | score=38.4 | mode=pending_monitor
+2026-02-09 11:22:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=2
+2026-02-09 11:22:02 | INFO | BLOCKED_COOLDOWN | BTCUSDT | LONG | remaining=240s
+2026-02-09 11:24:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=70096.10 | sl=70577.90 | tp=69614.30 | score=62.5 | mode=va_breakout
+2026-02-09 11:24:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 11:24:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68977.40 | sl=69209.40 | tp=68745.40 | score=62.5 | mode=va_breakout
+2026-02-09 11:24:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=4
+2026-02-09 11:25:03 | INFO | TRADE_RESOLVED | BTCUSDT | WIN | dir=DOWN | entry=70096.10 | sl=70577.90 | tp=69614.30
+2026-02-09 11:25:03 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68977.40 | sl=69209.40 | tp=68745.40
+2026-02-09 11:25:03 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68576.20 | sl=68895.60 | tp=68256.80 | score=65.3 | mode=va_breakout
+2026-02-09 11:25:03 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 11:26:02 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68576.20 | sl=68895.60 | tp=68256.80
+2026-02-09 11:26:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69141.00 | sl=68643.70 | tp=69638.30 | score=62.1 | mode=va_breakout
+2026-02-09 11:26:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 11:31:01 | INFO | TRADE_RESOLVED | BTCUSDT | WIN | dir=UP | entry=69141.00 | sl=68643.70 | tp=69638.30
+2026-02-09 11:35:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68868.10 | sl=69170.70 | tp=68565.50 | score=62.0 | mode=va_breakout
+2026-02-09 11:35:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 11:36:01 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=68868.10 | sl=69170.70 | tp=68565.50
+2026-02-09 11:42:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69612.40 | sl=69220.10 | tp=70004.70 | score=51.6 | mode=va_breakout
+2026-02-09 11:42:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=3
+2026-02-09 13:05:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=69239.20 | sl=69699.10 | tp=68779.30 | score=52.1 | mode=va_breakout
+2026-02-09 13:05:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1
+2026-02-09 13:05:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69035.80 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 13:05:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68977.40 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 13:06:02 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=DOWN | entry=69239.20 | sl=69699.10 | tp=68779.30
+2026-02-09 13:06:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70811.80 | sl=67731.39 | tp=73892.21 | score=37.8 | mode=pending_monitor
+2026-02-09 13:06:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1
+2026-02-09 13:06:07 | INFO | ALERT_SENT | BTCUSDT | LONG | entry=70811.80 | sl_dist=3080.41 | tp_dist=3080.41
+2026-02-09 13:08:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69612.40 | sl=69220.10 | tp=70004.70 | score=51.5 | mode=va_breakout
+2026-02-09 13:08:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=2
+2026-02-09 13:08:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68760.30 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 13:09:02 | INFO | TRADE_RESOLVED | BTCUSDT | WIN | dir=UP | entry=69612.40 | sl=69220.10 | tp=70004.70
+2026-02-09 13:09:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70570.50 | sl=67852.04 | tp=73288.96 | score=37.7 | mode=pending_monitor
+2026-02-09 13:09:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=2
+2026-02-09 13:09:02 | INFO | BLOCKED_COOLDOWN | BTCUSDT | LONG | remaining=120s
+2026-02-09 13:16:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69803.00 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 13:28:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70117.30 | sl=68078.64 | tp=72155.96 | score=37.6 | mode=pending_monitor
+2026-02-09 13:28:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 13:28:04 | INFO | ALERT_REJECTED | BTCUSDT | LONG | reason=Position already exists for BTCUSDT Buy
+2026-02-09 13:28:04 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70117.30 | (ver lineas anteriores para detalle)
+2026-02-09 13:28:04 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=70446.30 | sl=70081.20 | tp=70811.40 | score=62.3 | mode=va_breakout
+2026-02-09 13:29:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=70512.80 | sl=70971.80 | tp=70053.80 | score=49.1 | mode=va_breakout
+2026-02-09 13:31:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=70446.30 | sl=69962.70 | tp=70929.90 | score=63.3 | mode=va_breakout
+2026-02-09 13:31:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68760.30 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 13:33:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70370.50 | sl=67952.04 | tp=72788.96 | score=37.6 | mode=pending_monitor
+2026-02-09 13:33:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 13:33:05 | INFO | ALERT_REJECTED | BTCUSDT | LONG | reason=Position already exists for BTCUSDT Buy
+2026-02-09 13:33:05 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70370.50 | (ver lineas anteriores para detalle)
+2026-02-09 13:34:03 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68673.10 | sl=69133.90 | tp=68212.30 | score=71.5 | mode=va_breakout
+2026-02-09 13:34:03 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69702.50 | sl=69064.10 | tp=70340.90 | score=61.3 | mode=va_breakout
+2026-02-09 13:36:03 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69612.40 | sl=69220.10 | tp=70004.70 | score=51.5 | mode=va_breakout
+2026-02-09 13:36:03 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69035.80 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 13:36:03 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68760.30 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 14:15:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68576.20 | sl=68895.60 | tp=68256.80 | score=65.5 | mode=va_breakout
+2026-02-09 14:16:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69247.80 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 14:16:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68868.10 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 14:45:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68868.10 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 14:46:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69035.80 | sl=68672.00 | tp=69399.60 | score=61.3 | mode=va_breakout
+2026-02-09 14:52:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | UP | entry=69035.80 | sl=68672.00 | tp=69399.60 | score=61.2 | mode=va_breakout
+2026-02-09 14:52:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68977.40 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 14:57:01 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68868.10 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 15:00:02 | INFO | BREAKOUT_DETECTED | BTCUSDT | DOWN | entry=68977.40 | sl=0.00 | tp=0.00 | score=0.0 | mode=va_breakout
+2026-02-09 15:13:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=71047.80 | sl=70947.61 | tp=71147.99 | score=61.0 | mode=pending_monitor
+2026-02-09 15:13:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 15:13:04 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 15:13:04 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=71047.80 | (ver lineas anteriores para detalle)
+2026-02-09 15:16:03 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=UP | entry=71047.80 | sl=70947.61 | tp=71147.99
+2026-02-09 16:04:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70601.60 | sl=70349.24 | tp=70853.96 | score=62.9 | mode=pending_monitor
+2026-02-09 16:04:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 16:04:02 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=62.1 | overlapping zone removed (best=62.9)
+2026-02-09 16:04:02 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=43.5 | overlapping zone removed (best=62.9)
+2026-02-09 16:04:02 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.2 | overlapping zone removed (best=62.9)
+2026-02-09 16:04:02 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.9)
+2026-02-09 16:04:02 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.9)
+2026-02-09 16:04:04 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 16:04:04 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70601.60 | (ver lineas anteriores para detalle)
+2026-02-09 16:04:04 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70601.60 | sl=71180.32 | tp=70022.88 | score=48.1 | mode=pending_monitor
+2026-02-09 16:04:04 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | DOWN | entry=70601.60 | reason=already 1 open trade(s)
+2026-02-09 16:04:06 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 16:04:06 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70601.60 | (ver lineas anteriores para detalle)
+2026-02-09 16:04:06 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 16:04:06 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 16:04:06 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 16:04:06 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 16:05:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:05:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.5 | reason=already 1 open trade(s)
+2026-02-09 16:05:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:05:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:05:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:06:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:06:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.5 | reason=already 1 open trade(s)
+2026-02-09 16:06:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:06:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:06:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:06:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=42.7 | reason=already 1 open trade(s)
+2026-02-09 16:07:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:07:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.5 | reason=already 1 open trade(s)
+2026-02-09 16:07:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:07:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:07:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:07:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:08:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:08:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.5 | reason=already 1 open trade(s)
+2026-02-09 16:08:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:08:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:08:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:08:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:08:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:09:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=62.7 | reason=already 1 open trade(s)
+2026-02-09 16:09:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 16:09:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:09:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:09:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:09:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:09:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:10:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=62.7 | reason=already 1 open trade(s)
+2026-02-09 16:10:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:10:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:10:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:10:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:10:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=62.7 | reason=already 1 open trade(s)
+2026-02-09 16:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=62.7 | reason=already 1 open trade(s)
+2026-02-09 16:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 16:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=62.7 | reason=already 1 open trade(s)
+2026-02-09 16:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=62.7 | reason=already 1 open trade(s)
+2026-02-09 16:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 16:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=62.7 | reason=already 1 open trade(s)
+2026-02-09 16:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 16:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=62.7 | reason=already 1 open trade(s)
+2026-02-09 16:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 16:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.1 | reason=already 1 open trade(s)
+2026-02-09 16:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:17:02 | INFO | TRADE_RESOLVED | BTCUSDT | LOSS | dir=UP | entry=70601.60 | sl=70349.24 | tp=70853.96
+2026-02-09 16:17:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70346.00 | sl=70763.97 | tp=69928.03 | score=62.7 | mode=pending_monitor
+2026-02-09 16:17:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 16:17:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=50.3 | overlapping zone removed (best=62.7)
+2026-02-09 16:17:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.3 | overlapping zone removed (best=62.7)
+2026-02-09 16:17:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.7)
+2026-02-09 16:17:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.7)
+2026-02-09 16:17:04 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 16:17:04 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70346.00 | (ver lineas anteriores para detalle)
+2026-02-09 16:17:04 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70346.00 | sl=68419.08 | tp=72272.92 | score=62.1 | mode=pending_monitor
+2026-02-09 16:17:04 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=70346.00 | reason=already 1 open trade(s)
+2026-02-09 16:17:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.2 | overlapping zone removed (best=62.1)
+2026-02-09 16:17:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.1)
+2026-02-09 16:17:06 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 16:17:06 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70346.00 | (ver lineas anteriores para detalle)
+2026-02-09 16:17:06 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 16:54:03 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70323.70 | sl=70775.12 | tp=69872.27 | score=62.6 | mode=pending_monitor
+2026-02-09 16:54:03 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 16:54:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=50.2 | overlapping zone removed (best=62.6)
+2026-02-09 16:54:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.3 | overlapping zone removed (best=62.6)
+2026-02-09 16:54:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.1 | overlapping zone removed (best=62.6)
+2026-02-09 16:54:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 16:54:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 16:54:05 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 16:54:05 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70323.70 | (ver lineas anteriores para detalle)
+2026-02-09 16:54:05 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70323.70 | sl=68430.23 | tp=72217.17 | score=62.0 | mode=pending_monitor
+2026-02-09 16:54:05 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=70323.70 | reason=already 1 open trade(s)
+2026-02-09 16:54:05 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.2 | overlapping zone removed (best=62.0)
+2026-02-09 16:54:05 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.0)
+2026-02-09 16:54:07 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 16:54:07 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70323.70 | (ver lineas anteriores para detalle)
+2026-02-09 16:54:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 16:54:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 16:55:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:55:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 16:55:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:55:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:55:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:56:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 16:56:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:56:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 16:56:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:56:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:56:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:56:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:57:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 16:57:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:57:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 16:57:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:57:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:57:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:57:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:58:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 16:58:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:58:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 16:58:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:58:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:58:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:59:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 16:59:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 16:59:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 16:59:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 16:59:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 16:59:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:00:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 17:00:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:00:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:00:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:00:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:00:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:01:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 17:01:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:01:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:01:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:01:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:01:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:01:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:02:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 17:02:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:02:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:02:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:02:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:02:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:02:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:06:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70310.20 | sl=70781.88 | tp=69838.52 | score=62.6 | mode=pending_monitor
+2026-02-09 17:06:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 17:06:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=50.2 | overlapping zone removed (best=62.6)
+2026-02-09 17:06:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.3 | overlapping zone removed (best=62.6)
+2026-02-09 17:06:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.1 | overlapping zone removed (best=62.6)
+2026-02-09 17:06:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 17:06:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 17:06:04 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 17:06:04 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70310.20 | (ver lineas anteriores para detalle)
+2026-02-09 17:06:04 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70310.20 | sl=68436.98 | tp=72183.42 | score=62.0 | mode=pending_monitor
+2026-02-09 17:06:04 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=70310.20 | reason=already 1 open trade(s)
+2026-02-09 17:06:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.2 | overlapping zone removed (best=62.0)
+2026-02-09 17:06:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.0)
+2026-02-09 17:06:06 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 17:06:06 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70310.20 | (ver lineas anteriores para detalle)
+2026-02-09 17:06:06 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:06:06 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:07:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 17:07:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:07:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:07:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:07:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:07:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:07:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:10:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70370.60 | sl=70751.67 | tp=69989.53 | score=62.6 | mode=pending_monitor
+2026-02-09 17:10:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 17:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=50.2 | overlapping zone removed (best=62.6)
+2026-02-09 17:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.3 | overlapping zone removed (best=62.6)
+2026-02-09 17:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.1 | overlapping zone removed (best=62.6)
+2026-02-09 17:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 17:10:04 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 17:10:04 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70370.60 | (ver lineas anteriores para detalle)
+2026-02-09 17:10:04 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70370.60 | sl=68406.78 | tp=72334.42 | score=62.0 | mode=pending_monitor
+2026-02-09 17:10:04 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=70370.60 | reason=already 1 open trade(s)
+2026-02-09 17:10:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.2 | overlapping zone removed (best=62.0)
+2026-02-09 17:10:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.0)
+2026-02-09 17:10:07 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 17:10:07 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70370.60 | (ver lineas anteriores para detalle)
+2026-02-09 17:10:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:10:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:10:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:12:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:12:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:12:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:12:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:12:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:12:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:12:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.8 | reason=already 1 open trade(s)
+2026-02-09 17:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:14:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=62.8 | reason=already 1 open trade(s)
+2026-02-09 17:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:21:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:21:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:21:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:21:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:21:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 17:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 17:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 17:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 17:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.3 | reason=already 1 open trade(s)
+2026-02-09 17:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.2 | reason=already 1 open trade(s)
+2026-02-09 17:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:36:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70429.40 | sl=70722.27 | tp=70136.52 | score=62.6 | mode=pending_monitor
+2026-02-09 17:36:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 17:36:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.2 | overlapping zone removed (best=62.6)
+2026-02-09 17:36:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.1 | overlapping zone removed (best=62.6)
+2026-02-09 17:36:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 17:36:05 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 17:36:05 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70429.40 | (ver lineas anteriores para detalle)
+2026-02-09 17:36:05 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70429.40 | sl=68377.38 | tp=72481.42 | score=62.0 | mode=pending_monitor
+2026-02-09 17:36:05 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=70429.40 | reason=already 1 open trade(s)
+2026-02-09 17:36:05 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.1 | overlapping zone removed (best=62.0)
+2026-02-09 17:36:05 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.0)
+2026-02-09 17:36:07 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 17:36:07 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70429.40 | (ver lineas anteriores para detalle)
+2026-02-09 17:36:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:36:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:36:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:36:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:37:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 17:37:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:37:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:37:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.1 | reason=already 1 open trade(s)
+2026-02-09 17:37:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:38:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 17:38:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:38:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:38:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.1 | reason=already 1 open trade(s)
+2026-02-09 17:38:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:39:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 17:39:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:39:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:39:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.1 | reason=already 1 open trade(s)
+2026-02-09 17:39:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:41:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70422.10 | sl=70725.92 | tp=70118.28 | score=62.6 | mode=pending_monitor
+2026-02-09 17:41:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 17:41:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.2 | overlapping zone removed (best=62.6)
+2026-02-09 17:41:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.1 | overlapping zone removed (best=62.6)
+2026-02-09 17:41:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 17:41:05 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 17:41:05 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70422.10 | (ver lineas anteriores para detalle)
+2026-02-09 17:41:05 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70422.10 | sl=68381.03 | tp=72463.17 | score=62.0 | mode=pending_monitor
+2026-02-09 17:41:05 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=70422.10 | reason=already 1 open trade(s)
+2026-02-09 17:41:05 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.1 | overlapping zone removed (best=62.0)
+2026-02-09 17:41:05 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.0)
+2026-02-09 17:41:07 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 17:41:07 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70422.10 | (ver lineas anteriores para detalle)
+2026-02-09 17:41:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:41:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:41:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:41:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)
+2026-02-09 17:42:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 17:42:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:42:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:42:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.1 | reason=already 1 open trade(s)
+2026-02-09 17:42:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:43:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 17:43:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:43:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:43:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.1 | reason=already 1 open trade(s)
+2026-02-09 17:43:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:44:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 17:44:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.1 | reason=already 1 open trade(s)
+2026-02-09 17:44:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=43.4 | reason=already 1 open trade(s)
+2026-02-09 17:44:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.1 | reason=already 1 open trade(s)
+2026-02-09 17:44:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=36.7 | reason=already 1 open trade(s)
+2026-02-09 17:44:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 17:44:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 18:55:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70143.90 | sl=70865.02 | tp=69422.77 | score=62.6 | mode=pending_monitor
+2026-02-09 18:55:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 18:55:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=61.8 | overlapping zone removed (best=62.6)
+2026-02-09 18:55:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=52.2 | overlapping zone removed (best=62.6)
+2026-02-09 18:55:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=50.2 | overlapping zone removed (best=62.6)
+2026-02-09 18:55:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.2 | overlapping zone removed (best=62.6)
+2026-02-09 18:55:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.1 | overlapping zone removed (best=62.6)
+2026-02-09 18:55:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=43.4 | overlapping zone removed (best=62.6)
+2026-02-09 18:55:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 18:55:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.6)
+2026-02-09 18:55:04 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 18:55:04 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70143.90 | (ver lineas anteriores para detalle)
+2026-02-09 18:55:04 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70143.90 | sl=68520.13 | tp=71767.67 | score=62.0 | mode=pending_monitor
+2026-02-09 18:55:04 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=70143.90 | reason=already 1 open trade(s)
+2026-02-09 18:55:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.1 | overlapping zone removed (best=62.0)
+2026-02-09 18:55:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.0)
+2026-02-09 18:55:07 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 18:55:07 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70143.90 | (ver lineas anteriores para detalle)
+2026-02-09 19:10:02 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=69969.70 | sl=70952.12 | tp=68987.27 | score=62.5 | mode=pending_monitor
+2026-02-09 19:10:02 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 19:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=50.2 | overlapping zone removed (best=62.5)
+2026-02-09 19:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.2 | overlapping zone removed (best=62.5)
+2026-02-09 19:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=47.9 | overlapping zone removed (best=62.5)
+2026-02-09 19:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=43.2 | overlapping zone removed (best=62.5)
+2026-02-09 19:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=33.8 | overlapping zone removed (best=62.5)
+2026-02-09 19:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.5)
+2026-02-09 19:10:02 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.5)
+2026-02-09 19:10:04 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 19:10:04 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=69969.70 | (ver lineas anteriores para detalle)
+2026-02-09 19:10:04 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=69969.70 | sl=68607.23 | tp=71332.17 | score=62.0 | mode=pending_monitor
+2026-02-09 19:10:04 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=69969.70 | reason=already 1 open trade(s)
+2026-02-09 19:10:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.3 | overlapping zone removed (best=62.0)
+2026-02-09 19:10:04 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.0)
+2026-02-09 19:10:07 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 19:10:07 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=69969.70 | (ver lineas anteriores para detalle)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=47.9 | reason=already 1 open trade(s)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.7 | reason=already 1 open trade(s)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:11:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.7 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:12:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.8 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:13:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.8 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:14:03 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.8 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:15:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.8 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:16:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.9 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:17:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.2 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.9 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:18:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.9 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:19:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.0 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:20:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.1 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:21:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.9 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:22:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.1 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:23:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.3 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.1 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.3 | reason=already 1 open trade(s)
+2026-02-09 19:24:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.2 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.0 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.4 | reason=already 1 open trade(s)
+2026-02-09 19:25:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.2 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.0 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.4 | reason=already 1 open trade(s)
+2026-02-09 19:26:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.2 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=33.9 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.4 | reason=already 1 open trade(s)
+2026-02-09 19:27:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.2 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.0 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.4 | reason=already 1 open trade(s)
+2026-02-09 19:28:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.2 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.0 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.4 | reason=already 1 open trade(s)
+2026-02-09 19:29:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.2 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.0 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.4 | reason=already 1 open trade(s)
+2026-02-09 19:30:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.2 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.0 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.4 | reason=already 1 open trade(s)
+2026-02-09 19:31:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=50.3 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.2 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=48.0 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=43.2 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=34.0 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | DOWN | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=40.5 | reason=already 1 open trade(s)
+2026-02-09 19:32:02 | INFO | BLOCKED_SEQUENTIAL_PENDING | BTCUSDT | UP | score=0.0 | reason=already 1 open trade(s)
+2026-02-09 19:34:03 | INFO | INSTANT_BREAKOUT | BTCUSDT | DOWN | entry=70007.00 | sl=70933.47 | tp=69080.53 | score=62.5 | mode=pending_monitor
+2026-02-09 19:34:03 | INFO | OPEN_TRADE_REGISTERED | BTCUSDT | +1 trades | total_tracking=1 | mode=sequential
+2026-02-09 19:34:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=50.3 | overlapping zone removed (best=62.5)
+2026-02-09 19:34:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.2 | overlapping zone removed (best=62.5)
+2026-02-09 19:34:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=48.0 | overlapping zone removed (best=62.5)
+2026-02-09 19:34:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=43.3 | overlapping zone removed (best=62.5)
+2026-02-09 19:34:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=34.1 | overlapping zone removed (best=62.5)
+2026-02-09 19:34:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.5)
+2026-02-09 19:34:03 | INFO | DEDUP_REMOVED | BTCUSDT | DOWN | score=0.0 | overlapping zone removed (best=62.5)
+2026-02-09 19:34:05 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | SHORT | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 19:34:05 | ERROR | ALERT_FAILED | BTCUSDT | SHORT | entry=70007.00 | (ver lineas anteriores para detalle)
+2026-02-09 19:34:05 | INFO | INSTANT_BREAKOUT | BTCUSDT | UP | entry=70007.00 | sl=68588.58 | tp=71425.42 | score=62.0 | mode=pending_monitor
+2026-02-09 19:34:05 | INFO | BLOCKED_SEQUENTIAL | BTCUSDT | UP | entry=70007.00 | reason=already 1 open trade(s)
+2026-02-09 19:34:05 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=40.5 | overlapping zone removed (best=62.0)
+2026-02-09 19:34:05 | INFO | DEDUP_REMOVED | BTCUSDT | UP | score=0.0 | overlapping zone removed (best=62.0)
+2026-02-09 19:34:07 | ERROR | ALERT_CONNECT_ERROR | BTCUSDT | LONG | TradingBot no disponible en http://localhost:5000/api/watchlist-alert
+2026-02-09 19:34:07 | ERROR | ALERT_FAILED | BTCUSDT | LONG | entry=70007.00 | (ver lineas anteriores para detalle)
+2026-02-09 19:34:07 | INFO | DEDUP_OVERLAP_REMOVED | BTCUSDT | pending zone removed (price overlap >50%)

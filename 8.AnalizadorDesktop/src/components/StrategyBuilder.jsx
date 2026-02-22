@@ -4,13 +4,14 @@
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import IndicatorManagerRegistry from '../utils/IndicatorManagerRegistry';
+import { API_BASE_URL } from '../config';
 
 // =========================================================================
 // Constantes de configuracion
 // =========================================================================
 
 const MAX_DAYS_BY_INTERVAL = {
-  '1': 7, '3': 21, '5': 400, '15': 180, '30': 360,
+  '1': 400, '3': 400, '5': 400, '15': 180, '30': 360,
   '60': 730, '120': 730, '240': 1095, 'D': 2000, 'W': 1000,
 };
 
@@ -27,6 +28,27 @@ const LEVEL_SOURCES = [
     params: [
       { key: 'period', label: 'Period', min: 50, max: 1000, step: 10, default: 240 },
       { key: 'bins', label: 'Bins', min: 20, max: 100, step: 5, default: 50 },
+      { key: 'use_poc', label: 'POC', type: 'toggle', default: true },
+      { key: 'use_vah', label: 'VAH', type: 'toggle', default: true },
+      { key: 'use_val', label: 'VAL', type: 'toggle', default: true },
+      { key: 'lookback_segments', label: 'Segmentos activos', min: 0, max: 10, step: 1, default: 1 },
+    ],
+  },
+  {
+    id: 'vp_zones', label: 'VP Zones',
+    desc: 'Zonas D/P/b clasificadas (pesado)',
+    params: [
+      { key: 'window_size', label: 'Window Size', min: 10, max: 100, step: 5, default: 30 },
+      { key: 'window_step', label: 'Window Step', min: 1, max: 20, step: 1, default: 5 },
+      { key: 'bins', label: 'Bins', min: 20, max: 100, step: 5, default: 50 },
+      { key: 'va_percent', label: 'VA %', min: 0.50, max: 0.90, step: 0.05, default: 0.70 },
+      { key: 'min_d_score', label: 'Min D-Score', min: 0, max: 80, step: 5, default: 40 },
+      { key: 'include_pb_shapes', label: 'Incluir P/b', type: 'toggle', default: true },
+      { key: 'max_range_pct', label: 'Max Range %', min: 0.5, max: 5.0, step: 0.5, default: 2.0 },
+      { key: 'detection_mode', label: 'Modo', type: 'select', options: ['fixed_window', 'progressive'], default: 'fixed_window' },
+      { key: 'use_poc', label: 'POC', type: 'toggle', default: true },
+      { key: 'use_vah', label: 'VAH', type: 'toggle', default: true },
+      { key: 'use_val', label: 'VAL', type: 'toggle', default: true },
     ],
   },
   {
@@ -59,6 +81,19 @@ const LEVEL_SOURCES = [
       { key: 'candles_per_extreme', label: 'Candles/Extreme', min: 3, max: 15, step: 1, default: 5 },
       { key: 'price_margin_pct', label: 'Price Margin %', min: 0.5, max: 5.0, step: 0.5, default: 2.0 },
       { key: 'min_candles_between', label: 'Min Between', min: 5, max: 50, step: 5, default: 10 },
+      { key: 'max_candles_between', label: 'Max Between', min: 20, max: 300, step: 10, default: 100 },
+    ],
+  },
+  {
+    id: 'gaussian_channel', label: 'Gaussian Channel',
+    desc: 'Canal gaussiano de Ehlers (trend following)',
+    params: [
+      { key: 'poles', label: 'Poles', min: 1, max: 9, step: 1, default: 4 },
+      { key: 'period', label: 'Period', min: 10, max: 500, step: 1, default: 144 },
+      { key: 'multiplier', label: 'Multiplier', min: 0.5, max: 5.0, step: 0.1, default: 1.414 },
+      { key: 'source_type', label: 'Source', type: 'select', options: ['hlc3', 'close', 'hl2', 'ohlc4'], default: 'hlc3' },
+      { key: 'reduced_lag', label: 'Reduced Lag', type: 'toggle', default: false },
+      { key: 'fast_response', label: 'Fast Response', type: 'toggle', default: false },
     ],
   },
 ];
@@ -73,15 +108,17 @@ const ENTRY_SIGNALS = [
     { key: 'swing_bars', label: 'Swing Bars', min: 2, max: 10, step: 1, default: 3 },
   ]},
   { id: 'breakout_close', label: 'Breakout Close', desc: 'Cierre arriba/abajo de nivel', params: [
+    { key: 'confirm_bars', label: 'Confirm Bars', min: 1, max: 5, step: 1, default: 2 },
     { key: 'tolerance_pct', label: 'Tolerancia %', min: 0.05, max: 1.0, step: 0.05, default: 0.1 },
   ]},
   { id: 'rejection_candle', label: 'Rejection Candle', desc: 'Hammer/Shooting Star cerca de nivel', params: [
-    { key: 'tolerance_pct', label: 'Tolerancia %', min: 0.05, max: 1.0, step: 0.05, default: 0.3 },
-    { key: 'wick_body_ratio', label: 'Wick/Body Ratio', min: 1.0, max: 5.0, step: 0.5, default: 2.0 },
+    { key: 'tolerance_pct', label: 'Tolerancia %', min: 0.05, max: 1.0, step: 0.05, default: 0.2 },
+    { key: 'wick_ratio', label: 'Wick Ratio', min: 0.3, max: 0.9, step: 0.05, default: 0.6 },
   ]},
   { id: 'pattern_match', label: 'Pattern Match', desc: 'Engulfing/Doji cerca de nivel', params: [
-    { key: 'tolerance_pct', label: 'Tolerancia %', min: 0.1, max: 1.0, step: 0.1, default: 0.3 },
-    { key: 'pattern_type', label: 'Patron', type: 'select', options: ['engulfing', 'doji', 'any'], default: 'any' },
+    { key: 'tolerance_pct', label: 'Tolerancia %', min: 0.1, max: 1.0, step: 0.1, default: 0.5 },
+    { key: 'pattern_type', label: 'Patron', type: 'select', options: ['engulfing', 'doji', 'hammer', 'shooting_star', 'any'], default: 'any' },
+    { key: 'min_confidence', label: 'Min Confidence', min: 10, max: 90, step: 5, default: 50 },
   ]},
   { id: 'squeeze_release', label: 'Squeeze Release', desc: 'TTM Squeeze se libera', params: [] },
   { id: 'cvd_divergence', label: 'CVD Divergence', desc: 'Divergencia precio/CVD', params: [
@@ -91,15 +128,21 @@ const ENTRY_SIGNALS = [
     { key: 'lookback', label: 'Lookback', min: 10, max: 100, step: 10, default: 50 },
     { key: 'min_confidence', label: 'Min Confidence', min: 30, max: 90, step: 5, default: 50 },
   ]},
+  { id: 'band_crossover', label: 'Band Crossover', desc: 'Crossover/under de bandas Gaussian Channel', params: [
+    { key: 'tolerance_pct', label: 'Tolerancia %', min: 0, max: 0.5, step: 0.01, default: 0.05 },
+  ]},
 ];
 
 // --- Catalogo de Context Filters ---
 const CONTEXT_FILTERS = [
   { id: 'vwap_trend', label: 'VWAP Trend', desc: 'VWAP subiendo=solo LONG, bajando=solo SHORT', params: [
-    { key: 'lookback', label: 'Lookback', min: 5, max: 50, step: 5, default: 10 },
+    { key: 'lookback', label: 'Lookback', min: 5, max: 1000, step: 5, default: 10 },
+    { key: 'min_diff_pct', label: 'Min Diff %', min: 0, max: 2.0, step: 0.05, default: 0 },
   ]},
-  { id: 'vwap_position', label: 'VWAP Position', desc: 'Precio arriba/abajo de VWAP o banda', params: [
-    { key: 'reference', label: 'Referencia', type: 'select', options: ['vwap', 'upper_1', 'upper_2', 'lower_1', 'lower_2'], default: 'vwap' },
+  { id: 'vwap_position', label: 'VWAP Position', desc: 'Posicion del precio respecto a VWAP/bandas', params: [
+    { key: 'mode', label: 'Modo', type: 'select', options: ['trend', 'counter'], default: 'trend' },
+    { key: 'long_ref', label: 'Ref LONG', type: 'select', options: ['vwap', 'upper_1', 'upper_2', 'upper_3', 'lower_1', 'lower_2', 'lower_3'], default: 'vwap' },
+    { key: 'short_ref', label: 'Ref SHORT', type: 'select', options: ['vwap', 'upper_1', 'upper_2', 'upper_3', 'lower_1', 'lower_2', 'lower_3'], default: 'vwap' },
   ]},
   { id: 'ttm_squeeze', label: 'TTM Squeeze', desc: 'Filtro por estado de squeeze', params: [
     { key: 'require_squeeze', label: 'Requiere Squeeze', type: 'toggle', default: true },
@@ -121,6 +164,13 @@ const CONTEXT_FILTERS = [
   ]},
   { id: 'direction', label: 'Direction Filter', desc: 'Solo LONG, SHORT o BOTH', params: [
     { key: 'allowed', label: 'Direccion', type: 'select', options: ['both', 'long', 'short'], default: 'both' },
+  ]},
+  { id: 'vp_shape', label: 'VP Shape Filter', desc: 'Filtrar por forma del perfil VP (D, P, b, thin)', params: [
+    { key: 'allowed_shapes', label: 'Shapes permitidos', type: 'multi_select',
+      options: ['all', 'D', 'P', 'b', 'P_trimmed', 'b_trimmed', 'thin'], default: ['all'] },
+  ]},
+  { id: 'gaussian_trend', label: 'Gaussian Trend', desc: 'Solo operar en la direccion del filtro gaussiano', params: [
+    { key: 'lookback', label: 'Lookback', min: 1, max: 50, step: 1, default: 1 },
   ]},
 ];
 
@@ -205,12 +255,14 @@ function buildConfigPayload(state) {
       tp_method: state.tpMethod,
       tp_params: { ...state.tpParams },
       max_trades_per_segment: state.maxTradesPerSegment,
+      cooldown_bars: state.cooldownBars || 0,
       trailing_stop: state.trailingStop,
     },
     exit_rules: [],
     confluence_mode: state.confluenceMode,
     min_confluence_score: state.minConfluenceScore,
     vwap_period: state.vwapPeriod,
+    diag_level_proximity_pct: state.diagLevelProximityPct ?? 0.15,
   };
 
   // Level sources
@@ -269,6 +321,7 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
   // --- State ---
   const [days, setDays] = useState(() => DEFAULT_DAYS[interval] || 90);
   const [vwapPeriod, setVwapPeriod] = useState(20);
+  const [diagLevelProximityPct, setDiagLevelProximityPct] = useState(0.15);
 
   // Block 1: Level Sources
   const [levelSources, setLevelSources] = useState({ vp_periodic: true });
@@ -292,6 +345,7 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
   const [tpMethod, setTpMethod] = useState('rr_fixed');
   const [tpParams, setTpParams] = useState({ rr: 2.0 });
   const [maxTradesPerSegment, setMaxTradesPerSegment] = useState(1);
+  const [cooldownBars, setCooldownBars] = useState(0);
   const [trailingStop, setTrailingStop] = useState(false);
 
   // Block 5: Exit Rules
@@ -309,7 +363,19 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
   const [error, setError] = useState(null);
   const [minimized, setMinimized] = useState(false);
   const [showTradeList, setShowTradeList] = useState(false);
-  const [expandedBlocks, setExpandedBlocks] = useState({ levels: true });
+  const [showDebugHash, setShowDebugHash] = useState(false);
+  const [showVPProfiles, setShowVPProfiles] = useState(false);
+  const [expandedBlocks, setExpandedBlocks] = useState({ levels: true, entry: true });
+
+  // Preset state
+  const [presets, setPresets] = useState({});
+  const [presetName, setPresetName] = useState('');
+  const [selectedPreset, setSelectedPreset] = useState('');
+  const [presetLoading, setPresetLoading] = useState(false);
+
+  // VP Zone Cache state
+  const [vpZoneCaches, setVpZoneCaches] = useState([]);
+  const [vpCacheLoading, setVpCacheLoading] = useState(false);
 
   // Optimizer state
   const [showOptimizer, setShowOptimizer] = useState(false);
@@ -320,6 +386,24 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
   const [optLoading, setOptLoading] = useState(false);
   const [optError, setOptError] = useState(null);
 
+  // Auto-optimize state
+  const [showAutoOpt, setShowAutoOpt] = useState(false);
+  const [autoOptLoading, setAutoOptLoading] = useState(false);
+  const [autoOptProgress, setAutoOptProgress] = useState(null);
+  const [autoOptResults, setAutoOptResults] = useState(null);
+  const [autoOptError, setAutoOptError] = useState(null);
+  const [autoOptMetric, setAutoOptMetric] = useState('recovery_factor');
+  const [autoOptMinTrades, setAutoOptMinTrades] = useState(15);
+  const [autoOptShowAll, setAutoOptShowAll] = useState(false);
+  const [autoOptSortCol, setAutoOptSortCol] = useState(null);
+  const [autoOptSortAsc, setAutoOptSortAsc] = useState(false);
+
+  // Realtime state
+  const [showRealtime, setShowRealtime] = useState(false);
+  const [rtStatus, setRtStatus] = useState(null);
+  const [rtLoading, setRtLoading] = useState(false);
+  const rtPollRef = useRef(null);
+
   const abortRef = useRef(null);
 
   // Update days when interval changes
@@ -327,7 +411,127 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
     setDays(DEFAULT_DAYS[interval] || 90);
   }, [interval]);
 
+  // Cargar presets del backend al montar
+  useEffect(() => {
+    if (!isOpen) return;
+    fetch(`${API_BASE_URL}/api/strategy-builder/presets`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.presets) setPresets(data.presets);
+      })
+      .catch(() => {});
+  }, [isOpen]);
+
   const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 365;
+
+  // Cargar caches VP cuando se activa vp_zones
+  useEffect(() => {
+    if (!isOpen || !levelSources.vp_zones) {
+      setVpZoneCaches([]);
+      return;
+    }
+    setVpCacheLoading(true);
+    fetch(`${API_BASE_URL}/api/strategy-builder/vp-zone-caches?symbol=${symbol}&interval=${interval}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) setVpZoneCaches(data.caches || []);
+      })
+      .catch(() => {})
+      .finally(() => setVpCacheLoading(false));
+  }, [isOpen, levelSources.vp_zones, symbol, interval]);
+
+  // --- Preset helpers ---
+
+  const collectCurrentState = useCallback(() => {
+    return {
+      levelSources, levelParams, entrySignalType, entrySignalParams,
+      contextFilters, filterParams, slMethod, slParams, tpMethod, tpParams,
+      maxTradesPerSegment, cooldownBars, trailingStop, exitRules, exitRuleParams,
+      confluenceMode, minConfluenceScore, vwapPeriod, diagLevelProximityPct, days,
+    };
+  }, [
+    levelSources, levelParams, entrySignalType, entrySignalParams,
+    contextFilters, filterParams, slMethod, slParams, tpMethod, tpParams,
+    maxTradesPerSegment, cooldownBars, trailingStop, exitRules, exitRuleParams,
+    confluenceMode, minConfluenceScore, vwapPeriod, diagLevelProximityPct, days,
+  ]);
+
+  const applyPresetState = useCallback((state) => {
+    if (state.levelSources) setLevelSources(state.levelSources);
+    if (state.levelParams) setLevelParams(state.levelParams);
+    if (state.entrySignalType) setEntrySignalType(state.entrySignalType);
+    if (state.entrySignalParams) setEntrySignalParams(state.entrySignalParams);
+    if (state.contextFilters) setContextFilters(state.contextFilters);
+    if (state.filterParams) setFilterParams(state.filterParams);
+    if (state.slMethod) setSlMethod(state.slMethod);
+    if (state.slParams) setSlParams(state.slParams);
+    if (state.tpMethod) setTpMethod(state.tpMethod);
+    if (state.tpParams) setTpParams(state.tpParams);
+    if (state.maxTradesPerSegment != null) setMaxTradesPerSegment(state.maxTradesPerSegment);
+    if (state.cooldownBars != null) setCooldownBars(state.cooldownBars);
+    if (state.trailingStop != null) setTrailingStop(state.trailingStop);
+    if (state.exitRules) setExitRules(state.exitRules);
+    if (state.exitRuleParams) setExitRuleParams(state.exitRuleParams);
+    if (state.confluenceMode) setConfluenceMode(state.confluenceMode);
+    if (state.minConfluenceScore != null) setMinConfluenceScore(state.minConfluenceScore);
+    if (state.vwapPeriod != null) setVwapPeriod(state.vwapPeriod);
+    if (state.diagLevelProximityPct != null) setDiagLevelProximityPct(state.diagLevelProximityPct);
+    if (state.days != null) setDays(state.days);
+  }, []);
+
+  const handleSavePreset = useCallback(async () => {
+    if (!presetName.trim()) return;
+    setPresetLoading(true);
+    try {
+      const state = collectCurrentState();
+      const config = buildConfigPayload(state);
+      const res = await fetch(`${API_BASE_URL}/api/strategy-builder/presets/${encodeURIComponent(presetName.trim())}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          config: state,
+          days: state.days,
+          vwapPeriod: state.vwapPeriod,
+          savedAt: new Date().toISOString(),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Recargar presets
+        const list = await fetch(`${API_BASE_URL}/api/strategy-builder/presets`).then(r => r.json());
+        if (list.success) setPresets(list.presets);
+        setSelectedPreset(presetName.trim());
+        setPresetName('');
+      }
+    } catch (e) {
+      console.error('[Presets] Error guardando:', e);
+    } finally {
+      setPresetLoading(false);
+    }
+  }, [presetName, collectCurrentState]);
+
+  const handleLoadPreset = useCallback((name) => {
+    const preset = presets[name];
+    if (!preset || !preset.config) return;
+    applyPresetState(preset.config);
+    setSelectedPreset(name);
+  }, [presets, applyPresetState]);
+
+  const handleDeletePreset = useCallback(async (name) => {
+    setPresetLoading(true);
+    try {
+      await fetch(`${API_BASE_URL}/api/strategy-builder/presets/${encodeURIComponent(name)}`, {
+        method: 'DELETE',
+      });
+      const list = await fetch(`${API_BASE_URL}/api/strategy-builder/presets`).then(r => r.json());
+      if (list.success) setPresets(list.presets);
+      if (selectedPreset === name) setSelectedPreset('');
+    } catch (e) {
+      console.error('[Presets] Error eliminando:', e);
+    } finally {
+      setPresetLoading(false);
+    }
+  }, [selectedPreset]);
 
   // --- Handlers ---
 
@@ -347,8 +551,8 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
     const config = buildConfigPayload({
       levelSources, levelParams, entrySignalType, entrySignalParams,
       contextFilters, filterParams, slMethod, slParams, tpMethod, tpParams,
-      maxTradesPerSegment, trailingStop, exitRules, exitRuleParams,
-      confluenceMode, minConfluenceScore, vwapPeriod,
+      maxTradesPerSegment, cooldownBars, trailingStop, exitRules, exitRuleParams,
+      confluenceMode, minConfluenceScore, vwapPeriod, diagLevelProximityPct,
     });
 
     try {
@@ -372,8 +576,8 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
   }, [
     indicatorManager, symbol, days, levelSources, levelParams, entrySignalType,
     entrySignalParams, contextFilters, filterParams, slMethod, slParams,
-    tpMethod, tpParams, maxTradesPerSegment, trailingStop, exitRules,
-    exitRuleParams, confluenceMode, minConfluenceScore, vwapPeriod,
+    tpMethod, tpParams, maxTradesPerSegment, cooldownBars, trailingStop, exitRules,
+    exitRuleParams, confluenceMode, minConfluenceScore, vwapPeriod, diagLevelProximityPct,
   ]);
 
   const handleTradeClick = useCallback((zone) => {
@@ -388,10 +592,85 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
     const manager = indicatorManager || IndicatorManagerRegistry.get(symbol);
     if (manager && manager.zoneVisualizerIndicator) {
       manager.zoneVisualizerIndicator.setStrategyZones([]);
+      manager.zoneVisualizerIndicator.clearSBDiagnostics();
+      manager.zoneVisualizerIndicator.clearVPProfiles();
       manager.requestRedraw();
     }
     setResult(null);
+    setShowVPProfiles(false);
   }, [indicatorManager, symbol]);
+
+  // --- Realtime handlers ---
+
+  const fetchRtStatus = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/strategy-builder/realtime/status`);
+      const data = await res.json();
+      if (data.success) setRtStatus(data);
+    } catch (e) {
+      // silently fail
+    }
+  }, []);
+
+  // Fetch status when realtime panel is shown
+  useEffect(() => {
+    if (!isOpen || !showRealtime) {
+      if (rtPollRef.current) { clearInterval(rtPollRef.current); rtPollRef.current = null; }
+      return;
+    }
+    fetchRtStatus();
+    rtPollRef.current = setInterval(fetchRtStatus, 5000);
+    return () => { if (rtPollRef.current) { clearInterval(rtPollRef.current); rtPollRef.current = null; } };
+  }, [isOpen, showRealtime, fetchRtStatus]);
+
+  const handleToggleRealtime = useCallback(async () => {
+    const isCurrentlyRunning = rtStatus && rtStatus.running;
+    setRtLoading(true);
+
+    try {
+      const body = { enabled: !isCurrentlyRunning };
+
+      if (!isCurrentlyRunning) {
+        // Activar: enviar la estrategia actual y el simbolo
+        const config = buildConfigPayload({
+          levelSources, levelParams, entrySignalType, entrySignalParams,
+          contextFilters, filterParams, slMethod, slParams, tpMethod, tpParams,
+          maxTradesPerSegment, cooldownBars, trailingStop, exitRules, exitRuleParams,
+          confluenceMode, minConfluenceScore, vwapPeriod, diagLevelProximityPct,
+        });
+        body.strategy = config;
+        body.symbols = [symbol];
+        body.interval = interval;
+      }
+
+      const res = await fetch(`${API_BASE_URL}/api/strategy-builder/realtime/toggle`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchRtStatus();
+      }
+    } catch (e) {
+      console.error('[StrategyBuilder] Error toggling realtime:', e);
+    } finally {
+      setRtLoading(false);
+    }
+  }, [
+    rtStatus, symbol, interval, levelSources, levelParams,
+    entrySignalType, entrySignalParams, contextFilters, filterParams,
+    slMethod, slParams, tpMethod, tpParams, maxTradesPerSegment,
+    trailingStop, exitRules, exitRuleParams, confluenceMode,
+    minConfluenceScore, vwapPeriod, diagLevelProximityPct, fetchRtStatus,
+  ]);
+
+  const handleClearRtCooldowns = useCallback(async () => {
+    try {
+      await fetch(`${API_BASE_URL}/api/strategy-builder/realtime/clear-cooldowns`, { method: 'POST' });
+      await fetchRtStatus();
+    } catch (e) { /* silent */ }
+  }, [fetchRtStatus]);
 
   // --- Optimizer handlers ---
 
@@ -413,8 +692,8 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
     const config = buildConfigPayload({
       levelSources, levelParams, entrySignalType, entrySignalParams,
       contextFilters, filterParams, slMethod, slParams, tpMethod, tpParams,
-      maxTradesPerSegment, trailingStop, exitRules, exitRuleParams,
-      confluenceMode, minConfluenceScore, vwapPeriod,
+      maxTradesPerSegment, cooldownBars, trailingStop, exitRules, exitRuleParams,
+      confluenceMode, minConfluenceScore, vwapPeriod, diagLevelProximityPct,
     });
 
     setOptLoading(true);
@@ -439,8 +718,9 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
   }, [
     indicatorManager, symbol, days, optParamRanges, levelSources, levelParams,
     entrySignalType, entrySignalParams, contextFilters, filterParams,
-    slMethod, slParams, tpMethod, tpParams, maxTradesPerSegment, trailingStop,
-    exitRules, exitRuleParams, confluenceMode, minConfluenceScore, vwapPeriod,
+    slMethod, slParams, tpMethod, tpParams, maxTradesPerSegment, cooldownBars,
+    trailingStop, exitRules, exitRuleParams, confluenceMode, minConfluenceScore, vwapPeriod,
+    diagLevelProximityPct,
   ]);
 
   const handleRunOptimize = useCallback(async () => {
@@ -457,8 +737,8 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
     const config = buildConfigPayload({
       levelSources, levelParams, entrySignalType, entrySignalParams,
       contextFilters, filterParams, slMethod, slParams, tpMethod, tpParams,
-      maxTradesPerSegment, trailingStop, exitRules, exitRuleParams,
-      confluenceMode, minConfluenceScore, vwapPeriod,
+      maxTradesPerSegment, cooldownBars, trailingStop, exitRules, exitRuleParams,
+      confluenceMode, minConfluenceScore, vwapPeriod, diagLevelProximityPct,
     });
 
     setOptLoading(true);
@@ -486,8 +766,8 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
     indicatorManager, symbol, days, optParamRanges, optMetric,
     levelSources, levelParams, entrySignalType, entrySignalParams,
     contextFilters, filterParams, slMethod, slParams, tpMethod, tpParams,
-    maxTradesPerSegment, trailingStop, exitRules, exitRuleParams,
-    confluenceMode, minConfluenceScore, vwapPeriod,
+    maxTradesPerSegment, cooldownBars, trailingStop, exitRules, exitRuleParams,
+    confluenceMode, minConfluenceScore, vwapPeriod, diagLevelProximityPct,
   ]);
 
   const applyOptResult = useCallback((row) => {
@@ -522,8 +802,232 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
       if (key === 'risk.tp_params.fixed_pct') setTpParams(prev => ({ ...prev, fixed_pct: val }));
       if (key === 'risk.tp_params.fallback_rr') setTpParams(prev => ({ ...prev, fallback_rr: val }));
       if (key === 'vwap_period') setVwapPeriod(val);
+      if (key === 'diag_level_proximity_pct') setDiagLevelProximityPct(val);
     }
   }, []);
+
+  // --- Auto-optimize handlers ---
+
+  const handleRunAutoOptimize = useCallback(async () => {
+    const manager = indicatorManager || IndicatorManagerRegistry.get(symbol);
+    if (!manager) { setAutoOptError('IndicatorManager no disponible'); return; }
+
+    setAutoOptLoading(true);
+    setAutoOptError(null);
+    setAutoOptResults(null);
+    setAutoOptShowAll(false);
+    setAutoOptSortCol(null);
+    setAutoOptProgress({ phase: 'connecting', percent: 0, message: 'Conectando...' });
+
+    try {
+      await manager.autoOptimizeStrategy({
+        days: parseInt(days) || 365,
+        interval,
+        ranking_metric: autoOptMetric,
+        min_trades: autoOptMinTrades,
+        top_n: 20,
+        onProgress: (p) => setAutoOptProgress(p),
+        onComplete: (data) => {
+          setAutoOptResults(data);
+          setAutoOptLoading(false);
+          setAutoOptProgress(null);
+        },
+        onError: (msg) => {
+          setAutoOptError(msg);
+          setAutoOptLoading(false);
+          setAutoOptProgress(null);
+        },
+      });
+    } catch (e) {
+      setAutoOptError(e.message || 'Error de conexion');
+      setAutoOptLoading(false);
+      setAutoOptProgress(null);
+    }
+  }, [indicatorManager, symbol, interval, days, autoOptMetric, autoOptMinTrades]);
+
+  const applyAutoOptResult = useCallback((row) => {
+    const cfg = row.config;
+    if (!cfg) return;
+
+    // Level sources: desactivar todas, luego activar las del config
+    const newLevelSources = {};
+    const newLevelParams = {};
+    for (const ls of LEVEL_SOURCES) {
+      newLevelSources[ls.id] = false;
+      // Mantener defaults
+      const d = {};
+      for (const p of (ls.params || [])) d[p.key] = p.default;
+      newLevelParams[ls.id] = d;
+    }
+    for (const src of (cfg.level_sources || [])) {
+      if (src.enabled !== false) {
+        newLevelSources[src.source] = true;
+        if (src.params) newLevelParams[src.source] = { ...(newLevelParams[src.source] || {}), ...src.params };
+      }
+    }
+    setLevelSources(newLevelSources);
+    setLevelParams(newLevelParams);
+
+    // Entry signal
+    if (cfg.entry_signal) {
+      setEntrySignalType(cfg.entry_signal.signal_type || 'price_touch');
+      if (cfg.entry_signal.params) setEntrySignalParams(cfg.entry_signal.params);
+    }
+
+    // Context filters: desactivar todas, luego activar las del config
+    const newCtxFilters = {};
+    const newFilterParams = {};
+    for (const cf of CONTEXT_FILTERS) {
+      newCtxFilters[cf.id] = false;
+      const d = {};
+      for (const p of (cf.params || [])) d[p.key] = p.default;
+      newFilterParams[cf.id] = d;
+    }
+    // direction siempre activo
+    newCtxFilters['direction'] = true;
+    newFilterParams['direction'] = { allowed: 'both' };
+    for (const f of (cfg.context_filters || [])) {
+      if (f.enabled !== false) {
+        newCtxFilters[f.filter_type] = true;
+        if (f.params) newFilterParams[f.filter_type] = { ...(newFilterParams[f.filter_type] || {}), ...f.params };
+      }
+    }
+    setContextFilters(newCtxFilters);
+    setFilterParams(newFilterParams);
+
+    // Risk management
+    if (cfg.risk) {
+      if (cfg.risk.sl_method) setSlMethod(cfg.risk.sl_method);
+      if (cfg.risk.sl_params) setSlParams(cfg.risk.sl_params);
+      if (cfg.risk.tp_method) setTpMethod(cfg.risk.tp_method);
+      if (cfg.risk.tp_params) setTpParams(cfg.risk.tp_params);
+      if (cfg.risk.max_trades_per_segment != null) setMaxTradesPerSegment(cfg.risk.max_trades_per_segment);
+      if (cfg.risk.cooldown_bars != null) setCooldownBars(cfg.risk.cooldown_bars);
+      if (cfg.risk.trailing_stop != null) setTrailingStop(cfg.risk.trailing_stop);
+    }
+
+    // Exit rules: desactivar todas, luego activar las del config
+    const newExitRules = {};
+    const newExitParams = {};
+    for (const er of EXIT_RULES) {
+      newExitRules[er.id] = false;
+      const d = {};
+      for (const p of (er.params || [])) d[p.key] = p.default;
+      newExitParams[er.id] = d;
+    }
+    for (const r of (cfg.exit_rules || [])) {
+      if (r.enabled !== false) {
+        newExitRules[r.rule_type] = true;
+        if (r.params) newExitParams[r.rule_type] = { ...(newExitParams[r.rule_type] || {}), ...r.params };
+      }
+    }
+    setExitRules(newExitRules);
+    setExitRuleParams(newExitParams);
+
+    // Globals
+    if (cfg.confluence_mode) setConfluenceMode(cfg.confluence_mode);
+    if (cfg.min_confluence_score != null) setMinConfluenceScore(cfg.min_confluence_score);
+    if (cfg.vwap_period != null) setVwapPeriod(cfg.vwap_period);
+    if (cfg.diag_level_proximity_pct != null) setDiagLevelProximityPct(cfg.diag_level_proximity_pct);
+  }, []);
+
+  const handleAutoOptExport = useCallback(() => {
+    if (!autoOptResults || !autoOptResults.results) return;
+
+    const headers = ['Rank', 'Levels', 'Entry', 'SL', 'TP', 'Exits', 'Filters',
+      'Score', 'WR%', 'Trades', 'W', 'L', 'PnL(R)', 'Expect', 'PF', 'MaxDD', 'RecFactor', 'AvgBars',
+      'P.Levels', 'P.Entry', 'P.SL', 'P.TP', 'P.RiskExtra', 'P.Exits', 'P.Filters'];
+    const allHeaders = ['Phase', ...headers];
+
+    const escXml = (v) => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    const rowToValues = (r) => [
+      r.rank || 0,
+      (r.levels || []).join('+'),
+      r.entry || '',
+      r.sl || '',
+      r.tp || '',
+      (r.exits || []).join('+') || '-',
+      (r.filters || []).join('+') || '-',
+      r.score || 0,
+      r.win_rate || 0,
+      r.closed || 0,
+      r.wins || 0,
+      r.losses || 0,
+      r.total_pnl_r || 0,
+      r.expectancy || 0,
+      r.profit_factor || 0,
+      r.max_drawdown_r || 0,
+      r.recovery_factor || 0,
+      r.avg_bars_held || 0,
+      r.param_levels || '',
+      r.param_entry || '',
+      r.param_sl || '',
+      r.param_tp || '',
+      r.param_risk_extra || '',
+      r.param_exits || '',
+      r.param_filters || '',
+    ];
+
+    const buildCell = (val) => {
+      if (typeof val === 'number') {
+        return `<Cell><Data ss:Type="Number">${val}</Data></Cell>`;
+      }
+      return `<Cell><Data ss:Type="String">${escXml(val)}</Data></Cell>`;
+    };
+
+    const buildSheet = (name, hdrs, rows) => {
+      let xml = `<Worksheet ss:Name="${escXml(name)}"><Table>`;
+      // Header row
+      xml += '<Row>';
+      for (const h of hdrs) xml += `<Cell><Data ss:Type="String">${escXml(h)}</Data></Cell>`;
+      xml += '</Row>';
+      // Data rows
+      for (const vals of rows) {
+        xml += '<Row>';
+        for (const v of vals) xml += buildCell(v);
+        xml += '</Row>';
+      }
+      xml += '</Table></Worksheet>';
+      return xml;
+    };
+
+    // Sheet 1: Top Results
+    const topRows = autoOptResults.results.map(r => rowToValues(r));
+
+    // Sheet 2: All Combinations
+    const allRows = (autoOptResults.all_results || []).map(r => [r.phase || '', ...rowToValues(r)]);
+
+    // Sheet 3: Config JSON completo para cada Top result (para poder reproducir manualmente)
+    const configHeaders = ['Rank', 'Levels', 'Entry', 'WR%', 'PnL(R)', 'Config JSON'];
+    const configRows = autoOptResults.results.map(r => [
+      r.rank || 0,
+      (r.levels || []).join('+'),
+      r.entry || '',
+      r.win_rate || 0,
+      r.total_pnl_r || 0,
+      r.config ? JSON.stringify(r.config, null, 0) : '',
+    ]);
+
+    let xls = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xls += '<?mso-application progid="Excel.Sheet"?>\n';
+    xls += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" ';
+    xls += 'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
+    xls += buildSheet(`Top ${autoOptResults.results.length}`, headers, topRows);
+    if (allRows.length > 0) {
+      xls += buildSheet('Todas las combinaciones', allHeaders, allRows);
+    }
+    xls += buildSheet('Configs JSON', configHeaders, configRows);
+    xls += '</Workbook>';
+
+    const blob = new Blob([xls], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `auto_optimize_${symbol}_${interval}_${days}d.xls`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [autoOptResults, symbol, interval, days]);
 
   // --- No render si cerrado ---
   if (!isOpen) return null;
@@ -557,7 +1061,7 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
   }
 
   const stats = result?.stats;
-  const trades = result?.trades || [];
+  const trades = result?.zones || [];
   const modalWidth = showTradeList ? 840 : 560;
 
   // =========================================================================
@@ -614,6 +1118,40 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
               color: value ? '#000' : COLORS.textSec,
             }}
           >{value ? 'ON' : 'OFF'}</button>
+        </div>
+      );
+    }
+    if (param.type === 'multi_select') {
+      const selected = Array.isArray(value) ? value : [value || param.options[0]];
+      return (
+        <div key={param.key} style={{ marginBottom: 6 }}>
+          <div style={{ fontSize: 11, color: COLORS.textSec, marginBottom: 2 }}>{param.label}</div>
+          <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+            {param.options.map(opt => {
+              const isActive = selected.includes(opt);
+              return (
+                <button key={opt} onClick={() => {
+                  if (opt === 'all') {
+                    onChange(['all']);
+                  } else {
+                    let next = selected.filter(s => s !== 'all');
+                    if (isActive) {
+                      next = next.filter(s => s !== opt);
+                      if (next.length === 0) next = ['all'];
+                    } else {
+                      next.push(opt);
+                    }
+                    onChange(next);
+                  }
+                }} style={{
+                  padding: '2px 7px', border: 'none', borderRadius: 3, cursor: 'pointer',
+                  fontSize: 10, fontWeight: isActive ? 'bold' : 'normal',
+                  background: isActive ? COLORS.accent : COLORS.bgInput,
+                  color: isActive ? '#FFF' : COLORS.textSec,
+                }}>{opt}</button>
+              );
+            })}
+          </div>
         </div>
       );
     }
@@ -679,6 +1217,64 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
         </div>
       </div>
 
+      {/* Presets bar */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px',
+        background: COLORS.bgInput, borderBottom: `1px solid ${COLORS.border}`,
+        flexWrap: 'wrap',
+      }}>
+        <span style={{ fontSize: 10, color: COLORS.textSec, whiteSpace: 'nowrap' }}>Preset:</span>
+        <select
+          value={selectedPreset}
+          onChange={(e) => {
+            const name = e.target.value;
+            if (name) handleLoadPreset(name);
+            else setSelectedPreset('');
+          }}
+          style={{
+            flex: 1, minWidth: 80, maxWidth: 160, padding: '3px 4px', fontSize: 11,
+            background: COLORS.bgCard, border: `1px solid ${COLORS.border}`,
+            color: COLORS.text, borderRadius: 3,
+          }}
+        >
+          <option value="">-- ninguno --</option>
+          {Object.keys(presets).map(name => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+        </select>
+        {selectedPreset && (
+          <button onClick={() => handleDeletePreset(selectedPreset)}
+            disabled={presetLoading}
+            title="Eliminar preset"
+            style={{
+              padding: '2px 6px', border: 'none', borderRadius: 3, cursor: 'pointer',
+              fontSize: 11, background: COLORS.loss, color: '#FFF',
+            }}
+          >X</button>
+        )}
+        <span style={{ color: COLORS.border }}>|</span>
+        <input
+          type="text" placeholder="Nombre preset..."
+          value={presetName}
+          onChange={(e) => setPresetName(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') handleSavePreset(); }}
+          style={{
+            flex: 1, minWidth: 80, maxWidth: 140, padding: '3px 6px', fontSize: 11,
+            background: COLORS.bgCard, border: `1px solid ${COLORS.border}`,
+            color: COLORS.text, borderRadius: 3,
+          }}
+        />
+        <button onClick={handleSavePreset}
+          disabled={presetLoading || !presetName.trim()}
+          style={{
+            padding: '3px 8px', border: 'none', borderRadius: 3, cursor: 'pointer',
+            fontSize: 11, fontWeight: 'bold',
+            background: presetName.trim() ? COLORS.accent : COLORS.bgCard,
+            color: presetName.trim() ? '#FFF' : COLORS.textSec,
+          }}
+        >Guardar</button>
+      </div>
+
       {/* Content */}
       <div style={{
         flex: 1, overflowY: 'auto', padding: '10px 14px',
@@ -708,10 +1304,25 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
               <span>VWAP Period (rolling)</span>
               <span style={{ color: COLORS.accentLight, fontWeight: 'bold' }}>{vwapPeriod}</span>
             </div>
-            <input type="range" min={5} max={200} step={5} value={vwapPeriod}
+            <input type="range" min={5} max={6000} step={vwapPeriod < 200 ? 5 : 50} value={vwapPeriod}
               onChange={(e) => setVwapPeriod(parseInt(e.target.value))}
               style={{ width: '100%', accentColor: COLORS.accent }}
             />
+          </div>
+
+          {/* Diag Level Proximity */}
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: COLORS.textSec }}>
+              <span>Proximidad Nivel (LVL diag) %</span>
+              <span style={{ color: COLORS.accentLight, fontWeight: 'bold' }}>{diagLevelProximityPct.toFixed(2)}</span>
+            </div>
+            <input type="range" min={0.01} max={1.0} step={0.01} value={diagLevelProximityPct}
+              onChange={(e) => setDiagLevelProximityPct(parseFloat(e.target.value))}
+              style={{ width: '100%', accentColor: COLORS.accent }}
+            />
+            <div style={{ fontSize: 9, color: '#666', marginTop: 2 }}>
+              Distancia max del precio al nivel para LVL verde en diagnostico
+            </div>
           </div>
 
           {/* ============================================ */}
@@ -736,12 +1347,125 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
                   </label>
                   {levelSources[ls.id] && ls.params.length > 0 && (
                     <div style={{ paddingLeft: 20, marginTop: 4 }}>
-                      {ls.params.map(p => renderSlider(p,
+                      {ls.params.map(p => renderParamControl(p,
                         (levelParams[ls.id] || {})[p.key] ?? p.default,
                         (val) => setLevelParams(prev => ({
                           ...prev, [ls.id]: { ...(prev[ls.id] || {}), [p.key]: val }
                         }))
                       ))}
+                      {/* VP Zone Cache Panel */}
+                      {ls.id === 'vp_zones' && (
+                        <div style={{
+                          marginTop: 8, padding: '6px 8px',
+                          background: 'rgba(100,50,200,0.08)',
+                          border: '1px solid rgba(100,50,200,0.25)',
+                          borderRadius: 4, fontSize: 11,
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                            <span style={{ fontWeight: 'bold', color: COLORS.text }}>
+                              Cache de zonas VP
+                            </span>
+                            {vpCacheLoading && (
+                              <span style={{ fontSize: 10, color: '#888' }}>cargando...</span>
+                            )}
+                          </div>
+                          {vpZoneCaches.length === 0 && !vpCacheLoading && (
+                            <div style={{ color: '#888', fontSize: 10, fontStyle: 'italic' }}>
+                              Sin caches para {symbol} @ {interval}. Se escanearan al ejecutar el backtest.
+                            </div>
+                          )}
+                          {vpZoneCaches.length > 0 && (
+                            <div style={{ maxHeight: 160, overflowY: 'auto' }}>
+                              {vpZoneCaches.map((c, ci) => {
+                                const currentParams = levelParams.vp_zones || {};
+                                const vpDef = LEVEL_SOURCES.find(l => l.id === 'vp_zones');
+                                const keyParams = ['window_size', 'window_step', 'bins', 'va_percent',
+                                  'min_d_score', 'include_pb_shapes', 'max_range_pct', 'detection_mode'];
+                                const isMatch = keyParams.every(k => {
+                                  const defVal = vpDef?.params.find(p => p.key === k)?.default;
+                                  const uiVal = currentParams[k] ?? defVal;
+                                  const cacheVal = (c.detection_params || {})[k];
+                                  if (cacheVal === undefined || cacheVal === null) return true;
+                                  return String(uiVal) === String(cacheVal);
+                                });
+                                const matchDays = c.days === days;
+                                const isFull = isMatch && matchDays;
+                                return (
+                                  <div key={ci} style={{
+                                    padding: '4px 6px', marginBottom: 3, borderRadius: 3,
+                                    background: isFull ? 'rgba(0,200,100,0.12)' : 'rgba(255,255,255,0.04)',
+                                    border: isFull ? '1px solid rgba(0,200,100,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                                  }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <span style={{ fontWeight: 'bold', color: isFull ? '#4caf50' : COLORS.text, fontSize: 11 }}>
+                                        {isFull ? '\u2705' : isMatch ? '\u26A0\uFE0F' : '\u274C'} {c.zones_count} zonas
+                                        <span style={{ fontWeight: 'normal', color: '#888', marginLeft: 4, fontSize: 10 }}>
+                                          ({c.days}d, {c.candles_count?.toLocaleString()} velas, {c.age_hours < 1 ? '<1h' : c.age_hours.toFixed(0) + 'h'})
+                                        </span>
+                                      </span>
+                                      {!isFull && (
+                                        <button
+                                          onClick={() => {
+                                            const dp = c.detection_params || {};
+                                            const newParams = { ...(levelParams.vp_zones || {}) };
+                                            keyParams.forEach(k => {
+                                              if (dp[k] !== undefined && dp[k] !== null) {
+                                                newParams[k] = dp[k];
+                                              }
+                                            });
+                                            setLevelParams(prev => ({ ...prev, vp_zones: newParams }));
+                                            if (c.days !== days) setDays(c.days);
+                                          }}
+                                          style={{
+                                            padding: '2px 8px', border: 'none', borderRadius: 3,
+                                            background: COLORS.accent, color: '#FFF',
+                                            fontSize: 10, cursor: 'pointer', whiteSpace: 'nowrap',
+                                          }}
+                                        >
+                                          Usar estos params
+                                        </button>
+                                      )}
+                                    </div>
+                                    {/* Detalle de params del cache */}
+                                    <div style={{ marginTop: 3, display: 'flex', flexWrap: 'wrap', gap: '2px 8px', fontSize: 10, color: '#999' }}>
+                                      {keyParams.map(k => {
+                                        const cVal = (c.detection_params || {})[k];
+                                        if (cVal === undefined || cVal === null) return null;
+                                        const defVal = vpDef?.params.find(p => p.key === k)?.default;
+                                        const uiVal = currentParams[k] ?? defVal;
+                                        const match = String(uiVal) === String(cVal);
+                                        const shortKey = k.replace('window_', 'w_').replace('include_', '').replace('detection_', '');
+                                        return (
+                                          <span key={k} style={{ color: match ? '#6a6' : '#e88' }}>
+                                            {shortKey}={typeof cVal === 'boolean' ? (cVal ? 'on' : 'off') : cVal}
+                                          </span>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                          {vpZoneCaches.length > 0 && vpZoneCaches.every(c => {
+                            const currentParams = levelParams.vp_zones || {};
+                            const vpDef = LEVEL_SOURCES.find(l => l.id === 'vp_zones');
+                            const keyParams = ['window_size', 'window_step', 'bins', 'va_percent',
+                              'min_d_score', 'include_pb_shapes', 'max_range_pct', 'detection_mode'];
+                            return !keyParams.every(k => {
+                              const defVal = vpDef?.params.find(p => p.key === k)?.default;
+                              const uiVal = currentParams[k] ?? defVal;
+                              const cacheVal = (c.detection_params || {})[k];
+                              if (cacheVal === undefined || cacheVal === null) return true;
+                              return String(uiVal) === String(cacheVal);
+                            }) || c.days !== days;
+                          }) && (
+                            <div style={{ marginTop: 4, fontSize: 10, color: '#e88', fontStyle: 'italic' }}>
+                              Ningun cache coincide con los params actuales. Se escaneara al ejecutar.
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -908,6 +1632,12 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
                 maxTradesPerSegment, setMaxTradesPerSegment
               )}
 
+              {/* Cooldown bars */}
+              {renderSlider(
+                { key: 'cdb', label: 'Cooldown (velas)', min: 0, max: 500, step: 5 },
+                cooldownBars, setCooldownBars
+              )}
+
               {/* Trailing stop */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                 <span style={{ fontSize: 11, color: COLORS.textSec }}>Trailing Stop</span>
@@ -975,6 +1705,22 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
                 color: showOptimizer ? '#FFF' : COLORS.accent,
               }}
             >Optimizer</button>
+            <button onClick={() => setShowAutoOpt(!showAutoOpt)} disabled={autoOptLoading}
+              style={{
+                padding: '10px 12px', border: '1px solid #E040FB', borderRadius: 4,
+                cursor: autoOptLoading ? 'wait' : 'pointer', fontSize: 12, fontWeight: 'bold',
+                background: showAutoOpt ? '#E040FB' : 'transparent',
+                color: showAutoOpt ? '#FFF' : '#E040FB',
+              }}
+            >{autoOptLoading ? 'Buscando...' : 'Auto-Opt'}</button>
+            <button onClick={() => { setShowRealtime(!showRealtime); if (!showRealtime) fetchRtStatus(); }}
+              style={{
+                padding: '10px 12px', border: `1px solid ${rtStatus && rtStatus.running ? '#4CAF50' : '#FF9800'}`,
+                borderRadius: 4, cursor: 'pointer', fontSize: 12, fontWeight: 'bold',
+                background: showRealtime ? (rtStatus && rtStatus.running ? '#4CAF50' : '#FF9800') : 'transparent',
+                color: showRealtime ? '#FFF' : (rtStatus && rtStatus.running ? '#4CAF50' : '#FF9800'),
+              }}
+            >{rtStatus && rtStatus.running ? 'RT ON' : 'Realtime'}</button>
             {result && (
               <button onClick={handleClearZones} title="Limpiar zonas del chart"
                 style={{
@@ -985,16 +1731,65 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
             )}
           </div>
 
+          {/* Debug checkboxes */}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 4 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10,
+              color: COLORS.textSec, cursor: 'pointer', userSelect: 'none' }}>
+              <input type="checkbox" checked={showDebugHash}
+                onChange={e => setShowDebugHash(e.target.checked)}
+                style={{ width: 12, height: 12, cursor: 'pointer' }} />
+              Hash determinismo
+            </label>
+            {result && result.vp_profiles && result.vp_profiles.length > 0 && (
+              <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10,
+                color: showVPProfiles ? '#4FC3F7' : COLORS.textSec, cursor: 'pointer', userSelect: 'none' }}>
+                <input type="checkbox" checked={showVPProfiles}
+                  onChange={e => {
+                    const checked = e.target.checked;
+                    setShowVPProfiles(checked);
+                    const mgr = indicatorManager || IndicatorManagerRegistry.get(symbol);
+                    if (mgr && mgr.zoneVisualizerIndicator) {
+                      mgr.zoneVisualizerIndicator.setShowVPProfiles(checked);
+                      mgr.requestRedraw();
+                    }
+                  }}
+                  style={{ width: 12, height: 12, cursor: 'pointer' }} />
+                VP Profiles ({result.vp_profiles.length})
+              </label>
+            )}
+          </div>
+
           {/* Progress bar */}
           {progress && (
-            <div style={{ marginBottom: 8 }}>
-              <div style={{ fontSize: 11, color: COLORS.textSec, marginBottom: 2 }}>{progress.message || 'Procesando...'}</div>
-              <div style={{ height: 6, background: COLORS.bgCard, borderRadius: 3, overflow: 'hidden' }}>
+            <div style={{
+              padding: '10px 12px', background: COLORS.bgCard, borderRadius: 6,
+              marginBottom: 10, border: `1px solid ${COLORS.border}`,
+            }}>
+              {/* Barra visual */}
+              <div style={{
+                width: '100%', height: 22, background: 'rgba(0,0,0,0.3)',
+                borderRadius: 11, overflow: 'hidden', position: 'relative',
+                marginBottom: 6,
+              }}>
                 <div style={{
-                  width: `${progress.percent || 0}%`, height: '100%',
+                  width: `${Math.max(progress.percent || 0, 2)}%`,
+                  height: '100%',
                   background: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.accentLight})`,
+                  borderRadius: 11,
                   transition: 'width 0.4s ease',
                 }} />
+                <span style={{
+                  position: 'absolute', top: '50%', left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  fontSize: 11, fontWeight: 'bold', color: '#FFF',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.8)',
+                }}>
+                  {progress.percent || 0}%
+                </span>
+              </div>
+              {/* Fase actual */}
+              <div style={{ fontSize: 11, color: COLORS.textSec, textAlign: 'center' }}>
+                {progress.message || 'Procesando...'}
               </div>
             </div>
           )}
@@ -1077,7 +1872,7 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
                 allParams.push({
                   path: 'vwap_period',
                   label: 'VWAP Period',
-                  min: 5, max: 200, step: 5, default: 20,
+                  min: 5, max: 6000, step: 50, default: 20,
                 });
 
                 if (allParams.length === 0) {
@@ -1232,6 +2027,530 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
           )}
 
           {/* ============================================ */}
+          {/* Auto-Optimize Section */}
+          {/* ============================================ */}
+          {showAutoOpt && (
+            <div style={{
+              padding: '10px', background: COLORS.bgInput, borderRadius: 6,
+              border: '1px solid #E040FB40', marginBottom: 8,
+            }}>
+              <div style={{ fontSize: 13, fontWeight: 'bold', color: '#E040FB', marginBottom: 8 }}>
+                Auto-Optimizador (3 fases)
+              </div>
+              <div style={{ fontSize: 11, color: COLORS.textSec, marginBottom: 8 }}>
+                Busca automaticamente la mejor combinacion de niveles, senal, SL, TP,
+                filtros y exit rules. Luego afina parametros numericos.
+                Usa {days} dias en {interval}min.
+              </div>
+
+              {/* Metric selector */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                <span style={{ fontSize: 11, color: COLORS.textSec }}>Metrica de ranking:</span>
+                <select value={autoOptMetric} onChange={e => setAutoOptMetric(e.target.value)}
+                  disabled={autoOptLoading}
+                  style={{
+                    flex: 1, padding: '4px 6px', fontSize: 11, borderRadius: 4,
+                    background: COLORS.bgCard, color: COLORS.text, border: `1px solid ${COLORS.border}`,
+                  }}>
+                  <option value="recovery_factor">Recovery Factor (PnL/MaxDD)</option>
+                  <option value="total_pnl_r">PnL Total (R)</option>
+                  <option value="expectancy">Expectancy (R/trade)</option>
+                  <option value="profit_factor">Profit Factor</option>
+                  <option value="win_rate">Win Rate %</option>
+                  <option value="max_drawdown_r">Max Drawdown (menor=mejor)</option>
+                </select>
+              </div>
+
+              {/* Min trades slider */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                <span style={{ fontSize: 11, color: COLORS.textSec, whiteSpace: 'nowrap' }}>Min trades:</span>
+                <input type="range" min={5} max={50} step={5} value={autoOptMinTrades}
+                  onChange={e => setAutoOptMinTrades(parseInt(e.target.value))}
+                  disabled={autoOptLoading}
+                  style={{ flex: 1 }}
+                />
+                <span style={{ fontSize: 11, color: COLORS.text, minWidth: 20, textAlign: 'right' }}>{autoOptMinTrades}</span>
+                <span style={{ fontSize: 10, color: COLORS.textSec }}>
+                  (penaliza &lt;{autoOptMinTrades} trades)
+                </span>
+              </div>
+
+              {/* Boton ejecutar */}
+              <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+                <button onClick={handleRunAutoOptimize} disabled={autoOptLoading}
+                  style={{
+                    flex: 1, padding: '8px 0', border: 'none', borderRadius: 4,
+                    cursor: autoOptLoading ? 'wait' : 'pointer', fontWeight: 'bold', fontSize: 12,
+                    background: autoOptLoading ? COLORS.bgCard : '#E040FB',
+                    color: '#FFF',
+                  }}
+                >{autoOptLoading ? 'Buscando...' : 'Iniciar Auto-Optimizacion'}</button>
+                {autoOptLoading && (
+                  <button onClick={() => {
+                    const manager = indicatorManager || IndicatorManagerRegistry.get(symbol);
+                    if (manager) manager.cancelAutoOptimize();
+                    setAutoOptLoading(false);
+                    setAutoOptProgress(null);
+                  }}
+                    style={{
+                      padding: '8px 12px', border: '1px solid #FF5252', borderRadius: 4,
+                      cursor: 'pointer', fontSize: 12, background: 'transparent', color: '#FF5252',
+                    }}
+                  >Cancelar</button>
+                )}
+              </div>
+
+              {/* Progress */}
+              {autoOptProgress && (
+                <div style={{
+                  padding: '8px', background: COLORS.bgCard, borderRadius: 6,
+                  marginBottom: 8, border: `1px solid ${COLORS.border}`,
+                }}>
+                  <div style={{
+                    width: '100%', height: 20, background: 'rgba(0,0,0,0.3)',
+                    borderRadius: 10, overflow: 'hidden', position: 'relative', marginBottom: 4,
+                  }}>
+                    <div style={{
+                      width: `${Math.max(autoOptProgress.percent || 0, 2)}%`,
+                      height: '100%',
+                      background: 'linear-gradient(90deg, #E040FB, #CE93D8)',
+                      borderRadius: 10, transition: 'width 0.4s ease',
+                    }} />
+                    <span style={{
+                      position: 'absolute', top: '50%', left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      fontSize: 10, fontWeight: 'bold', color: '#FFF',
+                      textShadow: '0 1px 2px rgba(0,0,0,0.8)',
+                    }}>{autoOptProgress.percent || 0}%</span>
+                  </div>
+                  <div style={{ fontSize: 10, color: COLORS.textSec, textAlign: 'center' }}>
+                    {autoOptProgress.message || 'Procesando...'}
+                  </div>
+                </div>
+              )}
+
+              {/* Error */}
+              {autoOptError && (
+                <div style={{
+                  padding: '6px 8px', background: 'rgba(255,50,50,0.15)', border: '1px solid #FF5252',
+                  borderRadius: 4, fontSize: 11, color: '#FF5252', marginBottom: 8,
+                }}>{autoOptError}</div>
+              )}
+
+              {/* Results */}
+              {autoOptResults && autoOptResults.results && (
+                <div>
+                  {/* Summary */}
+                  <div style={{
+                    display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap',
+                  }}>
+                    <span style={{ fontSize: 10, color: COLORS.textSec }}>
+                      {autoOptResults.total_backtests} backtests
+                    </span>
+                    <span style={{ fontSize: 10, color: COLORS.textSec }}>
+                      {autoOptResults.elapsed}s
+                    </span>
+                    <span style={{ fontSize: 10, color: COLORS.textSec }}>
+                      {autoOptResults.candles_count || autoOptResults.candles} velas
+                    </span>
+                    <button onClick={handleAutoOptExport} style={{
+                      padding: '2px 8px', border: `1px solid ${COLORS.accent}`, borderRadius: 3,
+                      cursor: 'pointer', fontSize: 10, background: 'transparent', color: COLORS.accent,
+                      marginLeft: 'auto',
+                    }}>XLS</button>
+                  </div>
+
+                  {/* Phase 1 summary */}
+                  {autoOptResults.phase1_summary && (
+                    <details style={{ marginBottom: 8, fontSize: 10, color: COLORS.textSec }}>
+                      <summary style={{ cursor: 'pointer', fontWeight: 'bold', color: '#E040FB' }}>
+                        Fase 1: Ranking individual
+                      </summary>
+                      <div style={{ padding: '4px 0 4px 12px' }}>
+                        {autoOptResults.phase1_summary.adaptive_base && (
+                          <div style={{ marginBottom: 2, color: '#E040FB' }}>
+                            <b>Base adaptativa:</b> {autoOptResults.phase1_summary.adaptive_base}
+                          </div>
+                        )}
+                        <div><b>Niveles:</b> {(autoOptResults.phase1_summary.best_levels || []).map(([k, s]) => `${k}(${s})`).join(', ')}</div>
+                        <div><b>Senales:</b> {(autoOptResults.phase1_summary.best_entries || []).map(([k, s]) => `${k}(${s})`).join(', ')}</div>
+                        <div><b>SL:</b> {(autoOptResults.phase1_summary.best_sls || []).map(([k, s]) => `${k}(${s})`).join(', ')}</div>
+                        <div><b>TP:</b> {(autoOptResults.phase1_summary.best_tps || []).map(([k, s]) => `${k}(${s})`).join(', ')}</div>
+                        <div><b>Exits utiles:</b> {(autoOptResults.phase1_summary.beneficial_exits || []).join(', ') || 'ninguno'}</div>
+                        <div><b>Filtros utiles:</b> {(autoOptResults.phase1_summary.beneficial_filters || []).join(', ') || 'ninguno'}</div>
+                        {autoOptResults.phase1_summary.diversity_pool && (
+                          <div style={{ marginTop: 2, color: '#4FC3F7' }}>
+                            <b>Diversity pool:</b>{' '}
+                            {[...(autoOptResults.phase1_summary.diversity_pool.levels_added || []),
+                              ...(autoOptResults.phase1_summary.diversity_pool.entries_added || [])].join(', ') || 'ninguno extra'}
+                          </div>
+                        )}
+                        {autoOptResults.min_trades && (
+                          <div style={{ marginTop: 2 }}>
+                            <b>Min trades:</b> {autoOptResults.min_trades} (penalizacion cuadratica)
+                          </div>
+                        )}
+                      </div>
+                    </details>
+                  )}
+
+                  {/* Tab selector: Top N vs Todas */}
+                  {(() => {
+                    const topRows = autoOptResults.results || [];
+                    const allRows = autoOptResults.all_results || [];
+                    const baseRows = autoOptShowAll ? allRows : topRows;
+                    const phaseLabels = { phase1_level: 'P1-Lvl', phase1_entry: 'P1-Ent', phase1_sl: 'P1-SL', phase1_tp: 'P1-TP', phase1_exit: 'P1-Exit', phase1_filter: 'P1-Filt', phase2: 'P2', phase3: 'P3' };
+                    const phaseColors = { phase1_level: '#9E9E9E', phase1_entry: '#9E9E9E', phase1_sl: '#9E9E9E', phase1_tp: '#9E9E9E', phase1_exit: '#9E9E9E', phase1_filter: '#9E9E9E', phase2: '#FF9800', phase3: '#E040FB' };
+
+                    // Sortable columns: key -> accessor
+                    const sortableCols = {
+                      score: r => r.score || 0,
+                      win_rate: r => r.win_rate || 0,
+                      closed: r => r.closed || 0,
+                      wins: r => r.wins || 0,
+                      losses: r => r.losses || 0,
+                      total_pnl_r: r => r.total_pnl_r || 0,
+                      expectancy: r => r.expectancy || 0,
+                      profit_factor: r => r.profit_factor || 0,
+                      max_drawdown_r: r => r.max_drawdown_r || 0,
+                      recovery_factor: r => r.recovery_factor || 0,
+                      avg_bars_held: r => r.avg_bars_held || 0,
+                    };
+
+                    // Apply sort
+                    let displayRows = baseRows;
+                    if (autoOptSortCol && sortableCols[autoOptSortCol]) {
+                      const accessor = sortableCols[autoOptSortCol];
+                      displayRows = [...baseRows].sort((a, b) => {
+                        const va = accessor(a), vb = accessor(b);
+                        return autoOptSortAsc ? va - vb : vb - va;
+                      });
+                    }
+
+                    const handleColSort = (colKey) => {
+                      if (autoOptSortCol === colKey) {
+                        setAutoOptSortAsc(!autoOptSortAsc);
+                      } else {
+                        setAutoOptSortCol(colKey);
+                        setAutoOptSortAsc(false);
+                      }
+                    };
+
+                    const sortArrow = (colKey) => {
+                      if (autoOptSortCol !== colKey) return '';
+                      return autoOptSortAsc ? ' \u25B2' : ' \u25BC';
+                    };
+
+                    const thSortStyle = (colKey, align = 'right') => ({
+                      padding: '3px 4px', textAlign: align, cursor: 'pointer', userSelect: 'none',
+                      color: autoOptSortCol === colKey ? '#E040FB' : COLORS.textSec,
+                    });
+
+                    return (<>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 6 }}>
+                        <button onClick={() => { setAutoOptShowAll(false); setAutoOptSortCol(null); }} style={{
+                          padding: '3px 10px', border: 'none', borderRadius: 3, cursor: 'pointer', fontSize: 10,
+                          background: !autoOptShowAll ? '#E040FB' : COLORS.bgInput, color: !autoOptShowAll ? '#FFF' : COLORS.textSec,
+                        }}>Top {topRows.length}</button>
+                        <button onClick={() => { setAutoOptShowAll(true); setAutoOptSortCol(null); }} style={{
+                          padding: '3px 10px', border: 'none', borderRadius: 3, cursor: 'pointer', fontSize: 10,
+                          background: autoOptShowAll ? '#E040FB' : COLORS.bgInput, color: autoOptShowAll ? '#FFF' : COLORS.textSec,
+                        }}>Todas ({allRows.length})</button>
+                        <span style={{ fontSize: 9, color: COLORS.textSec, marginLeft: 'auto' }}>
+                          {autoOptSortCol
+                            ? `Ordenado por ${autoOptSortCol} ${autoOptSortAsc ? 'ASC' : 'DESC'} - doble-click en columna para cambiar`
+                            : 'Doble-click en columna para ordenar'}
+                        </span>
+                      </div>
+
+                      <div style={{ overflowX: 'auto', maxHeight: 400 }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+                          <thead>
+                            <tr style={{ borderBottom: `1px solid ${COLORS.border}`, position: 'sticky', top: 0, background: COLORS.bgInput, zIndex: 1 }}>
+                              {autoOptShowAll && <th style={{ padding: '3px 4px', textAlign: 'left', color: COLORS.textSec }}>Fase</th>}
+                              <th style={{ padding: '3px 4px', textAlign: 'left', color: COLORS.textSec }}>#</th>
+                              <th style={{ padding: '3px 4px', textAlign: 'left', color: COLORS.textSec }}>Niveles</th>
+                              <th style={{ padding: '3px 4px', textAlign: 'left', color: COLORS.textSec }}>Entrada</th>
+                              <th style={{ padding: '3px 4px', textAlign: 'left', color: COLORS.textSec }}>SL</th>
+                              <th style={{ padding: '3px 4px', textAlign: 'left', color: COLORS.textSec }}>TP</th>
+                              {autoOptShowAll && <th style={{ padding: '3px 4px', textAlign: 'left', color: COLORS.textSec }}>Exits</th>}
+                              {autoOptShowAll && <th style={{ padding: '3px 4px', textAlign: 'left', color: COLORS.textSec }}>Filtros</th>}
+                              <th style={thSortStyle('score')} onDoubleClick={() => handleColSort('score')}>Score{sortArrow('score')}</th>
+                              <th style={thSortStyle('win_rate')} onDoubleClick={() => handleColSort('win_rate')}>WR%{sortArrow('win_rate')}</th>
+                              <th style={thSortStyle('closed')} onDoubleClick={() => handleColSort('closed')}>Trades{sortArrow('closed')}</th>
+                              <th style={thSortStyle('wins')} onDoubleClick={() => handleColSort('wins')}>W{sortArrow('wins')}</th>
+                              <th style={thSortStyle('losses')} onDoubleClick={() => handleColSort('losses')}>L{sortArrow('losses')}</th>
+                              <th style={thSortStyle('total_pnl_r')} onDoubleClick={() => handleColSort('total_pnl_r')}>PnL(R){sortArrow('total_pnl_r')}</th>
+                              <th style={thSortStyle('expectancy')} onDoubleClick={() => handleColSort('expectancy')}>Expect{sortArrow('expectancy')}</th>
+                              <th style={thSortStyle('profit_factor')} onDoubleClick={() => handleColSort('profit_factor')}>PF{sortArrow('profit_factor')}</th>
+                              <th style={thSortStyle('max_drawdown_r')} onDoubleClick={() => handleColSort('max_drawdown_r')}>MaxDD{sortArrow('max_drawdown_r')}</th>
+                              <th style={thSortStyle('recovery_factor')} onDoubleClick={() => handleColSort('recovery_factor')}>RecF{sortArrow('recovery_factor')}</th>
+                              <th style={thSortStyle('avg_bars_held')} onDoubleClick={() => handleColSort('avg_bars_held')}>AvgBars{sortArrow('avg_bars_held')}</th>
+                              <th style={{ padding: '3px 4px', textAlign: 'center', color: COLORS.textSec }}></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {displayRows.map((row, idx) => {
+                              const isTop3 = !autoOptShowAll && !autoOptSortCol && idx < 3;
+                              const isFirst = !autoOptShowAll && !autoOptSortCol && idx === 0;
+                              const phase = row.phase || '';
+                              return (
+                                <tr key={idx} style={{
+                                  borderBottom: `1px solid ${COLORS.border}22`,
+                                  background: isFirst ? 'rgba(224,64,251,0.08)' : 'transparent',
+                                }}>
+                                  {autoOptShowAll && (
+                                    <td style={{ padding: '4px', color: phaseColors[phase] || COLORS.textSec, fontSize: 9, fontWeight: 'bold' }}>
+                                      {phaseLabels[phase] || phase}
+                                    </td>
+                                  )}
+                                  <td style={{ padding: '4px', color: isTop3 ? '#E040FB' : COLORS.textSec, fontWeight: isTop3 ? 'bold' : 'normal' }}>
+                                    {idx + 1}
+                                  </td>
+                                  <td style={{ padding: '4px', color: COLORS.text, maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                                    title={(row.levels || []).join(' + ')}>
+                                    {(row.levels || []).map(l => l.replace('_', '').substring(0, 6)).join('+')}
+                                  </td>
+                                  <td style={{ padding: '4px', color: COLORS.text }} title={row.entry}>
+                                    {(row.entry || '').substring(0, 10)}
+                                  </td>
+                                  <td style={{ padding: '4px', color: COLORS.text }} title={row.sl}>
+                                    {(row.sl || '').substring(0, 8)}
+                                  </td>
+                                  <td style={{ padding: '4px', color: COLORS.text }} title={row.tp}>
+                                    {(row.tp || '').substring(0, 8)}
+                                  </td>
+                                  {autoOptShowAll && (
+                                    <td style={{ padding: '4px', color: COLORS.textSec, fontSize: 9 }} title={(row.exits || []).join(', ')}>
+                                      {(row.exits || []).length > 0 ? (row.exits || []).map(e => e.substring(0, 6)).join(',') : '-'}
+                                    </td>
+                                  )}
+                                  {autoOptShowAll && (
+                                    <td style={{ padding: '4px', color: COLORS.textSec, fontSize: 9 }} title={(row.filters || []).join(', ')}>
+                                      {(row.filters || []).length > 0 ? (row.filters || []).map(f => f.substring(0, 6)).join(',') : '-'}
+                                    </td>
+                                  )}
+                                  <td style={{ padding: '4px', textAlign: 'right', color: row.score > 0 ? '#E040FB' : COLORS.textSec, fontSize: 9 }}>
+                                    {(row.score || 0).toFixed(1)}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: row.win_rate >= 50 ? COLORS.win : COLORS.loss }}>
+                                    {(row.win_rate || 0).toFixed(1)}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: COLORS.textSec }}>
+                                    {row.closed || 0}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: COLORS.win, fontSize: 9 }}>
+                                    {row.wins || 0}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: COLORS.loss, fontSize: 9 }}>
+                                    {row.losses || 0}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: (row.total_pnl_r || 0) >= 0 ? COLORS.win : COLORS.loss, fontWeight: 'bold' }}>
+                                    {(row.total_pnl_r || 0).toFixed(1)}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: (row.expectancy || 0) >= 0 ? COLORS.win : COLORS.loss, fontSize: 9 }}>
+                                    {(row.expectancy || 0).toFixed(2)}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: COLORS.textSec, fontSize: 9 }}>
+                                    {(row.profit_factor || 0).toFixed(1)}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: COLORS.loss }}>
+                                    {(row.max_drawdown_r || 0).toFixed(1)}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: '#E040FB', fontWeight: 'bold' }}>
+                                    {(row.recovery_factor || 0).toFixed(1)}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'right', color: COLORS.textSec, fontSize: 9 }}>
+                                    {(row.avg_bars_held || 0).toFixed(1)}
+                                  </td>
+                                  <td style={{ padding: '4px', textAlign: 'center' }}>
+                                    {row.config ? (
+                                      <button onClick={() => applyAutoOptResult(row)} style={{
+                                        padding: '2px 8px', border: 'none', borderRadius: 3, cursor: 'pointer',
+                                        fontSize: 9, background: '#E040FB', color: '#FFF',
+                                      }}>Aplicar</button>
+                                    ) : (
+                                      <span style={{ fontSize: 8, color: COLORS.textSec }}>-</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div style={{ fontSize: 9, color: COLORS.textSec, marginTop: 6, textAlign: 'center' }}>
+                        Click "Aplicar" para cargar la configuracion en los 5 bloques. Doble-click en columna para ordenar.
+                      </div>
+                    </>);
+                  })()}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ============================================ */}
+          {/* Realtime Section */}
+          {/* ============================================ */}
+          {showRealtime && (
+            <div style={{
+              padding: '10px', background: COLORS.bgInput, borderRadius: 6,
+              border: `1px solid ${rtStatus && rtStatus.running ? '#4CAF5060' : '#FF980060'}`,
+              marginBottom: 8,
+            }}>
+              <div style={{ fontSize: 13, fontWeight: 'bold', color: rtStatus && rtStatus.running ? '#4CAF50' : '#FF9800', marginBottom: 8 }}>
+                Ejecucion en Tiempo Real
+              </div>
+
+              <div style={{ fontSize: 11, color: COLORS.textSec, marginBottom: 8 }}>
+                Activa la estrategia actual para ejecutar senales en tiempo real y enviar alertas al TradingBot (puerto 5000).
+              </div>
+
+              {/* Toggle button */}
+              <div style={{ display: 'flex', gap: 6, marginBottom: 10, alignItems: 'center' }}>
+                <button
+                  onClick={handleToggleRealtime}
+                  disabled={rtLoading}
+                  style={{
+                    flex: 1, padding: '10px 0', border: 'none', borderRadius: 4,
+                    cursor: rtLoading ? 'wait' : 'pointer', fontWeight: 'bold', fontSize: 13,
+                    background: rtStatus && rtStatus.running ? '#f44336' : '#4CAF50',
+                    color: '#FFF',
+                  }}
+                >
+                  {rtLoading ? 'Procesando...' : (rtStatus && rtStatus.running ? 'Detener Realtime' : 'Activar Realtime')}
+                </button>
+                {rtStatus && rtStatus.running && (
+                  <button
+                    onClick={handleClearRtCooldowns}
+                    style={{
+                      padding: '10px 12px', border: `1px solid ${COLORS.border}`, borderRadius: 4,
+                      cursor: 'pointer', fontSize: 11, background: 'transparent', color: COLORS.textSec,
+                    }}
+                  >Clear Cooldowns</button>
+                )}
+              </div>
+
+              {/* Status info */}
+              {rtStatus && rtStatus.running && (
+                <div style={{ fontSize: 11 }}>
+                  {/* Service info row */}
+                  <div style={{
+                    display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4, marginBottom: 8,
+                    background: COLORS.bgCard, borderRadius: 4, padding: 6,
+                  }}>
+                    <div>
+                      <span style={{ color: COLORS.textSec }}>Simbolos: </span>
+                      <span style={{ color: COLORS.text }}>{(rtStatus.symbols || []).join(', ')}</span>
+                    </div>
+                    <div>
+                      <span style={{ color: COLORS.textSec }}>Intervalo: </span>
+                      <span style={{ color: COLORS.text }}>{rtStatus.interval}m</span>
+                    </div>
+                    <div>
+                      <span style={{ color: COLORS.textSec }}>Alertas: </span>
+                      <span style={{ color: rtStatus.alertsEnabled ? '#4CAF50' : '#f44336' }}>
+                        {rtStatus.alertsEnabled ? 'ON' : 'OFF'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Stats */}
+                  {rtStatus.stats && (
+                    <div style={{
+                      display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4, marginBottom: 8,
+                    }}>
+                      {[
+                        ['Velas', rtStatus.stats.candles_processed],
+                        ['Senales', rtStatus.stats.signals_generated],
+                        ['Filtradas', rtStatus.stats.signals_filtered],
+                        ['Alertas', rtStatus.stats.alerts_sent],
+                      ].map(([label, val]) => (
+                        <div key={label} style={{
+                          background: COLORS.bgCard, borderRadius: 4, padding: '4px 6px', textAlign: 'center',
+                        }}>
+                          <div style={{ fontSize: 9, color: COLORS.textSec }}>{label}</div>
+                          <div style={{ fontSize: 14, fontWeight: 'bold', color: COLORS.text }}>{val || 0}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Levels info */}
+                  {rtStatus.levels && Object.keys(rtStatus.levels).length > 0 && (
+                    <div style={{ marginBottom: 6 }}>
+                      {Object.entries(rtStatus.levels).map(([sym, info]) => (
+                        <div key={sym} style={{
+                          display: 'flex', justifyContent: 'space-between', padding: '2px 0',
+                          borderBottom: `1px solid ${COLORS.border}`,
+                        }}>
+                          <span style={{ color: COLORS.text, fontWeight: 'bold' }}>{sym}</span>
+                          <span style={{ color: COLORS.textSec }}>
+                            {info.active} niveles activos / {info.total} total
+                            {rtStatus.buffers && rtStatus.buffers[sym]
+                              ? ` | ${rtStatus.buffers[sym]} velas`
+                              : ''}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Open trades */}
+                  {rtStatus.open_trades && Object.keys(rtStatus.open_trades).some(k => rtStatus.open_trades[k].length > 0) && (
+                    <div style={{ marginTop: 6 }}>
+                      <div style={{ fontSize: 11, fontWeight: 'bold', color: '#FF9800', marginBottom: 4 }}>
+                        Trades Abiertos
+                      </div>
+                      {Object.entries(rtStatus.open_trades).map(([sym, trades]) => (
+                        trades.map((t, i) => (
+                          <div key={`${sym}_${i}`} style={{
+                            display: 'flex', justifyContent: 'space-between', padding: '3px 6px',
+                            background: COLORS.bgCard, borderRadius: 3, marginBottom: 2,
+                            borderLeft: `3px solid ${t.direction === 'LONG' ? '#4CAF50' : '#f44336'}`,
+                          }}>
+                            <span style={{ color: COLORS.text, fontWeight: 'bold' }}>
+                              {sym} {t.direction}
+                            </span>
+                            <span style={{ color: COLORS.textSec, fontSize: 10 }}>
+                              Entry: {t.entry_price ? t.entry_price.toFixed(2) : '-'} |
+                              SL: {t.sl_price ? t.sl_price.toFixed(2) : '-'} |
+                              TP: {t.tp_price ? t.tp_price.toFixed(2) : '-'}
+                            </span>
+                            <span style={{
+                              fontWeight: 'bold', fontFamily: 'monospace',
+                              color: (t.partial_pnl_r || 0) >= 0 ? '#4CAF50' : '#f44336',
+                            }}>
+                              {(t.partial_pnl_r || 0) >= 0 ? '+' : ''}{(t.partial_pnl_r || 0).toFixed(2)}R
+                            </span>
+                          </div>
+                        ))
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Uptime */}
+                  {rtStatus.stats && rtStatus.stats.start_time > 0 && (
+                    <div style={{ fontSize: 10, color: COLORS.textSec, marginTop: 6, textAlign: 'right' }}>
+                      Activo desde: {new Date(rtStatus.stats.start_time * 1000).toLocaleTimeString()} |
+                      Trades: {rtStatus.stats.trades_opened}O / {rtStatus.stats.trades_closed}C |
+                      Cooldowns bloqueados: {rtStatus.stats.alerts_blocked_cooldown}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Not running message */}
+              {(!rtStatus || !rtStatus.running) && (
+                <div style={{ fontSize: 11, color: COLORS.textSec, textAlign: 'center', padding: '8px 0' }}>
+                  El servicio no esta activo. Configura tu estrategia y presiona "Activar Realtime" para comenzar.
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ============================================ */}
           {/* Results: Metrics */}
           {/* ============================================ */}
           {stats && (
@@ -1280,7 +2599,64 @@ const StrategyBuilder = ({ isOpen, onClose, symbol, interval, indicatorManager }
               {/* Info line */}
               <div style={{ fontSize: 10, color: '#666', marginBottom: 6 }}>
                 {result.candles_count?.toLocaleString()} velas | {result.levels_count || 0} niveles | {(result.elapsed_seconds || 0).toFixed(1)}s
+                {showDebugHash && result.candle_hash && (
+                  <span onClick={() => { navigator.clipboard.writeText(result.candle_hash); }}
+                    title="Click para copiar. Mismo hash = mismas velas = resultados deterministas"
+                    style={{ marginLeft: 6, padding: '1px 5px', background: '#2a1a3e', border: '1px solid #7c4dff',
+                      borderRadius: 3, color: '#b388ff', cursor: 'pointer', fontFamily: 'monospace', letterSpacing: 1 }}>
+                    #{result.candle_hash}
+                  </span>
+                )}
               </div>
+
+              {/* Filter diagnostics */}
+              {result.filter_stats && (
+                <details style={{ marginBottom: 6, fontSize: 10 }}>
+                  <summary style={{ color: COLORS.textSec, cursor: 'pointer', userSelect: 'none' }}>
+                    Diagnostico de filtros (senales: {result.filter_stats.signals_generated}, trades: {result.filter_stats.trades_opened})
+                  </summary>
+                  <div style={{
+                    marginTop: 4, padding: '4px 6px', background: COLORS.bgCard,
+                    borderRadius: 4, display: 'grid', gridTemplateColumns: '1fr auto',
+                    gap: '1px 8px', color: COLORS.textSec,
+                  }}>
+                    <span>Senales generadas</span>
+                    <span style={{ textAlign: 'right', color: COLORS.text }}>{result.filter_stats.signals_generated}</span>
+                    {result.filter_stats.filtered_direction > 0 && <>
+                      <span>Filtradas por direccion</span>
+                      <span style={{ textAlign: 'right', color: COLORS.loss }}>-{result.filter_stats.filtered_direction}</span>
+                    </>}
+                    {result.filter_stats.filtered_confluence > 0 && <>
+                      <span>Filtradas por confluencia</span>
+                      <span style={{ textAlign: 'right', color: COLORS.loss }}>-{result.filter_stats.filtered_confluence}</span>
+                    </>}
+                    {result.filter_stats.filtered_max_trades_seg > 0 && <>
+                      <span>Filtradas max trades/segmento</span>
+                      <span style={{ textAlign: 'right', color: COLORS.loss }}>-{result.filter_stats.filtered_max_trades_seg}</span>
+                    </>}
+                    {result.filter_stats.filtered_context && Object.entries(result.filter_stats.filtered_context).map(([ft, cnt]) => (
+                      <React.Fragment key={ft}>
+                        <span>Filtradas por {ft}</span>
+                        <span style={{ textAlign: 'right', color: COLORS.loss }}>-{cnt}</span>
+                      </React.Fragment>
+                    ))}
+                    {result.filter_stats.filtered_sl_invalid > 0 && <>
+                      <span>SL invalido</span>
+                      <span style={{ textAlign: 'right', color: COLORS.loss }}>-{result.filter_stats.filtered_sl_invalid}</span>
+                    </>}
+                    {result.filter_stats.filtered_sl_direction > 0 && <>
+                      <span>SL direccion incorrecta</span>
+                      <span style={{ textAlign: 'right', color: COLORS.loss }}>-{result.filter_stats.filtered_sl_direction}</span>
+                    </>}
+                    {result.filter_stats.filtered_tp_invalid > 0 && <>
+                      <span>TP invalido</span>
+                      <span style={{ textAlign: 'right', color: COLORS.loss }}>-{result.filter_stats.filtered_tp_invalid}</span>
+                    </>}
+                    <span style={{ fontWeight: 'bold', color: COLORS.text, borderTop: `1px solid ${COLORS.border}`, paddingTop: 2, marginTop: 2 }}>Trades abiertos</span>
+                    <span style={{ textAlign: 'right', fontWeight: 'bold', color: COLORS.win, borderTop: `1px solid ${COLORS.border}`, paddingTop: 2, marginTop: 2 }}>{result.filter_stats.trades_opened}</span>
+                  </div>
+                </details>
+              )}
 
               {/* Trade list toggle */}
               <button onClick={() => setShowTradeList(!showTradeList)}

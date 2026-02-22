@@ -1,0 +1,49 @@
+1 hora, 401 días
+[SB_BACKTEST_SSE] GENERATE INICIO: BTCUSDT @ 60 x 401 dias
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=401, aplicando límite -> days_to_fetch=401 (máx: 401) @ 60
+[BTCUSDT] [DISK_CACHE] Cargadas 17520 velas desde disco (60)
+[BTCUSDT] [DISK_CACHE] HIT: 17520 velas en disco, necesarias ~9624, cargando incremental...
+[BTCUSDT] [DISK_CACHE_INC] Request #1: +1 velas (total: 1)
+[BTCUSDT] [DISK_CACHE_INC] Completado: 1 velas en 1 requests
+[BTCUSDT] [DISK_CACHE] INCREMENTAL: +1 nuevas (total: 17521)
+[BTCUSDT] [DISK_CACHE] Guardadas 17521 velas en disco (60, 0.4 MB)
+[SB_BACKTEST_SSE] DETERMINISTIC TRIM: 9624 -> 9624 velas (target=9624, first_ts=1736798400000, last_ts=1771441200000, hash=c9a8cc6a)
+[SB_BACKTEST_SSE] 9624 velas de cache en 1.7s
+[SB_RESOLVE] OPEN trade: dir=SHORT entry=66306.90 tp=43255.36 sl=68612.05 min_low_after_entry=66213.80 bars_remaining=1
+[SB_BACKTEST] Filter stats: signals=748, dir=0, conf=0, maxSeg=159, context={'vwap_trend': 364}, slInv=0, slDir=0, tpInv=0, opened=85
+[SB_BACKTEST_SSE] Completado en 2.1s
+
+cambiando el periodo del vwap
+[SB_BACKTEST_SSE] GENERATE INICIO: BTCUSDT @ 60 x 401 dias
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=401, aplicando límite -> days_to_fetch=401 (máx: 401) @ 60
+[BTCUSDT] [DATA] MEMORY CACHE HIT: 9624 velas (necesarias ~9624, edad=135s)
+[SB_BACKTEST_SSE] DETERMINISTIC TRIM: 9624 -> 9624 velas (target=9624, first_ts=1736798400000, last_ts=1771441200000, hash=c9a8cc6a)
+[SB_BACKTEST_SSE] 9624 velas de cache en 0.3s
+[SB_BACKTEST] Filter stats: signals=748, dir=0, conf=0, maxSeg=11, context={'vwap_trend': 722}, slInv=0, slDir=0, tpInv=0, opened=5
+[SB_BACKTEST_SSE] Completado en 7.0s
+
+
+otro cambio del vwap
+[SB_BACKTEST_SSE] GENERATE INICIO: BTCUSDT @ 60 x 401 dias
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=401, aplicando límite -> days_to_fetch=401 (máx: 401) @ 60
+[BTCUSDT] [DATA] MEMORY CACHE HIT: 9624 velas (necesarias ~9624, edad=236s)
+[SB_BACKTEST_SSE] DETERMINISTIC TRIM: 9624 -> 9624 velas (target=9624, first_ts=1736798400000, last_ts=1771441200000, hash=c9a8cc6a)
+[SB_BACKTEST_SSE] 9624 velas de cache en 0.3s
+2026-02-18 14:27:56 - swing_alerts - INFO - SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.28 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-18 14:27:56 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | TRXUSDT | SWING_LOW | price=0.28
+2026-02-18 14:27:56 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+[SB_BACKTEST] Filter stats: signals=327, dir=0, conf=0, maxSeg=12, context={'vwap_trend': 312}, slInv=0, slDir=0, tpInv=0, opened=3
+[SB_BACKTEST_SSE] Completado en 3.5s
+
+
+de regreso a los valores iniciales:
+[SB_BACKTEST_SSE] GENERATE INICIO: BTCUSDT @ 60 x 401 dias
+[BTCUSDT] [DATA] HISTORICAL: Recibido days=401, aplicando límite -> days_to_fetch=401 (máx: 401) @ 60
+[BTCUSDT] [DATA] MEMORY CACHE HIT: 9624 velas (necesarias ~9624, edad=236s)
+[SB_BACKTEST_SSE] DETERMINISTIC TRIM: 9624 -> 9624 velas (target=9624, first_ts=1736798400000, last_ts=1771441200000, hash=c9a8cc6a)
+[SB_BACKTEST_SSE] 9624 velas de cache en 0.3s
+2026-02-18 14:27:56 - swing_alerts - INFO - SIGNAL_DETECTED | TRXUSDT | SWING_LOW | price=0.28 | direction=LONG | volume_zscore=0.00 | interval=1
+2026-02-18 14:27:56 - swing_alerts - INFO - BLOCKED_ALERTS_DISABLED | TRXUSDT | SWING_LOW | price=0.28
+2026-02-18 14:27:56 - swing_service - WARNING - [SWING_SERVICE] Days 360 exceeds max 5 for interval 1, truncating to 5
+[SB_BACKTEST] Filter stats: signals=327, dir=0, conf=0, maxSeg=12, context={'vwap_trend': 312}, slInv=0, slDir=0, tpInv=0, opened=3
+[SB_BACKTEST_SSE] Completado en 3.5s

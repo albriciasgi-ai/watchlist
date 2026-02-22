@@ -1,0 +1,75 @@
+{
+  "enabled": false,
+  "symbols": [
+    "BTCUSDT"
+  ],
+  "interval": "1",
+  "window_candles": 2000,
+  "strategy": {
+    "level_sources": [
+      {
+        "source": "vp_periodic",
+        "enabled": true,
+        "params": {
+          "period": 960,
+          "bins": 50,
+          "use_poc": true,
+          "use_vah": true,
+          "use_val": true,
+          "lookback_segments": 1
+        }
+      }
+    ],
+    "entry_signal": {
+      "signal_type": "price_touch",
+      "params": {
+        "tolerance_pct": 0.3,
+        "swing_bars": 3,
+        "wick_body_ratio": 2,
+        "pattern_type": "any",
+        "lookback": 50,
+        "min_confidence": 50
+      }
+    },
+    "context_filters": [
+      {
+        "filter_type": "vwap_position",
+        "enabled": true,
+        "params": {
+          "mode": "counter",
+          "long_ref": "upper_2",
+          "short_ref": "lower_2"
+        }
+      },
+      {
+        "filter_type": "dtb_bias",
+        "enabled": true,
+        "params": {
+          "lookback": 50,
+          "min_confidence": 50
+        }
+      }
+    ],
+    "risk": {
+      "sl_method": "below_level",
+      "sl_params": {
+        "buffer_pct": 0.26
+      },
+      "tp_method": "rr_fixed",
+      "tp_params": {
+        "rr": 4
+      },
+      "max_trades_per_segment": 1,
+      "trailing_stop": false
+    },
+    "exit_rules": [],
+    "confluence_mode": "any",
+    "min_confluence_score": 0,
+    "vwap_period": 1205
+  },
+  "alertsEnabled": true,
+  "alertTargetUrl": "http://localhost:5000/api/watchlist-alert",
+  "cooldownMinutes": 30,
+  "dtb_recalc_every": 50,
+  "sr_recalc_every": 100
+}

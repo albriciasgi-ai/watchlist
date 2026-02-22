@@ -1,0 +1,5 @@
+1. El VWAP trend, para que sólo haga longs si el vwap viene subiendo, está funcionando bien pero hay que tener 
+cuidado con los periodos del vwap visual vs el que se usa para los cálculos
+SERÁ MEJOR EVALUAR LA TENDENCIA NO CON EL VWAP SINO CON EL PRECIO DIRECTAMENTE? (NO HABRÍA LAG)
+
+El DTB bias cómo funciona?

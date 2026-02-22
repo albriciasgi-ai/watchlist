@@ -48,6 +48,7 @@ class VWAPIndicator extends IndicatorBase {
     // Lifecycle flag to prevent fetch after destroy
     this._destroyed = false;
     this._pollingId = null; // Usa PollingCoordinator en lugar de setInterval
+    this._fetching = false; // Guard contra fetches simultaneos
 
     log.debug(`[${symbol}] VWAPIndicator initialized (type=${this.vwapType})`);
   }
@@ -134,6 +135,13 @@ class VWAPIndicator extends IndicatorBase {
       return false;
     }
 
+    // Guard contra fetches simultaneos (evita cascada de requests)
+    if (this._fetching) {
+      log.debug(`[${this.symbol}] Skipping VWAP fetch - already fetching`);
+      return false;
+    }
+
+    this._fetching = true;
     this.loading = true;
     try {
       const cacheParams = { vwapType: this.vwapType, days: this.days };
@@ -203,6 +211,7 @@ class VWAPIndicator extends IndicatorBase {
       return false;
     } finally {
       this.loading = false;
+      this._fetching = false;
     }
   }
 
