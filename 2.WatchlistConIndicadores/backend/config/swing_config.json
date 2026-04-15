@@ -12,8 +12,8 @@
     "ADAUSDT",
     "DOGEUSDT"
   ],
-  "interval": "1",
-  "days": 1,
+  "interval": "60",
+  "days": 90,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {

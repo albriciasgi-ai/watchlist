@@ -1,0 +1,226 @@
+Gaussian Channel - Guia completa de uso en el Strategy Builder
+
+  ---
+  BLOQUE 1: Level Source — Gaussian Channel
+
+  Este bloque calcula el canal gaussiano y produce 3 niveles dinamicos por vela que se
+  mueven con el precio (no son fijos como S/R).
+
+  | Parametro     | Rango                | Default | Que hace
+
+                                         |
+  |---------------|----------------------|---------|----------------------------------------
+  ------------------------------------------------------------------------------------------
+  ---------------------------------------|
+  | Poles         | 1-9                  | 4       | Cantidad de polos del filtro. Mas polos
+   = curva mas suave, menos ruido, pero mas lag. El articulo original usa 4.
+                                         |
+  | Period        | 10-500               | 144     | Periodo del filtro. Mas alto = canal
+  mas lento/suave. 144 es el default del articulo (equivale a ~6 dias en 1h).
+                                           |
+  | Multiplier    | 0.5-5.0              | 1.414   | Ancho de las bandas (multiplicador del
+  True Range filtrado). 1.414 = sqrt(2), el default original. Mas alto = canal mas ancho =
+  menos senales pero mas confiables.      |
+  | Source        | hlc3/close/hl2/ohlc4 | hlc3    | Dato de precio que alimenta al filtro.
+  hlc3 = (high+low+close)/3, es el mas comun para este tipo de filtro porque suaviza la
+  lectura del precio.                        |
+  | Reduced Lag   | on/off               | off     | Aplica correccion de lag restando el
+  retraso estimado del filtro. Hace que el canal reaccione mas rapido a cambios de
+  tendencia, pero puede generar mas senales falsas. |
+  | Fast Response | on/off               | off     | Promedia el filtro de N polos con un
+  filtro de 1 polo. Resultado: respuesta mas rapida sin tanto ruido como Reduced Lag. Es la
+  opcion intermedia.                       |
+
+  Como interactuan Reduced Lag y Fast Response:
+  - Ambos off → Canal clasico, suave, con lag natural. Ideal para timeframes altos (1h, 4h,
+  D).
+  - Solo Reduced Lag → Reaccion rapida pero puede oscilar mas. Util en timeframes medios
+  (15m, 1h).
+  - Solo Fast Response → Compromiso entre velocidad y suavidad. Recomendado como primer
+  ajuste si el canal clasico es muy lento.
+  - Ambos on → Maxima reactividad. Solo para scalping en timeframes bajos (1m, 5m). Muchas
+  senales, muchas falsas.
+
+  Que produce este level source:
+  - gc_upper (resistencia) → Banda superior del canal
+  - gc_lower (soporte) → Banda inferior del canal
+  - gc_center (soporte Y resistencia) → Linea central del filtro
+
+  Estos niveles se recalculan en cada vela, asi que son dinamicos. A diferencia de S/R que
+  son fijos, el Gaussian Channel se mueve con el mercado.
+
+  ---
+  BLOQUE 2: Entry Signal — Band Crossover
+
+  Detecta cuando el precio cruza las bandas del canal. Esta es la senal original del
+  articulo.
+
+  | Parametro    | Rango | Default | Que hace
+                                                                                 |
+  |--------------|-------|---------|--------------------------------------------------------
+  -------------------------------------------------------------------------------|
+  | Tolerancia % | 0-0.5 | 0.05    | Margen de holgura para el cruce. Con 0 necesitas cruce
+  exacto (close > hband). Con 0.05 acepta que el close este a 0.05% de la banda. |
+
+  Logica de la senal:
+  - LONG: La vela anterior cerraba debajo (o cerca) de la banda superior, y la vela actual
+  cierra arriba. Es un crossover de hband → el precio "rompe" el canal hacia arriba.
+  - SHORT: La vela anterior cerraba arriba (o cerca) de la banda inferior, y la vela actual
+  cierra abajo. Es un crossunder de lband → el precio "rompe" el canal hacia abajo.
+
+  Tolerancia en la practica:
+  - 0.00 = Solo dispara si el close cruza exactamente la banda. Pocas senales, muy precisas.
+  - 0.05 = Acepta que el close este a 0.05% de la banda. Default razonable.
+  - 0.10-0.20 = Mas senales, mas falsas. Util si el canal es muy ancho y el precio rara vez
+  cruza exactamente.
+
+  Nota importante: band_crossover fue disenado especificamente para usarse con el level
+  source gaussian_channel. Si lo usas sin ese level source activado, no producira senales
+  porque necesita los datos internos del canal (gc_data). Es decir, esta senal es
+  independiente del sistema de niveles — no busca niveles cercanos como price_touch o
+  breakout_close, sino que trabaja directamente con las bandas del canal.
+
+  ---
+  BLOQUE 3: Context Filter — Gaussian Trend
+
+  Filtra senales segun la tendencia del filtro gaussiano.
+
+  | Parametro | Rango | Default | Que hace
+                                                                               |
+  |-----------|-------|---------|-----------------------------------------------------------
+  -----------------------------------------------------------------------------|
+  | Lookback  | 1-50  | 1       | Cuantas velas atras comparar para determinar tendencia. 1
+  = compara filt[ahora] vs filt[vela anterior]. 5 = compara con 5 velas atras. |
+
+  Logica:
+  - Si filt[i] > filt[i - lookback] → El filtro esta subiendo → Solo permite LONG
+  - Si filt[i] < filt[i - lookback] → El filtro esta bajando → Solo permite SHORT
+  - Si son iguales → Plano, permite ambas direcciones
+
+  Lookback en la practica:
+  - 1 = Muy sensible. Cambia de tendencia en cuanto el filtro gira una sola vela. Puede dar
+  whipsaws en mercados laterales.
+  - 3-5 = Requiere que el filtro haya estado subiendo/bajando durante varias velas. Filtra
+  ruido.
+  - 10-20 = Solo opera en tendencias muy establecidas. Pocas senales, alta probabilidad.
+  - 30-50 = Tendencias macro. Solo sirve en datasets largos (meses/anos).
+
+  Cuando activar este filtro: Siempre es recomendable activarlo. La estrategia original del
+  articulo es intrinsecamente trend-following: no tiene sentido entrar LONG si el filtro
+  esta cayendo, porque el crossover de hband podria ser un falso breakout en una tendencia
+  bajista.
+
+  ---
+  COMBINACION CON BLOQUES 4 Y 5
+
+  Bloque 4: Risk Management
+
+  Para la estrategia Gaussian Channel, las opciones mas coherentes son:
+
+  Stop Loss:
+  - ATR Multiple con multiplicador 1.5-2.0 → El mas recomendado. El canal ya usa True Range
+  filtrado internamente, asi que un SL basado en ATR es coherente con la volatilidad del
+  instrumento.
+  - Below Level con buffer 0.1% → Pone el SL debajo de la banda que disparo la senal. Para
+  LONG, el SL queda debajo de hband. Puede ser muy ajustado si el canal es estrecho.
+  - Fixed % con 1-2% → Simple y predecible. Util para empezar.
+
+  Take Profit:
+  - R:R Fixed con ratio 2.0-3.0 → El mas simple. Si tu SL es de 1R, el TP esta a 2-3R.
+  - ATR Multiple con multiplicador 3.0-5.0 → Consistente con el SL si usas ATR para ambos.
+  - Opposite Level → Busca el nivel opuesto mas cercano. Si entraste LONG en gc_upper, el TP
+   seria el proximo gc_upper de resistencia... pero como los niveles son dinamicos, puede
+  dar resultados inestables. Mejor usar R:R fijo.
+
+  Max Trades per Segment: Con Gaussian Channel recomiendo 1. El canal produce muchos niveles
+   (3 por vela), pero la logica de crossover ya filtra a solo los cruces reales. Si pones
+  mas de 1, puedes acabar con trades redundantes.
+
+  Cooldown Bars: 5-20 dependiendo del timeframe. Evita que un whipsaw (precio cruza arriba y
+   abajo rapido) genere multiples trades perdedores.
+
+  Bloque 5: Exit Rules
+
+  - VWAP Reverse (lookback 5-10) → Cierra el trade si el VWAP cambia de direccion.
+  Complementa bien al canal gaussiano porque anade una condicion de salida independiente.
+  - Timeout (max_bars 50-200) → Cierra si el trade no alcanza TP ni SL en N velas. Util para
+   evitar trades que se estancan.
+  - Reenter Zone → Cierra si el precio vuelve a cruzar la banda en contra. Esto replica la
+  logica original del articulo donde crossunder(close, hband) cierra el LONG.
+
+  ---
+  CONFIGURACIONES RECOMENDADAS
+
+  1. Replica del articulo original (Trend Following puro)
+
+  Level Source:  Gaussian Channel (Poles=4, Period=144, Mult=1.414, hlc3, RL off, FR off)
+  Entry Signal:  Band Crossover (Tolerancia=0.05)
+  Filters:       Direction Filter = long only
+                 Gaussian Trend (Lookback=1)
+  Risk:          SL = ATR Multiple (1.5)
+                 TP = R:R Fixed (3.0)
+                 Max trades/seg = 1
+                 Cooldown = 10
+  Exit Rules:    Reenter Zone (replica crossunder como exit)
+  Esta es la version mas fiel al articulo. Solo LONG, entra cuando cruza hband arriba, sale
+  cuando vuelve a cruzar abajo.
+
+  2. Version bidireccional conservadora
+
+  Level Source:  Gaussian Channel (Poles=4, Period=144, Mult=1.414, hlc3, RL off, FR off)
+  Entry Signal:  Band Crossover (Tolerancia=0.05)
+  Filters:       Direction = both
+                 Gaussian Trend (Lookback=3)
+                 VWAP Trend (Lookback=20)
+  Risk:          SL = ATR Multiple (2.0)
+                 TP = R:R Fixed (2.0)
+                 Max trades/seg = 1
+                 Cooldown = 20
+  Exit Rules:    VWAP Reverse (lookback=10)
+                 Timeout (max_bars=100)
+  Opera en ambas direcciones pero con doble confirmacion: el filtro gaussiano Y el VWAP
+  deben apuntar en la misma direccion.
+
+  3. Version reactiva para scalping (timeframes bajos)
+
+  Level Source:  Gaussian Channel (Poles=4, Period=50, Mult=1.0, close, RL off, FR on)
+  Entry Signal:  Band Crossover (Tolerancia=0.10)
+  Filters:       Direction = both
+                 Gaussian Trend (Lookback=1)
+                 Volume Z-Score (min=1.0, lookback=20)
+  Risk:          SL = ATR Multiple (1.0)
+                 TP = R:R Fixed (1.5)
+                 Max trades/seg = 1
+                 Cooldown = 5
+  Exit Rules:    Timeout (max_bars=30)
+  Period mas bajo (50), canal mas estrecho (mult=1.0), Fast Response activado. Mas senales,
+  trades cortos. El filtro de volumen evita entrar en momentos de baja liquidez.
+
+  4. Combinacion con otras level sources
+
+  Level Source:  Gaussian Channel + S&R v2
+  Entry Signal:  Price Touch (Tolerancia=0.15)
+  Filters:       Direction = both
+                 Gaussian Trend (Lookback=5)
+  Confluence:    Score (min=30)
+  Risk:          SL = Below Level (buffer=0.15%)
+                 TP = R:R Fixed (2.0)
+  Aqui NO usas band_crossover sino price_touch. El Gaussian Channel aporta niveles dinamicos
+   y el S&R aporta niveles fijos. Con confluencia por score, solo se ejecuta si ambas
+  fuentes coinciden cerca del mismo precio. El filtro gaussian_trend asegura que solo operes
+   a favor de la tendencia gaussiana.
+
+  ---
+  QUE PARAMETROS AJUSTAR PRIMERO
+
+  1. Period es el parametro mas impactante. Bajalo si quieres mas senales (y mas ruido),
+  subelo si quieres menos senales (mas confiables).
+  2. Multiplier controla el ancho del canal. Si el canal es tan estrecho que el precio
+  siempre esta afuera, subelo. Si es tan ancho que nunca cruza, bajalo.
+  3. Poles casi nunca necesitas cambiarlo de 4. Valores menores (1-2) dan un filtro mas
+  ruidoso, mayores (7-9) dan uno extremadamente suave.
+  4. Reduced Lag / Fast Response: empieza con ambos off. Si el canal reacciona demasiado
+  lento para tu timeframe, activa Fast Response primero.
+
+  Todos estos parametros son optimizables con el Grid Search del Strategy Builder si quieres
+   encontrar la combinacion optima automaticamente.

@@ -1,0 +1,22 @@
+para el volume profile periódico, al ancho del histograma debe ser proporcional a los últimos N volume profiles
+
+!! Tener en cuenta para la estrategia del vp periódico: cuando viene a retestar el POC y se encuentra que viene
+con una vela tan fuerte (marubozú + buen volumen), muy posiblemente va a seguir derecho así que anular la entrada 
+en la dirección original (la que se esperaba retestara) y esperar el retest del POC en la nueva dirección. Es decir,
+si se buscaba un LONG, abrir un SHORT.
+
+
+======================
+Del video de automatización del backtesting (trade tactics):
+1. Usar sólo un % de los datos para poder hacer el desarrollo de las estrategias y lo que sobre, para hacer pruebas luego
+2. Ellos hacen el backtesting súper rápido. Poner al claude a que optimice la forma como lo hace
+3. Preguntarle al claude cómo se puede hacer para que él revise completamente que la estrategia esté bien (por 
+ejemplo el problema que tenemos con las entradas y el volume profile
+4. Librería Vector BT (creo que es para el backtesting, está en python.
+5. Hay otra librería que es útil y tiene muchos indicadores prefabricados.
+6. Minimizar el drawdown + mejorar el sharpe ratio
+7. montecarlo simulation + randomize the candlesticks
+8. En trade tactics tienen estrategias para usar como base para nuestros desarrollos.
+9. Cuando ya esté funcional el backtester, poner al claude a que itere una y otra vez para que optimice 
+todo y la estrategia tenga buen drawdown, buen sharpe ratio, p&L, etc. (que no esté pidiendo permiso a cada rato)
+

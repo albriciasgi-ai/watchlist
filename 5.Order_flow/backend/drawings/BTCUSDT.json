@@ -65,8 +65,17 @@
           5
         ]
       }
+    },
+    {
+      "type": "tpsl-short",
+      "id": "tpsl_short_1771995323105_0.37692134516874587",
+      "entryPrice": 65414.225,
+      "tpPrice": 64429.825,
+      "slPrice": 65857.85,
+      "time": 1771994700000,
+      "widthTime": 1440000
     }
   ],
-  "updated_at": "2026-02-20T01:58:06.868601+00:00",
-  "total_shapes": 5
+  "updated_at": "2026-02-25T04:56:55.386054+00:00",
+  "total_shapes": 6
 }

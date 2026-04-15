@@ -16,7 +16,7 @@
     "POLUSDT"
   ],
   "interval": "60",
-  "days": 90,
+  "days": 365,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -44,7 +44,7 @@
         "lookbackBars": 100
       },
       "swingBars": 5,
-      "days": 90,
+      "days": 365,
       "cooldownMinutes": 20,
       "alertsEnabled": false
     },
