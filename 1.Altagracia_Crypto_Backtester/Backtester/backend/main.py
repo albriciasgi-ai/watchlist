@@ -7,6 +7,7 @@ import httpx
 import asyncio
 import time
 import json
+import gzip
 import sys
 import numpy as np
 from pathlib import Path
@@ -190,16 +191,16 @@ CACHE_MAX_AGE = 1800  # 30 minutos en segundos
 # Límites máximos de días por timeframe
 # NOTA: 1m y 5m tienen límites extendidos para backtesting
 MAX_DAYS_BY_INTERVAL = {
-    "1": 365,    # 1 minuto -> máx 1 año (525,600 velas) - BACKTESTING
+    "1": 730,    # 1 minuto -> máx 2 años (1,051,200 velas) - BACKTESTING
     "3": 10,     # 3 min -> máx 10 días
-    "5": 1095,   # 5 minutos -> máx 3 años (315,360 velas) - BACKTESTING
-    "15": 730,   # 15 min -> máx 2 años (para backtesting)
-    "30": 730,   # 30 min -> máx 2 años
-    "60": 730,   # 1 hora -> máx 2 años
-    "120": 730,  # 2 horas -> máx 2 años
-    "240": 730,  # 4 horas -> máx 2 años
-    "D": 730,    # 1 día -> máx 730 días
-    "W": 730,    # 1 semana -> máx 730 días
+    "5": 1825,   # 5 minutos -> máx 5 años (525,600 velas) - BACKTESTING
+    "15": 1825,  # 15 min -> máx 5 años (175,200 velas) - BACKTESTING
+    "30": 1825,  # 30 min -> máx 5 años
+    "60": 1825,  # 1 hora -> máx 5 años (43,800 velas)
+    "120": 1825, # 2 horas -> máx 5 años
+    "240": 1825, # 4 horas -> máx 5 años (10,950 velas)
+    "D": 1825,   # 1 día -> máx 5 años
+    "W": 1825,   # 1 semana -> máx 5 años
 }
 
 def sanitize_filename(name: str) -> str:
@@ -1765,7 +1766,7 @@ async def test_backtesting_metadata():
 BACKTESTING_CONFIG = {
     "1m": {
         "interval": "1",
-        "days": 365,  # 1 año = 525,600 velas
+        "days": 730,   # 2 años = 1,051,200 velas
         "subdivisions": {
             "interval": "1",  # Sin subdivisiones (avanza vela completa)
             "count": 1
@@ -1773,7 +1774,7 @@ BACKTESTING_CONFIG = {
     },
     "5m": {
         "interval": "5",
-        "days": 1095,  # 3 años = 315,360 velas
+        "days": 1825,  # 5 años = 525,600 velas
         "subdivisions": {
             "interval": "1",
             "count": 5  # 5 velas de 1 minuto forman 1 vela de 5 minutos
@@ -1781,7 +1782,7 @@ BACKTESTING_CONFIG = {
     },
     "15m": {
         "interval": "15",
-        "days": 730,  # 2 años
+        "days": 1825,  # 5 años = 175,200 velas
         "subdivisions": {
             "interval": "5",
             "count": 3  # 3 velas de 5 minutos forman 1 vela de 15 minutos
@@ -1789,7 +1790,7 @@ BACKTESTING_CONFIG = {
     },
     "1h": {
         "interval": "60",
-        "days": 730,  # 2 años
+        "days": 1825,  # 5 años = 43,800 velas
         "subdivisions": {
             "interval": "15",
             "count": 4  # 4 velas de 15 minutos forman 1 vela de 1 hora
@@ -1797,7 +1798,7 @@ BACKTESTING_CONFIG = {
     },
     "4h": {
         "interval": "240",
-        "days": 730,  # 2 años
+        "days": 1825,  # 5 años = 10,950 velas
         "subdivisions": {
             "interval": "60",
             "count": 4  # 4 velas de 1 hora forman 1 vela de 4 horas
@@ -1807,28 +1808,49 @@ BACKTESTING_CONFIG = {
 
 
 def save_backtesting_cache(symbol: str, data: dict):
-    """Guarda datos de backtesting en caché permanente"""
-    # SEGURIDAD: Sanitizar symbol para prevenir Path Traversal
+    """Guarda datos de backtesting en caché permanente con compresión gzip"""
     safe_symbol = sanitize_filename(symbol)
-    cache_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_backtesting_data.json"
-    with open(cache_file, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    print(f"[BACKTESTING CACHE] Guardado {safe_symbol} - {cache_file.stat().st_size / (1024*1024):.2f} MB")
+    cache_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_backtesting_data.json.gz"
+    json_bytes = json.dumps(data, ensure_ascii=False).encode('utf-8')
+    raw_size_mb = len(json_bytes) / (1024 * 1024)
+    with gzip.open(cache_file, 'wb', compresslevel=6) as f:
+        f.write(json_bytes)
+    compressed_size_mb = cache_file.stat().st_size / (1024 * 1024)
+    ratio = (1 - compressed_size_mb / raw_size_mb) * 100 if raw_size_mb > 0 else 0
+    print(f"[BACKTESTING CACHE] Guardado {safe_symbol} - {compressed_size_mb:.1f} MB (comprimido {ratio:.0f}% desde {raw_size_mb:.1f} MB)")
+    # Eliminar archivo .json antiguo si existe (migración)
+    old_json = BACKTESTING_CACHE_DIR / f"{safe_symbol}_backtesting_data.json"
+    if old_json.exists():
+        old_json.unlink()
+        print(f"[BACKTESTING CACHE] Eliminado archivo antiguo .json de {safe_symbol}")
 
 
 def load_backtesting_cache(symbol: str):
-    """Carga datos de backtesting del caché"""
-    # SEGURIDAD: Sanitizar symbol para prevenir Path Traversal
+    """Carga datos de backtesting del caché (gzip con fallback a json para migración)"""
     safe_symbol = sanitize_filename(symbol)
-    cache_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_backtesting_data.json"
-    if cache_file.exists():
+    # Intentar .json.gz primero (formato nuevo)
+    gz_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_backtesting_data.json.gz"
+    if gz_file.exists():
         try:
-            with open(cache_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                print(f"[BACKTESTING CACHE] Cargado {safe_symbol} desde caché - {cache_file.stat().st_size / (1024*1024):.2f} MB")
-                return data
+            with gzip.open(gz_file, 'rb') as f:
+                data = json.loads(f.read().decode('utf-8'))
+            print(f"[BACKTESTING CACHE] Cargado {safe_symbol} desde caché gzip - {gz_file.stat().st_size / (1024*1024):.1f} MB en disco")
+            return data
         except Exception as e:
-            print(f"[BACKTESTING CACHE ERROR] {safe_symbol}: {str(e)}")
+            print(f"[BACKTESTING CACHE ERROR] {safe_symbol} gzip: {str(e)}")
+    # Fallback a .json (formato antiguo, migración automática)
+    json_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_backtesting_data.json"
+    if json_file.exists():
+        try:
+            with open(json_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            print(f"[BACKTESTING CACHE] Cargado {safe_symbol} desde caché JSON antiguo - {json_file.stat().st_size / (1024*1024):.1f} MB")
+            # Migrar automáticamente a gzip
+            print(f"[BACKTESTING CACHE] Migrando {safe_symbol} a formato gzip...")
+            save_backtesting_cache(safe_symbol, data)
+            return data
+        except Exception as e:
+            print(f"[BACKTESTING CACHE ERROR] {safe_symbol} json: {str(e)}")
     return None
 
 
@@ -1930,14 +1952,95 @@ async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 10
         return None
 
 
+async def fetch_incremental_candles(symbol: str, interval: str, since_timestamp_ms: int):
+    """
+    Descarga solo velas NUEVAS desde un timestamp dado.
+    Usado para actualizar cache existente sin re-descargar todo.
+    """
+    try:
+        interval_minutes = get_interval_minutes(interval)
+        now_ms = int(time.time() * 1000)
+        start_ms = since_timestamp_ms + (interval_minutes * 60 * 1000)  # Siguiente vela después del último timestamp
+
+        if start_ms >= now_ms:
+            return []  # Ya está actualizado
+
+        all_candles = []
+        current_start = start_ms
+
+        async with httpx.AsyncClient(timeout=60) as client:
+            request_count = 0
+            max_requests = 50  # Suficiente para semanas de datos incrementales
+
+            while request_count < max_requests:
+                request_count += 1
+                url = (
+                    "https://api.bybit.com/v5/market/kline?"
+                    f"category=linear&symbol={symbol}&interval={interval}"
+                    f"&start={current_start}&limit=1000"
+                )
+                r = await client.get(url)
+                data = r.json()
+
+                if data.get("retCode") != 0:
+                    break
+
+                batch = data["result"]["list"]
+                if not batch:
+                    break
+
+                batch.reverse()
+                all_candles.extend(batch)
+
+                last_ts = int(batch[-1][0])
+                current_start = last_ts + (interval_minutes * 60 * 1000)
+
+                if current_start >= now_ms:
+                    break
+
+                await asyncio.sleep(0.05)
+
+        candles = []
+        for c in all_candles:
+            ts_ms = int(c[0])
+            candles.append({
+                "timestamp": ts_ms,
+                "open": float(c[1]),
+                "high": float(c[2]),
+                "low": float(c[3]),
+                "close": float(c[4]),
+                "volume": float(c[5])
+            })
+
+        return candles
+
+    except Exception as e:
+        print(f"[ERROR] Incremental fetch {symbol} @ {interval}m: {str(e)}")
+        return []
+
+
+def merge_candles(existing: list, new_candles: list) -> list:
+    """Mergea velas existentes con nuevas, deduplicando por timestamp"""
+    if not new_candles:
+        return existing
+    if not existing:
+        return new_candles
+    # Usar dict para deduplicar (nuevas sobrescriben existentes)
+    candle_map = {c["timestamp"]: c for c in existing}
+    for c in new_candles:
+        candle_map[c["timestamp"]] = c
+    return sorted(candle_map.values(), key=lambda x: x["timestamp"])
+
+
 @app.get("/api/backtesting/bulk-data/{symbol}")
 @limiter.limit("10/minute")
 async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh: bool = False):
     """
-    Descarga y cachea 3 años de datos para backtesting
+    Descarga y cachea hasta 5 años de datos para backtesting.
+    Soporta carga incremental: si el cache existe, solo descarga velas nuevas.
 
-    NUEVO: El cache NUNCA expira por antiguedad. Los datos historicos se mantienen indefinidamente.
-    Solo se invalida con force_refresh=True
+    - force_refresh=True: re-descarga todo desde cero
+    - Sin force_refresh: usa cache + carga incremental si faltan velas recientes
 
     Retorna:
     {
@@ -1968,20 +2071,61 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
     """
     try:
         # Intentar cargar del caché si existe
+        cached_data = None
         if not force_refresh:
             cached_data = load_backtesting_cache(symbol)
             if cached_data:
-                # >> NUEVO: Caché NUNCA expira - siempre usar datos cacheados si existen
                 cached_at = cached_data.get("metadata", {}).get("cached_at", 0)
                 now_ms = int(time.time() * 1000)
                 age_hours = (now_ms - cached_at) / (1000 * 60 * 60)
 
-                print(f"[BACKTESTING CACHE] OK Usando caché existente ({age_hours:.1f} horas de antigüedad)")
-                return {
-                    "success": True,
-                    "from_cache": True,
-                    **cached_data
-                }
+                # Carga incremental: si el cache tiene más de 1 hora, actualizar con velas nuevas
+                if age_hours > 1.0:
+                    print(f"[BACKTESTING] Cache de {age_hours:.1f}h - actualizando incrementalmente...")
+                    updated = False
+                    for tf_name, tf_data in cached_data.get("timeframes", {}).items():
+                        config = BACKTESTING_CONFIG.get(tf_name)
+                        if not config:
+                            continue
+                        # Actualizar main candles
+                        main_candles = tf_data.get("main", [])
+                        if main_candles:
+                            last_ts = max(c["timestamp"] for c in main_candles)
+                            new_main = await fetch_incremental_candles(symbol, config["interval"], last_ts)
+                            if new_main:
+                                tf_data["main"] = merge_candles(main_candles, new_main)
+                                print(f"  [{tf_name}] main: +{len(new_main)} velas (total: {len(tf_data['main'])})")
+                                updated = True
+                        # Actualizar subdivision candles
+                        sub_candles = tf_data.get("subdivisions", [])
+                        if sub_candles:
+                            last_sub_ts = max(c["timestamp"] for c in sub_candles)
+                            new_subs = await fetch_incremental_candles(symbol, config["subdivisions"]["interval"], last_sub_ts)
+                            if new_subs:
+                                tf_data["subdivisions"] = merge_candles(sub_candles, new_subs)
+                                print(f"  [{tf_name}] subs: +{len(new_subs)} velas (total: {len(tf_data['subdivisions'])})")
+                                updated = True
+
+                    if updated:
+                        # Actualizar metadata y re-guardar
+                        cached_data["metadata"]["cached_at"] = now_ms
+                        cached_data["metadata"]["cached_at_colombia"] = datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S")
+                        save_backtesting_cache(symbol, cached_data)
+                        print(f"[BACKTESTING] Cache actualizado incrementalmente")
+
+                    return {
+                        "success": True,
+                        "from_cache": True,
+                        "incremental_update": updated,
+                        **cached_data
+                    }
+                else:
+                    print(f"[BACKTESTING CACHE] OK Cache reciente ({age_hours:.1f}h)")
+                    return {
+                        "success": True,
+                        "from_cache": True,
+                        **cached_data
+                    }
 
         print(f"[BACKTESTING] Descargando datos completos para {symbol}...")
 
@@ -1989,7 +2133,6 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
 
         # Descargar datos para cada timeframe
         for tf_name, config in BACKTESTING_CONFIG.items():
-            # Usar días específicos por timeframe (1m=365, 5m=1095, otros=730)
             tf_days = config.get("days", 730)
             print(f"\n[BACKTESTING] ===== Procesando {tf_name} ({tf_days} días) =====")
 
@@ -2001,7 +2144,7 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 print(f"[ERROR] No se pudieron obtener datos para {tf_name}")
                 continue
 
-            # Descargar subdivisiones (usar mismos días que el timeframe principal)
+            # Descargar subdivisiones
             subdivision_interval = config["subdivisions"]["interval"]
             subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, tf_days)
 
@@ -2009,18 +2152,15 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 print(f"[ERROR] No se pudieron obtener subdivisiones para {tf_name}")
                 continue
 
-            # >> CORREGIDO: Calcular rango de timestamps de las velas para OI
-            # Usar las velas principales para determinar el rango temporal exacto
             min_candle_ts = min(c["timestamp"] for c in main_candles)
             max_candle_ts = max(c["timestamp"] for c in main_candles)
 
-            # Para 1m y 5m, saltar Open Interest (demasiados datos y no es crítico)
+            # Para 1m y 5m, saltar Open Interest (demasiados datos)
             oi_data = []
             if tf_name not in ["1m", "5m"]:
                 print(f"\n[BACKTESTING] Obteniendo Open Interest para {tf_name}...")
                 print(f"[BACKTESTING] Rango de velas: {datetime.fromtimestamp(min_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')} -> {datetime.fromtimestamp(max_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}")
 
-                # >> CORREGIDO: Pasar timestamps exactos del rango de velas
                 oi_response = await get_open_interest(
                     symbol,
                     str(main_interval),
@@ -2036,7 +2176,7 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 "main": main_candles,
                 "subdivisions": subdivision_candles,
                 "subdivision_count": config["subdivisions"]["count"],
-                "open_interest": oi_data  # >> AGREGADO
+                "open_interest": oi_data
             }
 
             print(f"[BACKTESTING] {tf_name} completado:")

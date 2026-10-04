@@ -646,7 +646,9 @@ const BacktestingApp = () => {
         console.log('[BacktestingApp] DEBUG - startTimestamp calculado:', startTimestamp, new Date(startTimestamp).toISOString());
 
         // VALIDACIÓN 1: Verificar que la fecha esté dentro del rango de datos disponibles
-        const minDataBuffer = 7 * 24 * 60 * 60 * 1000; // Mínimo 7 días de datos después de la fecha
+        // Buffer dinámico: 3 días para timeframes cortos (1m/5m/15m), 7 días para el resto
+        const bufferDays = ['1m', '5m', '15m'].includes(activeTimeframe) ? 3 : 7;
+        const minDataBuffer = bufferDays * 24 * 60 * 60 * 1000;
         const maxAllowedStart = lastCandle.timestamp - minDataBuffer;
 
         if (startTimestamp < firstCandle.timestamp) {
@@ -691,15 +693,23 @@ const BacktestingApp = () => {
         console.log(`  - Índice de vela: ${startCandleIndex} de ${timeframeData.main.length}`);
         console.log(`  - Velas disponibles para simular: ${remainingCandles}`);
       } else {
-        // Sin fecha de inicio - usar una fecha razonable por defecto
-        // Buscar la vela más cercana a hace 1 año desde la última vela disponible
-        const oneYearAgo = lastCandle.timestamp - (365 * 24 * 60 * 60 * 1000);
-        const defaultStartIndex = timeframeData.main.findIndex(c => c.timestamp >= oneYearAgo);
+        // Sin fecha de inicio - usar un default razonable según timeframe
+        // Timeframes cortos: más cercano al presente, largos: más atrás
+        const defaultDaysBack = {
+          '1m': 30,     // 1 mes atrás (1m tiene mucha densidad)
+          '5m': 90,     // 3 meses atrás
+          '15m': 180,   // 6 meses atrás
+          '1h': 365,    // 1 año atrás
+          '4h': 730     // 2 años atrás
+        };
+        const daysBack = defaultDaysBack[activeTimeframe] || 365;
+        const defaultAgo = lastCandle.timestamp - (daysBack * 24 * 60 * 60 * 1000);
+        const defaultStartIndex = timeframeData.main.findIndex(c => c.timestamp >= defaultAgo);
 
         if (defaultStartIndex !== -1) {
           simulationStartTime = timeframeData.main[defaultStartIndex].timestamp;
           setSimulationStartTime(simulationStartTime); // 🎯 NUEVO: Guardar para usar en applyConfig
-          console.log('[BacktestingApp] Sin fecha de inicio especificada, usando hace ~1 año:', new Date(simulationStartTime).toISOString());
+          console.log(`[BacktestingApp] Sin fecha de inicio especificada, usando hace ~${daysBack} días:`, new Date(simulationStartTime).toISOString());
         } else {
           // Fallback: usar el primer dato del historial
           simulationStartTime = firstCandle.timestamp;
