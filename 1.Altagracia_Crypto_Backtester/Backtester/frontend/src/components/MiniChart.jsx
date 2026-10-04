@@ -1345,11 +1345,9 @@ const MiniChart = forwardRef(({
       const deltaCandlesFloat = (deltaX / chartWidth) * candlesPerScreen;
       const deltaCandles = Math.round(deltaCandlesFloat);
 
-      // 🎯 FIX: En modo backtesting, usar allCandlesRef para permitir navegación completa
-      const sourceForMax = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
-        ? allCandlesRef.current
-        : candlesRef.current;
-      const maxOffset = Math.max(0, sourceForMax.length - candlesPerScreen);
+      // Calcular maxOffset basado en las velas que se van a dibujar (candlesRef)
+      // Usar allCandlesRef aquí causaba que el offset excediera las velas disponibles
+      const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
       const newOffset = Math.max(0, Math.min(maxOffset, dragStateRef.current.startOffset + deltaCandles));
       viewStateRef.current.offset = newOffset;
 
@@ -1358,11 +1356,10 @@ const MiniChart = forwardRef(({
       const newVerticalOffset = dragStateRef.current.startVerticalOffset + deltaY;
       viewStateRef.current.verticalOffset = newVerticalOffset;
 
-      // 🎯 FIX: En modo backtesting, dibujar con allCandles para ver el historial completo
-      const candlesToDraw = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
-        ? allCandlesRef.current
-        : candlesRef.current;
-      drawChart(candlesToDraw, lastPriceRef.current, null, null);
+      // 🎯 FIX: En modo backtesting, dibujar con candlesRef (velas hasta el punto de playback)
+      // Usar allCandlesRef causaba un "volteo" porque displayCandles.length saltaba
+      // de ~500 (playback) a ~4380 (todas), desplazando la fórmula de startIdx
+      drawChart(candlesRef.current, lastPriceRef.current, null, null);
     } else {
       setMousePos({ x, y });
       drawChart(candlesRef.current, lastPriceRef.current, x, y);
