@@ -1290,3 +1290,27 @@ Click en una zona navega el chart a esa fecha.
   netstat -ano | findstr :9000
   taskkill /F /PID <pid>
   ```
+
+---
+
+# FIX: CHART FLIP BUG DURANTE PLAYBACK (Octubre 2026)
+
+## Problema
+
+Al hacer click o drag sobre el chart durante el playback del backtester, el gráfico se "volteaba" mostrando velas históricas antiguas y ocultando las barras recientes, haciendo imposible analizar.
+
+## Causa Raíz
+
+En `MiniChart.jsx`, `handleMouseMove` usaba `allCandlesRef` (~4380 velas) para `maxOffset` y `drawChart()`, pero el offset almacenado estaba dimensionado para `candlesRef` (~500 velas de playback). La fórmula `startIdx = displayCandles.length - candlesPerScreen - offset` producía índices incorrectos al saltar de ~500 a ~4380.
+
+## Fix (MiniChart.jsx)
+
+```javascript
+// Línea 1350 - maxOffset: ahora usa candlesRef en vez de allCandlesRef
+const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
+
+// Línea 1362 - drawChart: ahora pasa candlesRef en vez de allCandlesRef
+drawChart(candlesRef.current, lastPriceRef.current, null, null);
+```
+
+`centerOnTimestamp` y `renderOverlays` siguen usando `allCandlesRef` correctamente (son casos diferentes).

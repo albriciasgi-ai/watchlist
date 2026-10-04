@@ -5591,3 +5591,52 @@ Despues de aplicar el fix, los archivos viejos en `zones_cache/` tienen fingerpr
 ## Leccion Aprendida
 
 **Indices como estado global**: Cuando un sistema usa indices de array como referencia (como `valid_from_idx` en Level dataclass), el tamano del array se convierte en estado global implicito. Cualquier variacion en el tamano del array desplaza TODAS las referencias, causando resultados completamente diferentes. La solucion es garantizar un tamano de array determinista ANTES de cualquier procesamiento.
+
+---
+
+# FIX: CHART FLIP BUG EN BACKTESTER (Octubre 2026)
+
+## Problema
+
+Al hacer click o drag sobre el chart del backtester durante el playback, el grafico se "volteaba" mostrando velas historicas antiguas y ocultando las barras recientes del punto de playback, haciendo imposible analizar el grafico.
+
+## Causa Raiz
+
+Inconsistencia entre la fuente de datos para calcular offset y la fuente de datos para renderizar en `handleMouseMove` de `MiniChart.jsx`.
+
+**Antes del fix:**
+- `maxOffset` se calculaba con `allCandlesRef` (~4380 velas historicas)
+- `drawChart()` recibia `allCandlesRef`
+- Pero el offset almacenado estaba dimensionado para `candlesRef` (~500 velas de playback)
+
+La formula `startIdx = displayCandles.length - candlesPerScreen - offset` producia indices incorrectos cuando `displayCandles.length` saltaba de ~500 a ~4380.
+
+## Fix
+
+**Archivo:** `1.Altagracia_Crypto_Backtester/Backtester/frontend/src/components/MiniChart.jsx`
+
+Linea 1350 - maxOffset durante drag:
+```javascript
+// ANTES: usaba allCandlesRef → offset excedia velas disponibles
+const sourceForMax = backtestingMode && allCandlesRef.current ? allCandlesRef.current : candlesRef.current;
+const maxOffset = Math.max(0, sourceForMax.length - candlesPerScreen);
+
+// DESPUES: usa candlesRef consistentemente
+const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
+```
+
+Linea 1362 - drawChart durante drag:
+```javascript
+// ANTES: pasaba allCandlesRef → displayCandles.length saltaba a ~4380
+const candlesToDraw = backtestingMode && allCandlesRef.current ? allCandlesRef.current : candlesRef.current;
+drawChart(candlesToDraw, lastPriceRef.current, null, null);
+
+// DESPUES: pasa candlesRef → displayCandles.length consistente con offset
+drawChart(candlesRef.current, lastPriceRef.current, null, null);
+```
+
+**Nota:** `centerOnTimestamp` (navegacion a zonas) y `renderOverlays` (indicadores) siguen usando `allCandlesRef` correctamente - son casos de uso diferentes donde se necesita acceso al historial completo.
+
+## Leccion Aprendida
+
+**Consistencia de fuentes de datos en formulas de offset**: Cuando una formula usa `array.length` para calcular indices, TODAS las partes del flujo (calculo de offset, calculo de maxOffset, y el array pasado a la funcion de render) deben usar el MISMO array. Mezclar arrays de diferente tamano causa saltos en los indices calculados.
