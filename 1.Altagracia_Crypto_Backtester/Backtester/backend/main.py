@@ -2079,15 +2079,34 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 now_ms = int(time.time() * 1000)
                 age_hours = (now_ms - cached_at) / (1000 * 60 * 60)
 
-                # Carga incremental: si el cache tiene más de 1 hora, actualizar con velas nuevas
-                if age_hours > 1.0:
+                # Verificar si el cache tiene menos datos de lo configurado
+                # (ej: cache creado con límite de 2 años, ahora configurado a 5 años)
+                needs_expansion = False
+                for tf_name, config in BACKTESTING_CONFIG.items():
+                    tf_data = cached_data.get("timeframes", {}).get(tf_name, {})
+                    main_candles = tf_data.get("main", [])
+                    if main_candles:
+                        interval_minutes = get_interval_minutes(config["interval"])
+                        expected_candles = int((config["days"] * 24 * 60) / interval_minutes)
+                        actual_candles = len(main_candles)
+                        # Si tiene menos del 80% de las velas esperadas, expandir
+                        if actual_candles < expected_candles * 0.8:
+                            print(f"[BACKTESTING] {tf_name}: cache tiene {actual_candles} velas, esperadas ~{expected_candles} - NECESITA EXPANSION")
+                            needs_expansion = True
+                            break
+
+                if needs_expansion:
+                    print(f"[BACKTESTING] Cache insuficiente para los límites actuales. Re-descargando datos completos...")
+                    # Caer al flujo de descarga completa (no retornar cache)
+                    cached_data = None
+                elif age_hours > 1.0:
+                    # Carga incremental: solo descargar velas nuevas
                     print(f"[BACKTESTING] Cache de {age_hours:.1f}h - actualizando incrementalmente...")
                     updated = False
                     for tf_name, tf_data in cached_data.get("timeframes", {}).items():
                         config = BACKTESTING_CONFIG.get(tf_name)
                         if not config:
                             continue
-                        # Actualizar main candles
                         main_candles = tf_data.get("main", [])
                         if main_candles:
                             last_ts = max(c["timestamp"] for c in main_candles)
@@ -2096,7 +2115,6 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                                 tf_data["main"] = merge_candles(main_candles, new_main)
                                 print(f"  [{tf_name}] main: +{len(new_main)} velas (total: {len(tf_data['main'])})")
                                 updated = True
-                        # Actualizar subdivision candles
                         sub_candles = tf_data.get("subdivisions", [])
                         if sub_candles:
                             last_sub_ts = max(c["timestamp"] for c in sub_candles)
@@ -2107,7 +2125,6 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                                 updated = True
 
                     if updated:
-                        # Actualizar metadata y re-guardar
                         cached_data["metadata"]["cached_at"] = now_ms
                         cached_data["metadata"]["cached_at_colombia"] = datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S")
                         save_backtesting_cache(symbol, cached_data)
