@@ -4,59 +4,32 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ---
 
-## 🚨 TRABAJO EN PROGRESO (Enero 2026)
+## HISTORIAL DE CAMBIOS RECIENTES
 
-### Tarea Actual: Expansión de Timeframes (1m y 5m)
+### Octubre 2026: Open Interest con Resolución Real + Cobertura Informativa
 
-**Objetivo:** Expandir de 3 timeframes (15m, 1h, 4h) a 5 timeframes añadiendo 1m y 5m.
+**Cambios completados:**
+1. OI descarga datos a resolución real del timeframe (sin forward-fill/interpolación)
+2. Mapeo directo: 1m→5min, 5m→5min, 15m→15min, 1h→1h, 4h→4h
+3. MAX_OI_REQUESTS aumentado a 600 para máxima cobertura histórica
+4. Backend retorna metadata de cobertura OI (fecha desde/hasta, intervalo)
+5. Frontend muestra mensaje informativo con fecha exacta de disponibilidad
+6. Helper `_getOICoverageMessage()` centraliza lógica en 3 modos de render
 
-**Configuración de días por timeframe:**
-- 1m: 365 días (1 año = 525,600 velas)
-- 5m: 1095 días (3 años = 315,360 velas)
-- 15m/1h/4h: 730 días (2 años)
+**Archivos modificados:**
+- `backend/main.py` - `get_best_oi_interval()`, `get_open_interest_data()`, metadata en respuesta
+- `frontend/src/components/indicators/OpenInterestIndicator.js` - metadata, `_getOICoverageMessage()`
 
-### Estado de la Implementación
+### Octubre 2026: Expansión a 5 Años + Gzip Cache + VP Fixed Range from Rectangle + Fix Delete Key
 
-**✅ COMPLETADO:**
-1. Backend `main.py`:
-   - `MAX_DAYS_BY_INTERVAL` actualizado (1m=365, 5m=1095)
-   - `BACKTESTING_CONFIG` con 5 timeframes
-   - Variable `days` corregida a `tf_days` en endpoint bulk-data
-   - Metadata usa `days_by_timeframe` en vez de `days`
-   - Open Interest deshabilitado para 1m y 5m (demasiados datos)
-
-2. Frontend:
-   - `TimeframeTabs.jsx`: 5 tabs (1m, 5m, 15m, 1h, 4h)
-   - `TimeController.js`: Subdivisiones para 1m y 5m
-   - `BacktestingApp.jsx`: Estados para 5 timeframes
-
-**❌ PROBLEMA ACTUAL:**
-- Error: "name 'days' is not defined" aparece después de 30+ min de carga
-- El error NO aparece en la consola del backend
-- El código fuente está correcto (verificado con scripts de prueba)
-- El servidor parece ejecutar código viejo a pesar de reinicios
-
-**🔧 DIAGNÓSTICO REALIZADO:**
-1. Script `test_days_bug.py` confirma que el código Python es correcto
-2. Script `check_days_error.py` no encuentra errores en main.py
-3. Endpoint `/api/backtesting/test-metadata` creado pero no se carga en el servidor
-4. Múltiples procesos zombie en puerto 9000 detectados
-5. **Solución pendiente:** Reiniciar PC para liberar puerto 9000
-
-### Próximos Pasos (después del reinicio)
-
-1. Verificar que puerto 9000 está libre: `netstat -ano | findstr :9000`
-2. Iniciar backend: `python -m uvicorn main:app --port 9000`
-3. Probar endpoint: `http://localhost:9000/api/backtesting/test-metadata`
-4. Si funciona, probar carga completa de datos
-5. Si el error persiste, revisar dónde exactamente aparece (navegador F12, terminal, UI)
-
-### Archivos de Diagnóstico Creados
-
-- `backend/limpiar_cache.bat` - Limpia caché de Python y backtesting
-- `backend/reiniciar_backend.bat` - Mata procesos y reinicia servidor
-- `backend/test_days_bug.py` - Prueba aislada del código de metadata
-- `backend/check_days_error.py` - Analiza main.py buscando usos de 'days'
+**Cambios completados** (ver secciones detalladas más abajo):
+1. Expansión de límites de backtesting de 2 años a 5 años para la mayoría de timeframes
+2. Compresión gzip del caché de backtesting (~90% reducción de tamaño)
+3. Carga incremental de velas (solo descarga velas nuevas si caché >1h)
+4. Auto-detección de caché incompleto (re-descarga si <80% de velas esperadas)
+5. VP Fixed Range desde rectángulos dibujados en el chart
+6. Fix: Delete key no borraba shapes seleccionados (referencia obsoleta)
+7. Fix: Chart flip al hacer click/drag durante playback
 
 ---
 
@@ -127,9 +100,10 @@ npm install && npm run dev
 - **Exportación**: Excel, CSV, PNG
 - **Persistencia de sesiones**
 - **Timeframes**: 1m, 5m, 15m, 1h, 4h (5 tabs independientes)
-  - 1m: 1 año de datos (525,600 velas)
-  - 5m: 3 años de datos (315,360 velas)
-  - 15m/1h/4h: 2 años de datos
+  - 1m: 2 años de datos (1,051,200 velas)
+  - 5m: 5 años de datos (525,600 velas)
+  - 15m/1h/4h: 5 años de datos
+- **VP Fixed Range desde rectángulos** dibujados en el chart
 
 ---
 
@@ -154,16 +128,16 @@ npm install && npm run dev
 
 ```python
 MAX_DAYS_BY_INTERVAL = {
-    "1": 365,    # 1 minuto: 1 año (525,600 velas) - BACKTESTING
+    "1": 730,    # 1 minuto: 2 años (1,051,200 velas) - BACKTESTING
     "3": 10,     # 3 minutos: máx 10 días
-    "5": 1095,   # 5 minutos: 3 años (315,360 velas) - BACKTESTING
-    "15": 730,   # 15 minutos: máx 2 años
-    "30": 730,   # 30 minutos: máx 2 años
-    "60": 730,   # 1 hora: máx 2 años
-    "120": 730,  # 2 horas: máx 2 años
-    "240": 730,  # 4 horas: máx 2 años
-    "D": 730,    # Diario: máx 730 días
-    "W": 730     # Semanal: máx 730 días
+    "5": 1825,   # 5 minutos: 5 años (525,600 velas) - BACKTESTING
+    "15": 1825,  # 15 minutos: 5 años (175,200 velas) - BACKTESTING
+    "30": 1825,  # 30 minutos: 5 años
+    "60": 1825,  # 1 hora: 5 años (43,800 velas)
+    "120": 1825, # 2 horas: 5 años
+    "240": 1825, # 4 horas: 5 años (10,950 velas)
+    "D": 1825,   # Diario: 5 años
+    "W": 1825    # Semanal: 5 años
 }
 ```
 
@@ -171,15 +145,20 @@ MAX_DAYS_BY_INTERVAL = {
 
 ```python
 BACKTESTING_CONFIG = {
-    "1m": { "interval": "1", "days": 365, "subdivisions": { "interval": "1", "count": 1 } },
-    "5m": { "interval": "5", "days": 1095, "subdivisions": { "interval": "1", "count": 5 } },
-    "15m": { "interval": "15", "days": 730, "subdivisions": { "interval": "5", "count": 3 } },
-    "1h": { "interval": "60", "days": 730, "subdivisions": { "interval": "15", "count": 4 } },
-    "4h": { "interval": "240", "days": 730, "subdivisions": { "interval": "60", "count": 4 } }
+    "1m": { "interval": "1", "days": 730, "subdivisions": { "interval": "1", "count": 1, "days": 730 } },
+    "5m": { "interval": "5", "days": 1825, "subdivisions": { "interval": "1", "count": 5, "days": 730 } },
+    "15m": { "interval": "15", "days": 1825, "subdivisions": { "interval": "5", "count": 3, "days": 1825 } },
+    "1h": { "interval": "60", "days": 1825, "subdivisions": { "interval": "15", "count": 4, "days": 1825 } },
+    "4h": { "interval": "240", "days": 1825, "subdivisions": { "interval": "60", "count": 4, "days": 1825 } }
 }
 ```
 
-**Nota:** Open Interest se omite para 1m y 5m (demasiados datos).
+**Notas:**
+- Open Interest usa resolucion real del timeframe (1m/5m→5min OI, 15m→15min OI, 1h→1h OI, 4h→4h OI). No hay forward-fill.
+- Cobertura historica OI: 5min ~416 dias, 15min ~1249 dias, 1h/4h ~2268 dias (limites de Bybit)
+- MAX_OI_REQUESTS = 600 (hasta 120,000 puntos por descarga)
+- Subdivisiones tienen su propio campo `days` independiente del timeframe principal
+- La fecha de inicio por defecto varia por timeframe (1m=30d atras, 5m=90d, 15m=6mo, 1h=1yr, 4h=2yr)
 
 ---
 
@@ -994,7 +973,7 @@ DTB_PATTERNS_CACHE = {}   # Patrones divididos por chunks trimestrales
 | Aspecto | Backtester | Watchlist |
 |---------|-----------|----------|
 | **Modo** | Histórico (reproducción) | Tiempo real (WebSocket) |
-| **Timeframes** | 3 fijos (15m, 1h, 4h) | Múltiples (1m-D) |
+| **Timeframes** | 5 fijos (1m, 5m, 15m, 1h, 4h) | Múltiples (1m-D) |
 | **Datos** | Bybit REST API | Bybit WebSocket |
 | **Órdenes** | Simuladas | No ejecuta |
 | **TimeController** | SÍ | NO |
@@ -1314,3 +1293,172 @@ drawChart(candlesRef.current, lastPriceRef.current, null, null);
 ```
 
 `centerOnTimestamp` y `renderOverlays` siguen usando `allCandlesRef` correctamente (son casos diferentes).
+
+---
+
+# EXPANSIÓN A 5 AÑOS DE DATOS (Octubre 2026)
+
+## Problema
+
+Los timeframes 5m, 15m, 1h y 4h estaban limitados a 2 años (730 días), lo cual impedía hacer backtesting en fechas anteriores a 2024. Además, el caché de backtesting usaba JSON sin comprimir, ocupando mucho espacio en disco.
+
+## Cambios Implementados
+
+### 1. Expansión de MAX_DAYS_BY_INTERVAL
+
+| Timeframe | Antes | Después | Velas máx |
+|-----------|-------|---------|-----------|
+| 1m | 365 (1 año) | 730 (2 años) | 1,051,200 |
+| 5m | 1095 (3 años) | 1825 (5 años) | 525,600 |
+| 15m | 730 (2 años) | 1825 (5 años) | 175,200 |
+| 1h | 730 (2 años) | 1825 (5 años) | 43,800 |
+| 4h | 730 (2 años) | 1825 (5 años) | 10,950 |
+
+### 2. Caché con Compresión Gzip
+
+**Archivo:** `backend/main.py`
+
+- Los archivos de caché de backtesting ahora se guardan como `.json.gz` (~90% reducción de tamaño)
+- Migración automática: al iniciar, archivos `.json` existentes se comprimen a `.json.gz` y se elimina el original
+- Lectura/escritura transparente con `gzip.open()`
+
+### 3. Carga Incremental de Velas
+
+Cuando el caché existe pero tiene más de 1 hora de antigüedad:
+1. Lee velas existentes del caché
+2. Identifica el timestamp de la última vela
+3. Descarga solo velas nuevas desde ese timestamp
+4. Mergea con deduplicación por timestamp
+5. Guarda el caché actualizado
+
+Esto evita re-descargar 500,000+ velas cuando solo faltan unas pocas recientes.
+
+### 4. Auto-detección de Caché Incompleto
+
+Si el caché tiene **menos del 80%** de las velas esperadas para los días configurados, se descarta y se hace una descarga completa. Esto resuelve el caso donde se expanden los días (ej: de 2 años a 5 años) y el caché viejo no cubre el rango completo.
+
+### 5. Fecha de Inicio Dinámica por Timeframe
+
+La fecha por defecto donde inicia el playback varía según el timeframe:
+
+| Timeframe | Inicio por defecto |
+|-----------|--------------------|
+| 1m | 30 días atrás |
+| 5m | 90 días atrás |
+| 15m | 6 meses atrás |
+| 1h | 1 año atrás |
+| 4h | 2 años atrás |
+
+El buffer para la fecha de inicio es de 3 días para 1m/5m/15m y 7 días para 1h/4h.
+
+### Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `backend/main.py` | MAX_DAYS_BY_INTERVAL, BACKTESTING_CONFIG, gzip cache, incremental loading, auto-detect |
+| `frontend/src/components/backtesting/BacktestingApp.jsx` | Fecha de inicio dinámica por timeframe |
+| `frontend/src/components/backtesting/TimeframeTabs.jsx` | Labels actualizados (ej: "5m (5Y)") |
+
+---
+
+# VP FIXED RANGE DESDE RECTÁNGULOS (Octubre 2026)
+
+## Funcionalidad
+
+Permite crear Volume Profiles de rango fijo directamente desde rectángulos dibujados en el chart, sin necesidad de ingresar fechas manualmente.
+
+## Flujo de Uso
+
+1. El usuario dibuja un rectángulo en el chart (herramienta de dibujo)
+2. Abre el modal "VP Fixed Ranges" → click en "+ Nuevo Rango"
+3. En la sección "Desde rectangulo del chart", ve la lista de rectángulos disponibles
+4. Click en "Usar" junto al rectángulo deseado
+5. Se crea el VP Fixed Range usando el rango temporal del rectángulo
+6. El rectángulo puede borrarse sin afectar al VP ya creado
+
+## Implementación
+
+### FixedRangeProfilesManager.jsx
+
+- **Props nuevas**: `chartRectangles` (array de rectángulos del chart), `onStartDrawRectangle` (callback)
+- **Deduplicación**: Sistema `existingRanges` (Set) previene crear múltiples VP del mismo rectángulo via `sourceRectId`
+- **UI**: Sección "Desde rectangulo del chart" con lista de rectángulos, botón "+ Dibujar", botón "Seleccionar"
+- Cada rectángulo muestra rango de precios, fechas, y badge si ya tiene VP creado
+
+### MiniChart.jsx
+
+- **Estado**: `chartRectangles` - array de shapes tipo rectangle del DrawingManager
+- **Función** `updateChartRectangles()`: Filtra shapes del DrawingManager por `type === 'rectangle'`
+- **Handler** `handleCreateFixedRangeProfile()`: Pasa `sourceRectId` al IndicatorManager
+- **Handler** `handleStartDrawRectangle()`: Activa herramienta de rectángulo y cierra modal
+- Se llama `updateChartRectangles()` después de cargar/guardar dibujos
+
+### Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `FixedRangeProfilesManager.jsx` | UI para seleccionar rectángulos, deduplicación |
+| `MiniChart.jsx` | Estado chartRectangles, handlers, integración |
+
+---
+
+# FIX: DELETE KEY NO BORRABA SHAPES (Octubre 2026)
+
+## Problema
+
+El usuario podía seleccionar shapes (rectángulos, líneas, etc.) con el mouse, pero al presionar Delete, el shape no se borraba. La única opción era usar "Limpiar todo" que borraba todos los dibujos.
+
+## Causa Raíz
+
+El polling de dibujos (cada 30s) llama `loadShapes()` que reemplaza el array `this.shapes` con nuevas instancias deserializadas. Cuando el usuario seleccionaba un shape, `this.selectedShape` apuntaba a la instancia original. Después del polling, esa instancia ya no existía en el nuevo array.
+
+```
+1. Usuario selecciona shape → selectedShape = instanciaA
+2. Polling (30s) → loadShapes() → shapes = [instanciaB, instanciaC, ...] (nuevas instancias)
+3. Usuario presiona Delete → indexOf(instanciaA) en [instanciaB, instanciaC] → retorna -1
+4. Deletion falla silenciosamente
+```
+
+## Fix (DrawingToolManager.js)
+
+### 1. `deleteSelected()` - Búsqueda por ID como fallback
+
+```javascript
+deleteSelected() {
+  if (this.selectedShape) {
+    let index = this.shapes.indexOf(this.selectedShape);
+    // Fallback: buscar por ID si la referencia es obsoleta
+    if (index === -1 && this.selectedShape.id) {
+      index = this.shapes.findIndex(s => s.id === this.selectedShape.id);
+    }
+    if (index !== -1) {
+      this.shapes.splice(index, 1);
+      this.selectedShape = null;
+      this.saveToHistory();
+    }
+  }
+}
+```
+
+### 2. `loadShapes()` - Re-mapear selectedShape
+
+```javascript
+loadShapes(shapesData) {
+  const prevSelectedId = this.selectedShape?.id || null;
+  this.shapes = shapesData.map(data => this.deserializeShape(data)).filter(s => s !== null);
+  // Re-mapear selectedShape a nueva instancia
+  if (prevSelectedId) {
+    this.selectedShape = this.shapes.find(s => s.id === prevSelectedId) || null;
+  }
+  this.history = [this.shapes.map(s => s.serialize())];
+  this.historyIndex = 0;
+}
+```
+
+### 3. `restoreFromHistory()` - Preservar selección en undo/redo
+
+Mismo patrón: guarda `prevSelectedId` antes de reemplazar shapes y re-mapea después.
+
+### Archivo Modificado
+
+`frontend/src/components/drawing/DrawingToolManager.js` - métodos `deleteSelected`, `loadShapes`, `restoreFromHistory`

@@ -742,7 +742,7 @@ async def get_open_interest(
 
         async with httpx.AsyncClient(timeout=30) as client:
             request_count = 0
-            max_requests = 10
+            max_requests = 600  # 600 × 200 = 120,000 puntos max → 416 días en 5min, 1249 días en 15min, 6+ años en 1h+
 
             # Hacer múltiples requests hasta obtener todos los datos necesarios
             while len(all_oi_data) < total_points_needed and request_count < max_requests:
@@ -883,6 +883,12 @@ async def get_open_interest(
             else:
                 print(f"[OI DEBUG FINAL] {symbol} WARNING: processed_data is EMPTY")
 
+            # Calcular metadata de cobertura OI
+            oi_first_timestamp = processed_data[0]["timestamp"] if processed_data else None
+            oi_last_timestamp = processed_data[-1]["timestamp"] if processed_data else None
+            oi_first_date = processed_data[0].get("datetime_colombia", "") if processed_data else ""
+            oi_last_date = processed_data[-1].get("datetime_colombia", "") if processed_data else ""
+
             return {
                 "symbol": symbol,
                 "interval": interval_final,
@@ -895,7 +901,12 @@ async def get_open_interest(
                 "days_requested": days,
                 "days_fetched": days_to_fetch,
                 "max_days_allowed": max_days_allowed,
-                "api_requests_made": request_count
+                "api_requests_made": request_count,
+                "oi_first_timestamp": oi_first_timestamp,
+                "oi_last_timestamp": oi_last_timestamp,
+                "oi_first_date": oi_first_date,
+                "oi_last_date": oi_last_date,
+                "oi_interval": oi_interval
             }
 
     except Exception as e:
@@ -1761,47 +1772,83 @@ async def test_backtesting_metadata():
         }
 
 
+# Selección de intervalo OI para backtesting basada en resolución REAL del timeframe
+# Bybit OI intervals: 5min, 15min, 30min, 1h, 4h, 1d
+# Con 600 requests × 200 puntos = 120,000 puntos máximo por descarga
+# Retención empírica Bybit OI (BTCUSDT, Oct 2026):
+#   5min: ~416 días (600 req), 15min: ~1249 días (600 req),
+#   1h: ~2268 días/6.2 años (271 req, dato más antiguo Jul 2020),
+#   4h/1d: ~2253 días/6.2 años (dato más antiguo Ago 2020)
+def get_best_oi_interval(candle_interval: str) -> str:
+    """
+    Mapea el intervalo de velas al intervalo OI de Bybit correspondiente.
+    Descarga OI a la MISMA resolución del timeframe (sin forward-fill).
+    Para 1m y 3m usa 5min (el mínimo de Bybit).
+    """
+    # Mapeo directo: intervalo de vela → intervalo OI más cercano
+    CANDLE_TO_OI = {
+        "1": "5",       # 1m → 5min OI (mínimo disponible)
+        "3": "5",       # 3m → 5min OI (mínimo disponible)
+        "5": "5",       # 5m → 5min OI (match exacto)
+        "15": "15",     # 15m → 15min OI (match exacto)
+        "30": "30",     # 30m → 30min OI (match exacto)
+        "60": "60",     # 1h → 1h OI (match exacto)
+        "120": "60",    # 2h → 1h OI (Bybit no tiene 2h)
+        "240": "240",   # 4h → 4h OI (match exacto)
+        "D": "D",       # 1d → 1d OI (match exacto)
+        "W": "D",       # 1w → 1d OI (Bybit no tiene semanal)
+    }
+    result = CANDLE_TO_OI.get(candle_interval, "60")
+    print(f"[OI INTERVAL] Velas {candle_interval} → OI intervalo {result} (resolución real)")
+    return result
+
+
 # Configuración de timeframes y subdivisiones para backtesting
 # NOTA: 1m y 5m tienen configuración especial con menos días pero más velas
 BACKTESTING_CONFIG = {
     "1m": {
         "interval": "1",
-        "days": 730,   # 2 años = 1,051,200 velas
+        "days": 730,   # 2 años = 1,051,200 velas principales
         "subdivisions": {
             "interval": "1",  # Sin subdivisiones (avanza vela completa)
-            "count": 1
+            "count": 1,
+            "days": 730       # Mismos días (son la misma resolución)
         }
     },
     "5m": {
         "interval": "5",
-        "days": 1825,  # 5 años = 525,600 velas
+        "days": 1825,  # 5 años = 525,600 velas principales
         "subdivisions": {
             "interval": "1",
-            "count": 5  # 5 velas de 1 minuto forman 1 vela de 5 minutos
+            "count": 5,       # 5 velas de 1 minuto forman 1 vela de 5 minutos
+            "days": 730       # Subdivisiones solo 2 años (1m × 2yr = 1M velas)
         }
     },
     "15m": {
         "interval": "15",
-        "days": 1825,  # 5 años = 175,200 velas
+        "days": 1825,  # 5 años = 175,200 velas principales
         "subdivisions": {
             "interval": "5",
-            "count": 3  # 3 velas de 5 minutos forman 1 vela de 15 minutos
+            "count": 3,       # 3 velas de 5 minutos forman 1 vela de 15 minutos
+            "days": 1825      # 5m × 5yr = 525K velas (manejable)
         }
     },
     "1h": {
         "interval": "60",
-        "days": 1825,  # 5 años = 43,800 velas
+        "days": 1825,  # 5 años = 43,800 velas principales
         "subdivisions": {
             "interval": "15",
-            "count": 4  # 4 velas de 15 minutos forman 1 vela de 1 hora
+            "count": 4,       # 4 velas de 15 minutos forman 1 vela de 1 hora
+            "days": 1825      # 15m × 5yr = 175K velas (manejable)
         }
     },
     "4h": {
         "interval": "240",
-        "days": 1825,  # 5 años = 10,950 velas
+        "days": 1825,  # 5 años = 10,950 velas principales
         "subdivisions": {
             "interval": "60",
-            "count": 4  # 4 velas de 1 hora forman 1 vela de 4 horas
+            "count": 4,       # 4 velas de 1 hora forman 1 vela de 4 horas
+            "days": 1825      # 1h × 5yr = 43K velas (manejable)
         }
     }
 }
@@ -2034,12 +2081,13 @@ def merge_candles(existing: list, new_candles: list) -> list:
 
 @app.get("/api/backtesting/bulk-data/{symbol}")
 @limiter.limit("10/minute")
-async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh: bool = False):
+async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh: bool = False, timeframe: str = None):
     """
     Descarga y cachea hasta 5 años de datos para backtesting.
     Soporta carga incremental: si el cache existe, solo descarga velas nuevas.
 
     - force_refresh=True: re-descarga todo desde cero
+    - timeframe: si se especifica (ej: "15m"), solo descarga ese timeframe
     - Sin force_refresh: usa cache + carga incremental si faltan velas recientes
 
     Retorna:
@@ -2080,9 +2128,10 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 age_hours = (now_ms - cached_at) / (1000 * 60 * 60)
 
                 # Verificar si el cache tiene menos datos de lo configurado
-                # (ej: cache creado con límite de 2 años, ahora configurado a 5 años)
+                # Solo verificar el timeframe solicitado (o todos si no se especificó)
                 needs_expansion = False
-                for tf_name, config in BACKTESTING_CONFIG.items():
+                configs_to_check = {timeframe: BACKTESTING_CONFIG[timeframe]} if timeframe and timeframe in BACKTESTING_CONFIG else BACKTESTING_CONFIG
+                for tf_name, config in configs_to_check.items():
                     tf_data = cached_data.get("timeframes", {}).get(tf_name, {})
                     main_candles = tf_data.get("main", [])
                     if main_candles:
@@ -2095,15 +2144,25 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                             needs_expansion = True
                             break
 
-                if needs_expansion:
-                    print(f"[BACKTESTING] Cache insuficiente para los límites actuales. Re-descargando datos completos...")
-                    # Caer al flujo de descarga completa (no retornar cache)
-                    cached_data = None
+                # Si se pidió un timeframe específico que NO existe en el cache, descargar
+                if timeframe and timeframe not in cached_data.get("timeframes", {}):
+                    print(f"[BACKTESTING] Timeframe {timeframe} no encontrado en cache, descargando...")
+                    # No descartar cached_data para preservar otros timeframes
+                elif needs_expansion:
+                    if timeframe:
+                        # Solo invalidar el timeframe específico, preservar los demás
+                        print(f"[BACKTESTING] Cache insuficiente para {timeframe}. Re-descargando solo ese timeframe...")
+                        # No hacer cached_data = None, así preservamos los otros timeframes
+                    else:
+                        print(f"[BACKTESTING] Cache insuficiente para los límites actuales. Re-descargando todo...")
+                        cached_data = None
                 elif age_hours > 1.0:
                     # Carga incremental: solo descargar velas nuevas
-                    print(f"[BACKTESTING] Cache de {age_hours:.1f}h - actualizando incrementalmente...")
+                    # Si se pidió un timeframe específico, solo actualizar ese
+                    tfs_to_update = {timeframe: cached_data.get("timeframes", {}).get(timeframe, {})} if (timeframe and timeframe in cached_data.get("timeframes", {})) else cached_data.get("timeframes", {})
+                    print(f"[BACKTESTING] Cache de {age_hours:.1f}h - actualizando incrementalmente ({len(tfs_to_update)} timeframes)...")
                     updated = False
-                    for tf_name, tf_data in cached_data.get("timeframes", {}).items():
+                    for tf_name, tf_data in tfs_to_update.items():
                         config = BACKTESTING_CONFIG.get(tf_name)
                         if not config:
                             continue
@@ -2122,6 +2181,44 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                             if new_subs:
                                 tf_data["subdivisions"] = merge_candles(sub_candles, new_subs)
                                 print(f"  [{tf_name}] subs: +{len(new_subs)} velas (total: {len(tf_data['subdivisions'])})")
+                                updated = True
+
+                        # OI: descargar si falta, está vacío, o tiene cobertura insuficiente
+                        oi_data = tf_data.get("open_interest", [])
+                        oi_needs_download = False
+                        if not oi_data and main_candles:
+                            oi_needs_download = True
+                            print(f"  [{tf_name}] OI: falta en cache, descargando...")
+                        elif oi_data and main_candles:
+                            # Verificar cobertura: OI debe cubrir al menos 50% del rango de velas
+                            candle_min_ts = min(c["timestamp"] for c in main_candles)
+                            candle_max_ts = max(c["timestamp"] for c in main_candles)
+                            candle_range = candle_max_ts - candle_min_ts
+                            oi_min_ts = min(p["timestamp"] for p in oi_data)
+                            oi_max_ts = max(p["timestamp"] for p in oi_data)
+                            oi_range = oi_max_ts - oi_min_ts
+                            coverage_pct = (oi_range / candle_range * 100) if candle_range > 0 else 0
+                            if coverage_pct < 50:
+                                oi_needs_download = True
+                                print(f"  [{tf_name}] OI: cobertura insuficiente ({coverage_pct:.1f}% del rango de velas). Re-descargando...")
+
+                        if oi_needs_download and main_candles:
+                            min_ts = min(c["timestamp"] for c in main_candles)
+                            max_ts = max(c["timestamp"] for c in main_candles)
+                            tf_days = config.get("days", 730)
+                            main_interval = config.get("interval", "60")
+                            oi_interval_str = get_best_oi_interval(main_interval)
+                            oi_response = await get_open_interest(
+                                symbol,
+                                oi_interval_str,
+                                tf_days,
+                                start_timestamp_ms=min_ts,
+                                end_timestamp_ms=max_ts
+                            )
+                            new_oi = oi_response.get("data", []) if oi_response.get("success") else []
+                            if new_oi:
+                                tf_data["open_interest"] = new_oi
+                                print(f"  [{tf_name}] OI: {len(new_oi)} puntos descargados (intervalo: {oi_interval_str})")
                                 updated = True
 
                     if updated:
@@ -2144,12 +2241,21 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                         **cached_data
                     }
 
-        print(f"[BACKTESTING] Descargando datos completos para {symbol}...")
+        # Determinar qué timeframes descargar
+        if timeframe and timeframe in BACKTESTING_CONFIG:
+            tf_to_download = {timeframe: BACKTESTING_CONFIG[timeframe]}
+            print(f"[BACKTESTING] Descargando solo {timeframe} para {symbol}...")
+        else:
+            tf_to_download = BACKTESTING_CONFIG
+            print(f"[BACKTESTING] Descargando TODOS los timeframes para {symbol}...")
 
+        # Si hay cache parcial (otros timeframes ya descargados), preservarlos
         timeframes_data = {}
+        if cached_data and cached_data.get("timeframes"):
+            timeframes_data = cached_data["timeframes"]
 
-        # Descargar datos para cada timeframe
-        for tf_name, config in BACKTESTING_CONFIG.items():
+        # Descargar datos para cada timeframe solicitado
+        for tf_name, config in tf_to_download.items():
             tf_days = config.get("days", 730)
             print(f"\n[BACKTESTING] ===== Procesando {tf_name} ({tf_days} días) =====")
 
@@ -2161,9 +2267,10 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 print(f"[ERROR] No se pudieron obtener datos para {tf_name}")
                 continue
 
-            # Descargar subdivisiones
+            # Descargar subdivisiones (pueden tener menos días que las principales)
             subdivision_interval = config["subdivisions"]["interval"]
-            subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, tf_days)
+            subdivision_days = config["subdivisions"].get("days", tf_days)
+            subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, subdivision_days)
 
             if not subdivision_candles:
                 print(f"[ERROR] No se pudieron obtener subdivisiones para {tf_name}")
@@ -2172,22 +2279,23 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
             min_candle_ts = min(c["timestamp"] for c in main_candles)
             max_candle_ts = max(c["timestamp"] for c in main_candles)
 
-            # Para 1m y 5m, saltar Open Interest (demasiados datos)
+            # Open Interest: descargar OI a la MISMA resolución del timeframe de velas.
+            # Con 600 requests × 200 puntos = 120K puntos max, suficiente para años de datos.
             oi_data = []
-            if tf_name not in ["1m", "5m"]:
-                print(f"\n[BACKTESTING] Obteniendo Open Interest para {tf_name}...")
-                print(f"[BACKTESTING] Rango de velas: {datetime.fromtimestamp(min_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')} -> {datetime.fromtimestamp(max_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}")
+            print(f"\n[BACKTESTING] Obteniendo Open Interest para {tf_name}...")
+            print(f"[BACKTESTING] Rango de velas: {datetime.fromtimestamp(min_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')} -> {datetime.fromtimestamp(max_candle_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}")
 
-                oi_response = await get_open_interest(
-                    symbol,
-                    str(main_interval),
-                    tf_days,
-                    start_timestamp_ms=min_candle_ts,
-                    end_timestamp_ms=max_candle_ts
-                )
-                oi_data = oi_response.get("data", []) if oi_response.get("success") else []
-            else:
-                print(f"\n[BACKTESTING] Saltando Open Interest para {tf_name} (demasiados datos)")
+            oi_interval_str = get_best_oi_interval(main_interval)
+            print(f"[BACKTESTING] OI resolución real: velas {main_interval} → OI intervalo {oi_interval_str}")
+
+            oi_response = await get_open_interest(
+                symbol,
+                oi_interval_str,
+                tf_days,
+                start_timestamp_ms=min_candle_ts,
+                end_timestamp_ms=max_candle_ts
+            )
+            oi_data = oi_response.get("data", []) if oi_response.get("success") else []
 
             timeframes_data[tf_name] = {
                 "main": main_candles,

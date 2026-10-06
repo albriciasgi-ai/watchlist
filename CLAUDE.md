@@ -105,14 +105,19 @@ npm install && npm run dev
 ## Funcionalidades
 
 - **29 pares de criptomonedas** soportados
+- **5 timeframes** independientes: 1m, 5m, 15m, 1h, 4h
+  - 1m/5m: 2 anos de datos (~1,051,200 / ~210,240 velas)
+  - 15m/1h/4h: 5 anos de datos (~175,200 / ~43,800 / ~10,950 velas)
 - **10 indicadores tecnicos** simultaneos
 - **Deteccion automatica** de patrones (DTB, Rejection)
 - **Backtesting realista** con ordenes market/limit/stop
 - **TimeController** con subdivisiones intravela (1x, 2x, 5x, 10x)
+- **VP Fixed Range desde rectangulos** del chart
 - **Metricas**: win rate, drawdown, Sharpe ratio
-- **Zoom dinamico v3.0** similar a TradingView
+- **Zoom dinamico v4.0**: compresion horizontal hasta ~14,000 velas visibles (0.1px min por vela)
 - **Exportacion**: Excel, CSV, PNG
 - **Persistencia de sesiones**
+- **Cache gzip** con compresion ~90% y carga incremental
 
 ## Endpoints Backend
 
@@ -1688,6 +1693,71 @@ class VWAPService:
 
 ---
 
+# OPEN INTEREST INDICATOR (Backtester - Octubre 2026)
+
+Sistema de Open Interest integrado en el Backtester con resolución real (sin forward-fill/interpolación).
+
+## Principio Fundamental
+
+**NO se interpolan datos de OI.** Cada timeframe descarga OI a la resolución más cercana disponible en Bybit:
+
+| Timeframe del chart | Intervalo OI usado | Razón |
+|---------------------|-------------------|-------|
+| 1m | 5min | Mínimo disponible en Bybit |
+| 5m | 5min | Match exacto |
+| 15m | 15min | Match exacto |
+| 1h | 1h | Match exacto |
+| 4h | 4h | Match exacto |
+
+## Cobertura Histórica (Límites de Bybit)
+
+| Intervalo OI | Datos disponibles | Días aprox |
+|--------------|-------------------|------------|
+| 5min | ~416 días | ~1.1 años |
+| 15min | ~1,249 días | ~3.4 años |
+| 1h | ~2,268 días | ~6.2 años |
+| 4h | ~2,253 días | ~6.2 años |
+
+**MAX_OI_REQUESTS = 600** → Hasta 120,000 puntos por descarga.
+
+## Metadata de Cobertura
+
+El backend retorna metadata con cada respuesta de OI:
+
+```python
+# En la respuesta del endpoint
+{
+    "oi_data": [...],
+    "oi_first_timestamp": 1640000000000,
+    "oi_last_timestamp": 1696000000000,
+    "oi_first_date": "2021-12-20 15:00",
+    "oi_last_date": "2023-09-29 18:00",
+    "oi_interval": "5min"
+}
+```
+
+El frontend usa esta metadata para mostrar mensajes informativos cuando el usuario navega a fechas sin datos de OI:
+- `"Datos de OI disponibles desde: 2021-12-20 (navega hacia adelante para ver OI)"`
+
+## Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `1.Altagracia_Crypto_Backtester/Backtester/backend/main.py` | `get_best_oi_interval()` con mapeo real, MAX_OI_REQUESTS=600, metadata en respuesta |
+| `1.Altagracia_Crypto_Backtester/Backtester/frontend/src/components/indicators/OpenInterestIndicator.js` | Campos metadata, `_getOICoverageMessage()`, 3 modos render actualizados |
+
+## Modos de Visualización
+
+| Modo | Descripción |
+|------|-------------|
+| `histogram` | Barras de OI absoluto |
+| `cumulative` | OI acumulado (delta) |
+| `flow` | Flujo de OI (cambio por vela) |
+
+Los 3 modos usan `_getOICoverageMessage()` para mostrar mensajes informativos cuando no hay datos en el periodo visible.
+
+---
+
 # VELAS DUPLICADAS Y GAPS (Febrero 2026)
 
 ## Problema
@@ -2392,6 +2462,56 @@ if end_timestamp:
 - El detector actual es algorítmico, puede no capturar contexto de mercado
 - Considerar usar método `pivot_cluster` con parámetros más estrictos
 - El refinamiento del detector es un trabajo en progreso
+
+---
+
+# ZOOM SYSTEM - BACKTESTER (Octubre 2026)
+
+Sistema de zoom horizontal en el Backtester que permite comprimir velas hasta mostrar ~14,000 velas en pantalla.
+
+## Arquitectura
+
+El zoom usa `viewStateRef.current.zoom` como multiplicador sobre un ancho base de 8px:
+
+```javascript
+// Formula central aplicada en 4 ubicaciones criticas
+const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * zoom));
+const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
+```
+
+## Limites
+
+| Parametro | Valor | Descripcion |
+|-----------|-------|-------------|
+| Min zoom | `0.01` | Zoom out extremo |
+| Max zoom | `5` | Zoom in extremo |
+| Min ancho vela | `0.1px` | Compresion maxima (~14,000 velas en 15") |
+| Max ancho vela | `15px` | Expansion maxima |
+
+## Ubicaciones Criticas (MiniChart.jsx del Backtester)
+
+La formula `effectiveBarWidth` debe ser consistente en estas 4 ubicaciones:
+
+1. **drawChart** (~linea 651): Calculo principal de velas visibles
+2. **Wheel handler** (~linea 1600): Ajuste de offset post-zoom
+3. **Pan handler** (~linea 1357): Calculo de desplazamiento durante paneo
+4. **Auto-offset** (~linea 1839): Calculo de margen derecho automatico
+
+## Diferencias con App 8 (AnalizadorDesktop)
+
+| Aspecto | Backtester (App 1) | AnalizadorDesktop (App 8) |
+|---------|-------------------|---------------------------|
+| Min zoom | `0.01` | `0.02` |
+| Min ancho vela | `0.1px` | `0.5px` |
+| Max velas (~1422px) | ~14,220 | ~2,844 |
+| Calculo min zoom | Fijo | Fijo |
+
+El Backtester permite mayor compresion porque necesita mostrar hasta 5 anos de datos historicos en pantalla.
+
+## Historial
+
+- **v3.0**: Zoom dinamico con minimo calculado por total de velas (limitaba a ~2800 velas)
+- **v4.0 (Octubre 2026)**: Limites fijos, effectiveBarWidth clamp, ~14,000 velas visibles
 
 ---
 
@@ -5640,3 +5760,208 @@ drawChart(candlesRef.current, lastPriceRef.current, null, null);
 ## Leccion Aprendida
 
 **Consistencia de fuentes de datos en formulas de offset**: Cuando una formula usa `array.length` para calcular indices, TODAS las partes del flujo (calculo de offset, calculo de maxOffset, y el array pasado a la funcion de render) deben usar el MISMO array. Mezclar arrays de diferente tamano causa saltos en los indices calculados.
+
+---
+
+# EXPANSION A 5 ANOS DE DATOS - BACKTESTER (Octubre 2026)
+
+El Backtester fue expandido de 2-3 anos a 5 anos de datos historicos para timeframes grandes, con cache gzip y carga incremental.
+
+## Limites por Timeframe
+
+| Timeframe | Antes | Ahora | Velas aproximadas |
+|-----------|-------|-------|-------------------|
+| 1m | 365 dias (1 ano) | 730 dias (2 anos) | ~1,051,200 |
+| 5m | 1095 dias (3 anos) | 730 dias (2 anos) | ~210,240 |
+| 15m | 730 dias (2 anos) | 1825 dias (5 anos) | ~175,200 |
+| 1h | 730 dias (2 anos) | 1825 dias (5 anos) | ~43,800 |
+| 4h | 730 dias (2 anos) | 1825 dias (5 anos) | ~10,950 |
+
+## Configuracion Actualizada
+
+```python
+MAX_DAYS_BY_INTERVAL = {
+    "1": 730, "3": 10, "5": 730, "15": 1825, "30": 1825,
+    "60": 1825, "120": 1825, "240": 1825, "D": 1825, "W": 1825
+}
+
+BACKTESTING_CONFIG = {
+    "1m": {"interval": "1", "days": 730, "subdivisions": {"interval": "1", "count": 1, "days": 730}},
+    "5m": {"interval": "5", "days": 730, "subdivisions": {"interval": "1", "count": 5, "days": 730}},
+    "15m": {"interval": "15", "days": 1825, "subdivisions": {"interval": "5", "count": 3, "days": 1825}},
+    "1h": {"interval": "60", "days": 1825, "subdivisions": {"interval": "15", "count": 4, "days": 1825}},
+    "4h": {"interval": "240", "days": 1825, "subdivisions": {"interval": "60", "count": 4, "days": 1825}}
+}
+```
+
+## Cache Gzip
+
+Los archivos de cache del backtester se comprimen con gzip (~90% reduccion de tamano):
+
+```python
+# Guardar cache comprimido
+cache_file = BACKTESTING_CACHE_DIR / f"{symbol}_{interval}.json.gz"
+with gzip.open(cache_file, 'wt', encoding='utf-8', compresslevel=6) as f:
+    json.dump(candles, f)
+
+# Leer cache comprimido
+with gzip.open(cache_file, 'rt', encoding='utf-8') as f:
+    candles = json.load(f)
+```
+
+**Ejemplo de compresion:**
+- BTCUSDT 4h sin comprimir: ~15 MB
+- BTCUSDT 4h con gzip: ~1.5 MB
+
+## Carga Incremental
+
+Si el cache existe pero tiene menos dias de los configurados, solo descarga las velas faltantes:
+
+```python
+if cached_candles:
+    last_cached_ts = cached_candles[-1]['timestamp']
+    # Solo descarga desde last_cached_ts hasta ahora
+    new_candles = await fetch_from_bybit(symbol, interval, start=last_cached_ts)
+    all_candles = cached_candles + new_candles
+```
+
+## Auto-deteccion de Cache Incompleto
+
+Si el cache tiene menos dias de los configurados (ej: 730 dias cacheados pero 1825 configurados), detecta automaticamente que necesita re-descargar:
+
+```python
+configured_days = tf_config['days']  # 1825
+cached_days = (now - first_cached_ts) / (24 * 3600 * 1000)
+if cached_days < configured_days * 0.95:
+    # Re-descargar completo
+```
+
+## Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `Backtester/backend/main.py` | MAX_DAYS_BY_INTERVAL, BACKTESTING_CONFIG, cache gzip, carga incremental |
+| `Backtester/frontend/src/components/backtesting/BacktestingApp.jsx` | Nuevos limites, fecha inicio dinamica |
+| `Backtester/frontend/src/components/backtesting/TimeframeTabs.jsx` | 5 tabs con nuevos limites |
+
+---
+
+# VP FIXED RANGE DESDE RECTANGULOS - BACKTESTER (Octubre 2026)
+
+Permite crear Volume Profile Fixed Range directamente desde rectangulos dibujados en el chart del backtester.
+
+## Flujo de Uso
+
+1. Usuario dibuja un rectangulo en el chart (herramienta de dibujo)
+2. Abre el panel "VP Fixed Ranges"
+3. Click "Seleccionar" para ver rectangulos disponibles
+4. Click "Usar" en el rectangulo deseado
+5. Se crea un VP Fixed Range con el rango temporal del rectangulo
+6. El rectangulo puede borrarse sin afectar el VP creado
+
+## Implementacion
+
+En `FixedRangeProfilesManager.jsx`, los rectangulos del chart se reciben via prop `chartRectangles`:
+
+```javascript
+const handleCreateFromRect = (rect) => {
+    onCreateProfile(rect.timeStart, rect.timeEnd, false, rect.id);
+};
+```
+
+En `MiniChart.jsx`, se extraen los rectangulos del DrawingToolManager:
+
+```javascript
+const getChartRectangles = useCallback(() => {
+    const shapes = drawingManagerRef.current?.shapes || drawingsRef.current || [];
+    return shapes
+        .filter(s => s.type === 'rectangle')
+        .map(s => ({
+            id: s.id,
+            time1: s.startTime, time2: s.endTime,
+            price1: s.startPrice, price2: s.endPrice,
+            label: s.label || null
+        }));
+}, []);
+```
+
+## Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `Backtester/frontend/src/components/FixedRangeProfilesManager.jsx` | Seccion "Desde rectangulo del chart" con lista de rectangulos |
+| `Backtester/frontend/src/components/MiniChart.jsx` | Extrae rectangulos del DrawingToolManager y los pasa como prop |
+
+---
+
+# FIX: DELETE KEY NO BORRABA SHAPES - DRAWING SYSTEM (Octubre 2026)
+
+## Problema
+
+Al seleccionar un shape (rectangulo, linea, etc.) con el mouse y presionar Delete, el shape no se borraba. La unica opcion era "Limpiar todo" que eliminaba todos los dibujos del timeframe.
+
+## Causa Raiz
+
+**Referencias obsoletas despues de loadShapes()**: El polling de dibujos (cada 30s) llama a `loadShapes()` que reemplaza todo el array `this.shapes` con nuevas instancias deserializadas. Cuando `this.selectedShape` apunta a una instancia del array anterior, `this.shapes.indexOf(this.selectedShape)` retorna -1 porque las instancias son objetos diferentes (aunque representen el mismo shape).
+
+```
+Flujo del bug:
+1. Usuario selecciona rectangulo → selectedShape = instancia_A
+2. Polling 30s → loadShapes() → shapes = [instancia_B, instancia_C, ...]
+3. instancia_A ya no esta en el array (fue reemplazada por instancia_B)
+4. Delete → indexOf(instancia_A) → -1 → no borra nada
+```
+
+## Fixes Aplicados
+
+**Archivo:** `Backtester/frontend/src/components/drawing/DrawingToolManager.js`
+
+### 1. deleteSelected() - Fallback por ID
+
+```javascript
+deleteSelected() {
+    if (this.selectedShape) {
+        let index = this.shapes.indexOf(this.selectedShape);
+        // Fallback: buscar por ID si la referencia es obsoleta
+        if (index === -1 && this.selectedShape.id) {
+            index = this.shapes.findIndex(s => s.id === this.selectedShape.id);
+        }
+        if (index !== -1) {
+            this.shapes.splice(index, 1);
+            this.selectedShape = null;
+            this.saveToHistory();
+        }
+    }
+}
+```
+
+### 2. loadShapes() - Preservar seleccion
+
+```javascript
+loadShapes(shapesData) {
+    const prevSelectedId = this.selectedShape?.id || null;
+    this.shapes = shapesData.map(data => this.deserializeShape(data)).filter(shape => shape !== null);
+    if (prevSelectedId) {
+        this.selectedShape = this.shapes.find(s => s.id === prevSelectedId) || null;
+    }
+}
+```
+
+### 3. restoreFromHistory() - Preservar seleccion en undo/redo
+
+```javascript
+restoreFromHistory() {
+    const prevSelectedId = this.selectedShape?.id || null;
+    const state = this.history[this.historyIndex];
+    this.shapes = state.map(data => this.deserializeShape(data));
+    if (prevSelectedId) {
+        this.selectedShape = this.shapes.find(s => s.id === prevSelectedId) || null;
+    } else {
+        this.selectedShape = null;
+    }
+}
+```
+
+## Leccion Aprendida
+
+**Nunca comparar instancias de objetos despues de deserializacion**: Cuando un sistema serializa/deserializa objetos (como al guardar/cargar dibujos), las nuevas instancias son objetos completamente diferentes aunque tengan los mismos datos. Usar `indexOf()` con la referencia original falla. La solucion es siempre usar identificadores unicos (IDs) para buscar y comparar objetos que pueden ser deserializados.

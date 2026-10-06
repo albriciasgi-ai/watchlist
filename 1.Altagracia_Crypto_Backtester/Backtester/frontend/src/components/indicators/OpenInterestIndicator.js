@@ -26,6 +26,13 @@ class OpenInterestIndicator extends IndicatorBase {
     // Datos desde el backend
     this.dataMap = null; // Map de timestamp -> openInterest
     this.data = []; // Array de datos OI procesados
+
+    // Metadata de cobertura OI (fechas disponibles)
+    this.oiFirstTimestamp = null;
+    this.oiLastTimestamp = null;
+    this.oiFirstDate = "";
+    this.oiLastDate = "";
+    this.oiInterval = "";
   }
 
   /**
@@ -75,10 +82,21 @@ class OpenInterestIndicator extends IndicatorBase {
         });
 
         this.data = result.data;
+        this._sortedTimestamps = null; // Invalidar cache de timestamps ordenados
+
+        // Guardar metadata de cobertura OI
+        this.oiFirstTimestamp = result.oi_first_timestamp || null;
+        this.oiLastTimestamp = result.oi_last_timestamp || null;
+        this.oiFirstDate = result.oi_first_date || "";
+        this.oiLastDate = result.oi_last_date || "";
+        this.oiInterval = result.oi_interval || "";
 
         console.log(`%c[OI DEBUG] ${this.symbol} - DATA LOADED`, 'background: #4CAF50; color: white; font-weight: bold; padding: 4px 8px;', {
           dataMapSize: this.dataMap.size,
           dataLength: this.data.length,
+          oiFirstDate: this.oiFirstDate,
+          oiLastDate: this.oiLastDate,
+          oiInterval: this.oiInterval,
           sampleTimestamps: Array.from(this.dataMap.keys()).slice(0, 5).map(t => new Date(t).toISOString()),
           sampleValues: Array.from(this.dataMap.values()).slice(0, 5)
         });
@@ -114,6 +132,7 @@ class OpenInterestIndicator extends IndicatorBase {
         console.warn(`[${this.symbol}] ⚠️ No Open Interest data provided`);
         this.dataMap = null;
         this.data = [];
+        this._sortedTimestamps = null;
         return false;
       }
 
@@ -124,6 +143,15 @@ class OpenInterestIndicator extends IndicatorBase {
       });
 
       this.data = oiData;
+      this._sortedTimestamps = null; // Invalidar cache de timestamps ordenados
+      this._loggedMatch = false;
+      this._loggedNoMatch = false;
+
+      // Calcular metadata de cobertura desde los datos
+      this.oiFirstTimestamp = this.data[0].timestamp;
+      this.oiLastTimestamp = this.data[this.data.length - 1].timestamp;
+      this.oiFirstDate = this.data[0].datetime_colombia || new Date(this.oiFirstTimestamp).toLocaleDateString('es-CO');
+      this.oiLastDate = this.data[this.data.length - 1].datetime_colombia || new Date(this.oiLastTimestamp).toLocaleDateString('es-CO');
 
       console.log(`[${this.symbol}] ✅ Open Interest loaded from memory: ${this.data.length} points`);
       console.log(`[${this.symbol}] 📊 OI Data Range: ${new Date(this.data[0].timestamp).toISOString()} → ${new Date(this.data[this.data.length-1].timestamp).toISOString()}`);
@@ -132,8 +160,27 @@ class OpenInterestIndicator extends IndicatorBase {
       console.error(`[${this.symbol}] ❌ Error loading Open Interest from data:`, error);
       this.dataMap = null;
       this.data = [];
+      this._sortedTimestamps = null;
       return false;
     }
+  }
+
+  /**
+   * Genera el mensaje de cobertura OI para mostrar cuando no hay datos en el periodo visible.
+   * Muestra la fecha exacta desde la cual hay datos disponibles.
+   */
+  _getOICoverageMessage() {
+    if (this.oiFirstDate) {
+      // Formatear fecha legible: extraer solo la parte de fecha si viene con hora
+      const dateStr = this.oiFirstDate.split(' ')[0] || this.oiFirstDate;
+      return `Datos de OI disponibles desde: ${dateStr} (navega hacia adelante para ver OI)`;
+    }
+    if (this.oiFirstTimestamp) {
+      const d = new Date(this.oiFirstTimestamp);
+      const formatted = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      return `Datos de OI disponibles desde: ${formatted} (navega hacia adelante para ver OI)`;
+    }
+    return "Sin datos de OI para este periodo (Bybit no tiene datos tan antiguos)";
   }
 
   /**
@@ -154,58 +201,62 @@ class OpenInterestIndicator extends IndicatorBase {
   }
 
   /**
-   * 🎯 FIX: Busca el valor de OI más cercano para una vela (con tolerancia)
-   * Estrategia: Buscar el timestamp de OI más cercano (permite ±intervalo/2)
+   * Busca el valor de OI para una vela usando forward-fill.
+   * Estrategia: Usa el último valor de OI conocido antes o en el timestamp de la vela.
+   * Esto funciona correctamente cuando OI tiene resolución diferente a las velas
+   * (ej: OI diario con velas de 15m en backtesting de periodos largos).
    */
   findClosestOI(candleTimestamp) {
-    // Match exacto (raro pero posible)
+    // Match exacto
     if (this.dataMap.has(candleTimestamp)) {
       return this.dataMap.get(candleTimestamp);
     }
 
-    // 🎯 FIX: Buscar el timestamp MÁS CERCANO (no solo menor)
-    // Permitir tolerancia de +/- 15 minutos (900000 ms) para capturar desfases
-    const TOLERANCE_MS = 15 * 60 * 1000; // 15 minutos
+    // Forward-fill: buscar el OI más reciente que sea <= candleTimestamp
+    // Usa el array _sortedTimestamps para búsqueda eficiente
+    if (!this._sortedTimestamps) {
+      this._sortedTimestamps = Array.from(this.dataMap.keys()).sort((a, b) => a - b);
+    }
 
-    let closestValue = null;
-    let closestTimestamp = null;
-    let minDistance = Infinity;
+    // Búsqueda binaria del timestamp más cercano <= candleTimestamp
+    const arr = this._sortedTimestamps;
+    let lo = 0, hi = arr.length - 1;
+    let bestIdx = -1;
 
-    for (const [ts, value] of this.dataMap) {
-      const distance = Math.abs(ts - candleTimestamp);
-
-      // Si está dentro de tolerancia y es el más cercano
-      if (distance < minDistance && distance <= TOLERANCE_MS) {
-        minDistance = distance;
-        closestTimestamp = ts;
-        closestValue = value;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (arr[mid] <= candleTimestamp) {
+        bestIdx = mid;
+        lo = mid + 1;
+      } else {
+        hi = mid - 1;
       }
     }
 
-    // 🎯 DEBUG: Log detallado cuando no encuentra match
-    if (closestValue === null && !this._loggedNoMatch) {
-      const candleDate = new Date(candleTimestamp).toISOString();
-      const oiTimestamps = Array.from(this.dataMap.keys()).slice(0, 5).map(t => ({
-        ts: new Date(t).toISOString(),
-        diff: Math.abs(t - candleTimestamp) / 60000 + ' min'
-      }));
-      console.warn(`%c[OI MATCH FAILED] ${this.symbol}`, 'background: #F44336; color: white; font-weight: bold; padding: 4px 8px;', {
-        candleTimestamp: candleDate,
-        sampleOI: oiTimestamps,
-        tolerance: TOLERANCE_MS / 60000 + ' min'
-      });
-      this._loggedNoMatch = true;
-    } else if (closestValue !== null && minDistance > 0 && !this._loggedMatch) {
-      // Log cuando SÍ encuentra match para debugging
-      console.log(`%c[OI MATCH OK] ${this.symbol}`, 'background: #4CAF50; color: white; font-weight: bold; padding: 4px 8px;', {
-        candleTime: new Date(candleTimestamp).toISOString(),
-        oiTime: new Date(closestTimestamp).toISOString(),
-        distance: minDistance / 60000 + ' min'
-      });
-      this._loggedMatch = true;
+    if (bestIdx >= 0) {
+      const bestTs = arr[bestIdx];
+      const value = this.dataMap.get(bestTs);
+
+      // Log una sola vez para debug
+      if (!this._loggedMatch && bestTs !== candleTimestamp) {
+        console.log(`%c[OI MATCH] ${this.symbol}`, 'background: #4CAF50; color: white; padding: 2px 6px;',
+          `forward-fill: vela ${new Date(candleTimestamp).toISOString()} → OI de ${new Date(bestTs).toISOString()} (${((candleTimestamp - bestTs) / 3600000).toFixed(1)}h atrás)`
+        );
+        this._loggedMatch = true;
+      }
+
+      return value;
     }
 
-    return closestValue;
+    // No hay datos de OI antes de esta vela
+    if (!this._loggedNoMatch) {
+      console.warn(`%c[OI NO DATA] ${this.symbol}`, 'background: #F44336; color: white; padding: 2px 6px;',
+        `No hay OI antes de ${new Date(candleTimestamp).toISOString()}. Primer OI: ${arr.length > 0 ? new Date(arr[0]).toISOString() : 'N/A'}`
+      );
+      this._loggedNoMatch = true;
+    }
+
+    return null;
   }
 
   /**
@@ -214,33 +265,16 @@ class OpenInterestIndicator extends IndicatorBase {
    */
   calculateHistogramMode(candles) {
     if (!candles || candles.length === 0) {
-      console.warn(`[${this.symbol}] ⚠️ calculateHistogramMode: No hay velas`);
       return [];
     }
 
     if (!this.dataMap || this.dataMap.size === 0) {
-      console.error(`[${this.symbol}] ❌ calculateHistogramMode: dataMap está vacío o no existe`, {
-        hasDataMap: !!this.dataMap,
-        size: this.dataMap?.size || 0,
-        hasData: !!this.data,
-        dataLength: this.data?.length || 0
-      });
       return [];
     }
 
-    console.log(`[${this.symbol}] 📊 calculateHistogramMode START:`, {
-      candlesCount: candles.length,
-      firstCandleTime: new Date(candles[0].timestamp).toISOString(),
-      lastCandleTime: new Date(candles[candles.length - 1].timestamp).toISOString(),
-      oiDataCount: this.dataMap.size,
-      firstOITime: this.data[0] ? new Date(this.data[0].timestamp).toISOString() : 'N/A',
-      lastOITime: this.data[this.data.length - 1] ? new Date(this.data[this.data.length - 1].timestamp).toISOString() : 'N/A'
-    });
-
     const result = [];
     let lastOIValue = null;
-    let exactMatches = 0;
-    let nonZeroDeltas = 0;
+    let matchedCandles = 0;
 
     // Encontrar primer valor de OI
     for (const item of this.data) {
@@ -251,31 +285,39 @@ class OpenInterestIndicator extends IndicatorBase {
     }
 
     if (lastOIValue === null) {
-      console.error(`[${this.symbol}] ❌ No se encontró ningún valor de OI válido en los datos`);
       return [];
     }
+
+    // Determinar rango de OI disponible
+    if (!this._sortedTimestamps) {
+      this._sortedTimestamps = Array.from(this.dataMap.keys()).sort((a, b) => a - b);
+    }
+    const oiFirstTs = this._sortedTimestamps.length > 0 ? this._sortedTimestamps[0] : Infinity;
 
     for (let i = 0; i < candles.length; i++) {
       const candle = candles[i];
       const oiValue = this.findClosestOI(candle.timestamp);
 
-      if (oiValue !== null && oiValue !== undefined) exactMatches++;
+      // Contar velas que tienen datos reales de OI (no antes del primer punto OI)
+      if (oiValue !== null && oiValue !== undefined && candle.timestamp >= oiFirstTs) {
+        matchedCandles++;
+      }
 
       let currentOI = oiValue !== null && oiValue !== undefined ? oiValue : lastOIValue;
       const delta = i === 0 ? 0 : currentOI - lastOIValue;
 
-      if (delta !== 0) nonZeroDeltas++;
-
       result.push({
         timestamp: candle.timestamp,
         delta: delta,
-        oiValue: currentOI
+        oiValue: currentOI,
+        hasRealOI: candle.timestamp >= oiFirstTs && oiValue !== null && oiValue !== undefined
       });
 
       lastOIValue = currentOI;
     }
 
-    console.log(`[${this.symbol}] 📊 Histogram Mode: ${candles.length} candles, ${exactMatches} OI matches, ${nonZeroDeltas} non-zero deltas`);
+    // Marcar si hay cobertura real de OI en el rango visible
+    result._hasOICoverage = matchedCandles > 0;
 
     return result;
   }
@@ -289,6 +331,7 @@ class OpenInterestIndicator extends IndicatorBase {
     const result = [];
     let lastOIValue = null;
     let cumulativeDelta = 0;
+    let matchedCandles = 0;
 
     // Encontrar primer valor de OI
     for (const item of this.data) {
@@ -300,9 +343,19 @@ class OpenInterestIndicator extends IndicatorBase {
 
     if (lastOIValue === null) return [];
 
+    // Determinar rango de OI disponible
+    if (!this._sortedTimestamps) {
+      this._sortedTimestamps = Array.from(this.dataMap.keys()).sort((a, b) => a - b);
+    }
+    const oiFirstTs = this._sortedTimestamps.length > 0 ? this._sortedTimestamps[0] : Infinity;
+
     for (let i = 0; i < candles.length; i++) {
       const candle = candles[i];
       const oiValue = this.findClosestOI(candle.timestamp);
+
+      if (oiValue !== null && oiValue !== undefined && candle.timestamp >= oiFirstTs) {
+        matchedCandles++;
+      }
 
       let currentOI = oiValue !== null && oiValue !== undefined ? oiValue : lastOIValue;
       const delta = i === 0 ? 0 : currentOI - lastOIValue;
@@ -315,11 +368,14 @@ class OpenInterestIndicator extends IndicatorBase {
         openCumulative: previousCumulative,
         closeCumulative: cumulativeDelta,
         delta: delta,
-        oiValue: currentOI
+        oiValue: currentOI,
+        hasRealOI: candle.timestamp >= oiFirstTs && oiValue !== null && oiValue !== undefined
       });
 
       lastOIValue = currentOI;
     }
+
+    result._hasOICoverage = matchedCandles > 0;
 
     return result;
   }
@@ -332,6 +388,7 @@ class OpenInterestIndicator extends IndicatorBase {
 
     const oiValues = [];
     const timestamps = [];
+    let matchedCandles = 0;
 
     // Encontrar primer valor de OI
     let firstOIValue = null;
@@ -344,6 +401,12 @@ class OpenInterestIndicator extends IndicatorBase {
 
     if (firstOIValue === null) return [];
 
+    // Determinar rango de OI disponible
+    if (!this._sortedTimestamps) {
+      this._sortedTimestamps = Array.from(this.dataMap.keys()).sort((a, b) => a - b);
+    }
+    const oiFirstTs = this._sortedTimestamps.length > 0 ? this._sortedTimestamps[0] : Infinity;
+
     // Rellenar array de OI values
     let lastKnownOI = firstOIValue;
 
@@ -353,6 +416,9 @@ class OpenInterestIndicator extends IndicatorBase {
       if (oiValue !== undefined && oiValue !== null) {
         lastKnownOI = oiValue;
         oiValues.push(oiValue);
+        if (candle.timestamp >= oiFirstTs) {
+          matchedCandles++;
+        }
       } else {
         oiValues.push(lastKnownOI);
       }
@@ -383,6 +449,8 @@ class OpenInterestIndicator extends IndicatorBase {
         oiValue: oiValues[i]
       });
     }
+
+    result._hasOICoverage = matchedCandles > 0;
 
     return result;
   }
@@ -440,37 +508,13 @@ class OpenInterestIndicator extends IndicatorBase {
    * Renderiza el indicador según el modo actual
    */
   render(ctx, bounds, visibleCandles) {
-    // 🎯 DEBUG: Log completo del estado de render
-    console.log(`%c[OI RENDER] ${this.symbol}`, 'background: #9C27B0; color: white; font-weight: bold; padding: 4px 8px;', {
-      enabled: this.enabled,
-      hasDataMap: !!this.dataMap,
-      dataMapSize: this.dataMap?.size || 0,
-      dataLength: this.data?.length || 0,
-      visibleCandlesCount: visibleCandles?.length || 0,
-      mode: this.mode,
-      interval: this.interval
-    });
-
-    if (!this.enabled) {
-      console.warn(`%c[OI RENDER] ${this.symbol} - NOT ENABLED`, 'background: #FF5722; color: white; font-weight: bold; padding: 4px 8px;');
-      return;
-    }
-
-    if (!visibleCandles || visibleCandles.length === 0) {
-      console.warn(`%c[OI RENDER] ${this.symbol} - NO VISIBLE CANDLES`, 'background: #FF5722; color: white; font-weight: bold; padding: 4px 8px;');
-      return;
-    }
+    if (!this.enabled) return;
+    if (!visibleCandles || visibleCandles.length === 0) return;
 
     if (!this.dataMap || this.data.length === 0) {
-      console.warn(`%c[OI RENDER] ${this.symbol} - NO DATA AVAILABLE`, 'background: #FF5722; color: white; font-weight: bold; padding: 4px 8px;', {
-        hasDataMap: !!this.dataMap,
-        dataLength: this.data?.length || 0
-      });
       this.renderNoDataMessage(ctx, bounds);
       return;
     }
-
-    console.log(`%c[OI RENDER] ${this.symbol} - RENDERING ${this.mode} MODE`, 'background: #4CAF50; color: white; font-weight: bold; padding: 4px 8px;');
 
     switch (this.mode) {
       case "histogram":
@@ -514,19 +558,29 @@ class OpenInterestIndicator extends IndicatorBase {
 
     // Calcular datos
     const data = this.calculateHistogramMode(visibleCandles);
-    console.log(`[${this.symbol}] 🎨 RENDER Histogram: data.length=${data.length}`);
-    if (data.length === 0) {
-      console.log(`[${this.symbol}] ❌ RENDER: No data, exiting`);
+    if (data.length === 0) return;
+
+    // Verificar cobertura de OI
+    if (!data._hasOICoverage) {
+      ctx.fillStyle = "#999";
+      ctx.font = "11px Inter, sans-serif";
+      ctx.fillText(this._getOICoverageMessage(), x + 5, y + 30);
       return;
     }
 
     // Encontrar valor máximo para escala
-    const deltas = data.map(d => d.delta);
     const maxDelta = Math.max(...data.map(d => Math.abs(d.delta)));
-    console.log(`[${this.symbol}] 🎨 RENDER: maxDelta=${maxDelta}, sample deltas:`, deltas.slice(0, 10));
 
     if (maxDelta === 0) {
-      console.log(`[${this.symbol}] ❌ RENDER: maxDelta is 0, no bars to draw`);
+      const lastOI = data[data.length - 1]?.oiValue;
+      if (lastOI) {
+        ctx.fillStyle = "#999";
+        ctx.font = "11px Inter, sans-serif";
+        const formattedOI = lastOI >= 1e9 ? `${(lastOI / 1e9).toFixed(2)}B` :
+                           lastOI >= 1e6 ? `${(lastOI / 1e6).toFixed(2)}M` :
+                           lastOI >= 1e3 ? `${(lastOI / 1e3).toFixed(1)}K` : lastOI.toFixed(0);
+        ctx.fillText(`OI: ${formattedOI} (sin cambios en rango visible)`, x + 5, y + 30);
+      }
       return;
     }
 
@@ -611,6 +665,14 @@ class OpenInterestIndicator extends IndicatorBase {
     // Calcular datos
     const data = this.calculateCumulativeMode(visibleCandles);
     if (data.length === 0) return;
+
+    // Verificar cobertura de OI
+    if (!data._hasOICoverage) {
+      ctx.fillStyle = "#999";
+      ctx.font = "11px Inter, sans-serif";
+      ctx.fillText(this._getOICoverageMessage(), x + 5, y + 30);
+      return;
+    }
 
     // Encontrar rango
     const cumulativeValues = [];
@@ -714,6 +776,14 @@ class OpenInterestIndicator extends IndicatorBase {
     // Calcular datos
     const oiFlowData = this.calculateFlowMode(visibleCandles);
     if (oiFlowData.length === 0) return;
+
+    // Verificar cobertura de OI
+    if (!oiFlowData._hasOICoverage) {
+      ctx.fillStyle = "#999";
+      ctx.font = "11px Inter, sans-serif";
+      ctx.fillText(this._getOICoverageMessage(), x + 5, y + 30);
+      return;
+    }
 
     // Calcular Price Sentiment si está habilitado
     let priceSentimentData = [];
