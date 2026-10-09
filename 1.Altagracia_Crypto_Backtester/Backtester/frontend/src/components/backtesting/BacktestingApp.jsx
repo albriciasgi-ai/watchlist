@@ -21,12 +21,14 @@ import { StrategyBuilder, StrategyList, BacktestResults } from '../strategy';
 import '../strategy/StrategyBuilder.css';
 import '../strategy/BacktestResults.css';
 import DrawingToolbar from '../drawing/DrawingToolbar';
+import DrawingSidebar from '../drawing/DrawingSidebar'; // 🎯 OPTIMIZACIÓN UI: Sidebar vertical
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
 import SessionLoadModal from './SessionLoadModal';
 import { API_BASE_URL } from '../../config';
 import '../../backtesting_styles.css';
 import '../drawing/DrawingToolbar.css';
+import '../drawing/DrawingSidebar.css'; // 🎯 OPTIMIZACIÓN UI
 
 const BacktestingApp = () => {
   // Estado principal
@@ -37,16 +39,17 @@ const BacktestingApp = () => {
   const [loadingProgress, setLoadingProgress] = useState(null); // {message, percent, timeframe}
   const [error, setError] = useState(null);
   const [initialized, setInitialized] = useState(false);
+  const [downloadingTimeframes, setDownloadingTimeframes] = useState(new Set()); // Timeframes descargándose en background
 
   // 🎯 Configuración base de indicadores por timeframe
   // Para 1m y 5m deshabilitamos indicadores pesados por defecto (DTB, Rejection)
   const getDefaultIndicatorStates = (timeframe) => {
     const isSmallTimeframe = timeframe === '1m' || timeframe === '5m';
     return {
-      "Volume": true,
+      "Volume Delta": true,
       "Volume Profile": true,
       "CVD": true,
-      "Open Interest": !isSmallTimeframe, // Deshabilitado en 1m/5m (muchos datos)
+      "Open Interest": true, // Habilitado en todos los timeframes (backend usa intervalo OI adaptativo)
       "VWAP": false,
       "Range Detection": true,
       "Rejection Patterns": false,        // Siempre deshabilitado por defecto
@@ -73,31 +76,36 @@ const BacktestingApp = () => {
       indicatorStates: getDefaultIndicatorStates('1m'),
       vpConfig: { ...defaultVpConfig },
       vpFixedRange: null,
-      rejectionPatternConfig: null
+      rejectionPatternConfig: null,
+      oiMode: 'histogram'
     },
     '5m': {
       indicatorStates: getDefaultIndicatorStates('5m'),
       vpConfig: { ...defaultVpConfig },
       vpFixedRange: null,
-      rejectionPatternConfig: null
+      rejectionPatternConfig: null,
+      oiMode: 'histogram'
     },
     '15m': {
       indicatorStates: getDefaultIndicatorStates('15m'),
       vpConfig: { ...defaultVpConfig },
       vpFixedRange: null,
-      rejectionPatternConfig: null
+      rejectionPatternConfig: null,
+      oiMode: 'histogram'
     },
     '1h': {
       indicatorStates: getDefaultIndicatorStates('1h'),
       vpConfig: { ...defaultVpConfig },
       vpFixedRange: null,
-      rejectionPatternConfig: null
+      rejectionPatternConfig: null,
+      oiMode: 'histogram'
     },
     '4h': {
       indicatorStates: getDefaultIndicatorStates('4h'),
       vpConfig: { ...defaultVpConfig },
       vpFixedRange: null,
-      rejectionPatternConfig: null
+      rejectionPatternConfig: null,
+      oiMode: 'histogram'
     }
   });
 
@@ -112,10 +120,12 @@ const BacktestingApp = () => {
   // Estado de UI
   const [activePanel, setActivePanel] = useState('trading'); // 'trading', 'performance', 'history'
   const [showIndicatorPanel, setShowIndicatorPanel] = useState(false);
+  // 🎯 OPTIMIZACIÓN UI: Estado para menú dropdown compacto de acciones
+  const [showActionsMenu, setShowActionsMenu] = useState(false);
 
   // 🎯 NUEVO: Estado para indicadores (igual que Watchlist)
   const [indicatorStates, setIndicatorStates] = useState({
-    "Volume": true,
+    "Volume Delta": true,
     "Volume Profile": true,
     "CVD": true,
     "Open Interest": true,
@@ -164,7 +174,12 @@ const BacktestingApp = () => {
   const [currentTool, setCurrentTool] = useState('select');
 
   // 🎯 NUEVO: Estado para mostrar/ocultar panel de trading (Ctrl+T)
-  const [showTradingPanel, setShowTradingPanel] = useState(true);
+  // OPTIMIZACIÓN UI: Por defecto oculto para maximizar espacio del gráfico
+  const [showTradingPanel, setShowTradingPanel] = useState(false);
+
+  // 🎯 OPTIMIZACIÓN UI: Estados para sidebar de dibujo (D para toggle: expandido → colapsado → oculto)
+  const [drawingSidebarCollapsed, setDrawingSidebarCollapsed] = useState(false);
+  const [drawingSidebarHidden, setDrawingSidebarHidden] = useState(false);
 
   // 🎯 NUEVO: Estado para modo pantalla completa
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -193,6 +208,10 @@ const BacktestingApp = () => {
 
   // 🎯 Lista de timeframes disponibles (centralizada)
   const AVAILABLE_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
+
+  // 🎯 Configuración esperada de días por timeframe (debe coincidir con BACKTESTING_CONFIG del backend)
+  const DAYS_BY_TIMEFRAME = { '1m': 730, '5m': 1825, '15m': 1825, '1h': 1825, '4h': 1825 };
+  const INTERVAL_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 
   // 🎯 NUEVO: Referencias múltiples para cada timeframe
   const indicatorManagerRefs = useRef({
@@ -332,6 +351,26 @@ const BacktestingApp = () => {
         console.log('[BacktestingApp] Abriendo modal de cargar sesión (Ctrl+O)');
       }
 
+      // 🎯 OPTIMIZACIÓN UI: D key: Ciclar estados del sidebar (expandido → colapsado → oculto → expandido)
+      if (e.key === 'd' && !e.ctrlKey && !e.metaKey && !e.altKey && !isInputFocused) {
+        e.preventDefault();
+
+        if (drawingSidebarHidden) {
+          // Oculto → Expandido
+          setDrawingSidebarHidden(false);
+          setDrawingSidebarCollapsed(false);
+          console.log('[BacktestingApp] Sidebar de dibujo (D): oculto → expandido');
+        } else if (drawingSidebarCollapsed) {
+          // Colapsado → Oculto
+          setDrawingSidebarHidden(true);
+          console.log('[BacktestingApp] Sidebar de dibujo (D): colapsado → oculto');
+        } else {
+          // Expandido → Colapsado
+          setDrawingSidebarCollapsed(true);
+          console.log('[BacktestingApp] Sidebar de dibujo (D): expandido → colapsado');
+        }
+      }
+
       // 🎯 NUEVO: F key: Toggle fullscreen del gráfico
       if (e.key === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey && !isInputFocused) {
         e.preventDefault();
@@ -339,11 +378,17 @@ const BacktestingApp = () => {
         console.log('[BacktestingApp] Toggle fullscreen del gráfico (F)');
       }
 
-      // 🎯 NUEVO: ESC: Salir de fullscreen del panel
-      if (e.key === 'Escape' && fullscreenPanel) {
+      // 🎯 NUEVO: ESC: Salir de fullscreen del panel y ocultar panel trading
+      if (e.key === 'Escape') {
         e.preventDefault();
-        setFullscreenPanel(null);
-        console.log('[BacktestingApp] Saliendo de fullscreen del panel (ESC)');
+        if (fullscreenPanel) {
+          setFullscreenPanel(null);
+          console.log('[BacktestingApp] Saliendo de fullscreen del panel (ESC)');
+        }
+        if (showTradingPanel) {
+          setShowTradingPanel(false);
+          console.log('[BacktestingApp] Ocultando panel de trading (ESC)');
+        }
       }
     };
 
@@ -352,7 +397,7 @@ const BacktestingApp = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [showTradingPanel, isPlaying, initialized, fullscreenPanel]);
+  }, [showTradingPanel, drawingSidebarCollapsed, isPlaying, initialized, fullscreenPanel]);
 
   // 🎯 NUEVO: Listener para detectar cuando el usuario sale de fullscreen con ESC
   useEffect(() => {
@@ -376,15 +421,27 @@ const BacktestingApp = () => {
 
   /**
    * Carga datos de backtesting desde el backend
+   * @param {string} symbolToLoad - Símbolo a cargar
+   * @param {boolean} forceRefresh - Si true, fuerza re-descarga
+   * @param {string|null} timeframe - Si se especifica, solo descarga ese timeframe (ej: "15m")
+   * @param {boolean} isBackground - Si true, no afecta loading/error globales
    */
-  const loadBacktestingData = async (symbolToLoad, forceRefresh = false) => {
-    setLoading(true);
-    setError(null);
+  const loadBacktestingData = async (symbolToLoad, forceRefresh = false, timeframe = null, isBackground = false) => {
+    if (!isBackground) {
+      setLoading(true);
+      setError(null);
+    }
 
     try {
-      console.log(`[BacktestingApp] Cargando datos para ${symbolToLoad}... (force_refresh: ${forceRefresh})`);
+      const tfLabel = timeframe ? ` [solo ${timeframe}]` : ' [todos]';
+      console.log(`[BacktestingApp] Cargando datos para ${symbolToLoad}${tfLabel}... (force_refresh: ${forceRefresh}, bg: ${isBackground})`);
 
-      const url = `${API_BASE_URL}/api/backtesting/bulk-data/${symbolToLoad}${forceRefresh ? '?force_refresh=true' : ''}`;
+      const params = new URLSearchParams();
+      if (forceRefresh) params.append('force_refresh', 'true');
+      if (timeframe) params.append('timeframe', timeframe);
+      const queryString = params.toString();
+      const url = `${API_BASE_URL}/api/backtesting/bulk-data/${symbolToLoad}${queryString ? '?' + queryString : ''}`;
+
       const response = await fetch(url);
       const data = await response.json();
 
@@ -392,20 +449,38 @@ const BacktestingApp = () => {
         throw new Error(data.error || 'Error al cargar datos');
       }
 
-      console.log('[BacktestingApp] Datos cargados:', data);
+      console.log(`[BacktestingApp] Datos cargados${tfLabel}:`, Object.keys(data.timeframes || {}));
+
+      // Si descargamos solo 1 timeframe, mergear con los datos existentes
+      // Usar marketDataRef.current para evitar stale closures en background downloads
+      const currentData = marketDataRef.current;
+      if (timeframe && currentData && currentData.timeframes) {
+        const mergedData = {
+          ...data,
+          timeframes: {
+            ...currentData.timeframes,
+            ...data.timeframes
+          }
+        };
+        setMarketData(mergedData);
+        await saveToIndexedDB(symbolToLoad, mergedData);
+        return mergedData;
+      }
+
       setMarketData(data);
-
-      // Guardar en IndexedDB para futuras sesiones
       await saveToIndexedDB(symbolToLoad, data);
-
       return data;
 
     } catch (err) {
       console.error('[BacktestingApp] Error:', err);
-      setError(err.message);
+      if (!isBackground) {
+        setError(err.message);
+      }
       return null;
     } finally {
-      setLoading(false);
+      if (!isBackground) {
+        setLoading(false);
+      }
     }
   };
 
@@ -589,43 +664,56 @@ const BacktestingApp = () => {
 
       console.log(`[BacktestingApp] Datos encontrados en IndexedDB, guardados hace ${cacheAgeHours.toFixed(2)} horas`);
 
-      // 🎯 NUEVO: SIEMPRE usar caché si existe (nunca expira)
-      const timeframeData = cachedResult.data.timeframes?.['15m'];
-      if (timeframeData && timeframeData.main && timeframeData.main.length > 0) {
-        const lastCandle = timeframeData.main[timeframeData.main.length - 1];
-        console.log(`[BacktestingApp] Última vela del caché: ${new Date(lastCandle.timestamp).toISOString()}`);
-        console.log('[BacktestingApp] ✅ Usando datos de IndexedDB (carga instantánea)');
+      // Usar caché si tiene datos del timeframe activo CON suficientes velas
+      const cachedTfData = cachedResult.data.timeframes?.[activeTimeframe];
+      if (cachedTfData && cachedTfData.main && cachedTfData.main.length > 0) {
+        const lastCandle = cachedTfData.main[cachedTfData.main.length - 1];
+        console.log(`[BacktestingApp] Última vela del caché (${activeTimeframe}): ${new Date(lastCandle.timestamp).toISOString()}`);
 
-        shouldUseCachedData = true;
-        data = cachedResult.data;
-        setMarketData(data);
+        // Verificar si el cache tiene suficientes velas según la configuración esperada
+        const expectedDays = DAYS_BY_TIMEFRAME[activeTimeframe] || 1825;
+        const intervalMin = INTERVAL_MINUTES[activeTimeframe] || 15;
+        const expectedCandles = Math.floor((expectedDays * 24 * 60) / intervalMin);
+        const actualCandles = cachedTfData.main.length;
+        const hasEnoughData = actualCandles >= expectedCandles * 0.8;
 
-        // 🎯 NUEVO: Actualizar datos en segundo plano
-        checkForUpdates(symbol).then(updateResult => {
-          if (updateResult && updateResult.success && updateResult.new_candles_added > 0) {
-            console.log(`[BacktestingApp] 🔄 ${updateResult.new_candles_added} velas nuevas disponibles`);
-            alert(`✅ Datos actualizados: ${updateResult.new_candles_added} nuevas velas agregadas`);
-            // Recargar datos actualizados
-            loadBacktestingData(symbol).then(updatedData => {
-              if (updatedData) {
-                setMarketData(updatedData);
-              }
-            });
-          }
-        }).catch(err => {
-          console.warn('[BacktestingApp] No se pudo verificar actualizaciones:', err);
-        });
+        if (!hasEnoughData) {
+          console.log(`[BacktestingApp] ⚠️ Cache insuficiente para ${activeTimeframe}: ${actualCandles} velas, esperadas ~${expectedCandles} (80% = ${Math.floor(expectedCandles * 0.8)})`);
+          console.log(`[BacktestingApp] Invalidando cache de IndexedDB, forzando descarga del servidor...`);
+          // No usar el cache - forzar descarga del servidor
+        } else {
+          console.log('[BacktestingApp] ✅ Usando datos de IndexedDB (carga instantánea)');
+
+          shouldUseCachedData = true;
+          data = cachedResult.data;
+          setMarketData(data);
+
+          // Actualizar datos en segundo plano
+          checkForUpdates(symbol).then(updateResult => {
+            if (updateResult && updateResult.success && updateResult.new_candles_added > 0) {
+              console.log(`[BacktestingApp] 🔄 ${updateResult.new_candles_added} velas nuevas disponibles`);
+              alert(`✅ Datos actualizados: ${updateResult.new_candles_added} nuevas velas agregadas`);
+              loadBacktestingData(symbol).then(updatedData => {
+                if (updatedData) {
+                  setMarketData(updatedData);
+                }
+              });
+            }
+          }).catch(err => {
+            console.warn('[BacktestingApp] No se pudo verificar actualizaciones:', err);
+          });
+        }
       }
     }
 
-    // Si no hay caché válido, descargar datos frescos
+    // Si no hay caché válido, descargar solo el timeframe activo primero
     if (!shouldUseCachedData) {
-      console.log('[BacktestingApp] Descargando datos del servidor...');
-      data = await loadBacktestingData(symbol);
+      console.log(`[BacktestingApp] Descargando ${activeTimeframe} del servidor...`);
+      data = await loadBacktestingData(symbol, false, activeTimeframe);
     }
 
-    if (data && data.timeframes && data.timeframes['15m']) {
-      const timeframeData = data.timeframes['15m'];
+    if (data && data.timeframes && data.timeframes[activeTimeframe]) {
+      const timeframeData = data.timeframes[activeTimeframe];
       const firstCandle = timeframeData.main[0];
       const lastCandle = timeframeData.main[timeframeData.main.length - 1];
 
@@ -727,7 +815,7 @@ const BacktestingApp = () => {
       const controller = new TimeController(
         firstCandle.timestamp,     // startTime: inicio del historial (para mostrar todo)
         lastCandle.timestamp,       // endTime: fin del historial
-        '15m',                      // timeframe de referencia (para subdivisiones)
+        activeTimeframe,            // timeframe de referencia (para subdivisiones)
         handleTimeUpdate,           // callback
         simulationStartTime         // simulationStartTime: donde empieza la simulación
       );
@@ -822,6 +910,44 @@ const BacktestingApp = () => {
       console.log('[BacktestingApp] ✅ Inicializado');
       console.log(`  - Mostrando historial desde: ${new Date(firstCandle.timestamp).toISOString()}`);
       console.log(`  - Simulación inicia en: ${new Date(controller.currentTime).toISOString()}`);
+
+      // Descargar los demás timeframes en background (si solo descargamos uno)
+      if (!shouldUseCachedData) {
+        const otherTimeframes = AVAILABLE_TIMEFRAMES.filter(tf => tf !== activeTimeframe);
+        if (otherTimeframes.length > 0) {
+          console.log(`[BacktestingApp] Descargando ${otherTimeframes.length} timeframes restantes en background...`);
+          // Marcar timeframes como "descargando"
+          setDownloadingTimeframes(new Set(otherTimeframes));
+          // Descargar secuencialmente para no sobrecargar el backend
+          (async () => {
+            for (const tf of otherTimeframes) {
+              try {
+                console.log(`[BacktestingApp] [BG] Descargando ${tf}...`);
+                const bgData = await loadBacktestingData(symbol, false, tf, true);
+                // Precalcular indicadores del timeframe recién descargado
+                if (bgData && bgData.timeframes && bgData.timeframes[tf]) {
+                  const miniChart = miniChartRefs.current[tf];
+                  if (miniChart && miniChart.precalculateIndicators) {
+                    console.log(`[BacktestingApp] [BG] Precalculando indicadores para ${tf}...`);
+                    await miniChart.precalculateIndicators(bgData.timeframes[tf].main, simulationStartTime);
+                  }
+                }
+                console.log(`[BacktestingApp] [BG] ${tf} completado`);
+              } catch (err) {
+                console.warn(`[BacktestingApp] [BG] Error descargando ${tf}:`, err);
+              } finally {
+                // Remover timeframe del set de "descargando"
+                setDownloadingTimeframes(prev => {
+                  const next = new Set(prev);
+                  next.delete(tf);
+                  return next;
+                });
+              }
+            }
+            console.log('[BacktestingApp] [BG] Todos los timeframes descargados');
+          })();
+        }
+      }
     }
   };
 
@@ -1098,6 +1224,75 @@ const BacktestingApp = () => {
     setShowDoubleTopBottomSettings(false);
     setShowSwingDetectorSettings(false);
   }, [activeTimeframe]);
+
+  // 🔧 FIX: Forzar redibujado del canvas cuando se entra/sale de fullscreen
+  // para asegurar que los indicadores se renderizan con las alturas correctas
+  useEffect(() => {
+    // Primer redibujado: Inmediato después de que el layout se ajuste
+    const timer1 = setTimeout(() => {
+      Object.values(miniChartRefs.current).forEach(chart => {
+        if (chart && chart.forceRedraw) {
+          chart.forceRedraw();
+        }
+      });
+      if (fullscreenPanel === 'chart') {
+        console.log('[BacktestingApp] 🔧 Canvas redibujado (1/3) al entrar a fullscreen');
+      } else if (fullscreenPanel === null) {
+        console.log('[BacktestingApp] 🔧 Canvas redibujado (1/3) al salir de fullscreen');
+      }
+    }, 150);
+
+    // Segundo redibujado: Backup para asegurar dimensiones correctas
+    const timer2 = setTimeout(() => {
+      Object.values(miniChartRefs.current).forEach(chart => {
+        if (chart && chart.forceRedraw) {
+          chart.forceRedraw();
+        }
+      });
+      if (fullscreenPanel === 'chart') {
+        console.log('[BacktestingApp] 🔧 Canvas redibujado (2/3) al entrar a fullscreen');
+      } else if (fullscreenPanel === null) {
+        console.log('[BacktestingApp] 🔧 Canvas redibujado (2/3) al salir de fullscreen');
+      }
+    }, 400);
+
+    // Tercer redibujado: Delay extra al salir de fullscreen (el DOM tarda en reflow)
+    const timer3 = setTimeout(() => {
+      Object.values(miniChartRefs.current).forEach(chart => {
+        if (chart && chart.forceRedraw) {
+          chart.forceRedraw();
+        }
+      });
+      if (fullscreenPanel === 'chart') {
+        console.log('[BacktestingApp] 🔧 Canvas redibujado (3/3) al entrar a fullscreen');
+      } else if (fullscreenPanel === null) {
+        console.log('[BacktestingApp] 🔧 Canvas redibujado (3/3) al salir de fullscreen - FINAL');
+      }
+    }, 800);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [fullscreenPanel]);
+
+  // 🔧 FIX: Forzar redibujado cuando el sidebar de dibujo cambia de estado
+  // El ancho del chart cambia cuando el sidebar aparece/desaparece/colapsa
+  useEffect(() => {
+    // Esperar a que el DOM termine de reflow
+    const timer = setTimeout(() => {
+      Object.values(miniChartRefs.current).forEach(chart => {
+        if (chart && chart.forceRedraw) {
+          chart.forceRedraw();
+        }
+      });
+      const sidebarState = drawingSidebarHidden ? 'oculto' : (drawingSidebarCollapsed ? 'colapsado' : 'expandido');
+      console.log(`[BacktestingApp] 🔧 Canvas redibujado por cambio de sidebar: ${sidebarState}`);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [drawingSidebarCollapsed, drawingSidebarHidden]);
 
   /**
    * 🎯 NUEVO: Obtener contador de órdenes por timeframe
@@ -1431,156 +1626,159 @@ const BacktestingApp = () => {
    */
   return (
     <div className="backtesting-container">
-      <div className="backtesting-header">
-        <div className="header-info">
-          <h2>{symbol} - Multi-Timeframe</h2>
-          {marketData && marketData.metadata && (
-            <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-              📅 Datos: {new Date(marketData.metadata.date_range.start).toLocaleDateString('es-CO')} - {new Date(marketData.metadata.date_range.end).toLocaleDateString('es-CO')}
-              <button
-                onClick={async () => {
-                  const confirmed = window.confirm('¿Actualizar datos históricos desde Bybit? Esto puede tardar 30-60 segundos y eliminará todos los cachés.');
-                  if (confirmed) {
-                    try {
-                      setLoading(true);
-                      setError(null);
+      {/* 🎯 OPTIMIZACIÓN UI: Sidebar vertical de herramientas de dibujo (reemplaza toolbar horizontal) */}
+      <DrawingSidebar
+        selectedTool={currentTool}
+        onToolChange={setCurrentTool}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        onClearAll={handleClearAll}
+        isCollapsed={drawingSidebarCollapsed}
+        isHidden={drawingSidebarHidden}
+        onToggleCollapse={() => {
+          // Ciclar: expandido → colapsado → oculto → expandido
+          if (drawingSidebarHidden) {
+            setDrawingSidebarHidden(false);
+            setDrawingSidebarCollapsed(false);
+          } else if (drawingSidebarCollapsed) {
+            setDrawingSidebarHidden(true);
+          } else {
+            setDrawingSidebarCollapsed(true);
+          }
+        }}
+      />
 
-                      console.log('[BacktestingApp] ====== INICIANDO ACTUALIZACIÓN COMPLETA ======');
+      {/* 🎯 OPTIMIZACIÓN UI: Botón flotante para mostrar sidebar cuando está oculto O colapsado */}
+      {(drawingSidebarHidden || drawingSidebarCollapsed) && (
+        <button
+          className="btn-show-drawing-sidebar"
+          onClick={() => {
+            setDrawingSidebarHidden(false);
+            setDrawingSidebarCollapsed(false);
+          }}
+          title="Mostrar sidebar de dibujo expandido (D)"
+        >
+          🖌
+        </button>
+      )}
 
-                      // 1. Eliminar caché del backend
-                      console.log('[BacktestingApp] Paso 1/4: Eliminando caché del backend...');
-                      const deleteResponse = await fetch(`${API_BASE_URL}/api/backtesting/cache/${symbol}`, {
-                        method: 'DELETE'
-                      });
-                      const deleteResult = await deleteResponse.json();
-                      console.log('[BacktestingApp] Backend caché eliminado:', deleteResult);
-
-                      // 2. Eliminar datos de IndexedDB
-                      console.log('[BacktestingApp] Paso 2/4: Eliminando caché de IndexedDB...');
-                      await deleteFromIndexedDB(symbol);
-
-                      // 3. Limpiar localStorage también
-                      console.log('[BacktestingApp] Paso 3/4: Limpiando localStorage...');
-                      localStorage.removeItem(`backtesting_${symbol}`);
-
-                      // 4. Descargar datos frescos desde Bybit con force_refresh
-                      console.log('[BacktestingApp] Paso 4/4: Descargando datos frescos desde Bybit...');
-                      const freshData = await loadBacktestingData(symbol, true);
-
-                      if (freshData && freshData.metadata) {
-                        console.log('[BacktestingApp] ✅ DATOS ACTUALIZADOS:');
-                        console.log(`  - Inicio: ${freshData.metadata.date_range.start}`);
-                        console.log(`  - Fin: ${freshData.metadata.date_range.end}`);
-                        console.log(`  - Cached at: ${freshData.metadata.cached_at_colombia}`);
-                      }
-
-                      // 5. Recargar página para aplicar cambios
-                      console.log('[BacktestingApp] Recargando página en 2 segundos...');
-                      setTimeout(() => {
-                        window.location.reload();
-                      }, 2000);
-                    } catch (err) {
-                      console.error('[BacktestingApp] ❌ Error al actualizar:', err);
-                      setError('Error al actualizar datos: ' + err.message);
-                      setLoading(false);
-                    }
-                  }
-                }}
-                style={{
-                  marginLeft: '8px',
-                  padding: '2px 8px',
-                  fontSize: '11px',
-                  background: '#4CAF50',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '3px',
-                  cursor: 'pointer'
-                }}
-                title="Descargar datos actualizados desde Bybit"
-              >
-                🔄 Actualizar
-              </button>
-            </div>
+      {/* 🎯 OPTIMIZACIÓN UI: Header compacto (120px → 50px) */}
+      <div className="backtesting-header compact">
+        {/* Sección izquierda: Símbolo + Tiempo */}
+        <div className="header-left">
+          <h2 className="symbol-title">{symbol}</h2>
+          {currentTime && (
+            <span className="current-time-compact">
+              {new Date(currentTime).toLocaleString('es-CO', {
+                timeZone: 'America/Bogota',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </span>
           )}
-          <div className="current-time">
-            {currentTime && new Date(currentTime).toLocaleString('es-CO', {
-              timeZone: 'America/Bogota',
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
-          </div>
           {currentPrice && (
-            <div className="current-price">
-              Precio: ${currentPrice.toFixed(2)}
-            </div>
+            <span className="current-price-compact">
+              ${currentPrice.toFixed(2)}
+            </span>
           )}
         </div>
 
-        <div className="playback-controls">
+        {/* Sección centro: Controles de playback (solo iconos) */}
+        <div className="header-center">
           <button
-            className={`btn-control ${isPlaying ? 'active' : ''}`}
+            className={`btn-control-compact ${isPlaying ? 'active' : ''}`}
             onClick={isPlaying ? handlePause : handlePlay}
-            title={isPlaying ? 'Pausar' : 'Reproducir'}
+            title={isPlaying ? 'Pausar (Espacio)' : 'Reproducir (Espacio)'}
           >
-            {isPlaying ? '⏸️' : '▶️'}
+            {isPlaying ? '⏸' : '▶'}
           </button>
 
           <button
-            className="btn-control"
+            className="btn-control-compact"
             onClick={handleStop}
             title="Detener"
           >
-            ⏹️
+            ⏹
           </button>
 
-          <div className="speed-control">
-            <label>Velocidad:</label>
-            <select
-              value={playbackSpeed}
-              onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
-            >
-              <option value="0.5">0.5x</option>
-              <option value="1">1x</option>
-              <option value="20">20x</option>
-              <option value="40">40x</option>
-              <option value="60">60x</option>
-              <option value="80">80x</option>
-              <option value="100">100x</option>
-              <option value="200">200x</option>
-              <option value="300">300x</option>
-              <option value="400">400x</option>
-              <option value="500">500x</option>
-              <option value="600">600x</option>
-              <option value="700">700x</option>
-              <option value="800">800x</option>
-              <option value="900">900x</option>
-              <option value="1000">1000x</option>
-              <option value="2000">2000x</option>
-              <option value="3000">3000x</option>
-              <option value="4000">4000x</option>
-              <option value="5000">5000x</option>
-              <option value="6000">6000x</option>
-              <option value="7000">7000x</option>
-              <option value="8000">8000x</option>
-              <option value="9000">9000x</option>
-              <option value="10000">10000x</option>
-            </select>
-          </div>
+          <select
+            className="speed-control-compact"
+            value={playbackSpeed}
+            onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
+            title="Velocidad de reproducción"
+          >
+            <option value="0.5">0.5x</option>
+            <option value="1">1x</option>
+            <option value="20">20x</option>
+            <option value="40">40x</option>
+            <option value="60">60x</option>
+            <option value="80">80x</option>
+            <option value="100">100x</option>
+            <option value="200">200x</option>
+            <option value="300">300x</option>
+            <option value="400">400x</option>
+            <option value="500">500x</option>
+            <option value="1000">1000x</option>
+            <option value="2000">2000x</option>
+            <option value="3000">3000x</option>
+            <option value="4000">4000x</option>
+            <option value="5000">5000x</option>
+            <option value="7500">7500x</option>
+            <option value="10000">10000x</option>
+          </select>
 
-          <div className="indicator-selector" ref={indicatorPanelRef} style={{
-            position: 'relative',
-            display: 'inline-block',
-            marginLeft: '10px'
-          }}>
+          {/* 🎯 OPTIMIZACIÓN UI: Tabs de timeframes movidos al header (mejora_2.pdf) */}
+          <TimeframeTabs
+            activeTimeframe={activeTimeframe}
+            onTabChange={handleTabChange}
+            orderCounts={getOrderCountsByTimeframe()}
+            downloadingTimeframes={downloadingTimeframes}
+            compact={true}
+          />
+        </div>
+
+        {/* Sección derecha: Menú de acciones */}
+        <div className="header-right">
+          {/* Botón Actualizar datos (si hay metadata) */}
+          {marketData && marketData.metadata && (
             <button
-              className="btn-secondary"
+              className="btn-action-compact update"
+              onClick={async () => {
+                const confirmed = window.confirm('¿Actualizar datos históricos desde Bybit? Esto puede tardar 30-60 segundos y eliminará todos los cachés.');
+                if (confirmed) {
+                  try {
+                    setLoading(true);
+                    setError(null);
+                    console.log('[BacktestingApp] ====== INICIANDO ACTUALIZACIÓN COMPLETA ======');
+                    const deleteResponse = await fetch(`${API_BASE_URL}/api/backtesting/cache/${symbol}`, { method: 'DELETE' });
+                    await deleteFromIndexedDB(symbol);
+                    localStorage.removeItem(`backtesting_${symbol}`);
+                    const freshData = await loadBacktestingData(symbol, true);
+                    console.log('[BacktestingApp] Recargando página en 2 segundos...');
+                    setTimeout(() => window.location.reload(), 2000);
+                  } catch (err) {
+                    console.error('[BacktestingApp] ❌ Error al actualizar:', err);
+                    setError('Error al actualizar datos: ' + err.message);
+                    setLoading(false);
+                  }
+                }
+              }}
+              title={`Actualizar datos desde Bybit\nÚltima actualización: ${new Date(marketData.metadata.date_range.end).toLocaleDateString('es-CO')}`}
+            >
+              🔄
+            </button>
+          )}
+
+          {/* Selector de indicadores */}
+          <div className="indicator-selector-compact" ref={indicatorPanelRef}>
+            <button
+              className="btn-action-compact indicators"
               onClick={() => setShowIndicatorPanel(!showIndicatorPanel)}
-              title="Seleccionar indicadores"
+              title="Indicadores"
               style={{
-                background: Object.values(tabStates[activeTimeframe]?.indicatorStates || {}).filter(v => v).length > 0 ? '#4CAF50' : '#666',
+                background: Object.values(tabStates[activeTimeframe]?.indicatorStates || {}).filter(v => v).length > 0 ? '#4CAF50' : 'transparent',
                 padding: '6px 12px'
               }}
             >
@@ -1655,6 +1853,37 @@ const BacktestingApp = () => {
                       />
                       {name}
 
+                      {/* Selector de modo OI inline */}
+                      {name === 'Open Interest' && enabled && (
+                        <select
+                          value={tabStates[activeTimeframe]?.oiMode || 'histogram'}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            setTabStates(prev => ({
+                              ...prev,
+                              [activeTimeframe]: {
+                                ...prev[activeTimeframe],
+                                oiMode: e.target.value
+                              }
+                            }));
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            marginLeft: '8px',
+                            padding: '2px 4px',
+                            fontSize: '11px',
+                            border: '1px solid #ccc',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            background: '#f5f5f5'
+                          }}
+                        >
+                          <option value="histogram">Histogram</option>
+                          <option value="cumulative">Cumulative</option>
+                          <option value="flow">Flow</option>
+                        </select>
+                      )}
+
                       {hasSettings && (
                         <span
                           onClick={(e) => {
@@ -1703,89 +1932,50 @@ const BacktestingApp = () => {
             )}
           </div>
 
-          <button
-            className="btn-secondary"
-            onClick={() => setShowSaveModal(true)}
-            title="Guardar sesión (Ctrl+S)"
-            style={{
-              background: currentSessionId ? '#4CAF50' : 'transparent',
-              color: currentSessionId ? '#fff' : '#666'
-            }}
-          >
-            💾 Guardar
-          </button>
+          {/* Menú dropdown de acciones */}
+          <div className="actions-menu-compact">
+            <button
+              className="btn-action-compact menu-trigger"
+              onClick={() => setShowActionsMenu(prev => !prev)}
+              title="Menú de acciones"
+            >
+              ☰
+            </button>
 
-          <button
-            className="btn-secondary"
-            onClick={() => setShowLoadModal(true)}
-            title="Cargar sesión (Ctrl+O)"
-          >
-            📂 Cargar
-          </button>
-
-          <button
-            className="btn-secondary"
-            onClick={() => setInitialized(false)}
-            title="Cambiar configuración"
-          >
-            ⚙️ Configurar
-          </button>
-
-          <button
-            className="btn-secondary"
-            onClick={toggleFullscreen}
-            title={isFullscreen ? "Salir de pantalla completa (Ctrl+F o ESC)" : "Pantalla completa (Ctrl+F)"}
-            style={{
-              background: isFullscreen ? '#667eea' : 'transparent',
-              color: isFullscreen ? '#fff' : '#666'
-            }}
-          >
-            {isFullscreen ? '⛶ Salir' : '⛶ Fullscreen'}
-          </button>
-
-          <button
-            className="btn-secondary"
-            onClick={() => setShowTradingPanel(prev => !prev)}
-            title={showTradingPanel ? "Ocultar panel (T)" : "Mostrar panel (T)"}
-            style={{
-              background: showTradingPanel ? '#667eea' : 'transparent',
-              color: showTradingPanel ? '#fff' : '#666'
-            }}
-          >
-            {showTradingPanel ? '📊 Panel' : '📊 Panel'}
-          </button>
-
-          <button
-            className="btn-secondary"
-            onClick={() => setFullscreenPanel(prev => prev === 'chart' ? null : 'chart')}
-            title={fullscreenPanel === 'chart' ? "Restaurar layout" : "Maximizar gráfico (F)"}
-            style={{
-              background: fullscreenPanel === 'chart' ? '#FF9800' : 'transparent',
-              color: fullscreenPanel === 'chart' ? '#fff' : '#666'
-            }}
-          >
-            {fullscreenPanel === 'chart' ? '🔳 Chart' : '⛶ Chart'}
-          </button>
-
-          <button
-            className="btn-secondary"
-            onClick={() => setFullscreenPanel(prev => prev === 'trading' ? null : 'trading')}
-            title={fullscreenPanel === 'trading' ? "Restaurar layout" : "Maximizar panel trading"}
-            style={{
-              background: fullscreenPanel === 'trading' ? '#4CAF50' : 'transparent',
-              color: fullscreenPanel === 'trading' ? '#fff' : '#666'
-            }}
-          >
-            {fullscreenPanel === 'trading' ? '🔳 Trading' : '⛶ Trading'}
-          </button>
+            {showActionsMenu && (
+              <div className="actions-dropdown">
+                <button onClick={() => { setShowSaveModal(true); setShowActionsMenu(false); }}>
+                  💾 Guardar sesión
+                  {currentSessionId && <span className="active-badge">●</span>}
+                </button>
+                <button onClick={() => { setShowLoadModal(true); setShowActionsMenu(false); }}>
+                  📂 Cargar sesión
+                </button>
+                <button onClick={() => { setInitialized(false); setShowActionsMenu(false); }}>
+                  ⚙️ Configurar
+                </button>
+                <div className="dropdown-divider"></div>
+                <button onClick={() => { setShowTradingPanel(prev => !prev); setShowActionsMenu(false); }}>
+                  📊 {showTradingPanel ? 'Ocultar' : 'Mostrar'} Panel
+                </button>
+                <button onClick={() => { setFullscreenPanel(prev => prev === 'chart' ? null : 'chart'); setShowActionsMenu(false); }}>
+                  ⛶ {fullscreenPanel === 'chart' ? 'Restaurar' : 'Maximizar'} Chart
+                </button>
+                <div className="dropdown-divider"></div>
+                <button onClick={() => { toggleFullscreen(); setShowActionsMenu(false); }}>
+                  {isFullscreen ? '⛶ Salir Fullscreen' : '⛶ Fullscreen'}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       <div
-        className="backtesting-main-wrapper"
+        className={`backtesting-main-wrapper ${fullscreenPanel === 'chart' ? 'wrapper-fullscreen-chart' : ''}`}
         style={{
           position: 'relative',
-          display: fullscreenPanel ? 'block' : 'flex'
+          display: 'flex' // 🔧 FIX: Siempre flex para que la cadena de altura funcione
         }}
       >
         {/* 🎯 NUEVO: Divider redimensionable */}
@@ -1820,41 +2010,27 @@ const BacktestingApp = () => {
         )}
 
         <div
-          className="backtesting-main"
+          className={`backtesting-main chart-with-sidebar ${drawingSidebarCollapsed ? 'sidebar-collapsed' : ''} ${drawingSidebarHidden ? 'sidebar-hidden' : ''} ${fullscreenPanel === 'chart' ? 'fullscreen-chart' : ''}`}
           style={{
             flex: fullscreenPanel === 'chart' ? '1' : (fullscreenPanel === 'trading' ? '0' : '1'),
             display: fullscreenPanel === 'trading' ? 'none' : 'flex'
           }}
         >
-          {/* 🎯 NUEVO: Tabs de timeframes */}
-          <TimeframeTabs
-            activeTimeframe={activeTimeframe}
-            onTabChange={handleTabChange}
-            orderCounts={getOrderCountsByTimeframe()}
-          />
-
-          {/* 🎯 NUEVO: Barra de herramientas de dibujo */}
-          <DrawingToolbar
-            selectedTool={currentTool}
-            onToolChange={setCurrentTool}
-            onUndo={handleUndo}
-            onRedo={handleRedo}
-            onClearAll={handleClearAll}
-          />
+          {/* 🎯 OPTIMIZACIÓN UI: Tabs de timeframes movidos al header - Toolbar horizontal eliminado (ahora sidebar vertical) */}
 
           {/* 🎯 NUEVO: Contenedor de tabs - 5 MiniCharts (uno por timeframe) */}
-          {/* Días por timeframe: 1m=365, 5m=1095, 15m/1h/4h=730 */}
+          {/* Días por timeframe: 1m=730, 5m/15m/1h/4h=1825 */}
           <div className="timeframes-container">
             {['1m', '5m', '15m', '1h', '4h'].map(tf => {
-              // Mapeo de días por timeframe
+              // Mapeo de días por timeframe (debe coincidir con BACKTESTING_CONFIG del backend)
               const daysMap = {
-                '1m': 365,    // 1 año de datos (525,600 velas)
-                '5m': 1095,   // 3 años de datos (315,360 velas)
-                '15m': 730,   // 2 años de datos
-                '1h': 730,    // 2 años de datos
-                '4h': 730     // 2 años de datos
+                '1m': 730,    // 2 años de datos (1,051,200 velas)
+                '5m': 1825,   // 5 años de datos (525,600 velas)
+                '15m': 1825,  // 5 años de datos (175,200 velas)
+                '1h': 1825,   // 5 años de datos (43,800 velas)
+                '4h': 1825    // 5 años de datos (10,950 velas)
               };
-              const tfDays = daysMap[tf] || 730;
+              const tfDays = daysMap[tf] || 1825;
 
               return (
               <div
@@ -1871,8 +2047,10 @@ const BacktestingApp = () => {
                   backtestingMode={true}
                   backtestingData={marketData}
                   currentTime={currentTime}
+                  isBacktestingFullscreen={fullscreenPanel === 'chart'}
                   vpConfig={tabStates[tf]?.vpConfig}
                   vpFixedRange={tabStates[tf]?.vpFixedRange}
+                  oiMode={tabStates[tf]?.oiMode || 'histogram'}
                   onOpenVpSettings={handleOpenVpSettings}
                   onOpenRangeDetectionSettings={handleOpenRangeDetectionSettings}
                   onOpenRejectionPatternSettings={handleOpenRejectionPatternSettings}
@@ -1909,6 +2087,18 @@ const BacktestingApp = () => {
             display: fullscreenPanel === 'chart' ? 'none' : 'flex'
           }}
         >
+          {/* 🎯 OPTIMIZACIÓN UI: Header del panel con botón de colapsar */}
+          <div className="sidebar-header">
+            <span className="sidebar-title">Panel de Trading</span>
+            <button
+              className="btn-collapse"
+              onClick={() => setShowTradingPanel(false)}
+              title="Ocultar panel (T o ESC)"
+            >
+              ✕
+            </button>
+          </div>
+
           {/* Panel Tabs */}
           <div className="sidebar-tabs">
             <button
@@ -2112,6 +2302,17 @@ const BacktestingApp = () => {
           </div>
         </div>
       </div>
+
+      {/* 🎯 OPTIMIZACIÓN UI: Botón flotante para mostrar panel cuando está oculto */}
+      {!showTradingPanel && (
+        <button
+          className="floating-panel-toggle"
+          onClick={() => setShowTradingPanel(true)}
+          title="Mostrar panel de trading (T)"
+        >
+          📊
+        </button>
+      )}
 
       {/* 🎯 Modales de configuración de indicadores */}
       {showVpSettings && (

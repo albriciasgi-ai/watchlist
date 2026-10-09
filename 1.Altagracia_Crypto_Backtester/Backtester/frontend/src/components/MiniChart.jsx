@@ -142,7 +142,9 @@ const MiniChart = forwardRef(({
   // 🎯 NUEVO: Props para drawing tools
   currentTool = 'select',
   onToolChange = null,
-  onDrawingsChange = null  // 🔧 FIX: Callback para sincronizar dibujos entre tabs
+  onDrawingsChange = null,  // 🔧 FIX: Callback para sincronizar dibujos entre tabs
+  // 🎯 NUEVO: Prop para modo fullscreen del PANEL de backtesting (cuando se presiona F)
+  isBacktestingFullscreen = false
 }, ref) => {
   const canvasRef = useRef(null);
 
@@ -167,6 +169,8 @@ const MiniChart = forwardRef(({
   const [fullscreenOiMode, setFullscreenOiMode] = useState(oiMode || "histogram");
   const [showFixedRangeManager, setShowFixedRangeManager] = useState(false);
   const [showFollowButton, setShowFollowButton] = useState(false);  // 🎯 NUEVO: Mostrar botón Follow cuando hay paneo manual
+  const [chartRectangles, setChartRectangles] = useState([]);
+  const pendingVPFixedFromRectRef = useRef(false);
 
   // Actualizar fullscreenOiMode cuando cambia oiMode del padre
   useEffect(() => {
@@ -610,20 +614,55 @@ const MiniChart = forwardRef(({
       priceChartHeight = availableHeight - volumeHeight;
       heightScale = 1.0;
     } else {
-      // Con indicadores: usar ratio definido por el usuario
-      priceChartHeight = Math.floor(availableHeight * priceChartRatio);
-      const remainingHeight = availableHeight - priceChartHeight;
+      // 🎯 MODO HÍBRIDO: Normal (scroll) vs Fullscreen (compresión inteligente)
 
-      // Dividir el espacio restante entre volume e indicadores
-      volumeHeight = Math.min(baseVolumeHeight, Math.floor(remainingHeight * 0.15)); // 15% del restante
-      indicatorsHeight = remainingHeight - volumeHeight;
+      volumeHeight = Math.min(baseVolumeHeight, Math.floor(availableHeight * 0.1));
+      indicatorsHeight = desiredIndicatorsHeight;
 
-      // Calcular heightScale para indicadores
-      heightScale = indicatorsHeight / desiredIndicatorsHeight;
+      // Espacio mínimo para el gráfico de precio (30% del disponible)
+      const minPriceChartHeight = Math.floor(availableHeight * 0.3);
 
-      // Asegurar que no se pase del espacio disponible
-      if (priceChartHeight + volumeHeight + indicatorsHeight > availableHeight) {
+      // Calcular el precio chart según el ratio del usuario
+      let tentativePriceChartHeight = Math.floor(availableHeight * priceChartRatio);
+
+      // Verificar si todo cabe en el espacio disponible
+      const totalNeeded = tentativePriceChartHeight + volumeHeight + indicatorsHeight;
+
+      if (isBacktestingFullscreen && totalNeeded > availableHeight) {
+        // 🎯 MODO FULLSCREEN: Compresión inteligente proporcional (máximo 40%)
+        // Escala mínima = 0.6 (comprimir hasta 60% del tamaño original = 40% de compresión)
+        const compressionScale = Math.max(0.6, availableHeight / totalNeeded);
+
+        // Aplicar escala a todos los componentes proporcionalmente
+        priceChartHeight = Math.floor(tentativePriceChartHeight * compressionScale);
+        volumeHeight = Math.floor(volumeHeight * compressionScale);
+        indicatorsHeight = Math.floor(indicatorsHeight * compressionScale);
+        heightScale = compressionScale;
+
+        // Asegurar mínimo absoluto para precio chart (60% del mínimo)
+        const absoluteMinPriceChart = Math.floor(minPriceChartHeight * 0.6);
+        if (priceChartHeight < absoluteMinPriceChart) {
+          priceChartHeight = absoluteMinPriceChart;
+          // Si aún así excede, habrá scroll mínimo
+        }
+
+        console.log(`[MiniChart] 🔧 FULLSCREEN: Compresión aplicada al ${Math.round((1 - compressionScale) * 100)}%`);
+      } else if (totalNeeded > availableHeight) {
+        // 🎯 MODO NORMAL: Sin compresión, permitir scroll vertical
+        heightScale = 1.0;
         priceChartHeight = availableHeight - volumeHeight - indicatorsHeight;
+
+        // Si el precio chart queda demasiado pequeño, establecer mínimo y permitir scroll
+        if (priceChartHeight < minPriceChartHeight) {
+          priceChartHeight = minPriceChartHeight;
+          // El total ahora excede availableHeight - habrá scroll
+        }
+
+        console.log(`[MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: ${totalNeeded}px, disponible: ${availableHeight}px`);
+      } else {
+        // Cabe todo cómodamente - usar ratio del usuario
+        priceChartHeight = tentativePriceChartHeight;
+        heightScale = 1.0;
       }
     }
 
@@ -646,7 +685,8 @@ const MiniChart = forwardRef(({
     );
 
     const chartWidth = width - marginLeft - marginRight;
-    const candlesPerScreen = Math.floor(chartWidth / (8 * viewStateRef.current.zoom));
+    const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * viewStateRef.current.zoom));
+    const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
     const maxOffset = Math.max(0, displayCandles.length - candlesPerScreen);
     const offset = Math.min(viewStateRef.current.offset, maxOffset);
     
@@ -972,6 +1012,14 @@ const MiniChart = forwardRef(({
 
   // ==================== DRAWING PERSISTENCE ====================
 
+  // Extraer rectángulos del DrawingToolManager para el modal VP Fixed
+  const updateChartRectangles = () => {
+    if (!drawingManagerRef.current) return;
+    const shapes = drawingManagerRef.current.getShapes();
+    const rects = shapes.filter(s => s && s.type === 'rectangle');
+    setChartRectangles(rects);
+  };
+
   const loadDrawings = async () => {
     if (!drawingManagerRef.current) return;
 
@@ -982,6 +1030,7 @@ const MiniChart = forwardRef(({
       if (data.shapes && data.shapes.length > 0) {
         drawingManagerRef.current.loadShapes(data.shapes);
         console.log(`[${symbol}] ✅ Cargados ${data.shapes.length} dibujos`);
+        updateChartRectangles();
 
         // Forzar redibujado
         if (candlesRef.current.length > 0) {
@@ -1019,6 +1068,7 @@ const MiniChart = forwardRef(({
       });
 
       console.log(`[${symbol}] ✅ Guardados ${shapes.length} dibujos`);
+      updateChartRectangles();
     } catch (error) {
       console.error(`[${symbol}] ❌ Error guardando dibujos:`, error);
     }
@@ -1341,7 +1391,8 @@ const MiniChart = forwardRef(({
       // Paneo horizontal
       const deltaX = x - dragStateRef.current.startX;
       const chartWidth = rect.width - 75;
-      const candlesPerScreen = Math.floor(chartWidth / (8 * viewStateRef.current.zoom));
+      const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * viewStateRef.current.zoom));
+      const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
       const deltaCandlesFloat = (deltaX / chartWidth) * candlesPerScreen;
       const deltaCandles = Math.round(deltaCandlesFloat);
 
@@ -1575,22 +1626,8 @@ const MiniChart = forwardRef(({
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
     const oldZoom = viewStateRef.current.zoom;
 
-    // 🎯 NUEVO: Calcular límite mínimo de zoom dinámicamente
-    // Esto permite ver TODAS las velas disponibles sin límite artificial
-    const totalCandles = candlesRef.current.length;
-    const minCandleWidth = 0.3; // píxeles mínimos por vela para mantener visibilidad
-    const chartWidthForZoom = canvas.getBoundingClientRect().width - 75;
-
-    // Calcular el zoom mínimo necesario para mostrar todas las velas
-    // Si tenemos 2000 velas y 800px de ancho: minZoom = (800 / (8 * 2000)) = 0.05
-    const dynamicMinZoom = (chartWidthForZoom / (8 * totalCandles)) * 0.8; // 0.8 para dar margen
-    const absoluteMinZoom = minCandleWidth / 8; // 0.0375 (nunca menos de 0.3px por vela)
-    const minZoom = Math.max(dynamicMinZoom, absoluteMinZoom);
-
-    // Límite máximo sigue siendo 5 (zoom in extremo)
-    const maxZoom = 5;
-
-    const newZoom = Math.max(minZoom, Math.min(maxZoom, oldZoom * zoomFactor));
+    // Zoom limits: 0.01 (extreme zoom out, ~0.1px candles) to 5 (extreme zoom in)
+    const newZoom = Math.max(0.01, Math.min(5, oldZoom * zoomFactor));
     viewStateRef.current.zoom = newZoom;
 
     // Desmarcar preset activo si el usuario hace zoom manual
@@ -1601,7 +1638,8 @@ const MiniChart = forwardRef(({
     // Ajustar offset para mantener la vista coherente
     const rect = canvas.getBoundingClientRect();
     const chartWidth = rect.width - 75;
-    const candlesPerScreen = Math.floor(chartWidth / (8 * newZoom));
+    const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * newZoom));
+    const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
     const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
     viewStateRef.current.offset = Math.min(viewStateRef.current.offset, maxOffset);
 
@@ -1653,9 +1691,9 @@ const MiniChart = forwardRef(({
 
   // ==================== FIXED RANGE PROFILES ====================
   
-  const handleCreateFixedRangeProfile = (startTimestamp, endTimestamp) => {
+  const handleCreateFixedRangeProfile = (startTimestamp, endTimestamp, applyToAll = false, sourceRectId = null) => {
     if (indicatorManagerRef.current) {
-      const rangeId = indicatorManagerRef.current.createFixedRangeProfile(startTimestamp, endTimestamp);
+      const rangeId = indicatorManagerRef.current.createFixedRangeProfile(startTimestamp, endTimestamp, sourceRectId);
       const profiles = indicatorManagerRef.current.getFixedRangeProfiles();
       setFixedRangeProfiles(profiles);
       indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
@@ -1681,6 +1719,13 @@ const MiniChart = forwardRef(({
       indicatorManagerRef.current.saveFixedRangeProfilesToStorage();
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     }
+  };
+
+  const handleStartDrawRectangle = () => {
+    // Cerrar modal y activar herramienta de rectángulo para dibujar en el chart
+    setShowFixedRangeManager(false);
+    pendingVPFixedFromRectRef.current = true;
+    if (onToolChange) onToolChange('rectangle');
   };
 
   const handleConfigureFixedRangeProfile = (rangeId) => {
@@ -1828,9 +1873,10 @@ const MiniChart = forwardRef(({
       const rect = canvasRef.current.getBoundingClientRect();
       const chartWidth = rect.width - 75;
       const zoom = viewStateRef.current.zoom || 1;
-      const candlesPerScreen = Math.floor(chartWidth / (8 * zoom));
+      const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * zoom));
+      const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
       const marginRightPx = chartWidth * 0.35;
-      const candlesInMargin = Math.ceil(marginRightPx / (8 * zoom));
+      const candlesInMargin = Math.ceil(marginRightPx / effectiveBarWidth);
 
       if (candlesRef.current.length > candlesPerScreen) {
         viewStateRef.current.offset = Math.min(candlesInMargin, candlesRef.current.length - candlesPerScreen);
@@ -1939,7 +1985,24 @@ const MiniChart = forwardRef(({
     initIndicators();
 
     // 🎯 NUEVO: Inicializar sistema de dibujo
-    drawingManagerRef.current = new DrawingToolManager(symbol, interval);
+    drawingManagerRef.current = new DrawingToolManager(symbol, interval, null, (shape) => {
+      // Callback cuando se agrega un shape: actualizar rectángulos disponibles
+      updateChartRectangles();
+
+      // Auto-crear VP Fixed si el usuario dibujó un rectángulo desde el modal
+      if (pendingVPFixedFromRectRef.current && shape && shape.type === 'rectangle') {
+        pendingVPFixedFromRectRef.current = false;
+        const tStart = Math.min(shape.time1, shape.time2);
+        const tEnd = Math.max(shape.time1, shape.time2);
+        const rectId = shape.id;
+        // Salir del modo dibujo y crear el VP Fixed
+        if (onToolChange) onToolChange('select');
+        setTimeout(() => {
+          handleCreateFixedRangeProfile(tStart, tEnd, false, rectId);
+          saveDrawings();
+        }, 50);
+      }
+    });
     drawingManagerRef.current.setTool(currentTool);
 
     measurementToolRef.current = new MeasurementTool();
@@ -2417,13 +2480,15 @@ const MiniChart = forwardRef(({
             >
               ✕
             </button>
-            <FixedRangeProfilesManager 
+            <FixedRangeProfilesManager
               symbol={symbol}
               profiles={fixedRangeProfiles}
               onCreateProfile={handleCreateFixedRangeProfile}
               onDeleteProfile={handleDeleteFixedRangeProfile}
               onToggleProfile={handleToggleFixedRangeProfile}
               onConfigureProfile={handleConfigureFixedRangeProfile}
+              chartRectangles={chartRectangles}
+              onStartDrawRectangle={handleStartDrawRectangle}
             />
           </div>
         </div>

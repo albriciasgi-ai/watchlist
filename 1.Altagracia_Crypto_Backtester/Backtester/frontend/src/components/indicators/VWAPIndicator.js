@@ -800,6 +800,12 @@ class VWAPIndicator extends IndicatorBase {
     const { x, y, width, height } = bounds;
     const viewport = priceContext || {};
 
+    // Save canvas state to avoid pollution from/to other indicators
+    ctx.save();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+
     // Draw bands first (behind VWAP line)
     if (this.showBands) {
       this._drawBands(ctx, visibleCandles, viewport, x, y, width, height);
@@ -808,43 +814,53 @@ class VWAPIndicator extends IndicatorBase {
     // Draw VWAP line
     this._drawVWAPLine(ctx, visibleCandles, viewport, x, y, width, height);
 
+    // Restore canvas state
+    ctx.restore();
+
     // NOTE: Volatility indicators are now drawn separately from MiniChart
     // after the volume panel to avoid confusion
   }
 
   _drawVWAPLine(ctx, visibleCandles, viewport, x, y, width, height) {
-    ctx.strokeStyle = this.vwapColor;
-    ctx.lineWidth = this.vwapLineWidth;
-    ctx.beginPath();
-
-    let firstPoint = true;
     const candleWidth = width / visibleCandles.length;
+    const points = [];
 
-    visibleCandles.forEach((candle, i) => {
+    // Collect valid points first
+    for (let i = 0; i < visibleCandles.length; i++) {
+      const candle = visibleCandles[i];
       const vwapPoint = this.dataMap.get(candle.timestamp);
-      if (!vwapPoint) return;
+      if (!vwapPoint) continue;
 
       const candleX = x + (i * candleWidth) + (candleWidth / 2);
       const vwapPrice = vwapPoint.vwap;
 
-      // Convert price to Y coordinate using priceToY function if available
       let candleY;
       if (viewport.priceToY) {
         candleY = viewport.priceToY(vwapPrice);
       } else {
-        // Fallback to manual calculation
         candleY = y + ((viewport.maxPrice - vwapPrice) / (viewport.maxPrice - viewport.minPrice)) * height;
       }
 
-      if (firstPoint) {
-        ctx.moveTo(candleX, candleY);
-        firstPoint = false;
-      } else {
-        ctx.lineTo(candleX, candleY);
+      if (isFinite(candleX) && isFinite(candleY)) {
+        points.push({ x: candleX, y: candleY });
       }
-    });
+    }
 
-    ctx.stroke();
+    // Draw as individual segments (more reliable than single path)
+    if (points.length >= 2) {
+      ctx.strokeStyle = this.vwapColor;
+      ctx.lineWidth = this.vwapLineWidth;
+      ctx.setLineDash([]);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      for (let i = 0; i < points.length - 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(points[i].x, points[i].y);
+        ctx.lineTo(points[i + 1].x, points[i + 1].y);
+        ctx.stroke();
+      }
+    }
   }
 
   _drawBands(ctx, visibleCandles, viewport, x, y, width, height) {

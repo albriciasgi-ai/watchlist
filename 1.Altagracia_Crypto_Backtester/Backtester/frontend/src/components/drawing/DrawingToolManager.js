@@ -11,7 +11,7 @@ import TPSLBox from './shapes/TPSLBox';
 import TextBox from './shapes/TextBox';
 
 class DrawingToolManager {
-  constructor(symbol, interval, onToolChange = null) {
+  constructor(symbol, interval, onToolChange = null, onShapeAdded = null) {
     this.symbol = symbol;
     this.interval = interval;
     this.shapes = [];
@@ -21,6 +21,7 @@ class DrawingToolManager {
     this.drawingInProgress = null;
     this.tempPoints = [];
     this.onToolChange = onToolChange; // Callback para notificar cambios de herramienta
+    this.onShapeAdded = onShapeAdded; // Callback cuando se agrega un shape
 
     // Undo/Redo system
     this.history = [];
@@ -200,11 +201,16 @@ class DrawingToolManager {
 
   addShape(shape) {
     this.shapes.push(shape);
+    if (this.onShapeAdded) this.onShapeAdded(shape);
   }
 
   deleteSelected() {
     if (this.selectedShape) {
-      const index = this.shapes.indexOf(this.selectedShape);
+      let index = this.shapes.indexOf(this.selectedShape);
+      // Fallback: buscar por ID si la referencia es obsoleta (después de loadShapes)
+      if (index === -1 && this.selectedShape.id) {
+        index = this.shapes.findIndex(s => s.id === this.selectedShape.id);
+      }
       if (index !== -1) {
         this.shapes.splice(index, 1);
         this.selectedShape = null;
@@ -270,9 +276,15 @@ class DrawingToolManager {
 
   restoreFromHistory() {
     if (this.historyIndex >= 0 && this.historyIndex < this.history.length) {
+      const prevSelectedId = this.selectedShape?.id || null;
       const state = this.history[this.historyIndex];
       this.shapes = state.map(data => this.deserializeShape(data));
-      this.selectedShape = null;
+      // Re-mapear selectedShape si aún existe después del undo/redo
+      if (prevSelectedId) {
+        this.selectedShape = this.shapes.find(s => s.id === prevSelectedId) || null;
+      } else {
+        this.selectedShape = null;
+      }
     }
   }
 
@@ -306,9 +318,16 @@ class DrawingToolManager {
   }
 
   loadShapes(shapesData) {
+    const prevSelectedId = this.selectedShape?.id || null;
+
     this.shapes = shapesData
       .map(data => this.deserializeShape(data))
       .filter(shape => shape !== null);
+
+    // Re-mapear selectedShape a la nueva instancia (evita referencias obsoletas)
+    if (prevSelectedId) {
+      this.selectedShape = this.shapes.find(s => s.id === prevSelectedId) || null;
+    }
 
     // Inicializar history con estado cargado
     this.history = [this.shapes.map(s => s.serialize())];

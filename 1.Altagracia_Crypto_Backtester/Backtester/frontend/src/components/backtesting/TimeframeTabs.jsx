@@ -4,13 +4,17 @@ import './TimeframeTabs.css';
 /**
  * Componente de tabs para cambiar entre timeframes en backtesting
  *
- * Muestra 3 tabs fijos: 15m, 1h, 4h
+ * Muestra 5 tabs fijos: 1m, 5m, 15m, 1h, 4h
  * Cada tab puede mostrar un badge con el número de órdenes abiertas en ese timeframe
+ *
+ * @param {boolean} compact - Si es true, usa estilos compactos para el header (50px)
  */
 const TimeframeTabs = ({
   activeTimeframe,
   onTabChange,
-  orderCounts = {}
+  orderCounts = {},
+  downloadingTimeframes = new Set(),
+  compact = false
 }) => {
   const tabs = [
     { id: '1m', label: '1m', color: '#E91E63', emoji: '⚡' },   // 2 años de datos
@@ -21,24 +25,25 @@ const TimeframeTabs = ({
   ];
 
   return (
-    <div className="timeframe-tabs-container">
+    <div className={`timeframe-tabs-container ${compact ? 'compact' : ''}`}>
       <div className="timeframe-tabs">
         {tabs.map(tab => {
           const isActive = activeTimeframe === tab.id;
           const orderCount = orderCounts[tab.id] || 0;
+          const isDownloading = downloadingTimeframes.has(tab.id);
 
           return (
             <button
               key={tab.id}
-              className={`timeframe-tab ${isActive ? 'active' : ''}`}
+              className={`timeframe-tab ${isActive ? 'active' : ''} ${isDownloading ? 'downloading' : ''}`}
               onClick={() => onTabChange(tab.id)}
               style={{
                 borderBottomColor: isActive ? tab.color : 'transparent',
                 color: isActive ? tab.color : '#666'
               }}
-              title={`Cambiar a timeframe ${tab.label}`}
+              title={isDownloading ? `Descargando datos de ${tab.label}...` : `Cambiar a timeframe ${tab.label}`}
             >
-              <span className="tab-emoji">{tab.emoji}</span>
+              <span className="tab-emoji">{isDownloading ? '⏳' : tab.emoji}</span>
               <span className="tab-label">{tab.label}</span>
 
               {orderCount > 0 && (

@@ -606,7 +606,11 @@ class OpenInterestIndicator extends IndicatorBase {
 
       if (delta === 0) return;
 
-      const barHeight = Math.abs(delta) * deltaScale;
+      // 🔧 FIX: Limitar barHeight para que no exceda el área disponible
+      let barHeight = Math.abs(delta) * deltaScale;
+      const maxBarHeight = histogramHeight / 2;
+      barHeight = Math.min(barHeight, maxBarHeight);
+
       const color = delta >= 0 ? bullColor : bearColor;
 
       ctx.fillStyle = color;

@@ -327,6 +327,13 @@ class IndicatorManager {
               promises.push(indicator.fetchData());
             }
           }
+          // Open Interest: verificar si tiene datos
+          else if (indicator.name === "Open Interest") {
+            if (!indicator.dataMap || indicator.data.length === 0) {
+              console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
+              promises.push(indicator.fetchData());
+            }
+          }
         }
       }
     }
@@ -601,14 +608,15 @@ class IndicatorManager {
 
   // ==================== FIXED RANGE PROFILES ====================
 
-  createFixedRangeProfile(startTimestamp, endTimestamp) {
+  createFixedRangeProfile(startTimestamp, endTimestamp, sourceRectId = null) {
     const rangeId = `range_${Date.now()}`;
-    
+
     const newProfile = {
       rangeId: rangeId,
       symbol: this.symbol,
       startTimestamp: startTimestamp,
       endTimestamp: endTimestamp,
+      sourceRectId: sourceRectId,
       enabled: true,
       rows: 50,
       valueAreaPercent: 70,

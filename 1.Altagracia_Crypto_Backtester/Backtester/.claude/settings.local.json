@@ -1,30 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:code.claude.com)",
-      "SlashCommand(/init)",
-      "WebFetch(domain:blueberrymarkets.com)",
-      "WebFetch(domain:www.altrady.com)",
-      "Bash(python:*)",
-      "Bash(node testRangeDetection.js:*)",
-      "Bash(node -e:*)",
-      "Bash(node quickTest.js:*)",
-      "Bash(node optimizeRangeDetection.js:*)",
-      "Bash(dir:*)",
-      "Bash(npm run dev:*)",
-      "Bash(node convertToPDF.js:*)",
-      "Bash(start Resumen_Desarrollo_RangeDetector.html)",
-      "Bash(cd:*)",
-      "Bash(nul)",
-      "Bash(.venvScriptspip.exe install aiohttp==3.9.1)",
-      "Bash(.venv/Scripts/pip.exe:*)",
-      "Bash(findstr:*)",
-      "Bash(.venvScriptspip.exe install -r requirements.txt)",
-      "Bash(\".venv/Scripts/python.exe\" -m uvicorn main:app --reload --port 8000)",
-      "WebSearch",
-      "WebFetch(domain:www.tradingview.com)",
-      "Bash(timeout /t 5 /nobreak)",
-      "Bash(npm install:*)"
+      "Bash(\".venv\\Scripts\\python.exe\" -c \"\nimport httpx\nimport time\nfrom datetime import datetime\n\nsymbol = ''BTCUSDT''\n# Solo probar los intervalos que se quedaron en el limite de 20K puntos\nintervals_to_test = [''5min'', ''15min'', ''30min'', ''1h'']\nMAX_REQUESTS = 600  # 600 requests x 200 puntos = 120,000 puntos max\n\nclient = httpx.Client(timeout=30)\n\nprint(f''=== TEST CON {MAX_REQUESTS} REQUESTS (max {MAX_REQUESTS * 200:,} puntos) ==='')\nprint(f''Fecha actual: {datetime.now().strftime(\"\"%Y-%m-%d %H:%M\"\")}'')\nprint()\n\nfor interval in intervals_to_test:\n    start_time = time.time()\n    end_ms = int(datetime.now().timestamp() * 1000)\n    oldest_found = None\n    total_points = 0\n    requests = 0\n    \n    while requests < MAX_REQUESTS:\n        url = f''https://api.bybit.com/v5/market/open-interest?category=linear&symbol={symbol}&intervalTime={interval}&limit=200&endTime={end_ms}''\n        resp = client.get(url)\n        data = resp.json()\n        \n        if data.get(''retCode'') != 0:\n            print(f''  ERROR en request {requests}: {data.get(\"\"retMsg\"\")}'')\n            break\n            \n        items = data.get(''result'', {}).get(''list'', [])\n        if not items:\n            break\n            \n        oldest_found = items[-1]\n        total_points += len(items)\n        requests += 1\n        \n        # Siguiente pagina\n        end_ms = int(oldest_found[''timestamp'']) - 1\n        \n        if len(items) < 200:\n            break  # Ya no hay mas datos\n        \n        # Progreso cada 100 requests\n        if requests % 100 == 0:\n            oldest_dt = datetime.fromtimestamp(int(oldest_found[''timestamp''])/1000)\n            print(f''  {interval}: {requests} requests... {total_points:,} puntos... hasta {oldest_dt.strftime(\"\"%Y-%m-%d\"\")}'')\n        \n        time.sleep(0.05)  # Rate limit protection\n    \n    elapsed = time.time() - start_time\n    \n    if oldest_found:\n        oldest_dt = datetime.fromtimestamp(int(oldest_found[''timestamp''])/1000)\n        days_back = (datetime.now() - oldest_dt).days\n        hit_limit = requests >= MAX_REQUESTS\n        data_exhausted = not hit_limit\n        print(f''{interval:6s} | Dato mas antiguo: {oldest_dt.strftime(\"\"%Y-%m-%d %H:%M\"\")} ({days_back} dias / {days_back/365:.1f} anios) | {total_points:,} puntos en {requests} requests ({elapsed:.1f}s) | {\"\"LIMITE DE REQUESTS\"\" if hit_limit else \"\"DATOS AGOTADOS\"\"} '')\n    else:\n        print(f''{interval:6s} | SIN DATOS DISPONIBLES'')\n    \n    print()\n\nclient.close()\nprint(''=== TEST COMPLETADO ==='')\n\")"
     ],
     "deny": [],
     "ask": []

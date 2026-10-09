@@ -29,7 +29,6 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
 
   // Estado para controlar Open Interest
   const [showOpenInterest, setShowOpenInterest] = useState(true);
-
   // Configuración de visualización
   const CANDLE_WIDTH = 8; // Ancho fijo por vela
   const CANDLE_SPACING = 2; // Espacio entre velas
@@ -78,62 +77,6 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
     // TODO: Re-habilitar cuando se solucione el problema de Fabric.js con Vite
     console.log('[BacktestingChart] Drawing tools disabled - Fabric.js compatibility issue');
   }, []);
-
-  /**
-   * 🎯 NUEVO: Inicializar indicador Open Interest
-   */
-  useEffect(() => {
-    if (!marketData || !symbol || !timeframe) {
-      console.log('[BacktestingChart] ⏭️ Saltando inicialización OI (sin datos o símbolo)');
-      return;
-    }
-
-    // 🎯 FIX: Acceder a los datos OI específicos del timeframe activo
-    const timeframeData = marketData.timeframes?.[timeframe];
-    const oiData = timeframeData?.open_interest || [];
-
-    console.log('[BacktestingChart] 🔍 Verificando datos de Open Interest:', {
-      timeframe,
-      hasTimeframeData: !!timeframeData,
-      oiLength: oiData.length,
-      timeframesAvailable: marketData.timeframes ? Object.keys(marketData.timeframes) : []
-    });
-
-    // Crear instancia del indicador si no existe
-    if (!openInterestIndicatorRef.current) {
-      const indicator = new OpenInterestIndicator(symbol, timeframe, 1095); // 3 años
-      indicator.enabled = true;
-      indicator.mode = "histogram"; // Modo por defecto
-      openInterestIndicatorRef.current = indicator;
-      console.log('[BacktestingChart] ✅ OpenInterestIndicator creado para', timeframe);
-    }
-
-    // 🎯 FIX: Cargar datos del timeframe específico
-    if (oiData.length > 0) {
-      console.log(`[BacktestingChart] 📊 Cargando datos OI para ${timeframe}:`, {
-        count: oiData.length,
-        first: oiData[0],
-        last: oiData[oiData.length - 1]
-      });
-
-      const success = openInterestIndicatorRef.current.loadFromData(oiData);
-      if (success) {
-        console.log(`[BacktestingChart] ✅ Open Interest data loaded successfully for ${timeframe}`);
-      } else {
-        console.error(`[BacktestingChart] ❌ Failed to load Open Interest data for ${timeframe}`);
-      }
-    } else {
-      console.warn(`[BacktestingChart] ⚠️ No Open Interest data for ${timeframe}:`, {
-        hasTimeframeData: !!timeframeData,
-        timeframeKeys: timeframeData ? Object.keys(timeframeData) : []
-      });
-
-      // Limpiar datos del indicador si no hay datos para este timeframe
-      if (openInterestIndicatorRef.current) {
-        openInterestIndicatorRef.current.data = [];
-      }
-    }
-  }, [marketData, symbol, timeframe]);
 
   /**
    * Ajustar tamaño del canvas al contenedor
@@ -721,13 +664,6 @@ const BacktestingChart = ({ symbol, timeframe, marketData, currentTime, isPlayin
         width: chartWidth,
         height: oiIndicatorHeight
       };
-
-      console.log('[BacktestingChart] Rendering Open Interest:', {
-        hasIndicator: !!openInterestIndicatorRef.current,
-        hasData: openInterestIndicatorRef.current?.data?.length || 0,
-        bounds: oiBounds,
-        candlesCount: visibleCandles.main.length
-      });
 
       try {
         openInterestIndicatorRef.current.render(ctx, oiBounds, visibleCandles.main);

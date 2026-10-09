@@ -1,0 +1,16 @@
+{
+  "symbol": "PENDLEUSDT",
+  "shapes": [
+    {
+      "type": "tpsl-short",
+      "id": "tpsl_short_1789543563737_0.7389856389167184",
+      "entryPrice": 2.2665076480248167,
+      "tpPrice": 2.1444761996922157,
+      "slPrice": 2.3230263202239865,
+      "time": 1789537800000,
+      "widthTime": 4800000
+    }
+  ],
+  "updated_at": "2026-09-16T07:26:45.252205+00:00",
+  "total_shapes": 1
+}

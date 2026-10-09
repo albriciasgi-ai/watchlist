@@ -380,3 +380,67 @@ const profile = await workerPool.calculateVolumeProfile(candles, 100, 70);
 // Detect patterns in background
 const patterns = await workerPool.detectRejectionPatterns(candles, config);
 ```
+
+---
+
+## ZOOM SYSTEM (Octubre 2026)
+
+Sistema de zoom horizontal que permite comprimir velas hasta mostrar ~14,000 velas en pantalla.
+
+### Arquitectura
+
+El zoom usa `viewStateRef.current.zoom` como multiplicador sobre un ancho base de 8px:
+
+```javascript
+// Formula central aplicada en 4 ubicaciones criticas
+const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * zoom));
+const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
+```
+
+### Limites
+
+| Parametro | Valor | Descripcion |
+|-----------|-------|-------------|
+| Min zoom | `0.01` | Zoom out extremo |
+| Max zoom | `5` | Zoom in extremo |
+| Min ancho vela | `0.1px` | Compresion maxima |
+| Max ancho vela | `15px` | Expansion maxima |
+
+**Capacidad:** En pantalla de 15" (~1422px utiles): `1422 / 0.1 = ~14,220 velas` visibles.
+
+### Ubicaciones Criticas (MiniChart.jsx)
+
+La formula `effectiveBarWidth` debe ser consistente en estas 4 ubicaciones:
+
+1. **drawChart** (~linea 651): Calculo principal de velas visibles
+2. **Wheel handler** (~linea 1600): Ajuste de offset post-zoom
+3. **Pan handler** (~linea 1357): Calculo de desplazamiento durante paneo
+4. **Auto-offset** (~linea 1839): Calculo de margen derecho automatico
+
+### Historial de Cambios
+
+El sistema original usaba un zoom minimo dinamico que limitaba artificialmente el zoom out:
+
+```javascript
+// ANTES (limitaba a ~2800 velas):
+const dynamicMinZoom = (chartWidth / (8 * totalCandles)) * 0.8;
+const newZoom = Math.max(dynamicMinZoom, Math.min(5, oldZoom * zoomFactor));
+
+// DESPUES (permite ~14,000 velas):
+const newZoom = Math.max(0.01, Math.min(5, oldZoom * zoomFactor));
+```
+
+Se adopto el patron de App 8 (AnalizadorDesktop) que usa limites fijos en lugar de dinamicos.
+
+### Troubleshooting Zoom
+
+**Zoom out no llega al maximo:**
+- Verificar que las 4 ubicaciones usan `Math.max(0.1, ...)` (no 0.2 ni 0.5)
+- Verificar que el wheel handler usa `Math.max(0.01, ...)` como min zoom
+
+**Velas invisibles en zoom extremo:**
+- A 0.1px por vela el detalle individual no es visible, pero la forma general del precio si
+- Esto es comportamiento esperado (similar a TradingView en zoom out extremo)
+
+**Pan no funciona correctamente en zoom extremo:**
+- Verificar que pan handler usa `effectiveBarWidth` y no `8 * zoom` directo

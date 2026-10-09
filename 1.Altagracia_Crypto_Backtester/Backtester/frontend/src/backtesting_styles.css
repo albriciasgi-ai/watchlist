@@ -362,7 +362,7 @@
 .backtesting-main-wrapper {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  overflow: hidden; /* Mantener hidden en el wrapper para controlar scroll en niveles inferiores */
 }
 
 .backtesting-main {
@@ -374,10 +374,57 @@
   transition: flex 0.3s ease-in-out; /* Animar el cambio de tamaño */
 }
 
-/* 🎯 NUEVO: Asegurar que MiniChart dentro de backtesting ocupe toda la altura */
+/* ==================== MODO NORMAL: Altura dinámica + scroll ==================== */
+
+/* MiniChart crece automáticamente según su contenido (precio + volumen + indicadores) */
 .backtesting-main .mini-chart {
+  height: auto !important;
+  min-height: 0 !important; /* Sin mínimo fijo - el canvas calcula su altura necesaria */
+}
+
+/* Panel de timeframe con scroll vertical si el contenido excede el viewport */
+.timeframe-panel {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 100px); /* Máximo viewport menos header/controles */
+}
+
+/* ==================== MODO FULLSCREEN: Compresión inteligente 100vh ==================== */
+
+/* 1. Wrapper ocupa todo el viewport */
+.backtesting-main-wrapper.wrapper-fullscreen-chart {
+  height: 100vh !important;
+}
+
+/* 2. Main container 100% del wrapper */
+.backtesting-main.fullscreen-chart {
   height: 100% !important;
-  min-height: 600px !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* 3. Container de timeframes 100% del main */
+.backtesting-main.fullscreen-chart .timeframes-container {
+  height: 100% !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* 4. Panel de timeframe activo 100% del container */
+/* CRÍTICO: NO forzar display - dejar que JSX controle visibilidad */
+.backtesting-main.fullscreen-chart .timeframe-panel {
+  height: 100% !important;
+  overflow: hidden !important; /* Sin scroll en fullscreen - compresión inteligente */
+  flex-direction: column !important;
+}
+
+/* 5. MiniChart ocupa 100% del panel - el canvas se comprime inteligentemente */
+.backtesting-main.fullscreen-chart .mini-chart {
+  height: 100% !important;
+  min-height: 0 !important;
+  flex: 1 !important;
 }
 
 /* 🎯 NUEVO: Contenedor de tabs de timeframes */
@@ -385,13 +432,14 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible; /* 🔧 FIX: Permitir que el contenido fluya (scroll se maneja en .timeframe-panel) */
 }
 
 .timeframe-panel {
   flex: 1;
   height: 100%;
-  overflow: hidden;
+  overflow-y: auto; /* 🔧 FIX: Permitir scroll vertical cuando hay muchos indicadores */
+  overflow-x: hidden; /* Mantener sin scroll horizontal */
 }
 
 .backtesting-sidebar {
@@ -414,7 +462,11 @@
   opacity: 0;
   pointer-events: none;
   width: 0; /* Colapsar ancho para liberar espacio */
+  min-width: 0; /* 🔧 FIX: Permitir que el ancho llegue a 0 */
+  flex-basis: 0; /* 🔧 FIX: No ocupar espacio en flexbox */
+  flex-shrink: 1; /* 🔧 FIX: Permitir contracción total */
   border: none; /* Quitar borde */
+  overflow: hidden; /* 🔧 FIX: Ocultar contenido que se sale */
 }
 
 .sidebar-tabs {
@@ -1023,4 +1075,316 @@
   background: linear-gradient(135deg, #5a7fb5 0%, #6a8fc5 100%);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(74, 111, 165, 0.4);
+}
+
+/* ==================== 🎯 OPTIMIZACIÓN UI: PANEL TRADING COLAPSABLE ==================== */
+
+/* Header del sidebar con título y botón de cerrar */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Botón de colapsar (X) en el header del sidebar */
+.btn-collapse {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.btn-collapse:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-collapse:active {
+  transform: scale(0.95);
+}
+
+/* Botón flotante que aparece cuando el panel está oculto */
+.floating-panel-toggle {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  padding: 16px 12px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 950;
+  box-shadow: -2px 2px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  line-height: 1;
+}
+
+.floating-panel-toggle:hover {
+  background: #7b8ff0;
+  transform: translateY(-50%) translateX(-4px);
+  box-shadow: -4px 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.floating-panel-toggle:active {
+  transform: translateY(-50%) translateX(-2px) scale(0.95);
+}
+
+/* ==================== 🎯 OPTIMIZACIÓN UI: HEADER COMPACTO (120px → 50px) ==================== */
+
+/* Header principal compacto */
+.backtesting-header.compact {
+  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  overflow: visible; /* 🔧 FIX: Permitir que dropdowns se vean fuera del header */
+  position: relative;
+  z-index: 1200; /* 🔧 FIX: Z-index alto para que dropdowns aparezcan sobre el contenido */
+}
+
+/* Sección izquierda: Símbolo + Tiempo + Precio */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.symbol-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  line-height: 1;
+}
+
+.current-time-compact {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+  padding: 4px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.current-price-compact {
+  font-size: 14px;
+  font-weight: 600;
+  color: #667eea;
+  line-height: 1;
+}
+
+/* Sección centro: Controles de playback + Tabs de timeframes */
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* 🎯 Aumentado de 8px a 16px para separar playback de tabs */
+  flex-shrink: 0;
+}
+
+.btn-control-compact {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+  color: #495057;
+  min-width: 36px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-control-compact:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+.btn-control-compact:active {
+  transform: scale(0.95);
+}
+
+.btn-control-compact.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.speed-control-compact {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  height: 32px;
+  min-width: 60px;
+}
+
+.speed-control-compact:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Sección derecha: Acciones */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.btn-action-compact {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+  color: #495057;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-action-compact:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+.btn-action-compact:active {
+  transform: scale(0.95);
+}
+
+/* Selector de indicadores compacto */
+.indicator-selector-compact {
+  position: relative;
+}
+
+.indicator-selector-compact .btn-action-compact {
+  min-width: 150px;
+  justify-content: space-between;
+}
+
+.indicator-selector-compact .dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1300; /* 🔧 FIX: Z-index más alto para aparecer sobre todo */
+  min-width: 250px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Menú de acciones compacto */
+.actions-menu-compact {
+  position: relative;
+}
+
+.actions-menu-compact .menu-trigger {
+  font-size: 18px;
+  min-width: 36px;
+  padding: 6px 10px;
+}
+
+.actions-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1300; /* 🔧 FIX: Z-index más alto para aparecer sobre todo */
+  min-width: 200px;
+  padding: 4px 0;
+}
+
+.actions-dropdown button {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #495057;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.actions-dropdown button:hover {
+  background: #f8f9fa;
+}
+
+.actions-dropdown button:active {
+  background: #e9ecef;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 4px 0;
+}
+
+.active-badge {
+  color: #28a745;
+  font-size: 12px;
+  margin-left: auto;
+}
+
+/* Responsive: ajustar spacing en pantallas pequeñas */
+@media (max-width: 1200px) {
+  .backtesting-header.compact {
+    gap: 12px;
+  }
+
+  .header-left {
+    gap: 8px;
+  }
+
+  .current-time-compact {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
 }

@@ -1,19 +1,49 @@
 // FixedRangeProfilesManager.jsx
 // Componente para crear y gestionar multiples Volume Profile Fixed Range
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
-const FixedRangeProfilesManager = ({ 
+const FixedRangeProfilesManager = ({
   symbol,
   profiles = [],
   onCreateProfile,
   onDeleteProfile,
   onToggleProfile,
-  onConfigureProfile
+  onConfigureProfile,
+  chartRectangles = [],
+  onStartDrawRectangle,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [showRectPicker, setShowRectPicker] = useState(false);
+
+  // Rectangulos disponibles (filtrar los que ya tienen un VP Fixed creado)
+  const existingRanges = useMemo(() => {
+    const set = new Set();
+    profiles.forEach(p => {
+      if (p.sourceRectId) set.add(p.sourceRectId);
+    });
+    return set;
+  }, [profiles]);
+
+  const availableRects = useMemo(() => {
+    return chartRectangles.map(rect => {
+      const tStart = Math.min(rect.time1, rect.time2);
+      const tEnd = Math.max(rect.time1, rect.time2);
+      const pHigh = Math.max(rect.price1, rect.price2);
+      const pLow = Math.min(rect.price1, rect.price2);
+      return {
+        id: rect.id,
+        timeStart: tStart,
+        timeEnd: tEnd,
+        priceHigh: pHigh,
+        priceLow: pLow,
+        label: rect.label || null,
+        alreadyUsed: existingRanges.has(rect.id),
+      };
+    }).sort((a, b) => b.timeStart - a.timeStart); // mas recientes primero
+  }, [chartRectangles, existingRanges]);
 
   const handleCreate = () => {
     if (!startDate || !endDate) {
@@ -30,28 +60,48 @@ const FixedRangeProfilesManager = ({
     }
 
     onCreateProfile(startTimestamp, endTimestamp);
-    
-    // Limpiar formulario y cerrar modal
+
     setStartDate("");
     setEndDate("");
     setShowModal(false);
   };
 
+  const handleCreateFromRect = (rect) => {
+    onCreateProfile(rect.timeStart, rect.timeEnd, false, rect.id);
+  };
+
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
-    return date.toLocaleDateString('es-ES', { 
-      day: '2-digit', 
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
       month: 'short',
       hour: '2-digit',
       minute: '2-digit'
     });
   };
 
+  const formatPrice = (price) => {
+    if (price >= 1000) return price.toFixed(1);
+    if (price >= 1) return price.toFixed(2);
+    return price.toFixed(4);
+  };
+
+  const rectBtnStyle = {
+    padding: '6px 12px',
+    backgroundColor: '#1565C0',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '11px',
+    fontWeight: 600,
+  };
+
   return (
     <div className="fixed-range-profiles-manager">
       <div className="manager-header">
         <h4>VP Fixed Ranges ({symbol})</h4>
-        <button 
+        <button
           className="create-profile-btn"
           onClick={() => setShowModal(true)}
           title="Crear nuevo perfil de rango fijo"
@@ -76,7 +126,6 @@ const FixedRangeProfilesManager = ({
                 {formatDate(profile.startTimestamp)} - {formatDate(profile.endTimestamp)}
               </span>
               <div className="profile-actions">
-                {/* Boton de configuracion */}
                 <button
                   className="configure-profile-btn"
                   onClick={() => onConfigureProfile(profile.rangeId)}
@@ -113,7 +162,7 @@ const FixedRangeProfilesManager = ({
           <div className="modal-content small" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Nuevo VP Fixed Range</h3>
-              <button 
+              <button
                 className="modal-close-btn"
                 onClick={() => setShowModal(false)}
               >
@@ -122,25 +171,164 @@ const FixedRangeProfilesManager = ({
             </div>
 
             <div className="modal-body">
+
+              {/* Seccion: Desde Rectangulo del Chart */}
+              <div style={{
+                marginBottom: '16px', padding: '12px',
+                backgroundColor: 'rgba(21, 101, 192, 0.1)',
+                borderRadius: '8px',
+                border: '1px solid rgba(21, 101, 192, 0.3)',
+              }}>
+                {availableRects.length > 0 ? (
+                  <>
+                    <div style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      marginBottom: '8px',
+                    }}>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#1565C0' }}>
+                        Desde rectangulo del chart ({availableRects.length})
+                      </span>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        {onStartDrawRectangle && (
+                          <button
+                            onClick={() => {
+                              setShowModal(false);
+                              onStartDrawRectangle();
+                            }}
+                            style={{
+                              ...rectBtnStyle,
+                              backgroundColor: '#2E7D32',
+                              fontSize: '12px',
+                            }}
+                            title="Dibujar un nuevo rectangulo en el chart"
+                          >
+                            + Dibujar
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setShowRectPicker(!showRectPicker)}
+                          style={{
+                            ...rectBtnStyle,
+                            backgroundColor: showRectPicker ? '#555' : '#1565C0',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {showRectPicker ? 'Ocultar' : 'Seleccionar'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {showRectPicker && (
+                      <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {availableRects.map(rect => (
+                          <div key={rect.id} style={{
+                            display: 'flex', alignItems: 'center', gap: '8px',
+                            padding: '8px', marginBottom: '4px',
+                            backgroundColor: 'rgba(0,0,0,0.04)',
+                            borderRadius: '6px',
+                            border: '1px solid rgba(0,0,0,0.08)',
+                            opacity: rect.alreadyUsed ? 0.5 : 1,
+                          }}>
+                            <div style={{ flex: 1, fontSize: '11px' }}>
+                              <div style={{ color: '#333', fontWeight: 500 }}>
+                                {rect.label ? `[${rect.label}] ` : ''}
+                                {formatPrice(rect.priceLow)} - {formatPrice(rect.priceHigh)}
+                              </div>
+                              <div style={{ color: '#888', marginTop: '2px' }}>
+                                {formatDate(rect.timeStart)} - {formatDate(rect.timeEnd)}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleCreateFromRect(rect)}
+                              disabled={rect.alreadyUsed}
+                              style={{
+                                ...rectBtnStyle,
+                                opacity: rect.alreadyUsed ? 0.4 : 1,
+                                cursor: rect.alreadyUsed ? 'not-allowed' : 'pointer',
+                              }}
+                              title={rect.alreadyUsed ? 'Ya tiene un VP Fixed creado' : 'Crear VP Fixed desde este rectangulo'}
+                            >
+                              {rect.alreadyUsed ? 'Creado' : 'Usar'}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {!showRectPicker && (
+                      <div style={{ fontSize: '11px', color: '#888' }}>
+                        Selecciona un rectangulo existente o dibuja uno nuevo en el chart
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      marginBottom: '8px',
+                    }}>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#1565C0' }}>
+                        Desde rectangulo del chart
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '10px' }}>
+                      No hay rectangulos dibujados en el chart. Dibuja uno para definir visualmente el rango del VP Fixed.
+                    </div>
+                    {onStartDrawRectangle && (
+                      <button
+                        onClick={() => {
+                          setShowModal(false);
+                          onStartDrawRectangle();
+                        }}
+                        style={{
+                          ...rectBtnStyle,
+                          backgroundColor: '#2E7D32',
+                          fontSize: '12px',
+                          padding: '8px 16px',
+                          width: '100%',
+                        }}
+                        title="Activar herramienta de rectangulo para dibujar en el chart"
+                      >
+                        Dibujar Rectangulo en el Chart
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* Separador */}
+              <div style={{
+                textAlign: 'center', fontSize: '11px', color: '#666',
+                margin: '12px 0', position: 'relative',
+              }}>
+                <span style={{ backgroundColor: '#fff', padding: '0 12px', position: 'relative', zIndex: 1 }}>
+                  o ingresa fechas manualmente
+                </span>
+                <div style={{
+                  position: 'absolute', top: '50%', left: 0, right: 0,
+                  height: '1px', backgroundColor: 'rgba(0,0,0,0.1)',
+                }} />
+              </div>
+
               <div className="form-group">
                 <label>Fecha inicio:</label>
-                <input 
-                  type="datetime-local" 
+                <input
+                  type="datetime-local"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Fecha final:</label>
-                <input 
-                  type="datetime-local" 
+                <input
+                  type="datetime-local"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
 
-              <button 
+              <button
                 className="apply-range-btn"
                 onClick={handleCreate}
               >

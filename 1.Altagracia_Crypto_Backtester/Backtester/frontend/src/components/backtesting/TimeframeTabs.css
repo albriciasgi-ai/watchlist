@@ -45,6 +45,19 @@
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
 
+.timeframe-tab.downloading {
+  opacity: 0.6;
+}
+
+.timeframe-tab.downloading .tab-emoji {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
 .tab-emoji {
   font-size: 16px;
   line-height: 1;
@@ -103,6 +116,63 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 🎯 OPTIMIZACIÓN UI: Estilos compactos para tabs en el header (50px) */
+.timeframe-tabs-container.compact {
+  background: transparent;
+  border-bottom: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 50px;
+}
+
+.timeframe-tabs-container.compact .timeframe-tabs {
+  gap: 2px;
+  align-items: center;
+  height: 100%;
+}
+
+.timeframe-tabs-container.compact .timeframe-tab {
+  padding: 4px 10px;
+  min-width: auto;
+  height: 32px;
+  font-size: 12px;
+  border-radius: 4px;
+  border-bottom: 2px solid transparent;
+  box-shadow: none;
+}
+
+.timeframe-tabs-container.compact .timeframe-tab:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.timeframe-tabs-container.compact .timeframe-tab.active {
+  background: rgba(33, 150, 243, 0.1);
+  box-shadow: none;
+}
+
+.timeframe-tabs-container.compact .tab-emoji {
+  font-size: 14px;
+}
+
+.timeframe-tabs-container.compact .tab-label {
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+
+.timeframe-tabs-container.compact .tab-badge {
+  top: 2px;
+  right: 2px;
+  font-size: 9px;
+  padding: 1px 4px;
+  min-width: 14px;
+}
+
+.timeframe-tabs-container.compact .tabs-info {
+  display: none; /* Sin espacio para hint en header compacto */
 }
 
 /* Responsive */
