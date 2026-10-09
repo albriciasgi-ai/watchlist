@@ -2436,6 +2436,7 @@ const MiniChart = forwardRef(({
           }}
         />
 
+
         {/* 🎯 NUEVO: Divisor redimensionable entre precio e indicadores */}
         <div
           onMouseDown={handleDividerMouseDown}

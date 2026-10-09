@@ -269,6 +269,18 @@ class IndicatorManager {
         console.log(`[${this.symbol}] 📊 S&R State Check: shouldBeEnabled=${shouldBeEnabled}, wasEnabled=${wasEnabled}, hasData=${(indicator.resistances?.length || 0) + (indicator.supports?.length || 0)}`);
       }
 
+      // 🔍 DEBUG: Log para Open Interest específicamente
+      if (indicator.name === "Open Interest") {
+        console.log(`%c[${this.symbol}] 📊 OI State Check`, 'background: #FF9800; color: white; font-weight: bold; padding: 4px;', {
+          shouldBeEnabled,
+          wasEnabled,
+          hasDataMap: !!indicator.dataMap,
+          dataMapSize: indicator.dataMap?.size || 0,
+          dataLength: indicator.data?.length || 0,
+          isBackendIndicator: backendIndicators.includes(indicator.name)
+        });
+      }
+
       if (shouldBeEnabled && !wasEnabled) {
         // 🎯 Indicador se está ACTIVANDO
         console.log(`[${this.symbol}] ✅ Activando ${indicator.name}`);
@@ -329,8 +341,17 @@ class IndicatorManager {
           }
           // Open Interest: verificar si tiene datos
           else if (indicator.name === "Open Interest") {
-            if (!indicator.dataMap || indicator.data.length === 0) {
-              console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
+            const hasData = indicator.dataMap && indicator.dataMap.size > 0 && indicator.data.length > 0;
+            console.log(`%c[${this.symbol}] 🔍 OI Data Validation`, 'background: #FF9800; color: white; padding: 4px;', {
+              hasDataMap: !!indicator.dataMap,
+              dataMapSize: indicator.dataMap?.size || 0,
+              dataLength: indicator.data?.length || 0,
+              hasData,
+              willReload: !hasData
+            });
+
+            if (!hasData) {
+              console.log(`%c[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`, 'background: #F44336; color: white; font-weight: bold; padding: 4px;');
               promises.push(indicator.fetchData());
             }
           }
@@ -584,15 +605,35 @@ class IndicatorManager {
     });
   }
 
-  renderIndicators(ctx, bounds, visibleCandles) {
+  /**
+   * 🎯 NUEVO: Obtener indicadores renderizables (tienen render() y altura > 0)
+   * Usado por IndicatorPanel para el sistema de resize/reorder
+   */
+  getRenderableIndicators() {
+    return this.indicators.filter(indicator => {
+      const indicatorHeight = indicator.getHeight ? indicator.getHeight() : indicator.height || 0;
+      return indicator.enabled && indicator.render && indicatorHeight > 0;
+    });
+  }
+
+  /**
+   * 🎯 MODIFICADO: Ahora soporta layout dinámico opcional
+   * Si no se proporciona layout, usa el comportamiento por defecto (apilamiento secuencial)
+   * @param {CanvasRenderingContext2D} ctx - Contexto del canvas
+   * @param {Object} bounds - Límites del área de renderizado
+   * @param {Array} visibleCandles - Velas visibles
+   * @param {Object} layout - OPCIONAL: { order: [], heights: {} } para sistema dinámico
+   */
+  renderIndicators(ctx, bounds, visibleCandles, layout = null) {
     let currentY = bounds.y;
 
-    this.indicators.forEach(indicator => {
-      // 🎯 FIX: Verificar si el indicador necesita panel usando getHeight()
-      // Esto permite que indicadores como VWAP tengan overlay Y panel (barras de volatilidad)
-      const indicatorHeight = indicator.getHeight() * this.heightScale;
+    // 🎯 MODO 1: Con layout dinámico (resize/reorder habilitado)
+    if (layout && layout.order && layout.heights) {
+      for (const indicatorName of layout.order) {
+        const indicator = this.indicators.find(ind => ind.name === indicatorName);
+        if (!indicator || !indicator.enabled || !indicator.render) continue;
 
-      if (indicator.enabled && indicator.render && indicatorHeight > 0) {
+        const indicatorHeight = layout.heights[indicatorName] || 80;
         const indicatorBounds = {
           x: bounds.x,
           y: currentY,
@@ -600,10 +641,35 @@ class IndicatorManager {
           height: indicatorHeight
         };
 
-        indicator.render(ctx, indicatorBounds, visibleCandles);
+        try {
+          indicator.render(ctx, indicatorBounds, visibleCandles);
+        } catch (error) {
+          console.error(`[${this.symbol}] Error renderizando ${indicatorName}:`, error);
+        }
+
         currentY += indicatorHeight;
       }
-    });
+    }
+    // 🎯 MODO 2: Comportamiento por defecto (sin layout dinámico)
+    else {
+      this.indicators.forEach(indicator => {
+        // 🎯 FIX: Verificar si el indicador necesita panel usando getHeight()
+        // Esto permite que indicadores como VWAP tengan overlay Y panel (barras de volatilidad)
+        const indicatorHeight = indicator.getHeight() * this.heightScale;
+
+        if (indicator.enabled && indicator.render && indicatorHeight > 0) {
+          const indicatorBounds = {
+            x: bounds.x,
+            y: currentY,
+            width: bounds.width,
+            height: indicatorHeight
+          };
+
+          indicator.render(ctx, indicatorBounds, visibleCandles);
+          currentY += indicatorHeight;
+        }
+      });
+    }
   }
 
   // ==================== FIXED RANGE PROFILES ====================

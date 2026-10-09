@@ -444,3 +444,158 @@ Se adopto el patron de App 8 (AnalizadorDesktop) que usa limites fijos en lugar 
 
 **Pan no funciona correctamente en zoom extremo:**
 - Verificar que pan handler usa `effectiveBarWidth` y no `8 * zoom` directo
+
+---
+
+## HISTORIAL DE PROBLEMAS Y SOLUCIONES (Febrero 2026)
+
+### Intento Fallido: IndicatorPanel con Drag-and-Drop
+
+**Problema:** Se implementó un sistema de paneles de indicadores separados con drag-and-drop para reordenar, redimensionar y gestionar indicadores de manera independiente. El sistema incluía:
+- `IndicatorPanel.jsx` - Componente de panel individual con drag handles
+- `IndicatorPanel.css` - Estilos profesionales con animaciones
+- Integración en `MiniChart.jsx` con estado `indicatorLayout` y ref `indicatorBoundsRef`
+
+**Síntomas del fallo:**
+- Los indicadores dejaron de aparecer completamente en el gráfico
+- El canvas no mostraba ningún indicador después de la integración
+- La lógica condicional para renderizar en IndicatorPanel vs canvas directo causaba conflictos
+
+**Causa raíz:**
+- El IndicatorPanel intentaba renderizar indicadores usando refs a canvas individuales
+- La lógica condicional en `MiniChart.jsx` impedía el renderizado normal de indicadores
+- El sistema de bounds y layout para paneles separados no se sincronizaba correctamente con el renderizado del canvas principal
+
+**Solución aplicada:**
+Se revirtieron TODOS los cambios relacionados con IndicatorPanel:
+
+1. **MiniChart.jsx** - Eliminado:
+   - Import de IndicatorPanel (línea 14)
+   - Estado `indicatorLayout`
+   - Ref `indicatorBoundsRef`
+   - Lógica condicional para renderizado en IndicatorPanel
+   - Componente JSX `<IndicatorPanel />`
+
+2. **Restaurado renderizado simple:**
+```javascript
+// REVERTIDO A:
+if (indicatorManagerRef.current && indicatorsHeight > 0) {
+  const indicatorsBounds = {
+    x: marginLeft,
+    y: marginTop + priceChartHeight + volumeHeight + timeAxisHeight,
+    width: chartWidth,
+    height: indicatorsHeight
+  };
+  indicatorManagerRef.current.renderIndicators(ctx, indicatorsBounds, visibleCandles);
+}
+```
+
+**Resultado:** Los indicadores volvieron a aparecer correctamente en el gráfico.
+
+**Lección aprendida:**
+- El renderizado de indicadores en canvas es sensible a la sincronización de bounds y contexts
+- Separar indicadores en paneles independientes requiere una arquitectura más compleja
+- La lógica condicional para alternar entre diferentes modos de renderizado puede causar race conditions
+- Es mejor mantener un sistema de renderizado simple y centralizado para indicadores en canvas
+
+---
+
+### Fix: Open Interest Data Loading
+
+**Problema:** Después de revertir los cambios de IndicatorPanel, el indicador de Open Interest no cargaba datos. Síntomas:
+- UI mostraba "no hay datos de open interest para btcusdt"
+- Backend no mostraba logs de fetch a Bybit API
+- El indicador estaba habilitado pero no disparaba `fetchData()`
+
+**Causa raíz:**
+En `IndicatorManager.js`, el método `updateIndicatorStates()` tenía validación de datos incompleta para Open Interest en el bloque `else if (shouldBeEnabled && wasEnabled)`:
+
+```javascript
+// INCORRECTO (línea 332):
+if (!indicator.dataMap || indicator.data.length === 0) {
+  // Error: dataMap es un Map, no se puede verificar .length
+  // Solo verificaba indicator.data, no indicator.dataMap.size
+}
+```
+
+**Solución aplicada:**
+Corregir la validación para verificar correctamente tanto `dataMap.size` como `data.length`:
+
+```javascript
+// CORRECTO:
+if (!indicator.dataMap || indicator.dataMap.size === 0 || indicator.data.length === 0) {
+  console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
+  promises.push(indicator.fetchData());
+}
+```
+
+**Logging de diagnóstico agregado:**
+Se agregaron logs detallados para rastrear el estado de Open Interest:
+
+```javascript
+// Estado inicial:
+console.log(`%c[${symbol}] 📊 OI State Check`, 'background: #FF9800; ...', {
+  shouldBeEnabled,
+  wasEnabled,
+  hasDataMap: !!indicator.dataMap,
+  dataMapSize: indicator.dataMap?.size || 0,
+  dataLength: indicator.data?.length || 0,
+  isBackendIndicator: backendIndicators.includes(indicator.name)
+});
+
+// Validación de datos:
+console.log(`%c[${symbol}] 🔍 OI Data Validation`, 'background: #FF9800; ...', {
+  hasDataMap: !!indicator.dataMap,
+  dataMapSize: indicator.dataMap?.size || 0,
+  dataLength: indicator.data?.length || 0,
+  hasData,
+  willReload: !hasData
+});
+```
+
+**Resultado:** Open Interest ahora carga datos correctamente al estar habilitado.
+
+**Lección aprendida:**
+- Los objetos Map requieren `.size` en lugar de `.length`
+- La validación de datos debe ser exhaustiva para todos los campos relevantes
+- Logging detallado es crucial para diagnosticar problemas de carga de datos
+- Los indicadores con lazy loading necesitan validación explícita en el estado "ya habilitado pero sin datos"
+
+---
+
+### Patrón de Validación de Datos para Indicadores Backend
+
+Todos los indicadores que requieren datos del backend deben seguir este patrón en `updateIndicatorStates()`:
+
+```javascript
+const backendIndicators = ["VWAP", "Open Interest", "Double Top/Bottom", "Support & Resistance", "Rejection Patterns"];
+
+// En el bloque: else if (shouldBeEnabled && wasEnabled)
+if (backendIndicators.includes(indicator.name)) {
+  // Validación específica por tipo de indicador:
+
+  // Para indicadores con arrays:
+  if (indicator.name === "Support & Resistance") {
+    if ((!indicator.resistances || indicator.resistances.length === 0) &&
+        (!indicator.supports || indicator.supports.length === 0)) {
+      promises.push(indicator.fetchData());
+    }
+  }
+
+  // Para indicadores con Maps:
+  else if (indicator.name === "Open Interest") {
+    if (!indicator.dataMap || indicator.dataMap.size === 0 || indicator.data.length === 0) {
+      promises.push(indicator.fetchData());
+    }
+  }
+
+  // Para indicadores con objetos:
+  else if (indicator.name === "VWAP") {
+    if (!indicator.vwapData || Object.keys(indicator.vwapData || {}).length === 0) {
+      promises.push(indicator.fetchData());
+    }
+  }
+}
+```
+
+Este patrón asegura que los indicadores siempre tengan datos cuando están habilitados, incluso si el lazy loading inicial no se ejecutó.

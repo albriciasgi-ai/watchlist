@@ -10,7 +10,8 @@
       "Bash(cmd //c \"taskkill /F /PID 22220\")",
       "Bash(findstr:*)",
       "Bash(nul)",
-      "Bash(cmd /c:*)"
+      "Bash(cmd /c:*)",
+      "Bash(wmic process:*)"
     ],
     "deny": [],
     "ask": []
