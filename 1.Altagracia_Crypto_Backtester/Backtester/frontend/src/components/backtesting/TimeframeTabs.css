@@ -118,7 +118,7 @@
   }
 }
 
-/* 🎯 OPTIMIZACIÓN UI: Estilos compactos para tabs en el header (50px) */
+/* 🎯 OPTIMIZACIÓN UI: Estilos compactos para tabs en el header (40px) */
 .timeframe-tabs-container.compact {
   background: transparent;
   border-bottom: none;
@@ -126,7 +126,7 @@
   margin: 0;
   display: flex;
   align-items: center;
-  height: 50px;
+  height: 40px;
 }
 
 .timeframe-tabs-container.compact .timeframe-tabs {
@@ -136,13 +136,14 @@
 }
 
 .timeframe-tabs-container.compact .timeframe-tab {
-  padding: 4px 10px;
+  padding: 2px 6px;
   min-width: auto;
-  height: 32px;
-  font-size: 12px;
-  border-radius: 4px;
+  height: 26px;
+  font-size: 10px;
+  border-radius: 3px;
   border-bottom: 2px solid transparent;
   box-shadow: none;
+  flex-shrink: 0;
 }
 
 .timeframe-tabs-container.compact .timeframe-tab:hover {
@@ -155,20 +156,20 @@
 }
 
 .timeframe-tabs-container.compact .tab-emoji {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .timeframe-tabs-container.compact .tab-label {
-  font-size: 12px;
-  letter-spacing: 0.3px;
+  font-size: 10px;
+  letter-spacing: 0.1px;
 }
 
 .timeframe-tabs-container.compact .tab-badge {
-  top: 2px;
-  right: 2px;
-  font-size: 9px;
-  padding: 1px 4px;
-  min-width: 14px;
+  top: 0px;
+  right: 0px;
+  font-size: 7px;
+  padding: 1px 2px;
+  min-width: 10px;
 }
 
 .timeframe-tabs-container.compact .tabs-info {

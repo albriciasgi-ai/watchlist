@@ -3,7 +3,7 @@
 .drawing-sidebar {
   position: fixed;
   left: 0;
-  top: 50px; /* Debajo del header compacto */
+  top: 40px; /* Debajo del header fusionado compacto */
   bottom: 0;
   width: 200px;
   background: #ffffff;

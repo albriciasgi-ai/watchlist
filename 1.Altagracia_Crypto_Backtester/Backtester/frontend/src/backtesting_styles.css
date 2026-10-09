@@ -10,6 +10,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Evitar scroll externo */
+  padding-top: 40px; /* 🎯 FUSIÓN: Espacio para el header fixed único */
 }
 
 /* ==================== SETUP SCREEN ==================== */
@@ -1149,79 +1150,98 @@
 
 /* ==================== 🎯 OPTIMIZACIÓN UI: HEADER COMPACTO (120px → 50px) ==================== */
 
-/* Header principal compacto */
+/* Header principal compacto - FUSIONADO (main.jsx + backtesting) */
 .backtesting-header.compact {
-  height: 50px;
-  min-height: 50px;
-  max-height: 50px;
-  padding: 0 16px;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  padding: 0 10px;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 8px;
   background: #ffffff;
   border-bottom: 1px solid #e0e0e0;
   overflow: visible; /* 🔧 FIX: Permitir que dropdowns se vean fuera del header */
-  position: relative;
+  position: fixed; /* 🎯 FUSIÓN: Ahora el header único está fixed */
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1200; /* 🔧 FIX: Z-index alto para que dropdowns aparezcan sobre el contenido */
 }
 
-/* Sección izquierda: Símbolo + Tiempo + Precio */
+/* Sección izquierda: Título App + Símbolo + Tiempo + Precio */
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
+  flex-shrink: 1;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.app-title {
+  font-size: 18px;
+  line-height: 1;
   flex-shrink: 0;
 }
 
 .symbol-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #333;
   margin: 0;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .current-time-compact {
-  font-size: 13px;
+  font-size: 11px;
   color: #666;
   font-weight: 500;
-  padding: 4px 8px;
+  padding: 2px 5px;
   background: #f5f5f5;
-  border-radius: 4px;
+  border-radius: 3px;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .current-price-compact {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: #667eea;
   line-height: 1;
+  white-space: nowrap;
 }
 
 /* Sección centro: Controles de playback + Tabs de timeframes */
 .header-center {
   display: flex;
   align-items: center;
-  gap: 16px; /* 🎯 Aumentado de 8px a 16px para separar playback de tabs */
-  flex-shrink: 0;
+  gap: 8px;
+  flex-shrink: 1;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .btn-control-compact {
   background: #f8f9fa;
   border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 16px;
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
   line-height: 1;
   color: #495057;
-  min-width: 36px;
-  height: 32px;
+  min-width: 28px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .btn-control-compact:hover {
@@ -1240,14 +1260,15 @@
 }
 
 .speed-control-compact {
-  padding: 4px 8px;
-  font-size: 13px;
+  padding: 2px 4px;
+  font-size: 11px;
   border: 1px solid #dee2e6;
-  border-radius: 4px;
+  border-radius: 3px;
   background: #ffffff;
   cursor: pointer;
-  height: 32px;
-  min-width: 60px;
+  height: 26px;
+  min-width: 50px;
+  flex-shrink: 0;
 }
 
 .speed-control-compact:focus {
@@ -1259,25 +1280,28 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   flex-shrink: 0;
   margin-left: auto;
+  flex-wrap: nowrap;
 }
 
 .btn-action-compact {
   background: #f8f9fa;
   border: 1px solid #dee2e6;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 14px;
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
   line-height: 1;
   color: #495057;
-  height: 32px;
+  height: 26px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .btn-action-compact:hover {
@@ -1295,8 +1319,8 @@
 }
 
 .indicator-selector-compact .btn-action-compact {
-  min-width: 150px;
-  justify-content: space-between;
+  min-width: auto;
+  justify-content: center;
 }
 
 .indicator-selector-compact .dropdown-panel {
@@ -1319,9 +1343,9 @@
 }
 
 .actions-menu-compact .menu-trigger {
-  font-size: 18px;
-  min-width: 36px;
-  padding: 6px 10px;
+  font-size: 16px;
+  min-width: 32px;
+  padding: 4px 8px;
 }
 
 .actions-dropdown {
@@ -1376,15 +1400,15 @@
 /* Responsive: ajustar spacing en pantallas pequeñas */
 @media (max-width: 1200px) {
   .backtesting-header.compact {
-    gap: 12px;
-  }
-
-  .header-left {
     gap: 8px;
   }
 
+  .header-left {
+    gap: 6px;
+  }
+
   .current-time-compact {
-    font-size: 12px;
-    padding: 3px 6px;
+    font-size: 11px;
+    padding: 2px 5px;
   }
 }

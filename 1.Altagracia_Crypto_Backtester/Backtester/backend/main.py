@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
+from typing import Optional
 import httpx
 import asyncio
 import time
@@ -629,8 +630,8 @@ async def get_open_interest(
     symbol: str,
     interval: str = "15",
     days: int = 30,
-    start_timestamp_ms: int = None,  # >> NUEVO: timestamp de inicio opcional (para backtesting)
-    end_timestamp_ms: int = None     # >> NUEVO: timestamp de fin opcional (para backtesting)
+    start_timestamp_ms: Optional[int] = None,  # >> NUEVO: timestamp de inicio opcional (para backtesting)
+    end_timestamp_ms: Optional[int] = None     # >> NUEVO: timestamp de fin opcional (para backtesting)
 ):
     """
     Endpoint para obtener Open Interest de Bybit Futures
@@ -661,15 +662,19 @@ async def get_open_interest(
 
         print(f"[{symbol}] OPEN INTEREST: Recibido days={days}, aplicando limite -> days_to_fetch={days_to_fetch} (max: {max_days_allowed}) @ {interval_final}")
 
-        # >> CORREGIDO: Intentar cargar del cache solo en modo LIVE (no backtesting)
-        # En modo backtesting, el caché se maneja a nivel superior (backtesting cache)
-        cached_data = None
-        if start_timestamp_ms is None and end_timestamp_ms is None:
-            cached_data = load_cache(symbol, interval_final, "openinterest")
+        # 🎯 USAR CACHÉ PERMANENTE (sin TTL, datos históricos inmutables)
+        # Intentar cargar del caché permanente primero
+        cached_data = load_oi_permanent_cache(symbol, interval_final)
 
         if cached_data and cached_data.get("symbol") == symbol and cached_data.get("interval") == interval_final:
-            cache_age = time.time() - cached_data.get('timestamp', 0)
-            print(f"[CACHE HIT] OK {symbol} {interval_final} Open Interest desde cache (age: {cache_age:.0f}s)")
+            print(f"[OI PERMANENT CACHE] ✅ CACHE HIT para {symbol} @ {interval_final}")
+
+            # Extraer metadata si existe
+            oi_first_timestamp = cached_data.get("oi_first_timestamp")
+            oi_last_timestamp = cached_data.get("oi_last_timestamp")
+            oi_first_date = cached_data.get("oi_first_date", "")
+            oi_last_date = cached_data.get("oi_last_date", "")
+            oi_interval = cached_data.get("oi_interval", "unknown")
 
             return {
                 "symbol": symbol,
@@ -678,10 +683,15 @@ async def get_open_interest(
                 "data": cached_data.get("data", []),
                 "success": True,
                 "from_cache": True,
-                "cache_age_seconds": int(cache_age),
+                "from_permanent_cache": True,
                 "days_requested": days,
                 "days_fetched": days_to_fetch,
-                "max_days_allowed": max_days_allowed
+                "max_days_allowed": max_days_allowed,
+                "oi_first_timestamp": oi_first_timestamp,
+                "oi_last_timestamp": oi_last_timestamp,
+                "oi_first_date": oi_first_date,
+                "oi_last_date": oi_last_date,
+                "oi_interval": oi_interval
             }
 
         # Bybit Open Interest usa intervalos específicos
@@ -860,18 +870,24 @@ async def get_open_interest(
                     "datetime_colombia": dt_colombia.strftime("%Y-%m-%d %H:%M:%S")
                 })
 
-            # >> CORREGIDO: Guardar en cache solo en modo LIVE (no backtesting)
-            if start_timestamp_ms is None and end_timestamp_ms is None:
-                cache_data = {
-                    "symbol": symbol,
-                    "interval": interval_final,
-                    "indicator": "openInterest",
-                    "data": processed_data
-                }
-                save_cache(symbol, interval_final, "openinterest", cache_data)
-                print(f"[CACHE SAVED] {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
-            else:
-                print(f"[BACKTESTING MODE] Saltando guardado de caché (datos se guardan en backtesting cache)")
+            # 🎯 GUARDAR EN CACHÉ PERMANENTE (sin TTL)
+            # Los datos históricos de OI son inmutables, igual que las velas
+            cache_data = {
+                "symbol": symbol,
+                "interval": interval_final,
+                "indicator": "openInterest",
+                "data": processed_data,
+                # Incluir metadata para referencia rápida
+                "oi_first_timestamp": oi_first_timestamp,
+                "oi_last_timestamp": oi_last_timestamp,
+                "oi_first_date": oi_first_date,
+                "oi_last_date": oi_last_date,
+                "oi_interval": oi_interval,
+                "total_points": len(processed_data),
+                "days_fetched": days_to_fetch
+            }
+            save_oi_permanent_cache(symbol, interval_final, cache_data)
+            print(f"[OI PERMANENT CACHE] 💾 {symbol} {interval_final} Open Interest guardado ({len(processed_data)} puntos)")
 
             print(f"[SUCCESS] {symbol} {interval_final} Open Interest: {len(processed_data)} puntos")
 
@@ -923,20 +939,88 @@ async def get_open_interest(
         }
 
 @app.post("/api/clear-cache")
-async def clear_cache():
-    """Endpoint para limpiar el cache manualmente"""
+async def clear_cache(
+    include_oi: bool = False,
+    include_candles: bool = False,
+    symbol: str = None  # Opcional: limpiar solo un símbolo específico
+):
+    """
+    Endpoint para limpiar caché manualmente con opciones granulares.
+
+    Parámetros:
+    - include_oi: Si True, limpia caché permanente de Open Interest
+    - include_candles: Si True, limpia caché permanente de velas (CUIDADO: descarga pesada)
+    - symbol: Opcional, limpia solo este símbolo específico
+
+    Por defecto: Solo limpia caché temporal (30 min TTL)
+    """
     try:
-        cache_files = list(CACHE_DIR.glob("*.json"))
-        deleted_count = 0
-        
-        for cache_file in cache_files:
+        results = {
+            "temp_cache": 0,
+            "oi_cache": 0,
+            "candles_cache": 0
+        }
+
+        # 1. Limpiar caché temporal (siempre)
+        if symbol:
+            # Limpiar solo archivos del símbolo específico
+            pattern = f"{sanitize_filename(symbol)}_*.json"
+            temp_files = list(CACHE_DIR.glob(pattern))
+        else:
+            # Limpiar todo el caché temporal
+            temp_files = list(CACHE_DIR.glob("*.json"))
+
+        for cache_file in temp_files:
             cache_file.unlink()
-            deleted_count += 1
-        
+            results["temp_cache"] += 1
+
+        print(f"[CLEAR CACHE] 🗑️ Caché temporal: {results['temp_cache']} archivos eliminados")
+
+        # 2. Limpiar caché permanente de OI (opcional)
+        if include_oi:
+            if symbol:
+                # Limpiar OI solo del símbolo específico
+                pattern = f"{sanitize_filename(symbol)}_*_oi.json.gz"
+                oi_files = list(BACKTESTING_CACHE_DIR.glob(pattern))
+            else:
+                # Limpiar todos los archivos de OI
+                oi_files = list(BACKTESTING_CACHE_DIR.glob("*_oi.json.gz"))
+
+            for oi_file in oi_files:
+                oi_file.unlink()
+                results["oi_cache"] += 1
+
+            print(f"[CLEAR CACHE] 🗑️ Caché permanente OI: {results['oi_cache']} archivos eliminados")
+
+        # 3. Limpiar caché permanente de velas (opcional, CUIDADO)
+        if include_candles:
+            if symbol:
+                # Limpiar velas solo del símbolo específico
+                pattern = f"{sanitize_filename(symbol)}_backtesting_data.json.gz"
+                candle_files = list(BACKTESTING_CACHE_DIR.glob(pattern))
+            else:
+                # Limpiar todos los archivos de velas
+                candle_files = list(BACKTESTING_CACHE_DIR.glob("*_backtesting_data.json.gz"))
+
+            for candle_file in candle_files:
+                candle_file.unlink()
+                results["candles_cache"] += 1
+
+            print(f"[CLEAR CACHE] ⚠️ Caché permanente VELAS: {results['candles_cache']} archivos eliminados (descarga pesada)")
+
+        total_deleted = sum(results.values())
+
+        message_parts = [f"Caché temporal: {results['temp_cache']} archivos"]
+        if include_oi:
+            message_parts.append(f"OI permanente: {results['oi_cache']} archivos")
+        if include_candles:
+            message_parts.append(f"Velas permanentes: {results['candles_cache']} archivos")
+
         return {
             "success": True,
-            "message": f"Cache limpiado: {deleted_count} archivos eliminados",
-            "deleted_files": deleted_count
+            "message": f"Cache limpiado - {', '.join(message_parts)}",
+            "total_deleted": total_deleted,
+            "details": results
         }
     except Exception as e:
         return {
@@ -1898,6 +1982,80 @@ def load_backtesting_cache(symbol: str):
             return data
         except Exception as e:
             print(f"[BACKTESTING CACHE ERROR] {safe_symbol} json: {str(e)}")
+    return None
+
+
+# =============================================================================
+# 🎯 PERMANENT CACHE FOR OPEN INTEREST (Sin TTL, inmutable como velas)
+# =============================================================================
+
+def save_oi_permanent_cache(symbol: str, interval: str, data: dict):
+    """
+    Guarda datos de Open Interest en caché permanente con compresión gzip.
+    Sin TTL - los datos históricos de OI no cambian.
+
+    Args:
+        symbol: Símbolo del par (ej: BTCUSDT)
+        interval: Intervalo del timeframe (ej: 15, 60, 240)
+        data: Dict con los datos de OI a guardar
+    """
+    safe_symbol = sanitize_filename(symbol)
+    safe_interval = sanitize_filename(interval)
+
+    cache_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_{safe_interval}_oi.json.gz"
+
+    # Serializar a JSON
+    json_bytes = json.dumps(data, ensure_ascii=False).encode('utf-8')
+    raw_size_mb = len(json_bytes) / (1024 * 1024)
+
+    # Comprimir y guardar
+    with gzip.open(cache_file, 'wb', compresslevel=6) as f:
+        f.write(json_bytes)
+
+    compressed_size_mb = cache_file.stat().st_size / (1024 * 1024)
+    ratio = (1 - compressed_size_mb / raw_size_mb) * 100 if raw_size_mb > 0 else 0
+
+    print(f"[OI PERMANENT CACHE] 💾 Guardado {safe_symbol} @ {safe_interval} - {compressed_size_mb:.2f} MB (comprimido {ratio:.0f}% desde {raw_size_mb:.2f} MB)")
+
+    # Eliminar caché temporal antiguo si existe (limpieza)
+    old_temp_cache = CACHE_DIR / f"{safe_symbol}_{safe_interval}_openinterest.json"
+    if old_temp_cache.exists():
+        old_temp_cache.unlink()
+        print(f"[OI PERMANENT CACHE] 🗑️ Eliminado caché temporal antiguo de {safe_symbol} @ {safe_interval}")
+
+
+def load_oi_permanent_cache(symbol: str, interval: str):
+    """
+    Carga datos de Open Interest del caché permanente (sin TTL).
+
+    Args:
+        symbol: Símbolo del par (ej: BTCUSDT)
+        interval: Intervalo del timeframe (ej: 15, 60, 240)
+
+    Returns:
+        Dict con los datos de OI, o None si no existe caché
+    """
+    safe_symbol = sanitize_filename(symbol)
+    safe_interval = sanitize_filename(interval)
+
+    cache_file = BACKTESTING_CACHE_DIR / f"{safe_symbol}_{safe_interval}_oi.json.gz"
+
+    if cache_file.exists():
+        try:
+            with gzip.open(cache_file, 'rb') as f:
+                data = json.loads(f.read().decode('utf-8'))
+
+            file_size_mb = cache_file.stat().st_size / (1024 * 1024)
+            data_points = len(data.get('data', []))
+
+            print(f"[OI PERMANENT CACHE] ✅ Cargado {safe_symbol} @ {safe_interval} desde caché permanente - {file_size_mb:.2f} MB en disco ({data_points} puntos)")
+
+            return data
+        except Exception as e:
+            print(f"[OI PERMANENT CACHE ERROR] ❌ {safe_symbol} @ {safe_interval} gzip: {str(e)}")
+            return None
+
+    print(f"[OI PERMANENT CACHE] ⚠️ No existe caché para {safe_symbol} @ {safe_interval}")
     return None
 
 

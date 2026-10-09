@@ -1662,10 +1662,11 @@ const BacktestingApp = () => {
         </button>
       )}
 
-      {/* 🎯 OPTIMIZACIÓN UI: Header compacto (120px → 50px) */}
+      {/* 🎯 OPTIMIZACIÓN UI: Header único consolidado (fusión main.jsx + backtesting) */}
       <div className="backtesting-header compact">
-        {/* Sección izquierda: Símbolo + Tiempo */}
+        {/* Sección izquierda: Título App + Símbolo + Tiempo */}
         <div className="header-left">
+          <span className="app-title">📊</span>
           <h2 className="symbol-title">{symbol}</h2>
           {currentTime && (
             <span className="current-time-compact">
@@ -1779,10 +1780,10 @@ const BacktestingApp = () => {
               title="Indicadores"
               style={{
                 background: Object.values(tabStates[activeTimeframe]?.indicatorStates || {}).filter(v => v).length > 0 ? '#4CAF50' : 'transparent',
-                padding: '6px 12px'
+                padding: '4px 8px'
               }}
             >
-              📊 Indicadores ({Object.values(tabStates[activeTimeframe]?.indicatorStates || {}).filter(v => v).length})
+              📊 ({Object.values(tabStates[activeTimeframe]?.indicatorStates || {}).filter(v => v).length})
             </button>
 
             {showIndicatorPanel && (

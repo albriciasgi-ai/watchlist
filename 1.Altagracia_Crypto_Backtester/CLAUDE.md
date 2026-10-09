@@ -6,18 +6,25 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
-### Octubre 2026: Open Interest con Resolución Real + Cobertura Informativa
+### Octubre 2026: Header Fusionado + Fix Open Interest + UI Optimizations
 
 **Cambios completados:**
-1. OI descarga datos a resolución real del timeframe (sin forward-fill/interpolación)
-2. Mapeo directo: 1m→5min, 5m→5min, 15m→15min, 1h→1h, 4h→4h
-3. MAX_OI_REQUESTS aumentado a 600 para máxima cobertura histórica
-4. Backend retorna metadata de cobertura OI (fecha desde/hasta, intervalo)
-5. Frontend muestra mensaje informativo con fecha exacta de disponibilidad
-6. Helper `_getOICoverageMessage()` centraliza lógica en 3 modos de render
+1. **Header Fusionado (40px único)**: Eliminado header duplicado en main.jsx, consolidado todo en BacktestingApp.jsx con position fixed
+2. **Fix Open Interest Endpoint**: Corrección de parámetros `Optional[int]` para start/end timestamps + import de typing
+3. OI descarga datos a resolución real del timeframe (sin forward-fill/interpolación)
+4. Mapeo directo: 1m→5min, 5m→5min, 15m→15min, 1h→1h, 4h→4h
+5. MAX_OI_REQUESTS aumentado a 600 para máxima cobertura histórica
+6. Backend retorna metadata de cobertura OI (fecha desde/hasta, intervalo)
+7. Frontend muestra mensaje informativo con fecha exacta de disponibilidad
+8. Helper `_getOICoverageMessage()` centraliza lógica en 3 modos de render
 
 **Archivos modificados:**
-- `backend/main.py` - `get_best_oi_interval()`, `get_open_interest_data()`, metadata en respuesta
+- `frontend/src/main.jsx` - Eliminado header duplicado (50px), removido wrapper con marginTop
+- `frontend/src/components/backtesting/BacktestingApp.jsx` - Header único con icono, reducido a 40px
+- `frontend/src/backtesting_styles.css` - Header position fixed, padding-top en container, tamaños reducidos
+- `frontend/src/components/backtesting/TimeframeTabs.css` - Tabs ultra-compactos (26px altura)
+- `frontend/src/components/drawing/DrawingSidebar.css` - Alineado con header (top: 40px)
+- `backend/main.py` - Fix parámetros `Optional[int]` en endpoint OI (líneas 5, 633-634)
 - `frontend/src/components/indicators/OpenInterestIndicator.js` - metadata, `_getOICoverageMessage()`
 
 ### Octubre 2026: Expansión a 5 Años + Gzip Cache + VP Fixed Range from Rectangle + Fix Delete Key

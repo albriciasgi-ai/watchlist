@@ -9,7 +9,8 @@
       "Bash(cmd /c \"taskkill /F /PID 4760 & taskkill /F /PID 8816 & taskkill /F /PID 8592\")",
       "Bash(cmd //c \"taskkill /F /PID 22220\")",
       "Bash(findstr:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(cmd /c:*)"
     ],
     "deny": [],
     "ask": []
