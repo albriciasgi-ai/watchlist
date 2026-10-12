@@ -452,6 +452,49 @@ const MiniChart = forwardRef(({
   });
   const [isDraggingDivider, setIsDraggingDivider] = useState(false);
 
+  // 🎯 NUEVO: Estado para altura ajustable del panel de volumen
+  const [volumeHeight, setVolumeHeight] = useState(() => {
+    const saved = localStorage.getItem(`volumeHeight_${symbol}`);
+    return saved ? parseInt(saved) : 80; // 80px por defecto (aumentado de 50)
+  });
+  const [isDraggingVolumeDivider, setIsDraggingVolumeDivider] = useState(false);
+
+  // 🎯 NUEVO: Estados para parámetros de visualización de volumen
+  const [showVolumeSettings, setShowVolumeSettings] = useState(false);
+  const [volumeVisualParams, setVolumeVisualParams] = useState(() => {
+    // 🔧 FIX: Merge de valores guardados con defaults para evitar propiedades undefined
+    const defaults = {
+      intensityMin: 0.3,
+      intensityMax: 1.0,
+      intensityDivisor: 3,
+      opacityMin: 0.4,
+      opacityMax: 0.9,
+      opacityBase: 0.5,
+      opacityDivisor: 4,
+      gradientBottomMultiplier: 0.3,
+      glowThreshold: 2.0,
+      glowBlur: 8,
+      // 🎯 NUEVO: Detección de clusters de volumen alto consecutivo
+      clusterDetection: true,
+      clusterMinBars: 3,           // Mínimo de velas consecutivas para considerar cluster
+      clusterThreshold: 0.5,        // Umbral promedio de z-score para cluster (0.5 = volumen moderadamente alto)
+      clusterColor: '#FFA726'       // Color para resaltar barras de volumen en clusters
+    };
+
+    const saved = localStorage.getItem(`volumeVisualParams_${symbol}`);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Merge: defaults primero, luego sobrescribir con valores guardados
+        return { ...defaults, ...parsed };
+      } catch (e) {
+        console.error('Error parsing volumeVisualParams:', e);
+        return defaults;
+      }
+    }
+    return defaults;
+  });
+
   const getBybitInterval = (interval) => {
     const map = {
       "1": "1", "3": "3", "5": "5", "15": "15", "30": "30",
@@ -593,8 +636,9 @@ const MiniChart = forwardRef(({
     const marginRight = 65;
     const marginTop = 25;
     const timeAxisHeight = 25;
-    
-    const baseVolumeHeight = 50;
+
+    // 🎯 Altura del volumen ahora viene del estado (controlable por usuario)
+    // const baseVolumeHeight = 50; // REMOVIDO - ahora usa volumeHeight del estado
 
     let desiredIndicatorsHeight = 0;
     if (indicatorManagerRef.current) {
@@ -605,18 +649,20 @@ const MiniChart = forwardRef(({
 
     // 🎯 FIX: Si no hay indicadores activos, el gráfico de precio ocupa todo el espacio disponible
     // excepto el volumen. Esto evita el espacio vacío cuando se quitan indicadores.
-    let priceChartHeight, volumeHeight, indicatorsHeight, heightScale;
+    let priceChartHeight, volumeHeightCalculated, indicatorsHeight, heightScale;
 
     if (desiredIndicatorsHeight === 0) {
       // Sin indicadores: el gráfico ocupa todo excepto volumen
-      volumeHeight = Math.min(baseVolumeHeight, Math.floor(availableHeight * 0.1));
+      // 🎯 FIX: Usar directamente la altura del estado (ya está limitada en el handler 30-300px)
+      volumeHeightCalculated = volumeHeight;
       indicatorsHeight = 0;
-      priceChartHeight = availableHeight - volumeHeight;
+      priceChartHeight = availableHeight - volumeHeightCalculated;
       heightScale = 1.0;
     } else {
       // 🎯 MODO HÍBRIDO: Normal (scroll) vs Fullscreen (compresión inteligente)
 
-      volumeHeight = Math.min(baseVolumeHeight, Math.floor(availableHeight * 0.1));
+      // 🎯 FIX: Usar directamente la altura del estado (ya está limitada en el handler 30-300px)
+      volumeHeightCalculated = volumeHeight;
       indicatorsHeight = desiredIndicatorsHeight;
 
       // Espacio mínimo para el gráfico de precio (30% del disponible)
@@ -626,7 +672,7 @@ const MiniChart = forwardRef(({
       let tentativePriceChartHeight = Math.floor(availableHeight * priceChartRatio);
 
       // Verificar si todo cabe en el espacio disponible
-      const totalNeeded = tentativePriceChartHeight + volumeHeight + indicatorsHeight;
+      const totalNeeded = tentativePriceChartHeight + volumeHeightCalculated + indicatorsHeight;
 
       if (isBacktestingFullscreen && totalNeeded > availableHeight) {
         // 🎯 MODO FULLSCREEN: Compresión inteligente proporcional (máximo 40%)
@@ -635,7 +681,7 @@ const MiniChart = forwardRef(({
 
         // Aplicar escala a todos los componentes proporcionalmente
         priceChartHeight = Math.floor(tentativePriceChartHeight * compressionScale);
-        volumeHeight = Math.floor(volumeHeight * compressionScale);
+        volumeHeightCalculated = Math.floor(volumeHeightCalculated * compressionScale);
         indicatorsHeight = Math.floor(indicatorsHeight * compressionScale);
         heightScale = compressionScale;
 
@@ -650,7 +696,7 @@ const MiniChart = forwardRef(({
       } else if (totalNeeded > availableHeight) {
         // 🎯 MODO NORMAL: Sin compresión, permitir scroll vertical
         heightScale = 1.0;
-        priceChartHeight = availableHeight - volumeHeight - indicatorsHeight;
+        priceChartHeight = availableHeight - volumeHeightCalculated - indicatorsHeight;
 
         // Si el precio chart queda demasiado pequeño, establecer mínimo y permitir scroll
         if (priceChartHeight < minPriceChartHeight) {
@@ -670,7 +716,7 @@ const MiniChart = forwardRef(({
       indicatorManagerRef.current.setHeightScale(heightScale);
     }
 
-    const marginBottom = volumeHeight + timeAxisHeight + indicatorsHeight;
+    const marginBottom = volumeHeightCalculated + timeAxisHeight + indicatorsHeight;
 
     let displayCandles = [...candles];
     
@@ -714,7 +760,7 @@ const MiniChart = forwardRef(({
     const yScale = baseYScale * verticalZoom;
 
     const maxVolume = Math.max(...visibleCandles.map(d => d.volume));
-    const volumeScale = maxVolume > 0 ? volumeHeight / maxVolume : 1;
+    const volumeScale = maxVolume > 0 ? volumeHeightCalculated / maxVolume : 1;
 
     const barWidth = chartWidth / visibleCandles.length;
 
@@ -839,16 +885,119 @@ const MiniChart = forwardRef(({
       }
     });
 
+    // 🎯 NUEVO: Calcular z-score de volúmenes para mejoras visuales
+    const volumes = visibleCandles.map(d => d.volume);
+    const avgVolume = volumes.reduce((sum, v) => sum + v, 0) / volumes.length;
+    const stdDevVolume = Math.sqrt(
+      volumes.reduce((sum, v) => sum + Math.pow(v - avgVolume, 2), 0) / volumes.length
+    );
+
+    // Calcular z-score para cada vela
+    const volumeZScores = visibleCandles.map(d => {
+      if (stdDevVolume === 0) return 0;
+      return (d.volume - avgVolume) / stdDevVolume;
+    });
+
     const volumeStartY = marginTop + priceChartHeight + 5;
-    ctx.globalAlpha = 0.6;
+
+    // 🎯 NUEVO: Detectar clusters de volumen alto consecutivo
+    // 🔧 FIX: Validar que los parámetros existen (para estados guardados antiguos)
+    const clusterIndices = new Set(); // Set de índices que forman parte de un cluster
+
+    if (volumeVisualParams.clusterDetection === true &&
+        typeof volumeVisualParams.clusterMinBars !== 'undefined' &&
+        typeof volumeVisualParams.clusterThreshold !== 'undefined') {
+      const clusters = [];
+      let currentCluster = null;
+
+      volumeZScores.forEach((zScore, i) => {
+        // Si el z-score está por encima del umbral, es parte de un posible cluster
+        if (zScore >= volumeVisualParams.clusterThreshold) {
+          if (!currentCluster) {
+            // Iniciar nuevo cluster
+            currentCluster = { start: i, end: i, avgZScore: zScore, count: 1 };
+          } else {
+            // Extender cluster existente
+            currentCluster.end = i;
+            currentCluster.avgZScore = (currentCluster.avgZScore * currentCluster.count + zScore) / (currentCluster.count + 1);
+            currentCluster.count++;
+          }
+        } else {
+          // Finalizar cluster si existe
+          if (currentCluster && currentCluster.count >= volumeVisualParams.clusterMinBars) {
+            clusters.push(currentCluster);
+          }
+          currentCluster = null;
+        }
+      });
+
+      // No olvidar el último cluster si quedó abierto
+      if (currentCluster && currentCluster.count >= volumeVisualParams.clusterMinBars) {
+        clusters.push(currentCluster);
+      }
+
+      // 🎯 NUEVO: Guardar índices de barras que forman parte de clusters
+      clusters.forEach(cluster => {
+        for (let i = cluster.start; i <= cluster.end; i++) {
+          clusterIndices.add(i);
+        }
+      });
+    }
+
+    // 🎯 Renderizar volumen con mejoras visuales basadas en z-score
     visibleCandles.forEach((d, i) => {
       const x = marginLeft + (i * barWidth);
       const volHeight = d.volume * volumeScale;
-      const color = d.close >= d.open ? bullColor : bearColor;
-      
-      ctx.fillStyle = color;
-      ctx.fillRect(x + barWidth * 0.1, volumeStartY + volumeHeight - volHeight, barWidth * 0.8, volHeight);
+      const zScore = volumeZScores[i];
+
+      // 🎯 NUEVO: Determinar color base - si está en un cluster, usar color del cluster
+      const isInCluster = clusterIndices.has(i);
+      const baseColor = isInCluster
+        ? volumeVisualParams.clusterColor
+        : (d.close >= d.open ? bullColor : bearColor);
+
+      // 🎯 Intensidad basada en z-score (normalizada a 0-1)
+      // Usa parámetros configurables del estado
+      const intensity = Math.max(
+        volumeVisualParams.intensityMin,
+        Math.min(volumeVisualParams.intensityMax, (zScore + 1) / volumeVisualParams.intensityDivisor)
+      );
+
+      // 🎯 Opacidad adaptativa: más opaco para volúmenes altos
+      // Usa parámetros configurables del estado
+      ctx.globalAlpha = Math.max(
+        volumeVisualParams.opacityMin,
+        Math.min(volumeVisualParams.opacityMax, volumeVisualParams.opacityBase + (zScore / volumeVisualParams.opacityDivisor))
+      );
+
+      // 🎯 Gradiente de color según intensidad
+      // Interpolar entre el color base más oscuro y el color base
+      const gradient = ctx.createLinearGradient(x, volumeStartY + volumeHeightCalculated - volHeight, x, volumeStartY + volumeHeightCalculated);
+
+      // Extraer RGB del color hex
+      const r = parseInt(baseColor.slice(1, 3), 16);
+      const g = parseInt(baseColor.slice(3, 5), 16);
+      const b = parseInt(baseColor.slice(5, 7), 16);
+
+      // Color superior más intenso, color inferior más suave
+      // Usa parámetro configurable para el multiplicador del gradiente inferior
+      gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${intensity})`);
+      gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${intensity * volumeVisualParams.gradientBottomMultiplier})`);
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(x + barWidth * 0.1, volumeStartY + volumeHeightCalculated - volHeight, barWidth * 0.8, volHeight);
+
+      // 🎯 Glow effect para volúmenes excepcionales (solo si NO está en cluster)
+      // Los clusters tienen su propio color destacado, no necesitan glow adicional
+      if (!isInCluster && zScore > volumeVisualParams.glowThreshold) {
+        ctx.shadowBlur = volumeVisualParams.glowBlur;
+        ctx.shadowColor = baseColor;
+        ctx.fillStyle = baseColor;
+        ctx.fillRect(x + barWidth * 0.1, volumeStartY + volumeHeightCalculated - volHeight, barWidth * 0.8, volHeight);
+        ctx.shadowBlur = 0; // Resetear shadow
+      }
     });
+
     ctx.globalAlpha = 1.0;
 
     ctx.fillStyle = textColor;
@@ -856,7 +1005,7 @@ const MiniChart = forwardRef(({
     ctx.fillText("Vol", marginLeft + 2, volumeStartY + 12);
 
     const timeStep = Math.max(Math.floor(visibleCandles.length / 5), 1);
-    const timeY = volumeStartY + volumeHeight + 15;
+    const timeY = volumeStartY + volumeHeightCalculated + 15;
     
     ctx.fillStyle = textColor;
     ctx.font = "10px Inter, sans-serif";
@@ -2166,6 +2315,52 @@ const MiniChart = forwardRef(({
     }
   }, [isDraggingDivider, priceChartRatio]);
 
+  // 🎯 NUEVO: Handlers para divisor de volumen redimensionable
+  const handleVolumeDividerMouseDown = (e) => {
+    e.preventDefault();
+    setIsDraggingVolumeDivider(true);
+  };
+
+  const handleVolumeDividerMouseMove = (e) => {
+    if (!isDraggingVolumeDivider || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const mouseY = e.clientY - rect.top;
+
+    // Calcular la altura del volumen basado en la posición del mouse
+    // El divisor está en la parte superior del panel de volumen
+    const priceChartHeight = Math.floor(rect.height * priceChartRatio);
+    const newVolumeHeight = Math.max(30, Math.min(300, mouseY - priceChartHeight));
+
+    setVolumeHeight(newVolumeHeight);
+  };
+
+  const handleVolumeDividerMouseUp = () => {
+    if (isDraggingVolumeDivider) {
+      setIsDraggingVolumeDivider(false);
+      // Guardar en localStorage
+      localStorage.setItem(`volumeHeight_${symbol}`, volumeHeight.toString());
+      // Redibujar
+      if (candlesRef.current && candlesRef.current.length > 0) {
+        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+      }
+    }
+  };
+
+  // Agregar listener global para mouse move/up del divisor de volumen
+  useEffect(() => {
+    if (isDraggingVolumeDivider) {
+      window.addEventListener('mousemove', handleVolumeDividerMouseMove);
+      window.addEventListener('mouseup', handleVolumeDividerMouseUp);
+
+      return () => {
+        window.removeEventListener('mousemove', handleVolumeDividerMouseMove);
+        window.removeEventListener('mouseup', handleVolumeDividerMouseUp);
+      };
+    }
+  }, [isDraggingVolumeDivider, volumeHeight, priceChartRatio]);
+
   // ==================== RENDER ====================
 
   return (
@@ -2469,6 +2664,79 @@ const MiniChart = forwardRef(({
             height: '12px',
           }} />
         </div>
+
+        {/* 🎯 NUEVO: Divisor redimensionable para altura del volumen */}
+        {/* 🔧 MOVIDO: Ahora está ARRIBA del volumen (justo después del precio) para dar más espacio de ajuste */}
+        <div
+          onMouseDown={handleVolumeDividerMouseDown}
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: `calc(${priceChartRatio * 100}% + 5px)`, // 5px después del precio (donde empieza el volumen)
+            height: '3px',
+            background: isDraggingVolumeDivider ? '#FF9800' : 'transparent',
+            cursor: 'ns-resize',
+            zIndex: 1000,
+            transition: isDraggingVolumeDivider ? 'none' : 'background 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#FF9800';
+          }}
+          onMouseLeave={(e) => {
+            if (!isDraggingVolumeDivider) {
+              e.currentTarget.style.background = 'transparent';
+            }
+          }}
+        >
+          {/* Área de hover más amplia para facilitar el drag */}
+          <div style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: '-4px',
+            height: '11px',
+          }} />
+
+          {/* 🎯 NUEVO: Botón de configuración de visualización de volumen */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowVolumeSettings(!showVolumeSettings);
+            }}
+            style={{
+              position: 'absolute',
+              right: '5px',
+              top: '-8px',
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              border: '1px solid #FF9800',
+              background: showVolumeSettings ? '#FF9800' : 'rgba(255, 152, 0, 0.2)',
+              color: showVolumeSettings ? '#fff' : '#FF9800',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              padding: 0,
+              zIndex: 1001,
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#FF9800';
+              e.currentTarget.style.color = '#fff';
+            }}
+            onMouseLeave={(e) => {
+              if (!showVolumeSettings) {
+                e.currentTarget.style.background = 'rgba(255, 152, 0, 0.2)';
+                e.currentTarget.style.color = '#FF9800';
+              }
+            }}
+          >
+            ⚙️
+          </button>
+        </div>
       </div>
 
       {showFixedRangeManager && (
@@ -2513,6 +2781,409 @@ const MiniChart = forwardRef(({
           onClose={() => setShowPresetsConfig(false)}
           onApply={handlePresetsApply}
         />
+      )}
+
+      {/* 🎯 NUEVO: Modal de configuración de visualización de volumen */}
+      {showVolumeSettings && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowVolumeSettings(false)}
+          style={{ zIndex: 2000 }}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '450px',
+              maxHeight: '80vh',
+              overflow: 'auto'
+            }}
+          >
+            <button
+              className="modal-close-btn"
+              onClick={() => setShowVolumeSettings(false)}
+              style={{ position: 'absolute', top: '10px', right: '10px' }}
+            >
+              ✕
+            </button>
+
+            <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#FF9800' }}>
+              ⚙️ Configuración de Visualización de Volumen
+            </h3>
+
+            {/* Sección: Intensidad */}
+            <div style={{ marginBottom: '25px' }}>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#666' }}>Intensidad de Color</h4>
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px' }}>
+                Mínimo: {volumeVisualParams.intensityMin.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                min="0.1"
+                max="0.5"
+                step="0.05"
+                value={volumeVisualParams.intensityMin}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, intensityMin: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '10px' }}>
+                Máximo: {volumeVisualParams.intensityMax.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                min="0.6"
+                max="1.0"
+                step="0.05"
+                value={volumeVisualParams.intensityMax}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, intensityMax: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '10px' }}>
+                Divisor (afecta sensibilidad): {volumeVisualParams.intensityDivisor.toFixed(1)}
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="6"
+                step="0.5"
+                value={volumeVisualParams.intensityDivisor}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, intensityDivisor: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+            </div>
+
+            {/* Sección: Opacidad */}
+            <div style={{ marginBottom: '25px' }}>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#666' }}>Opacidad Adaptativa</h4>
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px' }}>
+                Mínimo: {volumeVisualParams.opacityMin.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                min="0.1"
+                max="0.6"
+                step="0.05"
+                value={volumeVisualParams.opacityMin}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, opacityMin: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '10px' }}>
+                Máximo: {volumeVisualParams.opacityMax.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                min="0.7"
+                max="1.0"
+                step="0.05"
+                value={volumeVisualParams.opacityMax}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, opacityMax: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '10px' }}>
+                Base: {volumeVisualParams.opacityBase.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                min="0.2"
+                max="0.8"
+                step="0.05"
+                value={volumeVisualParams.opacityBase}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, opacityBase: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '10px' }}>
+                Divisor Z-Score: {volumeVisualParams.opacityDivisor.toFixed(1)}
+              </label>
+              <input
+                type="range"
+                min="2"
+                max="8"
+                step="0.5"
+                value={volumeVisualParams.opacityDivisor}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, opacityDivisor: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+            </div>
+
+            {/* Sección: Gradiente */}
+            <div style={{ marginBottom: '25px' }}>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#666' }}>Gradiente Vertical</h4>
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px' }}>
+                Contraste Inferior: {volumeVisualParams.gradientBottomMultiplier.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                min="0.1"
+                max="0.8"
+                step="0.05"
+                value={volumeVisualParams.gradientBottomMultiplier}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, gradientBottomMultiplier: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+              <small style={{ fontSize: '11px', color: '#999' }}>
+                Menor valor = más contraste entre arriba y abajo de la barra
+              </small>
+            </div>
+
+            {/* Sección: Glow Effect */}
+            <div style={{ marginBottom: '25px' }}>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#666' }}>Efecto Glow (Volúmenes Excepcionales)</h4>
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px' }}>
+                Umbral Z-Score: {volumeVisualParams.glowThreshold.toFixed(1)}
+              </label>
+              <input
+                type="range"
+                min="1.0"
+                max="4.0"
+                step="0.1"
+                value={volumeVisualParams.glowThreshold}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, glowThreshold: parseFloat(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+              <small style={{ fontSize: '11px', color: '#999' }}>
+                Mayor valor = solo volúmenes MUY excepcionales tendrán glow
+              </small>
+
+              <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '10px' }}>
+                Intensidad de Glow (blur): {volumeVisualParams.glowBlur}px
+              </label>
+              <input
+                type="range"
+                min="2"
+                max="20"
+                step="1"
+                value={volumeVisualParams.glowBlur}
+                onChange={(e) => {
+                  const newParams = { ...volumeVisualParams, glowBlur: parseInt(e.target.value) };
+                  setVolumeVisualParams(newParams);
+                  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                  if (candlesRef.current && candlesRef.current.length > 0) {
+                    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                  }
+                }}
+                style={{ width: '100%' }}
+              />
+            </div>
+
+            {/* 🎯 NUEVO: Sección de Clusters de Volumen Alto Consecutivo */}
+            <div style={{ marginBottom: '25px' }}>
+              <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#666' }}>
+                Clusters de Volumen Alto Consecutivo
+              </h4>
+
+              {/* Toggle de activación */}
+              <label style={{ display: 'flex', alignItems: 'center', marginBottom: '15px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={volumeVisualParams.clusterDetection}
+                  onChange={(e) => {
+                    const newParams = { ...volumeVisualParams, clusterDetection: e.target.checked };
+                    setVolumeVisualParams(newParams);
+                    localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                    if (candlesRef.current && candlesRef.current.length > 0) {
+                      drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                    }
+                  }}
+                  style={{ marginRight: '8px' }}
+                />
+                <span style={{ fontSize: '13px' }}>Destacar clusters de volumen alto</span>
+              </label>
+
+              {volumeVisualParams.clusterDetection && (
+                <>
+                  <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px' }}>
+                    Mínimo de velas consecutivas: {volumeVisualParams.clusterMinBars}
+                  </label>
+                  <input
+                    type="range"
+                    min="2"
+                    max="10"
+                    step="1"
+                    value={volumeVisualParams.clusterMinBars}
+                    onChange={(e) => {
+                      const newParams = { ...volumeVisualParams, clusterMinBars: parseInt(e.target.value) };
+                      setVolumeVisualParams(newParams);
+                      localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                      if (candlesRef.current && candlesRef.current.length > 0) {
+                        drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                      }
+                    }}
+                    style={{ width: '100%' }}
+                  />
+                  <small style={{ fontSize: '11px', color: '#999' }}>
+                    Mayor valor = solo clusters más largos se destacarán
+                  </small>
+
+                  <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '10px' }}>
+                    Umbral promedio Z-Score: {volumeVisualParams.clusterThreshold.toFixed(1)}
+                  </label>
+                  <input
+                    type="range"
+                    min="0.0"
+                    max="2.0"
+                    step="0.1"
+                    value={volumeVisualParams.clusterThreshold}
+                    onChange={(e) => {
+                      const newParams = { ...volumeVisualParams, clusterThreshold: parseFloat(e.target.value) };
+                      setVolumeVisualParams(newParams);
+                      localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                      if (candlesRef.current && candlesRef.current.length > 0) {
+                        drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                      }
+                    }}
+                    style={{ width: '100%' }}
+                  />
+                  <small style={{ fontSize: '11px', color: '#999' }}>
+                    0 = cualquier volumen | 1 = volumen alto | 2 = volumen muy alto
+                  </small>
+
+                  <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '15px' }}>
+                    Color del cluster:
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="color"
+                      value={volumeVisualParams.clusterColor}
+                      onChange={(e) => {
+                        const newParams = { ...volumeVisualParams, clusterColor: e.target.value };
+                        setVolumeVisualParams(newParams);
+                        localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                        if (candlesRef.current && candlesRef.current.length > 0) {
+                          drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                        }
+                      }}
+                      style={{
+                        width: '50px',
+                        height: '30px',
+                        border: '1px solid #ddd',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <span style={{ fontSize: '12px', color: '#666' }}>
+                      {volumeVisualParams.clusterColor}
+                    </span>
+                  </div>
+                  <small style={{ fontSize: '11px', color: '#999' }}>
+                    Las barras que forman parte de un cluster se resaltarán con este color
+                  </small>
+                </>
+              )}
+            </div>
+
+            {/* Botón de reset */}
+            <button
+              onClick={() => {
+                const defaultParams = {
+                  intensityMin: 0.3,
+                  intensityMax: 1.0,
+                  intensityDivisor: 3,
+                  opacityMin: 0.4,
+                  opacityMax: 0.9,
+                  opacityBase: 0.5,
+                  opacityDivisor: 4,
+                  gradientBottomMultiplier: 0.3,
+                  glowThreshold: 2.0,
+                  glowBlur: 8,
+                  clusterDetection: true,
+                  clusterMinBars: 3,
+                  clusterThreshold: 0.5,
+                  clusterColor: '#FFA726'
+                };
+                setVolumeVisualParams(defaultParams);
+                localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(defaultParams));
+                if (candlesRef.current && candlesRef.current.length > 0) {
+                  drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                }
+              }}
+              style={{
+                width: '100%',
+                padding: '10px',
+                background: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: 'bold'
+              }}
+            >
+              🔄 Restaurar Valores por Defecto
+            </button>
+          </div>
+        </div>
       )}
 
       {isFullscreen && (

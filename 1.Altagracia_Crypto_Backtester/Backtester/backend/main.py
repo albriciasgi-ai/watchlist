@@ -656,6 +656,14 @@ async def get_open_interest(
 
         interval_final = INTERVAL_MAP.get(interval_clean, "15")
 
+        # 🔧 FIX: Inicializar variables de metadata ANTES de usarlas
+        # Esto previene UnboundLocalError si hay excepción temprana
+        oi_first_timestamp = None
+        oi_last_timestamp = None
+        oi_first_date = ""
+        oi_last_date = ""
+        oi_interval = ""
+
         # Aplicar límite máximo por timeframe
         max_days_allowed = MAX_DAYS_BY_INTERVAL.get(interval_final, 30)
         days_to_fetch = min(days, max_days_allowed)
@@ -926,7 +934,19 @@ async def get_open_interest(
             }
 
     except Exception as e:
-        print(f"[ERROR] Open Interest {symbol}: {str(e)}")
+        # MEJORADO: Logging más detallado para debugging
+        print(f"\n{'='*80}")
+        print(f"❌ ERROR CRÍTICO en get_open_interest")
+        print(f"{'='*80}")
+        print(f"Symbol: {symbol}")
+        print(f"Interval solicitado: {interval}")
+        print(f"Interval final (OI): {interval_final}")
+        print(f"Days: {days}")
+        print(f"Start timestamp: {start_timestamp_ms} ({datetime.fromtimestamp(start_timestamp_ms/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M') if start_timestamp_ms else 'None'})")
+        print(f"End timestamp: {end_timestamp_ms} ({datetime.fromtimestamp(end_timestamp_ms/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M') if end_timestamp_ms else 'None'})")
+        print(f"Exception type: {type(e).__name__}")
+        print(f"Exception message: {str(e)}")
+        print(f"{'='*80}\n")
         import traceback
         traceback.print_exc()
         return {
@@ -935,7 +955,7 @@ async def get_open_interest(
             "indicator": "openInterest",
             "data": [],
             "success": False,
-            "error": str(e)
+            "error": f"{type(e).__name__}: {str(e)}"
         }
 
 @app.post("/api/clear-cache")
@@ -2048,6 +2068,11 @@ def load_oi_permanent_cache(symbol: str, interval: str):
             file_size_mb = cache_file.stat().st_size / (1024 * 1024)
             data_points = len(data.get('data', []))
 
+            # NUEVO: Validar que el cache realmente tenga datos
+            if data_points == 0:
+                print(f"[OI PERMANENT CACHE] ⚠️ Cache existe pero está VACÍO para {safe_symbol} @ {safe_interval}, forzando descarga")
+                return None
+
             print(f"[OI PERMANENT CACHE] ✅ Cargado {safe_symbol} @ {safe_interval} desde caché permanente - {file_size_mb:.2f} MB en disco ({data_points} puntos)")
 
             return data
@@ -2455,6 +2480,11 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
             )
             oi_data = oi_response.get("data", []) if oi_response.get("success") else []
 
+            # NUEVO: Guardar OI en cache permanente para reutilización
+            if oi_data:
+                await save_oi_permanent_cache(symbol, oi_interval_str, oi_data)
+                print(f"[BACKTESTING] ✅ OI guardado en cache permanente: {len(oi_data)} puntos")
+
             timeframes_data[tf_name] = {
                 "main": main_candles,
                 "subdivisions": subdivision_candles,
@@ -2687,6 +2717,11 @@ async def update_backtesting_data(symbol: str):
 
             cached_data["timeframes"][tf_name]["open_interest"] = existing_oi
             print(f"[BACKTESTING UPDATE] {tf_name} OI: +{len(new_oi)} puntos nuevos")
+
+            # NUEVO: Guardar OI actualizado en cache permanente
+            if new_oi:
+                await save_oi_permanent_cache(symbol, str(main_interval), existing_oi)
+                print(f"[BACKTESTING UPDATE] ✅ OI actualizado en cache permanente: {len(existing_oi)} puntos totales")
 
         # Actualizar metadata
         all_timestamps = []

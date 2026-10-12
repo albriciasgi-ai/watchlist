@@ -1,0 +1,527 @@
+HYPERLIQUID API - DOCUMENTACIÓN TÉCNICA COMPLETA
+
+  1. ARQUITECTURA GENERAL
+
+  Hyperliquid es un DEX (exchange descentralizado) de derivados perpetuos construido sobre su propia blockchain L1
+  optimizada para trading de alta frecuencia.
+
+  Componentes clave:
+  - Hyperliquid L1: Blockchain custom (no EVM)
+  - Smart contracts: Lógica de trading on-chain
+  - API Gateway: https://api.hyperliquid.xyz
+  - WebSocket: wss://api.hyperliquid.xyz/ws
+
+  2. DIFERENCIAS FUNDAMENTALES VS BYBIT
+
+  | Aspecto       | Bybit                          | Hyperliquid                        |
+  |---------------|--------------------------------|------------------------------------|
+  | Arquitectura  | Exchange centralizado          | DEX con L1 propia                  |
+  | Autenticación | API Key + Secret (HMAC-SHA256) | Firma de wallet Ethereum (EIP-712) |
+  | Custodia      | Bybit custodia fondos          | Usuario tiene llaves privadas      |
+  | Liquidación   | Off-chain (Bybit internal)     | On-chain (smart contracts)         |
+  | Latencia      | ~50-200ms                      | ~200-500ms (consenso blockchain)   |
+  | Transparencia | Opaca (confías en Bybit)       | Total (todo en blockchain)         |
+  | Rate Limits   | 600 req/5s                     | 1200 req/min (20 req/s)            |
+
+  3. AUTENTICACIÓN CON WALLET
+
+  Bybit usa:
+  const crypto = require('crypto');
+  const signature = crypto
+    .createHmac('sha256', apiSecret)
+    .update(timestamp + apiKey + recvWindow + queryString)
+    .digest('hex');
+
+  Hyperliquid usa firma EIP-712:
+  const { ethers } = require('ethers');
+
+  // 1. Crear wallet desde private key
+  const wallet = new ethers.Wallet(privateKey);
+
+  // 2. Estructura de mensaje EIP-712
+  const domain = {
+    name: 'Exchange',
+    version: '1',
+    chainId: 42161,  // Arbitrum
+    verifyingContract: '0x0000000000000000000000000000000000000000'
+  };
+
+  const types = {
+    Agent: [
+      { name: 'source', type: 'string' },
+      { name: 'connectionId', type: 'bytes32' }
+    ]
+  };
+
+  const message = {
+    source: 'a',
+    connectionId: ethers.utils.randomBytes(32)
+  };
+
+  // 3. Firmar
+  const signature = await wallet._signTypedData(domain, types, message);
+
+  Implicación para tu app:
+  - ❌ NO puedes usar tus API keys de Bybit
+  - ✅ Necesitas integrar ethers.js para manejo de wallets
+  - ✅ Usuario debe proporcionar private key (o conectar wallet)
+
+  4. REST API - ENDPOINTS PRINCIPALES
+
+  4.1 Obtener Información de Mercado
+
+  Bybit:
+  GET /v5/market/tickers?category=linear&symbol=BTCUSDT
+
+  Hyperliquid:
+  POST https://api.hyperliquid.xyz/info
+  Content-Type: application/json
+
+  {
+    "type": "allMids"
+  }
+
+  // Respuesta:
+  {
+    "BTC": "95234.5",
+    "ETH": "3421.2",
+    ...
+  }
+
+  Cambio necesario:
+  - Bybit: GET con query params
+  - Hyperliquid: POST con JSON body
+
+  4.2 Obtener Book de Órdenes
+
+  Bybit:
+  GET /v5/market/orderbook?category=linear&symbol=BTCUSDT&limit=50
+
+  Hyperliquid:
+  POST https://api.hyperliquid.xyz/info
+
+  {
+    "type": "l2Book",
+    "coin": "BTC"
+  }
+
+  // Respuesta:
+  {
+    "coin": "BTC",
+    "time": 1706912345000,
+    "levels": [
+      [
+        { "px": "95235.5", "sz": "1.234", "n": 3 },  // nivel 0 (mejor bid)
+        { "px": "95234.0", "sz": "2.456", "n": 5 }   // nivel 1
+      ],
+      [
+        { "px": "95236.0", "sz": "0.987", "n": 2 },  // nivel 0 (mejor ask)
+        { "px": "95237.5", "sz": "1.543", "n": 4 }   // nivel 1
+      ]
+    ]
+  }
+
+  Estructura diferente:
+  - Bybit: bids y asks como arrays separadas
+  - Hyperliquid: levels[0] = bids, levels[1] = asks
+
+  4.3 Colocar Orden
+
+  Bybit:
+  POST /v5/order/create
+  {
+    "category": "linear",
+    "symbol": "BTCUSDT",
+    "side": "Buy",
+    "orderType": "Limit",
+    "qty": "0.01",
+    "price": "95000",
+    "timeInForce": "GTC"
+  }
+
+  Hyperliquid:
+  POST https://api.hyperliquid.xyz/exchange
+
+  {
+    "action": {
+      "type": "order",
+      "orders": [{
+        "a": 0,           // asset index (0 = BTC, 1 = ETH, etc.)
+        "b": true,        // is buy?
+        "p": "95000",     // price (string)
+        "s": "0.01",      // size
+        "r": false,       // reduce only
+        "t": { "limit": { "tif": "Gtc" } }  // time in force
+      }],
+      "grouping": "na"
+    },
+    "nonce": 1706912345000,
+    "signature": {
+      "r": "0x...",
+      "s": "0x...",
+      "v": 27
+    },
+    "vaultAddress": null
+  }
+
+  Cambios necesarios:
+  1. Asset representado por índice numérico (no símbolo string)
+  2. Estructura anidada más compleja
+  3. Requiere firma de wallet en cada orden
+  4. Respuesta incluye hash de transacción blockchain
+
+  4.4 Cancelar Orden
+
+  Bybit:
+  POST /v5/order/cancel
+  {
+    "category": "linear",
+    "symbol": "BTCUSDT",
+    "orderId": "1234567890"
+  }
+
+  Hyperliquid:
+  POST https://api.hyperliquid.xyz/exchange
+
+  {
+    "action": {
+      "type": "cancel",
+      "cancels": [{
+        "a": 0,      // asset
+        "o": 12345   // order id
+      }]
+    },
+    "nonce": 1706912346000,
+    "signature": { ... }
+  }
+
+  5. WEBSOCKET - DATOS EN TIEMPO REAL
+
+  5.1 Conexión y Suscripción
+
+  Bybit:
+  const ws = new WebSocket('wss://stream.bybit.com/v5/public/linear');
+
+  ws.on('open', () => {
+    ws.send(JSON.stringify({
+      op: 'subscribe',
+      args: ['orderbook.50.BTCUSDT', 'publicTrade.BTCUSDT']
+    }));
+  });
+
+  Hyperliquid:
+  const ws = new WebSocket('wss://api.hyperliquid.xyz/ws');
+
+  ws.on('open', () => {
+    ws.send(JSON.stringify({
+      method: 'subscribe',
+      subscription: {
+        type: 'l2Book',
+        coin: 'BTC'
+      }
+    }));
+  });
+
+  5.2 Formato de Mensajes
+
+  Bybit orderbook update:
+  {
+    "topic": "orderbook.50.BTCUSDT",
+    "type": "snapshot",
+    "ts": 1706912345000,
+    "data": {
+      "s": "BTCUSDT",
+      "b": [["95235.5", "1.234"], ["95234.0", "2.456"]],
+      "a": [["95236.0", "0.987"], ["95237.5", "1.543"]]
+    }
+  }
+
+  Hyperliquid l2Book update:
+  {
+    "channel": "l2Book",
+    "data": {
+      "coin": "BTC",
+      "time": 1706912345000,
+      "levels": [
+        [{ "px": "95235.5", "sz": "1.234", "n": 3 }],
+        [{ "px": "95236.0", "sz": "0.987", "n": 2 }]
+      ]
+    }
+  }
+
+  Diferencias clave:
+  - Hyperliquid incluye n (número de órdenes en ese nivel)
+  - Estructura de precios idéntica (strings)
+  - Timestamps en milisegundos (ambos)
+
+  6. RATE LIMITS Y OPTIMIZACIÓN
+
+  Bybit:
+  - 600 requests / 5 segundos = 120 req/s
+  - Market Data: 120 req/min = 2 req/s
+  - Order placement: 60 req/min = 1 req/s
+
+  Hyperliquid:
+  - 1200 requests / minuto = 20 req/s (unified)
+  - Sin separación por categoría
+  - Penalización: Ban temporal de 1 minuto si excedes
+
+  Recomendación:
+  // Tu app actual (Bybit)
+  const rateLimit = 120; // req/s
+
+  // Hyperliquid
+  const rateLimit = 20;  // req/s (más conservador)
+
+  7. ASSETS Y SÍMBOLOS
+
+  Bybit:
+  - Símbolos como strings: "BTCUSDT", "ETHUSDT"
+  - Category: "linear", "inverse"
+
+  Hyperliquid:
+  - Assets como índices numéricos:
+  const assetMap = {
+    "BTC": 0,
+    "ETH": 1,
+    "SOL": 2,
+    "ARB": 3,
+    // ... hasta ~50 assets
+  };
+
+  Obtener mapeo dinámico:
+  POST https://api.hyperliquid.xyz/info
+  { "type": "meta" }
+
+  // Respuesta:
+  {
+    "universe": [
+      { "name": "BTC", "szDecimals": 5 },
+      { "name": "ETH", "szDecimals": 4 },
+      { "name": "SOL", "szDecimals": 2 },
+      ...
+    ]
+  }
+
+  Implicación: Necesitas mantener un mapping dinámico actualizado.
+
+  8. GESTIÓN DE POSICIONES
+
+  Bybit:
+  GET /v5/position/list?category=linear&symbol=BTCUSDT
+
+  // Respuesta:
+  {
+    "result": {
+      "list": [{
+        "symbol": "BTCUSDT",
+        "side": "Buy",
+        "size": "0.01",
+        "entryPrice": "95000",
+        "unrealisedPnl": "23.45"
+      }]
+    }
+  }
+
+  Hyperliquid:
+  POST https://api.hyperliquid.xyz/info
+  {
+    "type": "clearinghouseState",
+    "user": "0xYourWalletAddress"
+  }
+
+  // Respuesta:
+  {
+    "assetPositions": [
+      {
+        "position": {
+          "coin": "BTC",
+          "entryPx": "95000",
+          "szi": "0.01",          // size (signed, + = long, - = short)
+          "unrealizedPnl": "23.45"
+        }
+      }
+    ],
+    "marginSummary": {
+      "accountValue": "10234.56",
+      "totalMarginUsed": "950.00"
+    }
+  }
+
+  Diferencias:
+  - Hyperliquid: szi es signed (positivo = long, negativo = short)
+  - Hyperliquid: Incluye margin summary en misma respuesta
+  - Hyperliquid: Requiere wallet address (no API key)
+
+  9. EJEMPLO DE INTEGRACIÓN COMPLETA
+
+  // config.js
+  export const EXCHANGE_CONFIG = {
+    bybit: {
+      apiUrl: "https://api.bybit.com",
+      wsUrl: "wss://stream.bybit.com/v5/public/linear",
+      authType: "hmac"
+    },
+    hyperliquid: {
+      apiUrl: "https://api.hyperliquid.xyz",
+      wsUrl: "wss://api.hyperliquid.xyz/ws",
+      authType: "wallet"
+    }
+  };
+
+  // ExchangeAdapter.js
+  class ExchangeAdapter {
+    constructor(exchangeType, credentials) {
+      this.type = exchangeType;
+      this.credentials = credentials;
+
+      if (exchangeType === 'hyperliquid') {
+        this.wallet = new ethers.Wallet(credentials.privateKey);
+        this.assetMap = null;
+        this._loadAssetMap();
+      }
+    }
+
+    async _loadAssetMap() {
+      const response = await fetch('https://api.hyperliquid.xyz/info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'meta' })
+      });
+      const data = await response.json();
+      this.assetMap = {};
+      data.universe.forEach((asset, index) => {
+        this.assetMap[asset.name] = index;
+      });
+    }
+
+    async placeOrder({ symbol, side, price, qty }) {
+      if (this.type === 'bybit') {
+        return this._placeOrderBybit({ symbol, side, price, qty });
+      } else {
+        return this._placeOrderHyperliquid({ symbol, side, price, qty });
+      }
+    }
+
+    async _placeOrderBybit({ symbol, side, price, qty }) {
+      // Tu implementación actual
+      const signature = this._signBybit(params);
+      return fetch('https://api.bybit.com/v5/order/create', {
+        method: 'POST',
+        headers: {
+          'X-BAPI-API-KEY': this.credentials.apiKey,
+          'X-BAPI-SIGN': signature,
+          'X-BAPI-TIMESTAMP': timestamp
+        },
+        body: JSON.stringify({
+          category: 'linear',
+          symbol, side, orderType: 'Limit', qty, price
+        })
+      });
+    }
+
+    async _placeOrderHyperliquid({ symbol, side, price, qty }) {
+      const assetIndex = this.assetMap[symbol.replace('USDT', '')];
+
+      const action = {
+        type: 'order',
+        orders: [{
+          a: assetIndex,
+          b: side === 'Buy',
+          p: price.toString(),
+          s: qty.toString(),
+          r: false,
+          t: { limit: { tif: 'Gtc' } }
+        }],
+        grouping: 'na'
+      };
+
+      const nonce = Date.now();
+      const signature = await this._signHyperliquid(action, nonce);
+
+      return fetch('https://api.hyperliquid.xyz/exchange', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action,
+          nonce,
+          signature,
+          vaultAddress: null
+        })
+      });
+    }
+
+    async _signHyperliquid(action, nonce) {
+      const domain = {
+        name: 'Exchange',
+        version: '1',
+        chainId: 42161,
+        verifyingContract: '0x0000000000000000000000000000000000000000'
+      };
+
+      const types = {
+        Agent: [
+          { name: 'source', type: 'string' },
+          { name: 'connectionId', type: 'bytes32' }
+        ],
+        Action: [
+          { name: 'type', type: 'string' },
+          { name: 'nonce', type: 'uint64' }
+        ]
+      };
+
+      const message = {
+        source: 'a',
+        connectionId: ethers.utils.hexZeroPad(ethers.utils.hexlify(nonce), 32)
+      };
+
+      return await this.wallet._signTypedData(domain, types, message);
+    }
+  }
+
+  10. ESTIMACIÓN DE ESFUERZO PARA MIGRACIÓN
+
+  Desglose de tareas:
+
+  | Tarea                                  | Horas | Prioridad |
+  |----------------------------------------|-------|-----------|
+  | Integrar ethers.js para wallets        | 4-6h  | Alta      |
+  | Crear ExchangeAdapter abstraction      | 8-12h | Alta      |
+  | Mapear endpoints REST (info, exchange) | 6-8h  | Alta      |
+  | Adaptar WebSocket subscriptions        | 4-6h  | Media     |
+  | Implementar firma EIP-712              | 6-8h  | Alta      |
+  | Mantener asset mapping dinámico        | 3-4h  | Media     |
+  | Adaptar formateo de órdenes            | 4-6h  | Alta      |
+  | Testing exhaustivo                     | 8-12h | Alta      |
+  | Documentación                          | 2-4h  | Media     |
+
+  Total estimado: 45-66 horas (~1-1.5 semanas de desarrollo full-time)
+
+  11. VENTAJAS DE HYPERLIQUID PARA TU APP
+
+  ✅ Transparencia total: Cada trade verificable en blockchain explorer
+  ✅ Sin custodio: Usuario controla llaves privadas
+  ✅ Auditabilidad: Smart contracts públicos y auditeables
+  ✅ Rate limits generosos: 20 req/s unified (vs Bybit 2 req/s market data)
+  ✅ Sin KYC: Solo necesitas wallet Ethereum
+  ✅ Liquidaciones justas: On-chain, sin manipulación posible
+  ✅ Open source: Código del SDK disponible en GitHub
+
+  12. RECURSOS ADICIONALES
+
+  Documentación oficial:
+  - Gitbook: https://hyperliquid.gitbook.io/hyperliquid-docs
+  - API Reference: https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api
+  - SDK Python: https://github.com/hyperliquid-dex/hyperliquid-python-sdk
+  - SDK TypeScript: https://github.com/hyperliquid-dex/hyperliquid-ts-sdk
+
+  Blockchain Explorer:
+  - https://app.hyperliquid.xyz/explorer
+
+  Testnet:
+  - API: https://api.hyperliquid-testnet.xyz
+  - Faucet: Disponible en Discord oficial
+
+  Comunidad:
+  - Discord: https://discord.gg/hyperliquid
+  - Twitter: @HyperliquidX

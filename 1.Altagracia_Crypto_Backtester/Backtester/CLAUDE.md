@@ -599,3 +599,238 @@ if (backendIndicators.includes(indicator.name)) {
 ```
 
 Este patrón asegura que los indicadores siempre tengan datos cuando están habilitados, incluso si el lazy loading inicial no se ejecutó.
+
+---
+
+### Fix: Open Interest Cache Permanente No Se Reutilizaba (Octubre 2026)
+
+**Problema:** El sistema de caché permanente de Open Interest no se estaba reutilizando correctamente entre diferentes requests, causando descargas masivas innecesarias de datos de Bybit.
+
+**Síntomas:**
+- Backtest con 4 años de datos descargaba OI correctamente
+- Request posterior con 1 año NO reutilizaba el caché de 4 años
+- Backend descargaba nuevamente desde Bybit aunque ya tenía los datos
+- Desperdicio de tiempo y recursos (requests de 5-10 minutos)
+
+**Causa raíz (5 problemas identificados):**
+
+1. **Caché no se guardaba en bulk-data endpoint:**
+   - El endpoint `/api/backtesting/bulk-data` descargaba OI pero NO lo guardaba en caché permanente
+   - Solo el endpoint `/api/open-interest` guardaba caché
+   - Resultado: datos descargados en backtesting se perdían
+
+2. **Caché vacío no se validaba:**
+   - Si el caché existía pero con `data: []`, se retornaba como válido
+   - Backend pensaba que tenía datos pero estaban vacíos
+   - Causaba mensaje "no hay datos de open interest"
+
+3. **Logging de errores insuficiente:**
+   - Cuando ocurría error, no se logueaban parámetros críticos
+   - Difícil diagnosticar problemas (timestamps, días, intervalo, etc.)
+
+4. **Frontend sin sistema de reintentos:**
+   - Un error HTTP o de red fallaba inmediatamente
+   - No había recuperación automática de errores transitorios
+
+5. **Días hardcodeados en lugar de dinámicos:**
+   - `BacktestingApp.jsx` tenía días hardcodeados por timeframe (1825 días para 5m)
+   - Aunque el usuario configurara fecha de inicio reciente, descargaba 5 años completos
+   - Desperdicio de ~60% de datos innecesarios
+
+**Solución Implementada (5 Fixes):**
+
+#### Fix 1: Guardar Caché en Bulk-Data Endpoint
+
+**Archivo:** `backend/main.py` (líneas 2456-2478, 2693-2716)
+
+Agregado `save_oi_permanent_cache()` en dos ubicaciones del endpoint bulk-data:
+
+```python
+# Primera carga de OI (línea 2478)
+if oi_data:
+    await save_oi_permanent_cache(symbol, oi_interval_str, oi_data)
+    print(f"[BACKTESTING] ✅ OI guardado en cache permanente: {len(oi_data)} puntos")
+
+# Actualización incremental de OI (línea 2710)
+if new_oi:
+    await save_oi_permanent_cache(symbol, str(main_interval), existing_oi)
+    print(f"[BACKTESTING UPDATE] ✅ OI actualizado: {len(existing_oi)} puntos totales")
+```
+
+#### Fix 2: Validación de Caché Vacío
+
+**Archivo:** `backend/main.py` (líneas 2046-2066)
+
+```python
+file_size_mb = cache_file.stat().st_size / (1024 * 1024)
+data_points = len(data.get('data', []))
+
+# NUEVO: Validar que el cache realmente tenga datos
+if data_points == 0:
+    print(f"[OI PERMANENT CACHE] ⚠️ Cache existe pero está VACÍO, forzando descarga")
+    return None
+
+print(f"[OI PERMANENT CACHE] ✅ Cargado {safe_symbol} @ {safe_interval} - {file_size_mb:.2f} MB ({data_points} puntos)")
+```
+
+#### Fix 3: Logging Estructurado de Errores
+
+**Archivo:** `backend/main.py` (líneas 936-959)
+
+```python
+except Exception as e:
+    # MEJORADO: Logging detallado para debugging
+    print(f"\n{'='*80}")
+    print(f"❌ ERROR CRÍTICO en get_open_interest")
+    print(f"{'='*80}")
+    print(f"Symbol: {symbol}")
+    print(f"Interval solicitado: {interval}")
+    print(f"Interval final (OI): {interval_final}")
+    print(f"Days: {days}")
+    print(f"Start timestamp: {start_timestamp_ms} ({datetime.fromtimestamp(start_timestamp_ms/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M') if start_timestamp_ms else 'None'})")
+    print(f"End timestamp: {end_timestamp_ms} ({datetime.fromtimestamp(end_timestamp_ms/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M') if end_timestamp_ms else 'None'})")
+    print(f"Exception type: {type(e).__name__}")
+    print(f"Exception message: {str(e)}")
+    print(f"{'='*80}\n")
+    import traceback
+    traceback.print_exc()
+```
+
+**Fix adicional - UnboundLocalError:** Variables de metadata inicializadas tempranamente (líneas 659-665):
+
+```python
+# 🔧 FIX: Inicializar variables de metadata ANTES de usarlas
+# Esto previene UnboundLocalError si hay excepción temprana
+oi_first_timestamp = None
+oi_last_timestamp = None
+oi_first_date = ""
+oi_last_date = ""
+oi_interval = ""
+```
+
+#### Fix 4: Sistema de Reintentos en Frontend
+
+**Archivo:** `frontend/src/components/indicators/OpenInterestIndicator.js` (líneas 38-167)
+
+Implementado sistema de retry con exponential backoff:
+
+```javascript
+async fetchData(skipCache = false, retryCount = 0) {
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY_MS = 2000; // 2s, 4s, 6s
+
+  this._isFetching = true;
+  this._fetchError = null;
+
+  try {
+    // ... fetch logic ...
+
+    if (!result.success) {
+      if (retryCount < MAX_RETRIES) {
+        const delay = RETRY_DELAY_MS * (retryCount + 1);
+        console.warn(`[OI] ${this.symbol} - ⏳ Reintentando en ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return this.fetchData(skipCache, retryCount + 1);
+      }
+      throw new Error(`OI fetch failed after ${MAX_RETRIES + 1} attempts`);
+    }
+
+  } catch (error) {
+    this._fetchError = error;
+
+    // Reintentar en errores de red
+    if (retryCount < MAX_RETRIES &&
+        (error.name === 'TypeError' || error.name === 'NetworkError')) {
+      const delay = RETRY_DELAY_MS * (retryCount + 1);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return this.fetchData(skipCache, retryCount + 1);
+    }
+
+    throw error;
+  } finally {
+    this._isFetching = false;
+  }
+}
+```
+
+Estados de UI mejorados (líneas 967-998):
+
+```javascript
+renderNoDataMessage(ctx, bounds) {
+  if (this._isFetching) {
+    // Estado: Cargando
+    ctx.fillStyle = "#FFA726";
+    ctx.fillText("⏳ Descargando Open Interest de Bybit...", centerX, centerY);
+  } else if (this._fetchError) {
+    // Estado: Error
+    ctx.fillStyle = "#EF5350";
+    ctx.fillText("❌ Error cargando Open Interest", centerX, centerY);
+  } else {
+    // Estado: Sin datos
+    ctx.fillStyle = "#FF9800";
+    ctx.fillText(`No Open Interest data available for ${this.symbol}`, centerX, centerY);
+  }
+}
+```
+
+#### Fix 5: Días Dinámicos Basados en Fecha de Inicio
+
+**Archivo:** `frontend/src/components/backtesting/BacktestingApp.jsx` (líneas 2023-2054)
+
+Reemplazado `daysMap` hardcodeado por cálculo dinámico:
+
+```javascript
+{['1m', '5m', '15m', '1h', '4h'].map(tf => {
+  // 🔧 FIX: Calcular días dinámicamente basándose en simulationStartTime
+  const calculateDaysNeeded = () => {
+    // Límites máximos del backend (MAX_DAYS_BY_INTERVAL)
+    const maxDaysMap = {
+      '1m': 730, '5m': 1825, '15m': 1825, '1h': 1825, '4h': 1825
+    };
+    const maxDays = maxDaysMap[tf] || 1825;
+
+    // Si hay fecha de inicio definida, calcular días reales necesarios
+    if (simulationStartTime) {
+      const now = Date.now();
+      const daysNeeded = Math.ceil((now - simulationStartTime) / (24 * 60 * 60 * 1000));
+      const result = Math.min(daysNeeded, maxDays);
+      console.log(`[BacktestingApp] 📊 ${tf} OI days: daysNeeded=${daysNeeded}, usando=${result}`);
+      return result;
+    }
+
+    return maxDays; // Sin fecha de inicio, usar máximo
+  };
+
+  const tfDays = calculateDaysNeeded();
+```
+
+**Resultado Verificado:**
+
+Prueba con fecha inicio octubre 2024 (~741 días):
+
+```
+[BTCUSDT] OPEN INTEREST: days=741 (antes: 1825 hardcodeado)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60 (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240 (11000 puntos)
+```
+
+**Impacto:**
+- ⚡ **60% menos datos** cuando se usa fecha de inicio reciente
+- 🚀 **Carga instantánea** con cache hit (0.51 MB en 1h, 0.13 MB en 4h)
+- 💾 **Cache reutilizable** entre backtests
+- 🎯 **Eficiencia óptima** - solo descarga lo necesario
+
+**Archivos Modificados:**
+
+| Archivo | Cambios |
+|---------|---------|
+| `backend/main.py` | save_oi_permanent_cache en bulk-data (2 ubicaciones), validación cache vacío, error logging, init variables metadata |
+| `frontend/src/components/indicators/OpenInterestIndicator.js` | Sistema retry (3 intentos, exponential backoff), estados UI (loading/error/no-data) |
+| `frontend/src/components/backtesting/BacktestingApp.jsx` | Días dinámicos basados en simulationStartTime |
+
+**Lección aprendida:**
+- Los sistemas de caché permanente deben guardar datos en TODOS los endpoints que los consumen
+- La validación de datos debe verificar que realmente contienen información (no solo que el archivo existe)
+- Los valores hardcodeados deben ser dinámicos cuando dependen del contexto del usuario
+- El logging estructurado es crítico para diagnosticar problemas de caché
+- Los sistemas de retry automático mejoran significativamente la robustez

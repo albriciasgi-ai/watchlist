@@ -1728,6 +1728,10 @@ const BacktestingApp = () => {
             <option value="5000">5000x</option>
             <option value="7500">7500x</option>
             <option value="10000">10000x</option>
+            <option value="20000">20000x</option>
+            <option value="30000">30000x</option>
+            <option value="40000">40000x</option>
+            <option value="50000">50000x</option>
           </select>
 
           {/* 🎯 OPTIMIZACIÓN UI: Tabs de timeframes movidos al header (mejora_2.pdf) */}
@@ -2020,18 +2024,38 @@ const BacktestingApp = () => {
           {/* 🎯 OPTIMIZACIÓN UI: Tabs de timeframes movidos al header - Toolbar horizontal eliminado (ahora sidebar vertical) */}
 
           {/* 🎯 NUEVO: Contenedor de tabs - 5 MiniCharts (uno por timeframe) */}
-          {/* Días por timeframe: 1m=730, 5m/15m/1h/4h=1825 */}
+          {/* Días por timeframe: calculados dinámicamente según fecha de inicio */}
           <div className="timeframes-container">
             {['1m', '5m', '15m', '1h', '4h'].map(tf => {
-              // Mapeo de días por timeframe (debe coincidir con BACKTESTING_CONFIG del backend)
-              const daysMap = {
-                '1m': 730,    // 2 años de datos (1,051,200 velas)
-                '5m': 1825,   // 5 años de datos (525,600 velas)
-                '15m': 1825,  // 5 años de datos (175,200 velas)
-                '1h': 1825,   // 5 años de datos (43,800 velas)
-                '4h': 1825    // 5 años de datos (10,950 velas)
+              // 🔧 FIX: Calcular días dinámicamente basándose en simulationStartTime
+              // Esto evita descargar 5 años cuando solo necesitamos 1.5 años
+              const calculateDaysNeeded = () => {
+                // Límites máximos del backend (MAX_DAYS_BY_INTERVAL)
+                const maxDaysMap = {
+                  '1m': 730,    // 2 años máximo
+                  '5m': 1825,   // 5 años máximo
+                  '15m': 1825,  // 5 años máximo
+                  '1h': 1825,   // 5 años máximo
+                  '4h': 1825    // 5 años máximo
+                };
+                const maxDays = maxDaysMap[tf] || 1825;
+
+                // Si hay fecha de inicio definida, calcular días reales necesarios
+                if (simulationStartTime) {
+                  const now = Date.now();
+                  const daysNeeded = Math.ceil((now - simulationStartTime) / (24 * 60 * 60 * 1000));
+                  // Usar el mínimo entre días necesarios y límite del backend
+                  const result = Math.min(daysNeeded, maxDays);
+                  console.log(`[BacktestingApp] 📊 ${tf} OI days: simulationStart=${new Date(simulationStartTime).toISOString().split('T')[0]}, daysNeeded=${daysNeeded}, maxDays=${maxDays}, usando=${result}`);
+                  return result;
+                }
+
+                // Sin fecha de inicio, usar el máximo permitido
+                console.log(`[BacktestingApp] 📊 ${tf} OI days: Sin simulationStartTime, usando maxDays=${maxDays}`);
+                return maxDays;
               };
-              const tfDays = daysMap[tf] || 1825;
+
+              const tfDays = calculateDaysNeeded();
 
               return (
               <div

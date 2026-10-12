@@ -1,0 +1,292 @@
+  cTrader: La Plataforma
+
+  cTrader es una plataforma de trading para Forex/CFDs, similar a MetaTrader 4/5 pero más moderna. Fue lanzada en
+  2011 por Spotware Systems.
+
+  Diferencias clave vs MetaTrader:
+  - Interfaz más moderna y limpia
+  - Ejecución ECN (Electronic Communication Network) - sin dealing desk
+  - Depth of Market (DOM) nativo
+  - Mejor soporte para automated trading
+
+  ---
+  cTrader "Open API": La API Web
+
+  El término "Open API" es el nombre oficial que Spotware le dio a su API web para desarrolladores.
+
+  Características Principales:
+
+  1. Arquitectura Multi-Protocolo:
+  cTrader Open API = REST + WebSocket + Protocol Buffers
+
+  2. REST API:
+  - Autenticación OAuth2 (Client ID + Secret)
+  - Endpoints para:
+    - Account info
+    - Market data
+    - Order management
+    - Position tracking
+    - Historical data
+
+  3. WebSocket API:
+  - Streaming en tiempo real
+  - Market data (ticks, orderbooks)
+  - Account updates
+  - Order execution confirmations
+
+  4. Protocol Buffers:
+  - Formato binario eficiente (más rápido que JSON)
+  - Usado en comunicación WebSocket
+  - Esquemas .proto disponibles
+
+  ---
+  Por Qué es Mejor que MetaTrader
+
+  | Aspecto        | MetaTrader 4/5           | cTrader Open API                   |
+  |----------------|--------------------------|------------------------------------|
+  | API Web        | ❌ No existe              | ✅ Completa                         |
+  | Integración    | DLL local (Windows only) | REST + WebSocket (multiplataforma) |
+  | Autenticación  | No aplica (local)        | OAuth2 (estándar)                  |
+  | Lenguajes      | MQL4/MQL5 (propietarios) | Python, C#, JavaScript, etc.       |
+  | Hosting        | Requiere PC/VPS con MT   | Backend en la nube                 |
+  | SDKs Oficiales | No                       | Sí (Python, C#)                    |
+
+  ---
+  Ejemplo Técnico: Tu App con cTrader
+
+  Arquitectura Actual (Bybit):
+
+  // config.js
+  const API_BASE_URL = "https://api.bybit.com";
+
+  // Autenticación
+  const signature = crypto.createHmac('sha256', secret)
+    .update(timestamp + apiKey + params)
+    .digest('hex');
+
+  Arquitectura con cTrader Open API:
+
+  // config.js
+  const CTRADER_API_URL = "https://openapi.ctrader.com";
+  const OAUTH_URL = "https://openapi.ctrader.com/oauth";
+
+  // 1. Autenticación OAuth2
+  const tokenResponse = await fetch(`${OAUTH_URL}/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: 'YOUR_CLIENT_ID',
+      client_secret: 'YOUR_CLIENT_SECRET',
+      scope: 'trading accounts'
+    })
+  });
+
+  const { access_token } = await tokenResponse.json();
+
+  // 2. REST API - Obtener info de cuenta
+  const accountInfo = await fetch(`${CTRADER_API_URL}/v2/accounts`, {
+    headers: {
+      'Authorization': `Bearer ${access_token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  // 3. WebSocket - Market data en tiempo real
+  const ws = new WebSocket('wss://openapi.ctrader.com/v2/websocket');
+
+  ws.on('open', () => {
+    ws.send(JSON.stringify({
+      payloadType: 'ProtoOASubscribeSpotsReq',
+      subscribeToSpotReq: {
+        ctidTraderAccountId: accountId,
+        symbolId: [1, 2, 3] // EURUSD, GBPUSD, etc.
+      }
+    }));
+  });
+
+  ws.on('message', (data) => {
+    // Ticks en tiempo real
+    const message = ProtoMessage.decode(data);
+    console.log('Price update:', message.spot);
+  });
+
+  ---
+  SDK Python Oficial
+
+  pip install ctrader_open_api
+
+  from ctrader_open_api import Client, Protobuf, TcpProtocol
+  import asyncio
+
+  # Configuración
+  client = Client("demo.ctrader.com", 5035, TcpProtocol)
+
+  # Autenticación
+  await client.send(Protobuf.ProtoOAApplicationAuthReq(
+      clientId="YOUR_CLIENT_ID",
+      clientSecret="YOUR_CLIENT_SECRET"
+  ))
+
+  # Market data
+  await client.send(Protobuf.ProtoOASubscribeSpotsReq(
+      ctidTraderAccountId=account_id,
+      symbolId=[1]  # EURUSD
+  ))
+
+  # Callbacks
+  @client.on("ProtoOASpotEvent")
+  async def on_tick(message):
+      print(f"Price: {message.bid}/{message.ask}")
+
+  ---
+  Integración con Tu AnalizadorDesktop
+
+  Opción 1: Adapter Pattern (Recomendado)
+
+  // ExchangeAdapter.js
+  class ExchangeAdapter {
+    constructor(type, credentials) {
+      this.type = type;
+
+      if (type === 'bybit') {
+        this.apiUrl = 'https://api.bybit.com';
+        this.auth = new BybitAuth(credentials);
+      }
+      else if (type === 'ctrader') {
+        this.apiUrl = 'https://openapi.ctrader.com';
+        this.auth = new CTraderOAuth(credentials);
+      }
+    }
+
+    async getSymbols() {
+      if (this.type === 'bybit') {
+        return this.getSymbolsBybit();
+      } else if (this.type === 'ctrader') {
+        return this.getSymbolsCTrader();
+      }
+    }
+
+    async placeOrder({ symbol, side, qty, price }) {
+      if (this.type === 'bybit') {
+        return this.placeOrderBybit({ symbol, side, qty, price });
+      } else if (this.type === 'ctrader') {
+        return this.placeOrderCTrader({ symbol, side, qty, price });
+      }
+    }
+  }
+
+  Opción 2: Backend Proxy
+
+  // Tu frontend sigue igual
+  const response = await fetch(`${API_BASE_URL}/api/symbols`);
+
+  // Backend detecta tipo de exchange y routea
+  // server.js (FastAPI/Express)
+  app.get('/api/symbols', async (req, res) => {
+    const exchangeType = process.env.EXCHANGE_TYPE; // 'bybit' | 'ctrader'
+
+    if (exchangeType === 'ctrader') {
+      const symbols = await ctraderClient.getSymbols();
+      res.json(symbols);
+    } else {
+      const symbols = await bybitClient.getSymbols();
+      res.json(symbols);
+    }
+  });
+
+  ---
+  Diferencias de Datos: Bybit vs cTrader
+
+  Bybit (Crypto):
+
+  {
+    "symbol": "BTCUSDT",
+    "lastPrice": "95000.50",
+    "volume24h": "1234567.89"
+  }
+
+  cTrader (Forex):
+
+  {
+    "symbolId": 1,
+    "symbolName": "EURUSD",
+    "bid": "1.08450",
+    "ask": "1.08452",
+    "digits": 5,
+    "lotSize": 100000
+  }
+
+  Mapeo necesario:
+  - Symbol IDs numéricos (1, 2, 3...) vs strings ("BTCUSDT")
+  - Digits/precision diferentes
+  - Lot sizes vs quantity
+
+  ---
+  Prop Firms con cTrader Open API
+
+  De las 50 firmas investigadas, estas soportan cTrader con API:
+
+  TIER 1 (Mejor soporte):
+  1. FunderPro - Documentación completa, bots permitidos
+  2. The Funded Trader - US-approved, buena integración
+  3. Alpha Capital Group - Dedicados a automation
+  4. MyFundedFX - Soporte activo para bots
+
+  TIER 2 (Soporte medio):
+  5. BrightFunded - Multi-plataforma (MT5, cTrader, DXTrade)
+  6. E8 Markets - US-based, permite bots
+  7. The5ers - Integración reciente (2025)
+
+  ❌ NO SOPORTAN BOTS en cTrader:
+  - FundedNext - Solo manual en cTrader (bots solo en MT4/MT5)
+
+  ---
+  Recursos Oficiales
+
+  Documentación:
+  - https://help.ctrader.com/open-api/
+  - https://connect.ctrader.com/docs
+
+  SDKs:
+  - Python: https://pypi.org/project/ctrader_open_api/
+  - C#: https://www.nuget.org/packages/cTrader.OpenAPI/
+
+  Protocol Buffers Schemas:
+  - https://github.com/spotware/OpenApiPy/tree/main/protobuf
+
+  OAuth2 Playground:
+  - https://connect.ctrader.com/apps (crear app, obtener credentials)
+
+  ---
+  Tiempo de Desarrollo Estimado
+
+  Para integrar cTrader Open API en tu AnalizadorDesktop:
+
+  Semana 1-2:
+  - Setup OAuth2
+  - REST API básico (accounts, symbols)
+  - Testing con cuenta demo
+
+  Semana 3-4:
+  - WebSocket streaming
+  - Order management
+  - Mapeo de datos Forex ↔ Crypto
+
+  Total: 40-60 horas (según mi estimación en el documento)
+
+  ---
+  Conclusión
+
+  "cTrader Open API" = API web moderna y completa para Forex/CFDs
+
+  Por qué la recomendé:
+  ✅ Es la ÚNICA plataforma forex con API web nativa (sin DLL local)
+  ✅ OAuth2 estándar, REST + WebSocket
+  ✅ SDKs oficiales en Python y C#
+  ✅ Varias prop firms la soportan
+  ✅ Tu app puede correr en la nube (no requiere Windows/VPS)
+
+  Alternativas:
+  ❌ MetaTrader 4/5: DLL local, no web API
+  ⚠️ Match-Trader/DXTrade: APIs propietarias, menos documentación

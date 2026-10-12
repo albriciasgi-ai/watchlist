@@ -6093,3 +6093,380 @@ restoreFromHistory() {
 ## Leccion Aprendida
 
 **Nunca comparar instancias de objetos despues de deserializacion**: Cuando un sistema serializa/deserializa objetos (como al guardar/cargar dibujos), las nuevas instancias son objetos completamente diferentes aunque tengan los mismos datos. Usar `indexOf()` con la referencia original falla. La solucion es siempre usar identificadores unicos (IDs) para buscar y comparar objetos que pueden ser deserializados.
+
+---
+
+# INVESTIGACION PROP FIRMS CON ACCESO API (Febrero 2026)
+
+Investigacion exhaustiva de prop firms con API para expandir opciones de integracion del AnalizadorDesktop mas alla de Bybit.
+
+## Objetivo
+
+Identificar las mejores 50 prop firms donde la aplicacion AnalizadorDesktop puede usarse con minima o media modificacion via conexion API, abarcando multiples mercados:
+- Crypto (Bybit, Binance, OKX, Kraken, Hyperliquid)
+- Forex (MetaTrader, cTrader, Match-Trader, DXTrade)
+- Futures (Rithmic, NinjaTrader, Tradovate)
+- Stocks/Equities
+
+## Documentos Generados
+
+### 1. Informe_PropFirms_API.md
+Analisis inicial detallado de las primeras prop firms investigadas:
+- HyroTrader, Mubite (Bybit Demo API)
+- Klein Funding (Bybit Demo)
+- Carrot Funding, Propr (Hyperliquid on-chain)
+- Comparacion simulador vs trading real
+- Integracion tecnica Bybit Demo vs Hyperliquid
+- Ejemplos de codigo para cambio de endpoint
+- Estimacion de esfuerzo de desarrollo (1 linea a 60-80 horas)
+
+**Ubicacion:** `8.AnalizadorDesktop/Informe_PropFirms_API.md`
+
+### 2. PropFirms_API_Completo_50.md
+Lista expandida con 50 prop firms organizadas por mercado:
+
+**Estructura:**
+- **16 Crypto Prop Firms** (Tier 1-4 segun complejidad API)
+- **15 Forex Prop Firms** (Tier 1-3 segun plataforma)
+- **14 Futures Prop Firms** (Tier 1-3 segun API)
+- **5 Multi-Asset Firms** (Stocks, Forex, Futures, Crypto)
+
+**Contenido por firma:**
+- Rating de calidad (⭐⭐⭐⭐⭐)
+- Exchange/Plataforma
+- Tipo de API y autenticacion
+- Profit split y fees
+- Tiempo estimado de desarrollo
+- Ventajas y desventajas
+- URL oficial
+
+**Ubicacion:** `8.AnalizadorDesktop/PropFirms_API_Completo_50.md`
+
+## Clasificacion por Complejidad de Integracion
+
+| Complejidad | Firmas | Esfuerzo Dev | Descripcion |
+|-------------|--------|--------------|-------------|
+| ⭐ MUY FACIL | HyroTrader, Mubite, Klein | **1 linea** | Cambio endpoint: `api.bybit.com` → `api-demo.bybit.com` |
+| ⭐⭐ FACIL | Tradeify, WenCrypto, BEM | 20-40h | DXTrade/Match-Trader integration |
+| ⭐⭐⭐ MEDIA | FunderPro, FundedNext, TFT | 40-60h | cTrader Open API |
+| ⭐⭐⭐⭐ DIFICIL | Lucid, Bulenox, TopStep | 50-70h | Rithmic/NinjaTrader API |
+| ⭐⭐⭐⭐⭐ MUY DIFICIL | Carrot, Propr | 60-80h | Hyperliquid (blockchain L1 propia) |
+| ❌ NO RECOMENDADO | FTMO, Audacity, etc. | N/A | MT4/MT5 (DLL local, no web API) |
+
+## Hallazgos Principales
+
+### APIs Recomendadas por Mercado
+
+**Crypto:**
+- **Bybit Demo:** HyroTrader, Mubite, Klein - Integracion inmediata (1 linea)
+- **Hyperliquid:** Carrot, Propr - Trading real on-chain verificable
+
+**Forex:**
+- **cTrader Open API:** FunderPro, FundedNext, TFT - UNICA plataforma forex con API web nativa
+- **Match-Trader/DXTrade:** BrightFunded, FundingPips - Complejidad media
+- **MetaTrader 4/5:** FTMO, The5ers - ❌ NO recomendado (DLL local, sin web API)
+
+**Futures:**
+- **Rithmic API:** Lucid, Topstep, Bulenox - Ultra-low latency, mejor opcion
+- **NinjaTrader TradeAPI:** MyFundedFutures, TradeDay - REST API mas simple
+
+### Politicas Importantes (Cambios 2026)
+
+⚠️ **Apex Trader Funding:** Bots PROHIBIDOS desde marzo 2026
+⚠️ **Earn2Trade:** Rithmic bundled descontinuado junio 2026
+⚠️ **FundedNext:** Bots permitidos en MT4/MT5 pero PROHIBIDOS en cTrader
+❌ **MyForexFunds:** Cerrado por CFTC en septiembre 2023
+
+### Modelo de Negocio
+
+- **80-90% son simuladores:** Pagan desde pool de fees de evaluacion
+- **5-10% trading real:** Solo Carrot y Propr (on-chain Hyperliquid)
+- **Ninguna es broker regulado:** No tienen licencias financieras tradicionales
+
+## Conceptos Tecnicos Clave
+
+### DLL Local vs API Web
+
+**DLL Local (MetaTrader 4/5):**
+- Codigo que corre en tu PC, no en la nube
+- Archivo `.dll` (Windows only) con funciones compiladas
+- Requiere proceso de MT4/MT5 corriendo 24/7
+- No hay REST/WebSocket API
+- Comunicacion solo en memoria local
+- Integracion requiere C++ complejo o workarounds fragiles
+
+**API Web (Bybit, cTrader, Rithmic):**
+- HTTP/HTTPS REST endpoints
+- WebSocket para streaming en tiempo real
+- Autenticacion estandar (HMAC, OAuth2, API tokens)
+- Multiplataforma (Windows, Linux, Mac, cloud)
+- Stateless, sin proceso corriendo
+- Integrable desde cualquier lenguaje (JavaScript, Python, etc.)
+
+**Por que esto importa:**
+```
+MetaTrader (DLL):
+  AnalizadorDesktop → NO puede conectarse directamente
+  Necesitas: MT4 corriendo + bridge/proxy custom + VPS Windows
+
+cTrader/Bybit (API Web):
+  AnalizadorDesktop → fetch('https://api.ctrader.com/...') → Listo ✅
+```
+
+### cTrader Open API
+
+**Nombre oficial** de la API web de cTrader (plataforma forex moderna, lanzada 2011).
+
+**Arquitectura:**
+```
+cTrader Open API = REST + WebSocket + Protocol Buffers
+```
+
+**Componentes:**
+1. **REST API:** Account info, market data, orders, historical data
+2. **WebSocket API:** Streaming tiempo real (ticks, orderbooks, account updates)
+3. **Protocol Buffers:** Formato binario eficiente (mas rapido que JSON)
+4. **OAuth2:** Autenticacion estandar (Client ID + Secret)
+
+**SDKs Oficiales:**
+- Python: `pip install ctrader_open_api`
+- C#: NuGet package
+
+**Ventajas sobre MetaTrader:**
+| Aspecto | MetaTrader 4/5 | cTrader Open API |
+|---------|----------------|------------------|
+| API Web | ❌ No existe | ✅ Completa |
+| Integracion | DLL local (Windows only) | REST + WebSocket (multiplataforma) |
+| Autenticacion | No aplica | OAuth2 (estandar) |
+| Lenguajes | MQL4/MQL5 (propietarios) | Python, C#, JavaScript, etc. |
+| Hosting | Requiere PC/VPS con MT | Backend en la nube |
+
+**Ejemplo de uso:**
+```javascript
+// Autenticacion OAuth2
+const tokenResponse = await fetch('https://openapi.ctrader.com/oauth/token', {
+  method: 'POST',
+  body: new URLSearchParams({
+    grant_type: 'client_credentials',
+    client_id: 'YOUR_CLIENT_ID',
+    client_secret: 'YOUR_CLIENT_SECRET'
+  })
+});
+
+// REST API - Account info
+const accountInfo = await fetch('https://openapi.ctrader.com/v2/accounts', {
+  headers: { 'Authorization': `Bearer ${access_token}` }
+});
+
+// WebSocket - Market data
+const ws = new WebSocket('wss://openapi.ctrader.com/v2/websocket');
+ws.send(JSON.stringify({
+  payloadType: 'ProtoOASubscribeSpotsReq',
+  symbolId: [1, 2, 3] // EURUSD, GBPUSD, etc.
+}));
+```
+
+### Hyperliquid On-Chain
+
+**Diferencia clave:** Trading real 100% verificable en blockchain vs simuladores.
+
+**Arquitectura:**
+- L1 blockchain propia (no Ethereum mainnet)
+- Ejecucion on-chain (todas las ordenes en blockchain)
+- Firma de wallet Ethereum (EIP-712)
+- ethers.js para integracion
+
+**Autenticacion:**
+```javascript
+const { ethers } = require('ethers');
+const wallet = new ethers.Wallet(privateKey);
+const signature = await wallet._signTypedData(domain, types, message);
+```
+
+**vs Bybit HMAC-SHA256:**
+```javascript
+const signature = crypto.createHmac('sha256', secret)
+  .update(timestamp + apiKey + params)
+  .digest('hex');
+```
+
+## Recomendaciones por Caso de Uso
+
+### Quick Start (1-2 dias)
+**HyroTrader o Mubite**
+- Razon: 1 linea de codigo
+- Costo: $59-99
+- Limitacion: Trading simulado
+
+### Trading Real (3-4 semanas)
+**Carrot Funding o Propr**
+- Razon: On-chain blockchain
+- Costo: $200-500
+- Ventaja: 100% transparente
+
+### Forex Bots (2-3 semanas)
+**FunderPro (cTrader)**
+- Razon: Mejor API forex
+- Costo: $79+
+- SDK: Python `ctrader_open_api`
+
+### Futures Bots (2-3 semanas)
+**Topstep o Lucid Trading**
+- Razon: Rithmic ultra-low latency
+- Costo: $90-165
+- Nota: Topstep permite bots, Lucid #1 ranked
+
+### Multi-Exchange Crypto (1-2 semanas)
+**Tradeify Crypto**
+- Razon: Binance, Bybit, OKX
+- Costo: $100-500
+- Ventaja: Lanzado 2026, DXTrade moderno
+
+### Algo Trader Sin Fee (1-2 semanas)
+**Velotrade**
+- Razon: API gratis incluido
+- Costo: $0 evaluacion
+- Para: Traders con estrategia validada
+
+## Roadmap de Desarrollo
+
+### Fase 1: Quick Start Bybit Demo (Semana 1-2)
+1. Cambiar endpoint en `config.js` (1 dia)
+2. Crear cuenta HyroTrader (1 dia)
+3. Testing exhaustivo (3-5 dias)
+4. Evaluacion opcional ($59)
+
+### Fase 2: Expansion Forex cTrader (Semana 3-5)
+1. Investigar cTrader Open API (2 dias)
+2. Desarrollar adapter cTrader (5-7 dias)
+3. Integracion dual-mode Bybit/cTrader (2-3 dias)
+4. Testing con FunderPro demo (2-3 dias)
+
+### Fase 3: Futures Rithmic/NinjaTrader (Semana 6-8)
+1. Decision Rithmic vs NinjaTrader
+2. Desarrollo adapter (7-10 dias)
+3. Testing con Topstep (3-5 dias)
+
+### Fase 4: On-Chain Hyperliquid (Semana 9-12)
+1. Integrar ethers.js (2-3 dias)
+2. Hyperliquid API (8-10 dias)
+3. Testing en testnet (3-5 dias)
+4. Evaluacion Carrot Funding ($200-500)
+
+### Fase 5: Unificacion Multi-Exchange (Semana 13-16)
+```javascript
+// ExchangeFactory.js
+class ExchangeFactory {
+  static create(type, config) {
+    switch(type) {
+      case 'bybit': return new BybitAdapter(config);
+      case 'bybit-demo': return new BybitDemoAdapter(config);
+      case 'ctrader': return new CTraderAdapter(config);
+      case 'rithmic': return new RithmicAdapter(config);
+      case 'hyperliquid': return new HyperliquidAdapter(config);
+    }
+  }
+}
+```
+
+## Estimaciones de Costos
+
+**Opcion A: Solo Bybit Demo**
+- Desarrollo: 1-2 dias (~$0)
+- Evaluacion: $59-99
+- Total: **$59-99**
+- ROI: Inmediato
+
+**Opcion B: Bybit + cTrader**
+- Desarrollo: 2-3 semanas (~$0)
+- Evaluacion: $59 + $79
+- Total: **$138**
+- ROI: 1-2 meses
+
+**Opcion C: Completa Multi-Asset**
+- Desarrollo: 3-4 meses (~$0)
+- Evaluaciones: $59 + $79 + $165 + $200
+- Total: **$503**
+- ROI: 3-6 meses
+
+**Opcion D: Externalizado**
+- Freelancer: $5,000-10,000
+- Evaluaciones: $503
+- Total: **$5,503-10,503**
+- ROI: 6-12 meses
+
+## Recursos Documentacion
+
+**Bybit:**
+- REST: https://bybit-exchange.github.io/docs/v5/intro
+- WebSocket: https://bybit-exchange.github.io/docs/v5/ws/connect
+
+**Hyperliquid:**
+- Gitbook: https://hyperliquid.gitbook.io/hyperliquid-docs
+- SDK Python: https://github.com/hyperliquid-dex/hyperliquid-python-sdk
+
+**cTrader:**
+- Open API: https://help.ctrader.com/open-api/
+- Python Package: https://pypi.org/project/ctrader_open_api/
+
+**Rithmic:**
+- Developer Portal: https://yyy3.rithmic.com/
+- API Docs: https://www.rithmic.com/rithmic_protocol_api.html
+
+**NinjaTrader:**
+- TradeAPI: https://connect.ninjatrader.com/futures-trading-api/
+
+## Consideraciones Legales
+
+**Firmas US-Friendly:**
+- E8 Markets, The Funded Trader, Apex, Topstep, Earn2Trade
+
+**Firmas Internacionales (No US):**
+- HyroTrader, Mubite, FTMO, FunderPro (Czech Republic/Internacional)
+
+**Riesgos:**
+1. Firma puede cerrar (ver MyForexFunds CFTC shutdown 2023)
+2. Cambio de ToS (ver Apex banning bots 2026)
+3. Payouts no garantizados
+
+**Mitigaciones:**
+1. Diversificar (no todo en una firma)
+2. Backup de datos (logger exhaustivo)
+3. Leer ToS cuidadosamente
+4. Empezar con plan basico
+
+## Top 3 Firmas por Categoria
+
+**Facilidad de Integracion:**
+1. HyroTrader - Bybit Demo, 1 linea
+2. Mubite - Bybit Demo, 1 linea
+3. Tradeify Crypto - DXTrade, ~20h
+
+**Trading Real:**
+1. Carrot Funding - Hyperliquid on-chain
+2. Propr - Hyperliquid on-chain
+3. *Resto son simuladores*
+
+**API Quality Forex:**
+1. FunderPro - cTrader Open API
+2. The Funded Trader - cTrader US-approved
+3. Alpha Capital Group - Pro-automation
+
+**API Quality Futures:**
+1. Lucid Trading - Rithmic (#1 ranked)
+2. Topstep - Rithmic + TopstepX (bots permitidos)
+3. Bulenox - Rithmic (100% primeros $10K)
+
+## Estrategia Hibrida Recomendada
+
+1. **Corto plazo:** HyroTrader ($59, 1-2 dias) - Validar concepto
+2. **Medio plazo:** FunderPro cTrader ($79, 2-3 semanas) - Expandir a forex
+3. **Largo plazo:** Carrot Funding Hyperliquid ($200, 1-2 meses) - Trading real
+
+---
+
+**Fecha investigacion:** 3 de febrero de 2026
+**Firmas verificadas:** 50 total
+**Fuentes:** Documentacion oficial, reviews verificados, testing APIs
+**Preparado por:** Claude Code (Anthropic)
+**Proyecto:** AnalizadorDesktop (Electron + React + Bybit API)

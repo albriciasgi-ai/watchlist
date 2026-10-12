@@ -33,21 +33,38 @@ class OpenInterestIndicator extends IndicatorBase {
     this.oiFirstDate = "";
     this.oiLastDate = "";
     this.oiInterval = "";
+
+    // NUEVO: Estados de carga y error
+    this._isFetching = false;
+    this._fetchError = null;
   }
 
   /**
    * Fetch Open Interest data from backend
+   * NUEVO: Sistema de reintentos inteligente (3 intentos con backoff exponencial)
    */
-  async fetchData() {
-    // 🎯 NUEVO: Si los datos ya fueron pre-cargados (modo backtesting), no hacer fetch
-    if (this._dataPreloaded) {
-      console.log(`[${this.symbol}] ✅ Open Interest: Skipping fetch (data preloaded in backtesting mode)`);
-      return true;
+  async fetchData(skipCache = false, retryCount = 0) {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 2000;
+
+    // 🎯 FIX: Validar preload ANTES de skip - verificar que realmente hay datos
+    if (this._dataPreloaded && !skipCache) {
+      if (this.dataMap && this.dataMap.size > 0 && this.data && this.data.length > 0) {
+        console.log(`[${this.symbol}] ✅ OI: Usando datos preloaded (${this.dataMap.size} puntos)`);
+        return true;
+      } else {
+        console.warn(`[${this.symbol}] ⚠️ OI: Preload marcado pero SIN datos, forzando fetch`);
+        this._dataPreloaded = false;
+      }
     }
+
+    // Marcar como cargando
+    this._isFetching = true;
+    this._fetchError = null;
 
     try {
       const url = `${API_BASE_URL}/api/open-interest/${this.symbol}?interval=${this.interval}&days=${this.days}`;
-      console.log(`%c[OI DEBUG] ${this.symbol} - FETCHING`, 'background: #FF9800; color: white; font-weight: bold; padding: 4px 8px;', {
+      console.log(`%c[OI] ${this.symbol} - FETCH INICIADO (intento ${retryCount + 1}/${MAX_RETRIES + 1})`, 'background: #FF9800; color: white; font-weight: bold; padding: 4px 8px;', {
         interval: this.interval,
         days: this.days,
         url
@@ -55,26 +72,41 @@ class OpenInterestIndicator extends IndicatorBase {
 
       const response = await fetch(url);
 
-      // 🎯 DEBUG: Verificar status de respuesta
+      // Verificar status HTTP
       if (!response.ok) {
-        console.error(`%c[OI DEBUG] ${this.symbol} - HTTP ERROR`, 'background: #F44336; color: white; font-weight: bold; padding: 4px 8px;', {
+        console.error(`%c[OI] ${this.symbol} - HTTP ERROR ${response.status}`, 'background: #F44336; color: white; font-weight: bold; padding: 4px 8px;', {
           status: response.status,
           statusText: response.statusText
         });
-        return false;
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
 
-      console.log(`%c[OI DEBUG] ${this.symbol} - API RESPONSE`, 'background: #2196F3; color: white; font-weight: bold; padding: 4px 8px;', {
+      console.log(`%c[OI] ${this.symbol} - API RESPONSE`, 'background: #2196F3; color: white; font-weight: bold; padding: 4px 8px;', {
         success: result.success,
         dataLength: result.data?.length || 0,
         error: result.error || 'none',
-        firstItem: result.data?.[0],
-        lastItem: result.data?.[result.data?.length - 1]
+        hasMetadata: !!(result.oi_first_date && result.oi_last_date)
       });
 
-      if (result.success && result.data && result.data.length > 0) {
+      // 🎯 FIX: Validar respuesta ANTES de procesar
+      if (!result.success) {
+        const errorMsg = result.error || result.message || 'Unknown error';
+
+        if (retryCount < MAX_RETRIES) {
+          const delay = RETRY_DELAY_MS * (retryCount + 1);
+          console.warn(`%c[OI] ${this.symbol} - Fetch falló: ${errorMsg}`, 'background: #FF9800; color: white; font-weight: bold; padding: 4px 8px;');
+          console.warn(`%c[OI] ${this.symbol} - ⏳ Reintentando en ${delay}ms...`, 'background: #FF9800; color: white; font-weight: bold; padding: 4px 8px;');
+
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return this.fetchData(skipCache, retryCount + 1);
+        }
+
+        throw new Error(`OI fetch failed after ${MAX_RETRIES + 1} attempts: ${errorMsg}`);
+      }
+
+      if (result.data && result.data.length > 0) {
         // Crear map de timestamp -> openInterest para búsqueda rápida
         this.dataMap = new Map();
         result.data.forEach(item => {
@@ -91,35 +123,47 @@ class OpenInterestIndicator extends IndicatorBase {
         this.oiLastDate = result.oi_last_date || "";
         this.oiInterval = result.oi_interval || "";
 
-        console.log(`%c[OI DEBUG] ${this.symbol} - DATA LOADED`, 'background: #4CAF50; color: white; font-weight: bold; padding: 4px 8px;', {
+        console.log(`%c[OI] ${this.symbol} - ✅ FETCH EXITOSO`, 'background: #4CAF50; color: white; font-weight: bold; padding: 4px 8px;', {
           dataMapSize: this.dataMap.size,
           dataLength: this.data.length,
-          oiFirstDate: this.oiFirstDate,
-          oiLastDate: this.oiLastDate,
-          oiInterval: this.oiInterval,
-          sampleTimestamps: Array.from(this.dataMap.keys()).slice(0, 5).map(t => new Date(t).toISOString()),
-          sampleValues: Array.from(this.dataMap.values()).slice(0, 5)
+          coverage: `${this.oiFirstDate} → ${this.oiLastDate}`,
+          interval: this.oiInterval
         });
         return true;
       } else {
-        console.warn(`%c[OI DEBUG] ${this.symbol} - NO DATA`, 'background: #F44336; color: white; font-weight: bold; padding: 4px 8px;', {
+        console.warn(`%c[OI] ${this.symbol} - NO DATA`, 'background: #F44336; color: white; font-weight: bold; padding: 4px 8px;', {
           success: result.success,
           dataExists: !!result.data,
-          dataLength: result.data?.length || 0,
-          error: result.error || 'none'
+          dataLength: result.data?.length || 0
         });
         this.dataMap = null;
         this.data = [];
         return false;
       }
     } catch (error) {
-      console.error(`%c[OI DEBUG] ${this.symbol} - EXCEPTION`, 'background: #000; color: white; font-weight: bold; padding: 4px 8px;', {
+      this._fetchError = error;
+      console.error(`%c[OI] ${this.symbol} - ❌ EXCEPTION`, 'background: #000; color: white; font-weight: bold; padding: 4px 8px;', {
         message: error.message,
-        stack: error.stack
+        retryCount: retryCount,
+        maxRetries: MAX_RETRIES
       });
+
+      // 🎯 FIX: Reintentar en errores de red (TypeError, NetworkError)
+      if (retryCount < MAX_RETRIES &&
+          (error.name === 'TypeError' || error.name === 'NetworkError' || error.message.includes('HTTP'))) {
+        const delay = RETRY_DELAY_MS * (retryCount + 1);
+        console.warn(`%c[OI] ${this.symbol} - ⏳ Reintentando por error de red en ${delay}ms...`, 'background: #FF9800; color: white; font-weight: bold; padding: 4px 8px;');
+
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return this.fetchData(skipCache, retryCount + 1);
+      }
+
+      // Si ya agotamos reintentos, propagar error
       this.dataMap = null;
       this.data = [];
-      return false;
+      throw error;
+    } finally {
+      this._isFetching = false;
     }
   }
 
@@ -916,9 +960,46 @@ class OpenInterestIndicator extends IndicatorBase {
     ctx.lineTo(x + width, y);
     ctx.stroke();
 
-    ctx.fillStyle = "#FF9800";
-    ctx.font = "11px Inter, sans-serif";
-    ctx.fillText(`No Open Interest data available for ${this.symbol}`, x + width / 2 - 120, y + height / 2);
+    // MEJORADO: Mostrar diferentes mensajes según el estado
+    const centerX = x + width / 2;
+    const centerY = y + height / 2;
+
+    if (this._isFetching) {
+      // Estado: Cargando
+      ctx.fillStyle = "#FFA726";
+      ctx.font = "bold 14px Inter, sans-serif";
+      const loadingText = "⏳ Descargando Open Interest de Bybit...";
+      const textWidth = ctx.measureText(loadingText).width;
+      ctx.fillText(loadingText, centerX - textWidth / 2, centerY);
+
+      ctx.fillStyle = "#757575";
+      ctx.font = "11px Inter, sans-serif";
+      const subText = "Esto puede tardar unos momentos";
+      const subTextWidth = ctx.measureText(subText).width;
+      ctx.fillText(subText, centerX - subTextWidth / 2, centerY + 20);
+
+    } else if (this._fetchError) {
+      // Estado: Error
+      ctx.fillStyle = "#EF5350";
+      ctx.font = "bold 14px Inter, sans-serif";
+      const errorText = `❌ Error cargando Open Interest`;
+      const textWidth = ctx.measureText(errorText).width;
+      ctx.fillText(errorText, centerX - textWidth / 2, centerY);
+
+      ctx.fillStyle = "#757575";
+      ctx.font = "11px Inter, sans-serif";
+      const errorMsg = this._fetchError.message || "Unknown error";
+      const errorMsgWidth = ctx.measureText(errorMsg).width;
+      ctx.fillText(errorMsg, centerX - errorMsgWidth / 2, centerY + 20);
+
+    } else {
+      // Estado: Sin datos (después de fetch exitoso pero sin resultados)
+      ctx.fillStyle = "#FF9800";
+      ctx.font = "11px Inter, sans-serif";
+      const noDataText = `No Open Interest data available for ${this.symbol}`;
+      const textWidth = ctx.measureText(noDataText).width;
+      ctx.fillText(noDataText, centerX - textWidth / 2, centerY);
+    }
   }
 
   /**

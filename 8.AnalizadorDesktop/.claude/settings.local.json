@@ -14,7 +14,18 @@
       "WebFetch(domain:medium.com)",
       "WebSearch",
       "WebFetch(domain:www.fmz.com)",
-      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import sys; sys.path.insert(0, ''C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/4.Analizador cripto/backend''); from strategy_engine import run_modular_backtest, compute_gaussian_channel, compute_gaussian_channel_levels, signal_band_crossover, filter_gaussian_trend; print(''OK - Todas las funciones importan correctamente'')\")"
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\4.Analizador cripto\\backend\\.venv\\Scripts\\python.exe\" -c \"import sys; sys.path.insert(0, ''C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/4.Analizador cripto/backend''); from strategy_engine import run_modular_backtest, compute_gaussian_channel, compute_gaussian_channel_levels, signal_band_crossover, filter_gaussian_trend; print(''OK - Todas las funciones importan correctamente'')\")",
+      "WebFetch(domain:propfirm.compare)",
+      "WebFetch(domain:hyrotrader.com)",
+      "WebFetch(domain:cryptofundtrader.com)",
+      "WebFetch(domain:mubite.com)",
+      "WebFetch(domain:velotrade.com)",
+      "WebFetch(domain:www.hyrotrader.com)",
+      "WebFetch(domain:cleo.finance)",
+      "WebFetch(domain:kleinfunding.com)",
+      "WebFetch(domain:theindustryspread.com)",
+      "WebFetch(domain:www.iqcapital.io)",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []

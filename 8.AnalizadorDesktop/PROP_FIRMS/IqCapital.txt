@@ -1,0 +1,246 @@
+  📊 IQ CAPITAL - ANÁLISIS COMPLETO
+
+  Información General
+
+  | Aspecto         | Detalle                                              |
+  |-----------------|------------------------------------------------------|
+  | Nombre          | IQ Capital                                           |
+  | URL             | https://www.iqcapital.io/                            |
+  | Mercados        | Crypto, CFDs, Futures                                |
+  | Tipo de Capital | Real (funded traders operan con capital de la firma) |
+  | Rating          | ⭐⭐⭐ (3/5 - APIs mixtas)                              |
+
+  ---
+  🎯 Estructura de Challenge
+
+  | Parámetro           | Valor                                                                     |
+  |---------------------|---------------------------------------------------------------------------|
+  | Profit Target       | 8%                                                                        |
+  | Max Drawdown        | 6%                                                                        |
+  | Position Loss Limit | 1%                                                                        |
+  | Duración            | 30 días                                                                   |
+  | Tamaños de Cuenta   | $50K - $100K (challenge)Hasta $200K (funded)Hasta $100K (instant funding) |
+  | Cuentas Simultáneas | Hasta 10 por trader                                                       |
+
+  ---
+  💰 Costos y Profit Split
+
+  | Concepto        | Costo                                                                     |
+  |-----------------|---------------------------------------------------------------------------|
+  | Challenge Fee   | $49 - $95 (one-time, con 80% descuento promocional)                       |
+  | Extension Fee   | $19 para extender 30 días                                                 |
+  | Instant Funding | Desde $9                                                                  |
+  | Profit Split    | Hasta 90% para el trader                                                  |
+  | Withdrawals     | Procesados en 48h (promedio 3h)Sin mínimo de retiroCrypto o bank transfer |
+
+  ---
+  🔧 PLATAFORMAS Y APIs DISPONIBLES
+
+  Para Crypto y CFDs:
+
+  | Plataforma     | Tipo de API                 | Complejidad | Tiempo Desarrollo |
+  |----------------|-----------------------------|-------------|-------------------|
+  | MetaTrader 5   | DLL Local (MQL5)            | ⭐⭐⭐⭐        | 4-6 semanas       |
+  | Volumetrica FX | REST + WebSocket + Webhooks | ⭐⭐          | 2-3 semanas       |
+
+  Para Futures:
+
+  | Plataforma | Tipo de API               | Complejidad | Tiempo Desarrollo |
+  |------------|---------------------------|-------------|-------------------|
+  | Tradovate  | REST API                  | ⭐⭐          | 2-3 semanas       |
+  | Quantower  | C# SDK                    | ⭐⭐⭐         | 3-4 semanas       |
+  | ATAS       | C# API (order flow)       | ⭐⭐⭐⭐        | 4-6 semanas       |
+  | DeepChart  | C# API (solo indicadores) | ⭐⭐⭐⭐⭐       | 6-8 semanas       |
+
+  ---
+  ✅ MEJOR OPCIÓN DE INTEGRACIÓN
+
+  Recomendación: Volumetrica FX (para crypto/CFD) y Tradovate (para futures)
+
+  Volumetrica FX
+
+  // REST API + WebSocket + Webhooks
+  const volumetrica = {
+    baseURL: 'https://api.volumetricafx.com',  // URL hipotética
+    auth: 'API_KEY',
+    protocols: ['REST', 'WebSocket', 'Webhooks'],
+    integration_time: '2-3 semanas',
+    assets: ['600+ crypto CFDs', 'Forex', 'Stocks']
+  };
+
+  // Ejemplo de conexión
+  class VolumetricaAdapter {
+    constructor(apiKey) {
+      this.apiKey = apiKey;
+      this.ws = null;
+    }
+
+    async connect() {
+      // REST para autenticación
+      const auth = await fetch(`${volumetrica.baseURL}/auth`, {
+        headers: { 'X-API-Key': this.apiKey }
+      });
+
+      // WebSocket para datos en tiempo real
+      this.ws = new WebSocket('wss://stream.volumetricafx.com');
+      this.ws.on('message', this.handleTick);
+    }
+
+    async placeOrder(symbol, side, quantity) {
+      return fetch(`${volumetrica.baseURL}/orders`, {
+        method: 'POST',
+        headers: { 'X-API-Key': this.apiKey },
+        body: JSON.stringify({ symbol, side, quantity })
+      });
+    }
+  }
+
+  Tradovate (para futures)
+
+  // Ya tienes experiencia con REST APIs similares a Bybit
+  const tradovate = {
+    baseURL: 'https://demo.tradovateapi.com/v1',
+    auth: 'OAuth2',
+    protocols: ['REST', 'WebSocket'],
+    integration_time: '2-3 semanas'
+  };
+
+  // Integración casi idéntica a Bybit
+  class TradovateAdapter {
+    async placeOrder(symbol, side, quantity) {
+      return fetch(`${tradovate.baseURL}/order/placeorder`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          accountId: this.accountId,
+          action: side, // 'Buy' o 'Sell'
+          symbol: symbol,
+          orderQty: quantity,
+          orderType: 'Market'
+        })
+      });
+    }
+  }
+
+  ---
+  📋 COMPARACIÓN CON OTRAS PROP FIRMS
+
+  | Aspecto           | IQ Capital           | HyroTrader   | FunderPro       |
+  |-------------------|----------------------|--------------|-----------------|
+  | Mejor API Crypto  | Volumetrica FX ⭐⭐    | Bybit Demo ⭐ | -               |
+  | Mejor API Futures | Tradovate ⭐⭐         | -            | -               |
+  | Challenge Fee     | $49-$95              | $59          | $79             |
+  | Profit Split      | 90%                  | 90%          | 90%             |
+  | Mercados          | Crypto, CFD, Futures | Solo Crypto  | Solo Forex      |
+  | Instant Funding   | Sí ($9)              | No           | No              |
+  | Múltiples Cuentas | Hasta 10             | Hasta 4      | No especificado |
+
+  ---
+  ⚠️ CONSIDERACIONES IMPORTANTES
+
+  Ventajas:
+
+  1. ✅ Multi-asset: Crypto, CFDs y Futures en una sola firma
+  2. ✅ Volumetrica FX tiene REST API - Integración web-friendly
+  3. ✅ Tradovate - API probada y documentada para futures
+  4. ✅ Instant Funding - Opción rápida desde $9
+  5. ✅ 10 cuentas simultáneas - Escalabilidad
+  6. ✅ Capital real - No es simulador
+  7. ✅ Soft Breach System - 2 oportunidades antes de hard breach
+  8. ✅ Withdrawals rápidos - 3h promedio
+
+  Desventajas:
+
+  1. ❌ MetaTrader 5 - Requiere DLL local (complejidad alta)
+  2. ❌ Quantower/ATAS - SDK C#, no REST API directa
+  3. ❌ DeepChart - Solo API de indicadores, no trading automation
+  4. ❌ Volumetrica API - Documentación no públicamente accesible (necesitas contactarlos)
+  5. ❌ Múltiples plataformas - Necesitas elegir una para cada mercado
+
+  ---
+  🛠️ ROADMAP DE INTEGRACIÓN RECOMENDADO
+
+  Fase 1: Crypto/CFD vía Volumetrica FX (2-3 semanas)
+
+  1. Contactar Volumetrica - Solicitar acceso a API docs
+  2. Crear VolumetricaAdapter - Implementar patrón similar a BybitAdapter
+  3. Endpoints básicos:
+    - Autenticación (REST)
+    - Conexión WebSocket
+    - Obtener precios en tiempo real
+    - Colocar órdenes market
+    - Gestionar stop-loss/take-profit
+  4. Testing - Cuenta demo de Volumetrica
+
+  Fase 2: Futures vía Tradovate (2-3 semanas)
+
+  1. Cuenta demo Tradovate - Obtener API keys
+  2. Crear TradovateAdapter
+  3. OAuth2 flow - Implementar refresh tokens
+  4. Endpoints:
+    - Market data (WebSocket)
+    - Order placement
+    - Position management
+  5. Testing - ES, NQ, YM (mini futures)
+
+  Fase 3: Unified Multi-Exchange (1 semana)
+
+  // Factory pattern para manejar múltiples exchanges
+  class IQCapitalFactory {
+    static create(market, config) {
+      switch(market) {
+        case 'crypto':
+        case 'cfd':
+          return new VolumetricaAdapter(config);
+        case 'futures':
+          return new TradovateAdapter(config);
+        default:
+          throw new Error(`Market ${market} not supported`);
+      }
+    }
+  }
+
+  // Uso en AnalizadorDesktop
+  const cryptoExchange = IQCapitalFactory.create('crypto', {
+    apiKey: process.env.VOLUMETRICA_API_KEY
+  });
+
+  const futuresExchange = IQCapitalFactory.create('futures', {
+    apiKey: process.env.TRADOVATE_API_KEY,
+    secret: process.env.TRADOVATE_SECRET
+  });
+
+  ---
+  💵 ESTIMACIÓN DE COSTOS
+
+  | Escenario                       | Challenge Fee | Extension | Total Inicial | Tiempo Dev | Costo Dev* |
+  |---------------------------------|---------------|-----------|---------------|------------|------------|
+  | Crypto (Volumetrica)            | $49           | $0        | $49           | 2-3 sem    | ~$2,000    |
+  | Futures (Tradovate)             | $49           | $0        | $49           | 2-3 sem    | ~$2,000    |
+  | Ambos mercados                  | $98           | $0        | $98           | 4-6 sem    | ~$4,000    |
+  | Con MT5 en lugar de Volumetrica | $49           | $19       | $68           | 4-6 sem    | ~$4,000    |
+
+  *Costo de desarrollo asumiendo $50/hora
+
+  ---
+  🎯 VEREDICTO FINAL
+
+  Tier 2 - Integración Media
+
+  IQ Capital es una buena opción multi-asset si:
+  1. Quieres diversificar a futures (Tradovate es sólido)
+  2. Puedes obtener documentación de Volumetrica FX (contactándolos)
+  3. Prefieres instant funding ($9) para validar rápido
+
+  NO es la mejor opción si:
+  1. Solo quieres crypto → HyroTrader es más simple (Bybit Demo API, 1 línea)
+  2. Solo quieres forex → FunderPro es más probado (cTrader Open API)
+  3. Necesitas documentación pública → Volumetrica requiere contacto directo
+
+  Recomendación:
+  - Para crypto: Volumetrica FX > MetaTrader 5
+  - Para futures: Tradovate (excelente API)
+  - Evitar: ATAS, Quantower, DeepChart (C# SDK, demasiado complejo)
