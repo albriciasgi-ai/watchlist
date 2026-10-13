@@ -236,7 +236,13 @@ npm install && npm run dev
 - **5 timeframes** independientes: 1m, 5m, 15m, 1h, 4h
   - 1m/5m: 2 anos de datos (~1,051,200 / ~210,240 velas)
   - 15m/1h/4h: 5 anos de datos (~175,200 / ~43,800 / ~10,950 velas)
-- **10 indicadores tecnicos** simultaneos
+- **10+ indicadores tecnicos** disponibles
+- **Indicadores habilitados por defecto**:
+  - ✅ Volume Delta (visualización con z-score y clusters bidireccionales)
+  - ✅ Volume Profile (perfil dinámico)
+  - ✅ Open Interest (interés abierto)
+  - ✅ OI-Volume Confluence (🎯 **NUEVO** - confluencia visual OI + Volumen con normalización Z-Score)
+  - ❌ CVD, Range Detection, S&R, VWAP, Rejection Patterns, DTB, Swing (deshabilitados)
 - **Deteccion automatica** de patrones (DTB, Rejection)
 - **Backtesting realista** con ordenes market/limit/stop
 - **TimeController** con subdivisiones intravela (1x, 2x, 5x, 10x)
@@ -246,6 +252,63 @@ npm install && npm run dev
 - **Exportacion**: Excel, CSV, PNG
 - **Persistencia de sesiones**
 - **Cache gzip** con compresion ~90% y carga incremental
+- **Visualizacion de volumen mejorada**: Z-score estadistico, intensidad/opacidad adaptativas, deteccion de clusters
+
+## Sistema de Visualizacion de Volumen (Febrero 2026)
+
+Sistema avanzado con analisis estadistico (z-score), parametros configurables y deteccion de clusters de volumen consecutivo.
+
+### Caracteristicas
+
+- **Analisis Z-Score**: Evaluacion estadistica de cada barra de volumen
+- **Intensidad/Opacidad Adaptativas**: Colores dinamicos segun desviacion del volumen promedio
+- **Gradientes Dinamicos**: Gradientes verticales variables segun z-score
+- **Glow Effect**: Resaltado para volumenes excepcionales (z-score > umbral)
+- **Deteccion de Clusters**: Grupos de velas consecutivas con volumen alto acumulado
+- **Modal de Configuracion**: Controles completos accesibles via boton ⚙️ en divisor naranja
+
+### Parametros Configurables
+
+Guardados por simbolo en localStorage (`volumeVisualParams_{symbol}`):
+
+| Categoria | Parametros | Valores Default |
+|-----------|------------|-----------------|
+| **Intensidad** | Min / Max / Divisor | 0.3 / 1.0 / 3 |
+| **Opacidad** | Min / Max / Base / Divisor | 0.4 / 0.9 / 0.5 / 4 |
+| **Gradiente** | Contraste Inferior | 0.3 |
+| **Glow** | Umbral / Blur | 2.0 / 8 |
+| **Clusters** | Min Barras / Umbral / Alcista / Bajista | 3 / 0.5 / #4CAF50 / #F44336 |
+
+### Deteccion de Clusters
+
+Identifica secuencias de velas consecutivas con `z-score >= threshold`:
+- Requiere minimo N barras consecutivas (`clusterMinBars`)
+- Las barras del cluster se resaltan con color personalizable
+- NO dibuja fondo invasivo en el grafico de precio
+- El glow effect no se aplica a barras de clusters
+
+### Formulas Clave
+
+```javascript
+// Z-Score
+zScore = (volume - avgVolume) / stdDevVolume
+
+// Intensidad Adaptativa
+intensity = max(intensityMin, min(intensityMax, (zScore + 1) / intensityDivisor))
+
+// Opacidad Adaptativa
+opacity = max(opacityMin, min(opacityMax, opacityBase + (zScore / opacityDivisor)))
+
+// Color de Barras
+color = isInCluster ? clusterColor : (close >= open ? green : red)
+```
+
+### Acceso al Modal
+
+- Click en boton ⚙️ del divisor naranja (entre precio y volumen)
+- 5 secciones: Intensidad, Opacidad, Gradiente, Glow, Clusters
+- Boton Reset para restaurar defaults
+- Cambios se aplican en tiempo real + persisten en localStorage
 
 ## Endpoints Backend
 

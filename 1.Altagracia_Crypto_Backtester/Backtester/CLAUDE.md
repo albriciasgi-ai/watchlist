@@ -148,9 +148,24 @@ The indicator architecture uses a manager pattern with specialized indicator cla
   - `VolumeProfileFixedRangeIndicator.js` - Fixed range Volume Profile (static period analysis)
   - `VolumeIndicator.js` - Volume bars
   - `CVDIndicator.js` - Cumulative Volume Delta
+  - `OIVolumeConfluenceIndicator.js` - 🎯 **OI-Volume Confluence** (combina OI y Volumen con normalización Z-Score)
   - `ATRBasedRangeDetector.js` - Automatic range detection using ATR
   - `RejectionPatternIndicator.js` - Candlestick pattern detection (Hammer, Shooting Star, Engulfing, Doji)
   - `LocalPatternDetector.js` - Local pattern detection without context validation
+
+- **Default Enabled Indicators:**
+  - ✅ Volume Delta (visualización de volumen con z-score y clusters)
+  - ✅ Volume Profile (perfil de volumen dinámico)
+  - ✅ Open Interest (interés abierto)
+  - ✅ OI-Volume Confluence (🎯 **NUEVO** - confluencia visual OI + Volumen)
+  - ❌ CVD (deshabilitado por defecto)
+  - ❌ Range Detection (deshabilitado por defecto)
+  - ❌ Support & Resistance (deshabilitado por defecto)
+  - ❌ S&R v2 (deshabilitado por defecto)
+  - ❌ VWAP (deshabilitado por defecto)
+  - ❌ Rejection Patterns (deshabilitado por defecto)
+  - ❌ Double Top/Bottom (deshabilitado por defecto)
+  - ❌ Swing Detector (deshabilitado por defecto)
 
 **Key Frontend Patterns:**
 
@@ -444,6 +459,238 @@ Se adopto el patron de App 8 (AnalizadorDesktop) que usa limites fijos en lugar 
 
 **Pan no funciona correctamente en zoom extremo:**
 - Verificar que pan handler usa `effectiveBarWidth` y no `8 * zoom` directo
+
+---
+
+## SISTEMA DE VISUALIZACIÓN DE VOLUMEN MEJORADO (Febrero 2026)
+
+Sistema avanzado de visualización de volumen con análisis estadístico basado en z-score, parámetros configurables y detección de clusters de volumen consecutivo.
+
+### Características Principales
+
+1. **Análisis Z-Score**: Cada barra de volumen es evaluada usando z-score estadístico para identificar volúmenes anormalmente altos
+2. **Intensidad y Opacidad Adaptativas**: Las barras se colorean dinámicamente según su desviación del volumen promedio
+3. **Gradientes Dinámicos**: Gradientes verticales que varían según el z-score de cada barra
+4. **Glow Effect**: Resaltado especial para volúmenes excepcionales (z-score > umbral)
+5. **Detección de Clusters**: Identifica grupos de velas consecutivas con volumen alto acumulado
+6. **Configuración Personalizable**: Modal con controles para ajustar todos los parámetros visuales
+
+### Parámetros Configurables
+
+Los parámetros se guardan por símbolo en localStorage (`volumeVisualParams_{symbol}`):
+
+```javascript
+{
+  // Intensidad de color
+  intensityMin: 0.3,           // Intensidad mínima (0.1-0.5)
+  intensityMax: 1.0,           // Intensidad máxima (0.6-1.0)
+  intensityDivisor: 3,         // Divisor de sensibilidad (1-6)
+
+  // Opacidad adaptativa
+  opacityMin: 0.4,             // Opacidad mínima (0.2-0.6)
+  opacityMax: 0.9,             // Opacidad máxima (0.7-1.0)
+  opacityBase: 0.5,            // Opacidad base (0.3-0.7)
+  opacityDivisor: 4,           // Divisor z-score (2-8)
+
+  // Gradiente
+  gradientBottomMultiplier: 0.3, // Contraste inferior (0.1-0.8)
+
+  // Efecto Glow
+  glowThreshold: 2.0,          // Umbral z-score para glow (1.0-4.0)
+  glowBlur: 8,                 // Intensidad del blur (2-20)
+
+  // Detección de Clusters
+  clusterDetection: true,          // Activar/desactivar detección
+  clusterMinBars: 3,               // Mínimo de velas consecutivas (2-10)
+  clusterThreshold: 0.5,           // Umbral promedio z-score (0.0-2.0)
+  clusterColorBullish: '#4CAF50',  // Color para clusters alcistas (verde)
+  clusterColorBearish: '#F44336'   // Color para clusters bajistas (rojo)
+}
+```
+
+### Sistema de Detección de Clusters
+
+Los clusters identifican grupos de velas consecutivas donde el volumen acumulado es significativo, aunque individualmente las barras no tengan volumen extremo.
+
+**Algoritmo:**
+
+```javascript
+// 1. Calcular z-score para cada vela
+const volumeZScores = visibleCandles.map(d =>
+  (d.volume - avgVolume) / stdDevVolume
+);
+
+// 2. Detectar secuencias consecutivas con z-score >= threshold
+const clusters = [];
+let currentCluster = null;
+
+volumeZScores.forEach((zScore, i) => {
+  if (zScore >= clusterThreshold) {
+    if (!currentCluster) {
+      // Iniciar nuevo cluster
+      currentCluster = { start: i, end: i, avgZScore: zScore, count: 1 };
+    } else {
+      // Extender cluster existente
+      currentCluster.end = i;
+      currentCluster.avgZScore =
+        (currentCluster.avgZScore * currentCluster.count + zScore) /
+        (currentCluster.count + 1);
+      currentCluster.count++;
+    }
+  } else {
+    // Finalizar cluster si cumple mínimo de barras
+    if (currentCluster && currentCluster.count >= clusterMinBars) {
+      clusters.push(currentCluster);
+    }
+    currentCluster = null;
+  }
+});
+
+// 3. Determinar dirección de cada cluster
+// Compara precio de apertura del inicio con precio de cierre del final
+clusters.forEach(cluster => {
+  const firstCandle = visibleCandles[cluster.start];
+  const lastCandle = visibleCandles[cluster.end];
+  const direction = lastCandle.close >= firstCandle.open ? 'bullish' : 'bearish';
+
+  for (let i = cluster.start; i <= cluster.end; i++) {
+    clusterIndices.add(i);
+    clusterDirections.set(i, direction); // Guardar dirección por índice
+  }
+});
+
+// 4. Las barras en clusters se resaltan con color según dirección
+// NO se dibuja fondo invasivo en el gráfico de precio
+```
+
+**Visualización:**
+- Las barras que forman parte de un **cluster alcista** se pintan con `clusterColorBullish` (verde por defecto)
+- Las barras que forman parte de un **cluster bajista** se pintan con `clusterColorBearish` (rojo por defecto)
+- Las barras normales usan verde (alcista) o rojo (bajista) estándar
+- El glow effect NO se aplica a barras de clusters para evitar redundancia
+- La dirección del cluster se determina comparando el precio de apertura de la primera vela con el precio de cierre de la última vela
+
+### Modal de Configuración
+
+Accesible mediante el botón ⚙️ en el divisor naranja del panel de volumen.
+
+**Secciones del modal:**
+
+1. **Intensidad de Color** (3 controles)
+   - Mínimo, Máximo, Divisor de sensibilidad
+
+2. **Opacidad Adaptativa** (4 controles)
+   - Mínimo, Máximo, Base, Divisor Z-Score
+
+3. **Gradiente** (1 control)
+   - Contraste Inferior
+
+4. **Efecto Glow** (2 controles)
+   - Umbral Z-Score, Intensidad del Blur
+
+5. **Detección de Clusters** (5 controles)
+   - Checkbox activar/desactivar
+   - Mínimo de velas consecutivas
+   - Umbral promedio Z-Score
+   - Selector de color alcista (input type="color") - verde por defecto
+   - Selector de color bajista (input type="color") - rojo por defecto
+
+6. **Botón Reset**
+   - Restaura todos los valores a defaults
+
+### Integración con Estado
+
+```javascript
+// Estado se inicializa con merge de valores guardados + defaults
+const [volumeVisualParams, setVolumeVisualParams] = useState(() => {
+  const defaults = { /* valores por defecto */ };
+  const saved = localStorage.getItem(`volumeVisualParams_${symbol}`);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    return { ...defaults, ...parsed }; // Merge para compatibilidad
+  }
+  return defaults;
+});
+
+// Todos los sliders actualizan estado + localStorage + redibujan
+onChange={(e) => {
+  const newParams = { ...volumeVisualParams, param: newValue };
+  setVolumeVisualParams(newParams);
+  localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+  if (candlesRef.current?.length > 0) {
+    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+  }
+}}
+```
+
+### Fórmulas Clave
+
+**Z-Score de Volumen:**
+```javascript
+const avgVolume = volumes.reduce((sum, v) => sum + v, 0) / volumes.length;
+const stdDevVolume = Math.sqrt(
+  volumes.reduce((sum, v) => sum + Math.pow(v - avgVolume, 2), 0) / volumes.length
+);
+const zScore = (volume - avgVolume) / stdDevVolume;
+```
+
+**Intensidad Adaptativa:**
+```javascript
+const intensity = Math.max(
+  intensityMin,
+  Math.min(intensityMax, (zScore + 1) / intensityDivisor)
+);
+```
+
+**Opacidad Adaptativa:**
+```javascript
+ctx.globalAlpha = Math.max(
+  opacityMin,
+  Math.min(opacityMax, opacityBase + (zScore / opacityDivisor))
+);
+```
+
+**Color de Barras:**
+```javascript
+const isInCluster = clusterIndices.has(i);
+const baseColor = isInCluster
+  ? clusterColor                           // Color del cluster
+  : (d.close >= d.open ? bullColor : bearColor);  // Verde/Rojo normal
+```
+
+### Divisor Redimensionable
+
+El divisor naranja entre el gráfico de precio y el volumen permite ajustar la altura del panel de volumen:
+
+```javascript
+// Posición: 5px después del gráfico de precio (donde inicia el volumen)
+top: `calc(${priceChartRatio * 100}% + 5px)`
+
+// Características:
+// - Cursor: ns-resize
+// - Color: naranja (#FF9800)
+// - Hover: se resalta para facilitar el drag
+// - Botón ⚙️ integrado para abrir modal
+```
+
+### Troubleshooting
+
+**Modal se crashea al abrir:**
+- Verificar que todas las propiedades existen en volumeVisualParams
+- El sistema hace merge con defaults para manejar configuraciones antiguas
+
+**Clusters no se ven:**
+- Verificar que `clusterDetection` está en `true`
+- Ajustar `clusterThreshold` más bajo (ej: 0.3)
+- Reducir `clusterMinBars` (ej: 2)
+
+**Colores no se actualizan:**
+- Verificar que `drawChart()` se llama después de cambiar parámetros
+- Limpiar localStorage y recargar si hay configuraciones corruptas
+
+**Divisor no se puede arrastrar:**
+- Verificar que el handler `handleVolumeDividerMouseDown` está conectado
+- Verificar `z-index: 1000` del divisor
 
 ---
 
@@ -834,3 +1081,206 @@ Prueba con fecha inicio octubre 2024 (~741 días):
 - Los valores hardcodeados deben ser dinámicos cuando dependen del contexto del usuario
 - El logging estructurado es crítico para diagnosticar problemas de caché
 - Los sistemas de retry automático mejoran significativamente la robustez
+
+---
+
+# 🎯 OI-VOLUME CONFLUENCE INDICATOR (Febrero 2026)
+
+## Concepto
+
+Nuevo indicador que combina **Open Interest** y **Volumen** para identificar visualmente cuando un movimiento de precio está respaldado por ambos indicadores (movimiento fuerte) o cuando hay divergencia (movimiento débil).
+
+## Objetivo
+
+Resolver la pregunta: *"¿Este movimiento de precio es importante o no?"*
+
+### Casos de Uso
+
+| OI | Volumen | Visualización | Interpretación |
+|-----|---------|---------------|----------------|
+| ⬆️ Sube | ⬆️ Sube | 🟢 Verde intenso | Movimiento FUERTE - nuevo dinero entrando |
+| ⬇️ Baja | ⬇️ Baja | 🔴 Rojo intenso | Distribución FUERTE - capital saliendo |
+| ⬆️ Sube | ⬇️ Baja | 🟡 Naranja | DIVERGENCIA - OI sube sin volumen = movimiento débil |
+| ⬇️ Baja | ⬆️ Sube | 🟡 Naranja | DIVERGENCIA - Volumen sin cambio en OI = trampa |
+| ~ Neutral | ~ Neutral | ⚪ Gris | Sin confluencia clara |
+
+## Implementación Técnica
+
+### Archivo: `OIVolumeConfluenceIndicator.js`
+
+**Algoritmo:**
+
+1. **Obtener datos de indicadores existentes**:
+   - Volume Delta desde `VolumeIndicator.calculateVolumeDelta()`
+   - OI Delta desde `OpenInterestIndicator` (histogram o cumulative mode)
+
+2. **Normalización con Z-Score**:
+   ```javascript
+   // Poner ambos indicadores en la misma escala
+   volumeZScores = calculateZScore(volumeDeltas, lookbackPeriod=20)
+   oiZScores = calculateZScore(oiDeltas, lookbackPeriod=20)
+   ```
+
+3. **Cálculo de Confluence Score**:
+   ```javascript
+   confluenceScore = volumeZScore × oiZScore
+
+   // Si ambos positivos: score positivo (confluencia alcista)
+   // Si ambos negativos: score positivo (confluencia bajista)
+   // Si uno positivo y otro negativo: score negativo (divergencia)
+   ```
+
+4. **Clasificación**:
+   ```javascript
+   if (confluenceScore > threshold && volZ > 0 && oiZ > 0):
+     → bullish_strong (verde)
+
+   else if (confluenceScore > threshold && volZ < 0 && oiZ < 0):
+     → bearish_strong (rojo)
+
+   else if (confluenceScore < -threshold):
+     → divergence (naranja)
+
+   else:
+     → neutral (gris)
+   ```
+
+5. **Visualización**:
+   - Histograma con barras coloreadas según confluenceType
+   - Opacidad variable según strength (intensidad del score)
+   - Leyenda con 4 estados: Fuerte ▲, Fuerte ▼, Divergencia, Neutral
+
+### Z-Score Calculation
+
+```javascript
+calculateZScore(values, lookbackPeriod = 20) {
+  // Para cada valor:
+  // 1. Tomar ventana de lookbackPeriod valores anteriores
+  // 2. Calcular media y desviación estándar de la ventana
+  // 3. Z-Score = (valor - media) / stdDev
+
+  // Esto normaliza los valores para que:
+  // - Z > 2: Muy por encima de lo normal
+  // - Z > 1: Por encima de lo normal
+  // - -1 < Z < 1: Dentro del rango normal
+  // - Z < -1: Por debajo de lo normal
+  // - Z < -2: Muy por debajo de lo normal
+}
+```
+
+### Inyección de Dependencias
+
+```javascript
+// En IndicatorManager.js - initialize()
+const volumeIndicator = new VolumeIndicator(...);
+const confluenceIndicator = new OIVolumeConfluenceIndicator(...);
+
+// Inyectar referencias
+confluenceIndicator.setIndicators(volumeIndicator, this.openInterestIndicator);
+```
+
+Esto permite que el indicador de confluencia acceda a los datos calculados de otros indicadores sin duplicar lógica.
+
+## Configuración
+
+### Parámetros Ajustables
+
+| Parámetro | Default | Descripción |
+|-----------|---------|-------------|
+| `lookbackPeriod` | 20 | Velas para calcular Z-Score |
+| `confluenceThreshold` | 0.5 | Umbral mínimo para considerar confluencia significativa |
+
+### Estados por Defecto
+
+- ✅ **Habilitado por defecto** en todos los timeframes
+- Altura: 120px
+- Muestra automáticamente al tener Volume Delta y Open Interest activos
+
+## Esquema de Colores
+
+```javascript
+bullish_strong:  { r: 52,  g: 199, b: 89  }  // Verde (#34C759)
+bearish_strong:  { r: 255, g: 59,  b: 48  }  // Rojo (#FF3B30)
+divergence:      { r: 255, g: 152, b: 0   }  // Naranja (#FF9800)
+neutral:         { r: 158, g: 158, b: 158 }  // Gris (#9E9E9E)
+
+// Opacidad dinámica según strength:
+alpha = Math.min(0.3 + (strength * 0.5), 0.9)
+```
+
+## Información Mostrada en UI
+
+### Header
+- Título: "OI-Volume Confluence"
+
+### Leyenda (esquina inferior derecha)
+- 🟢 Fuerte ▲
+- 🔴 Fuerte ▼
+- 🟡 Divergencia
+- ⚪ Neutral
+
+### Valor Actual (esquina inferior izquierda)
+- Label principal: "FUERTE ▲" / "FUERTE ▼" / "DIVERGENCIA" / "NEUTRAL"
+- Z-Scores detallados: `Vol Z: 1.23 | OI Z: 0.87`
+
+### Mensaje de Error
+Si Volume Delta u Open Interest no están activos:
+```
+"Requiere Volume Delta y Open Interest activos"
+```
+
+## Ejemplo de Interpretación
+
+**Escenario 1 - Breakout Fuerte:**
+```
+Precio: $95k → $97k ⬆️
+Volume Z-Score: +2.5 (volumen muy alto)
+OI Z-Score: +1.8 (OI subiendo fuerte)
+Confluence Score: +4.5 (positivo alto)
+→ Visualización: BARRA VERDE INTENSA
+→ Interpretación: Movimiento FUERTE, respaldado por nuevo dinero
+```
+
+**Escenario 2 - Trampa Alcista:**
+```
+Precio: $95k → $97k ⬆️
+Volume Z-Score: +0.5 (volumen ligeramente alto)
+OI Z-Score: -1.2 (OI bajando)
+Confluence Score: -0.6 (negativo)
+→ Visualización: BARRA NARANJA (divergencia)
+→ Interpretación: Movimiento DÉBIL, OI baja = posibles cierres de posiciones
+```
+
+**Escenario 3 - Distribución Fuerte:**
+```
+Precio: $97k → $95k ⬇️
+Volume Z-Score: -2.1 (volumen vendedor fuerte)
+OI Z-Score: -1.5 (OI bajando)
+Confluence Score: +3.15 (positivo)
+→ Visualización: BARRA ROJA INTENSA
+→ Interpretación: Distribución FUERTE, capital saliendo confirmado
+```
+
+## Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `frontend/src/components/indicators/OIVolumeConfluenceIndicator.js` | Nuevo archivo - Indicador completo |
+| `frontend/src/components/indicators/IndicatorManager.js` | Import + instancia + inyección de dependencias |
+| `frontend/src/components/backtesting/BacktestingApp.jsx` | Agregado a getDefaultIndicatorStates() y indicatorStates |
+| `CLAUDE.md` | Documentación completa del indicador |
+
+## Ventajas vs Visualizar OI y Volumen por Separado
+
+1. **Síntesis visual inmediata**: No necesitas comparar mentalmente dos gráficos separados
+2. **Normalización automática**: Z-Score pone ambos en la misma escala
+3. **Color coding intuitivo**: Verde = fuerte, Rojo = fuerte bajista, Naranja = cuidado
+4. **Detección de divergencias**: Resalta automáticamente cuando hay conflicto entre OI y Volumen
+
+## Posibles Mejoras Futuras
+
+- [ ] Configuración de thresholds desde UI
+- [ ] Alertas cuando confluencia cruza de neutral a fuerte
+- [ ] Historial de divergencias destacadas
+- [ ] Overlay opcional en el chart principal (background coloring)
+- [ ] Estadísticas de win rate basadas en señales de confluencia

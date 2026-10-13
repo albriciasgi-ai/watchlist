@@ -132,6 +132,7 @@ const MiniChart = forwardRef(({
   onOpenVWAPSettings,
   onOpenDoubleTopBottomSettings,
   onOpenSwingDetectorSettings,
+  onOpenOIVolumeConfluenceSettings,
   rejectionPatternConfig,
   // 🎯 NUEVO: Props para modo backtesting
   backtestingMode = false,
@@ -476,9 +477,10 @@ const MiniChart = forwardRef(({
       glowBlur: 8,
       // 🎯 NUEVO: Detección de clusters de volumen alto consecutivo
       clusterDetection: true,
-      clusterMinBars: 3,           // Mínimo de velas consecutivas para considerar cluster
-      clusterThreshold: 0.5,        // Umbral promedio de z-score para cluster (0.5 = volumen moderadamente alto)
-      clusterColor: '#FFA726'       // Color para resaltar barras de volumen en clusters
+      clusterMinBars: 3,              // Mínimo de velas consecutivas para considerar cluster
+      clusterThreshold: 0.5,           // Umbral promedio de z-score para cluster (0.5 = volumen moderadamente alto)
+      clusterColorBullish: '#4CAF50',  // Color para clusters alcistas (verde)
+      clusterColorBearish: '#F44336'   // Color para clusters bajistas (rojo)
     };
 
     const saved = localStorage.getItem(`volumeVisualParams_${symbol}`);
@@ -903,6 +905,7 @@ const MiniChart = forwardRef(({
     // 🎯 NUEVO: Detectar clusters de volumen alto consecutivo
     // 🔧 FIX: Validar que los parámetros existen (para estados guardados antiguos)
     const clusterIndices = new Set(); // Set de índices que forman parte de un cluster
+    const clusterDirections = new Map(); // Map: índice -> 'bullish' | 'bearish'
 
     if (volumeVisualParams.clusterDetection === true &&
         typeof volumeVisualParams.clusterMinBars !== 'undefined' &&
@@ -936,10 +939,16 @@ const MiniChart = forwardRef(({
         clusters.push(currentCluster);
       }
 
-      // 🎯 NUEVO: Guardar índices de barras que forman parte de clusters
+      // 🎯 NUEVO: Guardar índices y direcciones de barras que forman parte de clusters
       clusters.forEach(cluster => {
+        // Determinar dirección del cluster: comparar precio de apertura del inicio con precio de cierre del final
+        const firstCandle = visibleCandles[cluster.start];
+        const lastCandle = visibleCandles[cluster.end];
+        const direction = lastCandle.close >= firstCandle.open ? 'bullish' : 'bearish';
+
         for (let i = cluster.start; i <= cluster.end; i++) {
           clusterIndices.add(i);
+          clusterDirections.set(i, direction);
         }
       });
     }
@@ -950,11 +959,18 @@ const MiniChart = forwardRef(({
       const volHeight = d.volume * volumeScale;
       const zScore = volumeZScores[i];
 
-      // 🎯 NUEVO: Determinar color base - si está en un cluster, usar color del cluster
+      // 🎯 NUEVO: Determinar color base - si está en un cluster, usar color según dirección
       const isInCluster = clusterIndices.has(i);
-      const baseColor = isInCluster
-        ? volumeVisualParams.clusterColor
-        : (d.close >= d.open ? bullColor : bearColor);
+      let baseColor;
+
+      if (isInCluster) {
+        const direction = clusterDirections.get(i);
+        baseColor = direction === 'bullish'
+          ? volumeVisualParams.clusterColorBullish
+          : volumeVisualParams.clusterColorBearish;
+      } else {
+        baseColor = d.close >= d.open ? bullColor : bearColor;
+      }
 
       // 🎯 Intensidad basada en z-score (normalizada a 0-1)
       // Usa parámetros configurables del estado
@@ -2596,6 +2612,26 @@ const MiniChart = forwardRef(({
               DTB
             </button>
           )}
+          {onOpenOIVolumeConfluenceSettings && (
+            <button
+              className="oivolume-chart-settings-btn"
+              onClick={() => onOpenOIVolumeConfluenceSettings(indicatorManagerRef.current)}
+              title="Configurar OI-Volume Confluence"
+              style={{
+                background: '#2196F3',
+                color: 'white',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              OI-Vol
+            </button>
+          )}
           <button
             className="fixed-range-manager-btn"
             onClick={() => setShowFixedRangeManager(!showFixedRangeManager)}
@@ -3110,14 +3146,19 @@ const MiniChart = forwardRef(({
                   </small>
 
                   <label style={{ display: 'block', fontSize: '12px', marginBottom: '5px', marginTop: '15px' }}>
-                    Color del cluster:
+                    Colores de clusters:
                   </label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+
+                  {/* Color para clusters alcistas */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <span style={{ fontSize: '12px', color: '#666', width: '70px' }}>
+                      Alcista:
+                    </span>
                     <input
                       type="color"
-                      value={volumeVisualParams.clusterColor}
+                      value={volumeVisualParams.clusterColorBullish}
                       onChange={(e) => {
-                        const newParams = { ...volumeVisualParams, clusterColor: e.target.value };
+                        const newParams = { ...volumeVisualParams, clusterColorBullish: e.target.value };
                         setVolumeVisualParams(newParams);
                         localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
                         if (candlesRef.current && candlesRef.current.length > 0) {
@@ -3133,11 +3174,40 @@ const MiniChart = forwardRef(({
                       }}
                     />
                     <span style={{ fontSize: '12px', color: '#666' }}>
-                      {volumeVisualParams.clusterColor}
+                      {volumeVisualParams.clusterColorBullish}
                     </span>
                   </div>
-                  <small style={{ fontSize: '11px', color: '#999' }}>
-                    Las barras que forman parte de un cluster se resaltarán con este color
+
+                  {/* Color para clusters bajistas */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '12px', color: '#666', width: '70px' }}>
+                      Bajista:
+                    </span>
+                    <input
+                      type="color"
+                      value={volumeVisualParams.clusterColorBearish}
+                      onChange={(e) => {
+                        const newParams = { ...volumeVisualParams, clusterColorBearish: e.target.value };
+                        setVolumeVisualParams(newParams);
+                        localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(newParams));
+                        if (candlesRef.current && candlesRef.current.length > 0) {
+                          drawChart(candlesRef.current, lastPriceRef.current, null, null);
+                        }
+                      }}
+                      style={{
+                        width: '50px',
+                        height: '30px',
+                        border: '1px solid #ddd',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <span style={{ fontSize: '12px', color: '#666' }}>
+                      {volumeVisualParams.clusterColorBearish}
+                    </span>
+                  </div>
+                  <small style={{ fontSize: '11px', color: '#999', display: 'block', marginTop: '8px' }}>
+                    Los clusters se colorean según la dirección del precio (sube/baja)
                   </small>
                 </>
               )}

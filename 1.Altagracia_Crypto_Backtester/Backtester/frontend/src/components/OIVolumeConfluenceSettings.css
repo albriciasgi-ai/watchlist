@@ -1,0 +1,175 @@
+/* OIVolumeConfluenceSettings.css */
+.oivolume-confluence-settings {
+  background: #ffffff;
+  color: #333333;
+  padding: 15px;
+  border-radius: 8px;
+  max-height: 70vh;
+  overflow-y: auto;
+  min-width: 340px;
+}
+
+.oivolume-confluence-settings .settings-section h4 {
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2196F3;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.oivolume-confluence-settings .setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.oivolume-confluence-settings .setting-row label {
+  font-size: 12px;
+  color: #555555;
+  flex: 1;
+}
+
+.oivolume-confluence-settings .setting-row input[type="number"],
+.oivolume-confluence-settings .setting-row input[type="text"],
+.oivolume-confluence-settings .setting-row select {
+  background: #f5f5f5;
+  border: 1px solid #cccccc;
+  color: #333333;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  width: 140px;
+}
+
+.oivolume-confluence-settings .setting-row input[type="number"]:focus,
+.oivolume-confluence-settings .setting-row input[type="text"]:focus,
+.oivolume-confluence-settings .setting-row select:focus {
+  outline: none;
+  border-color: #2196F3;
+}
+
+.oivolume-confluence-settings .setting-row input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.oivolume-confluence-settings .setting-row input[type="color"] {
+  width: 60px;
+  height: 30px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.oivolume-confluence-settings .setting-row input[type="range"] {
+  flex: 1;
+  max-width: 200px;
+}
+
+.oivolume-confluence-settings .toggle-advanced-btn {
+  background: #f5f5f5;
+  border: 1px solid #cccccc;
+  color: #333333;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+.oivolume-confluence-settings .toggle-advanced-btn:hover {
+  background: #e8e8e8;
+}
+
+.oivolume-confluence-settings .advanced-settings {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.oivolume-confluence-settings .advanced-settings h5 {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2196F3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.oivolume-confluence-settings .settings-hint {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(33, 150, 243, 0.1);
+  border-left: 3px solid #2196F3;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #666666;
+  line-height: 1.4;
+}
+
+/* Cluster detection section highlight */
+.oivolume-confluence-settings .cluster-section {
+  background: #e8f5e9;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 2px solid #4CAF50;
+}
+
+.oivolume-confluence-settings .cluster-section label {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+/* Filter section styling */
+.oivolume-confluence-settings .filter-section {
+  background: #e3f2fd;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 2px solid #2196F3;
+}
+
+.oivolume-confluence-settings .filter-section h5 {
+  margin: 0 0 12px 0;
+  color: #1976D2;
+}
+
+/* Visualization section styling */
+.oivolume-confluence-settings .viz-section {
+  background: #fff3e0;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 2px solid #FF9800;
+}
+
+.oivolume-confluence-settings .viz-section h5 {
+  margin: 0 0 12px 0;
+  color: #F57C00;
+}
+
+/* Scrollbar styling */
+.oivolume-confluence-settings::-webkit-scrollbar {
+  width: 6px;
+}
+
+.oivolume-confluence-settings::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.oivolume-confluence-settings::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 3px;
+}
+
+.oivolume-confluence-settings::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}

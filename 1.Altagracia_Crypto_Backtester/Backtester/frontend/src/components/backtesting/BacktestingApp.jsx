@@ -16,6 +16,7 @@ import SupportResistance2Settings from '../SupportResistance2Settings';
 import VWAPSettings from '../VWAPSettings';
 import DoubleTopBottomSettings from '../DoubleTopBottomSettings';
 import SwingDetectorSettings from '../SwingDetectorSettings';
+import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
 import ZoneDetectorTester from '../ZoneDetectorTester';
 import { StrategyBuilder, StrategyList, BacktestResults } from '../strategy';
 import '../strategy/StrategyBuilder.css';
@@ -48,14 +49,15 @@ const BacktestingApp = () => {
     return {
       "Volume Delta": true,
       "Volume Profile": true,
-      "CVD": true,
+      "CVD": false,
       "Open Interest": true, // Habilitado en todos los timeframes (backend usa intervalo OI adaptativo)
+      "OI-Volume Confluence": true, // 🎯 Confluencia OI-Volumen (muestra cuando movimientos son fuertes/débiles)
       "VWAP": false,
-      "Range Detection": true,
+      "Range Detection": false,
       "Rejection Patterns": false,        // Siempre deshabilitado por defecto
       "Double Top/Bottom": false,         // Siempre deshabilitado por defecto
       "Support & Resistance": false,
-      "S&R v2": true,
+      "S&R v2": false,
       "Swing Detector": false
     };
   };
@@ -127,14 +129,15 @@ const BacktestingApp = () => {
   const [indicatorStates, setIndicatorStates] = useState({
     "Volume Delta": true,
     "Volume Profile": true,
-    "CVD": true,
+    "CVD": false,
     "Open Interest": true,
+    "OI-Volume Confluence": true,  // 🎯 Confluencia OI-Volumen
     "VWAP": false,  // Nuevo indicador
-    "Range Detection": true,
+    "Range Detection": false,
     "Rejection Patterns": false,  // Opcional (requiere configuración)
     "Double Top/Bottom": false,  // Nuevo indicador
     "Support & Resistance": false,
-    "S&R v2": true  // S&R basado en Swing Points (más preciso)
+    "S&R v2": false  // S&R basado en Swing Points (más preciso)
   });
 
   // 🎯 Estados para modales de configuración de indicadores
@@ -146,6 +149,7 @@ const BacktestingApp = () => {
   const [showVWAPSettings, setShowVWAPSettings] = useState(false);
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
+  const [showOIVolumeConfluenceSettings, setShowOIVolumeConfluenceSettings] = useState(false);
   const [showZoneDetectorTester, setShowZoneDetectorTester] = useState(false);
   const [detectedZones, setDetectedZones] = useState([]);
 
@@ -376,6 +380,13 @@ const BacktestingApp = () => {
         e.preventDefault();
         setFullscreenPanel(prev => prev === 'chart' ? null : 'chart');
         console.log('[BacktestingApp] Toggle fullscreen del gráfico (F)');
+      }
+
+      // 🎯 NUEVO: Shift+T: Toggle fullscreen del panel de trading
+      if (e.key === 'T' && e.shiftKey && !e.ctrlKey && !e.metaKey && !isInputFocused) {
+        e.preventDefault();
+        setFullscreenPanel(prev => prev === 'trading' ? null : 'trading');
+        console.log('[BacktestingApp] Toggle fullscreen del panel de trading (Shift+T)');
       }
 
       // 🎯 NUEVO: ESC: Salir de fullscreen del panel y ocultar panel trading
@@ -834,6 +845,22 @@ const BacktestingApp = () => {
         orderManagerRef.current.onOrderExecuted = (executedOrder) => {
           console.log('[BacktestingApp] Orden pendiente ejecutada:', executedOrder);
           // El popup se mostrará automáticamente en TradingControls a través del callback onOrderCreated
+
+          // 🎯 FIX: Crear caja TP/SL cuando limit/stop order se ejecuta
+          if (executedOrder && (executedOrder.stopLoss || executedOrder.takeProfit)) {
+            const miniChart = miniChartRefs.current[activeTimeframe];
+            if (miniChart && miniChart.addTPSLBox) {
+              miniChart.addTPSLBox(
+                executedOrder.entryPrice,
+                executedOrder.executedAt || currentTime,
+                executedOrder.side, // 'long' o 'short'
+                executedOrder.stopLoss,
+                executedOrder.takeProfit,
+                5 // 5 velas de ancho
+              );
+              console.log('[BacktestingApp] TP/SL box creada para limit order ejecutada');
+            }
+          }
         };
 
         console.log('[BacktestingApp] OrderManager creado');
@@ -1151,6 +1178,11 @@ const BacktestingApp = () => {
     setShowSwingDetectorSettings(true);
   };
 
+  const handleOpenOIVolumeConfluenceSettings = (indicatorManager) => {
+    indicatorManagerRef.current = indicatorManager;
+    setShowOIVolumeConfluenceSettings(true);
+  };
+
   const handleRejectionPatternConfigChange = (config) => {
     setRejectionPatternConfig(config);
   };
@@ -1223,6 +1255,7 @@ const BacktestingApp = () => {
     setShowVWAPSettings(false);
     setShowDoubleTopBottomSettings(false);
     setShowSwingDetectorSettings(false);
+    setShowOIVolumeConfluenceSettings(false);
   }, [activeTimeframe]);
 
   // 🔧 FIX: Forzar redibujado del canvas cuando se entra/sale de fullscreen
@@ -1820,7 +1853,8 @@ const BacktestingApp = () => {
                     'S&R v2': () => setShowSupportResistance2Settings(true),
                     'VWAP': () => setShowVWAPSettings(true),
                     'Double Top/Bottom': () => setShowDoubleTopBottomSettings(true),
-                    'Swing Detector': () => setShowSwingDetectorSettings(true)
+                    'Swing Detector': () => setShowSwingDetectorSettings(true),
+                    'OI-Volume Confluence': () => setShowOIVolumeConfluenceSettings(true)
                   };
 
                   const hasSettings = name in settingsMap;
@@ -2083,6 +2117,7 @@ const BacktestingApp = () => {
                   onOpenVWAPSettings={handleOpenVWAPSettings}
                   onOpenDoubleTopBottomSettings={handleOpenDoubleTopBottomSettings}
                   onOpenSwingDetectorSettings={handleOpenSwingDetectorSettings}
+                  onOpenOIVolumeConfluenceSettings={handleOpenOIVolumeConfluenceSettings}
                   rejectionPatternConfig={tabStates[tf]?.rejectionPatternConfig}
                   currentTool={currentTool}
                   onToolChange={setCurrentTool}
@@ -2112,16 +2147,26 @@ const BacktestingApp = () => {
             display: fullscreenPanel === 'chart' ? 'none' : 'flex'
           }}
         >
-          {/* 🎯 OPTIMIZACIÓN UI: Header del panel con botón de colapsar */}
+          {/* 🎯 OPTIMIZACIÓN UI: Header del panel con botones de maximizar y colapsar */}
           <div className="sidebar-header">
             <span className="sidebar-title">Panel de Trading</span>
-            <button
-              className="btn-collapse"
-              onClick={() => setShowTradingPanel(false)}
-              title="Ocultar panel (T o ESC)"
-            >
-              ✕
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                className="btn-collapse"
+                onClick={() => setFullscreenPanel(prev => prev === 'trading' ? null : 'trading')}
+                title={fullscreenPanel === 'trading' ? "Restaurar panel (ESC)" : "Maximizar panel (Shift+T)"}
+                style={{ fontSize: '16px' }}
+              >
+                {fullscreenPanel === 'trading' ? '⛶' : '⛶'}
+              </button>
+              <button
+                className="btn-collapse"
+                onClick={() => setShowTradingPanel(false)}
+                title="Ocultar panel (T o ESC)"
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
           {/* Panel Tabs */}
@@ -2650,6 +2695,73 @@ const BacktestingApp = () => {
                 }
               }}
               onClose={() => setShowSwingDetectorSettings(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de OI-Volume Confluence Settings */}
+      {showOIVolumeConfluenceSettings && indicatorManagerRef.current && (
+        <div className="modal-overlay" onClick={() => setShowOIVolumeConfluenceSettings(false)} style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div onClick={(e) => e.stopPropagation()} style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            maxHeight: '85vh',
+            width: '90%',
+            overflow: 'auto',
+            position: 'relative',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+          }}>
+            <button
+              onClick={() => setShowOIVolumeConfluenceSettings(false)}
+              style={{
+                position: 'sticky',
+                top: '8px',
+                right: '8px',
+                float: 'right',
+                zIndex: 1,
+                background: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                cursor: 'pointer',
+                fontSize: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold'
+              }}
+              title="Cerrar"
+            >
+              ×
+            </button>
+            <OIVolumeConfluenceSettings
+              config={indicatorManagerRef.current.getIndicatorConfig('OI-Volume Confluence') || {}}
+              onConfigChange={async (newConfig) => {
+                await indicatorManagerRef.current.applyConfig('OI-Volume Confluence', newConfig);
+
+                // Forzar redibujado del chart
+                const miniChart = miniChartRefs.current[activeTimeframe];
+                if (miniChart && miniChart.forceRedraw) {
+                  miniChart.forceRedraw();
+                }
+              }}
+              currentSymbol={symbol}
+              onClose={() => setShowOIVolumeConfluenceSettings(false)}
             />
           </div>
         </div>

@@ -6,8 +6,8 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
   const [orderSide, setOrderSide] = useState('long');
   const [quantity, setQuantity] = useState('0.01');
   const [entryPrice, setEntryPrice] = useState('');
-  const [stopLoss, setStopLoss] = useState('');
-  const [takeProfit, setTakeProfit] = useState('');
+  const [stopLossPercent, setStopLossPercent] = useState('');
+  const [takeProfitPercent, setTakeProfitPercent] = useState('');
   const [notes, setNotes] = useState('');
   const [useCurrentPrice, setUseCurrentPrice] = useState(true);
 
@@ -68,8 +68,25 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
 
     const qty = parseFloat(quantity);
     const price = parseFloat(entryPrice);
-    const sl = stopLoss ? parseFloat(stopLoss) : null;
-    const tp = takeProfit ? parseFloat(takeProfit) : null;
+
+    // 🎯 NUEVO: Convertir porcentajes a precios USDT
+    const slPercent = stopLossPercent ? parseFloat(stopLossPercent) : null;
+    const tpPercent = takeProfitPercent ? parseFloat(takeProfitPercent) : null;
+
+    let sl = null;
+    let tp = null;
+
+    if (slPercent !== null) {
+      sl = orderSide === 'long'
+        ? price * (1 - slPercent / 100)
+        : price * (1 + slPercent / 100);
+    }
+
+    if (tpPercent !== null) {
+      tp = orderSide === 'long'
+        ? price * (1 + tpPercent / 100)
+        : price * (1 - tpPercent / 100);
+    }
 
     // Validaciones
     if (isNaN(qty) || qty <= 0) {
@@ -82,36 +99,18 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       return;
     }
 
-    if (sl !== null && isNaN(sl)) {
-      alert('Stop Loss inválido');
+    if (slPercent !== null && (isNaN(slPercent) || slPercent <= 0)) {
+      alert('Stop Loss % inválido');
       return;
     }
 
-    if (tp !== null && isNaN(tp)) {
-      alert('Take Profit inválido');
+    if (tpPercent !== null && (isNaN(tpPercent) || tpPercent <= 0)) {
+      alert('Take Profit % inválido');
       return;
     }
 
-    // Validar SL/TP según el lado
-    if (orderSide === 'long') {
-      if (sl !== null && sl >= price) {
-        alert('Stop Loss debe ser menor que el precio de entrada en long');
-        return;
-      }
-      if (tp !== null && tp <= price) {
-        alert('Take Profit debe ser mayor que el precio de entrada en long');
-        return;
-      }
-    } else {
-      if (sl !== null && sl <= price) {
-        alert('Stop Loss debe ser mayor que el precio de entrada en short');
-        return;
-      }
-      if (tp !== null && tp >= price) {
-        alert('Take Profit debe ser menor que el precio de entrada en short');
-        return;
-      }
-    }
+    // Ya no necesitamos validar SL/TP vs precio porque la conversión % siempre
+    // respeta la dirección correcta (long: SL < price, TP > price, etc.)
 
     // Crear orden
     console.log('[TradingControls] Creando orden con:', {
@@ -183,6 +182,7 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
 
   /**
    * Auto-calcula SL/TP basado en porcentaje
+   * 🎯 MODIFICADO: Ahora simplemente establece los porcentajes directamente
    */
   const handleAutoSLTP = (slPercent, tpPercent) => {
     const price = parseFloat(entryPrice);
@@ -192,17 +192,9 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       return;
     }
 
-    if (orderSide === 'long') {
-      const sl = price * (1 - slPercent / 100);
-      const tp = price * (1 + tpPercent / 100);
-      setStopLoss(sl.toFixed(2));
-      setTakeProfit(tp.toFixed(2));
-    } else {
-      const sl = price * (1 + slPercent / 100);
-      const tp = price * (1 - tpPercent / 100);
-      setStopLoss(sl.toFixed(2));
-      setTakeProfit(tp.toFixed(2));
-    }
+    // 🎯 NUEVO: Ahora solo establecemos los porcentajes directamente
+    setStopLossPercent(slPercent.toString());
+    setTakeProfitPercent(tpPercent.toString());
   };
 
   return (
@@ -272,25 +264,43 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       </div>
 
       <div className="control-section">
-        <label>Stop Loss (Opcional)</label>
+        <label>Stop Loss % (Opcional)</label>
         <input
           type="number"
-          step="0.01"
-          value={stopLoss}
-          onChange={(e) => setStopLoss(e.target.value)}
-          placeholder="SL"
+          step="0.1"
+          min="0"
+          value={stopLossPercent}
+          onChange={(e) => setStopLossPercent(e.target.value)}
+          placeholder="Ej: 2 (= 2%)"
         />
+        {stopLossPercent && entryPrice && (
+          <div className="price-hint">
+            ${(orderSide === 'long'
+              ? parseFloat(entryPrice) * (1 - parseFloat(stopLossPercent) / 100)
+              : parseFloat(entryPrice) * (1 + parseFloat(stopLossPercent) / 100)
+            ).toFixed(2)}
+          </div>
+        )}
       </div>
 
       <div className="control-section">
-        <label>Take Profit (Opcional)</label>
+        <label>Take Profit % (Opcional)</label>
         <input
           type="number"
-          step="0.01"
-          value={takeProfit}
-          onChange={(e) => setTakeProfit(e.target.value)}
-          placeholder="TP"
+          step="0.1"
+          min="0"
+          value={takeProfitPercent}
+          onChange={(e) => setTakeProfitPercent(e.target.value)}
+          placeholder="Ej: 4 (= 4%)"
         />
+        {takeProfitPercent && entryPrice && (
+          <div className="price-hint">
+            ${(orderSide === 'long'
+              ? parseFloat(entryPrice) * (1 + parseFloat(takeProfitPercent) / 100)
+              : parseFloat(entryPrice) * (1 - parseFloat(takeProfitPercent) / 100)
+            ).toFixed(2)}
+          </div>
+        )}
       </div>
 
       <div className="control-section">

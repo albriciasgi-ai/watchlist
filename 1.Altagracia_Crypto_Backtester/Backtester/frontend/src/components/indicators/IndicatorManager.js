@@ -17,6 +17,7 @@ import VWAPIndicator from "./VWAPIndicator";
 import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator";
 import SwingDetectorIndicator from "./SwingDetectorIndicator"; // 🎯 Swing High/Low
 import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator"; // 🎯 Zone Detector 2.0
+import OIVolumeConfluenceIndicator from "./OIVolumeConfluenceIndicator"; // 🎯 OI-Volume Confluence
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -64,11 +65,19 @@ class IndicatorManager {
     // 🎯 Crear el Zone Visualizer
     this.zoneVisualizer = new ZoneVisualizerIndicator(this.symbol, this.interval, this.days);
 
+    // 🎯 Crear indicador de OI-Volume Confluence
+    const volumeIndicator = new VolumeIndicator(this.symbol, this.interval, this.days);
+    const confluenceIndicator = new OIVolumeConfluenceIndicator(this.symbol, this.interval, this.days);
+
+    // Inyectar referencias de Volume y OI al indicador de confluencia
+    confluenceIndicator.setIndicators(volumeIndicator, this.openInterestIndicator);
+
     this.indicators = [
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
-      new VolumeIndicator(this.symbol, this.interval, this.days),
+      volumeIndicator,
       new CVDIndicator(this.symbol, this.interval, this.days),
       this.openInterestIndicator,
+      confluenceIndicator, // 🎯 OI-Volume Confluence
       new RejectionPatternIndicator(this.symbol, this.interval, this.days),
       new DoubleTopBottomIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       this.supportResistanceIndicator,

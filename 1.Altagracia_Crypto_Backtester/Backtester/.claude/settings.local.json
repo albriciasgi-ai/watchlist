@@ -9,7 +9,8 @@
       "Bash(cmd /c \"taskkill /F /IM node.exe\")",
       "WebSearch",
       "WebFetch(domain:www.luxalgo.com)",
-      "WebFetch(domain:www.tradingview.com)"
+      "WebFetch(domain:www.tradingview.com)",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []
