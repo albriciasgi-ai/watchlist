@@ -10,7 +10,16 @@
       "WebSearch",
       "WebFetch(domain:www.luxalgo.com)",
       "WebFetch(domain:www.tradingview.com)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(.venvScriptspython.exe -m pip install python-multipart)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(dir:*)",
+      "Bash(curl:*)",
+      "Bash(python:*)",
+      "Bash(netstat:*)",
+      "Bash(cmd /c \"taskkill /F /PID 9832\")",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)"
     ],
     "deny": [],
     "ask": []

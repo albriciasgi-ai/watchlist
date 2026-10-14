@@ -846,9 +846,14 @@ const BacktestingApp = () => {
           console.log('[BacktestingApp] Orden pendiente ejecutada:', executedOrder);
           // El popup se mostrará automáticamente en TradingControls a través del callback onOrderCreated
 
+          // 🎯 FIX: Dibujar línea vertical de apertura para limit/stop orders
+          const miniChart = miniChartRefs.current[activeTimeframe];
+          if (miniChart && miniChart.addTradeBoundary) {
+            miniChart.addTradeBoundary(executedOrder.executedAt || currentTime, executedOrder.id);
+          }
+
           // 🎯 FIX: Crear caja TP/SL cuando limit/stop order se ejecuta
           if (executedOrder && (executedOrder.stopLoss || executedOrder.takeProfit)) {
-            const miniChart = miniChartRefs.current[activeTimeframe];
             if (miniChart && miniChart.addTPSLBox) {
               miniChart.addTPSLBox(
                 executedOrder.entryPrice,
@@ -862,6 +867,63 @@ const BacktestingApp = () => {
             }
           }
         };
+
+        // 📸 NUEVO: Capturar screenshot cuando se cierra un trade
+        orderManagerRef.current.on('tradeClosed', async (event) => {
+          const { order } = event;
+          console.log('[BacktestingApp] 📸 Trade cerrado, capturando screenshot...', order.id);
+
+          // 🎯 CRÍTICO: Dibujar línea de salida PRIMERO (fuera del try-catch del screenshot)
+          const miniChart = miniChartRefs.current[activeTimeframe];
+          if (miniChart && miniChart.updateTradeBoundary) {
+            miniChart.updateTradeBoundary(order.id, order.exitTime);
+            console.log('[BacktestingApp] 🎯 Trade #' + order.id + ' cerrado, dibujando línea de salida');
+          } else {
+            console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para dibujar línea de salida');
+          }
+
+          try {
+            // Obtener sessionId (generarlo si no existe)
+            const sessionId = currentSessionId || `session_${symbol}_${Date.now()}`;
+            if (!currentSessionId) {
+              setCurrentSessionId(sessionId);
+            }
+
+            // Capturar screenshot del timeframe activo
+            if (miniChart && miniChart.captureScreenshot) {
+              const screenshotData = await miniChart.captureScreenshot(sessionId, order.id);
+
+              // Actualizar la orden con metadata del screenshot
+              order.screenshotPath = screenshotData.screenshotPath;
+              order.screenshotCaptured = screenshotData.screenshotCaptured;
+              order.screenshotTimestamp = screenshotData.screenshotTimestamp;
+              order.screenshotMetadata = screenshotData.screenshotMetadata;
+
+              console.log('[BacktestingApp] ✅ Screenshot capturado y vinculado a orden:', {
+                orderId: order.id,
+                path: screenshotData.screenshotPath
+              });
+            } else {
+              console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para capturar screenshot');
+            }
+          } catch (error) {
+            console.error('[BacktestingApp] ❌ Error capturando screenshot:', error);
+            // No fallar la operación si el screenshot falla
+          }
+        });
+
+        // 🎯 NUEVO: Dibujar línea de entrada cuando se abre un trade
+        orderManagerRef.current.on('tradeOpened', (event) => {
+          const { order } = event;
+          console.log('[BacktestingApp] 🎯 Trade abierto, dibujando línea de entrada...', order.id);
+
+          const miniChart = miniChartRefs.current[activeTimeframe];
+          if (miniChart && miniChart.addTradeBoundary) {
+            miniChart.addTradeBoundary(order.entryTime, order.id);
+          } else {
+            console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para dibujar línea de entrada');
+          }
+        });
 
         console.log('[BacktestingApp] OrderManager creado');
       }
@@ -1185,6 +1247,64 @@ const BacktestingApp = () => {
 
   const handleRejectionPatternConfigChange = (config) => {
     setRejectionPatternConfig(config);
+  };
+
+  /**
+   * 📍 NUEVO: Navegar al trade en el gráfico
+   * Centra el gráfico en la ubicación del trade con margen
+   * y dibuja una caja temporal resaltando Entry/SL/TP
+   */
+  const handleNavigateToTrade = (order, tradeNumber) => {
+    console.log(`[BacktestingApp] 📍 Navegando al trade #${tradeNumber || '?'}:`, order);
+
+    const miniChart = miniChartRefs.current[activeTimeframe];
+    if (!miniChart || !miniChart.centerOnTimestamp) {
+      console.warn('[BacktestingApp] ⚠️ MiniChart o centerOnTimestamp no disponible');
+      return;
+    }
+
+    // 🔧 FIX: Centrar en la fecha de entrada del trade (no en el punto medio)
+    // para que el usuario vea exactamente dónde inició el trade
+    const targetTimestamp = order.entryTime;
+
+    console.log(`[BacktestingApp] 📍 Centrando en timestamp de entrada del trade: ${new Date(targetTimestamp).toISOString()}`);
+    console.log(`[BacktestingApp]   - Entry: ${new Date(order.entryTime).toISOString()}`);
+    console.log(`[BacktestingApp]   - Exit: ${new Date(order.exitTime).toISOString()}`);
+
+    // 🎯 NUEVO: Dibujar caja temporal del trade (si tiene SL/TP definidos)
+    if (miniChart.addTPSLBox && (order.stopLoss || order.takeProfit)) {
+      // Calcular ancho de la caja basado en duración del trade
+      const tradeDurationMs = order.exitTime - order.entryTime;
+      const intervalMs = {
+        '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000
+      }[activeTimeframe] || 900000;
+
+      // Ancho = duración del trade en velas (mínimo 5, máximo 50)
+      const candleWidthCount = Math.max(5, Math.min(50, Math.ceil(tradeDurationMs / intervalMs)));
+
+      console.log(`[BacktestingApp] 📍 Dibujando caja del trade (${candleWidthCount} velas de ancho)`);
+
+      miniChart.addTPSLBox(
+        order.entryPrice,
+        order.entryTime,
+        order.side, // 'long' o 'short'
+        order.stopLoss,
+        order.takeProfit,
+        candleWidthCount
+      );
+    }
+
+    // Centrar el gráfico en el trade (en la entrada)
+    miniChart.centerOnTimestamp(targetTimestamp);
+
+    // 🎯 REMOVED: setSelectedTradeInfo() ya no existe - las líneas permanentes se dibujan
+    // automáticamente via eventos tradeOpened/tradeClosed suscritos en líneas 908-918
+
+    // ✅ Actualizar el tiempo de simulación para que el TimeController se sincronice
+    if (order.entryTime && onRequestTimeChange) {
+      console.log('[BacktestingApp] 📍 Actualizando currentTime del TimeController');
+      onRequestTimeChange(order.entryTime);
+    }
   };
 
   /**
@@ -2252,7 +2372,10 @@ const BacktestingApp = () => {
             )}
 
             {activePanel === 'history' && (
-              <TradeHistory orderManager={orderManagerRef.current} />
+              <TradeHistory
+                orderManager={orderManagerRef.current}
+                onNavigateToTrade={handleNavigateToTrade}
+              />
             )}
 
             {activePanel === 'dashboard' && (

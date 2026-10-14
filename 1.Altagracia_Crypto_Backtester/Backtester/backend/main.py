@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from contextlib import asynccontextmanager
 from typing import Optional
 import httpx
@@ -28,6 +28,8 @@ CACHE_DIR = Path("cache")
 CACHE_DIR.mkdir(exist_ok=True)
 BACKTESTING_CACHE_DIR = Path("backtesting_cache")
 BACKTESTING_CACHE_DIR.mkdir(exist_ok=True)
+SCREENSHOTS_DIR = Path("screenshots/sessions")
+SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # =============================================================================
@@ -151,6 +153,31 @@ async def lifespan(app: FastAPI):
     print("[STARTUP] Backend started successfully")
     print("[STARTUP] Alert sender initialized")
     print(f"[STARTUP] Backtesting cache directory: {BACKTESTING_CACHE_DIR.absolute()}")
+
+    # 🔍 DIAGNÓSTICO: Listar TODAS las rutas registradas al startup
+    print("\n" + "="*80)
+    print("🚀 TODAS LAS RUTAS REGISTRADAS:")
+    print("="*80)
+    for route in app.routes:
+        path = getattr(route, 'path', str(route))
+        methods = getattr(route, 'methods', set())
+        name = getattr(route, 'name', 'unknown')
+        methods_str = str(methods) if methods else 'N/A'
+        print(f"  {methods_str:20s} {path:50s} (name: {name})")
+    print("="*80)
+
+    # 🔍 Específicamente screenshots
+    print("\n" + "="*80)
+    print("📸 SCREENSHOT ENDPOINTS:")
+    print("="*80)
+    for route in app.routes:
+        path = str(getattr(route, 'path', ''))
+        if "screenshot" in path.lower():
+            methods = getattr(route, 'methods', set())
+            name = getattr(route, 'name', 'unknown')
+            methods_str = str(methods) if methods else 'N/A'
+            print(f"  {methods_str:20s} {path:50s} (name: {name})")
+    print("="*80 + "\n")
 
     yield
 
@@ -4442,6 +4469,215 @@ async def get_quality_metrics_info():
             "consol_max_outside_bars": "3-5 (tolerancia a wick)"
         }
     }
+
+
+# ==================== SCREENSHOT ENDPOINTS ====================
+# IMPORTANTE: Rutas específicas ANTES de rutas con parámetros para evitar conflictos
+
+# 🔍 TEST: Endpoint de prueba simple sin subdirectorios
+# NOTA: Sin rate limiter para descartar que sea la causa del 404
+@app.get("/api/screenshot-test")
+async def test_simple():
+    """Endpoint de prueba simple"""
+    print("[TEST] ✅ Endpoint simple alcanzado!")
+    return {"test": "works"}
+
+# 🔍 TEST: Endpoint de prueba - DEBE IR PRIMERO
+# NOTA: Sin rate limiter para descartar que sea la causa del 404
+@app.get("/api/screenshots/test")
+async def test_screenshot_endpoint():
+    """Endpoint de prueba para verificar que el routing funciona"""
+    print("[SCREENSHOT TEST] ✅ Endpoint de prueba alcanzado!")
+    return {"status": "ok", "message": "Screenshot endpoint is working"}
+
+# 🔍 DEBUG: Endpoint sin parámetros para probar ruta base
+@app.get("/api/screenshots")
+async def test_screenshots_root():
+    """Endpoint de prueba para ruta base /api/screenshots"""
+    print("[SCREENSHOT ROOT] ✅ Ruta base alcanzada!")
+    return {"status": "ok", "message": "Screenshots root endpoint working"}
+
+
+@app.get("/api/screenshots/session/{session_id}/{filename}")
+@limiter.limit("60/minute")
+async def get_screenshot(request: Request, session_id: str, filename: str):
+    """
+    Retorna un screenshot de una sesión de backtesting.
+
+    Args:
+        session_id: ID de la sesión de backtesting
+        filename: Nombre del archivo de screenshot
+
+    Returns:
+        FileResponse con la imagen PNG
+    """
+    try:
+        # 🔍 DEBUG: Log de parámetros recibidos
+        print(f"\n{'='*80}")
+        print(f"[SCREENSHOT GET] 📥 REQUEST RECIBIDO EN ENDPOINT!")
+        print(f"{'='*80}")
+        print(f"  session_id (raw): {session_id}")
+        print(f"  filename (raw): {filename}")
+
+        # Sanitizar parámetros
+        safe_session_id = sanitize_filename(session_id)
+        safe_filename = sanitize_filename(filename)
+
+        print(f"  session_id (sanitized): {safe_session_id}")
+        print(f"  filename (sanitized): {safe_filename}")
+
+        if not safe_session_id or not safe_filename:
+            raise HTTPException(status_code=400, detail="Parámetros inválidos")
+
+        # Agregar extensión .png si no la tiene
+        if not safe_filename.endswith('.png'):
+            safe_filename += '.png'
+            print(f"  filename (with .png): {safe_filename}")
+
+        # Construir path
+        file_path = SCREENSHOTS_DIR / safe_session_id / safe_filename
+        print(f"  file_path: {file_path}")
+        print(f"  exists: {file_path.exists()}")
+
+        # Verificar que existe
+        if not file_path.exists():
+            # Listar lo que hay en el directorio de la sesión
+            session_dir = SCREENSHOTS_DIR / safe_session_id
+            if session_dir.exists():
+                files = list(session_dir.glob("*.png"))
+                print(f"  ⚠️ Archivos disponibles en {safe_session_id}: {[f.name for f in files]}")
+            else:
+                print(f"  ⚠️ Directorio de sesión no existe: {session_dir}")
+            raise HTTPException(status_code=404, detail="Screenshot no encontrado")
+
+        return FileResponse(
+            path=file_path,
+            media_type="image/png",
+            filename=safe_filename
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[SCREENSHOT] ❌ Error obteniendo screenshot: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/screenshots/session/{session_id}")
+@limiter.limit("10/minute")
+async def delete_session_screenshots(request: Request, session_id: str):
+    """
+    Elimina todos los screenshots de una sesión de backtesting.
+
+    Args:
+        session_id: ID de la sesión de backtesting
+
+    Returns:
+        JSON con cantidad de archivos eliminados
+    """
+    try:
+        # Sanitizar session_id
+        safe_session_id = sanitize_filename(session_id)
+        if not safe_session_id:
+            raise HTTPException(status_code=400, detail="session_id inválido")
+
+        session_dir = SCREENSHOTS_DIR / safe_session_id
+
+        # Si el directorio no existe, retornar success (idempotente)
+        if not session_dir.exists():
+            return {
+                "success": True,
+                "deleted": 0,
+                "message": "Directorio no existía"
+            }
+
+        # Contar y eliminar archivos
+        deleted = 0
+        for file_path in session_dir.glob("*.png"):
+            try:
+                file_path.unlink()
+                deleted += 1
+            except Exception as e:
+                print(f"[SCREENSHOT] ⚠️ Error eliminando {file_path.name}: {e}")
+
+        # Eliminar directorio vacío
+        try:
+            session_dir.rmdir()
+        except Exception as e:
+            print(f"[SCREENSHOT] ⚠️ No se pudo eliminar directorio {safe_session_id}: {e}")
+
+        print(f"[SCREENSHOT] 🗑️ Eliminados {deleted} screenshots de sesión {safe_session_id}")
+
+        return {
+            "success": True,
+            "deleted": deleted
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[SCREENSHOT] ❌ Error eliminando screenshots: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/screenshots/session/{session_id}")
+@limiter.limit("30/minute")
+async def save_screenshot(request: Request, session_id: str, file: UploadFile = File(...)):
+    """
+    Guarda un screenshot para una sesión de backtesting.
+
+    Args:
+        session_id: ID de la sesión de backtesting
+        file: Archivo de imagen (PNG) del screenshot
+
+    Returns:
+        JSON con ruta relativa del screenshot guardado
+    """
+    try:
+        # Sanitizar session_id para prevenir path traversal
+        safe_session_id = sanitize_filename(session_id)
+        if not safe_session_id:
+            raise HTTPException(status_code=400, detail="session_id inválido")
+
+        # Crear directorio de sesión si no existe
+        session_dir = SCREENSHOTS_DIR / safe_session_id
+        session_dir.mkdir(parents=True, exist_ok=True)
+
+        # Validar tipo de archivo
+        if not file.content_type or not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="El archivo debe ser una imagen")
+
+        # Generar nombre de archivo único basado en timestamp
+        timestamp = int(time.time() * 1000)
+        filename = f"order_{timestamp}.png"
+        file_path = session_dir / filename
+
+        # Guardar archivo
+        content = await file.read()
+        with open(file_path, 'wb') as f:
+            f.write(content)
+
+        # Calcular metadata
+        file_size = len(content)
+
+        print(f"[SCREENSHOT] ✅ Guardado: {safe_session_id}/{filename} ({file_size} bytes)")
+
+        return {
+            "success": True,
+            "screenshotPath": f"{safe_session_id}/{filename}",
+            "metadata": {
+                "size": file_size,
+                "timestamp": timestamp
+            }
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[SCREENSHOT] ❌ Error guardando screenshot: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ==================== MAIN ====================

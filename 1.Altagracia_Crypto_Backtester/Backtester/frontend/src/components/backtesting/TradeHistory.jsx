@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-const TradeHistory = ({ orderManager }) => {
+const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
   const [closedOrders, setClosedOrders] = useState([]);
   const [filterSide, setFilterSide] = useState('all'); // 'all', 'long', 'short'
   const [filterResult, setFilterResult] = useState('all'); // 'all', 'win', 'loss'
+  const [selectedTradeIndex, setSelectedTradeIndex] = useState(0); // 🎯 NUEVO: Índice del trade seleccionado
 
   /**
    * Actualiza historial periódicamente
@@ -23,6 +24,52 @@ const TradeHistory = ({ orderManager }) => {
 
     return () => clearInterval(interval);
   }, [orderManager]);
+
+  /**
+   * 🎯 NUEVO: Navegación con teclado (flechas arriba/abajo)
+   */
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Solo procesar si el modal está visible y hay trades filtrados
+      const filteredOrders = getFilteredOrders();
+      if (filteredOrders.length === 0) return;
+
+      // Evitar conflicto con inputs enfocados
+      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') {
+        return;
+      }
+
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        // Navegar al trade anterior (índice menor)
+        const newIndex = Math.max(0, selectedTradeIndex - 1);
+        setSelectedTradeIndex(newIndex);
+        if (onNavigateToTrade && filteredOrders[newIndex]) {
+          onNavigateToTrade(filteredOrders[newIndex]);
+        }
+        console.log('[TradeHistory] ⬆️ Navegando al trade anterior:', newIndex);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        // Navegar al trade siguiente (índice mayor)
+        const newIndex = Math.min(filteredOrders.length - 1, selectedTradeIndex + 1);
+        setSelectedTradeIndex(newIndex);
+        if (onNavigateToTrade && filteredOrders[newIndex]) {
+          onNavigateToTrade(filteredOrders[newIndex]);
+        }
+        console.log('[TradeHistory] ⬇️ Navegando al trade siguiente:', newIndex);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedTradeIndex, closedOrders, filterSide, filterResult, onNavigateToTrade]);
+
+  /**
+   * 🎯 NUEVO: Resetear índice seleccionado cuando cambian los filtros
+   */
+  useEffect(() => {
+    setSelectedTradeIndex(0);
+  }, [filterSide, filterResult]);
 
   /**
    * Filtra órdenes según criterios
@@ -114,6 +161,19 @@ const TradeHistory = ({ orderManager }) => {
     }
   };
 
+  /**
+   * 📍 NUEVO: Navegar al trade en el gráfico
+   */
+  const handleNavigateToTrade = (order, index) => {
+    // Actualizar índice seleccionado
+    setSelectedTradeIndex(index);
+
+    if (onNavigateToTrade) {
+      // 🎯 OPTIMIZACIÓN: Pasar index + 1 para mostrar número de trade (1-based)
+      onNavigateToTrade(order, index + 1);
+    }
+  };
+
   const filteredOrders = getFilteredOrders();
 
   return (
@@ -150,6 +210,8 @@ const TradeHistory = ({ orderManager }) => {
               <tr>
                 <th>#</th>
                 <th>Lado</th>
+                <th>Fecha Entrada</th>
+                <th>Fecha Salida</th>
                 <th>Entrada</th>
                 <th>Salida</th>
                 <th>Cantidad</th>
@@ -158,17 +220,28 @@ const TradeHistory = ({ orderManager }) => {
                 <th>Duración</th>
                 <th>Cierre</th>
                 <th>Notas</th>
+                <th>📍</th>
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map(order => (
-                <tr key={order.id} className={order.pnl > 0 ? 'trade-win' : 'trade-loss'}>
+              {filteredOrders.map((order, index) => (
+                <tr
+                  key={order.id}
+                  className={`
+                    ${order.pnl > 0 ? 'trade-win' : 'trade-loss'}
+                    ${index === selectedTradeIndex ? 'trade-selected' : ''}
+                  `.trim()}
+                  onClick={() => handleNavigateToTrade(order, index)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <td>#{order.id}</td>
                   <td>
                     <span className={`badge-side ${order.side}`}>
                       {order.side === 'long' ? '📈' : '📉'} {order.side.toUpperCase()}
                     </span>
                   </td>
+                  <td>{formatDate(order.entryTime)}</td>
+                  <td>{formatDate(order.exitTime)}</td>
                   <td>${order.entryPrice.toFixed(2)}</td>
                   <td>${order.exitPrice.toFixed(2)}</td>
                   <td>{order.quantity}</td>
@@ -187,12 +260,25 @@ const TradeHistory = ({ orderManager }) => {
                       </span>
                     )}
                   </td>
+                  <td className="trade-navigate">
+                    <button
+                      className="navigate-button"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Evitar doble click en la fila
+                        handleNavigateToTrade(order, index);
+                      }}
+                      title="Ver trade en el gráfico"
+                    >
+                      📍
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
+
     </div>
   );
 };

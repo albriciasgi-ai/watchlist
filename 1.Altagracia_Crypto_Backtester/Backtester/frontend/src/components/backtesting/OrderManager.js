@@ -114,7 +114,13 @@ class OrderManager {
       pnlPercent: 0,
       commission: 0,
       executedAt: null, // 🎯 NUEVO: Timestamp cuando se ejecutó (para pending orders)
-      executedPrice: null // 🎯 NUEVO: Precio al que se ejecutó realmente
+      executedPrice: null, // 🎯 NUEVO: Precio al que se ejecutó realmente
+
+      // 📸 SCREENSHOT SYSTEM
+      screenshotPath: null, // Ruta relativa: "session_123/order_456.png"
+      screenshotCaptured: false, // Flag indicando si se capturó screenshot
+      screenshotTimestamp: null, // Timestamp de cuando se capturó
+      screenshotMetadata: null // Metadata: { width, height, size }
     };
 
     // 🎯 NUEVO: Para market orders, ejecutar inmediatamente
@@ -133,6 +139,13 @@ class OrderManager {
         side: order.side,
         price: order.executedPrice,
         quantity: order.quantity
+      });
+
+      // 🎯 FIX: Emitir evento de trade abierto (para dibujar línea de entrada)
+      this.emit('tradeOpened', {
+        order: order,
+        balance: this.getBalance(),
+        timestamp: currentTime
       });
     } else {
       // 🎯 NUEVO: Limit/Stop orders van a pendientes

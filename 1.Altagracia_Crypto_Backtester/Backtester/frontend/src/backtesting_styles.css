@@ -964,6 +964,13 @@
   background: rgba(239, 83, 80, 0.05);
 }
 
+/* 🎯 NUEVO: Highlight del trade seleccionado (navegación con teclado) */
+.trades-table tr.trade-selected {
+  background: rgba(102, 126, 234, 0.15) !important;
+  border-left: 3px solid #667eea;
+  font-weight: 500;
+}
+
 .trades-table tr:hover {
   background: rgba(102, 126, 234, 0.05);
 }
@@ -989,6 +996,217 @@
 .trade-notes {
   text-align: center;
   cursor: help;
+}
+
+.trade-screenshot {
+  text-align: center;
+}
+
+.screenshot-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+  transition: transform 0.2s, opacity 0.2s;
+  opacity: 0.6;
+}
+
+.screenshot-button:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.no-screenshot {
+  color: #ccc;
+  font-size: 12px;
+}
+
+/* ==================== SCREENSHOT MODAL ==================== */
+
+.screenshot-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.screenshot-modal-content {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 95vw;
+  max-height: 95vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.screenshot-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+}
+
+.screenshot-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.screenshot-modal-icon {
+  font-size: 20px;
+}
+
+.screenshot-modal-badge {
+  font-weight: 600;
+}
+
+.screenshot-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #888;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.screenshot-modal-close:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.screenshot-modal-body {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.screenshot-modal-image {
+  max-width: 100%;
+  max-height: calc(95vh - 140px); /* Restar header y footer */
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.screenshot-modal-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px;
+  color: #666;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e0e0e0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.screenshot-modal-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px;
+  color: #ef5350;
+  text-align: center;
+}
+
+.screenshot-modal-error button {
+  padding: 10px 24px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.screenshot-modal-error button:hover {
+  background: #5568d3;
+}
+
+.screenshot-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+  border-radius: 0 0 12px 12px;
+}
+
+.screenshot-modal-close-button {
+  padding: 8px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.screenshot-modal-close-button:hover {
+  background: #5568d3;
 }
 
 /* ==================== RESPONSIVE ==================== */

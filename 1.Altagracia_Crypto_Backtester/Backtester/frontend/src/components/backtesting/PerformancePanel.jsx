@@ -72,6 +72,21 @@ const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
   };
 
   /**
+   * Formatea fecha y hora
+   */
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString('es-CO', {
+      timeZone: 'America/Bogota',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  /**
    * Formatea número con signo y color
    */
   const formatPnL = (value) => {
@@ -238,6 +253,10 @@ const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
                     </button>
                   </div>
                   <div className="order-details">
+                    <div className="order-detail-row">
+                      <span>Fecha Entrada:</span>
+                      <span>{formatDate(order.entryTime)}</span>
+                    </div>
                     <div className="order-detail-row">
                       <span>Entrada:</span>
                       <span>${order.entryPrice.toFixed(2)}</span>

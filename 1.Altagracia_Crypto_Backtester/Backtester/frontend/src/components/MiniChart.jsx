@@ -173,6 +173,10 @@ const MiniChart = forwardRef(({
   const [chartRectangles, setChartRectangles] = useState([]);
   const pendingVPFixedFromRectRef = useRef(false);
 
+  // 🎯 NUEVO: Array de límites de trades (para dibujar líneas verticales permanentes)
+  // 🔧 FIX: Cambiar de single trade a array para acumular todos los trades
+  const tradeBoundariesRef = useRef([]); // [{ entryTime, exitTime, tradeNumber }, ...]
+
   // Actualizar fullscreenOiMode cuando cambia oiMode del padre
   useEffect(() => {
     if (oiMode) {
@@ -357,9 +361,12 @@ const MiniChart = forwardRef(({
       }
     },
     // 🎯 NUEVO: Centrar el chart en un timestamp específico
-    centerOnTimestamp: (timestamp) => {
-      // 🎯 FIX: En modo backtesting, usar allCandlesRef para buscar en TODAS las velas
-      const sourceCandles = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
+    centerOnTimestamp: (timestamp, options = {}) => {
+      const { animate = true, duration = 500 } = options;
+
+      // 🎯 FIX NAVEGACIÓN A TRADES: En backtesting, usar allCandlesRef para buscar trades históricos
+      // y actualizar el currentTime del playback para que candlesRef se reconstruya correctamente
+      const sourceCandles = backtestingMode && allCandlesRef.current?.length > 0
         ? allCandlesRef.current
         : candlesRef.current;
 
@@ -372,7 +379,8 @@ const MiniChart = forwardRef(({
       const firstTs = sourceCandles[0].timestamp;
       const lastTs = sourceCandles[sourceCandles.length - 1].timestamp;
       console.log(`[MiniChart ${symbol}] 🔍 centerOnTimestamp: buscando ${timestamp} (${new Date(timestamp).toISOString()})`);
-      console.log(`[MiniChart ${symbol}] 🔍 Rango de velas (${backtestingMode ? 'allCandles' : 'candlesRef'}): ${new Date(firstTs).toISOString()} → ${new Date(lastTs).toISOString()}`);
+      console.log(`[MiniChart ${symbol}] 🔍 Fuente: ${backtestingMode ? 'allCandlesRef (histórico completo)' : 'candlesRef (actual)'}`);
+      console.log(`[MiniChart ${symbol}] 🔍 Rango disponible: ${new Date(firstTs).toISOString()} → ${new Date(lastTs).toISOString()}`);
       console.log(`[MiniChart ${symbol}] 🔍 Total velas: ${sourceCandles.length}`);
 
       // Encontrar índice de la vela más cercana al timestamp
@@ -390,9 +398,33 @@ const MiniChart = forwardRef(({
         targetIndex = sourceCandles.length - 1;
       }
 
-      // 🎯 FIX v2: NO actualizar currentTime - solo navegar visualmente
-      // Esto evita que las zonas desaparezcan al cambiar el playback time
-      // El usuario puede usar los controles de playback para cambiar el tiempo si lo desea
+      const targetCandle = sourceCandles[targetIndex];
+      console.log(`[MiniChart ${symbol}] ✅ Vela encontrada en índice ${targetIndex}: ${new Date(targetCandle.timestamp).toISOString()}`);
+
+      // 🎯 FIX NAVEGACIÓN A TRADES: En backtesting, actualizar currentTime para reconstruir candlesRef
+      if (backtestingMode && onRequestTimeChange) {
+        console.log(`[MiniChart ${symbol}] 📍 Actualizando playback time a: ${new Date(targetCandle.timestamp).toISOString()}`);
+
+        // 🔧 FIX "BAILE DEL GRÁFICO": Marcar como paneo manual temporalmente
+        // Esto evita que el useEffect(currentTime) recalcule el offset automáticamente
+        // mientras se reconstruye candlesRef, lo cual causaba el "baile" al mover el mouse
+        const wasManualPan = manualPanRef.current;
+        manualPanRef.current = true;
+
+        onRequestTimeChange(targetCandle.timestamp);
+
+        // Restaurar el estado original después de que el useEffect termine
+        setTimeout(() => {
+          manualPanRef.current = wasManualPan;
+          console.log(`[MiniChart ${symbol}] 🔄 Restaurado manualPan=${wasManualPan}`);
+        }, 300);
+
+        // El playback se encargará de reconstruir candlesRef con el rango correcto
+        return; // Salir aquí, el update de currentTime disparará el re-render
+      }
+
+      // 🎯 FALLBACK: Si no estamos en backtesting o no hay callback, navegar visualmente
+      // (comportamiento original para modo no-backtesting)
 
       // Calcular cuántas velas caben en la pantalla con el zoom actual
       const canvas = canvasRef.current;
@@ -404,11 +436,11 @@ const MiniChart = forwardRef(({
       const candlesPerScreen = Math.floor(chartWidth / (candleWidth * zoom));
 
       // Posicionar el target en el centro de la pantalla
-      const newOffset = Math.max(0, targetIndex - Math.floor(candlesPerScreen / 2));
+      const targetOffset = Math.max(0, targetIndex - Math.floor(candlesPerScreen / 2));
 
-      // 🎯 FIX: En modo backtesting, usar allCandlesRef para calcular maxOffset
-      const maxOffset = Math.max(0, sourceCandles.length - candlesPerScreen);
-      viewStateRef.current.offset = Math.min(newOffset, maxOffset);
+      // 🎯 FIX CHART FLIP: Usar candlesRef para calcular maxOffset (consistente con el resto del código)
+      const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
+      const clampedTargetOffset = Math.min(targetOffset, maxOffset);
 
       // 🎯 NUEVO: Marcar que el usuario navegó manualmente (mostrar botón Follow)
       if (backtestingMode) {
@@ -419,13 +451,134 @@ const MiniChart = forwardRef(({
         }
       }
 
-      // 🎯 FIX: En modo backtesting, dibujar con allCandles para ver todo el historial
-      const candlesToDraw = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
-        ? allCandlesRef.current
-        : candlesRef.current;
-      drawChart(candlesToDraw, lastPriceRef.current, null, null);
+      // 🎯 NUEVO: Animación suave de navegación
+      if (animate && viewStateRef.current.offset !== clampedTargetOffset) {
+        const startOffset = viewStateRef.current.offset;
+        const distance = Math.abs(clampedTargetOffset - startOffset);
 
-      console.log(`[MiniChart ${symbol}] 🎯 Centrado en timestamp ${timestamp} (índice ${targetIndex}, offset ${viewStateRef.current.offset})`);
+        // Duración adaptativa: mayor distancia = más tiempo (300ms-1000ms)
+        const adaptiveDuration = Math.min(1000, Math.max(300, duration * (distance / candlesPerScreen)));
+        const startTime = performance.now();
+
+        const animateStep = (currentTime) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / adaptiveDuration, 1);
+
+          // Easing function (easeInOutCubic) para animación suave
+          const eased = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+          const currentOffset = startOffset + (clampedTargetOffset - startOffset) * eased;
+          viewStateRef.current.offset = Math.round(currentOffset);
+
+          // 🎯 FIX CHART FLIP: Dibujar con candlesRef para evitar el volteo
+          drawChart(candlesRef.current, lastPriceRef.current, null, null);
+
+          if (progress < 1) {
+            requestAnimationFrame(animateStep);
+          } else {
+            console.log(`[MiniChart ${symbol}] 🎯 Animación completada - Centrado en timestamp ${timestamp} (índice ${targetIndex}, offset ${viewStateRef.current.offset})`);
+          }
+        };
+
+        requestAnimationFrame(animateStep);
+        console.log(`[MiniChart ${symbol}] 🎬 Iniciando animación suave (${adaptiveDuration.toFixed(0)}ms)`);
+      } else {
+        // Sin animación: salto instantáneo
+        viewStateRef.current.offset = clampedTargetOffset;
+
+        // 🎯 FIX CHART FLIP: Dibujar con candlesRef para evitar el volteo
+        drawChart(candlesRef.current, lastPriceRef.current, null, null);
+
+        console.log(`[MiniChart ${symbol}] 🎯 Centrado instantáneo en timestamp ${timestamp} (índice ${targetIndex}, offset ${viewStateRef.current.offset})`);
+      }
+    },
+    // 📸 NUEVO: Capturar screenshot del canvas para guardar con sesión
+    captureScreenshot: async (sessionId, orderId) => {
+      return new Promise((resolve, reject) => {
+        const canvas = canvasRef.current;
+        if (!canvas) {
+          reject(new Error('Canvas no disponible'));
+          return;
+        }
+
+        console.log(`[MiniChart ${symbol}] 📸 Capturando screenshot para order ${orderId}...`);
+
+        // Convertir canvas a blob (PNG)
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            reject(new Error('No se pudo generar blob del canvas'));
+            return;
+          }
+
+          try {
+            // Crear FormData para enviar el blob
+            const formData = new FormData();
+            formData.append('file', blob, `order_${orderId}.png`);
+
+            // Enviar al backend
+            const response = await fetch(`${API_BASE_URL}/api/screenshots/session/${sessionId}`, {
+              method: 'POST',
+              body: formData
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+              console.log(`[MiniChart ${symbol}] ✅ Screenshot guardado: ${result.screenshotPath}`);
+              resolve({
+                screenshotPath: result.screenshotPath,
+                screenshotCaptured: true,
+                screenshotTimestamp: Date.now(),
+                screenshotMetadata: {
+                  width: canvas.width,
+                  height: canvas.height,
+                  size: result.metadata.size
+                }
+              });
+            } else {
+              reject(new Error('Backend retornó success: false'));
+            }
+          } catch (error) {
+            console.error(`[MiniChart ${symbol}] ❌ Error guardando screenshot:`, error);
+            reject(error);
+          }
+        }, 'image/png');
+      });
+    },
+    // 🎯 NUEVO: Agregar un límite de trade (línea de entrada) cuando se abre el trade
+    addTradeBoundary: (entryTime, tradeNumber) => {
+      tradeBoundariesRef.current.push({ entryTime, exitTime: null, tradeNumber });
+      // Forzar redibujado para mostrar la línea de entrada inmediatamente
+      if (candlesRef.current && candlesRef.current.length > 0) {
+        drawChart(candlesRef.current, lastPriceRef.current, null, null);
+      }
+      console.log(`[MiniChart ${symbol}] 🎯 Trade #${tradeNumber} abierto: entry=${new Date(entryTime).toISOString()}`);
+    },
+    // 🎯 NUEVO: Actualizar un límite de trade con la línea de salida cuando se cierra
+    updateTradeBoundary: (tradeNumber, exitTime) => {
+      const trade = tradeBoundariesRef.current.find(t => t.tradeNumber === tradeNumber);
+      if (trade) {
+        trade.exitTime = exitTime;
+        // Forzar redibujado para mostrar la línea de salida inmediatamente
+        if (candlesRef.current && candlesRef.current.length > 0) {
+          drawChart(candlesRef.current, lastPriceRef.current, null, null);
+        }
+        console.log(`[MiniChart ${symbol}] 🎯 Trade #${tradeNumber} cerrado: exit=${new Date(exitTime).toISOString()}`);
+      }
+    },
+    // 🎯 NUEVO: Limpiar todos los límites de trades (borrar todas las líneas)
+    clearAllTradeBoundaries: () => {
+      tradeBoundariesRef.current = [];
+      if (candlesRef.current && candlesRef.current.length > 0) {
+        drawChart(candlesRef.current, lastPriceRef.current, null, null);
+      }
+      console.log(`[MiniChart ${symbol}] 🎯 Todos los límites de trades limpiados`);
     }
   }), [symbol, interval]);
 
@@ -1090,6 +1243,77 @@ const MiniChart = forwardRef(({
         console.error(`[${symbol}] Error rendering drawings:`, error);
         // No propagar el error para evitar crash de la aplicación
       }
+    }
+
+    // 🎯 NUEVO: Dibujar líneas verticales de TODOS los trades (acumulación permanente)
+    // 🔧 FIX: Cambiar de single trade a array para mostrar todos los trades simultáneamente
+    if (tradeBoundariesRef.current.length > 0 && scaleConverterRef.current) {
+      const scaleConverter = scaleConverterRef.current;
+
+      tradeBoundariesRef.current.forEach(({ entryTime, exitTime, tradeNumber }) => {
+        try {
+          // Convertir timestamps a coordenadas X
+          const entryX = scaleConverter.timeToX(entryTime);
+          const exitX = exitTime ? scaleConverter.timeToX(exitTime) : null;
+
+          // Solo dibujar si al menos una línea está visible
+          if ((entryX >= marginLeft && entryX <= width - marginRight) ||
+              (exitX && exitX >= marginLeft && exitX <= width - marginRight)) {
+
+            // Estilo para las líneas verticales
+            ctx.strokeStyle = '#FF9800'; // Naranja
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 3]); // Línea punteada
+
+            // Línea vertical en entry time (siempre existe)
+            if (entryX >= marginLeft && entryX <= width - marginRight) {
+              ctx.beginPath();
+              ctx.moveTo(entryX, marginTop);
+              ctx.lineTo(entryX, marginTop + priceChartHeight);
+              ctx.stroke();
+            }
+
+            // Línea vertical en exit time (solo si el trade está cerrado)
+            if (exitX && exitX >= marginLeft && exitX <= width - marginRight) {
+              ctx.beginPath();
+              ctx.moveTo(exitX, marginTop);
+              ctx.lineTo(exitX, marginTop + priceChartHeight);
+              ctx.stroke();
+            }
+
+            ctx.setLineDash([]); // Resetear línea punteada
+
+            // Dibujar número del trade en la esquina superior izquierda (junto a la línea de entry)
+            if (entryX >= marginLeft && entryX <= width - marginRight) {
+              ctx.font = 'bold 16px sans-serif';
+              ctx.fillStyle = '#FF9800';
+              ctx.textAlign = 'left';
+              ctx.textBaseline = 'top';
+
+              const tradeLabel = `#${tradeNumber}`;
+              const labelX = Math.max(marginLeft + 5, entryX + 5); // 5px a la derecha de la línea
+              const labelY = marginTop + 5; // 5px desde el top
+
+              // Fondo semitransparente para mejor legibilidad
+              const textMetrics = ctx.measureText(tradeLabel);
+              const padding = 4;
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+              ctx.fillRect(
+                labelX - padding,
+                labelY - padding,
+                textMetrics.width + padding * 2,
+                16 + padding * 2
+              );
+
+              // Texto
+              ctx.fillStyle = '#FF9800';
+              ctx.fillText(tradeLabel, labelX, labelY);
+            }
+          }
+        } catch (error) {
+          console.error(`[${symbol}] Error rendering trade #${tradeNumber}:`, error);
+        }
+      });
     }
 
     // 🎯 NUEVO: Crosshair estilo TradingView - mostrar info en los ejes

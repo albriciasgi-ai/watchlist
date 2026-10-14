@@ -1284,3 +1284,386 @@ Confluence Score: +3.15 (positivo)
 - [ ] Historial de divergencias destacadas
 - [ ] Overlay opcional en el chart principal (background coloring)
 - [ ] Estadísticas de win rate basadas en señales de confluencia
+
+---
+
+## MEJORAS AL PANEL DE TRADING (Octubre 2026)
+
+### 1. SL/TP en Porcentaje con Preview en USDT
+
+**Problema:** Los usuarios debían ingresar valores absolutos en USDT para Stop Loss y Take Profit, lo cual era incómodo para calcular riesgo/recompensa.
+
+**Solución:** Sistema de entrada basado en porcentajes con preview en tiempo real del valor equivalente en USDT.
+
+**Archivo:** `frontend/src/components/backtesting/TradingControls.jsx`
+
+**Cambios implementados:**
+
+1. **Estado cambiado a porcentajes (líneas 5-12)**:
+```javascript
+// ANTES:
+const [stopLoss, setStopLoss] = useState('');
+const [takeProfit, setTakeProfit] = useState('');
+
+// DESPUÉS:
+const [stopLossPercent, setStopLossPercent] = useState('');
+const [takeProfitPercent, setTakeProfitPercent] = useState('');
+```
+
+2. **Conversión automática en handleCreateOrder (líneas 69-110)**:
+```javascript
+// 🎯 NUEVO: Convertir porcentajes a precios USDT
+const slPercent = stopLossPercent ? parseFloat(stopLossPercent) : null;
+const tpPercent = takeProfitPercent ? parseFloat(takeProfitPercent) : null;
+
+let sl = null;
+let tp = null;
+
+if (slPercent !== null) {
+  sl = orderSide === 'long'
+    ? price * (1 - slPercent / 100)
+    : price * (1 + slPercent / 100);
+}
+
+if (tpPercent !== null) {
+  tp = orderSide === 'long'
+    ? price * (1 + tpPercent / 100)
+    : price * (1 - tpPercent / 100);
+}
+```
+
+3. **Inputs con preview en tiempo real (líneas 274-310)**:
+```javascript
+<div className="control-section">
+  <label>Stop Loss % (Opcional)</label>
+  <input
+    type="number"
+    step="0.1"
+    min="0"
+    value={stopLossPercent}
+    onChange={(e) => setStopLossPercent(e.target.value)}
+    placeholder="Ej: 2 (= 2%)"
+  />
+  {stopLossPercent && entryPrice && (
+    <div className="price-hint">
+      ${(orderSide === 'long'
+        ? parseFloat(entryPrice) * (1 - parseFloat(stopLossPercent) / 100)
+        : parseFloat(entryPrice) * (1 + parseFloat(stopLossPercent) / 100)
+      ).toFixed(2)}
+    </div>
+  )}
+</div>
+```
+
+**Funcionalidad:**
+- Usuario ingresa porcentajes (ej: `2` para 2%, `4` para 4%)
+- El sistema muestra automáticamente el valor equivalente en USDT debajo del input
+- La conversión mantiene la lógica correcta según la dirección:
+  - **LONG**: SL = precio × (1 - %) | TP = precio × (1 + %)
+  - **SHORT**: SL = precio × (1 + %) | TP = precio × (1 - %)
+- Botones rápidos (SL 2% / TP 4%, etc.) ahora establecen porcentajes directamente
+
+**Validación:**
+- Verifica que los porcentajes sean números válidos > 0
+- Elimina validación de SL/TP vs precio (la conversión % siempre respeta direcciones correctas)
+
+---
+
+### 2. Botón de Maximizar Panel de Trading
+
+**Problema:** El panel de trading no tenía opción de maximizar para ver mejor las métricas de rendimiento, aunque el backend ya soportaba fullscreen.
+
+**Solución:** Agregado botón de maximizar en el header del panel con atajo de teclado.
+
+**Archivo:** `frontend/src/components/backtesting/BacktestingApp.jsx`
+
+**Cambios implementados:**
+
+1. **Botón en el header del sidebar (líneas 2143-2165)**:
+```javascript
+{/* 🎯 OPTIMIZACIÓN UI: Header del panel con botones de maximizar y colapsar */}
+<div className="sidebar-header">
+  <span className="sidebar-title">Panel de Trading</span>
+  <div style={{ display: 'flex', gap: '8px' }}>
+    <button
+      className="btn-collapse"
+      onClick={() => setFullscreenPanel(prev => prev === 'trading' ? null : 'trading')}
+      title={fullscreenPanel === 'trading' ? "Restaurar panel (ESC)" : "Maximizar panel (Shift+T)"}
+      style={{ fontSize: '16px' }}
+    >
+      {fullscreenPanel === 'trading' ? '⛶' : '⛶'}
+    </button>
+    <button
+      className="btn-collapse"
+      onClick={() => setShowTradingPanel(false)}
+      title="Ocultar panel (T o ESC)"
+    >
+      ✕
+    </button>
+  </div>
+</div>
+```
+
+2. **Atajo de teclado Shift+T (líneas 378-393)**:
+```javascript
+// 🎯 NUEVO: F key: Toggle fullscreen del gráfico
+if (e.key === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey && !isInputFocused) {
+  e.preventDefault();
+  setFullscreenPanel(prev => prev === 'chart' ? null : 'chart');
+  console.log('[BacktestingApp] Toggle fullscreen del gráfico (F)');
+}
+
+// 🎯 NUEVO: Shift+T: Toggle fullscreen del panel de trading
+if (e.key === 'T' && e.shiftKey && !e.ctrlKey && !e.metaKey && !isInputFocused) {
+  e.preventDefault();
+  setFullscreenPanel(prev => prev === 'trading' ? null : 'trading');
+  console.log('[BacktestingApp] Toggle fullscreen del panel de trading (Shift+T)');
+}
+
+// 🎯 NUEVO: ESC: Salir de fullscreen del panel y ocultar panel trading
+if (e.key === 'Escape') {
+  e.preventDefault();
+  if (fullscreenPanel) {
+    setFullscreenPanel(null);
+    console.log('[BacktestingApp] Saliendo de fullscreen del panel (ESC)');
+  }
+  if (showTradingPanel) {
+    setShowTradingPanel(false);
+    console.log('[BacktestingApp] Ocultando panel de trading (ESC)');
+  }
+}
+```
+
+**Funcionalidad:**
+- Botón **⛶** en el header del panel de trading (junto al botón de cerrar)
+- Click en el botón alterna entre maximizado y normal
+- **Atajo de teclado**: `Shift+T` para maximizar/restaurar
+- **ESC** sale del fullscreen y oculta el panel
+- Usa el mismo sistema `fullscreenPanel` que el gráfico principal (`'chart'` | `'trading'` | `null`)
+
+**Beneficio:** Permite ver las métricas de rendimiento (win rate, PnL, drawdown, historial) en pantalla completa para análisis detallado.
+
+---
+
+### 3. Fix: TP/SL Box en Órdenes Limit
+
+**Problema:** Las órdenes limit no dibujaban la caja de TP/SL en el gráfico cuando se ejecutaban. Las market orders funcionaban correctamente, pero las limit/stop tenían este bug.
+
+**Causa raíz:** El callback `onOrderCreated` solo creaba cajas TP/SL para órdenes market (`if (order && order.type === 'market' && ...`). Las órdenes limit se creaban como 'pending' y solo se ejecutaban cuando el precio las alcanzaba, pero no había lógica para dibujar la caja en ese momento.
+
+**Solución:** Agregada lógica de creación de TP/SL box en el callback `onOrderExecuted`.
+
+**Archivo:** `frontend/src/components/backtesting/BacktestingApp.jsx`
+
+**Cambios implementados (líneas 838-858)**:
+```javascript
+// 🎯 NUEVO: Conectar callback para cuando una orden pendiente se ejecuta
+orderManagerRef.current.onOrderExecuted = (executedOrder) => {
+  console.log('[BacktestingApp] Orden pendiente ejecutada:', executedOrder);
+  // El popup se mostrará automáticamente en TradingControls a través del callback onOrderCreated
+
+  // 🎯 FIX: Crear caja TP/SL cuando limit/stop order se ejecuta
+  if (executedOrder && (executedOrder.stopLoss || executedOrder.takeProfit)) {
+    const miniChart = miniChartRefs.current[activeTimeframe];
+    if (miniChart && miniChart.addTPSLBox) {
+      miniChart.addTPSLBox(
+        executedOrder.entryPrice,
+        executedOrder.executedAt || currentTime,
+        executedOrder.side, // 'long' o 'short'
+        executedOrder.stopLoss,
+        executedOrder.takeProfit,
+        5 // 5 velas de ancho
+      );
+      console.log('[BacktestingApp] TP/SL box creada para limit order ejecutada');
+    }
+  }
+};
+```
+
+**Flujo de eventos:**
+1. Usuario crea orden limit con SL/TP configurados
+2. Orden queda en estado 'pending'
+3. Durante el playback, cuando precio alcanza el nivel limit:
+   - `OrderManager` ejecuta la orden y cambia estado a 'open'
+   - Llama al callback `onOrderExecuted(executedOrder)`
+4. El callback verifica si la orden tiene SL/TP definidos
+5. Si tiene, llama a `miniChart.addTPSLBox()` para dibujar la caja
+6. La caja aparece en el gráfico mostrando entry, SL y TP
+
+**Resultado:** Ahora las órdenes limit muestran correctamente la caja de TP/SL cuando se ejecutan, igual que las market orders.
+
+---
+
+## Atajos de Teclado Actualizados
+
+| Atajo | Función |
+|-------|---------|
+| `T` | Mostrar/ocultar panel de trading |
+| `F` | Maximizar/restaurar gráfico principal |
+| `Shift+T` | Maximizar/restaurar panel de trading |
+| `ESC` | Salir de fullscreen + ocultar panel trading |
+| `Space` | Play/Pause del playback |
+| `←` | Retroceder 1 vela |
+| `→` | Avanzar 1 vela |
+
+---
+
+## Archivos Modificados en Esta Sesión
+
+| Archivo | Cambios |
+|---------|---------|
+| `frontend/src/components/backtesting/TradingControls.jsx` | SL/TP en porcentaje, conversión automática, preview USDT |
+| `frontend/src/components/backtesting/BacktestingApp.jsx` | Botón maximizar panel, atajo Shift+T, fix TP/SL box limit orders |
+| `CLAUDE.md` | Documentación completa de los 3 fixes |
+
+---
+
+## FIX: NAVEGACIÓN A TRADES HISTÓRICOS (Octubre 2026)
+
+### Problema
+
+Al hacer click en el ícono 📍 en el historial de trades para navegar al gráfico en la fecha exacta del trade, la aplicación se iba a una fecha incorrecta que no coincidía con ningún trade. Todos los trades llevaban a la misma fecha incorrecta.
+
+### Causa Raíz
+
+El método `centerOnTimestamp` en `MiniChart.jsx` usaba `candlesRef.current` para buscar el timestamp del trade. Sin embargo:
+- `candlesRef` solo contiene las velas **visibles del playback actual** (~500 velas alrededor del currentTime)
+- Los trades históricos pueden estar **meses o años en el pasado**
+- El timestamp del trade no existía en `candlesRef`, por lo que siempre navegaba a la última vela disponible
+
+El fix anterior del "chart flip bug" había cambiado de usar `allCandlesRef` a `candlesRef` para evitar el volteo del gráfico, pero esto rompió la navegación a trades históricos.
+
+### Solución
+
+**Archivo:** `frontend/src/components/MiniChart.jsx` (líneas 364-420)
+
+El fix correcto usa un enfoque híbrido:
+
+1. **Para buscar el timestamp**: Usar `allCandlesRef` (todas las velas históricas) en modo backtesting
+2. **Para actualizar el playback**: Llamar a `onRequestTimeChange(timestamp)` con el timestamp del trade
+3. **Dejar que el sistema reconstruya**: El playback actualiza `currentTime` y reconstruye `candlesRef` automáticamente
+
+```javascript
+centerOnTimestamp: (timestamp, options = {}) => {
+  // 🎯 FIX: En backtesting, usar allCandlesRef para buscar trades históricos
+  const sourceCandles = backtestingMode && allCandlesRef.current?.length > 0
+    ? allCandlesRef.current
+    : candlesRef.current;
+
+  // Buscar el índice de la vela más cercana al timestamp
+  let targetIndex = -1;
+  for (let i = 0; i < sourceCandles.length; i++) {
+    if (sourceCandles[i].timestamp >= timestamp) {
+      targetIndex = i;
+      break;
+    }
+  }
+
+  const targetCandle = sourceCandles[targetIndex];
+
+  // 🎯 FIX: En backtesting, actualizar currentTime para reconstruir candlesRef
+  if (backtestingMode && onRequestTimeChange) {
+    console.log(`[MiniChart] 📍 Actualizando playback a: ${new Date(targetCandle.timestamp).toISOString()}`);
+    onRequestTimeChange(targetCandle.timestamp);
+    return; // El playback reconstruirá candlesRef automáticamente
+  }
+
+  // FALLBACK: Navegación visual si no estamos en backtesting
+  // ... (código de animación visual)
+}
+```
+
+### Ventajas de este Enfoque
+
+1. **Evita el chart flip**: No manipulamos directamente el offset con arrays de diferentes tamaños
+2. **Busca en todo el histórico**: `allCandlesRef` contiene todas las velas cargadas (hasta 5 años)
+3. **Actualización limpia**: `onRequestTimeChange` dispara el flujo normal de actualización del playback
+4. **Centrado automático**: El TimeController se encarga de centrar la vista después de actualizar currentTime
+
+### Flujo Completo
+
+```
+1. Usuario hace click en 📍 de un trade en TradeHistory
+   ↓
+2. handleNavigateToTrade() llama a miniChart.centerOnTimestamp(order.entryTime)
+   ↓
+3. centerOnTimestamp() busca el timestamp en allCandlesRef (todas las velas)
+   ↓
+4. Encuentra la vela exacta (ej: índice 15234 de 43800 velas totales)
+   ↓
+5. Llama a onRequestTimeChange(targetCandle.timestamp)
+   ↓
+6. BacktestingApp actualiza currentTime state
+   ↓
+7. TimeController reconstruye candlesRef con ~500 velas alrededor del nuevo currentTime
+   ↓
+8. El gráfico se re-renderiza centrado en el trade
+```
+
+### Logging de Diagnóstico
+
+El fix incluye logs detallados para debugging:
+
+```javascript
+console.log(`[MiniChart] 🔍 centerOnTimestamp: buscando ${timestamp} (${new Date(timestamp).toISOString()})`);
+console.log(`[MiniChart] 🔍 Fuente: ${backtestingMode ? 'allCandlesRef (histórico completo)' : 'candlesRef (actual)'}`);
+console.log(`[MiniChart] 🔍 Rango disponible: ${new Date(firstTs).toISOString()} → ${new Date(lastTs).toISOString()}`);
+console.log(`[MiniChart] 🔍 Total velas: ${sourceCandles.length}`);
+console.log(`[MiniChart] ✅ Vela encontrada en índice ${targetIndex}: ${new Date(targetCandle.timestamp).toISOString()}`);
+console.log(`[MiniChart] 📍 Actualizando playback time a: ${new Date(targetCandle.timestamp).toISOString()}`);
+```
+
+### Resultado
+
+✅ **Ahora funciona correctamente**: Click en cualquier trade del historial navega al gráfico en la fecha y hora exacta del trade, centrado en pantalla.
+
+### Fix Adicional: "Baile del Gráfico" al Mover Mouse (Octubre 2026)
+
+**Problema:** Después de implementar el fix inicial de navegación, apareció un nuevo issue: al hacer click en el ícono de un trade para navegar, el gráfico iba a la fecha correcta PERO al mover el mouse sobre el gráfico, este empezaba a "bailar" de izquierda a derecha, haciendo muy difícil la visualización.
+
+**Causa raíz:** El `useEffect(currentTime)` (líneas 2210-2269) reconstruye `candlesRef` cada vez que cambia `currentTime`, y si `!manualPanRef.current`, recalcula automáticamente el `offset` (líneas 2246-2261). El flujo problemático era:
+
+```
+1. centerOnTimestamp() llama onRequestTimeChange(timestamp)
+2. currentTime se actualiza en BacktestingApp
+3. useEffect(currentTime) se dispara → reconstruye candlesRef
+4. Recalcula offset automáticamente (líneas 2256-2260)
+5. Usuario mueve el mouse → handleMouseMove (línea 1791) llama drawChart()
+6. Pero el useEffect podría estar aún recalculando el offset
+7. Esto causa el "baile" visual del gráfico
+```
+
+**Solución:** Marcar temporalmente `manualPanRef.current = true` durante 300ms al navegar a un trade. Esto previene que el `useEffect` recalcule automáticamente el offset mientras se reconstruye `candlesRef`, eliminando el "baile".
+
+**Implementación (líneas 404-422 de MiniChart.jsx):**
+
+```javascript
+// 🎯 FIX NAVEGACIÓN A TRADES: En backtesting, actualizar currentTime
+if (backtestingMode && onRequestTimeChange) {
+  console.log(`[MiniChart ${symbol}] 📍 Actualizando playback time a: ${timestamp}`);
+
+  // 🔧 FIX "BAILE DEL GRÁFICO": Marcar como paneo manual temporalmente
+  // Esto evita que el useEffect(currentTime) recalcule el offset automáticamente
+  const wasManualPan = manualPanRef.current;
+  manualPanRef.current = true;
+
+  onRequestTimeChange(targetCandle.timestamp);
+
+  // Restaurar el estado original después de que el useEffect termine
+  setTimeout(() => {
+    manualPanRef.current = wasManualPan;
+    console.log(`[MiniChart ${symbol}] 🔄 Restaurado manualPan=${wasManualPan}`);
+  }, 300);
+
+  return;
+}
+```
+
+**Resultado:** El gráfico navega correctamente al trade Y se mantiene estable cuando el usuario mueve el mouse.
+
+### Archivos Modificados (Octubre 2026)
+
+| Archivo | Cambio |
+|---------|--------|
+| `frontend/src/components/MiniChart.jsx` | Fix centerOnTimestamp: usar allCandlesRef + actualizar playback time + prevenir recalculo de offset |
+| `CLAUDE.md` | Documentación completa de ambos fixes |
