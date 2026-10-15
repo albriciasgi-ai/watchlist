@@ -19,7 +19,9 @@
       "Bash(netstat:*)",
       "Bash(cmd /c \"taskkill /F /PID 9832\")",
       "Bash(npm run dev:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(cmd /c \"taskkill /F /PID 16376\")",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

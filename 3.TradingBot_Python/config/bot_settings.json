@@ -1,7 +1,7 @@
 {
   "use_integrated_tpsl": true,
   "daily_risk_limit": 20.0,
-  "daily_risk_date": "2026-02-17",
-  "daily_risk_used": 18.8,
-  "daily_risk_trades": 4
+  "daily_risk_date": "2026-10-14",
+  "daily_risk_used": 9.4,
+  "daily_risk_trades": 2
 }

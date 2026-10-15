@@ -330,14 +330,81 @@ const MiniChart = forwardRef(({
       }
 
       console.log(`[MiniChart ${symbol} ${interval}] ✅ TPSLBox creado:`, {
+        boxId: box.id,
         entry: entryPrice,
         sl: box.slPrice,
         tp: box.tpPrice,
         direction,
-        width: candleWidthCount
+        width: candleWidthCount,
+        totalShapes: drawingManagerRef.current.shapes.length
       });
 
       return box.id;
+    },
+    // 🎯 NUEVO: Extender caja TP/SL hasta el timestamp de cierre del trade
+    extendTPSLBox: (boxId, exitTime) => {
+      console.log(`[MiniChart ${symbol} ${interval}] 🔍 Intentando extender TP/SL box:`, {
+        boxId,
+        exitTime,
+        exitTimeDate: new Date(exitTime).toISOString(),
+        hasDrawingManager: !!drawingManagerRef.current,
+        totalShapesNow: drawingManagerRef.current?.shapes.length || 0
+      });
+
+      if (!drawingManagerRef.current) {
+        console.warn(`[MiniChart ${symbol} ${interval}] DrawingManager no disponible para extender TP/SL box`);
+        return false;
+      }
+
+      // Listar todas las shapes disponibles
+      console.log(`[MiniChart ${symbol} ${interval}] Shapes disponibles (${drawingManagerRef.current.shapes.length}):`,
+        drawingManagerRef.current.shapes.map(s => ({ id: s.id, type: s.type }))
+      );
+
+      // Buscar la caja por ID
+      const box = drawingManagerRef.current.shapes.find(shape =>
+        shape.id === boxId && shape.type === 'tpslbox'
+      );
+
+      if (!box) {
+        console.warn(`[MiniChart ${symbol} ${interval}] ⚠️ TP/SL box ${boxId} no encontrado`);
+        console.log(`[MiniChart ${symbol} ${interval}] Total shapes: ${drawingManagerRef.current.shapes.length}`);
+        return false;
+      }
+
+      console.log(`[MiniChart ${symbol} ${interval}] ✅ Box encontrado:`, {
+        id: box.id,
+        type: box.type,
+        timeStart: box.timeStart,
+        timeStartDate: new Date(box.timeStart).toISOString(),
+        timeEnd_antes: box.timeEnd,
+        timeEnd_antesDate: new Date(box.timeEnd).toISOString(),
+        timeEnd_nuevo: exitTime,
+        timeEnd_nuevoDate: new Date(exitTime).toISOString()
+      });
+
+      // Actualizar timeEnd al timestamp de salida
+      box.timeEnd = exitTime;
+      // Recalcular el centro de la caja
+      box.time = box.timeStart + (exitTime - box.timeStart) / 2;
+
+      console.log(`[MiniChart ${symbol} ${interval}] 📝 Box actualizado:`, {
+        timeEnd_despues: box.timeEnd,
+        timeEnd_despuesDate: new Date(box.timeEnd).toISOString(),
+        time_center: box.time,
+        time_centerDate: new Date(box.time).toISOString()
+      });
+
+      // Guardar cambios y redibujar
+      drawingManagerRef.current.saveToHistory();
+      saveDrawings();
+
+      if (candlesRef.current && candlesRef.current.length > 0) {
+        drawChart(candlesRef.current, lastPriceRef.current, null, null);
+      }
+
+      console.log(`[MiniChart ${symbol} ${interval}] ✅ TP/SL box ${boxId} extendido hasta ${new Date(exitTime).toISOString()}`);
+      return true;
     },
     // 🎯 NUEVO: Establecer zonas detectadas (Zone Detector 2.0)
     setZones: (zones) => {

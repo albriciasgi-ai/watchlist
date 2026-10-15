@@ -73,7 +73,11 @@ class IndicatorManager {
 
     // Solo crear OpenInterest si está habilitado
     if (indicatorStates['OpenInterest'] !== false) {
-      this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
+      this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days, {
+        mode: 'cumulative',
+        smoothing: 3,
+        showPriceSentiment: false
+      });
       this.indicators.push(this.openInterestIndicator);
     }
 
@@ -102,7 +106,13 @@ class IndicatorManager {
 
     // VWAP (suele estar habilitado)
     if (indicatorStates['VWAP'] !== false) {
-      this.indicators.push(new VWAPIndicator(this.symbol, this.interval, this.days));
+      this.indicators.push(new VWAPIndicator(this.symbol, this.interval, this.days, {
+        vwapType: 'rolling',
+        rollingPeriod: 200,
+        showBandWidth: false,
+        showBBWP: false,
+        showTTMSqueeze: false
+      }));
     }
 
     // Fibonacci - solo si está habilitado
@@ -1204,6 +1214,13 @@ class IndicatorManager {
    */
   getVWAPIndicator() {
     return this.indicators.find(ind => ind.name === "VWAP");
+  }
+
+  /**
+   * 🎯 NUEVO: Obtiene el indicador Open Interest
+   */
+  getOpenInterestIndicator() {
+    return this.indicators.find(ind => ind.name === "Open Interest") || this.openInterestIndicator;
   }
 
   /**

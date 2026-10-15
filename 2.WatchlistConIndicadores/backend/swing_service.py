@@ -99,7 +99,8 @@ class SwingServiceConfig:
     # Cooldown
     cooldownMinutes: int = 30
 
-    # Alert target
+    # Alert settings
+    alertsEnabled: bool = True  # Global toggle for sending alerts to Trading Bot
     alertTargetUrl: str = "http://localhost:5000/api/watchlist-alert"
 
     def get_symbol_config(self, symbol: str) -> Dict:
@@ -587,20 +588,32 @@ class SwingService:
         # Store signal for frontend
         self._store_signal(signal)
 
-        # Send alert to Trading Bot
-        success = await self._send_alert(signal)
+        # Send alert to Trading Bot (only if alertsEnabled)
+        if self.config.alertsEnabled:
+            success = await self._send_alert(signal)
 
-        if success:
+            if success:
+                self._cooldowns[cooldown_key] = now
+                self.stats['alerts_sent'] += 1
+                logger.info(
+                    f"[SWING_SERVICE] ✅ Alert sent: {signal.symbol} {signal.signal_type} "
+                    f"@ ${signal.price:.2f} ({signal.direction})"
+                )
+                alert_logger.info(
+                    f"ALERT_SENT | {signal.symbol} | {signal.signal_type} | "
+                    f"price={signal.price:.2f} | direction={signal.direction} | "
+                    f"target={self.config.alertTargetUrl}"
+                )
+        else:
+            # Alerts disabled - still apply cooldown to prevent spam when re-enabled
             self._cooldowns[cooldown_key] = now
-            self.stats['alerts_sent'] += 1
-            logger.info(
-                f"[SWING_SERVICE] ✅ Alert sent: {signal.symbol} {signal.signal_type} "
-                f"@ ${signal.price:.2f} ({signal.direction})"
+            self.stats['alerts_blocked_disabled'] = self.stats.get('alerts_blocked_disabled', 0) + 1
+            logger.debug(
+                f"[SWING_SERVICE] 🔇 Alert blocked (disabled): {signal.symbol} {signal.signal_type}"
             )
             alert_logger.info(
-                f"ALERT_SENT | {signal.symbol} | {signal.signal_type} | "
-                f"price={signal.price:.2f} | direction={signal.direction} | "
-                f"target={self.config.alertTargetUrl}"
+                f"ALERT_DISABLED | {signal.symbol} | {signal.signal_type} | "
+                f"price={signal.price:.2f} | direction={signal.direction}"
             )
 
     def _store_signal(self, signal: SwingSignal):
@@ -751,6 +764,7 @@ class SwingService:
             'priceZones': self.config.priceZones,  # All zones
             'priceZonesCount': len(self.config.priceZones),
             'cooldownMinutes': self.config.cooldownMinutes,
+            'alertsEnabled': self.config.alertsEnabled,
             # Per-symbol configs
             'symbolConfigs': self.config.symbolConfigs,
             'uptime_seconds': int(uptime),

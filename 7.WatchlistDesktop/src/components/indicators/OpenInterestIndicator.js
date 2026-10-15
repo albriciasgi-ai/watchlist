@@ -9,7 +9,7 @@ import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
 
 class OpenInterestIndicator extends IndicatorBase {
-  constructor(symbol, interval, days = 30) {
+  constructor(symbol, interval, days = 30, config = {}) {
     super(symbol, interval, days);
     this.name = "Open Interest";
     this.height = 100;
@@ -18,10 +18,10 @@ class OpenInterestIndicator extends IndicatorBase {
     // VERSION CHECK
     console.log(`%c[OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector`, 'background: #1E88E5; color: white; font-weight: bold; padding: 4px;');
 
-    // Configuración
-    this.mode = "histogram"; // "histogram", "cumulative", "flow"
-    this.smoothing = 3; // Suavizado para modo Flow
-    this.showPriceSentiment = false; // Price Sentiment solo en modo Flow
+    // Configuración con defaults
+    this.mode = config.mode || "cumulative"; // "histogram", "cumulative", "flow" - Default: cumulative
+    this.smoothing = config.smoothing || 3; // Suavizado para modo Flow
+    this.showPriceSentiment = config.showPriceSentiment || false; // Price Sentiment solo en modo Flow
 
     // Datos desde el backend
     this.dataMap = null; // Map de timestamp -> openInterest

@@ -493,6 +493,153 @@ class VWAPService:
 
 **Resultado**: Sin acumulacion de file descriptors, backend estable.
 
+### 9. Open Interest Default y "Apply to All" (Enero 2026)
+
+**Problema 1**: El Open Interest se mostraba en modo "histogram" por defecto en lugar de "cumulative".
+
+**Problema 2**: No había forma de aplicar la configuración de OI a todas las monedas simultáneamente.
+
+**Causa**: Tres capas de configuración desincronizadas:
+1. `OpenInterestIndicator.js` constructor tenía default hardcodeado
+2. `IndicatorManager.js` no pasaba config al crear el indicador
+3. `Watchlist.jsx` tenía `oiMode` state en "histogram"
+
+**Solución Aplicada**:
+
+**Archivo 1: `OpenInterestIndicator.js`** (línea 12):
+```javascript
+// Aceptar config como parámetro opcional
+constructor(symbol, interval, days = 30, config = {}) {
+  super(symbol, interval, days);
+  // Usar config con fallbacks
+  this.mode = config.mode || "cumulative";
+  this.smoothing = config.smoothing || 3;
+  this.showPriceSentiment = config.showPriceSentiment || false;
+}
+```
+
+**Archivo 2: `IndicatorManager.js`** (líneas 76-81):
+```javascript
+// Pasar config explícito al crear el indicador
+if (indicatorStates['OpenInterest'] !== false) {
+  this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days, {
+    mode: 'cumulative',
+    smoothing: 3,
+    showPriceSentiment: false
+  });
+  this.indicators.push(this.openInterestIndicator);
+}
+```
+
+**Archivo 3: `Watchlist.jsx`**:
+```javascript
+// Línea 152: Cambiar default del estado
+const [oiMode, setOiMode] = useState("cumulative");
+
+// Líneas 816-832: Sincronizar oiMode cuando cambia la config
+const handleOpenInterestConfigChange = (config) => {
+  const manager = indicatorManagers[selectedSymbolForOI]?.manager;
+  if (manager) {
+    const oiIndicator = manager.getOpenInterestIndicator();
+    if (oiIndicator) {
+      oiIndicator.updateConfig(config);
+      // Sincronizar estado global
+      if (config.mode) {
+        setOiMode(config.mode);
+      }
+      // ... resto del handler
+    }
+  }
+};
+
+// Líneas 831-857: Handler "Apply to All"
+const handleApplyOIToAll = (config) => {
+  // Iterar todos los símbolos en IndicatorManagerRegistry
+  Object.keys(indicatorManagers).forEach(sym => {
+    const manager = indicatorManagers[sym]?.manager;
+    if (manager) {
+      const oiIndicator = manager.getOpenInterestIndicator();
+      if (oiIndicator) {
+        oiIndicator.updateConfig(config);
+      }
+    }
+  });
+
+  // Sincronizar estado global
+  if (config.mode) {
+    setOiMode(config.mode);
+  }
+
+  // Forzar redraw del chart actual
+  if (miniChartRef.current?.redraw) {
+    miniChartRef.current.redraw();
+  }
+};
+```
+
+**Archivo 4: `OpenInterestSettings.jsx`**:
+```javascript
+// Línea 5: Agregar prop onApplyToAll
+export default function OpenInterestSettings({
+  symbol,
+  onConfigChange,
+  onApplyToAll  // NUEVO
+}) {
+
+  // Líneas 18-22: Handler para el botón
+  const handleApplyToAll = () => {
+    if (onApplyToAll) {
+      onApplyToAll(localConfig);
+    }
+  };
+
+  // Líneas 138-147: Botón "Apply to All" en la UI
+  <div className="oi-apply-all-container">
+    <button
+      className="oi-apply-all-btn"
+      onClick={handleApplyToAll}
+      title="Aplicar esta configuración a todas las monedas"
+    >
+      📋 Aplicar a todas las monedas
+    </button>
+  </div>
+}
+```
+
+**Archivo 5: `OpenInterestSettings.css`** (líneas 267-292):
+```css
+.oi-apply-all-container {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.oi-apply-all-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.oi-apply-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+```
+
+**Resultado**:
+- ✅ Open Interest muestra modo "cumulative" por defecto
+- ✅ Default persiste al cambiar timeframe o símbolo
+- ✅ Botón "Aplicar a todas las monedas" funciona correctamente
+- ✅ Estado global sincronizado en las tres capas (Indicator, Manager, Watchlist)
+
 ### 9. Mejoras de Robustez (29 Enero 2026)
 
 Se implementaron mejoras de robustez para mejorar la estabilidad y experiencia de usuario:
@@ -671,6 +818,195 @@ python -m uvicorn main:app --port 8000
 
 ---
 
+## SISTEMA DE ALERTAS GLOBALES (Enero 2026)
+
+Sistema de protección que controla centralizadamente TODAS las alertas automáticas al Trading Bot.
+
+### Objetivo
+
+Prevenir trading automático accidental desde la Watchlist Desktop. Solo el Crypto Analyzer (App 4/8) debe enviar alertas de trading por defecto.
+
+### Componentes del Sistema
+
+#### **AlertToggle Component**
+- **Ubicación**: `src/components/AlertToggle.jsx`
+- **Funcionalidad**: Toggle visual en el header de la Watchlist
+- **Estados**:
+  - **OFF (default)**: 🔕 Alertas OFF - Indicador verde
+  - **ON**: 🔔 Alertas ON - Indicador rojo pulsante + warning
+- **Integración**: Importado en `Watchlist.jsx` línea 1261
+
+#### **Backend Endpoints**
+
+**1. GET /api/alerts/global-status**
+```json
+{
+  "success": true,
+  "alertsEnabled": false,
+  "services": {
+    "swing": {"enabled": false},
+    "patterns": {
+      "enabled": false,
+      "dbt_enabled_count": 0,
+      "rejection_enabled_count": 0
+    }
+  }
+}
+```
+
+**2. POST /api/alerts/toggle-global**
+```json
+// Request
+{"enabled": true}
+
+// Response
+{
+  "success": true,
+  "alertsEnabled": true,
+  "message": "Global alerts enabled",
+  "services": {
+    "swing": {"success": true, "enabled": true},
+    "patterns": {"success": true, "enabled": true, "configs_updated": 4}
+  }
+}
+```
+
+### Servicios Controlados
+
+| Servicio | Archivo Config | Default | Qué Detecta |
+|----------|---------------|---------|-------------|
+| **Swing Detector** | `swing_config.json` | `alertsEnabled: false` | Swing Highs/Lows |
+| **Double Top/Bottom** | `realtime_configs.json` | `alertsEnabled: false` | Dobles techos/suelos |
+| **Rejection Patterns** | `realtime_configs.json` | `alertsEnabled: false` | Hammer, Shooting Star, Engulfing, Doji |
+
+### Flujo de Alertas
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    DETECCION DE PATRONES                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │ Swing        │  │ DTB          │  │ Rejection    │          │
+│  │ Detector     │  │ Detector     │  │ Patterns     │          │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘          │
+│         │                  │                  │                  │
+│         └──────────────────┴──────────────────┘                  │
+│                            │                                     │
+│                            ▼                                     │
+│                  ┌─────────────────┐                            │
+│                  │ alertsEnabled?  │                            │
+│                  └────────┬────────┘                            │
+│                           │                                     │
+│          ┌────────────────┴────────────────┐                   │
+│          │                                  │                   │
+│         NO                                 YES                  │
+│          │                                  │                   │
+│          ▼                                  ▼                   │
+│  ┌───────────────┐              ┌─────────────────┐            │
+│  │ Solo graficar │              │ Enviar alerta   │            │
+│  │ en el chart   │              │ Trading Bot     │            │
+│  └───────────────┘              │ (puerto 5000)   │            │
+│                                 └─────────────────┘            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### UI del Toggle
+
+**Estado OFF (Seguro):**
+```
+┌─────────────────────────────┐
+│  🔕  Alertas OFF   🟢       │
+└─────────────────────────────┘
+```
+
+**Estado ON (Advertencia):**
+```
+┌─────────────────────────────────────────────────────────┐
+│  🔔  Alertas ON   🔴 (pulsante)                         │
+├─────────────────────────────────────────────────────────┤
+│  ⚠️ Las alertas están activas - Los detectores de      │
+│  patrones (Swing, DTB, Rejection) enviarán órdenes al   │
+│  Trading Bot                                            │
+├─────────────────────────────────────────────────────────┤
+│  [Swing] [DTB (2)] [Rejection (2)]                      │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Badges de Servicios
+
+Cuando las alertas están ON, se muestran badges naranjas indicando qué servicios están activos:
+- **Swing**: Swing Detector activo
+- **DTB (N)**: N configuraciones de Double Top/Bottom activas
+- **Rejection (N)**: N configuraciones de Rejection Patterns activas
+
+### Archivos Modificados
+
+#### Backend
+1. **`realtime_pattern_service.py`**:
+   - Línea 915: `alertsEnabled: False` en `_get_default_dbt_config()`
+   - Línea 934: `alertsEnabled: False` en `_get_default_rejection_config()`
+
+2. **`config/realtime_configs.json`**:
+   - Todas las instancias de `alertsEnabled` cambiadas a `false`
+
+3. **`main.py`**:
+   - Línea ~3743: Endpoint `GET /api/alerts/global-status`
+   - Línea ~3802: Endpoint `POST /api/alerts/toggle-global`
+
+#### Frontend
+1. **`AlertToggle.jsx`** (NUEVO):
+   - Estado `alertsEnabled` y `serviceDetails`
+   - Fetch de `/api/alerts/global-status`
+   - Toggle via `/api/alerts/toggle-global`
+   - Renderiza warning + badges cuando ON
+
+2. **`AlertToggle.css`** (NUEVO):
+   - Estilos para botón con estados enabled/disabled
+   - Animación pulse-red para indicador ON
+   - Estilos para `.alert-details` y `.service-badge`
+
+3. **`Watchlist.jsx`**:
+   - Línea 24: `import AlertToggle from "./AlertToggle"`
+   - Línea 1261: `<AlertToggle />` en header
+
+### Verificación
+
+**Consola del navegador (Estado OFF):**
+```
+[AlertToggle] Alertas globales desactivadas
+[AlertToggle] Servicios afectados: {
+  swing: {success: true, enabled: false},
+  patterns: {success: true, enabled: false, configs_updated: 4}
+}
+```
+
+**Consola del navegador (Estado ON):**
+```
+[AlertToggle] Alertas globales activadas
+[AlertToggle] Servicios afectados: {
+  swing: {success: true, enabled: true},
+  patterns: {success: true, enabled: true, configs_updated: 4}
+}
+```
+
+### Troubleshooting
+
+**Toggle no responde:**
+1. Verificar que el backend está corriendo en puerto 8000
+2. Verificar que los endpoints `/api/alerts/*` existen
+3. Revisar consola del navegador por errores HTTP
+
+**Alertas se siguen enviando con toggle OFF:**
+1. Verificar que los archivos de configuración tienen `alertsEnabled: false`
+2. Reiniciar el backend para cargar la nueva configuración
+3. Verificar logs del backend que confirme estado OFF
+
+**Badges no aparecen:**
+1. Los badges solo aparecen cuando `alertsEnabled === true`
+2. Verificar que `serviceDetails` tiene datos en el estado del componente
+3. Revisar estilos CSS de `.alert-details` y `.service-badge`
+
+---
+
 ## INDICADORES DISPONIBLES
 
 Los indicadores se calculan en el **backend** y se renderizan en el frontend:
@@ -737,7 +1073,9 @@ npm run dev:electron
 
 ---
 
-## RESUMEN DE MEJORAS DE ROBUSTEZ
+## RESUMEN DE MEJORAS IMPLEMENTADAS
+
+### Robustez y Estabilidad
 
 | Funcionalidad | Archivo | Descripcion |
 |---------------|---------|-------------|
@@ -748,3 +1086,29 @@ npm run dev:electron
 | Retry con Backoff | `robustness.js` | 3 reintentos: 1s, 2s, 4s |
 | Cache Cleanup | `robustness.js` | Elimina entradas >7 dias |
 | Inicio Coordinado | `START_ALL.bat` | Backend + Electron secuencial |
+| HTTP Client Pool | `vwap_service.py` | Reutiliza conexiones HTTP |
+| Cache Cooldown | `CandleCache.js` | Previene ciclos infinitos de limpieza |
+
+### Indicadores y Configuración
+
+| Funcionalidad | Archivo | Descripcion |
+|---------------|---------|-------------|
+| OI Default Cumulative | `OpenInterestIndicator.js` | Modo acumulativo por defecto |
+| OI Apply to All | `OpenInterestSettings.jsx` | Aplicar config a todas las monedas |
+| VWAP Flickering Fix | `VWAPIndicator.js` | Reemplazo atomico de Map |
+| VWAP Polling Fix | `VWAPIndicator.js` | Integrado con PollingScheduler |
+| Swing Config Fixed | `swing_config.json` | BTCUSDT/ETHUSDT con days=90 |
+| Auto-scroll Grafico | `MiniChart.jsx` | Seguir precio en tiempo real |
+| Velas Duplicadas Fix | `MiniChart.jsx` | Deduplicacion con Map |
+
+### Sistema de Alertas
+
+| Funcionalidad | Archivo | Descripcion |
+|---------------|---------|-------------|
+| AlertToggle Component | `AlertToggle.jsx` | Toggle visual global de alertas |
+| Global Status Endpoint | `main.py` | GET /api/alerts/global-status |
+| Global Toggle Endpoint | `main.py` | POST /api/alerts/toggle-global |
+| Swing Alerts Default | `swing_config.json` | alertsEnabled: false |
+| DTB Alerts Default | `realtime_pattern_service.py` | alertsEnabled: false |
+| Rejection Alerts Default | `realtime_pattern_service.py` | alertsEnabled: false |
+| Config Persistence | `realtime_configs.json` | Todos alertsEnabled: false |

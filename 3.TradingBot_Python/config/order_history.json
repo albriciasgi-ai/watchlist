@@ -7954,5 +7954,35 @@
     "confidence": 75,
     "source": "STRATEGY_BUILDER",
     "status": "success"
+  },
+  {
+    "timestamp": "2026-10-14T20:45:03.576923",
+    "symbol": "BTCUSDT",
+    "side": "Sell",
+    "entry_price": 81760.1,
+    "quantity_coin": 0.002,
+    "quantity_usdt": 163.5202,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "sl_mode": "percent",
+    "pattern": "SWING_HIGH (SHORT)",
+    "confidence": 50.0,
+    "source": "SWING_DETECTOR",
+    "status": "success"
+  },
+  {
+    "timestamp": "2026-10-14T20:45:03.629271",
+    "symbol": "ETHUSDT",
+    "side": "Sell",
+    "entry_price": 2418.86,
+    "quantity_coin": 0.08,
+    "quantity_usdt": 193.5088,
+    "stop_loss": 0.0,
+    "take_profit": 0.0,
+    "sl_mode": "percent",
+    "pattern": "SWING_HIGH (SHORT)",
+    "confidence": 50.0,
+    "source": "SWING_DETECTOR",
+    "status": "success"
   }
 ]

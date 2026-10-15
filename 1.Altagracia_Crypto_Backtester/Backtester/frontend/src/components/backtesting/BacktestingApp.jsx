@@ -209,6 +209,116 @@ const BacktestingApp = () => {
   const orderManagerRef = useRef(null);
   const indicatorPanelRef = useRef(null);
   const indicatorManagerRef = useRef(null); // Ref para IndicatorManager del tab activo
+  const tradeBoxMapRef = useRef({}); // 🎯 NUEVO: Mapeo tradeId → boxId para extender TP/SL boxes
+
+  // 🎯 FIX CRÍTICO: Refs para almacenar handlers actualizables (soluciona problema HMR)
+  // Los listeners se adjuntan UNA VEZ en handleInitialize, pero llaman a estos refs
+  // que son actualizados por useEffect cada vez que cambian las dependencias
+  const eventHandlersRef = useRef({
+    tradeClosed: null,
+    tradeOpened: null
+  });
+
+  // 🔥 DIAGNÓSTICO: Confirmar que el archivo se carga
+  console.log('%c[BacktestingApp] 🎯 tradeBoxMapRef inicializado', 'background: #4CAF50; color: white; font-size: 16px; padding: 4px;');
+
+  // 🎯 FIX CRÍTICO: useEffect para actualizar handlers (estos se llaman desde los listeners adjuntos en handleInitialize)
+  // Este useEffect se ejecuta cada vez que cambia activeTimeframe o currentSessionId,
+  // actualizando los handlers con closures frescos que capturan el estado actual
+  useEffect(() => {
+    console.log('[BacktestingApp] 🔧 Actualizando event handlers del OrderManager...');
+
+    // 📸 NUEVO: Handler para cuando se cierra un trade
+    eventHandlersRef.current.tradeClosed = async (event) => {
+      const { order } = event;
+      console.log('[BacktestingApp] 📸 Trade cerrado, capturando screenshot...', order.id);
+
+      // 🎯 CRÍTICO: Dibujar línea de salida PRIMERO (fuera del try-catch del screenshot)
+      const miniChart = miniChartRefs.current[activeTimeframe];
+      if (miniChart && miniChart.updateTradeBoundary) {
+        miniChart.updateTradeBoundary(order.id, order.exitTime);
+        console.log('[BacktestingApp] 🎯 Trade #' + order.id + ' cerrado, dibujando línea de salida');
+      } else {
+        console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para dibujar línea de salida');
+      }
+
+      // 🎯 NUEVO: Extender caja TP/SL hasta el timestamp de cierre
+      const boxId = tradeBoxMapRef.current[order.id];
+      console.log('[BacktestingApp] 🔍 Buscando box para extender:', {
+        tradeId: order.id,
+        boxId,
+        exitTime: order.exitTime,
+        exitTimeDate: new Date(order.exitTime).toISOString(),
+        hasMiniChart: !!miniChart,
+        hasExtendMethod: !!(miniChart && miniChart.extendTPSLBox),
+        allMappedBoxes: Object.keys(tradeBoxMapRef.current).length
+      });
+
+      if (boxId && miniChart && miniChart.extendTPSLBox) {
+        console.log(`[BacktestingApp] 📞 Llamando a extendTPSLBox con boxId=${boxId}, exitTime=${order.exitTime}`);
+        const extended = miniChart.extendTPSLBox(boxId, order.exitTime);
+        if (extended) {
+          console.log(`[BacktestingApp] ✅ TP/SL box ${boxId} extendida hasta cierre de trade #${order.id}`);
+        } else {
+          console.warn(`[BacktestingApp] ⚠️ No se pudo extender TP/SL box ${boxId}`);
+        }
+      } else {
+        if (!boxId) {
+          console.warn(`[BacktestingApp] ⚠️ No hay boxId mapeado para trade #${order.id}`);
+        } else if (!miniChart) {
+          console.warn('[BacktestingApp] ⚠️ MiniChart no disponible');
+        } else if (!miniChart.extendTPSLBox) {
+          console.warn('[BacktestingApp] ⚠️ Método extendTPSLBox no disponible en MiniChart');
+        }
+      }
+
+      try {
+        // Obtener sessionId (generarlo si no existe)
+        const sessionId = currentSessionId || `session_${symbol}_${Date.now()}`;
+        if (!currentSessionId) {
+          setCurrentSessionId(sessionId);
+        }
+
+        // Capturar screenshot del timeframe activo
+        if (miniChart && miniChart.captureScreenshot) {
+          const screenshotData = await miniChart.captureScreenshot(sessionId, order.id);
+
+          // Actualizar la orden con metadata del screenshot
+          order.screenshotPath = screenshotData.screenshotPath;
+          order.screenshotCaptured = screenshotData.screenshotCaptured;
+          order.screenshotTimestamp = screenshotData.screenshotTimestamp;
+          order.screenshotMetadata = screenshotData.screenshotMetadata;
+
+          console.log('[BacktestingApp] ✅ Screenshot capturado y vinculado a orden:', {
+            orderId: order.id,
+            path: screenshotData.screenshotPath
+          });
+        } else {
+          console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para capturar screenshot');
+        }
+      } catch (error) {
+        console.error('[BacktestingApp] ❌ Error capturando screenshot:', error);
+        // No fallar la operación si el screenshot falla
+      }
+    };
+
+    // 🎯 NUEVO: Handler para cuando se abre un trade
+    eventHandlersRef.current.tradeOpened = (event) => {
+      const { order } = event;
+      console.log('[BacktestingApp] 🎯 Trade abierto, dibujando línea de entrada...', order.id);
+
+      const miniChart = miniChartRefs.current[activeTimeframe];
+      if (miniChart && miniChart.addTradeBoundary) {
+        miniChart.addTradeBoundary(order.entryTime, order.id);
+      } else {
+        console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para dibujar línea de entrada');
+      }
+    };
+
+    console.log('[BacktestingApp] ✅ Event handlers actualizados (tradeClosed, tradeOpened)');
+
+    // NO hay cleanup - los handlers se actualizan pero los listeners permanecen adjuntos
+  }, [activeTimeframe, currentSessionId]); // Re-ejecutar cuando cambian estas dependencias
 
   // 🎯 Lista de timeframes disponibles (centralizada)
   const AVAILABLE_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
@@ -855,7 +965,7 @@ const BacktestingApp = () => {
           // 🎯 FIX: Crear caja TP/SL cuando limit/stop order se ejecuta
           if (executedOrder && (executedOrder.stopLoss || executedOrder.takeProfit)) {
             if (miniChart && miniChart.addTPSLBox) {
-              miniChart.addTPSLBox(
+              const boxId = miniChart.addTPSLBox(
                 executedOrder.entryPrice,
                 executedOrder.executedAt || currentTime,
                 executedOrder.side, // 'long' o 'short'
@@ -863,69 +973,40 @@ const BacktestingApp = () => {
                 executedOrder.takeProfit,
                 5 // 5 velas de ancho
               );
-              console.log('[BacktestingApp] TP/SL box creada para limit order ejecutada');
+              // 🎯 NUEVO: Guardar mapeo tradeId → boxId
+              if (boxId) {
+                tradeBoxMapRef.current[executedOrder.id] = boxId;
+                console.log(`[BacktestingApp] TP/SL box ${boxId} asociada a trade #${executedOrder.id}`);
+              }
             }
           }
         };
 
-        // 📸 NUEVO: Capturar screenshot cuando se cierra un trade
-        orderManagerRef.current.on('tradeClosed', async (event) => {
-          const { order } = event;
-          console.log('[BacktestingApp] 📸 Trade cerrado, capturando screenshot...', order.id);
-
-          // 🎯 CRÍTICO: Dibujar línea de salida PRIMERO (fuera del try-catch del screenshot)
-          const miniChart = miniChartRefs.current[activeTimeframe];
-          if (miniChart && miniChart.updateTradeBoundary) {
-            miniChart.updateTradeBoundary(order.id, order.exitTime);
-            console.log('[BacktestingApp] 🎯 Trade #' + order.id + ' cerrado, dibujando línea de salida');
-          } else {
-            console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para dibujar línea de salida');
-          }
-
-          try {
-            // Obtener sessionId (generarlo si no existe)
-            const sessionId = currentSessionId || `session_${symbol}_${Date.now()}`;
-            if (!currentSessionId) {
-              setCurrentSessionId(sessionId);
-            }
-
-            // Capturar screenshot del timeframe activo
-            if (miniChart && miniChart.captureScreenshot) {
-              const screenshotData = await miniChart.captureScreenshot(sessionId, order.id);
-
-              // Actualizar la orden con metadata del screenshot
-              order.screenshotPath = screenshotData.screenshotPath;
-              order.screenshotCaptured = screenshotData.screenshotCaptured;
-              order.screenshotTimestamp = screenshotData.screenshotTimestamp;
-              order.screenshotMetadata = screenshotData.screenshotMetadata;
-
-              console.log('[BacktestingApp] ✅ Screenshot capturado y vinculado a orden:', {
-                orderId: order.id,
-                path: screenshotData.screenshotPath
-              });
-            } else {
-              console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para capturar screenshot');
-            }
-          } catch (error) {
-            console.error('[BacktestingApp] ❌ Error capturando screenshot:', error);
-            // No fallar la operación si el screenshot falla
-          }
-        });
-
-        // 🎯 NUEVO: Dibujar línea de entrada cuando se abre un trade
-        orderManagerRef.current.on('tradeOpened', (event) => {
-          const { order } = event;
-          console.log('[BacktestingApp] 🎯 Trade abierto, dibujando línea de entrada...', order.id);
-
-          const miniChart = miniChartRefs.current[activeTimeframe];
-          if (miniChart && miniChart.addTradeBoundary) {
-            miniChart.addTradeBoundary(order.entryTime, order.id);
-          } else {
-            console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para dibujar línea de entrada');
-          }
-        });
-
         console.log('[BacktestingApp] OrderManager creado');
+
+        // 🎯 FIX CRÍTICO: Adjuntar event listeners UNA VEZ (aquí OrderManager existe)
+        // Los listeners llaman a través de eventHandlersRef que es actualizado por useEffect
+        if (!orderManagerRef.current._listenersAttached) {
+          console.log('[BacktestingApp] 🔗 Adjuntando event listeners permanentes del OrderManager...');
+
+          orderManagerRef.current.on('tradeClosed', (event) => {
+            if (eventHandlersRef.current.tradeClosed) {
+              eventHandlersRef.current.tradeClosed(event);
+            }
+          });
+
+          orderManagerRef.current.on('tradeOpened', (event) => {
+            if (eventHandlersRef.current.tradeOpened) {
+              eventHandlersRef.current.tradeOpened(event);
+            }
+          });
+
+          // Marcar que ya se adjuntaron para no duplicar en re-inicializaciones
+          orderManagerRef.current._listenersAttached = true;
+          console.log('[BacktestingApp] ✅ Event listeners permanentes adjuntados');
+        } else {
+          console.log('[BacktestingApp] ⏭️ Event listeners ya estaban adjuntados');
+        }
       }
 
       // El currentTime está en simulationStartTime
@@ -2348,7 +2429,7 @@ const BacktestingApp = () => {
                     if (order && order.type === 'market' && (order.stopLoss || order.takeProfit)) {
                       const miniChart = miniChartRefs.current[activeTimeframe];
                       if (miniChart && miniChart.addTPSLBox) {
-                        miniChart.addTPSLBox(
+                        const boxId = miniChart.addTPSLBox(
                           order.entryPrice,
                           order.openTime || currentTime,
                           order.side, // 'long' o 'short'
@@ -2356,6 +2437,11 @@ const BacktestingApp = () => {
                           order.takeProfit,
                           5 // 5 velas de ancho
                         );
+                        // 🎯 NUEVO: Guardar mapeo tradeId → boxId
+                        if (boxId) {
+                          tradeBoxMapRef.current[order.id] = boxId;
+                          console.log(`[BacktestingApp] TP/SL box ${boxId} asociada a trade #${order.id}`);
+                        }
                       }
                     }
                   }}

@@ -8,6 +8,7 @@ import DoubleTopBottomSettings from "./DoubleTopBottomSettings";
 import SwingDetectorSettings from "./SwingDetectorSettings";
 import SupportResistanceSettings from "./SupportResistanceSettings";
 import VWAPSettings from "./VWAPSettings";
+import OpenInterestSettings from "./OpenInterestSettings";
 import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import wsManager from "./WebSocketManager";
@@ -21,6 +22,7 @@ import Logger from '../utils/Logger.js';
 import backgroundPreloader from '../utils/BackgroundPreloader.js';
 import { API_BASE_URL } from "../config";
 import ConnectionStatus from "./ConnectionStatus";
+import AlertToggle from "./AlertToggle";
 import { initRobustness, stopRobustness } from '../utils/robustness';
 import pollingScheduler from '../utils/PollingScheduler';
 
@@ -101,17 +103,17 @@ const Watchlist = () => {
     return saved ? parseInt(saved) : 2;
   });
   const [indicatorStates, setIndicatorStates] = useState({
-    "Volume Delta": false,    // Desactivado por defecto
+    "Volume Delta": true,     // Activo - análisis de flujo de órdenes
     "CVD": false,             // Desactivado por defecto
-    "Volume Profile": false,  // Desactivado por defecto (pesado)
-    "Open Interest": false,
+    "Volume Profile": true,   // Activo - análisis de volumen por precio
+    "Open Interest": true,    // Activo - interés abierto en futuros
     "VWAP": true,            // Activo (esencial para estrategia)
     "Fibonacci": false,
     "Continuation Patterns": false,
     "Rejection Patterns": false,  // Desactivado por defecto (pesado)
     "Double Top/Bottom": false,   // Desactivado por defecto (pesado)
     "Support & Resistance": false,  // S/R indicator (off by default)
-    "Swing Detector": true   // Swing high/low detector (backend-based) - Activo por defecto
+    "Swing Detector": false  // Desactivado por defecto
   });
 
   // 🚀 Estados para precarga de indicadores - DESHABILITADO para optimización
@@ -148,7 +150,7 @@ const Watchlist = () => {
   const [selectedSymbolForVp, setSelectedSymbolForVp] = useState(null);
 
   // 📊 NUEVO: Estado para modo de Open Interest
-  const [oiMode, setOiMode] = useState("histogram");
+  const [oiMode, setOiMode] = useState("cumulative");
 
   // 🎯 NUEVO: Estado para Range Detection Settings
   const [showRangeDetectionSettings, setShowRangeDetectionSettings] = useState(false);
@@ -164,9 +166,11 @@ const Watchlist = () => {
   const [showSupportResistanceSettings, setShowSupportResistanceSettings] = useState(false);
   const [selectedSymbolForSR, setSelectedSymbolForSR] = useState(null);
 
-  // 📈 NUEVO: Estados para VWAP, Fibonacci y Continuation Pattern Settings
+  // 📈 NUEVO: Estados para VWAP, Open Interest, Fibonacci y Continuation Pattern Settings
   const [showVWAPSettings, setShowVWAPSettings] = useState(false);
   const [selectedSymbolForVWAP, setSelectedSymbolForVWAP] = useState(null);
+  const [showOpenInterestSettings, setShowOpenInterestSettings] = useState(false);
+  const [selectedSymbolForOI, setSelectedSymbolForOI] = useState(null);
   const [showFibonacciSettings, setShowFibonacciSettings] = useState(false);
   const [selectedSymbolForFib, setSelectedSymbolForFib] = useState(null);
   const [showContinuationPatternSettings, setShowContinuationPatternSettings] = useState(false);
@@ -700,6 +704,17 @@ const Watchlist = () => {
     setShowVWAPSettings(true);
   };
 
+  const handleOpenOpenInterestSettings = (symbol, indicatorManagerRef) => {
+    setSelectedSymbolForOI(symbol);
+    if (indicatorManagerRef) {
+      setIndicatorManagers(prev => ({
+        ...prev,
+        [symbol]: { ...prev[symbol], manager: indicatorManagerRef }
+      }));
+    }
+    setShowOpenInterestSettings(true);
+  };
+
   const handleOpenFibonacciSettings = (symbol, indicatorManagerRef) => {
     setSelectedSymbolForFib(symbol);
     if (indicatorManagerRef) {
@@ -797,6 +812,53 @@ const Watchlist = () => {
         }
       });
     }
+  };
+
+  const handleOpenInterestConfigChange = (config) => {
+    const manager = indicatorManagers[selectedSymbolForOI]?.manager;
+    if (manager) {
+      const oiIndicator = manager.getOpenInterestIndicator();
+      if (oiIndicator) {
+        oiIndicator.updateConfig(config);
+        // Actualizar estado global de oiMode
+        if (config.mode) {
+          setOiMode(config.mode);
+        }
+        log.debug(`[Watchlist] Updated Open Interest config for ${selectedSymbolForOI}`);
+        // Forzar redibujado
+        if (manager.requestRedraw) {
+          manager.requestRedraw();
+        }
+      }
+    }
+  };
+
+  const handleApplyOIToAll = (config) => {
+    log.info(`[Watchlist] 🌐 Aplicando configuración OI a todas las monedas`);
+
+    // Actualizar estado global de oiMode
+    if (config.mode) {
+      setOiMode(config.mode);
+    }
+
+    symbols.forEach(symbol => {
+      const manager = IndicatorManagerRegistry.get(symbol);
+      if (manager) {
+        const oiIndicator = manager.getOpenInterestIndicator();
+        if (oiIndicator) {
+          oiIndicator.updateConfig(config);
+          log.debug(`[Watchlist] ✅ OI actualizado para ${symbol}: mode=${config.mode}`);
+        }
+      }
+    });
+
+    // Forzar redibujado del símbolo actual
+    const currentManager = indicatorManagers[selectedSymbolForOI]?.manager;
+    if (currentManager && currentManager.requestRedraw) {
+      currentManager.requestRedraw();
+    }
+
+    log.info(`[Watchlist] ✅ Configuración OI aplicada a todas las monedas`);
   };
 
   const handleFibonacciConfigChange = (config, saveAsOverride = true) => {
@@ -1195,6 +1257,10 @@ const Watchlist = () => {
         <div className="controls">
           {/* Indicador de estado de conexion */}
           <ConnectionStatus />
+
+          {/* Control de alertas al Trading Bot */}
+          <AlertToggle />
+
           <label>
             Timeframe:
             <select value={interval} onChange={(e) => setInterval(e.target.value)}>
@@ -1516,6 +1582,7 @@ const Watchlist = () => {
               onOpenRejectionPatternSettings={(indicatorManagerRef) => handleOpenRejectionPatternSettings(sym, indicatorManagerRef)}
               onOpenSupportResistanceSettings={(indicatorManagerRef) => handleOpenSupportResistanceSettings(sym, indicatorManagerRef)}
               onOpenVWAPSettings={(indicatorManagerRef) => handleOpenVWAPSettings(sym, indicatorManagerRef)}
+              onOpenOpenInterestSettings={(indicatorManagerRef) => handleOpenOpenInterestSettings(sym, indicatorManagerRef)}
               onOpenFibonacciSettings={(indicatorManagerRef) => handleOpenFibonacciSettings(sym, indicatorManagerRef)}
               onOpenContinuationPatternSettings={(indicatorManagerRef) => handleOpenContinuationPatternSettings(sym, indicatorManagerRef)}
               onOpenDoubleTopBottomSettings={(indicatorManagerRef) => handleOpenDoubleTopBottomSettings(sym, indicatorManagerRef)}
@@ -1682,14 +1749,20 @@ const Watchlist = () => {
                     resetHour: vwapIndicator.resetHour,
                     rollingPeriod: vwapIndicator.rollingPeriod,
                     showBands: vwapIndicator.showBands,
+                    showBandWidth: vwapIndicator.showBandWidth,
+                    showBBWP: vwapIndicator.showBBWP,
+                    showTTMSqueeze: vwapIndicator.showTTMSqueeze,
                     applyCryptoAdjustment: vwapIndicator.applyCryptoAdjustment,
                     bandMultipliers: vwapIndicator.bandMultipliers,
                     vwapColor: vwapIndicator.vwapColor
                   } : {
-                    vwapType: 'session',
+                    vwapType: 'rolling',
                     resetHour: 0,
                     rollingPeriod: 200,
                     showBands: true,
+                    showBandWidth: false,
+                    showBBWP: false,
+                    showTTMSqueeze: false,
                     applyCryptoAdjustment: true,
                     bandMultipliers: [1.0, 2.0, 3.0],
                     vwapColor: '#FF9800'
@@ -1698,6 +1771,43 @@ const Watchlist = () => {
                 onConfigChange={handleVWAPConfigChange}
                 currentSymbol={selectedSymbolForVWAP}
                 interval={interval}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📊 NUEVO: Modal de Open Interest Settings */}
+      {showOpenInterestSettings && selectedSymbolForOI && (
+        <div className="modal-overlay" onClick={() => setShowOpenInterestSettings(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Configuración Open Interest</h3>
+              <button
+                className="modal-close-btn"
+                onClick={() => setShowOpenInterestSettings(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <OpenInterestSettings
+                config={(() => {
+                  const manager = indicatorManagers[selectedSymbolForOI]?.manager;
+                  const oiIndicator = manager?.getOpenInterestIndicator();
+                  return oiIndicator ? {
+                    mode: oiIndicator.mode,
+                    smoothing: oiIndicator.smoothing,
+                    showPriceSentiment: oiIndicator.showPriceSentiment
+                  } : {
+                    mode: 'cumulative',
+                    smoothing: 3,
+                    showPriceSentiment: false
+                  };
+                })()}
+                onConfigChange={handleOpenInterestConfigChange}
+                onApplyToAll={handleApplyOIToAll}
+                currentSymbol={selectedSymbolForOI}
               />
             </div>
           </div>

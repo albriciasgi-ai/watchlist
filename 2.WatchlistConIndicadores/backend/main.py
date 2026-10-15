@@ -3740,6 +3740,188 @@ async def reanalyze_swing_signals():
         }
 
 
+@app.post("/api/swing/toggle-alerts")
+async def toggle_swing_alerts(request: Request):
+    """
+    Toggle alerts on/off for swing detector.
+
+    Body:
+    {
+        "enabled": true/false
+    }
+    """
+    try:
+        swing_service = get_swing_service()
+        data = await request.json()
+        enabled = data.get("enabled", True)
+
+        swing_service.config.alertsEnabled = enabled
+        swing_service._save_config()
+
+        return {
+            "success": True,
+            "alertsEnabled": enabled,
+            "message": f"Alerts {'enabled' if enabled else 'disabled'}"
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Toggling swing alerts: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.get("/api/alerts/global-status")
+async def get_global_alerts_status():
+    """
+    Get current alert status for all pattern detection services.
+
+    Returns:
+    {
+        "success": true,
+        "alertsEnabled": true/false,  // Global state (true if ANY service has alerts enabled)
+        "services": {
+            "swing": {"enabled": true/false},
+            "patterns": {"enabled": true/false, "dbt_count": 2, "rejection_count": 2}
+        }
+    }
+    """
+    try:
+        services = {}
+
+        # Get Swing Detector status
+        try:
+            swing_service = get_swing_service()
+            services['swing'] = {'enabled': swing_service.config.alertsEnabled}
+        except Exception as e:
+            services['swing'] = {'enabled': False, 'error': str(e)}
+
+        # Get Realtime Pattern Service status
+        try:
+            realtime_service = get_realtime_pattern_service()
+            config_store = realtime_service.config_store
+
+            dbt_enabled_count = 0
+            rejection_enabled_count = 0
+
+            for symbol_data in config_store.configs.values():
+                for interval_data in symbol_data.get('intervals', {}).values():
+                    # Check DTB alerts
+                    if 'doubleTopBottom' in interval_data:
+                        dbt_config = interval_data['doubleTopBottom'].get('config', {})
+                        if dbt_config.get('alertsEnabled', False):
+                            dbt_enabled_count += 1
+
+                    # Check Rejection alerts
+                    if 'rejection' in interval_data:
+                        rej_config = interval_data['rejection'].get('config', {})
+                        if rej_config.get('alertsEnabled', False):
+                            rejection_enabled_count += 1
+
+            # Consider patterns enabled if ANY config has alerts enabled
+            patterns_enabled = (dbt_enabled_count > 0 or rejection_enabled_count > 0)
+
+            services['patterns'] = {
+                'enabled': patterns_enabled,
+                'dbt_enabled_count': dbt_enabled_count,
+                'rejection_enabled_count': rejection_enabled_count
+            }
+
+        except Exception as e:
+            services['patterns'] = {'enabled': False, 'error': str(e)}
+
+        # Global state is true if ANY service has alerts enabled
+        global_enabled = any(s.get('enabled', False) for s in services.values())
+
+        return {
+            "success": True,
+            "alertsEnabled": global_enabled,
+            "services": services
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Getting global alerts status: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
+@app.post("/api/alerts/toggle-global")
+async def toggle_global_alerts(request: Request):
+    """
+    Toggle alerts on/off for ALL pattern detection services (Swing, DTB, Rejection).
+
+    Body:
+    {
+        "enabled": true/false
+    }
+    """
+    try:
+        data = await request.json()
+        enabled = data.get("enabled", True)
+
+        results = {}
+
+        # Toggle Swing Detector alerts
+        try:
+            swing_service = get_swing_service()
+            swing_service.config.alertsEnabled = enabled
+            swing_service._save_config()
+            results['swing'] = {'success': True, 'enabled': enabled}
+        except Exception as e:
+            results['swing'] = {'success': False, 'error': str(e)}
+
+        # Toggle Realtime Pattern Service alerts (DTB + Rejection)
+        try:
+            realtime_service = get_realtime_pattern_service()
+            config_store = realtime_service.config_store
+
+            # Get all symbols and intervals from config
+            symbols_updated = 0
+            for symbol_data in config_store.configs.values():
+                for interval_data in symbol_data.get('intervals', {}).values():
+                    # Update DTB alerts
+                    if 'doubleTopBottom' in interval_data:
+                        dbt_config = interval_data['doubleTopBottom'].get('config', {})
+                        dbt_config['alertsEnabled'] = enabled
+                        symbols_updated += 1
+
+                    # Update Rejection alerts
+                    if 'rejection' in interval_data:
+                        rej_config = interval_data['rejection'].get('config', {})
+                        rej_config['alertsEnabled'] = enabled
+                        symbols_updated += 1
+
+            # Save updated configs
+            config_store.save_configs()
+            results['patterns'] = {
+                'success': True,
+                'enabled': enabled,
+                'configs_updated': symbols_updated
+            }
+
+        except Exception as e:
+            results['patterns'] = {'success': False, 'error': str(e)}
+
+        overall_success = all(r.get('success', False) for r in results.values())
+
+        return {
+            "success": overall_success,
+            "alertsEnabled": enabled,
+            "message": f"Global alerts {'enabled' if enabled else 'disabled'}",
+            "services": results
+        }
+
+    except Exception as e:
+        print(f"[ERROR] Toggling global alerts: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 @app.post("/api/swing/add-zone")
 async def add_swing_zone(request: Request):
     """

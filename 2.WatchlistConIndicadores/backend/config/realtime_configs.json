@@ -70,7 +70,7 @@
               "minZScore": 1,
               "swingCandleRange": 1
             },
-            "alertsEnabled": true,
+            "alertsEnabled": false,
             "debugMode": false,
             "signalDirection": {
               "global": "BOTH"
@@ -209,7 +209,7 @@
               "minZScore": 1,
               "swingCandleRange": 1
             },
-            "alertsEnabled": true,
+            "alertsEnabled": false,
             "debugMode": false,
             "signalDirection": {
               "global": "BOTH"
@@ -353,7 +353,7 @@
               "minZScore": 1,
               "swingCandleRange": 1
             },
-            "alertsEnabled": true,
+            "alertsEnabled": false,
             "debugMode": false,
             "signalDirection": {
               "global": "BOTH"
@@ -481,7 +481,7 @@
               "minZScore": 1,
               "swingCandleRange": 1
             },
-            "alertsEnabled": true,
+            "alertsEnabled": false,
             "debugMode": false,
             "signalDirection": {
               "global": "BOTH"

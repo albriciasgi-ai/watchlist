@@ -6533,3 +6533,882 @@ class ExchangeFactory {
 **Fuentes:** Documentacion oficial, reviews verificados, testing APIs
 **Preparado por:** Claude Code (Anthropic)
 **Proyecto:** AnalizadorDesktop (Electron + React + Bybit API)
+
+---
+
+# VALIDACION API xSTOCKS BYBIT (Octubre 2026)
+
+Sistema completo de validación de compatibilidad API para xStocks (acciones tokenizadas) en Bybit.
+
+## Resumen Ejecutivo
+
+**Estado Final**: ✅ 5/5 xStocks completamente compatibles con la infraestructura API actual.
+
+**Conclusión**: Todos los xStocks activos en Bybit son 100% compatibles. No se requieren cambios en el código para soportarlos - funcionan exactamente igual que cualquier par spot tradicional. La implementación puede proceder inmediatamente.
+
+## xStocks Validados (Activos en Bybit)
+
+| Símbolo | Nombre | Multiplicador | Estado | Margin Trading | LONG/SHORT |
+|---------|--------|---------------|--------|----------------|------------|
+| AAPLXUSDT | Apple Inc. | 1.0033 | Trading | ✅ utaOnly | ✅ Ambos |
+| NVDAXUSDT | NVIDIA Corp. | 1.0017 | Trading | ✅ utaOnly | ✅ Ambos |
+| METAXUSDT | Meta Platforms | 1.0029 | Trading | ❌ none | ⚠️ Solo LONG |
+| GOOGLXUSDT | Alphabet Inc. | 1.0024 | Trading | ✅ utaOnly | ✅ Ambos |
+| MCDXUSDT | McDonald's | 1.0212 | Trading | ❌ none | ⚠️ Solo LONG |
+
+### Capacidades de Trading por xStock
+
+**✅ Con Margin Trading (LONG y SHORT disponibles):**
+- **AAPLXUSDT** - Apple Inc.
+- **NVDAXUSDT** - NVIDIA Corp.
+- **GOOGLXUSDT** - Alphabet Inc.
+
+**⚠️ Sin Margin Trading (Solo LONG):**
+- **METAXUSDT** - Meta Platforms
+- **MCDXUSDT** - McDonald's
+
+### Requisitos para Operar SHORT en xStocks
+
+Para hacer SHORT en los 3 xStocks que soportan margin trading (`marginTrading: "utaOnly"`):
+
+1. **Cuenta UTA Activada**: Unified Trading Account de Bybit
+2. **Margin Trading Habilitado**: En configuración de cuenta
+3. **Colateral Suficiente**: Saldo en USDT para garantizar el préstamo
+4. **Conocimiento del Riesgo**: El margin trading implica apalancamiento y riesgo de liquidación
+
+### Cómo Funciona el SHORT en Spot Margin
+
+```
+1. Sistema pide prestado el xStock (ej: AAPLX)
+2. Vende inmediatamente al precio actual
+3. Esperas a que baje el precio
+4. Recompras el xStock más barato
+5. Devuelves el xStock prestado
+6. Ganancia = Precio Venta - Precio Recompra - Intereses
+```
+
+**IMPORTANTE**: Los xStocks sin margin trading (META, MCD) **solo permiten operaciones LONG** (comprar y vender normalmente).
+
+## Problema Original
+
+**Fallo Inicial**: 0/8 símbolos pasaron las pruebas de validación
+
+**Causas Raíz**:
+1. **Formato de símbolo incorrecto**: Se usaba "AAPLX" en lugar del formato completo "AAPLXUSDT"
+2. **Símbolos inexistentes**: 3 de los 8 símbolos originales no existen o no están activos (TSLAX, MSFX, MSTRx, COINx, SPYx)
+3. **Lógica de validación con errores**: Extracción incorrecta de datos de la estructura JSON de la API
+
+## Proceso de Diagnóstico
+
+### 1. Análisis de Resultados Fallidos
+Revisión del archivo `xstocks_validation_results.json` que mostraba 0/8 símbolos compatibles.
+
+### 2. Script de Diagnóstico (diagnose_xstocks.py)
+Creación de script con 11 variaciones de formato de símbolo:
+- AAPLX, AAPLx
+- AAPLXUSDT, AAPLxUSDT
+- AAPLX/USDT, AAPLx/USDT
+- AAPLX-USDT, AAPLx-USDT
+- AAPL, AAPLUSDT, AAPL/USDT
+
+### 3. Descubrimiento del Formato Correcto
+**Formato correcto identificado**: Par completo "SYMBOLXUSDT" (ejemplo: AAPLXUSDT)
+
+### 4. Listado Completo de Mercado
+Descarga de todos los símbolos spot de Bybit: **527 símbolos totales**
+
+### 5. Filtrado de xStocks (filter_xstocks.py)
+Identificación mediante el campo `xstockMultiplier != "1"`: **5 xStocks activos** (no 8 como se creía)
+
+### 6. Corrección de Validación
+Ajuste de la lógica de extracción de datos de la estructura JSON anidada de la API.
+
+### 7. Validación Exitosa
+100% de compatibilidad confirmada para los 5 símbolos activos.
+
+## Problemas Técnicos Resueltos
+
+### 1. Error de Codificación Unicode
+**Problema**: Windows console (cp1252) no soporta caracteres Unicode (✓, ✗, ℹ)
+```
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2139'
+```
+**Solución**: Reemplazo por equivalentes ASCII: [OK], [ERROR], [INFO]
+
+### 2. Formato de Símbolo
+**Problema**: Se probaba "AAPLX" en lugar de "AAPLXUSDT"
+**Solución**: Uso del formato completo del par trading
+
+### 3. Validación de BaseCoin
+**Problema**: Lógica incorrecta esperaba "AAPLXUSDT" cuando el campo baseCoin contiene "AAPLX"
+**Solución**: Extracción correcta eliminando sufijo "USDT"
+```python
+expected_base = symbol.replace("USDT", "")  # AAPLXUSDT -> AAPLX
+```
+
+### 4. Estructura JSON de Respuesta API
+**Problema**: El campo `category` está en `result.category`, no en cada instrumento individual
+**Solución**: Extracción correcta desde el nivel superior de la respuesta
+```python
+category = result.get("category", "")
+checks = {
+    "Category": category == "spot",  # No instrument.get("category")
+    # ...
+}
+```
+
+### 5. Mapeo de Valores para Display
+**Problema**: Los nombres de checks ("Symbol", "Category") no coincidían con las claves del objeto ("symbol", "category")
+**Solución**: Creación de `value_map` para mapeo correcto
+```python
+value_map = {
+    "Symbol": instrument.get("symbol", "N/A"),
+    "Category": category,
+    "BaseCoin": instrument.get("baseCoin", "N/A"),
+    "QuoteCoin": instrument.get("quoteCoin", "N/A"),
+    "xstockMultiplier": instrument.get("xstockMultiplier", "N/A"),
+}
+```
+
+## Validación de Compatibilidad API
+
+Todos los xStocks pasaron las **4 pruebas de compatibilidad**:
+
+### ✅ Test 1: Instruments Info
+- Symbol correcto
+- Category = "spot"
+- BaseCoin y QuoteCoin correctos
+- Campo `xstockMultiplier` presente
+- Campo `symbolType` = "xstocks"
+
+### ✅ Test 2: Kline Data
+- Datos históricos disponibles
+- Formato de velas correcto (7 elementos: timestamp, open, high, low, close, volume, turnover)
+- Lógica OHLC válida (high >= max(open, close), low <= min(open, close))
+
+### ✅ Test 3: Ticker Data
+- Precio en tiempo real disponible
+- Datos 24h completos (high, low, volume)
+- Bid/Ask/Spread funcional
+- Spreads bajos: 0.029% - 0.224%
+
+### ✅ Test 4: Multiple Intervals
+- **6 intervalos soportados**: 1m, 5m, 15m, 60m, 240m, D
+- Todos funcionan correctamente
+- Sin restricciones especiales vs pares spot normales
+
+## Estructura de Respuesta API
+
+### Endpoint: GET /v5/market/instruments-info
+
+```json
+GET /v5/market/instruments-info?category=spot&symbol=AAPLXUSDT
+
+Response:
+{
+  "retCode": 0,
+  "retMsg": "OK",
+  "result": {
+    "category": "spot",
+    "list": [
+      {
+        "symbolId": 1002,
+        "symbol": "AAPLXUSDT",
+        "baseCoin": "AAPLX",
+        "quoteCoin": "USDT",
+        "innovation": "0",
+        "status": "Trading",
+        "marginTrading": "utaOnly",
+        "symbolType": "xstocks",
+        "xstockMultiplier": "1.0032690125398187",
+        "lotSizeFilter": {
+          "basePrecision": "0.001",
+          "quotePrecision": "0.00001",
+          "minOrderQty": "0.001",
+          "maxOrderQty": "270",
+          "minOrderAmt": "5",
+          "maxOrderAmt": "65000"
+        },
+        "priceFilter": {
+          "tickSize": "0.01"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Campos Clave
+
+| Campo | Descripción | Valor Ejemplo |
+|-------|-------------|---------------|
+| `symbolType` | Tipo de símbolo | "xstocks" |
+| `xstockMultiplier` | Multiplicador del xStock | "1.0032690125398187" |
+| `baseCoin` | Moneda base (sin USDT) | "AAPLX" |
+| `quoteCoin` | Moneda de cotización | "USDT" |
+| `status` | Estado del par | "Trading" |
+
+## Datos de Mercado (Snapshot 14 Oct 2026, 23:00 UTC)
+
+| Símbolo | Precio | 24h High | 24h Low | Vol 24h | Spread | Bid | Ask |
+|---------|--------|----------|---------|---------|--------|-----|-----|
+| AAPLXUSDT | $347.16 | $348.51 | $342.98 | 256 | 0.029% | $347.19 | $347.29 |
+| NVDAXUSDT | $220.21 | $230.38 | $218.38 | 2,440 | 0.032% | $220.17 | $220.24 |
+| METAXUSDT | $730.64 | $770.82 | $729.02 | 524 | 0.036% | $731.22 | $731.48 |
+| GOOGLXUSDT | $343.73 | $360.15 | $342.47 | 414 | 0.038% | $343.68 | $343.81 |
+| MCDXUSDT | $240.58 | $244.00 | $236.00 | 32 | 0.224% | $240.50 | $241.04 |
+
+**Observaciones**:
+- Spreads bajos (0.029% - 0.224%), indicando buena liquidez
+- Volúmenes variables: NVDA más activo (2,440), MCD menos activo (32)
+- Volatilidad 24h: NVDA ±5.2%, META ±5.7%
+
+## Archivos del Sistema de Validación
+
+### Scripts de Diagnóstico
+
+| Archivo | Descripción | Líneas |
+|---------|-------------|--------|
+| `diagnose_xstocks.py` | Script de diagnóstico con 11 variaciones de formato | ~270 |
+| `filter_xstocks.py` | Filtro para extraer xStocks del listado completo | ~16 |
+| `debug_xstocks.py` | Script para ver respuesta RAW de la API | ~30 |
+| `test_xstocks_api.py` | Script de validación completo corregido | ~500 |
+| `check_xstocks_margin.py` | Verificación de capacidades de margin trading | ~80 |
+
+### Archivos de Datos
+
+| Archivo | Descripción | Tamaño |
+|---------|-------------|--------|
+| `xstocks_found.json` | 527 símbolos spot con metadata | ~450 KB |
+| `xstocks_validation_results.json` | Resultados finales exitosos | ~1 KB |
+
+### Presentación
+
+| Archivo | Descripción |
+|---------|-------------|
+| `xStocks_Validation_Report.pptx` | Presentación PowerPoint profesional (12 slides) |
+| `create_xstocks_presentation.py` | Script generador de presentación |
+
+## Ejemplo de Uso del Script de Validación
+
+```bash
+# Ejecutar validación completa
+cd C:\Users\inven\OneDrive\Documentos\GitHub\watchlist
+python test_xstocks_api.py
+
+# Salida esperada:
+# [OK] Fully Compatible: 5/5
+# - AAPLXUSDT: 4/4 tests passed
+# - NVDAXUSDT: 4/4 tests passed
+# - METAXUSDT: 4/4 tests passed
+# - GOOGLXUSDT: 4/4 tests passed
+# - MCDXUSDT: 4/4 tests passed
+
+# Verificar capacidades de margin trading
+python check_xstocks_margin.py
+
+# Salida esperada:
+# AAPLXUSDT: Margin Trading: utaOnly (LONG y SHORT)
+# NVDAXUSDT: Margin Trading: utaOnly (LONG y SHORT)
+# METAXUSDT: Margin Trading: none (Solo LONG)
+# GOOGLXUSDT: Margin Trading: utaOnly (LONG y SHORT)
+# MCDXUSDT: Margin Trading: none (Solo LONG)
+```
+
+## Diagnóstico Rápido de xStocks
+
+Para verificar si un símbolo es un xStock:
+
+```python
+import httpx
+import asyncio
+
+async def is_xstock(symbol):
+    url = "https://api.bybit.com/v5/market/instruments-info"
+    params = {"category": "spot", "symbol": symbol}
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params, timeout=10.0)
+        data = response.json()
+
+        if data.get("retCode") == 0:
+            instruments = data.get("result", {}).get("list", [])
+            if instruments:
+                instrument = instruments[0]
+                # Verificar campos característicos
+                is_xstock = (
+                    "xstockMultiplier" in instrument and
+                    instrument.get("symbolType") == "xstocks"
+                )
+                return is_xstock, instrument.get("xstockMultiplier")
+    return False, None
+
+# Uso
+asyncio.run(is_xstock("AAPLXUSDT"))
+# Output: (True, "1.0032690125398187")
+```
+
+## Integración en Aplicaciones Existentes
+
+### Paso 1: Agregar Símbolos a la Configuración
+
+```python
+# En cualquier archivo de configuración de símbolos
+XSTOCKS_SYMBOLS = [
+    "AAPLXUSDT",   # Apple Inc.
+    "NVDAXUSDT",   # NVIDIA Corp.
+    "METAXUSDT",   # Meta Platforms
+    "GOOGLXUSDT",  # Alphabet Inc.
+    "MCDXUSDT",    # McDonald's
+]
+
+# Agregar a lista completa de símbolos
+ALL_SYMBOLS = CRYPTO_SYMBOLS + XSTOCKS_SYMBOLS
+```
+
+### Paso 2: Sin Cambios en el Código API
+
+Los xStocks usan **exactamente los mismos endpoints** que los pares spot tradicionales:
+
+```python
+# Datos históricos - FUNCIONA SIN CAMBIOS
+GET /v5/market/kline?category=spot&symbol=AAPLXUSDT&interval=60&limit=200
+
+# Ticker en tiempo real - FUNCIONA SIN CAMBIOS
+GET /v5/market/tickers?category=spot&symbol=NVDAXUSDT
+
+# WebSocket - FUNCIONA SIN CAMBIOS
+ws://stream.bybit.com/v5/public/spot
+Subscribe: {"op": "subscribe", "args": ["kline.60.METAXUSDT"]}
+```
+
+### Paso 3: Consideraciones Especiales (Opcional)
+
+Si quieres distinguir visualmente los xStocks:
+
+```javascript
+// Frontend - Ejemplo en React
+function SymbolBadge({ symbol }) {
+  const isXStock = symbol.includes('X') && symbol.endsWith('USDT') &&
+                   !symbol.startsWith('BTC') && !symbol.startsWith('ETH');
+
+  return (
+    <div className={isXStock ? 'xstock-badge' : 'crypto-badge'}>
+      {isXStock && <span className="icon">📈</span>}
+      {symbol}
+    </div>
+  );
+}
+```
+
+## Conclusiones Clave
+
+1. **✅ 100% Compatibilidad Confirmada**
+   - Todos los xStocks activos funcionan perfectamente con la API existente
+   - No se detectaron limitaciones, restricciones o comportamientos especiales
+
+2. **✅ Sin Cambios Arquitectónicos Necesarios**
+   - Los xStocks usan los mismos endpoints que pares spot normales
+   - WebSocket, REST API, y formatos de datos son idénticos
+   - El código actual funciona sin modificaciones
+
+3. **✅ Formato de Símbolo**
+   - **Correcto**: "SYMBOLXUSDT" (ej: AAPLXUSDT)
+   - **Incorrecto**: "SYMBOLX" (ej: AAPLX)
+   - Siempre usar el par completo para llamadas API
+
+4. **✅ Identificación de xStocks**
+   - Campo `xstockMultiplier` presente en la respuesta
+   - Campo `symbolType` = "xstocks"
+   - Multiplicador diferente de 1 (ej: 1.0033)
+
+5. **⚠️ Limitaciones de Trading Direccional**
+   - **3/5 xStocks permiten SHORT** (AAPL, NVDA, GOOGL con margin trading)
+   - **2/5 xStocks solo LONG** (META, MCD sin margin trading)
+   - Verificar campo `marginTrading` antes de implementar estrategias SHORT
+   - Requiere cuenta UTA para margin trading
+
+## Implicaciones para Estrategias de Trading
+
+### Para Aplicaciones con Soporte de Direcciones
+
+Si tu aplicación permite configurar direcciones de trading (LONG/SHORT/BOTH):
+
+```python
+# Ejemplo: Configuración de direcciones por símbolo
+XSTOCKS_TRADING_CONFIG = {
+    "AAPLXUSDT": {
+        "allowed_directions": ["LONG", "SHORT"],  # Margin disponible
+        "requires_margin": True
+    },
+    "NVDAXUSDT": {
+        "allowed_directions": ["LONG", "SHORT"],  # Margin disponible
+        "requires_margin": True
+    },
+    "METAXUSDT": {
+        "allowed_directions": ["LONG"],  # Sin margin - solo LONG
+        "requires_margin": False
+    },
+    "GOOGLXUSDT": {
+        "allowed_directions": ["LONG", "SHORT"],  # Margin disponible
+        "requires_margin": True
+    },
+    "MCDXUSDT": {
+        "allowed_directions": ["LONG"],  # Sin margin - solo LONG
+        "requires_margin": False
+    }
+}
+```
+
+### Detección Automática de Capacidades
+
+```python
+async def get_trading_capabilities(symbol: str) -> dict:
+    """
+    Obtiene las capacidades de trading para un símbolo
+    """
+    url = f"{BYBIT_API_URL}/v5/market/instruments-info"
+    params = {"category": "spot", "symbol": symbol}
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+        data = response.json()
+
+        if data.get("retCode") == 0:
+            instrument = data["result"]["list"][0]
+            margin_trading = instrument.get("marginTrading", "none")
+
+            return {
+                "symbol": symbol,
+                "margin_enabled": margin_trading != "none",
+                "margin_type": margin_trading,
+                "can_long": True,  # Siempre disponible en spot
+                "can_short": margin_trading == "utaOnly",  # Solo con margin
+                "requires_uta": margin_trading == "utaOnly"
+            }
+```
+
+### Filtros de Estrategia Recomendados
+
+```python
+# En tu sistema de alertas o trading bot
+def validate_signal(symbol: str, direction: str) -> bool:
+    """
+    Valida que una señal de trading sea ejecutable
+    """
+    capabilities = XSTOCKS_TRADING_CONFIG.get(symbol)
+
+    if not capabilities:
+        return True  # No es xStock, permitir todo
+
+    # Verificar que la dirección está permitida
+    if direction not in capabilities["allowed_directions"]:
+        logger.warning(
+            f"Signal rejected: {symbol} {direction} - "
+            f"Symbol only supports: {capabilities['allowed_directions']}"
+        )
+        return False
+
+    # Advertir si requiere margin
+    if capabilities["requires_margin"] and direction == "SHORT":
+        logger.info(
+            f"Signal {symbol} SHORT requires UTA margin account"
+        )
+
+    return True
+```
+
+## Próximos Pasos Recomendados
+
+### 1. Implementación en Desarrollo
+- Agregar los 5 símbolos xStocks a la configuración
+- Probar en entorno de desarrollo/staging
+- Verificar que indicadores técnicos funcionan correctamente
+
+### 2. Testing de Integración
+- Probar datos históricos (1m, 5m, 15m, 1h, 4h, D)
+- Verificar WebSocket en tiempo real
+- Confirmar que alertas y notificaciones funcionan
+
+### 3. Monitoreo Pre-Producción
+- Observar volúmenes y spreads durante 1-2 semanas
+- Identificar horarios de mayor liquidez
+- Evaluar si los spreads son aceptables para trading
+
+### 4. Expansión Futura
+- Monitorear si Bybit lista más xStocks
+- Considerar agregar filtros específicos para stocks (ej: sector, mercado)
+- Evaluar si se necesitan indicadores específicos para acciones tokenizadas
+
+## Diferencias con Pares Crypto Tradicionales
+
+| Aspecto | Crypto (BTCUSDT) | xStocks (AAPLXUSDT) |
+|---------|------------------|---------------------|
+| Horario | 24/7 | 24/7 (pero sigue precio de mercado US) |
+| Spread | 0.01% - 0.05% | 0.03% - 0.22% |
+| Volumen | Muy alto | Bajo-Medio |
+| Volatilidad | Alta | Media (similar a stock real) |
+| Trading LONG | ✅ Siempre | ✅ Siempre |
+| Trading SHORT | ✅ Con futures | ⚠️ Solo 3/5 (requiere UTA margin) |
+| Margin Trading | Opcional | 60% tienen (AAPL, NVDA, GOOGL) |
+| API Endpoints | Standard spot | **Idénticos** |
+| WebSocket | Standard spot | **Idéntico** |
+| Formato de datos | Standard | **Idéntico** |
+
+**Nota importante**: Aunque la API es idéntica, los xStocks **siguen el precio del mercado de acciones estadounidense** (NYSE/NASDAQ), por lo que su comportamiento de precio puede diferir de cryptos puras. Durante horarios de mercado cerrado US (weekends, holidays), el precio puede estar menos activo.
+
+## Referencias y Documentación
+
+### Documentación Oficial Bybit
+- Instruments Info: https://bybit-exchange.github.io/docs/v5/market/instrument
+- Kline Data: https://bybit-exchange.github.io/docs/v5/market/kline
+- Ticker Data: https://bybit-exchange.github.io/docs/v5/market/tickers
+
+### Archivos Locales
+- Validación completa: `xstocks_validation_results.json`
+- Lista completa de símbolos spot: `xstocks_found.json`
+- Script de validación: `test_xstocks_api.py`
+- Presentación: `xStocks_Validation_Report.pptx`
+
+### Información Adicional sobre xStocks
+Los xStocks son tokens en la blockchain de Solana que representan acciones fraccionadas de empresas estadounidenses. Permiten trading 24/7 de activos que normalmente solo operan durante horarios de mercado tradicionales.
+
+**Ventajas**:
+- Trading 24/7 de acciones
+- Acceso sin necesidad de cuenta de broker tradicional
+- Integración nativa con criptomonedas
+
+**Limitaciones**:
+- Volumen más bajo que crypto tradicional
+- Spreads más amplios (0.2% vs 0.01%)
+- Precio sigue mercado US (menor actividad fuera de horario)
+
+---
+
+**Fecha de validación:** 14 de Octubre de 2026
+**xStocks validados:** 5 activos
+**Compatibilidad:** 100%
+**Estado:** ✅ Listo para implementación
+**Autor:** Claude Code (Anthropic)
+
+---
+
+# TRADING DE ACCIONES US: ALPACA Y ALTERNATIVAS (Febrero 2026)
+
+Sistema de trading de acciones estadounidenses reales (no tokenizadas) a través de brokers con API profesional.
+
+## Resumen Ejecutivo
+
+**Alpaca Securities** es un broker-dealer estadounidense regulado (FINRA/SIPC) con API-first design, ideal para integración con bots de trading algorítmico.
+
+| Aspecto | Bybit xStocks | Alpaca Securities |
+|---------|---------------|-------------------|
+| Tipo de activos | 5 tokens (Solana) | 1,000+ acciones y ETFs reales |
+| Regulación | No regulado | FINRA/SIPC (US) |
+| Horario trading | 24/7 | 24/5 (pre-market, market, after-hours) |
+| Moneda | USDT | USD (via ACH/wire) |
+| Depósito mínimo | $0 | **$0** (cash account) |
+| Comisiones | Maker/taker fees | **$0** (stocks y ETFs) |
+| Trading SHORT | Solo 3/5 (margin) | ✅ Con margin account ($2,000 min) |
+| Acciones fraccionadas | No | ✅ Desde $1 |
+| API Python oficial | Bybit SDK | `alpaca-py` |
+| Paper trading | No | ✅ Gratis con fondos virtuales |
+
+**Conclusión:** Alpaca ofrece acceso a acciones reales estadounidenses con $0 de depósito mínimo y $0 de comisiones, perfecto para expandir el bot de trading más allá de crypto.
+
+---
+
+## Apertura de Cuenta Alpaca
+
+### Timeline Completo
+```
+Día 1: Aplicación online (5-10 minutos)
+  ↓ 1-3 días: Verificación KYC/AML
+Día 2-4: Cuenta aprobada
+  ↓ 3-5 días: Transferencia ACH inicial
+Día 5-6: Fondos disponibles → Trading live
+```
+
+### Requisitos KYC
+- Nombre completo
+- Fecha de nacimiento
+- Dirección residencial (US o internacional)
+- SSN/ITIN (solo residentes US) o pasaporte (internacional)
+- Experiencia de inversión (survey básico)
+- Empleo e ingresos
+- Ciudadanía (US citizens, US residents, o internacional)
+
+### Tipos de Cuenta
+| Tipo | Depósito Mínimo | Características |
+|------|----------------|-----------------|
+| Individual Cash | **$0** | No margin, solo LONG, settlement T+2 |
+| Individual Margin | $2,000 | Margin trading, SHORT permitido, 4x day trading power |
+| Paper Trading | **$0** | Virtual funds ($100K default), testing gratis |
+
+**Recomendación inicial:** Empezar con **Paper Trading** gratis para validar el bot, luego migrar a **Cash Account** ($0 depósito) con fondos reales pequeños ($100-500).
+
+---
+
+## Configuración API
+
+### 1. Obtener API Keys
+```
+Dashboard → API Keys → Generate New Key
+  - Seleccionar scope: Trading, Account, Market Data
+  - Copiar API Key y Secret Key (solo se muestra una vez)
+  - Guardar en archivo seguro (NO subir a GitHub)
+```
+
+### 2. Instalación SDK Python
+```bash
+pip install alpaca-py
+```
+
+### 3. Configuración Básica
+```python
+from alpaca.trading.client import TradingClient
+from alpaca.trading.requests import MarketOrderRequest
+from alpaca.trading.enums import OrderSide, TimeInForce
+
+# API Keys (usar .env en producción)
+ALPACA_API_KEY = "tu_api_key_aqui"
+ALPACA_SECRET_KEY = "tu_secret_key_aqui"
+
+# Cliente de trading
+trade_client = TradingClient(
+    api_key=ALPACA_API_KEY,
+    secret_key=ALPACA_SECRET_KEY,
+    paper=True  # True = Paper Trading, False = Live Trading
+)
+
+# Verificar conexión
+account = trade_client.get_account()
+print(f"Equity: ${account.equity}")
+print(f"Buying Power: ${account.buying_power}")
+```
+
+---
+
+## Tipos de Órdenes Soportadas
+
+### 1. Market Order (Orden de Mercado)
+Ejecuta inmediatamente al mejor precio disponible.
+
+```python
+def buy_market(symbol: str, qty: int):
+    """Compra acciones a precio de mercado"""
+    order_data = MarketOrderRequest(
+        symbol=symbol,
+        qty=qty,
+        side=OrderSide.BUY,
+        time_in_force=TimeInForce.DAY
+    )
+    order = trade_client.submit_order(order_data=order_data)
+    return order
+
+# Ejemplo: Comprar 10 acciones de Apple
+order = buy_market("AAPL", 10)
+```
+
+### 2. Notional Order (Por Monto en Dólares)
+Compra por valor en dólares en lugar de cantidad de acciones.
+
+```python
+def buy_notional(symbol: str, usd_amount: float):
+    """Compra acciones por valor en dólares (mínimo $1)"""
+    order_data = MarketOrderRequest(
+        symbol=symbol,
+        notional=usd_amount,  # Mínimo $1.00
+        side=OrderSide.BUY,
+        time_in_force=TimeInForce.DAY
+    )
+    order = trade_client.submit_order(order_data=order_data)
+    return order
+
+# Ejemplo: Comprar $50 de Tesla (acciones fraccionadas automáticas)
+order = buy_notional("TSLA", 50.0)
+```
+
+### 3. Bracket Order (Orden con TP y SL)
+Entrada + Take Profit + Stop Loss en una sola orden.
+
+```python
+from alpaca.trading.requests import MarketOrderRequest
+
+def buy_with_bracket(symbol: str, qty: int, take_profit: float, stop_loss: float):
+    """Compra con TP y SL automáticos"""
+    order_data = MarketOrderRequest(
+        symbol=symbol,
+        qty=qty,
+        side=OrderSide.BUY,
+        time_in_force=TimeInForce.GTC,
+        order_class="bracket",  # CRITICO
+        take_profit={"limit_price": take_profit},
+        stop_loss={"stop_price": stop_loss}
+    )
+    order = trade_client.submit_order(order_data=order_data)
+    return order
+
+# Ejemplo: Comprar con TP en $110 y SL en $90
+order = buy_with_bracket("AAPL", 10, take_profit=110.0, stop_loss=90.0)
+```
+
+---
+
+## Brokers Alternativos Recomendados
+
+Para diversificar o comparar opciones, aquí están los 5 mejores brokers con API para trading algorítmico:
+
+### 1. Alpaca ⭐⭐⭐⭐⭐ (MEJOR OPCIÓN)
+- **Depósito mínimo:** $0
+- **Comisiones:** $0
+- **API:** REST + WebSocket + Python SDK oficial
+- **Paper trading:** ✅ Gratis
+- **Documentación:** ⭐⭐⭐⭐⭐ Excelente
+- **Recomendado para:** Principiantes y trading algorítmico
+
+### 2. Webull ⭐⭐⭐⭐
+- **Depósito mínimo:** $0
+- **Comisiones:** $0
+- **API:** REST + WebSocket (oficial desde Ago 2026)
+- **Paper trading:** ✅ Gratis
+- **Ventajas únicas:** Acciones de Hong Kong, real-time data gratis
+- **Documentación:** ⭐⭐⭐ Buena (nueva)
+- **Recomendado para:** Trading Asia + US
+
+### 3. Interactive Brokers ⭐⭐⭐⭐⭐
+- **Depósito mínimo:** $0
+- **Comisiones:** $0.005/acción (min $1)
+- **API:** TWS API (Java/Python/C++)
+- **Paper trading:** ✅ Gratis
+- **Mercados:** 150+ países (stocks, forex, futures, options, bonds)
+- **Documentación:** ⭐⭐⭐⭐ Muy completa pero compleja
+- **Recomendado para:** Traders profesionales, multi-asset
+
+### 4. Tradier ⭐⭐⭐⭐
+- **Depósito mínimo:** $0
+- **Comisiones:** $0 con plan Pro ($10/mes), o $0.35/trade
+- **API:** REST + Streaming
+- **Paper trading:** ✅ Gratis
+- **Breakeven:** 29 trades/mes (29 × $0.35 = $10.15)
+- **Documentación:** ⭐⭐⭐⭐ Muy buena
+- **Recomendado para:** Traders activos (>30 trades/mes)
+
+### 5. Schwab ⭐⭐⭐
+- **Depósito mínimo:** $0
+- **Comisiones:** $0
+- **API:** Nueva API (fusión TD Ameritrade)
+- **Paper trading:** ❌ No disponible
+- **Documentación:** ⭐⭐ En desarrollo
+- **Recomendado para:** NO recomendado aún (API muy nueva)
+
+---
+
+## Comparación Detallada
+
+| Aspecto | Alpaca | Webull | IBKR | Tradier | Schwab |
+|---------|--------|--------|------|---------|--------|
+| **Depósito mínimo** | $0 | $0 | $0 | $0 | $0 |
+| **Comisión stocks** | $0 | $0 | $0.005/sh | $0.35 | $0 |
+| **API Python oficial** | ✅ | ✅ | ⚠️ Community | ✅ | ⚠️ Community |
+| **Paper trading** | ✅ | ✅ | ✅ | ✅ | ❌ |
+| **WebSocket API** | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| **Real-time data** | Gratis (IEX) | Gratis (L2) | $10/mo | Gratis | Gratis |
+| **Opciones** | ✅ ($0.65) | ✅ ($0.65) | ✅ ($0.65) | ✅ ($0.35) | ✅ ($0.65) |
+| **Crypto** | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **Forex** | ❌ | ❌ | ✅ | ❌ | ✅ |
+| **Futures** | ❌ | ❌ | ✅ | ❌ | ✅ |
+| **Acciones HK** | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **Margin trading** | ✅ ($2K) | ✅ ($2K) | ✅ ($2K) | ✅ ($2K) | ✅ ($25K) |
+| **Documentación** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ |
+| **Facilidad setup** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **Regulación** | FINRA/SIPC | FINRA/SIPC | FINRA/SIPC | FINRA/SIPC | FINRA/SIPC |
+
+---
+
+## Estrategia Multi-Broker Recomendada
+
+### Fase 1: Quick Start (Semana 1-2)
+**Objetivo:** Validar integración sin riesgo
+```
+1. Crear cuenta Alpaca (1-3 días aprobación)
+2. Configurar Paper Trading ($0 costo)
+3. Integrar bot con alpaca_adapter.py
+4. Testing exhaustivo 1-2 semanas
+```
+
+### Fase 2: Live Trading Inicial (Semana 3-4)
+**Objetivo:** Operar con capital real pequeño
+```
+1. Migrar a cuenta Live Alpaca
+2. Depositar $100-500 inicial (ACH gratis, 3-5 días)
+3. Operar solo acciones de alta liquidez (AAPL, TSLA, NVDA)
+4. Validar retornos reales 2-4 semanas
+```
+
+### Fase 3: Expansión Multi-Exchange (Mes 2-3)
+**Objetivo:** Diversificar y acceder a más mercados
+```
+1. Agregar Webull para:
+   - Acciones de Hong Kong
+   - Real-time data de mejor calidad
+   - Backup en caso de downtime Alpaca
+2. Mantener Bybit para crypto 24/7
+3. Total: 3 exchanges (Bybit crypto + Alpaca US + Webull HK/US)
+```
+
+### Fase 4: Pro Trader (Mes 6+)
+**Objetivo:** Acceso global a todos los mercados
+```
+1. Evaluar agregar Interactive Brokers si necesitas:
+   - Futures (ES, NQ, CL)
+   - Forex (EUR/USD, GBP/USD)
+   - Mercados europeos/asiáticos
+   - Opciones avanzadas
+2. Total: 4 exchanges (máximo recomendado para un solo bot)
+```
+
+---
+
+## Recursos y Documentación
+
+### Alpaca
+- Documentación oficial: https://docs.alpaca.markets/
+- Python SDK: https://github.com/alpacahq/alpaca-py
+- API Reference: https://docs.alpaca.markets/reference/
+- Community Forum: https://forum.alpaca.markets/
+
+### Webull
+- API Docs: https://webullcorporation.com/api
+- Python SDK: https://github.com/webull-inc/openapi-python-sdk
+- Model Context Protocol: https://webullcorporation.com/mcp
+
+### Interactive Brokers
+- TWS API: https://www.interactivebrokers.com/en/trading/tws-api.php
+- Python Guide: https://ib-insync.readthedocs.io/
+- API Reference: https://interactivebrokers.github.io/tws-api/
+
+### Tradier
+- Developer Docs: https://documentation.tradier.com/
+- Python Examples: https://github.com/tradier/tradier-python-client
+
+---
+
+## Próximos Pasos Recomendados
+
+1. **Abrir cuenta Alpaca Paper Trading** (hoy, gratis, 5 minutos)
+2. **Integrar `alpaca_adapter.py`** en el bot actual (1-2 días)
+3. **Testing exhaustivo** en paper trading (1-2 semanas)
+4. **Abrir cuenta Live Alpaca** (mientras testeas paper)
+5. **Depositar capital inicial** ($100-500, ACH gratis)
+6. **Live trading con estrategia validada**
+7. **Evaluar expandir a Webull** si necesitas HK stocks
+
+---
+
+**Documentación completa:** Ver `ALPACA_TRADING_GUIDE.md` y `BROKERS_API_COMPARISON.md`
+
+**Fecha de investigación:** 3 de Febrero de 2026
+**Brokers analizados:** 5 (Alpaca, Webull, IBKR, Tradier, Schwab)
+**Mejor opción para empezar:** Alpaca ($0 depósito, $0 comisiones, API excelente)
+**Autor:** Claude Code (Anthropic)

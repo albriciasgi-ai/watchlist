@@ -1,0 +1,3691 @@
+[
+  {
+    "symbol": "BTCUSDT",
+    "baseCoin": "BTC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHUSDT",
+    "baseCoin": "ETH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XRPUSDT",
+    "baseCoin": "XRP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHBTC",
+    "baseCoin": "ETH",
+    "quoteCoin": "BTC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XRPBTC",
+    "baseCoin": "XRP",
+    "quoteCoin": "BTC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOTUSDT",
+    "baseCoin": "DOT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XLMUSDT",
+    "baseCoin": "XLM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LTCUSDT",
+    "baseCoin": "LTC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOGEUSDT",
+    "baseCoin": "DOGE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CHZUSDT",
+    "baseCoin": "CHZ",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AXSUSDT",
+    "baseCoin": "AXS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MANAUSDT",
+    "baseCoin": "MANA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DYDXUSDT",
+    "baseCoin": "DYDX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "COMPUSDT",
+    "baseCoin": "COMP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AAVEUSDT",
+    "baseCoin": "AAVE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "YFIUSDT",
+    "baseCoin": "YFI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LINKUSDT",
+    "baseCoin": "LINK",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SUSHIUSDT",
+    "baseCoin": "SUSHI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "UNIUSDT",
+    "baseCoin": "UNI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KSMUSDT",
+    "baseCoin": "KSM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ICPUSDT",
+    "baseCoin": "ICP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ADAUSDT",
+    "baseCoin": "ADA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETCUSDT",
+    "baseCoin": "ETC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XTZUSDT",
+    "baseCoin": "XTZ",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BCHUSDT",
+    "baseCoin": "BCH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "QNTUSDT",
+    "baseCoin": "QNT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDCUSDT",
+    "baseCoin": "USDC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GRTUSDT",
+    "baseCoin": "GRT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOLUSDT",
+    "baseCoin": "SOL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FILUSDT",
+    "baseCoin": "FIL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BATUSDT",
+    "baseCoin": "BAT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZRXUSDT",
+    "baseCoin": "ZRX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CRVUSDT",
+    "baseCoin": "CRV",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AGLDUSDT",
+    "baseCoin": "AGLD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ANKRUSDT",
+    "baseCoin": "ANKR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WAVESUSDT",
+    "baseCoin": "WAVES",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LUNCUSDT",
+    "baseCoin": "LUNC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SHIBUSDT",
+    "baseCoin": "SHIB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ATOMUSDT",
+    "baseCoin": "ATOM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ALGOUSDT",
+    "baseCoin": "ALGO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ENJUSDT",
+    "baseCoin": "ENJ",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SANDUSDT",
+    "baseCoin": "SAND",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AVAXUSDT",
+    "baseCoin": "AVAX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WOOUSDT",
+    "baseCoin": "WOO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FTTUSDT",
+    "baseCoin": "FTT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "IMXUSDT",
+    "baseCoin": "IMX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ENSUSDT",
+    "baseCoin": "ENS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CAKEUSDT",
+    "baseCoin": "CAKE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "STETHUSDT",
+    "baseCoin": "STETH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "C98USDT",
+    "baseCoin": "C98",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AVAUSDT",
+    "baseCoin": "AVA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BOBAUSDT",
+    "baseCoin": "BOBA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "JASMYUSDT",
+    "baseCoin": "JASMY",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GALAUSDT",
+    "baseCoin": "GALA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WEMIXUSDT",
+    "baseCoin": "WEMIX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BICOUSDT",
+    "baseCoin": "BICO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "UMAUSDT",
+    "baseCoin": "UMA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NEXOUSDT",
+    "baseCoin": "NEXO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SNXUSDT",
+    "baseCoin": "SNX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "1INCHUSDT",
+    "baseCoin": "1INCH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TELUSDT",
+    "baseCoin": "TEL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LRCUSDT",
+    "baseCoin": "LRC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LDOUSDT",
+    "baseCoin": "LDO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHUSDC",
+    "baseCoin": "ETH",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCUSDC",
+    "baseCoin": "BTC",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "QTUMUSDT",
+    "baseCoin": "QTUM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZENUSDT",
+    "baseCoin": "ZEN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "THETAUSDT",
+    "baseCoin": "THETA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MXUSDT",
+    "baseCoin": "MX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RVNUSDT",
+    "baseCoin": "RVN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "EGLDUSDT",
+    "baseCoin": "EGLD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RUNEUSDT",
+    "baseCoin": "RUNE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XLMBTC",
+    "baseCoin": "XLM",
+    "quoteCoin": "BTC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XLMUSDC",
+    "baseCoin": "XLM",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOLUSDC",
+    "baseCoin": "SOL",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XRPUSDC",
+    "baseCoin": "XRP",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOLBTC",
+    "baseCoin": "SOL",
+    "quoteCoin": "BTC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XDCUSDT",
+    "baseCoin": "XDC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HNTUSDT",
+    "baseCoin": "HNT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZILUSDT",
+    "baseCoin": "ZIL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HBARUSDT",
+    "baseCoin": "HBAR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FLOWUSDT",
+    "baseCoin": "FLOW",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "STXUSDT",
+    "baseCoin": "STX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LTCUSDC",
+    "baseCoin": "LTC",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LTCBTC",
+    "baseCoin": "LTC",
+    "quoteCoin": "BTC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MANAUSDC",
+    "baseCoin": "MANA",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOTUSDC",
+    "baseCoin": "DOT",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GMXUSDT",
+    "baseCoin": "GMX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ACHUSDT",
+    "baseCoin": "ACH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "JSTUSDT",
+    "baseCoin": "JST",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SUNUSDT",
+    "baseCoin": "SUN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTTUSDT",
+    "baseCoin": "BTT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TRXUSDT",
+    "baseCoin": "TRX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NFTUSDT",
+    "baseCoin": "NFT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USTCUSDT",
+    "baseCoin": "USTC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "baseCoin": "BNB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NEARUSDT",
+    "baseCoin": "NEAR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SDUSDT",
+    "baseCoin": "SD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "APEUSDT",
+    "baseCoin": "APE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FIDAUSDT",
+    "baseCoin": "FIDA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MINAUSDT",
+    "baseCoin": "MINA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SCUSDT",
+    "baseCoin": "SC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GLMRUSDT",
+    "baseCoin": "GLMR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MOVRUSDT",
+    "baseCoin": "MOVR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WBTCUSDT",
+    "baseCoin": "WBTC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GMTUSDT",
+    "baseCoin": "GMT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CELOUSDT",
+    "baseCoin": "CELO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "APEXUSDT",
+    "baseCoin": "APEX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CTCUSDT",
+    "baseCoin": "CTC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "OPUSDT",
+    "baseCoin": "OP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LUNAUSDT",
+    "baseCoin": "LUNA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BELUSDT",
+    "baseCoin": "BEL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FORTUSDT",
+    "baseCoin": "FORT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOGEUSDC",
+    "baseCoin": "DOGE",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FLOKIUSDT",
+    "baseCoin": "FLOKI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BABYDOGEUSDT",
+    "baseCoin": "BABYDOGE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WAXPUSDT",
+    "baseCoin": "WAXP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ARUSDT",
+    "baseCoin": "AR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ROSEUSDT",
+    "baseCoin": "ROSE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PSGUSDT",
+    "baseCoin": "PSG",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "JUVUSDT",
+    "baseCoin": "JUV",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CITYUSDT",
+    "baseCoin": "CITY",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WBTCBTC",
+    "baseCoin": "WBTC",
+    "quoteCoin": "BTC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AVAXUSDC",
+    "baseCoin": "AVAX",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ADAUSDC",
+    "baseCoin": "ADA",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "OPUSDC",
+    "baseCoin": "OP",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "APEXUSDC",
+    "baseCoin": "APEX",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TRXUSDC",
+    "baseCoin": "TRX",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ICPUSDC",
+    "baseCoin": "ICP",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LINKUSDC",
+    "baseCoin": "LINK",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GMTUSDC",
+    "baseCoin": "GMT",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CHZUSDC",
+    "baseCoin": "CHZ",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SHIBUSDC",
+    "baseCoin": "SHIB",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LDOUSDC",
+    "baseCoin": "LDO",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "APEUSDC",
+    "baseCoin": "APE",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FILUSDC",
+    "baseCoin": "FIL",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHWUSDT",
+    "baseCoin": "ETHW",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "INJUSDT",
+    "baseCoin": "INJ",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MPLXUSDT",
+    "baseCoin": "MPLX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "APTUSDT",
+    "baseCoin": "APT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "APTUSDC",
+    "baseCoin": "APT",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDTEUR",
+    "baseCoin": "USDT",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MCRTUSDT",
+    "baseCoin": "MCRT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MASKUSDT",
+    "baseCoin": "MASK",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HFTUSDT",
+    "baseCoin": "HFT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PEOPLEUSDT",
+    "baseCoin": "PEOPLE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TWTUSDT",
+    "baseCoin": "TWT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MAGICUSDT",
+    "baseCoin": "MAGIC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MEEUSDT",
+    "baseCoin": "MEE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GRAMUSDT",
+    "baseCoin": "GRAM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BONKUSDT",
+    "baseCoin": "BONK",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FLRUSDT",
+    "baseCoin": "FLR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RPLUSDT",
+    "baseCoin": "RPL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SSVUSDT",
+    "baseCoin": "SSV",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "COREUSDT",
+    "baseCoin": "CORE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BLURUSDT",
+    "baseCoin": "BLUR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ACSUSDT",
+    "baseCoin": "ACS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PRIMEUSDT",
+    "baseCoin": "PRIME",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "IDUSDT",
+    "baseCoin": "ID",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ARBUSDC",
+    "baseCoin": "ARB",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ARBUSDT",
+    "baseCoin": "ARB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MBXUSDT",
+    "baseCoin": "MBX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AXLUSDT",
+    "baseCoin": "AXL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CGPTUSDT",
+    "baseCoin": "CGPT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SUIUSDT",
+    "baseCoin": "SUI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SUIUSDC",
+    "baseCoin": "SUI",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PEPEUSDT",
+    "baseCoin": "PEPE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LMWRUSDT",
+    "baseCoin": "LMWR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VELOUSDT",
+    "baseCoin": "VELO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PENDLEUSDT",
+    "baseCoin": "PENDLE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NYMUSDT",
+    "baseCoin": "NYM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MNTUSDT",
+    "baseCoin": "MNT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MNTUSDC",
+    "baseCoin": "MNT",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MNTBTC",
+    "baseCoin": "MNT",
+    "quoteCoin": "BTC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ARKMUSDT",
+    "baseCoin": "ARKM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WLDUSDC",
+    "baseCoin": "WLD",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WLDUSDT",
+    "baseCoin": "WLD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SEIUSDT",
+    "baseCoin": "SEI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CYBERUSDT",
+    "baseCoin": "CYBER",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ORDIUSDT",
+    "baseCoin": "ORDI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KAVAUSDT",
+    "baseCoin": "KAVA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PYUSDUSDT",
+    "baseCoin": "PYUSD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOLEUR",
+    "baseCoin": "SOL",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDCEUR",
+    "baseCoin": "USDC",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ADAEUR",
+    "baseCoin": "ADA",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOGEEUR",
+    "baseCoin": "DOGE",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LTCEUR",
+    "baseCoin": "LTC",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XRPEUR",
+    "baseCoin": "XRP",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHEUR",
+    "baseCoin": "ETH",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCEUR",
+    "baseCoin": "BTC",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KASUSDT",
+    "baseCoin": "KAS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FETUSDT",
+    "baseCoin": "FET",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BEAMUSDT",
+    "baseCoin": "BEAM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "POLUSDT",
+    "baseCoin": "POL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TIAUSDT",
+    "baseCoin": "TIA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MEMEUSDT",
+    "baseCoin": "MEME",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PYTHUSDT",
+    "baseCoin": "PYTH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KUBUSDT",
+    "baseCoin": "KUB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KCSUSDT",
+    "baseCoin": "KCS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "JTOUSDT",
+    "baseCoin": "JTO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "METHUSDT",
+    "baseCoin": "METH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "METHETH",
+    "baseCoin": "METH",
+    "quoteCoin": "ETH",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZIGUSDT",
+    "baseCoin": "ZIG",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SEIUSDC",
+    "baseCoin": "SEI",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AIOZUSDT",
+    "baseCoin": "AIOZ",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RATSUSDT",
+    "baseCoin": "RATS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SATSUSDT",
+    "baseCoin": "SATS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XAIUSDT",
+    "baseCoin": "XAI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ONDOUSDT",
+    "baseCoin": "ONDO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDYUSDT",
+    "baseCoin": "USDY",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MANTAUSDT",
+    "baseCoin": "MANTA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DYMUSDT",
+    "baseCoin": "DYM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZETAUSDT",
+    "baseCoin": "ZETA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "JUPUSDT",
+    "baseCoin": "JUP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MAVIAUSDT",
+    "baseCoin": "MAVIA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ALTUSDT",
+    "baseCoin": "ALT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HTXUSDT",
+    "baseCoin": "HTX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CSPRUSDT",
+    "baseCoin": "CSPR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "STRKUSDC",
+    "baseCoin": "STRK",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "STRKUSDT",
+    "baseCoin": "STRK",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CPOOLUSDT",
+    "baseCoin": "CPOOL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PORTALUSDT",
+    "baseCoin": "PORTAL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AEVOUSDT",
+    "baseCoin": "AEVO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BOMEUSDT",
+    "baseCoin": "BOME",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZKJUSDT",
+    "baseCoin": "ZKJ",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHFIUSDT",
+    "baseCoin": "ETHFI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DEGENUSDT",
+    "baseCoin": "DEGEN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ENAUSDT",
+    "baseCoin": "ENA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDEUSDT",
+    "baseCoin": "USDE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WUSDT",
+    "baseCoin": "W",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ESEUSDT",
+    "baseCoin": "ESE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TNSRUSDT",
+    "baseCoin": "TNSR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BRETTUSDT",
+    "baseCoin": "BRETT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MEWUSDT",
+    "baseCoin": "MEW",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MERLUSDT",
+    "baseCoin": "MERL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SAFEUSDT",
+    "baseCoin": "SAFE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WIFUSDT",
+    "baseCoin": "WIF",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KMNOUSDT",
+    "baseCoin": "KMNO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZENTUSDT",
+    "baseCoin": "ZENT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BBUSDT",
+    "baseCoin": "BB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NOTUSDT",
+    "baseCoin": "NOT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DRIFTUSDT",
+    "baseCoin": "DRIFT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SQDUSDT",
+    "baseCoin": "SQD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDEUSDC",
+    "baseCoin": "USDE",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOLUSDE",
+    "baseCoin": "SOL",
+    "quoteCoin": "USDE",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHUSDE",
+    "baseCoin": "ETH",
+    "quoteCoin": "USDE",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCUSDE",
+    "baseCoin": "BTC",
+    "quoteCoin": "USDE",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MOGUSDT",
+    "baseCoin": "MOG",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TAIKOUSDT",
+    "baseCoin": "TAIKO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AURORAUSDT",
+    "baseCoin": "AURORA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "IOUSDT",
+    "baseCoin": "IO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ATHUSDT",
+    "baseCoin": "ATH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "COOKIEUSDT",
+    "baseCoin": "COOKIE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZKUSDC",
+    "baseCoin": "ZK",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZKUSDT",
+    "baseCoin": "ZK",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "POPCATUSDT",
+    "baseCoin": "POPCAT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZROUSDC",
+    "baseCoin": "ZRO",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZROUSDT",
+    "baseCoin": "ZRO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCBRL",
+    "baseCoin": "BTC",
+    "quoteCoin": "BRL",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHBRL",
+    "baseCoin": "ETH",
+    "quoteCoin": "BRL",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOLBRL",
+    "baseCoin": "SOL",
+    "quoteCoin": "BRL",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDTBRL",
+    "baseCoin": "USDT",
+    "quoteCoin": "BRL",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDCBRL",
+    "baseCoin": "USDC",
+    "quoteCoin": "BRL",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SHIBEUR",
+    "baseCoin": "SHIB",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PEPEEUR",
+    "baseCoin": "PEPE",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AVAXEUR",
+    "baseCoin": "AVAX",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ONDOEUR",
+    "baseCoin": "ONDO",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "STETHEUR",
+    "baseCoin": "STETH",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ENAEUR",
+    "baseCoin": "ENA",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GRAMEUR",
+    "baseCoin": "GRAM",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LINKEUR",
+    "baseCoin": "LINK",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MOCAUSDT",
+    "baseCoin": "MOCA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "A8USDT",
+    "baseCoin": "A8",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CLOUDUSDT",
+    "baseCoin": "CLOUD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AVAILUSDT",
+    "baseCoin": "AVAIL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RENDERUSDT",
+    "baseCoin": "RENDER",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GUSDT",
+    "baseCoin": "G",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GRAMUSDC",
+    "baseCoin": "GRAM",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WIFUSDC",
+    "baseCoin": "WIF",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PEPEUSDC",
+    "baseCoin": "PEPE",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOGSUSDT",
+    "baseCoin": "DOGS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NOTUSDC",
+    "baseCoin": "NOT",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BNBUSDC",
+    "baseCoin": "BNB",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BONKUSDC",
+    "baseCoin": "BONK",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOGSUSDC",
+    "baseCoin": "DOGS",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDTPLN",
+    "baseCoin": "USDT",
+    "quoteCoin": "PLN",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHPLN",
+    "baseCoin": "ETH",
+    "quoteCoin": "PLN",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCPLN",
+    "baseCoin": "BTC",
+    "quoteCoin": "PLN",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FLOKIUSDC",
+    "baseCoin": "FLOKI",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BCHUSDC",
+    "baseCoin": "BCH",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NEARUSDC",
+    "baseCoin": "NEAR",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ORDERUSDT",
+    "baseCoin": "ORDER",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHTRY",
+    "baseCoin": "ETH",
+    "quoteCoin": "TRY",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCTRY",
+    "baseCoin": "BTC",
+    "quoteCoin": "TRY",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDTTRY",
+    "baseCoin": "USDT",
+    "quoteCoin": "TRY",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MEWUSDC",
+    "baseCoin": "MEW",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KASUSDC",
+    "baseCoin": "KAS",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ONDOUSDC",
+    "baseCoin": "ONDO",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "JASMYUSDC",
+    "baseCoin": "JASMY",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ATOMUSDC",
+    "baseCoin": "ATOM",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FETUSDC",
+    "baseCoin": "FET",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "UNIUSDC",
+    "baseCoin": "UNI",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TIAUSDC",
+    "baseCoin": "TIA",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "INJUSDC",
+    "baseCoin": "INJ",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CATIUSDT",
+    "baseCoin": "CATI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HMSTRUSDT",
+    "baseCoin": "HMSTR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CATIUSDC",
+    "baseCoin": "CATI",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CATIEUR",
+    "baseCoin": "CATI",
+    "quoteCoin": "EUR",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HMSTRUSDC",
+    "baseCoin": "HMSTR",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "EIGENUSDT",
+    "baseCoin": "EIGEN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NAVXUSDT",
+    "baseCoin": "NAVX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BBSOLUSDC",
+    "baseCoin": "BBSOL",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BBSOLUSDT",
+    "baseCoin": "BBSOL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CARVUSDT",
+    "baseCoin": "CARV",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DEEPUSDT",
+    "baseCoin": "DEEP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PUFFERUSDT",
+    "baseCoin": "PUFFER",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DBRUSDT",
+    "baseCoin": "DBR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SCRUSDT",
+    "baseCoin": "SCR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "COOKUSDT",
+    "baseCoin": "COOK",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GRASSUSDT",
+    "baseCoin": "GRASS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KAIAUSDT",
+    "baseCoin": "KAIA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SWELLUSDT",
+    "baseCoin": "SWELL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NSUSDT",
+    "baseCoin": "NS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GOATUSDT",
+    "baseCoin": "GOAT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MORPHOUSDT",
+    "baseCoin": "MORPHO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NEIROCTOUSDT",
+    "baseCoin": "NEIROCTO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BANUSDT",
+    "baseCoin": "BAN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VIRTUALUSDT",
+    "baseCoin": "VIRTUAL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MAJORUSDT",
+    "baseCoin": "MAJOR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PNUTUSDT",
+    "baseCoin": "PNUT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SPXUSDT",
+    "baseCoin": "SPX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CHILLGUYUSDT",
+    "baseCoin": "CHILLGUY",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SUPRAUSDT",
+    "baseCoin": "SUPRA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FUSDT",
+    "baseCoin": "F",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BBSOLSOL",
+    "baseCoin": "BBSOL",
+    "quoteCoin": "SOL",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MOVEUSDT",
+    "baseCoin": "MOVE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MEUSDT",
+    "baseCoin": "ME",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZEREBROUSDT",
+    "baseCoin": "ZEREBRO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AEROUSDT",
+    "baseCoin": "AERO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VANAUSDT",
+    "baseCoin": "VANA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PENGUUSDT",
+    "baseCoin": "PENGU",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FLUIDUSDT",
+    "baseCoin": "FLUID",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ALCHUSDT",
+    "baseCoin": "ALCH",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FLOCKUSDT",
+    "baseCoin": "FLOCK",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SONICUSDT",
+    "baseCoin": "SONIC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LAVAUSDT",
+    "baseCoin": "LAVA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AIXBTUSDT",
+    "baseCoin": "AIXBT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SUSDT",
+    "baseCoin": "S",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BMTUSDT",
+    "baseCoin": "BMT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TOSHIUSDT",
+    "baseCoin": "TOSHI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GPSUSDT",
+    "baseCoin": "GPS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOLVUSDT",
+    "baseCoin": "SOLV",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "OBTUSDT",
+    "baseCoin": "OBT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOSOUSDT",
+    "baseCoin": "SOSO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TRUMPUSDT",
+    "baseCoin": "TRUMP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TRUMPUSDC",
+    "baseCoin": "TRUMP",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PLUMEUSDT",
+    "baseCoin": "PLUME",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ANIMEUSDT",
+    "baseCoin": "ANIME",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LAYERUSDT",
+    "baseCoin": "LAYER",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BERAUSDT",
+    "baseCoin": "BERA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AVLUSDT",
+    "baseCoin": "AVL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "B3USDT",
+    "baseCoin": "B3",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DIAMUSDT",
+    "baseCoin": "DIAM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDTBUSDT",
+    "baseCoin": "USDTB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ROAMUSDT",
+    "baseCoin": "ROAM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "REDUSDT",
+    "baseCoin": "RED",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BRUSDT",
+    "baseCoin": "BR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VVVUSDT",
+    "baseCoin": "VVV",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WALUSDT",
+    "baseCoin": "WAL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PARTIUSDT",
+    "baseCoin": "PARTI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CORNUSDT",
+    "baseCoin": "CORN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FHEUSDT",
+    "baseCoin": "FHE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BABY1USDT",
+    "baseCoin": "BABY1",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XAUTUSDT",
+    "baseCoin": "XAUT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VETUSDT",
+    "baseCoin": "VET",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VTHOUSDT",
+    "baseCoin": "VTHO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WCTUSDT",
+    "baseCoin": "WCT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOLOUSDT",
+    "baseCoin": "DOLO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HYPERUSDT",
+    "baseCoin": "HYPER",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZORAUSDT",
+    "baseCoin": "ZORA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "INITUSDT",
+    "baseCoin": "INIT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SIGNUSDT",
+    "baseCoin": "SIGN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HAEDALUSDT",
+    "baseCoin": "HAEDAL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SXTUSDT",
+    "baseCoin": "SXT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DOODUSDT",
+    "baseCoin": "DOOD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NXPCUSDT",
+    "baseCoin": "NXPC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HUMAUSDT",
+    "baseCoin": "HUMA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AUSDT",
+    "baseCoin": "A",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LAUSDT",
+    "baseCoin": "LA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RESOLVUSDT",
+    "baseCoin": "RESOLV",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ALGOUSDC",
+    "baseCoin": "ALGO",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HBARUSDC",
+    "baseCoin": "HBAR",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ENAUSDC",
+    "baseCoin": "ENA",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AAVEUSDC",
+    "baseCoin": "AAVE",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HOMEUSDT",
+    "baseCoin": "HOME",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "JUPUSDC",
+    "baseCoin": "JUP",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MOVEUSDC",
+    "baseCoin": "MOVE",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RENDERUSDC",
+    "baseCoin": "RENDER",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CRVUSDC",
+    "baseCoin": "CRV",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SPKUSDT",
+    "baseCoin": "SPK",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HUSDT",
+    "baseCoin": "H",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NEWTUSDT",
+    "baseCoin": "NEWT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "EIGENUSDC",
+    "baseCoin": "EIGEN",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "POLUSDC",
+    "baseCoin": "POL",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SAHARAUSDT",
+    "baseCoin": "SAHARA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ICNTUSDT",
+    "baseCoin": "ICNT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NVDAXUSDT",
+    "baseCoin": "NVDAX",
+    "quoteCoin": "USDT",
+    "multiplier": "1.001701196801074",
+    "status": "Trading"
+  },
+  {
+    "symbol": "COINXUSDT",
+    "baseCoin": "COINX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AIXBTUSDC",
+    "baseCoin": "AIXBT",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ARUSDC",
+    "baseCoin": "AR",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SUSDC",
+    "baseCoin": "S",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AAPLXUSDT",
+    "baseCoin": "AAPLX",
+    "quoteCoin": "USDT",
+    "multiplier": "1.0032690125398187",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CRCLXUSDT",
+    "baseCoin": "CRCLX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "METAXUSDT",
+    "baseCoin": "METAX",
+    "quoteCoin": "USDT",
+    "multiplier": "1.0028515433272898",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HOODXUSDT",
+    "baseCoin": "HOODX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AMZNXUSDT",
+    "baseCoin": "AMZNX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GOOGLXUSDT",
+    "baseCoin": "GOOGLX",
+    "quoteCoin": "USDT",
+    "multiplier": "1.0023772500603487",
+    "status": "Trading"
+  },
+  {
+    "symbol": "STXUSDC",
+    "baseCoin": "STX",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ENSUSDC",
+    "baseCoin": "ENS",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ORDIUSDC",
+    "baseCoin": "ORDI",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PYTHUSDC",
+    "baseCoin": "PYTH",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USD1USDT",
+    "baseCoin": "USD1",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MNTUSD1",
+    "baseCoin": "MNT",
+    "quoteCoin": "USD1",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MCDXUSDT",
+    "baseCoin": "MCDX",
+    "quoteCoin": "USDT",
+    "multiplier": "1.0211807004882871",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TSLAXUSDT",
+    "baseCoin": "TSLAX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HYPEUSDT",
+    "baseCoin": "HYPE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "JTOUSDC",
+    "baseCoin": "JTO",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DYDXUSDC",
+    "baseCoin": "DYDX",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PUMPUSDT",
+    "baseCoin": "PUMP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ERAUSDT",
+    "baseCoin": "ERA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TAUSDT",
+    "baseCoin": "TA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CATUSDT",
+    "baseCoin": "CAT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TREEUSDT",
+    "baseCoin": "TREE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TOWNSUSDT",
+    "baseCoin": "TOWNS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TOWNSUSDC",
+    "baseCoin": "TOWNS",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PROVEUSDT",
+    "baseCoin": "PROVE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CFGUSDT",
+    "baseCoin": "CFG",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WLFIUSDT",
+    "baseCoin": "WLFI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOMIUSDT",
+    "baseCoin": "SOMI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SKYUSDT",
+    "baseCoin": "SKY",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AVNTUSDT",
+    "baseCoin": "AVNT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LINEAUSDT",
+    "baseCoin": "LINEA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XUSDUSDT",
+    "baseCoin": "XUSD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "HOLOUSDT",
+    "baseCoin": "HOLO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZKCUSDT",
+    "baseCoin": "ZKC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCXUSD",
+    "baseCoin": "BTC",
+    "quoteCoin": "XUSD",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BARDUSDT",
+    "baseCoin": "BARD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PUMPUSDC",
+    "baseCoin": "PUMP",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VIRTUALUSDC",
+    "baseCoin": "VIRTUAL",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SPXUSDC",
+    "baseCoin": "SPX",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ASTERUSDT",
+    "baseCoin": "ASTER",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XPLUSDT",
+    "baseCoin": "XPL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "0GUSDT",
+    "baseCoin": "0G",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XANUSDT",
+    "baseCoin": "XAN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RLUSDUSDT",
+    "baseCoin": "RLUSD",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCRLUSD",
+    "baseCoin": "BTC",
+    "quoteCoin": "RLUSD",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "XRPRLUSD",
+    "baseCoin": "XRP",
+    "quoteCoin": "RLUSD",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHRLUSD",
+    "baseCoin": "ETH",
+    "quoteCoin": "RLUSD",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FFUSDT",
+    "baseCoin": "FF",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "2ZUSDC",
+    "baseCoin": "2Z",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "2ZUSDT",
+    "baseCoin": "2Z",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NOMUSDT",
+    "baseCoin": "NOM",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ENSOUSDT",
+    "baseCoin": "ENSO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "YBUSDT",
+    "baseCoin": "YB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "RECALLUSDT",
+    "baseCoin": "RECALL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZBTUSDT",
+    "baseCoin": "ZBT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "METUSDT",
+    "baseCoin": "MET",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "METUSDC",
+    "baseCoin": "MET",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GAIBUSDT",
+    "baseCoin": "GAIB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MMTUSDT",
+    "baseCoin": "MMT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CCUSDT",
+    "baseCoin": "CC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CCUSDC",
+    "baseCoin": "CC",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PIEVERSEUSDT",
+    "baseCoin": "PIEVERSE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MONUSDT",
+    "baseCoin": "MON",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "STABLEUSDT",
+    "baseCoin": "STABLE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "WETUSDT",
+    "baseCoin": "WET",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "NIGHTUSDT",
+    "baseCoin": "NIGHT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZKPUSDT",
+    "baseCoin": "ZKP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VOOIUSDT",
+    "baseCoin": "VOOI",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "LITUSDT",
+    "baseCoin": "LIT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BREVUSDT",
+    "baseCoin": "BREV",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FRAXUSDT",
+    "baseCoin": "FRAX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FOGOUSDT",
+    "baseCoin": "FOGO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ELSAUSDT",
+    "baseCoin": "ELSA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SKRUSDT",
+    "baseCoin": "SKR",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "FIGHTUSDT",
+    "baseCoin": "FIGHT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SENTUSDT",
+    "baseCoin": "SENT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USATUSDT",
+    "baseCoin": "USAT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PYBOBOUSDT",
+    "baseCoin": "PYBOBO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BIRBUSDT",
+    "baseCoin": "BIRB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ZAMAUSDT",
+    "baseCoin": "ZAMA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AEDZUSDT",
+    "baseCoin": "AEDZ",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AEDZUSDC",
+    "baseCoin": "AEDZ",
+    "quoteCoin": "USDC",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "TRIAUSDT",
+    "baseCoin": "TRIA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "AZTECUSDT",
+    "baseCoin": "AZTEC",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SOLAED",
+    "baseCoin": "SOL",
+    "quoteCoin": "AED",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHAED",
+    "baseCoin": "ETH",
+    "quoteCoin": "AED",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCAED",
+    "baseCoin": "BTC",
+    "quoteCoin": "AED",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDTAED",
+    "baseCoin": "USDT",
+    "quoteCoin": "AED",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ROBOUSDT",
+    "baseCoin": "ROBO",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BSBUSDT",
+    "baseCoin": "BSB",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MANTRAUSDT",
+    "baseCoin": "MANTRA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "OPNUSDT",
+    "baseCoin": "OPN",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BASEDUSDT",
+    "baseCoin": "BASED",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "EDGEUSDT",
+    "baseCoin": "EDGE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDTUSD",
+    "baseCoin": "USDT",
+    "quoteCoin": "USD",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCUSD",
+    "baseCoin": "BTC",
+    "quoteCoin": "USD",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHUSD",
+    "baseCoin": "ETH",
+    "quoteCoin": "USD",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "OPGUSDT",
+    "baseCoin": "OPG",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CHIPUSDT",
+    "baseCoin": "CHIP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDCUSD1",
+    "baseCoin": "USDC",
+    "quoteCoin": "USD1",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ETHUSD1",
+    "baseCoin": "ETH",
+    "quoteCoin": "USD1",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BTCUSD1",
+    "baseCoin": "BTC",
+    "quoteCoin": "USD1",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BLENDUSDT",
+    "baseCoin": "BLEND",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "USDSUSDT",
+    "baseCoin": "USDS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "MEGAUSDT",
+    "baseCoin": "MEGA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "BILLUSDT",
+    "baseCoin": "BILL",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SPCXXUSDT",
+    "baseCoin": "SPCXX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "SLXUSDT",
+    "baseCoin": "SLX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "ARXUSDT",
+    "baseCoin": "ARX",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "VERONAUSDT",
+    "baseCoin": "VERONA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "CAPUSDT",
+    "baseCoin": "CAP",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GROVEUSDT",
+    "baseCoin": "GROVE",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "DATAUSDT",
+    "baseCoin": "DATA",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "GRVTUSDT",
+    "baseCoin": "GRVT",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "KIIUSDT",
+    "baseCoin": "KII",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  },
+  {
+    "symbol": "PONSUSDT",
+    "baseCoin": "PONS",
+    "quoteCoin": "USDT",
+    "multiplier": "1",
+    "status": "Trading"
+  }
+]

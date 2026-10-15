@@ -21,7 +21,7 @@ class VWAPIndicator extends IndicatorBase {
     this.fetchIntervalMs = this._getFetchIntervalForTimeframe(interval);
 
     // VWAP calculation config (sent to backend)
-    this.vwapType = config.vwapType || 'session';
+    this.vwapType = config.vwapType || 'rolling';  // Default: rolling VWAP
     this.rollingPeriod = config.rollingPeriod || 200;
 
     // Visual configuration (frontend only)

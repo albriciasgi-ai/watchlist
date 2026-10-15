@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(powershell -Command \"Test-Path ''drawings'' -PathType Container\")",
+      "Bash(powershell -Command \"Get-Item ''drawings'' | Select-Object Name, Length, LastWriteTime\")",
+      "Bash(cat:*)",
+      "WebSearch",
+      "WebFetch(domain:bybit-exchange.github.io)",
+      "WebFetch(domain:learn.bybit.com)",
+      "WebFetch(domain:www.bybit.com)",
+      "Bash(python:*)",
+      "Bash(pip show:*)",
+      "Bash(pip install:*)",
+      "WebFetch(domain:docs.alpaca.markets)",
+      "WebFetch(domain:alpaca.markets)",
+      "WebFetch(domain:brokerchooser.com)",
+      "Bash(powershell:*)",
+      "Bash(\"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\CLAUDE.md\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

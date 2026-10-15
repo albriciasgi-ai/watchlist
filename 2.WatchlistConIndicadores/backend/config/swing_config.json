@@ -12,8 +12,8 @@
     "ADAUSDT",
     "DOGEUSDT"
   ],
-  "interval": "60",
-  "days": 90,
+  "interval": "1",
+  "days": 1,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -118,5 +118,6 @@
     "skipVolumeInRectangle": false
   },
   "cooldownMinutes": 5,
+  "alertsEnabled": false,
   "alertTargetUrl": "http://localhost:5000/api/watchlist-alert"
 }

@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-10-14T23:44:50.783050",
+  "symbols_tested": 5,
+  "compatible": 5,
+  "partial": 0,
+  "failed": 0,
+  "details": [
+    {
+      "symbol": "AAPLXUSDT",
+      "tests": {
+        "instruments": true,
+        "kline": true,
+        "ticker": true,
+        "intervals": true
+      },
+      "passed": 4,
+      "total": 4,
+      "compatible": true
+    },
+    {
+      "symbol": "NVDAXUSDT",
+      "tests": {
+        "instruments": true,
+        "kline": true,
+        "ticker": true,
+        "intervals": true
+      },
+      "passed": 4,
+      "total": 4,
+      "compatible": true
+    },
+    {
+      "symbol": "METAXUSDT",
+      "tests": {
+        "instruments": true,
+        "kline": true,
+        "ticker": true,
+        "intervals": true
+      },
+      "passed": 4,
+      "total": 4,
+      "compatible": true
+    },
+    {
+      "symbol": "GOOGLXUSDT",
+      "tests": {
+        "instruments": true,
+        "kline": true,
+        "ticker": true,
+        "intervals": true
+      },
+      "passed": 4,
+      "total": 4,
+      "compatible": true
+    },
+    {
+      "symbol": "MCDXUSDT",
+      "tests": {
+        "instruments": true,
+        "kline": true,
+        "ticker": true,
+        "intervals": true
+      },
+      "passed": 4,
+      "total": 4,
+      "compatible": true
+    }
+  ]
+}

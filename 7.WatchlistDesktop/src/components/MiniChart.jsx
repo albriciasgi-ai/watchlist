@@ -110,7 +110,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenVWAPSettings, onOpenOpenInterestSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null); // 🎯 VIRTUALIZACIÓN: Ref para el contenedor principal
 
@@ -2484,6 +2484,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
               }}
             >
               VW
+            </button>
+          )}
+          {indicatorStates && indicatorStates["Open Interest"] && (
+            <button
+              className="oi-settings-btn"
+              onClick={() => onOpenOpenInterestSettings(indicatorManagerRef.current)}
+              title="Configurar Open Interest"
+              style={{
+                background: '#1E88E5',
+                color: 'white',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              OI
             </button>
           )}
           {indicatorStates && indicatorStates["Fibonacci"] && (

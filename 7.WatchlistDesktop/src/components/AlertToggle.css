@@ -1,0 +1,140 @@
+/* AlertToggle.css */
+
+.alert-toggle-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.alert-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border: 2px solid;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.alert-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.alert-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.alert-toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estado ENABLED (alertas activas) */
+.alert-toggle-btn.enabled {
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.alert-toggle-btn.enabled:hover {
+  background: #fff5f5;
+}
+
+/* Estado DISABLED (alertas desactivadas) */
+.alert-toggle-btn.disabled {
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+.alert-toggle-btn.disabled:hover {
+  background: #f1f8f4;
+}
+
+.toggle-icon {
+  font-size: 18px;
+}
+
+.toggle-text {
+  min-width: 80px;
+  text-align: left;
+}
+
+.toggle-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.indicator-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.indicator-dot.on {
+  background-color: #f44336;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+  animation: pulse-red 2s infinite;
+}
+
+.indicator-dot.off {
+  background-color: #4caf50;
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(244, 67, 54, 0.9);
+  }
+}
+
+.alert-warning {
+  background: #fff3e0;
+  border: 2px solid #ff9800;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #e65100;
+  font-weight: bold;
+  max-width: 300px;
+  text-align: right;
+  animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-details {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  animation: fade-in 0.3s ease;
+}
+
+.service-badge {
+  background: #ff9800;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+}
