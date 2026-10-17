@@ -25,7 +25,9 @@
       "WebFetch(domain:kleinfunding.com)",
       "WebFetch(domain:theindustryspread.com)",
       "WebFetch(domain:www.iqcapital.io)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(dir /s /b *Zone*.js*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

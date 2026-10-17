@@ -54,6 +54,10 @@ class ManualTradeRequest(BaseModel):
     current_price: Optional[Decimal] = None  # Optional if stopLoss/takeProfit provided
     stopLoss: Optional[Decimal] = None  # Custom SL price
     takeProfit: Optional[Decimal] = None  # Custom TP price
+    order_type: Optional[str] = "Market"  # "Market" or "Limit"
+    limit_price: Optional[Decimal] = None  # Required if order_type is "Limit"
+    custom_stop_loss: Optional[Decimal] = None  # Alias for stopLoss (compatibility)
+    custom_take_profit: Optional[Decimal] = None  # Alias for takeProfit (compatibility)
 
 
 class ConfigUpdateRequest(BaseModel):
@@ -1574,21 +1578,46 @@ async def manual_trade(req: ManualTradeRequest):
         trade_config = config.copy()
         trade_config["current_price"] = float(current_price)
 
-        # Override SL/TP with custom values if provided
-        if req.stopLoss:
-            trade_config["custom_stop_loss"] = float(req.stopLoss)
-        if req.takeProfit:
-            trade_config["custom_take_profit"] = float(req.takeProfit)
+        # Override SL/TP with custom values if provided (support both naming conventions)
+        stop_loss_value = req.custom_stop_loss or req.stopLoss
+        take_profit_value = req.custom_take_profit or req.takeProfit
 
-        # Execute using configured method
-        if state.use_integrated_tpsl:
+        if stop_loss_value:
+            trade_config["custom_stop_loss"] = float(stop_loss_value)
+        if take_profit_value:
+            trade_config["custom_take_profit"] = float(take_profit_value)
+
+        # Determine order type and limit price
+        order_type = (req.order_type or "Market").capitalize()
+        limit_price = None
+
+        if order_type == "Limit":
+            # For limit orders, use limit_price if provided, otherwise use current_price
+            limit_price = req.limit_price if req.limit_price else current_price
+
+            # Validate limit price is provided
+            if not limit_price:
+                raise HTTPException(status_code=400, detail="limit_price required for Limit orders")
+
+        # Log inicial con toda la info disponible (Entry + TP + SL)
+        entry_price_display = limit_price if order_type == "Limit" else current_price
+        sl_display = f"${stop_loss_value}" if stop_loss_value else f"${trade_config.get('custom_stop_loss', 'N/A')}"
+        tp_display = f"${take_profit_value}" if take_profit_value else f"${trade_config.get('custom_take_profit', 'N/A')}"
+
+        state.log("info", f"[MANUAL TRADE] {order_type.upper()}: {req.symbol} {req.side} | Entry=${entry_price_display} TP={tp_display} SL={sl_display}")
+
+        # Execute using integrated method (supports both Market and Limit)
+        # Sequential method doesn't support Limit orders
+        use_integrated = state.use_integrated_tpsl or (order_type == "Limit")
+
+        if use_integrated:
             result = await state.order_manager.execute_integrated_sequence(
                 symbol=req.symbol,
                 side=req.side,
                 quantity=quantity,
                 config=trade_config,
-                order_type="Market",
-                limit_price=None
+                order_type=order_type,
+                limit_price=Decimal(str(limit_price)) if limit_price else None
             )
         else:
             result = await state.order_manager.execute_complete_sequence(
@@ -1600,7 +1629,47 @@ async def manual_trade(req: ManualTradeRequest):
 
         await state.broadcast_event("trade_executed", result)
 
-        return {"success": result.get("success", False), "result": result}
+        # Save to order history if successful
+        success_status = result.get("success", False)
+        if success_status:
+            # Get actual SL/TP from trade_config (includes both custom and calculated values)
+            actual_sl = trade_config.get("custom_stop_loss")
+            actual_tp = trade_config.get("custom_take_profit")
+
+            # If not in trade_config, try to get from result or fetch from position
+            if not actual_sl or not actual_tp:
+                try:
+                    position = await state.bybit_client.get_position(req.symbol, side_filter=req.side)
+                    if position.get("success") and position.get("hasPosition"):
+                        actual_sl = actual_sl or float(position.get("stopLoss", 0))
+                        actual_tp = actual_tp or float(position.get("takeProfit", 0))
+                        state.log("info", f"[MANUAL TRADE] SL/TP fetched from position: SL=${actual_sl} TP=${actual_tp}")
+                except Exception as e:
+                    state.log("warning", f"[MANUAL TRADE] Could not fetch SL/TP from position: {e}")
+
+            final_entry = float(limit_price if order_type == "Limit" else current_price)
+
+            order_history_entry = {
+                "symbol": req.symbol,
+                "side": req.side,
+                "entry_price": final_entry,
+                "quantity_coin": float(quantity),
+                "quantity_usdt": float(quantity * (limit_price if limit_price else current_price)),
+                "stop_loss": float(actual_sl) if actual_sl else 0,
+                "take_profit": float(actual_tp) if actual_tp else 0,
+                "sl_mode": "custom" if stop_loss_value else "default",
+                "pattern": f"MANUAL_{order_type.upper()}",
+                "confidence": 100,
+                "source": "MANUAL_TRADE",
+                "order_type": order_type,
+                "status": "success"
+            }
+            state.add_order_to_history(order_history_entry)
+
+            # Log de confirmación con toda la info (Entry + TP + SL)
+            state.log("success", f"[MANUAL TRADE] ✅ {order_type.upper()} ejecutado: {req.symbol} {req.side} qty={quantity} | Entry=${final_entry:.8f} TP=${actual_tp or 'N/A'} SL=${actual_sl or 'N/A'}")
+
+        return {"success": success_status, "result": result}
 
     except HTTPException:
         raise

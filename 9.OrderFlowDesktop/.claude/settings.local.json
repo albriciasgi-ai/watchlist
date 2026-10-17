@@ -11,7 +11,9 @@
       "Bash(python:*)",
       "Bash(C:UsersinvenOneDriveDocumentosGitHubwatchlist9.OrderFlowDesktopfootprint_response.json)",
       "Bash(node -e:*)",
-      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\9.OrderFlowDesktop\\check_footprints.py\")"
+      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\9.OrderFlowDesktop\\check_footprints.py\")",
+      "Bash(findstr:*)",
+      "Bash(node test_aggregation.js:*)"
     ],
     "deny": [],
     "ask": []

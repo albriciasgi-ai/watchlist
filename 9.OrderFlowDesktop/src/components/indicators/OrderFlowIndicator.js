@@ -194,6 +194,169 @@ class OrderFlowIndicator extends IndicatorBase {
     }
   }
 
+  /**
+   * Carga footprints desde el archivo local (fallback cuando backend no tiene datos)
+   */
+  /**
+   * Agrega footprints de 1 minuto a intervalos mayores (5min, 15min, 1h, etc.)
+   *
+   * IMPORTANTE: Maneja dos formatos de footprints:
+   * - Formato archivo: candle_open/high/low/close, levels[] con price_mid
+   * - Formato backend: open/high/low/close, price_levels[] con price
+   *
+   * @param {Array} footprints1min - Footprints de 1 minuto
+   * @param {string} targetInterval - Intervalo objetivo ("5", "15", "60", etc.)
+   * @returns {Array} - Footprints agregados
+   */
+  _aggregateFootprints(footprints1min, targetInterval) {
+    if (targetInterval === "1") {
+      return footprints1min; // No agregar si ya es 1min
+    }
+
+    const intervalMinutes = parseInt(targetInterval);
+    if (isNaN(intervalMinutes)) {
+      console.error(`[OrderFlow] [${this.symbol}] _aggregateFootprints: intervalo inválido ${targetInterval}`);
+      return [];
+    }
+
+    console.log(`[OrderFlow] [${this.symbol}] 🔄 Agregando ${footprints1min.length} footprints de 1min a ${intervalMinutes}min`);
+
+    // Agrupar por intervalo
+    const groups = new Map();
+
+    for (const fp of footprints1min) {
+      // Redondear timestamp al inicio del intervalo
+      const timestamp = fp.candle_timestamp;
+      const intervalStart = Math.floor(timestamp / (intervalMinutes * 60 * 1000)) * (intervalMinutes * 60 * 1000);
+
+      if (!groups.has(intervalStart)) {
+        groups.set(intervalStart, []);
+      }
+      groups.get(intervalStart).push(fp);
+    }
+
+    // Agregar cada grupo
+    const aggregated = [];
+
+    for (const [intervalStart, groupFootprints] of groups) {
+      if (groupFootprints.length === 0) continue;
+
+      // Combinar todos los price_levels de los footprints del grupo
+      const combinedLevels = new Map();
+
+      for (const fp of groupFootprints) {
+        // Soportar ambos formatos: levels[] (archivo) y price_levels[] (backend)
+        const levels = fp.levels || fp.price_levels || [];
+
+        for (const level of levels) {
+          // Soportar price_mid (archivo) y price (backend)
+          const price = level.price_mid || level.price;
+
+          if (!combinedLevels.has(price)) {
+            combinedLevels.set(price, {
+              price: price,
+              bid_volume: 0,
+              ask_volume: 0,
+              total_volume: 0,
+              delta: 0
+            });
+          }
+
+          const combined = combinedLevels.get(price);
+          combined.bid_volume += level.bid_volume || 0;
+          combined.ask_volume += level.ask_volume || 0;
+          combined.total_volume += level.total_volume || 0;
+          combined.delta += level.delta || 0;
+        }
+      }
+
+      // Convertir Map a Array y ordenar por precio descendente
+      const price_levels = Array.from(combinedLevels.values()).sort((a, b) => b.price - a.price);
+
+      // Calcular OHLC del intervalo agregado
+      // Soportar candle_open/high/low/close (archivo) y open/high/low/close (backend)
+      const open = groupFootprints[0].candle_open || groupFootprints[0].open;
+      const close = groupFootprints[groupFootprints.length - 1].candle_close || groupFootprints[groupFootprints.length - 1].close;
+      const high = Math.max(...groupFootprints.map(fp => fp.candle_high || fp.high));
+      const low = Math.min(...groupFootprints.map(fp => fp.candle_low || fp.low));
+
+      // Sumar volúmenes totales
+      const total_volume = groupFootprints.reduce((sum, fp) => sum + (fp.total_volume || 0), 0);
+
+      // Calcular delta total sumando deltas individuales de los footprints
+      const total_delta = groupFootprints.reduce((sum, fp) => sum + (fp.total_delta || fp.delta || 0), 0);
+
+      // Calcular POC (Point of Control) - nivel con mayor volumen
+      let poc = null;
+      let max_volume = 0;
+      for (const level of price_levels) {
+        if (level.total_volume > max_volume) {
+          max_volume = level.total_volume;
+          poc = level.price;
+        }
+      }
+
+      const aggregatedFootprint = {
+        candle_timestamp: intervalStart,
+        open,
+        high,
+        low,
+        close,
+        total_volume,
+        total_delta,
+        delta: total_delta,  // Alias para compatibilidad
+        poc,
+        price_levels
+      };
+
+      aggregated.push(aggregatedFootprint);
+    }
+
+    // Ordenar por timestamp
+    aggregated.sort((a, b) => a.candle_timestamp - b.candle_timestamp);
+
+    console.log(`[OrderFlow] [${this.symbol}] ✅ Agregación completa: ${aggregated.length} footprints de ${intervalMinutes}min`);
+
+    return aggregated;
+  }
+
+  async _loadFromArchive() {
+    try {
+      // Verificar que window.electron existe
+      if (!window.electron || !window.electron.getUserDataPath || !window.electron.readFile || !window.electron.fileExists) {
+        console.log(`[OrderFlow] [${this.symbol}] _loadFromArchive: Electron APIs no disponibles`);
+        return [];
+      }
+
+      const userDataPath = await window.electron.getUserDataPath();
+      const archivePath = `${userDataPath}/footprint_archive/${this.symbol}_1.json`;
+
+      const exists = await window.electron.fileExists(archivePath);
+      if (!exists) {
+        console.log(`[OrderFlow] [${this.symbol}] _loadFromArchive: archivo no existe: ${archivePath}`);
+        return [];
+      }
+
+      const content = await window.electron.readFile(archivePath);
+      const data = JSON.parse(content);
+      const footprints1min = data.footprints || [];
+
+      console.log(`[OrderFlow] [${this.symbol}] 📚 Cargados ${footprints1min.length} footprints de 1min desde archivo local`);
+
+      // Si el intervalo no es 1min, agregar los footprints
+      if (this.interval !== "1") {
+        const aggregated = this._aggregateFootprints(footprints1min, this.interval);
+        return aggregated;
+      }
+
+      return footprints1min;
+
+    } catch (error) {
+      console.error(`[OrderFlow] [${this.symbol}] _loadFromArchive: error - ${error.message}`);
+      return [];
+    }
+  }
+
   async fetchFootprints() {
     if (this._destroyed) return false;
     if (this.isFetching) return false;
@@ -210,6 +373,22 @@ class OrderFlowIndicator extends IndicatorBase {
         return false;
       }
 
+      // =====================================================================
+      // PASO 1: SIEMPRE intentar cargar desde archivo local primero
+      // =====================================================================
+      let archivedFootprints = [];
+      try {
+        archivedFootprints = await this._loadFromArchive();
+        if (archivedFootprints.length > 0) {
+          console.log(`[OrderFlow] [${this.symbol}] 📚 Archivo local: ${archivedFootprints.length} footprints cargados`);
+        }
+      } catch (archiveError) {
+        console.warn(`[OrderFlow] [${this.symbol}] No se pudo cargar archivo local: ${archiveError.message}`);
+      }
+
+      // =====================================================================
+      // PASO 2: Intentar obtener datos del backend
+      // =====================================================================
       const hours = this.config.historyHours || 12;
       const url = `${API_BASE_URL}/api/orderflow/footprint/${this.symbol}?interval=${this.interval}&limit=2000&hours=${hours}`;
 
@@ -217,25 +396,52 @@ class OrderFlowIndicator extends IndicatorBase {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000);
 
-      let response;
+      let backendFootprints = [];
+      let backendFailed = false;
+
       try {
-        response = await fetch(url, { signal: controller.signal });
+        const response = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
-        // Reset retry count on success
-        this._retryCount = 0;
+        this._retryCount = 0; // Reset retry count on success
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.footprints) {
+            backendFootprints = data.footprints;
+            console.log(`[OrderFlow] [${this.symbol}] 🌐 Backend: ${backendFootprints.length} footprints recibidos`);
+          } else {
+            console.warn(`[OrderFlow] [${this.symbol}] Backend retornó success=false`);
+            backendFailed = true;
+          }
+        } else {
+          console.error(`[OrderFlow] [${this.symbol}] Backend HTTP error ${response.status}`);
+          backendFailed = true;
+        }
       } catch (fetchError) {
         clearTimeout(timeoutId);
-        console.error(`[OrderFlow] [${this.symbol}] fetchFootprints: fetch error - ${fetchError.message}`);
+        backendFailed = true;
+        console.warn(`[OrderFlow] [${this.symbol}] Backend error: ${fetchError.message}`);
+      }
 
-        // Schedule retry if we haven't exceeded max retries
-        if (this._retryCount < this._maxRetries && !this._destroyed) {
+      // =====================================================================
+      // PASO 3: Merge inteligente de archivo + backend
+      // =====================================================================
+      const oldCount = this.footprints.length;
+      let finalFootprints = [];
+
+      if (archivedFootprints.length === 0 && backendFootprints.length === 0) {
+        // No hay datos de ninguna fuente
+        console.warn(`[OrderFlow] [${this.symbol}] ❌ No hay footprints disponibles (ni archivo ni backend)`);
+
+        // Intentar retry si backend falló
+        if (backendFailed && this._retryCount < this._maxRetries && !this._destroyed) {
           this._retryCount++;
-          const delay = this._retryDelayMs * Math.pow(2, this._retryCount - 1); // Exponential backoff
-          console.log(`[OrderFlow] [${this.symbol}] fetchFootprints: scheduling retry ${this._retryCount}/${this._maxRetries} in ${delay}ms`);
+          const delay = this._retryDelayMs * Math.pow(2, this._retryCount - 1);
+          console.log(`[OrderFlow] [${this.symbol}] Scheduling retry ${this._retryCount}/${this._maxRetries} in ${delay}ms`);
 
           this._retryTimeoutId = setTimeout(async () => {
             if (!this._destroyed) {
-              this.isFetching = false; // Reset flag before retry
+              this.isFetching = false;
               const success = await this.fetchFootprints();
               if (success && this.indicatorManager?.requestRedraw) {
                 this.indicatorManager.requestRedraw();
@@ -244,26 +450,83 @@ class OrderFlowIndicator extends IndicatorBase {
           }, delay);
         }
 
+        this.footprints = [];
         return false;
+
+      } else if (archivedFootprints.length > 0 && backendFootprints.length === 0) {
+        // Solo archivo disponible
+        finalFootprints = archivedFootprints;
+        console.log(`[OrderFlow] [${this.symbol}] ✅ Usando solo archivo local (${finalFootprints.length} footprints)`);
+
+      } else if (archivedFootprints.length === 0 && backendFootprints.length > 0) {
+        // Solo backend disponible
+        finalFootprints = backendFootprints;
+        console.log(`[OrderFlow] [${this.symbol}] ✅ Usando solo backend (${finalFootprints.length} footprints)`);
+
+      } else {
+        // Ambas fuentes disponibles - MERGE INTELIGENTE
+        // Estrategia: Archivo como base completa + backend para agregar/actualizar datos más recientes
+
+        // 1. Usar TODO el archivo como base
+        const mergedMap = new Map();
+        for (const fp of archivedFootprints) {
+          mergedMap.set(fp.candle_timestamp, fp);
+        }
+
+        // 2. Agregar footprints del backend que:
+        //    a) Sean más recientes que el último del archivo (datos nuevos)
+        //    b) O actualicen los últimos 30 footprints del archivo (datos más frescos)
+
+        const archiveNewestTs = archivedFootprints.length > 0
+          ? archivedFootprints[archivedFootprints.length - 1].candle_timestamp
+          : 0;
+
+        const updateThresholdTs = archiveNewestTs - (30 * 5 * 60 * 1000); // últimos 2.5h del archivo
+
+        let backendUpdated = 0;
+        let backendAdded = 0;
+        let backendIgnored = 0;
+
+        for (const fp of backendFootprints) {
+          if (fp.candle_timestamp > archiveNewestTs) {
+            // Footprint más nuevo que el archivo → agregar
+            mergedMap.set(fp.candle_timestamp, fp);
+            backendAdded++;
+          } else if (fp.candle_timestamp >= updateThresholdTs) {
+            // Footprint en el rango de actualización → sobrescribir
+            mergedMap.set(fp.candle_timestamp, fp);
+            backendUpdated++;
+          } else {
+            // Footprint más viejo que el rango de actualización → ignorar (el archivo tiene mejor cobertura)
+            backendIgnored++;
+          }
+        }
+
+        // 3. Convertir a array y ordenar
+        finalFootprints = Array.from(mergedMap.values()).sort((a, b) => a.candle_timestamp - b.candle_timestamp);
+
+        console.log(`[OrderFlow] [${this.symbol}] ✅ Merge: archivo=${archivedFootprints.length}, backend: +${backendAdded} nuevos, ~${backendUpdated} actualizados, -${backendIgnored} ignorados = ${finalFootprints.length} total`);
+
+        // Log detallado de rangos después del merge
+        if (finalFootprints.length > 0) {
+          const firstFp = new Date(finalFootprints[0].candle_timestamp).toLocaleString();
+          const lastFp = new Date(finalFootprints[finalFootprints.length - 1].candle_timestamp).toLocaleString();
+          console.log(`[OrderFlow] [${this.symbol}] Rango merged: ${firstFp} → ${lastFp}`);
+        }
       }
 
-      if (this._destroyed) return false;
-
-      if (!response.ok) {
-        console.error(`[OrderFlow] [${this.symbol}] fetchFootprints: HTTP error ${response.status}`);
-        return false;
-      }
-
-      const data = await response.json();
-
-      if (!data.success) {
-        console.error(`[OrderFlow] [${this.symbol}] fetchFootprints: API returned success=false`);
-        return false;
-      }
-
-      const oldCount = this.footprints.length;
-      this.footprints = data.footprints || [];
+      this.footprints = finalFootprints;
       const newCount = this.footprints.length;
+
+      // Verificar integridad del array después de asignación
+      if (newCount !== finalFootprints.length) {
+        console.error(`[OrderFlow] [${this.symbol}] ⚠️ MISMATCH: finalFootprints=${finalFootprints.length} pero this.footprints=${newCount}`);
+      }
+
+      // SIEMPRE loguear ranges después de un merge exitoso para debugging
+      if (newCount > 0) {
+        this._logFootprintRanges();
+      }
 
       // Solo loguear cuando hay cambios significativos o es la primera carga
       const isFirstLoad = oldCount === 0 && newCount > 0;
@@ -272,12 +535,10 @@ class OrderFlowIndicator extends IndicatorBase {
 
       if (isFirstLoad) {
         console.log(`[OrderFlow] [${this.symbol}] INITIAL LOAD: ${newCount} footprints`);
-        this._logFootprintRanges();
       } else if (hasNewFootprints) {
         console.log(`[OrderFlow] [${this.symbol}] +${newCount - oldCount} footprints (total: ${newCount})`);
       } else if (significantChange) {
         console.warn(`[OrderFlow] [${this.symbol}] footprints changed: ${oldCount} -> ${newCount}`);
-        this._logFootprintRanges();
       } else if (newCount === 0 && oldCount > 0) {
         console.warn(`[OrderFlow] [${this.symbol}] footprints LOST: ${oldCount} -> 0`);
       }
@@ -330,11 +591,8 @@ class OrderFlowIndicator extends IndicatorBase {
     // Agregar el ultimo grupo
     groups.push(currentGroup);
 
-    // Log resumen
-    console.log(`[OrderFlow] [${this.symbol}] FOOTPRINT RANGES:`);
-    console.log(`  Total: ${fps.length} footprints`);
-    console.log(`  Rango completo: ${firstDate} -> ${lastDate}`);
-    console.log(`  Grupos contiguos: ${groups.length}`);
+    // Log resumen EN UNA SOLA LÍNEA para evitar que se pierda
+    console.log(`[OrderFlow] [${this.symbol}] FOOTPRINT RANGES: Total=${fps.length}, Rango=${firstDate} → ${lastDate}, Grupos=${groups.length}`);
 
     // Log cada grupo
     for (let i = 0; i < groups.length; i++) {
@@ -426,6 +684,13 @@ class OrderFlowIndicator extends IndicatorBase {
       this._loggedFirstRender = true;
       const mode = candleWidth < this.config.minCandleWidth ? 'DOTS (zoomed out)' : 'FOOTPRINT (zoomed in)';
       console.log(`[OrderFlow] [${this.symbol}] FIRST RENDER: ${this.footprints.length} fps, candleWidth=${candleWidth.toFixed(1)}px, minCandleWidth=${this.config.minCandleWidth}, mode=${mode}`);
+
+      // Log rango de velas visibles para comparar con footprints
+      if (visibleCandles.length > 0) {
+        const firstCandle = new Date(visibleCandles[0].timestamp).toLocaleString();
+        const lastCandle = new Date(visibleCandles[visibleCandles.length - 1].timestamp).toLocaleString();
+        console.log(`[OrderFlow] [${this.symbol}] CANDLES RANGE: ${firstCandle} → ${lastCandle} (${visibleCandles.length} velas)`);
+      }
     }
 
     // Minimum width check - if too small for full footprint, render imbalance dots instead

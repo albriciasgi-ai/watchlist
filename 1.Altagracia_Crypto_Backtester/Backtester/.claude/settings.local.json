@@ -21,7 +21,11 @@
       "Bash(npm run dev:*)",
       "Bash(timeout:*)",
       "Bash(cmd /c \"taskkill /F /PID 16376\")",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(../../2.WatchlistConIndicadores/CLAUDE.md)",
+      "Bash(../../\"4.Analizador cripto\"/CLAUDE.md)",
+      "Bash(../../11.TradingJournalDesktop/CLAUDE.md)"
     ],
     "deny": [],
     "ask": []

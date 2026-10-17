@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 # URL del Cloud Footprint Collector en Northflank
 CLOUD_COLLECTOR_URL = "https://p01--altagracia--rxv8nrbhxln9.code.run"
-CLOUD_TIMEOUT = 30.0
+CLOUD_TIMEOUT = 90.0  # Aumentado a 90s para archivos grandes
 
 # Directorio de cache
 CACHE_DIR = Path(__file__).parent / "footprint_cache"

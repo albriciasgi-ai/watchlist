@@ -16,6 +16,7 @@ const OrderForm = ({
   const [quantityMode, setQuantityMode] = useState('fixed'); // 'fixed' | 'risk'
   const [fixedAmount, setFixedAmount] = useState('100'); // USDT
   const [riskAmount, setRiskAmount] = useState('10'); // USDT a arriesgar
+  const [orderTypeMode, setOrderTypeMode] = useState('auto'); // 'auto' | 'market' | 'limit'
 
   // Modal de confirmación
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -106,6 +107,47 @@ const OrderForm = ({
     return `1:${ratio.toFixed(2)}`;
   }, [potentialPnL]);
 
+  // Determinar tipo de orden: LIMIT si entry difiere del precio actual
+  const orderType = useMemo(() => {
+    console.log(`[OrderForm] ===== ORDER TYPE CALCULATION START =====`);
+    console.log(`[OrderForm] orderTypeMode state:`, orderTypeMode);
+    console.log(`[OrderForm] tpslBoxData:`, tpslBoxData);
+    console.log(`[OrderForm] currentPrice:`, currentPrice);
+
+    if (!tpslBoxData || !currentPrice) {
+      console.log(`[OrderForm] Missing data, defaulting to MARKET`);
+      return 'MARKET';
+    }
+
+    // Si el usuario forzó un tipo manualmente, usar ese
+    if (orderTypeMode === 'market') {
+      console.log(`[OrderForm] User forced MARKET mode`);
+      return 'MARKET';
+    }
+    if (orderTypeMode === 'limit') {
+      console.log(`[OrderForm] User forced LIMIT mode`);
+      return 'LIMIT';
+    }
+
+    // Modo auto: decidir basado en diferencia de precio
+    const entryPrice = tpslBoxData.entryPrice;
+    const priceDiff = Math.abs(entryPrice - currentPrice);
+    const priceThreshold = currentPrice * 0.001; // 0.1%
+    const calculatedType = priceDiff > priceThreshold ? 'LIMIT' : 'MARKET';
+
+    console.log(`[OrderForm] AUTO mode calculation:`, {
+      entryPrice,
+      currentPrice,
+      priceDiff: priceDiff.toFixed(4),
+      priceThreshold: priceThreshold.toFixed(4),
+      result: calculatedType,
+      condition: `${priceDiff.toFixed(4)} > ${priceThreshold.toFixed(4)} = ${priceDiff > priceThreshold}`
+    });
+    console.log(`[OrderForm] ===== ORDER TYPE: ${calculatedType} =====`);
+
+    return calculatedType;
+  }, [tpslBoxData, currentPrice, orderTypeMode]);
+
   // Handler para preparar orden
   const handlePrepareOrder = useCallback(() => {
     if (!tpslBoxData || calculatedQuantity.qty <= 0) return;
@@ -115,15 +157,16 @@ const OrderForm = ({
       quantity: calculatedQuantity.qty,
       stopLoss: tpslBoxData.slPrice,
       takeProfit: tpslBoxData.tpPrice,
-      entryPrice: tpslBoxData.entryPrice,
+      entryPrice: tpslBoxData.entryPrice,  // ✅ CRÍTICO: incluir entry price
       investment: calculatedQuantity.investment,
       potentialProfit: potentialPnL.profit,
-      potentialLoss: potentialPnL.loss
+      potentialLoss: potentialPnL.loss,
+      orderType  // ✅ Incluir tipo de orden calculado
     };
 
     setPendingOrder(order);
     setShowConfirmation(true);
-  }, [side, tpslBoxData, calculatedQuantity, potentialPnL]);
+  }, [side, tpslBoxData, calculatedQuantity, potentialPnL, orderType]);
 
   // Handler para confirmar orden
   const handleConfirmOrder = useCallback(() => {
@@ -203,6 +246,49 @@ const OrderForm = ({
             >
               📉 SHORT (Sell)
             </button>
+          </div>
+        </div>
+
+        {/* Tipo de Orden */}
+        <div className="order-form-section">
+          <h4>Tipo de Orden</h4>
+          <div className="quantity-mode-toggle">
+            <button
+              className={`mode-btn ${orderTypeMode === 'auto' ? 'active' : ''}`}
+              onClick={() => setOrderTypeMode('auto')}
+              title="Automático: LIMIT si entry ≠ precio actual, MARKET si son similares"
+            >
+              🤖 Auto
+            </button>
+            <button
+              className={`mode-btn ${orderTypeMode === 'market' ? 'active' : ''}`}
+              onClick={() => setOrderTypeMode('market')}
+              title="Siempre ejecutar como MARKET (inmediato al precio actual)"
+            >
+              ⚡ Market
+            </button>
+            <button
+              className={`mode-btn ${orderTypeMode === 'limit' ? 'active' : ''}`}
+              onClick={() => setOrderTypeMode('limit')}
+              title="Siempre ejecutar como LIMIT (espera al entry price)"
+            >
+              🎯 Limit
+            </button>
+          </div>
+          <div style={{
+            fontSize: '11px',
+            color: '#666',
+            marginTop: '6px',
+            padding: '6px',
+            background: '#f5f5f5',
+            borderRadius: '4px'
+          }}>
+            {orderTypeMode === 'auto' && '🤖 Auto: Detecta automáticamente según diferencia de precio (>0.1%)'}
+            {orderTypeMode === 'market' && '⚡ Market: Ejecución inmediata al precio de mercado actual'}
+            {orderTypeMode === 'limit' && '🎯 Limit: Espera a que el precio alcance el entry price dibujado'}
+            <div style={{ marginTop: '4px', fontWeight: '600', color: orderType === 'LIMIT' ? '#f59e0b' : '#10b981' }}>
+              → Se ejecutará como: {orderType}
+            </div>
           </div>
         </div>
 
@@ -328,8 +414,23 @@ const OrderForm = ({
               </div>
               <div className="confirmation-row">
                 <span className="label">Tipo:</span>
-                <span className="value">MARKET</span>
+                <span className="value" style={{
+                  color: pendingOrder.orderType === 'LIMIT' ? '#f59e0b' : '#10b981',
+                  fontWeight: '600'
+                }}>
+                  {pendingOrder.orderType}
+                </span>
               </div>
+              {pendingOrder.orderType === 'LIMIT' && (
+                <div className="confirmation-info" style={{
+                  fontSize: '11px',
+                  color: '#f59e0b',
+                  fontStyle: 'italic',
+                  marginTop: '4px'
+                }}>
+                  ℹ️ Orden límite: se ejecutará cuando el precio alcance ${formatPrice(pendingOrder.entryPrice)}
+                </div>
+              )}
               <div className="confirmation-row">
                 <span className="label">Cantidad:</span>
                 <span className="value">{pendingOrder.quantity.toFixed(6)}</span>

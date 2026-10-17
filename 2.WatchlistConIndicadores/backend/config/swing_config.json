@@ -18,7 +18,7 @@
     "ETHUSDT": {
       "volumeFilter": {
         "enabled": false,
-        "minZScore": 2,
+        "minZScore": 1.5,
         "lookbackBars": 50
       },
       "days": 90,
@@ -35,7 +35,7 @@
     "BTCUSDT": {
       "volumeFilter": {
         "enabled": false,
-        "minZScore": 2,
+        "minZScore": 1.5,
         "lookbackBars": 50
       },
       "days": 90,
@@ -43,57 +43,57 @@
     },
     "XRPUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 2,
+        "enabled": false,
+        "minZScore": 1.5,
         "lookbackBars": 50
       }
     },
     "TRXUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 1.5,
         "lookbackBars": 50
       }
     },
     "GALAUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 2,
+        "enabled": false,
+        "minZScore": 1.5,
         "lookbackBars": 50
       }
     },
     "SUIUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 2,
+        "enabled": false,
+        "minZScore": 1.5,
         "lookbackBars": 50
       }
     },
     "TRBUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 2,
+        "enabled": false,
+        "minZScore": 1.5,
         "lookbackBars": 50
       }
     },
     "SOLUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 2,
+        "enabled": false,
+        "minZScore": 1.5,
         "lookbackBars": 50
       }
     },
     "ADAUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 2,
+        "enabled": false,
+        "minZScore": 1.5,
         "lookbackBars": 50
       }
     },
     "DOGEUSDT": {
       "volumeFilter": {
-        "enabled": true,
-        "minZScore": 2,
+        "enabled": false,
+        "minZScore": 1.5,
         "lookbackBars": 50
       }
     }
@@ -118,6 +118,6 @@
     "skipVolumeInRectangle": false
   },
   "cooldownMinutes": 5,
-  "alertsEnabled": false,
+  "alertsEnabled": true,
   "alertTargetUrl": "http://localhost:5000/api/watchlist-alert"
 }

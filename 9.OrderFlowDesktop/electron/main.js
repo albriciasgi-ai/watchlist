@@ -7,7 +7,7 @@
  * 3. Implementa system tray para ejecucion en background
  */
 
-const { app, BrowserWindow, powerSaveBlocker, Tray, Menu, nativeImage, Notification } = require('electron');
+const { app, BrowserWindow, powerSaveBlocker, Tray, Menu, nativeImage, Notification, ipcMain, shell } = require('electron');
 const path = require('path');
 
 // ============================================================
@@ -80,8 +80,8 @@ function createWindow() {
       sandbox: false,  // Desactivado para permitir mas conexiones de red
 
       // Permitir acceso a recursos locales
-      webSecurity: true,
-      allowRunningInsecureContent: false
+      webSecurity: false,  // TEMPORAL: Desactivado para debug de CORS
+      allowRunningInsecureContent: true
     },
     // Estilo de ventana - tema oscuro para trading
     backgroundColor: '#0d1117',
@@ -201,12 +201,82 @@ function stopPowerSaveBlocker() {
 // EVENTOS DE LA APLICACION
 // ============================================================
 
+// ============================================================
+// IPC HANDLERS (para FootprintArchiver)
+// ============================================================
+
+ipcMain.handle('get-user-data-path', () => {
+  return app.getPath('userData');
+});
+
+ipcMain.handle('open-folder', (event, folderPath) => {
+  shell.openPath(folderPath);
+});
+
+// ============================================================
+// FOOTPRINT DOWNLOADER (Main Process - Sin restricciones CORS)
+// ============================================================
+
+const fs = require('fs').promises;
+const https = require('https');
+
+/**
+ * Descarga footprints desde el cloud usando Node.js https (sin CORS)
+ */
+ipcMain.handle('download-footprints', async (event, { symbol, hours, interval }) => {
+  const CLOUD_URL = 'https://p01--altagracia--rxv8nrbhxln9.code.run';
+  const url = `${CLOUD_URL}/api/footprints/${symbol}?hours=${hours}&interval=${interval}`;
+
+  console.log(`[Main] Descargando ${symbol} desde: ${url}`);
+
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error('TIMEOUT después de 180 segundos'));
+    }, 180000);
+
+    https.get(url, { timeout: 180000 }, (res) => {
+      let data = '';
+
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      res.on('end', () => {
+        clearTimeout(timeout);
+
+        if (res.statusCode !== 200) {
+          reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
+          return;
+        }
+
+        try {
+          const json = JSON.parse(data);
+          const footprints = json.footprints || [];
+          console.log(`[Main] ✅ ${symbol}: ${footprints.length} footprints descargados`);
+          resolve(footprints);
+        } catch (error) {
+          reject(new Error(`Error parseando JSON: ${error.message}`));
+        }
+      });
+    }).on('error', (error) => {
+      clearTimeout(timeout);
+      console.error(`[Main] ❌ Error descargando ${symbol}:`, error.message);
+      reject(error);
+    });
+  });
+});
+
+// ============================================================
+// INICIO DE LA APLICACION
+// ============================================================
+
 app.whenReady().then(() => {
   console.log('====================================');
   console.log('Order Flow Desktop - Iniciando...');
   console.log('====================================');
   console.log('[Config] Modo:', isDev ? 'Desarrollo' : 'Produccion');
   console.log('[Config] Anti-throttling: ACTIVADO');
+  console.log('[Config] userData:', app.getPath('userData'));
   console.log('[Config] Backend esperado en: http://localhost:11000');
 
   // Iniciar PowerSaveBlocker

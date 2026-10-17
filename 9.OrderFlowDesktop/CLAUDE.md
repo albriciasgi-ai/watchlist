@@ -1,1037 +1,475 @@
-# CLAUDE.md - Order Flow Desktop
+# APP 9: ORDER FLOW DESKTOP (Electron)
 
-Guia para Claude Code al trabajar con esta aplicacion.
+**Ubicacion:** `9.OrderFlowDesktop/`
 
----
+Version de escritorio del Order Flow (App 5) empaquetada con Electron. Incluye optimizaciones agresivas de rendimiento y sistema de cache avanzado.
 
-## REGLAS DEL PROYECTO
-
-### Idioma
-**IMPORTANTE**: Comunicarse SIEMPRE en espanol con el usuario. Todos los mensajes, explicaciones y comentarios deben ser en espanol.
-
-### Perfil
-Agente programador JavaScript/Python con experiencia en aplicaciones de trading y Electron.
-
-### Comportamiento
-1. **Autonomia**: Trabajar sin preguntar. Entregar codigo completo y funcional.
-2. **Formato visual**: NO modificar estilos, CSS, layouts ni estructura visual existente salvo que se pida explicitamente.
-3. **Honestidad**: Si algo no es posible o hay limitaciones, informar claramente.
-4. **Calidad**: Revisar exhaustivamente antes de entregar. Ediciones pequenas y precisas.
-5. **Encoding**: Evitar tildes y caracteres especiales en codigo fuente para prevenir problemas de encoding.
-
----
-
-## VISION GENERAL
-
-**Order Flow Desktop** es la version de escritorio (Electron) del analizador de Order Flow.
-Resuelve el problema critico de throttling del navegador que causaba gaps en los graficos durante periodos de inactividad.
-
-| Aspecto | Valor |
-|---------|-------|
-| Ubicacion | `9.OrderFlowDesktop/` |
-| Puerto Frontend Dev | 11001 |
-| Puerto Backend | 11000 (usa backend de `5.Order_flow/`) |
-| Stack | Electron 33 + React 18 + Vite 5 + uPlot |
-| Base frontend | Copiado de `5.Order_flow/frontend/` |
-| Base Electron | Copiado de `7.WatchlistDesktop/electron/` |
-
----
-
-## PROBLEMA RESUELTO
-
-### Antes (Browser)
-
-| Problema | Causa |
-|----------|-------|
-| Gaps en graficos al minimizar | Chromium throttlea el renderer en background |
-| Graficos congelados al apagar pantalla | Timer throttling reduce frecuencia de render |
-| WebSocket se desconecta | Browser reduce conexiones de red en background |
-| Datos desactualizados al volver | El browser "pausa" la app completamente |
-| Alertas retrasadas | Calculos del frontend pausados |
-
-### Ahora (Electron)
-
-| Solucion | Implementacion |
-|----------|----------------|
-| Renderer siempre activo | `disable-renderer-backgrounding` |
-| Timers sin pausar | `disable-background-timer-throttling` |
-| Conexiones mantenidas | `backgroundThrottling: false` en webPreferences |
-| PC no entra en suspension | `powerSaveBlocker.start('prevent-app-suspension')` |
-| Ejecucion en segundo plano | System Tray con minimizar a bandeja |
-
-### Resultado de Pruebas (Enero 2026)
-
-- **Prueba de inactividad**: 10+ minutos con pantalla apagada
-- **Resultado**: Graficos sin gaps, datos actualizados al volver
-- **Footprints**: Continuaron procesandose cada minuto sin interrupcion
-- **WebSocket**: Conexion mantenida durante toda la prueba
-
----
-
-## ARQUITECTURA
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    9.OrderFlowDesktop                           │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                 ELECTRON (Main Process)                   │   │
-│  │  - disable-renderer-backgrounding                        │   │
-│  │  - disable-background-timer-throttling                   │   │
-│  │  - powerSaveBlocker.start('prevent-app-suspension')      │   │
-│  │  - System Tray para ejecucion en background              │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                              ↕ IPC                              │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                 RENDERER (React + uPlot)                  │   │
-│  │  - SingleSymbolAnalyzer.jsx (componente raiz)            │   │
-│  │  - MiniChart.jsx (grafico principal)                     │   │
-│  │  - OrderFlowIndicator.js (footprint overlay)             │   │
-│  │  - backgroundThrottling: false en webPreferences         │   │
-│  │  - Solo visualizacion, SIN calculos pesados              │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-                              ↕ HTTP/WebSocket
-┌─────────────────────────────────────────────────────────────────┐
-│              BACKEND (5.Order_flow - Puerto 11000)               │
-│  ✅ SIN CAMBIOS - Reutiliza el backend existente                 │
-│  - Trade Aggregator (acumula trades por vela)                   │
-│  - Footprint Calculator (Step Size Absoluto)                    │
-│  - Footprint Storage (Persistencia JSON)                        │
-│  - WebSocket Bybit (publicTrade para 21 simbolos)               │
-│  - Alert Sender → Trading Bot (puerto 5000)                     │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## ESTRUCTURA DE ARCHIVOS
+## Estructura
 
 ```
 9.OrderFlowDesktop/
 ├── electron/
-│   ├── main.js                    # Proceso principal Electron
-│   │                              # - Anti-throttling configuration
-│   │                              # - PowerSaveBlocker
-│   │                              # - System Tray
-│   │                              # - Window management
-│   └── preload.js                 # Bridge seguro renderer ↔ main
-│                                  # - electronAPI exposed
-│                                  # - Notificaciones nativas
+│   ├── main.js              # Proceso principal (anti-throttling, tray)
+│   └── preload.js           # Bridge seguro renderer<->main
 │
-├── src/                           # Frontend React (copiado de 5.Order_flow)
-│   ├── main.jsx                   # Entry point React
-│   ├── config.js                  # API_BASE_URL = localhost:11000
-│   ├── styles.css                 # Estilos globales
-│   │
+├── src/
 │   ├── components/
-│   │   ├── SingleSymbolAnalyzer.jsx   # Componente raiz
-│   │   ├── MiniChart.jsx              # Grafico principal con canvas
-│   │   ├── SymbolList.jsx             # Lista lateral de simbolos
-│   │   ├── SymbolSelector.jsx         # Selector de simbolo
-│   │   │
-│   │   ├── OrderFlowSettings.jsx      # Modal config Order Flow
-│   │   ├── VWAPSettings.jsx           # Modal config VWAP
-│   │   ├── SwingDetectorSettings.jsx  # Modal config Swing
-│   │   ├── [otros]Settings.jsx        # Modales de indicadores
-│   │   │
-│   │   ├── indicators/
-│   │   │   ├── IndicatorManager.js    # Orquestador de indicadores
-│   │   │   ├── OrderFlowIndicator.js  # Renderiza footprint
-│   │   │   ├── VWAPIndicator.js       # VWAP backend-native
-│   │   │   ├── SwingDetectorIndicator.js
-│   │   │   ├── CVDIndicator.js
-│   │   │   └── [otros]Indicator.js
-│   │   │
-│   │   ├── drawing/
-│   │   │   ├── DrawingToolManager.js  # Gestor de herramientas
-│   │   │   ├── DrawingToolbar.jsx     # Barra de herramientas
-│   │   │   └── shapes/                # Formas: Rectangle, Line, etc.
-│   │   │
-│   │   ├── trading/
-│   │   │   ├── TradingPanel.jsx       # Panel de trading
-│   │   │   ├── OrderForm.jsx          # Formulario de ordenes
-│   │   │   └── PositionCard.jsx       # Tarjeta de posicion
-│   │   │
-│   │   ├── SlidingAlertPanel/         # Panel de alertas
-│   │   └── ProximityAlerts/           # Sistema de alertas de proximidad
-│   │
-│   ├── hooks/
-│   │   └── useGlobalAlerts.js         # Hook para alertas globales
-│   │
-│   └── utils/
-│       ├── CandleCache.js             # Cache IndexedDB para velas
-│       ├── IndicatorCache.js          # Cache para indicadores
-│       ├── Logger.js                  # Sistema de logging
-│       └── [otros].js
+│   │   ├── SingleSymbolAnalyzer.jsx  # Componente raiz (OPTIMIZADO)
+│   │   ├── MiniChart.jsx             # Grafico con indicadores (OPTIMIZADO)
+│   │   ├── SymbolList.jsx            # Lista lateral de monedas
+│   │   └── indicators/
+│   │       ├── IndicatorManager.js   # Orquestador de indicadores
+│   │       ├── VWAPIndicator.js      # VWAP backend-native
+│   │       ├── SwingDetectorIndicator.js
+│   │       └── SupportResistance2Indicator.js
+│   ├── utils/
+│   │   ├── CandleCache.js            # Cache IndexedDB con LRU y validacion (OPTIMIZADO)
+│   │   ├── IndicatorCache.js         # Cache para indicadores
+│   │   ├── PollingCoordinator.js     # Coordinador de polling v2 (NUEVO)
+│   │   └── robustness.js             # Validacion y health checks
+│   └── config.js                     # API_BASE_URL = localhost:11000
 │
-├── assets/
-│   └── icon.ico                   # Icono de la aplicacion (opcional)
-│
-├── dist/                          # Build de produccion (generado)
-├── dist-electron/                 # Instaladores (generado)
-├── node_modules/                  # Dependencias (generado)
-│
-├── package.json                   # Configuracion npm + electron-builder
-├── vite.config.js                 # Configuracion Vite
-├── index.html                     # HTML principal
-│
-├── 1_INSTALL.bat                  # Script: npm install
-├── 2_START_DEV.bat                # Script: npm run dev:electron
-├── 3_BUILD.bat                    # Script: npm run build:electron
-├── START_ALL.bat                  # Script: Inicia backend, espera, luego Electron
-│
-└── CLAUDE.md                      # Este archivo
+├── package.json
+├── vite.config.js                    # Puerto 5175
+└── 1_START.bat                       # Inicio rapido
 ```
 
----
+## Comandos
 
-## COMANDOS
-
-### Instalacion (primera vez)
-
-```batch
-cd 9.OrderFlowDesktop
-1_INSTALL.bat
-
-# O manualmente:
-npm install
-```
-
-### Desarrollo
-
-```batch
-# OPCION RECOMENDADA: Inicio automatico (backend + frontend)
-cd 9.OrderFlowDesktop
-START_ALL.bat
-# Este script:
-# 1. Inicia el backend si no esta corriendo
-# 2. Espera a que responda (max 2 min)
-# 3. Inicia Electron cuando el backend esta listo
-
-# OPCION MANUAL: Dos terminales separadas
-# Terminal 1 - Backend (REQUERIDO)
-cd 5.Order_flow/backend
-.venv\Scripts\activate
-uvicorn main:app --reload --port 11000
-
-# Terminal 2 - Electron + Vite
-cd 9.OrderFlowDesktop
-2_START_DEV.bat
-
-# O manualmente:
-npm run dev:electron
-```
-
-### Build para Produccion
-
-```batch
-cd 9.OrderFlowDesktop
-3_BUILD.bat
-
-# O manualmente:
-npm run build:electron
-```
-
-**Output generado en `dist-electron/`:**
-- `Order Flow Desktop Setup.exe` - Instalador NSIS (~150MB)
-- `OrderFlowDesktop-Portable.exe` - Version portable
-
----
-
-## CONFIGURACION ANTI-THROTTLING
-
-### electron/main.js
-
-```javascript
-// ============================================================
-// CONFIGURACION ANTI-THROTTLING (ANTES de app.whenReady)
-// ============================================================
-
-// Desactivar throttling del renderer en background
-app.commandLine.appendSwitch('disable-renderer-backgrounding');
-
-// Desactivar throttling de timers en background
-app.commandLine.appendSwitch('disable-background-timer-throttling');
-
-// Desactivar throttling de ventanas ocultas
-app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
-
-// ============================================================
-// CONFIGURACION DE RED
-// ============================================================
-
-// Aumentar limite de conexiones (default es 6)
-app.commandLine.appendSwitch('max-connections-per-host', '64');
-
-// Aumentar memoria para JavaScript
-app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
-```
-
-### BrowserWindow webPreferences
-
-```javascript
-webPreferences: {
-  backgroundThrottling: false,  // CRITICO: Desactiva throttling
-  preload: path.join(__dirname, 'preload.js'),
-  contextIsolation: true,
-  nodeIntegration: false,
-  sandbox: false
-}
-```
-
-### PowerSaveBlocker
-
-```javascript
-// Prevenir que el sistema entre en suspension
-powerSaveBlockerId = powerSaveBlocker.start('prevent-app-suspension');
-```
-
----
-
-## RELACION CON BACKEND
-
-Esta aplicacion **NO tiene backend propio**. Reutiliza el backend de `5.Order_flow/`:
-
-| Componente | Ubicacion | Puerto |
-|------------|-----------|--------|
-| Backend Order Flow | `5.Order_flow/backend/` | 11000 |
-| Frontend Electron | `9.OrderFlowDesktop/` | 11001 (dev) |
-
-### Endpoints Principales Consumidos
-
-| Endpoint | Descripcion |
-|----------|-------------|
-| `GET /api/status` | Estado del servidor |
-| `GET /api/orderflow/footprint/{symbol}` | Footprints de un simbolo |
-| `GET /api/orderflow/config` | Configuracion Order Flow |
-| `POST /api/orderflow/config` | Actualizar configuracion |
-| `GET /api/orderflow/step-size/{symbol}` | Step size de un simbolo |
-| `GET /api/historical/{symbol}` | Datos OHLCV |
-| `GET /api/vwap-service/data/{symbol}` | Datos VWAP |
-| `GET /api/swing/signals/{symbol}` | Senales Swing |
-
----
-
-## FUNCIONALIDADES
-
-### Heredadas de Order Flow (5.Order_flow)
-
-- **Footprint con Step Size Absoluto**: Niveles de precio fijos ($10 BTC, $2 ETH)
-- **Visualizacion de Imbalances**: Ratio >= 3x marcado en amarillo
-- **Stacked Imbalances**: 3+ niveles consecutivos con imbalance
-- **POC (Point of Control)**: Nivel con mayor volumen
-- **Delta por Vela**: Diferencia ask - bid
-- **Persistencia de Footprints**: JSON en disco, 12h de historial
-- **21 Simbolos Soportados**: BTCUSDT, ETHUSDT, SOLUSDT, etc.
-
-### Nuevas de Electron
-
-- **Sin Gaps en Graficos**: Anti-throttling activo
-- **Ejecucion en Background**: Minimiza a System Tray
-- **Notificaciones Nativas**: Alertas del sistema operativo
-- **PowerSaveBlocker**: PC no entra en suspension
-- **Instalador Windows**: .exe con NSIS
-
----
-
-## SIMBOLOS SOPORTADOS
-
-```javascript
-const SYMBOLS = [
-  "BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT",
-  "TRXUSDT", "PAXGUSDT", "GALAUSDT", "SUIUSDT", "TRBUSDT",
-  "DOGEUSDT", "AAVEUSDT", "AVAXUSDT", "ARBUSDT", "BNBUSDT",
-  "INJUSDT", "KASUSDT", "SHIB1000USDT", "TONUSDT", "UNIUSDT",
-  "LPTUSDT"
-];
-```
-
-### Step Sizes por Defecto
-
-| Simbolo | Step Size | Descripcion |
-|---------|-----------|-------------|
-| BTCUSDT | $10.0 | Bitcoin |
-| ETHUSDT | $2.0 | Ethereum |
-| SOLUSDT | $0.5 | Solana |
-| BNBUSDT | $1.0 | Binance Coin |
-| XRPUSDT | $0.005 | Ripple |
-| DOGEUSDT | $0.001 | Dogecoin |
-
----
-
-## TROUBLESHOOTING
-
-### Backend no disponible
-
-**Sintoma**: Error "Cannot connect to localhost:11000" o grafico vacio
-
-**Solucion**:
-1. Verificar que el backend esta corriendo:
-   ```batch
-   cd 5.Order_flow/backend
-   .venv\Scripts\activate
-   uvicorn main:app --reload --port 11000
-   ```
-2. Verificar que el puerto 11000 no esta en uso:
-   ```batch
-   netstat -ano | findstr :11000
-   ```
-3. Si hay conflicto, matar el proceso:
-   ```batch
-   taskkill /PID <PID> /F
-   ```
-
-### Graficos vacios o sin footprint
-
-**Sintoma**: Velas se muestran pero sin datos de Order Flow
-
-**Solucion**:
-1. El backend necesita tiempo para acumular trades (esperar 1-2 minutos)
-2. Verificar que Order Flow esta habilitado en el panel de indicadores
-3. Revisar logs del backend buscando errores de WebSocket
-4. Verificar que el simbolo tiene suficiente volumen
-
-### Footprints faltan para las ultimas N velas
-
-**Sintoma**: Footprints historicos se muestran pero las velas recientes no tienen footprint
-
-**Causa**: Despues de un reinicio del backend, los footprints nuevos tardan en generarse.
-Los footprints historicos se cargan desde archivos JSON en disco (`footprint_cache/`),
-pero los footprints nuevos se generan solo cuando cierra cada vela (1 por minuto en timeframe 1m).
-
-**Solucion**:
-1. Esperar ~2-3 minutos para que se acumulen footprints de velas nuevas
-2. Verificar estado del servicio:
-   ```bash
-   curl http://localhost:11000/api/orderflow/status
-   ```
-   Debe mostrar: `"running": true`, `"websocket_connected": true`
-3. Verificar logs del backend buscando `[ORDERFLOW_SERVICE] Footprint completado`
-4. Si el backend acaba de reiniciarse, refrescar la pagina de Electron (F5)
-
-### Swing Detector no muestra senales
-
-**Sintoma**: El modal del Swing Detector dice "service stopped" o no hay flechas en el grafico
-
-**Causa**: El codigo de inicio del swing_service estaba comentado en `main.py`
-
-**Solucion**:
-1. Verificar que el servicio esta activo:
-   ```bash
-   curl http://localhost:11000/api/swing/status
-   ```
-   Debe mostrar: `"running": true`
-2. Si `"running": false`, verificar en `5.Order_flow/backend/main.py` que el codigo
-   de inicio del swing service NO esta comentado (lineas ~2486-2492):
-   ```python
-   # Start swing detector service
-   if swing_service:
-       try:
-           await swing_service.start()
-           print(f"[STARTUP] Swing detector service started")
-       except Exception as e:
-           print(f"[STARTUP] Warning: Could not start swing service: {e}")
-   ```
-3. Reiniciar el backend despues de descomentar
-
-### Backend no responde despues de cambios
-
-**Sintoma**: El hot-reload de uvicorn no aplica cambios correctamente
-
-**Solucion**:
-1. Matar todos los procesos Python:
-   ```batch
-   taskkill /F /IM python.exe /T
-   ```
-2. Reiniciar el backend:
-   ```batch
-   cd 5.Order_flow/backend
-   .venv\Scripts\activate
-   uvicorn main:app --reload --port 11000
-   ```
-
-### WebSocket timeout al iniciar
-
-**Sintoma**: Logs muestran `WebSocket error: timed out during opening handshake`
-
-**Causa**: Problema temporal de conexion con Bybit. Generalmente se resuelve solo.
-
-**Solucion**:
-1. Esperar 30-60 segundos, el servicio reintentara automaticamente
-2. Si persiste, verificar conexion a internet
-3. Reiniciar el backend si es necesario
-
-### Electron no inicia
-
-**Sintoma**: `npm run dev:electron` falla
-
-**Solucion**:
-1. Verificar que `npm install` se ejecuto correctamente
-2. Verificar que Vite inicia en puerto 11001:
-   ```batch
-   npm run dev
-   ```
-3. Si Vite funciona, el problema es Electron. Verificar version de Node.js (recomendado 18+)
-
-### Puerto 11001 en uso
-
-**Sintoma**: Error "Port 11001 is already in use"
-
-**Solucion**:
-```batch
-netstat -ano | findstr :11001
-taskkill /PID <PID> /F
-```
-
-### Build falla
-
-**Sintoma**: `npm run build:electron` da error
-
-**Solucion**:
-1. Ejecutar primero solo el build de Vite:
-   ```batch
-   npm run build
-   ```
-2. Si Vite falla, revisar errores de JSX/JavaScript
-3. Si Vite pasa pero electron-builder falla:
-   - Verificar que `assets/icon.ico` existe (o remover referencia en package.json)
-   - Limpiar cache: `rmdir /s /q dist dist-electron`
-
-### Gaps en graficos (si persisten)
-
-**Sintoma**: A pesar de Electron, siguen apareciendo gaps
-
-**Posibles causas**:
-1. Backend se detuvo o reinicio
-2. WebSocket de Bybit se desconecto (verificar logs del backend)
-3. Problema de red o firewall
-
-**Verificacion**:
-```batch
-# Ver logs del backend
-# Buscar: "[WS] Connected to Bybit"
-# Si hay: "[WS] Disconnected" - problema de conexion
-```
-
-### Notificaciones no aparecen
-
-**Sintoma**: Alertas no muestran notificacion del sistema
-
-**Solucion**:
-1. Verificar que Windows permite notificaciones de la app
-2. Configuracion de Windows > Sistema > Notificaciones
-3. Asegurarse de que "Electron" o "Order Flow Desktop" esta habilitado
-
-### Memoria alta o lentitud
-
-**Sintoma**: La app consume mucha RAM o se vuelve lenta
-
-**Solucion**:
-1. Reducir dias de historial en configuracion
-2. Deshabilitar indicadores no usados
-3. Reducir cantidad de simbolos monitoreados
-4. Reiniciar la app periodicamente (cada 24h recomendado)
-
-### DevTools muestra errores
-
-**Sintoma**: Errores en consola de DevTools al iniciar
-
-**Errores normales (ignorar)**:
-- `Unknown VE context: language-mismatch` - Error interno de DevTools
-- `Request Autofill.enable failed` - Caracteristica no soportada
-- Warnings de deprecation de Node.js
-
-**Errores a investigar**:
-- `Failed to fetch` - Problema de conexion al backend
-- `WebSocket connection failed` - Problema con Bybit
-- `Cannot read property of undefined` - Bug en el codigo
-
----
-
-## COMPARACION: BROWSER VS ELECTRON
-
-| Aspecto | Browser (5.Order_flow) | Electron (9.OrderFlowDesktop) |
-|---------|------------------------|-------------------------------|
-| Throttling en background | Si (causa gaps) | No (anti-throttling) |
-| System Tray | No | Si |
-| Notificaciones | Browser API | Nativas del OS |
-| PowerSave | No control | powerSaveBlocker activo |
-| Distribucion | URL localhost | Instalador .exe |
-| Memoria | Compartida con browser | Dedicada |
-| Inicio automatico | Manual | Puede configurarse |
-| Actualizaciones | Automaticas (hot reload) | Requiere rebuild |
-
----
-
-## PUERTOS DEL ECOSISTEMA
-
-| Aplicacion | Backend | Frontend |
-|------------|---------|----------|
-| Backtester | 9000 | 5173 |
-| Watchlist | 8000 | 5173 |
-| Trading Bot | 5000 | 3000 |
-| Analizador Cripto | 10000 | 10001 |
-| Order Flow (browser) | 11000 | 11001 |
-| **Order Flow Desktop** | 11000 (compartido) | 11001 (dev) |
-| Trading Journal | 12000 | 12001 |
-
----
-
-## HISTORIAL DE DESARROLLO
-
-### Enero 2026 - Migracion a Electron
-
-**Problema original**:
-- Graficos con gaps al minimizar ventana o apagar pantalla
-- WebSocket se desconectaba en background
-- Datos desactualizados al volver de inactividad
-
-**Solucion implementada**:
-1. Crear nueva app Electron (`9.OrderFlowDesktop/`)
-2. Copiar frontend de `5.Order_flow/frontend/src/`
-3. Copiar configuracion Electron de `7.WatchlistDesktop/electron/`
-4. Adaptar para puerto 11000/11001
-5. Configurar anti-throttling completo
-6. Probar con 10+ minutos de inactividad
-
-**Resultado**:
-- ✅ Graficos sin gaps
-- ✅ Datos siempre actualizados
-- ✅ WebSocket mantenido
-- ✅ Footprints procesados continuamente
-
-**Archivos creados**:
-- `electron/main.js` - Proceso principal con anti-throttling
-- `electron/preload.js` - Bridge seguro
-- `package.json` - Scripts y electron-builder config
-- `vite.config.js` - Build optimizado para Electron
-- `index.html` - Con CSP para Electron
-- `1_INSTALL.bat`, `2_START_DEV.bat`, `3_BUILD.bat`
-- `CLAUDE.md` - Esta documentacion
-
-### 28 Enero 2026 - Fix Swing Detector y Footprints
-
-**Problemas reportados**:
-1. Swing Detector no graficaba senales por ~5 horas, modal decia "service stopped"
-2. Footprints faltaban para las ultimas 10 velas despues de reiniciar backend
-
-**Diagnostico**:
-1. El codigo de inicio del `swing_service.start()` estaba comentado en `5.Order_flow/backend/main.py` (lineas 2486-2492)
-2. Los footprints se generan en tiempo real al cierre de cada vela; despues de un reinicio, los historicos se cargan del disco pero los nuevos tardan en acumularse
-
-**Solucion aplicada**:
-1. Descomentar el bloque de inicio del swing service:
-   ```python
-   if swing_service:
-       try:
-           await swing_service.start()
-           print(f"[STARTUP] Swing detector service started")
-       except Exception as e:
-           print(f"[STARTUP] Warning: Could not start swing service: {e}")
-   ```
-2. Reiniciar el backend (hot-reload no aplicaba cambios correctamente, fue necesario matar procesos Python y reiniciar)
-3. Esperar ~2-3 minutos para que se generaran footprints de velas nuevas
-
-**Verificacion**:
 ```bash
-# Verificar Swing Detector
-curl http://localhost:11000/api/swing/status
-# Debe mostrar: "running": true
+# Desarrollo (Vite + Electron con hot reload)
+npm run dev:electron
 
-# Verificar OrderFlow
-curl http://localhost:11000/api/orderflow/status
-# Debe mostrar: "running": true, "websocket_connected": true, "footprints_completed": N
+# Backend (desde carpeta 5.Order_flow)
+cd ../5.Order_flow/backend
+start_backend.bat  # Puerto 11000
 ```
 
-**Archivos modificados**:
-- `5.Order_flow/backend/main.py` - Descomentar inicio de swing_service
-- `9.OrderFlowDesktop/index.html` - Cambiar titulo
-- `9.OrderFlowDesktop/electron/main.js` - Cambiar titulo ventana y notificacion
-- `9.OrderFlowDesktop/src/components/SingleSymbolAnalyzer.jsx` - Cambiar titulo h2
+## Diferencias con App 5 (Browser)
 
-### 29 Enero 2026 - Optimizaciones de Rendimiento y Robustez
+| Caracteristica | App 5 (Browser) | App 9 (Electron) |
+|----------------|-----------------|------------------|
+| Throttling | Si (gaps en graficos) | No (sin gaps) |
+| System Tray | No | Si |
+| Cambio timeframe | ~2-5 min | ~1s (con cache) |
+| Polling | Independiente | Coordinado (PollingCoordinator v2) |
+| Cache validation | Basica | Con gaps detection |
+| Puerto frontend | 11001 | 5175 (dev) |
 
-**Problemas reportados**:
-1. Gaps de 5 minutos en las velas al iniciar
-2. Indicadores tardaban ~10 minutos en aparecer
-3. Cientos de errores `ERR_CONNECTION_REFUSED` en consola
+## Optimizaciones de Rendimiento (Enero 2026)
 
-**Diagnostico**:
-1. El frontend (Electron) iniciaba antes de que el backend estuviera listo
-2. El backend tarda ~1 minuto en cargar 29,000+ footprints del disco
-3. Los gaps estaban en el cache de IndexedDB de sesiones anteriores
-4. La carga incremental no rellena gaps historicos
+### 1. Cambio Atomico de Timeframe
 
-**Soluciones implementadas**:
+**Problema:** Cambiar timeframe causaba doble render (primero interval, luego days).
 
-#### 1. Cache en Backend con TTL (5.Order_flow/backend/main.py)
-```python
-HISTORICAL_CACHE = {}
-HISTORICAL_CACHE_TTL = 300  # 5 minutos
+**Archivo:** `SingleSymbolAnalyzer.jsx`
 
-# Endpoints agregados:
-# POST /api/cache/clear - Limpiar cache manualmente
-# GET /api/cache/status - Ver estado del cache
-```
-
-#### 2. Deteccion de Gaps en Cache (CandleCache.js)
 ```javascript
-// En getValidated(): detecta gaps y limpia cache si hay gaps >2 minutos
-const gapAnalysis = this.analyzeGaps(cached.candles, interval, context);
+// ✅ FIX: Handler unificado para cambiar interval Y days al mismo tiempo
+const handleIntervalChange = useCallback((newInterval) => {
+  const defaultDays = DEFAULT_DAYS_BY_INTERVAL[newInterval];
+  const maxDays = MAX_DAYS_BY_INTERVAL[newInterval] || 30;
+
+  let newDays;
+  if (defaultDays) {
+    newDays = defaultDays.toString();
+  } else if (parseInt(days) > maxDays) {
+    newDays = maxDays.toString();
+  } else {
+    newDays = days;
+  }
+
+  // CRITICO: Cambiar ambos valores en un solo batch de React
+  setInterval(newInterval);
+  setDays(newDays);
+}, [interval, days]);
+```
+
+**Resultado:** Elimina doble montaje de componente.
+
+### 2. CandleCache con Validacion de Gaps
+
+**Problema:** Cache con pocas velas se marcaba como "corrupto" causando recarga completa.
+
+**Archivo:** `CandleCache.js`
+
+```javascript
+// ✅ FIX: Si el cache tiene pocas velas pero es valido (sin gaps), NO limpiarlo
+if (ratio < this.MIN_CACHE_RATIO) {
+  console.log(`[CandleCache] Cache incompleto: ${actualCandles} velas`);
+  console.log(`[CandleCache] Se usara carga incremental para complementar`);
+  // NO limpiar - retornar el cache incompleto
+}
+
+// Solo limpiar si hay GAPS significativos (>2 minutos)
+const gapAnalysis = this.analyzeGaps(cached.candles, interval);
 if (gapAnalysis.gapCount > 0) {
   const significantGaps = gapAnalysis.gaps.filter(g => parseFloat(g.gapMinutes) > 2);
   if (significantGaps.length > 0) {
-    await this.clear(symbol, interval);  // Forzar recarga completa
+    await this.clear(symbol, interval);
     return null;
   }
 }
 ```
 
-#### 3. MIN_CACHE_RATIO aumentado (CandleCache.js)
-- Antes: 0.1 (10%) - aceptaba cache casi vacio
-- Ahora: 0.7 (70%) - requiere al menos 70% de velas esperadas
+**Resultado:** Carga incremental en lugar de completa.
 
-#### 4. Carga Secuencial de Indicadores (IndicatorManager.js)
+### 3. PollingCoordinator v2
+
+**Problema:** PollingCoordinator v1 hacia tick global cada 1 segundo con operaciones costosas.
+
+**Archivo:** `PollingCoordinator.js`
+
 ```javascript
-// Prioridad 1 (criticos): VWAP, Order Flow
-// Prioridad 2 (secundarios): Swing Detector, S&R v2
-// Prioridad 3 (opcionales): Volume Profile, DTB, Rejection
-// 100ms de delay entre batches
+// v1 (PROBLEMATICO):
+// - Tick cada 1 segundo aunque no haya nada que ejecutar
+// - Array.from + filter + sort en cada tick
+// - No esperaba promesas (callbacks podian solaparse)
+
+// v2 (OPTIMIZADO):
+class PollingCoordinator {
+  register(name, callback, intervalMs, priority = 5) {
+    const entry = {
+      name, callback, intervalMs, priority,
+      enabled: true,
+      isRunning: false,  // Evita solapamiento
+      timerId: null      // Timer individual
+    };
+    this._callbacks.set(id, entry);
+
+    // Cada callback tiene su propio setTimeout
+    if (this._isRunning && !this._isPaused) {
+      this._scheduleNext(id, entry);
+    }
+    return id;
+  }
+
+  _scheduleNext(id, entry) {
+    entry.timerId = setTimeout(() => {
+      this._executeCallback(id, entry);
+    }, entry.intervalMs);
+  }
+
+  async _executeCallback(id, entry) {
+    if (entry.isRunning) {
+      this._scheduleNext(id, entry);  // Reprogramar si ya esta corriendo
+      return;
+    }
+
+    entry.isRunning = true;
+    try {
+      const result = entry.callback();
+      if (result instanceof Promise) await result;
+    } finally {
+      entry.isRunning = false;
+      this._scheduleNext(id, entry);
+    }
+  }
+}
 ```
-
-#### 5. Prefetch Deshabilitado Inicialmente (SymbolList.jsx)
-- Prefetch de simbolos deshabilitado los primeros 10 segundos
-- Debounce aumentado de 300ms a 1000ms
-
-#### 6. Spinner de Carga (MiniChart.jsx)
-- Indicador visual mientras `!isInitialized`
-
-#### 7. Boton Reset para Indicadores (SingleSymbolAnalyzer.jsx)
-- Constante `DEFAULT_INDICATORS` con valores por defecto
-- Boton "Reset" para restaurar indicadores a valores iniciales
-
-#### 8. Script de Inicio Coordinado (START_ALL.bat)
-```batch
-# Flujo:
-# 1. Verifica si backend ya esta corriendo
-# 2. Si no, inicia backend en ventana separada
-# 3. Espera hasta que /api/status responda (max 2 min)
-# 4. Inicia Electron solo cuando backend esta listo
-```
-
-**Archivos modificados**:
-- `5.Order_flow/backend/main.py` - Cache con TTL, endpoints de cache
-- `9.OrderFlowDesktop/src/utils/CandleCache.js` - Deteccion de gaps, MIN_CACHE_RATIO 70%
-- `9.OrderFlowDesktop/src/components/indicators/IndicatorManager.js` - Carga secuencial
-- `9.OrderFlowDesktop/src/components/SymbolList.jsx` - Prefetch diferido
-- `9.OrderFlowDesktop/src/components/MiniChart.jsx` - Spinner de carga
-- `9.OrderFlowDesktop/src/components/SingleSymbolAnalyzer.jsx` - Reset indicadores
-
-**Archivos creados**:
-- `9.OrderFlowDesktop/START_ALL.bat` - Inicio coordinado backend + frontend
-
-**Resultado**:
-- ✅ Sin gaps en graficos (cache corrupto se detecta y limpia automaticamente)
-- ✅ Sin errores ERR_CONNECTION_REFUSED (Electron espera al backend)
-- ✅ Carga percibida mucho mas rapida
-- ✅ Indicadores aparecen en orden de prioridad
-
-### 29 Enero 2026 - Mejoras de Robustez
-
-**Objetivo**: Hacer la aplicacion mas resistente a fallos de red y datos corruptos.
-
-**Soluciones implementadas**:
-
-#### 1. Sistema de Robustez Centralizado (src/utils/robustness.js)
-
-**Validacion de datos de velas:**
-```javascript
-import { validateCandles } from './robustness';
-
-// Antes de guardar en cache, validar datos
-const { validCandles, invalidCount } = validateCandles(candles, context);
-// Descarta velas con campos faltantes, valores NaN, o OHLC invalido
-```
-
-**Health check periodico:**
-```javascript
-import { initRobustness, onConnectionChange } from './robustness';
-
-// Se inicia automaticamente cada 30 segundos
-initRobustness();
-
-// Suscribirse a cambios de conexion
-onConnectionChange((isConnected) => {
-  // Actualizar UI
-});
-```
-
-**Retry con backoff exponencial:**
-```javascript
-import { fetchWithRetry } from './robustness';
-
-// Reintenta 3 veces con backoff 1s -> 2s -> 4s
-const response = await fetchWithRetry(url, options, {
-  maxRetries: 3,
-  initialDelayMs: 1000,
-  context: 'historical-BTCUSDT'
-});
-```
-
-**Limpieza automatica de cache:**
-```javascript
-import { cleanupOldCache, getCacheStats } from './robustness';
-
-// Se ejecuta automaticamente al iniciar (elimina >7 dias)
-await cleanupOldCache(7);
-
-// Ver estadisticas del cache
-const stats = await getCacheStats();
-```
-
-#### 2. Indicador Visual de Conexion (ConnectionStatus.jsx)
-
-- Punto verde/rojo en el header
-- Tooltip con detalles (ultimo check, errores, intentos fallidos)
-- Click para reintentar conexion manual
-- Se actualiza automaticamente cada 30 segundos
-
-#### 3. Integracion en Componentes
-
-**CandleCache.js:**
-- Valida velas antes de guardar en cache
-- Descarta velas con datos invalidos
-
-**MiniChart.jsx:**
-- Usa `fetchWithRetry` para cargar datos historicos
-- Reintenta automaticamente si falla la conexion
-
-**SingleSymbolAnalyzer.jsx:**
-- Inicializa sistema de robustez al montar
-- Muestra ConnectionStatus en el header
-
-**Archivos creados:**
-- `src/utils/robustness.js` - Utilidades centralizadas
-- `src/components/ConnectionStatus.jsx` - Indicador visual
-
-**Archivos modificados:**
-- `src/utils/CandleCache.js` - Validacion de velas
-- `src/components/MiniChart.jsx` - fetchWithRetry
-- `src/components/SingleSymbolAnalyzer.jsx` - Integracion
 
 **Beneficios:**
-- ✅ Reconexion automatica cuando backend vuelve
-- ✅ Datos corruptos se detectan y descartan
-- ✅ Reintentos automaticos reducen fallos por red inestable
-- ✅ Cache viejo se limpia automaticamente
-- ✅ Usuario ve estado de conexion en tiempo real
+- Zero overhead cuando idle (no hay tick global)
+- Cada callback tiene su propio timer
+- Proper async/await (no solapamiento)
+- Respeta visibility API (pausa cuando tab oculto)
 
-### 29 Enero 2026 - Mejora del Crosshair (Etiqueta de Tiempo)
+### 4. Carga Incremental Inteligente
 
-**Problema reportado:**
-- El crosshair mostraba tiempo interpolado al mover el mouse entre velas
-- Ejemplo: entre las 10:00 y 11:00 mostraba 10:32, 10:45, etc.
-- Esto confundia al usuario sobre el timeframe actual
-- Ademas, la etiqueta parpadeaba al cambiar de vela
+**Archivo:** `MiniChart.jsx`
 
-**Solucion implementada:**
-
-1. **Tiempo sin interpolacion**: La etiqueta muestra el timestamp exacto de la vela actual
-   - Ya no calcula fracciones de tiempo entre velas
-   - El tiempo "salta" de vela en vela (ej: 10:00 → 11:00 en timeframe 1h)
-
-2. **Etiqueta siempre visible**: La etiqueta sigue la posicion horizontal del mouse
-   - Garantiza visibilidad continua mientras el mouse este en el grafico
-   - Elimina el parpadeo al cambiar de vela
-
-3. **Clamp a bordes**: Si el mouse esta fuera del rango de velas visibles
-   - A la izquierda: muestra tiempo de la primera vela
-   - A la derecha: muestra tiempo de la ultima vela
-
-**Archivo modificado:**
-- `src/components/MiniChart.jsx` - Seccion del crosshair (lineas ~1058-1098)
-
-**Codigo clave:**
 ```javascript
-// Calcular indice de vela (sin interpolacion)
-const mousePositionInChart = (mouseX - marginLeft) / barWidth;
-let candleIdx = Math.floor(mousePositionInChart);
-
-// Clamp al rango de velas visibles
-if (candleIdx < 0) candleIdx = 0;
-if (candleIdx >= visibleCandles.length) candleIdx = visibleCandles.length - 1;
-
-// Obtener timestamp de la vela (no interpolar)
-const candleTimestamp = visibleCandles[candleIdx].timestamp;
-
-// La etiqueta sigue al mouse pero muestra el tiempo de la vela
-const labelX = mouseX - textWidth / 2;
+if (cached && cached.candles.length > 0) {
+  // Si cache tiene MENOS del 70% de lo esperado → carga completa
+  if (cached.candles.length < maxExpectedCandles * 0.7) {
+    url = `${API_BASE_URL}/api/historical/${symbol}?interval=${interval}&days=${days}`;
+    isIncremental = false;
+  }
+  // Si cache es valido → carga incremental (solo velas nuevas)
+  else {
+    const sinceTs = cached.lastTimestamp;
+    url = `${API_BASE_URL}/api/historical/${symbol}?since_timestamp=${sinceTs}`;
+    isIncremental = true;
+  }
+}
 ```
 
-**Resultado:**
-- ✅ Tiempo muestra valores discretos del timeframe (10:00, 11:00, 12:00)
-- ✅ Sin parpadeo al moverse entre velas
-- ✅ Etiqueta siempre visible en el area del grafico
+## Resultados de Optimizacion
 
-### 31 Enero 2026 - Sistema de Integridad de Cache de Footprints
+| Metrica | Antes | Despues | Mejora |
+|---------|-------|---------|--------|
+| Cambio de timeframe | ~2:38 min | ~1:13s | **56x mas rapido** |
+| Montajes de componente | 2 (doble) | 1 (unico) | ✅ Eliminado |
+| Cache "corrupto" falsos | Frecuente | 0 | ✅ Eliminado |
+| Tipo de carga | COMPLETA | INCREMENTAL | ✅ Solo velas nuevas |
 
-**Objetivo**: Validar, reparar y limpiar el cache de footprints para mantener datos consistentes.
+## Logs de Verificacion
 
-**Problema original**:
-- Footprints con step_size antiguo mezclados con los nuevos
-- Al cambiar step_size en el modal, solo afectaba a velas nuevas
-- Sin forma facil de aplicar cambios a historial
+### Cambio de Timeframe Exitoso
 
-**Soluciones implementadas**:
+```
+[BTCUSDT] 🚀 Componente montado, iniciando...           # Solo 1 vez
+[CandleCache] 💾 BTCUSDT@5 - desde IndexedDB (1529 velas)
+[CandleCache] OK VALIDATION BTCUSDT@5: 1529 velas sin gaps
+[BTCUSDT] Carga INCREMENTAL: desde 29/1/2026 (1529 velas en cache)
+[CandleCache] 🔄 Merge: 1529 cached + 9 new = 1537 total
+[BTCUSDT] ✅ Histórico final: 1537 velas
+```
 
-#### 1. Panel de Integridad (IntegrityPanel.jsx)
+### PollingCoordinator v2 Funcionando
 
-Nuevo panel en el modal de OrderFlow Settings que muestra:
-- Estado de salud del cache (verde=OK, amarillo=reparando, rojo=problemas)
-- Conteo de simbolos saludables vs con problemas
-- Lista de problemas detectados (gaps)
+```
+[PollingCoordinator] Started
+[PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 300000ms, priority: 2)
+[PollingCoordinator] Registered: SwingDetector_Signals_BTCUSDT (interval: 30000ms, priority: 3)
+[PollingCoordinator] Registered: OrderFlow_BTCUSDT (interval: 5000ms, priority: 1)
+```
+
+### Cambio de Timeframe con Cleanup
+
+```
+[PollingCoordinator] Unregistered: VWAP_BTCUSDT
+[PollingCoordinator] Unregistered: SwingDetector_Signals_BTCUSDT
+[PollingCoordinator] Unregistered: OrderFlow_BTCUSDT
+[Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+```
+
+## Troubleshooting
+
+**Cambio de timeframe lento (~2+ min):**
+- Verificar que no hay "Limpiando cache corrupto" en logs
+- Verificar que hay "Carga INCREMENTAL" (no COMPLETA)
+- Verificar un solo "Componente montado" (no doble)
+
+**Cache se limpia innecesariamente:**
+- Verificar `CandleCache.js` tiene el fix de MIN_CACHE_RATIO
+- Los gaps menores a 2 minutos no deben causar limpieza
+
+**Polling no funciona:**
+- Verificar logs de `[PollingCoordinator] Registered:`
+- Verificar que PollingCoordinator.start() se llama
+- Tab debe estar visible (pausa cuando oculto)
+
+**Doble montaje de componente:**
+- Verificar que `handleIntervalChange` cambia interval Y days juntos
+- Verificar que select usa `handleIntervalChange(e.target.value)`
+- No deben haber dos useEffect separados para interval y days
+
+**Backend no conecta:**
+- Verificar que backend de Order Flow corre en puerto 11000
+- Verificar API_BASE_URL en config.js
+
+## Archivos Modificados (Enero 2026)
+
+| Archivo | Cambio |
+|---------|--------|
+| `SingleSymbolAnalyzer.jsx` | `handleIntervalChange` atomico |
+| `CandleCache.js` | No limpiar cache incompleto sin gaps |
+| `MiniChart.jsx` | Detectar cache incompleto para carga inteligente |
+| `PollingCoordinator.js` | Reescritura completa a v2 |
+
+## Sistema de Integridad de Cache (31 Enero 2026)
+
+Sistema para validar, reparar y limpiar el cache de footprints.
+
+### Panel de Integridad
+
+Nuevo componente `IntegrityPanel.jsx` en el modal de OrderFlow Settings:
+- Badge de estado: verde (saludable), amarillo (reparando), rojo (problemas)
+- Conteo de simbolos OK vs con problemas
 - Botones: Validar, Reparar, Limpiar Cache Completo
 
-#### 2. Servicio de Integridad (cache_integrity_service.py)
+### Servicio Backend (cache_integrity_service.py)
 
 ```python
-# Valida footprints detectando:
-# - Gaps de datos (velas faltantes) - ESTO SI es un problema
-# - Step_size diferente al actual - Solo informativo, NO es problema
-
 # Endpoints:
-GET  /api/orderflow/integrity/status    # Estado actual
-POST /api/orderflow/integrity/validate  # Validar todos
-POST /api/orderflow/integrity/repair    # Reparar desde cloud
-POST /api/orderflow/integrity/clear-cache  # Limpiar y recargar
-GET  /api/orderflow/integrity/progress  # Progreso de reparacion
+GET  /api/orderflow/integrity/status     # Estado actual
+POST /api/orderflow/integrity/validate   # Validar todos los simbolos
+POST /api/orderflow/integrity/repair     # Reparar desde cloud
+POST /api/orderflow/integrity/clear-cache # Limpiar y recargar todo
+DELETE /api/orderflow/cache/{symbol}     # Limpiar cache de un simbolo
 ```
 
-#### 3. Boton "Aplicar a historial" en Step Size
+### Validacion Inteligente
 
-Cuando el usuario cambia el step_size de un simbolo:
-1. Click "Guardar" guarda la nueva configuracion
-2. Click "Aplicar a historial" elimina cache del simbolo
-3. Los footprints se regeneran automaticamente con el nuevo step_size
-
-```javascript
-// Endpoint para limpiar cache de un simbolo especifico
-DELETE /api/orderflow/cache/{symbol}
-// Elimina: BTCUSDT_1.json, BTCUSDT_5.json, etc.
-```
-
-#### 4. Validacion Inteligente
-
-El sistema distingue entre:
-- **Problemas reales (gaps)**: Marcan el simbolo como "issues"
+- **Gaps (velas faltantes)**: Marcan como "issues" - problema real
 - **Step_size diferente**: Solo informativo, NO marca como problema
 
-```python
-# Solo GAPS causan estado "issues", no step_size diferente
-if gaps:
-    status = IntegrityStatus.ISSUES
-else:
-    status = IntegrityStatus.HEALTHY
-```
+### Boton "Aplicar a historial"
 
-**Archivos creados/modificados**:
-- `5.Order_flow/backend/cache_integrity_service.py` - Servicio de validacion
-- `5.Order_flow/backend/main.py` - Endpoints de integridad + clear-cache
-- `9.OrderFlowDesktop/src/components/IntegrityPanel.jsx` - UI del panel
-- `9.OrderFlowDesktop/src/components/OrderFlowSettings.jsx` - Boton "Aplicar a historial"
+En la seccion Step Size del modal OrderFlow:
+1. Usuario cambia step_size → Click "Guardar"
+2. Click "Aplicar a historial" → Elimina cache del simbolo
+3. Footprints se regeneran con el nuevo step_size
 
-**Resultado**:
-- ✅ Panel visual de estado de integridad
-- ✅ Deteccion automatica de gaps
-- ✅ Reparacion desde cloud collector
-- ✅ Boton para aplicar step_size a historial
-- ✅ Step_size diferente no marca como error
+### Archivos Relacionados
 
-### 31 Enero 2026 - Fix: Footprints Historicos No Se Graficaban
+| Archivo | Descripcion |
+|---------|-------------|
+| `5.Order_flow/backend/cache_integrity_service.py` | Servicio de validacion |
+| `5.Order_flow/backend/main.py` | Endpoints de integridad |
+| `9.OrderFlowDesktop/src/components/IntegrityPanel.jsx` | Panel UI |
+| `9.OrderFlowDesktop/src/components/OrderFlowSettings.jsx` | Boton "Aplicar a historial" |
 
-**Problema reportado**:
-- Los footprints historicos no se mostraban en el grafico
-- Solo las velas nuevas (tiempo real) mostraban footprint
-- El backend tenia los datos (465+ footprints) pero no se renderizaban
+## Fix: Footprints Historicos No Se Graficaban (31 Enero 2026)
 
-**Diagnostico**:
-- El backend retornaba correctamente los footprints
-- Los timestamps coincidian entre velas y footprints
-- El problema era que despues del fetch inicial, no se forzaba un redraw del grafico
-- Las velas nuevas se veian porque el WebSocket de velas disparaba redraw
+**Problema**: Los footprints historicos no se mostraban en el grafico, solo las velas nuevas (tiempo real).
 
-**Solucion implementada**:
+**Causa**: Race condition en la inicializacion - los footprints se cargaban pero no se forzaba redraw del grafico.
 
-Se agrego logging detallado a `OrderFlowIndicator.js` para diagnosticar el problema.
-Durante la investigacion, el reinicio de la aplicacion con los cambios de logging resolvio el problema (posible race condition en la inicializacion).
-
-**Logging inteligente agregado** (solo loguea cuando es relevante):
+**Solucion**: Se agrego logging inteligente a `OrderFlowIndicator.js` que solo loguea cuando es relevante:
 
 ```javascript
 // Solo al cargar por primera vez
-console.log(`[OrderFlow] [SYMBOL] INITIAL LOAD: N footprints`);
-// + rangos detallados de grupos contiguos
+[OrderFlow] [SYMBOL] INITIAL LOAD: N footprints
+// + rangos detallados con metodo _logFootprintRanges()
 
 // Solo cuando hay nuevos footprints
-console.log(`[OrderFlow] [SYMBOL] +N footprints (total: X)`);
+[OrderFlow] [SYMBOL] +N footprints (total: X)
 
 // Solo cuando hay problemas de matching (>30% sin match)
-console.warn(`[OrderFlow] [SYMBOL] HIGH UNMATCHED: X/Y (Z%)`);
+[OrderFlow] [SYMBOL] HIGH UNMATCHED: X/Y (Z%)
 
 // Solo cuando se pierden footprints
-console.warn(`[OrderFlow] [SYMBOL] footprints LOST: X -> 0`);
+[OrderFlow] [SYMBOL] footprints LOST: X -> 0
 ```
 
-**Metodo `_logFootprintRanges()`**: Analiza grupos contiguos de footprints y detecta gaps:
+**Metodo `_logFootprintRanges()`**: Detecta grupos contiguos y gaps:
 ```
 [OrderFlow] [ETHUSDT] FOOTPRINT RANGES:
   Total: 730 footprints
-  Rango completo: 31/1/2026, 8:25:00 a.m. -> 31/1/2026, 8:35:00 p.m.
+  Rango completo: 8:25 a.m. -> 8:35 p.m.
   Grupos contiguos: 2
-    Grupo 1: 31/1/2026, 8:25:00 a.m. -> 31/1/2026, 8:22:00 p.m. (718 fps, 717 min)
+    Grupo 1: 8:25 a.m. -> 8:22 p.m. (718 fps, 717 min)
     >>> GAP: 2 minutos <<<
-    Grupo 2: 31/1/2026, 8:24:00 p.m. -> 31/1/2026, 8:35:00 p.m. (12 fps, 11 min)
+    Grupo 2: 8:24 p.m. -> 8:35 p.m. (12 fps, 11 min)
 ```
 
 **Archivos modificados**:
-- `src/components/indicators/OrderFlowIndicator.js` - Logging inteligente y metodo `_logFootprintRanges()`
-- `src/components/MiniChart.jsx` - Limpieza de logging verbose
-- `src/components/indicators/IndicatorManager.js` - Limpieza de logging verbose
+- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js`
 
-**Resultado**:
-- ✅ Footprints historicos se grafican correctamente
-- ✅ Logging util para diagnostico sin spam en consola
-- ✅ Deteccion automatica de gaps en footprints
-- ✅ Warnings solo cuando hay problemas reales
+## Sistema de Archivo Histórico de Footprints (17 Octubre 2026)
+
+Sistema para descargar, almacenar y usar footprints históricos desde el servicio cloud, con agregación automática para todos los timeframes.
+
+### FootprintArchiverElectron
+
+Servicio que descarga footprints de 1 minuto desde Northflank y los almacena localmente en `userData/footprint_archive/`.
+
+**Configuración:**
+```javascript
+// FootprintArchiverElectron.js
+config: {
+  symbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', ...],
+  interval: '1',  // Solo descarga 1 minuto (se agrega a otros intervalos en frontend)
+  maxHoursPerRequest: 168,  // 7 días de historia por descarga
+  timeout: 180000  // 3 minutos timeout
+}
+```
+
+**Características:**
+- Descarga via IPC (Main Process) para bypass de CORS
+- Merge inteligente: evita duplicados, actualiza datos existentes
+- Almacenamiento en JSON con metadata (count, timestamps, lastUpdated)
+- Descarga programada cada 6 horas + manual bajo demanda
+
+### Agregación de Footprints
+
+Método `_aggregateFootprints()` en `OrderFlowIndicator.js` convierte footprints de 1 minuto a intervalos mayores (5min, 15min, 1h, 4h).
+
+**Proceso de agregación:**
+1. Agrupa footprints de 1min por intervalo objetivo
+2. Combina price_levels sumando volúmenes bid/ask por precio
+3. Recalcula OHLC del intervalo agregado
+4. Suma volúmenes totales y delta
+5. Recalcula POC (Point of Control)
+
+**Ejemplo: 5 footprints de 1min → 1 footprint de 5min**
+```javascript
+// Entrada: 5 footprints de 1min (9:00, 9:01, 9:02, 9:03, 9:04)
+// Salida: 1 footprint de 5min (9:00-9:05)
+{
+  candle_timestamp: 1729166400000,  // 9:00
+  open: fp1.open,
+  close: fp5.close,
+  high: max(fp1.high, fp2.high, ..., fp5.high),
+  low: min(fp1.low, fp2.low, ..., fp5.low),
+  total_volume: sum(fp1.total_volume, ..., fp5.total_volume),
+  total_bid_volume: sum(...),
+  total_ask_volume: sum(...),
+  delta: total_ask_volume - total_bid_volume,
+  poc: precio_con_mayor_volumen,
+  price_levels: [
+    // Volúmenes combinados por precio
+    { price: 67000, bid_volume: 150, ask_volume: 200, ... },
+    ...
+  ]
+}
+```
+
+### Uso Automático del Archivo
+
+`OrderFlowIndicator.js` usa footprints archivados como fallback:
+
+**Casos de uso:**
+1. **Backend falla completamente**: Carga desde archivo local
+2. **Backend retorna <100 footprints**: Complementa con archivo histórico
+3. **Intervalo != 1min**: Agrega automáticamente desde datos de 1min
+
+**Logs típicos:**
+```
+[OrderFlow] [BTCUSDT] 📚 Cargados 10080 footprints de 1min desde archivo local
+[OrderFlow] [BTCUSDT] 🔄 Agregando 10080 footprints de 1min a 5min
+[OrderFlow] [BTCUSDT] ✅ Agregación completa: 2016 footprints de 5min
+[OrderFlow] [BTCUSDT] 📚 Complementado con archivo: 1950 históricos + 66 recientes = 2016 total
+```
+
+### Panel de Archivo
+
+Nuevo botón "📚 Archivo" en `SingleSymbolAnalyzer.jsx` abre `FootprintArchivePanel.jsx`:
+
+**Funcionalidades:**
+- Ver estadísticas por símbolo (cantidad, rango de fechas)
+- Descargar ahora (manual)
+- Ver última descarga programada
+- Abrir carpeta de almacenamiento
+
+### IPC Handlers (electron/main.js)
+
+**Handler para descarga sin CORS:**
+```javascript
+ipcMain.handle('download-footprints', async (event, { symbol, hours, interval }) => {
+  // Usa Node.js https module (sin restricciones CORS)
+  // Descarga desde: https://p01--altagracia--rxv8nrbhxln9.code.run
+  // Retorna: array de footprints
+});
+```
+
+### Archivos Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `FootprintArchiverElectron.js` | maxHoursPerRequest: 24 → 168 |
+| `OrderFlowIndicator.js` | Agregado método `_aggregateFootprints()` |
+| `OrderFlowIndicator.js` | `_loadFromArchive()` agrega automáticamente si interval != "1" |
+| `OrderFlowIndicator.js` | Complemento con archivo sin restricción de interval |
+| `electron/main.js` | IPC handler `download-footprints` |
+| `electron/preload.js` | API `downloadFootprints()` expuesta a renderer |
+
+### Beneficios
+
+- **Timeframes mayores funcionales**: 5min, 15min, 1h, 4h ahora muestran datos históricos completos
+- **Fallback robusto**: Si backend falla, usa archivo local automáticamente
+- **Complemento inteligente**: Combina datos recientes del backend con históricos del archivo
+- **Sin duplicación de almacenamiento**: Solo guarda 1min, agrega on-the-fly
+- **Bypass CORS**: Descarga via Main Process (Node.js)
+
+## Dependencias con Otras Apps
+
+- **Backend:** Usa el mismo backend de App 5 (Order Flow) en puerto 11000
+- **Indicadores:** Comparte codigo con App 4, 5 y 8
+- **Cache:** Sistema propio de IndexedDB con validacion de gaps
+- **Cloud Service:** Northflank footprint collector en https://p01--altagracia--rxv8nrbhxln9.code.run
 
 ---
 
-## MANTENIMIENTO
-
-### Actualizar dependencias
-
-```batch
-cd 9.OrderFlowDesktop
-npm update
-```
-
-### Sincronizar con cambios de 5.Order_flow
-
-Si hay cambios importantes en el frontend de `5.Order_flow/`:
-
-```batch
-# Copiar archivos actualizados
-xcopy /s /y "5.Order_flow\frontend\src\*" "9.OrderFlowDesktop\src\"
-
-# Verificar que config.js mantiene puerto correcto
-# API_BASE_URL debe ser "http://localhost:11000"
-```
-
-### Limpiar cache y rebuilds
-
-```batch
-cd 9.OrderFlowDesktop
-rmdir /s /q node_modules dist dist-electron
-npm install
-npm run build:electron
-```

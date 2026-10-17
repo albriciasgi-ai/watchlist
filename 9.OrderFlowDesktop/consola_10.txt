@@ -1,0 +1,110 @@
+4OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] HIGH UNMATCHED: 0/80 (0.0%)
+renderOverlay @ OrderFlowIndicator.js:745
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:222 [OrderFlow] [BTCUSDT] 🔄 Agregando 1472 footprints de 1min a 5min
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 297 footprints de 5min
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:411 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:499 [OrderFlow] [BTCUSDT] ✅ Merge inteligente: base=297 archivo, +241 nuevos backend, ~31 actualizados = 538 total
+OrderFlowIndicator.js:505 [OrderFlow] [BTCUSDT] Rango merged: 16/10/2026, 10:15:00 a.m. → 17/10/2026, 1:20:00 p.m.
+OrderFlowIndicator.js:581 [OrderFlow] [BTCUSDT] FOOTPRINT RANGES:
+4OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] HIGH UNMATCHED: 0/80 (0.0%)
+renderOverlay @ OrderFlowIndicator.js:745
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:222 [OrderFlow] [BTCUSDT] 🔄 Agregando 1472 footprints de 1min a 5min
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 297 footprints de 5min
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:411 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:499 [OrderFlow] [BTCUSDT] ✅ Merge inteligente: base=297 archivo, +241 nuevos backend, ~31 actualizados = 538 total
+OrderFlowIndicator.js:505 [OrderFlow] [BTCUSDT] Rango merged: 16/10/2026, 10:15:00 a.m. → 17/10/2026, 1:20:00 p.m.
+OrderFlowIndicator.js:581 [OrderFlow] [BTCUSDT] FOOTPRINT RANGES:
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] HIGH UNMATCHED: 0/61 (0.0%)
+renderOverlay @ OrderFlowIndicator.js:745
+drawChart @ MiniChart.jsx:969
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:2176
+(anonymous) @ OrderFlowIndicator.js:170
+await in (anonymous)
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+3OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] HIGH UNMATCHED: 0/61 (0.0%)
+renderOverlay @ OrderFlowIndicator.js:745
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:222 [OrderFlow] [BTCUSDT] 🔄 Agregando 1472 footprints de 1min a 5min
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 297 footprints de 5min
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:411 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:499 [OrderFlow] [BTCUSDT] ✅ Merge inteligente: base=297 archivo, +241 nuevos backend, ~31 actualizados = 538 total
+OrderFlowIndicator.js:505 [OrderFlow] [BTCUSDT] Rango merged: 16/10/2026, 10:15:00 a.m. → 17/10/2026, 1:20:00 p.m.
+OrderFlowIndicator.js:581 [OrderFlow] [BTCUSDT] FOOTPRINT RANGES:
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] HIGH UNMATCHED: 0/61 (0.0%)
+renderOverlay @ OrderFlowIndicator.js:745
+drawChart @ MiniChart.jsx:969
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:2176
+(anonymous) @ OrderFlowIndicator.js:170
+await in (anonymous)
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] HIGH UNMATCHED: 0/61 (0.0%)
+renderOverlay @ OrderFlowIndicator.js:745
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1455
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1454
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1444
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] HIGH UNMATCHED: 0/61 (0.0%)
+renderOverlay @ OrderFlowIndicator.js:745
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:222 [OrderFlow] [BTCUSDT] 🔄 Agregando 1472 footprints de 1min a 5min
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 297 footprints de 5min
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:411 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:499 [OrderFlow] [BTCUSDT] ✅ Merge inteligente: base=297 archivo, +241 nuevos backend, ~31 actualizados = 538 total
+OrderFlowIndicator.js:505 [OrderFlow] [BTCUSDT] Rango merged: 16/10/2026, 10:15:00 a.m. → 17/10/2026, 1:20:00 p.m.
+OrderFlowIndicator.js:581 [OrderFlow] [BTCUSDT] FOOTPRINT RANGES:
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] HIGH UNMATCHED: 0/61 (0.0%)
+renderOverlay @ OrderFlowIndicator.js:745
+drawChart @ MiniChart.jsx:969
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:2176
+(anonymous) @ OrderFlowIndicator.js:170
+await in (anonymous)
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194

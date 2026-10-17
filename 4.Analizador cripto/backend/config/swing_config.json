@@ -13,10 +13,11 @@
     "DOGEUSDT",
     "PAXGUSDT",
     "BNBUSDT",
-    "POLUSDT"
+    "POLUSDT",
+    "CLUSDT"
   ],
-  "interval": "1",
-  "days": 1,
+  "interval": "60",
+  "days": 270,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -157,6 +158,9 @@
         "lookbackBars": 50
       },
       "swingBars": 5
+    },
+    "CLUSDT": {
+      "days": 270
     }
   },
   "swingBars": 3,

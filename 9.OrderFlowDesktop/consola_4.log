@@ -1,0 +1,130 @@
+ELECTRON:
+
+[FootprintArchiver] 🚀 Iniciando archivo de 10 símbolos...
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando BTCUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] BTCUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando BTCUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] BTCUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando ETHUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] ETHUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando ETHUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] ETHUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando SOLUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] SOLUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando SOLUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] SOLUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1572)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando XRPUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] XRPUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando XRPUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] XRPUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando ADAUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] ADAUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando ADAUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] ADAUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando TRXUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] TRXUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando TRXUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] TRXUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando DOGEUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] DOGEUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando DOGEUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] DOGEUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando BNBUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] BNBUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando BNBUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] BNBUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1572)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando AVAXUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] AVAXUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando AVAXUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] AVAXUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+FootprintArchiverElectron.js:249 [FootprintArchiver] 📥 Archivando ARBUSDT...
+FootprintArchiverElectron.js:255 [FootprintArchiver] ARBUSDT: ANTES de await _fetchFromCloud()
+FootprintArchiverElectron.js:159 [FootprintArchiver] 🌐 Descargando ARBUSDT (24h) via Main Process
+FootprintArchiverElectron.js:257 [FootprintArchiver] ARBUSDT: DESPUÉS de await _fetchFromCloud() - downloaded.length = 0
+FootprintArchiverElectron.js:357 [FootprintArchiver] ✅ Archivo completado en 9.1s
+FootprintArchiverElectron.js:358 [FootprintArchiver] Exitosos: 0, Fallidos: 10
+FootprintArchiverElectron.js:359 [FootprintArchiver] Total descargados: 0, Total nuevos: 0
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1572)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1572)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1572)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [9:28:33 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1572)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+
+
+===========================
+
+CONSOLA TERMINAL:
+
+> orderflow-desktop@1.0.0 dev:electron
+> concurrently "vite --port 11001" "wait-on http://localhost:11001 && electron ."
+
+(node:21080) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[0] The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+[0]
+[0]   VITE v5.4.21  ready in 772 ms
+[0]
+[0]   ➜  Local:   http://localhost:11001/
+[0]   ➜  Network: use --host to expose
+[1]
+[1] ====================================
+[1] Order Flow Desktop - Iniciando...
+[1] ====================================
+[1] [Config] Modo: Desarrollo
+[1] [Config] Anti-throttling: ACTIVADO
+[1] [Config] userData: C:\Users\inven\AppData\Roaming\orderflow-desktop
+[1] [Config] Backend esperado en: http://localhost:11000
+[1] [PowerSaveBlocker] Iniciado con ID: 0
+[1] [PowerSaveBlocker] Esta activo: true
+[1] [28380:1017/092725.762:ERROR:CONSOLE(1)] "Unknown VE context: language-mismatch    at new He (devtools://devtools/bundled/ui/legacy/legacy.js:1:98356)
+[1]     at devtools://devtools/bundled/ui/legacy/legacy.js:1:191793
+[1]     at new oi (devtools://devtools/bundled/ui/legacy/legacy.js:1:192189)
+[1]     at oi.instance (devtools://devtools/bundled/ui/legacy/legacy.js:1:192311)
+[1]     at O.presentUI (devtools://devtools/bundled/panels/emulation/emulation.js:1:58454)
+[1]     at #I (devtools://devtools/bundled/entrypoints/main/main.js:1:17314)
+[1]     at #x (devtools://devtools/bundled/entrypoints/main/main.js:1:17109)", source: devtools://devtools/bundled/ui/visual_logging/visual_logging.js (1)
+[1] [28380:1017/092726.389:ERROR:CONSOLE(1)] "Request Autofill.enable failed. {"code":-32601,"message":"'Autofill.enable' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+[1] [28380:1017/092726.389:ERROR:CONSOLE(1)] "Request Autofill.setAddresses failed. {"code":-32601,"message":"'Autofill.setAddresses' wasn't found"}", source: devtools://devtools/bundled/core/protocol_client/protocol_client.js (1)
+[0] 9:27:27 [vite] warning: The character ">" is not valid inside a JSX element
+[0] 1013|
+[0] 1014|                            <div style={{ fontSize: '10px', color: '#777', marginTop: '8px', background: '#f5f5f5', padding: '6px', borderRadius: '4px' }}>
+[0] 1015|                              Valores >normal% = Trending (rojo). Timeframe actual: {interval} min
+[0]    |                                      ^
+[0] 1016|                            </div>
+[0] 1017|                          </>);
+[0]
+[0]   Plugin: vite:esbuild
+[0]   File: C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/9.OrderFlowDesktop/src/components/VWAPSettings.jsx
+[0] 9:27:27 [vite] warning: The character ">" is not valid inside a JSX element
+[0] 1071|                    style={{ width: '80px' }} />
+[0] 1072|
+[0] 1073|                        <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>% (>% = Trending rojo)</span>
+[0]    |                                                                                                ^
+[0] 1074|                      </div>
+[0] 1075|                    </div>
+[0]
+[0]   Plugin: vite:esbuild
+[0]   File: C:/Users/inven/OneDrive/Documentos/GitHub/watchlist/9.OrderFlowDesktop/src/components/VWAPSettings.jsx

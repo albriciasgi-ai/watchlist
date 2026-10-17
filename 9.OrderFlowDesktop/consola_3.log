@@ -1,0 +1,1640 @@
+chunk-ZFBEYDM4.js?v=9c8daa37:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
+MiniChart.jsx:270 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:2135 [BTCUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [12:04:57 a. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+OrderFlowIndicator.js:26 [OrderFlow] [BTCUSDT] CONSTRUCTOR: interval=5, days=5, historyHours=24
+ZoneVisualizerIndicator.js:66 [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+PollingCoordinator.js:49 [PollingCoordinator] Started
+Logger.js:100 ✅ [12:04:57 a. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+Logger.js:100 ✅ [12:04:57 a. m.] [VWAP] [BTCUSDT] Config changed (vwapType=rolling), refetching...
+VolumeIndicator.js:21 [BTCUSDT] 📊 Volume Delta: Calculado en tiempo real desde velas
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+CandleCache.js:80 [CandleCache] 💾 BTCUSDT@5 - desde IndexedDB (1459 velas)
+CandleCache.js:393 [CandleCache] OK VALIDATION BTCUSDT@5: 1459 velas sin gaps
+CandleCache.js:269 [CandleCache] BTCUSDT@5 - Cache valido: 1459 velas, sin gaps significativos
+MiniChart.jsx:1243 [BTCUSDT] Carga INCREMENTAL: desde 16/10/2026, 11:55:00 p.m. (1459 velas en cache)
+robustness.js:415 [CacheCleanup] Complete: 0/3 candles, 0/1 indicators removed
+OrderFlowIndicator.js:274 [OrderFlow] [BTCUSDT] INITIAL LOAD: 677 footprints
+OrderFlowIndicator.js:334 [OrderFlow] [BTCUSDT] FOOTPRINT RANGES:
+OrderFlowIndicator.js:335   Total: 677 footprints
+OrderFlowIndicator.js:336   Rango completo: 16/10/2026, 12:04:00 p.m. -> 16/10/2026, 11:55:00 p.m.
+OrderFlowIndicator.js:337   Grupos contiguos: 675
+OrderFlowIndicator.js:345     Grupo 1: 16/10/2026, 12:04:00 p.m. -> 16/10/2026, 12:04:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 2: 16/10/2026, 12:05:00 p.m. -> 16/10/2026, 12:05:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+     Grupo 3: 16/10/2026, 12:06:00 p.m. -> 16/10/2026, 12:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 4: 16/10/2026, 12:07:00 p.m. -> 16/10/2026, 12:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 5: 16/10/2026, 12:08:00 p.m. -> 16/10/2026, 12:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 6: 16/10/2026, 12:09:00 p.m. -> 16/10/2026, 12:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 7: 16/10/2026, 12:10:00 p.m. -> 16/10/2026, 12:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 8: 16/10/2026, 12:11:00 p.m. -> 16/10/2026, 12:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 9: 16/10/2026, 12:12:00 p.m. -> 16/10/2026, 12:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 10: 16/10/2026, 12:13:00 p.m. -> 16/10/2026, 12:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 11: 16/10/2026, 12:14:00 p.m. -> 16/10/2026, 12:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 12: 16/10/2026, 12:15:00 p.m. -> 16/10/2026, 12:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 13: 16/10/2026, 12:16:00 p.m. -> 16/10/2026, 12:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 14: 16/10/2026, 12:17:00 p.m. -> 16/10/2026, 12:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 15: 16/10/2026, 12:18:00 p.m. -> 16/10/2026, 12:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 16: 16/10/2026, 12:19:00 p.m. -> 16/10/2026, 12:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 17: 16/10/2026, 12:20:00 p.m. -> 16/10/2026, 12:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 18: 16/10/2026, 12:21:00 p.m. -> 16/10/2026, 12:21:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 19: 16/10/2026, 12:22:00 p.m. -> 16/10/2026, 12:22:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 20: 16/10/2026, 12:23:00 p.m. -> 16/10/2026, 12:23:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 21: 16/10/2026, 12:24:00 p.m. -> 16/10/2026, 12:24:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 22: 16/10/2026, 12:25:00 p.m. -> 16/10/2026, 12:25:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 23: 16/10/2026, 12:26:00 p.m. -> 16/10/2026, 12:26:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 24: 16/10/2026, 12:27:00 p.m. -> 16/10/2026, 12:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 25: 16/10/2026, 12:28:00 p.m. -> 16/10/2026, 12:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 26: 16/10/2026, 12:29:00 p.m. -> 16/10/2026, 12:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 27: 16/10/2026, 12:30:00 p.m. -> 16/10/2026, 12:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 28: 16/10/2026, 12:31:00 p.m. -> 16/10/2026, 12:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 29: 16/10/2026, 12:32:00 p.m. -> 16/10/2026, 12:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 30: 16/10/2026, 12:33:00 p.m. -> 16/10/2026, 12:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 31: 16/10/2026, 12:34:00 p.m. -> 16/10/2026, 12:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 32: 16/10/2026, 12:35:00 p.m. -> 16/10/2026, 12:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 33: 16/10/2026, 12:36:00 p.m. -> 16/10/2026, 12:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 34: 16/10/2026, 12:37:00 p.m. -> 16/10/2026, 12:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 35: 16/10/2026, 12:38:00 p.m. -> 16/10/2026, 12:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 36: 16/10/2026, 12:39:00 p.m. -> 16/10/2026, 12:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 37: 16/10/2026, 12:40:00 p.m. -> 16/10/2026, 12:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 38: 16/10/2026, 12:41:00 p.m. -> 16/10/2026, 12:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 39: 16/10/2026, 12:42:00 p.m. -> 16/10/2026, 12:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 40: 16/10/2026, 12:43:00 p.m. -> 16/10/2026, 12:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 41: 16/10/2026, 12:44:00 p.m. -> 16/10/2026, 12:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 42: 16/10/2026, 12:45:00 p.m. -> 16/10/2026, 12:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 43: 16/10/2026, 12:46:00 p.m. -> 16/10/2026, 12:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 44: 16/10/2026, 12:47:00 p.m. -> 16/10/2026, 12:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 45: 16/10/2026, 12:48:00 p.m. -> 16/10/2026, 12:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 46: 16/10/2026, 12:49:00 p.m. -> 16/10/2026, 12:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 47: 16/10/2026, 12:50:00 p.m. -> 16/10/2026, 12:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 48: 16/10/2026, 12:51:00 p.m. -> 16/10/2026, 12:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 49: 16/10/2026, 12:52:00 p.m. -> 16/10/2026, 12:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 50: 16/10/2026, 12:53:00 p.m. -> 16/10/2026, 12:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 51: 16/10/2026, 12:54:00 p.m. -> 16/10/2026, 12:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 52: 16/10/2026, 12:55:00 p.m. -> 16/10/2026, 12:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 53: 16/10/2026, 12:56:00 p.m. -> 16/10/2026, 12:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 54: 16/10/2026, 12:57:00 p.m. -> 16/10/2026, 12:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 55: 16/10/2026, 12:58:00 p.m. -> 16/10/2026, 12:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 56: 16/10/2026, 12:59:00 p.m. -> 16/10/2026, 12:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 57: 16/10/2026, 1:00:00 p.m. -> 16/10/2026, 1:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 58: 16/10/2026, 1:01:00 p.m. -> 16/10/2026, 1:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 59: 16/10/2026, 1:02:00 p.m. -> 16/10/2026, 1:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 60: 16/10/2026, 1:03:00 p.m. -> 16/10/2026, 1:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 61: 16/10/2026, 1:04:00 p.m. -> 16/10/2026, 1:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 62: 16/10/2026, 1:05:00 p.m. -> 16/10/2026, 1:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 63: 16/10/2026, 1:06:00 p.m. -> 16/10/2026, 1:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 64: 16/10/2026, 1:07:00 p.m. -> 16/10/2026, 1:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 65: 16/10/2026, 1:08:00 p.m. -> 16/10/2026, 1:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 66: 16/10/2026, 1:09:00 p.m. -> 16/10/2026, 1:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 67: 16/10/2026, 1:10:00 p.m. -> 16/10/2026, 1:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 68: 16/10/2026, 1:11:00 p.m. -> 16/10/2026, 1:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 69: 16/10/2026, 1:12:00 p.m. -> 16/10/2026, 1:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 70: 16/10/2026, 1:13:00 p.m. -> 16/10/2026, 1:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 71: 16/10/2026, 1:14:00 p.m. -> 16/10/2026, 1:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 72: 16/10/2026, 1:15:00 p.m. -> 16/10/2026, 1:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 73: 16/10/2026, 1:16:00 p.m. -> 16/10/2026, 1:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 74: 16/10/2026, 1:17:00 p.m. -> 16/10/2026, 1:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 75: 16/10/2026, 1:18:00 p.m. -> 16/10/2026, 1:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 76: 16/10/2026, 1:19:00 p.m. -> 16/10/2026, 1:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 77: 16/10/2026, 1:20:00 p.m. -> 16/10/2026, 1:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 78: 16/10/2026, 1:21:00 p.m. -> 16/10/2026, 1:21:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 79: 16/10/2026, 1:22:00 p.m. -> 16/10/2026, 1:22:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 80: 16/10/2026, 1:23:00 p.m. -> 16/10/2026, 1:23:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 81: 16/10/2026, 1:24:00 p.m. -> 16/10/2026, 1:24:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 82: 16/10/2026, 1:25:00 p.m. -> 16/10/2026, 1:25:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 83: 16/10/2026, 1:26:00 p.m. -> 16/10/2026, 1:26:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 84: 16/10/2026, 1:27:00 p.m. -> 16/10/2026, 1:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 85: 16/10/2026, 1:28:00 p.m. -> 16/10/2026, 1:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 86: 16/10/2026, 1:29:00 p.m. -> 16/10/2026, 1:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 87: 16/10/2026, 1:30:00 p.m. -> 16/10/2026, 1:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 88: 16/10/2026, 1:31:00 p.m. -> 16/10/2026, 1:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 89: 16/10/2026, 1:32:00 p.m. -> 16/10/2026, 1:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 90: 16/10/2026, 1:33:00 p.m. -> 16/10/2026, 1:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 91: 16/10/2026, 1:34:00 p.m. -> 16/10/2026, 1:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 92: 16/10/2026, 1:35:00 p.m. -> 16/10/2026, 1:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 93: 16/10/2026, 1:36:00 p.m. -> 16/10/2026, 1:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 94: 16/10/2026, 1:37:00 p.m. -> 16/10/2026, 1:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 95: 16/10/2026, 1:38:00 p.m. -> 16/10/2026, 1:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 96: 16/10/2026, 1:39:00 p.m. -> 16/10/2026, 1:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 97: 16/10/2026, 1:40:00 p.m. -> 16/10/2026, 1:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 98: 16/10/2026, 1:41:00 p.m. -> 16/10/2026, 1:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 99: 16/10/2026, 1:42:00 p.m. -> 16/10/2026, 1:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 100: 16/10/2026, 1:43:00 p.m. -> 16/10/2026, 1:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 101: 16/10/2026, 1:44:00 p.m. -> 16/10/2026, 1:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 102: 16/10/2026, 1:45:00 p.m. -> 16/10/2026, 1:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 103: 16/10/2026, 1:46:00 p.m. -> 16/10/2026, 1:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 104: 16/10/2026, 1:47:00 p.m. -> 16/10/2026, 1:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 105: 16/10/2026, 1:48:00 p.m. -> 16/10/2026, 1:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 106: 16/10/2026, 1:49:00 p.m. -> 16/10/2026, 1:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 107: 16/10/2026, 1:50:00 p.m. -> 16/10/2026, 1:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 108: 16/10/2026, 1:51:00 p.m. -> 16/10/2026, 1:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 109: 16/10/2026, 1:52:00 p.m. -> 16/10/2026, 1:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 110: 16/10/2026, 1:53:00 p.m. -> 16/10/2026, 1:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 111: 16/10/2026, 1:54:00 p.m. -> 16/10/2026, 1:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 112: 16/10/2026, 1:55:00 p.m. -> 16/10/2026, 1:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 113: 16/10/2026, 1:56:00 p.m. -> 16/10/2026, 1:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 114: 16/10/2026, 1:57:00 p.m. -> 16/10/2026, 1:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 115: 16/10/2026, 1:58:00 p.m. -> 16/10/2026, 1:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 116: 16/10/2026, 1:59:00 p.m. -> 16/10/2026, 1:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 117: 16/10/2026, 2:00:00 p.m. -> 16/10/2026, 2:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 118: 16/10/2026, 2:01:00 p.m. -> 16/10/2026, 2:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 119: 16/10/2026, 2:02:00 p.m. -> 16/10/2026, 2:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 120: 16/10/2026, 2:03:00 p.m. -> 16/10/2026, 2:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 121: 16/10/2026, 2:04:00 p.m. -> 16/10/2026, 2:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 122: 16/10/2026, 2:05:00 p.m. -> 16/10/2026, 2:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 123: 16/10/2026, 2:06:00 p.m. -> 16/10/2026, 2:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 124: 16/10/2026, 2:07:00 p.m. -> 16/10/2026, 2:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 125: 16/10/2026, 2:08:00 p.m. -> 16/10/2026, 2:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 126: 16/10/2026, 2:09:00 p.m. -> 16/10/2026, 2:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 127: 16/10/2026, 2:10:00 p.m. -> 16/10/2026, 2:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 128: 16/10/2026, 2:11:00 p.m. -> 16/10/2026, 2:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 129: 16/10/2026, 2:12:00 p.m. -> 16/10/2026, 2:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 130: 16/10/2026, 2:13:00 p.m. -> 16/10/2026, 2:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 131: 16/10/2026, 2:14:00 p.m. -> 16/10/2026, 2:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 132: 16/10/2026, 2:15:00 p.m. -> 16/10/2026, 2:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 133: 16/10/2026, 2:16:00 p.m. -> 16/10/2026, 2:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 134: 16/10/2026, 2:17:00 p.m. -> 16/10/2026, 2:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 135: 16/10/2026, 2:18:00 p.m. -> 16/10/2026, 2:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 136: 16/10/2026, 2:19:00 p.m. -> 16/10/2026, 2:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 137: 16/10/2026, 2:20:00 p.m. -> 16/10/2026, 2:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 138: 16/10/2026, 2:21:00 p.m. -> 16/10/2026, 2:21:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 139: 16/10/2026, 2:22:00 p.m. -> 16/10/2026, 2:22:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 140: 16/10/2026, 2:23:00 p.m. -> 16/10/2026, 2:23:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 141: 16/10/2026, 2:24:00 p.m. -> 16/10/2026, 2:24:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 142: 16/10/2026, 2:25:00 p.m. -> 16/10/2026, 2:25:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 143: 16/10/2026, 2:26:00 p.m. -> 16/10/2026, 2:26:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 144: 16/10/2026, 2:27:00 p.m. -> 16/10/2026, 2:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 145: 16/10/2026, 2:28:00 p.m. -> 16/10/2026, 2:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 146: 16/10/2026, 2:29:00 p.m. -> 16/10/2026, 2:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 147: 16/10/2026, 2:30:00 p.m. -> 16/10/2026, 2:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 148: 16/10/2026, 2:31:00 p.m. -> 16/10/2026, 2:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 149: 16/10/2026, 2:32:00 p.m. -> 16/10/2026, 2:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 150: 16/10/2026, 2:33:00 p.m. -> 16/10/2026, 2:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 151: 16/10/2026, 2:34:00 p.m. -> 16/10/2026, 2:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 152: 16/10/2026, 2:35:00 p.m. -> 16/10/2026, 2:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 153: 16/10/2026, 2:36:00 p.m. -> 16/10/2026, 2:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 154: 16/10/2026, 2:37:00 p.m. -> 16/10/2026, 2:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 155: 16/10/2026, 2:38:00 p.m. -> 16/10/2026, 2:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 156: 16/10/2026, 2:39:00 p.m. -> 16/10/2026, 2:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 157: 16/10/2026, 2:40:00 p.m. -> 16/10/2026, 2:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 158: 16/10/2026, 2:41:00 p.m. -> 16/10/2026, 2:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 159: 16/10/2026, 2:42:00 p.m. -> 16/10/2026, 2:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 160: 16/10/2026, 2:43:00 p.m. -> 16/10/2026, 2:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 161: 16/10/2026, 2:44:00 p.m. -> 16/10/2026, 2:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 162: 16/10/2026, 2:45:00 p.m. -> 16/10/2026, 2:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 163: 16/10/2026, 2:46:00 p.m. -> 16/10/2026, 2:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 164: 16/10/2026, 2:47:00 p.m. -> 16/10/2026, 2:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 165: 16/10/2026, 2:48:00 p.m. -> 16/10/2026, 2:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 166: 16/10/2026, 2:49:00 p.m. -> 16/10/2026, 2:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 167: 16/10/2026, 2:50:00 p.m. -> 16/10/2026, 2:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 168: 16/10/2026, 2:51:00 p.m. -> 16/10/2026, 2:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 169: 16/10/2026, 2:52:00 p.m. -> 16/10/2026, 2:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 170: 16/10/2026, 2:53:00 p.m. -> 16/10/2026, 2:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 171: 16/10/2026, 2:54:00 p.m. -> 16/10/2026, 2:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 172: 16/10/2026, 2:55:00 p.m. -> 16/10/2026, 2:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 173: 16/10/2026, 2:56:00 p.m. -> 16/10/2026, 2:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 174: 16/10/2026, 2:57:00 p.m. -> 16/10/2026, 2:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 175: 16/10/2026, 2:58:00 p.m. -> 16/10/2026, 2:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 176: 16/10/2026, 2:59:00 p.m. -> 16/10/2026, 2:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 177: 16/10/2026, 3:00:00 p.m. -> 16/10/2026, 3:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 178: 16/10/2026, 3:01:00 p.m. -> 16/10/2026, 3:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 179: 16/10/2026, 3:02:00 p.m. -> 16/10/2026, 3:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 180: 16/10/2026, 3:03:00 p.m. -> 16/10/2026, 3:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 181: 16/10/2026, 3:04:00 p.m. -> 16/10/2026, 3:04:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 182: 16/10/2026, 3:05:00 p.m. -> 16/10/2026, 3:05:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 183: 16/10/2026, 3:06:00 p.m. -> 16/10/2026, 3:06:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 184: 16/10/2026, 3:07:00 p.m. -> 16/10/2026, 3:07:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 185: 16/10/2026, 3:08:00 p.m. -> 16/10/2026, 3:08:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 186: 16/10/2026, 3:09:00 p.m. -> 16/10/2026, 3:09:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 187: 16/10/2026, 3:10:00 p.m. -> 16/10/2026, 3:10:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 188: 16/10/2026, 3:11:00 p.m. -> 16/10/2026, 3:11:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 189: 16/10/2026, 3:12:00 p.m. -> 16/10/2026, 3:12:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 190: 16/10/2026, 3:13:00 p.m. -> 16/10/2026, 3:13:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 191: 16/10/2026, 3:14:00 p.m. -> 16/10/2026, 3:14:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 192: 16/10/2026, 3:15:00 p.m. -> 16/10/2026, 3:15:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 193: 16/10/2026, 3:16:00 p.m. -> 16/10/2026, 3:16:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 194: 16/10/2026, 3:17:00 p.m. -> 16/10/2026, 3:17:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 195: 16/10/2026, 3:18:00 p.m. -> 16/10/2026, 3:18:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 196: 16/10/2026, 3:19:00 p.m. -> 16/10/2026, 3:19:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 197: 16/10/2026, 3:20:00 p.m. -> 16/10/2026, 3:20:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 198: 16/10/2026, 3:21:00 p.m. -> 16/10/2026, 3:21:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 199: 16/10/2026, 3:22:00 p.m. -> 16/10/2026, 3:22:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 200: 16/10/2026, 3:23:00 p.m. -> 16/10/2026, 3:23:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 201: 16/10/2026, 3:24:00 p.m. -> 16/10/2026, 3:24:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 202: 16/10/2026, 3:25:00 p.m. -> 16/10/2026, 3:25:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 203: 16/10/2026, 3:26:00 p.m. -> 16/10/2026, 3:26:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 204: 16/10/2026, 3:27:00 p.m. -> 16/10/2026, 3:27:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 205: 16/10/2026, 3:28:00 p.m. -> 16/10/2026, 3:28:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 206: 16/10/2026, 3:29:00 p.m. -> 16/10/2026, 3:29:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 207: 16/10/2026, 3:30:00 p.m. -> 16/10/2026, 3:30:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 208: 16/10/2026, 3:31:00 p.m. -> 16/10/2026, 3:31:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 209: 16/10/2026, 3:32:00 p.m. -> 16/10/2026, 3:32:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 210: 16/10/2026, 3:33:00 p.m. -> 16/10/2026, 3:33:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 211: 16/10/2026, 3:34:00 p.m. -> 16/10/2026, 3:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 212: 16/10/2026, 3:35:00 p.m. -> 16/10/2026, 3:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 213: 16/10/2026, 3:36:00 p.m. -> 16/10/2026, 3:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 214: 16/10/2026, 3:37:00 p.m. -> 16/10/2026, 3:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 215: 16/10/2026, 3:38:00 p.m. -> 16/10/2026, 3:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 216: 16/10/2026, 3:39:00 p.m. -> 16/10/2026, 3:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 217: 16/10/2026, 3:40:00 p.m. -> 16/10/2026, 3:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 218: 16/10/2026, 3:41:00 p.m. -> 16/10/2026, 3:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 219: 16/10/2026, 3:42:00 p.m. -> 16/10/2026, 3:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 220: 16/10/2026, 3:43:00 p.m. -> 16/10/2026, 3:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 221: 16/10/2026, 3:44:00 p.m. -> 16/10/2026, 3:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 222: 16/10/2026, 3:45:00 p.m. -> 16/10/2026, 3:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 223: 16/10/2026, 3:46:00 p.m. -> 16/10/2026, 3:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 224: 16/10/2026, 3:47:00 p.m. -> 16/10/2026, 3:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 225: 16/10/2026, 3:48:00 p.m. -> 16/10/2026, 3:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 226: 16/10/2026, 3:49:00 p.m. -> 16/10/2026, 3:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 227: 16/10/2026, 3:50:00 p.m. -> 16/10/2026, 3:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 228: 16/10/2026, 3:51:00 p.m. -> 16/10/2026, 3:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 229: 16/10/2026, 3:52:00 p.m. -> 16/10/2026, 3:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 230: 16/10/2026, 3:53:00 p.m. -> 16/10/2026, 3:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 231: 16/10/2026, 3:54:00 p.m. -> 16/10/2026, 3:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 232: 16/10/2026, 3:55:00 p.m. -> 16/10/2026, 3:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 233: 16/10/2026, 3:56:00 p.m. -> 16/10/2026, 3:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 234: 16/10/2026, 3:57:00 p.m. -> 16/10/2026, 3:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 235: 16/10/2026, 3:58:00 p.m. -> 16/10/2026, 3:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 236: 16/10/2026, 3:59:00 p.m. -> 16/10/2026, 3:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 237: 16/10/2026, 4:00:00 p.m. -> 16/10/2026, 4:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 238: 16/10/2026, 4:01:00 p.m. -> 16/10/2026, 4:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 239: 16/10/2026, 4:02:00 p.m. -> 16/10/2026, 4:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 240: 16/10/2026, 4:03:00 p.m. -> 16/10/2026, 4:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 241: 16/10/2026, 4:04:00 p.m. -> 16/10/2026, 4:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 242: 16/10/2026, 4:05:00 p.m. -> 16/10/2026, 4:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 243: 16/10/2026, 4:06:00 p.m. -> 16/10/2026, 4:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 244: 16/10/2026, 4:07:00 p.m. -> 16/10/2026, 4:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 245: 16/10/2026, 4:08:00 p.m. -> 16/10/2026, 4:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 246: 16/10/2026, 4:09:00 p.m. -> 16/10/2026, 4:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 247: 16/10/2026, 4:10:00 p.m. -> 16/10/2026, 4:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 248: 16/10/2026, 4:11:00 p.m. -> 16/10/2026, 4:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 249: 16/10/2026, 4:12:00 p.m. -> 16/10/2026, 4:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 250: 16/10/2026, 4:13:00 p.m. -> 16/10/2026, 4:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 251: 16/10/2026, 4:14:00 p.m. -> 16/10/2026, 4:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 252: 16/10/2026, 4:15:00 p.m. -> 16/10/2026, 4:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 253: 16/10/2026, 4:16:00 p.m. -> 16/10/2026, 4:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 254: 16/10/2026, 4:17:00 p.m. -> 16/10/2026, 4:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 255: 16/10/2026, 4:18:00 p.m. -> 16/10/2026, 4:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 256: 16/10/2026, 4:19:00 p.m. -> 16/10/2026, 4:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 257: 16/10/2026, 4:20:00 p.m. -> 16/10/2026, 4:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 258: 16/10/2026, 4:21:00 p.m. -> 16/10/2026, 4:21:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 259: 16/10/2026, 4:22:00 p.m. -> 16/10/2026, 4:22:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 260: 16/10/2026, 4:23:00 p.m. -> 16/10/2026, 4:23:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 261: 16/10/2026, 4:24:00 p.m. -> 16/10/2026, 4:24:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 262: 16/10/2026, 4:25:00 p.m. -> 16/10/2026, 4:25:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 263: 16/10/2026, 4:26:00 p.m. -> 16/10/2026, 4:26:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 264: 16/10/2026, 4:27:00 p.m. -> 16/10/2026, 4:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 265: 16/10/2026, 4:28:00 p.m. -> 16/10/2026, 4:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 266: 16/10/2026, 4:29:00 p.m. -> 16/10/2026, 4:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 267: 16/10/2026, 4:30:00 p.m. -> 16/10/2026, 4:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 268: 16/10/2026, 4:31:00 p.m. -> 16/10/2026, 4:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 269: 16/10/2026, 4:32:00 p.m. -> 16/10/2026, 4:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 270: 16/10/2026, 4:33:00 p.m. -> 16/10/2026, 4:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 271: 16/10/2026, 4:34:00 p.m. -> 16/10/2026, 4:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 272: 16/10/2026, 4:35:00 p.m. -> 16/10/2026, 4:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 273: 16/10/2026, 4:36:00 p.m. -> 16/10/2026, 4:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 274: 16/10/2026, 4:37:00 p.m. -> 16/10/2026, 4:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 275: 16/10/2026, 4:38:00 p.m. -> 16/10/2026, 4:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 276: 16/10/2026, 4:39:00 p.m. -> 16/10/2026, 4:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 277: 16/10/2026, 4:40:00 p.m. -> 16/10/2026, 4:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 278: 16/10/2026, 4:41:00 p.m. -> 16/10/2026, 4:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 279: 16/10/2026, 4:42:00 p.m. -> 16/10/2026, 4:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 280: 16/10/2026, 4:43:00 p.m. -> 16/10/2026, 4:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 281: 16/10/2026, 4:44:00 p.m. -> 16/10/2026, 4:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 282: 16/10/2026, 4:45:00 p.m. -> 16/10/2026, 4:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 283: 16/10/2026, 4:46:00 p.m. -> 16/10/2026, 4:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 284: 16/10/2026, 4:47:00 p.m. -> 16/10/2026, 4:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 285: 16/10/2026, 4:48:00 p.m. -> 16/10/2026, 4:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 286: 16/10/2026, 4:49:00 p.m. -> 16/10/2026, 4:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 287: 16/10/2026, 4:50:00 p.m. -> 16/10/2026, 4:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 288: 16/10/2026, 4:51:00 p.m. -> 16/10/2026, 4:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 289: 16/10/2026, 4:52:00 p.m. -> 16/10/2026, 4:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 290: 16/10/2026, 4:53:00 p.m. -> 16/10/2026, 4:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 291: 16/10/2026, 4:54:00 p.m. -> 16/10/2026, 4:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 292: 16/10/2026, 4:55:00 p.m. -> 16/10/2026, 4:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 293: 16/10/2026, 4:56:00 p.m. -> 16/10/2026, 4:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 294: 16/10/2026, 4:57:00 p.m. -> 16/10/2026, 4:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 295: 16/10/2026, 4:58:00 p.m. -> 16/10/2026, 4:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 296: 16/10/2026, 4:59:00 p.m. -> 16/10/2026, 4:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 297: 16/10/2026, 5:00:00 p.m. -> 16/10/2026, 5:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 298: 16/10/2026, 5:01:00 p.m. -> 16/10/2026, 5:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 299: 16/10/2026, 5:02:00 p.m. -> 16/10/2026, 5:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 300: 16/10/2026, 5:03:00 p.m. -> 16/10/2026, 5:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 301: 16/10/2026, 5:04:00 p.m. -> 16/10/2026, 5:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 302: 16/10/2026, 5:05:00 p.m. -> 16/10/2026, 5:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 303: 16/10/2026, 5:06:00 p.m. -> 16/10/2026, 5:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 304: 16/10/2026, 5:07:00 p.m. -> 16/10/2026, 5:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 305: 16/10/2026, 5:08:00 p.m. -> 16/10/2026, 5:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 306: 16/10/2026, 5:09:00 p.m. -> 16/10/2026, 5:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 307: 16/10/2026, 5:10:00 p.m. -> 16/10/2026, 5:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 308: 16/10/2026, 5:11:00 p.m. -> 16/10/2026, 5:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 309: 16/10/2026, 5:12:00 p.m. -> 16/10/2026, 5:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 310: 16/10/2026, 5:13:00 p.m. -> 16/10/2026, 5:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 311: 16/10/2026, 5:14:00 p.m. -> 16/10/2026, 5:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 312: 16/10/2026, 5:15:00 p.m. -> 16/10/2026, 5:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 313: 16/10/2026, 5:16:00 p.m. -> 16/10/2026, 5:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 314: 16/10/2026, 5:17:00 p.m. -> 16/10/2026, 5:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 315: 16/10/2026, 5:18:00 p.m. -> 16/10/2026, 5:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 316: 16/10/2026, 5:19:00 p.m. -> 16/10/2026, 5:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 317: 16/10/2026, 5:20:00 p.m. -> 16/10/2026, 5:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 318: 16/10/2026, 5:21:00 p.m. -> 16/10/2026, 5:21:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 319: 16/10/2026, 5:22:00 p.m. -> 16/10/2026, 5:22:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 320: 16/10/2026, 5:23:00 p.m. -> 16/10/2026, 5:23:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 321: 16/10/2026, 5:24:00 p.m. -> 16/10/2026, 5:24:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 322: 16/10/2026, 5:25:00 p.m. -> 16/10/2026, 5:25:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 323: 16/10/2026, 5:26:00 p.m. -> 16/10/2026, 5:26:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 324: 16/10/2026, 5:27:00 p.m. -> 16/10/2026, 5:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 325: 16/10/2026, 5:28:00 p.m. -> 16/10/2026, 5:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 326: 16/10/2026, 5:29:00 p.m. -> 16/10/2026, 5:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 327: 16/10/2026, 5:30:00 p.m. -> 16/10/2026, 5:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 328: 16/10/2026, 5:31:00 p.m. -> 16/10/2026, 5:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 329: 16/10/2026, 5:32:00 p.m. -> 16/10/2026, 5:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 330: 16/10/2026, 5:33:00 p.m. -> 16/10/2026, 5:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 331: 16/10/2026, 5:34:00 p.m. -> 16/10/2026, 5:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 332: 16/10/2026, 5:35:00 p.m. -> 16/10/2026, 5:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 333: 16/10/2026, 5:36:00 p.m. -> 16/10/2026, 5:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 334: 16/10/2026, 5:37:00 p.m. -> 16/10/2026, 5:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 335: 16/10/2026, 5:38:00 p.m. -> 16/10/2026, 5:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 336: 16/10/2026, 5:39:00 p.m. -> 16/10/2026, 5:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 337: 16/10/2026, 5:40:00 p.m. -> 16/10/2026, 5:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 338: 16/10/2026, 5:41:00 p.m. -> 16/10/2026, 5:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 339: 16/10/2026, 5:42:00 p.m. -> 16/10/2026, 5:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 340: 16/10/2026, 5:43:00 p.m. -> 16/10/2026, 5:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 341: 16/10/2026, 5:44:00 p.m. -> 16/10/2026, 5:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 342: 16/10/2026, 5:45:00 p.m. -> 16/10/2026, 5:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 343: 16/10/2026, 5:46:00 p.m. -> 16/10/2026, 5:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 344: 16/10/2026, 5:47:00 p.m. -> 16/10/2026, 5:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 345: 16/10/2026, 5:48:00 p.m. -> 16/10/2026, 5:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 346: 16/10/2026, 5:49:00 p.m. -> 16/10/2026, 5:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 347: 16/10/2026, 5:50:00 p.m. -> 16/10/2026, 5:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 348: 16/10/2026, 5:51:00 p.m. -> 16/10/2026, 5:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 349: 16/10/2026, 5:52:00 p.m. -> 16/10/2026, 5:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 350: 16/10/2026, 5:53:00 p.m. -> 16/10/2026, 5:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 351: 16/10/2026, 5:54:00 p.m. -> 16/10/2026, 5:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 352: 16/10/2026, 5:55:00 p.m. -> 16/10/2026, 5:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 353: 16/10/2026, 5:56:00 p.m. -> 16/10/2026, 5:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 354: 16/10/2026, 5:57:00 p.m. -> 16/10/2026, 5:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 355: 16/10/2026, 5:58:00 p.m. -> 16/10/2026, 5:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 356: 16/10/2026, 5:59:00 p.m. -> 16/10/2026, 5:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 357: 16/10/2026, 6:00:00 p.m. -> 16/10/2026, 6:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 358: 16/10/2026, 6:01:00 p.m. -> 16/10/2026, 6:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 359: 16/10/2026, 6:02:00 p.m. -> 16/10/2026, 6:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 360: 16/10/2026, 6:03:00 p.m. -> 16/10/2026, 6:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 361: 16/10/2026, 6:04:00 p.m. -> 16/10/2026, 6:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 362: 16/10/2026, 6:05:00 p.m. -> 16/10/2026, 6:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 363: 16/10/2026, 6:06:00 p.m. -> 16/10/2026, 6:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 364: 16/10/2026, 6:07:00 p.m. -> 16/10/2026, 6:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 365: 16/10/2026, 6:08:00 p.m. -> 16/10/2026, 6:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 366: 16/10/2026, 6:09:00 p.m. -> 16/10/2026, 6:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 367: 16/10/2026, 6:10:00 p.m. -> 16/10/2026, 6:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 368: 16/10/2026, 6:11:00 p.m. -> 16/10/2026, 6:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 369: 16/10/2026, 6:12:00 p.m. -> 16/10/2026, 6:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 370: 16/10/2026, 6:13:00 p.m. -> 16/10/2026, 6:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 371: 16/10/2026, 6:14:00 p.m. -> 16/10/2026, 6:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 372: 16/10/2026, 6:15:00 p.m. -> 16/10/2026, 6:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 373: 16/10/2026, 6:16:00 p.m. -> 16/10/2026, 6:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 374: 16/10/2026, 6:17:00 p.m. -> 16/10/2026, 6:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 375: 16/10/2026, 6:18:00 p.m. -> 16/10/2026, 6:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 376: 16/10/2026, 6:19:00 p.m. -> 16/10/2026, 6:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 377: 16/10/2026, 6:20:00 p.m. -> 16/10/2026, 6:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 378: 16/10/2026, 6:21:00 p.m. -> 16/10/2026, 6:21:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 379: 16/10/2026, 6:22:00 p.m. -> 16/10/2026, 6:22:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 380: 16/10/2026, 6:23:00 p.m. -> 16/10/2026, 6:23:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 381: 16/10/2026, 6:24:00 p.m. -> 16/10/2026, 6:24:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 382: 16/10/2026, 6:25:00 p.m. -> 16/10/2026, 6:25:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 383: 16/10/2026, 6:26:00 p.m. -> 16/10/2026, 6:26:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 384: 16/10/2026, 6:27:00 p.m. -> 16/10/2026, 6:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 385: 16/10/2026, 6:28:00 p.m. -> 16/10/2026, 6:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 386: 16/10/2026, 6:29:00 p.m. -> 16/10/2026, 6:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 387: 16/10/2026, 6:30:00 p.m. -> 16/10/2026, 6:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 388: 16/10/2026, 6:31:00 p.m. -> 16/10/2026, 6:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 389: 16/10/2026, 6:32:00 p.m. -> 16/10/2026, 6:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 390: 16/10/2026, 6:33:00 p.m. -> 16/10/2026, 6:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 391: 16/10/2026, 6:34:00 p.m. -> 16/10/2026, 6:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 392: 16/10/2026, 6:35:00 p.m. -> 16/10/2026, 6:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 393: 16/10/2026, 6:36:00 p.m. -> 16/10/2026, 6:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 394: 16/10/2026, 6:37:00 p.m. -> 16/10/2026, 6:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 395: 16/10/2026, 6:38:00 p.m. -> 16/10/2026, 6:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 396: 16/10/2026, 6:39:00 p.m. -> 16/10/2026, 6:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 397: 16/10/2026, 6:40:00 p.m. -> 16/10/2026, 6:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 398: 16/10/2026, 6:41:00 p.m. -> 16/10/2026, 6:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 399: 16/10/2026, 6:42:00 p.m. -> 16/10/2026, 6:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 400: 16/10/2026, 6:43:00 p.m. -> 16/10/2026, 6:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 401: 16/10/2026, 6:44:00 p.m. -> 16/10/2026, 6:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 402: 16/10/2026, 6:45:00 p.m. -> 16/10/2026, 6:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 403: 16/10/2026, 6:46:00 p.m. -> 16/10/2026, 6:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 404: 16/10/2026, 6:47:00 p.m. -> 16/10/2026, 6:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 405: 16/10/2026, 6:48:00 p.m. -> 16/10/2026, 6:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 406: 16/10/2026, 6:49:00 p.m. -> 16/10/2026, 6:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 407: 16/10/2026, 6:50:00 p.m. -> 16/10/2026, 6:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 408: 16/10/2026, 6:51:00 p.m. -> 16/10/2026, 6:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 409: 16/10/2026, 6:52:00 p.m. -> 16/10/2026, 6:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 410: 16/10/2026, 6:53:00 p.m. -> 16/10/2026, 6:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 411: 16/10/2026, 6:54:00 p.m. -> 16/10/2026, 6:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 412: 16/10/2026, 6:55:00 p.m. -> 16/10/2026, 6:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 413: 16/10/2026, 6:56:00 p.m. -> 16/10/2026, 6:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 414: 16/10/2026, 6:57:00 p.m. -> 16/10/2026, 6:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 415: 16/10/2026, 6:58:00 p.m. -> 16/10/2026, 6:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 416: 16/10/2026, 6:59:00 p.m. -> 16/10/2026, 6:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 417: 16/10/2026, 7:00:00 p.m. -> 16/10/2026, 7:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 418: 16/10/2026, 7:01:00 p.m. -> 16/10/2026, 7:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 419: 16/10/2026, 7:02:00 p.m. -> 16/10/2026, 7:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 420: 16/10/2026, 7:03:00 p.m. -> 16/10/2026, 7:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 421: 16/10/2026, 7:04:00 p.m. -> 16/10/2026, 7:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 422: 16/10/2026, 7:05:00 p.m. -> 16/10/2026, 7:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 423: 16/10/2026, 7:06:00 p.m. -> 16/10/2026, 7:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 424: 16/10/2026, 7:07:00 p.m. -> 16/10/2026, 7:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 425: 16/10/2026, 7:08:00 p.m. -> 16/10/2026, 7:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 426: 16/10/2026, 7:09:00 p.m. -> 16/10/2026, 7:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 427: 16/10/2026, 7:10:00 p.m. -> 16/10/2026, 7:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 428: 16/10/2026, 7:11:00 p.m. -> 16/10/2026, 7:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 429: 16/10/2026, 7:12:00 p.m. -> 16/10/2026, 7:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 430: 16/10/2026, 7:13:00 p.m. -> 16/10/2026, 7:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 431: 16/10/2026, 7:14:00 p.m. -> 16/10/2026, 7:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 432: 16/10/2026, 7:15:00 p.m. -> 16/10/2026, 7:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 433: 16/10/2026, 7:16:00 p.m. -> 16/10/2026, 7:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 434: 16/10/2026, 7:17:00 p.m. -> 16/10/2026, 7:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 435: 16/10/2026, 7:18:00 p.m. -> 16/10/2026, 7:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 436: 16/10/2026, 7:19:00 p.m. -> 16/10/2026, 7:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 437: 16/10/2026, 7:20:00 p.m. -> 16/10/2026, 7:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 438: 16/10/2026, 7:21:00 p.m. -> 16/10/2026, 7:21:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 439: 16/10/2026, 7:22:00 p.m. -> 16/10/2026, 7:22:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 440: 16/10/2026, 7:23:00 p.m. -> 16/10/2026, 7:23:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 441: 16/10/2026, 7:24:00 p.m. -> 16/10/2026, 7:24:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 442: 16/10/2026, 7:25:00 p.m. -> 16/10/2026, 7:25:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 443: 16/10/2026, 7:26:00 p.m. -> 16/10/2026, 7:26:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 444: 16/10/2026, 7:27:00 p.m. -> 16/10/2026, 7:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 445: 16/10/2026, 7:28:00 p.m. -> 16/10/2026, 7:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 446: 16/10/2026, 7:29:00 p.m. -> 16/10/2026, 7:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 447: 16/10/2026, 7:30:00 p.m. -> 16/10/2026, 7:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 448: 16/10/2026, 7:31:00 p.m. -> 16/10/2026, 7:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 449: 16/10/2026, 7:32:00 p.m. -> 16/10/2026, 7:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 450: 16/10/2026, 7:33:00 p.m. -> 16/10/2026, 7:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 451: 16/10/2026, 7:34:00 p.m. -> 16/10/2026, 7:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 452: 16/10/2026, 7:35:00 p.m. -> 16/10/2026, 7:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 453: 16/10/2026, 7:36:00 p.m. -> 16/10/2026, 7:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 454: 16/10/2026, 7:37:00 p.m. -> 16/10/2026, 7:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 455: 16/10/2026, 7:38:00 p.m. -> 16/10/2026, 7:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 456: 16/10/2026, 7:39:00 p.m. -> 16/10/2026, 7:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 457: 16/10/2026, 7:40:00 p.m. -> 16/10/2026, 7:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 458: 16/10/2026, 7:41:00 p.m. -> 16/10/2026, 7:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 459: 16/10/2026, 7:42:00 p.m. -> 16/10/2026, 7:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 460: 16/10/2026, 7:43:00 p.m. -> 16/10/2026, 7:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 461: 16/10/2026, 7:44:00 p.m. -> 16/10/2026, 7:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 462: 16/10/2026, 7:45:00 p.m. -> 16/10/2026, 7:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 463: 16/10/2026, 7:46:00 p.m. -> 16/10/2026, 7:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 464: 16/10/2026, 7:47:00 p.m. -> 16/10/2026, 7:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 465: 16/10/2026, 7:48:00 p.m. -> 16/10/2026, 7:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 466: 16/10/2026, 7:49:00 p.m. -> 16/10/2026, 7:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 467: 16/10/2026, 7:50:00 p.m. -> 16/10/2026, 7:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 468: 16/10/2026, 7:51:00 p.m. -> 16/10/2026, 7:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 469: 16/10/2026, 7:52:00 p.m. -> 16/10/2026, 7:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 470: 16/10/2026, 7:53:00 p.m. -> 16/10/2026, 7:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 471: 16/10/2026, 7:54:00 p.m. -> 16/10/2026, 7:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 472: 16/10/2026, 7:55:00 p.m. -> 16/10/2026, 7:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 473: 16/10/2026, 7:56:00 p.m. -> 16/10/2026, 7:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 474: 16/10/2026, 7:57:00 p.m. -> 16/10/2026, 7:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 475: 16/10/2026, 7:58:00 p.m. -> 16/10/2026, 7:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 476: 16/10/2026, 7:59:00 p.m. -> 16/10/2026, 7:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 477: 16/10/2026, 8:00:00 p.m. -> 16/10/2026, 8:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 478: 16/10/2026, 8:01:00 p.m. -> 16/10/2026, 8:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 479: 16/10/2026, 8:02:00 p.m. -> 16/10/2026, 8:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 480: 16/10/2026, 8:03:00 p.m. -> 16/10/2026, 8:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 481: 16/10/2026, 8:04:00 p.m. -> 16/10/2026, 8:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 482: 16/10/2026, 8:05:00 p.m. -> 16/10/2026, 8:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 483: 16/10/2026, 8:06:00 p.m. -> 16/10/2026, 8:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 484: 16/10/2026, 8:07:00 p.m. -> 16/10/2026, 8:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 485: 16/10/2026, 8:08:00 p.m. -> 16/10/2026, 8:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 486: 16/10/2026, 8:09:00 p.m. -> 16/10/2026, 8:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 487: 16/10/2026, 8:10:00 p.m. -> 16/10/2026, 8:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 488: 16/10/2026, 8:11:00 p.m. -> 16/10/2026, 8:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 489: 16/10/2026, 8:12:00 p.m. -> 16/10/2026, 8:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 490: 16/10/2026, 8:13:00 p.m. -> 16/10/2026, 8:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 491: 16/10/2026, 8:14:00 p.m. -> 16/10/2026, 8:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 492: 16/10/2026, 8:15:00 p.m. -> 16/10/2026, 8:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 493: 16/10/2026, 8:16:00 p.m. -> 16/10/2026, 8:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 494: 16/10/2026, 8:17:00 p.m. -> 16/10/2026, 8:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 495: 16/10/2026, 8:18:00 p.m. -> 16/10/2026, 8:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 496: 16/10/2026, 8:19:00 p.m. -> 16/10/2026, 8:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 12 minutos <<<
+     Grupo 497: 16/10/2026, 8:31:00 p.m. -> 16/10/2026, 8:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 498: 16/10/2026, 8:32:00 p.m. -> 16/10/2026, 8:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 499: 16/10/2026, 8:33:00 p.m. -> 16/10/2026, 8:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 500: 16/10/2026, 8:34:00 p.m. -> 16/10/2026, 8:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 501: 16/10/2026, 8:35:00 p.m. -> 16/10/2026, 8:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 502: 16/10/2026, 8:36:00 p.m. -> 16/10/2026, 8:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 503: 16/10/2026, 8:37:00 p.m. -> 16/10/2026, 8:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 16 minutos <<<
+     Grupo 504: 16/10/2026, 8:53:00 p.m. -> 16/10/2026, 8:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 505: 16/10/2026, 8:54:00 p.m. -> 16/10/2026, 8:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 506: 16/10/2026, 8:55:00 p.m. -> 16/10/2026, 8:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 507: 16/10/2026, 8:56:00 p.m. -> 16/10/2026, 8:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 508: 16/10/2026, 8:57:00 p.m. -> 16/10/2026, 8:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 509: 16/10/2026, 8:58:00 p.m. -> 16/10/2026, 8:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 510: 16/10/2026, 8:59:00 p.m. -> 16/10/2026, 8:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 511: 16/10/2026, 9:00:00 p.m. -> 16/10/2026, 9:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 512: 16/10/2026, 9:01:00 p.m. -> 16/10/2026, 9:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 513: 16/10/2026, 9:02:00 p.m. -> 16/10/2026, 9:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 514: 16/10/2026, 9:03:00 p.m. -> 16/10/2026, 9:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 515: 16/10/2026, 9:04:00 p.m. -> 16/10/2026, 9:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 516: 16/10/2026, 9:05:00 p.m. -> 16/10/2026, 9:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 517: 16/10/2026, 9:06:00 p.m. -> 16/10/2026, 9:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 518: 16/10/2026, 9:07:00 p.m. -> 16/10/2026, 9:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 519: 16/10/2026, 9:08:00 p.m. -> 16/10/2026, 9:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 520: 16/10/2026, 9:09:00 p.m. -> 16/10/2026, 9:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 521: 16/10/2026, 9:10:00 p.m. -> 16/10/2026, 9:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 522: 16/10/2026, 9:11:00 p.m. -> 16/10/2026, 9:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 523: 16/10/2026, 9:12:00 p.m. -> 16/10/2026, 9:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 524: 16/10/2026, 9:13:00 p.m. -> 16/10/2026, 9:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 525: 16/10/2026, 9:14:00 p.m. -> 16/10/2026, 9:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 526: 16/10/2026, 9:15:00 p.m. -> 16/10/2026, 9:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 527: 16/10/2026, 9:16:00 p.m. -> 16/10/2026, 9:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 528: 16/10/2026, 9:17:00 p.m. -> 16/10/2026, 9:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 529: 16/10/2026, 9:18:00 p.m. -> 16/10/2026, 9:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 530: 16/10/2026, 9:19:00 p.m. -> 16/10/2026, 9:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 531: 16/10/2026, 9:20:00 p.m. -> 16/10/2026, 9:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 532: 16/10/2026, 9:21:00 p.m. -> 16/10/2026, 9:26:00 p.m. (2 fps, 5 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 533: 16/10/2026, 9:27:00 p.m. -> 16/10/2026, 9:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 534: 16/10/2026, 9:28:00 p.m. -> 16/10/2026, 9:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 535: 16/10/2026, 9:29:00 p.m. -> 16/10/2026, 9:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 536: 16/10/2026, 9:30:00 p.m. -> 16/10/2026, 9:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 537: 16/10/2026, 9:31:00 p.m. -> 16/10/2026, 9:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 538: 16/10/2026, 9:32:00 p.m. -> 16/10/2026, 9:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 539: 16/10/2026, 9:33:00 p.m. -> 16/10/2026, 9:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 540: 16/10/2026, 9:34:00 p.m. -> 16/10/2026, 9:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 541: 16/10/2026, 9:35:00 p.m. -> 16/10/2026, 9:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 542: 16/10/2026, 9:36:00 p.m. -> 16/10/2026, 9:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 543: 16/10/2026, 9:37:00 p.m. -> 16/10/2026, 9:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 544: 16/10/2026, 9:38:00 p.m. -> 16/10/2026, 9:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 545: 16/10/2026, 9:39:00 p.m. -> 16/10/2026, 9:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 546: 16/10/2026, 9:40:00 p.m. -> 16/10/2026, 9:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 547: 16/10/2026, 9:41:00 p.m. -> 16/10/2026, 9:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 548: 16/10/2026, 9:42:00 p.m. -> 16/10/2026, 9:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 549: 16/10/2026, 9:43:00 p.m. -> 16/10/2026, 9:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 550: 16/10/2026, 9:44:00 p.m. -> 16/10/2026, 9:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 551: 16/10/2026, 9:45:00 p.m. -> 16/10/2026, 9:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 552: 16/10/2026, 9:46:00 p.m. -> 16/10/2026, 9:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 553: 16/10/2026, 9:47:00 p.m. -> 16/10/2026, 9:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 554: 16/10/2026, 9:48:00 p.m. -> 16/10/2026, 9:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 555: 16/10/2026, 9:49:00 p.m. -> 16/10/2026, 9:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 556: 16/10/2026, 9:50:00 p.m. -> 16/10/2026, 9:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 557: 16/10/2026, 9:51:00 p.m. -> 16/10/2026, 9:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 558: 16/10/2026, 9:52:00 p.m. -> 16/10/2026, 9:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 559: 16/10/2026, 9:53:00 p.m. -> 16/10/2026, 9:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 560: 16/10/2026, 9:54:00 p.m. -> 16/10/2026, 9:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 561: 16/10/2026, 9:55:00 p.m. -> 16/10/2026, 9:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 562: 16/10/2026, 9:56:00 p.m. -> 16/10/2026, 9:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 563: 16/10/2026, 9:57:00 p.m. -> 16/10/2026, 9:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 564: 16/10/2026, 9:58:00 p.m. -> 16/10/2026, 9:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 565: 16/10/2026, 9:59:00 p.m. -> 16/10/2026, 9:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 566: 16/10/2026, 10:00:00 p.m. -> 16/10/2026, 10:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 567: 16/10/2026, 10:01:00 p.m. -> 16/10/2026, 10:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 568: 16/10/2026, 10:02:00 p.m. -> 16/10/2026, 10:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 569: 16/10/2026, 10:03:00 p.m. -> 16/10/2026, 10:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 570: 16/10/2026, 10:04:00 p.m. -> 16/10/2026, 10:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 571: 16/10/2026, 10:05:00 p.m. -> 16/10/2026, 10:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 572: 16/10/2026, 10:06:00 p.m. -> 16/10/2026, 10:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 573: 16/10/2026, 10:07:00 p.m. -> 16/10/2026, 10:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 574: 16/10/2026, 10:08:00 p.m. -> 16/10/2026, 10:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 575: 16/10/2026, 10:09:00 p.m. -> 16/10/2026, 10:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 576: 16/10/2026, 10:10:00 p.m. -> 16/10/2026, 10:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 577: 16/10/2026, 10:11:00 p.m. -> 16/10/2026, 10:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 578: 16/10/2026, 10:12:00 p.m. -> 16/10/2026, 10:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 579: 16/10/2026, 10:13:00 p.m. -> 16/10/2026, 10:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 580: 16/10/2026, 10:14:00 p.m. -> 16/10/2026, 10:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 581: 16/10/2026, 10:15:00 p.m. -> 16/10/2026, 10:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 582: 16/10/2026, 10:16:00 p.m. -> 16/10/2026, 10:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 583: 16/10/2026, 10:17:00 p.m. -> 16/10/2026, 10:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 584: 16/10/2026, 10:18:00 p.m. -> 16/10/2026, 10:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 585: 16/10/2026, 10:19:00 p.m. -> 16/10/2026, 10:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 586: 16/10/2026, 10:20:00 p.m. -> 16/10/2026, 10:20:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 587: 16/10/2026, 10:21:00 p.m. -> 16/10/2026, 10:21:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 588: 16/10/2026, 10:22:00 p.m. -> 16/10/2026, 10:22:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 589: 16/10/2026, 10:23:00 p.m. -> 16/10/2026, 10:23:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 590: 16/10/2026, 10:24:00 p.m. -> 16/10/2026, 10:24:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 591: 16/10/2026, 10:25:00 p.m. -> 16/10/2026, 10:25:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 592: 16/10/2026, 10:26:00 p.m. -> 16/10/2026, 10:26:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 593: 16/10/2026, 10:27:00 p.m. -> 16/10/2026, 10:27:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 594: 16/10/2026, 10:28:00 p.m. -> 16/10/2026, 10:28:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 595: 16/10/2026, 10:29:00 p.m. -> 16/10/2026, 10:29:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 596: 16/10/2026, 10:30:00 p.m. -> 16/10/2026, 10:30:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 597: 16/10/2026, 10:31:00 p.m. -> 16/10/2026, 10:31:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 598: 16/10/2026, 10:32:00 p.m. -> 16/10/2026, 10:32:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 599: 16/10/2026, 10:33:00 p.m. -> 16/10/2026, 10:33:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 600: 16/10/2026, 10:34:00 p.m. -> 16/10/2026, 10:34:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 601: 16/10/2026, 10:35:00 p.m. -> 16/10/2026, 10:35:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 602: 16/10/2026, 10:36:00 p.m. -> 16/10/2026, 10:36:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 603: 16/10/2026, 10:37:00 p.m. -> 16/10/2026, 10:37:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 604: 16/10/2026, 10:38:00 p.m. -> 16/10/2026, 10:38:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 605: 16/10/2026, 10:39:00 p.m. -> 16/10/2026, 10:39:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 606: 16/10/2026, 10:40:00 p.m. -> 16/10/2026, 10:40:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 607: 16/10/2026, 10:41:00 p.m. -> 16/10/2026, 10:41:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 608: 16/10/2026, 10:42:00 p.m. -> 16/10/2026, 10:42:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 609: 16/10/2026, 10:43:00 p.m. -> 16/10/2026, 10:43:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 610: 16/10/2026, 10:44:00 p.m. -> 16/10/2026, 10:44:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 611: 16/10/2026, 10:45:00 p.m. -> 16/10/2026, 10:45:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 612: 16/10/2026, 10:46:00 p.m. -> 16/10/2026, 10:46:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 613: 16/10/2026, 10:47:00 p.m. -> 16/10/2026, 10:47:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 614: 16/10/2026, 10:48:00 p.m. -> 16/10/2026, 10:48:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 615: 16/10/2026, 10:49:00 p.m. -> 16/10/2026, 10:49:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 616: 16/10/2026, 10:50:00 p.m. -> 16/10/2026, 10:50:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 617: 16/10/2026, 10:51:00 p.m. -> 16/10/2026, 10:51:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 618: 16/10/2026, 10:52:00 p.m. -> 16/10/2026, 10:52:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 619: 16/10/2026, 10:53:00 p.m. -> 16/10/2026, 10:53:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 620: 16/10/2026, 10:54:00 p.m. -> 16/10/2026, 10:54:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 621: 16/10/2026, 10:55:00 p.m. -> 16/10/2026, 10:55:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 622: 16/10/2026, 10:56:00 p.m. -> 16/10/2026, 10:56:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 623: 16/10/2026, 10:57:00 p.m. -> 16/10/2026, 10:57:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 624: 16/10/2026, 10:58:00 p.m. -> 16/10/2026, 10:58:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 625: 16/10/2026, 10:59:00 p.m. -> 16/10/2026, 10:59:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 626: 16/10/2026, 11:00:00 p.m. -> 16/10/2026, 11:00:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 627: 16/10/2026, 11:01:00 p.m. -> 16/10/2026, 11:01:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 628: 16/10/2026, 11:02:00 p.m. -> 16/10/2026, 11:02:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 629: 16/10/2026, 11:03:00 p.m. -> 16/10/2026, 11:03:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 630: 16/10/2026, 11:04:00 p.m. -> 16/10/2026, 11:04:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 631: 16/10/2026, 11:05:00 p.m. -> 16/10/2026, 11:05:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 632: 16/10/2026, 11:06:00 p.m. -> 16/10/2026, 11:06:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 633: 16/10/2026, 11:07:00 p.m. -> 16/10/2026, 11:07:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 634: 16/10/2026, 11:08:00 p.m. -> 16/10/2026, 11:08:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 635: 16/10/2026, 11:09:00 p.m. -> 16/10/2026, 11:09:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 636: 16/10/2026, 11:10:00 p.m. -> 16/10/2026, 11:10:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 637: 16/10/2026, 11:11:00 p.m. -> 16/10/2026, 11:11:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 638: 16/10/2026, 11:12:00 p.m. -> 16/10/2026, 11:12:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 639: 16/10/2026, 11:13:00 p.m. -> 16/10/2026, 11:13:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 640: 16/10/2026, 11:14:00 p.m. -> 16/10/2026, 11:14:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 641: 16/10/2026, 11:15:00 p.m. -> 16/10/2026, 11:15:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 642: 16/10/2026, 11:16:00 p.m. -> 16/10/2026, 11:16:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 643: 16/10/2026, 11:17:00 p.m. -> 16/10/2026, 11:17:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 644: 16/10/2026, 11:18:00 p.m. -> 16/10/2026, 11:18:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 645: 16/10/2026, 11:19:00 p.m. -> 16/10/2026, 11:19:00 p.m. (1 fps, 0 min)
+     >>> GAP: 1 minutos <<<
+     Grupo 646: 16/10/2026, 11:20:00 p.m. -> 16/10/2026, 11:20:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 647: 16/10/2026, 11:21:00 p.m. -> 16/10/2026, 11:21:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 648: 16/10/2026, 11:22:00 p.m. -> 16/10/2026, 11:22:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 649: 16/10/2026, 11:23:00 p.m. -> 16/10/2026, 11:23:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 650: 16/10/2026, 11:24:00 p.m. -> 16/10/2026, 11:24:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 651: 16/10/2026, 11:25:00 p.m. -> 16/10/2026, 11:25:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 652: 16/10/2026, 11:26:00 p.m. -> 16/10/2026, 11:26:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 653: 16/10/2026, 11:27:00 p.m. -> 16/10/2026, 11:27:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 654: 16/10/2026, 11:28:00 p.m. -> 16/10/2026, 11:28:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 655: 16/10/2026, 11:29:00 p.m. -> 16/10/2026, 11:29:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 656: 16/10/2026, 11:30:00 p.m. -> 16/10/2026, 11:30:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 657: 16/10/2026, 11:31:00 p.m. -> 16/10/2026, 11:31:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 658: 16/10/2026, 11:32:00 p.m. -> 16/10/2026, 11:32:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 659: 16/10/2026, 11:33:00 p.m. -> 16/10/2026, 11:33:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 660: 16/10/2026, 11:34:00 p.m. -> 16/10/2026, 11:34:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 661: 16/10/2026, 11:35:00 p.m. -> 16/10/2026, 11:35:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 662: 16/10/2026, 11:36:00 p.m. -> 16/10/2026, 11:36:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 663: 16/10/2026, 11:37:00 p.m. -> 16/10/2026, 11:37:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 664: 16/10/2026, 11:38:00 p.m. -> 16/10/2026, 11:38:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 665: 16/10/2026, 11:39:00 p.m. -> 16/10/2026, 11:39:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 666: 16/10/2026, 11:40:00 p.m. -> 16/10/2026, 11:40:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 667: 16/10/2026, 11:41:00 p.m. -> 16/10/2026, 11:41:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 668: 16/10/2026, 11:42:00 p.m. -> 16/10/2026, 11:42:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 669: 16/10/2026, 11:43:00 p.m. -> 16/10/2026, 11:43:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 670: 16/10/2026, 11:44:00 p.m. -> 16/10/2026, 11:44:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 671: 16/10/2026, 11:45:00 p.m. -> 16/10/2026, 11:45:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 672: 16/10/2026, 11:46:00 p.m. -> 16/10/2026, 11:46:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 673: 16/10/2026, 11:47:00 p.m. -> 16/10/2026, 11:47:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 1 minutos <<<
+OrderFlowIndicator.js:345     Grupo 674: 16/10/2026, 11:48:00 p.m. -> 16/10/2026, 11:48:00 p.m. (1 fps, 0 min)
+OrderFlowIndicator.js:351     >>> GAP: 2 minutos <<<
+OrderFlowIndicator.js:345     Grupo 675: 16/10/2026, 11:50:00 p.m. -> 16/10/2026, 11:55:00 p.m. (2 fps, 5 min)
+PollingCoordinator.js:102 [PollingCoordinator] Registered: OrderFlow_BTCUSDT (interval: 5000ms, priority: 1)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+WebSocketManager.js:61 WebSocket Manager conectado [5]
+WebSocketManager.js:79 ✓ Suscrito: 
+OrderFlowIndicator.js:428 [OrderFlow] [BTCUSDT] FIRST RENDER: 677 fps, candleWidth=397.0px, minCandleWidth=8, mode=FOOTPRINT (zoomed in)
+Logger.js:100 ✅ [12:05:00 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+ZoneVisualizerIndicator.js:204 [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+CandleCache.js:393 [CandleCache] OK CACHE-ANTES-MERGE BTCUSDT: 1459 velas sin gaps
+CandleCache.js:393 [CandleCache] OK BACKEND-NUEVAS BTCUSDT: 2 velas sin gaps
+CandleCache.js:197 [CandleCache] 🔄 Merge: 1459 cached + 2 new = 1460 total
+MiniChart.jsx:1303 [BTCUSDT] Incremental: +2 velas nuevas = 1460 total
+CandleCache.js:393 [CandleCache] OK MERGED BTCUSDT: 1460 velas sin gaps
+MiniChart.jsx:1333 [BTCUSDT] ✅ Histórico final: 1460 velas
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@5 - guardado (1460 velas, memoria: 1/4)
+OrderFlowIndicator.js:277 [OrderFlow] [BTCUSDT] +1 footprints (total: 678)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [12:05:05 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+Logger.js:100 ✅ [12:05:06 a. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (rolling, 5 days)
+Logger.js:100 ✅ [12:05:06 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [12:05:07 a. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (rolling, 5 days)
+Logger.js:100 ✅ [12:05:07 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+SymbolList.jsx:79 [Prefetch] Activado (10s despues de carga)
+Logger.js:100 ✅ [12:05:07 a. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (rolling, 5 days)
+Logger.js:100 ✅ [12:05:07 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [12:05:07 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 300000ms, priority: 2)
+Logger.js:100 ✅ [12:05:07 a. m.] [VWAP] [BTCUSDT] VWAP polling started (interval: 300000ms)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [12:05:08 a. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1440 points
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [12:05:09 a. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (rolling, 5 days)
+Logger.js:100 ✅ [12:05:09 a. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [12:05:09 a. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 4 indicadores
+Logger.js:100 ✅ [12:05:09 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [12:05:09 a. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [12:05:09 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [12:05:09 a. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+Logger.js:100 ✅ [12:05:09 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+FootprintArchiverElectron.js:338 [FootprintArchiver] 🚀 Iniciando archivo de 10 símbolos...
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando BTCUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando BTCUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] BTCUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] BTCUSDT: Esperando respuesta (timeout: 180s)...
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando ETHUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando ETHUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/ETHUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] ETHUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] ETHUSDT: Esperando respuesta (timeout: 180s)...
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando SOLUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando SOLUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/SOLUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] SOLUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] SOLUSDT: Esperando respuesta (timeout: 180s)...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando XRPUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando XRPUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/XRPUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] XRPUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] XRPUSDT: Esperando respuesta (timeout: 180s)...
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando ADAUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando ADAUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/ADAUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] ADAUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] ADAUSDT: Esperando respuesta (timeout: 180s)...
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando TRXUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando TRXUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/TRXUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] TRXUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] TRXUSDT: Esperando respuesta (timeout: 180s)...
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando DOGEUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando DOGEUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/DOGEUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] DOGEUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] DOGEUSDT: Esperando respuesta (timeout: 180s)...
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando BNBUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando BNBUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BNBUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] BNBUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] BNBUSDT: Esperando respuesta (timeout: 180s)...
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando AVAXUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando AVAXUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/AVAXUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] AVAXUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] AVAXUSDT: Esperando respuesta (timeout: 180s)...
+FootprintArchiverElectron.js:267 [FootprintArchiver] 📥 Archivando ARBUSDT...
+FootprintArchiverElectron.js:158 [FootprintArchiver] 🌐 Descargando ARBUSDT (24h)
+FootprintArchiverElectron.js:159 [FootprintArchiver] URL: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/ARBUSDT?hours=24&interval=1
+FootprintArchiverElectron.js:160 [FootprintArchiver] Timeout: 180s
+FootprintArchiverElectron.js:162 [FootprintArchiver] ARBUSDT: Iniciando fetch...
+FootprintArchiverElectron.js:175 [FootprintArchiver] ARBUSDT: Esperando respuesta (timeout: 180s)...
+FootprintArchiverElectron.js:373 [FootprintArchiver] ✅ Archivo completado en 9.1s
+FootprintArchiverElectron.js:374 [FootprintArchiver] Exitosos: 0, Fallidos: 10
+FootprintArchiverElectron.js:375 [FootprintArchiver] Total descargados: 0, Total nuevos: 0
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [12:05:55 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ ✅ [12:07:29 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1460)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT

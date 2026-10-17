@@ -1,0 +1,93 @@
+● 🔍 Diagnóstico del Consumo de Tokens
+
+  He encontrado el problema. Tienes DOS archivos CLAUDE.md que se cargan en cada sesión:
+
+  📊 Tamaños Detectados:
+
+  1. /watchlist/CLAUDE.md (raíz del proyecto):
+    - 271 KB de tamaño
+    - 7,414 líneas
+    - Este es el archivo ENORME
+  2. /Backtester/CLAUDE.md (subcarpeta):
+    - 63 KB de tamaño
+    - 1,668 líneas
+    - Este es más moderado
+
+  💥 Problema Principal:
+
+  El archivo CLAUDE.md de la raíz tiene 7,414 líneas y 271 KB, lo cual es extremadamente grande. Esto consume
+  probablemente entre 60,000-80,000 tokens SOLO en ese archivo al inicio de cada sesión.
+
+  ✅ Soluciones Recomendadas:
+
+  Opción 1: Dividir el CLAUDE.md gigante (recomendado)
+  - Separar en múltiples archivos por tema:
+    - CLAUDE_BACKTESTER.md
+    - CLAUDE_WATCHLIST.md
+    - CLAUDE_TRADING_BOT.md
+    - etc.
+  - Solo el archivo relevante al proyecto actual se leería
+
+  Opción 2: Reducir drásticamente el contenido
+  - Mover historial de cambios a CHANGELOG.md
+  - Mover troubleshooting extenso a TROUBLESHOOTING.md
+  - Mantener solo lo esencial en CLAUDE.md
+
+  Opción 3: Usar archivos de referencia separados
+  - Crear docs/ folder con documentación detallada
+  - CLAUDE.md solo tendría referencias a dónde buscar más info
+
+  🎯 Recomendación Inmediata:
+
+  ¿Quieres que reduzca el CLAUDE.md de la raíz moviendo secciones menos críticas a archivos separados? Podríamos
+  dejar el archivo principal en ~1000-1500 líneas (consumo de ~15,000-20,000 tokens en lugar de 80,000).
+  
+  --------------------------------------------------
+  --------------------------------------------------
+  
+   ✅ Resultados de la Optimización
+
+  | Archivo          | Antes                 | Después             | Reducción |
+  |------------------|-----------------------|---------------------|-----------|
+  | CLAUDE.md raíz   | 271 KB (7,414 líneas) | 5.9 KB (188 líneas) | ~98%      |
+  | Tokens estimados | ~80,000               | ~1,400              | ~98%      |
+
+  Estructura Actual:
+
+  watchlist/
+  ├── CLAUDE.md                          # 5.9 KB - Visión general + referencias
+  ├── CLAUDE_BACKUP_20261016_112409.md   # 271 KB - Backup del original
+  │
+  ├── 1.Altagracia_Crypto_Backtester/Backtester/
+  │   └── CLAUDE.md                      # 63 KB - Específico del Backtester
+  │
+  ├── 2.WatchlistConIndicadores/
+  │   └── (pendiente: CLAUDE_WATCHLIST.md)
+  │
+  ├── 3.TradingBot_Python/
+  │   └── CLAUDE.md                      # Ya existe
+  │
+  └── ...otras apps...
+
+  Cómo Funciona Ahora:
+
+  1. Cuando trabajas en el Backtester (directorio actual):
+    - Claude Code lee ./CLAUDE.md (63 KB, específico del Backtester)
+    - NO lee el CLAUDE.md raíz automáticamente
+  2. Cuando trabajas en la raíz del proyecto:
+    - Claude Code lee ./CLAUDE.md (5.9 KB, visión general)
+    - Contiene referencias a los archivos específicos de cada app
+  3. Cuando trabajas en otras apps:
+    - Cada una tendrá su propio CLAUDE.md específico
+    - Sin interferencia del archivo raíz gigante
+
+  Impacto en el Consumo de Tokens:
+
+  - Antes: ~80,000 tokens del CLAUDE.md raíz + contenido de la sesión
+  - Ahora: ~1,400 tokens del CLAUDE.md raíz + contenido de la sesión
+  - Ahorro: ~78,600 tokens por sesión (casi 40% del límite total de 200K)
+
+  Próximos Pasos (Opcional):
+
+  Si necesitas crear archivos CLAUDE específicos para las otras apps (Watchlist, Analizador, etc.), puedo extraer
+  esas secciones del backup. Pero con esta estructura ya tienes una mejora masiva en el consumo de tokens.

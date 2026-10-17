@@ -216,8 +216,8 @@ const TradingPanel = ({
     }
   }, [symbol, botStatus.connected, botStatus.hasCredentials]);
 
-  // Enviar orden market
-  const submitMarketOrder = useCallback(async (orderData) => {
+  // Enviar orden (detecta automáticamente si es LIMIT o MARKET)
+  const submitOrder = useCallback(async (orderData) => {
     if (!botStatus.connected) {
       setOrderStatus({ loading: false, success: false, error: 'TradingBot no conectado' });
       return;
@@ -226,12 +226,32 @@ const TradingPanel = ({
     setOrderStatus({ loading: true, success: null, error: null });
 
     try {
+      // Usar el tipo de orden que viene del OrderForm (ya calculado allí)
+      const entryPrice = orderData.entryPrice || currentPrice;
+      const orderType = orderData.orderType || 'Market'; // ✅ USAR EL TIPO QUE VIENE DEL FORM
+      const isLimitOrder = orderType === 'LIMIT';
+
+      console.log(`[TradingPanel] Order received from form:`, {
+        orderType: orderData.orderType,
+        entryPrice,
+        currentPrice,
+        finalOrderType: orderType
+      });
+
       const payload = {
         symbol: symbol,
         side: orderData.side, // 'Buy' o 'Sell'
         quantity: orderData.quantity,
         stopLoss: orderData.stopLoss,
-        takeProfit: orderData.takeProfit
+        takeProfit: orderData.takeProfit,
+        currentPrice: entryPrice,
+        // Si es LIMIT, incluir precio límite y TP/SL custom
+        ...(isLimitOrder && {
+          order_type: 'Limit',
+          limit_price: entryPrice,
+          custom_stop_loss: orderData.stopLoss,
+          custom_take_profit: orderData.takeProfit
+        })
       };
 
       console.log('[TradingPanel] Sending order:', payload);
@@ -269,7 +289,7 @@ const TradingPanel = ({
         error: error.message || 'Error de conexión'
       });
     }
-  }, [symbol, botStatus.connected, loadPosition]);
+  }, [symbol, botStatus.connected, currentPrice, loadPosition]);
 
   // Efectos
   useEffect(() => {
@@ -391,7 +411,7 @@ const TradingPanel = ({
               symbolConfig={symbolConfig}
               tpslBoxData={tpslBoxData}
               currentPrice={currentPrice}
-              onSubmit={submitMarketOrder}
+              onSubmit={submitOrder}
               orderStatus={orderStatus}
               disabled={!botStatus.hasCredentials || orderStatus.loading}
             />

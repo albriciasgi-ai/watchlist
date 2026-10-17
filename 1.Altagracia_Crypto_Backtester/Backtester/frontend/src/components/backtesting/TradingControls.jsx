@@ -4,7 +4,7 @@ import OrderConfirmationModal from './OrderConfirmationModal';
 const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreated }) => {
   const [orderType, setOrderType] = useState('market');
   const [orderSide, setOrderSide] = useState('long');
-  const [quantity, setQuantity] = useState('0.01');
+  const [quantityUSDT, setQuantityUSDT] = useState('100'); // 🎯 NUEVO: Cantidad en USDT en lugar de monedas
   const [entryPrice, setEntryPrice] = useState('');
   const [stopLossPercent, setStopLossPercent] = useState('');
   const [takeProfitPercent, setTakeProfitPercent] = useState('');
@@ -66,8 +66,10 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       return;
     }
 
-    const qty = parseFloat(quantity);
+    // 🎯 NUEVO: Calcular cantidad de monedas desde USDT
+    const usdtAmount = parseFloat(quantityUSDT);
     const price = parseFloat(entryPrice);
+    const qty = usdtAmount / price; // Convertir USDT a cantidad de monedas
 
     // 🎯 NUEVO: Convertir porcentajes a precios USDT
     const slPercent = stopLossPercent ? parseFloat(stopLossPercent) : null;
@@ -229,13 +231,13 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       </div>
 
       <div className="control-section">
-        <label>Cantidad</label>
+        <label>Cantidad (USDT)</label>
         <input
           type="number"
-          step="0.001"
-          value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
-          placeholder="0.01"
+          step="10"
+          value={quantityUSDT}
+          onChange={(e) => setQuantityUSDT(e.target.value)}
+          placeholder="100"
         />
       </div>
 

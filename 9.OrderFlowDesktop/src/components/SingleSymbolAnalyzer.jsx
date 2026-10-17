@@ -14,6 +14,7 @@ import VWAPSettings from "./VWAPSettings";
 import FibonacciSettings from "./FibonacciSettings";
 import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import OrderFlowSettings from "./OrderFlowSettings";
+import FootprintArchivePanel from "./FootprintArchivePanel";
 import StrategyBuilder from "./StrategyBuilder";
 import ConnectionStatus from "./ConnectionStatus";
 import IntegrityStatus from "./IntegrityStatus";
@@ -180,6 +181,7 @@ const SingleSymbolAnalyzer = () => {
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
   const [showSR2Settings, setShowSR2Settings] = useState(false);
   const [showOrderFlowSettings, setShowOrderFlowSettings] = useState(false);
+  const [showFootprintArchive, setShowFootprintArchive] = useState(false);
   const [orderFlowConfig, setOrderFlowConfig] = useState(null);
   const [showStrategyBuilder, setShowStrategyBuilder] = useState(false);
 
@@ -688,6 +690,23 @@ const SingleSymbolAnalyzer = () => {
           />
           <ConnectionStatus />
           <IntegrityStatus />
+          <button
+            onClick={() => setShowFootprintArchive(true)}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#2c3e50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '13px',
+              fontWeight: 'bold',
+              marginLeft: '10px'
+            }}
+            title="Archivo histórico de footprints"
+          >
+            📚 Archivo
+          </button>
         </div>
 
         <div className="controls">
@@ -1141,6 +1160,13 @@ const SingleSymbolAnalyzer = () => {
           symbol={symbol}
           interval={interval}
           days={days}
+        />
+      )}
+
+      {showFootprintArchive && (
+        <FootprintArchivePanel
+          isOpen={showFootprintArchive}
+          onClose={() => setShowFootprintArchive(false)}
         />
       )}
     </div>

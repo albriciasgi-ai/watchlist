@@ -1,0 +1,13 @@
+19OrderFlowIndicator.js:480 [OrderFlow] [BTCUSDT] Rango merged: 16/10/2026, 10:15:00 a.m. → 17/10/2026, 12:55:00 p.m.
+59OrderFlowIndicator.js:480 [OrderFlow] [BTCUSDT] Rango merged: 16/10/2026, 10:15:00 a.m. → 17/10/2026, 1:00:00 p.m.
+12OrderFlowIndicator.js:480 [OrderFlow] [BTCUSDT] Rango merged: 16/10/2026, 10:15:00 a.m. → 17/10/2026, 1:05:00 p.m.
+
+-------------------------
+-------------------------
+
+HIGH UNMATCHED --- No hay mensajes
+
+-------------------------
+-------------------------
+
+_logFootprintRanges() ---- no hay mensajes

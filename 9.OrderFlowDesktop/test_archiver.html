@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Footprint Archiver</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #00ff00;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    #log {
+      margin-top: 20px;
+      padding: 10px;
+      background: #000;
+      border: 1px solid #333;
+      white-space: pre-wrap;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .error { color: #ff0000; }
+    .success { color: #00ff00; }
+    .warning { color: #ffaa00; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Test Footprint Archiver</h1>
+
+  <button onclick="testCloudConnection()">1. Test Cloud Connection</button>
+  <button onclick="testElectronAPIs()">2. Test Electron APIs</button>
+  <button onclick="testSingleDownload()">3. Test Single Download (BTCUSDT)</button>
+
+  <div id="log"></div>
+
+  <script>
+    const CLOUD_COLLECTOR_URL = "https://p01--altagracia--rxv8nrbhxln9.code.run";
+
+    function log(message, type = 'info') {
+      const logDiv = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : '';
+      logDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+      console.log(`[${timestamp}] ${message}`);
+    }
+
+    async function testCloudConnection() {
+      log('=== TEST 1: Cloud Connection ===');
+
+      // Test 1: Root endpoint
+      log('Testing root endpoint (/)...');
+      try {
+        const response = await fetch(CLOUD_COLLECTOR_URL + '/');
+        log(`✅ Root: ${response.status} ${response.statusText}`, 'success');
+      } catch (error) {
+        log(`❌ Root: ${error.message}`, 'error');
+      }
+
+      // Test 2: Health endpoint
+      log('Testing health endpoint...');
+      try {
+        const response = await fetch(CLOUD_COLLECTOR_URL + '/health');
+        log(`✅ Health: ${response.status} ${response.statusText}`, 'success');
+      } catch (error) {
+        log(`❌ Health: ${error.message}`, 'error');
+      }
+
+      // Test 3: Footprints endpoint (1 hour)
+      log('Testing footprints endpoint (BTCUSDT, 1h)...');
+      try {
+        const url = `${CLOUD_COLLECTOR_URL}/api/footprints/BTCUSDT?hours=1&interval=1`;
+        log(`URL: ${url}`);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          log(`❌ Footprints: HTTP ${response.status} ${response.statusText}`, 'error');
+          const text = await response.text();
+          log(`Response: ${text.substring(0, 200)}...`, 'error');
+        } else {
+          const data = await response.json();
+          const count = data.footprints ? data.footprints.length : 0;
+          log(`✅ Footprints: ${count} footprints descargados`, 'success');
+
+          if (count > 0) {
+            const first = data.footprints[0];
+            log(`Primer footprint: timestamp=${first.candle_timestamp}, delta=${first.total_delta}`, 'success');
+          }
+        }
+      } catch (error) {
+        log(`❌ Footprints: ${error.message}`, 'error');
+        if (error.name === 'AbortError') {
+          log(`⚠️ Timeout después de 30 segundos`, 'warning');
+        }
+      }
+    }
+
+    async function testElectronAPIs() {
+      log('=== TEST 2: Electron APIs ===');
+
+      if (!window.electron) {
+        log('❌ window.electron NO está disponible', 'error');
+        log('⚠️ Esta app debe ejecutarse en Electron, no en browser', 'warning');
+        return;
+      }
+
+      log('✅ window.electron está disponible', 'success');
+
+      // Test getUserDataPath
+      try {
+        const userDataPath = await window.electron.getUserDataPath();
+        log(`✅ getUserDataPath: ${userDataPath}`, 'success');
+
+        // Test ensureDir
+        const archivePath = userDataPath + '/footprint_archive';
+        await window.electron.ensureDir(archivePath);
+        log(`✅ ensureDir: ${archivePath}`, 'success');
+
+        // Test write/read
+        const testFile = archivePath + '/test.json';
+        const testData = JSON.stringify({ test: 'hello', timestamp: Date.now() }, null, 2);
+
+        await window.electron.writeFile(testFile, testData);
+        log(`✅ writeFile: ${testFile}`, 'success');
+
+        const readData = await window.electron.readFile(testFile);
+        log(`✅ readFile: ${readData.substring(0, 50)}...`, 'success');
+
+        // Test fileExists
+        const exists = await window.electron.fileExists(testFile);
+        log(`✅ fileExists: ${exists}`, 'success');
+
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function testSingleDownload() {
+      log('=== TEST 3: Single Download (BTCUSDT) ===');
+
+      if (!window.electron) {
+        log('❌ window.electron NO disponible - ejecutar en Electron', 'error');
+        return;
+      }
+
+      const symbol = 'BTCUSDT';
+      const hours = 1;  // Solo 1 hora para test rápido
+
+      try {
+        // 1. Descargar desde cloud
+        log(`Descargando ${symbol} (${hours} horas)...`);
+        const url = `${CLOUD_COLLECTOR_URL}/api/footprints/${symbol}?hours=${hours}&interval=1`;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          log(`❌ HTTP ${response.status}: ${response.statusText}`, 'error');
+          return;
+        }
+
+        const data = await response.json();
+        const footprints = data.footprints || [];
+        log(`✅ ${footprints.length} footprints descargados del cloud`, 'success');
+
+        if (footprints.length === 0) {
+          log('⚠️ No hay footprints disponibles en el cloud', 'warning');
+          return;
+        }
+
+        // 2. Guardar en archivo
+        const userDataPath = await window.electron.getUserDataPath();
+        const archivePath = userDataPath + '/footprint_archive';
+        await window.electron.ensureDir(archivePath);
+
+        const filePath = archivePath + `/${symbol}_1.json`;
+
+        const fileData = {
+          symbol: symbol,
+          interval: '1',
+          count: footprints.length,
+          oldestTimestamp: footprints[0].candle_timestamp,
+          newestTimestamp: footprints[footprints.length - 1].candle_timestamp,
+          lastUpdated: Date.now(),
+          footprints: footprints
+        };
+
+        await window.electron.writeFile(filePath, JSON.stringify(fileData, null, 2));
+        log(`✅ Guardado en: ${filePath}`, 'success');
+
+        // 3. Verificar que se guardó
+        const exists = await window.electron.fileExists(filePath);
+        log(`✅ Archivo existe: ${exists}`, 'success');
+
+        // 4. Leer y verificar contenido
+        const savedContent = await window.electron.readFile(filePath);
+        const savedData = JSON.parse(savedContent);
+        log(`✅ Archivo contiene ${savedData.count} footprints`, 'success');
+
+        log('🎉 TEST COMPLETADO EXITOSAMENTE', 'success');
+
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+        if (error.name === 'AbortError') {
+          log('⚠️ Timeout - el cloud collector tardó más de 2 minutos', 'warning');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

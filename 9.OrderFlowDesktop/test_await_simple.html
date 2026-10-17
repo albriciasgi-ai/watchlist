@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test AWAIT Simple</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #00ff00;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    #log {
+      margin-top: 20px;
+      padding: 10px;
+      background: #000;
+      border: 1px solid #333;
+      white-space: pre-wrap;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .error { color: #ff0000; }
+    .success { color: #00ff00; }
+    .warning { color: #ffaa00; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Test AWAIT en Electron</h1>
+
+  <button onclick="testBasicAwait()">1. Test Básico (setTimeout)</button>
+  <button onclick="testFetchAwait()">2. Test Fetch con Await</button>
+  <button onclick="testAbortController()">3. Test AbortController</button>
+
+  <div id="log"></div>
+
+  <script>
+    const CLOUD_COLLECTOR_URL = "https://p01--altagracia--rxv8nrbhxln9.code.run";
+
+    function log(message, type = 'info') {
+      const logDiv = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : '';
+      logDiv.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+      console.log(`[${timestamp}] ${message}`);
+    }
+
+    // TEST 1: Verificar que await funciona con setTimeout básico
+    async function testBasicAwait() {
+      log('=== TEST 1: Await Básico ===');
+      log('Iniciando espera de 3 segundos...');
+
+      const startTime = Date.now();
+
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      const endTime = Date.now();
+      const elapsed = endTime - startTime;
+
+      log(`✅ Espera completada después de ${elapsed}ms`, 'success');
+
+      if (elapsed >= 2900 && elapsed <= 3100) {
+        log('✅ AWAIT FUNCIONA CORRECTAMENTE', 'success');
+      } else {
+        log(`❌ AWAIT NO FUNCIONA - esperado ~3000ms, real ${elapsed}ms`, 'error');
+      }
+    }
+
+    // TEST 2: Verificar que await funciona con fetch
+    async function testFetchAwait() {
+      log('=== TEST 2: Await con Fetch ===');
+      log('Fetch al endpoint root (/)...');
+
+      const startTime = Date.now();
+
+      try {
+        const response = await fetch(CLOUD_COLLECTOR_URL + '/');
+
+        const endTime = Date.now();
+        const elapsed = endTime - startTime;
+
+        log(`✅ Fetch completado después de ${elapsed}ms`, 'success');
+        log(`Status: ${response.status} ${response.statusText}`, 'success');
+
+        const data = await response.json();
+        log(`Data: ${JSON.stringify(data).substring(0, 100)}...`, 'success');
+
+      } catch (error) {
+        const endTime = Date.now();
+        const elapsed = endTime - startTime;
+
+        log(`❌ Error después de ${elapsed}ms: ${error.message}`, 'error');
+      }
+    }
+
+    // TEST 3: Verificar que AbortController funciona
+    async function testAbortController() {
+      log('=== TEST 3: AbortController con Timeout ===');
+      log('Fetch con timeout de 5 segundos a endpoint /api/footprints...');
+
+      const startTime = Date.now();
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        log('⏰ Timeout alcanzado, abortando...', 'warning');
+        controller.abort();
+      }, 5000);
+
+      try {
+        const url = `${CLOUD_COLLECTOR_URL}/api/footprints/BTCUSDT?hours=1&interval=1`;
+        log(`URL: ${url}`);
+
+        const response = await fetch(url, { signal: controller.signal });
+
+        clearTimeout(timeoutId);
+
+        const endTime = Date.now();
+        const elapsed = endTime - startTime;
+
+        log(`✅ Fetch completado después de ${elapsed}ms`, 'success');
+        log(`Status: ${response.status} ${response.statusText}`, 'success');
+
+      } catch (error) {
+        clearTimeout(timeoutId);
+
+        const endTime = Date.now();
+        const elapsed = endTime - startTime;
+
+        if (error.name === 'AbortError') {
+          log(`✅ TIMEOUT funcionó correctamente después de ${elapsed}ms`, 'success');
+          log(`Error name: ${error.name}`, 'success');
+        } else {
+          log(`❌ Error después de ${elapsed}ms: ${error.message}`, 'error');
+          log(`Error name: ${error.name}`, 'error');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

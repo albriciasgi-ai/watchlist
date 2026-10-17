@@ -1,0 +1,284 @@
+INFO:     Started server process [26696]
+INFO:     Waiting for application startup.
+2026-10-17 12:20:30 - alert_sender - WARNING - [WARN] Alert service not reachable at http://localhost:5000
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Proximity alerts system ready
+[STARTUP] Swing config loaded: 21 symbols
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - ERROR - [SWING_SERVICE] Error fetching batch: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] BTCUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] ETHUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] XRPUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] SOLUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] ADAUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] TRXUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] PAXGUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] SUIUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] TRBUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] DOGEUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] GALAUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] AAVEUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] AVAXUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] BNBUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] ARBUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] INJUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] KASUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] LPTUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] UNIUSDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] SHIB1000USDT: Not enough historical candles (0)
+2026-10-17 12:20:37 - swing_service - WARNING - [SWING_SERVICE] TONUSDT: Not enough historical candles (0)
+[STARTUP] Swing detector service started
+2026-10-17 12:20:37 - websocket_manager - WARNING - WebSocketManager already running
+[STARTUP] WebSocket Manager started - connected to Bybit
+[STARTUP] VWAP service started
+[STARTUP] Trade Aggregator initialized (interval=1)
+[STARTUP] Trade callback registered with WebSocket manager
+2026-10-17 12:20:37 - vwap_service - ERROR - [VWAP_SERVICE] BTCUSDT: Fetch error: Cannot connect to host api.bybit.com:443 ssl:default [getaddrinfo failed]
+2026-10-17 12:20:37 - vwap_service - WARNING - [VWAP_SERVICE] BTCUSDT: No historical data loaded
+2026-10-17 12:20:37 - vwap_service - ERROR - [VWAP_SERVICE] ETHUSDT: Fetch error: Cannot connect to host api.bybit.com:443 ssl:default [getaddrinfo failed]
+2026-10-17 12:20:37 - vwap_service - WARNING - [VWAP_SERVICE] ETHUSDT: No historical data loaded
+2026-10-17 12:20:37 - vwap_service - WARNING - [VWAP_SERVICE] BTCUSDT: Recent candles fetch error: Cannot connect to host api.bybit.com:443 ssl:default [getaddrinfo failed]
+2026-10-17 12:20:37 - vwap_service - WARNING - [VWAP_SERVICE] ETHUSDT: Recent candles fetch error: Cannot connect to host api.bybit.com:443 ssl:default [getaddrinfo failed]
+2026-10-17 12:20:38 - websocket_manager - ERROR - WebSocket error: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:39 - websocket_manager - ERROR - WebSocket error: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:41 - websocket_manager - ERROR - WebSocket error: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:45 - websocket_manager - ERROR - WebSocket error: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:47 - websocket_manager - WARNING - [TRADES] Timeout waiting for connection, subscriptions will be sent on reconnect
+[STARTUP] Subscribed to trades for 21 symbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT']
+2026-10-17 12:20:47 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Config cargada: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\config\orderflow_config.json
+2026-10-17 12:20:47 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Inicializado
+2026-10-17 12:20:47 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Iniciando con symbols=['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT'], intervals=['1', '5']
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para BTCUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 706 footprints historicos para BTCUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para ETHUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 706 footprints historicos para ETHUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para SOLUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 706 footprints historicos para SOLUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para XRPUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para XRPUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para ADAUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 695 footprints historicos para ADAUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 620 footprints historicos para TRXUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 611 footprints historicos para TRXUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 441 footprints historicos para PAXGUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 447 footprints historicos para PAXGUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 671 footprints historicos para GALAUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 663 footprints historicos para GALAUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para SUIUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para SUIUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 661 footprints historicos para TRBUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 654 footprints historicos para TRBUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para DOGEUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para DOGEUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para AAVEUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para AAVEUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 717 footprints historicos para AVAXUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 706 footprints historicos para AVAXUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para ARBUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para ARBUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 706 footprints historicos para BNBUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 696 footprints historicos para BNBUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para INJUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para INJUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 688 footprints historicos para KASUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 678 footprints historicos para KASUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 644 footprints historicos para SHIB1000USDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 636 footprints historicos para SHIB1000USDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 718 footprints historicos para UNIUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 707 footprints historicos para UNIUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 636 footprints historicos para LPTUSDT_1
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Cargados 627 footprints historicos para LPTUSDT_5
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Total footprints cargados desde disco: 27151
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Reconstruccion de estimados DESACTIVADA - solo datos reales
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Suscrito a trades de ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'TRXUSDT', 'PAXGUSDT', 'GALAUSDT', 'SUIUSDT', 'TRBUSDT', 'DOGEUSDT', 'AAVEUSDT', 'AVAXUSDT', 'ARBUSDT', 'BNBUSDT', 'INJUSDT', 'KASUSDT', 'SHIB1000USDT', 'TONUSDT', 'UNIUSDT', 'LPTUSDT']
+2026-10-17 12:20:48 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Servicio iniciado correctamente
+[STARTUP] OrderFlow Service started - 21 symbols, intervals: ['1', '5']
+2026-10-17 12:20:49 - cache_integrity_service - WARNING - [INTEGRITY] Cloud error para TRXUSDT: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:49 - cache_integrity_service - WARNING - [INTEGRITY] Cloud error para PAXGUSDT: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:50 - cache_integrity_service - WARNING - [INTEGRITY] Cloud error para PAXGUSDT: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:50 - cache_integrity_service - WARNING - [INTEGRITY] Cloud error para TRBUSDT: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:50 - cache_integrity_service - WARNING - [INTEGRITY] Cloud error para KASUSDT: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:51 - cache_integrity_service - WARNING - [INTEGRITY] Cloud error para SHIB1000USDT: [Errno 11001] getaddrinfo failed
+[STARTUP] Cache repaired - 36 healthy, 6 had issues
+2026-10-17 12:20:51 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:52 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:52 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:52 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:52 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:53 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:53 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:53 - websocket_manager - ERROR - WebSocket error: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:53 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:54 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:54 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:54 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:54 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:55 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:55 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:55 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:56 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:56 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:56 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:57 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:57 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:57 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:57 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:58 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:58 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:58 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:59 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:59 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:59 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:20:59 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:00 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:00 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:00 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:01 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:01 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:01 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:01 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:02 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:02 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:02 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:03 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:03 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:03 - footprint_storage - WARNING - [CLOUD] Error conectando al cloud collector: [Errno 11001] getaddrinfo failed
+[STARTUP] No footprints loaded from cloud (may be unavailable or empty)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:11000 (Press CTRL+C to quit)
+[VWAP] BTCUSDT: Reloading - interval=5, days=5, vwapType=rolling
+2026-10-17 12:21:09 - vwap_service - ERROR - [VWAP_SERVICE] BTCUSDT: Fetch error: Cannot connect to host api.bybit.com:443 ssl:default [getaddrinfo failed]
+[BTCUSDT] [DATA] HISTORICAL INCREMENTAL: desde 1792257000000 (~12 velas esperadas) @ 5
+[VWAP] BTCUSDT: Reloading - interval=5, days=5, vwapType=rolling
+[BTCUSDT] Retry 1/3 after ConnectError, waiting 2s...
+2026-10-17 12:21:09 - orderflow_service - INFO - [ORDERFLOW_SERVICE] Enriched 129/706 footprints with imbalances/stacked for BTCUSDT_5
+2026-10-17 12:21:09 - vwap_service - ERROR - [VWAP_SERVICE] BTCUSDT: Fetch error: Cannot connect to host api.bybit.com:443 ssl:default [getaddrinfo failed]
+2026-10-17 12:21:09 - realtime_pattern_service - WARNING - [REALTIME] Cannot update intervals: service not running
+[VWAP] BTCUSDT: Reloading - interval=5, days=5, vwapType=rolling
+[TICKERS ERROR] [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:10 - vwap_service - ERROR - [VWAP_SERVICE] BTCUSDT: Fetch error: Cannot connect to host api.bybit.com:443 ssl:default [getaddrinfo failed]
+2026-10-17 12:21:10 - websocket_manager - ERROR - WebSocket error: [Errno 11001] getaddrinfo failed
+[BTCUSDT] Retry 2/3 after ConnectError, waiting 4s...
+[BTCUSDT] All retries failed: ConnectError
+[ERROR BTCUSDT] [Errno 11001] getaddrinfo failed
+Traceback (most recent call last):
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 72, in map_httpcore_exceptions
+    yield
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 377, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\main.py", line 486, in get_historical
+    r = await client.get(url)
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1814, in get
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1585, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1674, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1702, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1739, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_client.py", line 1776, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 376, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\5.Order_flow\backend\.venv\Lib\site-packages\httpx\_transports\default.py", line 89, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-10-17 12:21:42 - websocket_manager - ERROR - WebSocket error: [Errno 11001] getaddrinfo failed
+[TICKERS ERROR] [Errno 11001] getaddrinfo failed

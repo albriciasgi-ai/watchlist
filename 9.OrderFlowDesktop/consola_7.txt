@@ -1,0 +1,32 @@
+[OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+OrderFlowIndicator.js:344 [OrderFlow] [BTCUSDT] 📚 Cargados 1472 footprints de 1min desde archivo local
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT] 📚 Archivo local: 297 footprints cargados
+
+-------------------------
+-------------------------
+
+OrderFlow] [BTCUSDT] 🌐 Backend: 687 footprints recibidos
+
+-------------------------
+-------------------------
+
+[OrderFlow] [BTCUSDT] ✅ Merge completado: 171 archivo + 687 backend = 858 total
