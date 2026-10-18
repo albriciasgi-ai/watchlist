@@ -1,0 +1,28 @@
+OrderFlowIndicator.js:381 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:381 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+57OrderFlowIndicator.js:381 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:381 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+57OrderFlowIndicator.js:381 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:381 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+27OrderFlowIndicator.js:381 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+
+===================
+
+OrderFlowIndicator.js:398 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:398 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+57OrderFlowIndicator.js:398 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:398 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+57OrderFlowIndicator.js:398 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:398 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+37OrderFlowIndicator.js:398 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+
+
+==================
+
+OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+57OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+57OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+41OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO

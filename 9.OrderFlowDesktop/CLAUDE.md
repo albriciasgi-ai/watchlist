@@ -348,6 +348,65 @@ En la seccion Step Size del modal OrderFlow:
 **Archivos modificados**:
 - `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js`
 
+## Fix: Footprints de Archivo No Se Renderizaban (17 Octubre 2026)
+
+**Problema**: Los footprints del archivo agregado (1min → 5min) no se graficaban. Solo se mostraban los footprints del backend (últimas 10-12 horas), aunque el merge logs mostraba 552 footprints desde ayer 10:15 AM.
+
+**Causa Raiz**:
+- El método `_aggregateFootprints()` retornaba footprints con campo `price_levels` (formato archivo)
+- El método `renderOverlay()` solo verificaba `footprint.levels` (formato backend)
+- Resultado: todos los footprints históricos agregados eran rechazados silenciosamente
+
+**Evidencia (consola_12.txt)**:
+```
+Primero (archivo agregado): levels=false, price_levels=true, keys=10
+Último (backend): levels=true, price_levels=false, keys=17
+```
+
+**Solución**:
+
+1. **Normalización en agregación** (`_aggregateFootprints()` línea 299-321):
+```javascript
+// ✅ NORMALIZAR AL FORMATO DEL BACKEND (con campo "levels" en lugar de "price_levels")
+const aggregatedFootprint = {
+  candle_timestamp: intervalStart,
+  symbol: this.symbol,
+  interval: targetInterval,
+  candle_open,
+  candle_high,
+  candle_low,
+  candle_close,
+  step_size: 0.1,
+  levels,  // ✅ Campo "levels" (no "price_levels")
+  num_levels: levels.length,
+  total_volume,
+  total_delta,
+  delta: total_delta,
+  poc
+};
+```
+
+2. **Fallback en renderizado** (`renderOverlay()` línea 782-806):
+```javascript
+// ✅ SOPORTE DUAL: levels (backend) o price_levels (archivo sin agregar)
+const levels = footprint.levels || footprint.price_levels;
+
+if (!levels) {
+  this.renderSimpleCandle(ctx, candle, bounds.x + i * candleWidth, candleWidth, priceToY);
+  rejectedNoLevels++;
+  continue;
+}
+
+// Normalizar para renderizado
+const normalizedFootprint = { ...footprint, levels };
+this.renderOrderFlowUnit(ctx, candle, normalizedFootprint, unitX, candleWidth, priceToY, fullMode);
+```
+
+**Resultado**: Ahora todos los footprints (archivo agregado + backend) se renderizan correctamente con el rango completo (27+ horas).
+
+**Archivos modificados**:
+- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js` (líneas 273-321, 782-815)
+
 ## Sistema de Archivo Histórico de Footprints (17 Octubre 2026)
 
 Sistema para descargar, almacenar y usar footprints históricos desde el servicio cloud, con agregación automática para todos los timeframes.

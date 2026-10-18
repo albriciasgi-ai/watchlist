@@ -253,8 +253,12 @@ class OrderFlowIndicator extends IndicatorBase {
           const price = level.price_mid || level.price;
 
           if (!combinedLevels.has(price)) {
+            // ✅ CREAR LEVEL CON TODOS LOS CAMPOS NECESARIOS para renderizado completo
             combinedLevels.set(price, {
               price: price,
+              price_min: price,      // ✅ Necesario para renderFootprint()
+              price_max: price,      // ✅ Necesario para renderFootprint()
+              price_mid: price,      // ✅ Para compatibilidad
               bid_volume: 0,
               ask_volume: 0,
               total_volume: 0,
@@ -271,14 +275,14 @@ class OrderFlowIndicator extends IndicatorBase {
       }
 
       // Convertir Map a Array y ordenar por precio descendente
-      const price_levels = Array.from(combinedLevels.values()).sort((a, b) => b.price - a.price);
+      const levels = Array.from(combinedLevels.values()).sort((a, b) => b.price - a.price);
 
       // Calcular OHLC del intervalo agregado
       // Soportar candle_open/high/low/close (archivo) y open/high/low/close (backend)
-      const open = groupFootprints[0].candle_open || groupFootprints[0].open;
-      const close = groupFootprints[groupFootprints.length - 1].candle_close || groupFootprints[groupFootprints.length - 1].close;
-      const high = Math.max(...groupFootprints.map(fp => fp.candle_high || fp.high));
-      const low = Math.min(...groupFootprints.map(fp => fp.candle_low || fp.low));
+      const candle_open = groupFootprints[0].candle_open || groupFootprints[0].open;
+      const candle_close = groupFootprints[groupFootprints.length - 1].candle_close || groupFootprints[groupFootprints.length - 1].close;
+      const candle_high = Math.max(...groupFootprints.map(fp => fp.candle_high || fp.high));
+      const candle_low = Math.min(...groupFootprints.map(fp => fp.candle_low || fp.low));
 
       // Sumar volúmenes totales
       const total_volume = groupFootprints.reduce((sum, fp) => sum + (fp.total_volume || 0), 0);
@@ -286,27 +290,36 @@ class OrderFlowIndicator extends IndicatorBase {
       // Calcular delta total sumando deltas individuales de los footprints
       const total_delta = groupFootprints.reduce((sum, fp) => sum + (fp.total_delta || fp.delta || 0), 0);
 
-      // Calcular POC (Point of Control) - nivel con mayor volumen
+      // Calcular POC (Point of Control) - nivel con mayor volumen Y su índice
       let poc = null;
+      let poc_index = -1;
       let max_volume = 0;
-      for (const level of price_levels) {
+      for (let i = 0; i < levels.length; i++) {
+        const level = levels[i];
         if (level.total_volume > max_volume) {
           max_volume = level.total_volume;
           poc = level.price;
+          poc_index = i;  // ✅ Guardar el índice del POC
         }
       }
 
+      // ✅ NORMALIZAR AL FORMATO DEL BACKEND (con campo "levels" en lugar de "price_levels")
       const aggregatedFootprint = {
         candle_timestamp: intervalStart,
-        open,
-        high,
-        low,
-        close,
+        symbol: this.symbol,
+        interval: targetInterval,
+        candle_open,
+        candle_high,
+        candle_low,
+        candle_close,
+        step_size: 0.1, // Default step size
+        levels,  // ✅ Campo "levels" (no "price_levels")
+        num_levels: levels.length,
         total_volume,
         total_delta,
-        delta: total_delta,  // Alias para compatibilidad
+        delta: total_delta,
         poc,
-        price_levels
+        poc_index  // ✅ Agregar poc_index para renderizado completo
       };
 
       aggregated.push(aggregatedFootprint);
@@ -315,29 +328,41 @@ class OrderFlowIndicator extends IndicatorBase {
     // Ordenar por timestamp
     aggregated.sort((a, b) => a.candle_timestamp - b.candle_timestamp);
 
-    console.log(`[OrderFlow] [${this.symbol}] ✅ Agregación completa: ${aggregated.length} footprints de ${intervalMinutes}min`);
+    console.log(`[OrderFlow] [${this.symbol}] ✅ Agregación completa: ${aggregated.length} footprints de ${intervalMinutes}min (formato normalizado con campo "levels")`);
 
     return aggregated;
   }
 
   async _loadFromArchive() {
+    console.log(`[OrderFlow] [${this.symbol}] 🔍 _loadFromArchive INICIADO`);
+    console.log(`[OrderFlow] [${this.symbol}] 🔍 window.electron=${!!window.electron}, getUserDataPath=${!!window.electron?.getUserDataPath}, readFile=${!!window.electron?.readFile}, fileExists=${!!window.electron?.fileExists}`);
+
     try {
       // Verificar que window.electron existe
       if (!window.electron || !window.electron.getUserDataPath || !window.electron.readFile || !window.electron.fileExists) {
-        console.log(`[OrderFlow] [${this.symbol}] _loadFromArchive: Electron APIs no disponibles`);
+        console.warn(`[OrderFlow] [${this.symbol}] ❌ _loadFromArchive: Electron APIs no disponibles`);
         return [];
       }
 
       const userDataPath = await window.electron.getUserDataPath();
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 userDataPath obtenido: ${userDataPath}`);
+
       const archivePath = `${userDataPath}/footprint_archive/${this.symbol}_1.json`;
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 Verificando archivo: ${archivePath}`);
 
       const exists = await window.electron.fileExists(archivePath);
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 Archivo existe: ${exists}`);
+
       if (!exists) {
-        console.log(`[OrderFlow] [${this.symbol}] _loadFromArchive: archivo no existe: ${archivePath}`);
+        console.warn(`[OrderFlow] [${this.symbol}] ❌ _loadFromArchive: archivo no existe: ${archivePath}`);
         return [];
       }
 
+      console.log(`[OrderFlow] [${this.symbol}] ✅ Archivo existe, leyendo...`);
+
       const content = await window.electron.readFile(archivePath);
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 Contenido leído: ${content.length} caracteres`);
+
       const data = JSON.parse(content);
       const footprints1min = data.footprints || [];
 
@@ -345,14 +370,17 @@ class OrderFlowIndicator extends IndicatorBase {
 
       // Si el intervalo no es 1min, agregar los footprints
       if (this.interval !== "1") {
+        console.log(`[OrderFlow] [${this.symbol}] 🔍 Agregando de 1min a ${this.interval}min...`);
         const aggregated = this._aggregateFootprints(footprints1min, this.interval);
+        console.log(`[OrderFlow] [${this.symbol}] 🔍 Agregación retorna: ${aggregated.length} footprints`);
         return aggregated;
       }
 
       return footprints1min;
 
     } catch (error) {
-      console.error(`[OrderFlow] [${this.symbol}] _loadFromArchive: error - ${error.message}`);
+      console.error(`[OrderFlow] [${this.symbol}] ❌ _loadFromArchive ERROR: ${error.message}`);
+      console.error(`[OrderFlow] [${this.symbol}] ❌ Stack: ${error.stack}`);
       return [];
     }
   }
@@ -360,6 +388,8 @@ class OrderFlowIndicator extends IndicatorBase {
   async fetchFootprints() {
     if (this._destroyed) return false;
     if (this.isFetching) return false;
+
+    console.log(`[OrderFlow] [${this.symbol}] 🔍 fetchFootprints INICIADO - interval=${this.interval}`);
 
     this.isFetching = true;
     this.lastFetchTime = Date.now();
@@ -376,6 +406,7 @@ class OrderFlowIndicator extends IndicatorBase {
       // =====================================================================
       // PASO 1: SIEMPRE intentar cargar desde archivo local primero
       // =====================================================================
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 PASO 1: Intentando cargar desde archivo...`);
       let archivedFootprints = [];
       try {
         archivedFootprints = await this._loadFromArchive();
@@ -507,6 +538,28 @@ class OrderFlowIndicator extends IndicatorBase {
 
         console.log(`[OrderFlow] [${this.symbol}] ✅ Merge: archivo=${archivedFootprints.length}, backend: +${backendAdded} nuevos, ~${backendUpdated} actualizados, -${backendIgnored} ignorados = ${finalFootprints.length} total`);
 
+        // 🔍 DIAGNÓSTICO: Verificar estructura después del merge
+        if (finalFootprints.length > 0) {
+          const first = finalFootprints[0];
+          const last = finalFootprints[finalFootprints.length - 1];
+          const mid = finalFootprints[Math.floor(finalFootprints.length / 2)];
+
+          console.log(`[OrderFlow] [${this.symbol}] 🔍 POST-MERGE: first.levels=${!!first.levels}, mid.levels=${!!mid.levels}, last.levels=${!!last.levels}`);
+
+          // Contar cuántos tienen levels vs price_levels
+          let withLevels = 0;
+          let withPriceLevels = 0;
+          let withNeither = 0;
+
+          for (const fp of finalFootprints) {
+            if (fp.levels) withLevels++;
+            else if (fp.price_levels) withPriceLevels++;
+            else withNeither++;
+          }
+
+          console.log(`[OrderFlow] [${this.symbol}] 🔍 FORMATO: ${withLevels} con levels, ${withPriceLevels} con price_levels, ${withNeither} sin ninguno`);
+        }
+
         // Log detallado de rangos después del merge
         if (finalFootprints.length > 0) {
           const firstFp = new Date(finalFootprints[0].candle_timestamp).toLocaleString();
@@ -517,16 +570,6 @@ class OrderFlowIndicator extends IndicatorBase {
 
       this.footprints = finalFootprints;
       const newCount = this.footprints.length;
-
-      // Verificar integridad del array después de asignación
-      if (newCount !== finalFootprints.length) {
-        console.error(`[OrderFlow] [${this.symbol}] ⚠️ MISMATCH: finalFootprints=${finalFootprints.length} pero this.footprints=${newCount}`);
-      }
-
-      // SIEMPRE loguear ranges después de un merge exitoso para debugging
-      if (newCount > 0) {
-        this._logFootprintRanges();
-      }
 
       // Solo loguear cuando hay cambios significativos o es la primera carga
       const isFirstLoad = oldCount === 0 && newCount > 0;
@@ -679,17 +722,33 @@ class OrderFlowIndicator extends IndicatorBase {
 
     const candleWidth = bounds.width / visibleCandles.length;
 
-    // One-shot diagnostic log for first render with footprints
-    if (!this._loggedFirstRender && this.footprints.length > 0) {
-      this._loggedFirstRender = true;
+    // Diagnostic log - ejecutar una vez cuando cambia el número de footprints
+    const fpCountChanged = !this._lastFpCount || this._lastFpCount !== this.footprints.length;
+    if (fpCountChanged && this.footprints.length > 0) {
+      this._lastFpCount = this.footprints.length;
       const mode = candleWidth < this.config.minCandleWidth ? 'DOTS (zoomed out)' : 'FOOTPRINT (zoomed in)';
-      console.log(`[OrderFlow] [${this.symbol}] FIRST RENDER: ${this.footprints.length} fps, candleWidth=${candleWidth.toFixed(1)}px, minCandleWidth=${this.config.minCandleWidth}, mode=${mode}`);
+      console.log(`[OrderFlow] [${this.symbol}] RENDER: ${this.footprints.length} fps, candleWidth=${candleWidth.toFixed(1)}px, mode=${mode}`);
 
       // Log rango de velas visibles para comparar con footprints
       if (visibleCandles.length > 0) {
         const firstCandle = new Date(visibleCandles[0].timestamp).toLocaleString();
         const lastCandle = new Date(visibleCandles[visibleCandles.length - 1].timestamp).toLocaleString();
-        console.log(`[OrderFlow] [${this.symbol}] CANDLES RANGE: ${firstCandle} → ${lastCandle} (${visibleCandles.length} velas)`);
+        console.log(`[OrderFlow] [${this.symbol}] CANDLES VISIBLE: ${firstCandle} → ${lastCandle} (${visibleCandles.length} velas)`);
+
+        // 🔍 CRÍTICO: Comparar con allCandles
+        if (allCandles && allCandles.length > 0) {
+          const firstAll = new Date(allCandles[0].timestamp).toLocaleString();
+          const lastAll = new Date(allCandles[allCandles.length - 1].timestamp).toLocaleString();
+          console.log(`[OrderFlow] [${this.symbol}] CANDLES ALL: ${firstAll} → ${lastAll} (${allCandles.length} velas TOTALES)`);
+        }
+
+        // Comparar con footprints
+        if (this.footprints.length > 0) {
+          const fpTimestamps = this.footprints.map(fp => fp.candle_timestamp).sort((a, b) => a - b);
+          const firstFp = new Date(fpTimestamps[0]).toLocaleString();
+          const lastFp = new Date(fpTimestamps[fpTimestamps.length - 1]).toLocaleString();
+          console.log(`[OrderFlow] [${this.symbol}] FP RANGE: ${firstFp} → ${lastFp}`);
+        }
       }
     }
 
@@ -717,6 +776,38 @@ class OrderFlowIndicator extends IndicatorBase {
       footprintMap.set(fp.candle_timestamp, fp);
     }
 
+    // 🔍 DIAGNÓSTICO: Log matching de timestamps (siempre en primera renderización)
+    if (!this._loggedMatching && visibleCandles.length > 0 && this.footprints.length > 0) {
+      this._loggedMatching = true;
+
+      const firstCandleTs = visibleCandles[0].timestamp;
+      const lastCandleTs = visibleCandles[visibleCandles.length - 1].timestamp;
+      const firstFpTs = this.footprints[0].candle_timestamp;
+      const lastFpTs = this.footprints[this.footprints.length - 1].candle_timestamp;
+
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 MATCHING: velas ${new Date(firstCandleTs).toLocaleString()} → ${new Date(lastCandleTs).toLocaleString()} (${visibleCandles.length} velas)`);
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 MATCHING: fps   ${new Date(firstFpTs).toLocaleString()} → ${new Date(lastFpTs).toLocaleString()} (${this.footprints.length} fps)`);
+
+      // Verificar overlap
+      const hasOverlap = !(lastFpTs < firstCandleTs || firstFpTs > lastCandleTs);
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 MATCHING: overlap=${hasOverlap}, tolerancia=±${this.config.timestampToleranceMs}ms`);
+
+      // Probar matching de primeras 5 velas
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 MATCHING: Probando primeras 5 velas...`);
+      for (let i = 0; i < Math.min(5, visibleCandles.length); i++) {
+        const candle = visibleCandles[i];
+        const fp = this._findFootprintForCandle(candle.timestamp, footprintMap);
+        const candleDate = new Date(candle.timestamp).toLocaleString();
+        if (fp) {
+          const fpDate = new Date(fp.candle_timestamp).toLocaleString();
+          const diff = Math.abs(candle.timestamp - fp.candle_timestamp);
+          console.log(`[OrderFlow] [${this.symbol}]   ✅ Vela[${i}] ${candleDate} → FP ${fpDate} (diff: ${diff}ms)`);
+        } else {
+          console.log(`[OrderFlow] [${this.symbol}]   ❌ Vela[${i}] ${candleDate} → SIN MATCH`);
+        }
+      }
+    }
+
     // DEBUG: Contar matches para verificar el fix
     let matchedCount = 0;
     let unmatchedCount = 0;
@@ -727,6 +818,12 @@ class OrderFlowIndicator extends IndicatorBase {
 
     ctx.save();
 
+    // 🔍 DIAGNÓSTICO CRÍTICO: Contar cuántos footprints matchean
+    let totalMatches = 0;
+    let totalNoMatches = 0;
+    let firstMatchIdx = -1;
+    let lastMatchIdx = -1;
+
     // Render each visible candle
     for (let i = 0; i < visibleCandles.length; i++) {
       const candle = visibleCandles[i];
@@ -734,44 +831,92 @@ class OrderFlowIndicator extends IndicatorBase {
       // FIX: Usar matching tolerante en lugar de exacto
       const footprint = this._findFootprintForCandle(candle.timestamp, footprintMap);
 
-      if (!footprint || !footprint.levels || footprint.levels.length === 0) {
-        // No footprint data - draw simple candle
+      if (!footprint) {
+        // No se encontró footprint para esta vela
         this.renderSimpleCandle(ctx, candle, bounds.x + i * candleWidth, candleWidth, priceToY);
         unmatchedCount++;
+        totalNoMatches++;
         if (!firstUnmatchedTs) firstUnmatchedTs = candle.timestamp;
         lastUnmatchedTs = candle.timestamp;
         continue;
       }
 
+      totalMatches++;
+      if (firstMatchIdx === -1) firstMatchIdx = i;
+      lastMatchIdx = i;
+
+      // ✅ SOPORTE DUAL: levels (backend) o price_levels (archivo sin agregar)
+      const levels = footprint.levels || footprint.price_levels;
+
+      if (!levels) {
+        // Footprint existe pero no tiene campo 'levels' ni 'price_levels'
+        this.renderSimpleCandle(ctx, candle, bounds.x + i * candleWidth, candleWidth, priceToY);
+        unmatchedCount++;
+
+        // 🔍 DEBUG: Log first rejected footprint
+        if (!this._loggedFirstNoLevels) {
+          this._loggedFirstNoLevels = true;
+          console.warn(`[OrderFlow] [${this.symbol}] ⚠️ ZOOM IN: Footprint sin levels - ${new Date(footprint.candle_timestamp).toLocaleString()}, keys=${Object.keys(footprint).join(',')}`);
+        }
+
+        if (!firstUnmatchedTs) firstUnmatchedTs = candle.timestamp;
+        lastUnmatchedTs = candle.timestamp;
+        continue;
+      }
+
+      if (levels.length === 0) {
+        // Footprint tiene 'levels' pero está vacío
+        this.renderSimpleCandle(ctx, candle, bounds.x + i * candleWidth, candleWidth, priceToY);
+        unmatchedCount++;
+
+        // 🔍 DEBUG: Log first empty levels
+        if (!this._loggedFirstEmptyLevels) {
+          this._loggedFirstEmptyLevels = true;
+          console.warn(`[OrderFlow] [${this.symbol}] ⚠️ ZOOM IN: Footprint con levels vacío - ${new Date(footprint.candle_timestamp).toLocaleString()}`);
+        }
+
+        if (!firstUnmatchedTs) firstUnmatchedTs = candle.timestamp;
+        lastUnmatchedTs = candle.timestamp;
+        continue;
+      }
+
+      // Actualizar footprint para usar levels extraídos (no modificar objeto original)
+      const normalizedFootprint = { ...footprint, levels };
+
       matchedCount++;
       if (!firstMatchedTs) firstMatchedTs = candle.timestamp;
       lastMatchedTs = candle.timestamp;
       const unitX = bounds.x + i * candleWidth;
-      this.renderOrderFlowUnit(ctx, candle, footprint, unitX, candleWidth, priceToY, fullMode);
+      this.renderOrderFlowUnit(ctx, candle, normalizedFootprint, unitX, candleWidth, priceToY, fullMode);
     }
 
-    // Solo loguear matching cuando hay problemas significativos (>30% unmatched)
-    if (unmatchedCount > visibleCandles.length * 0.3) {
-      const matchPct = ((matchedCount / visibleCandles.length) * 100).toFixed(1);
-      console.warn(`[OrderFlow] [${this.symbol}] HIGH UNMATCHED: ${matchedCount}/${visibleCandles.length} (${matchPct}%)`);
+    // ✅ LOG SIMPLE PERMANENTE - Se ejecuta SIEMPRE (una vez por segundo máximo)
+    const now = Date.now();
+    if (!this._lastRenderLog || (now - this._lastRenderLog) > 1000) {
+      this._lastRenderLog = now;
 
-      // Log detallado solo cuando hay problema
-      if (visibleCandles.length > 0 && this.footprints.length > 0) {
-        const candleFirst = visibleCandles[0].timestamp;
-        const candleLast = visibleCandles[visibleCandles.length - 1].timestamp;
-        const fpTimestamps = this.footprints.map(fp => fp.candle_timestamp).sort((a, b) => a - b);
-        const fpFirst = fpTimestamps[0];
-        const fpLast = fpTimestamps[fpTimestamps.length - 1];
+      console.log(`[OrderFlow] [${this.symbol}] RENDER: ${totalMatches}/${visibleCandles.length} velas con FP, ${this.footprints.length} fps disponibles`);
 
-        console.warn(`  Candle range: ${new Date(candleFirst).toLocaleString()} -> ${new Date(candleLast).toLocaleString()}`);
-        console.warn(`  Footprint range: ${new Date(fpFirst).toLocaleString()} -> ${new Date(fpLast).toLocaleString()}`);
+      // Si hay 0 matches, mostrar info de debug
+      if (totalMatches === 0 && this.footprints.length > 0 && visibleCandles.length > 0) {
+        const fp0 = this.footprints[0];
+        const fpLast = this.footprints[this.footprints.length - 1];
+        const c0 = visibleCandles[0];
+        const cLast = visibleCandles[visibleCandles.length - 1];
 
-        if (candleLast < fpFirst) {
-          console.warn(`  !!! Velas terminan ANTES de que comiencen los footprints`);
-        }
-        if (candleFirst > fpLast) {
-          console.warn(`  !!! Velas comienzan DESPUES de que terminan los footprints`);
-        }
+        console.warn(`[OrderFlow] [${this.symbol}] ⚠️ CERO MATCHES!`);
+        console.warn(`  FP[0]: ts=${fp0.candle_timestamp} (${new Date(fp0.candle_timestamp).toLocaleString()}), levels=${fp0.levels?.length || 'undefined'}`);
+        console.warn(`  FP[last]: ts=${fpLast.candle_timestamp} (${new Date(fpLast.candle_timestamp).toLocaleString()}), levels=${fpLast.levels?.length || 'undefined'}`);
+        console.warn(`  Vela[0]: ts=${c0.timestamp} (${new Date(c0.timestamp).toLocaleString()})`);
+        console.warn(`  Vela[last]: ts=${cLast.timestamp} (${new Date(cLast.timestamp).toLocaleString()})`);
+        console.warn(`  Diff FP[0] vs Vela[0]: ${Math.abs(fp0.candle_timestamp - c0.timestamp)}ms`);
+        console.warn(`  Tolerancia: ${this.config.timestampToleranceMs || 'UNDEFINED'}ms`);
+      }
+
+      // Si hay matches parciales, mostrar dónde empiezan
+      if (totalMatches > 0 && firstMatchIdx > 0) {
+        const firstMatchCandle = visibleCandles[firstMatchIdx];
+        console.warn(`[OrderFlow] [${this.symbol}] ⚠️ Primeros ${firstMatchIdx} velas SIN FP. Primer match en índice ${firstMatchIdx}: ${new Date(firstMatchCandle.timestamp).toLocaleString()}`);
       }
     }
 
@@ -1277,6 +1422,30 @@ class OrderFlowIndicator extends IndicatorBase {
       fpMap.set(fp.candle_timestamp, fp);
     }
 
+    // ✅ LOG SIMPLE - Contar matches en modo DOTS
+    let dotsMatches = 0;
+    let dotsNoMatches = 0;
+    for (const candle of visibleCandles) {
+      const fp = this._findFootprintForCandle(candle.timestamp, fpMap);
+      if (fp) dotsMatches++;
+      else dotsNoMatches++;
+    }
+
+    const now = Date.now();
+    if (!this._lastDotsLog || (now - this._lastDotsLog) > 1000) {
+      this._lastDotsLog = now;
+      console.log(`[OrderFlow] [${this.symbol}] DOTS MODE: ${dotsMatches}/${visibleCandles.length} velas con FP, ${this.footprints.length} fps disponibles`);
+
+      if (dotsMatches === 0 && this.footprints.length > 0) {
+        const fp0 = this.footprints[0];
+        const c0 = visibleCandles[0];
+        console.warn(`[OrderFlow] [${this.symbol}] ⚠️ DOTS: CERO MATCHES!`);
+        console.warn(`  FP[0]: ${new Date(fp0.candle_timestamp).toLocaleString()}`);
+        console.warn(`  Vela[0]: ${new Date(c0.timestamp).toLocaleString()}`);
+        console.warn(`  Diff: ${Math.abs(fp0.candle_timestamp - c0.timestamp)}ms, tolerancia=${this.config.timestampToleranceMs}ms`);
+      }
+    }
+
     const { x: boundsX } = bounds;
     const lineWidth = this.config.stackedLineWidth || 2;
     const extend = this.config.stackedLineExtend || 3;
@@ -1292,42 +1461,67 @@ class OrderFlowIndicator extends IndicatorBase {
     for (let i = 0; i < visibleCandles.length; i++) {
       const candle = visibleCandles[i];
       const fp = this._findFootprintForCandle(candle.timestamp, fpMap);
-      if (!fp || !fp.stacked_imbalances || fp.stacked_imbalances.length === 0) continue;
 
-      // Volume z-score filter: skip footprints from low-volume candles
-      if (minZScore > 0) {
-        const fpZScore = fp.volume_zscore != null ? fp.volume_zscore : 0;
-        if (fpZScore < minZScore) continue;
-      }
+      if (!fp) continue; // Si no hay footprint, skip
 
       const candleX = boundsX + (i * candleWidth);
-      const levels = fp.levels || [];
 
-      // Line start/end with extension, clamped to chart bounds
-      const lineStartX = Math.max(boundsX, candleX - extraHalf);
-      const lineEndX = Math.min(boundsX + bounds.width, candleX + candleWidth + extraHalf);
-
-      for (const si of fp.stacked_imbalances) {
-        const siLevels = si.levels || [];
-        if (siLevels.length === 0) continue;
-
-        const rgb = si.direction === 'BUY' ? buyRgb : sellRgb;
-        ctx.strokeStyle = `rgba(${rgb}, ${baseOpacity})`;
-        ctx.lineWidth = lineWidth;
-
-        // Draw a horizontal line at each level's price_mid
-        for (const lvIdx of siLevels) {
-          const level = levels[lvIdx];
-          if (!level) continue;
-
-          const priceMid = level.price_mid || ((level.price_min + level.price_max) / 2);
-          const y = priceContext.priceToY(priceMid);
-
-          ctx.beginPath();
-          ctx.moveTo(lineStartX, y);
-          ctx.lineTo(lineEndX, y);
-          ctx.stroke();
+      // ✅ SI TIENE stacked_imbalances (footprints del backend): dibujar líneas completas
+      if (fp.stacked_imbalances && fp.stacked_imbalances.length > 0) {
+        // Volume z-score filter: skip footprints from low-volume candles
+        if (minZScore > 0) {
+          const fpZScore = fp.volume_zscore != null ? fp.volume_zscore : 0;
+          if (fpZScore < minZScore) continue;
         }
+
+        const levels = fp.levels || fp.price_levels || [];
+
+        // Line start/end with extension, clamped to chart bounds
+        const lineStartX = Math.max(boundsX, candleX - extraHalf);
+        const lineEndX = Math.min(boundsX + bounds.width, candleX + candleWidth + extraHalf);
+
+        for (const si of fp.stacked_imbalances) {
+          const siLevels = si.levels || [];
+          if (siLevels.length === 0) continue;
+
+          const rgb = si.direction === 'BUY' ? buyRgb : sellRgb;
+          ctx.strokeStyle = `rgba(${rgb}, ${baseOpacity})`;
+          ctx.lineWidth = lineWidth;
+
+          // Draw a horizontal line at each level's price_mid
+          for (const lvIdx of siLevels) {
+            const level = levels[lvIdx];
+            if (!level) continue;
+
+            const priceMid = level.price_mid || level.price || ((level.price_min + level.price_max) / 2);
+            const y = priceContext.priceToY(priceMid);
+
+            ctx.beginPath();
+            ctx.moveTo(lineStartX, y);
+            ctx.lineTo(lineEndX, y);
+            ctx.stroke();
+          }
+        }
+      }
+      // ✅ SI NO TIENE stacked_imbalances (footprints agregados): dibujar POC simple
+      else {
+        const poc = fp.poc;
+        if (!poc) continue; // Si no hay POC, skip
+
+        const delta = fp.total_delta || fp.delta || 0;
+        const rgb = delta >= 0 ? buyRgb : sellRgb;
+
+        ctx.strokeStyle = `rgba(${rgb}, ${baseOpacity})`;
+        ctx.lineWidth = 2;
+
+        const lineStartX = Math.max(boundsX, candleX - extraHalf);
+        const lineEndX = Math.min(boundsX + bounds.width, candleX + candleWidth + extraHalf);
+        const y = priceContext.priceToY(poc);
+
+        ctx.beginPath();
+        ctx.moveTo(lineStartX, y);
+        ctx.lineTo(lineEndX, y);
+        ctx.stroke();
       }
     }
 

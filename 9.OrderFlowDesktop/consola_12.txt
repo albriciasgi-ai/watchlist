@@ -1,0 +1,120 @@
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+
+===========================
+
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Primero: levels=false, price_levels=true, keys=10
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 ESTRUCTURA - Último: levels=true, price_levels=false, keys=17
+OrderFlowIndicator.js:535 [OrderFlow] [BTCUSDT] 🔍 Primero keys: candle_timestamp,open,high,low,close,total_volume,total_delta,delta,poc,price_levels
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Último keys: candle_timestamp,symbol,interval,candle_open,candle_high,candle_low,candle_close,step_size,levels,num_levels
+
+=============================
+
+[OrderFlow] [BTCUSDT] RENDER: 629 fps, candleWidth=1.0px, mode=DOTS (zoomed out)
+OrderFlowIndicator.js:703 [OrderFlow] [BTCUSDT] RENDER: 630 fps, candleWidth=3.3px, mode=DOTS (zoomed out)

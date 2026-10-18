@@ -1,0 +1,92 @@
+EVIDENCIA RECOPILADA
+
+  1. Los datos ESTÁN ahí y son correctos:
+
+  - Footprints totales: 516 footprints (archivo agregado + backend)
+  - Rango de footprints: 16/10/2026 10:15 AM → 17/10/2026 3:55 PM (~29 horas)
+  - Estructura: TODOS tienen levels=true (normalización funcionó)
+  - Velas totales: 1521 velas de 5 minutos (5+ días completos)
+  - Rango de velas totales: 12/10/2026 9:35 AM → 17/10/2026 4:15 PM
+
+  2. El problema visual:
+
+  - Solo ves footprints desde las 12:30 PM de hoy (~3-6 horas)
+  - Pero tienes velas visibles desde días anteriores
+  - Los logs de diagnóstico no están apareciendo, lo que sugiere que fpCountChanged es false
+
+  3. Pista crítica - Los logs no aparecen:
+
+  Esto significa que:
+  - this._lastFpCount ya está seteado
+  - El número de footprints NO está cambiando
+  - Los logs diagnósticos dependen de fpCountChanged, por eso no aparecen
+
+  HIPÓTESIS DEL PROBLEMA REAL
+
+  Creo que el problema es que los footprints se están cargando DESPUÉS del primer render, y cuando finalmente se cargan, el código NO está
+  forzando un redraw completo que regenere las estadísticas de diagnóstico.
+
+  O peor aún: los footprints tienen el campo levels VACÍO (arrays vacíos) en lugar de levels=undefined. Esto pasaría la validación de
+  !!footprint.levels (que daría true) pero fallaría en la validación de levels.length === 0.
+
+  PROBLEMAS IDENTIFICADOS Y SOLUCIONES
+
+  Problema 1: No hay visibilidad de qué está pasando en el renderizado
+
+  Causa: Todos los logs dependen de flags que solo se ejecutan una vez (fpCountChanged, _loggedMatchStats, etc.)
+
+  Solución: Agregar un log PERMANENTE (sin flags) que se ejecute SIEMPRE en cada render y muestre:
+  - Cuántos footprints hay disponibles
+  - Cuántas velas visibles hay
+  - Cuántos matches exitosos hubo
+  - Timestamp del primer y último match
+
+  Problema 2: Posible array levels vacío
+
+  Causa: La agregación podría estar creando footprints con levels: [] (array vacío) en lugar de tener datos.
+
+  Solución:
+  1. Verificar que _aggregateFootprints() está realmente agregando los price_levels correctamente
+  2. Agregar validación en la agregación para detectar footprints con 0 levels
+  3. Log permanente que cuente cuántos footprints tienen levels.length > 0
+
+  Problema 3: Matching de timestamps puede estar fallando
+
+  Causa: Los footprints agregados tienen timestamps redondeados al inicio del intervalo (10:15, 10:20, 10:25...) pero las velas pueden tener
+  timestamps ligeramente diferentes.
+
+  Solución:
+  1. Verificar que this.config.timestampToleranceMs está definido (el log mostró ±undefinedms)
+  2. Aumentar la tolerancia de matching si es necesaria
+  3. Agregar log que muestre los primeros 10 timestamps de footprints vs las primeras 10 timestamps de velas para ver si están alineados
+
+  Problema 4: El archivo agregado puede estar corrupto
+
+  Causa: Si guardamos el archivo agregado con formato incorrecto, cada vez que recargamos estaríamos cargando footprints inválidos.
+
+  Solución:
+  1. Eliminar el archivo de cache agregado (BTCUSDT_5.json)
+  2. Forzar re-agregación desde el archivo de 1min
+  3. Verificar que la nueva agregación tiene levels poblados
+
+  MI RECOMENDACIÓN
+
+  Paso 1: Agregar UN SOLO log simple y permanente al final de renderOverlay() que se ejecute SIEMPRE:
+
+  console.log(`[OrderFlow] RENDER: ${totalMatches}/${visibleCandles.length} velas con FP, ${this.footprints.length} fps disponibles`);
+
+  Esto nos dirá de inmediato si el problema es:
+  - 0 matches → problema de matching de timestamps
+  - Matches parciales (ej: 100/500) → algunos footprints matchean, otros no
+  - Footprints = 0 → problema de carga de datos
+
+  Paso 2: Si totalMatches = 0, verificar timestamps agregando otro log:
+
+  const fp0 = this.footprints[0];
+  const fp1 = this.footprints[1];
+  const c0 = visibleCandles[0];
+  const c1 = visibleCandles[1];
+  console.log(`FP[0]: ${fp0.candle_timestamp}, levels=${fp0.levels?.length || 0}`);
+  console.log(`Vela[0]: ${c0.timestamp}, diff=${Math.abs(fp0.candle_timestamp - c0.timestamp)}ms`);
+
+  Paso 3: Si los levels están vacíos, eliminar el archivo de cache y regenerar.

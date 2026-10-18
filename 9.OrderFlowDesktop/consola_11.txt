@@ -1,0 +1,5 @@
+13OrderFlowIndicator.js:508 [OrderFlow] [BTCUSDT] ✅ Merge: archivo=297, backend: +135 nuevos, ~151 actualizados, -416 ignorados = 552 total
+
+OrderFlowIndicator.js:514 [OrderFlow] [BTCUSDT] Rango merged: 16/10/2026, 10:15:00 a.m. → 17/10/2026, 1:45:00 p.m.
+
+3OrderFlowIndicator.js:595 [OrderFlow] [BTCUSDT] FOOTPRINT RANGES: Total=552, Rango=16/10/2026, 10:15:00 a.m. → 17/10/2026, 1:45:00 p.m., Grupos=285
