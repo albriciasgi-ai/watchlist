@@ -1,0 +1,1234 @@
+127.0.0.1:10000/api/drawings/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT,PAXGUSDT,CLUSDT,OPUSDT,PENDLEUSDT,AAVEUSDT,GRTUSDT,UNIUSDT,INJUSDT,ROSEUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/zones/presets:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/realtime/set-interval:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+IndicatorManager.js:469 Uncaught (in promise) TypeError: indicator.setEnabled is not a function
+    at IndicatorManager.toggleIndicator (IndicatorManager.js:469:17)
+    at MiniChart.jsx:2412:39
+    at Array.forEach (<anonymous>)
+    at initIndicators (MiniChart.jsx:2411:41)
+MiniChart.jsx:1534 [BTCUSDT] Error cargando histórico TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at loadHistoricalData (MiniChart.jsx:1503:9)
+loadHistoricalData @ MiniChart.jsx:1534
+IndicatorManager.js:518 Uncaught (in promise) TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at loadHistoricalData (MiniChart.jsx:1541:9)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1592:19
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleWheel (MiniChart.jsx:2058:5)
+    at HTMLCanvasElement.preventScroll (MiniChart.jsx:2513:7)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:268:9
+MiniChart.jsx:1534 [BTCUSDT] Error cargando histórico TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at loadHistoricalData (MiniChart.jsx:1503:9)
+loadHistoricalData @ MiniChart.jsx:1534
+IndicatorManager.js:518 Uncaught (in promise) TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at loadHistoricalData (MiniChart.jsx:1541:9)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1706:13
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at MiniChart.jsx:1792:11
+IndicatorManager.js:518 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+chunk-ZFBEYDM4.js?v=0d753ea7:3750 Uncaught TypeError: ind.getHeight is not a function
+    at IndicatorManager.js:518:59
+    at Array.reduce (<anonymous>)
+    at IndicatorManager.getTotalHeight (IndicatorManager.js:518:28)
+    at drawChart (MiniChart.jsx:714:61)
+    at handleMouseLeave (MiniChart.jsx:1928:7)
+    at HTMLUnknownElement.callCallback2 (chunk-ZFBEYDM4.js?v=0d753ea7:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-ZFBEYDM4.js?v=0d753ea7:3699:24)
+    at invokeGuardedCallback (chunk-ZFBEYDM4.js?v=0d753ea7:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-ZFBEYDM4.js?v=0d753ea7:3736:33)
+    at executeDispatch (chunk-ZFBEYDM4.js?v=0d753ea7:7014:11)
+ [HealthCheck] Backend disconnected: signal is aborted without reason
+checkBackendHealth @ robustness.js:195
+await in checkBackendHealth
+(anonymous) @ robustness.js:227
+IndicatorManager.js:518 Uncaught 
+(anonymous) @ IndicatorManager.js:518
+getTotalHeight @ IndicatorManager.js:518
+drawChart @ MiniChart.jsx:714
+(anonymous) @ MiniChart.jsx:1792
+requestAnimationFrame
+handleMouseMove @ MiniChart.jsx:1791
+callCallback2 @ chunk-ZFBEYDM4.js?v=0d753ea7:3674
+invokeGuardedCallbackDev @ chunk-ZFBEYDM4.js?v=0d753ea7:3699
+invokeGuardedCallback @ chunk-ZFBEYDM4.js?v=0d753ea7:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-ZFBEYDM4.js?v=0d753ea7:3736
+executeDispatch @ chunk-ZFBEYDM4.js?v=0d753ea7:7014
+processDispatchQueueItemsInOrder @ chunk-ZFBEYDM4.js?v=0d753ea7:7034
+processDispatchQueue @ chunk-ZFBEYDM4.js?v=0d753ea7:7043
+dispatchEventsForPlugins @ chunk-ZFBEYDM4.js?v=0d753ea7:7051
+(anonymous) @ chunk-ZFBEYDM4.js?v=0d753ea7:7174
+batchedUpdates$1 @ chunk-ZFBEYDM4.js?v=0d753ea7:18913
+batchedUpdates @ chunk-ZFBEYDM4.js?v=0d753ea7:3579
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=0d753ea7:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=0d753ea7:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=0d753ea7:5472
+dispatchContinuousEvent @ chunk-ZFBEYDM4.js?v=0d753ea7:5461

@@ -111,7 +111,8 @@ const SingleSymbolAnalyzer = () => {
     "Support & Resistance": false,
     "S&R v2": true,
     "Swing Detector": false,
-    "VP Periodic": false
+    "VP Periodic": false,
+    "Liquidation Clusters": false
   };
 
   const [indicatorStates, setIndicatorStates] = useState(() => {

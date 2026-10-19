@@ -14,10 +14,11 @@
     "PAXGUSDT",
     "BNBUSDT",
     "POLUSDT",
-    "CLUSDT"
+    "CLUSDT",
+    "ARBUSDT"
   ],
-  "interval": "60",
-  "days": 270,
+  "interval": "15",
+  "days": 60,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -161,6 +162,9 @@
     },
     "CLUSDT": {
       "days": 270
+    },
+    "ARBUSDT": {
+      "days": 60
     }
   },
   "swingBars": 3,

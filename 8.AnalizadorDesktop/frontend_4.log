@@ -1,0 +1,770 @@
+ [Preload] Script cargado correctamente
+ [Preload] Plataforma: win32
+ [Preload] Electron: 33.4.11
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ [Config] API_BASE_URL: http://127.0.0.1:10000
+ [Config] Electron: Si
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ ====================================
+ Analizador Desktop - Frontend
+ ====================================
+ [Electron] Ejecutando en Electron
+ [Electron] Versiones: Object
+ [Electron] Plataforma: win32
+ [App] Backend esperado en: http://localhost:10000
+ [ZoneDetector] interval=15, maxDays=730
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [LiquidationClusters] Inicializado para BTCUSDT
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [PollingCoordinator] Started
+ ✅ [2:54:40 a. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=5
+ [BTCUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=5
+ [LiquidationClusters] setEnabled(true) para BTCUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/BTCUSDT
+ [CandleCache] 💾 BTCUSDT@15 - desde IndexedDB (5759 velas)
+ [CandleCache] OK VALIDATION BTCUSDT@15: 5759 velas sin gaps
+ [BTCUSDT] Carga INCREMENTAL: desde 19/10/2026, 2:30:00 a.m. (5759 velas en cache, 98%)
+ [CacheCleanup] Complete: 0/16 candles, 0/20 indicators removed
+ WebSocket Manager conectado [15]
+ ✓ Suscrito: 
+ [Prefetch] Activado (10s despues de carga)
+ [CandleCache] 💾 BTCUSDT@15 - desde memoria (5759 velas)
+ [BTCUSDT] drawChart: 5760 velas disponibles, zoom=1.000, chartWidth=1101, mostrando=137, userZoomed=false
+ [BTCUSDT] 🔧 Auto-corregido zoom: 1.000 -> 0.092 (mostraba 137 velas, ahora ~1500 de 5760)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [LiquidationClusters] 📊 renderOverlay called but no clusters to render (enabled=true)
+ [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [HealthCheck] Backend reconnected
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 5760 velas disponibles, zoom=0.092, chartWidth=1101, mostrando=1500, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 5760 velas disponibles, zoom=0.092, chartWidth=1101, mostrando=1500, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] drawChart: 5760 velas disponibles, zoom=0.092, chartWidth=1101, mostrando=1500, userZoomed=false
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+ [LiquidationClusters] Destruyendo BTCUSDT...
+ [LiquidationClusters] setEnabled(false) para BTCUSDT
+ [LiquidationClusters] Deshabilitando indicador...
+ [LiquidationClusters] BTCUSDT deshabilitado
+ [LiquidationClusters] ✅ BTCUSDT destruido completamente
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 BTCUSDT@15 - desde memoria (5759 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION BTCUSDT@15: 5759 velas sin gaps
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=4
+ [BTCUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, false): found=false, totalIndicators=4
+ [BTCUSDT] Carga INCREMENTAL: desde 19/10/2026, 2:30:00 a.m. (5759 velas en cache, 98%)
+ [BTCUSDT] ✅ Open Interest loaded: 2000 points
+ [BTCUSDT] 📊 OI Data Range: 2026-10-17T06:00:00.000Z → 2026-09-30T13:45:00.000Z
+ [BTCUSDT] 📊 First OI: 59333.798, Last OI: 54477.843
+ ✓ Suscrito: 
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 BTCUSDT@15 - desde memoria (5759 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [LiquidationClusters] Inicializado para BTCUSDT
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION BTCUSDT@15: 5759 velas sin gaps
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=5
+ [BTCUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=5
+ [LiquidationClusters] setEnabled(true) para BTCUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/BTCUSDT
+ [BTCUSDT] Carga INCREMENTAL: desde 19/10/2026, 2:30:00 a.m. (5759 velas en cache, 98%)
+ [BTCUSDT] ✅ Open Interest loaded: 2000 points
+ [BTCUSDT] 📊 OI Data Range: 2026-10-17T06:00:00.000Z → 2026-09-30T13:45:00.000Z
+ [BTCUSDT] 📊 First OI: 59333.798, Last OI: 54477.843
+ ✓ Suscrito: 
+ [CandleCache] 🔄 Merge: 5759 cached + 1 new = 5759 total
+ [BTCUSDT] ✅ Incremental: +1 velas nuevas = 5759 total
+ [BTCUSDT] ✅ Histórico final: 5759 velas
+ [BTCUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5759 velas)
+ [LiquidationClusters] ⚠️ _enrichClusters: no hay clusters para enriquecer
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [LiquidationClusters] 📊 renderOverlay called but no clusters to render (enabled=true)
+ [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+ [BTCUSDT] ⚠️ No OI match found for candle 2026-09-26T00:30:00.000Z. Sample OI timestamps: Array(3)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [CandleCache] ✅ BTCUSDT@15 - guardado (5759 velas, memoria: 1/4)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] ✅ Open Interest loaded: 2000 points
+ [BTCUSDT] 📊 OI Data Range: 2026-10-17T06:00:00.000Z → 2026-09-30T13:45:00.000Z
+ [BTCUSDT] 📊 First OI: 59333.798, Last OI: 54477.843
+ ✅ [2:56:47 a. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 5 indicadores
+ [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
+ ✅ [2:56:47 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 60000ms, priority: 2)
+ ✅ [2:56:47 a. m.] [Manager] [BTCUSDT] Polling iniciado para todos los indicadores
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [LiquidationClusters] ✅ Response received in 1736ms (status: 200)
+ [LiquidationClusters] 📦 Data parsed: Object
+ [LiquidationClusters] ✅ BTCUSDT: 50 clusters cargados
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $11.94M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] candles exists: false
+ [LiquidationClusters] candles length: 0
+ [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [LiquidationClusters] 🔄 Redraw requested
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [CandleCache] 🔄 Merge: 5759 cached + 1 new = 5759 total
+ [BTCUSDT] ✅ Incremental: +1 velas nuevas = 5759 total
+ [BTCUSDT] ✅ Histórico final: 5759 velas
+ [BTCUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5759 velas)
+ [LiquidationClusters] 🔄 Primera actualización de velas - enriqueciendo 50 clusters...
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $11.94M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] candles exists: false
+ [LiquidationClusters] candles length: 0
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [CandleCache] ✅ BTCUSDT@15 - guardado (5759 velas, memoria: 1/4)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] ✅ Open Interest loaded: 2000 points
+ [BTCUSDT] 📊 OI Data Range: 2026-10-17T06:00:00.000Z → 2026-09-30T13:45:00.000Z
+ [BTCUSDT] 📊 First OI: 59333.798, Last OI: 54477.843
+ ✅ [2:56:50 a. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 5 indicadores
+ [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
+ ✅ [2:56:50 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [2:56:50 a. m.] [Manager] [BTCUSDT] Polling iniciado para todos los indicadores
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] drawChart: 5760 velas disponibles, zoom=0.022, chartWidth=1119, mostrando=2238, userZoomed=true
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_BTCUSDT
+ [LiquidationClusters] Destruyendo BTCUSDT...
+ [LiquidationClusters] setEnabled(false) para BTCUSDT
+ [LiquidationClusters] Deshabilitando indicador...
+ [LiquidationClusters] BTCUSDT deshabilitado
+ [LiquidationClusters] ✅ BTCUSDT destruido completamente
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 BTCUSDT@15 - desde memoria (5759 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION BTCUSDT@15: 5759 velas sin gaps
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=4
+ [BTCUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, false): found=false, totalIndicators=4
+ [BTCUSDT] Carga INCREMENTAL: desde 19/10/2026, 2:30:00 a.m. (5759 velas en cache, 98%)
+ [BTCUSDT] ✅ Open Interest loaded: 2000 points
+ [BTCUSDT] 📊 OI Data Range: 2026-10-17T06:00:00.000Z → 2026-09-30T13:45:00.000Z
+ [BTCUSDT] 📊 First OI: 59333.798, Last OI: 54477.843
+ ✓ Suscrito: 
+ [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 BTCUSDT@15 - desde memoria (5759 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [LiquidationClusters] Inicializado para BTCUSDT
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION BTCUSDT@15: 5759 velas sin gaps
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=5
+ [BTCUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=5
+ [LiquidationClusters] setEnabled(true) para BTCUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/BTCUSDT
+ [BTCUSDT] Carga INCREMENTAL: desde 19/10/2026, 2:30:00 a.m. (5759 velas en cache, 98%)
+ [BTCUSDT] ✅ Open Interest loaded: 2000 points
+ [BTCUSDT] 📊 OI Data Range: 2026-10-17T06:00:00.000Z → 2026-09-30T13:45:00.000Z
+ [BTCUSDT] 📊 First OI: 59333.798, Last OI: 54477.843
+ ✓ Suscrito: 
+ [CandleCache] 🔄 Merge: 5759 cached + 1 new = 5759 total
+ [BTCUSDT] ✅ Incremental: +1 velas nuevas = 5759 total
+ [BTCUSDT] ✅ Histórico final: 5759 velas
+ [BTCUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5759 velas)
+ [LiquidationClusters] ⚠️ _enrichClusters: no hay clusters para enriquecer
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [LiquidationClusters] 📊 renderOverlay called but no clusters to render (enabled=true)
+ [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+ [BTCUSDT] ⚠️ No OI match found for candle 2026-09-26T00:30:00.000Z. Sample OI timestamps: Array(3)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [CandleCache] ✅ BTCUSDT@15 - guardado (5759 velas, memoria: 1/4)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] ✅ Open Interest loaded: 2000 points
+ [BTCUSDT] 📊 OI Data Range: 2026-10-17T06:00:00.000Z → 2026-09-30T13:45:00.000Z
+ [BTCUSDT] 📊 First OI: 59333.798, Last OI: 54477.843
+ ✅ [2:57:04 a. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 5 indicadores
+ [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
+ ✅ [2:57:04 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 60000ms, priority: 2)
+ ✅ [2:57:04 a. m.] [Manager] [BTCUSDT] Polling iniciado para todos los indicadores
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [LiquidationClusters] ✅ Response received in 1397ms (status: 200)
+ [LiquidationClusters] 📦 Data parsed: Object
+ [LiquidationClusters] ✅ BTCUSDT: 50 clusters cargados
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $11.94M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] candles exists: false
+ [LiquidationClusters] candles length: 0
+ [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [LiquidationClusters] 🔄 Redraw requested
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [CandleCache] 🔄 Merge: 5759 cached + 1 new = 5759 total
+ [BTCUSDT] ✅ Incremental: +1 velas nuevas = 5759 total
+ [BTCUSDT] ✅ Histórico final: 5759 velas
+ [BTCUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5759 velas)
+ [LiquidationClusters] 🔄 Primera actualización de velas - enriqueciendo 50 clusters...
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $11.94M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] candles exists: false
+ [LiquidationClusters] candles length: 0
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [CandleCache] ✅ BTCUSDT@15 - guardado (5759 velas, memoria: 1/4)
+ [BTCUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/BTCUSDT?interval=15&days=60
+ [BTCUSDT] ✅ Open Interest loaded: 2000 points
+ [BTCUSDT] 📊 OI Data Range: 2026-10-17T06:00:00.000Z → 2026-09-30T13:45:00.000Z
+ [BTCUSDT] 📊 First OI: 59333.798, Last OI: 54477.843
+ ✅ [2:57:04 a. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 5 indicadores
+ [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
+ ✅ [2:57:04 a. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [2:57:04 a. m.] [Manager] [BTCUSDT] Polling iniciado para todos los indicadores
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+ [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+IndicatorManager.js:535 [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+IndicatorManager.js:535 [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+IndicatorManager.js:535 [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+MiniChart.jsx:772 [BTCUSDT] drawChart: 5760 velas disponibles, zoom=0.022, chartWidth=1119, mostrando=2238, userZoomed=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+IndicatorManager.js:535 [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+CandleCache.js:79 [CandleCache] 💾 ETHUSDT@15 - desde IndexedDB (11519 velas)
+CandleCache.js:264 [CandleCache] OK VALIDATION ETHUSDT@15: 11519 velas sin gaps
+SymbolList.jsx:92 [Prefetch] ETHUSDT@15 - ya en cache (11519 velas)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=2238
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1547.5040000000008, sample deltas: Array(10)
+IndicatorManager.js:535 [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+IndicatorManager.js:535 [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+IndicatorManager.js:535 [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] drawChart: 5760 velas disponibles, zoom=0.022, chartWidth=772, mostrando=1544, userZoomed=true
+ [BTCUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]
+ [BTCUSDT] 📊 Histogram Mode: 1544 candles, 1544 OI matches, 1543 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=1544
+ [BTCUSDT] 🎨 RENDER: maxDelta=1178.1109999999971, sample deltas: (10) [0, -41.22299999999814, 15.675999999999476, 20.234000000004016, -31.056000000004133, -12.680000000000291, -19.718999999997322, -109.93100000000413, -166.48999999999796, -25.786000000000058]

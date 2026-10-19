@@ -1,0 +1,863 @@
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ARBUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [LiquidationClusters] Inicializado para ARBUSDT
+ [ARBUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION ARBUSDT@15: 5780 velas sin gaps
+ [Registry] ✅ Registrado manager para ARBUSDT (total: 1)
+ [ARBUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/ARBUSDT?interval=15&days=60
+ [IndicatorCache] 💾 vwap@ARBUSDT desde memoria
+ [ARBUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=4
+ [ARBUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=4
+ [LiquidationClusters] setEnabled(true) para ARBUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/ARBUSDT
+ [ARBUSDT] Carga INCREMENTAL: desde 19/10/2026, 8:00:00 a.m. (5780 velas en cache, 99%)
+ [ARBUSDT] ✅ Open Interest loaded: 2000 points
+ [ARBUSDT] 📊 OI Data Range: 2026-10-17T11:15:00.000Z → 2026-09-30T19:00:00.000Z
+ [ARBUSDT] 📊 First OI: 164415221, Last OI: 195786927.2
+ ✓ Suscrito: 
+ [LiquidationClusters] ✅ Response received in 609ms (status: 200)
+ [LiquidationClusters] 📦 Data parsed: Object
+ [LiquidationClusters] ✅ ARBUSDT: 50 clusters cargados
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+ [LiquidationClusters] 🔄 Redraw requested
+ [CandleCache] 🔄 Merge: 5780 cached + 1 new = 5780 total
+ [ARBUSDT] ✅ Incremental: +1 velas nuevas = 5780 total
+ [ARBUSDT] ✅ Histórico final: 5780 velas
+ [ARBUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5780 velas)
+ [LiquidationClusters] 🔄 Primera actualización de velas - enriqueciendo 50 clusters...
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] ✅ Precio desde candles param: $0.20
+ [LiquidationClusters] currentPrice: $0.20
+ [LiquidationClusters] Top 5 por fuerza magnetica:
+   1. $0.18 | LONG | Vol: $0.06M | Dist: 10.8% | Mag: 84.5%
+   2. $0.20 | SHORT | Vol: $0.04M | Dist: 0.1% | Mag: 78.5%
+   3. $0.19 | SHORT | Vol: $0.03M | Dist: 3.0% | Mag: 52.1%
+   4. $0.18 | LONG | Vol: $0.03M | Dist: 10.3% | Mag: 49.2%
+   5. $0.20 | LONG | Vol: $0.02M | Dist: 0.6% | Mag: 48.7%
+ [LiquidationClusters] ✅ Enriquecimiento exitoso (50 clusters) - forzando redraw
+ [ARBUSDT] [RENDER] renderOverlays: 4 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [CandleCache] ✅ ARBUSDT@15 - guardado (5780 velas, memoria: 3/4)
+ [Registry] 🗑️ Desregistrado manager para ARBUSDT (total: 0)
+ [LiquidationClusters] Destruyendo ARBUSDT...
+ [LiquidationClusters] setEnabled(false) para ARBUSDT
+ [LiquidationClusters] Deshabilitando indicador...
+ [LiquidationClusters] ARBUSDT deshabilitado
+ [LiquidationClusters] ✅ ARBUSDT destruido completamente
+ [ARBUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ARBUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [SupportResistance2Indicator] VERSION 1.0 - Swing-based S&R
+ [LiquidationClusters] Inicializado para ARBUSDT
+ [ARBUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION ARBUSDT@15: 5780 velas sin gaps
+ [Registry] ✅ Registrado manager para ARBUSDT (total: 1)
+ [ARBUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/ARBUSDT?interval=15&days=60
+ [IndicatorCache] 💾 vwap@ARBUSDT desde memoria
+ [ARBUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=5
+ [ARBUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=5
+ [LiquidationClusters] setEnabled(true) para ARBUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/ARBUSDT
+ [ARBUSDT] Carga INCREMENTAL: desde 19/10/2026, 8:00:00 a.m. (5780 velas en cache, 99%)
+ [ARBUSDT] S&R v2: Fetching from backend...
+ [ARBUSDT] S&R v2: Fetching from backend...
+ [ARBUSDT] ✅ Open Interest loaded: 2000 points
+ [ARBUSDT] 📊 OI Data Range: 2026-10-17T11:15:00.000Z → 2026-09-30T19:00:00.000Z
+ [ARBUSDT] 📊 First OI: 164415221, Last OI: 195786927.2
+ ✓ Suscrito: 
+ [LiquidationClusters] ✅ Response received in 684ms (status: 200)
+ [LiquidationClusters] 📦 Data parsed: Object
+ [LiquidationClusters] ✅ ARBUSDT: 50 clusters cargados
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+ [LiquidationClusters] 🔄 Redraw requested
+ [CandleCache] 🔄 Merge: 5780 cached + 1 new = 5780 total
+ [ARBUSDT] ✅ Incremental: +1 velas nuevas = 5780 total
+ [ARBUSDT] ✅ Histórico final: 5780 velas
+ [ARBUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5780 velas)
+ [LiquidationClusters] 🔄 Primera actualización de velas - enriqueciendo 50 clusters...
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] ✅ Precio desde candles param: $0.20
+ [LiquidationClusters] currentPrice: $0.20
+ [LiquidationClusters] Top 5 por fuerza magnetica:
+   1. $0.18 | LONG | Vol: $0.06M | Dist: 10.8% | Mag: 84.5%
+   2. $0.20 | SHORT | Vol: $0.04M | Dist: 0.1% | Mag: 78.5%
+   3. $0.19 | SHORT | Vol: $0.03M | Dist: 3.0% | Mag: 52.1%
+   4. $0.18 | LONG | Vol: $0.03M | Dist: 10.3% | Mag: 49.2%
+   5. $0.20 | LONG | Vol: $0.02M | Dist: 0.6% | Mag: 48.7%
+ [LiquidationClusters] ✅ Enriquecimiento exitoso (50 clusters) - forzando redraw
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [CandleCache] ✅ ARBUSDT@15 - guardado (5780 velas, memoria: 3/4)
+ [ARBUSDT] S&R v2 loaded: 4R, 3S
+ [ARBUSDT] S&R v2 loaded: 4R, 3S
+ [ARBUSDT] drawChart: 5781 velas disponibles, zoom=0.022, chartWidth=1119, mostrando=2238, userZoomed=true
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [ARBUSDT] S&R v2 renderOverlay: Object
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [Registry] 🗑️ Desregistrado manager para ARBUSDT (total: 0)
+ [ARBUSDT] S&R v2 destroyed
+ [LiquidationClusters] Destruyendo ARBUSDT...
+ [LiquidationClusters] setEnabled(false) para ARBUSDT
+ [LiquidationClusters] Deshabilitando indicador...
+ [LiquidationClusters] ARBUSDT deshabilitado
+ [LiquidationClusters] ✅ ARBUSDT destruido completamente
+ [ARBUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ARBUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [LiquidationClusters] Inicializado para ARBUSDT
+ [ARBUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION ARBUSDT@15: 5780 velas sin gaps
+ [Registry] ✅ Registrado manager para ARBUSDT (total: 1)
+ [ARBUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/ARBUSDT?interval=15&days=60
+ [IndicatorCache] 💾 vwap@ARBUSDT desde memoria
+ [ARBUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=4
+ [ARBUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=4
+ [LiquidationClusters] setEnabled(true) para ARBUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/ARBUSDT
+ [ARBUSDT] Carga INCREMENTAL: desde 19/10/2026, 8:00:00 a.m. (5780 velas en cache, 99%)
+ [ARBUSDT] ✅ Open Interest loaded: 2000 points
+ [ARBUSDT] 📊 OI Data Range: 2026-10-17T11:15:00.000Z → 2026-09-30T19:00:00.000Z
+ [ARBUSDT] 📊 First OI: 164415221, Last OI: 195786927.2
+ ✓ Suscrito: 
+ [LiquidationClusters] ✅ Response received in 624ms (status: 200)
+ [LiquidationClusters] 📦 Data parsed: Object
+ [LiquidationClusters] ✅ ARBUSDT: 50 clusters cargados
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+ [LiquidationClusters] 🔄 Redraw requested
+ [Registry] 🗑️ Desregistrado manager para ARBUSDT (total: 0)
+ [LiquidationClusters] Destruyendo ARBUSDT...
+ [LiquidationClusters] setEnabled(false) para ARBUSDT
+ [LiquidationClusters] Deshabilitando indicador...
+ [LiquidationClusters] ARBUSDT deshabilitado
+ [LiquidationClusters] ✅ ARBUSDT destruido completamente
+ [ARBUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ARBUSDT] [SWING] initialize(): Creando SwingDetectorIndicator
+ [ARBUSDT] [SWING] CONSTRUCTOR: enabled=true, config.enabled=true, interval=15, days=60
+ [LiquidationClusters] Inicializado para ARBUSDT
+ [ARBUSDT] ZoneVisualizerIndicator: Inicializado
+ ✅ [8:24:43 a. m.] [SingleSymbolAnalyzer] Sincronizando Swing Detector: interval=15, days=60, enabled=true
+ [CandleCache] OK VALIDATION ARBUSDT@15: 5780 velas sin gaps
+ [Registry] ✅ Registrado manager para ARBUSDT (total: 1)
+ [ARBUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/ARBUSDT?interval=15&days=60
+ [IndicatorCache] 💾 vwap@ARBUSDT desde memoria
+ [ARBUSDT] [Swing Detector] toggleIndicator(Swing Detector, true): found=true, totalIndicators=5
+ [ARBUSDT] [SWING] setEnabled(true) aplicado, indicator.enabled=true
+ [ARBUSDT] [SWING] fetchData() INICIO - enabled=true
+ [ARBUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=5
+ [LiquidationClusters] setEnabled(true) para ARBUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/ARBUSDT
+ [ARBUSDT] Carga INCREMENTAL: desde 19/10/2026, 8:00:00 a.m. (5780 velas en cache, 99%)
+ [ARBUSDT] ✅ Open Interest loaded: 2000 points
+ [ARBUSDT] 📊 OI Data Range: 2026-10-17T11:15:00.000Z → 2026-09-30T19:00:00.000Z
+ [ARBUSDT] 📊 First OI: 164415221, Last OI: 195786927.2
+ [ARBUSDT] [SWING] Backend service already running
+ ✅ [8:24:43 a. m.] [SingleSymbolAnalyzer] Swing Detector sincronizado (enabled + interval + days)
+ ✓ Suscrito: 
+ [CandleCache] 🔄 Merge: 5780 cached + 1 new = 5780 total
+ [ARBUSDT] ✅ Incremental: +1 velas nuevas = 5780 total
+ [ARBUSDT] ✅ Histórico final: 5780 velas
+ [ARBUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5780 velas)
+ [LiquidationClusters] ⚠️ _enrichClusters: no hay clusters para enriquecer
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=found(enabled=true)
+ [ARBUSDT] [SWING] renderOverlay: signals=0, zones=0, visibleCandles=2238, hasPriceContext=true
+ [LiquidationClusters] 📊 renderOverlay called but no clusters to render (enabled=true)
+ [ARBUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+ [ARBUSDT] ⚠️ No OI match found for candle 2026-09-26T06:00:00.000Z. Sample OI timestamps: Array(3)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] [SWING] refresh(): agregado a priority2 (enabled=true)
+ [IndicatorCache] 💾 vwap@ARBUSDT desde memoria
+ [CandleCache] ✅ ARBUSDT@15 - guardado (5780 velas, memoria: 3/4)
+ [ARBUSDT] [SWING] fetchData() INICIO - enabled=true
+ [ARBUSDT] [SWING] Backend service already running
+ [CandleCache] 🔄 Merge: 5780 cached + 1 new = 5780 total
+ [ARBUSDT] ✅ Incremental: +1 velas nuevas = 5780 total
+ [ARBUSDT] ✅ Histórico final: 5780 velas
+ [ARBUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5780 velas)
+ [LiquidationClusters] ⚠️ _enrichClusters: no hay clusters para enriquecer
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=found(enabled=true)
+ [ARBUSDT] [SWING] renderOverlay: signals=0, zones=0, visibleCandles=2238, hasPriceContext=true
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] [SWING] refresh(): agregado a priority2 (enabled=true)
+ [IndicatorCache] 💾 vwap@ARBUSDT desde memoria
+ [CandleCache] ✅ ARBUSDT@15 - guardado (5780 velas, memoria: 3/4)
+ [ARBUSDT] [SWING] fetchData() INICIO - enabled=true
+ [ARBUSDT] [SWING] Backend service already running
+ [LiquidationClusters] ✅ Response received in 4631ms (status: 200)
+ [LiquidationClusters] 📦 Data parsed: Object
+ [LiquidationClusters] ✅ ARBUSDT: 50 clusters cargados
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+ [ARBUSDT] [SWING] renderOverlay: signals=0, zones=0, visibleCandles=2238, hasPriceContext=true
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [LiquidationClusters] 🔄 Redraw requested
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] SwingDetector initialized with 60 days
+ [ARBUSDT] [SWING] fetchSignals() fetching: http://127.0.0.1:10000/api/swing/signals/ARBUSDT
+ [ARBUSDT] [SWING] fetchStatus() OK: 0 zones (service enabled=true, running=true)
+ [ARBUSDT] [SWING] fetchSignals() OK: 300/300 signals match interval=15
+ [ARBUSDT] [SWING] fetchData() FIN - signals=300, zones=0
+ [ARBUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/ARBUSDT?interval=15&days=60
+ [ARBUSDT] ✅ Open Interest loaded: 2000 points
+ [ARBUSDT] 📊 OI Data Range: 2026-10-17T11:15:00.000Z → 2026-09-30T19:00:00.000Z
+ [ARBUSDT] 📊 First OI: 164415221, Last OI: 195786927.2
+ ✅ [8:24:55 a. m.] [Manager] [ARBUSDT] startAllPolling() llamado - 5 indicadores
+ [ARBUSDT] [SWING] startAllPolling(): Swing Detector found (enabled=true, hasStartPolling=true)
+ ✅ [8:24:55 a. m.] [Manager] [ARBUSDT] -> Llamando startPollingIfReady() para VWAP
+ [PollingCoordinator] Registered: VWAP_ARBUSDT (interval: 60000ms, priority: 2)
+ ✅ [8:24:55 a. m.] [Manager] [ARBUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [ARBUSDT] SwingDetector startPollingIfReady: interval=false, enabled=true
+ [ARBUSDT] SwingDetector polling started (signals: 30000ms, status: 60000ms)
+ ✅ [8:24:55 a. m.] [Manager] [ARBUSDT] Polling iniciado para todos los indicadores
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=found(enabled=true)
+ [ARBUSDT] [SWING] renderOverlay: signals=300, zones=0, visibleCandles=2238, hasPriceContext=true
+ [ARBUSDT] [SWING] RENDERED 300 arrows on chart
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] SwingDetector initialized with 60 days
+ [IndicatorCache] 💾 swing@ARBUSDT desde memoria
+ [ARBUSDT] [SWING] fetchSignals() CACHE HIT: 300 signals
+ [ARBUSDT] [SWING] fetchStatus() OK: 0 zones (service enabled=true, running=true)
+ [ARBUSDT] [SWING] fetchData() FIN - signals=300, zones=0
+ [ARBUSDT] SwingDetector initialized with 60 days
+ [IndicatorCache] 💾 swing@ARBUSDT desde memoria
+ [ARBUSDT] [SWING] fetchSignals() CACHE HIT: 300 signals
+ [ARBUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/ARBUSDT?interval=15&days=60
+ [ARBUSDT] [SWING] fetchStatus() OK: 0 zones (service enabled=true, running=true)
+ [ARBUSDT] [SWING] fetchData() FIN - signals=300, zones=0
+ [ARBUSDT] [SWING] fetchData completado via toggle, signals=300, requestRedraw=true
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] ✅ Open Interest loaded: 2000 points
+ [ARBUSDT] 📊 OI Data Range: 2026-10-17T11:15:00.000Z → 2026-09-30T19:00:00.000Z
+ [ARBUSDT] 📊 First OI: 164415221, Last OI: 195786927.2
+ ✅ [8:24:55 a. m.] [Manager] [ARBUSDT] startAllPolling() llamado - 5 indicadores
+ [ARBUSDT] [SWING] startAllPolling(): Swing Detector found (enabled=true, hasStartPolling=true)
+ ✅ [8:24:55 a. m.] [Manager] [ARBUSDT] -> Llamando startPollingIfReady() para VWAP
+ ✅ [8:24:55 a. m.] [Manager] [ARBUSDT] -> Llamando startPollingIfReady() para Swing Detector
+ [ARBUSDT] SwingDetector startPollingIfReady: interval=true, enabled=true
+ ✅ [8:24:55 a. m.] [Manager] [ARBUSDT] Polling iniciado para todos los indicadores
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=found(enabled=true)
+ [ARBUSDT] [SWING] renderOverlay: signals=300, zones=0, visibleCandles=2238, hasPriceContext=true
+ [ARBUSDT] [SWING] RENDERED 300 arrows on chart
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [IndicatorCache] 💾 swing@ARBUSDT desde memoria
+ [ARBUSDT] [SWING] fetchSignals() CACHE HIT: 300 signals
+ [ARBUSDT] drawChart: 5781 velas disponibles, zoom=0.022, chartWidth=1119, mostrando=2238, userZoomed=true
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=found(enabled=true)
+ [ARBUSDT] [SWING] renderOverlay: signals=300, zones=0, visibleCandles=2238, hasPriceContext=true
+ [ARBUSDT] [SWING] RENDERED 300 arrows on chart
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] [SWING] renderOverlay: signals=300, zones=0, visibleCandles=2238, hasPriceContext=true
+ [ARBUSDT] [SWING] RENDERED 300 arrows on chart
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [ARBUSDT] 📊 Histogram Mode: 2238 candles, 2000 OI matches, 2000 non-zero deltas
+ [ARBUSDT] 🎨 RENDER Histogram: data.length=2238
+ [ARBUSDT] 🎨 RENDER: maxDelta=19651430.400000006, sample deltas: Array(10)
+ [Registry] 🗑️ Desregistrado manager para ARBUSDT (total: 0)
+ [PollingCoordinator] Unregistered: VWAP_ARBUSDT
+ [ARBUSDT] SwingDetector signal polling stopped
+ [ARBUSDT] SwingDetector status polling stopped
+ [LiquidationClusters] Destruyendo ARBUSDT...
+ [LiquidationClusters] setEnabled(false) para ARBUSDT
+ [LiquidationClusters] Deshabilitando indicador...
+ [LiquidationClusters] ARBUSDT deshabilitado
+ [LiquidationClusters] ✅ ARBUSDT destruido completamente
+ [ARBUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ARBUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [LiquidationClusters] Inicializado para ARBUSDT
+ [ARBUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION ARBUSDT@15: 5780 velas sin gaps
+ [Registry] ✅ Registrado manager para ARBUSDT (total: 1)
+ [ARBUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/ARBUSDT?interval=15&days=60
+ [IndicatorCache] 💾 vwap@ARBUSDT desde memoria
+ [ARBUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=4
+ [ARBUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=4
+ [LiquidationClusters] setEnabled(true) para ARBUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/ARBUSDT
+ [ARBUSDT] Carga INCREMENTAL: desde 19/10/2026, 8:00:00 a.m. (5780 velas en cache, 99%)
+ [ARBUSDT] ✅ Open Interest loaded: 2000 points
+ [ARBUSDT] 📊 OI Data Range: 2026-10-17T11:15:00.000Z → 2026-09-30T19:00:00.000Z
+ [ARBUSDT] 📊 First OI: 164415221, Last OI: 195786927.2
+ ✓ Suscrito: 
+ [LiquidationClusters] ✅ Response received in 1010ms (status: 200)
+ [LiquidationClusters] 📦 Data parsed: Object
+ [LiquidationClusters] ✅ ARBUSDT: 50 clusters cargados
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+ [LiquidationClusters] 🔄 Redraw requested
+ [CandleCache] 🔄 Merge: 5780 cached + 1 new = 5780 total
+ [ARBUSDT] ✅ Incremental: +1 velas nuevas = 5780 total
+ [ARBUSDT] ✅ Histórico final: 5780 velas
+ [ARBUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5780 velas)
+ [LiquidationClusters] 🔄 Primera actualización de velas - enriqueciendo 50 clusters...
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] ✅ Precio desde candles param: $0.20
+ [LiquidationClusters] currentPrice: $0.20
+ [LiquidationClusters] Top 5 por fuerza magnetica:
+   1. $0.18 | LONG | Vol: $0.06M | Dist: 10.8% | Mag: 84.5%
+   2. $0.20 | SHORT | Vol: $0.04M | Dist: 0.1% | Mag: 78.5%
+   3. $0.19 | SHORT | Vol: $0.03M | Dist: 3.0% | Mag: 52.1%
+   4. $0.18 | LONG | Vol: $0.03M | Dist: 10.3% | Mag: 49.2%
+   5. $0.20 | LONG | Vol: $0.02M | Dist: 0.6% | Mag: 48.7%
+ [LiquidationClusters] ✅ Enriquecimiento exitoso (50 clusters) - forzando redraw
+ [ARBUSDT] [RENDER] renderOverlays: 4 total, 3 con renderOverlay, 3 enabled. Swing=NOT FOUND
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [CandleCache] ✅ ARBUSDT@15 - guardado (5780 velas, memoria: 3/4)
+ [Registry] 🗑️ Desregistrado manager para ARBUSDT (total: 0)
+ [LiquidationClusters] Destruyendo ARBUSDT...
+ [LiquidationClusters] setEnabled(false) para ARBUSDT
+ [LiquidationClusters] Deshabilitando indicador...
+ [LiquidationClusters] ARBUSDT deshabilitado
+ [LiquidationClusters] ✅ ARBUSDT destruido completamente
+ [ARBUSDT] 🚀 Componente montado, iniciando...
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [ARBUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [LiquidationClusters] Inicializado para ARBUSDT
+ [ARBUSDT] ZoneVisualizerIndicator: Inicializado
+ [CandleCache] OK VALIDATION ARBUSDT@15: 5780 velas sin gaps
+ [Registry] ✅ Registrado manager para ARBUSDT (total: 1)
+ [ARBUSDT] 📊 Open Interest: Fetching from http://127.0.0.1:10000/api/open-interest/ARBUSDT?interval=15&days=60
+ [IndicatorCache] 💾 vwap@ARBUSDT desde memoria
+ [ARBUSDT] [Swing Detector] toggleIndicator(Swing Detector, false): found=false, totalIndicators=5
+ [ARBUSDT] [Liquidation Clusters] toggleIndicator(Liquidation Clusters, true): found=true, totalIndicators=5
+ [LiquidationClusters] setEnabled(true) para ARBUSDT
+ [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/ARBUSDT
+ [ARBUSDT] Carga INCREMENTAL: desde 19/10/2026, 8:00:00 a.m. (5780 velas en cache, 99%)
+ [ARBUSDT] ✅ Open Interest loaded: 2000 points
+ [ARBUSDT] 📊 OI Data Range: 2026-10-17T11:15:00.000Z → 2026-09-30T19:00:00.000Z
+ [ARBUSDT] 📊 First OI: 164415221, Last OI: 195786927.2
+ ✓ Suscrito: 
+ [LiquidationClusters] ✅ Response received in 593ms (status: 200)
+ [LiquidationClusters] 📦 Data parsed: Object
+ [LiquidationClusters] ✅ ARBUSDT: 50 clusters cargados
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+ [LiquidationClusters] 🔄 Redraw requested
+ [CandleCache] 🔄 Merge: 5780 cached + 1 new = 5780 total
+ [ARBUSDT] ✅ Incremental: +1 velas nuevas = 5780 total
+ [ARBUSDT] ✅ Histórico final: 5780 velas
+ [ARBUSDT] 🔔 Notificando a Liquidation Clusters de velas cargadas (5780 velas)
+ [LiquidationClusters] 🔄 Primera actualización de velas - enriqueciendo 50 clusters...
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] ✅ Precio desde candles param: $0.20
+ [LiquidationClusters] currentPrice: $0.20
+ [LiquidationClusters] Top 5 por fuerza magnetica:
+   1. $0.18 | LONG | Vol: $0.06M | Dist: 10.8% | Mag: 84.5%
+   2. $0.20 | SHORT | Vol: $0.04M | Dist: 0.1% | Mag: 78.5%
+   3. $0.19 | SHORT | Vol: $0.03M | Dist: 3.0% | Mag: 52.1%
+   4. $0.18 | LONG | Vol: $0.03M | Dist: 10.3% | Mag: 49.2%
+   5. $0.20 | LONG | Vol: $0.02M | Dist: 0.6% | Mag: 48.7%
+ [LiquidationClusters] ✅ Enriquecimiento exitoso (50 clusters) - forzando redraw
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [CandleCache] 💾 ARBUSDT@15 - desde memoria (5780 velas)
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [CandleCache] ✅ ARBUSDT@15 - guardado (5780 velas, memoria: 3/4)
+ [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+ [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+ [LiquidationClusters] maxVolume: $0.06M
+ [LiquidationClusters] chartManager exists: true
+ [LiquidationClusters] chartManager.candles exists: false
+ [LiquidationClusters] chartManager.candles length: 0
+ [LiquidationClusters] candles param passed: false
+ [LiquidationClusters] candles param length: 0
+ [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0
+LiquidationClustersIndicator.js:373 [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0
+LiquidationClustersIndicator.js:373 [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0
+LiquidationClustersIndicator.js:373 [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0
+LiquidationClustersIndicator.js:373 [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0
+LiquidationClustersIndicator.js:373 [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0
+LiquidationClustersIndicator.js:373 [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0
+LiquidationClustersIndicator.js:373 [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0
+MiniChart.jsx:772 [ARBUSDT] drawChart: 5781 velas disponibles, zoom=0.022, chartWidth=772, mostrando=1544, userZoomed=true
+IndicatorManager.js:542 [ARBUSDT] [RENDER] renderOverlays: 5 total, 4 con renderOverlay, 4 enabled. Swing=NOT FOUND
+LiquidationClustersIndicator.js:373 [LiquidationClusters] 🎨 Rendering 50 clusters
+LiquidationClustersIndicator.js:237 [LiquidationClusters] 🧲 Iniciando enriquecimiento de 50 clusters...
+LiquidationClustersIndicator.js:249 [LiquidationClusters] maxVolume: $0.06M
+LiquidationClustersIndicator.js:256 [LiquidationClusters] chartManager exists: true
+LiquidationClustersIndicator.js:257 [LiquidationClusters] chartManager.candles exists: false
+LiquidationClustersIndicator.js:258 [LiquidationClusters] chartManager.candles length: 0
+LiquidationClustersIndicator.js:259 [LiquidationClusters] candles param passed: false
+LiquidationClustersIndicator.js:260 [LiquidationClusters] candles param length: 0

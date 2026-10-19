@@ -8270,5 +8270,21 @@
     "source": "MANUAL_TRADE",
     "order_type": "Limit",
     "status": "success"
+  },
+  {
+    "timestamp": "2026-10-19T01:58:48.661963",
+    "symbol": "ARBUSDT",
+    "side": "Buy",
+    "entry_price": 0.19123087174402234,
+    "quantity_coin": 522.928,
+    "quantity_usdt": 99.99997729935811,
+    "stop_loss": 0.18416601059002705,
+    "take_profit": 0.20537430190655365,
+    "sl_mode": "custom",
+    "pattern": "MANUAL_LIMIT",
+    "confidence": 100,
+    "source": "MANUAL_TRADE",
+    "order_type": "Limit",
+    "status": "success"
   }
 ]

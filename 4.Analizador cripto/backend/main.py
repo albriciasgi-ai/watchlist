@@ -3020,6 +3020,142 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
             "error": str(e)
         }
 
+# ==================== LIQUIDATION CLUSTERS ENDPOINT ====================
+
+@app.get("/api/liquidations/clusters/{symbol}")
+async def get_liquidation_clusters(symbol: str, minutes: int = 1440):
+    """
+    Obtiene liquidaciones REALES (históricas) desde MarginPad API
+
+    IMPORTANTE: Este endpoint retorna liquidaciones que YA OCURRIERON,
+    no predicciones de dónde podrían ocurrir.
+
+    Args:
+        symbol: Simbolo de trading (ej: BTCUSDT)
+        minutes: Ventana temporal en minutos (default 1440 = 24h)
+                 Opciones: 60, 240, 1440 (1h, 4h, 24h)
+
+    Returns:
+        Niveles de precio donde ocurrieron liquidaciones reales con volumen
+    """
+    try:
+        # Normalizar simbolo: BTCUSDT -> BTC, ETHUSDT -> ETH
+        base_symbol = symbol.replace('USDT', '').replace('PERP', '')
+
+        print(f"[LIQUIDATIONS] Fetching REAL liquidations for {symbol} ({base_symbol}) last {minutes}min")
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            # MarginPad liquidations/recent endpoint (liquidaciones REALES históricas)
+            url = "https://marginpad.io/api/v1/liquidations/recent"
+            params = {"symbol": base_symbol}
+
+            print(f"[LIQUIDATIONS] Request URL: {url}?symbol={base_symbol}")
+
+            response = await client.get(url, params=params)
+
+            if response.status_code != 200:
+                print(f"[ERROR] MarginPad API returned {response.status_code}")
+                return {
+                    "symbol": symbol,
+                    "clusters": [],
+                    "success": False,
+                    "error": f"HTTP {response.status_code}"
+                }
+
+            data = response.json()
+
+            # Verificar estructura de respuesta
+            if not isinstance(data, dict) or "buckets" not in data:
+                print(f"[ERROR] Unexpected response format: {type(data)}")
+                return {
+                    "symbol": symbol,
+                    "clusters": [],
+                    "success": False,
+                    "error": "Invalid response format"
+                }
+
+            # MarginPad retorna: { "symbol": "BTC", "minutes": 1440, "buckets": [...] }
+            buckets = data.get("buckets", [])
+
+            # Transformar buckets a formato de clusters
+            clusters = []
+
+            for bucket in buckets:
+                price = float(bucket.get("price", 0))
+                long_volume = float(bucket.get("long", 0))
+                short_volume = float(bucket.get("short", 0))
+                count = int(bucket.get("count", 0))
+
+                # Crear cluster para liquidaciones LONG si hay volumen
+                if long_volume > 0:
+                    clusters.append({
+                        "price": price,
+                        "side": "long",
+                        "volume": long_volume,  # Volumen real liquidado en USD
+                        "count": count,  # Número de liquidaciones
+                        "total_volume": long_volume + short_volume
+                    })
+
+                # Crear cluster para liquidaciones SHORT si hay volumen
+                if short_volume > 0:
+                    clusters.append({
+                        "price": price,
+                        "side": "short",
+                        "volume": short_volume,  # Volumen real liquidado en USD
+                        "count": count,
+                        "total_volume": long_volume + short_volume
+                    })
+
+            # Ordenar por volumen total descendente (los más importantes primero)
+            clusters.sort(key=lambda x: x["total_volume"], reverse=True)
+
+            # Limitar a top 50 para no saturar (opcional)
+            clusters = clusters[:50]
+
+            print(f"[SUCCESS] {symbol}: {len(clusters)} liquidation levels from {len(buckets)} price buckets")
+
+            # Mostrar top 10 para debug
+            if clusters:
+                print(f"[TOP 10 LIQUIDATION LEVELS]")
+                for i, c in enumerate(clusters[:10]):
+                    print(f"  {i+1}. ${c['price']:,.0f} - {c['side'].upper()} - ${c['volume']:,.0f} ({c['count']} liquidations)")
+
+            # Calcular estadísticas
+            long_count = len([c for c in clusters if c['side'] == 'long'])
+            short_count = len([c for c in clusters if c['side'] == 'short'])
+            total_volume = sum(c['volume'] for c in clusters)
+
+            return {
+                "symbol": symbol,
+                "clusters": clusters,
+                "success": True,
+                "total_clusters": len(clusters),
+                "long_clusters": long_count,
+                "short_clusters": short_count,
+                "total_volume": total_volume,
+                "time_window_minutes": data.get("minutes", minutes),
+                "timestamp": int(time.time() * 1000)
+            }
+
+    except httpx.TimeoutException:
+        print(f"[ERROR] Timeout fetching liquidations for {symbol}")
+        return {
+            "symbol": symbol,
+            "clusters": [],
+            "success": False,
+            "error": "Request timeout"
+        }
+    except Exception as e:
+        print(f"[ERROR] Liquidations {symbol}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "symbol": symbol,
+            "clusters": [],
+            "success": False,
+            "error": str(e)
+        }
+
 @app.post("/api/clear-cache")
 
 

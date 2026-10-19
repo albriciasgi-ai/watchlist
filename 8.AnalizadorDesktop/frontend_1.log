@@ -1,0 +1,89 @@
+ [Preload] Script cargado correctamente
+ [Preload] Plataforma: win32
+ [Preload] Electron: 33.4.11
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ [Config] API_BASE_URL: http://127.0.0.1:10000
+ [Config] Electron: Si
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ ====================================
+ Analizador Desktop - Frontend
+ ====================================
+ [Electron] Ejecutando en Electron
+ [Electron] Versiones: Object
+ [Electron] Plataforma: win32
+ [App] Backend esperado en: http://localhost:10000
+ [ZoneDetector] interval=15, maxDays=730
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+ [LiquidationClusters] Inicializado para BTCUSDT
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+PollingCoordinator.js:49 [PollingCoordinator] Started
+Logger.js:100 ✅ [1:35:29 a. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManager.js:452 [BTCUSDT] [SWING] toggleIndicator(Swing Detector, false): found=false, totalIndicators=2
+LiquidationClustersIndicator.js:56 [LiquidationClusters] setEnabled(true) para BTCUSDT
+LiquidationClustersIndicator.js:131 [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/BTCUSDT
+CandleCache.js:79 [CandleCache] 💾 BTCUSDT@15 - desde IndexedDB (1444 velas)
+CandleCache.js:264 [CandleCache] OK VALIDATION BTCUSDT@15: 1444 velas sin gaps
+MiniChart.jsx:1344 [BTCUSDT] Carga INCREMENTAL: desde 19/10/2026, 1:15:00 a.m. (1444 velas en cache, 94%)
+robustness.js:415 [CacheCleanup] Complete: 0/14 candles, 0/20 indicators removed
+WebSocketManager.js:61 WebSocket Manager conectado [15]
+WebSocketManager.js:79 ✓ Suscrito: 
+SymbolList.jsx:75 [Prefetch] Activado (10s despues de carga)
+CandleCache.js:192 [CandleCache] 🔄 Merge: 1444 cached + 1 new = 1444 total
+MiniChart.jsx:1410 [BTCUSDT] ✅ Incremental: +1 velas nuevas = 1444 total
+MiniChart.jsx:1434 [BTCUSDT] ✅ Histórico final: 1444 velas
+MiniChart.jsx:772 [BTCUSDT] drawChart: 1445 velas disponibles, zoom=0.092, chartWidth=1101, mostrando=1499, userZoomed=false
+IndicatorManager.js:532 [BTCUSDT] [RENDER] renderOverlays: 2 total, 2 con renderOverlay, 2 enabled. Swing=NOT FOUND
+LiquidationClustersIndicator.js:296 [LiquidationClusters] 📊 renderOverlay called but no clusters to render (enabled=true)
+ZoneVisualizerIndicator.js:233 [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+Logger.js:100 ✅ [1:35:41 a. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 2 indicadores
+IndicatorManager.js:1599 [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
+Logger.js:100 ✅ [1:35:41 a. m.] [Manager] [BTCUSDT] Polling iniciado para todos los indicadores
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@15 - guardado (1444 velas, memoria: 1/4)
+IndicatorManager.js:532 [BTCUSDT] [RENDER] renderOverlays: 2 total, 2 con renderOverlay, 2 enabled. Swing=NOT FOUND
+IndicatorManager.js:532 [BTCUSDT] [RENDER] renderOverlays: 2 total, 2 con renderOverlay, 2 enabled. Swing=NOT FOUND
+IndicatorManager.js:532 [BTCUSDT] [RENDER] renderOverlays: 2 total, 2 con renderOverlay, 2 enabled. Swing=NOT FOUND
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+LiquidationClustersIndicator.js:427 [LiquidationClusters] Destruyendo BTCUSDT...
+MiniChart.jsx:2298 [BTCUSDT] 🚀 Componente montado, iniciando...
+CandleCache.js:68 [CandleCache] 💾 BTCUSDT@15 - desde memoria (1444 velas)
+IndicatorManager.js:151 [BTCUSDT] [SWING] initialize(): NO creado (indicatorStates['Swing Detector']=false)
+LiquidationClustersIndicator.js:34 [LiquidationClusters] Inicializado para BTCUSDT
+ZoneVisualizerIndicator.js:95 [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+CandleCache.js:241 [CandleCache] BTCUSDT@15 - Cache incompleto: 1444 velas (esperadas: ~11520, ratio: 12.5%)
+CandleCache.js:242 [CandleCache] Se usara carga incremental para complementar el cache
+CandleCache.js:264 [CandleCache] OK VALIDATION BTCUSDT@15: 1444 velas sin gaps
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+IndicatorManager.js:452 [BTCUSDT] [SWING] toggleIndicator(Swing Detector, false): found=false, totalIndicators=2
+LiquidationClustersIndicator.js:56 [LiquidationClusters] setEnabled(true) para BTCUSDT
+LiquidationClustersIndicator.js:131 [LiquidationClusters] 📡 Fetching: http://127.0.0.1:10000/api/liquidations/clusters/BTCUSDT
+MiniChart.jsx:1334 [BTCUSDT] Cache insuficiente: 1444/11620 velas (12%) - carga COMPLETA
+MiniChart.jsx:1357 [BTCUSDT] 📊 Usando carga con streaming (11620 velas estimadas)
+MiniChart.jsx:1266 [BTCUSDT] 📊 Iniciando carga STREAM: 120 dias @ 15
+robustness.js:240 [HealthCheck] Stopped
+robustness.js:505 [Robustness] Stopped
+PollingCoordinator.js:71 [PollingCoordinator] Stopped
+Logger.js:100 ✅ [1:35:50 a. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Stopped
+IndicatorManagerRegistry.js:12 [Registry] 🗑️ Desregistrado manager para BTCUSDT (total: 0)
+LiquidationClustersIndicator.js:427 [LiquidationClusters] Destruyendo BTCUSDT...
+WebSocketManager.js:79 ✓ Suscrito: 
+LiquidationClustersIndicator.js:138 [LiquidationClusters] ✅ Response received in 946ms (status: 200)
+LiquidationClustersIndicator.js:145 [LiquidationClusters] 📦 Data parsed: Object
+LiquidationClustersIndicator.js:155 [LiquidationClusters] ✅ BTCUSDT: 50 clusters cargados
+LiquidationClustersIndicator.js:160 [LiquidationClusters] 🧲 Enriched 0 clusters with magnetic strength
+LiquidationClustersIndicator.js:168 [LiquidationClusters] 🔄 Redraw requested
+MiniChart.jsx:1283 [BTCUSDT] ✅ Stream completado: 11520 velas
+MiniChart.jsx:1415 [BTCUSDT] ✅ Completa: 11519 velas
+MiniChart.jsx:1434 [BTCUSDT] ✅ Histórico final: 11519 velas
+Logger.js:100 ✅ [1:35:58 a. m.] [Manager] [BTCUSDT] startAllPolling() llamado - 2 indicadores
+IndicatorManager.js:1599 [BTCUSDT] [SWING] startAllPolling(): Swing Detector NOT FOUND
+Logger.js:100 ✅ [1:35:58 a. m.] [Manager] [BTCUSDT] Polling iniciado para todos los indicadores
+CandleCache.js:164 [CandleCache] ✅ BTCUSDT@15 - guardado (11519 velas, memoria: 1/4)
+ WebSocket Manager cerrado

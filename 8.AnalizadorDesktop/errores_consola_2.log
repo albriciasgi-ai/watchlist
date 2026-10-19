@@ -1,0 +1,136 @@
+127.0.0.1:10000/api/drawings/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [12:28:40 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:560:30)
+    at MiniChart.jsx:2581:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=6acb148a:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=6acb148a:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=6acb148a:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=6acb148a:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=6acb148a:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=6acb148a:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=6acb148a:19447:22)
+    at chunk-ZFBEYDM4.js?v=6acb148a:19328:17
+error @ Logger.js:88
+127.0.0.1:10000/api/tickers?symbols=BTCUSDT,ETHUSDT,XRPUSDT,TRXUSDT,GALAUSDT,SUIUSDT,TRBUSDT,SOLUSDT,ADAUSDT,DOGEUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SymbolList.jsx:239 Error fetching price changes: TypeError: Failed to fetch
+    at SymbolList.jsx:213:30
+    at SymbolList.jsx:247:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=6acb148a:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=6acb148a:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=6acb148a:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=6acb148a:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=6acb148a:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=6acb148a:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=6acb148a:19447:22)
+    at chunk-ZFBEYDM4.js?v=6acb148a:19328:17
+(anonymous) @ SymbolList.jsx:239
+127.0.0.1:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=6acb148a:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=6acb148a:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=6acb148a:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=6acb148a:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=6acb148a:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=6acb148a:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=6acb148a:19447:22)
+    at chunk-ZFBEYDM4.js?v=6acb148a:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+127.0.0.1:10000/api/zones/presets:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+ZoneDetectorSettings.jsx:225 [ZoneDetector] Error cargando presets del backend: TypeError: Failed to fetch
+    at ZoneDetectorSettings.jsx:219:27
+    at ZoneDetectorSettings.jsx:227:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=6acb148a:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=6acb148a:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=6acb148a:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=6acb148a:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=6acb148a:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=6acb148a:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=6acb148a:19447:22)
+    at chunk-ZFBEYDM4.js?v=6acb148a:19328:17
+(anonymous) @ ZoneDetectorSettings.jsx:225
+127.0.0.1:10000/api/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+robustness.js:195 [HealthCheck] Backend disconnected: Failed to fetch
+checkBackendHealth @ robustness.js:195
+127.0.0.1:10000/api/realtime/set-interval:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/zones/realtime/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/swing/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/vwap-service/data/BTCUSDT?days=1&interval=60&vwapType=session&rollingPeriod=20:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/sr2/BTCUSDT?interval=60&days=1&swing_bars=3&cluster_distance_pct=0.5&min_touches=2&max_levels=5&price_range_pct=3&min_volume_zscore=0:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SupportResistance2Indicator.js:166 [BTCUSDT] S&R v2 fetch error: TypeError: Failed to fetch
+    at SupportResistance2Indicator.fetchData (SupportResistance2Indicator.js:133:30)
+fetchData @ SupportResistance2Indicator.js:166
+127.0.0.1:10000/api/historical/BTCUSDT?interval=60&days=1&t=1792387718853:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+127.0.0.1:10000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+    at useGlobalAlerts.js:380:5
+    at commitHookEffectListMount (chunk-ZFBEYDM4.js?v=6acb148a:16915:34)
+    at commitPassiveMountOnFiber (chunk-ZFBEYDM4.js?v=6acb148a:18156:19)
+    at commitPassiveMountEffects_complete (chunk-ZFBEYDM4.js?v=6acb148a:18129:17)
+    at commitPassiveMountEffects_begin (chunk-ZFBEYDM4.js?v=6acb148a:18119:15)
+    at commitPassiveMountEffects (chunk-ZFBEYDM4.js?v=6acb148a:18109:11)
+    at flushPassiveEffectsImpl (chunk-ZFBEYDM4.js?v=6acb148a:19490:11)
+    at flushPassiveEffects (chunk-ZFBEYDM4.js?v=6acb148a:19447:22)
+    at chunk-ZFBEYDM4.js?v=6acb148a:19328:17
+(anonymous) @ useGlobalAlerts.js:73
+127.0.0.1:10000/api/sr2/BTCUSDT?interval=60&days=1&swing_bars=3&cluster_distance_pct=0.5&min_touches=2&max_levels=5&price_range_pct=3&min_volume_zscore=0:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+SupportResistance2Indicator.js:166 [BTCUSDT] S&R v2 fetch error: TypeError: Failed to fetch
+    at SupportResistance2Indicator.fetchData (SupportResistance2Indicator.js:133:30)
+fetchData @ SupportResistance2Indicator.js:166
+127.0.0.1:10000/api/historical/BTCUSDT?interval=60&days=1&t=1792387718853:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+MiniChart.jsx:1485 Uncaught TypeError: Cannot read properties of null (reading 'checkAndRefreshIfNeeded')
+    at MiniChart.jsx:1485:41
+ [HealthCheck] Backend disconnected: signal is aborted without reason
+checkBackendHealth @ robustness.js:195
+await in checkBackendHealth
+(anonymous) @ robustness.js:227
+ [LiquidationClusters] Timeout fetching BTCUSDT
+fetchData @ LiquidationClustersIndicator.js:139
+await in fetchData
+(anonymous) @ LiquidationClustersIndicator.js:82
+_executeCallback @ PollingCoordinator.js:217
+(anonymous) @ PollingCoordinator.js:194

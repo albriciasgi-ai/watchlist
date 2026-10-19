@@ -27,7 +27,8 @@
       "WebFetch(domain:www.iqcapital.io)",
       "Bash(nul)",
       "Bash(dir /s /b *Zone*.js*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(node -c:*)"
     ],
     "deny": [],
     "ask": []

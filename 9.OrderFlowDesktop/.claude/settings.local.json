@@ -1,27 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir:*)",
-      "Bash(taskkill:*)",
-      "Bash(start cmd:*)",
-      "Bash(timeout /t 15 /nobreak)",
-      "WebFetch(domain:p01--altagracia--rxv8nrbhxln9.code.run)",
-      "Bash(curl:*)",
-      "Bash(nul)",
-      "Bash(python:*)",
-      "Bash(C:UsersinvenOneDriveDocumentosGitHubwatchlist9.OrderFlowDesktopfootprint_response.json)",
-      "Bash(node -e:*)",
-      "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\9.OrderFlowDesktop\\check_footprints.py\")",
-      "Bash(findstr:*)",
-      "Bash(node test_aggregation.js:*)",
-      "WebSearch",
-      "WebFetch(domain:www.coinglass.com)",
-      "WebFetch(domain:app.spreadfighter.com)",
-      "WebFetch(domain:docs.coinglass.com)",
-      "WebFetch(domain:api.coinalyze.net)",
-      "WebFetch(domain:bybit-exchange.github.io)",
-      "WebFetch(domain:bykaranteli.com)",
-      "WebFetch(domain:marginpad.io)"
+      "Bash(Get-FileHash \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\8.AnalizadorDesktop\\src\\components\\indicators\\LiquidationClustersIndicator.js\")",
+      "Bash(Select-Object Hash)",
+      "Bash(timeout /t 2 /nobreak)",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []

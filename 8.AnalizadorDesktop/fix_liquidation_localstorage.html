@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Liquidation Clusters LocalStorage</title>
+</head>
+<body>
+    <h1>Limpiando Liquidation Clusters de localStorage...</h1>
+    <pre id="output"></pre>
+    <script>
+        const output = document.getElementById('output');
+        
+        try {
+            // Leer el estado actual
+            const saved = localStorage.getItem('analyzer_indicators');
+            output.textContent += 'Estado actual:\n' + saved + '\n\n';
+            
+            if (saved) {
+                const indicators = JSON.parse(saved);
+                
+                // Forzar Liquidation Clusters a false
+                if (indicators['Liquidation Clusters'] !== undefined) {
+                    output.textContent += 'ANTES: Liquidation Clusters = ' + indicators['Liquidation Clusters'] + '\n';
+                    indicators['Liquidation Clusters'] = false;
+                    output.textContent += 'DESPUÉS: Liquidation Clusters = false\n\n';
+                    
+                    // Guardar
+                    localStorage.setItem('analyzer_indicators', JSON.stringify(indicators));
+                    output.textContent += '✅ localStorage actualizado correctamente\n';
+                    output.textContent += '\nNuevo estado:\n' + localStorage.getItem('analyzer_indicators');
+                } else {
+                    output.textContent += 'No se encontró "Liquidation Clusters" en localStorage\n';
+                }
+            } else {
+                output.textContent += 'No hay datos en localStorage\n';
+            }
+        } catch (err) {
+            output.textContent += '❌ Error: ' + err.message + '\n';
+        }
+        
+        output.textContent += '\n\n📌 Ahora puedes cerrar esta página y reiniciar la app Electron';
+    </script>
+</body>
+</html>

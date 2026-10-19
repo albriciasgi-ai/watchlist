@@ -706,5 +706,45 @@
         }
       }
     }
+  },
+  "ARBUSDT": {
+    "symbol": "ARBUSDT",
+    "intervals": {
+      "15": {
+        "rejection": {
+          "indicator_type": "rejection",
+          "config": {
+            "showMode": "validated",
+            "minConfidence": 70,
+            "alertEnabled": false,
+            "alertThreshold": 80,
+            "contexts": {
+              "volumeProfileDynamic": true,
+              "volumeProfileFixed": true,
+              "rangeDetector": true
+            },
+            "patterns": {
+              "hammer": {
+                "enabled": true,
+                "minWickRatio": 2
+              },
+              "shootingStar": {
+                "enabled": true,
+                "minWickRatio": 2
+              },
+              "engulfing": {
+                "enabled": true
+              },
+              "doji": {
+                "enabled": true,
+                "maxBodyRatio": 0.1
+              }
+            }
+          },
+          "calculated_levels": {},
+          "updated_at": 1792416219.9416795
+        }
+      }
+    }
   }
 }

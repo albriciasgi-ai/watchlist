@@ -21,6 +21,7 @@ import SwingDetectorIndicator from "./SwingDetectorIndicator";
 import SupportResistance2Indicator from "./SupportResistance2Indicator";
 import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator";
 import VolumeProfilePeriodicIndicator from "./VolumeProfilePeriodicIndicator";
+import LiquidationClustersIndicator from "./LiquidationClustersIndicator";
 import IndicatorPreloader from "../../utils/IndicatorPreloader";
 import { API_BASE_URL } from "../../config";
 import Logger from '../../utils/Logger.js';
@@ -162,6 +163,12 @@ class IndicatorManager {
       this.indicators.push(new VolumeProfilePeriodicIndicator(this.symbol, this.interval, this.days));
     }
 
+    // Liquidation Clusters - solo si habilitado
+    if (indicatorStates['Liquidation Clusters'] === true) {
+      log.debug(`[${this.symbol}] Creando Liquidation Clusters`);
+      this.indicators.push(new LiquidationClustersIndicator(this.symbol, this.interval, this));
+    }
+
     // Zone Visualizer - siempre disponible (las zonas se cargan bajo demanda)
     this.zoneVisualizerIndicator = new ZoneVisualizerIndicator(this.symbol, this.interval, this.days);
     this.zoneVisualizerIndicator.enabled = true;
@@ -223,6 +230,8 @@ class IndicatorManager {
         return new SupportResistance2Indicator(this.symbol, this.interval, this.days);
       case 'VP Periodic':
         return new VolumeProfilePeriodicIndicator(this.symbol, this.interval, this.days);
+      case 'Liquidation Clusters':
+        return new LiquidationClustersIndicator(this.symbol, this.interval, this);
       default:
         log.warn(`[${this.symbol}] Unknown indicator: ${name}`);
         return null;
@@ -439,20 +448,30 @@ class IndicatorManager {
   toggleIndicator(name, enabled) {
     let indicator = this.indicators.find(ind => ind.name === name);
 
-    if (name === 'Swing Detector') {
-      console.log(`[${this.symbol}] [SWING] toggleIndicator(${name}, ${enabled}): found=${!!indicator}, totalIndicators=${this.indicators.length}`);
+    if (name === 'Swing Detector' || name === 'Liquidation Clusters') {
+      console.log(`[${this.symbol}] [${name}] toggleIndicator(${name}, ${enabled}): found=${!!indicator}, totalIndicators=${this.indicators.length}`);
     }
 
     // 🚀 LAZY: Si se habilita y no existe, crearlo bajo demanda
     if (enabled && !indicator) {
-      log.debug(`[${this.symbol}] Creando ${name} bajo demanda (lazy)`);
+      console.log(`[${this.symbol}] 🔧 Creando ${name} bajo demanda (lazy)`);
       indicator = this._createIndicator(name);
       if (indicator) {
         indicator.indicatorManager = this;
         this.indicators.push(indicator);
+        console.log(`[${this.symbol}] ✅ ${name} creado exitosamente, total indicadores: ${this.indicators.length}`);
+
+        // Si las velas ya están cargadas, notificar al indicador inmediatamente
+        if (this.allCandles && this.allCandles.length > 0 && indicator.updateCandles) {
+          console.log(`[${this.symbol}] 🔔 Velas ya disponibles (${this.allCandles.length}) - notificando a ${name}`);
+          indicator.updateCandles(this.allCandles);
+        }
+
         if (name === 'Swing Detector') {
           console.log(`[${this.symbol}] [SWING] Creado bajo demanda, enabled=${indicator.enabled}`);
         }
+      } else {
+        console.error(`[${this.symbol}] ❌ ERROR: _createIndicator(${name}) retornó null/undefined`);
       }
     }
 
@@ -2854,6 +2873,14 @@ class IndicatorManager {
   onHistoricalCandlesLoaded(allCandles) {
     // ✅ Guardar referencia a las velas
     this.allCandles = allCandles;
+
+    // ✅ Notificar a todos los indicadores que tienen updateCandles
+    this.indicators.forEach(indicator => {
+      if (indicator.updateCandles && typeof indicator.updateCandles === 'function') {
+        console.log(`[${this.symbol}] 🔔 Notificando a ${indicator.name} de velas cargadas (${allCandles.length} velas)`);
+        indicator.updateCandles(allCandles);
+      }
+    });
 
     // ✅ Si DBT está habilitado y no ha hecho fetchData(), hacerlo ahora con las velas
     const dbtIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
