@@ -1,0 +1,16 @@
+Coinglass
+
+https://www.coinglass.com/liquidation-levels
+
+https://www.coinglass.com/pro/futures/LiquidationMap
+
+https://www.coinglass.com/pro/futures/LiquidationHeatMap   y sus diversos modelos, son 3.
+
+https://www.coinglass.com/liquidation-maxpain
+
+
+qué podemos utilizar + qué datos están disponibles para descargar por la API y qué tan antiguos pueden ser para
+poder usarlos para backtesting?
+
+
+

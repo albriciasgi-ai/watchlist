@@ -54,8 +54,8 @@ const FootprintArchivePanel = ({ isOpen, onClose }) => {
 
     const archiver = getFootprintArchiver();
 
-    // Usar 24 horas en lugar de 168 para evitar timeout en Northflank
-    const result = await archiver.archiveAll(24, (prog) => {
+    // Usar 720 horas (30 días / 1 mes) - datos disponibles en Northflank
+    const result = await archiver.archiveAll(720, (prog) => {
       setProgress(prog);
     });
 
@@ -213,7 +213,7 @@ const FootprintArchivePanel = ({ isOpen, onClose }) => {
               onClick={handleDownloadNow}
               disabled={downloading}
             >
-              {downloading ? '⏳ Descargando...' : '📥 Descargar Ahora (Última Semana)'}
+              {downloading ? '⏳ Descargando...' : '📥 Descargar Ahora (Último Mes - 30 días)'}
             </button>
           </div>
 

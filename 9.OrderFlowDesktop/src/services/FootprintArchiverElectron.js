@@ -21,7 +21,7 @@ class FootprintArchiverElectron {
         'TRXUSDT', 'DOGEUSDT', 'BNBUSDT', 'AVAXUSDT', 'ARBUSDT'
       ],
       interval: '1',  // SOLO 1 minuto (los intervalos mayores se agregan en frontend)
-      maxHoursPerRequest: 168,  // 7 días de historia (1 semana completa)
+      maxHoursPerRequest: 720,  // 30 días de historia (1 mes completo - disponible en Northflank)
       timeout: 180000  // 3 minutos (aumentado de 2 min)
     };
 
@@ -148,13 +148,19 @@ class FootprintArchiverElectron {
    * Usa IPC con Main Process para bypass de CORS.
    */
   async _fetchFromCloud(symbol, hours) {
-    console.log(`[FootprintArchiver] 🌐 Descargando ${symbol} (${hours}h)`);
+    const daysRequested = (hours / 24).toFixed(1);
+    console.log(`[FootprintArchiver] 🌐 Descargando ${symbol}: ${hours}h (~${daysRequested} días)`);
+    console.log(`[FootprintArchiver] 🔍 URL cloud: ${CLOUD_COLLECTOR_URL}/api/footprints/${symbol}?hours=${hours}&interval=${this.config.interval}`);
+
+    const startTime = Date.now();
 
     try {
       // Verificar que window.electron.downloadFootprints existe
       if (!window.electron || !window.electron.downloadFootprints) {
         throw new Error('window.electron.downloadFootprints no disponible - ejecutar en Electron');
       }
+
+      console.log(`[FootprintArchiver] ⏳ Esperando respuesta del cloud...`);
 
       // Descargar via Main Process (sin restricciones CORS)
       const footprints = await window.electron.downloadFootprints(
@@ -163,16 +169,32 @@ class FootprintArchiverElectron {
         this.config.interval
       );
 
-      console.log(`[FootprintArchiver] ✅ ${symbol}: ${footprints.length} footprints descargados`);
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
-      if (footprints.length === 0) {
-        console.warn(`[FootprintArchiver] ⚠️ ${symbol}: Cloud retornó 0 footprints`);
+      console.log(`[FootprintArchiver] ✅ ${symbol}: ${footprints.length} footprints descargados en ${elapsed}s`);
+
+      if (footprints.length > 0) {
+        // Calcular rango temporal de los datos descargados
+        const timestamps = footprints.map(fp => fp.candle_timestamp).sort((a, b) => a - b);
+        const oldestTs = timestamps[0];
+        const newestTs = timestamps[timestamps.length - 1];
+        const oldestDate = new Date(oldestTs).toLocaleString('es-ES');
+        const newestDate = new Date(newestTs).toLocaleString('es-ES');
+        const rangeDays = ((newestTs - oldestTs) / (1000 * 60 * 60 * 24)).toFixed(1);
+
+        console.log(`[FootprintArchiver] 🔍 ${symbol} RANGO DESCARGADO:`);
+        console.log(`[FootprintArchiver]   • Desde: ${oldestDate}`);
+        console.log(`[FootprintArchiver]   • Hasta: ${newestDate}`);
+        console.log(`[FootprintArchiver]   • Cobertura: ${rangeDays} días (~${timestamps.length} footprints de ${this.config.interval}min)`);
+      } else {
+        console.warn(`[FootprintArchiver] ⚠️ ${symbol}: Cloud retornó 0 footprints después de ${elapsed}s`);
       }
 
       return footprints;
 
     } catch (error) {
-      console.error(`[FootprintArchiver] ❌ ${symbol}: Error descargando:`, error.message);
+      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+      console.error(`[FootprintArchiver] ❌ ${symbol}: Error descargando después de ${elapsed}s:`, error.message);
       return [];
     }
   }
@@ -228,7 +250,8 @@ class FootprintArchiverElectron {
    * @returns {Promise<Object>} - Resultado
    */
   async archiveSymbol(symbol, hours = 168) {
-    console.log(`[FootprintArchiver] 📥 Archivando ${symbol}...`);
+    const daysRequested = (hours / 24).toFixed(1);
+    console.log(`[FootprintArchiver] 📥 Archivando ${symbol} (${hours}h = ~${daysRequested} días)...`);
 
     this.currentSymbol = symbol;
 
@@ -245,20 +268,33 @@ class FootprintArchiverElectron {
         };
       }
 
-      console.log(`[FootprintArchiver] ${symbol}: Descargados ${downloaded.length} footprints del cloud`);
+      console.log(`[FootprintArchiver] 📦 ${symbol}: Descargados ${downloaded.length} footprints del cloud`);
 
       // 2. Leer footprints existentes
       const existing = await this._readFromFile(symbol);
-      console.log(`[FootprintArchiver] ${symbol}: ${existing.length} footprints existentes en archivo local`);
+
+      if (existing.length > 0) {
+        const existOldest = new Date(Math.min(...existing.map(fp => fp.candle_timestamp))).toLocaleString('es-ES');
+        const existNewest = new Date(Math.max(...existing.map(fp => fp.candle_timestamp))).toLocaleString('es-ES');
+        console.log(`[FootprintArchiver] 💾 ${symbol}: ${existing.length} footprints en archivo local (${existOldest} → ${existNewest})`);
+      } else {
+        console.log(`[FootprintArchiver] 💾 ${symbol}: Archivo local vacío (primera descarga)`);
+      }
 
       // 3. Merge
       const { merged, added, updated, skipped } = this._mergeFootprints(existing, downloaded);
-      console.log(`[FootprintArchiver] ${symbol}: Merge completado - added=${added}, updated=${updated}, skipped=${skipped}`);
+      console.log(`[FootprintArchiver] 🔄 ${symbol}: Merge - +${added} nuevos, ~${updated} actualizados, =${skipped} duplicados`);
 
       // 4. Guardar archivo actualizado
       const metadata = await this._writeToFile(symbol, merged);
 
-      console.log(`[FootprintArchiver] ✅ ${symbol}: +${added} nuevos, ~${updated} actualizados, =${skipped} sin cambios`);
+      // Calcular y mostrar rango final
+      const finalOldest = new Date(metadata.oldestTimestamp).toLocaleString('es-ES');
+      const finalNewest = new Date(metadata.newestTimestamp).toLocaleString('es-ES');
+      const finalDays = ((metadata.newestTimestamp - metadata.oldestTimestamp) / (1000 * 60 * 60 * 24)).toFixed(1);
+
+      console.log(`[FootprintArchiver] ✅ ${symbol}: GUARDADO - ${merged.length} footprints totales`);
+      console.log(`[FootprintArchiver] 📊 ${symbol}: RANGO FINAL - ${finalDays} días (${finalOldest} → ${finalNewest})`);
 
       return {
         success: true,
@@ -298,11 +334,21 @@ class FootprintArchiverElectron {
 
     const startTime = Date.now();
     const results = [];
+    const daysRequested = (hours / 24).toFixed(1);
 
-    console.log(`[FootprintArchiver] 🚀 Iniciando archivo de ${this.config.symbols.length} símbolos...`);
+    console.log(`[FootprintArchiver] ========================================`);
+    console.log(`[FootprintArchiver] 🚀 INICIANDO DESCARGA MASIVA`);
+    console.log(`[FootprintArchiver] ========================================`);
+    console.log(`[FootprintArchiver] Símbolos: ${this.config.symbols.length}`);
+    console.log(`[FootprintArchiver] Horas por símbolo: ${hours}h (~${daysRequested} días)`);
+    console.log(`[FootprintArchiver] Intervalo: ${this.config.interval} minuto(s)`);
+    console.log(`[FootprintArchiver] Cloud: ${CLOUD_COLLECTOR_URL}`);
+    console.log(`[FootprintArchiver] ========================================`);
 
     for (let i = 0; i < this.config.symbols.length; i++) {
       const symbol = this.config.symbols[i];
+
+      console.log(`\n[FootprintArchiver] ======== SÍMBOLO ${i + 1}/${this.config.symbols.length}: ${symbol} ========`);
 
       // Reportar progreso
       this.progress = Math.round((i / this.config.symbols.length) * 100);
@@ -316,11 +362,21 @@ class FootprintArchiverElectron {
       }
 
       // Archivar símbolo
+      const symbolStartTime = Date.now();
       const result = await this.archiveSymbol(symbol, hours);
+      const symbolDuration = ((Date.now() - symbolStartTime) / 1000).toFixed(1);
+
       results.push(result);
+
+      if (result.success) {
+        console.log(`[FootprintArchiver] ⏱️ ${symbol} completado en ${symbolDuration}s`);
+      } else {
+        console.log(`[FootprintArchiver] ❌ ${symbol} falló en ${symbolDuration}s: ${result.error}`);
+      }
 
       // Pausa entre símbolos
       if (i < this.config.symbols.length - 1) {
+        console.log(`[FootprintArchiver] ⏸️ Pausa de 1 segundo antes del siguiente símbolo...`);
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
@@ -329,14 +385,23 @@ class FootprintArchiverElectron {
     this.progress = 100;
 
     const duration = Date.now() - startTime;
+    const durationMin = (duration / 60000).toFixed(1);
     const successful = results.filter(r => r.success).length;
     const failed = results.filter(r => !r.success).length;
     const totalDownloaded = results.reduce((sum, r) => sum + (r.downloaded || 0), 0);
     const totalAdded = results.reduce((sum, r) => sum + (r.added || 0), 0);
+    const totalUpdated = results.reduce((sum, r) => sum + (r.updated || 0), 0);
 
-    console.log(`[FootprintArchiver] ✅ Archivo completado en ${(duration / 1000).toFixed(1)}s`);
-    console.log(`[FootprintArchiver] Exitosos: ${successful}, Fallidos: ${failed}`);
-    console.log(`[FootprintArchiver] Total descargados: ${totalDownloaded}, Total nuevos: ${totalAdded}`);
+    console.log(`\n[FootprintArchiver] ========================================`);
+    console.log(`[FootprintArchiver] 🎉 DESCARGA MASIVA COMPLETADA`);
+    console.log(`[FootprintArchiver] ========================================`);
+    console.log(`[FootprintArchiver] ⏱️ Duración total: ${durationMin} minutos (${(duration / 1000).toFixed(1)}s)`);
+    console.log(`[FootprintArchiver] ✅ Exitosos: ${successful}/${this.config.symbols.length}`);
+    console.log(`[FootprintArchiver] ❌ Fallidos: ${failed}/${this.config.symbols.length}`);
+    console.log(`[FootprintArchiver] 📦 Total descargados: ${totalDownloaded.toLocaleString()} footprints`);
+    console.log(`[FootprintArchiver] ➕ Total nuevos agregados: ${totalAdded.toLocaleString()} footprints`);
+    console.log(`[FootprintArchiver] 🔄 Total actualizados: ${totalUpdated.toLocaleString()} footprints`);
+    console.log(`[FootprintArchiver] ========================================`);
 
     return {
       success: true,

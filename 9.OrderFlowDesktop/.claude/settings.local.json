@@ -13,7 +13,15 @@
       "Bash(node -e:*)",
       "Bash(del \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\9.OrderFlowDesktop\\check_footprints.py\")",
       "Bash(findstr:*)",
-      "Bash(node test_aggregation.js:*)"
+      "Bash(node test_aggregation.js:*)",
+      "WebSearch",
+      "WebFetch(domain:www.coinglass.com)",
+      "WebFetch(domain:app.spreadfighter.com)",
+      "WebFetch(domain:docs.coinglass.com)",
+      "WebFetch(domain:api.coinalyze.net)",
+      "WebFetch(domain:bybit-exchange.github.io)",
+      "WebFetch(domain:bykaranteli.com)",
+      "WebFetch(domain:marginpad.io)"
     ],
     "deny": [],
     "ask": []

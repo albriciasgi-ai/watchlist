@@ -368,11 +368,42 @@ class OrderFlowIndicator extends IndicatorBase {
 
       console.log(`[OrderFlow] [${this.symbol}] 📚 Cargados ${footprints1min.length} footprints de 1min desde archivo local`);
 
+      // 🔍 DIAGNOSTICO: Verificar rango temporal del archivo
+      if (footprints1min.length > 0) {
+        const firstFp = footprints1min[0];
+        const lastFp = footprints1min[footprints1min.length - 1];
+        const firstDate = new Date(firstFp.candle_timestamp).toLocaleString('es-ES');
+        const lastDate = new Date(lastFp.candle_timestamp).toLocaleString('es-ES');
+        const rangeHours = ((lastFp.candle_timestamp - firstFp.candle_timestamp) / (1000 * 60 * 60)).toFixed(1);
+
+        console.log(`[OrderFlow] [${this.symbol}] 🔍 ARCHIVO 1min RANGO:`);
+        console.log(`[OrderFlow] [${this.symbol}]   • Desde: ${firstDate} (ts: ${firstFp.candle_timestamp})`);
+        console.log(`[OrderFlow] [${this.symbol}]   • Hasta: ${lastDate} (ts: ${lastFp.candle_timestamp})`);
+        console.log(`[OrderFlow] [${this.symbol}]   • Duración: ${rangeHours} horas (~${(rangeHours / 24).toFixed(1)} días)`);
+        console.log(`[OrderFlow] [${this.symbol}]   • Footprints: ${footprints1min.length} de 1min`);
+      }
+
       // Si el intervalo no es 1min, agregar los footprints
       if (this.interval !== "1") {
         console.log(`[OrderFlow] [${this.symbol}] 🔍 Agregando de 1min a ${this.interval}min...`);
         const aggregated = this._aggregateFootprints(footprints1min, this.interval);
-        console.log(`[OrderFlow] [${this.symbol}] 🔍 Agregación retorna: ${aggregated.length} footprints`);
+        console.log(`[OrderFlow] [${this.symbol}] 🔍 Agregación retorna: ${aggregated.length} footprints de ${this.interval}min`);
+
+        // 🔍 DIAGNOSTICO: Verificar rango temporal después de agregar
+        if (aggregated.length > 0) {
+          const firstAgg = aggregated[0];
+          const lastAgg = aggregated[aggregated.length - 1];
+          const firstDateAgg = new Date(firstAgg.candle_timestamp).toLocaleString('es-ES');
+          const lastDateAgg = new Date(lastAgg.candle_timestamp).toLocaleString('es-ES');
+          const rangeHoursAgg = ((lastAgg.candle_timestamp - firstAgg.candle_timestamp) / (1000 * 60 * 60)).toFixed(1);
+
+          console.log(`[OrderFlow] [${this.symbol}] 🔍 AGREGADO ${this.interval}min RANGO:`);
+          console.log(`[OrderFlow] [${this.symbol}]   • Desde: ${firstDateAgg}`);
+          console.log(`[OrderFlow] [${this.symbol}]   • Hasta: ${lastDateAgg}`);
+          console.log(`[OrderFlow] [${this.symbol}]   • Duración: ${rangeHoursAgg} horas (~${(rangeHoursAgg / 24).toFixed(1)} días)`);
+          console.log(`[OrderFlow] [${this.symbol}]   • Footprints: ${aggregated.length} de ${this.interval}min`);
+        }
+
         return aggregated;
       }
 
@@ -440,6 +471,21 @@ class OrderFlowIndicator extends IndicatorBase {
           if (data.success && data.footprints) {
             backendFootprints = data.footprints;
             console.log(`[OrderFlow] [${this.symbol}] 🌐 Backend: ${backendFootprints.length} footprints recibidos`);
+
+            // 🔍 DIAGNOSTICO: Verificar rango temporal del backend
+            if (backendFootprints.length > 0) {
+              const firstBe = backendFootprints[0];
+              const lastBe = backendFootprints[backendFootprints.length - 1];
+              const firstDateBe = new Date(firstBe.candle_timestamp).toLocaleString('es-ES');
+              const lastDateBe = new Date(lastBe.candle_timestamp).toLocaleString('es-ES');
+              const rangeHoursBe = ((lastBe.candle_timestamp - firstBe.candle_timestamp) / (1000 * 60 * 60)).toFixed(1);
+
+              console.log(`[OrderFlow] [${this.symbol}] 🔍 BACKEND ${this.interval}min RANGO:`);
+              console.log(`[OrderFlow] [${this.symbol}]   • Desde: ${firstDateBe}`);
+              console.log(`[OrderFlow] [${this.symbol}]   • Hasta: ${lastDateBe}`);
+              console.log(`[OrderFlow] [${this.symbol}]   • Duración: ${rangeHoursBe} horas (~${(rangeHoursBe / 24).toFixed(1)} días)`);
+              console.log(`[OrderFlow] [${this.symbol}]   • Footprints: ${backendFootprints.length} de ${this.interval}min`);
+            }
           } else {
             console.warn(`[OrderFlow] [${this.symbol}] Backend retornó success=false`);
             backendFailed = true;
@@ -562,9 +608,17 @@ class OrderFlowIndicator extends IndicatorBase {
 
         // Log detallado de rangos después del merge
         if (finalFootprints.length > 0) {
-          const firstFp = new Date(finalFootprints[0].candle_timestamp).toLocaleString();
-          const lastFp = new Date(finalFootprints[finalFootprints.length - 1].candle_timestamp).toLocaleString();
-          console.log(`[OrderFlow] [${this.symbol}] Rango merged: ${firstFp} → ${lastFp}`);
+          const firstFp = finalFootprints[0];
+          const lastFp = finalFootprints[finalFootprints.length - 1];
+          const firstDate = new Date(firstFp.candle_timestamp).toLocaleString('es-ES');
+          const lastDate = new Date(lastFp.candle_timestamp).toLocaleString('es-ES');
+          const rangeHours = ((lastFp.candle_timestamp - firstFp.candle_timestamp) / (1000 * 60 * 60)).toFixed(1);
+
+          console.log(`[OrderFlow] [${this.symbol}] 🔍 MERGED ${this.interval}min RANGO FINAL:`);
+          console.log(`[OrderFlow] [${this.symbol}]   • Desde: ${firstDate}`);
+          console.log(`[OrderFlow] [${this.symbol}]   • Hasta: ${lastDate}`);
+          console.log(`[OrderFlow] [${this.symbol}]   • Duración: ${rangeHours} horas (~${(rangeHours / 24).toFixed(1)} días)`);
+          console.log(`[OrderFlow] [${this.symbol}]   • Footprints: ${finalFootprints.length} de ${this.interval}min`);
         }
       }
 
@@ -816,6 +870,56 @@ class OrderFlowIndicator extends IndicatorBase {
     let firstUnmatchedTs = null;
     let lastUnmatchedTs = null;
 
+    // 🔍 NUEVO DEBUG: Verificar matching cuando cambia el rango de velas visibles
+    const firstVisibleTs = visibleCandles.length > 0 ? visibleCandles[0].timestamp : 0;
+    const rangeChanged = this._lastFirstVisibleTs !== firstVisibleTs;
+
+    if (visibleCandles.length > 0 && rangeChanged && candleWidth >= this.config.minCandleWidth) {
+      this._lastFirstVisibleTs = firstVisibleTs;
+
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):`);
+      console.log(`[OrderFlow] [${this.symbol}]   Total velas visibles: ${visibleCandles.length}`);
+      console.log(`[OrderFlow] [${this.symbol}]   Total footprints: ${this.footprints.length}`);
+
+      const firstCandle = new Date(visibleCandles[0].timestamp).toLocaleString('es-ES');
+      const lastCandle = new Date(visibleCandles[visibleCandles.length - 1].timestamp).toLocaleString('es-ES');
+      console.log(`[OrderFlow] [${this.symbol}]   Rango velas: ${firstCandle} → ${lastCandle}`);
+
+      // Probar primeras 5 y últimas 5 velas
+      const testIndices = [0, 1, 2, 3, 4];
+      const lastIdx = visibleCandles.length - 1;
+      testIndices.push(lastIdx - 4, lastIdx - 3, lastIdx - 2, lastIdx - 1, lastIdx);
+
+      for (const idx of testIndices) {
+        if (idx < 0 || idx >= visibleCandles.length) continue;
+        const candle = visibleCandles[idx];
+        const fp = this._findFootprintForCandle(candle.timestamp, footprintMap);
+        const candleDate = new Date(candle.timestamp).toLocaleString('es-ES');
+        if (fp) {
+          const fpDate = new Date(fp.candle_timestamp).toLocaleString('es-ES');
+          const hasLevels = !!(fp.levels || fp.price_levels);
+          const diff = Math.abs(candle.timestamp - fp.candle_timestamp);
+          console.log(`[OrderFlow] [${this.symbol}]   [${idx}] ✅ ${candleDate} → FP ${fpDate}, hasLevels=${hasLevels}, diff=${diff}ms`);
+        } else {
+          console.log(`[OrderFlow] [${this.symbol}]   [${idx}] ❌ ${candleDate} → NO MATCH`);
+
+          // Buscar footprints cercanos
+          const nearbyFps = this.footprints.filter(fp =>
+            Math.abs(fp.candle_timestamp - candle.timestamp) < 600000 // dentro de 10 minutos
+          ).slice(0, 3);
+
+          if (nearbyFps.length > 0) {
+            console.log(`[OrderFlow] [${this.symbol}]       Footprints cercanos:`);
+            for (const nfp of nearbyFps) {
+              const nfpDate = new Date(nfp.candle_timestamp).toLocaleString('es-ES');
+              const diff = (nfp.candle_timestamp - candle.timestamp) / 60000;
+              console.log(`[OrderFlow] [${this.symbol}]         • ${nfpDate} (${diff > 0 ? '+' : ''}${diff.toFixed(1)} min)`);
+            }
+          }
+        }
+      }
+    }
+
     ctx.save();
 
     // 🔍 DIAGNÓSTICO CRÍTICO: Contar cuántos footprints matchean
@@ -823,6 +927,10 @@ class OrderFlowIndicator extends IndicatorBase {
     let totalNoMatches = 0;
     let firstMatchIdx = -1;
     let lastMatchIdx = -1;
+
+    // ✅ FIX CRÍTICO: Renderizar usando visibleCandles pero con posición relativa correcta
+    // visibleCandles es un subset de allCandles que cabe en el viewport actual
+    // Necesitamos calcular la posición X relativa al inicio de visibleCandles, no de allCandles
 
     // Render each visible candle
     for (let i = 0; i < visibleCandles.length; i++) {
@@ -886,6 +994,8 @@ class OrderFlowIndicator extends IndicatorBase {
       matchedCount++;
       if (!firstMatchedTs) firstMatchedTs = candle.timestamp;
       lastMatchedTs = candle.timestamp;
+
+      // Posición X es relativa al viewport (visibleCandles), no a allCandles
       const unitX = bounds.x + i * candleWidth;
       this.renderOrderFlowUnit(ctx, candle, normalizedFootprint, unitX, candleWidth, priceToY, fullMode);
     }
