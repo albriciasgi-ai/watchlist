@@ -25,6 +25,12 @@ class LiquidationClustersIndicator extends IndicatorBase {
     this.POLLING_INTERVAL_MS = 2 * 60 * 1000;  // Polling cada 2 minutos
     this.FETCH_TIMEOUT_MS = 30 * 1000;  // Timeout 30 segundos (MarginPad puede ser lento)
 
+    // 🎨 Configuracion visual (Opcion 4: Top 3 + Fondo Sutil)
+    this.labelPosition = 'right';  // 'left' o 'right'
+    this.showTop3Lines = true;     // Mostrar lineas completas para Top 3
+    this.showMid7Markers = true;   // Mostrar marcadores para clusters 4-10
+    this.showRestShading = true;   // Mostrar sombreado sutil para 11-50
+
     // IDs de polling
     this.pollingId = null;
 
@@ -66,6 +72,31 @@ class LiquidationClustersIndicator extends IndicatorBase {
         this.indicatorManager.requestRedraw();
       }
     }
+  }
+
+  /**
+   * Actualiza la configuracion visual del indicador
+   * @param {Object} config - { labelPosition: 'left'|'right', showTop3Lines: bool, showMid7Markers: bool, showRestShading: bool }
+   */
+  updateConfig(config) {
+    if (config.labelPosition !== undefined) {
+      this.labelPosition = config.labelPosition;
+    }
+    if (config.showTop3Lines !== undefined) {
+      this.showTop3Lines = config.showTop3Lines;
+    }
+    if (config.showMid7Markers !== undefined) {
+      this.showMid7Markers = config.showMid7Markers;
+    }
+    if (config.showRestShading !== undefined) {
+      this.showRestShading = config.showRestShading;
+    }
+    console.log(`[LiquidationClusters] Config actualizada:`, {
+      labelPosition: this.labelPosition,
+      showTop3Lines: this.showTop3Lines,
+      showMid7Markers: this.showMid7Markers,
+      showRestShading: this.showRestShading
+    });
   }
 
   /**
@@ -404,18 +435,33 @@ class LiquidationClustersIndicator extends IndicatorBase {
       // ⚠️ NO re-enriquecer en cada frame - los clusters ya están enriquecidos
       // Re-enriquecimiento solo se hace en updateCandles() cuando el precio cambia
 
-      const top10 = this.enrichedClusters.slice(0, 10);
+      const top3 = this.enrichedClusters.slice(0, 3);
+      const mid7 = this.enrichedClusters.slice(3, 10);
+      const rest = this.enrichedClusters.slice(10);
 
-      // Renderizar TODOS los clusters (con opacidad variable)
-      this.enrichedClusters.forEach(cluster => {
-        const isTop10 = top10.includes(cluster);
-        this._renderCluster(ctx, cluster, bounds, priceToY, isTop10);
-      });
+      // 🎨 OPCION 4: Renderizado en 3 capas
 
-      // Renderizar labels solo para top 10
-      top10.forEach((cluster, index) => {
-        this._renderLabel(ctx, cluster, bounds, priceToY, index);
-      });
+      // Capa 1: Clusters 11-50 (sombreado muy sutil - FONDO)
+      if (this.showRestShading && rest.length > 0) {
+        rest.forEach(cluster => {
+          this._renderShading(ctx, cluster, bounds, priceToY);
+        });
+      }
+
+      // Capa 2: Clusters 4-10 (marcadores en eje Y - MEDIO)
+      if (this.showMid7Markers && mid7.length > 0) {
+        mid7.forEach((cluster, index) => {
+          this._renderMarker(ctx, cluster, bounds, priceToY, index + 3);
+        });
+      }
+
+      // Capa 3: Top 3 (lineas completas + labels - FRENTE)
+      if (this.showTop3Lines && top3.length > 0) {
+        top3.forEach((cluster, index) => {
+          this._renderTop3Line(ctx, cluster, bounds, priceToY, index);
+          this._renderTop3Label(ctx, cluster, bounds, priceToY, index);
+        });
+      }
 
     } finally {
       // ✅ FIX 3: Restaurar estado UNA SOLA VEZ (siempre se ejecuta)
@@ -424,87 +470,165 @@ class LiquidationClustersIndicator extends IndicatorBase {
   }
 
   /**
-   * Renderiza un cluster individual
-   * ✅ FIX 3: Eliminado save/restore individual - ahora se hace una sola vez en renderOverlay()
+   * 🎨 OPCION 4 - CAPA 1: Renderiza sombreado sutil para clusters 11-50
    */
-  _renderCluster(ctx, cluster, bounds, priceToY, isTop10) {
+  _renderShading(ctx, cluster, bounds, priceToY) {
     const y = priceToY(cluster.price);
 
-    // Verificar si esta dentro del viewport (usar bounds.y + bounds.height)
+    // Verificar si esta dentro del viewport
+    if (y < bounds.y - 50 || y > bounds.y + bounds.height + 50) {
+      return;
+    }
+
+    // Color segun lado (muy transparente)
+    const baseColor = cluster.side === 'long' ? 'rgba(239, 68, 68, 0.05)' : 'rgba(34, 197, 94, 0.05)';
+
+    // Zona sombreada (altura proporcional al volumen, minimo 2px)
+    const zoneHeight = Math.max(2, cluster.magneticStrength * 8);
+
+    ctx.fillStyle = baseColor;
+    ctx.fillRect(bounds.x, y - zoneHeight / 2, bounds.width, zoneHeight);
+  }
+
+  /**
+   * 🎨 OPCION 4 - CAPA 2: Renderiza marcador en eje Y para clusters 4-10
+   */
+  _renderMarker(ctx, cluster, bounds, priceToY, rank) {
+    const y = priceToY(cluster.price);
+
+    // Verificar si esta dentro del viewport
     if (y < bounds.y - 50 || y > bounds.y + bounds.height + 50) {
       return;
     }
 
     // Color segun lado
-    const baseColor = cluster.side === 'long' ? 'rgb(239, 68, 68)' : 'rgb(34, 197, 94)';  // red/green
+    const baseColor = cluster.side === 'long' ? 'rgb(239, 68, 68)' : 'rgb(34, 197, 94)';
+    const opacity = 0.5;
 
-    // Opacidad basada en magnetic strength
-    const opacity = isTop10 ? 0.8 : Math.max(0.15, cluster.magneticStrength * 0.6);
+    // Posicion del marcador (en el eje Y derecho)
+    const markerX = bounds.x + bounds.width;
+    const markerSize = 6;
 
-    // Grosor basado en magnetic strength
-    const lineWidth = isTop10 ? 2 : Math.max(1, cluster.magneticStrength * 2);
+    // Triangulo apuntando hacia adentro
+    ctx.fillStyle = baseColor.replace('rgb', 'rgba').replace(')', `, ${opacity})`);
+    ctx.beginPath();
+    if (cluster.side === 'long') {
+      // Triangulo apuntando hacia abajo (liquidaciones LONG empujan precio abajo)
+      ctx.moveTo(markerX - markerSize, y - markerSize);
+      ctx.lineTo(markerX, y);
+      ctx.lineTo(markerX - markerSize, y + markerSize);
+    } else {
+      // Triangulo apuntando hacia arriba (liquidaciones SHORT empujan precio arriba)
+      ctx.moveTo(markerX - markerSize, y + markerSize);
+      ctx.lineTo(markerX, y);
+      ctx.lineTo(markerX - markerSize, y - markerSize);
+    }
+    ctx.closePath();
+    ctx.fill();
 
-    // Estilo de linea
+    // Linea punteada muy sutil hacia el grafico
+    ctx.strokeStyle = baseColor.replace('rgb', 'rgba').replace(')', `, 0.2)`);
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(bounds.x, y);
+    ctx.lineTo(bounds.x + bounds.width, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  /**
+   * 🎨 OPCION 4 - CAPA 3: Renderiza linea completa para Top 3
+   */
+  _renderTop3Line(ctx, cluster, bounds, priceToY, rank) {
+    const y = priceToY(cluster.price);
+
+    // Verificar si esta dentro del viewport
+    if (y < bounds.y - 50 || y > bounds.y + bounds.height + 50) {
+      return;
+    }
+
+    // Color segun lado
+    const baseColor = cluster.side === 'long' ? 'rgb(239, 68, 68)' : 'rgb(34, 197, 94)';
+
+    // Opacidad mas alta para top 3
+    const opacity = rank === 0 ? 0.7 : (rank === 1 ? 0.6 : 0.5);
+    const lineWidth = rank === 0 ? 2.5 : (rank === 1 ? 2 : 1.5);
+
+    // Linea principal
     ctx.strokeStyle = baseColor.replace('rgb', 'rgba').replace(')', `, ${opacity})`);
     ctx.lineWidth = lineWidth;
-
-    // Linea horizontal (bounds.x y bounds.x + bounds.width)
     ctx.beginPath();
     ctx.moveTo(bounds.x, y);
     ctx.lineTo(bounds.x + bounds.width, y);
     ctx.stroke();
 
-    // Borde extra para top 10
-    if (isTop10) {
-      ctx.strokeStyle = baseColor.replace('rgb', 'rgba').replace(')', `, 0.3)`);
-      ctx.lineWidth = 4;
+    // Borde exterior sutil (efecto glow)
+    if (rank === 0) {
+      ctx.strokeStyle = baseColor.replace('rgb', 'rgba').replace(')', `, 0.2)`);
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(bounds.x, y);
+      ctx.lineTo(bounds.x + bounds.width, y);
       ctx.stroke();
     }
   }
 
   /**
-   * Renderiza label para un cluster top 10
-   * ✅ FIX 3: Eliminado save/restore individual - ahora se hace una sola vez en renderOverlay()
+   * 🎨 OPCION 4 - CAPA 3: Renderiza label para Top 3 (con posicion configurable)
    */
-  _renderLabel(ctx, cluster, bounds, priceToY, index) {
+  _renderTop3Label(ctx, cluster, bounds, priceToY, rank) {
     const y = priceToY(cluster.price);
 
-    // Verificar si esta dentro del viewport (usar bounds.y + bounds.height)
+    // Verificar si esta dentro del viewport
     if (y < bounds.y - 50 || y > bounds.y + bounds.height + 50) {
       return;
     }
 
     // Icono segun ranking
-    let icon = '⚡';
-    if (index === 0) icon = '🔥';
-    else if (index === 1) icon = '🔥';
-    else if (index === 2) icon = '🔥';
+    const icon = rank === 0 ? '🔥' : (rank === 1 ? '🔥' : '⚡');
 
-    // Texto del label
+    // Texto del label (mas compacto que antes)
     const volumeM = (cluster.volume / 1e6).toFixed(1);
-    const distPct = (cluster.distancePercent * 100).toFixed(1);
     const magPct = (cluster.magneticStrength * 100).toFixed(0);
+    const sideIcon = cluster.side === 'long' ? '🔻' : '🔺';
 
-    const label = `${icon} #${index + 1} $${volumeM}M (${distPct}% | ${magPct}%)`;
+    // Formato compacto: "🔥 $2.5M 85%"
+    const label = `${icon} ${sideIcon}$${volumeM}M ${magPct}%`;
 
     // Estilo de texto
-    ctx.font = '11px monospace';
-    ctx.textAlign = 'left';
+    ctx.font = rank === 0 ? 'bold 11px monospace' : '11px monospace';
     ctx.textBaseline = 'middle';
 
-    // Fondo semi-transparente
+    // Calcular posicion segun configuracion
     const textWidth = ctx.measureText(label).width;
-    const padding = 4;
-    const boxX = bounds.x + bounds.width - textWidth - padding * 2 - 5;
-    const boxY = y - 10;
-    const boxHeight = 20;
+    const padding = 5;
+    const boxHeight = 18;
+    const margin = 5;
 
-    ctx.fillStyle = cluster.side === 'long' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(34, 197, 94, 0.2)';
+    let boxX, textAlign;
+    if (this.labelPosition === 'left') {
+      boxX = bounds.x + margin;
+      textAlign = 'left';
+      ctx.textAlign = 'left';
+    } else {
+      boxX = bounds.x + bounds.width - textWidth - padding * 2 - margin;
+      textAlign = 'left';
+      ctx.textAlign = 'left';
+    }
+
+    const boxY = y - boxHeight / 2;
+
+    // Fondo con opacidad mas alta
+    const bgOpacity = rank === 0 ? 0.3 : (rank === 1 ? 0.25 : 0.2);
+    ctx.fillStyle = cluster.side === 'long'
+      ? `rgba(239, 68, 68, ${bgOpacity})`
+      : `rgba(34, 197, 94, ${bgOpacity})`;
     ctx.fillRect(boxX, boxY, textWidth + padding * 2, boxHeight);
 
-    // Borde del box
+    // Borde del box (mas grueso para #1)
     ctx.strokeStyle = cluster.side === 'long' ? 'rgb(239, 68, 68)' : 'rgb(34, 197, 94)';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = rank === 0 ? 1.5 : 1;
     ctx.strokeRect(boxX, boxY, textWidth + padding * 2, boxHeight);
 
     // Texto

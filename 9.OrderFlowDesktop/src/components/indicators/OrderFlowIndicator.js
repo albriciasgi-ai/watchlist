@@ -3,6 +3,7 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import pollingCoordinator from '../../utils/PollingCoordinator.js';
+import { getFootprintArchiver } from '../../services/FootprintArchiverElectron.js';
 
 /**
  * OrderFlowIndicator - Professional Footprint Chart Visualization
@@ -96,6 +97,10 @@ class OrderFlowIndicator extends IndicatorBase {
         if (merged.historyHours === 12) {
           merged.historyHours = defaults.historyHours;
         }
+        // Force timestampToleranceMs if missing (fix para footprints históricos)
+        if (!merged.timestampToleranceMs) {
+          merged.timestampToleranceMs = defaults.timestampToleranceMs;
+        }
         return merged;
       } catch (e) {
         // Config parse error - use defaults
@@ -123,7 +128,8 @@ class OrderFlowIndicator extends IndicatorBase {
       stackedBuyColor: '38,166,154',   // RGB del color BUY (verde)
       stackedSellColor: '239,83,80',   // RGB del color SELL (rojo)
       stackedOpacity: 0.7,     // Opacidad de las lineas stacked (0.1 - 1.0)
-      stackedMinVolumeZScore: 0 // Filtro minimo de volume z-score para stacked (0 = sin filtro)
+      stackedMinVolumeZScore: 0, // Filtro minimo de volume z-score para stacked (0 = sin filtro)
+      timestampToleranceMs: 30000 // Tolerancia para matching de timestamps vela-footprint (30 segundos)
     };
   }
 
@@ -221,6 +227,27 @@ class OrderFlowIndicator extends IndicatorBase {
 
     console.log(`[OrderFlow] [${this.symbol}] 🔄 Agregando ${footprints1min.length} footprints de 1min a ${intervalMinutes}min`);
 
+    // 🔍 DEBUG: Inspeccionar estructura del primer footprint
+    if (footprints1min.length > 0) {
+      const sample = footprints1min[0];
+      const sampleLevels = sample.levels || sample.price_levels || [];
+      const sampleLevel = sampleLevels[0];
+
+      console.log(`[OrderFlow] [${this.symbol}] 🔍 MUESTRA FP 1MIN:`, {
+        fpKeys: Object.keys(sample).join(', '),
+        levelCount: sampleLevels.length,
+        level0: sampleLevel ? {
+          keys: Object.keys(sampleLevel).join(', '),
+          bid_volume: sampleLevel.bid_volume,
+          ask_volume: sampleLevel.ask_volume,
+          buyVolume: sampleLevel.buyVolume,
+          sellVolume: sampleLevel.sellVolume,
+          buy_volume: sampleLevel.buy_volume,
+          sell_volume: sampleLevel.sell_volume
+        } : null
+      });
+    }
+
     // Agrupar por intervalo
     const groups = new Map();
 
@@ -248,17 +275,26 @@ class OrderFlowIndicator extends IndicatorBase {
         // Soportar ambos formatos: levels[] (archivo) y price_levels[] (backend)
         const levels = fp.levels || fp.price_levels || [];
 
+        // 🔍 DEBUG: Ver estructura del primer level del archivo
+        if (!this._loggedArchiveLevel && levels.length > 0) {
+          this._loggedArchiveLevel = true;
+          console.log(`[OrderFlow] [${this.symbol}] 🔍 NIVEL ARCHIVO (primer fp, primer level):`, {
+            allKeys: Object.keys(levels[0]),
+            sample: levels[0]
+          });
+        }
+
         for (const level of levels) {
           // Soportar price_mid (archivo) y price (backend)
           const price = level.price_mid || level.price;
 
           if (!combinedLevels.has(price)) {
-            // ✅ CREAR LEVEL CON TODOS LOS CAMPOS NECESARIOS para renderizado completo
+            // ✅ CREAR LEVEL preservando price_min/max del nivel original
             combinedLevels.set(price, {
               price: price,
-              price_min: price,      // ✅ Necesario para renderFootprint()
-              price_max: price,      // ✅ Necesario para renderFootprint()
-              price_mid: price,      // ✅ Para compatibilidad
+              price_min: level.price_min || price,  // ✅ Preservar rango original
+              price_max: level.price_max || price,  // ✅ Preservar rango original
+              price_mid: price,
               bid_volume: 0,
               ask_volume: 0,
               total_volume: 0,
@@ -267,6 +303,14 @@ class OrderFlowIndicator extends IndicatorBase {
           }
 
           const combined = combinedLevels.get(price);
+          // ✅ Expandir el rango de precio para incluir este nivel
+          if (level.price_min != null && level.price_min < combined.price_min) {
+            combined.price_min = level.price_min;
+          }
+          if (level.price_max != null && level.price_max > combined.price_max) {
+            combined.price_max = level.price_max;
+          }
+
           combined.bid_volume += level.bid_volume || 0;
           combined.ask_volume += level.ask_volume || 0;
           combined.total_volume += level.total_volume || 0;
@@ -276,6 +320,19 @@ class OrderFlowIndicator extends IndicatorBase {
 
       // Convertir Map a Array y ordenar por precio descendente
       const levels = Array.from(combinedLevels.values()).sort((a, b) => b.price - a.price);
+
+      // 🔍 DEBUG: Verificar volúmenes del primer nivel agregado (solo primer footprint agregado)
+      if (aggregated.length === 0 && levels.length > 0) {
+        console.log(`[OrderFlow] [${this.symbol}] 🔍 NIVEL AGREGADO (primer nivel del primer FP):`, {
+          price: levels[0].price,
+          price_min: levels[0].price_min,
+          price_max: levels[0].price_max,
+          bid_volume: levels[0].bid_volume,
+          ask_volume: levels[0].ask_volume,
+          total_volume: levels[0].total_volume,
+          allKeys: Object.keys(levels[0]).join(', ')
+        });
+      }
 
       // Calcular OHLC del intervalo agregado
       // Soportar candle_open/high/low/close (archivo) y open/high/low/close (backend)
@@ -383,6 +440,26 @@ class OrderFlowIndicator extends IndicatorBase {
         console.log(`[OrderFlow] [${this.symbol}]   • Footprints: ${footprints1min.length} de 1min`);
       }
 
+      // ✅ AUTO-CHECK: Verificar si el archivo está desactualizado y descargar automáticamente
+      if (footprints1min.length > 0) {
+        const lastFp = footprints1min[footprints1min.length - 1];
+        const lastTimestamp = lastFp.candle_timestamp;
+        const now = Date.now();
+        const ageHours = (now - lastTimestamp) / (1000 * 60 * 60);
+
+        // Si el archivo tiene más de 12 horas de antigüedad, descargar automáticamente
+        if (ageHours > 12) {
+          const lastDate = new Date(lastTimestamp).toLocaleString('es-ES');
+          console.warn(`[OrderFlow] [${this.symbol}] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de ${lastDate} (${ageHours.toFixed(1)}h de antigüedad)`);
+          console.log(`[OrderFlow] [${this.symbol}] 🔄 Descargando footprints actualizados automáticamente...`);
+
+          // Descargar en background (no esperar)
+          this._autoDownloadArchive().catch(err => {
+            console.error(`[OrderFlow] [${this.symbol}] ❌ Auto-descarga falló: ${err.message}`);
+          });
+        }
+      }
+
       // Si el intervalo no es 1min, agregar los footprints
       if (this.interval !== "1") {
         console.log(`[OrderFlow] [${this.symbol}] 🔍 Agregando de 1min a ${this.interval}min...`);
@@ -413,6 +490,54 @@ class OrderFlowIndicator extends IndicatorBase {
       console.error(`[OrderFlow] [${this.symbol}] ❌ _loadFromArchive ERROR: ${error.message}`);
       console.error(`[OrderFlow] [${this.symbol}] ❌ Stack: ${error.stack}`);
       return [];
+    }
+  }
+
+  /**
+   * Descarga automática de footprints actualizados cuando el archivo está desactualizado
+   * @returns {Promise<void>}
+   */
+  async _autoDownloadArchive() {
+    try {
+      console.log(`[OrderFlow] [${this.symbol}] 🔄 _autoDownloadArchive: Iniciando descarga automática...`);
+
+      // Obtener instancia del archiver
+      const archiver = getFootprintArchiver();
+      if (!archiver) {
+        throw new Error('FootprintArchiver no disponible');
+      }
+
+      // Descargar últimas 48 horas para cerrar el gap
+      // (archivo viejo + últimas horas del backend = gap en el medio)
+      const hoursToDownload = 48;
+      console.log(`[OrderFlow] [${this.symbol}] 📥 Descargando últimas ${hoursToDownload}h desde cloud...`);
+
+      const result = await archiver.archiveSymbol(this.symbol, hoursToDownload);
+
+      if (result.success) {
+        console.log(`[OrderFlow] [${this.symbol}] ✅ Auto-descarga exitosa: ${result.added || 0} nuevos footprints`);
+
+        // Recargar footprints desde el archivo actualizado
+        console.log(`[OrderFlow] [${this.symbol}] 🔄 Recargando footprints desde archivo actualizado...`);
+        const updatedFootprints = await this._loadFromArchive();
+
+        if (updatedFootprints.length > 0) {
+          console.log(`[OrderFlow] [${this.symbol}] ✅ Archivo actualizado: ${updatedFootprints.length} footprints disponibles`);
+
+          // Forzar recarga completa de datos
+          // (esto se manejará en el próximo ciclo de fetchFootprints)
+          console.log(`[OrderFlow] [${this.symbol}] 🔄 Datos actualizados, próxima carga usará archivo nuevo`);
+        } else {
+          console.warn(`[OrderFlow] [${this.symbol}] ⚠️ Archivo actualizado pero sin footprints cargados`);
+        }
+      } else {
+        throw new Error(result.error || 'Descarga falló sin error específico');
+      }
+
+    } catch (error) {
+      console.error(`[OrderFlow] [${this.symbol}] ❌ _autoDownloadArchive ERROR: ${error.message}`);
+      // No lanzar error - esto es un proceso de background
+      // El indicador seguirá funcionando con los datos disponibles
     }
   }
 
@@ -850,7 +975,7 @@ class OrderFlowIndicator extends IndicatorBase {
       console.log(`[OrderFlow] [${this.symbol}] 🔍 MATCHING: Probando primeras 5 velas...`);
       for (let i = 0; i < Math.min(5, visibleCandles.length); i++) {
         const candle = visibleCandles[i];
-        const fp = this._findFootprintForCandle(candle.timestamp, footprintMap);
+        const fp = this._findFootprintForCandle(candle.timestamp, footprintMap, this.config.timestampToleranceMs);
         const candleDate = new Date(candle.timestamp).toLocaleString();
         if (fp) {
           const fpDate = new Date(fp.candle_timestamp).toLocaleString();
@@ -893,7 +1018,7 @@ class OrderFlowIndicator extends IndicatorBase {
       for (const idx of testIndices) {
         if (idx < 0 || idx >= visibleCandles.length) continue;
         const candle = visibleCandles[idx];
-        const fp = this._findFootprintForCandle(candle.timestamp, footprintMap);
+        const fp = this._findFootprintForCandle(candle.timestamp, footprintMap, this.config.timestampToleranceMs);
         const candleDate = new Date(candle.timestamp).toLocaleString('es-ES');
         if (fp) {
           const fpDate = new Date(fp.candle_timestamp).toLocaleString('es-ES');
@@ -901,7 +1026,17 @@ class OrderFlowIndicator extends IndicatorBase {
           const diff = Math.abs(candle.timestamp - fp.candle_timestamp);
           console.log(`[OrderFlow] [${this.symbol}]   [${idx}] ✅ ${candleDate} → FP ${fpDate}, hasLevels=${hasLevels}, diff=${diff}ms`);
         } else {
-          console.log(`[OrderFlow] [${this.symbol}]   [${idx}] ❌ ${candleDate} → NO MATCH`);
+          console.log(`[OrderFlow] [${this.symbol}]   [${idx}] ❌ ${candleDate} (ts: ${candle.timestamp}) → NO MATCH`);
+
+          // 🔍 DEBUG: Verificar primeros 3 footprints para ver sus timestamps
+          if (idx === 0) {
+            console.log(`[OrderFlow] [${this.symbol}]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:`);
+            for (let i = 0; i < Math.min(3, this.footprints.length); i++) {
+              const fp = this.footprints[i];
+              const fpDate = new Date(fp.candle_timestamp).toLocaleString('es-ES');
+              console.log(`[OrderFlow] [${this.symbol}]         FP[${i}]: ${fpDate} (ts: ${fp.candle_timestamp})`);
+            }
+          }
 
           // Buscar footprints cercanos
           const nearbyFps = this.footprints.filter(fp =>
@@ -915,6 +1050,9 @@ class OrderFlowIndicator extends IndicatorBase {
               const diff = (nfp.candle_timestamp - candle.timestamp) / 60000;
               console.log(`[OrderFlow] [${this.symbol}]         • ${nfpDate} (${diff > 0 ? '+' : ''}${diff.toFixed(1)} min)`);
             }
+          } else if (idx < 3) {
+            // Si NO hay footprints cercanos, buscar el más cercano en general
+            console.log(`[OrderFlow] [${this.symbol}]       ⚠️ NO hay footprints dentro de 10 minutos`);
           }
         }
       }
@@ -937,7 +1075,7 @@ class OrderFlowIndicator extends IndicatorBase {
       const candle = visibleCandles[i];
 
       // FIX: Usar matching tolerante en lugar de exacto
-      const footprint = this._findFootprintForCandle(candle.timestamp, footprintMap);
+      const footprint = this._findFootprintForCandle(candle.timestamp, footprintMap, this.config.timestampToleranceMs);
 
       if (!footprint) {
         // No se encontró footprint para esta vela
@@ -1005,7 +1143,7 @@ class OrderFlowIndicator extends IndicatorBase {
     if (!this._lastRenderLog || (now - this._lastRenderLog) > 1000) {
       this._lastRenderLog = now;
 
-      console.log(`[OrderFlow] [${this.symbol}] RENDER: ${totalMatches}/${visibleCandles.length} velas con FP, ${this.footprints.length} fps disponibles`);
+      console.log(`[OrderFlow] [${this.symbol}] RENDER: ${totalMatches}/${visibleCandles.length} velas con FP, ${this.footprints.length} fps disponibles, candleWidth=${candleWidth.toFixed(1)}px, fullMode=${fullMode}`);
 
       // Si hay 0 matches, mostrar info de debug
       if (totalMatches === 0 && this.footprints.length > 0 && visibleCandles.length > 0) {
@@ -1536,7 +1674,7 @@ class OrderFlowIndicator extends IndicatorBase {
     let dotsMatches = 0;
     let dotsNoMatches = 0;
     for (const candle of visibleCandles) {
-      const fp = this._findFootprintForCandle(candle.timestamp, fpMap);
+      const fp = this._findFootprintForCandle(candle.timestamp, fpMap, this.config.timestampToleranceMs);
       if (fp) dotsMatches++;
       else dotsNoMatches++;
     }
@@ -1570,7 +1708,7 @@ class OrderFlowIndicator extends IndicatorBase {
 
     for (let i = 0; i < visibleCandles.length; i++) {
       const candle = visibleCandles[i];
-      const fp = this._findFootprintForCandle(candle.timestamp, fpMap);
+      const fp = this._findFootprintForCandle(candle.timestamp, fpMap, this.config.timestampToleranceMs);
 
       if (!fp) continue; // Si no hay footprint, skip
 

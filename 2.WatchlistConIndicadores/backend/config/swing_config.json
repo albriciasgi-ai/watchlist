@@ -118,6 +118,6 @@
     "skipVolumeInRectangle": false
   },
   "cooldownMinutes": 5,
-  "alertsEnabled": true,
+  "alertsEnabled": false,
   "alertTargetUrl": "http://localhost:5000/api/watchlist-alert"
 }

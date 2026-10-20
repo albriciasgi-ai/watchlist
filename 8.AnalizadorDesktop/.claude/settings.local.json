@@ -28,7 +28,9 @@
       "Bash(nul)",
       "Bash(dir /s /b *Zone*.js*)",
       "Bash(npm run build:*)",
-      "Bash(node -c:*)"
+      "Bash(node -c:*)",
+      "Bash(dir:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

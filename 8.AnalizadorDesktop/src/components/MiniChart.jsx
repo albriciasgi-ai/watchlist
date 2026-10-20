@@ -110,7 +110,7 @@ const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
 
 // ==================== MAIN COMPONENT ====================
 
-const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpPeriodicConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenSR2Settings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, swingAlertsActive = false, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
+const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpPeriodicConfig, vpFixedRange, oiMode, externalIndicatorManager = null, externalDrawingManager = null, externalDrawingMode = false, onDrawingModeChange = null, onOpenVpSettings, onOpenRangeDetectionSettings, onOpenRejectionPatternSettings, onOpenSupportResistanceSettings, onOpenSR2Settings, onOpenVWAPSettings, onOpenFibonacciSettings, onOpenContinuationPatternSettings, onOpenDoubleTopBottomSettings, onOpenSwingDetectorSettings, onOpenLiquidationClustersSettings, swingAlertsActive = false, rejectionPatternConfig, onFullscreenChange, isFullscreenChild = false, onDrawingsChanged = null, onChartLoaded = null }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null); // 🎯 VIRTUALIZACIÓN: Ref para el contenedor principal
 
@@ -3072,6 +3072,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpPeriod
               )}
             </button>
           )}
+          {indicatorStates && indicatorStates["Liquidation Clusters"] && onOpenLiquidationClustersSettings && (
+            <button
+              className="liquidation-clusters-settings-btn"
+              onClick={() => onOpenLiquidationClustersSettings(indicatorManagerRef.current)}
+              title="Configurar Liquidation Clusters"
+              style={{
+                background: '#E91E63',
+                color: 'white',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                marginLeft: '4px'
+              }}
+            >
+              🔥 LC
+            </button>
+          )}
           {indicatorStates && indicatorStates["S&R v2"] && (
             <button
               className="sr2-settings-btn"
@@ -3377,6 +3397,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpPeriod
               onOpenContinuationPatternSettings={onOpenContinuationPatternSettings}
               onOpenDoubleTopBottomSettings={onOpenDoubleTopBottomSettings}
               onOpenSwingDetectorSettings={onOpenSwingDetectorSettings}
+              onOpenLiquidationClustersSettings={onOpenLiquidationClustersSettings}
               swingAlertsActive={swingAlertsActive}
               rejectionPatternConfig={rejectionPatternConfig}
               isFullscreenChild={true}

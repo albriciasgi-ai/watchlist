@@ -1812,6 +1812,13 @@ class IndicatorManager {
   }
 
   /**
+   * Obtiene el indicador Liquidation Clusters
+   */
+  getLiquidationClustersIndicator() {
+    return this.indicators.find(ind => ind.name === "Liquidation Clusters");
+  }
+
+  /**
    * 🎯 NUEVO: Obtiene el indicador Zone Visualizer
    */
   getZoneVisualizerIndicator() {

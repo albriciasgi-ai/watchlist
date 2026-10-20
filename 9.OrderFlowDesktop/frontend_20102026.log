@@ -1,0 +1,909 @@
+ [OrderFlow] [BTCUSDT] DOTS MODE: 263/842 velas con FP, 9368 fps disponibles
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 263/842 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 732 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 19/10/2026, 22:52:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 13.0 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 732 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +732 nuevos, ~0 actualizados, -0 ignorados = 9368 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9368 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 781.2 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9368 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1452)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ ✅ [11:58:16 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [OrderFlow] [BTCUSDT] DOTS MODE: 628/1211 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 543/1126 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 190/769 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 156/434 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 156/269 velas con FP, 9368 fps disponibles
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] DOTS MODE: 156/167 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 732 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 19/10/2026, 22:52:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 13.0 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 732 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +732 nuevos, ~0 actualizados, -0 ignorados = 9368 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9368 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 781.2 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9368 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1452)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ ✅ [11:58:22 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [OrderFlow] [BTCUSDT] DOTS MODE: 76/167 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] 🔍 MATCHING: velas 19/10/2026, 5:45:00 p.m. → 20/10/2026, 5:10:00 a.m. (138 velas)
+ [OrderFlow] [BTCUSDT] 🔍 MATCHING: fps   17/9/2026, 10:40:00 p.m. → 20/10/2026, 11:50:00 a.m. (9368 fps)
+ [OrderFlow] [BTCUSDT] 🔍 MATCHING: overlap=true, tolerancia=±undefinedms
+ [OrderFlow] [BTCUSDT] 🔍 MATCHING: Probando primeras 5 velas...
+ [OrderFlow] [BTCUSDT]   ❌ Vela[0] 19/10/2026, 5:45:00 p.m. → SIN MATCH
+ [OrderFlow] [BTCUSDT]   ❌ Vela[1] 19/10/2026, 5:50:00 p.m. → SIN MATCH
+ [OrderFlow] [BTCUSDT]   ❌ Vela[2] 19/10/2026, 5:55:00 p.m. → SIN MATCH
+ [OrderFlow] [BTCUSDT]   ❌ Vela[3] 19/10/2026, 6:00:00 p.m. → SIN MATCH
+ [OrderFlow] [BTCUSDT]   ❌ Vela[4] 19/10/2026, 6:05:00 p.m. → SIN MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 138
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 17:45:00 → 20/10/2026, 5:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 17:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 17:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 17:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 18:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 18:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [133] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [134] ✅ 20/10/2026, 4:55:00 → FP 20/10/2026, 4:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [135] ✅ 20/10/2026, 5:00:00 → FP 20/10/2026, 5:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [136] ✅ 20/10/2026, 5:05:00 → FP 20/10/2026, 5:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [137] ✅ 20/10/2026, 5:10:00 → FP 20/10/2026, 5:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] RENDER: 76/138 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 125
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 18:50:00 → 20/10/2026, 5:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 18:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 18:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 19:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [120] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [121] ✅ 20/10/2026, 4:55:00 → FP 20/10/2026, 4:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [122] ✅ 20/10/2026, 5:00:00 → FP 20/10/2026, 5:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [123] ✅ 20/10/2026, 5:05:00 → FP 20/10/2026, 5:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [124] ✅ 20/10/2026, 5:10:00 → FP 20/10/2026, 5:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 114
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:45:00 → 20/10/2026, 5:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [109] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [110] ✅ 20/10/2026, 4:55:00 → FP 20/10/2026, 4:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [111] ✅ 20/10/2026, 5:00:00 → FP 20/10/2026, 5:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [112] ✅ 20/10/2026, 5:05:00 → FP 20/10/2026, 5:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [113] ✅ 20/10/2026, 5:10:00 → FP 20/10/2026, 5:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 104
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:35:00 → 20/10/2026, 5:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [99] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [100] ✅ 20/10/2026, 4:55:00 → FP 20/10/2026, 4:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [101] ✅ 20/10/2026, 5:00:00 → FP 20/10/2026, 5:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [102] ✅ 20/10/2026, 5:05:00 → FP 20/10/2026, 5:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [103] ✅ 20/10/2026, 5:10:00 → FP 20/10/2026, 5:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 94
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 21:25:00 → 20/10/2026, 5:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 21:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [89] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [90] ✅ 20/10/2026, 4:55:00 → FP 20/10/2026, 4:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [91] ✅ 20/10/2026, 5:00:00 → FP 20/10/2026, 5:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [92] ✅ 20/10/2026, 5:05:00 → FP 20/10/2026, 5:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [93] ✅ 20/10/2026, 5:10:00 → FP 20/10/2026, 5:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 85
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 22:10:00 → 20/10/2026, 5:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 22:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 22:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 22:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 22:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 22:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [80] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [81] ✅ 20/10/2026, 4:55:00 → FP 20/10/2026, 4:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [82] ✅ 20/10/2026, 5:00:00 → FP 20/10/2026, 5:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [83] ✅ 20/10/2026, 5:05:00 → FP 20/10/2026, 5:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [84] ✅ 20/10/2026, 5:10:00 → FP 20/10/2026, 5:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 22:45:00 → 20/10/2026, 5:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 22:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:52:00 (+7.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:53:00 (+8.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:54:00 (+9.0 min)
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 22:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:52:00 (+2.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:53:00 (+3.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:54:00 (+4.0 min)
+ [OrderFlow] [BTCUSDT]   [2] ✅ 19/10/2026, 22:55:00 → FP 19/10/2026, 22:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 19/10/2026, 23:00:00 → FP 19/10/2026, 23:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 19/10/2026, 23:05:00 → FP 19/10/2026, 23:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 4:55:00 → FP 20/10/2026, 4:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 5:00:00 → FP 20/10/2026, 5:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 5:05:00 → FP 20/10/2026, 5:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 5:10:00 → FP 20/10/2026, 5:10:00, hasLevels=true, diff=0ms
+ ✅ [11:58:24 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 22:35:00 → 20/10/2026, 5:00:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 22:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 22:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 22:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:52:00 (+7.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:53:00 (+8.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:54:00 (+9.0 min)
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 22:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:52:00 (+2.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:53:00 (+3.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:54:00 (+4.0 min)
+ [OrderFlow] [BTCUSDT]   [4] ✅ 19/10/2026, 22:55:00 → FP 19/10/2026, 22:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 4:40:00 → FP 20/10/2026, 4:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 4:45:00 → FP 20/10/2026, 4:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 4:55:00 → FP 20/10/2026, 4:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 5:00:00 → FP 20/10/2026, 5:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 22:25:00 → 20/10/2026, 4:50:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 22:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 22:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 22:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 22:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 22:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:52:00 (+7.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:53:00 (+8.0 min)
+ [OrderFlow] [BTCUSDT]         • 19/10/2026, 22:54:00 (+9.0 min)
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 4:30:00 → FP 20/10/2026, 4:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 4:35:00 → FP 20/10/2026, 4:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 4:40:00 → FP 20/10/2026, 4:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 4:45:00 → FP 20/10/2026, 4:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 4:50:00 → FP 20/10/2026, 4:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 22:15:00 → 20/10/2026, 4:40:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 22:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 22:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 22:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 22:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 22:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 4:20:00 → FP 20/10/2026, 4:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 4:25:00 → FP 20/10/2026, 4:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 4:30:00 → FP 20/10/2026, 4:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 4:35:00 → FP 20/10/2026, 4:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 4:40:00 → FP 20/10/2026, 4:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 22:00:00 → 20/10/2026, 4:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 22:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 22:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 22:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 22:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 22:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 4:05:00 → FP 20/10/2026, 4:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 4:10:00 → FP 20/10/2026, 4:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 4:15:00 → FP 20/10/2026, 4:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 4:20:00 → FP 20/10/2026, 4:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 4:25:00 → FP 20/10/2026, 4:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 21:50:00 → 20/10/2026, 4:15:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 21:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 22:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 22:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 22:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 3:55:00 → FP 20/10/2026, 3:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 4:00:00 → FP 20/10/2026, 4:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 4:05:00 → FP 20/10/2026, 4:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 4:10:00 → FP 20/10/2026, 4:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 4:15:00 → FP 20/10/2026, 4:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 21:35:00 → 20/10/2026, 4:00:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 21:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 3:40:00 → FP 20/10/2026, 3:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 3:45:00 → FP 20/10/2026, 3:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 3:50:00 → FP 20/10/2026, 3:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 3:55:00 → FP 20/10/2026, 3:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 4:00:00 → FP 20/10/2026, 4:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 21:20:00 → 20/10/2026, 3:45:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 21:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 3:25:00 → FP 20/10/2026, 3:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 3:30:00 → FP 20/10/2026, 3:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 3:35:00 → FP 20/10/2026, 3:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 3:40:00 → FP 20/10/2026, 3:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 3:45:00 → FP 20/10/2026, 3:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 21:10:00 → 20/10/2026, 3:35:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 21:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 3:15:00 → FP 20/10/2026, 3:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 3:20:00 → FP 20/10/2026, 3:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 3:25:00 → FP 20/10/2026, 3:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 3:30:00 → FP 20/10/2026, 3:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 3:35:00 → FP 20/10/2026, 3:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:55:00 → 20/10/2026, 3:20:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 3:00:00 → FP 20/10/2026, 3:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 3:05:00 → FP 20/10/2026, 3:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 3:10:00 → FP 20/10/2026, 3:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 3:15:00 → FP 20/10/2026, 3:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 3:20:00 → FP 20/10/2026, 3:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:45:00 → 20/10/2026, 3:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 2:50:00 → FP 20/10/2026, 2:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 2:55:00 → FP 20/10/2026, 2:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 3:00:00 → FP 20/10/2026, 3:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 3:05:00 → FP 20/10/2026, 3:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 3:10:00 → FP 20/10/2026, 3:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:35:00 → 20/10/2026, 3:00:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 2:40:00 → FP 20/10/2026, 2:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 2:45:00 → FP 20/10/2026, 2:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 2:50:00 → FP 20/10/2026, 2:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:55:00 → FP 20/10/2026, 2:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 3:00:00 → FP 20/10/2026, 3:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:25:00 → 20/10/2026, 2:50:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 2:30:00 → FP 20/10/2026, 2:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 2:35:00 → FP 20/10/2026, 2:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 2:40:00 → FP 20/10/2026, 2:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:45:00 → FP 20/10/2026, 2:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:50:00 → FP 20/10/2026, 2:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:20:00 → 20/10/2026, 2:45:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 2:25:00 → FP 20/10/2026, 2:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 2:30:00 → FP 20/10/2026, 2:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 2:35:00 → FP 20/10/2026, 2:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:40:00 → FP 20/10/2026, 2:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:45:00 → FP 20/10/2026, 2:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:10:00 → 20/10/2026, 2:35:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 2:15:00 → FP 20/10/2026, 2:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 2:20:00 → FP 20/10/2026, 2:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 2:25:00 → FP 20/10/2026, 2:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:30:00 → FP 20/10/2026, 2:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:35:00 → FP 20/10/2026, 2:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] RENDER: 45/78 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:05:00 → 20/10/2026, 2:30:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 2:10:00 → FP 20/10/2026, 2:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 2:15:00 → FP 20/10/2026, 2:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 2:20:00 → FP 20/10/2026, 2:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:25:00 → FP 20/10/2026, 2:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:30:00 → FP 20/10/2026, 2:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:00:00 → 20/10/2026, 2:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 2:05:00 → FP 20/10/2026, 2:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 2:10:00 → FP 20/10/2026, 2:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 2:15:00 → FP 20/10/2026, 2:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:20:00 → FP 20/10/2026, 2:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:25:00 → FP 20/10/2026, 2:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:50:00 → 20/10/2026, 2:15:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 1:55:00 → FP 20/10/2026, 1:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 2:00:00 → FP 20/10/2026, 2:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 2:05:00 → FP 20/10/2026, 2:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:10:00 → FP 20/10/2026, 2:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:15:00 → FP 20/10/2026, 2:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:45:00 → 20/10/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 1:50:00 → FP 20/10/2026, 1:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 1:55:00 → FP 20/10/2026, 1:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 2:00:00 → FP 20/10/2026, 2:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:05:00 → FP 20/10/2026, 2:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:10:00 → FP 20/10/2026, 2:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:40:00 → 20/10/2026, 2:05:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 1:45:00 → FP 20/10/2026, 1:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 1:50:00 → FP 20/10/2026, 1:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 1:55:00 → FP 20/10/2026, 1:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 2:00:00 → FP 20/10/2026, 2:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:05:00 → FP 20/10/2026, 2:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:35:00 → 20/10/2026, 2:00:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 1:40:00 → FP 20/10/2026, 1:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 1:45:00 → FP 20/10/2026, 1:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 1:50:00 → FP 20/10/2026, 1:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 1:55:00 → FP 20/10/2026, 1:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 2:00:00 → FP 20/10/2026, 2:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:30:00 → 20/10/2026, 1:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 1:35:00 → FP 20/10/2026, 1:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 1:40:00 → FP 20/10/2026, 1:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 1:45:00 → FP 20/10/2026, 1:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 1:50:00 → FP 20/10/2026, 1:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 1:55:00 → FP 20/10/2026, 1:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:25:00 → 20/10/2026, 1:50:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 1:30:00 → FP 20/10/2026, 1:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 1:35:00 → FP 20/10/2026, 1:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 1:40:00 → FP 20/10/2026, 1:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 1:45:00 → FP 20/10/2026, 1:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 1:50:00 → FP 20/10/2026, 1:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 78
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:20:00 → 20/10/2026, 1:45:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:25:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 19:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ✅ 20/10/2026, 1:25:00 → FP 20/10/2026, 1:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [74] ✅ 20/10/2026, 1:30:00 → FP 20/10/2026, 1:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [75] ✅ 20/10/2026, 1:35:00 → FP 20/10/2026, 1:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 1:40:00 → FP 20/10/2026, 1:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 1:45:00 → FP 20/10/2026, 1:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] RENDER: 35/78 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 71
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:55:00 → 20/10/2026, 1:45:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [66] ✅ 20/10/2026, 1:25:00 → FP 20/10/2026, 1:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [67] ✅ 20/10/2026, 1:30:00 → FP 20/10/2026, 1:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [68] ✅ 20/10/2026, 1:35:00 → FP 20/10/2026, 1:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [69] ✅ 20/10/2026, 1:40:00 → FP 20/10/2026, 1:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [70] ✅ 20/10/2026, 1:45:00 → FP 20/10/2026, 1:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 64
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:30:00 → 20/10/2026, 1:45:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:30:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [59] ✅ 20/10/2026, 1:25:00 → FP 20/10/2026, 1:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [60] ✅ 20/10/2026, 1:30:00 → FP 20/10/2026, 1:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [61] ✅ 20/10/2026, 1:35:00 → FP 20/10/2026, 1:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [62] ✅ 20/10/2026, 1:40:00 → FP 20/10/2026, 1:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [63] ✅ 20/10/2026, 1:45:00 → FP 20/10/2026, 1:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 21:00:00 → 20/10/2026, 1:45:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 21:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:20:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 1:25:00 → FP 20/10/2026, 1:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 1:30:00 → FP 20/10/2026, 1:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 1:35:00 → FP 20/10/2026, 1:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 1:40:00 → FP 20/10/2026, 1:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 1:45:00 → FP 20/10/2026, 1:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] RENDER: 35/58 velas con FP, 9368 fps disponibles
+ ✅ [11:58:27 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:55:00 → 20/10/2026, 1:40:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 1:20:00 → FP 20/10/2026, 1:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 1:25:00 → FP 20/10/2026, 1:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 1:30:00 → FP 20/10/2026, 1:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 1:35:00 → FP 20/10/2026, 1:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 1:40:00 → FP 20/10/2026, 1:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:50:00 → 20/10/2026, 1:35:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 1:15:00 → FP 20/10/2026, 1:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 1:20:00 → FP 20/10/2026, 1:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 1:25:00 → FP 20/10/2026, 1:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 1:30:00 → FP 20/10/2026, 1:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 1:35:00 → FP 20/10/2026, 1:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:45:00 → 20/10/2026, 1:30:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 21:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 21:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 1:10:00 → FP 20/10/2026, 1:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 1:15:00 → FP 20/10/2026, 1:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 1:20:00 → FP 20/10/2026, 1:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 1:25:00 → FP 20/10/2026, 1:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 1:30:00 → FP 20/10/2026, 1:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:40:00 → 20/10/2026, 0:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:05:00 → FP 20/10/2026, 0:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:10:00 → FP 20/10/2026, 0:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:15:00 → FP 20/10/2026, 0:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:20:00 → FP 20/10/2026, 0:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:25:00 → FP 20/10/2026, 0:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:35:00 → 20/10/2026, 0:20:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:35:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:00:00 → FP 20/10/2026, 0:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:05:00 → FP 20/10/2026, 0:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:10:00 → FP 20/10/2026, 0:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:15:00 → FP 20/10/2026, 0:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:20:00 → FP 20/10/2026, 0:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 732 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 19/10/2026, 22:52:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 13.0 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 732 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +732 nuevos, ~0 actualizados, -0 ignorados = 9368 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9368 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 781.2 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9368 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1452)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:40:00 → 20/10/2026, 0:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:40:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:05:00 → FP 20/10/2026, 0:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:10:00 → FP 20/10/2026, 0:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:15:00 → FP 20/10/2026, 0:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:20:00 → FP 20/10/2026, 0:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:25:00 → FP 20/10/2026, 0:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] RENDER: 19/58 velas con FP, 9368 fps disponibles
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:45:00 → 20/10/2026, 0:30:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:45:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:10:00 → FP 20/10/2026, 0:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:15:00 → FP 20/10/2026, 0:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:20:00 → FP 20/10/2026, 0:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:25:00 → FP 20/10/2026, 0:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:30:00 → FP 20/10/2026, 0:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:50:00 → 20/10/2026, 0:35:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:50:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:15:00 → FP 20/10/2026, 0:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:20:00 → FP 20/10/2026, 0:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:25:00 → FP 20/10/2026, 0:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:30:00 → FP 20/10/2026, 0:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:35:00 → FP 20/10/2026, 0:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 19:55:00 → 20/10/2026, 0:40:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 19:55:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:20:00 → FP 20/10/2026, 0:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:25:00 → FP 20/10/2026, 0:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:30:00 → FP 20/10/2026, 0:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:35:00 → FP 20/10/2026, 0:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:40:00 → FP 20/10/2026, 0:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+ [OrderFlow] [BTCUSDT]   Total footprints: 9368
+ [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:00:00 → 20/10/2026, 0:45:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:00:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:05:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:10:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:15:00 → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:20:00 → NO MATCH
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:25:00 → FP 20/10/2026, 0:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:30:00 → FP 20/10/2026, 0:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:35:00 → FP 20/10/2026, 0:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:40:00 → FP 20/10/2026, 0:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:45:00 → FP 20/10/2026, 0:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:880 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:881 [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+OrderFlowIndicator.js:882 [OrderFlow] [BTCUSDT]   Total footprints: 9368
+OrderFlowIndicator.js:886 [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:05:00 → 20/10/2026, 0:50:00
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:05:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:10:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:15:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:20:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:25:00 → NO MATCH
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:30:00 → FP 20/10/2026, 0:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:35:00 → FP 20/10/2026, 0:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:40:00 → FP 20/10/2026, 0:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:45:00 → FP 20/10/2026, 0:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:50:00 → FP 20/10/2026, 0:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:880 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:881 [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+OrderFlowIndicator.js:882 [OrderFlow] [BTCUSDT]   Total footprints: 9368
+OrderFlowIndicator.js:886 [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:10:00 → 20/10/2026, 0:55:00
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:10:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:15:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:20:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:25:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:30:00 → NO MATCH
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:35:00 → FP 20/10/2026, 0:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:40:00 → FP 20/10/2026, 0:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:45:00 → FP 20/10/2026, 0:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:50:00 → FP 20/10/2026, 0:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 0:55:00 → FP 20/10/2026, 0:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:880 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:881 [OrderFlow] [BTCUSDT]   Total velas visibles: 58
+OrderFlowIndicator.js:882 [OrderFlow] [BTCUSDT]   Total footprints: 9368
+OrderFlowIndicator.js:886 [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 20:15:00 → 20/10/2026, 1:00:00
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 20:15:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 20:20:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 20:25:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 20:30:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 20:35:00 → NO MATCH
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 0:40:00 → FP 20/10/2026, 0:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [54] ✅ 20/10/2026, 0:45:00 → FP 20/10/2026, 0:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [55] ✅ 20/10/2026, 0:50:00 → FP 20/10/2026, 0:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 0:55:00 → FP 20/10/2026, 0:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 1:00:00 → FP 20/10/2026, 1:00:00, hasLevels=true, diff=0ms
+Logger.js:100 ✅ [11:58:28 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/58 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/58 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:880 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:881 [OrderFlow] [BTCUSDT]   Total velas visibles: 40
+OrderFlowIndicator.js:882 [OrderFlow] [BTCUSDT]   Total footprints: 9368
+OrderFlowIndicator.js:886 [OrderFlow] [BTCUSDT]   Rango velas: 19/10/2026, 21:45:00 → 20/10/2026, 1:00:00
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [0] ❌ 19/10/2026, 21:45:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [1] ❌ 19/10/2026, 21:50:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [2] ❌ 19/10/2026, 21:55:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [3] ❌ 19/10/2026, 22:00:00 → NO MATCH
+OrderFlowIndicator.js:904 [OrderFlow] [BTCUSDT]   [4] ❌ 19/10/2026, 22:05:00 → NO MATCH
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [35] ✅ 20/10/2026, 0:40:00 → FP 20/10/2026, 0:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [36] ✅ 20/10/2026, 0:45:00 → FP 20/10/2026, 0:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [37] ✅ 20/10/2026, 0:50:00 → FP 20/10/2026, 0:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [38] ✅ 20/10/2026, 0:55:00 → FP 20/10/2026, 0:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT]   [39] ✅ 20/10/2026, 1:00:00 → FP 20/10/2026, 1:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:423 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:440 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:338 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:348 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:351 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:354 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:361 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:364 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+OrderFlowIndicator.js:369 [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+OrderFlowIndicator.js:379 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:380 [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+OrderFlowIndicator.js:381 [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+OrderFlowIndicator.js:382 [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+OrderFlowIndicator.js:383 [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+OrderFlowIndicator.js:388 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:222 [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+OrderFlowIndicator.js:331 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+OrderFlowIndicator.js:390 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+OrderFlowIndicator.js:400 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:401 [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+OrderFlowIndicator.js:402 [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+OrderFlowIndicator.js:403 [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+OrderFlowIndicator.js:404 [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+OrderFlowIndicator.js:445 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+OrderFlowIndicator.js:473 [OrderFlow] [BTCUSDT] 🌐 Backend: 732 footprints recibidos
+OrderFlowIndicator.js:483 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:484 [OrderFlow] [BTCUSDT]   • Desde: 19/10/2026, 22:52:00
+OrderFlowIndicator.js:485 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 11:50:00
+OrderFlowIndicator.js:486 [OrderFlow] [BTCUSDT]   • Duración: 13.0 horas (~0.5 días)
+OrderFlowIndicator.js:487 [OrderFlow] [BTCUSDT]   • Footprints: 732 de 5min
+OrderFlowIndicator.js:585 [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +732 nuevos, ~0 actualizados, -0 ignorados = 9368 total
+OrderFlowIndicator.js:593 [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+OrderFlowIndicator.js:606 [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9368 con levels, 0 con price_levels, 0 sin ninguno
+OrderFlowIndicator.js:617 [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+OrderFlowIndicator.js:618 [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 11:50:00
+OrderFlowIndicator.js:620 [OrderFlow] [BTCUSDT]   • Duración: 781.2 horas (~32.6 días)
+OrderFlowIndicator.js:621 [OrderFlow] [BTCUSDT]   • Footprints: 9368 de 5min
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1452)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:423 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:440 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:337 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:338 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:1008 [OrderFlow] [BTCUSDT] RENDER: 26/40 velas con FP, 9368 fps disponibles
+OrderFlowIndicator.js:348 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:351 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:354 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:361 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres

@@ -16,6 +16,7 @@ import ContinuationPatternSettings from "./ContinuationPatternSettings";
 import ZoneDetectorSettings from "./ZoneDetectorSettings";
 import VPZoneScannerSettings from "./VPZoneScannerSettings";
 import VPPeriodicBacktestSettings from "./VPPeriodicBacktestSettings";
+import LiquidationClustersSettings from "./LiquidationClustersSettings";
 import StrategyBuilder from "./StrategyBuilder";
 import wsManager from "./WebSocketManager";
 import { SlidingAlertPanel, AlertPanelToggle } from "./SlidingAlertPanel";
@@ -180,6 +181,7 @@ const SingleSymbolAnalyzer = () => {
   const [showVPPeriodicBacktest, setShowVPPeriodicBacktest] = useState(false);
   const [showStrategyBuilder, setShowStrategyBuilder] = useState(false);
   const [showVPPeriodicSettings, setShowVPPeriodicSettings] = useState(false);
+  const [showLiquidationClustersSettings, setShowLiquidationClustersSettings] = useState(false);
   const [vpPeriodicConfig, setVpPeriodicConfig] = useState(() => {
     const saved = localStorage.getItem('vpPeriodicConfig');
     if (saved) {
@@ -610,6 +612,13 @@ const SingleSymbolAnalyzer = () => {
     setShowZoneDetectorSettings(true);
   }, []);
 
+  const handleOpenLiquidationClustersSettings = useCallback((manager) => {
+    if (manager) {
+      indicatorManagerRef.current = manager;
+    }
+    setShowLiquidationClustersSettings(true);
+  }, []);
+
   // Handlers de cambio de configuracion
   const handleVWAPConfigChange = useCallback((config) => {
     const manager = indicatorManagerRef.current;
@@ -631,6 +640,17 @@ const SingleSymbolAnalyzer = () => {
         fibIndicator.updateConfig(config);
         log.debug(`Updated Fibonacci config for ${symbol}`);
         PresetManager.updateSymbolOverride(symbol, "Fibonacci", config);
+      }
+    }
+  }, [symbol]);
+
+  const handleLiquidationClustersConfigChange = useCallback((config) => {
+    const manager = indicatorManagerRef.current;
+    if (manager) {
+      const liqIndicator = manager.getLiquidationClustersIndicator?.();
+      if (liqIndicator) {
+        liqIndicator.updateConfig(config);
+        log.debug(`Updated Liquidation Clusters config for ${symbol}`);
       }
     }
   }, [symbol]);
@@ -1003,6 +1023,7 @@ const SingleSymbolAnalyzer = () => {
             onOpenSwingDetectorSettings={handleOpenSwingDetectorSettings}
             swingAlertsActive={swingAlertsActive}
             onOpenSR2Settings={handleOpenSR2Settings}
+            onOpenLiquidationClustersSettings={handleOpenLiquidationClustersSettings}
             rejectionPatternConfig={rejectionPatternConfig}
             onFullscreenChange={handleFullscreenChange}
             onChartLoaded={() => log.debug(`Chart loaded: ${symbol}`)}
@@ -1414,6 +1435,37 @@ const SingleSymbolAnalyzer = () => {
         interval={interval}
         indicatorManager={indicatorManagerRef.current}
       />
+
+      {showLiquidationClustersSettings && (
+        <div className="modal-overlay" onClick={() => setShowLiquidationClustersSettings(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Configuración Liquidation Clusters - {symbol}</h3>
+              <button className="modal-close-btn" onClick={() => setShowLiquidationClustersSettings(false)}>X</button>
+            </div>
+            <div className="modal-body">
+              <LiquidationClustersSettings
+                config={(() => {
+                  const liqIndicator = getIndicatorConfig('getLiquidationClustersIndicator');
+                  return liqIndicator ? {
+                    labelPosition: liqIndicator.labelPosition || 'right',
+                    showTop3Lines: liqIndicator.showTop3Lines !== false,
+                    showMid7Markers: liqIndicator.showMid7Markers !== false,
+                    showRestShading: liqIndicator.showRestShading !== false
+                  } : {
+                    labelPosition: 'right',
+                    showTop3Lines: true,
+                    showMid7Markers: true,
+                    showRestShading: true
+                  };
+                })()}
+                onConfigChange={handleLiquidationClustersConfigChange}
+                currentSymbol={symbol}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

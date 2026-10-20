@@ -1,0 +1,1117 @@
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ ✅ [2:12:30 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): Object
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+ [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OrderFlowIndicator.js:1077 [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+Logger.js:100 ✅ [2:13:17 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+OrderFlowIndicator.js:1077 [OrderFlow] [BTCUSDT] RENDER: 31/67 velas con FP, 9352 fps disponibles, candleWidth=18.1px, fullMode=false
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 67 candles, 67 OI matches, 66 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=67
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=273.24000000000524, sample deltas: Array(10)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:479 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:496 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:393 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:394 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:404 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:407 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:410 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:417 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:420 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+OrderFlowIndicator.js:425 [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+OrderFlowIndicator.js:435 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:436 [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+OrderFlowIndicator.js:437 [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+OrderFlowIndicator.js:438 [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+OrderFlowIndicator.js:439 [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+OrderFlowIndicator.js:444 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:227 [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+OrderFlowIndicator.js:235 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 6, level0: {…}}
+OrderFlowIndicator.js:325 [OrderFlow] [BTCUSDT] 🔍 NIVEL AGREGADO (primer nivel del primer FP): {price: 77345, price_min: 77340, price_max: 77350, bid_volume: 9.687999999999995, ask_volume: 0.04900000000000001, …}
+OrderFlowIndicator.js:387 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+OrderFlowIndicator.js:446 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+OrderFlowIndicator.js:456 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:457 [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+OrderFlowIndicator.js:458 [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+OrderFlowIndicator.js:459 [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+OrderFlowIndicator.js:460 [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+OrderFlowIndicator.js:501 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+OrderFlowIndicator.js:936 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:937 [OrderFlow] [BTCUSDT]   Total velas visibles: 47
+OrderFlowIndicator.js:938 [OrderFlow] [BTCUSDT]   Total footprints: 9352
+OrderFlowIndicator.js:942 [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 21:50:00 → 18/10/2026, 1:40:00
+OrderFlowIndicator.js:958 [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 21:50:00 → FP 17/10/2026, 21:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:958 [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 21:55:00 → FP 17/10/2026, 21:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:958 [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 22:00:00 → FP 17/10/2026, 22:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:958 [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 22:05:00 → FP 17/10/2026, 22:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:958 [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 22:10:00 → FP 17/10/2026, 22:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:960 [OrderFlow] [BTCUSDT]   [42] ❌ 18/10/2026, 1:20:00 (ts: 1792304400000) → NO MATCH
+OrderFlowIndicator.js:960 [OrderFlow] [BTCUSDT]   [43] ❌ 18/10/2026, 1:25:00 (ts: 1792304700000) → NO MATCH
+OrderFlowIndicator.js:960 [OrderFlow] [BTCUSDT]   [44] ❌ 18/10/2026, 1:30:00 (ts: 1792305000000) → NO MATCH
+OrderFlowIndicator.js:960 [OrderFlow] [BTCUSDT]   [45] ❌ 18/10/2026, 1:35:00 (ts: 1792305300000) → NO MATCH
+OrderFlowIndicator.js:960 [OrderFlow] [BTCUSDT]   [46] ❌ 18/10/2026, 1:40:00 (ts: 1792305600000) → NO MATCH
+OrderFlowIndicator.js:1077 [OrderFlow] [BTCUSDT] RENDER: 11/47 velas con FP, 9352 fps disponibles, candleWidth=18.2px, fullMode=false
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🌐 Backend: 715 footprints recibidos
+OrderFlowIndicator.js:539 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:540 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 2:08:00
+OrderFlowIndicator.js:541 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+OrderFlowIndicator.js:542 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:543 [OrderFlow] [BTCUSDT]   • Footprints: 715 de 5min
+OrderFlowIndicator.js:641 [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +715 nuevos, ~0 actualizados, -0 ignorados = 9352 total
+OrderFlowIndicator.js:649 [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+OrderFlowIndicator.js:662 [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9352 con levels, 0 con price_levels, 0 sin ninguno
+OrderFlowIndicator.js:673 [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+OrderFlowIndicator.js:674 [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+OrderFlowIndicator.js:675 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 14:05:00
+OrderFlowIndicator.js:676 [OrderFlow] [BTCUSDT]   • Duración: 783.4 horas (~32.6 días)
+OrderFlowIndicator.js:677 [OrderFlow] [BTCUSDT]   • Footprints: 9352 de 5min
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1479)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+OrderFlowIndicator.js:1077 [OrderFlow] [BTCUSDT] RENDER: 11/47 velas con FP, 9352 fps disponibles, candleWidth=18.2px, fullMode=false
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:479 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:496 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:393 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:394 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:1077 [OrderFlow] [BTCUSDT] RENDER: 11/47 velas con FP, 9352 fps disponibles, candleWidth=18.2px, fullMode=false
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+OrderFlowIndicator.js:1077 [OrderFlow] [BTCUSDT] RENDER: 11/47 velas con FP, 9352 fps disponibles, candleWidth=18.2px, fullMode=false
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+OrderFlowIndicator.js:1077 [OrderFlow] [BTCUSDT] RENDER: 11/47 velas con FP, 9352 fps disponibles, candleWidth=18.2px, fullMode=false
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+OrderFlowIndicator.js:1077 [OrderFlow] [BTCUSDT] RENDER: 11/47 velas con FP, 9352 fps disponibles, candleWidth=18.2px, fullMode=false
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+OrderFlowIndicator.js:404 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:407 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:410 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:417 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+ [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+ [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+ [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+ [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+ [BTCUSDT] 📊 Histogram Mode: 47 candles, 47 OI matches, 46 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=47
+ [BTCUSDT] 🎨 RENDER: maxDelta=99.1820000000007, sample deltas: (10) [0, 4.136000000005879, -14.198000000003958, -29.37000000000262, 28.686000000001513, -60.411999999996624, 9.485000000000582, 3.4239999999990687, 3.2149999999965075, -6.078000000001339]
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres

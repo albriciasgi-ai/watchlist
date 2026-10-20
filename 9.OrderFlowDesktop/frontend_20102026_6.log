@@ -1,0 +1,1066 @@
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 14:20:00 → FP 17/10/2026, 14:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 14:25:00 → FP 17/10/2026, 14:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 14:30:00 → FP 17/10/2026, 14:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 14:45:00 → FP 17/10/2026, 14:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 14:50:00 → FP 17/10/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 14:55:00 → FP 17/10/2026, 14:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 15:00:00 → FP 17/10/2026, 15:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 15:05:00 → FP 17/10/2026, 15:05:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 14:05:00 → 17/10/2026, 15:00:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 14:05:00 → FP 17/10/2026, 14:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 14:10:00 → FP 17/10/2026, 14:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 14:15:00 → FP 17/10/2026, 14:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 14:20:00 → FP 17/10/2026, 14:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 14:25:00 → FP 17/10/2026, 14:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 14:40:00 → FP 17/10/2026, 14:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 14:45:00 → FP 17/10/2026, 14:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 14:50:00 → FP 17/10/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 14:55:00 → FP 17/10/2026, 14:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 15:00:00 → FP 17/10/2026, 15:00:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 14:00:00 → 17/10/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 14:00:00 → FP 17/10/2026, 14:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 14:05:00 → FP 17/10/2026, 14:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 14:10:00 → FP 17/10/2026, 14:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 14:15:00 → FP 17/10/2026, 14:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 14:20:00 → FP 17/10/2026, 14:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 14:35:00 → FP 17/10/2026, 14:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 14:40:00 → FP 17/10/2026, 14:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 14:45:00 → FP 17/10/2026, 14:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 14:50:00 → FP 17/10/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 14:55:00 → FP 17/10/2026, 14:55:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 13:55:00 → 17/10/2026, 14:50:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 13:55:00 → FP 17/10/2026, 13:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 14:00:00 → FP 17/10/2026, 14:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 14:05:00 → FP 17/10/2026, 14:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 14:10:00 → FP 17/10/2026, 14:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 14:15:00 → FP 17/10/2026, 14:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 14:30:00 → FP 17/10/2026, 14:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 14:35:00 → FP 17/10/2026, 14:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 14:40:00 → FP 17/10/2026, 14:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 14:45:00 → FP 17/10/2026, 14:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 14:50:00 → FP 17/10/2026, 14:50:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 13:50:00 → 17/10/2026, 14:45:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 13:50:00 → FP 17/10/2026, 13:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 13:55:00 → FP 17/10/2026, 13:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 14:00:00 → FP 17/10/2026, 14:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 14:05:00 → FP 17/10/2026, 14:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 14:10:00 → FP 17/10/2026, 14:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 14:25:00 → FP 17/10/2026, 14:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 14:30:00 → FP 17/10/2026, 14:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 14:35:00 → FP 17/10/2026, 14:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 14:40:00 → FP 17/10/2026, 14:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 14:45:00 → FP 17/10/2026, 14:45:00, hasLevels=true, diff=0ms
+ ✅ [1:56:08 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=93.11899999999878, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 13:45:00 → 17/10/2026, 14:40:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 13:45:00 → FP 17/10/2026, 13:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 13:50:00 → FP 17/10/2026, 13:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 13:55:00 → FP 17/10/2026, 13:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 14:00:00 → FP 17/10/2026, 14:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 14:05:00 → FP 17/10/2026, 14:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 14:20:00 → FP 17/10/2026, 14:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 14:25:00 → FP 17/10/2026, 14:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 14:30:00 → FP 17/10/2026, 14:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 14:35:00 → FP 17/10/2026, 14:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 14:40:00 → FP 17/10/2026, 14:40:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=91.78300000000309, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 13:15:00 → 17/10/2026, 14:10:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 13:25:00 → FP 17/10/2026, 13:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 13:30:00 → FP 17/10/2026, 13:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 13:35:00 → FP 17/10/2026, 13:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:50:00 → FP 17/10/2026, 13:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:55:00 → FP 17/10/2026, 13:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 14:00:00 → FP 17/10/2026, 14:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 14:05:00 → FP 17/10/2026, 14:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 14:10:00 → FP 17/10/2026, 14:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] RENDER: 12/12 velas con FP, 9336 fps disponibles, candleWidth=100.9px, fullMode=true
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 13:10:00 → 17/10/2026, 14:05:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 13:25:00 → FP 17/10/2026, 13:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 13:30:00 → FP 17/10/2026, 13:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:45:00 → FP 17/10/2026, 13:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:50:00 → FP 17/10/2026, 13:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:55:00 → FP 17/10/2026, 13:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 14:00:00 → FP 17/10/2026, 14:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 14:05:00 → FP 17/10/2026, 14:05:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 13:05:00 → 17/10/2026, 14:00:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 13:25:00 → FP 17/10/2026, 13:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:40:00 → FP 17/10/2026, 13:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:45:00 → FP 17/10/2026, 13:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:50:00 → FP 17/10/2026, 13:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:55:00 → FP 17/10/2026, 13:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 14:00:00 → FP 17/10/2026, 14:00:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 699 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 1:54:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 13:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 699 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +699 nuevos, ~0 actualizados, -0 ignorados = 9336 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9336 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 13:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 783.2 horas (~32.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9336 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1476)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 12/12 velas con FP, 9336 fps disponibles, candleWidth=100.9px, fullMode=true
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=40.31499999999505, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 13:00:00 → 17/10/2026, 13:55:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:35:00 → FP 17/10/2026, 13:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:40:00 → FP 17/10/2026, 13:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:45:00 → FP 17/10/2026, 13:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:50:00 → FP 17/10/2026, 13:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:55:00 → FP 17/10/2026, 13:55:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:55:00 → 17/10/2026, 13:50:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:30:00 → FP 17/10/2026, 13:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:35:00 → FP 17/10/2026, 13:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:40:00 → FP 17/10/2026, 13:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:45:00 → FP 17/10/2026, 13:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:50:00 → FP 17/10/2026, 13:50:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:50:00 → 17/10/2026, 13:45:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:25:00 → FP 17/10/2026, 13:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:30:00 → FP 17/10/2026, 13:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:35:00 → FP 17/10/2026, 13:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:40:00 → FP 17/10/2026, 13:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:45:00 → FP 17/10/2026, 13:45:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:45:00 → 17/10/2026, 13:40:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:25:00 → FP 17/10/2026, 13:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:30:00 → FP 17/10/2026, 13:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:35:00 → FP 17/10/2026, 13:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:40:00 → FP 17/10/2026, 13:40:00, hasLevels=true, diff=0ms
+ ✅ [1:56:10 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:40:00 → 17/10/2026, 13:35:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:25:00 → FP 17/10/2026, 13:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:30:00 → FP 17/10/2026, 13:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:35:00 → FP 17/10/2026, 13:35:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:35:00 → 17/10/2026, 13:30:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:25:00 → FP 17/10/2026, 13:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:30:00 → FP 17/10/2026, 13:30:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:30:00 → 17/10/2026, 13:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:25:00 → FP 17/10/2026, 13:25:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:25:00 → 17/10/2026, 13:20:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:20:00 → FP 17/10/2026, 13:20:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:20:00 → 17/10/2026, 13:15:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:15:00 → FP 17/10/2026, 13:15:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:15:00 → 17/10/2026, 13:10:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:10:00 → FP 17/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:10:00 → 17/10/2026, 13:05:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:05:00 → FP 17/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 12/12 velas con FP, 9336 fps disponibles, candleWidth=100.9px, fullMode=true
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=105.33800000000338, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:05:00 → 17/10/2026, 13:00:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 13:00:00 → FP 17/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 12:00:00 → 17/10/2026, 12:55:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 12:55:00 → FP 17/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:55:00 → 17/10/2026, 12:50:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:55:00 → FP 17/10/2026, 11:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 12:50:00 → FP 17/10/2026, 12:50:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:50:00 → 17/10/2026, 12:45:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:50:00 → FP 17/10/2026, 11:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 11:55:00 → FP 17/10/2026, 11:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 12:45:00 → FP 17/10/2026, 12:45:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:45:00 → 17/10/2026, 12:40:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:45:00 → FP 17/10/2026, 11:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 11:50:00 → FP 17/10/2026, 11:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 11:55:00 → FP 17/10/2026, 11:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 12:40:00 → FP 17/10/2026, 12:40:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ ✅ [1:56:12 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:40:00 → 17/10/2026, 12:35:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:40:00 → FP 17/10/2026, 11:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 11:45:00 → FP 17/10/2026, 11:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 11:50:00 → FP 17/10/2026, 11:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 11:55:00 → FP 17/10/2026, 11:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 12:35:00 → FP 17/10/2026, 12:35:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:35:00 → 17/10/2026, 12:30:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:35:00 → FP 17/10/2026, 11:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 11:40:00 → FP 17/10/2026, 11:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 11:45:00 → FP 17/10/2026, 11:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 11:50:00 → FP 17/10/2026, 11:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 11:55:00 → FP 17/10/2026, 11:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 12:30:00 → FP 17/10/2026, 12:30:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:30:00 → 17/10/2026, 12:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:30:00 → FP 17/10/2026, 11:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 11:35:00 → FP 17/10/2026, 11:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 11:40:00 → FP 17/10/2026, 11:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 11:45:00 → FP 17/10/2026, 11:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 11:50:00 → FP 17/10/2026, 11:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 12:25:00 → FP 17/10/2026, 12:25:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+ [OrderFlow] [BTCUSDT]   Total footprints: 9336
+ [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:25:00 → 17/10/2026, 12:20:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:25:00 → FP 17/10/2026, 11:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 11:30:00 → FP 17/10/2026, 11:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 11:35:00 → FP 17/10/2026, 11:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 11:40:00 → FP 17/10/2026, 11:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 11:45:00 → FP 17/10/2026, 11:45:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [8] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [9] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [10] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [11] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 12/12 velas con FP, 9336 fps disponibles, candleWidth=100.9px, fullMode=true
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [OrderFlow] [BTCUSDT] RENDER: 12/12 velas con FP, 9336 fps disponibles, candleWidth=100.9px, fullMode=true
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [BTCUSDT] 📊 Histogram Mode: 12 candles, 12 OI matches, 11 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=12
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(10)
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43169 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:42:00 (ts: 1789702920000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00 (ts: 1792294800000)
+ [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+OrderFlowIndicator.js:409 [OrderFlow] [BTCUSDT]   • Footprints: 43169 de 1min
+OrderFlowIndicator.js:414 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:227 [OrderFlow] [BTCUSDT] 🔄 Agregando 43169 footprints de 1min a 5min
+OrderFlowIndicator.js:357 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8637 footprints de 5min (formato normalizado con campo "levels")
+OrderFlowIndicator.js:416 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8637 footprints de 5min
+OrderFlowIndicator.js:426 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:427 [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+OrderFlowIndicator.js:428 [OrderFlow] [BTCUSDT]   • Hasta: 17/10/2026, 22:40:00
+OrderFlowIndicator.js:429 [OrderFlow] [BTCUSDT]   • Duración: 720.0 horas (~30.0 días)
+OrderFlowIndicator.js:430 [OrderFlow] [BTCUSDT]   • Footprints: 8637 de 5min
+OrderFlowIndicator.js:471 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8637 footprints cargados
+OrderFlowIndicator.js:906 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:907 [OrderFlow] [BTCUSDT]   Total velas visibles: 7
+OrderFlowIndicator.js:908 [OrderFlow] [BTCUSDT]   Total footprints: 9336
+OrderFlowIndicator.js:912 [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:50:00 → 17/10/2026, 12:20:00
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:50:00 → FP 17/10/2026, 11:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 11:55:00 → FP 17/10/2026, 11:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [5] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [6] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1047 [OrderFlow] [BTCUSDT] RENDER: 7/7 velas con FP, 9336 fps disponibles, candleWidth=105.7px, fullMode=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 7 candles, 7 OI matches, 6 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=7
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(7)
+OrderFlowIndicator.js:499 [OrderFlow] [BTCUSDT] 🌐 Backend: 699 footprints recibidos
+OrderFlowIndicator.js:509 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:510 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 1:54:00
+OrderFlowIndicator.js:511 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 13:50:00
+OrderFlowIndicator.js:512 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT]   • Footprints: 699 de 5min
+OrderFlowIndicator.js:611 [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8637, backend: +699 nuevos, ~0 actualizados, -0 ignorados = 9336 total
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+OrderFlowIndicator.js:632 [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9336 con levels, 0 con price_levels, 0 sin ninguno
+OrderFlowIndicator.js:643 [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+OrderFlowIndicator.js:644 [OrderFlow] [BTCUSDT]   • Desde: 17/9/2026, 22:40:00
+OrderFlowIndicator.js:645 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 13:50:00
+OrderFlowIndicator.js:646 [OrderFlow] [BTCUSDT]   • Duración: 783.2 horas (~32.6 días)
+OrderFlowIndicator.js:647 [OrderFlow] [BTCUSDT]   • Footprints: 9336 de 5min
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1476)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:906 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:907 [OrderFlow] [BTCUSDT]   Total velas visibles: 8
+OrderFlowIndicator.js:908 [OrderFlow] [BTCUSDT]   Total footprints: 9336
+OrderFlowIndicator.js:912 [OrderFlow] [BTCUSDT]   Rango velas: 17/10/2026, 11:45:00 → 17/10/2026, 12:20:00
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [0] ✅ 17/10/2026, 11:45:00 → FP 17/10/2026, 11:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [1] ✅ 17/10/2026, 11:50:00 → FP 17/10/2026, 11:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [2] ✅ 17/10/2026, 11:55:00 → FP 17/10/2026, 11:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [3] ✅ 17/10/2026, 12:00:00 → FP 17/10/2026, 12:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [4] ✅ 17/10/2026, 12:05:00 → FP 17/10/2026, 12:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [5] ✅ 17/10/2026, 12:10:00 → FP 17/10/2026, 12:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [6] ✅ 17/10/2026, 12:15:00 → FP 17/10/2026, 12:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   [7] ✅ 17/10/2026, 12:20:00 → FP 17/10/2026, 12:20:00, hasLevels=true, diff=0ms
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: Array(8)
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OrderFlowIndicator.js:1047 [OrderFlow] [BTCUSDT] RENDER: 8/8 velas con FP, 9336 fps disponibles, candleWidth=94.5px, fullMode=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:449 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:466 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:363 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:364 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OrderFlowIndicator.js:1047 [OrderFlow] [BTCUSDT] RENDER: 8/8 velas con FP, 9336 fps disponibles, candleWidth=94.5px, fullMode=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OrderFlowIndicator.js:1047 [OrderFlow] [BTCUSDT] RENDER: 8/8 velas con FP, 9336 fps disponibles, candleWidth=94.5px, fullMode=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OrderFlowIndicator.js:1047 [OrderFlow] [BTCUSDT] RENDER: 8/8 velas con FP, 9336 fps disponibles, candleWidth=94.5px, fullMode=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OrderFlowIndicator.js:1047 [OrderFlow] [BTCUSDT] RENDER: 8/8 velas con FP, 9336 fps disponibles, candleWidth=94.5px, fullMode=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OrderFlowIndicator.js:1047 [OrderFlow] [BTCUSDT] RENDER: 8/8 velas con FP, 9336 fps disponibles, candleWidth=94.5px, fullMode=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OrderFlowIndicator.js:374 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:377 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:380 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:387 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:1047 [OrderFlow] [BTCUSDT] RENDER: 8/8 velas con FP, 9336 fps disponibles, candleWidth=94.5px, fullMode=true
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+OpenInterestIndicator.js:402 [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+OpenInterestIndicator.js:411 [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+OpenInterestIndicator.js:189 [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+ [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+ [BTCUSDT] 📊 Histogram Mode: 8 candles, 8 OI matches, 7 non-zero deltas
+ [BTCUSDT] 🎨 RENDER Histogram: data.length=8
+ [BTCUSDT] 🎨 RENDER: maxDelta=80.09700000000157, sample deltas: (8) [0, -9.555000000000291, 23.89900000000489, -22.635000000002037, -5.493999999998778, -80.09700000000157, 7.896999999997206, -5.195999999996275]
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 89912867 caracteres
