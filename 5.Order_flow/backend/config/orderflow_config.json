@@ -29,13 +29,13 @@
   ],
   "imbalance_threshold": 3.0,
   "stacked_min_levels": 3,
-  "alerts_enabled": true,
+  "alerts_enabled": false,
   "alert_cooldown_minutes": 15,
   "max_footprints_in_memory": 2880,
   "max_history_hours": 12.0,
   "log_trades": false,
   "symbol_step_sizes": {
-    "BTCUSDT": 20.0,
+    "BTCUSDT": 5.0,
     "ADAUSDT": 0.001,
     "SOLUSDT": 1.0
   }

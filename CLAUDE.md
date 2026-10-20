@@ -53,6 +53,65 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 9 (OrderFlowDesktop) - 20 Octubre 2026: Fix Footprints Solo en Últimas 12h (Timeframe 5min)
+
+**Problema:** Los footprints solo se mostraban en las últimas 12 horas en timeframe de 5 minutos, a pesar de tener 20-30 días de datos. En 1 minuto funcionaba correctamente.
+
+**Causas raíz:**
+1. **Price ranges colapsados en agregación**: Al agregar footprints 1min → 5min, `price_min === price_max`, causando `levelHeight = 0` → rechazaba todos los levels en renderizado
+2. **Archivo desactualizado**: Gap de ~27.5h entre último footprint del archivo (17 Oct 22:40) y primeros del backend (20 Oct 02:08)
+
+**Soluciones implementadas:**
+
+1. **Preservar rangos de precio en agregación** (`_aggregateFootprints()` líneas 211-390):
+```javascript
+// ✅ Preservar y expandir price_min/price_max al combinar levels
+if (level.price_min != null && level.price_min < combined.price_min) {
+  combined.price_min = level.price_min;
+}
+if (level.price_max != null && level.price_max > combined.price_max) {
+  combined.price_max = level.price_max;
+}
+```
+
+2. **Auto-download de archivos desactualizados** (`_loadFromArchive()` líneas 442-460):
+```javascript
+// Si archivo >12h antiguo, descargar automáticamente
+if (ageHours > 12) {
+  this._autoDownloadArchive().catch(err => { ... });
+}
+```
+
+3. **Timestamp tolerance** configuración: `timestampToleranceMs: 30000` (30s de tolerancia)
+
+**Resultado:** ✅ **PROBLEMA RESUELTO**
+- Verificado con 20 días en timeframe 5min
+- Todas las velas tienen footprints (no solo últimas 12h)
+- Auto-download cierra gaps automáticamente
+
+**Segundo fix (mismo día):** Alturas inconsistentes de price levels en footprints
+- **Problema 1:** Celdas individuales con alturas radicalmente diferentes
+  - **Causa:** Combinar levels expandiendo rangos
+  - **Solución:** Regenerar levels con step_size uniforme (grid fijo)
+- **Problema 2:** Footprints incompletos (más bajos que velas)
+  - **Causa:** Filtrar levels vacíos + threshold renderizado 2px muy alto
+  - **Solución:** NO filtrar vacíos + threshold a 0.5px + color gris para vacíos
+- **Problema 3 (CRÍTICO):** Algunos footprints con celdas más pequeñas que otros
+  - **Causa:** Calcular step_size independientemente por cada grupo de 5min → si archivo tiene 90% footprints con step_size=0.1 y 10% con step_size=1.0, la mayoría de grupos usan 0.1 (footprints bajitos)
+  - **Intento fallido:** Usar `Math.max()` por grupo → solo grupos "afortunados" con step_size=1.0 quedaban altos
+  - **Solución CORRECTA:** Calcular step_size GLOBAL una sola vez (Math.max de TODOS los footprints 1min) y reutilizar para TODOS los grupos
+- **Resultado final:** ✅ Todas las celdas uniformes + mismo tamaño entre TODOS los footprints + cubren altura completa
+
+**Archivos modificados:**
+- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js` - Reescritura completa de agregación (líneas 273-340), import `getFootprintArchiver`, auto-check, método `_autoDownloadArchive()`, logs diagnóstico
+- `9.OrderFlowDesktop/CLAUDE.md` - Documentación completa de ambos fixes
+
+**Ver documentación detallada:** `9.OrderFlowDesktop/CLAUDE.md` secciones:
+- "Fix COMPLETO: Footprints Solo en Últimas 12h"
+- "Fix: Alturas Inconsistentes de Price Levels en Footprints"
+
+---
+
 ### APP 1 (Backtester) - Octubre 2026: Header Fusionado + Fix Open Interest + UI Optimizations
 
 **Cambios completados:**

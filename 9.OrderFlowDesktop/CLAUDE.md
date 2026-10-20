@@ -528,6 +528,240 @@ timestampToleranceMs: 30000  // 30 segundos de tolerancia para matching
 3. **Logs diagnósticos**: Logging de ranges ayudó a identificar el colapso de precios
 4. **Auto-healing**: Detección automática de datos obsoletos evita intervención manual
 
+## Fix: Alturas Inconsistentes de Price Levels en Footprints (20 Octubre 2026)
+
+**Problema:** Las celdas individuales (price levels) dentro de cada footprint tenían alturas muy inconsistentes - algunas eran diminutas y otras enormes, creando footprints visualmente distorsionados.
+
+**Evidencia:** Ver imagen `con_mas_zoom.jpg` - muestra footprints con celdas de alturas radicalmente diferentes.
+
+**Causa raíz:**
+
+Al agregar footprints de 1min → 5min, el código anterior combinaba levels por precio y **expandía** los rangos `price_min/price_max`:
+
+```javascript
+// ❌ PROBLEMA: Expandir rangos causaba alturas inconsistentes
+if (level.price_max > combined.price_max) {
+  combined.price_max = level.price_max;  // Expandir hacia arriba
+}
+```
+
+**Ejemplo del problema:**
+- Precio 67000 aparece en 5 footprints de 1min → rango se expande de (66999-67001) a (66995-67005) → celda ENORME (10 puntos)
+- Precio 67050 aparece en 1 footprint de 1min → rango (67049-67051) → celda pequeña (2 puntos)
+
+**Resultado:** Celdas con alturas de 2 a 50+ puntos en el mismo footprint.
+
+---
+
+**Solución implementada:**
+
+**Estrategia completa nueva** en `_aggregateFootprints()` (líneas 273-340):
+
+En lugar de combinar levels expandiendo rangos, **regeneramos levels con step_size uniforme**:
+
+```javascript
+// 1. Calcular OHLC del footprint agregado
+const candle_high = Math.max(...groupFootprints.map(fp => fp.candle_high || fp.high));
+const candle_low = Math.min(...groupFootprints.map(fp => fp.candle_low || fp.low));
+
+// 2. Obtener step_size del primer footprint
+const step_size = groupFootprints[0].step_size || 0.1;
+
+// 3. Generar levels UNIFORMES desde low hasta high
+const uniformLevels = new Map();
+let currentPriceMin = Math.floor(candle_low / step_size) * step_size;
+
+while (currentPriceMin <= candle_high) {
+  const currentPriceMax = currentPriceMin + step_size;
+  const currentPriceMid = (currentPriceMin + currentPriceMax) / 2;
+
+  uniformLevels.set(currentPriceMin, {
+    price: currentPriceMid,
+    price_min: currentPriceMin,
+    price_max: currentPriceMax,  // ✅ Rango FIJO = step_size
+    bid_volume: 0,
+    ask_volume: 0,
+    total_volume: 0,
+    delta: 0
+  });
+
+  currentPriceMin += step_size;
+}
+
+// 4. Redistribuir volúmenes de footprints originales en levels uniformes
+for (const fp of groupFootprints) {
+  const originalLevels = fp.levels || fp.price_levels || [];
+
+  for (const origLevel of originalLevels) {
+    // Encontrar levels uniformes que intersectan con este level original
+    for (const [uniformMin, uniformLevel] of uniformLevels) {
+      const uniformMax = uniformLevel.price_max;
+
+      // Si hay intersección, sumar volúmenes
+      const intersects = !(origLevel.price_max <= uniformMin || origLevel.price_min >= uniformMax);
+
+      if (intersects) {
+        uniformLevel.bid_volume += origLevel.bid_volume || 0;
+        uniformLevel.ask_volume += origLevel.ask_volume || 0;
+        uniformLevel.total_volume += origLevel.total_volume || 0;
+      }
+    }
+  }
+}
+
+// 5. Filtrar levels vacíos (sin volumen)
+const levels = Array.from(uniformLevels.values())
+  .filter(level => level.total_volume > 0)
+  .sort((a, b) => b.price - a.price);
+```
+
+**Beneficios:**
+
+1. ✅ **Todos los levels tienen la misma altura** (price_max - price_min = step_size)
+2. ✅ **Footprints visualmente consistentes** - no más celdas gigantes mezcladas con diminutas
+3. ✅ **Volúmenes correctamente redistribuidos** - mediante intersección de rangos
+4. ✅ **Usa step_size real** del footprint original (no hardcoded 0.1)
+
+**Logs de diagnóstico:**
+
+```javascript
+// En agregación - primeros 3 levels con rangos uniformes
+🔍 NIVELES UNIFORMES (primeros 3): [
+  { price: 67000.5, price_min: 67000, price_max: 67001, range: '1.0000', total_volume: '12.50' },
+  { price: 66999.5, price_min: 66999, price_max: 67000, range: '1.0000', total_volume: '8.30' },
+  { price: 66998.5, price_min: 66998, price_max: 66999, range: '1.0000', total_volume: '15.20' }
+]
+🔍 step_size=1, total_levels=250, candle_range=250.00
+```
+
+**Resultado parcial:** ✅ Celdas uniformes pero ❌ footprints incompletos (más bajos que velas)
+
+---
+
+**Problema secundario detectado:** Después del fix inicial, las celdas eran uniformes pero algunos footprints completos eran más bajos que las velas (ver `altura_footprints_2.png`).
+
+**Causas adicionales:**
+
+1. **Filtro de levels vacíos** (línea 339):
+```javascript
+.filter(level => level.total_volume > 0) // ❌ Elimina levels sin volumen
+```
+Si un precio dentro del rango de la vela no tuvo trades, se eliminaba, creando "huecos".
+
+2. **Threshold de renderizado muy alto** (línea 1447):
+```javascript
+if (levelHeight < 2) continue;  // ❌ Salta levels < 2 píxeles
+```
+Levels pequeños visualmente se saltaban, dejando espacios vacíos.
+
+**Solución final:**
+
+1. **NO filtrar levels vacíos** (línea 337-340):
+```javascript
+// ✅ Mantener TODOS los levels, incluso vacíos
+const levels = Array.from(uniformLevels.values())
+  .sort((a, b) => b.price - a.price);
+// NO .filter(level => level.total_volume > 0)
+```
+
+2. **Reducir threshold de renderizado** (líneas 1447, 1384):
+```javascript
+// ✅ De 2px a 0.5px - permite renderizar más levels
+if (levelHeight < 0.5) continue;
+```
+
+3. **Renderizar levels vacíos con color neutral** (líneas 1456-1463):
+```javascript
+const isEmpty = level.total_volume === 0;
+const bidBg = isEmpty ? 'rgba(100, 100, 100, 0.15)' : (bidDominates ? BID_STRONG : BID_WEAK);
+const askBg = isEmpty ? 'rgba(100, 100, 100, 0.15)' : (askDominates ? ASK_STRONG : ASK_WEAK);
+```
+
+**Resultado intermedio:** ✅ Celdas uniformes + footprints completos, pero ❌ **algunos footprints con celdas más pequeñas que otros**
+
+---
+
+**Problema terciario detectado:** Después de los fixes, algunos footprints tenían celdas visiblemente más pequeñas que otros, causando alturas inconsistentes.
+
+**Intentos fallidos:**
+
+1. **Intento 1** - Usar step_size del primer footprint:
+```javascript
+// ❌ FALLA: Diferentes footprints con diferentes tamaños
+const step_size = groupFootprints[0].step_size || 0.1;
+```
+
+2. **Intento 2** - Usar step_size máximo POR GRUPO:
+```javascript
+// ❌ FALLA: La mayoría de footprints quedan pequeños
+const step_sizes = groupFootprints.map(fp => fp.step_size).filter(s => s != null);
+const step_size = step_sizes.length > 0 ? Math.max(...step_sizes) : 0.1;
+```
+
+**Por qué el Intento 2 falló:**
+
+Calcula el `Math.max()` **independientemente para cada grupo de 5min**:
+
+- Si archivo tiene: 90% footprints con `step_size = 0.1`, 10% con `step_size = 1.0`
+- **Grupo 1** (5 footprints): `max([0.1, 0.1, 0.1, 0.1, 0.1])` = **0.1** → footprint BAJITO
+- **Grupo 2** (5 footprints): `max([1.0, 0.1, 0.1, 0.1, 0.1])` = **1.0** → footprint ALTO
+- **Grupo 3** (5 footprints): `max([0.1, 0.1, 0.1, 0.1, 0.1])` = **0.1** → footprint BAJITO
+
+**Resultado:** ~60% footprints con step_size = 0.1, ~40% con step_size = 1.0 → **alturas inconsistentes**
+
+**Solución CORRECTA implementada:**
+
+Calcular step_size **GLOBAL** una sola vez para TODOS los footprints:
+
+```javascript
+// ✅ CORRECTO: step_size GLOBAL (antes del loop de grupos)
+const allStepSizes = footprints1min.map(fp => fp.step_size).filter(s => s != null && s > 0);
+const globalStepSize = allStepSizes.length > 0 ? Math.max(...allStepSizes) : 0.1;
+
+// Logging de distribución
+const stepSizeDistribution = {};
+allStepSizes.forEach(s => {
+  stepSizeDistribution[s] = (stepSizeDistribution[s] || 0) + 1;
+});
+console.log(`STEP_SIZE GLOBAL: ${globalStepSize}`);
+console.log(`Distribución:`, stepSizeDistribution);
+
+// Dentro del loop de grupos: reutilizar globalStepSize
+for (const [intervalStart, groupFootprints] of groups) {
+  const step_size = globalStepSize;  // ✅ MISMO para TODOS
+  // ...
+}
+```
+
+**Beneficios:**
+- ✅ **Un solo step_size** para TODOS los footprints agregados
+- ✅ **Alturas consistentes** entre footprints
+- ✅ **Logging de distribución** muestra cuántos footprints tienen cada step_size original
+
+**Logs de diagnóstico:**
+```
+🔍 STEP_SIZE GLOBAL: 1.0
+🔍 Distribución: { '0.1': 8520, '1.0': 940 }
+🔍 Total footprints 1min: 9460, con step_size: 9460, sin step_size: 0
+```
+
+**Resultado FINAL:** ✅ **PROBLEMA COMPLETAMENTE RESUELTO**
+- Celdas uniformes ✅
+- Mismo tamaño de celda en todos los footprints ✅
+- Footprints cubren toda la altura de las velas ✅
+- Levels vacíos se muestran en gris claro ✅
+
+**Archivos modificados:**
+- `OrderFlowIndicator.js` líneas 230-244: **CRÍTICO** - Calcular step_size GLOBAL una sola vez (Math.max de TODOS los footprints 1min)
+- `OrderFlowIndicator.js` líneas 245-248: Logging de distribución de step_sizes
+- `OrderFlowIndicator.js` líneas 290-340: Regeneración de levels con step_size uniforme
+- `OrderFlowIndicator.js` línea 299: Usar globalStepSize (no calcular por grupo)
+- `OrderFlowIndicator.js` líneas 355-373: NO filtrar levels vacíos + logs diagnóstico
+- `OrderFlowIndicator.js` línea 431: Usar step_size real en footprint agregado
+- `OrderFlowIndicator.js` línea 1452: Threshold 2px → 0.5px (footprint renderizado)
+- `OrderFlowIndicator.js` línea 1389: Threshold 1px → 0.5px (volume profile renderizado)
+- `OrderFlowIndicator.js` líneas 1461-1468: Color gris para levels vacíos
+
 ## Sistema de Archivo Histórico de Footprints (17 Octubre 2026)
 
 Sistema para descargar, almacenar y usar footprints históricos desde el servicio cloud, con agregación automática para todos los timeframes.

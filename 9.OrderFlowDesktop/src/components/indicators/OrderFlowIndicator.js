@@ -40,6 +40,8 @@ class OrderFlowIndicator extends IndicatorBase {
     this._retryDelayMs = 2000; // Start with 2 seconds
     this._retryTimeoutId = null;
 
+    // Debug tracking
+    this._loggedMismatch = false; // Flag para loguear desajustes candle/footprint solo una vez
 
     // Layout proportions (as fractions of total candle width)
     // Order: Candle | Footprint (bid|ask) | Volume Profile
@@ -248,6 +250,21 @@ class OrderFlowIndicator extends IndicatorBase {
       });
     }
 
+    // ✅ CRITICAL: Calcular step_size GLOBAL una sola vez (para TODOS los footprints agregados)
+    // Esto asegura que todos los footprints agregados tengan la misma altura de celda
+    const allStepSizes = footprints1min.map(fp => fp.step_size).filter(s => s != null && s > 0);
+    const globalStepSize = allStepSizes.length > 0 ? Math.max(...allStepSizes) : 0.1;
+
+    // 🔍 DEBUG: Mostrar distribución de step_sizes
+    const stepSizeDistribution = {};
+    allStepSizes.forEach(s => {
+      stepSizeDistribution[s] = (stepSizeDistribution[s] || 0) + 1;
+    });
+
+    console.log(`[OrderFlow] [${this.symbol}] 🔍 STEP_SIZE GLOBAL: ${globalStepSize}`);
+    console.log(`[OrderFlow] [${this.symbol}] 🔍 Distribución:`, stepSizeDistribution);
+    console.log(`[OrderFlow] [${this.symbol}] 🔍 Total footprints 1min: ${footprints1min.length}, con step_size: ${allStepSizes.length}, sin step_size: ${footprints1min.length - allStepSizes.length}`);
+
     // Agrupar por intervalo
     const groups = new Map();
 
@@ -268,78 +285,90 @@ class OrderFlowIndicator extends IndicatorBase {
     for (const [intervalStart, groupFootprints] of groups) {
       if (groupFootprints.length === 0) continue;
 
-      // Combinar todos los price_levels de los footprints del grupo
-      const combinedLevels = new Map();
+      // ✅ ESTRATEGIA CORREGIDA: Regenerar levels con step_size uniforme
+      // PROBLEMA ANTERIOR: Combinar levels expandiendo rangos causaba alturas inconsistentes
+      // SOLUCIÓN: Dividir el rango OHLC en steps uniformes y redistribuir volúmenes
 
-      for (const fp of groupFootprints) {
-        // Soportar ambos formatos: levels[] (archivo) y price_levels[] (backend)
-        const levels = fp.levels || fp.price_levels || [];
-
-        // 🔍 DEBUG: Ver estructura del primer level del archivo
-        if (!this._loggedArchiveLevel && levels.length > 0) {
-          this._loggedArchiveLevel = true;
-          console.log(`[OrderFlow] [${this.symbol}] 🔍 NIVEL ARCHIVO (primer fp, primer level):`, {
-            allKeys: Object.keys(levels[0]),
-            sample: levels[0]
-          });
-        }
-
-        for (const level of levels) {
-          // Soportar price_mid (archivo) y price (backend)
-          const price = level.price_mid || level.price;
-
-          if (!combinedLevels.has(price)) {
-            // ✅ CREAR LEVEL preservando price_min/max del nivel original
-            combinedLevels.set(price, {
-              price: price,
-              price_min: level.price_min || price,  // ✅ Preservar rango original
-              price_max: level.price_max || price,  // ✅ Preservar rango original
-              price_mid: price,
-              bid_volume: 0,
-              ask_volume: 0,
-              total_volume: 0,
-              delta: 0
-            });
-          }
-
-          const combined = combinedLevels.get(price);
-          // ✅ Expandir el rango de precio para incluir este nivel
-          if (level.price_min != null && level.price_min < combined.price_min) {
-            combined.price_min = level.price_min;
-          }
-          if (level.price_max != null && level.price_max > combined.price_max) {
-            combined.price_max = level.price_max;
-          }
-
-          combined.bid_volume += level.bid_volume || 0;
-          combined.ask_volume += level.ask_volume || 0;
-          combined.total_volume += level.total_volume || 0;
-          combined.delta += level.delta || 0;
-        }
-      }
-
-      // Convertir Map a Array y ordenar por precio descendente
-      const levels = Array.from(combinedLevels.values()).sort((a, b) => b.price - a.price);
-
-      // 🔍 DEBUG: Verificar volúmenes del primer nivel agregado (solo primer footprint agregado)
-      if (aggregated.length === 0 && levels.length > 0) {
-        console.log(`[OrderFlow] [${this.symbol}] 🔍 NIVEL AGREGADO (primer nivel del primer FP):`, {
-          price: levels[0].price,
-          price_min: levels[0].price_min,
-          price_max: levels[0].price_max,
-          bid_volume: levels[0].bid_volume,
-          ask_volume: levels[0].ask_volume,
-          total_volume: levels[0].total_volume,
-          allKeys: Object.keys(levels[0]).join(', ')
-        });
-      }
-
-      // Calcular OHLC del intervalo agregado
-      // Soportar candle_open/high/low/close (archivo) y open/high/low/close (backend)
+      // 1. Calcular OHLC del intervalo agregado PRIMERO
       const candle_open = groupFootprints[0].candle_open || groupFootprints[0].open;
       const candle_close = groupFootprints[groupFootprints.length - 1].candle_close || groupFootprints[groupFootprints.length - 1].close;
       const candle_high = Math.max(...groupFootprints.map(fp => fp.candle_high || fp.high));
       const candle_low = Math.min(...groupFootprints.map(fp => fp.candle_low || fp.low));
+
+      // 2. ✅ USAR step_size GLOBAL (calculado una sola vez al inicio)
+      // NO calcular step_size por grupo - esto causaba alturas inconsistentes
+      const step_size = globalStepSize;
+
+      // 3. Generar price levels UNIFORMES desde low hasta high
+      const uniformLevels = new Map(); // price_min -> level
+
+      // Redondear low hacia abajo al múltiplo más cercano de step_size
+      let currentPriceMin = Math.floor(candle_low / step_size) * step_size;
+
+      while (currentPriceMin <= candle_high) {
+        const currentPriceMax = currentPriceMin + step_size;
+        const currentPriceMid = (currentPriceMin + currentPriceMax) / 2;
+
+        uniformLevels.set(currentPriceMin, {
+          price: currentPriceMid,
+          price_min: currentPriceMin,
+          price_max: currentPriceMax,
+          price_mid: currentPriceMid,
+          bid_volume: 0,
+          ask_volume: 0,
+          total_volume: 0,
+          delta: 0
+        });
+
+        currentPriceMin = parseFloat((currentPriceMin + step_size).toFixed(8)); // Evitar errores de punto flotante
+      }
+
+      // 4. Distribuir volúmenes de footprints originales en levels uniformes
+      for (const fp of groupFootprints) {
+        const originalLevels = fp.levels || fp.price_levels || [];
+
+        for (const origLevel of originalLevels) {
+          const origPriceMid = origLevel.price_mid || origLevel.price;
+          const origPriceMin = origLevel.price_min || origPriceMid;
+          const origPriceMax = origLevel.price_max || origPriceMid;
+
+          // Encontrar levels uniformes que intersectan con este level original
+          for (const [uniformMin, uniformLevel] of uniformLevels) {
+            const uniformMax = uniformLevel.price_max;
+
+            // Verificar intersección: los rangos se solapan si NO están completamente separados
+            const intersects = !(origPriceMax <= uniformMin || origPriceMin >= uniformMax);
+
+            if (intersects) {
+              // Sumar volúmenes (distribución simple: si hay intersección, suma completo)
+              uniformLevel.bid_volume += origLevel.bid_volume || 0;
+              uniformLevel.ask_volume += origLevel.ask_volume || 0;
+              uniformLevel.total_volume += origLevel.total_volume || 0;
+              uniformLevel.delta += origLevel.delta || 0;
+            }
+          }
+        }
+      }
+
+      // 5. Convertir a array y ordenar descendente (NO FILTRAR - mantener levels vacíos)
+      // Los levels vacíos son necesarios para que el footprint cubra toda la altura de la vela
+      const levels = Array.from(uniformLevels.values())
+        .sort((a, b) => b.price - a.price);
+
+      // 🔍 DEBUG: Verificar estructura del nivel agregado uniforme (solo primer footprint)
+      if (aggregated.length === 0 && levels.length > 0) {
+        const nonEmpty = levels.filter(l => l.total_volume > 0).length;
+        const empty = levels.length - nonEmpty;
+
+        console.log(`[OrderFlow] [${this.symbol}] 🔍 NIVELES UNIFORMES (primeros 3):`, levels.slice(0, 3).map(l => ({
+          price: l.price,
+          price_min: l.price_min,
+          price_max: l.price_max,
+          range: (l.price_max - l.price_min).toFixed(4),
+          total_volume: l.total_volume.toFixed(2)
+        })));
+        console.log(`[OrderFlow] [${this.symbol}] 🔍 step_size GLOBAL=${step_size}, total_levels=${levels.length} (${nonEmpty} con volumen, ${empty} vacíos), candle_range=${(candle_high - candle_low).toFixed(2)}`);
+      }
 
       // Sumar volúmenes totales
       const total_volume = groupFootprints.reduce((sum, fp) => sum + (fp.total_volume || 0), 0);
@@ -360,17 +389,40 @@ class OrderFlowIndicator extends IndicatorBase {
         }
       }
 
+      // ✅ SINCRONIZAR: Asegurar que el rango OHLC de la vela cubra TODOS los levels agregados
+      // Calcular el rango real de los levels
+      const levelsHigh = Math.max(...levels.map(l => l.price_max));
+      const levelsLow = Math.min(...levels.map(l => l.price_min));
+
+      // Extender candle_high/low si los levels van más allá
+      const synchronized_high = Math.max(candle_high, levelsHigh);
+      const synchronized_low = Math.min(candle_low, levelsLow);
+
+      // 🔍 DEBUG: Loguear discrepancias significativas (solo si >1% diferencia)
+      const highDiff = Math.abs(synchronized_high - candle_high);
+      const lowDiff = Math.abs(synchronized_low - candle_low);
+      const avgPrice = (synchronized_high + synchronized_low) / 2;
+      const threshold = avgPrice * 0.01; // 1% del precio promedio
+
+      if (aggregated.length === 0 && (highDiff > threshold || lowDiff > threshold)) {
+        console.warn(`[OrderFlow] [${this.symbol}] ⚠️ DESAJUSTE CANDLE/LEVELS detectado en primer footprint agregado:`);
+        console.log(`  Vela original: high=${candle_high}, low=${candle_low}, rango=${(candle_high - candle_low).toFixed(2)}`);
+        console.log(`  Levels rango: high=${levelsHigh}, low=${levelsLow}, rango=${(levelsHigh - levelsLow).toFixed(2)}`);
+        console.log(`  Sincronizado: high=${synchronized_high}, low=${synchronized_low}, rango=${(synchronized_high - synchronized_low).toFixed(2)}`);
+        console.log(`  Diferencia: +${highDiff.toFixed(2)} en high, +${lowDiff.toFixed(2)} en low`);
+      }
+
       // ✅ NORMALIZAR AL FORMATO DEL BACKEND (con campo "levels" en lugar de "price_levels")
       const aggregatedFootprint = {
         candle_timestamp: intervalStart,
         symbol: this.symbol,
         interval: targetInterval,
         candle_open,
-        candle_high,
-        candle_low,
+        candle_high: synchronized_high,  // ✅ Usar valores sincronizados
+        candle_low: synchronized_low,    // ✅ Usar valores sincronizados
         candle_close,
-        step_size: 0.1, // Default step size
-        levels,  // ✅ Campo "levels" (no "price_levels")
+        step_size: step_size,  // ✅ Usar step_size real (no hardcoded)
+        levels,  // ✅ Campo "levels" con rangos UNIFORMES (no "price_levels")
         num_levels: levels.length,
         total_volume,
         total_delta,
@@ -1245,6 +1297,22 @@ class OrderFlowIndicator extends IndicatorBase {
       }
     }
 
+    // 🔍 DEBUG: Detectar desajustes significativos (solo loguear una vez por sesión)
+    if (!this._loggedMismatch) {
+      const highExtension = footprintHigh - candle.high;
+      const lowExtension = candle.low - footprintLow;
+      const avgPrice = (footprintHigh + footprintLow) / 2;
+      const threshold = avgPrice * 0.005; // 0.5% del precio
+
+      if (highExtension > threshold || lowExtension > threshold) {
+        console.warn(`[OrderFlow] [${this.symbol}] ⚠️ DESAJUSTE CANDLE/FOOTPRINT en renderizado (vela ${new Date(candle.timestamp).toLocaleTimeString('es-ES')}):`);
+        console.log(`  Vela: high=${candle.high}, low=${candle.low}, rango=${(candle.high - candle.low).toFixed(2)}`);
+        console.log(`  Footprint levels: high=${footprintHigh}, low=${footprintLow}, rango=${(footprintHigh - footprintLow).toFixed(2)}`);
+        console.log(`  Extensión: +${highExtension.toFixed(2)} arriba, +${lowExtension.toFixed(2)} abajo`);
+        this._loggedMismatch = true; // Solo loguear una vez
+      }
+    }
+
     // 1. Draw Japanese Candle (leftmost) - with extended wicks to match footprint range
     if (this.config.showCandle) {
       this.renderJapaneseCandle(ctx, candle, candleX, candleWidth, priceToY, footprintHigh, footprintLow);
@@ -1329,7 +1397,8 @@ class OrderFlowIndicator extends IndicatorBase {
       const levelBottomY = priceToY(level.price_min);
       const levelHeight = Math.abs(levelBottomY - levelTopY);
 
-      if (levelHeight < 1) continue;
+      // ✅ Reducir threshold para consistencia con footprint
+      if (levelHeight < 0.5) continue;
 
       const bgY = Math.min(levelTopY, levelBottomY);
 
@@ -1392,7 +1461,9 @@ class OrderFlowIndicator extends IndicatorBase {
       const levelBottomY = priceToY(level.price_min);
       const levelHeight = Math.abs(levelBottomY - levelTopY);
 
-      if (levelHeight < 2) continue;
+      // ✅ Reducir threshold: renderizar levels >= 0.5px (antes era 2px)
+      // Esto permite que footprints cubran toda la altura de la vela
+      if (levelHeight < 0.5) continue;
 
       const bgY = Math.min(levelTopY, levelBottomY);
       const priceMid = (level.price_min + level.price_max) / 2;
@@ -1402,13 +1473,16 @@ class OrderFlowIndicator extends IndicatorBase {
       const bidDominates = level.bid_volume > level.ask_volume;
       const askDominates = level.ask_volume > level.bid_volume;
 
+      // Color de fondo - si el level está vacío (sin volumen), usar color neutral
+      const isEmpty = level.total_volume === 0;
+
       // Left side: BID
-      const bidBg = bidDominates ? this.colors.BID_BG_STRONG : this.colors.BID_BG_WEAK;
+      const bidBg = isEmpty ? 'rgba(100, 100, 100, 0.15)' : (bidDominates ? this.colors.BID_BG_STRONG : this.colors.BID_BG_WEAK);
       ctx.fillStyle = bidBg;
       ctx.fillRect(x, bgY, halfWidth - 0.5, levelHeight - levelGap);
 
       // Right side: ASK
-      const askBg = askDominates ? this.colors.ASK_BG_STRONG : this.colors.ASK_BG_WEAK;
+      const askBg = isEmpty ? 'rgba(100, 100, 100, 0.15)' : (askDominates ? this.colors.ASK_BG_STRONG : this.colors.ASK_BG_WEAK);
       ctx.fillStyle = askBg;
       ctx.fillRect(x + halfWidth + 0.5, bgY, halfWidth - 0.5, levelHeight - levelGap);
 

@@ -4,7 +4,9 @@
       "Bash(Get-FileHash \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\8.AnalizadorDesktop\\src\\components\\indicators\\LiquidationClustersIndicator.js\")",
       "Bash(Select-Object Hash)",
       "Bash(timeout /t 2 /nobreak)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
