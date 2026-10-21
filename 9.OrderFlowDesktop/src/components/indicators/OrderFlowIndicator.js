@@ -131,7 +131,8 @@ class OrderFlowIndicator extends IndicatorBase {
       stackedSellColor: '239,83,80',   // RGB del color SELL (rojo)
       stackedOpacity: 0.7,     // Opacidad de las lineas stacked (0.1 - 1.0)
       stackedMinVolumeZScore: 0, // Filtro minimo de volume z-score para stacked (0 = sin filtro)
-      timestampToleranceMs: 30000 // Tolerancia para matching de timestamps vela-footprint (30 segundos)
+      timestampToleranceMs: 30000, // Tolerancia para matching de timestamps vela-footprint (30 segundos)
+      stepSizeOverride: null   // Override manual del step_size (null = auto)
     };
   }
 
@@ -214,9 +215,10 @@ class OrderFlowIndicator extends IndicatorBase {
    *
    * @param {Array} footprints1min - Footprints de 1 minuto
    * @param {string} targetInterval - Intervalo objetivo ("5", "15", "60", etc.)
+   * @param {number} backendStepSize - Step size configurado en el backend (opcional, priority 1)
    * @returns {Array} - Footprints agregados
    */
-  _aggregateFootprints(footprints1min, targetInterval) {
+  _aggregateFootprints(footprints1min, targetInterval, backendStepSize = null) {
     if (targetInterval === "1") {
       return footprints1min; // No agregar si ya es 1min
     }
@@ -250,20 +252,74 @@ class OrderFlowIndicator extends IndicatorBase {
       });
     }
 
-    // ✅ CRITICAL: Calcular step_size GLOBAL una sola vez (para TODOS los footprints agregados)
-    // Esto asegura que todos los footprints agregados tengan la misma altura de celda
-    const allStepSizes = footprints1min.map(fp => fp.step_size).filter(s => s != null && s > 0);
-    const globalStepSize = allStepSizes.length > 0 ? Math.max(...allStepSizes) : 0.1;
+    // ✅ FASE 1 FIX FINAL: Sistema de Prioridades COMPLETO
+    // Priority 1: Backend step_size (configurado vía modal/API)
+    // Priority 2: Config override (stepSizeOverride en localStorage)
+    // Priority 3: Mode de footprints A AGREGAR (valor más frecuente en datos)
+    // Priority 4: Default fallback
 
-    // 🔍 DEBUG: Mostrar distribución de step_sizes
+    const allStepSizes = footprints1min.map(fp => fp.step_size).filter(s => s != null && s > 0);
+
+    // Calcular MODA (step_size más frecuente) de los footprints QUE SE ESTÁN AGREGANDO
     const stepSizeDistribution = {};
     allStepSizes.forEach(s => {
       stepSizeDistribution[s] = (stepSizeDistribution[s] || 0) + 1;
     });
 
-    console.log(`[OrderFlow] [${this.symbol}] 🔍 STEP_SIZE GLOBAL: ${globalStepSize}`);
-    console.log(`[OrderFlow] [${this.symbol}] 🔍 Distribución:`, stepSizeDistribution);
-    console.log(`[OrderFlow] [${this.symbol}] 🔍 Total footprints 1min: ${footprints1min.length}, con step_size: ${allStepSizes.length}, sin step_size: ${footprints1min.length - allStepSizes.length}`);
+    let modeStepSize = 0.1; // default absoluto
+    let maxCount = 0;
+    for (const [stepSize, count] of Object.entries(stepSizeDistribution)) {
+      if (count > maxCount) {
+        maxCount = count;
+        modeStepSize = parseFloat(stepSize);
+      }
+    }
+
+    // Override de configuración del usuario (localStorage)
+    const configStepSize = this.config.stepSizeOverride;
+
+    // SISTEMA DE PRIORIDADES COMPLETO
+    let globalStepSize;
+    let source;
+
+    if (backendStepSize != null && backendStepSize > 0) {
+      // Priority 1: Backend step_size (configurado vía modal)
+      globalStepSize = backendStepSize;
+      source = 'backend';
+    } else if (configStepSize != null && configStepSize > 0) {
+      // Priority 2: Config override
+      globalStepSize = configStepSize;
+      source = 'config';
+    } else if (allStepSizes.length > 0) {
+      // Priority 3: MODA de los footprints que se están agregando
+      globalStepSize = modeStepSize;
+      source = 'mode';
+    } else {
+      // Priority 4: Default fallback
+      globalStepSize = 0.1;
+      source = 'default';
+    }
+
+    // VALIDACIÓN: step_size debe estar en rango [0.01, 100]
+    if (globalStepSize < 0.01 || globalStepSize > 100) {
+      console.warn(`[OrderFlow] [${this.symbol}] ⚠️ step_size inválido: ${globalStepSize} (fuente: ${source})`);
+      console.warn(`[OrderFlow] [${this.symbol}] ⚠️ Usando fallback a default: 0.1`);
+      globalStepSize = 0.1;
+      source = 'default (fallback)';
+    }
+
+    console.log(`[OrderFlow] [${this.symbol}] 📏 STEP_SIZE: ${globalStepSize} (fuente: ${source})`);
+    if (source === 'backend') {
+      console.log(`[OrderFlow] [${this.symbol}] 🌐 Usando step_size configurado en backend/modal`);
+    } else if (source === 'config') {
+      console.log(`[OrderFlow] [${this.symbol}] 🔧 Usando override manual de configuración localStorage`);
+    } else if (source === 'mode') {
+      console.log(`[OrderFlow] [${this.symbol}] 📊 Usando moda de footprints a agregar (aparece ${maxCount}/${allStepSizes.length} veces)`);
+      console.log(`[OrderFlow] [${this.symbol}] 📊 Distribución:`, stepSizeDistribution);
+    } else if (source === 'default') {
+      console.log(`[OrderFlow] [${this.symbol}] ⚙️ Usando default (no hay step_size en footprints)`);
+    }
+    console.log(`[OrderFlow] [${this.symbol}] 📊 Total footprints 1min: ${footprints1min.length}, con step_size: ${allStepSizes.length}, sin step_size: ${footprints1min.length - allStepSizes.length}`);
 
     // Agrupar por intervalo
     const groups = new Map();
@@ -443,7 +499,7 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   async _loadFromArchive() {
-    console.log(`[OrderFlow] [${this.symbol}] 🔍 _loadFromArchive INICIADO`);
+    console.log(`[OrderFlow] [${this.symbol}] 🔍 _loadFromArchive INICIADO - interval=${this.interval}`);
     console.log(`[OrderFlow] [${this.symbol}] 🔍 window.electron=${!!window.electron}, getUserDataPath=${!!window.electron?.getUserDataPath}, readFile=${!!window.electron?.readFile}, fileExists=${!!window.electron?.fileExists}`);
 
     try {
@@ -536,6 +592,7 @@ class OrderFlowIndicator extends IndicatorBase {
         return aggregated;
       }
 
+      // Para interval="1", retornar footprints del archivo
       return footprints1min;
 
     } catch (error) {
@@ -1261,7 +1318,7 @@ class OrderFlowIndicator extends IndicatorBase {
    * Layout order (left to right): Japanese Candle, Footprint (bid|ask), Volume Profile
    */
   renderOrderFlowUnit(ctx, candle, footprint, unitX, unitWidth, priceToY, fullMode) {
-    const levels = footprint.levels;
+    let levels = footprint.levels;
     const pocIndex = footprint.poc_index;
 
     // Calculate section widths based on layout proportions
@@ -1279,16 +1336,16 @@ class OrderFlowIndicator extends IndicatorBase {
     const profileWidth = unitWidth * this.layout.profilePct;
     const profileX = footprintX + footprintWidth + gap;
 
-    // Find max volume for profile scaling AND extended price range from footprint levels
+    // ✅ FASE 2 FIX: Expandir levels para cubrir el rango COMPLETO de la vela
+    // Calcular rango actual de los levels
+    let footprintHigh = -Infinity;
+    let footprintLow = Infinity;
     let maxVolume = 0;
-    let footprintHigh = candle.high;
-    let footprintLow = candle.low;
 
     for (const level of levels) {
       if (level.total_volume > maxVolume) {
         maxVolume = level.total_volume;
       }
-      // Extend range to include all footprint levels
       if (level.price_max > footprintHigh) {
         footprintHigh = level.price_max;
       }
@@ -1297,20 +1354,72 @@ class OrderFlowIndicator extends IndicatorBase {
       }
     }
 
-    // 🔍 DEBUG: Detectar desajustes significativos (solo loguear una vez por sesión)
-    if (!this._loggedMismatch) {
-      const highExtension = footprintHigh - candle.high;
-      const lowExtension = candle.low - footprintLow;
-      const avgPrice = (footprintHigh + footprintLow) / 2;
-      const threshold = avgPrice * 0.005; // 0.5% del precio
+    // Detectar si necesitamos expandir (footprint más pequeño que vela)
+    const needsExpansionAbove = candle.high > footprintHigh;
+    const needsExpansionBelow = candle.low < footprintLow;
 
-      if (highExtension > threshold || lowExtension > threshold) {
-        console.warn(`[OrderFlow] [${this.symbol}] ⚠️ DESAJUSTE CANDLE/FOOTPRINT en renderizado (vela ${new Date(candle.timestamp).toLocaleTimeString('es-ES')}):`);
-        console.log(`  Vela: high=${candle.high}, low=${candle.low}, rango=${(candle.high - candle.low).toFixed(2)}`);
-        console.log(`  Footprint levels: high=${footprintHigh}, low=${footprintLow}, rango=${(footprintHigh - footprintLow).toFixed(2)}`);
-        console.log(`  Extensión: +${highExtension.toFixed(2)} arriba, +${lowExtension.toFixed(2)} abajo`);
-        this._loggedMismatch = true; // Solo loguear una vez
+    if (needsExpansionAbove || needsExpansionBelow) {
+      // Obtener step_size del footprint o usar default
+      const step_size = footprint.step_size || 0.1;
+
+      // Crear array expandido con levels adicionales vacíos
+      const expandedLevels = [...levels];
+
+      // Agregar levels vacíos ARRIBA (si es necesario)
+      if (needsExpansionAbove) {
+        let currentPriceMin = footprintHigh;
+        while (currentPriceMin < candle.high) {
+          const currentPriceMax = Math.min(currentPriceMin + step_size, candle.high + step_size);
+          expandedLevels.push({
+            price: (currentPriceMin + currentPriceMax) / 2,
+            price_min: currentPriceMin,
+            price_max: currentPriceMax,
+            bid_volume: 0,
+            ask_volume: 0,
+            total_volume: 0,
+            delta: 0
+          });
+          currentPriceMin = parseFloat((currentPriceMin + step_size).toFixed(8));
+        }
       }
+
+      // Agregar levels vacíos ABAJO (si es necesario)
+      if (needsExpansionBelow) {
+        let currentPriceMax = footprintLow;
+        while (currentPriceMax > candle.low) {
+          const currentPriceMin = Math.max(currentPriceMax - step_size, candle.low - step_size);
+          expandedLevels.push({
+            price: (currentPriceMin + currentPriceMax) / 2,
+            price_min: currentPriceMin,
+            price_max: currentPriceMax,
+            bid_volume: 0,
+            ask_volume: 0,
+            total_volume: 0,
+            delta: 0
+          });
+          currentPriceMax = parseFloat((currentPriceMax - step_size).toFixed(8));
+        }
+      }
+
+      // Ordenar levels (descendente por precio)
+      expandedLevels.sort((a, b) => b.price - a.price);
+
+      // 🔍 DEBUG: Loguear expansión (solo primera vez)
+      if (!this._loggedExpansion) {
+        this._loggedExpansion = true;
+        console.log(`[OrderFlow] [${this.symbol}] 🔧 EXPANDIENDO LEVELS para cubrir vela completa:`);
+        console.log(`  Vela: high=${candle.high.toFixed(2)}, low=${candle.low.toFixed(2)}, rango=${(candle.high - candle.low).toFixed(2)}`);
+        console.log(`  Footprint original: high=${footprintHigh.toFixed(2)}, low=${footprintLow.toFixed(2)}, rango=${(footprintHigh - footprintLow).toFixed(2)}`);
+        console.log(`  Levels: original=${levels.length}, expandido=${expandedLevels.length}, agregados=${expandedLevels.length - levels.length}`);
+        console.log(`  Step_size: ${step_size}`);
+      }
+
+      // Reemplazar levels con la versión expandida
+      levels = expandedLevels;
+
+      // Actualizar rango
+      footprintHigh = candle.high;
+      footprintLow = candle.low;
     }
 
     // 1. Draw Japanese Candle (leftmost) - with extended wicks to match footprint range

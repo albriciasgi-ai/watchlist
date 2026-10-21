@@ -237,9 +237,8 @@ const OrderFlowSettings = ({
         console.log(`[OrderFlow] Step size saved for ${currentSymbol}: ${pendingStepSize}`);
         setSymbolStepSize(pendingStepSize);
         setPendingStepSize(null);
-        if (onBackendConfigSaved) {
-          onBackendConfigSaved();
-        }
+        // NO llamar callback aquí - solo guardar en backend
+        // El callback se ejecuta solo cuando se hace "Aplicar a historial"
       } else {
         alert('Error al guardar step size');
       }
@@ -259,41 +258,9 @@ const OrderFlowSettings = ({
     setPendingStepSize(null);
   };
 
-  // Clear cache for current symbol to regenerate footprints with new step_size
-  const handleClearSymbolCache = async () => {
-    if (!currentSymbol) return;
-
-    const confirmed = window.confirm(
-      `Esto eliminara el historial de footprints para ${currentSymbol}.\n\n` +
-      `Los footprints se regeneraran con el step_size actual ($${currentStepSize}).\n\n` +
-      `Continuar?`
-    );
-
-    if (!confirmed) return;
-
-    setClearingCache(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/orderflow/cache/${currentSymbol}`, {
-        method: 'DELETE'
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(`[OrderFlow] Cache cleared for ${currentSymbol}:`, data);
-        alert(`Cache limpiado: ${data.files_deleted} archivos eliminados.\nLos footprints se regeneraran automaticamente.`);
-        if (onBackendConfigSaved) {
-          onBackendConfigSaved();
-        }
-      } else {
-        alert('Error al limpiar cache');
-      }
-    } catch (error) {
-      console.error('[OrderFlow] Clear cache error:', error);
-      alert('Error de conexion al limpiar cache');
-    } finally {
-      setClearingCache(false);
-    }
-  };
+  // ELIMINADO: Ya no es necesario limpiar cache
+  // Los footprints históricos del cloud mantienen su step_size original
+  // Solo los footprints nuevos (tiempo real) usan el step_size configurado
 
   return (
     <div className="orderflow-settings" style={{ padding: '16px', maxHeight: '70vh', overflowY: 'auto' }}>
@@ -961,38 +928,6 @@ const OrderFlowSettings = ({
           - Velas grandes tendran MAS niveles, velas pequenas MENOS<br/>
           - Los niveles estan ALINEADOS entre velas (mismo precio = misma posicion Y)<br/>
           - Similar a ATAS, Sierra Chart y plataformas profesionales
-        </div>
-
-        {/* Apply to History Button */}
-        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #90CAF9' }}>
-          <button
-            onClick={handleClearSymbolCache}
-            disabled={loading || clearingCache}
-            style={{
-              width: '100%',
-              padding: '10px 16px',
-              background: clearingCache ? '#90CAF9' : '#1976D2',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: (loading || clearingCache) ? 'default' : 'pointer',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px'
-            }}
-          >
-            {clearingCache ? (
-              <>Limpiando...</>
-            ) : (
-              <>Aplicar a historial</>
-            )}
-          </button>
-          <div style={{ fontSize: '10px', color: '#1565C0', marginTop: '6px', textAlign: 'center' }}>
-            Elimina footprints antiguos para que se regeneren con el step_size actual
-          </div>
         </div>
       </div>
 
