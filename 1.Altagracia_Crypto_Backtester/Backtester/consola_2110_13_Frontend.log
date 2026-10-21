@@ -1,0 +1,161 @@
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 739px, disponible: 470px
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 739px, disponible: 470px
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2537 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: true, CVD: false, Open Interest: true, OI-Volume Confluence: true, …}
+MiniChart.jsx:2538 [MiniChart] Velas disponibles: 1046787
+MiniChart.jsx:2539 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando Volume Delta
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: true, wasEnabled: true, hasDataMap: true, dataMapSize: 70200, dataLength: 70200, …}
+IndicatorManager.js:359 [BTCUSDT] 🔍 OI Data Validation {hasDataMap: true, dataMapSize: 70200, dataLength: 70200, hasData: true, willReload: false}
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 1m] Redibujando por cambio en indicatorStates - 1046787 velas
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 659px, disponible: 470px
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2537 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: true, OI-Volume Confluence: true, …}
+MiniChart.jsx:2538 [MiniChart] Velas disponibles: 1046787
+MiniChart.jsx:2539 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando Volume Profile
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: true, wasEnabled: true, hasDataMap: true, dataMapSize: 70200, dataLength: 70200, …}
+IndicatorManager.js:359 [BTCUSDT] 🔍 OI Data Validation {hasDataMap: true, dataMapSize: 70200, dataLength: 70200, hasData: true, willReload: false}
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 1m] Redibujando por cambio en indicatorStates - 1046787 velas
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 659px, disponible: 470px
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2537 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: false, OI-Volume Confluence: true, …}
+MiniChart.jsx:2538 [MiniChart] Velas disponibles: 1046787
+MiniChart.jsx:2539 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: false, wasEnabled: true, hasDataMap: true, dataMapSize: 70200, dataLength: 70200, …}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando Open Interest
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 1m] Redibujando por cambio en indicatorStates - 1046787 velas
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 509px, disponible: 470px
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2537 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: false, OI-Volume Confluence: false, …}
+MiniChart.jsx:2538 [MiniChart] Velas disponibles: 1046787
+MiniChart.jsx:2539 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: false, wasEnabled: false, hasDataMap: true, dataMapSize: 70200, dataLength: 70200, …}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando OI-Volume Confluence
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 1m] Redibujando por cambio en indicatorStates - 1046787 velas
+OpenInterestIndicator.js:86 [OI] BTCUSDT - API RESPONSE {success: true, dataLength: 6200, error: 'none', hasMetadata: true}
+OpenInterestIndicator.js:126 [OI] BTCUSDT - ✅ FETCH EXITOSO {dataMapSize: 6200, dataLength: 6200, coverage: '2026-10-20 23:10:00 → 2026-09-30 19:45:00', interval: '5min'}
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2396 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+OpenInterestIndicator.js:86 [OI] BTCUSDT - API RESPONSE {success: true, dataLength: 6200, error: 'none', hasMetadata: true}
+OpenInterestIndicator.js:126 [OI] BTCUSDT - ✅ FETCH EXITOSO {dataMapSize: 6200, dataLength: 6200, coverage: '2026-10-20 23:10:00 → 2026-09-30 19:45:00', interval: '5min'}
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2396 [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+OpenInterestIndicator.js:86 [OI] BTCUSDT - API RESPONSE {success: true, dataLength: 6200, error: 'none', hasMetadata: true}
+OpenInterestIndicator.js:126 [OI] BTCUSDT - ✅ FETCH EXITOSO {dataMapSize: 6200, dataLength: 6200, coverage: '2026-10-20 23:10:00 → 2026-09-30 19:45:00', interval: '5min'}
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2537 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: false, OI-Volume Confluence: false, …}
+MiniChart.jsx:2538 [MiniChart] Velas disponibles: 1046787
+MiniChart.jsx:2539 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":true,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: false, wasEnabled: false, hasDataMap: true, dataMapSize: 70200, dataLength: 70200, …}
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:300 [BTCUSDT] ✅ Activando Order Flow
+IndicatorManager.js:315 [BTCUSDT] 🌐 Cargando datos para Order Flow (activación dinámica)
+OrderFlowIndicator.js:88 [BTCUSDT] 🔍 Interval conversion: 1m → 1
+OrderFlowIndicator.js:101 [BTCUSDT] 📊 Fetching Order Flow data from http://localhost:9000/api/orderflow/historical/BTCUSDT?interval=1&days=21
+react-dom_client.js?v=0bc9ba31:3671 [Violation] 'mouseout' handler took 177ms
+[Violation] 'mouseout' handler took 177ms
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+OrderFlowIndicator.js:113 [BTCUSDT] 🔍 Backend response: {success: true, footprints: Array(29168), count: 29168, step_size: 10, interval: '1', …}
+OrderFlowIndicator.js:114 [BTCUSDT] 🔍 data.footprints: (29168) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+OrderFlowIndicator.js:115 [BTCUSDT] 🔍 data.footprints?.length: 29168
+OrderFlowIndicator.js:116 [BTCUSDT] 🔍 Type of data: object
+OrderFlowIndicator.js:117 [BTCUSDT] 🔍 Keys in data: (6) ['success', 'footprints', 'count', 'step_size', 'interval', 'message']
+OrderFlowIndicator.js:119 [BTCUSDT] ✅ Order Flow loaded: 29168 footprints
+OrderFlowIndicator.js:190 [BTCUSDT] 🔍 Detected stacked imbalances in 1 footprints
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 1m] Redibujando por cambio en indicatorStates - 1046787 velas
+OrderFlowIndicator.js:302 [BTCUSDT] 🎨 OrderFlow renderOverlay: {totalFootprints: 29168, visibleCandles: 152, visibleFootprints: 152, timeRange: '2026-10-01T02:29:00.000Z → 2026-10-01T05:00:00.000Z'}timeRange: "2026-10-01T02:29:00.000Z → 2026-10-01T05:00:00.000Z"totalFootprints: 29168visibleCandles: 152visibleFootprints: 152[[Prototype]]: Object

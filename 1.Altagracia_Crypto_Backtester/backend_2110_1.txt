@@ -1,0 +1,239 @@
+[notice] A new release of pip is available: 26.0 -> 26.2.2
+[notice] To update, run: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\1.Altagracia_Crypto_Backtester\Backtester\backend\.venv\Scripts\python.exe -m pip install --upgrade pip
+[INFO] Backend listo. Iniciando uvicorn...
+INFO:     Will watch for changes in these directories: ['C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\1.Altagracia_Crypto_Backtester\\Backtester\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [8040] using WatchFiles
+[STARTUP] Zone Detector 2.0 modules loaded successfully
+[STARTUP] Zone Quality Analyzer loaded successfully
+[STARTUP] Strategy Builder modules loaded successfully
+[STARTUP] Strategy Executor module loaded successfully
+INFO:     Started server process [24836]
+INFO:     Waiting for application startup.
+INFO:alert_sender:[START] Alert sender started. Target: http://localhost:5000
+INFO:alert_sender:[MAILBOX] Alert queue processor started
+WARNING:alert_sender:[WARN] Alert service not reachable at http://localhost:5000
+INFO:alert_sender:[INFO] Alert service is optional. Alerts will be logged locally.
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Backtesting cache directory: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\1.Altagracia_Crypto_Backtester\Backtester\backend\backtesting_cache
+
+================================================================================
+🚀 TODAS LAS RUTAS REGISTRADAS:
+================================================================================
+  {'HEAD', 'GET'}      /openapi.json                                      (name: openapi)
+  {'HEAD', 'GET'}      /docs                                              (name: swagger_ui_html)
+  {'HEAD', 'GET'}      /docs/oauth2-redirect                              (name: swagger_ui_redirect)
+  {'HEAD', 'GET'}      /redoc                                             (name: redoc_html)
+  {'GET'}              /api/status                                        (name: status)
+  {'GET'}              /api/historical/{symbol}                           (name: get_historical)
+  {'GET'}              /api/volume-delta/{symbol}                         (name: get_volume_delta)
+  {'GET'}              /api/open-interest/{symbol}                        (name: get_open_interest)
+  {'POST'}             /api/clear-cache                                   (name: clear_cache)
+  {'POST'}             /api/upload-cache/{symbol}                         (name: upload_cache)
+  {'GET'}              /api/support-resistance/{symbol}                   (name: get_support_resistance)
+  {'POST'}             /api/rejection-patterns/detect                     (name: detect_rejection_patterns)
+  {'GET'}              /api/rejection-patterns/available-contexts/{symbol} (name: get_available_contexts)
+  {'GET'}              /api/backtesting/test-metadata                     (name: test_backtesting_metadata)
+  {'GET'}              /api/backtesting/bulk-data/{symbol}                (name: get_backtesting_bulk_data)
+  {'DELETE'}           /api/backtesting/cache/{symbol}                    (name: delete_backtesting_cache)
+  {'POST'}             /api/backtesting/update/{symbol}                   (name: update_backtesting_data)
+  {'GET'}              /api/drawings/{symbol}                             (name: get_drawings)
+  {'POST'}             /api/drawings/{symbol}                             (name: save_drawings)
+  {'DELETE'}           /api/drawings/{symbol}                             (name: delete_drawings)
+  {'POST'}             /api/double-topbottom/detect                       (name: detect_double_topbottom)
+  {'POST'}             /api/double-topbottom/chunk                        (name: get_dtb_chunk)
+  {'GET'}              /api/vwap/{symbol}                                 (name: get_vwap)
+  {'POST'}             /api/zones/detect                                  (name: detect_zones)
+  {'POST'}             /api/zones/evaluate                                (name: evaluate_zones)
+  {'POST'}             /api/zones/compare-methods                         (name: compare_zone_methods)
+  {'POST'}             /api/zones/optimize                                (name: optimize_zone_params)
+  {'GET'}              /api/zones/methods                                 (name: get_zone_methods)
+  {'GET'}              /api/strategies                                    (name: list_strategies)
+  {'GET'}              /api/strategies/templates                          (name: get_strategy_templates)
+  {'GET'}              /api/strategies/{strategy_id}                      (name: get_strategy)
+  {'POST'}             /api/strategies                                    (name: create_strategy)
+  {'PUT'}              /api/strategies/{strategy_id}                      (name: update_strategy)
+  {'DELETE'}           /api/strategies/{strategy_id}                      (name: delete_strategy)
+  {'POST'}             /api/strategies/{strategy_id}/duplicate            (name: duplicate_strategy)
+  {'POST'}             /api/strategies/validate                           (name: validate_strategy)
+  {'POST'}             /api/strategies/{strategy_id}/backtest             (name: run_strategy_backtest)
+  {'POST'}             /api/strategies/quick-backtest                     (name: quick_backtest)
+  {'POST'}             /api/zones/quality-simulation                      (name: run_zone_quality_simulation)
+  {'POST'}             /api/zones/analyze-quality                         (name: analyze_zones_quality)
+  {'GET'}              /api/zones/quality-metrics                         (name: get_quality_metrics_info)
+  {'GET'}              /api/screenshot-test                               (name: test_simple)
+  {'GET'}              /api/screenshots/test                              (name: test_screenshot_endpoint)
+  {'GET'}              /api/screenshots                                   (name: test_screenshots_root)
+  {'GET'}              /api/screenshots/session/{session_id}/{filename}   (name: get_screenshot)
+  {'DELETE'}           /api/screenshots/session/{session_id}              (name: delete_session_screenshots)
+  {'POST'}             /api/screenshots/session/{session_id}              (name: save_screenshot)
+  {'GET'}              /api/orderflow/historical/{symbol}                 (name: get_orderflow_historical)
+================================================================================
+
+================================================================================
+📸 SCREENSHOT ENDPOINTS:
+================================================================================
+  {'GET'}              /api/screenshot-test                               (name: test_simple)
+  {'GET'}              /api/screenshots/test                              (name: test_screenshot_endpoint)
+  {'GET'}              /api/screenshots                                   (name: test_screenshots_root)
+  {'GET'}              /api/screenshots/session/{session_id}/{filename}   (name: get_screenshot)
+  {'DELETE'}           /api/screenshots/session/{session_id}              (name: delete_session_screenshots)
+  {'POST'}             /api/screenshots/session/{session_id}              (name: save_screenshot)
+================================================================================
+
+INFO:     Application startup complete.
+[BACKTESTING CACHE] Cargado BTCUSDT desde caché gzip - 3.4 MB en disco
+
+[BACKTESTING UPDATE] [UPDATE] Actualizando datos para BTCUSDT...
+[BACKTESTING UPDATE] 15m: Última vela en caché: 2026-10-21 12:00:00
+[BACKTESTING UPDATE] 15m: Descargando últimos 1 días...
+[BACKTESTING] BTCUSDT @ 15m - Necesitamos 96 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=15&start=1792516381885&limit=96 "HTTP/1.1 200 OK"
+[BACKTESTING] OK BTCUSDT @ 15m - 96 velas descargadas
+[BACKTESTING UPDATE] 15m main: +0 velas nuevas
+[BACKTESTING] BTCUSDT @ 5m - Necesitamos 288 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=5&start=1792516382659&limit=288 "HTTP/1.1 200 OK"
+[BACKTESTING] OK BTCUSDT @ 5m - 288 velas descargadas
+[BACKTESTING UPDATE] 15m subdivisions: +1 velas nuevas
+[BTCUSDT] OPEN INTEREST: Recibido days=1, aplicando limite -> days_to_fetch=1 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+[BACKTESTING UPDATE] 15m OI: +0 puntos nuevos
+[BACKTESTING CACHE] Guardado BTCUSDT - 3.4 MB (comprimido 85% desde 22.6 MB)
+
+[BACKTESTING UPDATE] OK Actualización completada en 3.3s
+[BACKTESTING UPDATE] Total de velas nuevas agregadas: 0
+INFO:     127.0.0.1:52339 - "POST /api/backtesting/update/BTCUSDT HTTP/1.1" 200 OK
+[BACKTESTING CACHE] Cargado BTCUSDT desde caché gzip - 3.4 MB en disco
+
+[BACKTESTING UPDATE] [UPDATE] Actualizando datos para BTCUSDT...
+[BACKTESTING UPDATE] 15m: Última vela en caché: 2026-10-21 12:00:00
+[BACKTESTING UPDATE] 15m: Descargando últimos 1 días...
+[BACKTESTING] BTCUSDT @ 15m - Necesitamos 96 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 730) @ 1
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 1 desde caché permanente - 0.80 MB en disco (70200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 1
+INFO:     127.0.0.1:61826 - "GET /api/open-interest/BTCUSDT?interval=1m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 5
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 5 desde caché permanente - 0.07 MB en disco (6200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 5
+INFO:     127.0.0.1:49265 - "GET /api/open-interest/BTCUSDT?interval=5m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 60
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 60 desde caché permanente - 0.51 MB en disco (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60
+INFO:     127.0.0.1:59205 - "GET /api/open-interest/BTCUSDT?interval=1h&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:54348 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+INFO:     127.0.0.1:57220 - "GET /api/open-interest/BTCUSDT?interval=15m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 240
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 240 desde caché permanente - 0.13 MB en disco (11000 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240
+INFO:     127.0.0.1:61826 - "GET /api/open-interest/BTCUSDT?interval=4h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 5
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 5 desde caché permanente - 0.07 MB en disco (6200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 5
+INFO:     127.0.0.1:54348 - "GET /api/open-interest/BTCUSDT?interval=5m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 730) @ 1
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 1 desde caché permanente - 0.80 MB en disco (70200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 1
+INFO:     127.0.0.1:49265 - "GET /api/open-interest/BTCUSDT?interval=1m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 60
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 60 desde caché permanente - 0.51 MB en disco (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60
+INFO:     127.0.0.1:59205 - "GET /api/open-interest/BTCUSDT?interval=1h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+INFO:     127.0.0.1:61826 - "GET /api/open-interest/BTCUSDT?interval=15m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 5
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 5 desde caché permanente - 0.07 MB en disco (6200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 5
+INFO:     127.0.0.1:49265 - "GET /api/open-interest/BTCUSDT?interval=5m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 240
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 240 desde caché permanente - 0.13 MB en disco (11000 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240
+INFO:     127.0.0.1:54348 - "GET /api/open-interest/BTCUSDT?interval=4h&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:57220 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 60
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 60 desde caché permanente - 0.51 MB en disco (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60
+INFO:     127.0.0.1:61826 - "GET /api/open-interest/BTCUSDT?interval=1h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+INFO:     127.0.0.1:49265 - "GET /api/open-interest/BTCUSDT?interval=15m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 730) @ 1
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 1 desde caché permanente - 0.80 MB en disco (70200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 1
+INFO:     127.0.0.1:59205 - "GET /api/open-interest/BTCUSDT?interval=1m&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:61826 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 60
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 60 desde caché permanente - 0.51 MB en disco (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60
+INFO:     127.0.0.1:49265 - "GET /api/open-interest/BTCUSDT?interval=1h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 240
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 240 desde caché permanente - 0.13 MB en disco (11000 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240
+INFO:     127.0.0.1:54348 - "GET /api/open-interest/BTCUSDT?interval=4h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 5
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 5 desde caché permanente - 0.07 MB en disco (6200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 5
+INFO:     127.0.0.1:57220 - "GET /api/open-interest/BTCUSDT?interval=5m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+INFO:     127.0.0.1:61826 - "GET /api/open-interest/BTCUSDT?interval=15m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 240
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 240 desde caché permanente - 0.13 MB en disco (11000 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240
+INFO:     127.0.0.1:54348 - "GET /api/open-interest/BTCUSDT?interval=4h&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:49265 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 730) @ 1
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 1 desde caché permanente - 0.80 MB en disco (70200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 1
+INFO:     127.0.0.1:59205 - "GET /api/open-interest/BTCUSDT?interval=1m&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:49265 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:49265 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:49265 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:49265 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:49265 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:49265 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=15&start=1792516395849&limit=96 "HTTP/1.1 200 OK"
+[BACKTESTING] OK BTCUSDT @ 15m - 96 velas descargadas
+[BACKTESTING UPDATE] 15m main: +0 velas nuevas
+[BACKTESTING] BTCUSDT @ 5m - Necesitamos 288 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=5&start=1792516400796&limit=288 "HTTP/1.1 200 OK"
+[BACKTESTING] OK BTCUSDT @ 5m - 288 velas descargadas
+[BACKTESTING UPDATE] 15m subdivisions: +0 velas nuevas
+[BTCUSDT] OPEN INTEREST: Recibido days=1, aplicando limite -> days_to_fetch=1 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+[BACKTESTING UPDATE] 15m OI: +0 puntos nuevos
+[BACKTESTING CACHE] Guardado BTCUSDT - 3.4 MB (comprimido 85% desde 22.6 MB)
+
+[BACKTESTING UPDATE] OK Actualización completada en 6.6s
+[BACKTESTING UPDATE] Total de velas nuevas agregadas: 0
+INFO:     127.0.0.1:58770 - "POST /api/backtesting/update/BTCUSDT HTTP/1.1" 200 OK
+[ORDERFLOW] 📂 Cargando footprints desde: orderflow_archive\BTCUSDT_1.json
+[ORDERFLOW] ✅ Cargados 43169 footprints de 1min
+[ORDERFLOW] 📅 Limitados a últimos 21 días: 43169 → 29382
+[ORDERFLOW] 🔄 Agregando footprints de 1min → 5min...
+[ORDERFLOW] ✅ Agregación completa: 5880 footprints de 5min
+INFO:     127.0.0.1:50843 - "GET /api/orderflow/historical/BTCUSDT?interval=5&days=21 HTTP/1.1" 200 OK

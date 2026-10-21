@@ -512,6 +512,53 @@ class FootprintArchiverElectron {
   }
 
   /**
+   * Elimina el archivo de footprints de un símbolo específico.
+   * Útil cuando se cambia step_size y se necesita regenrar datos desde cero.
+   *
+   * @param {string} symbol - Símbolo del archivo a eliminar
+   * @returns {Promise<Object>} - Resultado de la operación
+   */
+  async deleteArchiveFile(symbol) {
+    if (!window.electron || !this.storageDir) {
+      return {
+        success: false,
+        error: 'Electron API no disponible'
+      };
+    }
+
+    try {
+      const filePath = this._getFilePath(symbol);
+      const exists = await window.electron.fileExists(filePath);
+
+      if (!exists) {
+        console.log(`[FootprintArchiver] ${symbol}: archivo no existe, nada que eliminar`);
+        return {
+          success: true,
+          message: 'Archivo no existía'
+        };
+      }
+
+      // Eliminar archivo usando la API de Electron
+      await window.electron.deleteFile(filePath);
+
+      console.log(`[FootprintArchiver] 🗑️ ${symbol}: archivo eliminado: ${filePath}`);
+
+      return {
+        success: true,
+        message: `Archivo ${symbol}_${this.config.interval}.json eliminado`,
+        filePath
+      };
+
+    } catch (error) {
+      console.error(`[FootprintArchiver] ❌ Error eliminando archivo de ${symbol}:`, error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
+  /**
    * Abre la carpeta de almacenamiento en el explorador.
    */
   async openStorageFolder() {

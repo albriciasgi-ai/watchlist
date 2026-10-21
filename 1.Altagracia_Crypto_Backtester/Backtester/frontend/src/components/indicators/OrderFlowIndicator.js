@@ -288,15 +288,25 @@ class OrderFlowIndicator extends IndicatorBase {
     const firstVisibleTs = visibleCandles[0].timestamp;
     const lastVisibleTs = visibleCandles[visibleCandles.length - 1].timestamp;
 
-    // Anti-sesgo: solo footprints hasta el tiempo actual del playback
+    // 🎯 Anti-sesgo corregido:
+    // - Mostrar TODOS los footprints hasta la fecha de inicio del backtesting
+    // - Durante el playback: solo mostrar footprints adicionales hasta currentTime
     const currentTime = this.backtestingMode && allCandles.length > 0
       ? allCandles[allCandles.length - 1].timestamp
       : Date.now();
 
-    // Filtrar por RANGO temporal de velas visibles Y anti-sesgo
+    // Obtener fecha de inicio del backtesting (primera vela de allCandles)
+    const backtestingStartTime = this.backtestingMode && allCandles.length > 0
+      ? allCandles[0].timestamp
+      : 0;
+
+    // Filtrar footprints:
+    // - Rango temporal de velas visibles
+    // - Hasta el MAX de (backtestingStartTime, currentTime)
     const visibleFootprints = this.footprints.filter(fp => {
       const fpTime = fp.candle_timestamp || fp.timestamp;
-      return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs && fpTime <= currentTime;
+      const maxAllowedTime = Math.max(backtestingStartTime, currentTime);
+      return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs && fpTime <= maxAllowedTime;
     });
 
     // 🔍 DEBUG: Log único al inicio para verificar funcionamiento

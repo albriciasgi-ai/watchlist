@@ -1,0 +1,1000 @@
+ [BTCUSDT] ⏳ Deferring load for CVD (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Open Interest (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for OI-Volume Confluence (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Rejection Patterns (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Double Top/Bottom (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Support & Resistance (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for S&R v2 (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for VWAP (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Swing Detector (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Zone Visualizer (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Order Flow (lazy loading)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: 
+ [MiniChart] Velas disponibles: 524724
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando CVD
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=true, hasData=0
+ [BTCUSDT] ❌ Desactivando Support & Resistance
+ [BTCUSDT] ❌ Desactivando S&R v2
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [BTCUSDT] ❌ Desactivando Order Flow
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart BTCUSDT 15m] 📊 Cargando 175351 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 21 días @ 15m
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [SupportResistance2Indicator] VERSION 1.0 - Swing Points Based
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 15m: 
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (siempre requerido)
+ [BTCUSDT] ⏳ Deferring load for Volume Delta (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for CVD (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Open Interest (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for OI-Volume Confluence (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Rejection Patterns (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Double Top/Bottom (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Support & Resistance (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for S&R v2 (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for VWAP (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Swing Detector (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Zone Visualizer (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Order Flow (lazy loading)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: 
+ [MiniChart] Velas disponibles: 174910
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando CVD
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=true, hasData=0
+ [BTCUSDT] ❌ Desactivando Support & Resistance
+ [BTCUSDT] ❌ Desactivando S&R v2
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [BTCUSDT] ❌ Desactivando Order Flow
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart BTCUSDT 1h] 📊 Cargando 43837 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 21 días @ 1h
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [SupportResistance2Indicator] VERSION 1.0 - Swing Points Based
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 1h: 
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (siempre requerido)
+ [BTCUSDT] ⏳ Deferring load for Volume Delta (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for CVD (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Open Interest (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for OI-Volume Confluence (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Rejection Patterns (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Double Top/Bottom (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Support & Resistance (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for S&R v2 (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for VWAP (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Swing Detector (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Zone Visualizer (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Order Flow (lazy loading)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: 
+ [MiniChart] Velas disponibles: 43727
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando CVD
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=true, hasData=0
+ [BTCUSDT] ❌ Desactivando Support & Resistance
+ [BTCUSDT] ❌ Desactivando S&R v2
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [BTCUSDT] ❌ Desactivando Order Flow
+ [BTCUSDT] Drawing tool changed to: select
+ [MiniChart BTCUSDT 4h] 📊 Cargando 10959 velas en allCandlesRef
+ [BTCUSDT] 🔧 IndicatorManager: Inicializando con 21 días @ 4h
+ [SupportResistanceIndicator] VERSION 1.3 LOADED - WITH LOCAL CALCULATION
+ [SupportResistance2Indicator] VERSION 1.0 - Swing Points Based
+ [OpenInterestIndicator] VERSION 2.0 LOADED - Azul/Naranja colors + Fullscreen selector
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [BTCUSDT] 🔔 Double Top/Bottom alert system initialized (cooldown: 5 min)
+ [BTCUSDT] BandWidth thresholds for 4h: 
+ [BTCUSDT] SwingDetectorIndicator initialized (full backtesting mode)
+ [BTCUSDT] Pattern show mode: all
+ [BTCUSDT] Fetching data for Volume Profile (siempre requerido)
+ [BTCUSDT] ⏳ Deferring load for Volume Delta (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for CVD (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Open Interest (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for OI-Volume Confluence (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Rejection Patterns (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Double Top/Bottom (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Support & Resistance (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for S&R v2 (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for VWAP (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Swing Detector (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Zone Visualizer (lazy loading)
+ [BTCUSDT] ⏳ Deferring load for Order Flow (lazy loading)
+ [BTCUSDT] ✅ Sistema de dibujo inicializado
+ [MiniChart] Actualizando indicadores: 
+ [MiniChart] Velas disponibles: 10932
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando CVD
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] ❌ Desactivando Rejection Patterns
+ [BTCUSDT] ❌ Desactivando Double Top/Bottom
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=true, hasData=0
+ [BTCUSDT] ❌ Desactivando Support & Resistance
+ [BTCUSDT] ❌ Desactivando S&R v2
+ [BTCUSDT] ❌ Desactivando VWAP
+ [BTCUSDT] ❌ Desactivando Swing Detector
+ [BTCUSDT] ❌ Desactivando Order Flow
+ [TradingControls] Precio actualizado automáticamente: 84060.00
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 📂 0 Fixed Ranges cargados desde localStorage
+ [BTCUSDT] 🔄 Sincronizadas 0 instancias de Fixed Ranges
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 🔍 OI Data Validation 
+ [BTCUSDT] 🔄 Open Interest habilitado pero sin datos, recargando...
+ [OI] BTCUSDT - FETCH INICIADO (intento 1/4) 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84208.70
+ [TimeController] Rol de master reclamado
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 174910 velas
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [BTCUSDT] 🎯 renderOverlays - Indicadores con overlay: Volume Profile(enabled=true), Rejection Patterns(enabled=false), Double Top/Bottom(enabled=false), Support & Resistance(enabled=false), S&R v2(enabled=false), VWAP(enabled=false), Swing Detector(enabled=false), Zone Visualizer(enabled=true), Order Flow(enabled=false)
+ [BTCUSDT] 📊 S&R Status: enabled=false, resistances=0, supports=0
+ [BTCUSDT] 📊 S&R v2 Status: enabled=false, resistances=0, supports=0
+ [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 1h] Redibujando por cambio en indicatorStates - 43727 velas
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 1m] Redibujando por cambio en indicatorStates - 1046787 velas
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 4h] Redibujando por cambio en indicatorStates - 10932 velas
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 1h] Redibujando por cambio en indicatorStates - 43727 velas
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 15m] Redibujando por cambio en indicatorStates - 174910 velas
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 1m] Redibujando por cambio en indicatorStates - 1046787 velas
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 4h] Redibujando por cambio en indicatorStates - 10932 velas
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [OI] BTCUSDT - API RESPONSE 
+ [OI] BTCUSDT - ✅ FETCH EXITOSO 
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [BTCUSDT] ✅ Sincronizados 0 Fixed Range Profiles
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [BacktestingApp] Cambiando de tab: 15m → 5m
+ [BacktestingApp] Sincronizando 0 dibujos a todos los tabs
+ [MiniChart BTCUSDT 1m] Dibujos cargados: 0 (sin sync)
+ [MiniChart BTCUSDT 5m] Dibujos cargados: 0 (sin sync)
+ [MiniChart BTCUSDT 1h] Dibujos cargados: 0 (sin sync)
+ [MiniChart BTCUSDT 4h] Dibujos cargados: 0 (sin sync)
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🔧 Actualizando event handlers del OrderManager...
+ [BacktestingApp] ✅ Event handlers actualizados (tradeClosed, tradeOpened)
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84170.00
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [BTCUSDT] 🎯 renderOverlays - Indicadores con overlay: Volume Profile(enabled=true), Rejection Patterns(enabled=false), Double Top/Bottom(enabled=false), Support & Resistance(enabled=false), S&R v2(enabled=false), VWAP(enabled=false), Swing Detector(enabled=false), Zone Visualizer(enabled=true), Order Flow(enabled=false)
+ [BTCUSDT] 📊 S&R Status: enabled=false, resistances=0, supports=0
+ [BTCUSDT] 📊 S&R v2 Status: enabled=false, resistances=0, supports=0
+ [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+ [MiniChart BTCUSDT 5m] Canvas forzado a redibujar
+ [BacktestingApp] Tab 5m redibujado
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [BacktestingApp] ✅ Actualización completada: 
+ [BacktestingApp] Cargando datos para BTCUSDT [todos]... (force_refresh: false, bg: false)
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [MiniChart] Actualizando indicadores: 
+ [MiniChart] Velas disponibles: 524724
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":false,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] ❌ Desactivando Open Interest
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 687px, disponible: 591px
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [MiniChart] Actualizando indicadores: 
+ [MiniChart] Velas disponibles: 524724
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":true,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] ❌ Desactivando OI-Volume Confluence
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [MiniChart] Actualizando indicadores: 
+ [MiniChart] Velas disponibles: 524724
+ [MiniChart] Modo backtesting: true
+ [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":true,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+ [BTCUSDT] ❌ Desactivando Volume Profile
+ [BTCUSDT] 📊 OI State Check 
+ [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+ [BTCUSDT] ✅ Estados actualizados correctamente
+ [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [MiniChart] Actualizando indicadores: 
+ [MiniChart] Velas disponibles: 524724
+MiniChart.jsx:2539 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando Volume Delta
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check Object
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2537 [MiniChart] Actualizando indicadores: Object
+MiniChart.jsx:2538 [MiniChart] Velas disponibles: 524724
+MiniChart.jsx:2539 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":true,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check Object
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:300 [BTCUSDT] ✅ Activando Order Flow
+IndicatorManager.js:315 [BTCUSDT] 🌐 Cargando datos para Order Flow (activación dinámica)
+OrderFlowIndicator.js:88 [BTCUSDT] 🔍 Interval conversion: 5m → 5
+OrderFlowIndicator.js:101 [BTCUSDT] 📊 Fetching Order Flow data from http://localhost:9000/api/orderflow/historical/BTCUSDT?interval=5&days=21
+OrderFlowIndicator.js:113 [BTCUSDT] 🔍 Backend response: Object
+OrderFlowIndicator.js:114 [BTCUSDT] 🔍 data.footprints: Array(5831)
+OrderFlowIndicator.js:115 [BTCUSDT] 🔍 data.footprints?.length: 5831
+OrderFlowIndicator.js:116 [BTCUSDT] 🔍 Type of data: object
+OrderFlowIndicator.js:117 [BTCUSDT] 🔍 Keys in data: Array(6)
+OrderFlowIndicator.js:119 [BTCUSDT] ✅ Order Flow loaded: 5831 footprints
+OrderFlowIndicator.js:190 [BTCUSDT] 🔍 Detected stacked imbalances in 0 footprints
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+OrderFlowIndicator.js:314 [BTCUSDT] 🎨 OrderFlow renderOverlay: Object
+OrderFlowIndicator.js:330 [BTCUSDT] 🟢 Imbalance Coloring: 57 velas dibujadas
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked

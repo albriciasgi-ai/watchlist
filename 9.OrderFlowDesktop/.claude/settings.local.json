@@ -6,7 +6,15 @@
       "Bash(timeout /t 2 /nobreak)",
       "Bash(tasklist:*)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(Get-Content \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\9.OrderFlowDesktop\\src\\services\\FootprintArchiverElectron.js\")",
+      "Bash(Measure-Object -Line)",
+      "Bash(Get-Content \"C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\9.OrderFlowDesktop\\CLAUDE.md\")",
+      "Bash(Select-String -Pattern \"Fix: Footprints\" -Context 5,20)",
+      "Bash(npm run dev:electron:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

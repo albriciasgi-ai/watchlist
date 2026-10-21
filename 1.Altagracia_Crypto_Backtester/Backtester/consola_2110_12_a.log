@@ -1,0 +1,764 @@
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2537 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: false, OI-Volume Confluence: false, …}
+MiniChart.jsx:2538 [MiniChart] Velas disponibles: 524724
+MiniChart.jsx:2539 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":true,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: false, wasEnabled: false, hasDataMap: true, dataMapSize: 6200, dataLength: 6200, …}
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:300 [BTCUSDT] ✅ Activando Order Flow
+IndicatorManager.js:315 [BTCUSDT] 🌐 Cargando datos para Order Flow (activación dinámica)
+OrderFlowIndicator.js:88 [BTCUSDT] 🔍 Interval conversion: 5m → 5
+OrderFlowIndicator.js:101 [BTCUSDT] 📊 Fetching Order Flow data from http://localhost:9000/api/orderflow/historical/BTCUSDT?interval=5&days=21
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 0, visibleCandlesCount: 260}
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 0, visibleCandlesCount: 260}
+OrderFlowIndicator.js:113 [BTCUSDT] 🔍 Backend response: {success: true, footprints: Array(5842), count: 5842, step_size: 10, interval: '5', …}
+OrderFlowIndicator.js:114 [BTCUSDT] 🔍 data.footprints: (5842) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+OrderFlowIndicator.js:115 [BTCUSDT] 🔍 data.footprints?.length: 5842
+OrderFlowIndicator.js:116 [BTCUSDT] 🔍 Type of data: object
+OrderFlowIndicator.js:117 [BTCUSDT] 🔍 Keys in data: (6) ['success', 'footprints', 'count', 'step_size', 'interval', 'message']
+OrderFlowIndicator.js:119 [BTCUSDT] ✅ Order Flow loaded: 5842 footprints
+OrderFlowIndicator.js:190 [BTCUSDT] 🔍 Detected stacked imbalances in 0 footprints
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2546 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:159 [BTCUSDT] 🔍 Footprint timestamps: {firstFp_timestamp: undefined, firstFp_candle_timestamp: 1790799600000, lastFp_timestamp: undefined, lastFp_candle_timestamp: 1792553100000, currentPlaybackTime: 1791228000000, …}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 63 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 58 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 43 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 35 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 16 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 8 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 3 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 0 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 1 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 5 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 7 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 13 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 13 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 17 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 19 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 22 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 25 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 30 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 34 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 38 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 43 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 44 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 47 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 50 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 50 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 260}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 236}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 215}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 195}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 177}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 161}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 146}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 133}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 121}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 110}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 100}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 91}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 82}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 50 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 92}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 102}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 113}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 126}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 140}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 155}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 173}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 192}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados
+OrderFlowIndicator.js:272 [BTCUSDT] 🎨 OrderFlow.renderOverlay called: {hasCtx: true, hasBounds: true, hasPriceContext: true, footprintsCount: 5842, visibleCandlesCount: 213}
+OrderFlowIndicator.js:299 [BTCUSDT] 🎨 Renderizando 1429 footprints visibles
+OrderFlowIndicator.js:304 [BTCUSDT] 🟢 Capa 1 (Imbalance Coloring): 51 velas con imbalance
+OrderFlowIndicator.js:310 [BTCUSDT] 🟣 Capa 2 (POC Markers): 0 marcadores dibujados
+OrderFlowIndicator.js:316 [BTCUSDT] 🟡 Capa 3 (Stacked Imbalances): 0 grupos dibujados

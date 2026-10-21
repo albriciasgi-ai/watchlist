@@ -4387,43 +4387,38 @@ async def clear_cache_and_reload(request: Request):
 async def clear_symbol_cache(symbol: str, interval: str = "1"):
     """
     Clear cache for a specific symbol (used when step_size changes).
-    Simpler endpoint than /integrity/clear-cache for quick cache clearing.
 
-    This deletes the local JSON files for the symbol, allowing footprints
-    to be regenerated with the new step_size configuration.
+    NOTA: Esta operación NO elimina archivos ni memoria.
+    Solo actualiza los calculators con el nuevo step_size.
+    Los footprints históricos del cloud/archivo mantendrán su step_size original.
+    Solo los footprints NUEVOS (generados en tiempo real) usarán el nuevo step_size.
     """
     try:
-        import os
-        from pathlib import Path
+        # SOLO actualizar calculators - NO eliminar nada
+        service = get_orderflow_service()
+        if service:
+            # Los calculators ya fueron actualizados cuando se guardó el step_size
+            # Este endpoint simplemente confirma la operación
+            print(f"[CACHE] Step size change confirmed for {symbol}")
+            print(f"[CACHE] Historical footprints will keep original step_size")
+            print(f"[CACHE] NEW footprints will use configured step_size")
 
-        cache_dir = Path(__file__).parent / "footprint_cache"
-
-        if not cache_dir.exists():
             return {
                 "success": True,
-                "message": f"No cache directory found",
-                "files_deleted": 0
+                "symbol": symbol,
+                "files_deleted": 0,
+                "deleted": [],
+                "memory_cleared": [],
+                "message": "Step size updated. Historical footprints unchanged, new footprints will use new step_size."
             }
-
-        # Find and delete files matching pattern: SYMBOL_INTERVAL.json
-        deleted_files = []
-        pattern = f"{symbol}_{interval}.json"
-
-        for file in cache_dir.glob(f"{symbol}_*.json"):
-            try:
-                file.unlink()
-                deleted_files.append(file.name)
-            except Exception as e:
-                print(f"[CACHE] Error deleting {file}: {e}")
-
-        print(f"[CACHE] Cleared {len(deleted_files)} files for {symbol}")
-
-        return {
-            "success": True,
-            "symbol": symbol,
-            "files_deleted": len(deleted_files),
-            "deleted": deleted_files
-        }
+        else:
+            return {
+                "success": True,
+                "symbol": symbol,
+                "files_deleted": 0,
+                "deleted": [],
+                "warning": "Service not available"
+            }
 
     except Exception as e:
         print(f"[ERROR] Clear symbol cache: {str(e)}")

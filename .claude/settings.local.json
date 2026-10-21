@@ -14,7 +14,14 @@
       "Bash(npm install:*)",
       "Bash(node -e:*)",
       "WebSearch",
-      "WebFetch(domain:bybit-exchange.github.io)"
+      "WebFetch(domain:bybit-exchange.github.io)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)",
+      "Bash(xcopy:*)",
+      "Bash(C:temporderflow_response.json)",
+      "Bash(netstat:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

@@ -26,6 +26,7 @@ import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import Logger from '../utils/Logger.js';
 import { initRobustness, stopRobustness } from '../utils/robustness';
 import pollingCoordinator from '../utils/PollingCoordinator';
+import { getFootprintArchiver } from '../services/FootprintArchiverElectron';
 import { API_BASE_URL } from "../config";
 import { TradingPanel } from "./trading";
 
@@ -1146,6 +1147,95 @@ const SingleSymbolAnalyzer = () => {
                       manager.requestRedraw();
                     }
                   }
+                }}
+                onBackendConfigSaved={async () => {
+                  console.log('╔═══════════════════════════════════════════════════════════════╗');
+                  console.log('║ [RECARGA FOOTPRINTS] INICIANDO DESPUÉS DE CAMBIO STEP_SIZE    ║');
+                  console.log('╚═══════════════════════════════════════════════════════════════╝');
+
+                  const manager = indicatorManagerRef.current;
+                  const ofIndicator = manager?.indicators?.find(ind => ind.name === "Order Flow");
+
+                  if (!ofIndicator) {
+                    console.error('[RECARGA] ❌ No se encontró indicador OrderFlow');
+                    return;
+                  }
+
+                  console.log(`[RECARGA] 📊 Estado ANTES de limpiar:`);
+                  console.log(`  - Footprints en memoria: ${ofIndicator.footprints?.length || 0}`);
+                  console.log(`  - Símbolo: ${ofIndicator.symbol}`);
+                  console.log(`  - Intervalo: ${ofIndicator.interval}`);
+
+                  // PASO 0: PAUSAR PollingCoordinator para evitar race conditions
+                  console.log('[RECARGA] ⏸️ PASO 0: Pausando PollingCoordinator...');
+                  pollingCoordinator.pause();
+
+                  // Esperar 500ms para que cualquier operación en progreso complete
+                  await new Promise(resolve => setTimeout(resolve, 500));
+                  console.log('[RECARGA] ✅ PollingCoordinator pausado y operaciones en progreso completadas');
+
+                  try {
+                    // PASO 1: Eliminar archivo local (contiene footprints 1min con step_size antiguo)
+                    console.log('[RECARGA] 🗑️ PASO 1: Eliminando archivo local de footprints...');
+                    try {
+                      const archiver = getFootprintArchiver();
+                      const deleteResult = await archiver.deleteArchiveFile(ofIndicator.symbol);
+
+                      if (deleteResult.success) {
+                        console.log(`[RECARGA] ✅ Archivo local eliminado: ${deleteResult.message}`);
+                      } else {
+                        console.warn(`[RECARGA] ⚠️ No se pudo eliminar archivo: ${deleteResult.error}`);
+                      }
+                    } catch (deleteError) {
+                      console.error('[RECARGA] ❌ Error eliminando archivo local:', deleteError);
+                      // Continuar de todos modos - el backend puede regenerar
+                    }
+
+                    // PASO 2: Limpiar footprints en memoria
+                    const oldCount = ofIndicator.footprints?.length || 0;
+                    ofIndicator.footprints = [];
+                    console.log(`[RECARGA] 🗑️ PASO 2: Footprints en memoria limpiados: ${oldCount} → 0`);
+
+                    // PASO 3: Recargar footprints desde cero (backend generará con nuevo step_size)
+                    console.log('[RECARGA] 🔄 PASO 3: Recargando desde backend (con nuevo step_size)...');
+                    const startTime = Date.now();
+
+                    await ofIndicator.fetchData();
+                    const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+
+                    console.log(`[RECARGA] ✅ fetchData() completado en ${elapsed}s`);
+                    console.log(`[RECARGA] 📊 Estado DESPUÉS de recargar:`);
+                    console.log(`  - Footprints en memoria: ${ofIndicator.footprints?.length || 0}`);
+
+                    if (ofIndicator.footprints?.length > 0) {
+                      const first = ofIndicator.footprints[0];
+                      const last = ofIndicator.footprints[ofIndicator.footprints.length - 1];
+                      console.log(`  - Primer fp: ${new Date(first.candle_timestamp).toLocaleString()}, step_size=${first.step_size}`);
+                      console.log(`  - Último fp: ${new Date(last.candle_timestamp).toLocaleString()}, step_size=${last.step_size}`);
+                    }
+
+                    // PASO 4: Forzar redraw para mostrar los nuevos footprints
+                    if (manager.requestRedraw) {
+                      console.log('[RECARGA] 🎨 PASO 4: Solicitando redraw del gráfico...');
+                      manager.requestRedraw();
+                      console.log('[RECARGA] ✅ Redraw completado');
+                    } else {
+                      console.warn('[RECARGA] ⚠️ manager.requestRedraw no disponible');
+                    }
+
+                  } catch (error) {
+                    console.error('[RECARGA] ❌ Error durante recarga:', error);
+                  } finally {
+                    // PASO 5: REANUDAR PollingCoordinator
+                    console.log('[RECARGA] ▶️ PASO 5: Reanudando PollingCoordinator...');
+                    pollingCoordinator.resume();
+                    console.log('[RECARGA] ✅ PollingCoordinator reanudado');
+                  }
+
+                  console.log('╔═══════════════════════════════════════════════════════════════╗');
+                  console.log('║ [RECARGA FOOTPRINTS] COMPLETADO - ARCHIVO LOCAL ELIMINADO    ║');
+                  console.log('║ Backend regenerará footprints con nuevo step_size            ║');
+                  console.log('╚═══════════════════════════════════════════════════════════════╝');
                 }}
               />
             </div>

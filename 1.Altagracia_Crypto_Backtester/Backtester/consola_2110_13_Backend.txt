@@ -1,0 +1,1162 @@
+[notice] A new release of pip is available: 26.0 -> 26.2.2
+[notice] To update, run: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\1.Altagracia_Crypto_Backtester\Backtester\backend\.venv\Scripts\python.exe -m pip install --upgrade pip
+[INFO] Backend listo. Iniciando uvicorn...
+INFO:     Will watch for changes in these directories: ['C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\1.Altagracia_Crypto_Backtester\\Backtester\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:9000 (Press CTRL+C to quit)
+INFO:     Started reloader process [3028] using WatchFiles
+[STARTUP] Zone Detector 2.0 modules loaded successfully
+[STARTUP] Zone Quality Analyzer loaded successfully
+[STARTUP] Strategy Builder modules loaded successfully
+[STARTUP] Strategy Executor module loaded successfully
+INFO:     Started server process [9792]
+INFO:     Waiting for application startup.
+INFO:alert_sender:[START] Alert sender started. Target: http://localhost:5000
+INFO:alert_sender:[MAILBOX] Alert queue processor started
+WARNING:alert_sender:[WARN] Alert service not reachable at http://localhost:5000
+INFO:alert_sender:[INFO] Alert service is optional. Alerts will be logged locally.
+[STARTUP] Backend started successfully
+[STARTUP] Alert sender initialized
+[STARTUP] Backtesting cache directory: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\1.Altagracia_Crypto_Backtester\Backtester\backend\backtesting_cache
+
+================================================================================
+🚀 TODAS LAS RUTAS REGISTRADAS:
+================================================================================
+  {'HEAD', 'GET'}      /openapi.json                                      (name: openapi)
+  {'HEAD', 'GET'}      /docs                                              (name: swagger_ui_html)
+  {'HEAD', 'GET'}      /docs/oauth2-redirect                              (name: swagger_ui_redirect)
+  {'HEAD', 'GET'}      /redoc                                             (name: redoc_html)
+  {'GET'}              /api/status                                        (name: status)
+  {'GET'}              /api/historical/{symbol}                           (name: get_historical)
+  {'GET'}              /api/volume-delta/{symbol}                         (name: get_volume_delta)
+  {'GET'}              /api/open-interest/{symbol}                        (name: get_open_interest)
+  {'POST'}             /api/clear-cache                                   (name: clear_cache)
+  {'POST'}             /api/upload-cache/{symbol}                         (name: upload_cache)
+  {'GET'}              /api/support-resistance/{symbol}                   (name: get_support_resistance)
+  {'POST'}             /api/rejection-patterns/detect                     (name: detect_rejection_patterns)
+  {'GET'}              /api/rejection-patterns/available-contexts/{symbol} (name: get_available_contexts)
+  {'GET'}              /api/backtesting/test-metadata                     (name: test_backtesting_metadata)
+  {'GET'}              /api/backtesting/bulk-data/{symbol}                (name: get_backtesting_bulk_data)
+  {'DELETE'}           /api/backtesting/cache/{symbol}                    (name: delete_backtesting_cache)
+  {'POST'}             /api/backtesting/update/{symbol}                   (name: update_backtesting_data)
+  {'GET'}              /api/drawings/{symbol}                             (name: get_drawings)
+  {'POST'}             /api/drawings/{symbol}                             (name: save_drawings)
+  {'DELETE'}           /api/drawings/{symbol}                             (name: delete_drawings)
+  {'POST'}             /api/double-topbottom/detect                       (name: detect_double_topbottom)
+  {'POST'}             /api/double-topbottom/chunk                        (name: get_dtb_chunk)
+  {'GET'}              /api/vwap/{symbol}                                 (name: get_vwap)
+  {'POST'}             /api/zones/detect                                  (name: detect_zones)
+  {'POST'}             /api/zones/evaluate                                (name: evaluate_zones)
+  {'POST'}             /api/zones/compare-methods                         (name: compare_zone_methods)
+  {'POST'}             /api/zones/optimize                                (name: optimize_zone_params)
+  {'GET'}              /api/zones/methods                                 (name: get_zone_methods)
+  {'GET'}              /api/strategies                                    (name: list_strategies)
+  {'GET'}              /api/strategies/templates                          (name: get_strategy_templates)
+  {'GET'}              /api/strategies/{strategy_id}                      (name: get_strategy)
+  {'POST'}             /api/strategies                                    (name: create_strategy)
+  {'PUT'}              /api/strategies/{strategy_id}                      (name: update_strategy)
+  {'DELETE'}           /api/strategies/{strategy_id}                      (name: delete_strategy)
+  {'POST'}             /api/strategies/{strategy_id}/duplicate            (name: duplicate_strategy)
+  {'POST'}             /api/strategies/validate                           (name: validate_strategy)
+  {'POST'}             /api/strategies/{strategy_id}/backtest             (name: run_strategy_backtest)
+  {'POST'}             /api/strategies/quick-backtest                     (name: quick_backtest)
+  {'POST'}             /api/zones/quality-simulation                      (name: run_zone_quality_simulation)
+  {'POST'}             /api/zones/analyze-quality                         (name: analyze_zones_quality)
+  {'GET'}              /api/zones/quality-metrics                         (name: get_quality_metrics_info)
+  {'GET'}              /api/screenshot-test                               (name: test_simple)
+  {'GET'}              /api/screenshots/test                              (name: test_screenshot_endpoint)
+  {'GET'}              /api/screenshots                                   (name: test_screenshots_root)
+  {'GET'}              /api/screenshots/session/{session_id}/{filename}   (name: get_screenshot)
+  {'DELETE'}           /api/screenshots/session/{session_id}              (name: delete_session_screenshots)
+  {'POST'}             /api/screenshots/session/{session_id}              (name: save_screenshot)
+  {'GET'}              /api/orderflow/historical/{symbol}                 (name: get_orderflow_historical)
+================================================================================
+
+================================================================================
+📸 SCREENSHOT ENDPOINTS:
+================================================================================
+  {'GET'}              /api/screenshot-test                               (name: test_simple)
+  {'GET'}              /api/screenshots/test                              (name: test_screenshot_endpoint)
+  {'GET'}              /api/screenshots                                   (name: test_screenshots_root)
+  {'GET'}              /api/screenshots/session/{session_id}/{filename}   (name: get_screenshot)
+  {'DELETE'}           /api/screenshots/session/{session_id}              (name: delete_session_screenshots)
+  {'POST'}             /api/screenshots/session/{session_id}              (name: save_screenshot)
+================================================================================
+
+INFO:     Application startup complete.
+[BACKTESTING CACHE] Cargado BTCUSDT desde caché gzip - 3.4 MB en disco
+
+[BACKTESTING UPDATE] [UPDATE] Actualizando datos para BTCUSDT...
+[BACKTESTING UPDATE] 15m: Última vela en caché: 2026-10-21 15:15:00
+[BACKTESTING UPDATE] 15m: Descargando últimos 1 días...
+[BACKTESTING] BTCUSDT @ 15m - Necesitamos 96 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+INFO:     127.0.0.1:59910 - "GET /api/open-interest/BTCUSDT?interval=15m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 60
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 60 desde caché permanente - 0.51 MB en disco (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60
+INFO:     127.0.0.1:52246 - "GET /api/open-interest/BTCUSDT?interval=1h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 730) @ 1
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 1 desde caché permanente - 0.80 MB en disco (70200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 1
+INFO:     127.0.0.1:55807 - "GET /api/open-interest/BTCUSDT?interval=1m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 5
+[OI PERMANENT CACHE ERROR] ❌ BTCUSDT @ 5 gzip: 'list' object has no attribute 'get'
+[OI CALCULATION] interval_final=5 -> oi_interval=5min (5 min)
+[OI CALCULATION] 21 días × 24h × 60min / 5 min = 6048 puntos necesarios
+[OI LIVE MODE] Obteniendo desde ahora hacia atrás: 21 días
+[BYBIT API] Request 1/600: endTime=1792616190255 (2026-10-21 20:56) | 0/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792616190255
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:62695 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 240
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 240 desde caché permanente - 0.13 MB en disco (11000 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240
+INFO:     127.0.0.1:59910 - "GET /api/open-interest/BTCUSDT?interval=4h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+INFO:     127.0.0.1:52246 - "GET /api/open-interest/BTCUSDT?interval=15m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 60
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 60 desde caché permanente - 0.51 MB en disco (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60
+INFO:     127.0.0.1:55807 - "GET /api/open-interest/BTCUSDT?interval=1h&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:59910 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 240
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 240 desde caché permanente - 0.13 MB en disco (11000 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240
+INFO:     127.0.0.1:52246 - "GET /api/open-interest/BTCUSDT?interval=4h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 730) @ 1
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 1 desde caché permanente - 0.80 MB en disco (70200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 1
+INFO:     127.0.0.1:62695 - "GET /api/open-interest/BTCUSDT?interval=1m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+INFO:     127.0.0.1:59910 - "GET /api/open-interest/BTCUSDT?interval=15m&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:52246 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 60
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 60 desde caché permanente - 0.51 MB en disco (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60
+INFO:     127.0.0.1:55807 - "GET /api/open-interest/BTCUSDT?interval=1h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 730) @ 1
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 1 desde caché permanente - 0.80 MB en disco (70200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 1
+INFO:     127.0.0.1:59910 - "GET /api/open-interest/BTCUSDT?interval=1m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+INFO:     127.0.0.1:52246 - "GET /api/open-interest/BTCUSDT?interval=15m&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 240
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 240 desde caché permanente - 0.13 MB en disco (11000 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240
+INFO:     127.0.0.1:62695 - "GET /api/open-interest/BTCUSDT?interval=4h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 60
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 60 desde caché permanente - 0.51 MB en disco (43800 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 60
+INFO:     127.0.0.1:59910 - "GET /api/open-interest/BTCUSDT?interval=1h&days=21 HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 730) @ 1
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 1 desde caché permanente - 0.80 MB en disco (70200 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 1
+INFO:     127.0.0.1:52246 - "GET /api/open-interest/BTCUSDT?interval=1m&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:55807 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 240
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 240 desde caché permanente - 0.13 MB en disco (11000 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 240
+INFO:     127.0.0.1:62695 - "GET /api/open-interest/BTCUSDT?interval=4h&days=21 HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:55807 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:55807 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:55807 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:55807 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:55807 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+[DRAWINGS] Loaded 0 shapes for BTCUSDT
+INFO:     127.0.0.1:55807 - "GET /api/drawings/BTCUSDT HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=15&start=1792529188989&limit=96 "HTTP/1.1 200 OK"
+[BACKTESTING] OK BTCUSDT @ 15m - 96 velas descargadas
+[BACKTESTING UPDATE] 15m main: +2 velas nuevas
+[BACKTESTING] BTCUSDT @ 5m - Necesitamos 288 velas para 1 días
+[BACKTESTING] Permitiendo hasta 10 requests para descargar todas las velas
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792616190255 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-21 04:10 -> 2026-10-21 20:45
+[BYBIT API] Request 2/600: endTime=1792555799999 (2026-10-21 04:09) | 200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792555799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792555799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=5&start=1792529194248&limit=288 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-20 11:30 -> 2026-10-21 04:05
+[BYBIT API] Request 3/600: endTime=1792495799999 (2026-10-20 11:29) | 400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792495799999
+[BACKTESTING] OK BTCUSDT @ 5m - 288 velas descargadas
+[BACKTESTING UPDATE] 15m subdivisions: +6 velas nuevas
+[BTCUSDT] OPEN INTEREST: Recibido days=1, aplicando limite -> days_to_fetch=1 (max: 1825) @ 15
+[OI PERMANENT CACHE] ✅ Cargado BTCUSDT @ 15 desde caché permanente - 0.05 MB en disco (4400 puntos)
+[OI PERMANENT CACHE] ✅ CACHE HIT para BTCUSDT @ 15
+[BACKTESTING UPDATE] 15m OI: +0 puntos nuevos
+[BACKTESTING CACHE] Guardado BTCUSDT - 3.4 MB (comprimido 85% desde 22.6 MB)
+
+[BACKTESTING UPDATE] OK Actualización completada en 7.4s
+[BACKTESTING UPDATE] Total de velas nuevas agregadas: 2
+INFO:     127.0.0.1:57243 - "POST /api/backtesting/update/BTCUSDT HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792495799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-19 18:50 -> 2026-10-20 11:25
+[BACKTESTING CACHE] Cargado BTCUSDT desde caché gzip - 3.4 MB en disco
+[BACKTESTING] 15m: cache tiene 28208 velas, esperadas ~175200 - NECESITA EXPANSION
+[BACKTESTING] Cache insuficiente para los límites actuales. Re-descargando todo...
+[BACKTESTING] Descargando TODOS los timeframes para BTCUSDT...
+
+[BACKTESTING] ===== Procesando 1m (730 días) =====
+[BACKTESTING] BTCUSDT @ 1m - Necesitamos 1051200 velas para 730 días
+[BACKTESTING] Permitiendo hasta 600 requests para descargar todas las velas
+[BYBIT API] Request 4/600: endTime=1792435799999 (2026-10-19 18:49) | 600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792435799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792435799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-19 02:10 -> 2026-10-19 18:45
+[BYBIT API] Request 5/600: endTime=1792375799999 (2026-10-19 02:09) | 800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792375799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729543596401&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792375799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-18 09:30 -> 2026-10-19 02:05
+[BYBIT API] Request 6/600: endTime=1792315799999 (2026-10-18 09:29) | 1000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792315799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792315799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729603620000&limit=1000 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-17 16:50 -> 2026-10-18 09:25
+[BYBIT API] Request 7/600: endTime=1792255799999 (2026-10-17 16:49) | 1200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792255799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792255799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729663620000&limit=1000 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-17 00:10 -> 2026-10-17 16:45
+[BYBIT API] Request 8/600: endTime=1792195799999 (2026-10-17 00:09) | 1400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792195799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729723620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792195799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-16 07:30 -> 2026-10-17 00:05
+[BYBIT API] Request 9/600: endTime=1792135799999 (2026-10-16 07:29) | 1600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792135799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792135799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-15 14:50 -> 2026-10-16 07:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729783620000&limit=1000 "HTTP/1.1 200 OK"
+[BYBIT API] Request 10/600: endTime=1792075799999 (2026-10-15 14:49) | 1800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792075799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792075799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-14 22:10 -> 2026-10-15 14:45
+[BYBIT API] Request 11/600: endTime=1792015799999 (2026-10-14 22:09) | 2000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792015799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729843620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792015799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-14 05:30 -> 2026-10-14 22:05
+[BYBIT API] Request 12/600: endTime=1791955799999 (2026-10-14 05:29) | 2200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791955799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729903620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791955799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-13 12:50 -> 2026-10-14 05:25
+[BYBIT API] Request 13/600: endTime=1791895799999 (2026-10-13 12:49) | 2400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791895799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791895799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-12 20:10 -> 2026-10-13 12:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729963620000&limit=1000 "HTTP/1.1 200 OK"
+[BYBIT API] Request 14/600: endTime=1791835799999 (2026-10-12 20:09) | 2600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791835799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791835799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-12 03:30 -> 2026-10-12 20:05
+[BYBIT API] Request 15/600: endTime=1791775799999 (2026-10-12 03:29) | 2800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791775799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730023620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791775799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-11 10:50 -> 2026-10-12 03:25
+[BYBIT API] Request 16/600: endTime=1791715799999 (2026-10-11 10:49) | 3000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791715799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730083620000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 10000/1051200 velas (10 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791715799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-10 18:10 -> 2026-10-11 10:45
+[BYBIT API] Request 17/600: endTime=1791655799999 (2026-10-10 18:09) | 3200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791655799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730143620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791655799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-10 01:30 -> 2026-10-10 18:05
+[BYBIT API] Request 18/600: endTime=1791595799999 (2026-10-10 01:29) | 3400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791595799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730203620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791595799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-09 08:50 -> 2026-10-10 01:25
+[BYBIT API] Request 19/600: endTime=1791535799999 (2026-10-09 08:49) | 3600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791535799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791535799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-08 16:10 -> 2026-10-09 08:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730263620000&limit=1000 "HTTP/1.1 200 OK"
+[BYBIT API] Request 20/600: endTime=1791475799999 (2026-10-08 16:09) | 3800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791475799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791475799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-07 23:30 -> 2026-10-08 16:05
+[BYBIT API] Request 21/600: endTime=1791415799999 (2026-10-07 23:29) | 4000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791415799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730323620000&limit=1000 "HTTP/1.1 200 OK"
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 5
+[OI PERMANENT CACHE ERROR] ❌ BTCUSDT @ 5 gzip: 'list' object has no attribute 'get'
+[OI CALCULATION] interval_final=5 -> oi_interval=5min (5 min)
+[OI CALCULATION] 21 días × 24h × 60min / 5 min = 6048 puntos necesarios
+[OI LIVE MODE] Obteniendo desde ahora hacia atrás: 21 días
+[BYBIT API] Request 1/600: endTime=1792616208890 (2026-10-21 20:56) | 0/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792616208890
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791415799999 "HTTP/1.1 200 OK"
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 5
+[OI PERMANENT CACHE ERROR] ❌ BTCUSDT @ 5 gzip: 'list' object has no attribute 'get'
+[OI CALCULATION] interval_final=5 -> oi_interval=5min (5 min)
+[OI CALCULATION] 21 días × 24h × 60min / 5 min = 6048 puntos necesarios
+[OI LIVE MODE] Obteniendo desde ahora hacia atrás: 21 días
+[BYBIT API] Request 1/600: endTime=1792616209190 (2026-10-21 20:56) | 0/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792616209190
+[BTCUSDT] OPEN INTEREST: Recibido days=21, aplicando limite -> days_to_fetch=21 (max: 1825) @ 5
+[OI PERMANENT CACHE ERROR] ❌ BTCUSDT @ 5 gzip: 'list' object has no attribute 'get'
+[OI CALCULATION] interval_final=5 -> oi_interval=5min (5 min)
+[OI CALCULATION] 21 días × 24h × 60min / 5 min = 6048 puntos necesarios
+[OI LIVE MODE] Obteniendo desde ahora hacia atrás: 21 días
+[BYBIT API] Request 1/600: endTime=1792616209502 (2026-10-21 20:56) | 0/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792616209502
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-07 06:50 -> 2026-10-07 23:25
+[BYBIT API] Request 22/600: endTime=1791355799999 (2026-10-07 06:49) | 4200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791355799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730383620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791355799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-06 14:10 -> 2026-10-07 06:45
+[BYBIT API] Request 23/600: endTime=1791295799999 (2026-10-06 14:09) | 4400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791295799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792616209190 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-21 04:10 -> 2026-10-21 20:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792616209502 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-21 04:10 -> 2026-10-21 20:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792616208890 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-21 04:10 -> 2026-10-21 20:45
+[BYBIT API] Request 2/600: endTime=1792555799999 (2026-10-21 04:09) | 200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792555799999
+[BYBIT API] Request 2/600: endTime=1792555799999 (2026-10-21 04:09) | 200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792555799999
+[BYBIT API] Request 2/600: endTime=1792555799999 (2026-10-21 04:09) | 200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792555799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792555799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-20 11:30 -> 2026-10-21 04:05
+[BYBIT API] Request 3/600: endTime=1792495799999 (2026-10-20 11:29) | 400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792495799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791295799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792555799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-05 21:30 -> 2026-10-06 14:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730443620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792555799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-20 11:30 -> 2026-10-21 04:05
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-20 11:30 -> 2026-10-21 04:05
+[BYBIT API] Request 24/600: endTime=1791235799999 (2026-10-05 21:29) | 4600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791235799999
+[BYBIT API] Request 3/600: endTime=1792495799999 (2026-10-20 11:29) | 400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792495799999
+[BYBIT API] Request 3/600: endTime=1792495799999 (2026-10-20 11:29) | 400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792495799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792495799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-19 18:50 -> 2026-10-20 11:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791235799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-05 04:50 -> 2026-10-05 21:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792495799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-19 18:50 -> 2026-10-20 11:25
+[BYBIT API] Request 4/600: endTime=1792435799999 (2026-10-19 18:49) | 600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792435799999
+[BYBIT API] Request 25/600: endTime=1791175799999 (2026-10-05 04:49) | 4800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791175799999
+[BYBIT API] Request 4/600: endTime=1792435799999 (2026-10-19 18:49) | 600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792435799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730503620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792495799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-19 18:50 -> 2026-10-20 11:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792435799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-19 02:10 -> 2026-10-19 18:45
+[BYBIT API] Request 4/600: endTime=1792435799999 (2026-10-19 18:49) | 600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792435799999
+[BYBIT API] Request 5/600: endTime=1792375799999 (2026-10-19 02:09) | 800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792375799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792435799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-19 02:10 -> 2026-10-19 18:45
+[BYBIT API] Request 5/600: endTime=1792375799999 (2026-10-19 02:09) | 800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792375799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791175799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-04 12:10 -> 2026-10-05 04:45
+[BYBIT API] Request 26/600: endTime=1791115799999 (2026-10-04 12:09) | 5000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791115799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792435799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792375799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-18 09:30 -> 2026-10-19 02:05
+[BYBIT API] Request 6/600: endTime=1792315799999 (2026-10-18 09:29) | 1000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792315799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792375799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-18 09:30 -> 2026-10-19 02:05
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-19 02:10 -> 2026-10-19 18:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730563620000&limit=1000 "HTTP/1.1 200 OK"
+[BYBIT API] Request 6/600: endTime=1792315799999 (2026-10-18 09:29) | 1000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792315799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791115799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-03 19:30 -> 2026-10-04 12:05
+[BYBIT API] Request 5/600: endTime=1792375799999 (2026-10-19 02:09) | 800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792375799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792315799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-17 16:50 -> 2026-10-18 09:25
+[BYBIT API] Request 27/600: endTime=1791055799999 (2026-10-03 19:29) | 5200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791055799999
+[BYBIT API] Request 7/600: endTime=1792255799999 (2026-10-17 16:49) | 1200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792255799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792315799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792375799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-17 16:50 -> 2026-10-18 09:25
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-18 09:30 -> 2026-10-19 02:05
+[BYBIT API] Request 7/600: endTime=1792255799999 (2026-10-17 16:49) | 1200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792255799999
+[BYBIT API] Request 6/600: endTime=1792315799999 (2026-10-18 09:29) | 1000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792315799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730623620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791055799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792255799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-03 02:50 -> 2026-10-03 19:25
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-17 00:10 -> 2026-10-17 16:45
+[BYBIT API] Request 28/600: endTime=1790995799999 (2026-10-03 02:49) | 5400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790995799999
+[BYBIT API] Request 8/600: endTime=1792195799999 (2026-10-17 00:09) | 1400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792195799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792255799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-17 00:10 -> 2026-10-17 16:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790995799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-02 10:10 -> 2026-10-03 02:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792195799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-16 07:30 -> 2026-10-17 00:05
+[BYBIT API] Request 8/600: endTime=1792195799999 (2026-10-17 00:09) | 1400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792195799999
+[BYBIT API] Request 29/600: endTime=1790935799999 (2026-10-02 10:09) | 5600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790935799999
+[BYBIT API] Request 9/600: endTime=1792135799999 (2026-10-16 07:29) | 1600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792135799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730683620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792195799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-16 07:30 -> 2026-10-17 00:05
+[BYBIT API] Request 9/600: endTime=1792135799999 (2026-10-16 07:29) | 1600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792135799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792135799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790935799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-01 17:30 -> 2026-10-02 10:05
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-15 14:50 -> 2026-10-16 07:25
+[BYBIT API] Request 30/600: endTime=1790875799999 (2026-10-01 17:29) | 5800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790875799999
+[BYBIT API] Request 10/600: endTime=1792075799999 (2026-10-15 14:49) | 1800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792075799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792315799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-17 16:50 -> 2026-10-18 09:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792135799999 "HTTP/1.1 200 OK"
+[BYBIT API] Request 7/600: endTime=1792255799999 (2026-10-17 16:49) | 1200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792255799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-15 14:50 -> 2026-10-16 07:25
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 20000/1051200 velas (20 requests)
+[BYBIT API] Request 10/600: endTime=1792075799999 (2026-10-15 14:49) | 1800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792075799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790875799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-01 00:50 -> 2026-10-01 17:25
+[BYBIT API] Request 31/600: endTime=1790815799999 (2026-10-01 00:49) | 6000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790815799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792255799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-17 00:10 -> 2026-10-17 16:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792075799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-14 22:10 -> 2026-10-15 14:45
+[BYBIT API] Request 8/600: endTime=1792195799999 (2026-10-17 00:09) | 1400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792195799999
+[BYBIT API] Request 11/600: endTime=1792015799999 (2026-10-14 22:09) | 2000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792015799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792075799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-14 22:10 -> 2026-10-15 14:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730743620000&limit=1000 "HTTP/1.1 200 OK"
+[BYBIT API] Request 11/600: endTime=1792015799999 (2026-10-14 22:09) | 2000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792015799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792195799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-16 07:30 -> 2026-10-17 00:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790815799999 "HTTP/1.1 200 OK"
+[BYBIT API] Request 9/600: endTime=1792135799999 (2026-10-16 07:29) | 1600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792135799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792015799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-09-30 08:10 -> 2026-10-01 00:45
+[INFO BTCUSDT] Alcanzamos el inicio del periodo solicitado
+[INFO BTCUSDT] Total obtenido: 6200 puntos en 31 requests
+[INFO BTCUSDT] Orden de datos: primer_ts=1792555800000, último_ts=1790815500000, orden_correcto=False
+[OI PERMANENT CACHE] 💾 Guardado BTCUSDT @ 5 - 0.07 MB (comprimido 89% desde 0.60 MB)
+[OI PERMANENT CACHE] 💾 BTCUSDT 5 Open Interest guardado (6200 puntos)
+[SUCCESS] BTCUSDT 5 Open Interest: 6200 puntos
+[OI DEBUG FINAL] BTCUSDT interval=5 oi_interval=5min
+[OI DEBUG FINAL] First 3 items: [{'timestamp': 1792555800000, 'openInterest': 60600.565, 'datetime_colombia': '2026-10-20 23:10:00'}, {'timestamp': 1792556100000, 'openInterest': 60616.425, 'datetime_colombia': '2026-10-20 23:15:00'}, {'timestamp': 1792556400000, 'openInterest': 60602.899, 'datetime_colombia': '2026-10-20 23:20:00'}]
+[OI DEBUG FINAL] Last 3 items: [{'timestamp': 1790814900000, 'openInterest': 54470.588, 'datetime_colombia': '2026-09-30 19:35:00'}, {'timestamp': 1790815200000, 'openInterest': 54474.759, 'datetime_colombia': '2026-09-30 19:40:00'}, {'timestamp': 1790815500000, 'openInterest': 54510.852, 'datetime_colombia': '2026-09-30 19:45:00'}]
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-14 05:30 -> 2026-10-14 22:05
+INFO:     127.0.0.1:63464 - "GET /api/open-interest/BTCUSDT?interval=5m&days=21 HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792015799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-14 05:30 -> 2026-10-14 22:05
+[BYBIT API] Request 12/600: endTime=1791955799999 (2026-10-14 05:29) | 2200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791955799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730803620000&limit=1000 "HTTP/1.1 200 OK"
+[BYBIT API] Request 12/600: endTime=1791955799999 (2026-10-14 05:29) | 2200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791955799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792135799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-15 14:50 -> 2026-10-16 07:25
+[BYBIT API] Request 10/600: endTime=1792075799999 (2026-10-15 14:49) | 1800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792075799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791955799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-13 12:50 -> 2026-10-14 05:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791955799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-13 12:50 -> 2026-10-14 05:25
+[BYBIT API] Request 13/600: endTime=1791895799999 (2026-10-13 12:49) | 2400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791895799999
+[BYBIT API] Request 13/600: endTime=1791895799999 (2026-10-13 12:49) | 2400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791895799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792075799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-14 22:10 -> 2026-10-15 14:45
+[BYBIT API] Request 11/600: endTime=1792015799999 (2026-10-14 22:09) | 2000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792015799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791895799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-12 20:10 -> 2026-10-13 12:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730863620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791895799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-12 20:10 -> 2026-10-13 12:45
+[BYBIT API] Request 14/600: endTime=1791835799999 (2026-10-12 20:09) | 2600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791835799999
+[BYBIT API] Request 14/600: endTime=1791835799999 (2026-10-12 20:09) | 2600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791835799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791835799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-12 03:30 -> 2026-10-12 20:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791835799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-12 03:30 -> 2026-10-12 20:05
+[BYBIT API] Request 15/600: endTime=1791775799999 (2026-10-12 03:29) | 2800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791775799999
+[BYBIT API] Request 15/600: endTime=1791775799999 (2026-10-12 03:29) | 2800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791775799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1792015799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791775799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-11 10:50 -> 2026-10-12 03:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791775799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-11 10:50 -> 2026-10-12 03:25
+[BYBIT API] Request 16/600: endTime=1791715799999 (2026-10-11 10:49) | 3000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791715799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-14 05:30 -> 2026-10-14 22:05
+[BYBIT API] Request 16/600: endTime=1791715799999 (2026-10-11 10:49) | 3000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791715799999
+[BYBIT API] Request 12/600: endTime=1791955799999 (2026-10-14 05:29) | 2200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791955799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791715799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-10 18:10 -> 2026-10-11 10:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791715799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-10 18:10 -> 2026-10-11 10:45
+[BYBIT API] Request 17/600: endTime=1791655799999 (2026-10-10 18:09) | 3200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791655799999
+[BYBIT API] Request 17/600: endTime=1791655799999 (2026-10-10 18:09) | 3200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791655799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730923620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791655799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-10 01:30 -> 2026-10-10 18:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791655799999 "HTTP/1.1 200 OK"
+[BYBIT API] Request 18/600: endTime=1791595799999 (2026-10-10 01:29) | 3400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791595799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-10 01:30 -> 2026-10-10 18:05
+[BYBIT API] Request 18/600: endTime=1791595799999 (2026-10-10 01:29) | 3400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791595799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791955799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-13 12:50 -> 2026-10-14 05:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791595799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-09 08:50 -> 2026-10-10 01:25
+[BYBIT API] Request 13/600: endTime=1791895799999 (2026-10-13 12:49) | 2400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791895799999
+[BYBIT API] Request 19/600: endTime=1791535799999 (2026-10-09 08:49) | 3600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791535799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730983620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791535799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-08 16:10 -> 2026-10-09 08:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791895799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-12 20:10 -> 2026-10-13 12:45
+[BYBIT API] Request 20/600: endTime=1791475799999 (2026-10-08 16:09) | 3800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791475799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791595799999 "HTTP/1.1 200 OK"
+[BYBIT API] Request 14/600: endTime=1791835799999 (2026-10-12 20:09) | 2600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791835799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-09 08:50 -> 2026-10-10 01:25
+[BYBIT API] Request 19/600: endTime=1791535799999 (2026-10-09 08:49) | 3600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791535799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791475799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-07 23:30 -> 2026-10-08 16:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731043620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791835799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-12 03:30 -> 2026-10-12 20:05
+[BYBIT API] Request 21/600: endTime=1791415799999 (2026-10-07 23:29) | 4000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791415799999
+[BYBIT API] Request 15/600: endTime=1791775799999 (2026-10-12 03:29) | 2800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791775799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791535799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-08 16:10 -> 2026-10-09 08:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791775799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791415799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-07 06:50 -> 2026-10-07 23:25
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-11 10:50 -> 2026-10-12 03:25
+[BYBIT API] Request 20/600: endTime=1791475799999 (2026-10-08 16:09) | 3800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791475799999
+[BYBIT API] Request 22/600: endTime=1791355799999 (2026-10-07 06:49) | 4200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791355799999
+[BYBIT API] Request 16/600: endTime=1791715799999 (2026-10-11 10:49) | 3000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791715799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731103620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791475799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-07 23:30 -> 2026-10-08 16:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791715799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-10 18:10 -> 2026-10-11 10:45
+[BYBIT API] Request 21/600: endTime=1791415799999 (2026-10-07 23:29) | 4000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791415799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791355799999 "HTTP/1.1 200 OK"
+[BYBIT API] Request 17/600: endTime=1791655799999 (2026-10-10 18:09) | 3200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791655799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-06 14:10 -> 2026-10-07 06:45
+[BYBIT API] Request 23/600: endTime=1791295799999 (2026-10-06 14:09) | 4400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791295799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731163620000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791655799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791415799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-07 06:50 -> 2026-10-07 23:25
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-10 01:30 -> 2026-10-10 18:05
+[BYBIT API] Request 22/600: endTime=1791355799999 (2026-10-07 06:49) | 4200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791355799999
+[BYBIT API] Request 18/600: endTime=1791595799999 (2026-10-10 01:29) | 3400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791595799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791295799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-05 21:30 -> 2026-10-06 14:05
+[BYBIT API] Request 24/600: endTime=1791235799999 (2026-10-05 21:29) | 4600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791235799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791355799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791595799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-06 14:10 -> 2026-10-07 06:45
+[BYBIT API] Request 23/600: endTime=1791295799999 (2026-10-06 14:09) | 4400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791295799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791235799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-05 04:50 -> 2026-10-05 21:25
+[BYBIT API] Request 25/600: endTime=1791175799999 (2026-10-05 04:49) | 4800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791175799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-09 08:50 -> 2026-10-10 01:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731223620000&limit=1000 "HTTP/1.1 200 OK"
+[BYBIT API] Request 19/600: endTime=1791535799999 (2026-10-09 08:49) | 3600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791535799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791295799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-05 21:30 -> 2026-10-06 14:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791175799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-04 12:10 -> 2026-10-05 04:45
+[BYBIT API] Request 24/600: endTime=1791235799999 (2026-10-05 21:29) | 4600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791235799999
+[BYBIT API] Request 26/600: endTime=1791115799999 (2026-10-04 12:09) | 5000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791115799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731283620000&limit=1000 "HTTP/1.1 200 OK"
+[ERROR BTCUSDT] Bybit error: svc error: Get kline failed
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791535799999 "HTTP/1.1 200 OK"
+[BACKTESTING] OK BTCUSDT @ 1m - 29000 velas descargadas
+[BACKTESTING] BTCUSDT @ 1m - Necesitamos 1051200 velas para 730 días
+[BACKTESTING] Permitiendo hasta 600 requests para descargar todas las velas
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-08 16:10 -> 2026-10-09 08:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791235799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-05 04:50 -> 2026-10-05 21:25
+[BYBIT API] Request 20/600: endTime=1791475799999 (2026-10-08 16:09) | 3800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791475799999
+[BYBIT API] Request 25/600: endTime=1791175799999 (2026-10-05 04:49) | 4800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791175799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791115799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-03 19:30 -> 2026-10-04 12:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791475799999 "HTTP/1.1 200 OK"
+[BYBIT API] Request 27/600: endTime=1791055799999 (2026-10-03 19:29) | 5200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791055799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-07 23:30 -> 2026-10-08 16:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791175799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729543622890&limit=1000 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-04 12:10 -> 2026-10-05 04:45
+[BYBIT API] Request 21/600: endTime=1791415799999 (2026-10-07 23:29) | 4000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791415799999
+[BYBIT API] Request 26/600: endTime=1791115799999 (2026-10-04 12:09) | 5000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791115799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791055799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791415799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-03 02:50 -> 2026-10-03 19:25
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729603680000&limit=1000 "HTTP/1.1 200 OK"
+[BYBIT API] Request 28/600: endTime=1790995799999 (2026-10-03 02:49) | 5400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790995799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-07 06:50 -> 2026-10-07 23:25
+[BYBIT API] Request 22/600: endTime=1791355799999 (2026-10-07 06:49) | 4200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791355799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790995799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-02 10:10 -> 2026-10-03 02:45
+[BYBIT API] Request 29/600: endTime=1790935799999 (2026-10-02 10:09) | 5600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790935799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791355799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791115799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790935799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-06 14:10 -> 2026-10-07 06:45
+[BYBIT API] Request 23/600: endTime=1791295799999 (2026-10-06 14:09) | 4400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791295799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-01 17:30 -> 2026-10-02 10:05
+[BYBIT API] Request 30/600: endTime=1790875799999 (2026-10-01 17:29) | 5800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790875799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-03 19:30 -> 2026-10-04 12:05
+[BYBIT API] Request 27/600: endTime=1791055799999 (2026-10-03 19:29) | 5200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791055799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791295799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729663680000&limit=1000 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-05 21:30 -> 2026-10-06 14:05
+[BYBIT API] Request 24/600: endTime=1791235799999 (2026-10-05 21:29) | 4600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791235799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791055799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-03 02:50 -> 2026-10-03 19:25
+[BYBIT API] Request 28/600: endTime=1790995799999 (2026-10-03 02:49) | 5400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790995799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790875799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791235799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-01 00:50 -> 2026-10-01 17:25
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-05 04:50 -> 2026-10-05 21:25
+[BYBIT API] Request 31/600: endTime=1790815799999 (2026-10-01 00:49) | 6000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790815799999
+[BYBIT API] Request 25/600: endTime=1791175799999 (2026-10-05 04:49) | 4800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791175799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729723680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790995799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791175799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-02 10:10 -> 2026-10-03 02:45
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-04 12:10 -> 2026-10-05 04:45
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790815799999 "HTTP/1.1 200 OK"
+[BYBIT API] Request 29/600: endTime=1790935799999 (2026-10-02 10:09) | 5600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790935799999
+[BYBIT API] Request 26/600: endTime=1791115799999 (2026-10-04 12:09) | 5000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791115799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-09-30 08:10 -> 2026-10-01 00:45
+[INFO BTCUSDT] Alcanzamos el inicio del periodo solicitado
+[INFO BTCUSDT] Total obtenido: 6200 puntos en 31 requests
+[INFO BTCUSDT] Orden de datos: primer_ts=1792555800000, último_ts=1790815500000, orden_correcto=False
+[OI PERMANENT CACHE] 💾 Guardado BTCUSDT @ 5 - 0.07 MB (comprimido 89% desde 0.60 MB)
+[OI PERMANENT CACHE] 💾 BTCUSDT 5 Open Interest guardado (6200 puntos)
+[SUCCESS] BTCUSDT 5 Open Interest: 6200 puntos
+[OI DEBUG FINAL] BTCUSDT interval=5 oi_interval=5min
+[OI DEBUG FINAL] First 3 items: [{'timestamp': 1792555800000, 'openInterest': 60600.565, 'datetime_colombia': '2026-10-20 23:10:00'}, {'timestamp': 1792556100000, 'openInterest': 60616.425, 'datetime_colombia': '2026-10-20 23:15:00'}, {'timestamp': 1792556400000, 'openInterest': 60602.899, 'datetime_colombia': '2026-10-20 23:20:00'}]
+[OI DEBUG FINAL] Last 3 items: [{'timestamp': 1790814900000, 'openInterest': 54470.588, 'datetime_colombia': '2026-09-30 19:35:00'}, {'timestamp': 1790815200000, 'openInterest': 54474.759, 'datetime_colombia': '2026-09-30 19:40:00'}, {'timestamp': 1790815500000, 'openInterest': 54510.852, 'datetime_colombia': '2026-09-30 19:45:00'}]
+INFO:     127.0.0.1:54539 - "GET /api/open-interest/BTCUSDT?interval=5m&days=21 HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790935799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-01 17:30 -> 2026-10-02 10:05
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791115799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-03 19:30 -> 2026-10-04 12:05
+[BYBIT API] Request 30/600: endTime=1790875799999 (2026-10-01 17:29) | 5800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790875799999
+[BYBIT API] Request 27/600: endTime=1791055799999 (2026-10-03 19:29) | 5200/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791055799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729783680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790875799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1791055799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-03 02:50 -> 2026-10-03 19:25
+[BYBIT API] Request 28/600: endTime=1790995799999 (2026-10-03 02:49) | 5400/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790995799999
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-01 00:50 -> 2026-10-01 17:25
+[BYBIT API] Request 31/600: endTime=1790815799999 (2026-10-01 00:49) | 6000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790815799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729843680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790995799999 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790815799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-09-30 08:10 -> 2026-10-01 00:45
+[INFO BTCUSDT] Alcanzamos el inicio del periodo solicitado
+[INFO BTCUSDT] Total obtenido: 6200 puntos en 31 requests
+[INFO BTCUSDT] Orden de datos: primer_ts=1792555800000, último_ts=1790815500000, orden_correcto=False
+[OI PERMANENT CACHE] 💾 Guardado BTCUSDT @ 5 - 0.07 MB (comprimido 89% desde 0.60 MB)
+[OI PERMANENT CACHE] 💾 BTCUSDT 5 Open Interest guardado (6200 puntos)
+[SUCCESS] BTCUSDT 5 Open Interest: 6200 puntos
+[OI DEBUG FINAL] BTCUSDT interval=5 oi_interval=5min
+[OI DEBUG FINAL] First 3 items: [{'timestamp': 1792555800000, 'openInterest': 60600.565, 'datetime_colombia': '2026-10-20 23:10:00'}, {'timestamp': 1792556100000, 'openInterest': 60616.425, 'datetime_colombia': '2026-10-20 23:15:00'}, {'timestamp': 1792556400000, 'openInterest': 60602.899, 'datetime_colombia': '2026-10-20 23:20:00'}]
+[OI DEBUG FINAL] Last 3 items: [{'timestamp': 1790814900000, 'openInterest': 54470.588, 'datetime_colombia': '2026-09-30 19:35:00'}, {'timestamp': 1790815200000, 'openInterest': 54474.759, 'datetime_colombia': '2026-09-30 19:40:00'}, {'timestamp': 1790815500000, 'openInterest': 54510.852, 'datetime_colombia': '2026-09-30 19:45:00'}]
+INFO:     127.0.0.1:54748 - "GET /api/open-interest/BTCUSDT?interval=5m&days=21 HTTP/1.1" 200 OK
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-02 10:10 -> 2026-10-03 02:45
+[BYBIT API] Request 29/600: endTime=1790935799999 (2026-10-02 10:09) | 5600/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790935799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790935799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-01 17:30 -> 2026-10-02 10:05
+[BYBIT API] Request 30/600: endTime=1790875799999 (2026-10-01 17:29) | 5800/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790875799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729903680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790875799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-10-01 00:50 -> 2026-10-01 17:25
+[BYBIT API] Request 31/600: endTime=1790815799999 (2026-10-01 00:49) | 6000/6048 puntos
+[OI DEBUG] Full URL: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790815799999
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1729963680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=5min&limit=200&endTime=1790815799999 "HTTP/1.1 200 OK"
+[OI DEBUG] Bybit retCode=0, retMsg=OK
+[OI DEBUG] Result list length: 200
+[BATCH] Recibidos 200 puntos: 2026-09-30 08:10 -> 2026-10-01 00:45
+[INFO BTCUSDT] Alcanzamos el inicio del periodo solicitado
+[INFO BTCUSDT] Total obtenido: 6200 puntos en 31 requests
+[INFO BTCUSDT] Orden de datos: primer_ts=1792555800000, último_ts=1790815500000, orden_correcto=False
+[OI PERMANENT CACHE] 💾 Guardado BTCUSDT @ 5 - 0.07 MB (comprimido 89% desde 0.60 MB)
+[OI PERMANENT CACHE] 💾 BTCUSDT 5 Open Interest guardado (6200 puntos)
+[SUCCESS] BTCUSDT 5 Open Interest: 6200 puntos
+[OI DEBUG FINAL] BTCUSDT interval=5 oi_interval=5min
+[OI DEBUG FINAL] First 3 items: [{'timestamp': 1792555800000, 'openInterest': 60600.565, 'datetime_colombia': '2026-10-20 23:10:00'}, {'timestamp': 1792556100000, 'openInterest': 60616.425, 'datetime_colombia': '2026-10-20 23:15:00'}, {'timestamp': 1792556400000, 'openInterest': 60602.899, 'datetime_colombia': '2026-10-20 23:20:00'}]
+[OI DEBUG FINAL] Last 3 items: [{'timestamp': 1790814900000, 'openInterest': 54470.588, 'datetime_colombia': '2026-09-30 19:35:00'}, {'timestamp': 1790815200000, 'openInterest': 54474.759, 'datetime_colombia': '2026-09-30 19:40:00'}, {'timestamp': 1790815500000, 'openInterest': 54510.852, 'datetime_colombia': '2026-09-30 19:45:00'}]
+INFO:     127.0.0.1:54477 - "GET /api/open-interest/BTCUSDT?interval=5m&days=21 HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730023680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730083680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 10000/1051200 velas (10 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730143680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730203680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730263680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730323680000&limit=1000 "HTTP/1.1 200 OK"
+[ORDERFLOW] 📂 Cargando footprints desde: orderflow_archive\BTCUSDT_1.json
+[ORDERFLOW] ✅ Cargados 43169 footprints de 1min
+[ORDERFLOW] 📅 Limitados a últimos 21 días: 43169 → 29168
+INFO:     127.0.0.1:54477 - "GET /api/orderflow/historical/BTCUSDT?interval=1&days=21 HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730383680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730443680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730503680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730563680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730623680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730683680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 20000/1051200 velas (20 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730743680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730803680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730863680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730923680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1730983680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731043680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731103680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731163680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731223680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731283680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 30000/1051200 velas (30 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731343680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731403680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731463680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731523680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731583680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731643680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731703680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731763680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731823680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731883680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 40000/1051200 velas (40 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1731943680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732003680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732063680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732123680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732183680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732243680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732303680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732363680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732423680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732483680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 50000/1051200 velas (50 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732543680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732603680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732663680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732723680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732783680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732843680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732903680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1732963680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733023680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733083680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 60000/1051200 velas (60 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733143680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733203680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733263680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733323680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733383680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733443680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733503680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733563680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733623680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733683680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 70000/1051200 velas (70 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733743680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733803680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733863680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733923680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1733983680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734043680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734103680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734163680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734223680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734283680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 80000/1051200 velas (80 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734343680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734403680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734463680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734523680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734583680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734643680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734703680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734763680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734823680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734883680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 90000/1051200 velas (90 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1734943680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735003680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735063680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735123680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735183680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735243680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735303680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735363680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735423680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735483680000&limit=1000 "HTTP/1.1 200 OK"
+[BACKTESTING] BTCUSDT @ 1m - Descargadas 100000/1051200 velas (100 requests)
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735543680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735603680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735663680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735723680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735783680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=1&start=1735843680000&limit=1000 "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.bybit.com/v5/market/kline?category=

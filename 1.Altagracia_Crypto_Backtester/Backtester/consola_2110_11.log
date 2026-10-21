@@ -1,0 +1,2395 @@
+OpenInterestIndicator.js:86 [OI] BTCUSDT - API RESPONSE {success: true, dataLength: 6200, error: 'none', hasMetadata: true}
+OpenInterestIndicator.js:126 [OI] BTCUSDT - ✅ FETCH EXITOSO {dataMapSize: 6200, dataLength: 6200, coverage: '2026-10-20 22:30:00 → 2026-09-30 19:05:00', interval: '5min'}
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2580 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:2585 [MiniChart BTCUSDT 5m] Error actualizando indicadores: ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at MiniChart.jsx:2581:11
+(anonymous) @ MiniChart.jsx:2585
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+ [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 625px, disponible: 328px
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2571 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: true, CVD: false, Open Interest: true, OI-Volume Confluence: true, …}
+MiniChart.jsx:2572 [MiniChart] Velas disponibles: 524724
+MiniChart.jsx:2573 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":true,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando Volume Delta
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: true, wasEnabled: true, hasDataMap: true, dataMapSize: 6200, dataLength: 6200, …}
+IndicatorManager.js:359 [BTCUSDT] 🔍 OI Data Validation {hasDataMap: true, dataMapSize: 6200, dataLength: 6200, hasData: true, willReload: false}
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2580 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 545px, disponible: 328px
+MiniChart.jsx:2585 [MiniChart BTCUSDT 5m] Error actualizando indicadores: ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at MiniChart.jsx:2581:11
+(anonymous) @ MiniChart.jsx:2585
+Promise.catch
+(anonymous) @ MiniChart.jsx:2584
+commitHookEffectListMount @ react-dom_client.js?v=0bc9ba31:16915
+commitPassiveMountOnFiber @ react-dom_client.js?v=0bc9ba31:18156
+commitPassiveMountEffects_complete @ react-dom_client.js?v=0bc9ba31:18129
+commitPassiveMountEffects_begin @ react-dom_client.js?v=0bc9ba31:18119
+commitPassiveMountEffects @ react-dom_client.js?v=0bc9ba31:18109
+flushPassiveEffectsImpl @ react-dom_client.js?v=0bc9ba31:19490
+flushPassiveEffects @ react-dom_client.js?v=0bc9ba31:19447
+commitRootImpl @ react-dom_client.js?v=0bc9ba31:19416
+commitRoot @ react-dom_client.js?v=0bc9ba31:19277
+performSyncWorkOnRoot @ react-dom_client.js?v=0bc9ba31:18895
+flushSyncCallbacks @ react-dom_client.js?v=0bc9ba31:9119
+flushSync @ react-dom_client.js?v=0bc9ba31:18959
+finishEventHandler @ react-dom_client.js?v=0bc9ba31:3569
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3582
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchDiscreteEvent @ react-dom_client.js?v=0bc9ba31:5449
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2571 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: true, OI-Volume Confluence: true, …}
+MiniChart.jsx:2572 [MiniChart] Velas disponibles: 524724
+MiniChart.jsx:2573 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":true,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando Volume Profile
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: true, wasEnabled: true, hasDataMap: true, dataMapSize: 6200, dataLength: 6200, …}
+IndicatorManager.js:359 [BTCUSDT] 🔍 OI Data Validation {hasDataMap: true, dataMapSize: 6200, dataLength: 6200, hasData: true, willReload: false}
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2580 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 545px, disponible: 328px
+MiniChart.jsx:2585 [MiniChart BTCUSDT 5m] Error actualizando indicadores: ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at MiniChart.jsx:2581:11
+(anonymous) @ MiniChart.jsx:2585
+Promise.catch
+(anonymous) @ MiniChart.jsx:2584
+commitHookEffectListMount @ react-dom_client.js?v=0bc9ba31:16915
+commitPassiveMountOnFiber @ react-dom_client.js?v=0bc9ba31:18156
+commitPassiveMountEffects_complete @ react-dom_client.js?v=0bc9ba31:18129
+commitPassiveMountEffects_begin @ react-dom_client.js?v=0bc9ba31:18119
+commitPassiveMountEffects @ react-dom_client.js?v=0bc9ba31:18109
+flushPassiveEffectsImpl @ react-dom_client.js?v=0bc9ba31:19490
+flushPassiveEffects @ react-dom_client.js?v=0bc9ba31:19447
+commitRootImpl @ react-dom_client.js?v=0bc9ba31:19416
+commitRoot @ react-dom_client.js?v=0bc9ba31:19277
+performSyncWorkOnRoot @ react-dom_client.js?v=0bc9ba31:18895
+flushSyncCallbacks @ react-dom_client.js?v=0bc9ba31:9119
+flushSync @ react-dom_client.js?v=0bc9ba31:18959
+finishEventHandler @ react-dom_client.js?v=0bc9ba31:3569
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3582
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchDiscreteEvent @ react-dom_client.js?v=0bc9ba31:5449
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2571 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: false, OI-Volume Confluence: true, …}
+MiniChart.jsx:2572 [MiniChart] Velas disponibles: 524724
+MiniChart.jsx:2573 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":true,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: false, wasEnabled: true, hasDataMap: true, dataMapSize: 6200, dataLength: 6200, …}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando Open Interest
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2580 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+MiniChart.jsx:929 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 395px, disponible: 328px
+MiniChart.jsx:2585 [MiniChart BTCUSDT 5m] Error actualizando indicadores: ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at MiniChart.jsx:2581:11
+(anonymous) @ MiniChart.jsx:2585
+Promise.catch
+(anonymous) @ MiniChart.jsx:2584
+commitHookEffectListMount @ react-dom_client.js?v=0bc9ba31:16915
+commitPassiveMountOnFiber @ react-dom_client.js?v=0bc9ba31:18156
+commitPassiveMountEffects_complete @ react-dom_client.js?v=0bc9ba31:18129
+commitPassiveMountEffects_begin @ react-dom_client.js?v=0bc9ba31:18119
+commitPassiveMountEffects @ react-dom_client.js?v=0bc9ba31:18109
+flushPassiveEffectsImpl @ react-dom_client.js?v=0bc9ba31:19490
+flushPassiveEffects @ react-dom_client.js?v=0bc9ba31:19447
+commitRootImpl @ react-dom_client.js?v=0bc9ba31:19416
+commitRoot @ react-dom_client.js?v=0bc9ba31:19277
+performSyncWorkOnRoot @ react-dom_client.js?v=0bc9ba31:18895
+flushSyncCallbacks @ react-dom_client.js?v=0bc9ba31:9119
+flushSync @ react-dom_client.js?v=0bc9ba31:18959
+finishEventHandler @ react-dom_client.js?v=0bc9ba31:3569
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3582
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchDiscreteEvent @ react-dom_client.js?v=0bc9ba31:5449
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2571 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: false, OI-Volume Confluence: false, …}
+MiniChart.jsx:2572 [MiniChart] Velas disponibles: 524724
+MiniChart.jsx:2573 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":false,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: false, wasEnabled: false, hasDataMap: true, dataMapSize: 6200, dataLength: 6200, …}
+IndicatorManager.js:320 [BTCUSDT] ❌ Desactivando OI-Volume Confluence
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2580 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+MiniChart.jsx:2585 [MiniChart BTCUSDT 5m] Error actualizando indicadores: ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at MiniChart.jsx:2581:11
+(anonymous) @ MiniChart.jsx:2585
+Promise.catch
+(anonymous) @ MiniChart.jsx:2584
+commitHookEffectListMount @ react-dom_client.js?v=0bc9ba31:16915
+commitPassiveMountOnFiber @ react-dom_client.js?v=0bc9ba31:18156
+commitPassiveMountEffects_complete @ react-dom_client.js?v=0bc9ba31:18129
+commitPassiveMountEffects_begin @ react-dom_client.js?v=0bc9ba31:18119
+commitPassiveMountEffects @ react-dom_client.js?v=0bc9ba31:18109
+flushPassiveEffectsImpl @ react-dom_client.js?v=0bc9ba31:19490
+flushPassiveEffects @ react-dom_client.js?v=0bc9ba31:19447
+commitRootImpl @ react-dom_client.js?v=0bc9ba31:19416
+commitRoot @ react-dom_client.js?v=0bc9ba31:19277
+performSyncWorkOnRoot @ react-dom_client.js?v=0bc9ba31:18895
+flushSyncCallbacks @ react-dom_client.js?v=0bc9ba31:9119
+flushSync @ react-dom_client.js?v=0bc9ba31:18959
+finishEventHandler @ react-dom_client.js?v=0bc9ba31:3569
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3582
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchDiscreteEvent @ react-dom_client.js?v=0bc9ba31:5449
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:2571 [MiniChart] Actualizando indicadores: {Volume Delta: false, Volume Profile: false, CVD: false, Open Interest: false, OI-Volume Confluence: false, …}
+MiniChart.jsx:2572 [MiniChart] Velas disponibles: 524724
+MiniChart.jsx:2573 [MiniChart] Modo backtesting: true
+IndicatorManager.js:261 [BTCUSDT] 🔄 Actualizando estados de indicadores: {"Volume Delta":false,"Volume Profile":false,"CVD":false,"Open Interest":false,"OI-Volume Confluence":false,"Order Flow":true,"VWAP":false,"Range Detection":false,"Rejection Patterns":false,"Double Top/Bottom":false,"Support & Resistance":false,"S&R v2":false,"Swing Detector":false}
+IndicatorManager.js:288 [BTCUSDT] 📊 OI State Check {shouldBeEnabled: false, wasEnabled: false, hasDataMap: true, dataMapSize: 6200, dataLength: 6200, …}
+IndicatorManager.js:283 [BTCUSDT] 📊 S&R State Check: shouldBeEnabled=false, wasEnabled=false, hasData=0
+IndicatorManager.js:300 [BTCUSDT] ✅ Activando Order Flow
+IndicatorManager.js:315 [BTCUSDT] 🌐 Cargando datos para Order Flow (activación dinámica)
+OrderFlowIndicator.js:88 [BTCUSDT] 🔍 Interval conversion: 5m → 5
+OrderFlowIndicator.js:101 [BTCUSDT] 📊 Fetching Order Flow data from http://localhost:9000/api/orderflow/historical/BTCUSDT?interval=5&days=21
+OrderFlowIndicator.js:113 [BTCUSDT] 🔍 Backend response: {success: true, footprints: Array(5844), count: 5844, step_size: 10, interval: '5', …}
+OrderFlowIndicator.js:114 [BTCUSDT] 🔍 data.footprints: (5844) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, …]
+OrderFlowIndicator.js:115 [BTCUSDT] 🔍 data.footprints?.length: 5844
+OrderFlowIndicator.js:116 [BTCUSDT] 🔍 Type of data: object
+OrderFlowIndicator.js:117 [BTCUSDT] 🔍 Keys in data: (6) ['success', 'footprints', 'count', 'step_size', 'interval', 'message']
+OrderFlowIndicator.js:119 [BTCUSDT] ✅ Order Flow loaded: 5844 footprints
+OrderFlowIndicator.js:190 [BTCUSDT] 🔍 Detected stacked imbalances in 0 footprints
+IndicatorManager.js:386 [BTCUSDT] ✅ Estados actualizados correctamente
+MiniChart.jsx:2580 [MiniChart BTCUSDT 5m] Redibujando por cambio en indicatorStates - 524724 velas
+MiniChart.jsx:2585 [MiniChart BTCUSDT 5m] Error actualizando indicadores: ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at MiniChart.jsx:2581:11
+(anonymous) @ MiniChart.jsx:2585
+Promise.catch
+(anonymous) @ MiniChart.jsx:2584
+commitHookEffectListMount @ react-dom_client.js?v=0bc9ba31:16915
+commitPassiveMountOnFiber @ react-dom_client.js?v=0bc9ba31:18156
+commitPassiveMountEffects_complete @ react-dom_client.js?v=0bc9ba31:18129
+commitPassiveMountEffects_begin @ react-dom_client.js?v=0bc9ba31:18119
+commitPassiveMountEffects @ react-dom_client.js?v=0bc9ba31:18109
+flushPassiveEffectsImpl @ react-dom_client.js?v=0bc9ba31:19490
+flushPassiveEffects @ react-dom_client.js?v=0bc9ba31:19447
+commitRootImpl @ react-dom_client.js?v=0bc9ba31:19416
+commitRoot @ react-dom_client.js?v=0bc9ba31:19277
+performSyncWorkOnRoot @ react-dom_client.js?v=0bc9ba31:18895
+flushSyncCallbacks @ react-dom_client.js?v=0bc9ba31:9119
+flushSync @ react-dom_client.js?v=0bc9ba31:18959
+finishEventHandler @ react-dom_client.js?v=0bc9ba31:3569
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3582
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchDiscreteEvent @ react-dom_client.js?v=0bc9ba31:5449
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:859 Uncaught 
+react-dom_client.js?v=0bc9ba31:3750 Uncaught 
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseMove (MiniChart.jsx:1878:7)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseMove @ MiniChart.jsx:1878
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+MiniChart.jsx:1112 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseLeave (MiniChart.jsx:1972:5)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseLeave @ MiniChart.jsx:1972
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461
+react-dom_client.js?v=0bc9ba31:3750 Uncaught ReferenceError: savedAllCandlesForCalculation is not defined
+    at drawChart (MiniChart.jsx:1112:40)
+    at handleMouseLeave (MiniChart.jsx:1972:5)
+    at HTMLUnknownElement.callCallback2 (react-dom_client.js?v=0bc9ba31:3674:22)
+    at Object.invokeGuardedCallbackDev (react-dom_client.js?v=0bc9ba31:3699:24)
+    at invokeGuardedCallback (react-dom_client.js?v=0bc9ba31:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (react-dom_client.js?v=0bc9ba31:3736:33)
+    at executeDispatch (react-dom_client.js?v=0bc9ba31:7014:11)
+    at processDispatchQueueItemsInOrder (react-dom_client.js?v=0bc9ba31:7034:15)
+    at processDispatchQueue (react-dom_client.js?v=0bc9ba31:7043:13)
+    at dispatchEventsForPlugins (react-dom_client.js?v=0bc9ba31:7051:11)
+drawChart @ MiniChart.jsx:1112
+handleMouseLeave @ MiniChart.jsx:1972
+callCallback2 @ react-dom_client.js?v=0bc9ba31:3674
+invokeGuardedCallbackDev @ react-dom_client.js?v=0bc9ba31:3699
+invokeGuardedCallback @ react-dom_client.js?v=0bc9ba31:3733
+invokeGuardedCallbackAndCatchFirstError @ react-dom_client.js?v=0bc9ba31:3736
+executeDispatch @ react-dom_client.js?v=0bc9ba31:7014
+processDispatchQueueItemsInOrder @ react-dom_client.js?v=0bc9ba31:7034
+processDispatchQueue @ react-dom_client.js?v=0bc9ba31:7043
+dispatchEventsForPlugins @ react-dom_client.js?v=0bc9ba31:7051
+(anonymous) @ react-dom_client.js?v=0bc9ba31:7174
+batchedUpdates$1 @ react-dom_client.js?v=0bc9ba31:18913
+batchedUpdates @ react-dom_client.js?v=0bc9ba31:3579
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=0bc9ba31:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom_client.js?v=0bc9ba31:5478
+dispatchEvent @ react-dom_client.js?v=0bc9ba31:5472
+dispatchContinuousEvent @ react-dom_client.js?v=0bc9ba31:5461

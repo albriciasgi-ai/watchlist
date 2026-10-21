@@ -1,0 +1,1285 @@
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:197 [Preload] Order Flow Desktop - Script cargado correctamente
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:198 [Preload] Electron: 33.4.11
+VM115 C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\electron\preload.js:199 [Preload] Chrome: 130.0.6723.191
+chunk-ZFBEYDM4.js?v=9c8daa37:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+Logger.js:266 💡 Debug utilities available:
+Logger.js:267    window.toggleDebugMode() - Toggle all logs
+Logger.js:268    window.disableHeavyLogs() - Disable performance-heavy logs
+ConfigSynchronizer.js:21 [ConfigSynchronizer] Initialized
+MiniChart.jsx:270 [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+MiniChart.jsx:2135 [BTCUSDT] 🚀 Componente montado, iniciando...
+Logger.js:100 ✅ [9:04:23 p. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+OrderFlowIndicator.js:27 [OrderFlow] [BTCUSDT] CONSTRUCTOR: interval=5, days=5, historyHours=24
+ZoneVisualizerIndicator.js:66 [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+VolumeProfileFixedRangeIndicator.js:555 [BTCUSDT] ✅ Fixed Range range_1792293391546 cargado {start: '2026-10-02T03:16:00.000Z', end: '2026-10-17T03:16:00.000Z', enabled: true}
+PollingCoordinator.js:102 [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+robustness.js:230 [HealthCheck] Started (interval: 30000ms)
+robustness.js:496 [Robustness] Initialized
+PollingCoordinator.js:49 [PollingCoordinator] Started
+Logger.js:100 ✅ [9:04:23 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+IndicatorManagerRegistry.js:7 [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+Logger.js:100 ✅ [9:04:24 p. m.] [VWAP] [BTCUSDT] Config changed (vwapType=rolling), refetching...
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+CandleCache.js:80 [CandleCache] 💾 BTCUSDT@5 - desde IndexedDB (1485 velas)
+CandleCache.js:393 [CandleCache] OK VALIDATION BTCUSDT@5: 1485 velas sin gaps
+CandleCache.js:269 [CandleCache] BTCUSDT@5 - Cache valido: 1485 velas, sin gaps significativos
+MiniChart.jsx:1243 [BTCUSDT] Carga INCREMENTAL: desde 20/10/2026, 8:55:00 p.m. (1485 velas en cache)
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+robustness.js:415 [CacheCleanup] Complete: 0/11 candles, 0/3 indicators removed
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 708 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 20:55:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.8 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 708 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (708 footprints)
+OrderFlowIndicator.js:896 [OrderFlow] [BTCUSDT] INITIAL LOAD: 708 footprints
+PollingCoordinator.js:102 [PollingCoordinator] Registered: OrderFlow_BTCUSDT (interval: 5000ms, priority: 1)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+WebSocketManager.js:61 WebSocket Manager conectado [5]
+WebSocketManager.js:79 ✓ Suscrito: 
+CandleCache.js:393 [CandleCache] OK CACHE-ANTES-MERGE BTCUSDT: 1485 velas sin gaps
+CandleCache.js:197 [CandleCache] 🔄 Merge: 1485 cached + 1 new = 1485 total
+MiniChart.jsx:1303 [BTCUSDT] Incremental: +1 velas nuevas = 1485 total
+CandleCache.js:393 [CandleCache] OK MERGED BTCUSDT: 1485 velas sin gaps
+MiniChart.jsx:1333 [BTCUSDT] ✅ Histórico final: 1485 velas
+OrderFlowIndicator.js:1046 [OrderFlow] [BTCUSDT] RENDER: 708 fps, candleWidth=1.0px, mode=DOTS (zoomed out)
+OrderFlowIndicator.js:1052 [OrderFlow] [BTCUSDT] CANDLES VISIBLE: 18/10/2026, 2:25:00 a.m. → 20/10/2026, 9:00:00 p.m. (800 velas)
+OrderFlowIndicator.js:1058 [OrderFlow] [BTCUSDT] CANDLES ALL: 15/10/2026, 5:15:00 p.m. → 20/10/2026, 9:00:00 p.m. (1486 velas TOTALES)
+OrderFlowIndicator.js:1066 [OrderFlow] [BTCUSDT] FP RANGE: 20/10/2026, 9:04:00 a.m. → 20/10/2026, 8:55:00 p.m.
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+Logger.js:100 ✅ [9:04:28 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=0
+ZoneVisualizerIndicator.js:204 [BTCUSDT] ZoneVisualizer.renderOverlay SKIP: enabled=true, showZones=true, zones=0
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@5 - guardado (1485 velas, memoria: 1/4)
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 708 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 20:55:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.8 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 708 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (708 footprints)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 708 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 20:55:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.8 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 708 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (708 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+Logger.js:100 ✅ [9:04:30 p. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (rolling, 5 days)
+Logger.js:100 ✅ [9:04:30 p. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+Logger.js:100 ✅ [9:04:31 p. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (rolling, 5 days)
+Logger.js:100 ✅ [9:04:31 p. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [9:04:32 p. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (rolling, 5 days)
+Logger.js:100 ✅ [9:04:32 p. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [9:04:32 p. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+PollingCoordinator.js:102 [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 300000ms, priority: 2)
+Logger.js:100 ✅ [9:04:32 p. m.] [VWAP] [BTCUSDT] VWAP polling started (interval: 300000ms)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [9:04:32 p. m.] [VWAP] [BTCUSDT] VWAP loaded: 1440 points (rolling, 5 days)
+Logger.js:100 ✅ [9:04:32 p. m.] [VWAP] [BTCUSDT] VWAP requestRedraw() after initial load
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [9:04:32 p. m.] [Manager] [BTCUSDT] 🚀 startAllPolling() llamado - 3 indicadores
+Logger.js:100 ✅ [9:04:32 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para VWAP
+Logger.js:100 ✅ [9:04:32 p. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: pollingId=true, enabled=true, destroyed=false
+Logger.js:100 ✅ [9:04:32 p. m.] [Manager] [BTCUSDT] -> Llamando startPollingIfReady() para Order Flow
+Logger.js:100 ✅ [9:04:32 p. m.] [Manager] [BTCUSDT] 🚀 Polling iniciado para todos los indicadores
+SymbolList.jsx:79 [Prefetch] Activado (10s despues de carga)
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 708 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 20:55:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.8 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 708 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (708 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 708 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 20:55:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.8 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 708 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (708 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 708 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 20:55:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.8 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 708 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (708 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 708 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 20:55:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.8 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 708 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (708 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 708 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 20:55:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.8 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 708 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (708 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1485)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/800 velas con FP, 708 fps disponibles
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 143/727 velas con FP, 708 fps disponibles
+Logger.js:100 ✅ [9:04:58 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1440
+OrderFlowIndicator.js:1896 [OrderFlow] [BTCUSDT] DOTS MODE: 142/143 velas con FP, 708 fps disponibles
+ [OrderFlow] [BTCUSDT] 🔍 MATCHING: velas 20/10/2026, 12:55:00 p.m. → 20/10/2026, 9:00:00 p.m. (98 velas)
+ [OrderFlow] [BTCUSDT] 🔍 MATCHING: fps   20/10/2026, 9:04:00 a.m. → 20/10/2026, 8:55:00 p.m. (708 fps)
+ [OrderFlow] [BTCUSDT] 🔍 MATCHING: overlap=true, tolerancia=±30000ms
+ [OrderFlow] [BTCUSDT] 🔍 MATCHING: Probando primeras 5 velas...
+ [OrderFlow] [BTCUSDT]   ✅ Vela[0] 20/10/2026, 12:55:00 p.m. → FP 20/10/2026, 12:55:00 p.m. (diff: 0ms)
+ [OrderFlow] [BTCUSDT]   ✅ Vela[1] 20/10/2026, 1:00:00 p.m. → FP 20/10/2026, 1:00:00 p.m. (diff: 0ms)
+ [OrderFlow] [BTCUSDT]   ✅ Vela[2] 20/10/2026, 1:05:00 p.m. → FP 20/10/2026, 1:05:00 p.m. (diff: 0ms)
+ [OrderFlow] [BTCUSDT]   ✅ Vela[3] 20/10/2026, 1:10:00 p.m. → FP 20/10/2026, 1:10:00 p.m. (diff: 0ms)
+ [OrderFlow] [BTCUSDT]   ✅ Vela[4] 20/10/2026, 1:15:00 p.m. → FP 20/10/2026, 1:15:00 p.m. (diff: 0ms)
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 98
+ [OrderFlow] [BTCUSDT]   Total footprints: 708
+ [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 12:55:00 → 20/10/2026, 21:00:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 12:55:00 → FP 20/10/2026, 12:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 13:00:00 → FP 20/10/2026, 13:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 13:05:00 → FP 20/10/2026, 13:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 13:10:00 → FP 20/10/2026, 13:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 13:15:00 → FP 20/10/2026, 13:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [93] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [94] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [95] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [96] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [97] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1438 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS para cubrir vela completa:
+OrderFlowIndicator.js:1439   Vela: high=82806.40, low=82715.00, rango=91.40
+OrderFlowIndicator.js:1440   Footprint original: high=82810.00, low=82760.00, rango=50.00
+OrderFlowIndicator.js:1441   Levels: original=5, expandido=10, agregados=5
+OrderFlowIndicator.js:1442   Step_size: 10
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 97/98 velas con FP, 708 fps disponibles, candleWidth=8.6px, fullMode=false
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 89
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 13:40:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 13:40:00 → FP 20/10/2026, 13:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 13:45:00 → FP 20/10/2026, 13:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 13:50:00 → FP 20/10/2026, 13:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 13:55:00 → FP 20/10/2026, 13:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 14:00:00 → FP 20/10/2026, 14:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [84] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [85] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [86] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [87] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [88] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 81
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 14:20:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 14:20:00 → FP 20/10/2026, 14:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 14:25:00 → FP 20/10/2026, 14:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 14:30:00 → FP 20/10/2026, 14:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 14:35:00 → FP 20/10/2026, 14:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 14:40:00 → FP 20/10/2026, 14:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [76] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [77] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [78] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [79] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [80] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 73
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 15:00:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 15:00:00 → FP 20/10/2026, 15:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 15:05:00 → FP 20/10/2026, 15:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 15:10:00 → FP 20/10/2026, 15:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 15:15:00 → FP 20/10/2026, 15:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 15:20:00 → FP 20/10/2026, 15:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [68] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [69] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [70] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [71] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [72] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 67
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 15:30:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 15:30:00 → FP 20/10/2026, 15:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 15:35:00 → FP 20/10/2026, 15:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 15:40:00 → FP 20/10/2026, 15:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 15:45:00 → FP 20/10/2026, 15:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 15:50:00 → FP 20/10/2026, 15:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [62] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [63] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [64] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [65] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [66] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 61
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 16:00:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 16:00:00 → FP 20/10/2026, 16:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 16:05:00 → FP 20/10/2026, 16:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 16:10:00 → FP 20/10/2026, 16:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 16:15:00 → FP 20/10/2026, 16:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 16:20:00 → FP 20/10/2026, 16:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [56] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [57] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [58] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [59] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [60] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 55
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 16:30:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 16:30:00 → FP 20/10/2026, 16:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 16:35:00 → FP 20/10/2026, 16:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 16:40:00 → FP 20/10/2026, 16:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 16:45:00 → FP 20/10/2026, 16:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 16:50:00 → FP 20/10/2026, 16:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [50] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [51] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [52] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [53] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [54] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 50
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 16:55:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 16:55:00 → FP 20/10/2026, 16:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 17:00:00 → FP 20/10/2026, 17:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 17:05:00 → FP 20/10/2026, 17:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 17:10:00 → FP 20/10/2026, 17:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 17:15:00 → FP 20/10/2026, 17:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [45] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [46] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [47] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [48] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [49] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 45
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 17:20:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 17:20:00 → FP 20/10/2026, 17:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 17:25:00 → FP 20/10/2026, 17:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 17:30:00 → FP 20/10/2026, 17:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 17:35:00 → FP 20/10/2026, 17:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 17:40:00 → FP 20/10/2026, 17:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [40] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [41] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [42] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [43] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [44] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 41
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 17:40:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 17:40:00 → FP 20/10/2026, 17:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 17:45:00 → FP 20/10/2026, 17:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 17:50:00 → FP 20/10/2026, 17:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 17:55:00 → FP 20/10/2026, 17:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 18:00:00 → FP 20/10/2026, 18:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [36] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [37] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [38] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [39] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [40] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 37
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 18:00:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 18:00:00 → FP 20/10/2026, 18:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 18:05:00 → FP 20/10/2026, 18:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 18:10:00 → FP 20/10/2026, 18:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 18:15:00 → FP 20/10/2026, 18:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 18:20:00 → FP 20/10/2026, 18:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [32] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [33] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [34] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [35] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [36] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 34
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 18:15:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 18:15:00 → FP 20/10/2026, 18:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 18:20:00 → FP 20/10/2026, 18:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 18:25:00 → FP 20/10/2026, 18:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 18:30:00 → FP 20/10/2026, 18:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 18:35:00 → FP 20/10/2026, 18:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [29] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [30] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [31] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [32] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [33] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 31
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 18:30:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 18:30:00 → FP 20/10/2026, 18:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 18:35:00 → FP 20/10/2026, 18:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 18:40:00 → FP 20/10/2026, 18:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 18:45:00 → FP 20/10/2026, 18:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 18:50:00 → FP 20/10/2026, 18:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [26] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [27] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [28] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [29] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [30] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 28
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 18:45:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 18:45:00 → FP 20/10/2026, 18:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 18:50:00 → FP 20/10/2026, 18:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 18:55:00 → FP 20/10/2026, 18:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 19:00:00 → FP 20/10/2026, 19:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 19:05:00 → FP 20/10/2026, 19:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [23] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [24] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [25] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [26] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [27] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 27/28 velas con FP, 708 fps disponibles, candleWidth=30.0px, fullMode=false
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 25
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 19:00:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 19:00:00 → FP 20/10/2026, 19:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 19:05:00 → FP 20/10/2026, 19:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 19:10:00 → FP 20/10/2026, 19:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 19:15:00 → FP 20/10/2026, 19:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 19:20:00 → FP 20/10/2026, 19:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [20] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [21] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [22] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [23] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [24] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 23
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 19:10:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 19:10:00 → FP 20/10/2026, 19:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 19:15:00 → FP 20/10/2026, 19:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 19:20:00 → FP 20/10/2026, 19:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 19:25:00 → FP 20/10/2026, 19:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 19:30:00 → FP 20/10/2026, 19:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [18] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [19] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [20] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [21] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [22] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 21
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 19:20:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 19:20:00 → FP 20/10/2026, 19:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 19:25:00 → FP 20/10/2026, 19:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 19:30:00 → FP 20/10/2026, 19:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 19:35:00 → FP 20/10/2026, 19:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 19:40:00 → FP 20/10/2026, 19:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [16] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [17] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [18] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [19] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [20] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 19
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 19:30:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 19:30:00 → FP 20/10/2026, 19:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 19:35:00 → FP 20/10/2026, 19:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 19:40:00 → FP 20/10/2026, 19:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 19:45:00 → FP 20/10/2026, 19:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 19:50:00 → FP 20/10/2026, 19:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [14] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [15] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [16] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [17] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [18] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 17
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 19:40:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 19:40:00 → FP 20/10/2026, 19:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 19:45:00 → FP 20/10/2026, 19:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 19:50:00 → FP 20/10/2026, 19:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 19:55:00 → FP 20/10/2026, 19:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:00:00 → FP 20/10/2026, 20:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [12] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [13] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [14] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [15] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [16] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 708 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 17
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 708
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 19:45:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 19:45:00 → FP 20/10/2026, 19:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 19:50:00 → FP 20/10/2026, 19:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 19:55:00 → FP 20/10/2026, 19:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:00:00 → FP 20/10/2026, 20:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:05:00 → FP 20/10/2026, 20:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [12] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [13] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [14] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [15] ❌ 20/10/2026, 21:00:00 (ts: 1792548000000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:55:00 (-5.0 min)
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [16] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+CandleCache.js:169 [CandleCache] ✅ BTCUSDT@5 - guardado (1486 velas, memoria: 1/4)
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:00:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 709 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (709 footprints)
+OrderFlowIndicator.js:898 [OrderFlow] [BTCUSDT] +1 footprints (total: 709)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1046 [OrderFlow] [BTCUSDT] RENDER: 709 fps, candleWidth=49.4px, mode=FOOTPRINT (zoomed in)
+OrderFlowIndicator.js:1052 [OrderFlow] [BTCUSDT] CANDLES VISIBLE: 20/10/2026, 7:45:00 p.m. → 20/10/2026, 9:05:00 p.m. (17 velas)
+OrderFlowIndicator.js:1058 [OrderFlow] [BTCUSDT] CANDLES ALL: 15/10/2026, 5:15:00 p.m. → 20/10/2026, 9:05:00 p.m. (1487 velas TOTALES)
+OrderFlowIndicator.js:1066 [OrderFlow] [BTCUSDT] FP RANGE: 20/10/2026, 9:04:00 a.m. → 20/10/2026, 9:00:00 p.m.
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+Logger.js:100 ✅ [9:05:03 p. m.] [VWAP] [BTCUSDT] VWAP updated (polling): 1441 points
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+Logger.js:100 ✅ [9:05:03 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:00:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 709 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (709 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+Logger.js:100 ✅ [9:05:08 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:00:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 709 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (709 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:00:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 709 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (709 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:00:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 709 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (709 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:00:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 709 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (709 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:00:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 709 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (709 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowSettings.jsx:237 [OrderFlow] Step size saved for BTCUSDT: 5
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 709 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:04:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:00:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 709 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (709 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowSettings.jsx:281 [OrderFlow] Cache cleared for BTCUSDT: {success: true, symbol: 'BTCUSDT', files_deleted: 2, deleted: Array(2), memory_cleared: Array(2)}
+OrderFlowSettings.jsx:285 [OrderFlowSettings] Ejecutando callback onBackendConfigSaved...
+SingleSymbolAnalyzer.jsx:1152 ╔═══════════════════════════════════════════════════════════════╗
+SingleSymbolAnalyzer.jsx:1153 ║ [RECARGA FOOTPRINTS] INICIANDO DESPUÉS DE CAMBIO STEP_SIZE    ║
+SingleSymbolAnalyzer.jsx:1154 ╚═══════════════════════════════════════════════════════════════╝
+SingleSymbolAnalyzer.jsx:1164 [RECARGA] 📊 Estado ANTES de limpiar:
+SingleSymbolAnalyzer.jsx:1165   - Footprints en memoria: 709
+SingleSymbolAnalyzer.jsx:1166   - Símbolo: BTCUSDT
+SingleSymbolAnalyzer.jsx:1167   - Intervalo: 5
+SingleSymbolAnalyzer.jsx:1170 [RECARGA] ⏸️ PASO 0: Pausando PollingCoordinator...
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 709 fps disponibles, candleWidth=49.4px, fullMode=false
+SingleSymbolAnalyzer.jsx:1175 [RECARGA] ✅ PollingCoordinator pausado y operaciones en progreso completadas
+SingleSymbolAnalyzer.jsx:1179 [RECARGA] 🗑️ PASO 1: Eliminando archivo local de footprints...
+SingleSymbolAnalyzer.jsx:1197 [RECARGA] 🗑️ PASO 2: Footprints en memoria limpiados: 709 → 0
+SingleSymbolAnalyzer.jsx:1200 [RECARGA] 🔄 PASO 3: Recargando desde backend (con nuevo step_size)...
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+FootprintArchiverElectron.js:45 [FootprintArchiver] Storage dir: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 717 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:06:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:02:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 717 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (717 footprints)
+OrderFlowIndicator.js:896 [OrderFlow] [BTCUSDT] INITIAL LOAD: 717 footprints
+SingleSymbolAnalyzer.jsx:1206 [RECARGA] ✅ fetchData() completado en 0.16s
+SingleSymbolAnalyzer.jsx:1207 [RECARGA] 📊 Estado DESPUÉS de recargar:
+SingleSymbolAnalyzer.jsx:1208   - Footprints en memoria: 717
+SingleSymbolAnalyzer.jsx:1213   - Primer fp: 20/10/2026, 9:06:00 a.m., step_size=10
+SingleSymbolAnalyzer.jsx:1214   - Último fp: 20/10/2026, 9:02:00 p.m., step_size=10
+SingleSymbolAnalyzer.jsx:1219 [RECARGA] 🎨 PASO 4: Solicitando redraw del gráfico...
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1046 [OrderFlow] [BTCUSDT] RENDER: 717 fps, candleWidth=49.4px, mode=FOOTPRINT (zoomed in)
+OrderFlowIndicator.js:1052 [OrderFlow] [BTCUSDT] CANDLES VISIBLE: 20/10/2026, 7:45:00 p.m. → 20/10/2026, 9:05:00 p.m. (17 velas)
+OrderFlowIndicator.js:1058 [OrderFlow] [BTCUSDT] CANDLES ALL: 15/10/2026, 5:15:00 p.m. → 20/10/2026, 9:05:00 p.m. (1487 velas TOTALES)
+OrderFlowIndicator.js:1066 [OrderFlow] [BTCUSDT] FP RANGE: 20/10/2026, 9:06:00 a.m. → 20/10/2026, 9:02:00 p.m.
+SingleSymbolAnalyzer.jsx:1221 [RECARGA] ✅ Redraw completado
+SingleSymbolAnalyzer.jsx:1230 [RECARGA] ▶️ PASO 5: Reanudando PollingCoordinator...
+SingleSymbolAnalyzer.jsx:1232 [RECARGA] ✅ PollingCoordinator reanudado
+SingleSymbolAnalyzer.jsx:1235 ╔═══════════════════════════════════════════════════════════════╗
+SingleSymbolAnalyzer.jsx:1236 ║ [RECARGA FOOTPRINTS] COMPLETADO - ARCHIVO LOCAL ELIMINADO    ║
+SingleSymbolAnalyzer.jsx:1237 ║ Backend regenerará footprints con nuevo step_size            ║
+SingleSymbolAnalyzer.jsx:1238 ╚═══════════════════════════════════════════════════════════════╝
+OrderFlowSettings.jsx:287 [OrderFlowSettings] Callback onBackendConfigSaved completado
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 717 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:06:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:02:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 717 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (717 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+Logger.js:100 ✅ [9:05:45 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 717 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:06:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:02:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 717 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (717 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 717 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:06:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:02:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 717 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (717 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 717 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:06:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:02:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 717 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (717 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 16/17 velas con FP, 717 fps disponibles, candleWidth=49.4px, fullMode=false
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 16
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 19:50:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 19:50:00 → FP 20/10/2026, 19:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 19:55:00 → FP 20/10/2026, 19:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:00:00 → FP 20/10/2026, 20:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:05:00 → FP 20/10/2026, 20:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:10:00 → FP 20/10/2026, 20:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [11] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [12] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [13] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [14] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [15] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 15/16 velas con FP, 717 fps disponibles, candleWidth=52.4px, fullMode=false
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 14
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:00:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:00:00 → FP 20/10/2026, 20:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:05:00 → FP 20/10/2026, 20:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:10:00 → FP 20/10/2026, 20:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:15:00 → FP 20/10/2026, 20:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:20:00 → FP 20/10/2026, 20:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [9] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [10] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [11] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [12] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [13] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 13
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:05:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:05:00 → FP 20/10/2026, 20:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:10:00 → FP 20/10/2026, 20:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:15:00 → FP 20/10/2026, 20:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:20:00 → FP 20/10/2026, 20:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:25:00 → FP 20/10/2026, 20:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [8] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [9] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [10] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [11] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [12] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 12
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:10:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:10:00 → FP 20/10/2026, 20:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:15:00 → FP 20/10/2026, 20:15:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:20:00 → FP 20/10/2026, 20:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:25:00 → FP 20/10/2026, 20:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:30:00 → FP 20/10/2026, 20:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [7] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [8] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [9] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [10] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [11] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 10
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:20:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:20:00 → FP 20/10/2026, 20:20:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:25:00 → FP 20/10/2026, 20:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:30:00 → FP 20/10/2026, 20:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:35:00 → FP 20/10/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [5] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [6] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [7] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [8] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [9] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 9
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:25:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:25:00 → FP 20/10/2026, 20:25:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:30:00 → FP 20/10/2026, 20:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:35:00 → FP 20/10/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [5] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [6] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [7] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [8] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 8
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:30:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:30:00 → FP 20/10/2026, 20:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:35:00 → FP 20/10/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [5] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [6] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [7] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 717 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:06:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:02:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 717 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (717 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 7/8 velas con FP, 717 fps disponibles, candleWidth=104.9px, fullMode=true
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 7
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:35:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:35:00 → FP 20/10/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [5] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [6] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 6
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:40:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [5] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 5
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:45:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [4] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [4] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 4
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:50:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [3] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [3] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 3
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:55:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [2] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [2] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 2/3 velas con FP, 717 fps disponibles, candleWidth=279.7px, fullMode=true
+Logger.js:100 ✅ [9:06:06 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 4
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:50:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [3] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [3] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 5
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:45:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [4] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [4] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 6
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:40:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [5] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 7
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:35:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:35:00 → FP 20/10/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [5] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [6] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 7
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:30:00 → 20/10/2026, 21:00:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:30:00 → FP 20/10/2026, 20:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:35:00 → FP 20/10/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [5] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [6] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+Logger.js:100 ✅ [9:06:08 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 7/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1142 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1143 [OrderFlow] [BTCUSDT]   Total velas visibles: 7
+OrderFlowIndicator.js:1144 [OrderFlow] [BTCUSDT]   Total footprints: 717
+OrderFlowIndicator.js:1148 [OrderFlow] [BTCUSDT]   Rango velas: 20/10/2026, 20:35:00 → 20/10/2026, 21:05:00
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [0] ✅ 20/10/2026, 20:35:00 → FP 20/10/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [1] ✅ 20/10/2026, 20:40:00 → FP 20/10/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [2] ✅ 20/10/2026, 20:45:00 → FP 20/10/2026, 20:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [3] ✅ 20/10/2026, 20:50:00 → FP 20/10/2026, 20:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [4] ✅ 20/10/2026, 20:55:00 → FP 20/10/2026, 20:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1164 [OrderFlow] [BTCUSDT]   [5] ✅ 20/10/2026, 21:00:00 → FP 20/10/2026, 21:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1166 [OrderFlow] [BTCUSDT]   [6] ❌ 20/10/2026, 21:05:00 (ts: 1792548300000) → NO MATCH
+OrderFlowIndicator.js:1184 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:56:00 (-9.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:57:00 (-8.0 min)
+OrderFlowIndicator.js:1188 [OrderFlow] [BTCUSDT]         • 20/10/2026, 20:58:00 (-7.0 min)
+Logger.js:100 ✅ [9:06:09 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
+Logger.js:100 ✅ [9:06:10 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP found, enabled=true, dataMap.size=1441
+OrderFlowIndicator.js:735 [OrderFlow] [BTCUSDT] 🌐 Backend: 717 footprints recibidos
+OrderFlowIndicator.js:745 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:746 [OrderFlow] [BTCUSDT]   • Desde: 20/10/2026, 9:06:00
+OrderFlowIndicator.js:747 [OrderFlow] [BTCUSDT]   • Hasta: 20/10/2026, 21:02:00
+OrderFlowIndicator.js:748 [OrderFlow] [BTCUSDT]   • Duración: 11.9 horas (~0.5 días)
+OrderFlowIndicator.js:749 [OrderFlow] [BTCUSDT]   • Footprints: 717 de 5min
+OrderFlowIndicator.js:803 [OrderFlow] [BTCUSDT] ✅ Usando solo backend (717 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1486)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:685 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:702 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:1283 [OrderFlow] [BTCUSDT] RENDER: 6/7 velas con FP, 717 fps disponibles, candleWidth=119.9px, fullMode=true
+OrderFlowIndicator.js:513 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:519 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: false
