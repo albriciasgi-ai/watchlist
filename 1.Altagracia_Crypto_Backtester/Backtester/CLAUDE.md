@@ -11,6 +11,208 @@ This is a cryptocurrency trading platform watchlist application with advanced Vo
 - Backend: FastAPI + Uvicorn (Python 3.10+)
 - Data Source: Bybit Futures API (REST + WebSocket)
 
+---
+
+## 🆕 NUEVO: ORDER FLOW INDICATOR (Octubre 2026)
+
+Sistema de visualización de Order Flow basado en footprints del OrderFlowDesktop (App 9), integrado en el Backtester con soporte completo de anti-sesgo de supervivencia.
+
+### Plan de Implementación
+
+**Ubicación del plan:** `1.Altagracia_Crypto_Backtester/altura_footprints_1.pdf`
+
+**Enfoque:** Implementación simplificada usando footprints pre-calculados del archivo local, con 3 capas de visualización como overlays sobre el gráfico de precio.
+
+### Arquitectura Implementada
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     ORDER FLOW SYSTEM                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  BACKEND (main.py)                                              │
+│  ├─ GET /api/orderflow/historical/{symbol}                      │
+│  │   ├─ Lee footprints desde archivo local                     │
+│  │   │   5.Order_flow/backend/footprint_cache/{symbol}_{int}.json
+│  │   ├─ Filtra por días solicitados                            │
+│  │   └─ Retorna: {success, footprints[], count, step_size}     │
+│  │                                                              │
+│  FRONTEND                                                        │
+│  ├─ OrderFlowIndicator.js (Overlay Indicator)                  │
+│  │   ├─ fetchData(): Carga footprints del backend              │
+│  │   ├─ getVisibleFootprints(): Anti-sesgo (solo hasta playback)
+│  │   └─ renderOverlay(): 3 capas de visualización              │
+│  │       ├─ Capa 1: Imbalance Coloring (bordes de velas)       │
+│  │       ├─ Capa 2: POC Markers (puntos de control)            │
+│  │       └─ Capa 3: Stacked Imbalances (grupos)                │
+│  │                                                              │
+│  ├─ FootprintCard.jsx (Componente de tarjeta)                  │
+│  │   └─ Renderiza: Vela + Footprint + Volume Profile           │
+│  │                                                              │
+│  ├─ FootprintSidebar.jsx (Panel lateral)                       │
+│  │   ├─ Muestra hasta 10 footprints pinneados                  │
+│  │   └─ Click en tarjeta → navega al timestamp                 │
+│  │                                                              │
+│  └─ BacktestingApp.jsx (Integración)                           │
+│      ├─ handlePinFootprint(candle)                             │
+│      └─ handleNavigateToFootprint(timestamp)                   │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Archivos Creados/Modificados
+
+| Archivo | Tipo | Descripción |
+|---------|------|-------------|
+| `backend/main.py` | Modificado | Endpoint `/api/orderflow/historical/{symbol}` (líneas 4470-4550) |
+| `frontend/src/components/indicators/OrderFlowIndicator.js` | Creado | Indicador overlay con 3 capas de visualización (~450 líneas) |
+| `frontend/src/components/backtesting/FootprintCard.jsx` | Creado | Componente de tarjeta individual (~200 líneas) |
+| `frontend/src/components/backtesting/FootprintSidebar.jsx` | Creado | Sidebar para footprints pinneados (~180 líneas) |
+| `frontend/src/components/backtesting/FootprintSidebar.css` | Creado | Estilos del sidebar (~170 líneas) |
+| `frontend/src/components/backtesting/BacktestingApp.jsx` | Modificado | Integración de callbacks y estado (líneas 2150-2200) |
+| `frontend/src/components/indicators/IndicatorManager.js` | Modificado | Registro del indicador + getter (líneas 77, 92, ~1260) |
+
+### Problemas Resueltos Durante la Implementación
+
+#### 1. Error de Scope Variables (ReferenceError)
+
+**Problema:** `allCandlesForCalculation is not defined` - 96 errores repetidos al mover el mouse.
+
+**Causa:** Variables definidas dentro de un bloque `if (indicatorManagerRef.current)` que terminaba antes del loop de velas, se intentaban usar después del loop.
+
+**Solución:** Reorganizar el código para que el renderizado de overlays tenga su propio bloque con todas las variables definidas:
+
+```javascript
+// DESPUÉS del loop de velas:
+if (indicatorManagerRef.current) {
+  const overlayBounds = { x: marginLeft, y: marginTop, width: chartWidth, height: priceChartHeight };
+  const priceToY = (price) => marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
+  const timeToX = (timestamp) => { /* ... */ };
+  const priceContext = { minPrice, maxPrice, priceRange, verticalZoom, verticalOffset, yScale, priceToY, timeToX };
+  const allCandlesForCalculation = backtestingMode && allCandlesRef.current?.length > 0 ? allCandlesRef.current : displayCandles;
+
+  indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, allCandlesForCalculation, priceContext);
+}
+```
+
+**Archivo:** `MiniChart.jsx` (líneas 1037-1080)
+
+#### 2. Lag Extremo por Procesamiento Excesivo
+
+**Problema:** App extremadamente lenta al mover el mouse, procesando 7147 footprints en cada mousemove de 29,168 totales cuando solo había 225 velas visibles.
+
+**Causa:**
+1. Miles de `console.log()` por segundo
+2. Filtrado ineficiente - solo filtraba por anti-sesgo, no por rango visible
+
+**Solución:**
+
+**A) Eliminar logs en hot path:**
+```javascript
+// ANTES: 4-5 logs por renderOverlay
+console.log(`[${symbol}] 🎨 OrderFlow.renderOverlay called`);
+console.log(`[${symbol}] 🎨 Renderizando ${visibleFootprints.length} footprints`);
+console.log(`[${symbol}] 🟢 Capa 1: ${count} velas con imbalance`);
+// ...
+
+// DESPUÉS: Solo 1 log al inicio (con flag _renderLogged)
+if (!this._renderLogged) {
+  console.log(`[${symbol}] 🎨 OrderFlow renderOverlay:`, { ... });
+  this._renderLogged = true;
+}
+```
+
+**B) Filtrado optimizado por rango temporal:**
+```javascript
+// ANTES: Filtra TODOS los footprints hasta currentTime (7147)
+const visibleFootprints = this.getVisibleFootprints(currentTime);
+
+// DESPUÉS: Filtra solo footprints del rango visible (~225)
+const firstVisibleTs = visibleCandles[0].timestamp;
+const lastVisibleTs = visibleCandles[visibleCandles.length - 1].timestamp;
+
+const visibleFootprints = this.footprints.filter(fp => {
+  const fpTime = fp.candle_timestamp || fp.timestamp;
+  return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs && fpTime <= currentTime;
+});
+```
+
+**Resultado:** ~97% menos procesamiento (de 7147 a ~225 footprints por frame)
+
+**Archivo:** `OrderFlowIndicator.js` (líneas 271-325)
+
+#### 3. Overlays No Visibles (candleWidth undefined)
+
+**Problema:** Los overlays se renderizaban pero no eran visibles en el gráfico.
+
+**Causa:** El parámetro `candleWidth` se extraía de `bounds` con destructuring:
+```javascript
+const { candleWidth } = bounds;
+```
+
+Pero `bounds` solo tiene `{x, y, width, height}`, no `candleWidth`.
+
+**Solución:** Calcular `candleWidth` a partir de bounds.width:
+```javascript
+const candleWidth = bounds.width / visibleCandles.length;
+```
+
+**Archivo:** `OrderFlowIndicator.js` (línea 285)
+
+### Configuración del Indicador
+
+```javascript
+config = {
+  showImbalanceColoring: true,      // Capa 1: Bordes de velas
+  showPOCMarkers: true,              // Capa 2: Marcadores POC
+  showStackedImbalances: true,       // Capa 3: Grupos de imbalances
+  imbalanceThreshold: 1.5,           // Ratio mínimo bid/ask para considerar imbalance
+  stackedImbalanceMinCount: 3,       // Mínimo de niveles consecutivos
+  stackedImbalanceMinRatio: 2.0      // Ratio mínimo para grupo
+}
+```
+
+### Estado Actual (Octubre 2026)
+
+✅ **Completado:**
+- Backend endpoint funcional
+- OrderFlowIndicator carga y filtra footprints
+- Anti-sesgo de supervivencia implementado
+- Renderizado de overlays optimizado (sin lag)
+- **Visualización funcionando:** Primeros rectángulos de imbalances visibles
+
+⏳ **Pendiente:**
+- Testing de capas POC y Stacked Imbalances
+- Testing del sidebar con footprints pinneados
+- Verificar navegación temporal (clic en footprints)
+- Ajuste fino de umbrales de detección
+
+### Anti-Sesgo de Supervivencia
+
+El sistema filtra footprints para mostrar solo aquellos que existían hasta el momento actual del playback:
+
+```javascript
+// En renderOverlay:
+const currentTime = this.backtestingMode && allCandles.length > 0
+  ? allCandles[allCandles.length - 1].timestamp
+  : Date.now();
+
+const visibleFootprints = this.footprints.filter(fp => {
+  const fpTime = fp.candle_timestamp || fp.timestamp;
+  return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs && fpTime <= currentTime;
+});
+```
+
+**Resultado:** Solo se muestran footprints desde 8 horas antes del inicio de la simulación hasta el tiempo actual del playback. Para ver footprints más antiguos, mover el playback hacia atrás en el tiempo.
+
+### Lecciones Aprendidas
+
+1. **Scope de variables en canvas rendering:** Las variables deben estar en scope cuando se usan - no intentar "guardarlas" entre bloques
+2. **Performance en hot paths:** Eliminar TODOS los logs de funciones que se ejecutan en mousemove
+3. **Filtrado eficiente:** Filtrar por rango temporal visible, no por todo el dataset
+4. **Calcular dimensiones:** Los overlays deben calcular sus propias dimensiones (candleWidth) a partir de bounds
+5. **Anti-sesgo correcto:** Filtrar por timestamp del playback actual, no por timestamp de carga
+
 ## Development Commands
 
 ### Backend (FastAPI)

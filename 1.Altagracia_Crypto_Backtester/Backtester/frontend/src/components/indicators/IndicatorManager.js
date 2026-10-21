@@ -18,6 +18,7 @@ import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator";
 import SwingDetectorIndicator from "./SwingDetectorIndicator"; // 🎯 Swing High/Low
 import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator"; // 🎯 Zone Detector 2.0
 import OIVolumeConfluenceIndicator from "./OIVolumeConfluenceIndicator"; // 🎯 OI-Volume Confluence
+import OrderFlowIndicator from "./OrderFlowIndicator"; // 🎯 Order Flow (Footprints)
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -72,6 +73,9 @@ class IndicatorManager {
     // Inyectar referencias de Volume y OI al indicador de confluencia
     confluenceIndicator.setIndicators(volumeIndicator, this.openInterestIndicator);
 
+    // 🎯 Crear indicador de Order Flow
+    this.orderFlowIndicator = new OrderFlowIndicator(this.symbol, this.interval, this.days, backtestingMode);
+
     this.indicators = [
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       volumeIndicator,
@@ -84,7 +88,8 @@ class IndicatorManager {
       this.supportResistance2Indicator,
       new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       new SwingDetectorIndicator(this.symbol, this.interval, this.days), // 🎯 Swing High/Low
-      this.zoneVisualizer // 🎯 Zone Visualizer (Zone Detector 2.0)
+      this.zoneVisualizer, // 🎯 Zone Visualizer (Zone Detector 2.0)
+      this.orderFlowIndicator // 🎯 Order Flow (Footprints)
     ];
 
     // Habilitar el indicador de patrones por defecto
@@ -258,7 +263,7 @@ class IndicatorManager {
     const promises = [];
 
     // 🎯 Indicadores que requieren datos del backend
-    const backendIndicators = ["VWAP", "Open Interest", "Double Top/Bottom", "Support & Resistance", "Rejection Patterns"];
+    const backendIndicators = ["VWAP", "Open Interest", "Double Top/Bottom", "Support & Resistance", "Rejection Patterns", "Order Flow"];
 
     // 🎯 NUEVO: Indicadores internos que NO deben ser controlados por el UI
     // Zone Visualizer se controla manualmente desde el Zone Detector Tester
@@ -361,6 +366,14 @@ class IndicatorManager {
 
             if (!hasData) {
               console.log(`%c[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`, 'background: #F44336; color: white; font-weight: bold; padding: 4px;');
+              promises.push(indicator.fetchData());
+            }
+          }
+          // Order Flow: verificar si tiene datos
+          else if (indicator.name === "Order Flow") {
+            const hasData = indicator.footprints && indicator.footprints.length > 0;
+            if (!hasData) {
+              console.log(`[${this.symbol}] 🔄 ${indicator.name} habilitado pero sin datos, recargando...`);
               promises.push(indicator.fetchData());
             }
           }
@@ -1250,6 +1263,13 @@ class IndicatorManager {
    */
   getRejectionPatternIndicator() {
     return this.indicators.find(ind => ind.name === "Rejection Patterns");
+  }
+
+  /**
+   * Obtiene el indicador de Order Flow
+   */
+  getOrderFlowIndicator() {
+    return this.orderFlowIndicator;
   }
 
   /**

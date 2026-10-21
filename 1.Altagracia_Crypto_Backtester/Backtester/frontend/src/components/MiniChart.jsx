@@ -1003,81 +1003,7 @@ const MiniChart = forwardRef(({
       ctx.fillText(price.toFixed(2), width - marginRight + 5, y + 4);
     }
 
-    if (indicatorManagerRef.current) {
-      const overlayBounds = {
-        x: marginLeft,
-        y: marginTop,
-        width: chartWidth,
-        height: priceChartHeight
-      };
-
-      // 🎯 NUEVO: Función para convertir precio a coordenada Y en el canvas
-      const priceToY = (price) => {
-        return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
-      };
-
-      // 🎯 NUEVO: Pasar información de zoom vertical, offset y rango de precios
-      // 🎯 Función para convertir timestamp a coordenada X
-      // 🎯 FIX: Ahora también calcula posiciones para timestamps fuera del rango visible
-      const timeToX = (timestamp) => {
-        if (!visibleCandles || visibleCandles.length === 0) return null;
-
-        // Primero intentar búsqueda exacta
-        const exactIndex = visibleCandles.findIndex(c => c.timestamp === timestamp);
-        if (exactIndex !== -1) {
-          return marginLeft + (exactIndex * barWidth) + (barWidth / 2);
-        }
-
-        // Si no está exactamente, calcular posición por interpolación
-        const firstTs = visibleCandles[0].timestamp;
-        const lastTs = visibleCandles[visibleCandles.length - 1].timestamp;
-
-        // Calcular el intervalo promedio entre velas
-        const avgInterval = (lastTs - firstTs) / Math.max(1, visibleCandles.length - 1);
-
-        if (avgInterval <= 0) return null;
-
-        // Calcular índice relativo (puede ser negativo o mayor que el rango visible)
-        const relativeIndex = (timestamp - firstTs) / avgInterval;
-
-        // Calcular coordenada X
-        const x = marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
-
-        return x;
-      };
-
-      const priceContext = {
-        minPrice,
-        maxPrice,
-        priceRange,
-        verticalZoom,
-        verticalOffset,
-        yScale,
-        priceToY,  // ✨ Función para que los indicadores puedan convertir precios a coordenadas Y
-        timeToX    // ✨ Función para convertir timestamp a coordenada X
-      };
-
-      // 🎯 OPTIMIZACIÓN: En modo backtesting, pasar TODAS las velas para pre-cálculo
-      // Los indicadores usarán esto para calcular UNA VEZ, luego solo dibujarán visibleCandles
-      // IMPORTANTE: SIEMPRE usar allCandlesRef en backtesting, incluso cuando está pausado
-      const allCandlesForCalculation = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
-        ? allCandlesRef.current
-        : displayCandles;
-
-      // Debug: Detectar si allCandlesForCalculation está vacío
-      if (!allCandlesForCalculation || allCandlesForCalculation.length === 0) {
-        console.error(`[MiniChart ${symbol} ${interval}] ⚠️ CRÍTICO: allCandlesForCalculation está vacío!`);
-        console.error(`  backtestingMode: ${backtestingMode}`);
-        console.error(`  allCandlesRef.current: ${allCandlesRef.current ? allCandlesRef.current.length : 'null/undefined'}`);
-        console.error(`  displayCandles: ${displayCandles.length}`);
-      }
-
-      // Renderizar overlays
-      if (allCandlesForCalculation && allCandlesForCalculation.length > 0) {
-        indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, allCandlesForCalculation, priceContext);
-      }
-    }
-
+    // 🎯 DIBUJAR VELAS PRIMERO (para que los overlays se vean encima)
     ctx.lineWidth = 1;
     visibleCandles.forEach((d, i) => {
       const x = marginLeft + (i * barWidth);
@@ -1097,7 +1023,7 @@ const MiniChart = forwardRef(({
 
       const bodyHeight = Math.abs(yClose - yOpen);
       const bodyWidth = Math.max(barWidth * 0.7, 2);
-      
+
       if (bodyHeight < 2) {
         const y = (yOpen + yClose) / 2;
         ctx.fillRect(x + (barWidth - bodyWidth) / 2, y - 1.5, bodyWidth, 3);
@@ -1106,6 +1032,52 @@ const MiniChart = forwardRef(({
         ctx.fillRect(x + (barWidth - bodyWidth) / 2, topY, bodyWidth, Math.max(bodyHeight, 2));
       }
     });
+
+    // 🎯 ORDER FLOW: Renderizar overlays DESPUÉS de las velas (para que se vean encima)
+    if (indicatorManagerRef.current) {
+      const overlayBounds = {
+        x: marginLeft,
+        y: marginTop,
+        width: chartWidth,
+        height: priceChartHeight
+      };
+
+      const priceToY = (price) => {
+        return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
+      };
+
+      const timeToX = (timestamp) => {
+        if (!visibleCandles || visibleCandles.length === 0) return null;
+        const exactIndex = visibleCandles.findIndex(c => c.timestamp === timestamp);
+        if (exactIndex !== -1) {
+          return marginLeft + (exactIndex * barWidth) + (barWidth / 2);
+        }
+        const firstTs = visibleCandles[0].timestamp;
+        const lastTs = visibleCandles[visibleCandles.length - 1].timestamp;
+        const avgInterval = (lastTs - firstTs) / Math.max(1, visibleCandles.length - 1);
+        if (avgInterval <= 0) return null;
+        const relativeIndex = (timestamp - firstTs) / avgInterval;
+        const x = marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
+        return x;
+      };
+
+      const priceContext = {
+        minPrice,
+        maxPrice,
+        priceRange,
+        verticalZoom,
+        verticalOffset,
+        yScale,
+        priceToY,
+        timeToX
+      };
+
+      const allCandlesForCalculation = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
+        ? allCandlesRef.current
+        : displayCandles;
+
+      indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, allCandlesForCalculation, priceContext);
+    }
 
     // 🎯 NUEVO: Calcular z-score de volúmenes para mejoras visuales
     const volumes = visibleCandles.map(d => d.volume);

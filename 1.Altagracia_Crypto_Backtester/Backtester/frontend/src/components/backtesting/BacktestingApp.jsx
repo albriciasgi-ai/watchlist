@@ -23,6 +23,7 @@ import '../strategy/StrategyBuilder.css';
 import '../strategy/BacktestResults.css';
 import DrawingToolbar from '../drawing/DrawingToolbar';
 import DrawingSidebar from '../drawing/DrawingSidebar'; // 🎯 OPTIMIZACIÓN UI: Sidebar vertical
+import FootprintSidebar from './FootprintSidebar'; // 🎯 Order Flow Footprints
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
 import SessionLoadModal from './SessionLoadModal';
@@ -52,6 +53,7 @@ const BacktestingApp = () => {
       "CVD": false,
       "Open Interest": true, // Habilitado en todos los timeframes (backend usa intervalo OI adaptativo)
       "OI-Volume Confluence": true, // 🎯 Confluencia OI-Volumen (muestra cuando movimientos son fuertes/débiles)
+      "Order Flow": false, // 🎯 Order Flow con Footprints (overlays + sidebar)
       "VWAP": false,
       "Range Detection": false,
       "Rejection Patterns": false,        // Siempre deshabilitado por defecto
@@ -184,6 +186,9 @@ const BacktestingApp = () => {
   // 🎯 OPTIMIZACIÓN UI: Estados para sidebar de dibujo (D para toggle: expandido → colapsado → oculto)
   const [drawingSidebarCollapsed, setDrawingSidebarCollapsed] = useState(false);
   const [drawingSidebarHidden, setDrawingSidebarHidden] = useState(false);
+
+  // 🎯 Order Flow: Estado para footprints anclados (hasta 10)
+  const [pinnedFootprints, setPinnedFootprints] = useState([]);
 
   // 🎯 NUEVO: Estado para modo pantalla completa
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -1389,6 +1394,48 @@ const BacktestingApp = () => {
   };
 
   /**
+   * 🎯 Order Flow: Anclar/desanclar footprint
+   */
+  const handleToggleFootprintPin = (timestamp) => {
+    setPinnedFootprints(prev => {
+      if (prev.includes(timestamp)) {
+        // Desanclar
+        console.log(`[BacktestingApp] 📌 Desanclando footprint: ${new Date(timestamp).toISOString()}`);
+        return prev.filter(ts => ts !== timestamp);
+      } else {
+        // Anclar (máximo 10)
+        if (prev.length >= 10) {
+          console.warn('[BacktestingApp] ⚠️ Máximo 10 footprints anclados alcanzado');
+          return prev; // No agregar más
+        }
+        console.log(`[BacktestingApp] 📌 Anclando footprint: ${new Date(timestamp).toISOString()}`);
+        return [...prev, timestamp];
+      }
+    });
+  };
+
+  /**
+   * 🎯 Order Flow: Navegar a un footprint en el gráfico
+   */
+  const handleNavigateToFootprint = (timestamp) => {
+    console.log(`[BacktestingApp] 📍 Navegando a footprint: ${new Date(timestamp).toISOString()}`);
+
+    const miniChart = miniChartRefs.current[activeTimeframe];
+    if (!miniChart || !miniChart.centerOnTimestamp) {
+      console.warn('[BacktestingApp] ⚠️ MiniChart o centerOnTimestamp no disponible');
+      return;
+    }
+
+    // Centrar el gráfico en el timestamp del footprint
+    miniChart.centerOnTimestamp(timestamp);
+
+    // Actualizar el tiempo de simulación
+    if (onRequestTimeChange) {
+      onRequestTimeChange(timestamp);
+    }
+  };
+
+  /**
    * 🎯 NUEVO: Handlers para Tabs de Timeframes
    */
   const handleTabChange = (newTimeframe) => {
@@ -2333,6 +2380,10 @@ const BacktestingApp = () => {
                     setCurrentTime(newTime);
                   }}
                   onDrawingsChange={handleDrawingsChange}
+                  onCandleClick={(timestamp) => {
+                    // 🎯 Order Flow: Anclar footprint al hacer click en vela
+                    handleToggleFootprintPin(timestamp);
+                  }}
                 />
               </div>
             );
@@ -3000,6 +3051,18 @@ const BacktestingApp = () => {
           onImport={(importedSession) => {
             console.log('[BacktestingApp] Sesión importada:', importedSession.sessionName);
           }}
+        />
+      )}
+
+      {/* 🎯 Order Flow Sidebar - Footprints anclados */}
+      {pinnedFootprints.length > 0 && (
+        <FootprintSidebar
+          pinnedFootprints={pinnedFootprints}
+          onTogglePin={handleToggleFootprintPin}
+          onNavigate={handleNavigateToFootprint}
+          orderFlowIndicator={
+            miniChartRefs.current[activeTimeframe]?.indicatorManagerRef?.getOrderFlowIndicator?.()
+          }
         />
       )}
     </div>

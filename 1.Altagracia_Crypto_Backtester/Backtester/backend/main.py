@@ -4680,6 +4680,238 @@ async def save_screenshot(request: Request, session_id: str, file: UploadFile = 
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== ORDER FLOW ====================
+
+@app.get("/api/orderflow/historical/{symbol}")
+@limiter.limit("30/minute")
+async def get_orderflow_historical(
+    request: Request,
+    symbol: str,
+    interval: str = "1",
+    days: int = 7,
+    start_timestamp: Optional[int] = None,
+    end_timestamp: Optional[int] = None
+):
+    """
+    Retorna footprints históricos para backtesting.
+
+    Solo carga desde archivo local (userData/footprint_archive/SYMBOL_1.json).
+    Si interval != "1", agrega footprints 1min → intervalos mayores.
+    """
+    try:
+        # 1. Validar interval
+        if interval not in MAX_DAYS_BY_INTERVAL:
+            return {
+                "success": False,
+                "message": f"Interval '{interval}' no soportado",
+                "footprints": [],
+                "count": 0
+            }
+
+        # 2. Validar límite de días
+        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+        if days > max_days:
+            print(f"[ORDERFLOW] WARN: days={days} excede máximo {max_days} para interval={interval}")
+            days = max_days
+
+        # 3. Determinar ruta del archivo (simular estructura de OrderFlowDesktop)
+        # En producción, esto debería apuntar a la carpeta real de userData
+        # Por ahora, usar carpeta local en el proyecto
+        archive_dir = Path("orderflow_archive")
+        archive_dir.mkdir(exist_ok=True)
+
+        safe_symbol = sanitize_filename(symbol)
+        archive_file = archive_dir / f"{safe_symbol}_1.json"
+
+        # 4. Verificar si archivo existe
+        if not archive_file.exists():
+            print(f"[ORDERFLOW] ❌ Archivo no encontrado: {archive_file}")
+            return {
+                "success": False,
+                "message": f"Footprints históricos no disponibles para {symbol}. Descarga primero desde OrderFlowDesktop (App 9).",
+                "footprints": [],
+                "count": 0
+            }
+
+        # 5. Cargar archivo
+        print(f"[ORDERFLOW] 📂 Cargando footprints desde: {archive_file}")
+        with open(archive_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        footprints_1min = data.get('footprints', [])
+
+        if len(footprints_1min) == 0:
+            return {
+                "success": False,
+                "message": f"Archivo de footprints vacío para {symbol}",
+                "footprints": [],
+                "count": 0
+            }
+
+        print(f"[ORDERFLOW] ✅ Cargados {len(footprints_1min)} footprints de 1min")
+
+        # 6. Filtrar por rango temporal si se especificó
+        if start_timestamp or end_timestamp:
+            original_count = len(footprints_1min)
+
+            if start_timestamp:
+                footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] >= start_timestamp]
+
+            if end_timestamp:
+                footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] <= end_timestamp]
+
+            print(f"[ORDERFLOW] 🔍 Filtrados por timestamps: {original_count} → {len(footprints_1min)}")
+
+        # 7. Limitar por días desde el final
+        if days > 0:
+            # Calcular timestamp de corte
+            now = int(time.time() * 1000)
+            cutoff_timestamp = now - (days * 24 * 60 * 60 * 1000)
+
+            original_count = len(footprints_1min)
+            footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] >= cutoff_timestamp]
+
+            print(f"[ORDERFLOW] 📅 Limitados a últimos {days} días: {original_count} → {len(footprints_1min)}")
+
+        # 8. Si interval != 1, agregar footprints
+        final_footprints = footprints_1min
+
+        if interval != "1":
+            print(f"[ORDERFLOW] 🔄 Agregando footprints de 1min → {interval}min...")
+            final_footprints = aggregate_footprints(footprints_1min, interval)
+            print(f"[ORDERFLOW] ✅ Agregación completa: {len(final_footprints)} footprints de {interval}min")
+
+        # 9. Detectar step_size del primer footprint
+        step_size = final_footprints[0].get('step_size', 0.1) if len(final_footprints) > 0 else 0.1
+
+        return {
+            "success": True,
+            "footprints": final_footprints,
+            "count": len(final_footprints),
+            "step_size": step_size,
+            "interval": interval,
+            "message": f"Cargados {len(final_footprints)} footprints de {interval}min"
+        }
+
+    except Exception as e:
+        print(f"[ORDERFLOW] ❌ Error: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "message": f"Error cargando footprints: {str(e)}",
+            "footprints": [],
+            "count": 0
+        }
+
+
+def aggregate_footprints(footprints_1min, target_interval):
+    """
+    Agrega footprints de 1 minuto a intervalos mayores (5, 15, 60, 240).
+    Simplificado - solo suma volúmenes y combina levels.
+    """
+    if not footprints_1min or len(footprints_1min) == 0:
+        return []
+
+    target_minutes = int(target_interval)
+    aggregated = []
+
+    # Agrupar por intervalos
+    groups = {}
+    for fp in footprints_1min:
+        timestamp = fp['candle_timestamp']
+        # Redondear timestamp al inicio del intervalo
+        interval_start = (timestamp // (target_minutes * 60 * 1000)) * (target_minutes * 60 * 1000)
+
+        if interval_start not in groups:
+            groups[interval_start] = []
+        groups[interval_start].append(fp)
+
+    # Agregar cada grupo
+    for interval_start in sorted(groups.keys()):
+        group_fps = groups[interval_start]
+
+        if len(group_fps) == 0:
+            continue
+
+        # Calcular OHLC del intervalo
+        candle_open = group_fps[0].get('candle_open', group_fps[0].get('open', 0))
+        candle_close = group_fps[-1].get('candle_close', group_fps[-1].get('close', 0))
+        candle_high = max(fp.get('candle_high', fp.get('high', 0)) for fp in group_fps)
+        candle_low = min(fp.get('candle_low', fp.get('low', 0)) for fp in group_fps)
+
+        # Sumar volúmenes totales
+        total_volume = sum(fp.get('total_volume', 0) for fp in group_fps)
+        total_bid_volume = sum(fp.get('total_bid_volume', 0) for fp in group_fps)
+        total_ask_volume = sum(fp.get('total_ask_volume', 0) for fp in group_fps)
+        total_delta = total_ask_volume - total_bid_volume
+
+        # Combinar levels (simplificado - usar step_size del primer footprint)
+        step_size = group_fps[0].get('step_size', 0.1)
+
+        # Crear mapa de levels combinados
+        combined_levels_map = {}
+
+        for fp in group_fps:
+            levels = fp.get('levels', fp.get('price_levels', []))
+
+            for level in levels:
+                price = level.get('price', 0)
+                # Redondear precio al step_size más cercano
+                price_key = round(price / step_size) * step_size
+
+                if price_key not in combined_levels_map:
+                    combined_levels_map[price_key] = {
+                        'price': price_key,
+                        'price_min': price_key,
+                        'price_max': price_key + step_size,
+                        'bid_volume': 0,
+                        'ask_volume': 0,
+                        'total_volume': 0,
+                        'delta': 0
+                    }
+
+                combined_levels_map[price_key]['bid_volume'] += level.get('bid_volume', 0)
+                combined_levels_map[price_key]['ask_volume'] += level.get('ask_volume', 0)
+                combined_levels_map[price_key]['total_volume'] += level.get('total_volume', 0)
+                combined_levels_map[price_key]['delta'] += level.get('delta', 0)
+
+        # Convertir a lista y ordenar por precio descendente
+        combined_levels = sorted(combined_levels_map.values(), key=lambda x: x['price'], reverse=True)
+
+        # Calcular POC (Point of Control)
+        poc_price = None
+        max_volume = 0
+        for level in combined_levels:
+            if level['total_volume'] > max_volume:
+                max_volume = level['total_volume']
+                poc_price = level['price']
+
+        # Crear footprint agregado
+        aggregated_fp = {
+            'candle_timestamp': interval_start,
+            'symbol': group_fps[0].get('symbol', ''),
+            'interval': target_interval,
+            'candle_open': candle_open,
+            'candle_high': candle_high,
+            'candle_low': candle_low,
+            'candle_close': candle_close,
+            'step_size': step_size,
+            'levels': combined_levels,
+            'num_levels': len(combined_levels),
+            'total_volume': total_volume,
+            'total_bid_volume': total_bid_volume,
+            'total_ask_volume': total_ask_volume,
+            'total_delta': total_delta,
+            'delta': total_delta,
+            'poc': poc_price
+        }
+
+        aggregated.append(aggregated_fp)
+
+    return aggregated
+
+
 # ==================== MAIN ====================
 
 if __name__ == "__main__":
