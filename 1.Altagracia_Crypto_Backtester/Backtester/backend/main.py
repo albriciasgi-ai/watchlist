@@ -2509,7 +2509,7 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
 
             # NUEVO: Guardar OI en cache permanente para reutilización
             if oi_data:
-                await save_oi_permanent_cache(symbol, oi_interval_str, oi_data)
+                save_oi_permanent_cache(symbol, oi_interval_str, oi_data)
                 print(f"[BACKTESTING] ✅ OI guardado en cache permanente: {len(oi_data)} puntos")
 
             timeframes_data[tf_name] = {
@@ -2747,7 +2747,7 @@ async def update_backtesting_data(symbol: str):
 
             # NUEVO: Guardar OI actualizado en cache permanente
             if new_oi:
-                await save_oi_permanent_cache(symbol, str(main_interval), existing_oi)
+                save_oi_permanent_cache(symbol, str(main_interval), existing_oi)
                 print(f"[BACKTESTING UPDATE] ✅ OI actualizado en cache permanente: {len(existing_oi)} puntos totales")
 
         # Actualizar metadata

@@ -817,13 +817,20 @@ const BacktestingApp = () => {
 
             if (updateResult && updateResult.success) {
               if (updateResult.new_candles_added > 0) {
-                console.log(`[BacktestingApp] 🔄 ${updateResult.new_candles_added} velas nuevas agregadas, recargando datos...`);
-                // Recargar datos actualizados desde el servidor
-                data = await loadBacktestingData(symbol);
-                if (data) {
+                console.log(`[BacktestingApp] 🔄 ${updateResult.new_candles_added} velas nuevas agregadas`);
+                // checkForUpdates ya actualizó IndexedDB, solo necesitamos recargar desde allí
+                const updatedCacheResult = await loadFromIndexedDB(symbol);
+                if (updatedCacheResult && updatedCacheResult.data) {
+                  shouldUseCachedData = true;
+                  data = updatedCacheResult.data;
+                  setMarketData(data);
+                  console.log('[BacktestingApp] ✅ Datos actualizados desde IndexedDB');
+                } else {
+                  // Fallback: si IndexedDB falló, cargar desde servidor
+                  console.warn('[BacktestingApp] ⚠️ IndexedDB no tiene datos actualizados, cargando desde servidor...');
+                  data = await loadBacktestingData(symbol);
                   shouldUseCachedData = true;
                   setMarketData(data);
-                  console.log('[BacktestingApp] ✅ Datos actualizados cargados correctamente');
                 }
               } else {
                 console.log('[BacktestingApp] ✅ Caché está actualizado, usando datos de IndexedDB');
