@@ -193,6 +193,64 @@ config = {
 - Testing del sidebar con footprints pinneados
 - Ajuste fino de umbrales de detección
 
+#### 5. Problema: Simulación Se Detiene y Resetea (Octubre 21)
+
+**Síntomas:**
+- La simulación avanza hasta octubre 5 y luego se resetea automáticamente a octubre 1
+- No permite simular hasta la fecha actual (octubre 21)
+- Mensaje en consola: "Estamos al final, reseteando al inicio de la simulación..."
+
+**Investigación:**
+1. TimeController resetea cuando `currentTime >= endTime` (línea 156)
+2. `endTime` se establece con `lastCandle.timestamp` del caché
+3. Caché de IndexedDB tenía velas hasta octubre 5 (desactualizado)
+4. Archivo del servidor (`BTCUSDT_backtesting_data.json.gz`) SÍ tenía velas hasta octubre 21
+5. Sistema tenía mecanismo `checkForUpdates()` pero se ejecutaba en segundo plano DESPUÉS de cargar el caché
+
+**Causa Raíz:**
+El sistema cargaba datos del caché de IndexedDB inmediatamente y verificaba actualizaciones en segundo plano. Esto causaba que:
+- El TimeController se inicializara con `endTime` basado en velas antiguas (octubre 5)
+- Las actualizaciones llegaban tarde, cuando el playback ya estaba en marcha
+- El usuario no veía las velas nuevas hasta recargar completamente
+
+**Solución Aplicada:**
+
+**Archivo:** `frontend/src/components/backtesting/BacktestingApp.jsx` (líneas 810-845)
+
+Modificado el flujo para verificar actualizaciones ANTES de usar el caché:
+
+```javascript
+// ANTES: Usar caché inmediatamente, actualizar en segundo plano
+shouldUseCachedData = true;
+data = cachedResult.data;
+setMarketData(data);
+checkForUpdates(symbol).then(...); // Segundo plano
+
+// DESPUÉS: Verificar actualizaciones PRIMERO
+const updateResult = await checkForUpdates(symbol);
+
+if (updateResult.new_candles_added > 0) {
+  console.log(`🔄 ${updateResult.new_candles_added} velas nuevas agregadas`);
+  data = await loadBacktestingData(symbol); // Recargar datos actualizados
+} else {
+  console.log('✅ Caché está actualizado');
+  data = cachedResult.data; // Usar caché
+}
+```
+
+**Resultado:**
+✅ **PROBLEMA RESUELTO**
+- El sistema ahora verifica actualizaciones ANTES de iniciar el backtesting
+- Si hay velas nuevas, las descarga y actualiza el caché
+- `lastCandle.timestamp` refleja la vela más reciente (octubre 21)
+- La simulación puede avanzar hasta la fecha actual sin resetear prematuramente
+- El caché se mantiene sincronizado automáticamente
+
+**Lección Aprendida:**
+- Las actualizaciones de caché deben ser síncronas (await) antes de usar los datos
+- No ejecutar actualizaciones en segundo plano si afectan el estado inicial de la aplicación
+- El `endTime` del TimeController es crítico - debe basarse en datos actualizados
+
 #### 4. Problema: Solo Últimas 8 Horas de Footprints (Octubre 21)
 
 **Síntomas:**

@@ -808,26 +808,43 @@ const BacktestingApp = () => {
           console.log(`[BacktestingApp] Invalidando cache de IndexedDB, forzando descarga del servidor...`);
           // No usar el cache - forzar descarga del servidor
         } else {
-          console.log('[BacktestingApp] ✅ Usando datos de IndexedDB (carga instantánea)');
+          console.log('[BacktestingApp] ✅ Datos encontrados en IndexedDB, verificando actualizaciones...');
 
-          shouldUseCachedData = true;
-          data = cachedResult.data;
-          setMarketData(data);
+          // 🔧 FIX: Verificar actualizaciones ANTES de usar el caché
+          // Esto asegura que siempre tengamos las velas más recientes disponibles
+          try {
+            const updateResult = await checkForUpdates(symbol);
 
-          // Actualizar datos en segundo plano
-          checkForUpdates(symbol).then(updateResult => {
-            if (updateResult && updateResult.success && updateResult.new_candles_added > 0) {
-              console.log(`[BacktestingApp] 🔄 ${updateResult.new_candles_added} velas nuevas disponibles`);
-              alert(`✅ Datos actualizados: ${updateResult.new_candles_added} nuevas velas agregadas`);
-              loadBacktestingData(symbol).then(updatedData => {
-                if (updatedData) {
-                  setMarketData(updatedData);
+            if (updateResult && updateResult.success) {
+              if (updateResult.new_candles_added > 0) {
+                console.log(`[BacktestingApp] 🔄 ${updateResult.new_candles_added} velas nuevas agregadas, recargando datos...`);
+                // Recargar datos actualizados desde el servidor
+                data = await loadBacktestingData(symbol);
+                if (data) {
+                  shouldUseCachedData = true;
+                  setMarketData(data);
+                  console.log('[BacktestingApp] ✅ Datos actualizados cargados correctamente');
                 }
-              });
+              } else {
+                console.log('[BacktestingApp] ✅ Caché está actualizado, usando datos de IndexedDB');
+                shouldUseCachedData = true;
+                data = cachedResult.data;
+                setMarketData(data);
+              }
+            } else {
+              // Si falla la actualización, usar el caché existente
+              console.warn('[BacktestingApp] ⚠️ No se pudo verificar actualizaciones, usando caché existente');
+              shouldUseCachedData = true;
+              data = cachedResult.data;
+              setMarketData(data);
             }
-          }).catch(err => {
-            console.warn('[BacktestingApp] No se pudo verificar actualizaciones:', err);
-          });
+          } catch (err) {
+            console.warn('[BacktestingApp] ⚠️ Error al verificar actualizaciones:', err);
+            // En caso de error, usar el caché existente
+            shouldUseCachedData = true;
+            data = cachedResult.data;
+            setMarketData(data);
+          }
         }
       }
     }
