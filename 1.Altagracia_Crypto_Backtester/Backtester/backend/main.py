@@ -4750,28 +4750,34 @@ async def get_orderflow_historical(
 
         print(f"[ORDERFLOW] ✅ Cargados {len(footprints_1min)} footprints de 1min")
 
-        # 6. Filtrar por rango temporal si se especificó
-        if start_timestamp or end_timestamp:
-            original_count = len(footprints_1min)
+        # 6. Filtrar por rango temporal
+        original_count = len(footprints_1min)
 
-            if start_timestamp:
-                footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] >= start_timestamp]
+        # Si se especificó end_timestamp, usarlo como referencia temporal
+        if end_timestamp:
+            # Filtrar hasta end_timestamp
+            footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] <= end_timestamp]
 
-            if end_timestamp:
-                footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] <= end_timestamp]
+            # Si también se especificó days, calcular desde end_timestamp hacia atrás
+            if days > 0:
+                cutoff_timestamp = end_timestamp - (days * 24 * 60 * 60 * 1000)
+                footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] >= cutoff_timestamp]
+                print(f"[ORDERFLOW] 📅 Filtrados {days} días hacia atrás desde {datetime.fromtimestamp(end_timestamp/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}: {original_count} → {len(footprints_1min)}")
+            else:
+                print(f"[ORDERFLOW] 📅 Filtrados hasta {datetime.fromtimestamp(end_timestamp/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}: {original_count} → {len(footprints_1min)}")
 
-            print(f"[ORDERFLOW] 🔍 Filtrados por timestamps: {original_count} → {len(footprints_1min)}")
-
-        # 7. Limitar por días desde el final
-        if days > 0:
-            # Calcular timestamp de corte
+        # Si NO se especificó end_timestamp pero sí days, usar HOY como referencia
+        elif days > 0:
             now = int(time.time() * 1000)
             cutoff_timestamp = now - (days * 24 * 60 * 60 * 1000)
-
-            original_count = len(footprints_1min)
             footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] >= cutoff_timestamp]
+            print(f"[ORDERFLOW] 📅 Limitados a últimos {days} días desde HOY: {original_count} → {len(footprints_1min)}")
 
-            print(f"[ORDERFLOW] 📅 Limitados a últimos {days} días: {original_count} → {len(footprints_1min)}")
+        # start_timestamp como filtro adicional independiente
+        if start_timestamp:
+            original_count = len(footprints_1min)
+            footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] >= start_timestamp]
+            print(f"[ORDERFLOW] 🔍 Filtrados desde {datetime.fromtimestamp(start_timestamp/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}: {original_count} → {len(footprints_1min)}")
 
         # 8. Si interval != 1, agregar footprints
         final_footprints = footprints_1min

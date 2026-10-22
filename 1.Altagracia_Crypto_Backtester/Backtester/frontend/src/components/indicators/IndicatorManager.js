@@ -49,9 +49,10 @@ class IndicatorManager {
     console.log(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
 
-  async initialize(backtestingMode = false) {
+  async initialize(backtestingMode = false, simulationStartTime = null) {
     // 🎯 Guardar modo backtesting para usarlo en otros métodos
     this.backtestingMode = backtestingMode;
+    this.simulationStartTime = simulationStartTime; // 🎯 NUEVO: Fecha de inicio de la simulación
     this.allCandles = null; // 🎯 NUEVO: Almacenar referencia a todas las velas para precálculo
 
     // Crear el indicador de S/R
@@ -73,8 +74,8 @@ class IndicatorManager {
     // Inyectar referencias de Volume y OI al indicador de confluencia
     confluenceIndicator.setIndicators(volumeIndicator, this.openInterestIndicator);
 
-    // 🎯 Crear indicador de Order Flow
-    this.orderFlowIndicator = new OrderFlowIndicator(this.symbol, this.interval, this.days, backtestingMode);
+    // 🎯 Crear indicador de Order Flow con fecha de inicio de simulación
+    this.orderFlowIndicator = new OrderFlowIndicator(this.symbol, this.interval, this.days, backtestingMode, simulationStartTime);
 
     this.indicators = [
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),

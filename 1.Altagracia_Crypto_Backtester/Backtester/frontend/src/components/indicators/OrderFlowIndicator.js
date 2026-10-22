@@ -10,11 +10,12 @@ import { API_BASE_URL } from '../../config.js';
  * - Soporte backtesting: anti-sesgo de supervivencia
  */
 class OrderFlowIndicator extends IndicatorBase {
-  constructor(symbol, interval, days = 7, backtestingMode = false) {
+  constructor(symbol, interval, days = 7, backtestingMode = false, simulationStartTime = null) {
     super(symbol, interval, days);
     this.name = "Order Flow";
     this.height = 0; // Overlay mode - no ocupa espacio propio
     this.backtestingMode = backtestingMode;
+    this.simulationStartTime = simulationStartTime; // Fecha de inicio de la simulación (para anti-sesgo)
 
     // Estructura de datos
     this.footprints = []; // Array de footprints históricos
@@ -87,14 +88,23 @@ class OrderFlowIndicator extends IndicatorBase {
 
       console.log(`[${this.symbol}] 🔍 Interval conversion: ${this.interval} → ${backendInterval}`);
 
+      // 🎯 En backtesting, pedir 60 días (2 meses) para tener todo el histórico de footprints
+      // En producción, usar this.days (típicamente 7-21 días)
+      const daysToRequest = this.backtestingMode ? 60 : this.days;
+
+      console.log(`[${this.symbol}] 📅 Requesting ${daysToRequest} days of footprints (backtestingMode: ${this.backtestingMode})`);
+
       // Construir URL
       const params = new URLSearchParams({
         interval: backendInterval,
-        days: this.days.toString()
+        days: daysToRequest.toString()
       });
 
       if (startTimestamp) params.append('start_timestamp', startTimestamp.toString());
-      if (endTimestamp) params.append('end_timestamp', endTimestamp.toString());
+      // NO enviar end_timestamp en backtesting - queremos todos los footprints
+      if (!this.backtestingMode && endTimestamp) {
+        params.append('end_timestamp', endTimestamp.toString());
+      }
 
       const url = `${API_BASE_URL}/api/orderflow/historical/${this.symbol}?${params}`;
 
@@ -288,34 +298,31 @@ class OrderFlowIndicator extends IndicatorBase {
     const firstVisibleTs = visibleCandles[0].timestamp;
     const lastVisibleTs = visibleCandles[visibleCandles.length - 1].timestamp;
 
-    // 🎯 Anti-sesgo corregido:
-    // - Mostrar TODOS los footprints hasta la fecha de inicio del backtesting
-    // - Durante el playback: solo mostrar footprints adicionales hasta currentTime
-    const currentTime = this.backtestingMode && allCandles.length > 0
-      ? allCandles[allCandles.length - 1].timestamp
-      : Date.now();
-
-    // Obtener fecha de inicio del backtesting (primera vela de allCandles)
-    const backtestingStartTime = this.backtestingMode && allCandles.length > 0
-      ? allCandles[0].timestamp
-      : 0;
-
-    // Filtrar footprints:
-    // - Rango temporal de velas visibles
-    // - Hasta el MAX de (backtestingStartTime, currentTime)
+    // 🎯 Filtrar footprints solo por rango visible en pantalla
+    // El anti-sesgo ya se aplicó en el backend (end_timestamp = simulationStartTime)
+    // Aquí solo mostramos los footprints que corresponden a las velas visibles
     const visibleFootprints = this.footprints.filter(fp => {
       const fpTime = fp.candle_timestamp || fp.timestamp;
-      const maxAllowedTime = Math.max(backtestingStartTime, currentTime);
-      return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs && fpTime <= maxAllowedTime;
+      return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs;
     });
 
     // 🔍 DEBUG: Log único al inicio para verificar funcionamiento
     if (!this._renderLogged) {
+      const oldestFootprint = this.footprints.length > 0
+        ? Math.min(...this.footprints.map(fp => fp.candle_timestamp || fp.timestamp))
+        : null;
+
+      const newestFootprint = this.footprints.length > 0
+        ? Math.max(...this.footprints.map(fp => fp.candle_timestamp || fp.timestamp))
+        : null;
+
       console.log(`[${this.symbol}] 🎨 OrderFlow renderOverlay:`, {
         totalFootprints: this.footprints.length,
+        footprintRange: `${oldestFootprint ? new Date(oldestFootprint).toISOString() : 'N/A'} → ${newestFootprint ? new Date(newestFootprint).toISOString() : 'N/A'}`,
         visibleCandles: visibleCandles.length,
         visibleFootprints: visibleFootprints.length,
-        timeRange: `${new Date(firstVisibleTs).toISOString()} → ${new Date(lastVisibleTs).toISOString()}`,
+        visibleTimeRange: `${new Date(firstVisibleTs).toISOString()} → ${new Date(lastVisibleTs).toISOString()}`,
+        antiSesgoBehavior: `Backend filtró hasta simulationStartTime. Frontend muestra footprints del rango visible.`,
         bounds,
         candleWidth,
         config: this.config

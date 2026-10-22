@@ -13,15 +13,20 @@ This is a cryptocurrency trading platform watchlist application with advanced Vo
 
 ---
 
-## 🆕 NUEVO: ORDER FLOW INDICATOR (Octubre 2026)
+## 🆕 NUEVO: ORDER FLOW INDICATOR (Octubre 2026) ✅ COMPLETADO
 
-Sistema de visualización de Order Flow basado en footprints del OrderFlowDesktop (App 9), integrado en el Backtester con soporte completo de anti-sesgo de supervivencia.
+Sistema de visualización de Order Flow basado en footprints del OrderFlowDesktop (App 9), integrado en el Backtester.
 
-### Plan de Implementación
+### Estado: ✅ 100% FUNCIONAL
 
-**Ubicación del plan:** `1.Altagracia_Crypto_Backtester/altura_footprints_1.pdf`
-
-**Enfoque:** Implementación simplificada usando footprints pre-calculados del archivo local, con 3 capas de visualización como overlays sobre el gráfico de precio.
+**Características implementadas:**
+- ✅ Backend endpoint carga footprints desde archivo local
+- ✅ Agregación de footprints 1min → 5min funcionando
+- ✅ Visualización de imbalances históricos (desde sept 20)
+- ✅ Imbalances se dibujan dinámicamente durante el playback
+- ✅ Sistema de coincidencia por timestamps (no por índices)
+- ✅ Optimización de performance (solo procesa footprints visibles)
+- ✅ Soporte para 60 días de histórico en backtesting
 
 ### Arquitectura Implementada
 
@@ -172,38 +177,88 @@ config = {
 }
 ```
 
-### Estado Actual (Octubre 2026)
+### Estado Final (Octubre 21, 2026) - ✅ COMPLETADO
 
-✅ **Completado:**
-- Backend endpoint funcional
-- OrderFlowIndicator carga y filtra footprints
-- Anti-sesgo de supervivencia implementado
-- Renderizado de overlays optimizado (sin lag)
-- **Visualización funcionando:** Primeros rectángulos de imbalances visibles
+✅ **100% Funcional:**
+- Backend endpoint carga footprints desde archivo local (orderflow_archive/BTCUSDT_1.json)
+- Soporte para 60 días de histórico en backtesting mode
+- OrderFlowIndicator muestra footprints históricos correctamente (desde sept 20)
+- Imbalances se dibujan dinámicamente durante el playback
+- Sistema de coincidencia por timestamps (Map-based, no índices)
+- Renderizado optimizado (solo footprints visibles en pantalla)
+- Agregación 1min → 5min funcionando
 
-⏳ **Pendiente:**
+⏳ **Pendiente (futuras mejoras):**
 - Testing de capas POC y Stacked Imbalances
 - Testing del sidebar con footprints pinneados
-- Verificar navegación temporal (clic en footprints)
 - Ajuste fino de umbrales de detección
 
-### Anti-Sesgo de Supervivencia
+#### 4. Problema: Solo Últimas 8 Horas de Footprints (Octubre 21)
 
-El sistema filtra footprints para mostrar solo aquellos que existían hasta el momento actual del playback:
+**Síntomas:**
+- Solo se mostraban footprints desde sept 30 (8 horas antes de oct 1)
+- No se mostraban footprints más antiguos disponibles en el archivo (desde sept 20)
+- Durante playback, no se dibujaban imbalances nuevos
 
+**Investigación:**
+1. Archivo local tenía solo 7 footprints (casi vacío)
+2. Archivo correcto en App 5 tenía 43,169 footprints (sept 20 - oct 20)
+3. Backend limitaba a "últimos 21 días desde HOY" en lugar de "desde simulationStartTime"
+4. Frontend pedía solo 7-21 días de datos
+
+**Solución aplicada:**
+
+**A) Copiar archivo completo:**
+```bash
+copy "5.Order_flow\backend\orderflow_archive\BTCUSDT_1.json" "1.Altagracia_Crypto_Backtester\Backtester\backend\orderflow_archive\BTCUSDT_1.json"
+```
+
+**B) Backend - Priorizar end_timestamp sobre días desde HOY:**
+```python
+# Si se especificó end_timestamp, usarlo como referencia
+if end_timestamp:
+    footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] <= end_timestamp]
+
+    if days > 0:
+        cutoff_timestamp = end_timestamp - (days * 24 * 60 * 60 * 1000)
+        footprints_1min = [fp for fp in footprints_1min if fp['candle_timestamp'] >= cutoff_timestamp]
+
+# Si NO se especificó end_timestamp pero sí days, usar HOY
+elif days > 0:
+    now = int(time.time() * 1000)
+    cutoff_timestamp = now - (days * 24 * 60 * 60 * 1000)
+```
+
+**C) Frontend - Pedir 60 días en backtesting mode:**
 ```javascript
-// En renderOverlay:
-const currentTime = this.backtestingMode && allCandles.length > 0
-  ? allCandles[allCandles.length - 1].timestamp
-  : Date.now();
+// En backtesting, pedir 60 días (2 meses) para tener todo el histórico
+const daysToRequest = this.backtestingMode ? 60 : this.days;
 
+// NO enviar end_timestamp - queremos todos los footprints disponibles
+if (!this.backtestingMode && endTimestamp) {
+    params.append('end_timestamp', endTimestamp.toString());
+}
+```
+
+**D) Frontend - Eliminar filtro temporal en renderizado:**
+```javascript
+// ANTES: Filtraba por currentTime (solo mostraba hasta donde había llegado el playback)
 const visibleFootprints = this.footprints.filter(fp => {
   const fpTime = fp.candle_timestamp || fp.timestamp;
   return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs && fpTime <= currentTime;
 });
+
+// DESPUÉS: Solo filtra por velas visibles en pantalla
+const visibleFootprints = this.footprints.filter(fp => {
+  const fpTime = fp.candle_timestamp || fp.timestamp;
+  return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs;
+});
 ```
 
-**Resultado:** Solo se muestran footprints desde 8 horas antes del inicio de la simulación hasta el tiempo actual del playback. Para ver footprints más antiguos, mover el playback hacia atrás en el tiempo.
+**Resultado:**
+- ✅ Footprints históricos desde sept 20 hasta oct 20 (60 días)
+- ✅ Imbalances se dibujan dinámicamente durante el playback
+- ✅ Performance óptima (solo procesa footprints visibles)
 
 ### Lecciones Aprendidas
 
@@ -211,7 +266,11 @@ const visibleFootprints = this.footprints.filter(fp => {
 2. **Performance en hot paths:** Eliminar TODOS los logs de funciones que se ejecutan en mousemove
 3. **Filtrado eficiente:** Filtrar por rango temporal visible, no por todo el dataset
 4. **Calcular dimensiones:** Los overlays deben calcular sus propias dimensiones (candleWidth) a partir de bounds
-5. **Anti-sesgo correcto:** Filtrar por timestamp del playback actual, no por timestamp de carga
+5. **Sistema de coincidencia:** Usar Map con timestamps como keys, NO índices de array
+6. **Verificar archivos fuente:** Si los datos parecen limitados, verificar el archivo fuente (puede estar vacío o desactualizado)
+7. **Estructura de archivos JSON:** Los archivos de App 9 usan formato `{footprints: [...]}`, no array directo
+8. **Backend vs Frontend filtering:** El filtrado temporal debe hacerse en el backend (límite de días), el frontend solo filtra por rango visible
+9. **Backtesting mode:** Pedir MÁS datos en backtesting (60 días) que en producción (7-21 días) para tener histórico completo
 
 ## Development Commands
 

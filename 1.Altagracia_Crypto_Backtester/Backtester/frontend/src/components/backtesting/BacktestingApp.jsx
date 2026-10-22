@@ -2354,6 +2354,7 @@ const BacktestingApp = () => {
                   backtestingMode={true}
                   backtestingData={marketData}
                   currentTime={currentTime}
+                  simulationStartTime={simulationStartTime}
                   isBacktestingFullscreen={fullscreenPanel === 'chart'}
                   vpConfig={tabStates[tf]?.vpConfig}
                   vpFixedRange={tabStates[tf]?.vpFixedRange}

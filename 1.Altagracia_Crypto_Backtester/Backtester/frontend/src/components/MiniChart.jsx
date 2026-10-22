@@ -138,6 +138,7 @@ const MiniChart = forwardRef(({
   backtestingMode = false,
   backtestingData = null,
   currentTime = null,
+  simulationStartTime = null,  // 🎯 NUEVO: Fecha de inicio de la simulación (para anti-sesgo en Order Flow)
   onRequestPause = null,  // 🎯 NUEVO: Callback para pausar reproducción al hacer paneo
   onRequestTimeChange = null,  // 🎯 NUEVO: Callback para cambiar el tiempo de playback (navegación a zonas)
   // 🎯 NUEVO: Props para drawing tools
@@ -2365,7 +2366,7 @@ const MiniChart = forwardRef(({
         }
       }
 
-      await indicatorManagerRef.current.initialize(backtestingMode);
+      await indicatorManagerRef.current.initialize(backtestingMode, simulationStartTime);
 
       // ✨ NUEVO: Agregar referencia a drawChart para que los indicadores puedan forzar redibujado
       indicatorManagerRef.current.requestRedraw = () => {
