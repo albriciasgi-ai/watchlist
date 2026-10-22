@@ -856,8 +856,20 @@ const BacktestingApp = () => {
       }
     }
 
-    // Si no hay caché válido, descargar solo el timeframe activo primero
+    // Si no hay caché válido, verificar actualizaciones primero y luego descargar
     if (!shouldUseCachedData) {
+      console.log(`[BacktestingApp] No hay caché válido para ${activeTimeframe}`);
+
+      // 🔧 FIX: Verificar si el backend tiene datos actualizados antes de descargar
+      try {
+        const updateResult = await checkForUpdates(symbol);
+        if (updateResult && updateResult.success && updateResult.new_candles_added > 0) {
+          console.log(`[BacktestingApp] ✅ Backend actualizado con ${updateResult.new_candles_added} velas nuevas`);
+        }
+      } catch (err) {
+        console.warn('[BacktestingApp] ⚠️ No se pudo verificar actualizaciones del backend:', err);
+      }
+
       console.log(`[BacktestingApp] Descargando ${activeTimeframe} del servidor...`);
       data = await loadBacktestingData(symbol, false, activeTimeframe);
     }
