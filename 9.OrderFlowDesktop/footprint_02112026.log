@@ -1,0 +1,1358 @@
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/historical/BTCUSDT?interval=5&since_timestamp=1793634900000&t=1793636627070:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/set-interval:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,UNIUSDT,LPTUSDT,OPUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/historical/BTCUSDT?interval=5&since_timestamp=1793634900000&t=1793636627070:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/integrity/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/historical/BTCUSDT?interval=5&since_timestamp=1793634900000&t=1793636627070:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/historical/BTCUSDT?interval=5&since_timestamp=1793634900000&t=1793636627070:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,UNIUSDT,LPTUSDT,OPUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,UNIUSDT,LPTUSDT,OPUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,UNIUSDT,LPTUSDT,OPUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [11:27:49 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ ⚠️ [11:27:49 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP NOT FOUND in indicators (count=2)
+warn @ Logger.js:68
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,UNIUSDT,LPTUSDT,OPUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error fetching price changes: 
+(anonymous) @ SymbolList.jsx:209
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [11:28:19 a. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ ⚠️ [11:28:35 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP NOT FOUND in indicators (count=2)
+warn @ Logger.js:68
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 81/188 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] DOTS MODE: 102/209 velas con FP, 8683 fps disponibles
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+ [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] DOTS MODE: 54/161 velas con FP, 8683 fps disponibles
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 147
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 1/11/2026, 22:55:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 1/11/2026, 22:55:00 → FP 1/11/2026, 22:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 1/11/2026, 23:00:00 → FP 1/11/2026, 23:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 1/11/2026, 23:05:00 → FP 1/11/2026, 23:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 1/11/2026, 23:10:00 → FP 1/11/2026, 23:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 1/11/2026, 23:15:00 → FP 1/11/2026, 23:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [142] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [143] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [144] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [145] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [146] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] RENDER: 40/147 velas con FP, 8683 fps disponibles, candleWidth=8.1px, fullMode=false
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 133
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 0:05:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 0:05:00 → FP 2/11/2026, 0:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 0:10:00 → FP 2/11/2026, 0:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 0:15:00 → FP 2/11/2026, 0:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 2/11/2026, 0:20:00 → FP 2/11/2026, 0:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 2/11/2026, 0:25:00 → FP 2/11/2026, 0:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [128] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [129] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [130] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [131] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [132] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 121
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 1:05:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 1:05:00 → FP 2/11/2026, 1:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 1:10:00 → FP 2/11/2026, 1:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 1:15:00 → FP 2/11/2026, 1:15:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 2/11/2026, 1:20:00 → FP 2/11/2026, 1:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 2/11/2026, 1:25:00 → FP 2/11/2026, 1:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [116] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [117] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [118] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [119] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [120] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 110
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 2:00:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 2:00:00 → FP 2/11/2026, 2:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 2:05:00 → FP 2/11/2026, 2:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 2:10:00 → FP 2/11/2026, 2:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 2:15:00 (ts: 1793603700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 2/11/2026, 2:10:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 2:20:00 (ts: 1793604000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [105] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [106] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [107] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [108] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [109] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 100
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 2:50:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 2:50:00 (ts: 1793605800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 2:55:00 (ts: 1793606100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 3:00:00 (ts: 1793606400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 3:05:00 (ts: 1793606700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 3:10:00 (ts: 1793607000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [95] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [96] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [97] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [98] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [99] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 91
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 3:35:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 3:35:00 (ts: 1793608500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 3:40:00 (ts: 1793608800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 3:45:00 (ts: 1793609100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 3:50:00 (ts: 1793609400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 3:55:00 (ts: 1793609700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [86] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [87] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [88] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [89] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [90] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 83
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 4:15:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 4:15:00 (ts: 1793610900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 4:20:00 (ts: 1793611200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 4:25:00 (ts: 1793611500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 4:30:00 (ts: 1793611800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 4:35:00 (ts: 1793612100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [78] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [79] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [80] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [81] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [82] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 75
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 4:55:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 4:55:00 (ts: 1793613300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 5:00:00 (ts: 1793613600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 5:05:00 (ts: 1793613900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 5:10:00 (ts: 1793614200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 5:15:00 (ts: 1793614500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [70] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [71] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [72] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [73] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [74] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 68
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 5:30:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 5:30:00 (ts: 1793615400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 5:35:00 (ts: 1793615700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 5:40:00 (ts: 1793616000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 5:45:00 (ts: 1793616300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 5:50:00 (ts: 1793616600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [63] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [64] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [65] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [66] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [67] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 62
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 6:00:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 6:00:00 (ts: 1793617200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 6:05:00 (ts: 1793617500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 6:10:00 (ts: 1793617800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 6:15:00 (ts: 1793618100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 6:20:00 (ts: 1793618400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [57] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [58] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [59] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [60] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [61] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 56
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 6:30:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 6:30:00 (ts: 1793619000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 6:35:00 (ts: 1793619300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 6:40:00 (ts: 1793619600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 6:45:00 (ts: 1793619900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 6:50:00 (ts: 1793620200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [51] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [52] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [53] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [54] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [55] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] RENDER: 0/56 velas con FP, 8683 fps disponibles, candleWidth=21.3px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ CERO MATCHES!
+renderOverlay @ OrderFlowIndicator.js:1289
+   FP[0]: ts=1790997600000 (2/10/2026, 10:20:00 p.m.), levels=3
+renderOverlay @ OrderFlowIndicator.js:1290
+   FP[last]: ts=1793603400000 (2/11/2026, 2:10:00 a.m.), levels=3
+renderOverlay @ OrderFlowIndicator.js:1291
+   Vela[0]: ts=1793619000000 (2/11/2026, 6:30:00 a.m.)
+renderOverlay @ OrderFlowIndicator.js:1292
+   Vela[last]: ts=1793636700000 (2/11/2026, 11:25:00 a.m.)
+renderOverlay @ OrderFlowIndicator.js:1293
+   Diff FP[0] vs Vela[0]: 2621400000ms
+renderOverlay @ OrderFlowIndicator.js:1294
+   Tolerancia: 30000ms
+renderOverlay @ OrderFlowIndicator.js:1295
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 51
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 6:55:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 6:55:00 (ts: 1793620500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 7:00:00 (ts: 1793620800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 7:05:00 (ts: 1793621100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 7:10:00 (ts: 1793621400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 7:15:00 (ts: 1793621700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [46] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [47] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [48] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [49] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [50] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 46
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 7:20:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 7:20:00 (ts: 1793622000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 7:25:00 (ts: 1793622300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 7:30:00 (ts: 1793622600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 7:35:00 (ts: 1793622900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 7:40:00 (ts: 1793623200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [41] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [42] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [43] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [44] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [45] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 42
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 7:40:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 7:40:00 (ts: 1793623200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 7:45:00 (ts: 1793623500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 7:50:00 (ts: 1793623800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 7:55:00 (ts: 1793624100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 8:00:00 (ts: 1793624400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [37] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [38] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [39] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [40] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [41] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 38
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 8:00:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 8:00:00 (ts: 1793624400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 8:05:00 (ts: 1793624700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 8:10:00 (ts: 1793625000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 8:15:00 (ts: 1793625300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 8:20:00 (ts: 1793625600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [33] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [34] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [35] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [36] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [37] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 35
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 8:15:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 8:15:00 (ts: 1793625300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 8:20:00 (ts: 1793625600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 8:25:00 (ts: 1793625900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 8:30:00 (ts: 1793626200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 8:35:00 (ts: 1793626500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [30] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [31] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [32] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [33] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [34] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 39
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 7:55:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 7:55:00 (ts: 1793624100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 8:00:00 (ts: 1793624400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 8:05:00 (ts: 1793624700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 8:10:00 (ts: 1793625000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 8:15:00 (ts: 1793625300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [34] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [35] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [36] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [37] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [38] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 43
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 7:35:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 7:35:00 (ts: 1793622900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 7:40:00 (ts: 1793623200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 7:45:00 (ts: 1793623500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 7:50:00 (ts: 1793623800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 7:55:00 (ts: 1793624100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [38] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [39] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [40] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [41] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [42] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 48
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 7:10:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 7:10:00 (ts: 1793621400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 7:15:00 (ts: 1793621700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 7:20:00 (ts: 1793622000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 7:25:00 (ts: 1793622300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 7:30:00 (ts: 1793622600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [43] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [44] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [45] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [46] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [47] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 53
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 6:45:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 6:45:00 (ts: 1793619900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 6:50:00 (ts: 1793620200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 6:55:00 (ts: 1793620500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 7:00:00 (ts: 1793620800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 7:05:00 (ts: 1793621100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [48] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [49] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [50] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [51] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [52] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 59
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 6:15:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 6:15:00 (ts: 1793618100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 6:20:00 (ts: 1793618400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 6:25:00 (ts: 1793618700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 6:30:00 (ts: 1793619000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 6:35:00 (ts: 1793619300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [54] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [55] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [56] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [57] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [58] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [CandleCache] 💾 BTCUSDT@5 - desde memoria (1454 velas)
+ [CandleCache] === GAPS en VALIDATION BTCUSDT@5 ===
+analyzeGaps @ CandleCache.js:383
+   Total velas: 1454
+analyzeGaps @ CandleCache.js:384
+   Primera: 28/10/2026, 9:55:00 a. m.
+analyzeGaps @ CandleCache.js:385
+   Ultima: 2/11/2026, 11:20:00 a. m.
+analyzeGaps @ CandleCache.js:386
+   Gaps encontrados: 1
+analyzeGaps @ CandleCache.js:387
+     Gap #1: 2/11/2026, 10:55:00 a. m. -> 2/11/2026, 11:20:00 a. m. (25.0 min = 0.42 hrs)
+(anonymous) @ CandleCache.js:389
+   Tiempo total perdido: 25.0 min (0.42 hrs)
+analyzeGaps @ CandleCache.js:391
+ [CandleCache] BTCUSDT@5 - Cache tiene 1 gaps significativos
+getValidated @ CandleCache.js:258
+   Gap #1: 2/11/2026, 10:55:00 a. m. -> 2/11/2026, 11:20:00 a. m. (25.0 min)
+(anonymous) @ CandleCache.js:260
+ [CandleCache] Limpiando cache con gaps para forzar recarga completa...
+ [CandleCache] 🗑️ BTCUSDT@5 - cache limpiado
+ [BTCUSDT] Carga COMPLETA: 5 dias @ 5
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 66
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 5:40:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 5:40:00 (ts: 1793616000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 5:45:00 (ts: 1793616300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 5:50:00 (ts: 1793616600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 5:55:00 (ts: 1793616900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 6:00:00 (ts: 1793617200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [61] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [62] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [63] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [64] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [65] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] RENDER: 0/66 velas con FP, 8683 fps disponibles, candleWidth=18.1px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ CERO MATCHES!
+renderOverlay @ OrderFlowIndicator.js:1289
+   FP[0]: ts=1790997600000 (2/10/2026, 10:20:00 p.m.), levels=3
+renderOverlay @ OrderFlowIndicator.js:1290
+   FP[last]: ts=1793603400000 (2/11/2026, 2:10:00 a.m.), levels=3
+renderOverlay @ OrderFlowIndicator.js:1291
+   Vela[0]: ts=1793616000000 (2/11/2026, 5:40:00 a.m.)
+renderOverlay @ OrderFlowIndicator.js:1292
+   Vela[last]: ts=1793636700000 (2/11/2026, 11:25:00 a.m.)
+renderOverlay @ OrderFlowIndicator.js:1293
+   Diff FP[0] vs Vela[0]: 2618400000ms
+renderOverlay @ OrderFlowIndicator.js:1294
+   Tolerancia: 30000ms
+renderOverlay @ OrderFlowIndicator.js:1295
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 73
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 5:05:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 5:05:00 (ts: 1793613900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 5:10:00 (ts: 1793614200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 5:15:00 (ts: 1793614500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 5:20:00 (ts: 1793614800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 5:25:00 (ts: 1793615100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [68] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [69] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [70] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [71] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [72] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 81
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 4:25:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 4:25:00 (ts: 1793611500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 4:30:00 (ts: 1793611800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 4:35:00 (ts: 1793612100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 4:40:00 (ts: 1793612400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 4:45:00 (ts: 1793612700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [76] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [77] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [78] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [79] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [80] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+:11000/api/historical/BTCUSDT?interval=5&days=5&t=1793636927085:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [Retry] historical-BTCUSDT: Attempt 1/4 failed: Failed to fetch
+withRetry @ robustness.js:279
+ [BTCUSDT] Retry 1: Failed to fetch, waiting 1000ms
+onRetry @ MiniChart.jsx:970
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 90
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 3:40:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 3:40:00 (ts: 1793608800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 3:45:00 (ts: 1793609100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 3:50:00 (ts: 1793609400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 3:55:00 (ts: 1793609700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 4:00:00 (ts: 1793610000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [85] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [86] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [87] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [88] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [89] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 101
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 2:45:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 2/11/2026, 2:45:00 (ts: 1793605500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 2/11/2026, 2:50:00 (ts: 1793605800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 2:55:00 (ts: 1793606100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 3:00:00 (ts: 1793606400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 3:05:00 (ts: 1793606700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [96] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [97] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [98] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [99] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [100] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ⚠️ [11:28:47 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP NOT FOUND in indicators (count=2)
+warn @ Logger.js:68
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 112
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 1:50:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 1:50:00 → FP 2/11/2026, 1:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 1:55:00 → FP 2/11/2026, 1:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 2:00:00 → FP 2/11/2026, 2:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 2/11/2026, 2:05:00 → FP 2/11/2026, 2:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 2/11/2026, 2:10:00 → FP 2/11/2026, 2:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [107] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [108] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [109] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [110] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [111] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 124
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 0:50:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 0:50:00 → FP 2/11/2026, 0:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 0:55:00 → FP 2/11/2026, 0:55:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 1:00:00 → FP 2/11/2026, 1:00:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 2/11/2026, 1:05:00 → FP 2/11/2026, 1:05:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 2/11/2026, 1:10:00 → FP 2/11/2026, 1:10:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [119] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [120] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [121] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [122] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [123] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 138
+ [OrderFlow] [BTCUSDT]   Total footprints: 8683
+ [OrderFlow] [BTCUSDT]   Rango velas: 1/11/2026, 23:40:00 → 2/11/2026, 11:25:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 1/11/2026, 23:40:00 → FP 1/11/2026, 23:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 1/11/2026, 23:45:00 → FP 1/11/2026, 23:45:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1161 [OrderFlow] [BTCUSDT]   [2] ✅ 1/11/2026, 23:50:00 → FP 1/11/2026, 23:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1161 [OrderFlow] [BTCUSDT]   [3] ✅ 1/11/2026, 23:55:00 → FP 1/11/2026, 23:55:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1161 [OrderFlow] [BTCUSDT]   [4] ✅ 2/11/2026, 0:00:00 → FP 2/11/2026, 0:00:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [133] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [134] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [135] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [136] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [137] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 31/138 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+:11000/api/historical/BTCUSDT?interval=5&days=5&t=1793636927085:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+robustness.js:279 [Retry] historical-BTCUSDT: Attempt 2/4 failed: Failed to fetch
+withRetry @ robustness.js:279
+MiniChart.jsx:1262 [BTCUSDT] Retry 2: Failed to fetch, waiting 2000ms
+onRetry @ MiniChart.jsx:1262
+:11000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/drawings/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [11:28:49 a. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:493:30)
+    at MiniChart.jsx:2400:9
+error @ Logger.js:88
+:11000/api/orderflow/step-size/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+OrderFlowIndicator.js:232 [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+OrderFlowIndicator.js:240 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+OrderFlowIndicator.js:311 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+OrderFlowIndicator.js:317 [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+OrderFlowIndicator.js:322 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+OrderFlowIndicator.js:419 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+OrderFlowIndicator.js:426 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+OrderFlowIndicator.js:496 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+OrderFlowIndicator.js:600 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+OrderFlowIndicator.js:610 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:611 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:612 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+OrderFlowIndicator.js:613 [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+OrderFlowIndicator.js:614 [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+OrderFlowIndicator.js:704 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 31/138 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:759 [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+OrderFlowIndicator.js:795 [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1139 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1140 [OrderFlow] [BTCUSDT]   Total velas visibles: 109
+OrderFlowIndicator.js:1141 [OrderFlow] [BTCUSDT]   Total footprints: 8683
+OrderFlowIndicator.js:1145 [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 2:05:00 → 2/11/2026, 11:25:00
+OrderFlowIndicator.js:1161 [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 2:05:00 → FP 2/11/2026, 2:05:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1161 [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 2:10:00 → FP 2/11/2026, 2:10:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [2] ❌ 2/11/2026, 2:15:00 (ts: 1793603700000) → NO MATCH
+OrderFlowIndicator.js:1181 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1185 [OrderFlow] [BTCUSDT]         • 2/11/2026, 2:10:00 (-5.0 min)
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [3] ❌ 2/11/2026, 2:20:00 (ts: 1793604000000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [4] ❌ 2/11/2026, 2:25:00 (ts: 1793604300000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [104] ❌ 2/11/2026, 10:45:00 (ts: 1793634300000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [105] ❌ 2/11/2026, 10:50:00 (ts: 1793634600000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [106] ❌ 2/11/2026, 10:55:00 (ts: 1793634900000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [107] ❌ 2/11/2026, 11:20:00 (ts: 1793636400000) → NO MATCH
+OrderFlowIndicator.js:1163 [OrderFlow] [BTCUSDT]   [108] ❌ 2/11/2026, 11:25:00 (ts: 1793636700000) → NO MATCH
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+:11000/api/historical/BTCUSDT?interval=5&days=5&t=1793636927085:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+robustness.js:279 [Retry] historical-BTCUSDT: Attempt 3/4 failed: Failed to fetch
+withRetry @ robustness.js:279
+MiniChart.jsx:1262 [BTCUSDT] Retry 3: Failed to fetch, waiting 4000ms
+onRetry @ MiniChart.jsx:1262
+withRetry @ robustness.js:282
+:11000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: SymbolList_PriceChanges
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:682 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:699 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:522 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:523 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:533 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:536 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:539 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:546 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:549 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres
+OrderFlowIndicator.js:554 [OrderFlow] [BTCUSDT] 📚 Cargados 43398 footprints de 1min desde archivo local
+OrderFlowIndicator.js:564 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:565 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+OrderFlowIndicator.js:566 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:11:00 (ts: 1793603460000)
+OrderFlowIndicator.js:567 [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+OrderFlowIndicator.js:568 [OrderFlow] [BTCUSDT]   • Footprints: 43398 de 1min
+OrderFlowIndicator.js:593 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+robustness.js:320 
+        
+        
+       GET http://localhost:11000/api/historical/BTCUSDT?interval=5&days=5&t=1793636927085 net::ERR_CONNECTION_REFUSED
+withRetry @ robustness.js:320
+withRetry @ robustness.js:271
+robustness.js:293 [Retry] historical-BTCUSDT: All 4 attempts failed
+withRetry @ robustness.js:293
+MiniChart.jsx:1422 [BTCUSDT] Error cargando histórico TypeError: Failed to fetch
+    at withRetry (robustness.js:320:30)
+    at withRetry (robustness.js:271:20)
+    at async loadHistoricalData (MiniChart.jsx:1251:19)
+    at async MiniChart.jsx:2292:7
+loadHistoricalData @ MiniChart.jsx:1422
+OrderFlowIndicator.js:507 
+        
+        
+       GET http://localhost:11000/api/orderflow/step-size/BTCUSDT net::ERR_CONNECTION_REFUSED
+_fetchBackendStepSize @ OrderFlowIndicator.js:507
+_loadFromArchive @ OrderFlowIndicator.js:597
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:702
+(anonymous) @ OrderFlowIndicator.js:177
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:516 [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:516
+await in _fetchBackendStepSize
+_loadFromArchive @ OrderFlowIndicator.js:597
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:702
+(anonymous) @ OrderFlowIndicator.js:177
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:232 [OrderFlow] [BTCUSDT] 🔄 Agregando 43398 footprints de 1min a 5min
+OrderFlowIndicator.js:240 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+OrderFlowIndicator.js:311 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+OrderFlowIndicator.js:317 [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43398/43398 veces)
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] 📊 Distribución: {10: 43398}
+OrderFlowIndicator.js:322 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43398, con step_size: 43398, sin step_size: 0
+OrderFlowIndicator.js:419 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+OrderFlowIndicator.js:426 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+OrderFlowIndicator.js:496 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8683 footprints de 5min con 3 levels uniformes
+OrderFlowIndicator.js:600 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8683 footprints de 5min
+OrderFlowIndicator.js:610 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:611 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:612 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 2:10:00
+OrderFlowIndicator.js:613 [OrderFlow] [BTCUSDT]   • Duración: 723.8 horas (~30.2 días)
+OrderFlowIndicator.js:614 [OrderFlow] [BTCUSDT]   • Footprints: 8683 de 5min
+OrderFlowIndicator.js:704 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8683 footprints cargados
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+OrderFlowIndicator.js:724 
+        
+        
+       GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=5&limit=2000&hours=24 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:724
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:177
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:759 [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:759
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:177
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:795 [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8683 footprints)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1454)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+SymbolList.jsx:219 
+        
+        
+       GET http://localhost:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,UNIUSDT,LPTUSDT,OPUSDT net::ERR_CONNECTION_REFUSED
+(anonymous) @ SymbolList.jsx:219
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+SymbolList.jsx:245 Error fetching price changes: TypeError: Failed to fetch
+    at Object.callback (SymbolList.jsx:219:30)
+    at PollingCoordinator._executeCallback (PollingCoordinator.js:221:28)
+    at PollingCoordinator.js:194:12
+(anonymous) @ SymbolList.jsx:245
+await in (anonymous)
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:682 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:699 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:522 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:523 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:1280 [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] RENDER: 2/109 velas con FP, 8683 fps disponibles, candleWidth=8.7px, fullMode=false
+ ⚠️ [11:29:19 a. m.] [Manager] [BTCUSDT] renderOverlays: VWAP NOT FOUND in indicators (count=2)
+warn @ Logger.js:68
+renderOverlays @ IndicatorManager.js:526
+drawChart @ MiniChart.jsx:781
+(anonymous) @ MiniChart.jsx:1234
+requestAnimationFrame
+handleMouseMove @ MiniChart.jsx:1233
+callCallback2 @ chunk-ZFBEYDM4.js?v=9c8daa37:3674
+invokeGuardedCallbackDev @ chunk-ZFBEYDM4.js?v=9c8daa37:3699
+invokeGuardedCallback @ chunk-ZFBEYDM4.js?v=9c8daa37:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-ZFBEYDM4.js?v=9c8daa37:3736
+executeDispatch @ chunk-ZFBEYDM4.js?v=9c8daa37:7014
+processDispatchQueueItemsInOrder @ chunk-ZFBEYDM4.js?v=9c8daa37:7034
+processDispatchQueue @ chunk-ZFBEYDM4.js?v=9c8daa37:7043
+dispatchEventsForPlugins @ chunk-ZFBEYDM4.js?v=9c8daa37:7051
+(anonymous) @ chunk-ZFBEYDM4.js?v=9c8daa37:7174
+batchedUpdates$1 @ chunk-ZFBEYDM4.js?v=9c8daa37:18913
+batchedUpdates @ chunk-ZFBEYDM4.js?v=9c8daa37:3579
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js?v=9c8daa37:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js?v=9c8daa37:5478
+dispatchEvent @ chunk-ZFBEYDM4.js?v=9c8daa37:5472
+dispatchContinuousEvent @ chunk-ZFBEYDM4.js?v=9c8daa37:5461
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 85231008 caracteres

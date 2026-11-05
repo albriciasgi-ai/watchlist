@@ -1,31 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell -Command:*)",
-      "Bash(tasklist:*)",
-      "Bash(findstr:*)",
-      "Bash(taskkill:*)",
-      "Bash(cmd /c \"taskkill /F /PID 27052\")",
-      "Bash(cmd /c \"taskkill /F /IM node.exe\")",
-      "WebSearch",
-      "WebFetch(domain:www.luxalgo.com)",
-      "WebFetch(domain:www.tradingview.com)",
-      "Bash(nul)",
-      "Bash(.venvScriptspython.exe -m pip install python-multipart)",
-      "Bash(.venv/Scripts/python.exe:*)",
-      "Bash(dir:*)",
-      "Bash(curl:*)",
-      "Bash(python:*)",
-      "Bash(netstat:*)",
-      "Bash(cmd /c \"taskkill /F /PID 9832\")",
-      "Bash(npm run dev:*)",
-      "Bash(timeout:*)",
-      "Bash(cmd /c \"taskkill /F /PID 16376\")",
-      "Bash(cat:*)",
-      "Bash(find:*)",
-      "Bash(../../2.WatchlistConIndicadores/CLAUDE.md)",
-      "Bash(../../\"4.Analizador cripto\"/CLAUDE.md)",
-      "Bash(../../11.TradingJournalDesktop/CLAUDE.md)"
+      "Bash(cmd /c \"taskkill /F /PID 16516\")",
+      "Bash(cmd /c \"taskkill /F /PID 12084\")"
     ],
     "deny": [],
     "ask": []

@@ -37,8 +37,8 @@ IF EXIST "requirements.txt" (
 )
 
 REM 4) Activar venv y ejecutar uvicorn
-echo [INFO] Iniciando servidor uvicorn (main:app) en puerto 8000...
+echo [INFO] Iniciando servidor uvicorn (main:app) en puerto 11000...
 REM Llamamos directamente al python del venv para lanzar uvicorn
-.venv\Scripts\python.exe -m uvicorn main:app --reload --port 10000
+.venv\Scripts\python.exe -m uvicorn main:app --reload --port 11000
 
 pause

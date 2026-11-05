@@ -96,7 +96,7 @@ const SingleSymbolAnalyzer = () => {
       console.warn(`[Analyzer] Invalid interval in localStorage: "${saved}", resetting to "1"`);
       localStorage.removeItem('analyzer_interval');
     }
-    return "1"; // Default: 1 minuto para Order Flow
+    return "5"; // Default: 5 minutos
   });
 
   const [days, setDays] = useState(() => {
@@ -116,8 +116,8 @@ const SingleSymbolAnalyzer = () => {
     "Rejection Patterns": false,
     "Double Top/Bottom": false,
     "Support & Resistance": false,
-    "S&R v2": true,
-    "Swing Detector": true,
+    "S&R v2": false,  // ✅ Deshabilitado por defecto
+    "Swing Detector": false,  // ✅ Deshabilitado por defecto
     "Order Flow": true  // Enabled by default for this project
   };
 

@@ -1,0 +1,1220 @@
+ [Preload] Order Flow Desktop - Script cargado correctamente
+ [Preload] Electron: 33.4.11
+ [Preload] Chrome: 130.0.6723.191
+ [vite] connecting...
+ [vite] connected.
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ 💡 Debug utilities available:
+    window.toggleDebugMode() - Toggle all logs
+    window.disableHeavyLogs() - Disable performance-heavy logs
+ [ConfigSynchronizer] Initialized
+ Electron Security Warning (Disabled webSecurity) This renderer process has "webSecurity" disabled. This
+  exposes users of this app to severe security risks.
+
+For more information and help, consult
+https://electronjs.org/docs/tutorial/security.
+This warning will not show up
+once the app is packaged.
+(anonymous) @ node:electron/js2c/renderer_init:2
+ Electron Security Warning (allowRunningInsecureContent) This renderer process has "allowRunningInsecureContent"
+  enabled. This exposes users of this app to severe security risks.
+
+  
+For more information and help, consult
+https://electronjs.org/docs/tutorial/security.
+This warning will not show up
+once the app is packaged.
+(anonymous) @ node:electron/js2c/renderer_init:2
+ [MiniChart BTCUSDT] 🖥️ Fullscreen effect: isFullscreen=false, hasCallback=true
+ [BTCUSDT] 🚀 Componente montado, iniciando...
+ ✅ [3:42:05 p. m.] [VWAP] [BTCUSDT] VWAPIndicator initialized (backend native, type=session)
+ [OrderFlow] [BTCUSDT] CONSTRUCTOR: interval=5, days=1, historyHours=24
+ [BTCUSDT] ZoneVisualizerIndicator: Inicializado
+ [PollingCoordinator] Registered: SymbolList_PriceChanges (interval: 60000ms, priority: 10)
+ [HealthCheck] Started (interval: 30000ms)
+ [Robustness] Initialized
+ [PollingCoordinator] Started
+ ✅ [3:42:05 p. m.] [SingleSymbolAnalyzer] [PollingCoordinator] Started
+ [Registry] ✅ Registrado manager para BTCUSDT (total: 1)
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ WebSocket Manager conectado [5]
+ ✓ Suscrito: 
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/realtime/set-interval:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [HealthCheck] Backend disconnected: Failed to fetch
+checkBackendHealth @ robustness.js:195
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error fetching price changes: 
+(anonymous) @ SymbolList.jsx:209
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [3:42:07 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx?t=1793649617225:426
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [OrderFlow] [BTCUSDT] INITIAL LOAD: 8799 footprints
+ [PollingCoordinator] Registered: OrderFlow_BTCUSDT (interval: 5000ms, priority: 1)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ IndicatorManager.js?t=1793649617225:472
+:11000/api/orderflow/integrity/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [IntegrityStatus] Error fetching status: 
+(anonymous) @ IntegrityStatus.jsx:62
+ unable to open database (14 sqlite_open returned null)
+(anonymous) @ localforage.js:1335
+_initStorage$1 @ localforage.js:1333
+extendSelfWithDriver @ localforage.js:2074
+ [BTCUSDT] Carga COMPLETA: 1 dias @ 5
+ unable to open database (14 sqlite_open returned null)
+(anonymous) @ localforage.js:1335
+_initStorage$1 @ localforage.js:1333
+extendSelfWithDriver @ localforage.js:2074
+ unable to open database (14 sqlite_open returned null)
+(anonymous) @ localforage.js:1335
+_initStorage$1 @ localforage.js:1333
+extendSelfWithDriver @ localforage.js:2074
+ unable to open database (14 sqlite_open returned null)
+(anonymous) @ localforage.js:1335
+_initStorage$1 @ localforage.js:1333
+extendSelfWithDriver @ localforage.js:2074
+ [CacheCleanup] Complete: 0/0 candles, 0/0 indicators removed
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=5&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [3:42:13 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: 
+error @ Logger.js:63
+fetchData @ VWAPIndicator.js:210
+ ✅ [3:42:13 p. m.] [VWAP] [BTCUSDT] VWAP startPollingIfReady: pollingId=false, enabled=true, destroyed=false
+ [PollingCoordinator] Registered: VWAP_BTCUSDT (interval: 300000ms, priority: 2)
+ ✅ [3:42:13 p. m.] [VWAP] [BTCUSDT] VWAP polling started (interval: 300000ms)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ IndicatorManager.js?t=1793649617225:472
+:11000/api/vwap-service/data/BTCUSDT?days=1&interval=5&vwapType=session&rollingPeriod=20:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [3:42:13 p. m.] [VWAP] [BTCUSDT] ❌ VWAP fetch error: 
+error @ Logger.js:63
+fetchData @ VWAPIndicator.js:210
+:11000/api/historical/BTCUSDT?interval=5&days=1&t=1793652125279:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [Retry] historical-BTCUSDT: Attempt 1/4 failed: Failed to fetch
+withRetry @ robustness.js:279
+ [BTCUSDT] Retry 1: Failed to fetch, waiting 1000ms
+onRetry @ MiniChart.jsx?t=1793649617225:970
+withRetry @ robustness.js:282
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+ [Prefetch] Activado (10s despues de carga)
+:11000/api/historical/BTCUSDT?interval=5&days=1&t=1793652125279:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [Retry] historical-BTCUSDT: Attempt 2/4 failed: Failed to fetch
+withRetry @ robustness.js:279
+ [BTCUSDT] Retry 2: Failed to fetch, waiting 2000ms
+onRetry @ MiniChart.jsx?t=1793649617225:970
+withRetry @ robustness.js:282
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ OrderFlowIndicator.j…t=1793649617225:179
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+:11000/api/historical/BTCUSDT?interval=5&days=1&t=1793652125279:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [Retry] historical-BTCUSDT: Attempt 3/4 failed: Failed to fetch
+withRetry @ robustness.js:279
+ [BTCUSDT] Retry 3: Failed to fetch, waiting 4000ms
+onRetry @ MiniChart.jsx?t=1793649617225:970
+withRetry @ robustness.js:282
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ OrderFlowIndicator.j…t=1793649617225:179
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+:11000/api/historical/BTCUSDT?interval=5&days=1&t=1793652125279:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [Retry] historical-BTCUSDT: All 4 attempts failed
+withRetry @ robustness.js:293
+ [BTCUSDT] Error cargando histórico 
+loadHistoricalData @ MiniChart.jsx?t=1793649617225:1071
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ OrderFlowIndicator.j…t=1793649617225:179
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [3:42:37 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+loadDrawings @ MiniChart.jsx?t=1793649617225:426
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ OrderFlowIndicator.j…t=1793649617225:179
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ OrderFlowIndicator.j…t=1793649617225:179
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ OrderFlowIndicator.j…t=1793649617225:179
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+(anonymous) @ OrderFlowIndicator.j…t=1793649617225:179
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error fetching price changes: 
+(anonymous) @ SymbolList.jsx:209
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [3:43:07 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [3:43:38 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+:11000/api/tickers?symbols=BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT,TRXUSDT,PAXGUSDT,GALAUSDT,SUIUSDT,TRBUSDT,DOGEUSDT,AAVEUSDT,AVAXUSDT,ARBUSDT,BNBUSDT,INJUSDT,KASUSDT,SHIB1000USDT,TONUSDT,UNIUSDT,LPTUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error fetching price changes: 
+(anonymous) @ SymbolList.jsx:209
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/status:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+:11000/api/realtime/alerts/history?limit=100:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ Error loading alerts from backend, falling back to localStorage: 
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/drawings/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ ❌ [3:44:09 p. m.] [MiniChart] Error loading drawings for BTCUSDT: 
+error @ Logger.js:63
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+ [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+ [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.j…t=1793649617225:771
+ [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+ [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+ [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx?t=1793649617225:1618
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+ [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1  Failed to load resource: net::ERR_CONNECTION_REFUSED
+ [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.j…t=1793649617225:523
+OrderFlowIndicator.js:232 [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+OrderFlowIndicator.js:240 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+OrderFlowIndicator.js:311 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+OrderFlowIndicator.js:317 [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+OrderFlowIndicator.js:322 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+OrderFlowIndicator.js:419 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+OrderFlowIndicator.js:426 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+OrderFlowIndicator.js:607 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+OrderFlowIndicator.js:617 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:618 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+OrderFlowIndicator.js:620 [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+OrderFlowIndicator.js:621 [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+OrderFlowIndicator.js:711 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:771 [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:771
+OrderFlowIndicator.js:807 [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+OrderFlowIndicator.js:815 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+MiniChart.jsx:2178 [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:2178
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:689 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:706 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:540 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:543 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:546 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:553 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:556 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+OrderFlowIndicator.js:561 [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+OrderFlowIndicator.js:571 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:572 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+OrderFlowIndicator.js:573 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+OrderFlowIndicator.js:574 [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+OrderFlowIndicator.js:575 [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+OrderFlowIndicator.js:600 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+:11000/api/orderflow/step-size/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:523 [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:523
+OrderFlowIndicator.js:232 [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+OrderFlowIndicator.js:240 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+OrderFlowIndicator.js:311 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+OrderFlowIndicator.js:317 [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] 📊 Distribución: Object
+OrderFlowIndicator.js:322 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+OrderFlowIndicator.js:419 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+OrderFlowIndicator.js:426 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+OrderFlowIndicator.js:607 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+OrderFlowIndicator.js:617 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:618 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+OrderFlowIndicator.js:620 [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+OrderFlowIndicator.js:621 [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+OrderFlowIndicator.js:711 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+:11000/api/status:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+:11000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/realtime/alerts/history?limit=100:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+useGlobalAlerts.js:73 Error loading alerts from backend, falling back to localStorage: TypeError: Failed to fetch
+    at useGlobalAlerts.js:35:30
+(anonymous) @ useGlobalAlerts.js:73
+:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+OrderFlowIndicator.js:771 [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:771
+OrderFlowIndicator.js:807 [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+OrderFlowIndicator.js:815 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): Object
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+MiniChart.jsx:2178 [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:2178
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+:11000/api/drawings/BTCUSDT:1 
+        
+        
+       Failed to load resource: net::ERR_CONNECTION_REFUSED
+Logger.js:88 ❌ [3:44:39 p. m.] [MiniChart] Error loading drawings for BTCUSDT: TypeError: Failed to fetch
+    at loadDrawings (MiniChart.jsx:493:30)
+    at MiniChart.jsx:2400:9
+error @ Logger.js:88
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:689 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:706 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:540 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:543 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:546 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:553 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:556 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres
+OrderFlowIndicator.js:561 [OrderFlow] [BTCUSDT] 📚 Cargados 43979 footprints de 1min desde archivo local
+OrderFlowIndicator.js:571 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:572 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+OrderFlowIndicator.js:573 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:52:00 (ts: 1793638320000)
+OrderFlowIndicator.js:574 [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+OrderFlowIndicator.js:575 [OrderFlow] [BTCUSDT]   • Footprints: 43979 de 1min
+OrderFlowIndicator.js:600 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:514 
+        
+        
+       GET http://localhost:11000/api/orderflow/step-size/BTCUSDT net::ERR_CONNECTION_REFUSED
+_fetchBackendStepSize @ OrderFlowIndicator.js:514
+_loadFromArchive @ OrderFlowIndicator.js:604
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:709
+(anonymous) @ OrderFlowIndicator.js:177
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:523 [OrderFlow] [BTCUSDT] ⚠️ No se pudo consultar step_size del backend: Failed to fetch
+_fetchBackendStepSize @ OrderFlowIndicator.js:523
+await in _fetchBackendStepSize
+_loadFromArchive @ OrderFlowIndicator.js:604
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:709
+(anonymous) @ OrderFlowIndicator.js:177
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:232 [OrderFlow] [BTCUSDT] 🔄 Agregando 43979 footprints de 1min a 5min
+OrderFlowIndicator.js:240 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+OrderFlowIndicator.js:311 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: mode)
+OrderFlowIndicator.js:317 [OrderFlow] [BTCUSDT] 📊 Usando moda de footprints a agregar (aparece 43979/43979 veces)
+OrderFlowIndicator.js:318 [OrderFlow] [BTCUSDT] 📊 Distribución: {10: 43979}
+OrderFlowIndicator.js:322 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 43979, con step_size: 43979, sin step_size: 0
+OrderFlowIndicator.js:419 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+OrderFlowIndicator.js:426 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8799 footprints de 5min con 3 levels uniformes
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {10: 8799}
+OrderFlowIndicator.js:607 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8799 footprints de 5min
+OrderFlowIndicator.js:617 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:618 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 11:50:00
+OrderFlowIndicator.js:620 [OrderFlow] [BTCUSDT]   • Duración: 733.5 horas (~30.6 días)
+OrderFlowIndicator.js:621 [OrderFlow] [BTCUSDT]   • Footprints: 8799 de 5min
+OrderFlowIndicator.js:711 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8799 footprints cargados
+OrderFlowIndicator.js:736 
+        
+        
+       GET http://localhost:11000/api/orderflow/footprint/BTCUSDT?interval=1&limit=2000&hours=24 net::ERR_CONNECTION_REFUSED
+fetchFootprints @ OrderFlowIndicator.js:736
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:177
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:771 [OrderFlow] [BTCUSDT] Backend error: Failed to fetch
+fetchFootprints @ OrderFlowIndicator.js:771
+await in fetchFootprints
+(anonymous) @ OrderFlowIndicator.js:177
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:807 [OrderFlow] [BTCUSDT] ✅ Usando solo archivo local (8799 footprints)
+OrderFlowIndicator.js:815 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES (solo archivo): {10: 8799}
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 0)
+MiniChart.jsx:2178 [BTCUSDT] 🔄 requestRedraw SKIPPED - no candles yet
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:2178
+(anonymous) @ OrderFlowIndicator.js:179
+await in (anonymous)
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:689 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:706 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:540 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:543 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:546 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:553 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:556 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 86551871 caracteres

@@ -1,27 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir:*)",
-      "Bash(nul)",
-      "Bash(curl:*)",
-      "Bash(powershell -Command \"$response = Invoke-WebRequest -Uri ''http://localhost:11000/api/historical/BTCUSDT?interval=1&days=1'' -UseBasicParsing; $json = $response.Content | ConvertFrom-Json; Write-Host ''Total velas:'' $json.total_candles; Write-Host ''Esperadas:'' $json.requested_candles; Write-Host ''Primera vela:'' $json.data[0].datetime_colombia; Write-Host ''Ultima vela:'' $json.data[-1].datetime_colombia; Write-Host ''In progress ultima:'' $json.data[-1].in_progress\")",
-      "Bash(powershell -Command \"(Invoke-WebRequest -Uri ''''http://localhost:11000/api/historical/BTCUSDT?interval=1&days=1'''' -UseBasicParsing).Content\")",
-      "Bash(findstr:*)",
-      "Bash(powershell -Command \"$r = Invoke-WebRequest -Uri ''http://localhost:11000/api/historical/BTCUSDT?interval=1&days=1'' -UseBasicParsing; $r.Content | Out-File -Encoding utf8 ''C:\\temp\\btc_hist.json''\")",
-      "Bash(python:*)",
-      "Bash(cmd /c:*)",
-      "Bash(powershell -Command:*)",
-      "Bash(npm install:*)",
-      "Bash(node -e:*)",
-      "WebSearch",
-      "WebFetch(domain:bybit-exchange.github.io)",
-      "Bash(npm run dev:*)",
-      "Bash(timeout:*)",
-      "Bash(xcopy:*)",
-      "Bash(C:temporderflow_response.json)",
-      "Bash(netstat:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(copy:*)",
+      "Bash(git add:*)",
+      "Bash(.gitignore)"
     ],
     "deny": [],
     "ask": []

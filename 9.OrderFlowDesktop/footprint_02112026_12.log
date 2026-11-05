@@ -1,0 +1,2574 @@
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=28.37px (GLOBAL - mismo para todos)
+   normalizedCellHeight=28.37px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 10
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 44239 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44239, con step_size: 44239, sin step_size: 0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8851 footprints de 5min con 3 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8851 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 16:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 737.8 horas (~30.7 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8851 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8851 footprints cargados
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=28.37px (GLOBAL - mismo para todos)
+   normalizedCellHeight=28.37px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=28.37px (GLOBAL - mismo para todos)
+   normalizedCellHeight=28.37px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 3
+ [OrderFlow] [BTCUSDT]   Total footprints: 9242
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 20:30:00 → 2/11/2026, 20:40:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 20:30:00 → FP 2/11/2026, 20:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 20:35:00 → FP 2/11/2026, 20:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 20:40:00 → FP 2/11/2026, 20:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 20:30:00 → FP 2/11/2026, 20:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 20:35:00 → FP 2/11/2026, 20:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 20:40:00 → FP 2/11/2026, 20:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=19.90px (GLOBAL - mismo para todos)
+   normalizedCellHeight=19.90px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 4
+ [OrderFlow] [BTCUSDT]   Total footprints: 9242
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 20:25:00 → 2/11/2026, 20:40:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 20:25:00 → FP 2/11/2026, 20:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 20:30:00 → FP 2/11/2026, 20:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 20:35:00 → FP 2/11/2026, 20:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 2/11/2026, 20:40:00 → FP 2/11/2026, 20:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 20:25:00 → FP 2/11/2026, 20:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 20:30:00 → FP 2/11/2026, 20:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 20:35:00 → FP 2/11/2026, 20:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 2/11/2026, 20:40:00 → FP 2/11/2026, 20:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 5
+ [OrderFlow] [BTCUSDT]   Total footprints: 9242
+ [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 20:20:00 → 2/11/2026, 20:40:00
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 20:20:00 → FP 2/11/2026, 20:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 20:25:00 → FP 2/11/2026, 20:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 20:30:00 → FP 2/11/2026, 20:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 2/11/2026, 20:35:00 → FP 2/11/2026, 20:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 2/11/2026, 20:40:00 → FP 2/11/2026, 20:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 20:20:00 → FP 2/11/2026, 20:20:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 20:25:00 → FP 2/11/2026, 20:25:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 20:30:00 → FP 2/11/2026, 20:30:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [3] ✅ 2/11/2026, 20:35:00 → FP 2/11/2026, 20:35:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [4] ✅ 2/11/2026, 20:40:00 → FP 2/11/2026, 20:40:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:20:
+   Vela: high=77294.60, low=77209.70
+   Footprint: high=77270.00, low=77200.00
+   needsExpansionAbove=true, needsExpansionBelow=false
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77294.60, low=77209.70, rango=84.90
+   Footprint original: high=77270.00, low=77200.00, rango=70.00
+   Levels: original=7, expandido=10, agregados=3
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:20:
+   step_size=10, priceRange=84.90
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.49, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:20:
+   Vela: high=77294.60, low=77209.70
+   Footprint: high=77270.00, low=77200.00
+   needsExpansionAbove=true, needsExpansionBelow=false
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77294.60, low=77209.70, rango=84.90
+   Footprint original: high=77270.00, low=77200.00, rango=70.00
+   Levels: original=7, expandido=10, agregados=3
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:20:
+   step_size=10, priceRange=84.90
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.49, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:20:
+   Vela: high=77294.60, low=77209.70
+   Footprint: high=77270.00, low=77200.00
+   needsExpansionAbove=true, needsExpansionBelow=false
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77294.60, low=77209.70, rango=84.90
+   Footprint original: high=77270.00, low=77200.00, rango=70.00
+   Levels: original=7, expandido=10, agregados=3
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:20:
+   step_size=10, priceRange=84.90
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.49, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 731 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/11/2026, 8:31:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 20:41:00
+ [OrderFlow] [BTCUSDT]   • Duración: 12.2 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 731 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8851, backend: +271 nuevos, ~151 actualizados, -309 ignorados = 9242 total
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES POST-MERGE: Object
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9242 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 20:41:00
+ [OrderFlow] [BTCUSDT]   • Duración: 742.4 horas (~30.9 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9242 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1441)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:20:
+   Vela: high=77294.60, low=77209.70
+   Footprint: high=77270.00, low=77200.00
+   needsExpansionAbove=true, needsExpansionBelow=false
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77294.60, low=77209.70, rango=84.90
+   Footprint original: high=77270.00, low=77200.00, rango=70.00
+   Levels: original=7, expandido=10, agregados=3
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:20:
+   step_size=10, priceRange=84.90
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.49, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:20:
+   Vela: high=77294.60, low=77209.70
+   Footprint: high=77270.00, low=77200.00
+   needsExpansionAbove=true, needsExpansionBelow=false
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77294.60, low=77209.70, rango=84.90
+   Footprint original: high=77270.00, low=77200.00, rango=70.00
+   Levels: original=7, expandido=10, agregados=3
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:20:
+   step_size=10, priceRange=84.90
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.49, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 5/5 velas con FP, 9242 fps disponibles, candleWidth=239.0px, fullMode=true
+ ⚠️ [8:42:53 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP NOT FOUND in indicators (count=2)
+warn @ Logger.js:68
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:20:
+   Vela: high=77294.60, low=77209.70
+   Footprint: high=77270.00, low=77200.00
+   needsExpansionAbove=true, needsExpansionBelow=false
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77294.60, low=77209.70, rango=84.90
+   Footprint original: high=77270.00, low=77200.00, rango=70.00
+   Levels: original=7, expandido=10, agregados=3
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:20:
+   step_size=10, priceRange=84.90
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.49, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:20:
+   Vela: high=77294.60, low=77209.70
+   Footprint: high=77270.00, low=77200.00
+   needsExpansionAbove=true, needsExpansionBelow=false
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77294.60, low=77209.70, rango=84.90
+   Footprint original: high=77270.00, low=77200.00, rango=70.00
+   Levels: original=7, expandido=10, agregados=3
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:20:
+   step_size=10, priceRange=84.90
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.49, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:25:
+   Vela: high=77290.00, low=77194.00
+   Footprint: high=77300.00, low=77260.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77290.00, low=77194.00, rango=96.00
+   Footprint original: high=77300.00, low=77260.00, rango=40.00
+   Levels: original=4, expandido=11, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:25:
+   step_size=10, priceRange=96.00
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.60, levels.length=4
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+OrderFlowIndicator.js:1316 [OrderFlow] [BTCUSDT] RENDER: 5/5 velas con FP, 9242 fps disponibles, candleWidth=239.0px, fullMode=true
+OrderFlowIndicator.js:1175 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1176 [OrderFlow] [BTCUSDT]   Total velas visibles: 3
+OrderFlowIndicator.js:1177 [OrderFlow] [BTCUSDT]   Total footprints: 9242
+OrderFlowIndicator.js:1181 [OrderFlow] [BTCUSDT]   Rango velas: 2/11/2026, 20:30:00 → 2/11/2026, 20:40:00
+OrderFlowIndicator.js:1197 [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 20:30:00 → FP 2/11/2026, 20:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1197 [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 20:35:00 → FP 2/11/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1197 [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 20:40:00 → FP 2/11/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1197 [OrderFlow] [BTCUSDT]   [0] ✅ 2/11/2026, 20:30:00 → FP 2/11/2026, 20:30:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1197 [OrderFlow] [BTCUSDT]   [1] ✅ 2/11/2026, 20:35:00 → FP 2/11/2026, 20:35:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1197 [OrderFlow] [BTCUSDT]   [2] ✅ 2/11/2026, 20:40:00 → FP 2/11/2026, 20:40:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+PollingCoordinator.js:227 [PollingCoordinator] Completed: SymbolList_PriceChanges
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+OrderFlowIndicator.js:1316 [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9242 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:689 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:706 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:540 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:543 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:546 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:553 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:556 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87247286 caracteres
+OrderFlowIndicator.js:561 [OrderFlow] [BTCUSDT] 📚 Cargados 44239 footprints de 1min desde archivo local
+OrderFlowIndicator.js:571 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:572 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+OrderFlowIndicator.js:573 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 16:12:00 (ts: 1793653920000)
+OrderFlowIndicator.js:574 [OrderFlow] [BTCUSDT]   • Duración: 737.8 horas (~30.7 días)
+OrderFlowIndicator.js:575 [OrderFlow] [BTCUSDT]   • Footprints: 44239 de 1min
+OrderFlowIndicator.js:600 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:518 [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 10
+OrderFlowIndicator.js:232 [OrderFlow] [BTCUSDT] 🔄 Agregando 44239 footprints de 1min a 5min
+OrderFlowIndicator.js:240 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+OrderFlowIndicator.js:311 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: backend)
+OrderFlowIndicator.js:313 [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+OrderFlowIndicator.js:322 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44239, con step_size: 44239, sin step_size: 0
+OrderFlowIndicator.js:419 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+OrderFlowIndicator.js:426 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8851 footprints de 5min con 3 levels uniformes
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {10: 8851}
+OrderFlowIndicator.js:607 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8851 footprints de 5min
+OrderFlowIndicator.js:617 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:618 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 16:10:00
+OrderFlowIndicator.js:620 [OrderFlow] [BTCUSDT]   • Duración: 737.8 horas (~30.7 días)
+OrderFlowIndicator.js:621 [OrderFlow] [BTCUSDT]   • Footprints: 8851 de 5min
+OrderFlowIndicator.js:711 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8851 footprints cargados
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+OrderFlowIndicator.js:1316 [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9242 fps disponibles, candleWidth=226.3px, fullMode=true
+OrderFlowIndicator.js:744 [OrderFlow] [BTCUSDT] 🌐 Backend: 732 footprints recibidos
+OrderFlowIndicator.js:754 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:755 [OrderFlow] [BTCUSDT]   • Desde: 2/11/2026, 8:31:00
+OrderFlowIndicator.js:756 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 20:42:00
+OrderFlowIndicator.js:757 [OrderFlow] [BTCUSDT]   • Duración: 12.2 horas (~0.5 días)
+OrderFlowIndicator.js:758 [OrderFlow] [BTCUSDT]   • Footprints: 732 de 5min
+OrderFlowIndicator.js:872 [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8851, backend: +272 nuevos, ~151 actualizados, -309 ignorados = 9243 total
+OrderFlowIndicator.js:880 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES POST-MERGE: {10: 9222, 20: 21}
+OrderFlowIndicator.js:888 [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+OrderFlowIndicator.js:901 [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9243 con levels, 0 con price_levels, 0 sin ninguno
+OrderFlowIndicator.js:912 [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+OrderFlowIndicator.js:913 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:914 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 20:42:00
+OrderFlowIndicator.js:915 [OrderFlow] [BTCUSDT]   • Duración: 742.4 horas (~30.9 días)
+OrderFlowIndicator.js:916 [OrderFlow] [BTCUSDT]   • Footprints: 9243 de 5min
+OrderFlowIndicator.js:931 [OrderFlow] [BTCUSDT] +1 footprints (total: 9243)
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1441)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1079 [OrderFlow] [BTCUSDT] RENDER: 9243 fps, candleWidth=226.3px, mode=FOOTPRINT (zoomed in)
+OrderFlowIndicator.js:1085 [OrderFlow] [BTCUSDT] CANDLES VISIBLE: 2/11/2026, 8:30:00 p.m. → 2/11/2026, 8:40:00 p.m. (3 velas)
+OrderFlowIndicator.js:1091 [OrderFlow] [BTCUSDT] CANDLES ALL: 28/10/2026, 8:35:00 p.m. → 2/11/2026, 8:40:00 p.m. (1442 velas TOTALES)
+OrderFlowIndicator.js:1099 [OrderFlow] [BTCUSDT] FP RANGE: 2/10/2026, 10:20:00 p.m. → 2/11/2026, 8:42:00 p.m.
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+OrderFlowIndicator.js:1316 [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+OrderFlowIndicator.js:1424   Vela: high=77272.20, low=77165.40
+OrderFlowIndicator.js:1425   Footprint: high=77280.00, low=77230.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77272.20, low=77165.40, rango=106.80
+OrderFlowIndicator.js:1475   Footprint original: high=77280.00, low=77230.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=106.80
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=10.68, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+OrderFlowIndicator.js:1424   Vela: high=77218.10, low=77104.90
+OrderFlowIndicator.js:1425   Footprint: high=77220.00, low=77170.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77218.10, low=77104.90, rango=113.20
+OrderFlowIndicator.js:1475   Footprint original: high=77220.00, low=77170.00, rango=50.00
+OrderFlowIndicator.js:1476   Levels: original=5, expandido=12, agregados=7
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=113.20
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=11.32, levels.length=5
+OrderFlowIndicator.js:1423 [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+OrderFlowIndicator.js:1424   Vela: high=77164.70, low=77079.00
+OrderFlowIndicator.js:1425   Footprint: high=77170.00, low=77110.00
+OrderFlowIndicator.js:1426   needsExpansionAbove=false, needsExpansionBelow=true
+OrderFlowIndicator.js:1431 [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+OrderFlowIndicator.js:1473 [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+OrderFlowIndicator.js:1474   Vela: high=77164.70, low=77079.00, rango=85.70
+OrderFlowIndicator.js:1475   Footprint original: high=77170.00, low=77110.00, rango=60.00
+OrderFlowIndicator.js:1476   Levels: original=6, expandido=10, agregados=4
+OrderFlowIndicator.js:1477   Step_size: 10
+OrderFlowIndicator.js:1664 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+OrderFlowIndicator.js:1665   step_size=10, priceRange=85.70
+OrderFlowIndicator.js:1666   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1667   normalizedCellHeight=18.10px (con mínimo 1.5px)
+OrderFlowIndicator.js:1668   expectedSteps=8.57, levels.length=6
+OrderFlowIndicator.js:1316 [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:689 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:706 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:530 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:540 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:543 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:546 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:553 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:556 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87247286 caracteres
+OrderFlowIndicator.js:561 [OrderFlow] [BTCUSDT] 📚 Cargados 44239 footprints de 1min desde archivo local
+OrderFlowIndicator.js:571 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:572 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+OrderFlowIndicator.js:573 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 16:12:00 (ts: 1793653920000)
+OrderFlowIndicator.js:574 [OrderFlow] [BTCUSDT]   • Duración: 737.8 horas (~30.7 días)
+OrderFlowIndicator.js:575 [OrderFlow] [BTCUSDT]   • Footprints: 44239 de 1min
+OrderFlowIndicator.js:600 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:518 [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 10
+OrderFlowIndicator.js:232 [OrderFlow] [BTCUSDT] 🔄 Agregando 44239 footprints de 1min a 5min
+OrderFlowIndicator.js:240 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+OrderFlowIndicator.js:311 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 10 (fuente: backend)
+OrderFlowIndicator.js:313 [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+OrderFlowIndicator.js:322 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44239, con step_size: 44239, sin step_size: 0
+OrderFlowIndicator.js:419 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+OrderFlowIndicator.js:426 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=10, total_levels=3 (3 con volumen, 0 vacíos), candle_range=18.40
+OrderFlowIndicator.js:502 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8851 footprints de 5min con 3 levels uniformes
+OrderFlowIndicator.js:503 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {10: 8851}
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8851 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 16:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 737.8 horas (~30.7 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8851 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8851 footprints cargados
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 732 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/11/2026, 8:31:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 20:42:00
+ [OrderFlow] [BTCUSDT]   • Duración: 12.2 horas (~0.5 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 732 de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8851, backend: +272 nuevos, ~151 actualizados, -309 ignorados = 9243 total
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES POST-MERGE: {10: 9222, 20: 21}
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 9243 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 20:42:00
+ [OrderFlow] [BTCUSDT]   • Duración: 742.4 horas (~30.9 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 9243 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1441)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77079.00
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77079.00, rango=85.70
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=85.70
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.57, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77077.30
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77077.30, rango=87.40
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=87.40
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.74, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77077.30
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77077.30, rango=87.40
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=87.40
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.74, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77077.30
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77077.30, rango=87.40
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=87.40
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.74, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77076.30
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77076.30, rango=88.40
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=88.40
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.84, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77076.20
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77076.20, rango=88.50
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=88.50
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=8.85, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] RENDER: 3/3 velas con FP, 9243 fps disponibles, candleWidth=226.3px, fullMode=true
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:30:
+   Vela: high=77272.20, low=77165.40
+   Footprint: high=77280.00, low=77230.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77272.20, low=77165.40, rango=106.80
+   Footprint original: high=77280.00, low=77230.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:30:
+   step_size=10, priceRange=106.80
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=10.68, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:35:
+   Vela: high=77218.10, low=77104.90
+   Footprint: high=77220.00, low=77170.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77218.10, low=77104.90, rango=113.20
+   Footprint original: high=77220.00, low=77170.00, rango=50.00
+   Levels: original=5, expandido=12, agregados=7
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:35:
+   step_size=10, priceRange=113.20
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=11.32, levels.length=5
+ [OrderFlow] [BTCUSDT] 🔍 EXPANSION CHECK @ 20:40:
+   Vela: high=77164.70, low=77070.40
+   Footprint: high=77170.00, low=77110.00
+   needsExpansionAbove=false, needsExpansionBelow=true
+ [OrderFlow] [BTCUSDT] 🔧 EXPANDIENDO LEVELS...
+ [OrderFlow] [BTCUSDT] ✅ EXPANSIÓN COMPLETADA:
+   Vela: high=77164.70, low=77070.40, rango=94.30
+   Footprint original: high=77170.00, low=77110.00, rango=60.00
+   Levels: original=6, expandido=10, agregados=4
+   Step_size: 10
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 20:40:
+   step_size=10, priceRange=94.30
+   cellHeightForStepSize=18.10px (GLOBAL - mismo para todos)
+   normalizedCellHeight=18.10px (con mínimo 1.5px)
+   expectedSteps=9.43, levels.length=6
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87247286 caracteres

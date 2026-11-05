@@ -1,0 +1,3337 @@
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 65
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 9:35:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 9:35:00 (ts: 1793802900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 9:40:00 (ts: 1793803200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 9:45:00 (ts: 1793803500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 9:50:00 (ts: 1793803800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 9:55:00 (ts: 1793804100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [60] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [61] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [62] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [63] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [64] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=2.97px (GLOBAL - mismo para todos)
+   normalizedCellHeight=2.97px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 59
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 10:05:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 10:05:00 (ts: 1793804700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 10:10:00 (ts: 1793805000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 10:15:00 (ts: 1793805300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 10:20:00 (ts: 1793805600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 10:25:00 (ts: 1793805900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [54] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [55] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [56] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [57] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [58] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=6.24px (GLOBAL - mismo para todos)
+   normalizedCellHeight=6.24px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 54
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 10:30:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 10:30:00 (ts: 1793806200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 10:35:00 (ts: 1793806500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 10:40:00 (ts: 1793806800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 10:45:00 (ts: 1793807100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 10:50:00 (ts: 1793807400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [49] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [50] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [51] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [52] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [53] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=8.71px (GLOBAL - mismo para todos)
+   normalizedCellHeight=8.71px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 49
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 10:55:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 10:55:00 (ts: 1793807700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 11:00:00 (ts: 1793808000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 11:05:00 (ts: 1793808300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 11:10:00 (ts: 1793808600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 11:15:00 (ts: 1793808900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [44] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [45] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [46] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [47] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [48] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=9.89px (GLOBAL - mismo para todos)
+   normalizedCellHeight=9.89px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 44
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 11:20:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 11:20:00 (ts: 1793809200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 11:25:00 (ts: 1793809500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 11:30:00 (ts: 1793809800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 11:35:00 (ts: 1793810100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 11:40:00 (ts: 1793810400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [39] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [40] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [41] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [42] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [43] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=9.89px (GLOBAL - mismo para todos)
+   normalizedCellHeight=9.89px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 40
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 11:40:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 11:40:00 (ts: 1793810400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 11:45:00 (ts: 1793810700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 11:50:00 (ts: 1793811000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 11:55:00 (ts: 1793811300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 12:00:00 (ts: 1793811600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [35] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [36] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [37] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [38] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [39] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.23px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.23px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 3 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 4/11/2026, 14:52:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:54:00
+ [OrderFlow] [BTCUSDT]   • Duración: 0.0 horas (~0.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 3 de 5min
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints del backend de 1min a 5min...
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 3, con step_size: 3, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 3 footprints 1min → 1 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-29.json
+
+ ✅ Grupo 1/1: 14:50:00 | gaps: ↑0.0 ↓0.0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=7 (7 con volumen, 0 vacíos), candle_range=126.50
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 1 footprints de 5min con 7 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 1 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-29.json
+
+ [OrderFlow] [BTCUSDT] ✅ Backend agregado: 1 footprints de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8922, backend(5min): +1 nuevos, ~0 actualizados, -0 ignorados = 8923 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 8923 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 784.5 horas (~32.7 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8923 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1440)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.23px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.23px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.23px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.23px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 37
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 11:55:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 11:55:00 (ts: 1793811300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 12:00:00 (ts: 1793811600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 12:05:00 (ts: 1793811900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 12:10:00 (ts: 1793812200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 12:15:00 (ts: 1793812500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [32] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [33] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [34] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [35] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [36] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/37 velas con FP, 8923 fps disponibles, candleWidth=32.7px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 35 velas SIN FP. Primer match en índice 35: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 33
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:15:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:15:00 (ts: 1793812500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 12:20:00 (ts: 1793812800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 12:25:00 (ts: 1793813100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 12:30:00 (ts: 1793813400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 12:35:00 (ts: 1793813700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [28] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [29] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [30] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [31] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [32] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 30
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:30:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:30:00 (ts: 1793813400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 12:35:00 (ts: 1793813700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 12:40:00 (ts: 1793814000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 12:45:00 (ts: 1793814300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 12:50:00 (ts: 1793814600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [25] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [26] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [27] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [28] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [29] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 27
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:45:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:45:00 (ts: 1793814300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 12:50:00 (ts: 1793814600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 12:55:00 (ts: 1793814900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 13:00:00 (ts: 1793815200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 13:05:00 (ts: 1793815500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [22] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [23] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [24] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [25] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [26] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 25
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:55:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:55:00 (ts: 1793814900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 13:00:00 (ts: 1793815200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 13:05:00 (ts: 1793815500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 13:10:00 (ts: 1793815800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 13:15:00 (ts: 1793816100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [20] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [21] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [22] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [23] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [24] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 22
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 13:10:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 13:10:00 (ts: 1793815800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 13:15:00 (ts: 1793816100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 13:20:00 (ts: 1793816400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 13:25:00 (ts: 1793816700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 13:30:00 (ts: 1793817000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [17] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [18] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [19] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [20] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [21] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.67px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.67px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 20
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 13:20:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 13:20:00 (ts: 1793816400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 13:25:00 (ts: 1793816700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 13:30:00 (ts: 1793817000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 13:35:00 (ts: 1793817300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 13:40:00 (ts: 1793817600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [15] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [16] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [17] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [18] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [19] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/20 velas con FP, 8923 fps disponibles, candleWidth=60.5px, fullMode=true
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 18 velas SIN FP. Primer match en índice 18: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/20 velas con FP, 8923 fps disponibles, candleWidth=60.5px, fullMode=true
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 18 velas SIN FP. Primer match en índice 18: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ ⚠️ [2:55:32 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP NOT FOUND in indicators (count=2)
+warn @ Logger.js:68
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=11.06px (GLOBAL - mismo para todos)
+   normalizedCellHeight=11.06px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 23
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 13:05:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 13:05:00 (ts: 1793815500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 13:10:00 (ts: 1793815800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 13:15:00 (ts: 1793816100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 13:20:00 (ts: 1793816400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 13:25:00 (ts: 1793816700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [18] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [19] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [20] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [21] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [22] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.44px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.44px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 25
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:55:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:55:00 (ts: 1793814900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 13:00:00 (ts: 1793815200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 13:05:00 (ts: 1793815500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 13:10:00 (ts: 1793815800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 13:15:00 (ts: 1793816100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [20] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [21] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [22] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [23] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [24] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 28
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:40:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:40:00 (ts: 1793814000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 12:45:00 (ts: 1793814300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 12:50:00 (ts: 1793814600000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 12:55:00 (ts: 1793814900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 13:00:00 (ts: 1793815200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [23] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [24] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [25] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [26] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [27] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 31
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:25:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:25:00 (ts: 1793813100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 12:30:00 (ts: 1793813400000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 12:35:00 (ts: 1793813700000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 12:40:00 (ts: 1793814000000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 12:45:00 (ts: 1793814300000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [26] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [27] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [28] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [29] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [30] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+ [OrderFlow] [BTCUSDT]   Total velas visibles: 35
+ [OrderFlow] [BTCUSDT]   Total footprints: 8923
+ [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:05:00 → 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:05:00 (ts: 1793811900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+ [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+ [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+ [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 12:10:00 (ts: 1793812200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 12:15:00 (ts: 1793812500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+ [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 12:20:00 (ts: 1793812800000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 12:25:00 (ts: 1793813100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [30] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [31] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+ [OrderFlow] [BTCUSDT]   [32] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+ [OrderFlow] [BTCUSDT]   [33] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+ [OrderFlow] [BTCUSDT]   [34] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+ [OrderFlow] [BTCUSDT]       Footprints cercanos:
+ [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/35 velas con FP, 8923 fps disponibles, candleWidth=34.6px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 33 velas SIN FP. Primer match en índice 33: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/35 velas con FP, 8923 fps disponibles, candleWidth=34.6px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 33 velas SIN FP. Primer match en índice 33: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87973900 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 44593 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:13:00 (ts: 1793675580000)
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 44593 de 1min
+ [OrderFlow] [BTCUSDT] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de 2/11/2026, 22:13:00 (40.7h de antigüedad)
+_loadFromArchive @ OrderFlowIndicator.js:618
+ [OrderFlow] [BTCUSDT] 🔄 Descargando footprints actualizados automáticamente...
+ [OrderFlow] [BTCUSDT] 🔄 _autoDownloadArchive: Iniciando descarga automática...
+ [OrderFlow] [BTCUSDT] 📥 Descargando últimas 48h desde cloud...
+ [FootprintArchiver] 📥 Archivando BTCUSDT (48h = ~2.0 días)...
+ [FootprintArchiver] 🌐 Descargando BTCUSDT: 48h (~2.0 días)
+ [FootprintArchiver] 🔍 URL cloud: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=48&interval=1
+ [FootprintArchiver] ⏳ Esperando respuesta del cloud...
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 44593 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44593, con step_size: 44593, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 44593 footprints 1min → 8922 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-34.json
+
+ ✅ Grupo 1/8922: 22:20:00 | sin vela real
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(2)
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=2 (2 con volumen, 0 vacíos), candle_range=18.40
+ ✅ Grupo 2/8922: 22:25:00 | sin vela real
+ ✅ Grupo 3/8922: 22:30:00 | sin vela real
+ ✅ Grupo 4/8922: 22:35:00 | sin vela real
+ ✅ Grupo 5/8922: 22:40:00 | sin vela real
+ ✅ Grupo 6/8922: 22:45:00 | sin vela real
+ ✅ Grupo 7/8922: 22:50:00 | sin vela real
+ ✅ Grupo 8/8922: 22:55:00 | sin vela real
+ ✅ Grupo 9/8922: 23:00:00 | sin vela real
+ ✅ Grupo 10/8922: 23:05:00 | sin vela real
+ ✅ Grupo 11/8922: 23:10:00 | sin vela real
+ ✅ Grupo 12/8922: 23:15:00 | sin vela real
+ ✅ Grupo 13/8922: 23:20:00 | sin vela real
+ ✅ Grupo 14/8922: 23:25:00 | sin vela real
+ ✅ Grupo 15/8922: 23:30:00 | sin vela real
+ ✅ Grupo 16/8922: 23:35:00 | sin vela real
+ ✅ Grupo 17/8922: 23:40:00 | sin vela real
+ ✅ Grupo 18/8922: 23:45:00 | sin vela real
+ ✅ Grupo 19/8922: 23:50:00 | sin vela real
+ ✅ Grupo 20/8922: 23:55:00 | sin vela real
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8922 footprints de 5min con 2 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 20 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-34.json
+
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8922 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8922 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8922 footprints cargados
+ [FootprintArchiver] ❌ BTCUSDT: Error descargando después de 0.6s: Error invoking remote method 'download-footprints': Error: HTTP 503: Service Unavailable
+_fetchFromCloud @ FootprintArchiverElectron.js:197
+ [FootprintArchiver] ❌ BTCUSDT: No hay datos en el cloud (0 footprints descargados)
+archiveSymbol @ FootprintArchiverElectron.js:263
+ [OrderFlow] [BTCUSDT] ❌ _autoDownloadArchive ERROR: No hay datos disponibles en el cloud collector
+_autoDownloadArchive @ OrderFlowIndicator.js:709
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 3 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:785 [OrderFlow] [BTCUSDT]   • Desde: 4/11/2026, 14:52:00
+OrderFlowIndicator.js:786 [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:54:00
+OrderFlowIndicator.js:787 [OrderFlow] [BTCUSDT]   • Duración: 0.0 horas (~0.0 días)
+OrderFlowIndicator.js:788 [OrderFlow] [BTCUSDT]   • Footprints: 3 de 5min
+OrderFlowIndicator.js:811 [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints del backend de 1min a 5min...
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/35 velas con FP, 8923 fps disponibles, candleWidth=34.6px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 33 velas SIN FP. Primer match en índice 33: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+OrderFlowIndicator.js:548 [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+OrderFlowIndicator.js:233 [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints de 1min a 5min
+OrderFlowIndicator.js:241 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: Object
+OrderFlowIndicator.js:312 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+OrderFlowIndicator.js:314 [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+OrderFlowIndicator.js:323 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 3, con step_size: 3, sin step_size: 0
+aggregation-logger.js:42 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+aggregation-logger.js:43 📊 BTCUSDT | 3 footprints 1min → 1 grupos 5min
+aggregation-logger.js:44 ⚙️  Step size: 20 (fuente: backend)
+aggregation-logger.js:48 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-35.json
+
+aggregation-logger.js:342 ✅ Grupo 1/1: 14:50:00 | gaps: ↑0.0 ↓0.0
+OrderFlowIndicator.js:445 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): Array(3)
+OrderFlowIndicator.js:452 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=7 (7 con volumen, 0 vacíos), candle_range=126.50
+OrderFlowIndicator.js:528 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 1 footprints de 5min con 7 levels uniformes
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: Object
+aggregation-logger.js:380 
+✅ ANÁLISIS COMPLETADO
+aggregation-logger.js:381 📊 Resumen: 0 errores, 0 warnings de 1 grupos
+aggregation-logger.js:382 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-35.json
+
+OrderFlowIndicator.js:814 [OrderFlow] [BTCUSDT] ✅ Backend agregado: 1 footprints de 5min
+OrderFlowIndicator.js:894 [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8922, backend(5min): +1 nuevos, ~0 actualizados, -0 ignorados = 8923 total
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+OrderFlowIndicator.js:915 [OrderFlow] [BTCUSDT] 🔍 FORMATO: 8923 con levels, 0 con price_levels, 0 sin ninguno
+OrderFlowIndicator.js:926 [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+OrderFlowIndicator.js:927 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:50:00
+OrderFlowIndicator.js:929 [OrderFlow] [BTCUSDT]   • Duración: 784.5 horas (~32.7 días)
+OrderFlowIndicator.js:930 [OrderFlow] [BTCUSDT]   • Footprints: 8923 de 5min
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1189 [OrderFlow] [BTCUSDT] 🔍 DETAILED MATCHING TEST (FOOTPRINT MODE):
+OrderFlowIndicator.js:1190 [OrderFlow] [BTCUSDT]   Total velas visibles: 25
+OrderFlowIndicator.js:1191 [OrderFlow] [BTCUSDT]   Total footprints: 8923
+OrderFlowIndicator.js:1195 [OrderFlow] [BTCUSDT]   Rango velas: 4/11/2026, 12:55:00 → 4/11/2026, 14:55:00
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [0] ❌ 4/11/2026, 12:55:00 (ts: 1793814900000) → NO MATCH
+OrderFlowIndicator.js:1217 [OrderFlow] [BTCUSDT]       🔍 PRIMEROS 3 FOOTPRINTS EN MEMORIA:
+OrderFlowIndicator.js:1221 [OrderFlow] [BTCUSDT]         FP[0]: 2/10/2026, 22:20:00 (ts: 1790997600000)
+OrderFlowIndicator.js:1221 [OrderFlow] [BTCUSDT]         FP[1]: 2/10/2026, 22:25:00 (ts: 1790997900000)
+OrderFlowIndicator.js:1221 [OrderFlow] [BTCUSDT]         FP[2]: 2/10/2026, 22:30:00 (ts: 1790998200000)
+OrderFlowIndicator.js:1239 [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [1] ❌ 4/11/2026, 13:00:00 (ts: 1793815200000) → NO MATCH
+OrderFlowIndicator.js:1239 [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [2] ❌ 4/11/2026, 13:05:00 (ts: 1793815500000) → NO MATCH
+OrderFlowIndicator.js:1239 [OrderFlow] [BTCUSDT]       ⚠️ NO hay footprints dentro de 10 minutos
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [3] ❌ 4/11/2026, 13:10:00 (ts: 1793815800000) → NO MATCH
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [4] ❌ 4/11/2026, 13:15:00 (ts: 1793816100000) → NO MATCH
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [20] ❌ 4/11/2026, 14:35:00 (ts: 1793820900000) → NO MATCH
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [21] ❌ 4/11/2026, 14:40:00 (ts: 1793821200000) → NO MATCH
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [22] ❌ 4/11/2026, 14:45:00 (ts: 1793821500000) → NO MATCH
+OrderFlowIndicator.js:1231 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1235 [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (+5.0 min)
+OrderFlowIndicator.js:1211 [OrderFlow] [BTCUSDT]   [23] ✅ 4/11/2026, 14:50:00 → FP 4/11/2026, 14:50:00, hasLevels=true, diff=0ms
+OrderFlowIndicator.js:1213 [OrderFlow] [BTCUSDT]   [24] ❌ 4/11/2026, 14:55:00 (ts: 1793822100000) → NO MATCH
+OrderFlowIndicator.js:1231 [OrderFlow] [BTCUSDT]       Footprints cercanos:
+OrderFlowIndicator.js:1235 [OrderFlow] [BTCUSDT]         • 4/11/2026, 14:50:00 (-5.0 min)
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1455
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1454
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1444
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:719 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:736 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:559 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:560 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:570 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:573 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:576 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:583 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:586 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87973900 caracteres
+OrderFlowIndicator.js:591 [OrderFlow] [BTCUSDT] 📚 Cargados 44593 footprints de 1min desde archivo local
+OrderFlowIndicator.js:601 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:602 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+OrderFlowIndicator.js:603 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:13:00 (ts: 1793675580000)
+OrderFlowIndicator.js:604 [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+OrderFlowIndicator.js:605 [OrderFlow] [BTCUSDT]   • Footprints: 44593 de 1min
+OrderFlowIndicator.js:618 [OrderFlow] [BTCUSDT] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de 2/11/2026, 22:13:00 (40.7h de antigüedad)
+_loadFromArchive @ OrderFlowIndicator.js:618
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT] 🔄 Descargando footprints actualizados automáticamente...
+OrderFlowIndicator.js:673 [OrderFlow] [BTCUSDT] 🔄 _autoDownloadArchive: Iniciando descarga automática...
+OrderFlowIndicator.js:684 [OrderFlow] [BTCUSDT] 📥 Descargando últimas 48h desde cloud...
+FootprintArchiverElectron.js:254 [FootprintArchiver] 📥 Archivando BTCUSDT (48h = ~2.0 días)...
+FootprintArchiverElectron.js:152 [FootprintArchiver] 🌐 Descargando BTCUSDT: 48h (~2.0 días)
+FootprintArchiverElectron.js:153 [FootprintArchiver] 🔍 URL cloud: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=48&interval=1
+FootprintArchiverElectron.js:163 [FootprintArchiver] ⏳ Esperando respuesta del cloud...
+OrderFlowIndicator.js:630 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1455
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1454
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1444
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:548 [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+OrderFlowIndicator.js:233 [OrderFlow] [BTCUSDT] 🔄 Agregando 44593 footprints de 1min a 5min
+OrderFlowIndicator.js:241 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+OrderFlowIndicator.js:312 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+OrderFlowIndicator.js:314 [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+OrderFlowIndicator.js:323 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44593, con step_size: 44593, sin step_size: 0
+aggregation-logger.js:42 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+aggregation-logger.js:43 📊 BTCUSDT | 44593 footprints 1min → 8922 grupos 5min
+aggregation-logger.js:44 ⚙️  Step size: 20 (fuente: backend)
+aggregation-logger.js:48 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-41.json
+
+aggregation-logger.js:342 ✅ Grupo 1/8922: 22:20:00 | sin vela real
+OrderFlowIndicator.js:445 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (2) [{…}, {…}]
+OrderFlowIndicator.js:452 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=2 (2 con volumen, 0 vacíos), candle_range=18.40
+aggregation-logger.js:342 ✅ Grupo 2/8922: 22:25:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 3/8922: 22:30:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 4/8922: 22:35:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 5/8922: 22:40:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 6/8922: 22:45:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 7/8922: 22:50:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 8/8922: 22:55:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 9/8922: 23:00:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 10/8922: 23:05:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 11/8922: 23:10:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 12/8922: 23:15:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 13/8922: 23:20:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 14/8922: 23:25:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 15/8922: 23:30:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 16/8922: 23:35:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 17/8922: 23:40:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 18/8922: 23:45:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 19/8922: 23:50:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 20/8922: 23:55:00 | sin vela real
+OrderFlowIndicator.js:528 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8922 footprints de 5min con 2 levels uniformes
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 8922}
+aggregation-logger.js:380 
+✅ ANÁLISIS COMPLETADO
+aggregation-logger.js:381 📊 Resumen: 0 errores, 0 warnings de 20 grupos
+aggregation-logger.js:382 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-41.json
+
+OrderFlowIndicator.js:637 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8922 footprints de 5min
+OrderFlowIndicator.js:647 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:648 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:649 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:10:00
+OrderFlowIndicator.js:650 [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+OrderFlowIndicator.js:651 [OrderFlow] [BTCUSDT]   • Footprints: 8922 de 5min
+OrderFlowIndicator.js:741 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8922 footprints cargados
+OrderFlowIndicator.js:774 [OrderFlow] [BTCUSDT] 🌐 Backend: 3 footprints recibidos
+OrderFlowIndicator.js:784 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:785 [OrderFlow] [BTCUSDT]   • Desde: 4/11/2026, 14:52:00
+OrderFlowIndicator.js:786 [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:54:00
+OrderFlowIndicator.js:787 [OrderFlow] [BTCUSDT]   • Duración: 0.0 horas (~0.0 días)
+OrderFlowIndicator.js:788 [OrderFlow] [BTCUSDT]   • Footprints: 3 de 5min
+OrderFlowIndicator.js:811 [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints del backend de 1min a 5min...
+OrderFlowIndicator.js:548 [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+OrderFlowIndicator.js:233 [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints de 1min a 5min
+OrderFlowIndicator.js:241 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…me, imbalances, stacked_imbalances, volume_zscore', levelCount: 2, level0: {…}}
+OrderFlowIndicator.js:312 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+OrderFlowIndicator.js:314 [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+OrderFlowIndicator.js:323 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 3, con step_size: 3, sin step_size: 0
+aggregation-logger.js:42 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+aggregation-logger.js:43 📊 BTCUSDT | 3 footprints 1min → 1 grupos 5min
+aggregation-logger.js:44 ⚙️  Step size: 20 (fuente: backend)
+aggregation-logger.js:48 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-42.json
+
+aggregation-logger.js:342 ✅ Grupo 1/1: 14:50:00 | gaps: ↑0.0 ↓0.0
+OrderFlowIndicator.js:445 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+OrderFlowIndicator.js:452 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=7 (7 con volumen, 0 vacíos), candle_range=126.50
+OrderFlowIndicator.js:528 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 1 footprints de 5min con 7 levels uniformes
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 1}
+aggregation-logger.js:380 
+✅ ANÁLISIS COMPLETADO
+aggregation-logger.js:381 📊 Resumen: 0 errores, 0 warnings de 1 grupos
+aggregation-logger.js:382 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-42.json
+
+OrderFlowIndicator.js:814 [OrderFlow] [BTCUSDT] ✅ Backend agregado: 1 footprints de 5min
+OrderFlowIndicator.js:894 [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8922, backend(5min): +1 nuevos, ~0 actualizados, -0 ignorados = 8923 total
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+OrderFlowIndicator.js:915 [OrderFlow] [BTCUSDT] 🔍 FORMATO: 8923 con levels, 0 con price_levels, 0 sin ninguno
+OrderFlowIndicator.js:926 [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+OrderFlowIndicator.js:927 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:50:00
+OrderFlowIndicator.js:929 [OrderFlow] [BTCUSDT]   • Duración: 784.5 horas (~32.7 días)
+OrderFlowIndicator.js:930 [OrderFlow] [BTCUSDT]   • Footprints: 8923 de 5min
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:2176
+(anonymous) @ OrderFlowIndicator.js:180
+await in (anonymous)
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+FootprintArchiverElectron.js:197 [FootprintArchiver] ❌ BTCUSDT: Error descargando después de 1.8s: Error invoking remote method 'download-footprints': Error: HTTP 503: Service Unavailable
+_fetchFromCloud @ FootprintArchiverElectron.js:197
+await in _fetchFromCloud
+archiveSymbol @ FootprintArchiverElectron.js:260
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+FootprintArchiverElectron.js:263 [FootprintArchiver] ❌ BTCUSDT: No hay datos en el cloud (0 footprints descargados)
+archiveSymbol @ FootprintArchiverElectron.js:263
+await in archiveSymbol
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:709 [OrderFlow] [BTCUSDT] ❌ _autoDownloadArchive ERROR: No hay datos disponibles en el cloud collector
+_autoDownloadArchive @ OrderFlowIndicator.js:709
+await in _autoDownloadArchive
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:719 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:736 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:559 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:560 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:570 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:573 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:576 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:583 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:586 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87973900 caracteres
+OrderFlowIndicator.js:591 [OrderFlow] [BTCUSDT] 📚 Cargados 44593 footprints de 1min desde archivo local
+OrderFlowIndicator.js:601 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:602 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+OrderFlowIndicator.js:603 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:13:00 (ts: 1793675580000)
+OrderFlowIndicator.js:604 [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+OrderFlowIndicator.js:605 [OrderFlow] [BTCUSDT]   • Footprints: 44593 de 1min
+OrderFlowIndicator.js:618 [OrderFlow] [BTCUSDT] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de 2/11/2026, 22:13:00 (40.7h de antigüedad)
+_loadFromArchive @ OrderFlowIndicator.js:618
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT] 🔄 Descargando footprints actualizados automáticamente...
+OrderFlowIndicator.js:673 [OrderFlow] [BTCUSDT] 🔄 _autoDownloadArchive: Iniciando descarga automática...
+OrderFlowIndicator.js:684 [OrderFlow] [BTCUSDT] 📥 Descargando últimas 48h desde cloud...
+FootprintArchiverElectron.js:254 [FootprintArchiver] 📥 Archivando BTCUSDT (48h = ~2.0 días)...
+FootprintArchiverElectron.js:152 [FootprintArchiver] 🌐 Descargando BTCUSDT: 48h (~2.0 días)
+FootprintArchiverElectron.js:153 [FootprintArchiver] 🔍 URL cloud: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=48&interval=1
+FootprintArchiverElectron.js:163 [FootprintArchiver] ⏳ Esperando respuesta del cloud...
+OrderFlowIndicator.js:630 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:548 [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+OrderFlowIndicator.js:233 [OrderFlow] [BTCUSDT] 🔄 Agregando 44593 footprints de 1min a 5min
+OrderFlowIndicator.js:241 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+OrderFlowIndicator.js:312 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+OrderFlowIndicator.js:314 [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+OrderFlowIndicator.js:323 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44593, con step_size: 44593, sin step_size: 0
+aggregation-logger.js:42 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+aggregation-logger.js:43 📊 BTCUSDT | 44593 footprints 1min → 8922 grupos 5min
+aggregation-logger.js:44 ⚙️  Step size: 20 (fuente: backend)
+aggregation-logger.js:48 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-47.json
+
+aggregation-logger.js:342 ✅ Grupo 1/8922: 22:20:00 | sin vela real
+OrderFlowIndicator.js:445 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (2) [{…}, {…}]
+OrderFlowIndicator.js:452 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=2 (2 con volumen, 0 vacíos), candle_range=18.40
+aggregation-logger.js:342 ✅ Grupo 2/8922: 22:25:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 3/8922: 22:30:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 4/8922: 22:35:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 5/8922: 22:40:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 6/8922: 22:45:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 7/8922: 22:50:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 8/8922: 22:55:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 9/8922: 23:00:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 10/8922: 23:05:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 11/8922: 23:10:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 12/8922: 23:15:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 13/8922: 23:20:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 14/8922: 23:25:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 15/8922: 23:30:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 16/8922: 23:35:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 17/8922: 23:40:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 18/8922: 23:45:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 19/8922: 23:50:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 20/8922: 23:55:00 | sin vela real
+OrderFlowIndicator.js:528 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8922 footprints de 5min con 2 levels uniformes
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 8922}
+aggregation-logger.js:380 
+✅ ANÁLISIS COMPLETADO
+aggregation-logger.js:381 📊 Resumen: 0 errores, 0 warnings de 20 grupos
+aggregation-logger.js:382 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-47.json
+
+OrderFlowIndicator.js:637 [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8922 footprints de 5min
+OrderFlowIndicator.js:647 [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+OrderFlowIndicator.js:648 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:649 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:10:00
+OrderFlowIndicator.js:650 [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+OrderFlowIndicator.js:651 [OrderFlow] [BTCUSDT]   • Footprints: 8922 de 5min
+OrderFlowIndicator.js:741 [OrderFlow] [BTCUSDT] 📚 Archivo local: 8922 footprints cargados
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:774 [OrderFlow] [BTCUSDT] 🌐 Backend: 3 footprints recibidos
+OrderFlowIndicator.js:784 [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+OrderFlowIndicator.js:785 [OrderFlow] [BTCUSDT]   • Desde: 4/11/2026, 14:52:00
+OrderFlowIndicator.js:786 [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:54:00
+OrderFlowIndicator.js:787 [OrderFlow] [BTCUSDT]   • Duración: 0.0 horas (~0.0 días)
+OrderFlowIndicator.js:788 [OrderFlow] [BTCUSDT]   • Footprints: 3 de 5min
+OrderFlowIndicator.js:811 [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints del backend de 1min a 5min...
+OrderFlowIndicator.js:548 [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+OrderFlowIndicator.js:233 [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints de 1min a 5min
+OrderFlowIndicator.js:241 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…me, imbalances, stacked_imbalances, volume_zscore', levelCount: 2, level0: {…}}
+OrderFlowIndicator.js:312 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+OrderFlowIndicator.js:314 [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+OrderFlowIndicator.js:323 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 3, con step_size: 3, sin step_size: 0
+aggregation-logger.js:42 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+aggregation-logger.js:43 📊 BTCUSDT | 3 footprints 1min → 1 grupos 5min
+aggregation-logger.js:44 ⚙️  Step size: 20 (fuente: backend)
+aggregation-logger.js:48 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-49.json
+
+aggregation-logger.js:342 ✅ Grupo 1/1: 14:50:00 | gaps: ↑0.0 ↓0.0
+OrderFlowIndicator.js:445 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+OrderFlowIndicator.js:452 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=7 (7 con volumen, 0 vacíos), candle_range=126.50
+OrderFlowIndicator.js:528 [OrderFlow] [BTCUSDT] ✅ Agregación completa: 1 footprints de 5min con 7 levels uniformes
+OrderFlowIndicator.js:529 [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 1}
+aggregation-logger.js:380 
+✅ ANÁLISIS COMPLETADO
+aggregation-logger.js:381 📊 Resumen: 0 errores, 0 warnings de 1 grupos
+aggregation-logger.js:382 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-49.json
+
+OrderFlowIndicator.js:814 [OrderFlow] [BTCUSDT] ✅ Backend agregado: 1 footprints de 5min
+OrderFlowIndicator.js:894 [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8922, backend(5min): +1 nuevos, ~0 actualizados, -0 ignorados = 8923 total
+OrderFlowIndicator.js:902 [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+OrderFlowIndicator.js:915 [OrderFlow] [BTCUSDT] 🔍 FORMATO: 8923 con levels, 0 con price_levels, 0 sin ninguno
+OrderFlowIndicator.js:926 [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+OrderFlowIndicator.js:927 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+OrderFlowIndicator.js:928 [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:50:00
+OrderFlowIndicator.js:929 [OrderFlow] [BTCUSDT]   • Duración: 784.5 horas (~32.7 días)
+OrderFlowIndicator.js:930 [OrderFlow] [BTCUSDT]   • Footprints: 8923 de 5min
+MiniChart.jsx:2173 [BTCUSDT] 🔄 requestRedraw called (candles: 1440)
+MiniChart.jsx:2175 [BTCUSDT] 🔄 Redraw executing drawChart...
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+PollingCoordinator.js:227 [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+FootprintArchiverElectron.js:197 [FootprintArchiver] ❌ BTCUSDT: Error descargando después de 1.2s: Error invoking remote method 'download-footprints': Error: HTTP 503: Service Unavailable
+_fetchFromCloud @ FootprintArchiverElectron.js:197
+await in _fetchFromCloud
+archiveSymbol @ FootprintArchiverElectron.js:260
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+FootprintArchiverElectron.js:263 [FootprintArchiver] ❌ BTCUSDT: No hay datos en el cloud (0 footprints descargados)
+archiveSymbol @ FootprintArchiverElectron.js:263
+await in archiveSymbol
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:709 [OrderFlow] [BTCUSDT] ❌ _autoDownloadArchive ERROR: No hay datos disponibles en el cloud collector
+_autoDownloadArchive @ OrderFlowIndicator.js:709
+await in _autoDownloadArchive
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1455
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1454
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1444
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1455
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1454
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1444
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+PollingCoordinator.js:218 [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+OrderFlowIndicator.js:719 [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+OrderFlowIndicator.js:736 [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+OrderFlowIndicator.js:559 [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+OrderFlowIndicator.js:560 [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+OrderFlowIndicator.js:570 [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+OrderFlowIndicator.js:573 [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+OrderFlowIndicator.js:576 [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+OrderFlowIndicator.js:583 [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+OrderFlowIndicator.js:586 [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87973900 caracteres
+OrderFlowIndicator.js:591 [OrderFlow] [BTCUSDT] 📚 Cargados 44593 footprints de 1min desde archivo local
+OrderFlowIndicator.js:601 [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+OrderFlowIndicator.js:602 [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+OrderFlowIndicator.js:603 [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:13:00 (ts: 1793675580000)
+OrderFlowIndicator.js:604 [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+OrderFlowIndicator.js:605 [OrderFlow] [BTCUSDT]   • Footprints: 44593 de 1min
+OrderFlowIndicator.js:618 [OrderFlow] [BTCUSDT] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de 2/11/2026, 22:13:00 (40.7h de antigüedad)
+_loadFromArchive @ OrderFlowIndicator.js:618
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+OrderFlowIndicator.js:619 [OrderFlow] [BTCUSDT] 🔄 Descargando footprints actualizados automáticamente...
+OrderFlowIndicator.js:673 [OrderFlow] [BTCUSDT] 🔄 _autoDownloadArchive: Iniciando descarga automática...
+OrderFlowIndicator.js:684 [OrderFlow] [BTCUSDT] 📥 Descargando últimas 48h desde cloud...
+FootprintArchiverElectron.js:254 [FootprintArchiver] 📥 Archivando BTCUSDT (48h = ~2.0 días)...
+FootprintArchiverElectron.js:152 [FootprintArchiver] 🌐 Descargando BTCUSDT: 48h (~2.0 días)
+FootprintArchiverElectron.js:153 [FootprintArchiver] 🔍 URL cloud: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=48&interval=1
+FootprintArchiverElectron.js:163 [FootprintArchiver] ⏳ Esperando respuesta del cloud...
+OrderFlowIndicator.js:630 [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+OrderFlowIndicator.js:1662 [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+OrderFlowIndicator.js:1663   step_size=20, priceRange=126.50
+OrderFlowIndicator.js:1664   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+OrderFlowIndicator.js:1665   normalizedCellHeight=10.26px (con mínimo 1.5px)
+OrderFlowIndicator.js:1666   expectedSteps=6.33, levels.length=7
+OrderFlowIndicator.js:1330 [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+OrderFlowIndicator.js:1351 [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:969
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+Logger.js:94 ⚠️ [2:55:54 p. m.] [Manager] [BTCUSDT] renderOverlays: VWAP NOT FOUND in indicators (count=2)
+warn @ Logger.js:94
+renderOverlays @ IndicatorManager.js:526
+drawChart @ MiniChart.jsx:1004
+(anonymous) @ MiniChart.jsx:1569
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1568
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+OrderFlowIndicator.js:548 [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+OrderFlowIndicator.js:233 [OrderFlow] [BTCUSDT] 🔄 Agregando 44593 footprints de 1min a 5min
+OrderFlowIndicator.js:241 [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+OrderFlowIndicator.js:312 [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+OrderFlowIndicator.js:314 [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+OrderFlowIndicator.js:323 [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44593, con step_size: 44593, sin step_size: 0
+aggregation-logger.js:42 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+aggregation-logger.js:43 📊 BTCUSDT | 44593 footprints 1min → 8922 grupos 5min
+aggregation-logger.js:44 ⚙️  Step size: 20 (fuente: backend)
+aggregation-logger.js:48 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-54.json
+
+aggregation-logger.js:342 ✅ Grupo 1/8922: 22:20:00 | sin vela real
+OrderFlowIndicator.js:445 [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (2) [{…}, {…}]
+OrderFlowIndicator.js:452 [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=2 (2 con volumen, 0 vacíos), candle_range=18.40
+aggregation-logger.js:342 ✅ Grupo 2/8922: 22:25:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 3/8922: 22:30:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 4/8922: 22:35:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 5/8922: 22:40:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 6/8922: 22:45:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 7/8922: 22:50:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 8/8922: 22:55:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 9/8922: 23:00:00 | sin vela real
+aggregation-logger.js:342 ✅ Grupo 10/8922: 23:05:00 | sin vela real
+ ✅ Grupo 11/8922: 23:10:00 | sin vela real
+ ✅ Grupo 12/8922: 23:15:00 | sin vela real
+ ✅ Grupo 13/8922: 23:20:00 | sin vela real
+ ✅ Grupo 14/8922: 23:25:00 | sin vela real
+ ✅ Grupo 15/8922: 23:30:00 | sin vela real
+ ✅ Grupo 16/8922: 23:35:00 | sin vela real
+ ✅ Grupo 17/8922: 23:40:00 | sin vela real
+ ✅ Grupo 18/8922: 23:45:00 | sin vela real
+ ✅ Grupo 19/8922: 23:50:00 | sin vela real
+ ✅ Grupo 20/8922: 23:55:00 | sin vela real
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8922 footprints de 5min con 2 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 8922}
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 20 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-54.json
+
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8922 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8922 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8922 footprints cargados
+ [FootprintArchiver] ❌ BTCUSDT: Error descargando después de 0.6s: Error invoking remote method 'download-footprints': Error: HTTP 503: Service Unavailable
+_fetchFromCloud @ FootprintArchiverElectron.js:197
+await in _fetchFromCloud
+archiveSymbol @ FootprintArchiverElectron.js:260
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [FootprintArchiver] ❌ BTCUSDT: No hay datos en el cloud (0 footprints descargados)
+archiveSymbol @ FootprintArchiverElectron.js:263
+await in archiveSymbol
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] ❌ _autoDownloadArchive ERROR: No hay datos disponibles en el cloud collector
+_autoDownloadArchive @ OrderFlowIndicator.js:709
+await in _autoDownloadArchive
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 3 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 4/11/2026, 14:52:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:54:00
+ [OrderFlow] [BTCUSDT]   • Duración: 0.0 horas (~0.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 3 de 5min
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints del backend de 1min a 5min...
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…me, imbalances, stacked_imbalances, volume_zscore', levelCount: 2, level0: {…}}
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 3, con step_size: 3, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 3 footprints 1min → 1 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-55-55.json
+
+ ✅ Grupo 1/1: 14:50:00 | gaps: ↑0.0 ↓0.0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=7 (7 con volumen, 0 vacíos), candle_range=126.50
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 1 footprints de 5min con 7 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 1}
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 1 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-55-55.json
+
+ [OrderFlow] [BTCUSDT] ✅ Backend agregado: 1 footprints de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8922, backend(5min): +1 nuevos, ~0 actualizados, -0 ignorados = 8923 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 8923 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 784.5 horas (~32.7 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8923 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1440)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:1616
+(anonymous) @ OrderFlowIndicator.js:180
+await in (anonymous)
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1094
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1093
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1085
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87973900 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 44593 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:13:00 (ts: 1793675580000)
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 44593 de 1min
+ [OrderFlow] [BTCUSDT] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de 2/11/2026, 22:13:00 (40.7h de antigüedad)
+_loadFromArchive @ OrderFlowIndicator.js:618
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] 🔄 Descargando footprints actualizados automáticamente...
+ [OrderFlow] [BTCUSDT] 🔄 _autoDownloadArchive: Iniciando descarga automática...
+ [OrderFlow] [BTCUSDT] 📥 Descargando últimas 48h desde cloud...
+ [FootprintArchiver] 📥 Archivando BTCUSDT (48h = ~2.0 días)...
+ [FootprintArchiver] 🌐 Descargando BTCUSDT: 48h (~2.0 días)
+ [FootprintArchiver] 🔍 URL cloud: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=48&interval=1
+ [FootprintArchiver] ⏳ Esperando respuesta del cloud...
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 44593 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44593, con step_size: 44593, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 44593 footprints 1min → 8922 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-56-01.json
+
+ ✅ Grupo 1/8922: 22:20:00 | sin vela real
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (2) [{…}, {…}]
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=2 (2 con volumen, 0 vacíos), candle_range=18.40
+ ✅ Grupo 2/8922: 22:25:00 | sin vela real
+ ✅ Grupo 3/8922: 22:30:00 | sin vela real
+ ✅ Grupo 4/8922: 22:35:00 | sin vela real
+ ✅ Grupo 5/8922: 22:40:00 | sin vela real
+ ✅ Grupo 6/8922: 22:45:00 | sin vela real
+ ✅ Grupo 7/8922: 22:50:00 | sin vela real
+ ✅ Grupo 8/8922: 22:55:00 | sin vela real
+ ✅ Grupo 9/8922: 23:00:00 | sin vela real
+ ✅ Grupo 10/8922: 23:05:00 | sin vela real
+ ✅ Grupo 11/8922: 23:10:00 | sin vela real
+ ✅ Grupo 12/8922: 23:15:00 | sin vela real
+ ✅ Grupo 13/8922: 23:20:00 | sin vela real
+ ✅ Grupo 14/8922: 23:25:00 | sin vela real
+ ✅ Grupo 15/8922: 23:30:00 | sin vela real
+ ✅ Grupo 16/8922: 23:35:00 | sin vela real
+ ✅ Grupo 17/8922: 23:40:00 | sin vela real
+ ✅ Grupo 18/8922: 23:45:00 | sin vela real
+ ✅ Grupo 19/8922: 23:50:00 | sin vela real
+ ✅ Grupo 20/8922: 23:55:00 | sin vela real
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8922 footprints de 5min con 2 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 8922}
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 20 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-56-01.json
+
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8922 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8922 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8922 footprints cargados
+ [FootprintArchiver] ❌ BTCUSDT: Error descargando después de 0.6s: Error invoking remote method 'download-footprints': Error: HTTP 503: Service Unavailable
+_fetchFromCloud @ FootprintArchiverElectron.js:197
+await in _fetchFromCloud
+archiveSymbol @ FootprintArchiverElectron.js:260
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [FootprintArchiver] ❌ BTCUSDT: No hay datos en el cloud (0 footprints descargados)
+archiveSymbol @ FootprintArchiverElectron.js:263
+await in archiveSymbol
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] ❌ _autoDownloadArchive ERROR: No hay datos disponibles en el cloud collector
+_autoDownloadArchive @ OrderFlowIndicator.js:709
+await in _autoDownloadArchive
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [PollingCoordinator] Executing: SymbolList_PriceChanges
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 3 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 4/11/2026, 14:52:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:54:00
+ [OrderFlow] [BTCUSDT]   • Duración: 0.0 horas (~0.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 3 de 5min
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints del backend de 1min a 5min...
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 3 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…me, imbalances, stacked_imbalances, volume_zscore', levelCount: 2, level0: {…}}
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 3, con step_size: 3, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 3 footprints 1min → 1 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-56-03.json
+
+ ✅ Grupo 1/1: 14:50:00 | gaps: ↑0.0 ↓0.0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=7 (7 con volumen, 0 vacíos), candle_range=126.50
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 1 footprints de 5min con 7 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 1}
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 1 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-56-03.json
+
+ [OrderFlow] [BTCUSDT] ✅ Backend agregado: 1 footprints de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8922, backend(5min): +1 nuevos, ~0 actualizados, -0 ignorados = 8923 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 8923 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:50:00
+ [OrderFlow] [BTCUSDT]   • Duración: 784.5 horas (~32.7 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8923 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1440)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [PollingCoordinator] Completed: SymbolList_PriceChanges
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87973900 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 44593 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:13:00 (ts: 1793675580000)
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 44593 de 1min
+ [OrderFlow] [BTCUSDT] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de 2/11/2026, 22:13:00 (40.7h de antigüedad)
+_loadFromArchive @ OrderFlowIndicator.js:618
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] 🔄 Descargando footprints actualizados automáticamente...
+ [OrderFlow] [BTCUSDT] 🔄 _autoDownloadArchive: Iniciando descarga automática...
+ [OrderFlow] [BTCUSDT] 📥 Descargando últimas 48h desde cloud...
+ [FootprintArchiver] 📥 Archivando BTCUSDT (48h = ~2.0 días)...
+ [FootprintArchiver] 🌐 Descargando BTCUSDT: 48h (~2.0 días)
+ [FootprintArchiver] 🔍 URL cloud: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=48&interval=1
+ [FootprintArchiver] ⏳ Esperando respuesta del cloud...
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 44593 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44593, con step_size: 44593, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 44593 footprints 1min → 8922 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-56-09.json
+
+ ✅ Grupo 1/8922: 22:20:00 | sin vela real
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (2) [{…}, {…}]
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=2 (2 con volumen, 0 vacíos), candle_range=18.40
+ ✅ Grupo 2/8922: 22:25:00 | sin vela real
+ ✅ Grupo 3/8922: 22:30:00 | sin vela real
+ ✅ Grupo 4/8922: 22:35:00 | sin vela real
+ ✅ Grupo 5/8922: 22:40:00 | sin vela real
+ ✅ Grupo 6/8922: 22:45:00 | sin vela real
+ ✅ Grupo 7/8922: 22:50:00 | sin vela real
+ ✅ Grupo 8/8922: 22:55:00 | sin vela real
+ ✅ Grupo 9/8922: 23:00:00 | sin vela real
+ ✅ Grupo 10/8922: 23:05:00 | sin vela real
+ ✅ Grupo 11/8922: 23:10:00 | sin vela real
+ ✅ Grupo 12/8922: 23:15:00 | sin vela real
+ ✅ Grupo 13/8922: 23:20:00 | sin vela real
+ ✅ Grupo 14/8922: 23:25:00 | sin vela real
+ ✅ Grupo 15/8922: 23:30:00 | sin vela real
+ ✅ Grupo 16/8922: 23:35:00 | sin vela real
+ ✅ Grupo 17/8922: 23:40:00 | sin vela real
+ ✅ Grupo 18/8922: 23:45:00 | sin vela real
+ ✅ Grupo 19/8922: 23:50:00 | sin vela real
+ ✅ Grupo 20/8922: 23:55:00 | sin vela real
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8922 footprints de 5min con 2 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 8922}
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] RENDER: 1/25 velas con FP, 8923 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 20 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-56-09.json
+
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8922 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8922 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8922 footprints cargados
+ [FootprintArchiver] ❌ BTCUSDT: Error descargando después de 0.6s: Error invoking remote method 'download-footprints': Error: HTTP 503: Service Unavailable
+_fetchFromCloud @ FootprintArchiverElectron.js:197
+await in _fetchFromCloud
+archiveSymbol @ FootprintArchiverElectron.js:260
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [FootprintArchiver] ❌ BTCUSDT: No hay datos en el cloud (0 footprints descargados)
+archiveSymbol @ FootprintArchiverElectron.js:263
+await in archiveSymbol
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] ❌ _autoDownloadArchive ERROR: No hay datos disponibles en el cloud collector
+_autoDownloadArchive @ OrderFlowIndicator.js:709
+await in _autoDownloadArchive
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 4 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 4/11/2026, 14:52:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   • Duración: 0.1 horas (~0.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 4 de 5min
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 4 footprints del backend de 1min a 5min...
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 4 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…me, imbalances, stacked_imbalances, volume_zscore', levelCount: 2, level0: {…}}
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 4, con step_size: 4, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 4 footprints 1min → 2 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-56-10.json
+
+ ✅ Grupo 1/2: 14:50:00 | gaps: ↑0.0 ↓0.0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=7 (7 con volumen, 0 vacíos), candle_range=126.50
+ ✅ Grupo 2/2: 14:55:00 | sin vela real
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 2 footprints de 5min con 7 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 2}
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 2 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-56-10.json
+
+ [OrderFlow] [BTCUSDT] ✅ Backend agregado: 2 footprints de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8922, backend(5min): +2 nuevos, ~0 actualizados, -0 ignorados = 8924 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 8924 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   • Duración: 784.6 horas (~32.7 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8924 de 5min
+ [OrderFlow] [BTCUSDT] +1 footprints (total: 8924)
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1440)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] RENDER: 8924 fps, candleWidth=35.4px, mode=FOOTPRINT (zoomed in)
+ [OrderFlow] [BTCUSDT] CANDLES VISIBLE: 4/11/2026, 12:55:00 p.m. → 4/11/2026, 2:55:00 p.m. (25 velas)
+ [OrderFlow] [BTCUSDT] CANDLES ALL: 30/10/2026, 2:55:00 p.m. → 4/11/2026, 2:55:00 p.m. (1441 velas TOTALES)
+ [OrderFlow] [BTCUSDT] FP RANGE: 2/10/2026, 10:20:00 p.m. → 4/11/2026, 2:55:00 p.m.
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1094
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1093
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1085
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1094
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1093
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1085
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87973900 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 44593 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:13:00 (ts: 1793675580000)
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 44593 de 1min
+ [OrderFlow] [BTCUSDT] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de 2/11/2026, 22:13:00 (40.7h de antigüedad)
+_loadFromArchive @ OrderFlowIndicator.js:618
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] 🔄 Descargando footprints actualizados automáticamente...
+ [OrderFlow] [BTCUSDT] 🔄 _autoDownloadArchive: Iniciando descarga automática...
+ [OrderFlow] [BTCUSDT] 📥 Descargando últimas 48h desde cloud...
+ [FootprintArchiver] 📥 Archivando BTCUSDT (48h = ~2.0 días)...
+ [FootprintArchiver] 🌐 Descargando BTCUSDT: 48h (~2.0 días)
+ [FootprintArchiver] 🔍 URL cloud: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=48&interval=1
+ [FootprintArchiver] ⏳ Esperando respuesta del cloud...
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 44593 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44593, con step_size: 44593, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 44593 footprints 1min → 8922 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-56-15.json
+
+ ✅ Grupo 1/8922: 22:20:00 | sin vela real
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (2) [{…}, {…}]
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=2 (2 con volumen, 0 vacíos), candle_range=18.40
+ ✅ Grupo 2/8922: 22:25:00 | sin vela real
+ ✅ Grupo 3/8922: 22:30:00 | sin vela real
+ ✅ Grupo 4/8922: 22:35:00 | sin vela real
+ ✅ Grupo 5/8922: 22:40:00 | sin vela real
+ ✅ Grupo 6/8922: 22:45:00 | sin vela real
+ ✅ Grupo 7/8922: 22:50:00 | sin vela real
+ ✅ Grupo 8/8922: 22:55:00 | sin vela real
+ ✅ Grupo 9/8922: 23:00:00 | sin vela real
+ ✅ Grupo 10/8922: 23:05:00 | sin vela real
+ ✅ Grupo 11/8922: 23:10:00 | sin vela real
+ ✅ Grupo 12/8922: 23:15:00 | sin vela real
+ ✅ Grupo 13/8922: 23:20:00 | sin vela real
+ ✅ Grupo 14/8922: 23:25:00 | sin vela real
+ ✅ Grupo 15/8922: 23:30:00 | sin vela real
+ ✅ Grupo 16/8922: 23:35:00 | sin vela real
+ ✅ Grupo 17/8922: 23:40:00 | sin vela real
+ ✅ Grupo 18/8922: 23:45:00 | sin vela real
+ ✅ Grupo 19/8922: 23:50:00 | sin vela real
+ ✅ Grupo 20/8922: 23:55:00 | sin vela real
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 8922 footprints de 5min con 2 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 8922}
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 20 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-56-15.json
+
+ [OrderFlow] [BTCUSDT] 🔍 Agregación retorna: 8922 footprints de 5min
+ [OrderFlow] [BTCUSDT] 🔍 AGREGADO 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:10:00
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8922 de 5min
+ [OrderFlow] [BTCUSDT] 📚 Archivo local: 8922 footprints cargados
+ [FootprintArchiver] ❌ BTCUSDT: Error descargando después de 0.6s: Error invoking remote method 'download-footprints': Error: HTTP 503: Service Unavailable
+_fetchFromCloud @ FootprintArchiverElectron.js:197
+await in _fetchFromCloud
+archiveSymbol @ FootprintArchiverElectron.js:260
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [FootprintArchiver] ❌ BTCUSDT: No hay datos en el cloud (0 footprints descargados)
+archiveSymbol @ FootprintArchiverElectron.js:263
+await in archiveSymbol
+_autoDownloadArchive @ OrderFlowIndicator.js:686
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] ❌ _autoDownloadArchive ERROR: No hay datos disponibles en el cloud collector
+_autoDownloadArchive @ OrderFlowIndicator.js:709
+await in _autoDownloadArchive
+_loadFromArchive @ OrderFlowIndicator.js:622
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] 🌐 Backend: 4 footprints recibidos
+ [OrderFlow] [BTCUSDT] 🔍 BACKEND 5min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 4/11/2026, 14:52:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   • Duración: 0.1 horas (~0.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 4 de 5min
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 4 footprints del backend de 1min a 5min...
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 4 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…me, imbalances, stacked_imbalances, volume_zscore', levelCount: 2, level0: {…}}
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 4, con step_size: 4, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 4 footprints 1min → 2 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-56-16.json
+
+ ✅ Grupo 1/2: 14:50:00 | gaps: ↑0.0 ↓0.0
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (3) [{…}, {…}, {…}]
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=7 (7 con volumen, 0 vacíos), candle_range=126.50
+ ✅ Grupo 2/2: 14:55:00 | sin vela real
+ [OrderFlow] [BTCUSDT] ✅ Agregación completa: 2 footprints de 5min con 7 levels uniformes
+ [OrderFlow] [BTCUSDT] 🔍 DISTRIBUCIÓN STEP_SIZES AGREGADOS: {20: 2}
+ 
+✅ ANÁLISIS COMPLETADO
+ 📊 Resumen: 0 errores, 0 warnings de 2 grupos
+ 💾 Archivo guardado: C:\Users\inven\OneDrive\Documentos\GitHub\watchlist\9.OrderFlowDesktop\aggregation_analysis_2026-11-04T19-56-16.json
+
+ [OrderFlow] [BTCUSDT] ✅ Backend agregado: 2 footprints de 5min
+ [OrderFlow] [BTCUSDT] ✅ Merge: archivo=8922, backend(5min): +2 nuevos, ~0 actualizados, -0 ignorados = 8924 total
+ [OrderFlow] [BTCUSDT] 🔍 POST-MERGE: first.levels=true, mid.levels=true, last.levels=true
+ [OrderFlow] [BTCUSDT] 🔍 FORMATO: 8924 con levels, 0 con price_levels, 0 sin ninguno
+ [OrderFlow] [BTCUSDT] 🔍 MERGED 5min RANGO FINAL:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:20:00
+ [OrderFlow] [BTCUSDT]   • Hasta: 4/11/2026, 14:55:00
+ [OrderFlow] [BTCUSDT]   • Duración: 784.6 horas (~32.7 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 8924 de 5min
+ [BTCUSDT] 🔄 requestRedraw called (candles: 1440)
+ [BTCUSDT] 🔄 Redraw executing drawChart...
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+indicatorManagerRef.current.requestRedraw @ MiniChart.jsx:1616
+(anonymous) @ OrderFlowIndicator.js:180
+await in (anonymous)
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [PollingCoordinator] Completed: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1094
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1093
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1085
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1094
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1093
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1085
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [PollingCoordinator] Executing: OrderFlow_BTCUSDT
+ [OrderFlow] [BTCUSDT] 🔍 fetchFootprints INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 PASO 1: Intentando cargar desde archivo...
+ [OrderFlow] [BTCUSDT] 🔍 _loadFromArchive INICIADO - interval=5
+ [OrderFlow] [BTCUSDT] 🔍 window.electron=true, getUserDataPath=true, readFile=true, fileExists=true
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1094
+requestAnimationFrame
+onPriceUpdate @ MiniChart.jsx:1093
+handleWebSocketUpdate @ RenderManager.js:96
+handleWebSocketMessage @ MiniChart.jsx:1085
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:164
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1172
+requestAnimationFrame
+handleWebSocketMessage @ MiniChart.jsx:1171
+(anonymous) @ WebSocketManager.js:184
+_dispatchToSubscribers @ WebSocketManager.js:182
+(anonymous) @ WebSocketManager.js:167
+_processBuffer @ WebSocketManager.js:159
+(anonymous) @ WebSocketManager.js:138
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] RENDER: 2/25 velas con FP, 8924 fps disponibles, candleWidth=35.4px, fullMode=false
+ [OrderFlow] [BTCUSDT] ⚠️ Primeros 23 velas SIN FP. Primer match en índice 23: 4/11/2026, 2:50:00 p.m.
+renderOverlay @ OrderFlowIndicator.js:1351
+drawChart @ MiniChart.jsx:752
+(anonymous) @ MiniChart.jsx:1234
+requestAnimationFrame
+handleMouseMove @ MiniChart.jsx:1233
+callCallback2 @ chunk-ZFBEYDM4.js:3674
+invokeGuardedCallbackDev @ chunk-ZFBEYDM4.js:3699
+invokeGuardedCallback @ chunk-ZFBEYDM4.js:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-ZFBEYDM4.js:3736
+executeDispatch @ chunk-ZFBEYDM4.js:7014
+processDispatchQueueItemsInOrder @ chunk-ZFBEYDM4.js:7034
+processDispatchQueue @ chunk-ZFBEYDM4.js:7043
+dispatchEventsForPlugins @ chunk-ZFBEYDM4.js:7051
+(anonymous) @ chunk-ZFBEYDM4.js:7174
+batchedUpdates$1 @ chunk-ZFBEYDM4.js:18913
+batchedUpdates @ chunk-ZFBEYDM4.js:3579
+dispatchEventForPluginEventSystem @ chunk-ZFBEYDM4.js:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-ZFBEYDM4.js:5478
+dispatchEvent @ chunk-ZFBEYDM4.js:5472
+dispatchContinuousEvent @ chunk-ZFBEYDM4.js:5461
+ [OrderFlow] [BTCUSDT] 🔍 userDataPath obtenido: C:\Users\inven\AppData\Roaming\orderflow-desktop
+ [OrderFlow] [BTCUSDT] 🔍 Verificando archivo: C:\Users\inven\AppData\Roaming\orderflow-desktop/footprint_archive/BTCUSDT_1.json
+ [OrderFlow] [BTCUSDT] 🔍 Archivo existe: true
+ [OrderFlow] [BTCUSDT] ✅ Archivo existe, leyendo...
+ [OrderFlow] [BTCUSDT] 🔍 Contenido leído: 87973900 caracteres
+ [OrderFlow] [BTCUSDT] 📚 Cargados 44593 footprints de 1min desde archivo local
+ [OrderFlow] [BTCUSDT] 🔍 ARCHIVO 1min RANGO:
+ [OrderFlow] [BTCUSDT]   • Desde: 2/10/2026, 22:23:00 (ts: 1790997780000)
+ [OrderFlow] [BTCUSDT]   • Hasta: 2/11/2026, 22:13:00 (ts: 1793675580000)
+ [OrderFlow] [BTCUSDT]   • Duración: 743.8 horas (~31.0 días)
+ [OrderFlow] [BTCUSDT]   • Footprints: 44593 de 1min
+ [OrderFlow] [BTCUSDT] ⚠️ ARCHIVO DESACTUALIZADO: último footprint de 2/11/2026, 22:13:00 (40.7h de antigüedad)
+_loadFromArchive @ OrderFlowIndicator.js:618
+await in _loadFromArchive
+fetchFootprints @ OrderFlowIndicator.js:739
+(anonymous) @ OrderFlowIndicator.js:178
+_executeCallback @ PollingCoordinator.js:221
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+setTimeout
+_scheduleNext @ PollingCoordinator.js:193
+_executeCallback @ PollingCoordinator.js:235
+await in _executeCallback
+(anonymous) @ PollingCoordinator.js:194
+ [OrderFlow] [BTCUSDT] 🔄 Descargando footprints actualizados automáticamente...
+ [OrderFlow] [BTCUSDT] 🔄 _autoDownloadArchive: Iniciando descarga automática...
+ [OrderFlow] [BTCUSDT] 📥 Descargando últimas 48h desde cloud...
+ [FootprintArchiver] 📥 Archivando BTCUSDT (48h = ~2.0 días)...
+ [FootprintArchiver] 🌐 Descargando BTCUSDT: 48h (~2.0 días)
+ [FootprintArchiver] 🔍 URL cloud: https://p01--altagracia--rxv8nrbhxln9.code.run/api/footprints/BTCUSDT?hours=48&interval=1
+ [FootprintArchiver] ⏳ Esperando respuesta del cloud...
+ [OrderFlow] [BTCUSDT] 🔍 Agregando de 1min a 5min...
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:50:
+   step_size=20, priceRange=126.50
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=6.33, levels.length=7
+ [OrderFlow] [BTCUSDT] 📏 NORMALIZACIÓN GLOBAL @ 14:55:
+   step_size=20, priceRange=79.30
+   cellHeightForStepSize=10.26px (GLOBAL - mismo para todos)
+   normalizedCellHeight=10.26px (con mínimo 1.5px)
+   expectedSteps=3.97, levels.length=5
+ [OrderFlow] [BTCUSDT] ✅ Backend step_size consultado: 20
+ [OrderFlow] [BTCUSDT] 🔄 Agregando 44593 footprints de 1min a 5min
+ [OrderFlow] [BTCUSDT] 🔍 MUESTRA FP 1MIN: {fpKeys: 'candle_timestamp, symbol, interval, candle_open, c…total_delta, total_volume, trade_count, estimated', levelCount: 1, level0: {…}}
+ [OrderFlow] [BTCUSDT] 📏 STEP_SIZE: 20 (fuente: backend)
+ [OrderFlow] [BTCUSDT] 🌐 Usando step_size configurado en backend/modal
+ [OrderFlow] [BTCUSDT] 📊 Total footprints 1min: 44593, con step_size: 44593, sin step_size: 0
+ 
+🔬 ANÁLISIS PROFESIONAL DE AGREGACIÓN
+ 📊 BTCUSDT | 44593 footprints 1min → 8922 grupos 5min
+ ⚙️  Step size: 20 (fuente: backend)
+ 💾 Guardando en: aggregation_analysis_2026-11-04T19-56-34.json
+
+ ✅ Grupo 1/8922: 22:20:00 | sin vela real
+ [OrderFlow] [BTCUSDT] 🔍 NIVELES UNIFORMES (primeros 3): (2) [{…}, {…}]
+ [OrderFlow] [BTCUSDT] 🔍 step_size GLOBAL=20, total_levels=2 (2 con volumen, 0 vacíos), candle_range=18.40
+ ✅ Grupo 2/8922: 22:25:00 | sin vela real
+ ✅ Grupo 3/8922: 22:30:00 | sin vela real
+ ✅ Grupo 4/8922: 22:35:00 | sin vela real
+ ✅ Grupo 5/8922: 22:40:00 | sin vela real
+ ✅ Grupo 6/8922: 22:45:00 | sin vela real
+ ✅ Grupo 7/8922: 22:50:00 | sin vela real
+ ✅ Grupo 8/8922: 22:55:00 | sin vela real
+ ✅ Grupo 9/8922: 23:00:00 | sin vela real
+ ✅ Grupo 10/8922: 23:05:00 | sin vela real
+ ✅ Grupo 11/8922: 23:10:00 | sin vela real
+ ✅ Grupo 12/8922: 23:15:00 | sin vela real
+ ✅ Grupo 13/8922: 23:20:00 | sin vela real
+ ✅ Grupo 14/8922: 23:25:00 | sin vela real
+ ✅ Grupo 15/8922: 23:30:00 | sin vela real
+ ✅ Grupo 16/8922: 23:35:00 | sin vela real
+ ✅ Grupo 17/8922: 23:40:00 | sin vela real
+ ✅ Grupo 18/8922: 23:45:00 | sin vela real
+ ✅ Grupo 19/8922: 23:50:00 | sin vela real
+ ✅ Grupo 20/8922: 23:55:00 | sin vela real

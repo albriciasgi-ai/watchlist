@@ -1,0 +1,1000 @@
+ [BacktestingApp] CHECK3: visibleCandles.length=524938
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790895000000 (2026-10-01T22:50:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790895000000 (2026-10-01T22:50:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84729.10
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T22:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790895300000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790895300000 (2026-10-01T22:55:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524939
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790895300000 (2026-10-01T22:55:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790895300000 (2026-10-01T22:55:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84715.60
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790895600000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790895600000 (2026-10-01T23:00:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524940
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790895600000 (2026-10-01T23:00:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790895600000 (2026-10-01T23:00:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84685.00
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790895900000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790895900000 (2026-10-01T23:05:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524941
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790895900000 (2026-10-01T23:05:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790895900000 (2026-10-01T23:05:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84655.80
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790896200000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790896200000 (2026-10-01T23:10:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524942
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790896200000 (2026-10-01T23:10:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790896200000 (2026-10-01T23:10:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84628.10
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790896500000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790896500000 (2026-10-01T23:15:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524943
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790896500000 (2026-10-01T23:15:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790896500000 (2026-10-01T23:15:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84737.40
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790896800000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790896800000 (2026-10-01T23:20:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524944
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790896800000 (2026-10-01T23:20:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790896800000 (2026-10-01T23:20:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84719.90
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790897100000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790897100000 (2026-10-01T23:25:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524945
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790897100000 (2026-10-01T23:25:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790897100000 (2026-10-01T23:25:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84703.90
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790897400000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790897400000 (2026-10-01T23:30:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524946
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790897400000 (2026-10-01T23:30:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790897400000 (2026-10-01T23:30:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84773.20
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790897700000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790897700000 (2026-10-01T23:35:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524947
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790897700000 (2026-10-01T23:35:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790897700000 (2026-10-01T23:35:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84785.30
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790898000000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790898000000 (2026-10-01T23:40:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524948
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790898000000 (2026-10-01T23:40:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790898000000 (2026-10-01T23:40:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84800.10
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:45:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790898300000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790898300000 (2026-10-01T23:45:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524949
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790898300000 (2026-10-01T23:45:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790898300000 (2026-10-01T23:45:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84806.00
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:50:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790898600000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790898600000 (2026-10-01T23:50:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524950
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790898600000 (2026-10-01T23:50:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790898600000 (2026-10-01T23:50:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84806.50
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-01T23:55:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790898900000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790898900000 (2026-10-01T23:55:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524951
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790898900000 (2026-10-01T23:55:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790898900000 (2026-10-01T23:55:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84836.00
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:00:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790899200000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790899200000 (2026-10-02T00:00:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524952
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790899200000 (2026-10-02T00:00:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790899200000 (2026-10-02T00:00:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84727.30
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:05:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790899500000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790899500000 (2026-10-02T00:05:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524953
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790899500000 (2026-10-02T00:05:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790899500000 (2026-10-02T00:05:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84749.70
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:10:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790899800000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790899800000 (2026-10-02T00:10:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524954
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790899800000 (2026-10-02T00:10:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790899800000 (2026-10-02T00:10:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84835.80
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:15:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790900100000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790900100000 (2026-10-02T00:15:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524955
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790900100000 (2026-10-02T00:15:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790900100000 (2026-10-02T00:15:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84883.50
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790900400000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790900400000 (2026-10-02T00:20:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524956
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790900400000 (2026-10-02T00:20:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790900400000 (2026-10-02T00:20:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84848.00
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790900700000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790900700000 (2026-10-02T00:25:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524957
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790900700000 (2026-10-02T00:25:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790900700000 (2026-10-02T00:25:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84757.60
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:30:00.000Z, increment: 300000ms, subdivision: 0/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790901000000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790901000000 (2026-10-02T00:30:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524958
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790901000000 (2026-10-02T00:30:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790901000000 (2026-10-02T00:30:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84714.10
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:35:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790901300000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790901300000 (2026-10-02T00:35:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524959
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790901300000 (2026-10-02T00:35:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790901300000 (2026-10-02T00:35:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84711.50
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TimeController] Tick - currentTime: 2026-10-02T00:40:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790901600000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790901600000 (2026-10-02T00:40:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=526048
+ [BacktestingApp] CHECK3: visibleCandles.length=524960
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790901600000 (2026-10-02T00:40:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790901600000 (2026-10-02T00:40:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [TradingControls] Precio actualizado automáticamente: 84780.00
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-02T00:45:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1790901900000
+BacktestingApp.jsx:1133 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1790901900000 (2026-10-02T00:45:00.000Z)
+BacktestingApp.jsx:1140 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=5m, hasData=true
+BacktestingApp.jsx:1144 [BacktestingApp] CHECK2: timeframeData.main.length=526048
+BacktestingApp.jsx:1148 [BacktestingApp] CHECK3: visibleCandles.length=524961
+BacktestingApp.jsx:1164 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=5m, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1167 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1790901900000 (2026-10-02T00:45:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1790901900000 (2026-10-02T00:45:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+TimeController.js:231 [TimeController] ⏸️ Pause
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 84748.90
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=730, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:2331 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=21, maxDays=1825, usando=21
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked
+BacktestingApp.jsx:1204 [BacktestingApp] handlePause clicked

@@ -4386,39 +4386,47 @@ async def clear_cache_and_reload(request: Request):
 @app.delete("/api/orderflow/cache/{symbol}")
 async def clear_symbol_cache(symbol: str, interval: str = "1"):
     """
-    Clear cache for a specific symbol (used when step_size changes).
+    Clear cache for a specific symbol (usado cuando step_size cambia).
 
-    NOTA: Esta operación NO elimina archivos ni memoria.
-    Solo actualiza los calculators con el nuevo step_size.
-    Los footprints históricos del cloud/archivo mantendrán su step_size original.
-    Solo los footprints NUEVOS (generados en tiempo real) usarán el nuevo step_size.
+    FIX CRÍTICO: Limpia MEMORIA + DISCO para forzar regeneración con nuevo step_size.
     """
     try:
-        # SOLO actualizar calculators - NO eliminar nada
+        cache_dir = Path("footprint_cache")
+        deleted_files = []
+        memory_cleared = []
+
+        # PASO 1: Eliminar archivos de disco
+        if cache_dir.exists():
+            for file in cache_dir.glob(f"{symbol}_*.json"):
+                try:
+                    file.unlink()
+                    deleted_files.append(file.name)
+                    print(f"[CACHE] Deleted file: {file.name}")
+                except Exception as e:
+                    print(f"[ERROR] Failed to delete {file.name}: {e}")
+
+        # PASO 2: Limpiar footprints en MEMORIA del servicio
         service = get_orderflow_service()
         if service:
-            # Los calculators ya fueron actualizados cuando se guardó el step_size
-            # Este endpoint simplemente confirma la operación
-            print(f"[CACHE] Step size change confirmed for {symbol}")
-            print(f"[CACHE] Historical footprints will keep original step_size")
-            print(f"[CACHE] NEW footprints will use configured step_size")
+            for key in list(service._footprints.keys()):
+                if key.startswith(f"{symbol}_"):
+                    count = len(service._footprints[key])
+                    service._footprints[key].clear()
+                    memory_cleared.append(f"{key}: {count} footprints")
+                    print(f"[CACHE] Cleared memory for {key}: {count} footprints")
 
-            return {
-                "success": True,
-                "symbol": symbol,
-                "files_deleted": 0,
-                "deleted": [],
-                "memory_cleared": [],
-                "message": "Step size updated. Historical footprints unchanged, new footprints will use new step_size."
-            }
-        else:
-            return {
-                "success": True,
-                "symbol": symbol,
-                "files_deleted": 0,
-                "deleted": [],
-                "warning": "Service not available"
-            }
+        print(f"[CACHE] OK Cache limpiado para {symbol}")
+        print(f"[CACHE]    Archivos disco: {len(deleted_files)}")
+        print(f"[CACHE]    Memoria limpiada: {len(memory_cleared)}")
+
+        return {
+            "success": True,
+            "symbol": symbol,
+            "files_deleted": len(deleted_files),
+            "deleted": deleted_files,
+            "memory_cleared": memory_cleared,
+            "message": f"Cache completamente limpiado. Backend regenerará con nuevo step_size."
+        }
 
     except Exception as e:
         print(f"[ERROR] Clear symbol cache: {str(e)}")

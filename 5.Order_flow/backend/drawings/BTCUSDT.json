@@ -74,8 +74,22 @@
       "slPrice": 65857.85,
       "time": 1771994700000,
       "widthTime": 1440000
+    },
+    {
+      "type": "vertical",
+      "id": "vertical_1793713691949_0.12567903608120523",
+      "price": 77476.175,
+      "time": 1793713500000,
+      "style": {
+        "color": "#F59E0B",
+        "lineWidth": 2,
+        "dash": [
+          5,
+          5
+        ]
+      }
     }
   ],
-  "updated_at": "2026-02-25T04:56:55.386054+00:00",
-  "total_shapes": 6
+  "updated_at": "2026-11-04T04:29:28.917939+00:00",
+  "total_shapes": 7
 }

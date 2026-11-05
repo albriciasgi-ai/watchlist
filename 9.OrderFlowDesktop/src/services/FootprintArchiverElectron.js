@@ -21,8 +21,8 @@ class FootprintArchiverElectron {
         'TRXUSDT', 'DOGEUSDT', 'BNBUSDT', 'AVAXUSDT', 'ARBUSDT'
       ],
       interval: '1',  // SOLO 1 minuto (los intervalos mayores se agregan en frontend)
-      maxHoursPerRequest: 720,  // 30 días de historia (1 mes completo - disponible en Northflank)
-      timeout: 180000  // 3 minutos (aumentado de 2 min)
+      maxHoursPerRequest: 8760,  // 365 días de historia (1 año completo - SIN LIMITE en Northflank)
+      timeout: 300000  // 5 minutos (para descargas grandes de 1 año)
     };
 
     this._initStorage();

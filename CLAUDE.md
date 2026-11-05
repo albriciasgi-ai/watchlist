@@ -53,6 +53,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 9 (OrderFlowDesktop) - 4 Noviembre 2026: Limpieza de Rendimiento + Fix Footprints 5min
+
+**Problema:** Aplicación muy lenta por exceso de console.log (151 en OrderFlowIndicator.js) y código debug acumulado.
+
+**Cambios:**
+1. **Limpieza de logs:** De 151 a 43 console.log/warn/error. Eliminados todos los logs per-frame, per-cell y per-second
+2. **Eliminado aggregation-logger.js:** Módulo que escribía JSON a disco en cada agregación
+3. **Eliminado debug rendering:** Columna de precios amarilla con sombras CSS costosas por celda por frame
+4. **Fix footprints 5min recientes:** Backend retorna fps de 1min pero no se agregaban antes del merge. Agregado paso 2.5 en `fetchFootprints()` que agrega backend fps de 1min→5min antes del merge
+
+**Archivos modificados:**
+- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js` - Limpieza masiva de logs y debug
+- `9.OrderFlowDesktop/src/utils/aggregation-logger.js` - **ELIMINADO**
+
+**Ver:** `9.OrderFlowDesktop/CLAUDE.md` secciones "Limpieza de Rendimiento" y "Fix: Footprints no Cubren Velas en 5min Recientes"
+
+---
+
 ### APP 8 (AnalizadorDesktop) - 20 Octubre 2026: Indicador Liquidation Clusters
 
 **Implementación completa del indicador Liquidation Clusters con visualización en 3 capas y configuración UI.**
@@ -89,109 +107,21 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
-### APP 9 (OrderFlowDesktop) - 20 Octubre 2026: Fix Footprints Solo en Últimas 12h (Timeframe 5min)
+### APP 9 (OrderFlowDesktop) - 20 Octubre 2026: Fix Footprints Solo en Últimas 12h + Alturas Inconsistentes
 
-**Problema:** Los footprints solo se mostraban en las últimas 12 horas en timeframe de 5 minutos, a pesar de tener 20-30 días de datos. En 1 minuto funcionaba correctamente.
+**Problema:** Footprints solo se mostraban en las últimas 12h en timeframe 5min (20-30 días disponibles). Adicionalmente, celdas con alturas inconsistentes.
 
-**Causas raíz:**
-1. **Price ranges colapsados en agregación**: Al agregar footprints 1min → 5min, `price_min === price_max`, causando `levelHeight = 0` → rechazaba todos los levels en renderizado
-2. **Archivo desactualizado**: Gap de ~27.5h entre último footprint del archivo (17 Oct 22:40) y primeros del backend (20 Oct 02:08)
+**Fixes implementados (todos resueltos):**
+1. Preservar price_min/price_max en agregación (evita levelHeight=0)
+2. Auto-download de archivos desactualizados (>12h)
+3. Timestamp tolerance (30s)
+4. Regenerar levels con step_size uniforme (grid fijo)
+5. Step_size GLOBAL como MODA + sistema de 4 prioridades (backend > config > moda > default)
+6. Expansión dinámica de levels en renderizado
+7. Callback `onBackendConfigSaved` con pausa de PollingCoordinator + eliminación de archivo local
+8. Backend DELETE endpoint limpia memoria + disco
 
-**Soluciones implementadas:**
-
-1. **Preservar rangos de precio en agregación** (`_aggregateFootprints()` líneas 211-390):
-```javascript
-// ✅ Preservar y expandir price_min/price_max al combinar levels
-if (level.price_min != null && level.price_min < combined.price_min) {
-  combined.price_min = level.price_min;
-}
-if (level.price_max != null && level.price_max > combined.price_max) {
-  combined.price_max = level.price_max;
-}
-```
-
-2. **Auto-download de archivos desactualizados** (`_loadFromArchive()` líneas 442-460):
-```javascript
-// Si archivo >12h antiguo, descargar automáticamente
-if (ageHours > 12) {
-  this._autoDownloadArchive().catch(err => { ... });
-}
-```
-
-3. **Timestamp tolerance** configuración: `timestampToleranceMs: 30000` (30s de tolerancia)
-
-**Resultado:** ✅ **PROBLEMA RESUELTO**
-- Verificado con 20 días en timeframe 5min
-- Todas las velas tienen footprints (no solo últimas 12h)
-- Auto-download cierra gaps automáticamente
-
-**Segundo fix (mismo día):** Alturas inconsistentes de price levels en footprints
-- **Problema 1:** Celdas individuales con alturas radicalmente diferentes
-  - **Causa:** Combinar levels expandiendo rangos
-  - **Solución:** Regenerar levels con step_size uniforme (grid fijo)
-- **Problema 2:** Footprints incompletos (más bajos que velas)
-  - **Causa:** Filtrar levels vacíos + threshold renderizado 2px muy alto
-  - **Solución:** NO filtrar vacíos + threshold a 0.5px + color gris para vacíos
-- **Problema 3 (CRÍTICO):** Algunos footprints con celdas más pequeñas que otros
-  - **Causa:** Calcular step_size independientemente por cada grupo de 5min → si archivo tiene 90% footprints con step_size=0.1 y 10% con step_size=1.0, la mayoría de grupos usan 0.1 (footprints bajitos)
-  - **Intento fallido 1:** Usar `Math.max()` por grupo → solo grupos "afortunados" con step_size=1.0 quedaban altos
-  - **Intento fallido 2:** Usar `Math.max()` global → si distribución es 89% con 0.1, 10% con 1.0, 1% con 10 → elige 10 (usado solo por 1%) → celdas gigantes → mayoría de footprints bajitos
-  - **Solución parcial:** Calcular step_size GLOBAL como **MODA** (valor más frecuente) y reutilizar para TODOS los grupos
-- **Problema 4 (CRÍTICO):** Después de moda, el problema persistió - celdas con diferentes alturas en píxeles (2px vs 4px)
-  - **Causa raíz:** El problema NO está en agregación sino en RENDERIZADO - `priceToY()` produce diferentes alturas visuales para mismo step_size debido a redondeo
-  - **Solución - FASE 1:** Sistema de prioridades para step_size configurable
-  - **Bug 1 detectado:** Sistema usaba step_size de footprints en memoria (incorrecto)
-  - **Fix temporal:** Eliminada prioridad "backend", usar MODA
-  - **Bug 2 detectado:** Configuración manual del usuario (modal) ignorada al agregar
-  - **Fix FINAL:** Consultar backend antes de agregar para obtener step_size configurado
-  - **Prioridades finales:**
-    1. Backend (configurado vía modal/API) - consulta `GET /api/orderflow/step-size/${symbol}`
-    2. Config localStorage (`stepSizeOverride`)
-    3. Moda de footprints a agregar
-    4. Default (0.1)
-  - **Estado:** Fase 1 ✅ COMPLETA (con 2 fixes críticos)
-- **Problema 5 (CRÍTICO):** Después de Fase 1, celdas uniformes PERO altura total del footprint no coincide con vela
-  - **Causa raíz:** Los footprints agregados calculan OHLC de los footprints 1min (no de la vela real) → footprints más pequeños que velas
-  - **Solución - FASE 2:** Expansión dinámica de levels en renderizado:
-    - Detecta si footprint no cubre rango completo de vela
-    - Agrega levels vacíos (gris) arriba/abajo para cubrir gaps
-    - Se hace en renderizado (eficiente, no modifica footprint original)
-  - **Estado:** Fase 2 ✅ COMPLETA
-
-- **Problema 6 (CRÍTICO):** Después de fixes anteriores, configuración manual funcionaba solo en velas nuevas
-  - **Causa:** Botón "Aplicar a historial" eliminaba cache backend pero NO recargaba footprints en memoria
-  - **Solución:** Callback `onBackendConfigSaved` que limpia footprints y recarga desde cero
-  - **Estado:** ✅ RESUELTO
-
-- **Problema 7 (CRÍTICO FINAL):** Después del Problema 6, footprints históricos SEGUÍAN sin actualizarse visualmente
-  - **Síntomas:** Solo footprints en tiempo real mostraban nuevo step_size, históricos seguían con step_size antiguo. Al hacer "Aplicar a historial", gráfico cambiaba momentáneamente y luego volvía al estado anterior.
-  - **Causa raíz 1 - Archivo local:** Archivo `userData/footprint_archive/SYMBOL_1.json` contenía footprints de 1min generados con step_size ANTIGUO (10 o 20). Al reagregarlos con nuevo step_size (5), NO se puede recrear granularidad que nunca existió.
-  - **Causa raíz 2 - Race condition:** PollingCoordinator ejecutaba fetchFootprints() en background cada 5s. Al eliminar archivo, ya había una lectura en progreso que completaba DESPUÉS y sobrescribía los datos nuevos.
-  - **Causa raíz 3 - Doble callback:** Tanto botón "Guardar" como "Aplicar a historial" ejecutaban el callback, causando dos recargas.
-  - **Solución DEFINITIVA:**
-    1. Agregado método `deleteArchiveFile(symbol)` en `FootprintArchiverElectron.js`
-    2. Callback PAUSA PollingCoordinator → Espera 500ms → Elimina archivo → Recarga → REANUDA PollingCoordinator
-    3. Eliminado callback de botón "Guardar" (solo ejecuta en "Aplicar a historial")
-  - **Estado:** ✅ **PROBLEMA RESUELTO COMPLETAMENTE**
-
-**Archivos modificados:**
-- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js` (línea 136) - Config `stepSizeOverride`
-- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js` (líneas 220-221) - Parámetro `backendStepSize`
-- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js` (líneas 253-330) - Sistema de 4 prioridades
-- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js` (líneas 571-586) - Consulta backend antes de agregar
-- `9.OrderFlowDesktop/src/components/indicators/OrderFlowIndicator.js` (líneas 1327-1430) - Expansión dinámica de levels (Fase 2)
-- `9.OrderFlowDesktop/src/components/SingleSymbolAnalyzer.jsx` (líneas 1151-1230) - Callback pausa polling + elimina archivo + reanuda (Problema 7)
-- `9.OrderFlowDesktop/src/components/OrderFlowSettings.jsx` (líneas 236-242) - Eliminado callback de handleSaveStepSize (Problema 7)
-- `9.OrderFlowDesktop/src/services/FootprintArchiverElectron.js` (líneas 514-559) - Método `deleteArchiveFile()` (Problema 7)
-- **`5.Order_flow/backend/main.py` (líneas 4386-4445) - Endpoint DELETE limpia memoria + disco (Problema 7)** ← FIX BACKEND CRÍTICO
-- `9.OrderFlowDesktop/CLAUDE.md` - Documentación completa de todos los fixes
-
-**Ver documentación detallada:** `9.OrderFlowDesktop/CLAUDE.md` secciones:
-- "Fix COMPLETO: Footprints Solo en Últimas 12h"
-- "Fix: Alturas Inconsistentes de Price Levels en Footprints"
-- "Fase 1: Sistema de Step Size Configurable" (incluye 3 FIXES CRÍTICOS)
-- "Fase 2: Expansión Dinámica de Levels"
-- "Fix CRÍTICO: Footprints Históricos No Se Actualizan al Cambiar Step Size" (Problema 7 - SOLUCIÓN DEFINITIVA)
+**Ver documentación detallada:** `9.OrderFlowDesktop/CLAUDE.md`
 
 ---
 

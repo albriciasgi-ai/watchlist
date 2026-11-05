@@ -1,0 +1,87 @@
+═══════════════════════════════════════════════════════════════
+    CHECKLIST POST-REINICIO - BACKTESTER
+═══════════════════════════════════════════════════════════════
+
+□ 1. REINICIAR PC
+   └─ Mata procesos duplicados del backend
+
+□ 2. ABRIR TERMINAL 1 - Backend
+   └─ cd C:\...\1.Altagracia_Crypto_Backtester\Backtester\backend
+   └─ start_backend.bat
+   └─ Esperar: "Backend started successfully"
+
+□ 3. ABRIR TERMINAL 2 - Frontend
+   └─ cd C:\...\1.Altagracia_Crypto_Backtester\Backtester\frontend
+   └─ npm run dev
+   └─ Esperar: "Local: http://localhost:5173/"
+
+□ 4. ABRIR NAVEGADOR
+   └─ Ir a: http://localhost:5173
+   └─ Presionar F12 (DevTools)
+   └─ Ir a pestaña "Console"
+
+□ 5. EJECUTAR SCRIPT EN CONSOLA
+   └─ Copiar/pegar:
+
+   (async () => {
+     console.log('🗑️ Eliminando IndexedDB...');
+     const req = indexedDB.deleteDatabase('BacktestingDataDB');
+     req.onsuccess = () => console.log('✅ Eliminado - Recarga (F5)');
+   })();
+
+   └─ Presionar Enter
+   └─ Esperar: "✅ Eliminado - Recarga (F5)"
+
+□ 6. RECARGAR PÁGINA
+   └─ Presionar F5
+
+□ 7. INICIAR BACKTESTING
+   └─ Símbolo: BTCUSDT
+   └─ Fecha inicio: 2026-10-01
+   └─ Click "Iniciar Backtesting"
+
+□ 8. VERIFICAR BACKEND
+   └─ DEBE aparecer en terminal del backend:
+
+   [BACKTESTING] ===== Procesando 1m (730 días) =====
+   [BACKTESTING] BTCUSDT @ 1m - Necesitamos 1051200 velas
+   INFO:httpx:HTTP Request: GET https://api.bybit.com...
+
+□ 9. ESPERAR DESCARGA
+   └─ Tiempo estimado: 15-20 minutos
+   └─ Verás progreso cada 10 requests
+
+□ 10. VERIFICAR ÉXITO
+   └─ Todos los timeframes muestran octubre 2026
+   └─ No aparece error de "datos terminan en mayo 2023"
+
+═══════════════════════════════════════════════════════════════
+
+🚨 SI BACKEND NO MUESTRA MENSAJES (paso 8):
+
+□ A. Verificar procesos duplicados
+   └─ En PowerShell: netstat -ano | findstr :9000
+   └─ Si aparecen 2 procesos: taskkill /F /IM python.exe
+   └─ Reiniciar backend: start_backend.bat
+
+□ B. Verificar código actualizado en navegador
+   └─ En consola debe aparecer:
+      "- Datos recientes (< 30 días): ❌ NO"
+   └─ Si NO aparece:
+      - Cerrar todas las pestañas
+      - cd frontend
+      - rmdir /s /q node_modules\.vite
+      - npm run dev
+      - Abrir nueva pestaña
+      - Ctrl + Shift + R (hard refresh)
+
+═══════════════════════════════════════════════════════════════
+
+📄 ARCHIVOS DE REFERENCIA:
+
+- DESPUES_DE_REINICIAR.md → Pasos detallados
+- SOLUCION_FINAL.md → Troubleshooting completo
+- RESUMEN_SESION_OCT22.md → Contexto técnico
+- CLAUDE.md → Documentación completa
+
+═══════════════════════════════════════════════════════════════

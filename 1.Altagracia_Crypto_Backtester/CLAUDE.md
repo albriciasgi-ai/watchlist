@@ -6,6 +6,35 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Octubre 2026: OPCIÓN B - Subdivisiones = Main (Optimización de Performance)
+
+**Problema:** Las subdivisiones descargaban velas de timeframes inferiores, causando:
+- Descarga de 2.6M velas de 1m para subdivisiones de 5m (60+ minutos)
+- Consumo de memoria: ~150MB solo en subdivisiones
+- Procesamiento pesado: agregar múltiples velas para formar una vela superior
+
+**Solución Implementada: OPCIÓN B**
+Las subdivisiones ahora son **referencias directas al array main**, sin descarga extra.
+
+**Cambios en Backend:**
+1. `subdivision_candles = main_candles` - Referencia directa, no copia
+2. Configuración actualizada: `subdivisions.interval` = mismo que `main`
+3. Eliminado código de descarga separada de subdivisiones
+4. Eliminado código de expansión hacia atrás de subdivisiones
+5. Eliminado código de actualización incremental de subdivisiones
+
+**Resultados:**
+- ✅ Descarga: 525K velas en 5 min (antes: 2.6M en 60 min)
+- ✅ Memoria: ~20MB (antes: ~150MB)
+- ✅ Playback funciona correctamente vela por vela
+- ⚠️ Trade-off: No hay movimiento "fluido" intravela (igual que TradingView)
+
+**Archivos modificados:**
+- `backend/main.py` (líneas 1954-1985, 2716-2722, 2564-2590, 2601-2608)
+- `CLAUDE.md` - Documentación
+
+---
+
 ### Octubre 2026: Header Fusionado + Fix Open Interest + UI Optimizations
 
 **Cambios completados:**

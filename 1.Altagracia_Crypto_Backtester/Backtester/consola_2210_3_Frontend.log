@@ -1,0 +1,1001 @@
+:9001/favicon.ico:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791072600000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791072600000 (2026-10-04T00:10:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791072600000 (2026-10-04T00:10:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791072600000 (2026-10-04T00:10:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:10:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:10:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:10:00.000Z, allCandles=525622, lastIndex=520271
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520272, lastIndexRef=520271
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520273 velas hasta 2026-10-04T00:10:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:10:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:10:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:15:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791072900000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791072900000 (2026-10-04T00:15:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791072900000 (2026-10-04T00:15:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791072900000 (2026-10-04T00:15:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:15:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:15:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:15:00.000Z, allCandles=525622, lastIndex=520272
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520273, lastIndexRef=520272
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520274 velas hasta 2026-10-04T00:15:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:15:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:15:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:20:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791073200000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791073200000 (2026-10-04T00:20:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791073200000 (2026-10-04T00:20:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791073200000 (2026-10-04T00:20:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:20:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:20:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:20:00.000Z, allCandles=525622, lastIndex=520273
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520274, lastIndexRef=520273
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520275 velas hasta 2026-10-04T00:20:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:20:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:20:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:25:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791073500000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791073500000 (2026-10-04T00:25:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791073500000 (2026-10-04T00:25:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791073500000 (2026-10-04T00:25:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:25:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:25:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:25:00.000Z, allCandles=525622, lastIndex=520274
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520275, lastIndexRef=520274
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520276 velas hasta 2026-10-04T00:25:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:25:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:25:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:30:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791073800000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791073800000 (2026-10-04T00:30:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791073800000 (2026-10-04T00:30:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791073800000 (2026-10-04T00:30:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:30:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:30:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:30:00.000Z, allCandles=525622, lastIndex=520275
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520276, lastIndexRef=520275
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520277 velas hasta 2026-10-04T00:30:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:30:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:30:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:35:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791074100000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791074100000 (2026-10-04T00:35:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791074100000 (2026-10-04T00:35:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791074100000 (2026-10-04T00:35:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:35:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:35:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:35:00.000Z, allCandles=525622, lastIndex=520276
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520277, lastIndexRef=520276
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520278 velas hasta 2026-10-04T00:35:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:35:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:35:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:40:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791074400000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791074400000 (2026-10-04T00:40:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791074400000 (2026-10-04T00:40:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791074400000 (2026-10-04T00:40:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:40:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:40:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:40:00.000Z, allCandles=525622, lastIndex=520277
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520278, lastIndexRef=520277
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520279 velas hasta 2026-10-04T00:40:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:40:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:40:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:45:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791074700000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791074700000 (2026-10-04T00:45:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791074700000 (2026-10-04T00:45:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791074700000 (2026-10-04T00:45:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:45:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:45:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:45:00.000Z, allCandles=525622, lastIndex=520278
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520279, lastIndexRef=520278
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520280 velas hasta 2026-10-04T00:45:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:45:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:45:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:50:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791075000000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791075000000 (2026-10-04T00:50:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791075000000 (2026-10-04T00:50:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791075000000 (2026-10-04T00:50:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:50:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:50:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:50:00.000Z, allCandles=525622, lastIndex=520279
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520280, lastIndexRef=520279
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520281 velas hasta 2026-10-04T00:50:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:50:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:50:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T00:55:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791075300000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791075300000 (2026-10-04T00:55:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43356
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791075300000 (2026-10-04T00:55:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791075300000 (2026-10-04T00:55:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T00:55:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T00:55:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T00:55:00.000Z, allCandles=525622, lastIndex=520280
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520281, lastIndexRef=520280
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520282 velas hasta 2026-10-04T00:55:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T00:55:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T00:55:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43355, lastIndexRef=43355
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43355, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T01:00:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791075600000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791075600000 (2026-10-04T01:00:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43357
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791075600000 (2026-10-04T01:00:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791075600000 (2026-10-04T01:00:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T01:00:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T01:00:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T01:00:00.000Z, allCandles=525622, lastIndex=520281
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520282, lastIndexRef=520281
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520283 velas hasta 2026-10-04T01:00:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T01:00:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T01:00:00.000Z, allCandles=43800, lastIndex=43355
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43356, lastIndexRef=43355
+MiniChart.jsx:2339 [MiniChart BTCUSDT 4h] ✅ UPDATED candlesRef: 43357 velas hasta 2026-10-04T01:00:00.000Z
+TradingControls.jsx:35 [TradingControls] Precio actualizado automáticamente: 84768.00
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T01:05:00.000Z, increment: 300000ms, subdivision: 1/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791075900000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791075900000 (2026-10-04T01:05:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43357
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791075900000 (2026-10-04T01:05:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791075900000 (2026-10-04T01:05:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T01:05:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T01:05:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T01:05:00.000Z, allCandles=525622, lastIndex=520282
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520283, lastIndexRef=520282
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520284 velas hasta 2026-10-04T01:05:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T01:05:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T01:05:00.000Z, allCandles=43800, lastIndex=43356
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43356, lastIndexRef=43356
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43356, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T01:10:00.000Z, increment: 300000ms, subdivision: 2/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791076200000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791076200000 (2026-10-04T01:10:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43357
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791076200000 (2026-10-04T01:10:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791076200000 (2026-10-04T01:10:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T01:10:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T01:10:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T01:10:00.000Z, allCandles=525622, lastIndex=520283
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520284, lastIndexRef=520283
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520285 velas hasta 2026-10-04T01:10:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T01:10:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T01:10:00.000Z, allCandles=43800, lastIndex=43356
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43356, lastIndexRef=43356
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43356, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+TimeController.js:192 [TimeController] Tick - currentTime: 2026-10-04T01:15:00.000Z, increment: 300000ms, subdivision: 0/3
+TimeController.js:202 [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+TimeController.js:204 [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791076500000
+BacktestingApp.jsx:1203 [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791076500000 (2026-10-04T01:15:00.000Z)
+BacktestingApp.jsx:1210 [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+BacktestingApp.jsx:1214 [BacktestingApp] CHECK2: timeframeData.main.length=43800
+BacktestingApp.jsx:1218 [BacktestingApp] CHECK3: visibleCandles.length=43357
+BacktestingApp.jsx:1234 [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+BacktestingApp.jsx:1237 [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791076500000 (2026-10-04T01:15:00.000Z)
+IndicatorManager.js:412 [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791076500000 (2026-10-04T01:15:00.000Z)
+IndicatorManager.js:413 [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T01:15:00.000Z, allCandles=600000, lastIndex=599999
+ [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+ [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+ [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T01:15:00.000Z, allCandles=600000, lastIndex=599999
+ [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+ [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+ [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T01:15:00.000Z, allCandles=525622, lastIndex=520284
+ [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520285, lastIndexRef=520284
+ [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520286 velas hasta 2026-10-04T01:15:00.000Z
+ [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T01:15:00.000Z, allCandles=8000, lastIndex=7999
+ [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+ [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+ [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T01:15:00.000Z, allCandles=43800, lastIndex=43356
+ [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43356, lastIndexRef=43356
+ [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43356, same as before
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [TimeController] Tick - currentTime: 2026-10-04T01:20:00.000Z, increment: 300000ms, subdivision: 1/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791076800000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791076800000 (2026-10-04T01:20:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=43800
+ [BacktestingApp] CHECK3: visibleCandles.length=43357
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791076800000 (2026-10-04T01:20:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791076800000 (2026-10-04T01:20:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+ [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+ [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+ [TimeController] ✅ onTimeUpdate completed
+ [BTCUSDT] ✅ DTB updatePlaybackDate completed
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T01:20:00.000Z, allCandles=600000, lastIndex=599999
+ [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+ [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+ [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T01:20:00.000Z, allCandles=600000, lastIndex=599999
+ [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+ [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+ [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T01:20:00.000Z, allCandles=525622, lastIndex=520285
+ [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520286, lastIndexRef=520285
+ [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520287 velas hasta 2026-10-04T01:20:00.000Z
+ [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T01:20:00.000Z, allCandles=8000, lastIndex=7999
+ [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+ [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+ [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+ [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T01:20:00.000Z, allCandles=43800, lastIndex=43356
+ [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43356, lastIndexRef=43356
+ [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43356, same as before
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+ [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+ [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+ [TimeController] Tick - currentTime: 2026-10-04T01:25:00.000Z, increment: 300000ms, subdivision: 2/3
+ [TimeController] 🔍 DEBUG: onTimeUpdate exists? true, type: function
+ [TimeController] ✅ Calling onTimeUpdate with timestamp: 1791077100000
+ [BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: 1791077100000 (2026-10-04T01:25:00.000Z)
+ [BacktestingApp] CHECK1: marketData=true, timeframes=true, activeTimeframe=1h, hasData=true
+ [BacktestingApp] CHECK2: timeframeData.main.length=43800
+ [BacktestingApp] CHECK3: visibleCandles.length=43357
+ [BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=1h, hasMiniChart=true, hasManager=true, hasMethod=true
+ [BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: 1791077100000 (2026-10-04T01:25:00.000Z)
+ [BTCUSDT] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: 1791077100000 (2026-10-04T01:25:00.000Z)
+ [BTCUSDT] 🔍 Total indicators: 13
+IndicatorManager.js:416 [BTCUSDT] 🔍 DTB indicator found: true, has method: true
+IndicatorManager.js:419 [BTCUSDT] ✅ Calling DTB updatePlaybackDate
+TimeController.js:206 [TimeController] ✅ onTimeUpdate completed
+IndicatorManager.js:421 [BTCUSDT] ✅ DTB updatePlaybackDate completed
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1m] 🔍 currentTime=2026-10-04T01:25:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 5m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 5m] 🔍 currentTime=2026-10-04T01:25:00.000Z, allCandles=600000, lastIndex=599999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 5m] 🔍 Binary search result: lastIndex=599999, lastIndexRef=599999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 5m] ⏭️ NO UPDATE: lastIndex=599999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 15m] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 15m] 🔍 currentTime=2026-10-04T01:25:00.000Z, allCandles=525622, lastIndex=520286
+MiniChart.jsx:2324 [MiniChart BTCUSDT 15m] 🔍 Binary search result: lastIndex=520287, lastIndexRef=520286
+MiniChart.jsx:2339 [MiniChart BTCUSDT 15m] ✅ UPDATED candlesRef: 520288 velas hasta 2026-10-04T01:25:00.000Z
+MiniChart.jsx:2306 [MiniChart BTCUSDT 1h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 1h] 🔍 currentTime=2026-10-04T01:25:00.000Z, allCandles=8000, lastIndex=7999
+MiniChart.jsx:2324 [MiniChart BTCUSDT 1h] 🔍 Binary search result: lastIndex=7999, lastIndexRef=7999
+MiniChart.jsx:2328 [MiniChart BTCUSDT 1h] ⏭️ NO UPDATE: lastIndex=7999, same as before
+MiniChart.jsx:2306 [MiniChart BTCUSDT 4h] 🔍 BINARY SEARCH START
+MiniChart.jsx:2307 [MiniChart BTCUSDT 4h] 🔍 currentTime=2026-10-04T01:25:00.000Z, allCandles=43800, lastIndex=43356
+MiniChart.jsx:2324 [MiniChart BTCUSDT 4h] 🔍 Binary search result: lastIndex=43356, lastIndexRef=43356
+MiniChart.jsx:2328 [MiniChart BTCUSDT 4h] ⏭️ NO UPDATE: lastIndex=43356, same as before
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:1274 [BacktestingApp] handlePause clicked
+TimeController.js:231 [TimeController] ⏸️ Pause
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:228 [BacktestingApp] 🎯 tradeBoxMapRef inicializado
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=730, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 5m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 15m OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 1h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+BacktestingApp.jsx:2401 [BacktestingApp] 📊 4h OI days: simulationStart=2026-10-01, daysNeeded=22, maxDays=1825, usando=22
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 837px, disponible: 591px
+MiniChart.jsx:930 [MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: 513px, disponible: 190px

@@ -2237,34 +2237,74 @@ const MiniChart = forwardRef(({
 
   // 🎯 Cargar todas las velas UNA VEZ al inicio (para binary search)
   useEffect(() => {
+    console.log(`%c[MiniChart ${symbol} ${interval}] 🔍 USEEFFECT ALLCANDLES EJECUTÁNDOSE`, 'background: #FF00FF; color: white; font-weight: bold;');
+
     // Reset del flag cuando cambia el interval o backtestingData
     initialRenderDoneRef.current = false;
     lastIndexRef.current = -1; // 🎯 CRÍTICO: Reset para forzar re-render en próximo Binary Search
 
+    console.log(`[MiniChart ${symbol} ${interval}] 🔍 backtestingMode=${backtestingMode}, hasData=${!!backtestingData}`);
+
     if (!backtestingMode || !backtestingData) {
-      console.log(`[MiniChart ${symbol} ${interval}] No hay datos de backtesting aún`);
+      console.log(`[MiniChart ${symbol} ${interval}] ⚠️ No hay datos de backtesting aún (mode=${backtestingMode}, data=${!!backtestingData})`);
       return;
     }
+
     const timeframeData = backtestingData.timeframes?.[interval];
+    console.log(`[MiniChart ${symbol} ${interval}] 🔍 timeframeData:`, {
+      hasMain: !!timeframeData?.main,
+      mainLength: timeframeData?.main?.length || 0,
+      hasSubdivisions: !!(timeframeData?.subdivisions && timeframeData.subdivisions.length > 0),
+      subdivisionsLength: timeframeData?.subdivisions?.length || 0
+    });
 
     if (timeframeData?.main) {
-      console.log(`[MiniChart ${symbol} ${interval}] 📊 Cargando ${timeframeData.main.length} velas en allCandlesRef`);
-      allCandlesRef.current = timeframeData.main;
+      // 🎯 FIX CRÍTICO: En modo backtesting, usar SUBDIVISIONES si existen
+      // Esto permite que el playback avance correctamente con estados intravela
+      // Ejemplo: timeframe 5m usa velas de 1m para avanzar de 5 en 5 subdivisiones
+      const hasSubdivisions = timeframeData.subdivisions && timeframeData.subdivisions.length > 0;
+
+      if (hasSubdivisions) {
+        console.log(`%c[MiniChart ${symbol} ${interval}] ✅ USANDO SUBDIVISIONES: ${timeframeData.subdivisions.length} velas`, 'background: #00FF00; color: black; font-weight: bold;');
+        console.log(`[MiniChart ${symbol} ${interval}] 📊 Subdivisiones en lugar de ${timeframeData.main.length} main`);
+
+        // Log de primeras y últimas velas de subdivisiones
+        const firstSub = timeframeData.subdivisions[0];
+        const lastSub = timeframeData.subdivisions[timeframeData.subdivisions.length - 1];
+        console.log(`[MiniChart ${symbol} ${interval}] 🔍 Primera subdivisión: ${new Date(firstSub.timestamp).toISOString()}`);
+        console.log(`[MiniChart ${symbol} ${interval}] 🔍 Última subdivisión: ${new Date(lastSub.timestamp).toISOString()}`);
+
+        allCandlesRef.current = timeframeData.subdivisions;
+      } else {
+        console.log(`%c[MiniChart ${symbol} ${interval}] ⚠️ NO HAY SUBDIVISIONES - Usando main: ${timeframeData.main.length} velas`, 'background: #FFFF00; color: black; font-weight: bold;');
+        allCandlesRef.current = timeframeData.main;
+      }
+
+      console.log(`[MiniChart ${symbol} ${interval}] 🔍 allCandlesRef.current.length = ${allCandlesRef.current.length}`);
 
       // 🎯 ELIMINADO: Ya NO reseteamos el caché del VWAP
       // El VWAP detecta automáticamente cambios en allCandles.length y se recalcula si es necesario
     } else {
-      console.warn(`[MiniChart ${symbol} ${interval}] ⚠️ No hay datos main en timeframe ${interval}`);
+      console.warn(`%c[MiniChart ${symbol} ${interval}] ❌ NO HAY DATOS MAIN en timeframe`, 'background: #FF0000; color: white; font-weight: bold;');
     }
-  }, [backtestingMode, backtestingData, interval, symbol]);
+  }, [backtestingMode, backtestingData, backtestingData?.timeframes?.[interval]?.main?.length, backtestingData?.timeframes?.[interval]?.subdivisions?.length, interval, symbol]);
 
   // 🎯 ELIMINADO - Ya no es necesario, el Binary Search maneja todo desde el inicio
 
   // 🎯 OPTIMIZADO: Efecto para modo backtesting - filtrar velas con Binary Search
   useEffect(() => {
     // IMPORTANTE: Solo ejecutar en modo backtesting con datos disponibles
-    if (!backtestingMode || !backtestingData || allCandlesRef.current.length === 0) return;
-    if (!currentTime) return;
+    if (!backtestingMode || !backtestingData || allCandlesRef.current.length === 0) {
+      console.log(`%c[MiniChart ${symbol} ${interval}] ⏭️ BINARY SEARCH SKIPPED: mode=${backtestingMode}, data=${!!backtestingData}, allCandles=${allCandlesRef.current.length}`, 'background: #888; color: white;');
+      return;
+    }
+    if (!currentTime) {
+      console.log(`%c[MiniChart ${symbol} ${interval}] ⏭️ BINARY SEARCH SKIPPED: currentTime=${currentTime}`, 'background: #888; color: white;');
+      return;
+    }
+
+    console.log(`%c[MiniChart ${symbol} ${interval}] 🔍 BINARY SEARCH START`, 'background: #0000FF; color: white; font-weight: bold;');
+    console.log(`[MiniChart ${symbol} ${interval}] 🔍 currentTime=${new Date(currentTime).toISOString()}, allCandles=${allCandlesRef.current.length}, lastIndex=${lastIndexRef.current}`);
 
     // Binary search: encontrar último índice donde timestamp <= currentTime
     let left = 0;
@@ -2281,8 +2321,13 @@ const MiniChart = forwardRef(({
       }
     }
 
+    console.log(`[MiniChart ${symbol} ${interval}] 🔍 Binary search result: lastIndex=${lastIndex}, lastIndexRef=${lastIndexRef.current}`);
+
     // Solo actualizar si el índice cambió (nueva vela)
-    if (lastIndex < 0 || lastIndex === lastIndexRef.current) return;
+    if (lastIndex < 0 || lastIndex === lastIndexRef.current) {
+      console.log(`%c[MiniChart ${symbol} ${interval}] ⏭️ NO UPDATE: lastIndex=${lastIndex}, same as before`, 'background: #FFA500; color: black;');
+      return;
+    }
 
     // Actualizar refs
     lastIndexRef.current = lastIndex;
@@ -2290,6 +2335,8 @@ const MiniChart = forwardRef(({
     // Usar slice en lugar de filter
     candlesRef.current = allCandlesRef.current.slice(0, lastIndex + 1);
     inProgressCandleRef.current = null;
+
+    console.log(`%c[MiniChart ${symbol} ${interval}] ✅ UPDATED candlesRef: ${candlesRef.current.length} velas hasta ${new Date(candlesRef.current[candlesRef.current.length - 1]?.timestamp).toISOString()}`, 'background: #00FF00; color: black; font-weight: bold;');
 
     // Actualizar precio actual
     const lastCandle = candlesRef.current[candlesRef.current.length - 1];

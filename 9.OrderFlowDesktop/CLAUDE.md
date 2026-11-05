@@ -4,6 +4,63 @@
 
 Version de escritorio del Order Flow (App 5) empaquetada con Electron. Incluye optimizaciones agresivas de rendimiento y sistema de cache avanzado.
 
+---
+
+## Limpieza de Rendimiento: Eliminación de Logs y Debug (4 Noviembre 2026)
+
+**Problema:** La aplicación se volvió muy lenta debido a exceso de console.log y código de debug acumulado durante las sesiones de investigación del 2-4 de noviembre.
+
+**Diagnóstico:** 151 `console.log/warn/error` en `OrderFlowIndicator.js`, muchos ejecutándose per-frame (~60fps), per-cell, o per-second. Además, renderizado de columna de precios debug con sombras CSS costosas por cada celda.
+
+**Cambios realizados:**
+
+| Categoría | Eliminado | Impacto |
+|-----------|-----------|---------|
+| `aggregation-logger.js` | Import, init, logGrupo, logAggregationResults, finalize + archivo completo | Escribía JSON a disco en cada agregación |
+| Logs per-frame en renderOverlay | MATCHING diagnostic, fpCountChanged, debug counters | ~30 console.logs por frame eliminados |
+| Columna de precio debug | 2 bloques de renderizado canvas (sombras, measureText, save/restore) | Operaciones costosas por celda por frame |
+| DETAILED MATCHING TEST | ~60 líneas de diagnóstico con búsqueda de footprints cercanos | Loop pesado por frame |
+| DOTS MODE log | Conteo de footprints + 5 console.warn cada segundo | Logging constante |
+| Normalización debug | 5 console.logs por footprint en renderizado | Per-footprint per-frame |
+| Logs de agregación | NIVELES UNIFORMES, DESAJUSTE, distribución step_sizes | Per-agregación |
+| Logs de _loadFromArchive | 8 logs diagnóstico de electron checks, paths, file existence | Per-fetch (cada 5s) |
+| Logs de fetchFootprints | BACKEND RANGO, POST-MERGE diagnostic, PASO markers | Per-fetch (cada 5s) |
+
+**Resultado:**
+
+| Métrica | Antes | Después |
+|---------|-------|---------|
+| `console.log/warn/error` | 151 | 43 |
+| Logs per-frame | ~30+ | 0 |
+| Logs per-second | ~10 | 0 |
+| Canvas debug rendering | 2 bloques costosos | 0 |
+
+**Logs conservados (43):** Constructor (1x), destroy (1x), one-time flags (`_loggedAggregation`, `_loggedStepSize`, `_loggedArchiveLoad`), errores de fetch, cambios significativos de estado, y `debugAnalyzeFootprints()` (herramienta manual invocada desde consola DevTools).
+
+**Archivos modificados:**
+- `OrderFlowIndicator.js` - Limpieza masiva de logs y debug rendering
+- `src/utils/aggregation-logger.js` - **ELIMINADO** (ya no se usa)
+
+---
+
+## Fix: Footprints no Cubren Velas en 5min Recientes (4 Noviembre 2026)
+
+**Problema:** En timeframe de 5 minutos, los footprints recientes (últimas ~12-22h) no cubrían la altura completa de las velas. Los footprints antiguos (3+ días) sí coincidían.
+
+**Causa Raíz:** El backend SIEMPRE retorna footprints de **1min**. El archivo local pasa por `_aggregateFootprints()` que convierte 1min→5min. Pero los footprints del backend NO se agregaban antes del merge, mezclando fps de 1min con fps de 5min.
+
+**Solución:** Agregar los footprints del backend de 1min→5min **ANTES** del merge (paso 2.5 en `fetchFootprints()`):
+```javascript
+if (this.interval !== "1" && backendFootprints.length > 0) {
+  const backendStepSize = await this._fetchBackendStepSize();
+  backendAggregated = await this._aggregateFootprints(backendFootprints, this.interval, backendStepSize);
+}
+```
+
+**Archivo modificado:** `OrderFlowIndicator.js` - Paso 2.5 en fetchFootprints + revertido lookup candle_real + eliminados logs EXPANSION CHECK
+
+---
+
 ## Fix Crítico: Restauración de Footprints Históricos (20 Octubre 2026)
 
 **Problema**: Los footprints históricos no se mostraban - solo aparecían las últimas 10-12 horas del backend, aunque el archivo local tenía 7 días de datos.

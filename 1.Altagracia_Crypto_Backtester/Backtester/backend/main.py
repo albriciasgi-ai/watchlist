@@ -199,10 +199,12 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # SEGURIDAD: CORS limitado a orígenes conocidos
-# Backtester frontend corre en puerto 9001
+# Backtester frontend corre en puerto 9001 o 9002 (si 9001 está ocupado)
 ALLOWED_ORIGINS = [
-    "http://localhost:9001",      # Backtester frontend (Vite)
+    "http://localhost:9001",      # Backtester frontend (Vite - puerto principal)
     "http://127.0.0.1:9001",
+    "http://localhost:9002",      # Backtester frontend (Vite - puerto alternativo)
+    "http://127.0.0.1:9002",
 ]
 
 app.add_middleware(
@@ -1950,36 +1952,36 @@ BACKTESTING_CONFIG = {
         "interval": "5",
         "days": 1825,  # 5 años = 525,600 velas principales
         "subdivisions": {
-            "interval": "1",
-            "count": 5,       # 5 velas de 1 minuto forman 1 vela de 5 minutos
-            "days": 730       # Subdivisiones solo 2 años (1m × 2yr = 1M velas)
+            "interval": "5",  # 🔧 OPCIÓN B: Mismo timeframe que main
+            "count": 5,       # Subdividir cada vela 5m en 5 estados (visual)
+            "days": 1825      # Mismos días (apunta al mismo array)
         }
     },
     "15m": {
         "interval": "15",
         "days": 1825,  # 5 años = 175,200 velas principales
         "subdivisions": {
-            "interval": "5",
-            "count": 3,       # 3 velas de 5 minutos forman 1 vela de 15 minutos
-            "days": 1825      # 5m × 5yr = 525K velas (manejable)
+            "interval": "15",  # 🔧 OPCIÓN B: Mismo timeframe que main
+            "count": 3,        # Subdividir cada vela 15m en 3 estados (visual)
+            "days": 1825       # Mismos días (apunta al mismo array)
         }
     },
     "1h": {
         "interval": "60",
         "days": 1825,  # 5 años = 43,800 velas principales
         "subdivisions": {
-            "interval": "15",
-            "count": 4,       # 4 velas de 15 minutos forman 1 vela de 1 hora
-            "days": 1825      # 15m × 5yr = 175K velas (manejable)
+            "interval": "60",  # 🔧 OPCIÓN B: Mismo timeframe que main
+            "count": 4,        # Subdividir cada vela 1h en 4 estados (visual)
+            "days": 1825       # Mismos días (apunta al mismo array)
         }
     },
     "4h": {
         "interval": "240",
         "days": 1825,  # 5 años = 10,950 velas principales
         "subdivisions": {
-            "interval": "60",
-            "count": 4,       # 4 velas de 1 hora forman 1 vela de 4 horas
-            "days": 1825      # 1h × 5yr = 43K velas (manejable)
+            "interval": "240",  # 🔧 OPCIÓN B: Mismo timeframe que main
+            "count": 4,         # Subdividir cada vela 4h en 4 estados (visual)
+            "days": 1825        # Mismos días (apunta al mismo array)
         }
     }
 }
@@ -2141,9 +2143,11 @@ async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 10
             request_count = 0
             # Calcular max_requests basado en las velas necesarias
             # Cada request trae máximo 1000 velas
-            # 1m x 365 días = 525,600 velas = ~526 requests
-            # 5m x 1095 días = 315,360 velas = ~316 requests
-            max_requests = min(600, (total_candles_needed // 1000) + 10)
+            # 1m x 730 días = 1,051,200 velas = ~1052 requests
+            # 5m x 1825 días = 525,600 velas = ~526 requests
+            # 15m x 1825 días = 175,200 velas = ~176 requests
+            # Límite aumentado de 600 a 1200 para soportar 1m con 730 días
+            max_requests = min(1200, (total_candles_needed // 1000) + 10)
             print(f"[BACKTESTING] Permitiendo hasta {max_requests} requests para descargar todas las velas")
 
             while len(all_candles) < total_candles_needed and request_count < max_requests:
@@ -2157,11 +2161,46 @@ async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 10
                     f"&start={current_start}&limit={fetch_limit}"
                 )
 
-                r = await client.get(url)
-                data = r.json()
+                # Sistema de reintentos para errores temporales de Bybit
+                max_retries = 3
+                retry_count = 0
+                success = False
 
-                if data.get("retCode") != 0:
-                    print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
+                while retry_count < max_retries and not success:
+                    try:
+                        r = await client.get(url)
+                        data = r.json()
+
+                        if data.get("retCode") != 0:
+                            error_msg = data.get('retMsg')
+                            # Errores temporales que se deben reintentar
+                            if "Get kline failed" in error_msg or "svc error" in error_msg:
+                                retry_count += 1
+                                if retry_count < max_retries:
+                                    print(f"[RETRY {symbol}] Error temporal de Bybit: {error_msg} - Reintento {retry_count}/{max_retries}")
+                                    await asyncio.sleep(2)  # Esperar 2 segundos antes de reintentar
+                                    continue
+                                else:
+                                    print(f"[ERROR {symbol}] Bybit error después de {max_retries} reintentos: {error_msg}")
+                                    break
+                            else:
+                                # Otros errores (no temporales) - fallar inmediatamente
+                                print(f"[ERROR {symbol}] Bybit error: {error_msg}")
+                                break
+
+                        success = True
+
+                    except Exception as e:
+                        retry_count += 1
+                        if retry_count < max_retries:
+                            print(f"[RETRY {symbol}] Error de red: {str(e)} - Reintento {retry_count}/{max_retries}")
+                            await asyncio.sleep(2)
+                        else:
+                            print(f"[ERROR {symbol}] Error de red después de {max_retries} reintentos: {str(e)}")
+                            break
+
+                if not success:
+                    # Si falló después de todos los reintentos, terminar la descarga
                     break
 
                 batch_candles = data["result"]["list"]
@@ -2184,7 +2223,9 @@ async def fetch_backtesting_timeframe(symbol: str, interval: str, days: int = 10
                 if len(all_candles) >= total_candles_needed:
                     break
 
-                await asyncio.sleep(0.1)  # Rate limiting
+                # Rate limiting: 500ms entre requests para evitar Bybit rate limit
+                # Con 175K velas necesitamos ~175 requests, a 500ms = ~88 segundos total
+                await asyncio.sleep(0.5)
 
         # Procesar velas
         candles = []
@@ -2276,6 +2317,134 @@ async def fetch_incremental_candles(symbol: str, interval: str, since_timestamp_
         return []
 
 
+async def fetch_historical_candles_backwards(symbol: str, interval: str, before_timestamp_ms: int, days_needed: int):
+    """
+    Descarga velas HACIA ATRÁS desde un timestamp dado.
+    Usado para expandir caché existente cuando necesitamos más historia.
+
+    Args:
+        symbol: Par de trading (ej: BTCUSDT)
+        interval: Intervalo (5, 15, 60, 240)
+        before_timestamp_ms: Timestamp ANTES del cual descargar (primera vela del caché existente)
+        days_needed: Cuántos días hacia atrás necesitamos
+
+    Returns:
+        Lista de velas históricas (ordenadas cronológicamente)
+    """
+    try:
+        interval_minutes = get_interval_minutes(interval)
+        minutes_in_period = days_needed * 24 * 60
+        total_candles_needed = int(minutes_in_period / interval_minutes)
+
+        print(f"[BACKTESTING EXPANSION] 📥 Expandiendo hacia atrás: {symbol} @ {interval}m")
+        print(f"  - Fecha límite: {datetime.fromtimestamp(before_timestamp_ms/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d %H:%M')}")
+        print(f"  - Días a descargar: {days_needed}")
+        print(f"  - Velas necesarias: {total_candles_needed:,}")
+
+        # Calcular rango temporal
+        end_ms = before_timestamp_ms - (interval_minutes * 60 * 1000)  # Una vela antes del límite
+        start_ms = end_ms - (days_needed * 24 * 60 * 60 * 1000)  # N días hacia atrás
+
+        all_candles = []
+        current_start = start_ms
+
+        async with httpx.AsyncClient(timeout=180) as client:
+            request_count = 0
+            max_requests = min(600, (total_candles_needed // 1000) + 10)
+
+            print(f"[BACKTESTING EXPANSION] Permitiendo hasta {max_requests} requests")
+
+            while len(all_candles) < total_candles_needed and request_count < max_requests:
+                request_count += 1
+                candles_remaining = total_candles_needed - len(all_candles)
+                fetch_limit = min(1000, candles_remaining)
+
+                url = (
+                    "https://api.bybit.com/v5/market/kline?"
+                    f"category=linear&symbol={symbol}&interval={interval}"
+                    f"&start={current_start}&limit={fetch_limit}"
+                )
+
+                r = await client.get(url)
+                data = r.json()
+
+                if data.get("retCode") != 0:
+                    print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
+                    break
+
+                batch_candles = data["result"]["list"]
+                if not batch_candles:
+                    print(f"[INFO {symbol}] No más datos históricos disponibles")
+                    break
+
+                # Bybit retorna en orden descendente, invertir a cronológico
+                batch_candles.reverse()
+
+                # Filtrar velas que están ANTES del límite (no incluir velas del caché existente)
+                filtered_batch = []
+                for c in batch_candles:
+                    ts = int(c[0])
+                    if ts < before_timestamp_ms:
+                        filtered_batch.append(c)
+                    else:
+                        # Ya llegamos al límite, detener
+                        break
+
+                all_candles.extend(filtered_batch)
+
+                # Si ya no hay velas antes del límite, detener
+                if len(filtered_batch) == 0:
+                    print(f"[BACKTESTING EXPANSION] Alcanzado límite temporal, deteniendo descarga")
+                    break
+
+                # Actualizar punto de inicio para siguiente batch
+                last_candle_ts = int(batch_candles[-1][0])
+                current_start = last_candle_ts + (interval_minutes * 60 * 1000)
+
+                # Detener si alcanzamos o superamos el límite temporal
+                if current_start >= end_ms:
+                    break
+
+                if len(all_candles) >= total_candles_needed:
+                    break
+
+                # Logging cada 10 requests
+                if request_count % 10 == 0:
+                    print(f"[BACKTESTING EXPANSION] {symbol} @ {interval}m - Descargadas {len(all_candles):,}/{total_candles_needed:,} velas ({request_count} requests)")
+
+                await asyncio.sleep(0.1)  # Rate limiting
+
+        # Procesar velas a formato estándar
+        candles = []
+        for c in all_candles:
+            ts_ms = int(c[0])
+            candles.append({
+                "timestamp": ts_ms,
+                "open": float(c[1]),
+                "high": float(c[2]),
+                "low": float(c[3]),
+                "close": float(c[4]),
+                "volume": float(c[5])
+            })
+
+        # Ordenar cronológicamente
+        candles.sort(key=lambda x: x["timestamp"])
+
+        print(f"[BACKTESTING EXPANSION] ✅ {symbol} @ {interval}m - {len(candles):,} velas históricas descargadas")
+        if candles:
+            first_ts = candles[0]["timestamp"]
+            last_ts = candles[-1]["timestamp"]
+            print(f"  - Rango: {datetime.fromtimestamp(first_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d')} → {datetime.fromtimestamp(last_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d')}")
+
+        return candles
+
+    except Exception as e:
+        print(f"[ERROR] Backwards fetch {symbol} @ {interval}m: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return []
+
+
 def merge_candles(existing: list, new_candles: list) -> list:
     """Mergea velas existentes con nuevas, deduplicando por timestamp"""
     if not new_candles:
@@ -2337,35 +2506,119 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 now_ms = int(time.time() * 1000)
                 age_hours = (now_ms - cached_at) / (1000 * 60 * 60)
 
-                # Verificar si el cache tiene menos datos de lo configurado
-                # Solo verificar el timeframe solicitado (o todos si no se especificó)
-                needs_expansion = False
+                # 🎯 FIX: Sistema de expansión inteligente del caché
+                # 1. Si tiene < 30 días → Descarga completa
+                # 2. Si tiene datos pero faltan para llegar al máximo configurado → Expansión hacia atrás
+                # 3. Si tiene suficientes datos → Actualización incremental (solo velas nuevas)
+                needs_full_download = False
+                needs_backwards_expansion = False
+                expansion_info = {}  # Para guardar info de cuántos días expandir por timeframe
+
                 configs_to_check = {timeframe: BACKTESTING_CONFIG[timeframe]} if timeframe and timeframe in BACKTESTING_CONFIG else BACKTESTING_CONFIG
+
                 for tf_name, config in configs_to_check.items():
                     tf_data = cached_data.get("timeframes", {}).get(tf_name, {})
                     main_candles = tf_data.get("main", [])
-                    if main_candles:
-                        interval_minutes = get_interval_minutes(config["interval"])
-                        expected_candles = int((config["days"] * 24 * 60) / interval_minutes)
-                        actual_candles = len(main_candles)
-                        # Si tiene menos del 80% de las velas esperadas, expandir
-                        if actual_candles < expected_candles * 0.8:
-                            print(f"[BACKTESTING] {tf_name}: cache tiene {actual_candles} velas, esperadas ~{expected_candles} - NECESITA EXPANSION")
-                            needs_expansion = True
-                            break
 
-                # Si se pidió un timeframe específico que NO existe en el cache, descargar
+                    if not main_candles:
+                        # No hay datos para este timeframe, necesitamos descarga completa
+                        print(f"[BACKTESTING] {tf_name}: Sin datos en caché - NECESITA DESCARGA COMPLETA")
+                        needs_full_download = True
+                        break
+
+                    interval_minutes = get_interval_minutes(config["interval"])
+                    actual_candles = len(main_candles)
+
+                    # Mínimo absoluto: 30 días
+                    min_days_required = 30
+                    min_candles_required = int((min_days_required * 24 * 60) / interval_minutes)
+
+                    # Máximo configurado para este timeframe
+                    config_days = config.get("days", 1825)
+                    expected_candles_config = int((config_days * 24 * 60) / interval_minutes)
+
+                    # Calcular cobertura
+                    coverage_pct = (actual_candles / expected_candles_config * 100)
+
+                    if actual_candles < min_candles_required:
+                        # Muy pocos datos - descarga completa
+                        print(f"[BACKTESTING] {tf_name}: Solo {actual_candles:,} velas (< {min_candles_required:,}) - NECESITA DESCARGA COMPLETA")
+                        needs_full_download = True
+                        break
+                    elif actual_candles < expected_candles_config * 0.95:
+                        # Tiene datos útiles pero le faltan para completar el máximo configurado
+                        # Expandir hacia atrás en lugar de re-descargar todo
+                        candles_missing = expected_candles_config - actual_candles
+                        days_missing = int((candles_missing * interval_minutes) / (24 * 60)) + 5  # +5 días de buffer
+
+                        print(f"[BACKTESTING] {tf_name}: {actual_candles:,}/{expected_candles_config:,} velas ({coverage_pct:.1f}%)")
+                        print(f"  → Faltan ~{candles_missing:,} velas ({days_missing} días)")
+                        print(f"  → Usando EXPANSIÓN HACIA ATRÁS (más rápido que descarga completa)")
+
+                        needs_backwards_expansion = True
+                        expansion_info[tf_name] = {
+                            "days_missing": days_missing,
+                            "first_candle_ts": main_candles[0]["timestamp"],
+                            "config": config
+                        }
+                    else:
+                        # Tiene casi todo el histórico configurado - solo informar
+                        print(f"[BACKTESTING] {tf_name}: cache completo - {actual_candles:,} velas ({coverage_pct:.1f}% del máx configurado)")
+
+                # Ejecutar acción según diagnóstico
                 if timeframe and timeframe not in cached_data.get("timeframes", {}):
                     print(f"[BACKTESTING] Timeframe {timeframe} no encontrado en cache, descargando...")
-                    # No descartar cached_data para preservar otros timeframes
-                elif needs_expansion:
+                    needs_full_download = True
+                elif needs_full_download:
                     if timeframe:
-                        # Solo invalidar el timeframe específico, preservar los demás
-                        print(f"[BACKTESTING] Cache insuficiente para {timeframe}. Re-descargando solo ese timeframe...")
-                        # No hacer cached_data = None, así preservamos los otros timeframes
+                        print(f"[BACKTESTING] {timeframe} necesita descarga completa (preservando otros timeframes)")
+                        # No hacer cached_data = None para preservar otros timeframes
                     else:
-                        print(f"[BACKTESTING] Cache insuficiente para los límites actuales. Re-descargando todo...")
+                        print(f"[BACKTESTING] Descartando caché completo - necesita descarga desde cero")
                         cached_data = None
+                elif needs_backwards_expansion:
+                    # 🎯 NUEVA FUNCIONALIDAD: Expandir caché existente hacia atrás
+                    print(f"\n[BACKTESTING] ⚡ EXPANSIÓN INCREMENTAL HACIA ATRÁS - {len(expansion_info)} timeframes")
+                    updated = False
+
+                    for tf_name, info in expansion_info.items():
+                        tf_data = cached_data["timeframes"][tf_name]
+                        config = info["config"]
+
+                        # Expandir velas principales hacia atrás
+                        print(f"\n[{tf_name}] Expandiendo velas principales...")
+                        historical_main = await fetch_historical_candles_backwards(
+                            symbol,
+                            config["interval"],
+                            info["first_candle_ts"],
+                            info["days_missing"]
+                        )
+
+                        if historical_main:
+                            # Mergear: [velas_históricas] + [velas_existentes]
+                            tf_data["main"] = historical_main + tf_data["main"]
+                            print(f"  [{tf_name}] main: +{len(historical_main):,} velas históricas (total: {len(tf_data['main']):,})")
+                            updated = True
+
+                        # 🔧 OPCIÓN B: Subdivisiones = Main (actualización automática)
+                        # Como subdivisions apunta a main, se actualiza automáticamente
+                        # No necesita código de expansión separado
+                        tf_data["subdivisions"] = tf_data["main"]  # Mantener referencia
+                        print(f"  [{tf_name}] subs: Actualizado automáticamente (apunta a main)")
+
+                    if updated:
+                        # Actualizar metadata y guardar
+                        cached_data["metadata"]["cached_at"] = int(time.time() * 1000)
+                        cached_data["metadata"]["cached_at_colombia"] = datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S")
+                        save_backtesting_cache(symbol, cached_data)
+                        print(f"\n[BACKTESTING] ✅ Cache expandido y guardado")
+
+                    return {
+                        "success": True,
+                        "from_cache": True,
+                        "backwards_expansion": True,
+                        **cached_data
+                    }
                 elif age_hours > 1.0:
                     # Carga incremental: solo descargar velas nuevas
                     # Si se pidió un timeframe específico, solo actualizar ese
@@ -2384,14 +2637,10 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                                 tf_data["main"] = merge_candles(main_candles, new_main)
                                 print(f"  [{tf_name}] main: +{len(new_main)} velas (total: {len(tf_data['main'])})")
                                 updated = True
-                        sub_candles = tf_data.get("subdivisions", [])
-                        if sub_candles:
-                            last_sub_ts = max(c["timestamp"] for c in sub_candles)
-                            new_subs = await fetch_incremental_candles(symbol, config["subdivisions"]["interval"], last_sub_ts)
-                            if new_subs:
-                                tf_data["subdivisions"] = merge_candles(sub_candles, new_subs)
-                                print(f"  [{tf_name}] subs: +{len(new_subs)} velas (total: {len(tf_data['subdivisions'])})")
-                                updated = True
+                        # 🔧 OPCIÓN B: Subdivisiones = Main (actualización automática)
+                        # Como subdivisions apunta a main, se actualiza automáticamente
+                        tf_data["subdivisions"] = tf_data["main"]  # Mantener referencia
+                        print(f"  [{tf_name}] subs: Actualizado automáticamente (apunta a main)")
 
                         # OI: descargar si falta, está vacío, o tiene cobertura insuficiente
                         oi_data = tf_data.get("open_interest", [])
@@ -2477,14 +2726,11 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 print(f"[ERROR] No se pudieron obtener datos para {tf_name}")
                 continue
 
-            # Descargar subdivisiones (pueden tener menos días que las principales)
-            subdivision_interval = config["subdivisions"]["interval"]
-            subdivision_days = config["subdivisions"].get("days", tf_days)
-            subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, subdivision_days)
-
-            if not subdivision_candles:
-                print(f"[ERROR] No se pudieron obtener subdivisiones para {tf_name}")
-                continue
+            # 🔧 OPCIÓN B: Subdivisiones = Main (sin descarga extra)
+            # Las subdivisiones apuntan al mismo array que main para evitar descargas masivas
+            # El playback funcionará correctamente pero sin datos intravela reales
+            subdivision_candles = main_candles  # Referencia directa, no copia
+            print(f"[BACKTESTING] Subdivisiones = Main (mismo array, sin descarga extra)")
 
             min_candle_ts = min(c["timestamp"] for c in main_candles)
             max_candle_ts = max(c["timestamp"] for c in main_candles)
@@ -2521,7 +2767,7 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
 
             print(f"[BACKTESTING] {tf_name} completado:")
             print(f"  - Main: {len(main_candles)} velas de {main_interval}m")
-            print(f"  - Subdivisions: {len(subdivision_candles)} velas de {subdivision_interval}m")
+            print(f"  - Subdivisions: {len(subdivision_candles)} velas de {main_interval}m (mismo array que main)")
             print(f"  - Open Interest: {len(oi_data)} puntos")
 
         # Calcular metadata

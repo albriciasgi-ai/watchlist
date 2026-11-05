@@ -258,9 +258,47 @@ const OrderFlowSettings = ({
     setPendingStepSize(null);
   };
 
-  // ELIMINADO: Ya no es necesario limpiar cache
-  // Los footprints históricos del cloud mantienen su step_size original
-  // Solo los footprints nuevos (tiempo real) usan el step_size configurado
+  // Handler para aplicar step_size al historial (elimina archivo y regenera)
+  const handleApplyToHistory = async () => {
+    if (!currentSymbol) return;
+
+    const confirmed = window.confirm(
+      `¿Regenerar footprints históricos de ${currentSymbol} con step_size=${symbolStepSize}?\n\n` +
+      `Esto eliminará el archivo local y el backend regenerará todos los footprints con el nuevo step_size.\n\n` +
+      `Puede tomar unos segundos.`
+    );
+
+    if (!confirmed) return;
+
+    setLoading(true);
+    try {
+      // 1. Eliminar cache del backend
+      console.log('[OrderFlowSettings] Eliminando cache backend...');
+      const deleteResponse = await fetch(`${API_BASE_URL}/api/orderflow/cache/${currentSymbol}`, {
+        method: 'DELETE'
+      });
+
+      if (!deleteResponse.ok) {
+        throw new Error('Error al eliminar cache backend');
+      }
+
+      const deleteResult = await deleteResponse.json();
+      console.log('[OrderFlowSettings] Cache backend eliminado:', deleteResult);
+
+      // 2. Ejecutar callback para eliminar archivo local y recargar
+      if (onBackendConfigSaved) {
+        console.log('[OrderFlowSettings] Ejecutando callback onBackendConfigSaved...');
+        await onBackendConfigSaved();
+      }
+
+      alert(`✅ Footprints regenerados con step_size=${symbolStepSize}`);
+    } catch (error) {
+      console.error('[OrderFlowSettings] Error al aplicar a historial:', error);
+      alert('Error al regenerar footprints. Ver consola para detalles.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="orderflow-settings" style={{ padding: '16px', maxHeight: '70vh', overflowY: 'auto' }}>
@@ -929,6 +967,39 @@ const OrderFlowSettings = ({
           - Los niveles estan ALINEADOS entre velas (mismo precio = misma posicion Y)<br/>
           - Similar a ATAS, Sierra Chart y plataformas profesionales
         </div>
+
+        {/* Boton Aplicar a Historial - Solo visible si step_size esta guardado */}
+        {!hasUnsavedStepSize && symbolStepSize && (
+          <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #90CAF9' }}>
+            <div style={{ fontSize: '11px', color: '#1565C0', marginBottom: '8px', fontWeight: 'bold' }}>
+              ⚠️ Regenerar Histórico
+            </div>
+            <div style={{ fontSize: '10px', color: '#666', marginBottom: '8px' }}>
+              Los footprints actuales tienen diferentes step_size (mezclados).
+              Regenerar TODO el histórico con step_size=${symbolStepSize} para uniformidad visual.
+            </div>
+            <button
+              onClick={handleApplyToHistory}
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '8px',
+                background: loading ? '#FF9800' : '#FF6F00',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: loading ? 'default' : 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold'
+              }}
+            >
+              {loading ? '🔄 Regenerando...' : '🔄 Aplicar a Todo el Historial'}
+            </button>
+            <div style={{ fontSize: '9px', color: '#666', marginTop: '4px', fontStyle: 'italic' }}>
+              Elimina archivo local y cache backend. Puede tomar ~30s.
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footprint Parameters (Backend) */}

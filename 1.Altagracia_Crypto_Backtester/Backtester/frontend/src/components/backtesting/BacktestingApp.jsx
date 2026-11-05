@@ -794,84 +794,130 @@ const BacktestingApp = () => {
       const cachedTfData = cachedResult.data.timeframes?.[activeTimeframe];
       if (cachedTfData && cachedTfData.main && cachedTfData.main.length > 0) {
         const lastCandle = cachedTfData.main[cachedTfData.main.length - 1];
-        console.log(`[BacktestingApp] Última vela del caché (${activeTimeframe}): ${new Date(lastCandle.timestamp).toISOString()}`);
+        const firstCandle = cachedTfData.main[0];
+        console.log(`[BacktestingApp] 📊 Caché encontrado para ${activeTimeframe}:`);
+        console.log(`  - Velas totales: ${cachedTfData.main.length.toLocaleString()}`);
+        console.log(`  - Primera vela: ${new Date(firstCandle.timestamp).toISOString()}`);
+        console.log(`  - Última vela: ${new Date(lastCandle.timestamp).toISOString()}`);
+        console.log(`  - Edad del caché: ${cacheAgeHours.toFixed(2)} horas`);
 
-        // Verificar si el cache tiene suficientes velas según la configuración esperada
-        const expectedDays = DAYS_BY_TIMEFRAME[activeTimeframe] || 1825;
+        // 🎯 FIX CRÍTICO: Validación de caché con verificación de datos recientes
         const intervalMin = INTERVAL_MINUTES[activeTimeframe] || 15;
-        const expectedCandles = Math.floor((expectedDays * 24 * 60) / intervalMin);
+        const minDaysRequired = 30; // Mínimo razonable para backtesting
+        const minCandlesRequired = Math.floor((minDaysRequired * 24 * 60) / intervalMin);
         const actualCandles = cachedTfData.main.length;
-        const hasEnoughData = actualCandles >= expectedCandles * 0.8;
+        const hasMinimumData = actualCandles >= minCandlesRequired;
 
-        if (!hasEnoughData) {
-          console.log(`[BacktestingApp] ⚠️ Cache insuficiente para ${activeTimeframe}: ${actualCandles} velas, esperadas ~${expectedCandles} (80% = ${Math.floor(expectedCandles * 0.8)})`);
-          console.log(`[BacktestingApp] Invalidando cache de IndexedDB, forzando descarga del servidor...`);
+        // 🔧 NUEVA VALIDACIÓN: Verificar que los datos lleguen hasta una fecha RECIENTE
+        const now = Date.now();
+        const lastCandleAge = now - lastCandle.timestamp;
+        const lastCandleAgeDays = lastCandleAge / (1000 * 60 * 60 * 24);
+        const maxAllowedAgeDays = 30; // Los datos no pueden ser más viejos de 30 días
+        const hasRecentData = lastCandleAgeDays <= maxAllowedAgeDays;
+
+        const expectedDaysConfig = DAYS_BY_TIMEFRAME[activeTimeframe] || 1825;
+        const expectedCandlesConfig = Math.floor((expectedDaysConfig * 24 * 60) / intervalMin);
+        const coveragePct = (actualCandles / expectedCandlesConfig * 100).toFixed(1);
+
+        console.log(`  - Cobertura: ${coveragePct}% del máximo configurado (${expectedDaysConfig} días)`);
+        console.log(`  - Mínimo requerido: ${minCandlesRequired} velas (${minDaysRequired} días)`);
+        console.log(`  - Tiene datos suficientes: ${hasMinimumData ? '✅ SÍ' : '❌ NO'}`);
+        console.log(`  - Última vela edad: ${lastCandleAgeDays.toFixed(1)} días`);
+        console.log(`  - Datos recientes (< ${maxAllowedAgeDays} días): ${hasRecentData ? '✅ SÍ' : '❌ NO'}`);
+
+        if (!hasMinimumData) {
+          console.log(`[BacktestingApp] ❌ Cache con muy pocas velas (${actualCandles} < ${minCandlesRequired})`);
+          console.log(`[BacktestingApp] Forzando descarga completa del servidor...`);
+          // No usar el cache - forzar descarga del servidor
+        } else if (!hasRecentData) {
+          console.log(`[BacktestingApp] ❌ Cache con datos MUY ANTIGUOS (última vela: ${lastCandleAgeDays.toFixed(1)} días atrás)`);
+          console.log(`[BacktestingApp] Forzando descarga completa del servidor...`);
           // No usar el cache - forzar descarga del servidor
         } else {
-          console.log('[BacktestingApp] ✅ Datos encontrados en IndexedDB, verificando actualizaciones...');
+          console.log(`[BacktestingApp] ✅ Cache válido - REUTILIZANDO datos existentes`);
 
-          // 🔧 FIX: Verificar actualizaciones ANTES de usar el caché
-          // Esto asegura que siempre tengamos las velas más recientes disponibles
-          try {
-            const updateResult = await checkForUpdates(symbol);
+          // 🎯 FIX: Solo verificar actualizaciones si el caché tiene más de 1 hora
+          // Para backtesting, los datos históricos no cambian, solo agregar velas nuevas
+          if (cacheAgeHours > 1.0) {
+            console.log(`[BacktestingApp] 🔄 Cache antiguo (${cacheAgeHours.toFixed(1)}h), verificando si hay velas nuevas...`);
 
-            if (updateResult && updateResult.success) {
-              if (updateResult.new_candles_added > 0) {
-                console.log(`[BacktestingApp] 🔄 ${updateResult.new_candles_added} velas nuevas agregadas`);
-                // checkForUpdates ya actualizó IndexedDB, solo necesitamos recargar desde allí
-                const updatedCacheResult = await loadFromIndexedDB(symbol);
-                if (updatedCacheResult && updatedCacheResult.data) {
+            try {
+              // Verificar si el backend tiene velas más recientes
+              const backendResponse = await fetch(`${API_BASE_URL}/api/backtesting/bulk-data/${symbol}?timeframe=${activeTimeframe}`);
+              const backendData = await backendResponse.json();
+
+              if (backendData.success && backendData.timeframes?.[activeTimeframe]) {
+                const backendCandles = backendData.timeframes[activeTimeframe].main;
+                const backendLastCandle = backendCandles[backendCandles.length - 1];
+
+                if (backendLastCandle.timestamp > lastCandle.timestamp) {
+                  console.log(`[BacktestingApp] 🆕 Hay ${backendCandles.length - actualCandles} velas nuevas en el servidor`);
+                  console.log(`[BacktestingApp] Actualizando caché con datos completos...`);
+
+                  // Usar los datos actualizados del backend
                   shouldUseCachedData = true;
-                  data = updatedCacheResult.data;
+                  data = backendData;
                   setMarketData(data);
-                  console.log('[BacktestingApp] ✅ Datos actualizados desde IndexedDB');
+                  await saveToIndexedDB(symbol, data);
+                  console.log('[BacktestingApp] ✅ Caché actualizado con velas nuevas');
                 } else {
-                  // Fallback: si IndexedDB falló, cargar desde servidor
-                  console.warn('[BacktestingApp] ⚠️ IndexedDB no tiene datos actualizados, cargando desde servidor...');
-                  data = await loadBacktestingData(symbol);
+                  console.log(`[BacktestingApp] ✅ No hay velas nuevas - usando caché existente`);
                   shouldUseCachedData = true;
+                  data = cachedResult.data;
                   setMarketData(data);
                 }
               } else {
-                console.log('[BacktestingApp] ✅ Caché está actualizado, usando datos de IndexedDB');
+                // Fallback: usar caché existente si falla la verificación
+                console.warn('[BacktestingApp] ⚠️ No se pudo verificar actualizaciones, usando caché existente');
                 shouldUseCachedData = true;
                 data = cachedResult.data;
                 setMarketData(data);
               }
-            } else {
-              // Si falla la actualización, usar el caché existente
-              console.warn('[BacktestingApp] ⚠️ No se pudo verificar actualizaciones, usando caché existente');
+            } catch (err) {
+              console.warn('[BacktestingApp] ⚠️ Error al verificar actualizaciones:', err.message);
+              // En caso de error, usar el caché existente (modo offline)
+              console.log('[BacktestingApp] 📴 Modo offline - usando caché existente');
               shouldUseCachedData = true;
               data = cachedResult.data;
               setMarketData(data);
             }
-          } catch (err) {
-            console.warn('[BacktestingApp] ⚠️ Error al verificar actualizaciones:', err);
-            // En caso de error, usar el caché existente
+          } else {
+            // Caché reciente (< 1 hora) - usar directamente sin verificar actualizaciones
+            console.log(`[BacktestingApp] ⚡ Cache reciente (${cacheAgeHours.toFixed(1)}h) - usando directamente sin verificar actualizaciones`);
             shouldUseCachedData = true;
             data = cachedResult.data;
+
+            // 🔍 DEBUG: Verificar subdivisiones
+            console.log(`%c[BacktestingApp] 🔍 VERIFICANDO SUBDIVISIONES EN MARKETDATA`, 'background: #FF00FF; color: white; font-weight: bold;');
+            ['1m', '5m', '15m', '1h', '4h'].forEach(tf => {
+              const tfData = data.timeframes?.[tf];
+              if (tfData) {
+                console.log(`[BacktestingApp] ${tf}: main=${tfData.main?.length || 0}, subdivisions=${tfData.subdivisions?.length || 0}`);
+              }
+            });
+
             setMarketData(data);
           }
         }
       }
     }
 
-    // Si no hay caché válido, verificar actualizaciones primero y luego descargar
+    // Si no hay caché válido, descargar del servidor
     if (!shouldUseCachedData) {
-      console.log(`[BacktestingApp] No hay caché válido para ${activeTimeframe}`);
+      console.log(`[BacktestingApp] ❌ No hay caché válido para ${activeTimeframe}`);
+      console.log(`[BacktestingApp] 📥 Descargando histórico completo del servidor (primera carga, tardará varios minutos)...`);
+      // 🔧 FIX: NO pasar activeTimeframe - descargar TODOS los timeframes en la carga inicial
+      // Esto asegura que todos los timeframes (1m, 5m, 15m, 1h, 4h) se descarguen de una vez
+      data = await loadBacktestingData(symbol, false, null);
 
-      // 🔧 FIX: Verificar si el backend tiene datos actualizados antes de descargar
-      try {
-        const updateResult = await checkForUpdates(symbol);
-        if (updateResult && updateResult.success && updateResult.new_candles_added > 0) {
-          console.log(`[BacktestingApp] ✅ Backend actualizado con ${updateResult.new_candles_added} velas nuevas`);
+      // 🔍 DEBUG: Verificar subdivisiones después de descargar
+      console.log(`%c[BacktestingApp] 🔍 VERIFICANDO SUBDIVISIONES DESPUÉS DE DESCARGA`, 'background: #FF00FF; color: white; font-weight: bold;');
+      ['1m', '5m', '15m', '1h', '4h'].forEach(tf => {
+        const tfData = data.timeframes?.[tf];
+        if (tfData) {
+          console.log(`[BacktestingApp] ${tf}: main=${tfData.main?.length || 0}, subdivisions=${tfData.subdivisions?.length || 0}`);
         }
-      } catch (err) {
-        console.warn('[BacktestingApp] ⚠️ No se pudo verificar actualizaciones del backend:', err);
-      }
-
-      console.log(`[BacktestingApp] Descargando ${activeTimeframe} del servidor...`);
-      data = await loadBacktestingData(symbol, false, activeTimeframe);
+      });
     }
 
     if (data && data.timeframes && data.timeframes[activeTimeframe]) {

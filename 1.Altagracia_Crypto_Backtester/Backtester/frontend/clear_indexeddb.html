@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Limpiar Caché de Backtesting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        button {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #d32f2f;
+        }
+        button.success {
+            background: #4CAF50;
+        }
+        button.success:hover {
+            background: #45a049;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background: #333;
+        }
+        .success-msg {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .error-msg {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .info-msg {
+            color: #FFC107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpieza de Caché - Backtesting App</h1>
+        <p>Este script eliminará completamente el caché de IndexedDB para forzar una descarga completa de datos.</p>
+
+        <button onclick="clearIndexedDB()">🗑️ Limpiar IndexedDB</button>
+        <button class="success" onclick="window.location.href='http://localhost:9001'">✅ Ir a la App</button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function clearIndexedDB() {
+            const status = document.getElementById('status');
+            status.innerHTML = '<p class="info-msg">⏳ Eliminando base de datos...</p>';
+
+            const request = indexedDB.deleteDatabase('BacktestingDataDB');
+
+            request.onsuccess = function() {
+                status.innerHTML = `
+                    <p class="success-msg">✅ IndexedDB eliminado exitosamente</p>
+                    <p>La próxima vez que abras la app, descargará todos los datos desde cero.</p>
+                    <p><strong>Nota:</strong> Esto puede tardar varios minutos (5-10 min) según tu conexión.</p>
+                    <p style="margin-top: 15px;">
+                        <button class="success" onclick="window.location.href='http://localhost:9001'">
+                            🚀 Abrir App Ahora
+                        </button>
+                    </p>
+                `;
+            };
+
+            request.onerror = function() {
+                status.innerHTML = `
+                    <p class="error-msg">❌ Error al eliminar IndexedDB</p>
+                    <p>${request.error}</p>
+                `;
+            };
+
+            request.onblocked = function() {
+                status.innerHTML = `
+                    <p class="error-msg">⚠️ Operación bloqueada</p>
+                    <p>Cierra todas las pestañas de la app de backtesting e intenta de nuevo.</p>
+                `;
+            };
+        }
+
+        // Mostrar información al cargar
+        window.onload = function() {
+            const status = document.getElementById('status');
+            status.innerHTML = `
+                <p class="info-msg">ℹ️ Estado actual:</p>
+                <p>• Backend caché: Limpiado ✅</p>
+                <p>• Frontend IndexedDB: Pendiente de limpiar</p>
+                <p style="margin-top: 10px; font-size: 14px;">
+                    Click en "Limpiar IndexedDB" para continuar.
+                </p>
+            `;
+        };
+    </script>
+</body>
+</html>
