@@ -23,6 +23,32 @@ from vwap_service import get_vwap_service
 logger = logging.getLogger(__name__)
 
 # Config file path
+# Limites por timeframe, iguales a los del Analizador. Sin ellos, 1m con 90 dias
+# pide 129,600 velas por simbolo y deja el backend sin responder.
+MAX_DAYS_BY_INTERVAL = {
+    "1": 5,
+    "3": 10,
+    "5": 30,
+    "15": 90,
+    "30": 150,
+    "60": 360,
+    "120": 180,
+    "240": 720,
+    "D": 1440,
+    "W": 730,
+}
+MAX_CANDLES_ABSOLUTE = 10000
+
+
+def validate_days_for_interval(days: int, interval: str) -> int:
+    """Cap days to the maximum allowed for the given interval."""
+    max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
+    if days > max_days:
+        logger.warning(f"[SWING_SERVICE] Days {days} exceeds max {max_days} for interval {interval}, truncating")
+        return max_days
+    return days
+
+
 CONFIG_DIR = Path(__file__).parent / "config"
 CONFIG_FILE = CONFIG_DIR / "swing_config.json"
 SIGNALS_FILE = CONFIG_DIR / "swing_signals.json"
@@ -139,6 +165,8 @@ class SwingServiceConfig:
             if 'priceZones' in symbol_cfg:
                 # Symbol-specific zones override (but also include global zones for this symbol)
                 config['priceZones'] = symbol_cfg['priceZones']
+
+        config['days'] = validate_days_for_interval(config['days'], self.interval)
 
         return config
 
@@ -321,7 +349,7 @@ class SwingService:
                 logger.info(f"[SWING_SERVICE] {symbol}: Config = swingBars={symbol_config.get('swingBars')}, direction={symbol_config.get('direction')}, volumeFilter={symbol_config.get('volumeFilter')}")
 
                 # Calculate how many candles based on symbol's days setting
-                desired_candles = calculate_candles_for_days(self.config.interval, symbol_days)
+                desired_candles = min(calculate_candles_for_days(self.config.interval, symbol_days), MAX_CANDLES_ABSOLUTE)
                 logger.info(f"[SWING_SERVICE] {symbol}: Days={symbol_days}, Interval={self.config.interval} -> {desired_candles} candles")
 
                 # Get candles from WebSocket buffer first
@@ -647,6 +675,7 @@ class SwingService:
 
         payload = {
             "source": "SWING_DETECTOR",
+            "origin": "WATCHLIST",
             "symbol": signal.symbol,
             "interval": signal.interval,
             "pattern": {

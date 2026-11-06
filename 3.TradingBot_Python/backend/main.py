@@ -24,7 +24,11 @@ from trading.alert_parser import AlertParser
 ALERT_LOG_DIR = Path(__file__).parent / "logs"
 ALERT_RECEIVED_LOG = ALERT_LOG_DIR / "alerts_received.log"
 
-def log_received_alert(symbol: str, side: str, pattern: str, price: float, confidence: float, result: str, source: str = "WATCHLIST"):
+# Aplicaciones autorizadas a enviar alertas automaticas. Cualquier otro origen,
+# o una alerta sin origen, se rechaza. Solo el Analizador arranca habilitado.
+DEFAULT_ALLOWED_ORIGINS = {"ANALIZADOR": True, "WATCHLIST": False, "ORDERFLOW": False}
+
+def log_received_alert(symbol: str, side: str, pattern: str, price: float, confidence: float, result: str, source: str = "WATCHLIST", origin: str = "N/A"):
     """Write received alert to log file"""
     try:
         # Ensure logs directory exists
@@ -32,7 +36,7 @@ def log_received_alert(symbol: str, side: str, pattern: str, price: float, confi
 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         conf_str = f"{confidence:.1f}%" if confidence else "N/A"
-        log_line = f"{timestamp} | {result} | {source} | {symbol} | {side} | {pattern} | ${price:.2f} | {conf_str}\n"
+        log_line = f"{timestamp} | {result} | {source} | {symbol} | {side} | {pattern} | ${price:.2f} | {conf_str} | {origin}\n"
         with open(ALERT_RECEIVED_LOG, "a", encoding="utf-8") as f:
             f.write(log_line)
     except Exception as e:
@@ -153,6 +157,8 @@ class AppState:
         self.daily_risk_used: float = 0.0  # accumulated risk today
         self.daily_risk_date: str = ""  # date string YYYY-MM-DD
         self.daily_risk_trades: int = 0  # trades count today
+        # Alert origin filter
+        self.allowed_origins: Dict[str, bool] = dict(DEFAULT_ALLOWED_ORIGINS)
 
     def load_config(self):
         """Load trading configuration from JSON"""
@@ -257,6 +263,11 @@ class AppState:
                     settings = json.load(f)
                     self.use_integrated_tpsl = settings.get("use_integrated_tpsl", False)
                     self.daily_risk_limit = settings.get("daily_risk_limit", 0.0)
+                    saved_origins = settings.get("allowed_origins", {})
+                    self.allowed_origins = {
+                        origin: saved_origins.get(origin, default) is True
+                        for origin, default in DEFAULT_ALLOWED_ORIGINS.items()
+                    }
                     # Restore daily counters only if same day
                     saved_date = settings.get("daily_risk_date", "")
                     today = date.today().isoformat()
@@ -289,7 +300,8 @@ class AppState:
                 "daily_risk_limit": self.daily_risk_limit,
                 "daily_risk_date": self.daily_risk_date,
                 "daily_risk_used": self.daily_risk_used,
-                "daily_risk_trades": self.daily_risk_trades
+                "daily_risk_trades": self.daily_risk_trades,
+                "allowed_origins": self.allowed_origins
             }
             with open(self.bot_settings_file, 'w') as f:
                 json.dump(settings, f, indent=2)
@@ -809,8 +821,27 @@ async def get_bot_settings():
         "daily_risk_used": state.daily_risk_used,
         "daily_risk_trades": state.daily_risk_trades,
         "daily_risk_date": state.daily_risk_date,
-        "daily_risk_remaining": max(0, state.daily_risk_limit - state.daily_risk_used) if state.daily_risk_limit > 0 else None
+        "daily_risk_remaining": max(0, state.daily_risk_limit - state.daily_risk_used) if state.daily_risk_limit > 0 else None,
+        "allowed_origins": state.allowed_origins
     }
+
+
+@app.post("/api/settings/allowed-origins")
+async def set_allowed_origin(request: Request):
+    """Enable or disable automatic alerts from one application."""
+    body = await request.json()
+    origin = str(body.get("origin") or "").strip().upper()
+    enabled = body.get("enabled")
+
+    if origin not in DEFAULT_ALLOWED_ORIGINS:
+        raise HTTPException(status_code=400, detail=f"Unknown alert origin: {origin}")
+    if not isinstance(enabled, bool):
+        raise HTTPException(status_code=400, detail="enabled must be true or false")
+
+    state.allowed_origins[origin] = enabled
+    state.save_bot_settings()
+    state.log("success", f"Alert origin {origin}: {'ALLOWED' if enabled else 'BLOCKED'}")
+    return {"success": True, "allowed_origins": state.allowed_origins}
 
 
 @app.post("/api/settings/execution-method")
@@ -1191,6 +1222,33 @@ async def process_alert(req: AlertRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+def reject_alert_by_origin(request: Dict[str, Any], origin: str) -> JSONResponse:
+    """Record an alert blocked by the origin filter and build its 403 response."""
+    label = origin or "NONE"
+    source = request.get("source", "WATCHLIST")
+    symbol = request.get("symbol", "UNKNOWN")
+    pattern_data = request.get("pattern")
+    details = pattern_data if isinstance(pattern_data, dict) else request
+
+    pattern = details.get("patternType") if isinstance(pattern_data, dict) else pattern_data
+    side = details.get("direction") or "N/A"
+    try:
+        price = float(details.get("price") or 0)
+        confidence = float(details.get("confidence") or 0)
+    except (TypeError, ValueError):
+        price = 0.0
+        confidence = 0.0
+
+    log_received_alert(symbol, side, str(pattern or "UNKNOWN"), price, confidence, f"BLOCKED_ORIGIN:{label}", source, label)
+
+    state.log("warning", f"Alert blocked by origin filter: origin={label} source={source} symbol={symbol}")
+
+    return JSONResponse(
+        status_code=403,
+        content={"success": False, "message": f"Alert origin not allowed: {label}", "symbol": symbol}
+    )
+
+
 @app.post("/api/watchlist-alert")
 async def process_watchlist_alert(request: Dict[str, Any]):
     """
@@ -1198,7 +1256,12 @@ async def process_watchlist_alert(request: Dict[str, Any]):
     Supports both formats:
     - Watchlist: {pattern, symbol, price, confidence}
     - SwingDetector: {source, symbol, interval, pattern: {patternType, price, direction, ...}}
+    Every alert must declare an allowed "origin" application.
     """
+    origin = str(request.get("origin") or "").strip().upper()
+    if not state.allowed_origins.get(origin, False):
+        return reject_alert_by_origin(request, origin)
+
     try:
         if not state.bybit_client:
             raise HTTPException(status_code=400, detail="Credentials not configured")
@@ -1268,7 +1331,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
         # Guard: rechazar alertas con precio <= 0 (alertas fantasma o mal formadas)
         if price <= 0:
             state.log("warning", f"Alert rejected: {symbol} {side} price={price} (invalid price <= 0)")
-            log_received_alert(symbol, side, pattern, float(price), confidence, "REJECTED_INVALID_PRICE", source)
+            log_received_alert(symbol, side, pattern, float(price), confidence, "REJECTED_INVALID_PRICE", source, origin)
             return {
                 "success": False,
                 "message": f"Invalid price: {price} (must be > 0)",
@@ -1277,12 +1340,12 @@ async def process_watchlist_alert(request: Dict[str, Any]):
 
         # Log with explicit timestamp for debugging alert timing
         received_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        state.log("info", f"[{received_at}] {source} alert: {symbol} {side} @ {price} | {pattern} | Conf: {confidence}%")
+        state.log("info", f"[{received_at}] [{origin}] {source} alert: {symbol} {side} @ {price} | {pattern} | Conf: {confidence}%")
 
         # Check direction filter
         if not state.direction_manager.is_alert_allowed(symbol, side):
             state.log("warning", f"Alert rejected by direction filter: {symbol} {side}")
-            log_received_alert(symbol, side, pattern, float(price), confidence, "REJECTED_DIRECTION", source)
+            log_received_alert(symbol, side, pattern, float(price), confidence, "REJECTED_DIRECTION", source, origin)
             return {
                 "success": False,
                 "message": f"Direction filter rejected: {symbol} is set to {state.direction_manager.get_direction(symbol)}",
@@ -1294,7 +1357,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
         config = state.get_coin_config(symbol)
         if not config:
             state.log("error", f"No configuration found for {symbol}")
-            log_received_alert(symbol, side, pattern, float(price), confidence, "NO_CONFIG", source)
+            log_received_alert(symbol, side, pattern, float(price), confidence, "NO_CONFIG", source, origin)
             raise HTTPException(status_code=404, detail=f"No configuration for {symbol}")
 
         # Acquire lock for this symbol
@@ -1322,7 +1385,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
                           f"size={position.get('size')} entry=${position.get('entryPrice')} "
                           f"SL={position.get('stopLoss')} TP={position.get('takeProfit')} "
                           f"PnL={position.get('unrealizedPnl')}, skipping alert")
-                log_received_alert(symbol, side, pattern, float(price), confidence, "SKIPPED_POSITION_EXISTS", source)
+                log_received_alert(symbol, side, pattern, float(price), confidence, "SKIPPED_POSITION_EXISTS", source, origin)
                 return {
                     "success": False,
                     "message": f"Position already exists for {symbol} {side}",
@@ -1367,7 +1430,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
                 msg = (f"Daily risk limit reached: ${daily_check['used']:.2f} / ${daily_check['limit']:.2f} "
                        f"({daily_check['trades_today']} trades). Requested: ${daily_check['requested']:.2f}")
                 state.log("warning", f"[RISK] {msg}")
-                log_received_alert(symbol, side, pattern, float(price), confidence, "BLOCKED_DAILY_LIMIT", source)
+                log_received_alert(symbol, side, pattern, float(price), confidence, "BLOCKED_DAILY_LIMIT", source, origin)
                 await state.broadcast_event("daily_limit_reached", {
                     "symbol": symbol, "side": side, "limit": daily_check["limit"],
                     "used": daily_check["used"], "trades": daily_check["trades_today"]
@@ -1472,14 +1535,14 @@ async def process_watchlist_alert(request: Dict[str, Any]):
 
             # Enhanced logging
             if success_status and partial:
-                state.log("warning", f"[PARTIAL] {symbol}: Market Order executed but SL/TP failed")
-                log_received_alert(symbol, side, pattern, float(price), confidence, "PARTIAL", source)
+                state.log("warning", f"[PARTIAL] [{origin}] {symbol}: Market Order executed but SL/TP failed")
+                log_received_alert(symbol, side, pattern, float(price), confidence, "PARTIAL", source, origin)
             elif success_status:
-                state.log("success", f"[SUCCESS] {symbol}: Trade completed! {side} qty={quantity} @ ~${price} | SL/TP applied | Pattern: {pattern}")
-                log_received_alert(symbol, side, pattern, float(price), confidence, "SUCCESS", source)
+                state.log("success", f"[SUCCESS] [{origin}] {symbol}: Trade completed! {side} qty={quantity} @ ~${price} | SL/TP applied | Pattern: {pattern}")
+                log_received_alert(symbol, side, pattern, float(price), confidence, "SUCCESS", source, origin)
             else:
-                state.log("error", f"[FAILED] {symbol}: Trade failed - {result.get('error', 'Unknown error')}")
-                log_received_alert(symbol, side, pattern, float(price), confidence, "FAILED", source)
+                state.log("error", f"[FAILED] [{origin}] {symbol}: Trade failed - {result.get('error', 'Unknown error')}")
+                log_received_alert(symbol, side, pattern, float(price), confidence, "FAILED", source, origin)
 
             # Save to order history
             if success_status:
@@ -1495,6 +1558,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
                     "pattern": pattern,
                     "confidence": confidence,
                     "source": source,
+                    "origin": origin,
                     "status": "partial" if partial else "success"
                 }
                 state.add_order_to_history(order_history_entry)
@@ -1511,6 +1575,7 @@ async def process_watchlist_alert(request: Dict[str, Any]):
                 "pattern": pattern,
                 "confidence": confidence,
                 "source": source,
+                "origin": origin,
                 "result": result,
                 "partial": partial
             }
@@ -1844,7 +1909,8 @@ async def get_recent_alerts(minutes: int = 30):
                                     "side": parts[4],
                                     "pattern": parts[5],
                                     "price": parts[6].replace("$", ""),
-                                    "confidence": parts[7] if len(parts) > 7 else None
+                                    "confidence": parts[7] if len(parts) > 7 else None,
+                                    "origin": parts[8] if len(parts) > 8 else None
                                 })
                     except Exception:
                         continue

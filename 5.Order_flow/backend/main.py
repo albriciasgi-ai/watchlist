@@ -4461,6 +4461,40 @@ async def get_repair_progress():
         }
 
 
+@app.post("/api/swing/toggle-alerts")
+async def toggle_swing_alerts(request: Request):
+    """
+    Toggle swing alerts globally and for every configured symbol.
+    Body: { "enabled": true/false }
+    Enabling starts the service if needed; disabling keeps detection running.
+    """
+    try:
+        body = await request.json()
+        enabled = body.get("enabled") is True
+        swing_service = get_swing_service()
+
+        swing_service.config.alertsEnabled = enabled
+        for sym_key in swing_service.config.symbolConfigs:
+            swing_service.config.symbolConfigs[sym_key]["alertsEnabled"] = enabled
+
+        if enabled and not swing_service.running:
+            swing_service.config.enabled = True
+            await swing_service.start()
+            print("[SWING] Alerts enabled + service started via toggle-alerts")
+
+        swing_service._save_config()
+
+        return {
+            "success": True,
+            "alertsEnabled": enabled,
+            "running": swing_service.running,
+            "symbolsUpdated": list(swing_service.config.symbolConfigs.keys())
+        }
+    except Exception as e:
+        print(f"[ERROR] Swing toggle-alerts: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
 @app.post("/api/swing/config")
 async def update_swing_config(request: Request):
     """

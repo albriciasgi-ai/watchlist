@@ -533,7 +533,7 @@ class RejectionPatternIndicator extends IndicatorBase {
         proximityPercent: 1.0,
         requireVolumeSpike: false
       },
-      alertsEnabled: true,  // Habilitado por defecto para enviar al trading bot
+      alertsEnabled: false,  // Deshabilitado por defecto: requiere activacion explicita
       // Nuevo: Modo debug global
       debugMode: false,                  // Si true, muestra console.log de todos los patrones rechazados
       // NUEVO: Filtro de dirección de señales

@@ -1306,6 +1306,7 @@ class ZoneServiceV2:
         side = "Buy" if direction == "UP" else "Sell"
         payload = {
             "source": "ZONE_DETECTOR_V2",
+            "origin": "ANALIZADOR",
             "symbol": symbol,
             "interval": self.config.interval,
             "pattern": {

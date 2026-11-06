@@ -582,7 +582,7 @@ const SwingDetectorSettings = ({
             <div style={{ fontSize: '11px', color: '#666', marginTop: '6px', marginLeft: '26px' }}>
               {alertsEnabled
                 ? `Swing service ${isRunning ? 'RUNNING' : 'starting...'} - signals sent to Trading Bot (port 5000)`
-                : 'Swing service stopped - display only mode (no alerts sent)'}
+                : 'Detection keeps running - no alerts sent'}
             </div>
           </div>
         );

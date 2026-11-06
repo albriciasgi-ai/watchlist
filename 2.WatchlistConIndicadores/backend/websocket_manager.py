@@ -315,6 +315,11 @@ class WebSocketManager:
 
         logger.info("WebSocket loop ended")
 
+    async def _send_in_batches(self, op: str, channels: List[str]):
+        """Send subscribe/unsubscribe requests (Bybit allows 10 channels per message)"""
+        for i in range(0, len(channels), 10):
+            await self.ws.send(json.dumps({"op": op, "args": channels[i:i + 10]}))
+
     async def _connect_and_subscribe(self):
         """Connect to Bybit and subscribe to channels"""
         logger.info(f"Connecting to {self.BYBIT_WS_URL}...")
@@ -336,11 +341,7 @@ class WebSocketManager:
 
         # Subscribe to all channels
         if self.subscriptions:
-            subscribe_msg = {
-                "op": "subscribe",
-                "args": list(self.subscriptions)
-            }
-            await self.ws.send(json.dumps(subscribe_msg))
+            await self._send_in_batches("subscribe", list(self.subscriptions))
             logger.info(f"Subscribed to {len(self.subscriptions)} channels")
 
         # Start ping task
@@ -522,20 +523,12 @@ class WebSocketManager:
         try:
             # Unsubscribe from old channels
             if to_unsubscribe:
-                unsubscribe_msg = {
-                    "op": "unsubscribe",
-                    "args": list(to_unsubscribe)
-                }
-                await self.ws.send(json.dumps(unsubscribe_msg))
+                await self._send_in_batches("unsubscribe", list(to_unsubscribe))
                 logger.info(f"[WS] Unsubscribed from {len(to_unsubscribe)} channels: {to_unsubscribe}")
 
             # Subscribe to new channels
             if to_subscribe:
-                subscribe_msg = {
-                    "op": "subscribe",
-                    "args": list(to_subscribe)
-                }
-                await self.ws.send(json.dumps(subscribe_msg))
+                await self._send_in_batches("subscribe", list(to_subscribe))
                 logger.info(f"[WS] Subscribed to {len(to_subscribe)} channels: {to_subscribe}")
 
             # Update internal state

@@ -1276,6 +1276,7 @@ class StrategyRealtimeService:
 
         payload = {
             "source": "STRATEGY_BUILDER",
+            "origin": "ANALIZADOR",
             "symbol": symbol,
             "interval": self.config.interval,
             "pattern": {

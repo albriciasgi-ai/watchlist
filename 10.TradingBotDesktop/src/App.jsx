@@ -4,6 +4,7 @@ import './App.css'
 import { WS_URL, API_BASE_URL } from './config'
 import CredentialsPanel from './components/CredentialsPanel'
 import DirectionManager from './components/DirectionManager'
+import AlertOriginsPanel from './components/AlertOriginsPanel'
 import ConfigManager from './components/ConfigManager'
 import AlertPanel from './components/AlertPanel'
 import LogsPanel from './components/LogsPanel'
@@ -183,6 +184,11 @@ function App() {
               </div>
 
               <div className="dashboard-right">
+                <div className="dashboard-section">
+                  <h2>Alert Origins</h2>
+                  <AlertOriginsPanel />
+                </div>
+
                 <div className="dashboard-section">
                   <h2>Trading Directions</h2>
                   <DirectionManager />

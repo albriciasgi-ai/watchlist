@@ -2404,11 +2404,11 @@ async def startup_event():
     # Start real-time pattern detection service
     try:
         realtime_service = get_realtime_pattern_service()
-        # Default symbols - can be configured via API
-        symbols = ["BTCUSDT", "ETHUSDT"]
-        # Start with only 1h interval - frontend will notify the active timeframe
-        # This avoids monitoring ALL timeframes and reduces load significantly
-        intervals = ["60"]  # Only 1h by default, frontend will update via POST /api/realtime/set-interval
+        # El Swing depende de este WebSocket: sin sus simbolos no recibe velas en vivo
+        swing_config = get_swing_service().config
+        symbols = swing_config.symbols or ["BTCUSDT", "ETHUSDT"]
+        # Un solo intervalo para reducir carga; el frontend lo actualiza via POST /api/realtime/set-interval
+        intervals = [swing_config.interval]
         await realtime_service.start(symbols, intervals)
         print("[STARTUP] Real-time pattern detection service started")
         print(f"[STARTUP] Monitoring symbols: {symbols}")
@@ -3802,22 +3802,8 @@ async def get_global_alerts_status():
             realtime_service = get_realtime_pattern_service()
             config_store = realtime_service.config_store
 
-            dbt_enabled_count = 0
-            rejection_enabled_count = 0
-
-            for symbol_data in config_store.configs.values():
-                for interval_data in symbol_data.get('intervals', {}).values():
-                    # Check DTB alerts
-                    if 'doubleTopBottom' in interval_data:
-                        dbt_config = interval_data['doubleTopBottom'].get('config', {})
-                        if dbt_config.get('alertsEnabled', False):
-                            dbt_enabled_count += 1
-
-                    # Check Rejection alerts
-                    if 'rejection' in interval_data:
-                        rej_config = interval_data['rejection'].get('config', {})
-                        if rej_config.get('alertsEnabled', False):
-                            rejection_enabled_count += 1
+            dbt_enabled_count = config_store.count_alerts_enabled('doubleTopBottom')
+            rejection_enabled_count = config_store.count_alerts_enabled('rejection')
 
             # Consider patterns enabled if ANY config has alerts enabled
             patterns_enabled = (dbt_enabled_count > 0 or rejection_enabled_count > 0)
@@ -3878,24 +3864,7 @@ async def toggle_global_alerts(request: Request):
             realtime_service = get_realtime_pattern_service()
             config_store = realtime_service.config_store
 
-            # Get all symbols and intervals from config
-            symbols_updated = 0
-            for symbol_data in config_store.configs.values():
-                for interval_data in symbol_data.get('intervals', {}).values():
-                    # Update DTB alerts
-                    if 'doubleTopBottom' in interval_data:
-                        dbt_config = interval_data['doubleTopBottom'].get('config', {})
-                        dbt_config['alertsEnabled'] = enabled
-                        symbols_updated += 1
-
-                    # Update Rejection alerts
-                    if 'rejection' in interval_data:
-                        rej_config = interval_data['rejection'].get('config', {})
-                        rej_config['alertsEnabled'] = enabled
-                        symbols_updated += 1
-
-            # Save updated configs
-            config_store.save_configs()
+            symbols_updated = config_store.set_all_alerts_enabled(enabled)
             results['patterns'] = {
                 'success': True,
                 'enabled': enabled,

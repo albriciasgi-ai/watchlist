@@ -409,6 +409,7 @@ class VPZoneService:
 
         alert_payload = {
             "source": "VP_ZONE_SCANNER",
+            "origin": "ANALIZADOR",
             "symbol": symbol,
             "interval": self.config.interval,
             "pattern": {

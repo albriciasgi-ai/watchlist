@@ -769,9 +769,9 @@ class SwingService:
     async def _send_alert(self, signal: SwingSignal) -> bool:
         """Send alert to Trading Bot"""
         # Check if alerts are enabled for this symbol
-        # First check symbol-specific config, then fall back to global config
+        # Global OFF always wins; symbol config can only narrow a global ON
         symbol_config = self.config.get_symbol_config(signal.symbol)
-        alerts_enabled = symbol_config.get('alertsEnabled', self.config.alertsEnabled)
+        alerts_enabled = self.config.alertsEnabled and symbol_config.get('alertsEnabled', True)
 
         if not alerts_enabled:
             logger.debug(f"[SWING_SERVICE] Alerts disabled for {signal.symbol}, skipping {signal.signal_type}")
@@ -787,6 +787,7 @@ class SwingService:
 
         payload = {
             "source": "SWING_DETECTOR",
+            "origin": "ANALIZADOR",
             "symbol": signal.symbol,
             "interval": signal.interval,
             "pattern": {
@@ -892,6 +893,11 @@ class SwingService:
         Called when config changes to refresh signals with new parameters.
         """
         logger.info("[SWING_SERVICE] Re-analyzing historical data with new config...")
+
+        # El intervalo pudo cambiar: sin suscripcion las velas nuevas nunca llegan.
+        # Solo se agrega para no cortar otros servicios ni dejar huecos en buffers ya cargados.
+        if self.running:
+            await self.ws_manager.add_subscriptions(self.config.symbols, [self.config.interval])
 
         # Clear existing signals
         self._recent_signals = {}

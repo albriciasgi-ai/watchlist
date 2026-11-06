@@ -1594,6 +1594,14 @@ async def send_pattern_alert_endpoint(request: Request):
                 "error": "Missing required fields: symbol, pattern"
             }
 
+        if not config.get('alertsEnabled', False):
+            print(f"\nSTEP 3: ALERTS DISABLED - {symbol} alert not sent")
+            print("="*80 + "\n")
+            return {
+                "success": False,
+                "reason": "alerts_disabled"
+            }
+
         # Extract pattern details
         pattern_type = pattern.get('patternType', 'UNKNOWN')
         pattern_price = pattern.get('price', 0)
@@ -4543,7 +4551,7 @@ async def toggle_swing_alerts(request: Request):
     Toggle alerts globally and per-symbol for the swing detector.
     Body: { "enabled": true/false }
     Sets alertsEnabled on global config AND on all symbolConfigs.
-    Also starts/stops the service accordingly.
+    Enabling starts the service if needed; disabling keeps detection running.
     """
     try:
         body = await request.json()
@@ -4557,15 +4565,10 @@ async def toggle_swing_alerts(request: Request):
         for sym_key in swing_service.config.symbolConfigs:
             swing_service.config.symbolConfigs[sym_key]["alertsEnabled"] = enabled
 
-        # Start or stop service accordingly
         if enabled and not swing_service.running:
             swing_service.config.enabled = True
             await swing_service.start()
             print(f"[SWING] Alerts enabled + service started via toggle-alerts")
-        elif not enabled and swing_service.running:
-            await swing_service.stop()
-            swing_service.config.enabled = False
-            print(f"[SWING] Alerts disabled + service stopped via toggle-alerts")
 
         swing_service._save_config()
 
@@ -6595,6 +6598,7 @@ async def send_zone_alert(request: Request):
         # Construir payload en formato compatible con TradingBot
         alert_payload = {
             "source": "ZONE_DETECTOR",
+            "origin": "ANALIZADOR",
             "symbol": symbol,
             "interval": "0",  # No aplica para zone detector
             "pattern": {
@@ -6733,6 +6737,7 @@ async def send_zone_alerts_batch(request: Request):
 
                 alert_payload = {
                     "source": "ZONE_DETECTOR",
+                    "origin": "ANALIZADOR",
                     "symbol": symbol,
                     "interval": "0",
                     "pattern": {

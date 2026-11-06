@@ -231,7 +231,7 @@ class SwingDetector:
             )
             signals.append(signal)
 
-            logger.info(
+            logger.debug(
                 f"[{self.name}] {symbol}/{interval}: {signal.signal_type} @ ${price:.2f} "
                 f"(z-score: {zscore:.2f}, direction: {signal.direction})"
             )

@@ -373,10 +373,6 @@ class RealtimePatternService:
             logger.debug(f"{symbol}/{interval}: No DBT config synced, using defaults")
             config = self._get_default_dbt_config()
 
-        # Check if alerts are enabled
-        if not config.get('alertsEnabled', False):
-            return
-
         # Get calculated levels
         levels = self.config_store.get_levels(symbol, interval, indicator_type)
 
@@ -410,7 +406,8 @@ class RealtimePatternService:
                     await self.store_detected_pattern(symbol, interval, 'doubleTopBottom', pattern_dict)
 
                     # Process for alerting (may be filtered by cooldown, rate limit, etc.)
-                    await self._process_dbt_pattern(symbol, interval, pattern, config, levels, candles)
+                    if config.get('alertsEnabled', False):
+                        await self._process_dbt_pattern(symbol, interval, pattern, config, levels, candles)
 
         except Exception as e:
             logger.error(f"DBT detection error for {symbol}/{interval}: {e}")
@@ -425,11 +422,6 @@ class RealtimePatternService:
         if not config:
             logger.debug(f"{symbol}/{interval}: No Rejection config synced, using defaults")
             config = self._get_default_rejection_config()
-
-        # Check if alerts are enabled
-        if not config.get('alertsEnabled', False):
-            logger.debug(f"{symbol}/{interval}: Rejection alerts disabled (alertsEnabled=False)")
-            return
 
         # Get calculated levels
         levels = self.config_store.get_levels(symbol, interval, indicator_type)
@@ -469,7 +461,8 @@ class RealtimePatternService:
                     await self.store_detected_pattern(symbol, interval, 'rejection', pattern_dict)
 
                     # Process for alerting (may be filtered by cooldown, rate limit, etc.)
-                    await self._process_rejection_pattern(symbol, interval, pattern, config, levels, candles)
+                    if config.get('alertsEnabled', False):
+                        await self._process_rejection_pattern(symbol, interval, pattern, config, levels, candles)
             else:
                 logger.debug(f"[REALTIME] {symbol}/{interval}: No rejection patterns detected")
 

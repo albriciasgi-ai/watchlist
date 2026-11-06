@@ -7,6 +7,7 @@ Replaces frontend calculation with centralized backend service.
 """
 
 import asyncio
+from bisect import bisect_right
 import logging
 import time
 import json
@@ -331,32 +332,47 @@ class VWAPCalculator:
         if self.config.applyCryptoAdjustment:
             multipliers = [m * self.config.cryptoAdjustmentFactor for m in multipliers]
 
+        # Sumas acumuladas: la varianza de cualquier ventana sale en O(1) en vez de
+        # recorrerla por cada vela. Se centran en el primer precio para conservar precision.
+        typical_prices = [
+            ((c.get('high') or 0) + (c.get('low') or 0) + (c.get('close') or 0)) / 3.0
+            for c in candles
+        ]
+        reference = typical_prices[0] if typical_prices else 0.0
+        sum_volume = [0.0]
+        sum_price = [0.0]
+        sum_price_sq = [0.0]
+        for tp, c in zip(typical_prices, candles):
+            volume = c.get('volume') or 0
+            centered = tp - reference
+            sum_volume.append(sum_volume[-1] + volume)
+            sum_price.append(sum_price[-1] + volume * centered)
+            sum_price_sq.append(sum_price_sq[-1] + volume * centered * centered)
+
+        # Candidatas a inicio de sesion: velas de la hora de reinicio, en orden
+        timestamps = [c.get('timestamp') or 0 for c in candles]
+        session_ts = []
+        session_idx = []
+        if self.config.vwapType == 'session':
+            for j, ts in enumerate(timestamps):
+                if datetime.fromtimestamp(ts / 1000, tz=timezone.utc).hour == self.config.resetHour:
+                    session_ts.append(ts)
+                    session_idx.append(j)
+
         for i, point in enumerate(vwap_points):
             vwap_value = point.vwap
 
             # Determine window based on VWAP type
             if self.config.vwapType == 'rolling':
                 start_idx = max(0, i - self.config.rollingPeriod + 1)
-                window_candles = candles[start_idx:i + 1]
             elif self.config.vwapType == 'session':
-                # Find session start
-                start_idx = 0
-                for j in range(i, -1, -1):
-                    if j == 0:
-                        start_idx = 0
-                        break
-                    ts = candles[j].get('timestamp') or (candles[j].timestamp if hasattr(candles[j], 'timestamp') else 0)
-                    dt = datetime.fromtimestamp(ts / 1000, tz=timezone.utc)
-                    if dt.hour == self.config.resetHour and j < i:
-                        prev_ts = candles[i].get('timestamp') or (candles[i].timestamp if hasattr(candles[i], 'timestamp') else 0)
-                        if prev_ts - ts >= (23 * 60 * 60 * 1000):
-                            start_idx = j
-                            break
-                window_candles = candles[start_idx:i + 1]
+                # Ultima vela de la hora de reinicio con al menos 23h de antiguedad
+                pos = bisect_right(session_ts, timestamps[i] - (23 * 60 * 60 * 1000)) - 1
+                start_idx = session_idx[pos] if pos >= 0 else 0
             else:
-                window_candles = candles[:i + 1]
+                start_idx = 0
 
-            if len(window_candles) < 2:
+            if i - start_idx + 1 < 2:
                 point.upper_1 = vwap_value
                 point.lower_1 = vwap_value
                 point.upper_2 = vwap_value
@@ -366,22 +382,18 @@ class VWAPCalculator:
                 point.std_dev = 0
                 continue
 
-            # Calculate weighted variance
-            total_weighted_sq_diff = 0.0
-            total_volume = 0.0
+            # Calculate weighted variance: sum(v * (tp - vwap)^2) / sum(v)
+            total_volume = sum_volume[i + 1] - sum_volume[start_idx]
+            weighted_price = sum_price[i + 1] - sum_price[start_idx]
+            weighted_price_sq = sum_price_sq[i + 1] - sum_price_sq[start_idx]
+            centered_vwap = vwap_value - reference
+            total_weighted_sq_diff = (
+                weighted_price_sq
+                - 2 * centered_vwap * weighted_price
+                + centered_vwap * centered_vwap * total_volume
+            )
 
-            for c in window_candles:
-                high = c.get('high') or (c.high if hasattr(c, 'high') else 0)
-                low = c.get('low') or (c.low if hasattr(c, 'low') else 0)
-                close = c.get('close') or (c.close if hasattr(c, 'close') else 0)
-                volume = c.get('volume') or (c.volume if hasattr(c, 'volume') else 0)
-
-                tp = (high + low + close) / 3.0
-                sq_diff = (tp - vwap_value) ** 2
-                total_weighted_sq_diff += sq_diff * volume
-                total_volume += volume
-
-            variance = total_weighted_sq_diff / total_volume if total_volume > 0 else 0
+            variance = max(total_weighted_sq_diff / total_volume, 0.0) if total_volume > 0 else 0
             std_dev = math.sqrt(variance)
 
             point.std_dev = std_dev
@@ -824,7 +836,8 @@ class VWAPService:
 
         # Calculate VWAP
         try:
-            vwap_points = self.calculator.calculate(all_candles)
+            # En un hilo: con miles de velas tarda segundos y bloquearia todo el backend
+            vwap_points = await asyncio.to_thread(self.calculator.calculate, all_candles)
             self._vwap_data[symbol] = vwap_points
             self.stats['calculations'] += 1
             self.stats['last_update'][symbol] = time.time()

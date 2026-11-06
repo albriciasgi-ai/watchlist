@@ -18,6 +18,7 @@ from pathlib import Path
 
 # Alert log file
 ALERT_LOG_FILE = Path(__file__).parent / "alerts_sent.log"
+ALERT_ORIGIN = "ANALIZADOR"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -327,6 +328,7 @@ class AlertSender:
             logger.error("="*80 + "\n")
             return False
 
+        alert = {**alert, "origin": ALERT_ORIGIN}
         endpoint = f"{self.alert_service_url}/api/watchlist-alert"
 
         logger.debug(f"[HTTP] Request Details:")

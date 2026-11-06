@@ -520,10 +520,29 @@ const SwingDetectorSettings = ({
         </label>
       </div>
 
-      {/* Enable/Disable Alerts to Trading Bot - PER SYMBOL */}
+      {/* Enable/Disable Alerts to Trading Bot - MASTER TOGGLE */}
       {(() => {
-        // Get alertsEnabled from local state (pending changes) or from backend symbolConfig
-        const alertsEnabled = localSymbolConfig?.alertsEnabled ?? backendStatus?.symbolConfig?.alertsEnabled ?? backendStatus?.alertsEnabled ?? true;
+        const alertsEnabled = backendStatus?.alertsEnabled ?? false;
+        const isRunning = backendStatus?.running ?? false;
+
+        const handleToggleAlerts = async (enabled) => {
+          setLoading(true);
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/swing/toggle-alerts`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ enabled })
+            });
+            if (response.ok) {
+              await fetchBackendStatus();
+            }
+          } catch (error) {
+            console.error('[SwingDetector] Error toggling alerts:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+
         return (
           <div style={{
             marginBottom: '16px',
@@ -541,18 +560,18 @@ const SwingDetectorSettings = ({
               <input
                 type="checkbox"
                 checked={alertsEnabled}
-                onChange={(e) => handleBackendConfigUpdate({ alertsEnabled: e.target.checked })}
+                onChange={(e) => handleToggleAlerts(e.target.checked)}
                 disabled={loading}
                 style={{ marginRight: '8px', width: '18px', height: '18px' }}
               />
               <span style={{ color: alertsEnabled ? '#2E7D32' : '#E65100' }}>
-                {alertsEnabled ? `🔔 Alerts ENABLED for ${currentSymbol}` : `🔕 Alerts DISABLED for ${currentSymbol}`}
+                {alertsEnabled ? '🔔 Alerts ENABLED (all symbols)' : '🔕 Alerts DISABLED (all symbols)'}
               </span>
             </label>
             <div style={{ fontSize: '11px', color: '#666', marginTop: '6px', marginLeft: '26px' }}>
               {alertsEnabled
-                ? `Swing signals for ${currentSymbol} will be sent to Trading Bot (port 5000)`
-                : `Swing signals for ${currentSymbol} will NOT be sent - display only mode`}
+                ? `Swing service ${isRunning ? 'RUNNING' : 'starting...'} - signals go to Trading Bot if Order Flow is allowed there`
+                : 'Detection keeps running - no alerts sent'}
             </div>
           </div>
         );

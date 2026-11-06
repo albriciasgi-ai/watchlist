@@ -17,8 +17,8 @@
     "CLUSDT",
     "ARBUSDT"
   ],
-  "interval": "15",
-  "days": 60,
+  "interval": "1",
+  "days": 1,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -36,19 +36,19 @@
         "marginPercent": 20,
         "skipVolumeInRectangle": false
       },
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "swingBars": 5
     },
     "BTCUSDT": {
       "volumeFilter": {
-        "enabled": true,
+        "enabled": false,
         "minZScore": 2,
         "lookbackBars": 100
       },
-      "swingBars": 5,
+      "swingBars": 2,
       "days": 1,
       "cooldownMinutes": 20,
-      "alertsEnabled": false
+      "alertsEnabled": true
     },
     "XRPUSDT": {
       "volumeFilter": {
@@ -57,7 +57,7 @@
         "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "swingBars": 5
     },
     "TRXUSDT": {
@@ -67,7 +67,7 @@
         "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "swingBars": 5
     },
     "GALAUSDT": {
@@ -77,7 +77,7 @@
         "lookbackBars": 50
       },
       "days": 5,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "swingBars": 5
     },
     "SUIUSDT": {
@@ -87,7 +87,7 @@
         "lookbackBars": 50
       },
       "days": 1,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "swingBars": 5
     },
     "SOLUSDT": {
@@ -97,12 +97,12 @@
         "minZScore": 1.5,
         "lookbackBars": 50
       },
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "swingBars": 5
     },
     "PAXGUSDT": {
       "days": 360,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -112,7 +112,7 @@
     },
     "TRBUSDT": {
       "days": 1,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -122,7 +122,7 @@
     },
     "ADAUSDT": {
       "days": 1,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -132,7 +132,7 @@
     },
     "DOGEUSDT": {
       "days": 1,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -142,7 +142,7 @@
     },
     "BNBUSDT": {
       "days": 1,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -152,7 +152,7 @@
     },
     "POLUSDT": {
       "days": 1,
-      "alertsEnabled": false,
+      "alertsEnabled": true,
       "volumeFilter": {
         "enabled": false,
         "minZScore": 1.5,
@@ -161,15 +161,17 @@
       "swingBars": 5
     },
     "CLUSDT": {
-      "days": 270
+      "days": 270,
+      "alertsEnabled": true
     },
     "ARBUSDT": {
-      "days": 60
+      "days": 60,
+      "alertsEnabled": true
     }
   },
   "swingBars": 3,
   "direction": "BOTH",
-  "alertsEnabled": false,
+  "alertsEnabled": true,
   "priceZones": [
     {
       "id": "zone_rect_rectangle_1769031374194_0.4896187440234493",

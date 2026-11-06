@@ -196,6 +196,32 @@ class ConfigStore:
         config = self.get_config(symbol, interval, indicator_type)
         return config.get('alertsEnabled', False)
 
+    def count_alerts_enabled(self, indicator_type: str) -> int:
+        """Count configs of an indicator type with alerts enabled"""
+        with self._lock:
+            return sum(
+                1
+                for symbol_config in self._configs.values()
+                for indicators in symbol_config.intervals.values()
+                if indicator_type in indicators
+                and indicators[indicator_type].config.get('alertsEnabled', False)
+            )
+
+    def set_all_alerts_enabled(self, enabled: bool) -> int:
+        """Set alertsEnabled on every stored config and persist. Returns configs updated."""
+        updated = 0
+        with self._lock:
+            for symbol_config in self._configs.values():
+                for indicators in symbol_config.intervals.values():
+                    for indicator in indicators.values():
+                        indicator.config['alertsEnabled'] = enabled
+                        updated += 1
+            if updated:
+                self._dirty = True
+
+        self.save()
+        return updated
+
     def save(self) -> None:
         """Save configs to file"""
         with self._lock:

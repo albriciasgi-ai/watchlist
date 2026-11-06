@@ -3239,7 +3239,7 @@ function getDefaultConfig() {
       minZScore: 1.0,
       swingCandleRange: 1  // Velas alrededor del swing a considerar para el Z-score
     },
-    alertsEnabled: true,  // Habilitado por defecto para enviar al trading bot
+    alertsEnabled: false,  // Deshabilitado por defecto: requiere activacion explicita
     debugMode: false,
     signalDirection: {
       global: 'BOTH'  // 'LONG' | 'SHORT' | 'BOTH'

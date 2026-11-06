@@ -642,6 +642,7 @@ class OrderFlowService:
 
         alert_payload = {
             "source": "ORDER_FLOW",
+            "origin": "ORDERFLOW",
             "symbol": footprint.symbol,
             "interval": footprint.interval,
             "pattern": {

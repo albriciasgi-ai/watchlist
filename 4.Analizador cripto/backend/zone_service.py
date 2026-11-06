@@ -1392,6 +1392,7 @@ class ZoneService:
 
         payload = {
             "source": "ZONE_DETECTOR",
+            "origin": "ANALIZADOR",
             "symbol": symbol,
             "interval": self.config.interval,
             "pattern": {
