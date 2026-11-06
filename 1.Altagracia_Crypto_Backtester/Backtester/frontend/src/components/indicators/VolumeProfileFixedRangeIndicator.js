@@ -2,6 +2,10 @@
 // ✅ VERSION 3.0 - Correcciones de formato visual y configuración
 
 import IndicatorBase from "./IndicatorBase";
+import { API_BASE_URL } from "../../config";
+import { TF_MS } from "../backtesting/replayClock";
+
+const MIN_REAL_COVERAGE = 0.99; // Con menos minutos en el almacén se usa el perfil estimado
 
 class VolumeProfileFixedRangeIndicator extends IndicatorBase {
   constructor(symbol, interval, rangeId = null) {
@@ -40,6 +44,11 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
 
     // 🎯 NUEVO: Identificador alfabético del rango
     this.rangeLabel = null; // "A", "B", "C", etc.
+
+    // Volumen real por franja, leído del almacén de trades
+    this.realVolumes = null;
+    this.realRequestKey = null;
+    this.realLoading = false;
   }
 
   setTimeRange(startTimestamp, endTimestamp) {
@@ -122,7 +131,16 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       });
     }
 
-    for (const candle of candles) {
+    // Si el almacén cubre el rango, el volumen de cada franja es real
+    const realVolumes = this.realVolumes?.key === this.realKey(minPrice, maxPrice) ? this.realVolumes.volumes : null;
+
+    if (realVolumes) {
+      levels.forEach((level, i) => {
+        level.volume = realVolumes[i];
+      });
+    }
+
+    for (const candle of realVolumes ? [] : candles) {
       const candleLow = candle.low;
       const candleHigh = candle.high;
       const candleVolume = candle.volume;
@@ -211,8 +229,48 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       minPrice: minPrice,
       maxPrice: maxPrice,
       totalVolume: totalVolume,
-      maxVolume: maxVolume
+      maxVolume: maxVolume,
+      isReal: !!realVolumes
     };
+  }
+
+  realKey(minPrice, maxPrice) {
+    return `${this.startTimestamp}|${this.endTimestamp}|${minPrice}|${maxPrice}|${this.rows}|${this.profiledUntil}`;
+  }
+
+  // Pide el volumen real del rango, cortado en la hora simulada. Sin cobertura queda el estimado
+  loadRealVolumes(priceContext) {
+    const { minPrice, maxPrice } = this.profile;
+    const key = this.realKey(minPrice, maxPrice);
+    if (this.realLoading || this.realRequestKey === key || !priceContext?.knownUntil) return;
+
+    this.realRequestKey = key;
+    this.realLoading = true;
+
+    const params = new URLSearchParams({
+      start_timestamp: String(this.startTimestamp),
+      end_timestamp: String(this.endTimestamp + (TF_MS[this.interval] || 0)),
+      low: String(minPrice),
+      high: String(maxPrice),
+      rows: String(this.rows),
+      known_until: String(priceContext.knownUntil)
+    });
+
+    fetch(`${API_BASE_URL}/api/orderflow/profile/${this.symbol}?${params}`)
+      .then(response => (response.ok ? response.json() : null))
+      .then(data => {
+        if (!data?.success || data.expected_minutes === 0) return;
+        if (data.minutes / data.expected_minutes < MIN_REAL_COVERAGE) return;
+        if (this.realRequestKey !== key || !this.rangeCandles?.length) return;
+
+        this.realVolumes = { key, volumes: data.buy.map((buy, i) => buy + data.sell[i]) };
+        this.profile = this.calculateProfile(this.rangeCandles);
+        priceContext.requestRedraw?.();
+      })
+      .catch(error => console.warn(`[${this.symbol}] Perfil real no disponible:`, error.message))
+      .finally(() => {
+        this.realLoading = false;
+      });
   }
 
   filterCandlesByRange(allCandles, startTimestamp, endTimestamp) {
@@ -251,24 +309,34 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
     if (!this.startTimestamp || !this.endTimestamp) return;
 
-    const candlesToUse = allCandles && allCandles.length > 0 ? allCandles : visibleCandles;
+    // En reproducción solo cuentan las velas que ya ocurrieron
+    const candlesToUse = priceContext?.knownCandles || (allCandles && allCandles.length > 0 ? allCandles : visibleCandles);
+    const knownUntil = candlesToUse[candlesToUse.length - 1]?.timestamp ?? 0;
+    const rangeChanged = this.profileCalculated
+      && knownUntil !== this.profiledUntil
+      && this.endTimestamp >= Math.min(knownUntil, this.profiledUntil ?? 0);
 
-    if (!this.profileCalculated) {
+    if (!this.profileCalculated || rangeChanged) {
       this.rangeCandles = this.filterCandlesByRange(
         candlesToUse,
         this.startTimestamp,
         this.endTimestamp
       );
+      this.profiledUntil = knownUntil;
 
       if (this.rangeCandles.length > 0) {
         this.profile = this.calculateProfile(this.rangeCandles);
         this.profileCalculated = true;
       } else {
+        this.profile = null;
+        this.profileCalculated = false;
         return;
       }
     }
 
     if (!this.profile) return;
+
+    this.loadRealVolumes(priceContext);
 
     const { x, y, width, height } = bounds;
 
@@ -451,7 +519,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     }
 
     ctx.fillStyle = this.pocColor;
-    ctx.fillText(`POC: ${this.profile.poc.price.toFixed(2)}`, labelX, labelY);
+    ctx.fillText(`POC: ${this.profile.poc.price.toFixed(2)}${this.profile.isReal ? ' · real' : ''}`, labelX, labelY);
   }
 
   hexToRgba(hex, alpha) {

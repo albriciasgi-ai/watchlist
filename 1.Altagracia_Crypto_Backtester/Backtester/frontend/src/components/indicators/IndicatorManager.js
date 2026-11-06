@@ -19,6 +19,9 @@ import SwingDetectorIndicator from "./SwingDetectorIndicator"; // 🎯 Swing Hig
 import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator"; // 🎯 Zone Detector 2.0
 import OIVolumeConfluenceIndicator from "./OIVolumeConfluenceIndicator"; // 🎯 OI-Volume Confluence
 import OrderFlowIndicator from "./OrderFlowIndicator"; // 🎯 Order Flow (Footprints)
+import FVGIndicator from "./FVGIndicator";
+
+const MIN_PANEL_HEIGHT = 48; // Por debajo de esto un panel ya no se alcanza a leer
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -63,6 +66,7 @@ class IndicatorManager {
 
     // Crear el indicador de Open Interest
     this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
+    this.openInterestIndicator.requestRedraw = () => this.requestRedraw?.();
 
     // 🎯 Crear el Zone Visualizer
     this.zoneVisualizer = new ZoneVisualizerIndicator(this.symbol, this.interval, this.days);
@@ -76,6 +80,7 @@ class IndicatorManager {
 
     // 🎯 Crear indicador de Order Flow con fecha de inicio de simulación
     this.orderFlowIndicator = new OrderFlowIndicator(this.symbol, this.interval, this.days, backtestingMode, simulationStartTime);
+    volumeIndicator.setDeltaSource(this.orderFlowIndicator);
 
     this.indicators = [
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
@@ -90,7 +95,8 @@ class IndicatorManager {
       new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       new SwingDetectorIndicator(this.symbol, this.interval, this.days), // 🎯 Swing High/Low
       this.zoneVisualizer, // 🎯 Zone Visualizer (Zone Detector 2.0)
-      this.orderFlowIndicator // 🎯 Order Flow (Footprints)
+      this.orderFlowIndicator, // 🎯 Order Flow (Footprints)
+      new FVGIndicator(this.symbol, this.interval, this.days)
     ];
 
     // Habilitar el indicador de patrones por defecto
@@ -536,6 +542,17 @@ class IndicatorManager {
     this.heightScale = scale;
   }
 
+  // Altura de un panel con la escala actual, sin bajar de lo legible
+  getPanelHeight(indicator) {
+    const height = indicator.getHeight();
+    if (height <= 0) return 0;
+    return Math.max(Math.min(height, MIN_PANEL_HEIGHT), Math.floor(height * this.heightScale));
+  }
+
+  getScaledHeight() {
+    return this.indicators.reduce((sum, indicator) => sum + this.getPanelHeight(indicator), 0);
+  }
+
   renderOverlays(ctx, bounds, visibleCandles, allCandles, priceContext = null) {
     // 🔍 DEBUG: Log de indicadores con renderOverlay
     const overlayIndicators = this.indicators.filter(i => i.renderOverlay);
@@ -678,7 +695,7 @@ class IndicatorManager {
       this.indicators.forEach(indicator => {
         // 🎯 FIX: Verificar si el indicador necesita panel usando getHeight()
         // Esto permite que indicadores como VWAP tengan overlay Y panel (barras de volatilidad)
-        const indicatorHeight = indicator.getHeight() * this.heightScale;
+        const indicatorHeight = this.getPanelHeight(indicator);
 
         if (indicator.enabled && indicator.render && indicatorHeight > 0) {
           const indicatorBounds = {

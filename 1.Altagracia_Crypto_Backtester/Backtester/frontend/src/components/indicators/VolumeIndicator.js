@@ -13,6 +13,14 @@ class VolumeIndicator extends IndicatorBase {
     
     // ✅ Ya NO necesitamos dataMap del backend
     this.dataMap = null;
+
+    // Order Flow: entrega el delta real cuando tiene todas las velas pedidas
+    this.deltaSource = null;
+    this.usesRealDelta = false;
+  }
+
+  setDeltaSource(source) {
+    this.deltaSource = source;
   }
 
   async fetchData() {
@@ -30,14 +38,19 @@ class VolumeIndicator extends IndicatorBase {
     
     const volumeDeltaData = [];
     
-    for (const candle of candles) {
+    const realDeltas = this.deltaSource?.realDeltas(candles) ?? null;
+    this.usesRealDelta = !!realDeltas;
+
+    for (const [index, candle] of candles.entries()) {
       // ✅ YA NO ignoramos velas en progreso
       // Las procesamos igual para mostrar la última barra en tiempo real
       
       // ✅ FÓRMULA: Si cierra arriba del open = volumen positivo, si cierra abajo = volumen negativo
       let volumeDelta;
       
-      if (candle.close > candle.open) {
+      if (realDeltas) {
+        volumeDelta = realDeltas[index];
+      } else if (candle.close > candle.open) {
         // Vela alcista (verde) - Volumen de compra
         volumeDelta = candle.volume;
       } else if (candle.close < candle.open) {
@@ -81,10 +94,10 @@ class VolumeIndicator extends IndicatorBase {
     // Titulo
     ctx.fillStyle = "#666";
     ctx.font = "bold 11px Inter, sans-serif";
-    ctx.fillText("Volume Delta (Real-time)", x + 5, y + 15);
 
     // ✅ CALCULAR en tiempo real desde las velas visibles
     const volumeDeltaData = this.calculateVolumeDelta(visibleCandles);
+    ctx.fillText(this.usesRealDelta ? "Volume Delta (trades reales)" : "Volume Delta (Real-time)", x + 5, y + 15);
     
     if (volumeDeltaData.length === 0) return;
 

@@ -2,6 +2,7 @@
 
 .backtesting-container {
   width: 100%;
+  box-sizing: border-box; /* Los 40px del header van dentro de la pantalla, no debajo */
   height: 100vh; /* Usar viewport height para ocupar toda la pantalla */
   max-height: 100vh; /* Evitar overflow */
   background: #ffffff;
@@ -375,26 +376,28 @@
   transition: flex 0.3s ease-in-out; /* Animar el cambio de tamaño */
 }
 
-/* ==================== MODO NORMAL: Altura dinámica + scroll ==================== */
+/* ==================== MODO NORMAL: Gráfico a todo el alto ==================== */
 
-/* MiniChart crece automáticamente según su contenido (precio + volumen + indicadores) */
+/* MiniChart llena el alto disponible: el canvas reparte ese alto entre precio e indicadores */
 .backtesting-main .mini-chart {
-  height: auto !important;
-  min-height: 0 !important; /* Sin mínimo fijo - el canvas calcula su altura necesaria */
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
 }
 
-/* Panel de timeframe con scroll vertical si el contenido excede el viewport */
-.timeframe-panel {
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: calc(100vh - 100px); /* Máximo viewport menos header/controles */
+/* El canvas sigue al contenedor: su tamaño interno nunca empuja el alto de la página */
+.backtesting-main .mini-chart canvas {
+  position: absolute !important;
+  top: 0;
+  left: 0;
 }
 
 /* ==================== MODO FULLSCREEN: Compresión inteligente 100vh ==================== */
 
 /* 1. Wrapper ocupa todo el viewport */
 .backtesting-main-wrapper.wrapper-fullscreen-chart {
-  height: 100vh !important;
+  height: auto !important; /* El header sigue arriba: el gráfico usa el resto */
+  min-height: 0;
 }
 
 /* 2. Main container 100% del wrapper */
@@ -433,14 +436,15 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: visible; /* 🔧 FIX: Permitir que el contenido fluya (scroll se maneja en .timeframe-panel) */
+  min-height: 0; /* El contenido no estira el contenedor más allá de la ventana */
+  overflow: hidden;
 }
 
 .timeframe-panel {
   flex: 1;
   height: 100%;
-  overflow-y: auto; /* 🔧 FIX: Permitir scroll vertical cuando hay muchos indicadores */
-  overflow-x: hidden; /* Mantener sin scroll horizontal */
+  min-height: 0;
+  overflow: hidden; /* El gráfico siempre cabe: no hay scroll */
 }
 
 .backtesting-sidebar {

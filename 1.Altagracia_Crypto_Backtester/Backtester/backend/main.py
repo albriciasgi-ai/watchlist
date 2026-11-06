@@ -11,6 +11,8 @@ import json
 import gzip
 import sys
 import numpy as np
+import footprint_store
+import oi_store
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import OrderedDict
@@ -660,7 +662,8 @@ async def get_open_interest(
     interval: str = "15",
     days: int = 30,
     start_timestamp_ms: Optional[int] = None,  # >> NUEVO: timestamp de inicio opcional (para backtesting)
-    end_timestamp_ms: Optional[int] = None     # >> NUEVO: timestamp de fin opcional (para backtesting)
+    end_timestamp_ms: Optional[int] = None,    # >> NUEVO: timestamp de fin opcional (para backtesting)
+    local_only: bool = False                   # Solo la serie local, sin consultar a Bybit
 ):
     """
     Endpoint para obtener Open Interest de Bybit Futures
@@ -684,6 +687,16 @@ async def get_open_interest(
             interval_clean = str(int(interval_clean) * 60)
 
         interval_final = INTERVAL_MAP.get(interval_clean, "15")
+
+        # Con un rango, primero la serie local: cubre años y no depende de lo que Bybit conserve
+        if start_timestamp_ms is not None and end_timestamp_ms is not None:
+            local = oi_store.series(sanitize_filename(symbol), interval_final, start_timestamp_ms, end_timestamp_ms)
+            if local is not None:
+                return {"symbol": symbol, "interval": interval_final, "indicator": "openInterest",
+                        "success": True, "source": "local", **local}
+            if local_only:
+                return {"symbol": symbol, "interval": interval_final, "indicator": "openInterest",
+                        "success": False, "source": "none", "data": []}
 
         # 🔧 FIX: Inicializar variables de metadata ANTES de usarlas
         # Esto previene UnboundLocalError si hay excepción temprana
@@ -4929,20 +4942,23 @@ async def save_screenshot(request: Request, session_id: str, file: UploadFile = 
 # ==================== ORDER FLOW ====================
 
 @app.get("/api/orderflow/historical/{symbol}")
-@limiter.limit("30/minute")
+@limiter.limit("600/minute")
 async def get_orderflow_historical(
     request: Request,
     symbol: str,
     interval: str = "1",
     days: int = 7,
     start_timestamp: Optional[int] = None,
-    end_timestamp: Optional[int] = None
+    end_timestamp: Optional[int] = None,
+    known_until: Optional[int] = None,
+    step: Optional[float] = None
 ):
     """
     Retorna footprints históricos para backtesting.
 
-    Solo carga desde archivo local (userData/footprint_archive/SYMBOL_1.json).
-    Si interval != "1", agrega footprints 1min → intervalos mayores.
+    Con start_timestamp y end_timestamp lee el almacén diario de trades de Bybit, cortado en
+    known_until para no mostrar el futuro. Sin ese rango usa el archivo local anterior
+    (userData/footprint_archive/SYMBOL_1.json) y agrega 1min → intervalos mayores.
     """
     try:
         # 1. Validar interval
@@ -4952,6 +4968,19 @@ async def get_orderflow_historical(
                 "message": f"Interval '{interval}' no soportado",
                 "footprints": [],
                 "count": 0
+            }
+
+        if start_timestamp is not None and end_timestamp is not None and interval.isdigit():
+            cut = known_until if known_until is not None else end_timestamp
+            result = footprint_store.footprints(sanitize_filename(symbol), int(interval), start_timestamp, end_timestamp, cut, step)
+            return {
+                "success": True,
+                "footprints": result["footprints"],
+                "count": len(result["footprints"]),
+                "step_size": result["step_size"],
+                "known_until": result["known_until"],
+                "interval": interval,
+                "source": "store"
             }
 
         # 2. Validar límite de días
@@ -5055,6 +5084,31 @@ async def get_orderflow_historical(
             "footprints": [],
             "count": 0
         }
+
+
+@app.get("/api/orderflow/profile/{symbol}")
+@limiter.limit("600/minute")
+async def get_orderflow_profile(
+    request: Request,
+    symbol: str,
+    start_timestamp: int,
+    end_timestamp: int,
+    low: float,
+    high: float,
+    rows: int = 50,
+    known_until: Optional[int] = None
+):
+    """Volumen real por franja de precio en un rango, cortado en la hora simulada."""
+    rows = max(1, min(rows, 2000))
+    result = footprint_store.profile(sanitize_filename(symbol), start_timestamp, end_timestamp, known_until, low, high, rows)
+    return {"success": True, **result}
+
+
+@app.get("/api/orderflow/coverage/{symbol}")
+@limiter.limit("60/minute")
+async def get_orderflow_coverage(request: Request, symbol: str):
+    """Días disponibles en el almacén de trades para un símbolo."""
+    return {"success": True, **footprint_store.coverage(sanitize_filename(symbol))}
 
 
 def aggregate_footprints(footprints_1min, target_interval):

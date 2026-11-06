@@ -240,14 +240,14 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
                       {order.side === 'long' ? '📈' : '📉'} {order.side.toUpperCase()}
                     </span>
                   </td>
-                  <td>{formatDate(order.entryTime)}</td>
+                  <td>{formatDate(order.executedAt || order.entryTime)}</td>
                   <td>{formatDate(order.exitTime)}</td>
                   <td>${order.entryPrice.toFixed(2)}</td>
                   <td>${order.exitPrice.toFixed(2)}</td>
                   <td>{order.quantity}</td>
                   <td>{formatPnL(order.pnl)}</td>
                   <td>{formatPnL(order.pnlPercent)}%</td>
-                  <td>{formatDuration(order.entryTime, order.exitTime)}</td>
+                  <td>{formatDuration(order.executedAt || order.entryTime, order.exitTime)}</td>
                   <td>
                     <span title={order.closeReason}>
                       {getCloseReasonEmoji(order.closeReason)}

@@ -561,7 +561,7 @@ class SupportResistance2Indicator extends IndicatorBase {
 
       // Filtrar por playback time
       if (this._currentPlaybackTime) {
-        candlesToUse = allCandles.filter(c => c.timestamp <= this._currentPlaybackTime);
+        candlesToUse = priceContext?.knownCandles || allCandles.filter(c => c.timestamp <= this._currentPlaybackTime);
       } else if (visibleCandles && visibleCandles.length > 0) {
         const lastVisibleTs = visibleCandles[visibleCandles.length - 1].timestamp;
         candlesToUse = allCandles.filter(c => c.timestamp <= lastVisibleTs);

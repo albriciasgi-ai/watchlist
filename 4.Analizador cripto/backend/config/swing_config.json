@@ -17,8 +17,8 @@
     "CLUSDT",
     "ARBUSDT"
   ],
-  "interval": "1",
-  "days": 1,
+  "interval": "15",
+  "days": 90,
   "symbolConfigs": {
     "ETHUSDT": {
       "volumeFilter": {
@@ -46,7 +46,7 @@
         "lookbackBars": 100
       },
       "swingBars": 2,
-      "days": 1,
+      "days": 90,
       "cooldownMinutes": 20,
       "alertsEnabled": true
     },

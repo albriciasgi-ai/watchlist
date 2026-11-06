@@ -11,6 +11,13 @@ import ZoomPresetsConfig from "./ZoomPresetsConfig";
 import DrawingToolManager from "./drawing/DrawingToolManager";
 import MeasurementTool from "./drawing/MeasurementTool";
 import TPSLBox from "./drawing/shapes/TPSLBox"; // 🎯 Para crear cajas TP/SL programáticamente
+import { formingCandle, lastClosedIndex } from './backtesting/replayClock';
+
+// Al acercarse, una vela ancha deja leer su footprint
+const MAX_BAR_WIDTH = 400;
+const MAX_ZOOM = MAX_BAR_WIDTH / 8;
+const FOOTPRINT_ZOOM = 20; // Velas de 160px: se leen las cifras del footprint
+const MIN_VOLUME_HEIGHT = 40;
 
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = false;
@@ -96,6 +103,9 @@ const formatCandleTime = (datetimeStr, interval) => {
   return `${hours}:${minutes}`;
 };
 
+// Las velas de backtesting traen solo timestamp: hora de Colombia, UTC-5
+const colombiaTime = (timestamp) => new Date(timestamp - 5 * 3600000).toISOString().slice(0, 19).replace("T", " ");
+
 const formatAxisTime = (datetimeStr, prevDatetimeStr) => {
   if (!datetimeStr) return "";
   
@@ -144,9 +154,7 @@ const MiniChart = forwardRef(({
   // 🎯 NUEVO: Props para drawing tools
   currentTool = 'select',
   onToolChange = null,
-  onDrawingsChange = null,  // 🔧 FIX: Callback para sincronizar dibujos entre tabs
-  // 🎯 NUEVO: Prop para modo fullscreen del PANEL de backtesting (cuando se presiona F)
-  isBacktestingFullscreen = false
+  onDrawingsChange = null  // 🔧 FIX: Callback para sincronizar dibujos entre tabs
 }, ref) => {
   const canvasRef = useRef(null);
 
@@ -654,11 +662,16 @@ const MiniChart = forwardRef(({
   const [configuringProfileId, setConfiguringProfileId] = useState(null);
   const [currentProfileConfig, setCurrentProfileConfig] = useState(null);
   const viewStateRef = useRef({ offset: 0, zoom: 1, verticalOffset: 0, verticalZoom: 1 });
+  const priceScaleRef = useRef(null); // Escala del último dibujo
+  const drawChartRef = useRef(null); // Última versión de drawChart, para redibujar desde indicadores
+  const simulatedNowRef = useRef(null);
+  simulatedNowRef.current = currentTime;
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
   const manualPanRef = useRef(false); // 🎯 NUEVO: Detectar si el usuario hizo paneo manual
   const rafRef = useRef(null); // Para requestAnimationFrame
   const allCandlesRef = useRef([]); // Almacena todas las velas para binary search
   const lastIndexRef = useRef(-1); // Para detectar cambios reales de vela
+  const formingKeyRef = useRef(0); // Para detectar avances de la vela en formacion
   const initialRenderDoneRef = useRef(false); // Para forzar primer render cuando se carga currentTime
   const lastRenderTimeRef = useRef(0); // Para throttling agresivo
 
@@ -673,6 +686,7 @@ const MiniChart = forwardRef(({
     return saved ? parseFloat(saved) : 0.65; // 65% por defecto
   });
   const [isDraggingDivider, setIsDraggingDivider] = useState(false);
+  const [priceAreaBottom, setPriceAreaBottom] = useState(null); // Dónde termina el precio, en píxeles
 
   // 🎯 NUEVO: Estado para altura ajustable del panel de volumen
   const [volumeHeight, setVolumeHeight] = useState(() => {
@@ -870,74 +884,23 @@ const MiniChart = forwardRef(({
 
     const availableHeight = height - marginTop - timeAxisHeight;
 
-    // 🎯 FIX: Si no hay indicadores activos, el gráfico de precio ocupa todo el espacio disponible
-    // excepto el volumen. Esto evita el espacio vacío cuando se quitan indicadores.
-    let priceChartHeight, volumeHeightCalculated, indicatorsHeight, heightScale;
+    // El precio recibe su parte primero y el resto se reparte entre volumen e indicadores.
+    // Si todo cabe, lo que sobra va al precio: el gráfico llena la pantalla sin scroll.
+    const priceTarget = Math.floor(availableHeight * priceChartRatio);
+    const heightScale = Math.min(1, (availableHeight - priceTarget) / (volumeHeight + desiredIndicatorsHeight));
 
-    if (desiredIndicatorsHeight === 0) {
-      // Sin indicadores: el gráfico ocupa todo excepto volumen
-      // 🎯 FIX: Usar directamente la altura del estado (ya está limitada en el handler 30-300px)
-      volumeHeightCalculated = volumeHeight;
-      indicatorsHeight = 0;
-      priceChartHeight = availableHeight - volumeHeightCalculated;
-      heightScale = 1.0;
-    } else {
-      // 🎯 MODO HÍBRIDO: Normal (scroll) vs Fullscreen (compresión inteligente)
-
-      // 🎯 FIX: Usar directamente la altura del estado (ya está limitada en el handler 30-300px)
-      volumeHeightCalculated = volumeHeight;
-      indicatorsHeight = desiredIndicatorsHeight;
-
-      // Espacio mínimo para el gráfico de precio (30% del disponible)
-      const minPriceChartHeight = Math.floor(availableHeight * 0.3);
-
-      // Calcular el precio chart según el ratio del usuario
-      let tentativePriceChartHeight = Math.floor(availableHeight * priceChartRatio);
-
-      // Verificar si todo cabe en el espacio disponible
-      const totalNeeded = tentativePriceChartHeight + volumeHeightCalculated + indicatorsHeight;
-
-      if (isBacktestingFullscreen && totalNeeded > availableHeight) {
-        // 🎯 MODO FULLSCREEN: Compresión inteligente proporcional (máximo 40%)
-        // Escala mínima = 0.6 (comprimir hasta 60% del tamaño original = 40% de compresión)
-        const compressionScale = Math.max(0.6, availableHeight / totalNeeded);
-
-        // Aplicar escala a todos los componentes proporcionalmente
-        priceChartHeight = Math.floor(tentativePriceChartHeight * compressionScale);
-        volumeHeightCalculated = Math.floor(volumeHeightCalculated * compressionScale);
-        indicatorsHeight = Math.floor(indicatorsHeight * compressionScale);
-        heightScale = compressionScale;
-
-        // Asegurar mínimo absoluto para precio chart (60% del mínimo)
-        const absoluteMinPriceChart = Math.floor(minPriceChartHeight * 0.6);
-        if (priceChartHeight < absoluteMinPriceChart) {
-          priceChartHeight = absoluteMinPriceChart;
-          // Si aún así excede, habrá scroll mínimo
-        }
-
-        console.log(`[MiniChart] 🔧 FULLSCREEN: Compresión aplicada al ${Math.round((1 - compressionScale) * 100)}%`);
-      } else if (totalNeeded > availableHeight) {
-        // 🎯 MODO NORMAL: Sin compresión, permitir scroll vertical
-        heightScale = 1.0;
-        priceChartHeight = availableHeight - volumeHeightCalculated - indicatorsHeight;
-
-        // Si el precio chart queda demasiado pequeño, establecer mínimo y permitir scroll
-        if (priceChartHeight < minPriceChartHeight) {
-          priceChartHeight = minPriceChartHeight;
-          // El total ahora excede availableHeight - habrá scroll
-        }
-
-        console.log(`[MiniChart] 📏 NORMAL: Scroll habilitado - total necesario: ${totalNeeded}px, disponible: ${availableHeight}px`);
-      } else {
-        // Cabe todo cómodamente - usar ratio del usuario
-        priceChartHeight = tentativePriceChartHeight;
-        heightScale = 1.0;
-      }
-    }
+    const volumeHeightCalculated = Math.max(Math.min(volumeHeight, MIN_VOLUME_HEIGHT), Math.floor(volumeHeight * heightScale));
+    let indicatorsHeight = 0;
 
     if (indicatorManagerRef.current) {
       indicatorManagerRef.current.setHeightScale(heightScale);
+      indicatorsHeight = indicatorManagerRef.current.getScaledHeight();
     }
+
+    const priceChartHeight = Math.max(
+      Math.floor(availableHeight * 0.3),
+      availableHeight - volumeHeightCalculated - indicatorsHeight
+    );
 
     const marginBottom = volumeHeightCalculated + timeAxisHeight + indicatorsHeight;
 
@@ -954,7 +917,7 @@ const MiniChart = forwardRef(({
     );
 
     const chartWidth = width - marginLeft - marginRight;
-    const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * viewStateRef.current.zoom));
+    const effectiveBarWidth = Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * viewStateRef.current.zoom));
     const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
     const maxOffset = Math.max(0, displayCandles.length - candlesPerScreen);
     const offset = Math.min(viewStateRef.current.offset, maxOffset);
@@ -972,9 +935,30 @@ const MiniChart = forwardRef(({
     // - Backtesting: Queremos ver detalle de la acción del precio visible
     // - Normal: Evitamos auto-zoom durante paneo (mantiene contexto)
     const candlesForPriceRange = backtestingMode ? visibleCandles : displayCandles;
-    const minPrice = Math.min(...candlesForPriceRange.map(d => d.low));
-    const maxPrice = Math.max(...candlesForPriceRange.map(d => d.high));
+    let minPrice = Math.min(...candlesForPriceRange.map(d => d.low));
+    let maxPrice = Math.max(...candlesForPriceRange.map(d => d.high));
+
+    // Order Flow: con velas anchas el footprint reemplaza la vela y sus niveles entran en la escala
+    const orderFlowIndicator = indicatorManagerRef.current?.getOrderFlowIndicator?.();
+    const orderFlowReplacesCandles = !!orderFlowIndicator?.shouldReplaceCandles(chartWidth / visibleCandles.length);
+    if (orderFlowReplacesCandles) {
+      const extent = orderFlowIndicator.priceExtent(visibleCandles);
+      if (extent) {
+        minPrice = Math.min(minPrice, extent.low);
+        maxPrice = Math.max(maxPrice, extent.high);
+      }
+    }
+
     const priceRange = maxPrice - minPrice;
+    const priceAreaEnd = marginTop + priceChartHeight;
+    if (priceAreaEnd !== priceScaleRef.current?.priceAreaEnd) setPriceAreaBottom(priceAreaEnd);
+
+    priceScaleRef.current = {
+      minPrice, maxPrice, marginTop, marginLeft, priceChartHeight, chartWidth, startIdx,
+      priceAreaEnd, availableHeight,
+      visibleCount: visibleCandles.length,
+      totalCount: displayCandles.length
+    };
 
     // 🎯 NUEVO: Aplicar zoom vertical (Ctrl + rueda del mouse) y offset vertical (paneo)
     const verticalZoom = viewStateRef.current.verticalZoom || 1;
@@ -1006,7 +990,7 @@ const MiniChart = forwardRef(({
 
     // 🎯 DIBUJAR VELAS PRIMERO (para que los overlays se vean encima)
     ctx.lineWidth = 1;
-    visibleCandles.forEach((d, i) => {
+    if (!orderFlowReplacesCandles) visibleCandles.forEach((d, i) => {
       const x = marginLeft + (i * barWidth);
       const yOpen = marginTop + priceChartHeight - (d.open - minPrice) * yScale + verticalOffset;
       const yClose = marginTop + priceChartHeight - (d.close - minPrice) * yScale + verticalOffset;
@@ -1062,6 +1046,8 @@ const MiniChart = forwardRef(({
         return x;
       };
 
+      const newestCandle = displayCandles[displayCandles.length - 1];
+
       const priceContext = {
         minPrice,
         maxPrice,
@@ -1070,14 +1056,27 @@ const MiniChart = forwardRef(({
         verticalOffset,
         yScale,
         priceToY,
+        knownCandles: backtestingMode ? displayCandles : null, // Solo lo que ya ocurrió en la hora simulada
+        knownUntil: !backtestingMode ? Date.now()
+          : (newestCandle.in_progress ? newestCandle.knownUntil : simulatedNowRef.current),
+        requestRedraw: () => indicatorManagerRef.current?.requestRedraw?.(),
         timeToX
       };
+
+      // Los footprints van debajo de los demás overlays, como en App 9
+      orderFlowIndicator?.renderOnChart(ctx, overlayBounds, visibleCandles, priceContext, orderFlowReplacesCandles);
 
       const allCandlesForCalculation = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
         ? allCandlesRef.current
         : displayCandles;
 
+      // Con zoom vertical los overlays no invaden los paneles de abajo
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, marginTop, width, priceChartHeight);
+      ctx.clip();
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, allCandlesForCalculation, priceContext);
+      ctx.restore();
     }
 
     // 🎯 NUEVO: Calcular z-score de volúmenes para mejoras visuales
@@ -1224,9 +1223,12 @@ const MiniChart = forwardRef(({
       const prevCandle = i > 0 ? visibleCandles[i - timeStep] : null;
       const x = marginLeft + (i * barWidth) + (barWidth / 2);
       
-      const timeText = formatAxisTime(candle.datetime_colombia, prevCandle?.datetime_colombia);
+      const timeText = formatAxisTime(
+        candle.datetime_colombia || colombiaTime(candle.timestamp),
+        prevCandle && (prevCandle.datetime_colombia || colombiaTime(prevCandle.timestamp))
+      );
       const textWidth = ctx.measureText(timeText).width;
-      ctx.fillText(timeText, x - textWidth / 2, timeY);
+      ctx.fillText(timeText, Math.max(2, x - textWidth / 2), timeY);
     }
 
     ctx.fillStyle = "#222";
@@ -1250,7 +1252,7 @@ const MiniChart = forwardRef(({
     if (indicatorManagerRef.current && indicatorsHeight > 0) {
       const indicatorsBounds = {
         x: marginLeft,
-        y: marginTop + priceChartHeight + volumeHeight + timeAxisHeight,
+        y: marginTop + priceChartHeight + volumeHeightCalculated + timeAxisHeight,
         width: chartWidth,
         height: indicatorsHeight
       };
@@ -1442,6 +1444,29 @@ const MiniChart = forwardRef(({
   // ==================== DRAWING PERSISTENCE ====================
 
   // Extraer rectángulos del DrawingToolManager para el modal VP Fixed
+  drawChartRef.current = drawChart;
+
+  // Redibujar al cambiar el tamaño de la ventana, del panel lateral o de la pestaña visible
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(() => {
+      if (candlesRef.current?.length > 0) {
+        drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+      }
+    });
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  // Al mover los divisores, el reparto de altura se ve mientras se arrastra
+  useEffect(() => {
+    if (candlesRef.current?.length > 0) {
+      drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+    }
+  }, [priceChartRatio, volumeHeight]);
+
   const updateChartRectangles = () => {
     if (!drawingManagerRef.current) return;
     const shapes = drawingManagerRef.current.getShapes();
@@ -1820,7 +1845,7 @@ const MiniChart = forwardRef(({
       // Paneo horizontal
       const deltaX = x - dragStateRef.current.startX;
       const chartWidth = rect.width - 75;
-      const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * viewStateRef.current.zoom));
+      const effectiveBarWidth = Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * viewStateRef.current.zoom));
       const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
       const deltaCandlesFloat = (deltaX / chartWidth) * candlesPerScreen;
       const deltaCandles = Math.round(deltaCandlesFloat);
@@ -1957,66 +1982,17 @@ const MiniChart = forwardRef(({
 
       const rect = canvas.getBoundingClientRect();
       const mouseY = e.clientY - rect.top;
-      const width = Math.floor(rect.width);
-      const height = Math.floor(rect.height);
 
-      // 🎯 IMPORTANTE: Usar las MISMAS dimensiones que drawChart
-      const marginTop = 25;
-      const timeAxisHeight = 25;
-      const baseVolumeHeight = 50;
-      const minPriceChartHeight = 180;
+      if (!priceScaleRef.current) return;
 
-      // Calcular altura de indicadores
-      let desiredIndicatorsHeight = 0;
-      if (indicatorManagerRef.current) {
-        desiredIndicatorsHeight = indicatorManagerRef.current.getTotalHeight();
-      }
-
-      const availableHeight = height - marginTop - timeAxisHeight;
-      const totalNeeded = minPriceChartHeight + baseVolumeHeight + desiredIndicatorsHeight;
-
-      let priceChartHeight, volumeHeight, indicatorsHeight;
-
-      if (availableHeight >= totalNeeded) {
-        volumeHeight = baseVolumeHeight;
-        indicatorsHeight = desiredIndicatorsHeight;
-        priceChartHeight = availableHeight - volumeHeight - indicatorsHeight;
-      } else {
-        const scale = availableHeight / totalNeeded;
-        priceChartHeight = Math.floor(minPriceChartHeight * scale);
-        volumeHeight = Math.floor(baseVolumeHeight * scale);
-        indicatorsHeight = Math.floor(desiredIndicatorsHeight * scale);
-
-        const actualTotal = priceChartHeight + volumeHeight + indicatorsHeight;
-        const diff = availableHeight - actualTotal;
-        if (diff > 0) {
-          priceChartHeight += diff;
-        }
-      }
+      // La misma escala y altura del último dibujo: así el precio bajo el mouse no se desplaza
+      const { minPrice, maxPrice, marginTop, priceChartHeight } = priceScaleRef.current;
+      const priceRange = maxPrice - minPrice;
 
       // Verificar que el mouse está en el área del gráfico de precios
       if (mouseY < marginTop || mouseY > (marginTop + priceChartHeight)) {
         return; // No hacer zoom si el mouse está fuera del área de precios
       }
-
-      // 🎯 IMPORTANTE: Usar displayCandles como en drawChart (incluye inProgressCandle)
-      let displayCandles = [...candlesRef.current];
-      if (inProgressCandleRef.current) {
-        displayCandles.push(inProgressCandleRef.current);
-      }
-
-      displayCandles = displayCandles.filter(d =>
-        d.open > 0 && d.high > 0 && d.low > 0 && d.close > 0 &&
-        d.high >= d.low && d.high >= d.open && d.high >= d.close &&
-        d.low <= d.open && d.low <= d.close
-      );
-
-      if (displayCandles.length === 0) return;
-
-      // Calcular el precio en la posición del mouse ANTES del zoom
-      const minPrice = Math.min(...displayCandles.map(d => d.low));
-      const maxPrice = Math.max(...displayCandles.map(d => d.high));
-      const priceRange = maxPrice - minPrice;
 
       const oldVerticalZoom = viewStateRef.current.verticalZoom || 1;
       const oldVerticalOffset = viewStateRef.current.verticalOffset || 0;
@@ -2055,8 +2031,8 @@ const MiniChart = forwardRef(({
     const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
     const oldZoom = viewStateRef.current.zoom;
 
-    // Zoom limits: 0.01 (extreme zoom out, ~0.1px candles) to 5 (extreme zoom in)
-    const newZoom = Math.max(0.01, Math.min(5, oldZoom * zoomFactor));
+    // Zoom limits: 0.01 (extreme zoom out, ~0.1px candles) to MAX_ZOOM (velas de 400px)
+    const newZoom = Math.max(0.01, Math.min(MAX_ZOOM, oldZoom * zoomFactor));
     viewStateRef.current.zoom = newZoom;
 
     // Desmarcar preset activo si el usuario hace zoom manual
@@ -2067,7 +2043,7 @@ const MiniChart = forwardRef(({
     // Ajustar offset para mantener la vista coherente
     const rect = canvas.getBoundingClientRect();
     const chartWidth = rect.width - 75;
-    const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * newZoom));
+    const effectiveBarWidth = Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * newZoom));
     const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
     const maxOffset = Math.max(0, candlesRef.current.length - candlesPerScreen);
     viewStateRef.current.offset = Math.min(viewStateRef.current.offset, maxOffset);
@@ -2115,6 +2091,28 @@ const MiniChart = forwardRef(({
       viewStateRef.current.verticalOffset = 0;
 
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+      return;
+    }
+
+    // Con Order Flow activo, doble clic sobre una vela: acercarse para leer su footprint
+    const scale = priceScaleRef.current;
+    const orderFlowIndicator = indicatorManagerRef.current?.getOrderFlowIndicator?.();
+    const isOverCandles = scale
+      && x >= scale.marginLeft && x <= scale.marginLeft + scale.chartWidth
+      && y >= scale.marginTop && y <= scale.marginTop + scale.priceChartHeight;
+
+    if (orderFlowIndicator?.enabled && isOverCandles && drawingManagerRef.current?.currentTool === 'select') {
+      const barWidth = scale.chartWidth / scale.visibleCount;
+      const index = scale.startIdx + Math.floor((x - scale.marginLeft) / barWidth);
+      const candlesPerScreen = Math.floor(scale.chartWidth / (8 * FOOTPRINT_ZOOM));
+
+      viewStateRef.current.zoom = FOOTPRINT_ZOOM;
+      viewStateRef.current.offset = Math.max(0, scale.totalCount - index - Math.ceil(candlesPerScreen / 2));
+      manualPanRef.current = true;
+      setShowFollowButton(true);
+      onRequestPause?.();
+
+      drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
     }
   };
 
@@ -2242,6 +2240,7 @@ const MiniChart = forwardRef(({
     // Reset del flag cuando cambia el interval o backtestingData
     initialRenderDoneRef.current = false;
     lastIndexRef.current = -1; // 🎯 CRÍTICO: Reset para forzar re-render en próximo Binary Search
+    formingKeyRef.current = 0;
 
     console.log(`[MiniChart ${symbol} ${interval}] 🔍 backtestingMode=${backtestingMode}, hasData=${!!backtestingData}`);
 
@@ -2306,34 +2305,26 @@ const MiniChart = forwardRef(({
     console.log(`%c[MiniChart ${symbol} ${interval}] 🔍 BINARY SEARCH START`, 'background: #0000FF; color: white; font-weight: bold;');
     console.log(`[MiniChart ${symbol} ${interval}] 🔍 currentTime=${new Date(currentTime).toISOString()}, allCandles=${allCandlesRef.current.length}, lastIndex=${lastIndexRef.current}`);
 
-    // Binary search: encontrar último índice donde timestamp <= currentTime
-    let left = 0;
-    let right = allCandlesRef.current.length - 1;
-    let lastIndex = -1;
-
-    while (left <= right) {
-      const mid = Math.floor((left + right) / 2);
-      if (allCandlesRef.current[mid].timestamp <= currentTime) {
-        lastIndex = mid;
-        left = mid + 1;
-      } else {
-        right = mid - 1;
-      }
-    }
+    // Solo velas cerradas en la hora simulada, mas la vela en formacion armada con velas menores
+    const lastIndex = lastClosedIndex(allCandlesRef.current, interval, currentTime);
+    const forming = formingCandle(backtestingData.timeframes, interval, currentTime);
+    const formingKey = forming ? forming.knownUntil : 0;
 
     console.log(`[MiniChart ${symbol} ${interval}] 🔍 Binary search result: lastIndex=${lastIndex}, lastIndexRef=${lastIndexRef.current}`);
 
-    // Solo actualizar si el índice cambió (nueva vela)
-    if (lastIndex < 0 || lastIndex === lastIndexRef.current) {
+    // Solo actualizar si cerró una vela o avanzó la vela en formación
+    if ((lastIndex < 0 && !forming) || (lastIndex === lastIndexRef.current && formingKey === formingKeyRef.current)) {
       console.log(`%c[MiniChart ${symbol} ${interval}] ⏭️ NO UPDATE: lastIndex=${lastIndex}, same as before`, 'background: #FFA500; color: black;');
       return;
     }
 
     // Actualizar refs
     lastIndexRef.current = lastIndex;
+    formingKeyRef.current = formingKey;
 
     // Usar slice en lugar de filter
     candlesRef.current = allCandlesRef.current.slice(0, lastIndex + 1);
+    if (forming) candlesRef.current.push(forming);
     inProgressCandleRef.current = null;
 
     console.log(`%c[MiniChart ${symbol} ${interval}] ✅ UPDATED candlesRef: ${candlesRef.current.length} velas hasta ${new Date(candlesRef.current[candlesRef.current.length - 1]?.timestamp).toISOString()}`, 'background: #00FF00; color: black; font-weight: bold;');
@@ -2344,21 +2335,9 @@ const MiniChart = forwardRef(({
       lastPriceRef.current = lastCandle.close;
     }
 
-    // Ajustar offset si no hay paneo manual
-    if (!manualPanRef.current && canvasRef.current) {
-      const rect = canvasRef.current.getBoundingClientRect();
-      const chartWidth = rect.width - 75;
-      const zoom = viewStateRef.current.zoom || 1;
-      const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * zoom));
-      const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
-      const marginRightPx = chartWidth * 0.35;
-      const candlesInMargin = Math.ceil(marginRightPx / effectiveBarWidth);
-
-      if (candlesRef.current.length > candlesPerScreen) {
-        viewStateRef.current.offset = Math.min(candlesInMargin, candlesRef.current.length - candlesPerScreen);
-      } else {
-        viewStateRef.current.offset = 0;
-      }
+    // Sin paneo manual, la vela más reciente queda a la vista
+    if (!manualPanRef.current) {
+      viewStateRef.current.offset = 0;
     }
 
     // 🎯 CRITICAL: Throttle agresivo para alta velocidad
@@ -2418,8 +2397,7 @@ const MiniChart = forwardRef(({
       // ✨ NUEVO: Agregar referencia a drawChart para que los indicadores puedan forzar redibujado
       indicatorManagerRef.current.requestRedraw = () => {
         if (candlesRef.current && candlesRef.current.length > 0) {
-          console.log(`[${symbol}] 🔄 Redraw requested by indicator`);
-          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          drawChartRef.current?.(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
         }
       };
 
@@ -2607,12 +2585,13 @@ const MiniChart = forwardRef(({
   };
 
   const handleDividerMouseMove = (e) => {
-    if (!isDraggingDivider || !canvasRef.current) return;
+    if (!isDraggingDivider || !canvasRef.current || !priceScaleRef.current) return;
 
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const mouseY = e.clientY - rect.top;
-    const newRatio = Math.max(0.3, Math.min(0.85, mouseY / rect.height)); // Entre 30% y 85%
+    const { marginTop, availableHeight } = priceScaleRef.current;
+    const newRatio = Math.max(0.3, Math.min(0.85, (mouseY - marginTop) / availableHeight)); // Entre 30% y 85%
 
     setPriceChartRatio(newRatio);
   };
@@ -2649,7 +2628,7 @@ const MiniChart = forwardRef(({
   };
 
   const handleVolumeDividerMouseMove = (e) => {
-    if (!isDraggingVolumeDivider || !canvasRef.current) return;
+    if (!isDraggingVolumeDivider || !canvasRef.current || !priceScaleRef.current) return;
 
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
@@ -2657,8 +2636,7 @@ const MiniChart = forwardRef(({
 
     // Calcular la altura del volumen basado en la posición del mouse
     // El divisor está en la parte superior del panel de volumen
-    const priceChartHeight = Math.floor(rect.height * priceChartRatio);
-    const newVolumeHeight = Math.max(30, Math.min(300, mouseY - priceChartHeight));
+    const newVolumeHeight = Math.max(30, Math.min(300, mouseY - priceScaleRef.current.priceAreaEnd));
 
     setVolumeHeight(newVolumeHeight);
   };
@@ -2986,7 +2964,7 @@ const MiniChart = forwardRef(({
             position: 'absolute',
             left: 0,
             right: 0,
-            top: `${priceChartRatio * 100}%`,
+            top: priceAreaBottom ?? `${priceChartRatio * 100}%`,
             height: '4px',
             background: isDraggingDivider ? '#667eea' : 'transparent',
             cursor: 'ns-resize',
@@ -3020,7 +2998,7 @@ const MiniChart = forwardRef(({
             position: 'absolute',
             left: 0,
             right: 0,
-            top: `calc(${priceChartRatio * 100}% + 5px)`, // 5px después del precio (donde empieza el volumen)
+            top: priceAreaBottom !== null ? priceAreaBottom + 5 : `calc(${priceChartRatio * 100}% + 5px)`, // 5px después del precio (donde empieza el volumen)
             height: '3px',
             background: isDraggingVolumeDivider ? '#FF9800' : 'transparent',
             cursor: 'ns-resize',

@@ -8,6 +8,10 @@
  * - Rastrear métricas de rendimiento
  */
 
+// Comisiones Bybit VIP 0. La orden limit paga maker; mercado, stop, TP y SL pagan taker.
+const FEE_MAKER = 0.0002;
+const FEE_TAKER = 0.00055;
+
 class OrderManager {
   constructor(initialBalance = 10000) {
     this.orders = []; // Todas las órdenes (abiertas, cerradas y pendientes)
@@ -128,8 +132,7 @@ class OrderManager {
       order.status = 'open';
       order.executedAt = currentTime;
       order.executedPrice = currentPrice || entryPrice;
-      // Calcular comisión (0.1% por defecto)
-      order.commission = (order.executedPrice * quantity * 0.001);
+      order.commission = order.executedPrice * quantity * FEE_TAKER;
 
       this.orders.push(order);
       this.openOrders.push(order);
@@ -182,8 +185,8 @@ class OrderManager {
 
     const order = this.openOrders[orderIndex];
 
-    // Calcular PnL
-    const pnlInfo = this.calculatePnL(order, exitPrice);
+    // Calcular PnL desde el precio realmente ejecutado
+    const pnlInfo = this.calculatePnL({ ...order, entryPrice: order.executedPrice || order.entryPrice }, exitPrice);
 
     order.exitPrice = exitPrice;
     order.exitTime = currentTime;
@@ -241,7 +244,7 @@ class OrderManager {
     }
 
     // Restar comisión de salida
-    const exitCommission = currentPrice * order.quantity * 0.001;
+    const exitCommission = currentPrice * order.quantity * FEE_TAKER;
     pnl -= (order.commission + exitCommission);
 
     pnlPercent = (pnl / (order.entryPrice * order.quantity)) * 100;
@@ -276,8 +279,13 @@ class OrderManager {
     let ordersToClose = [];
     let ordersToExecute = [];
 
+    // Una orden solo responde a velas que empezaron después de crearla
+    const candleStart = typeof priceOrCandle === 'object' && priceOrCandle !== null ? priceOrCandle.timestamp : null;
+    const isActive = (order) => candleStart === null || candleStart === undefined || candleStart >= order.entryTime;
+
     // 🎯 FIX: Verificar órdenes pendientes usando high/low
     this.pendingOrders.forEach(order => {
+      if (!isActive(order)) return;
       let shouldExecute = false;
 
       if (order.type === 'limit') {
@@ -314,6 +322,7 @@ class OrderManager {
 
     // Recorrer órdenes abiertas
     this.openOrders.forEach(order => {
+      if (!isActive(order)) return;
       // Calcular PnL no realizado - usar el precio ejecutado real
       const entryPriceForCalc = order.executedPrice || order.entryPrice;
       const pnlInfo = this.calculatePnL({...order, entryPrice: entryPriceForCalc}, currentPrice);
@@ -375,7 +384,7 @@ class OrderManager {
     order.status = 'open';
     order.executedAt = currentTime;
     order.executedPrice = executionPrice;
-    order.commission = (executionPrice * order.quantity * 0.001);
+    order.commission = executionPrice * order.quantity * (order.type === 'limit' ? FEE_MAKER : FEE_TAKER);
 
     // Agregar a órdenes abiertas
     this.openOrders.push(order);

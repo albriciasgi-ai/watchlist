@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import TimeController from './TimeController';
 import MiniChart from '../MiniChart';
 import OrderManager from './OrderManager';
+import { TF_MS, candlesToSettle, priceAt } from './replayClock';
 import TradingControls from './TradingControls';
 import PerformancePanel from './PerformancePanel';
 import TradeHistory from './TradeHistory';
@@ -54,6 +55,7 @@ const BacktestingApp = () => {
       "Open Interest": true, // Habilitado en todos los timeframes (backend usa intervalo OI adaptativo)
       "OI-Volume Confluence": true, // 🎯 Confluencia OI-Volumen (muestra cuando movimientos son fuertes/débiles)
       "Order Flow": false, // 🎯 Order Flow con Footprints (overlays + sidebar)
+      "FVG": false, // Fair value gaps abiertos
       "VWAP": false,
       "Range Detection": false,
       "Rejection Patterns": false,        // Siempre deshabilitado por defecto
@@ -360,6 +362,7 @@ const BacktestingApp = () => {
   // 🎯 FIX: Referencias para evitar closure stale en handleTimeUpdate
   const marketDataRef = useRef(null);
   const activeTimeframeRef = useRef('15m');
+  const settledTimeRef = useRef(null); // Hasta dónde ya se revisaron las órdenes
 
   // 🎯 FIX: Sincronizar refs con valores actuales
   useEffect(() => {
@@ -652,21 +655,33 @@ const BacktestingApp = () => {
 
       request.onsuccess = () => {
         const db = request.result;
-        const transaction = db.transaction(['marketData'], 'readwrite');
-        const store = transaction.objectStore('marketData');
 
-        const saveRequest = store.put({
-          symbol: symbol,
-          data: data,
-          savedAt: Date.now()
-        });
-
-        saveRequest.onsuccess = () => {
-          console.log(`[IndexedDB] Datos guardados para ${symbol}`);
+        // Los datos ya están en memoria: si el caché falla, la app sigue sin él
+        const skipCache = (reason) => {
+          console.warn(`[IndexedDB] No se pudo guardar ${symbol}:`, reason);
           resolve();
         };
 
-        saveRequest.onerror = () => reject(saveRequest.error);
+        try {
+          const transaction = db.transaction(['marketData'], 'readwrite');
+          const store = transaction.objectStore('marketData');
+
+          const saveRequest = store.put({
+            symbol: symbol,
+            data: data,
+            savedAt: Date.now()
+          });
+
+          saveRequest.onsuccess = () => {
+            console.log(`[IndexedDB] Datos guardados para ${symbol}`);
+            resolve();
+          };
+
+          saveRequest.onerror = () => skipCache(saveRequest.error);
+          transaction.onabort = () => skipCache(transaction.error);
+        } catch (error) {
+          skipCache(error);
+        }
       };
 
       request.onupgradeneeded = (event) => {
@@ -1170,7 +1185,7 @@ const BacktestingApp = () => {
 
       // Descargar los demás timeframes en background (si solo descargamos uno)
       if (!shouldUseCachedData) {
-        const otherTimeframes = AVAILABLE_TIMEFRAMES.filter(tf => tf !== activeTimeframe);
+        const otherTimeframes = AVAILABLE_TIMEFRAMES.filter(tf => tf !== activeTimeframe && !data.timeframes[tf]);
         if (otherTimeframes.length > 0) {
           console.log(`[BacktestingApp] Descargando ${otherTimeframes.length} timeframes restantes en background...`);
           // Marcar timeframes como "descargando"
@@ -1209,6 +1224,23 @@ const BacktestingApp = () => {
   };
 
   /**
+   * Liquida órdenes con las velas que cerraron desde la última revisión, en orden.
+   * Cambiar de pestaña no mueve el tiempo, así que no puede llenar ni cerrar órdenes.
+   */
+  const settleOrders = (timeframes, now) => {
+    const manager = orderManagerRef.current;
+    if (!manager || !timeframes || !now) return;
+    const idle = manager.openOrders.length === 0 && manager.pendingOrders.length === 0;
+    if (settledTimeRef.current === null || now < settledTimeRef.current || idle) {
+      settledTimeRef.current = now;
+      return;
+    }
+    const { tf, candles, settledTo } = candlesToSettle(timeframes, settledTimeRef.current, now);
+    candles.forEach(candle => manager.updateOrders(candle, candle.timestamp + TF_MS[tf]));
+    settledTimeRef.current = settledTo;
+  };
+
+  /**
    * Callback cuando el tiempo cambia
    */
   const handleTimeUpdate = (newTime) => {
@@ -1225,19 +1257,14 @@ const BacktestingApp = () => {
       const timeframeData = currentMarketData.timeframes[currentActiveTimeframe];
       console.log(`[BacktestingApp] CHECK2: timeframeData.main.length=${timeframeData.main?.length}`);
 
-      // Buscar la vela más reciente que no exceda currentTime
-      const visibleCandles = timeframeData.main.filter(c => c.timestamp <= newTime);
-      console.log(`[BacktestingApp] CHECK3: visibleCandles.length=${visibleCandles.length}`);
+      // Último precio que ya ocurrió en la hora simulada
+      const knownPrice = priceAt(currentMarketData.timeframes, newTime);
 
-      if (visibleCandles.length > 0) {
-        const lastCandle = visibleCandles[visibleCandles.length - 1];
-        setCurrentPrice(lastCandle.close);
+      if (knownPrice !== null) {
+        setCurrentPrice(knownPrice);
 
-        // 🎯 FIX: Actualizar órdenes con el candle completo (high/low/close)
-        // Esto permite detectar SL/TP que fueron tocados durante la vela
-        if (orderManagerRef.current) {
-          orderManagerRef.current.updateOrders(lastCandle, newTime);
-        }
+        // Revisa TP, SL y órdenes pendientes con las velas ya cerradas
+        settleOrders(currentMarketData.timeframes, newTime);
 
         // 🎯 NUEVO: Actualizar fecha de playback para Double Top/Bottom (chunks progresivos)
         // Esto permite que nuevos patrones aparezcan a medida que avanza el playback
@@ -1317,17 +1344,12 @@ const BacktestingApp = () => {
     const timeframeData = marketData.timeframes?.[activeTimeframe];
     if (!timeframeData || !timeframeData.main) return;
 
-    // Buscar la vela más reciente que no exceda currentTime
-    const visibleCandles = timeframeData.main.filter(c => c.timestamp <= currentTime);
+    // Último precio que ya ocurrió en la hora simulada
+    const knownPrice = priceAt(marketData.timeframes, currentTime);
 
-    if (visibleCandles.length > 0) {
-      const lastCandle = visibleCandles[visibleCandles.length - 1];
-      setCurrentPrice(lastCandle.close);
-
-      // 🎯 FIX: Actualizar órdenes con el candle completo (high/low/close)
-      if (orderManagerRef.current) {
-        orderManagerRef.current.updateOrders(lastCandle, currentTime);
-      }
+    if (knownPrice !== null) {
+      setCurrentPrice(knownPrice);
+      settleOrders(marketData.timeframes, currentTime);
     }
   }, [currentTime, marketData, activeTimeframe]);
 
@@ -2437,7 +2459,6 @@ const BacktestingApp = () => {
                   backtestingData={marketData}
                   currentTime={currentTime}
                   simulationStartTime={simulationStartTime}
-                  isBacktestingFullscreen={fullscreenPanel === 'chart'}
                   vpConfig={tabStates[tf]?.vpConfig}
                   vpFixedRange={tabStates[tf]?.vpFixedRange}
                   oiMode={tabStates[tf]?.oiMode || 'histogram'}

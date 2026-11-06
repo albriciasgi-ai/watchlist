@@ -1,581 +1,652 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 
+const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
+const MAX_CANDLES_TO_LOAD = 400; // Con más velas en pantalla no se piden footprints
+const MAX_FOOTPRINTS_IN_MEMORY = 6000;
+const MIN_REQUEST_GAP_MS = 400;
+const ERROR_WAIT_MS = 5000;
+const STEP_RESET_CHANGE = 0.3; // Si el precio se aleja 30% se elige otro step
+
 /**
- * OrderFlowIndicator - Versión simplificada para Backtesting
+ * OrderFlowIndicator - Footprints sobre las velas, con el dibujo de App 9
  *
- * - NO renderiza footprints inline (sin cuadrícula invisible)
- * - Solo overlays: imbalance coloring, POC markers, stacked imbalances
- * - Sidebar consume datos vía getFootprintForTimestamp()
- * - Soporte backtesting: anti-sesgo de supervivencia
+ * Los datos salen del almacén diario de trades de Bybit y se piden solo para las velas
+ * visibles, cortados en la hora simulada. Con velas angostas quedan las líneas de stacked
+ * imbalance. El sidebar consume datos vía getFootprintForTimestamp().
  */
 class OrderFlowIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 7, backtestingMode = false, simulationStartTime = null) {
     super(symbol, interval, days);
     this.name = "Order Flow";
-    this.height = 0; // Overlay mode - no ocupa espacio propio
+    this.height = 0; // Se dibuja sobre las velas, no ocupa panel propio
     this.backtestingMode = backtestingMode;
-    this.simulationStartTime = simulationStartTime; // Fecha de inicio de la simulación (para anti-sesgo)
+    this.simulationStartTime = simulationStartTime;
 
-    // Estructura de datos
-    this.footprints = []; // Array de footprints históricos
-    this.footprintMap = new Map(); // timestamp → footprint (para búsqueda rápida)
-    this.stackedImbalances = new Map(); // timestamp → array de imbalances consecutivos
+    this.tfMinutes = MINUTES_BY_INTERVAL[interval] || parseInt(interval, 10) || 1;
+    this.tfMs = this.tfMinutes * 60000;
 
-    // Configuración de overlays
-    this.config = this.getDefaultConfig();
+    this.footprintMap = new Map(); // Inicio de vela → footprint
+    this.noData = new Map(); // Inicio de vela sin trades → hasta cuándo se consultó
+    this.clock = null; // Hasta dónde se conoce la información
+    this.generation = 0; // Invalida las respuestas pedidas antes de retroceder el tiempo
+    this.stepSize = null;
+    this.stepPrice = null;
 
-    // Estado de carga
     this.isLoading = false;
     this.error = null;
+    this.nextRequestAt = 0;
+    this.retryTimer = null;
+
+    this.config = this.getDefaultConfig();
+
+    // Orden de izquierda a derecha: Vela | Footprint (venta|compra) | Perfil
+    this.layout = { candlePct: 0.20, footprintPct: 0.28, profilePct: 0.47, gapPct: 0.05 };
+
+    this.colors = {
+      PROFILE_BAR: 'rgba(100, 149, 237, 0.7)',
+      PROFILE_POC: 'rgba(255, 215, 0, 0.9)',
+      BID_BG_STRONG: 'rgba(183, 28, 28, 0.85)',
+      BID_BG_WEAK: 'rgba(239, 154, 154, 0.6)',
+      ASK_BG_STRONG: 'rgba(27, 94, 32, 0.85)',
+      ASK_BG_WEAK: 'rgba(165, 214, 167, 0.6)',
+      EMPTY_BG: 'rgba(100, 100, 100, 0.15)',
+      TEXT: '#FFFFFF',
+      TEXT_SHADOW: '#000000',
+      CANDLE_UP: '#26A69A',
+      CANDLE_DOWN: '#EF5350',
+      CANDLE_WICK: '#666666',
+      POC_LINE: '#FFD700',
+      IMBALANCE_BORDER: '#FFD600'
+    };
   }
 
   // ==================== CONFIGURACIÓN ====================
 
   getDefaultConfig() {
     return {
-      // Detección de imbalances
-      imbalanceThreshold: 1.5, // Ratio mínimo bid/ask o ask/bid
-      stackedMinLevels: 3, // Mínimo de niveles consecutivos para "stacked"
-
-      // Visualización - Imbalance Coloring
-      showImbalanceColoring: true,
-      bullishImbalanceColor: 'rgba(34, 197, 94, 0.8)', // Verde semi-transparente (AUMENTADO para testing)
-      bearishImbalanceColor: 'rgba(239, 68, 68, 0.8)', // Rojo semi-transparente (AUMENTADO para testing)
-
-      // Visualización - POC Markers
-      showPOCMarkers: true,
-      pocMarkerColor: '#8B5CF6', // Morado
-      pocMarkerSize: 4,
-
-      // Visualización - Stacked Imbalances
-      showStackedImbalances: true,
-      stackedImbalanceSize: 8, // Tamaño del marcador (cuadrado/círculo)
-      stackedImbalanceOpacity: 0.8,
-      stackedBullishColor: '#22C55E', // Verde sólido
-      stackedBearishColor: '#EF4444', // Rojo sólido
-      stackedMarkerType: 'square', // 'square', 'circle', 'triangle'
-
-      // Z-Score para normalización (opcional)
-      useZScore: false,
-      zScoreThreshold: 1.5
+      enabled: true,
+      showCandle: true,
+      showProfile: true,
+      showFootprint: true,
+      showPOC: true,
+      showImbalances: true,
+      showDelta: true,
+      fontSize: 9,
+      minCandleWidth: 16, // Desde este ancho el footprint reemplaza la vela
+      minCandleWidthFull: 60, // Desde este ancho se muestran cifras y delta
+      stackedLineWidth: 2,
+      stackedLineExtend: 3,
+      stackedBuyColor: '38,166,154',
+      stackedSellColor: '239,83,80',
+      stackedOpacity: 0.7,
+      stackedMinVolumeZScore: 0,
+      showDeltaMarks: true,
+      deltaMarkMinShare: 0.2 // Parte del volumen de la vela que debe ir contra su color
     };
   }
 
   updateConfig(newConfig) {
     this.config = { ...this.config, ...newConfig };
-    // Re-detectar imbalances con nueva configuración
-    this._detectAllStackedImbalances();
   }
 
-  // ==================== DATA LOADING ====================
+  // ==================== DATOS ====================
 
-  async fetchData(startTimestamp = null, endTimestamp = null) {
-    this.isLoading = true;
-    this.error = null;
-
-    try {
-      // 🔧 FIX: Convertir interval de formato frontend (15m, 1h, 4h) a backend (15, 60, 240)
-      const intervalMap = {
-        '1m': '1',
-        '5m': '5',
-        '15m': '15',
-        '1h': '60',
-        '4h': '240'
-      };
-
-      const backendInterval = intervalMap[this.interval] || this.interval;
-
-      console.log(`[${this.symbol}] 🔍 Interval conversion: ${this.interval} → ${backendInterval}`);
-
-      // 🎯 En backtesting, pedir 60 días (2 meses) para tener todo el histórico de footprints
-      // En producción, usar this.days (típicamente 7-21 días)
-      const daysToRequest = this.backtestingMode ? 60 : this.days;
-
-      console.log(`[${this.symbol}] 📅 Requesting ${daysToRequest} days of footprints (backtestingMode: ${this.backtestingMode})`);
-
-      // Construir URL
-      const params = new URLSearchParams({
-        interval: backendInterval,
-        days: daysToRequest.toString()
-      });
-
-      if (startTimestamp) params.append('start_timestamp', startTimestamp.toString());
-      // NO enviar end_timestamp en backtesting - queremos todos los footprints
-      if (!this.backtestingMode && endTimestamp) {
-        params.append('end_timestamp', endTimestamp.toString());
-      }
-
-      const url = `${API_BASE_URL}/api/orderflow/historical/${this.symbol}?${params}`;
-
-      console.log(`[${this.symbol}] 📊 Fetching Order Flow data from ${url}`);
-
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || `Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      // 🔍 DEBUG: Ver qué estructura tiene realmente la respuesta
-      console.log(`[${this.symbol}] 🔍 Backend response:`, data);
-      console.log(`[${this.symbol}] 🔍 data.footprints:`, data.footprints);
-      console.log(`[${this.symbol}] 🔍 data.footprints?.length:`, data.footprints?.length);
-      console.log(`[${this.symbol}] 🔍 Type of data:`, typeof data);
-      console.log(`[${this.symbol}] 🔍 Keys in data:`, Object.keys(data));
-
-      console.log(`[${this.symbol}] ✅ Order Flow loaded: ${data.footprints?.length || 0} footprints`);
-
-      // Almacenar footprints
-      this.footprints = data.footprints;
-      this._buildFootprintMap();
-
-      // Detectar stacked imbalances en todos los footprints
-      this._detectAllStackedImbalances();
-
-      this.isLoading = false;
-      return data;
-
-    } catch (error) {
-      console.error(`[${this.symbol}] ❌ Error loading Order Flow:`, error);
-      this.error = error.message;
-      this.isLoading = false;
-      throw error;
-    }
+  // Los footprints se piden al dibujar, según las velas visibles
+  async fetchData() {
+    return null;
   }
 
-  _buildFootprintMap() {
+  get footprints() {
+    return Array.from(this.footprintMap.values());
+  }
+
+  hasFootprintData() {
+    return this.footprintMap.size > 0;
+  }
+
+  _reset() {
     this.footprintMap.clear();
-    this.footprints.forEach(fp => {
-      // 🔧 FIX: Usar candle_timestamp como key
-      const timestamp = fp.candle_timestamp || fp.timestamp;
-      this.footprintMap.set(timestamp, fp);
-    });
+    this.noData.clear();
+    this.stepSize = null;
+    this.stepPrice = null;
+    this.generation += 1;
   }
 
-  // ==================== ANTI-SESGO DE SUPERVIVENCIA ====================
-
-  getVisibleFootprints(currentPlaybackTime) {
-    if (!this.backtestingMode) {
-      return this.footprints;
-    }
-
-    // 🔍 DEBUG: Ver timestamps de footprints
-    if (this.footprints.length > 0 && !this._timestampLogged) {
-      const firstFp = this.footprints[0];
-      const lastFp = this.footprints[this.footprints.length - 1];
-      console.log(`[${this.symbol}] 🔍 Footprint timestamps:`, {
-        firstFp_timestamp: firstFp.timestamp,
-        firstFp_candle_timestamp: firstFp.candle_timestamp,
-        lastFp_timestamp: lastFp.timestamp,
-        lastFp_candle_timestamp: lastFp.candle_timestamp,
-        currentPlaybackTime,
-        totalFootprints: this.footprints.length
-      });
-      this._timestampLogged = true;
-    }
-
-    // 🔧 FIX: Usar candle_timestamp en lugar de timestamp
-    // Los footprints del backend tienen candle_timestamp, no timestamp
-    return this.footprints.filter(fp => {
-      const fpTime = fp.candle_timestamp || fp.timestamp;
-      return fpTime <= currentPlaybackTime;
-    });
-  }
-
-  // ==================== IMBALANCE DETECTION ====================
-
-  _detectAllStackedImbalances() {
-    this.stackedImbalances.clear();
-
-    this.footprints.forEach(footprint => {
-      const stacked = this._detectStackedImbalancesInFootprint(footprint);
-      if (stacked.length > 0) {
-        this.stackedImbalances.set(footprint.timestamp, stacked);
+  // Al retroceder el tiempo se descarta lo que solo se conocía en una hora posterior
+  _syncClock(knownUntil, price) {
+    if (this.stepPrice && Math.abs(price / this.stepPrice - 1) > STEP_RESET_CHANGE) {
+      this._reset();
+    } else if (this.clock !== null && knownUntil < this.clock) {
+      this.generation += 1;
+      for (const timestamp of this.footprintMap.keys()) {
+        if (timestamp + this.tfMs > knownUntil) this.footprintMap.delete(timestamp);
       }
-    });
-
-    console.log(`[${this.symbol}] 🔍 Detected stacked imbalances in ${this.stackedImbalances.size} footprints`);
+    }
+    this.clock = knownUntil;
   }
 
-  _detectStackedImbalancesInFootprint(footprint) {
-    if (!footprint.levels || footprint.levels.length === 0) {
-      return [];
+  _needsData(candle) {
+    const target = candle.in_progress ? candle.knownUntil : candle.timestamp + this.tfMs;
+    const seen = this.footprintMap.get(candle.timestamp)?.knownUntil ?? this.noData.get(candle.timestamp) ?? 0;
+    return seen < target;
+  }
+
+  _loadVisible(visibleCandles, priceContext) {
+    const { knownUntil, requestRedraw } = priceContext;
+    if (!knownUntil) return;
+
+    this._syncClock(knownUntil, visibleCandles[visibleCandles.length - 1].close);
+    if (visibleCandles.length > MAX_CANDLES_TO_LOAD) return;
+
+    const missing = visibleCandles.filter(candle => this._needsData(candle));
+    if (missing.length === 0) return;
+
+    // Al desplazarse se trae una ventana de más; una vela que avanza solo se pide a sí misma
+    const pad = missing.length > 4 ? Math.ceil(visibleCandles.length / 2) * this.tfMs : 0;
+    const start = missing[0].timestamp - pad;
+    const end = missing[missing.length - 1].timestamp + this.tfMs + pad;
+    this._request(start, end, knownUntil, requestRedraw);
+  }
+
+  _request(start, end, knownUntil, redraw) {
+    if (this.isLoading) return; // Al terminar se redibuja y se vuelve a evaluar
+
+    const wait = this.nextRequestAt - performance.now();
+    if (wait > 0) {
+      if (!this.retryTimer) {
+        this.retryTimer = setTimeout(() => {
+          this.retryTimer = null;
+          redraw?.();
+        }, wait);
+      }
+      return;
     }
 
-    const { imbalanceThreshold, stackedMinLevels } = this.config;
-    const imbalances = [];
+    this.isLoading = true;
+    this.nextRequestAt = performance.now() + MIN_REQUEST_GAP_MS;
+    const generation = this.generation;
 
-    // 1. Detectar imbalances en cada level
-    const levelImbalances = footprint.levels.map(level => {
-      const bid = level.bid_volume || 0;
-      const ask = level.ask_volume || 0;
-      const total = bid + ask;
+    const params = new URLSearchParams({
+      interval: String(this.tfMinutes),
+      start_timestamp: String(start),
+      end_timestamp: String(end),
+      known_until: String(knownUntil)
+    });
+    if (this.stepSize) params.append('step', String(this.stepSize));
 
-      if (total === 0) return null;
-
-      const ratio = bid > ask ? bid / (ask || 1) : ask / (bid || 1);
-      const isBullish = bid > ask;
-
-      if (ratio >= imbalanceThreshold) {
-        return {
-          price: level.price,
-          ratio,
-          isBullish,
-          bid,
-          ask
-        };
-      }
-
-      return null;
-    }).filter(Boolean);
-
-    if (levelImbalances.length === 0) return [];
-
-    // 2. Buscar grupos consecutivos
-    let currentGroup = [levelImbalances[0]];
-    let currentDirection = levelImbalances[0].isBullish;
-
-    for (let i = 1; i < levelImbalances.length; i++) {
-      const imb = levelImbalances[i];
-
-      // Si mantiene dirección, agregar al grupo
-      if (imb.isBullish === currentDirection) {
-        currentGroup.push(imb);
-      } else {
-        // Cambió dirección, guardar grupo si cumple mínimo
-        if (currentGroup.length >= stackedMinLevels) {
-          imbalances.push({
-            type: currentDirection ? 'bullish' : 'bearish',
-            levels: currentGroup,
-            priceStart: currentGroup[0].price,
-            priceEnd: currentGroup[currentGroup.length - 1].price,
-            avgRatio: currentGroup.reduce((sum, l) => sum + l.ratio, 0) / currentGroup.length
-          });
+    fetch(`${API_BASE_URL}/api/orderflow/historical/${this.symbol}?${params}`)
+      .then(response => {
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        if (!data.success) throw new Error(data.message || 'Sin respuesta del almacén');
+        if (generation === this.generation) this._store(data, start, end);
+        this.error = null;
+        this.isLoading = false;
+        redraw?.();
+      })
+      .catch(error => {
+        if (this.error !== error.message) {
+          console.error(`[${this.symbol}] ❌ Error loading Order Flow:`, error);
         }
-
-        // Iniciar nuevo grupo
-        currentGroup = [imb];
-        currentDirection = imb.isBullish;
-      }
-    }
-
-    // Guardar último grupo si cumple mínimo
-    if (currentGroup.length >= stackedMinLevels) {
-      imbalances.push({
-        type: currentDirection ? 'bullish' : 'bearish',
-        levels: currentGroup,
-        priceStart: currentGroup[0].price,
-        priceEnd: currentGroup[currentGroup.length - 1].price,
-        avgRatio: currentGroup.reduce((sum, l) => sum + l.ratio, 0) / currentGroup.length
+        this.error = error.message;
+        this.isLoading = false;
+        this.nextRequestAt = performance.now() + ERROR_WAIT_MS;
       });
-    }
-
-    return imbalances;
   }
 
-  // ==================== OVERLAY RENDERING ====================
+  _store(data, start, end) {
+    const known = data.known_until;
 
-  renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
-    if (!ctx || !bounds || !priceContext) {
-      return;
+    data.footprints.forEach(footprint => {
+      footprint.knownUntil = known;
+      this.footprintMap.delete(footprint.candle_timestamp);
+      this.footprintMap.set(footprint.candle_timestamp, footprint);
+      this.noData.delete(footprint.candle_timestamp);
+    });
+
+    for (let timestamp = start; timestamp < end; timestamp += this.tfMs) {
+      if (!this.footprintMap.has(timestamp)) this.noData.set(timestamp, known);
     }
-    if (this.footprints.length === 0) {
-      return;
+
+    // Un solo step en la sesión, para que todas las celdas midan lo mismo
+    if (!this.stepSize && data.step_size && data.footprints.length > 0) {
+      this.stepSize = data.step_size;
+      this.stepPrice = data.footprints[data.footprints.length - 1].candle_close;
     }
-    if (!visibleCandles || visibleCandles.length === 0) {
-      return;
+
+    while (this.footprintMap.size > MAX_FOOTPRINTS_IN_MEMORY) {
+      this.footprintMap.delete(this.footprintMap.keys().next().value);
     }
+  }
+
+  destroy() {
+    clearTimeout(this.retryTimer);
+    this.retryTimer = null;
+    this.generation += 1;
+  }
+
+  // ==================== DIBUJO ====================
+
+  /** El footprint reemplaza la vela solo si hay datos y la vela es ancha */
+  shouldReplaceCandles(candleWidth = 0) {
+    return this.enabled && this.config.enabled && this.hasFootprintData() && candleWidth >= this.config.minCandleWidth;
+  }
+
+  /** Rango de precio de los niveles visibles, para que entren completos en la escala */
+  priceExtent(visibleCandles) {
+    let low = Infinity;
+    let high = -Infinity;
+    for (const candle of visibleCandles) {
+      const levels = this.footprintMap.get(candle.timestamp)?.levels;
+      if (!levels?.length) continue;
+      low = Math.min(low, levels[0].price_min);
+      high = Math.max(high, levels[levels.length - 1].price_max);
+    }
+    return low < high ? { low, high } : null;
+  }
+
+  /** Delta real de cada vela, solo si todas las velas dadas ya lo tienen */
+  realDeltas(candles) {
+    if (!this.enabled || !this.config.enabled || candles.length > MAX_CANDLES_TO_LOAD) return null;
+
+    const deltas = [];
+    for (const candle of candles) {
+      const footprint = this.footprintMap.get(candle.timestamp);
+      if (!footprint) return null;
+      deltas.push(footprint.total_delta);
+    }
+    return deltas;
+  }
+
+  /** Compra agresiva en una vela roja, o venta agresiva en una vela verde */
+  deltaAgainstCandle(footprint, candle) {
+    const move = candle.close - candle.open;
+    const delta = footprint.total_delta;
+    return move * delta < 0 && Math.abs(delta) >= footprint.total_volume * this.config.deltaMarkMinShare;
+  }
+
+  renderOnChart(ctx, bounds, visibleCandles, priceContext, replacesCandles) {
+    if (!this.enabled || !this.config.enabled || visibleCandles.length === 0) return;
+
+    this._loadVisible(visibleCandles, priceContext);
 
     const { priceToY } = priceContext;
-
-    // 🔧 FIX: Calcular candleWidth a partir de bounds.width y visibleCandles
     const candleWidth = bounds.width / visibleCandles.length;
+    const fullMode = candleWidth >= this.config.minCandleWidthFull;
 
-    // 🎯 OPTIMIZACIÓN: Filtrar footprints por rango de timestamps de visibleCandles
-    const firstVisibleTs = visibleCandles[0].timestamp;
-    const lastVisibleTs = visibleCandles[visibleCandles.length - 1].timestamp;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+    ctx.clip();
 
-    // 🎯 Filtrar footprints solo por rango visible en pantalla
-    // El anti-sesgo ya se aplicó en el backend (end_timestamp = simulationStartTime)
-    // Aquí solo mostramos los footprints que corresponden a las velas visibles
-    const visibleFootprints = this.footprints.filter(fp => {
-      const fpTime = fp.candle_timestamp || fp.timestamp;
-      return fpTime >= firstVisibleTs && fpTime <= lastVisibleTs;
-    });
-
-    // 🔍 DEBUG: Log único al inicio para verificar funcionamiento
-    if (!this._renderLogged) {
-      const oldestFootprint = this.footprints.length > 0
-        ? Math.min(...this.footprints.map(fp => fp.candle_timestamp || fp.timestamp))
-        : null;
-
-      const newestFootprint = this.footprints.length > 0
-        ? Math.max(...this.footprints.map(fp => fp.candle_timestamp || fp.timestamp))
-        : null;
-
-      console.log(`[${this.symbol}] 🎨 OrderFlow renderOverlay:`, {
-        totalFootprints: this.footprints.length,
-        footprintRange: `${oldestFootprint ? new Date(oldestFootprint).toISOString() : 'N/A'} → ${newestFootprint ? new Date(newestFootprint).toISOString() : 'N/A'}`,
-        visibleCandles: visibleCandles.length,
-        visibleFootprints: visibleFootprints.length,
-        visibleTimeRange: `${new Date(firstVisibleTs).toISOString()} → ${new Date(lastVisibleTs).toISOString()}`,
-        antiSesgoBehavior: `Backend filtró hasta simulationStartTime. Frontend muestra footprints del rango visible.`,
-        bounds,
-        candleWidth,
-        config: this.config
+    if (replacesCandles) {
+      visibleCandles.forEach((candle, i) => {
+        const unitX = bounds.x + i * candleWidth;
+        const footprint = this.footprintMap.get(candle.timestamp);
+        if (footprint?.levels?.length) {
+          this.renderOrderFlowUnit(ctx, candle, footprint, unitX, candleWidth, priceToY, fullMode, bounds);
+        } else {
+          this.renderSimpleCandle(ctx, candle, unitX, candleWidth, priceToY);
+        }
       });
-      this._renderLogged = true;
+    } else if (candleWidth < this.config.minCandleWidth) {
+      this.renderImbalanceMarkers(ctx, bounds, visibleCandles, priceToY, candleWidth);
     }
 
-    // CAPA 1: Imbalance Coloring (fondo de velas con imbalance general)
-    if (this.config.showImbalanceColoring) {
-      const count = this._renderImbalanceColoring(ctx, bounds, visibleCandles, visibleFootprints, priceToY, candleWidth);
-      if (!this._imbalanceLogged && count > 0) {
-        console.log(`[${this.symbol}] 🟢 Imbalance Coloring: ${count} velas dibujadas`);
-        this._imbalanceLogged = true;
-      }
-    }
+    this._renderNotice(ctx, bounds, visibleCandles);
+    ctx.restore();
+  }
 
-    // CAPA 2: POC Markers (punto de control de volumen)
-    if (this.config.showPOCMarkers) {
-      this._renderPOCMarkers(ctx, bounds, visibleCandles, visibleFootprints, priceToY, candleWidth);
+  _renderNotice(ctx, bounds, visibleCandles) {
+    let text = null;
+    if (this.error) {
+      text = 'Order Flow: no se pudo leer el almacén de trades';
+    } else if (!this.isLoading && visibleCandles.length <= MAX_CANDLES_TO_LOAD
+      && visibleCandles.every(candle => !this.footprintMap.has(candle.timestamp) && this.noData.has(candle.timestamp))) {
+      text = 'Order Flow: sin trades descargados para este rango';
     }
+    if (!text) return;
 
-    // CAPA 3: Stacked Imbalances (marcadores de imbalances consecutivos)
-    if (this.config.showStackedImbalances) {
-      this._renderStackedImbalances(ctx, bounds, visibleCandles, visibleFootprints, priceToY, candleWidth);
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = '#9E9E9E';
+    ctx.fillText(text, bounds.x + 8, bounds.y + 6);
+  }
+
+  /** Vela sencilla cuando esa vela no tiene footprint */
+  renderSimpleCandle(ctx, candle, x, width, priceToY) {
+    const margin = width * 0.1;
+    const bodyWidth = width - margin * 2;
+    const centerX = x + width / 2;
+    const color = candle.close >= candle.open ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN;
+
+    const openY = priceToY(candle.open);
+    const closeY = priceToY(candle.close);
+    const bodyTop = Math.min(openY, closeY);
+    const bodyHeight = Math.max(1, Math.max(openY, closeY) - bodyTop);
+
+    ctx.strokeStyle = this.colors.CANDLE_WICK;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(centerX, priceToY(candle.high));
+    ctx.lineTo(centerX, priceToY(candle.low));
+    ctx.stroke();
+
+    ctx.fillStyle = color;
+    ctx.fillRect(x + margin, bodyTop, bodyWidth, bodyHeight);
+  }
+
+  /** Niveles vacíos para llegar a los extremos de la vela oficial, que pueden no tener trades */
+  _levelsToCoverCandle(footprint, candle) {
+    const { levels, step_size: step } = footprint;
+    const extra = [];
+    if (!(step > 0)) return extra;
+
+    for (let top = levels[levels.length - 1].price_max; top < candle.high; top += step) {
+      extra.push({ price_min: top, price_max: top + step });
+    }
+    for (let bottom = levels[0].price_min; bottom > candle.low; bottom -= step) {
+      extra.push({ price_min: bottom - step, price_max: bottom });
+    }
+    return extra;
+  }
+
+  /** Vela | Footprint | Perfil de una vela */
+  renderOrderFlowUnit(ctx, candle, footprint, unitX, unitWidth, priceToY, fullMode, bounds) {
+    const gap = unitWidth * this.layout.gapPct / 3;
+    const candleWidth = unitWidth * this.layout.candlePct;
+    const candleX = unitX + gap;
+    const footprintWidth = unitWidth * this.layout.footprintPct;
+    const footprintX = candleX + candleWidth + gap;
+    const profileWidth = unitWidth * this.layout.profilePct;
+    const profileX = footprintX + footprintWidth + gap;
+
+    const { levels } = footprint;
+    const extraLevels = this._levelsToCoverCandle(footprint, candle);
+    const high = extraLevels.reduce((max, level) => Math.max(max, level.price_max), levels[levels.length - 1].price_max);
+    const low = extraLevels.reduce((min, level) => Math.min(min, level.price_min), levels[0].price_min);
+
+    if (this.config.showCandle) {
+      this.renderJapaneseCandle(ctx, candle, candleX, candleWidth, priceToY, high, low);
+    }
+    if (this.config.showFootprint) {
+      this.renderFootprint(ctx, footprint, extraLevels, footprintX, footprintWidth, priceToY, fullMode, unitX, bounds);
+    }
+    if (this.config.showProfile) {
+      this.renderVolumeProfile(ctx, footprint, profileX, profileWidth, priceToY, bounds);
+    }
+    if (this.config.showDelta && fullMode) {
+      this.renderDelta(ctx, footprint, unitX, unitWidth, low, priceToY);
     }
   }
 
-  _renderImbalanceColoring(ctx, bounds, visibleCandles, visibleFootprints, priceToY, candleWidth) {
-    // 🔧 FIX: Usar candle_timestamp para el mapa
-    const fpMap = new Map(visibleFootprints.map(fp => [fp.candle_timestamp || fp.timestamp, fp]));
-    let count = 0;
+  renderJapaneseCandle(ctx, candle, x, width, priceToY, high, low) {
+    const centerX = x + width / 2;
+    const bodyWidth = Math.max(2, width * 0.6);
+    const color = candle.close >= candle.open ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN;
 
-    visibleCandles.forEach((candle, index) => {
-      const footprint = fpMap.get(candle.timestamp);
-      if (!footprint || !footprint.levels) return;
+    const openY = priceToY(candle.open);
+    const closeY = priceToY(candle.close);
+    const bodyTop = Math.min(openY, closeY);
+    const bodyBottom = Math.max(openY, closeY);
+    const bodyHeight = Math.max(1, bodyBottom - bodyTop);
 
-      // Calcular imbalance general del footprint
-      let totalBid = 0;
-      let totalAsk = 0;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(centerX, priceToY(high));
+    ctx.lineTo(centerX, bodyTop);
+    ctx.moveTo(centerX, bodyBottom);
+    ctx.lineTo(centerX, priceToY(low));
+    ctx.stroke();
 
-      footprint.levels.forEach(level => {
-        totalBid += level.bid_volume || 0;
-        totalAsk += level.ask_volume || 0;
-      });
-
-      const total = totalBid + totalAsk;
-      if (total === 0) return;
-
-      const ratio = totalBid > totalAsk ? totalBid / (totalAsk || 1) : totalAsk / (totalBid || 1);
-
-      if (ratio >= this.config.imbalanceThreshold) {
-        const isBullish = totalBid > totalAsk;
-        const color = isBullish ? '#22C55E' : '#EF4444'; // Verde o rojo sólido
-
-        // 🔧 FIX: Dibujar BORDE grueso en lugar de fondo (más visible)
-        const x = bounds.x + index * candleWidth;
-        const yTop = priceToY(candle.high);
-        const yBottom = priceToY(candle.low);
-
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 3;
-        ctx.strokeRect(x, yTop, candleWidth, yBottom - yTop);
-        count++;
-      }
-    });
-
-    return count;
+    ctx.fillStyle = color;
+    ctx.fillRect(centerX - bodyWidth / 2, bodyTop, bodyWidth, bodyHeight);
+    ctx.strokeRect(centerX - bodyWidth / 2, bodyTop, bodyWidth, bodyHeight);
   }
 
-  _renderPOCMarkers(ctx, bounds, visibleCandles, visibleFootprints, priceToY, candleWidth) {
-    // 🔧 FIX: Usar candle_timestamp para el mapa
-    const fpMap = new Map(visibleFootprints.map(fp => [fp.candle_timestamp || fp.timestamp, fp]));
-    let count = 0;
+  /** Barras horizontales con el volumen de cada nivel */
+  renderVolumeProfile(ctx, footprint, x, width, priceToY, bounds) {
+    const { levels, poc_index: pocIndex } = footprint;
+    const maxVolume = levels.reduce((max, level) => Math.max(max, level.total_volume), 0);
+    if (maxVolume === 0) return;
 
-    visibleCandles.forEach((candle, index) => {
-      const footprint = fpMap.get(candle.timestamp);
-      if (!footprint || !footprint.poc_price) return;
+    for (let i = 0; i < levels.length; i++) {
+      const level = levels[i];
+      const topY = priceToY(level.price_max);
+      const levelHeight = Math.abs(priceToY(level.price_min) - topY);
+      if (levelHeight < 0.5 || topY > bounds.y + bounds.height || topY + levelHeight < bounds.y) continue;
 
-      const x = bounds.x + index * candleWidth + candleWidth / 2;
-      const y = priceToY(footprint.poc_price);
+      const barWidth = width * (level.total_volume / maxVolume);
+      const isPOC = i === pocIndex;
+      ctx.fillStyle = isPOC ? this.colors.PROFILE_POC : this.colors.PROFILE_BAR;
+      ctx.fillRect(x, topY, barWidth, Math.max(1, levelHeight - 1));
 
-      // Dibujar marcador de POC (línea horizontal corta)
-      ctx.strokeStyle = this.config.pocMarkerColor;
-      ctx.lineWidth = 2;
+      if (isPOC && this.config.showPOC) {
+        ctx.strokeStyle = this.colors.POC_LINE;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, topY + levelHeight / 2);
+        ctx.lineTo(x + barWidth, topY + levelHeight / 2);
+        ctx.stroke();
+      }
+    }
+  }
+
+  /** Celdas de venta (izquierda) y compra (derecha) por nivel */
+  renderFootprint(ctx, footprint, extraLevels, x, width, priceToY, fullMode, unitX, bounds) {
+    const { levels, poc_index: pocIndex, step_size: step } = footprint;
+    const imbalanceSet = new Set((footprint.imbalances || []).map(item => item.level_index));
+
+    const stackedSet = new Map(); // Índice de nivel → dirección
+    const minZScore = this.config.stackedMinVolumeZScore || 0;
+    if (minZScore <= 0 || (footprint.volume_zscore || 0) >= minZScore) {
+      for (const stacked of footprint.stacked_imbalances || []) {
+        for (const index of stacked.levels || []) stackedSet.set(index, stacked.direction);
+      }
+    }
+
+    const halfWidth = width / 2;
+    const levelGap = 1;
+    // Una sola altura para todas las celdas: la que mide un step en la escala actual
+    const reference = levels[0].price_max;
+    const levelHeight = Math.max(Math.abs(priceToY(reference - step) - priceToY(reference)), 1.5);
+    const cellHeight = levelHeight - levelGap;
+    const isOutside = y => y > bounds.y + bounds.height || y + levelHeight < bounds.y;
+
+    for (const level of extraLevels) {
+      const y = priceToY(level.price_max);
+      if (isOutside(y)) continue;
+      ctx.fillStyle = this.colors.EMPTY_BG;
+      ctx.fillRect(x, y, width, cellHeight);
+    }
+
+    for (let i = 0; i < levels.length; i++) {
+      const level = levels[i];
+      const y = priceToY(level.price_max);
+      if (isOutside(y)) continue;
+
+      const textY = y + levelHeight / 2;
+      const isEmpty = level.total_volume === 0;
+      const sellDominates = level.bid_volume > level.ask_volume;
+      const buyDominates = level.ask_volume > level.bid_volume;
+
+      ctx.fillStyle = isEmpty ? this.colors.EMPTY_BG : (sellDominates ? this.colors.BID_BG_STRONG : this.colors.BID_BG_WEAK);
+      ctx.fillRect(x, y, halfWidth - 0.5, cellHeight);
+
+      ctx.fillStyle = isEmpty ? this.colors.EMPTY_BG : (buyDominates ? this.colors.ASK_BG_STRONG : this.colors.ASK_BG_WEAK);
+      ctx.fillRect(x + halfWidth + 0.5, y, halfWidth - 0.5, cellHeight);
+
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(x, y, width, cellHeight);
+
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+      ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(x - this.config.pocMarkerSize, y);
-      ctx.lineTo(x + this.config.pocMarkerSize, y);
+      ctx.moveTo(x + halfWidth, y);
+      ctx.lineTo(x + halfWidth, y + cellHeight);
       ctx.stroke();
-      count++;
-    });
 
-    return count;
+      if (this.config.showPOC && i === pocIndex) {
+        ctx.fillStyle = 'rgba(255, 215, 0, 0.9)';
+        ctx.fillRect(x, textY - 1, width, 2);
+      }
+
+      if (this.config.showImbalances && stackedSet.has(i)) {
+        const rgb = stackedSet.get(i) === 'BUY' ? this.config.stackedBuyColor : this.config.stackedSellColor;
+        const opacity = this.config.stackedOpacity;
+
+        ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.4})`;
+        ctx.fillRect(x, y, width, cellHeight);
+        ctx.strokeStyle = `rgba(${rgb}, 0.95)`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, width, cellHeight);
+
+        // La franja sigue hacia la izquierda, por detrás de la vela
+        const extendLeft = x - unitX;
+        if (extendLeft > 0) {
+          ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.6})`;
+          ctx.fillRect(unitX, y, extendLeft, cellHeight);
+          ctx.strokeStyle = `rgba(${rgb}, ${opacity * 0.8})`;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(unitX, y, extendLeft, cellHeight);
+        }
+      } else if (this.config.showImbalances && imbalanceSet.has(i) && levelHeight >= 6) {
+        // En celdas muy bajas el borde taparía el color de la celda
+        ctx.strokeStyle = this.colors.IMBALANCE_BORDER;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, width, cellHeight);
+      }
+
+      if (fullMode && width >= 30 && levelHeight >= 10) {
+        const fontSize = Math.min(this.config.fontSize, levelHeight - 2, 11);
+        ctx.font = `bold ${fontSize}px Arial`;
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = this.colors.TEXT;
+
+        if (level.bid_volume > 0) {
+          ctx.textAlign = 'right';
+          this.drawTextWithShadow(ctx, this.formatVolume(level.bid_volume), x + halfWidth - 2, textY);
+        }
+        if (level.ask_volume > 0) {
+          ctx.textAlign = 'left';
+          this.drawTextWithShadow(ctx, this.formatVolume(level.ask_volume), x + halfWidth + 3, textY);
+        }
+      }
+    }
   }
 
-  _renderStackedImbalances(ctx, bounds, visibleCandles, visibleFootprints, priceToY, candleWidth) {
-    // 🔧 FIX: Usar candle_timestamp para el mapa
-    const fpMap = new Map(visibleFootprints.map(fp => [fp.candle_timestamp || fp.timestamp, fp]));
-    let count = 0;
+  /** Delta total debajo de la vela */
+  renderDelta(ctx, footprint, unitX, unitWidth, lowestPrice, priceToY) {
+    const delta = footprint.total_delta;
+    if (Math.abs(delta) < 0.001) return;
 
-    visibleCandles.forEach((candle, index) => {
-      const footprint = fpMap.get(candle.timestamp);
+    ctx.font = `bold ${this.config.fontSize}px Arial`;
+    ctx.fillStyle = delta >= 0 ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    const text = delta >= 0 ? `+${this.formatVolume(delta)}` : this.formatVolume(delta);
+    this.drawTextWithShadow(ctx, text, unitX + unitWidth / 2, priceToY(lowestPrice) + 14);
+  }
+
+  formatVolume(volume) {
+    if (volume === undefined || volume === null) return '0';
+    const absVolume = Math.abs(volume);
+    if (absVolume >= 1000000) return (volume / 1000000).toFixed(1) + 'M';
+    if (absVolume >= 1000) return (volume / 1000).toFixed(1) + 'K';
+    if (absVolume >= 100) return Math.round(volume).toString();
+    if (absVolume >= 1) return volume.toFixed(1);
+    return volume.toFixed(2);
+  }
+
+  drawTextWithShadow(ctx, text, x, y) {
+    ctx.save();
+    ctx.strokeStyle = this.colors.TEXT_SHADOW;
+    ctx.lineWidth = 2;
+    ctx.strokeText(text, x, y);
+    ctx.fillText(text, x, y);
+    ctx.restore();
+  }
+
+  renderDeltaMark(ctx, candle, footprint, centerX, priceToY, candleWidth) {
+    const buying = footprint.total_delta > 0;
+    const size = Math.min(5, Math.max(2.5, candleWidth * 0.5));
+    const y = buying ? priceToY(candle.low) + size + 3 : priceToY(candle.high) - size - 3;
+
+    ctx.fillStyle = `rgb(${buying ? this.config.stackedBuyColor : this.config.stackedSellColor})`;
+    ctx.beginPath();
+    ctx.moveTo(centerX, y - size);
+    ctx.lineTo(centerX + size, y);
+    ctx.lineTo(centerX, y + size);
+    ctx.lineTo(centerX - size, y);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  /** Con velas angostas: líneas de stacked imbalance y marcas de delta contrario a la vela */
+  renderImbalanceMarkers(ctx, bounds, visibleCandles, priceToY, candleWidth) {
+    const { stackedLineWidth, stackedLineExtend, stackedBuyColor, stackedSellColor, stackedOpacity } = this.config;
+    const minZScore = this.config.stackedMinVolumeZScore || 0;
+    const extraHalf = (candleWidth * stackedLineExtend - candleWidth) / 2;
+
+    ctx.lineWidth = stackedLineWidth;
+
+    visibleCandles.forEach((candle, i) => {
+      const footprint = this.footprintMap.get(candle.timestamp);
       if (!footprint) return;
 
-      const stackedGroups = this.stackedImbalances.get(footprint.timestamp);
-      if (!stackedGroups || stackedGroups.length === 0) return;
+      const candleX = bounds.x + i * candleWidth;
 
-      stackedGroups.forEach(group => {
-        const isBullish = group.type === 'bullish';
-        const color = isBullish ? this.config.stackedBullishColor : this.config.stackedBearishColor;
+      if (this.config.showDeltaMarks && this.deltaAgainstCandle(footprint, candle)) {
+        this.renderDeltaMark(ctx, candle, footprint, candleX + candleWidth / 2, priceToY, candleWidth);
+      }
 
-        // Posición del marcador
-        const x = bounds.x + index * candleWidth + candleWidth / 2;
-        const yPrice = isBullish ? group.priceEnd : group.priceStart; // Arriba para bullish, abajo para bearish
-        const y = priceToY(yPrice);
+      if (!footprint.stacked_imbalances?.length) return;
+      if (minZScore > 0 && (footprint.volume_zscore || 0) < minZScore) return;
 
-        // Dibujar marcador según tipo
-        ctx.globalAlpha = this.config.stackedImbalanceOpacity;
-        ctx.fillStyle = color;
+      const startX = Math.max(bounds.x, candleX - extraHalf);
+      const endX = Math.min(bounds.x + bounds.width, candleX + candleWidth + extraHalf);
 
-        const size = this.config.stackedImbalanceSize;
+      for (const stacked of footprint.stacked_imbalances) {
+        const rgb = stacked.direction === 'BUY' ? stackedBuyColor : stackedSellColor;
+        ctx.strokeStyle = `rgba(${rgb}, ${stackedOpacity})`;
 
-        switch (this.config.stackedMarkerType) {
-          case 'square':
-            ctx.fillRect(x - size / 2, y - size / 2, size, size);
-            break;
-
-          case 'circle':
-            ctx.beginPath();
-            ctx.arc(x, y, size / 2, 0, Math.PI * 2);
-            ctx.fill();
-            break;
-
-          case 'triangle':
-            ctx.beginPath();
-            if (isBullish) {
-              // Triángulo apuntando arriba
-              ctx.moveTo(x, y - size / 2);
-              ctx.lineTo(x - size / 2, y + size / 2);
-              ctx.lineTo(x + size / 2, y + size / 2);
-            } else {
-              // Triángulo apuntando abajo
-              ctx.moveTo(x, y + size / 2);
-              ctx.lineTo(x - size / 2, y - size / 2);
-              ctx.lineTo(x + size / 2, y - size / 2);
-            }
-            ctx.closePath();
-            ctx.fill();
-            break;
+        for (const index of stacked.levels || []) {
+          const level = footprint.levels[index];
+          if (!level) continue;
+          const y = priceToY(level.price_mid);
+          ctx.beginPath();
+          ctx.moveTo(startX, y);
+          ctx.lineTo(endX, y);
+          ctx.stroke();
         }
-
-        ctx.globalAlpha = 1.0;
-        count++;
-      });
+      }
     });
-
-    return count;
   }
 
-  // ==================== PUBLIC API FOR SIDEBAR ====================
+  // Se dibuja sobre las velas desde MiniChart: no tiene panel propio
+  render() {}
 
-  /**
-   * Obtiene el footprint para un timestamp dado
-   * Usado por FootprintSidebar para mostrar footprints pinneados
-   */
+  // ==================== API PÚBLICA PARA EL SIDEBAR ====================
+
+  /** Footprint de una vela, usado por FootprintSidebar */
   getFootprintForTimestamp(timestamp) {
     return this.footprintMap.get(timestamp) || null;
   }
 
-  /**
-   * Obtiene múltiples footprints por timestamps
-   */
   getFootprintsForTimestamps(timestamps) {
     return timestamps
-      .map(ts => this.getFootprintForTimestamp(ts))
+      .map(timestamp => this.getFootprintForTimestamp(timestamp))
       .filter(Boolean);
   }
 
-  /**
-   * Obtiene stacked imbalances para un timestamp
-   */
   getStackedImbalancesForTimestamp(timestamp) {
-    return this.stackedImbalances.get(timestamp) || [];
-  }
-
-  // ==================== UTILITIES ====================
-
-  /**
-   * Calcula Z-Score de un array de valores
-   */
-  _calculateZScore(value, values) {
-    const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
-    const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
-    const stdDev = Math.sqrt(variance);
-
-    if (stdDev === 0) return 0;
-    return (value - mean) / stdDev;
-  }
-
-  /**
-   * Normaliza ratios usando Z-Score si está habilitado
-   */
-  _normalizeImbalanceRatio(ratio, allRatios) {
-    if (!this.config.useZScore) return ratio;
-    return this._calculateZScore(ratio, allRatios);
-  }
-
-  /**
-   * Formatea precio según step_size del footprint
-   */
-  _formatPrice(price, stepSize = 0.1) {
-    const decimals = stepSize < 1 ? Math.abs(Math.log10(stepSize)) : 0;
-    return price.toFixed(decimals);
-  }
-
-  /**
-   * Obtiene color para un ratio de imbalance
-   */
-  _getImbalanceColor(ratio, isBullish) {
-    const intensity = Math.min(ratio / 10, 1); // Normalizar a 0-1
-
-    if (isBullish) {
-      // Verde con intensidad variable
-      const r = Math.floor(34 * (1 - intensity));
-      const g = Math.floor(197 * intensity);
-      const b = Math.floor(94 * (1 - intensity * 0.5));
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    } else {
-      // Rojo con intensidad variable
-      const r = Math.floor(239 * intensity);
-      const g = Math.floor(68 * (1 - intensity * 0.5));
-      const b = Math.floor(68 * (1 - intensity * 0.5));
-      return `rgba(${r}, ${g}, ${b}, 0.3)`;
-    }
-  }
-
-  // ==================== DEBUG ====================
-
-  getDebugInfo() {
-    return {
-      name: this.name,
-      symbol: this.symbol,
-      interval: this.interval,
-      backtestingMode: this.backtestingMode,
-      footprintsCount: this.footprints.length,
-      stackedImbalancesCount: this.stackedImbalances.size,
-      isLoading: this.isLoading,
-      error: this.error,
-      config: this.config
-    };
-  }
-
-  logDebugInfo() {
-    console.table(this.getDebugInfo());
+    return this.getFootprintForTimestamp(timestamp)?.stacked_imbalances || [];
   }
 }
 

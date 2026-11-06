@@ -5,8 +5,13 @@
 // Modo 3: Flow (OI Flow Sentiment con EMA - LuxAlgo)
 // VERSION: 2.0 - Azul/Naranja + Fullscreen selector
 
-import IndicatorBase from "./IndicatorBase";
-import { API_BASE_URL } from "../../config";
+import IndicatorBase from "./IndicatorBase.js";
+import { API_BASE_URL } from "../../config.js";
+import { TF_MS } from "../backtesting/replayClock.js";
+
+const OI_STEP_MS = 300000; // Resolución de la serie local
+const OI_PAD_POINTS = 2000; // Puntos de margen a cada lado de las velas visibles
+const OI_RETRY_WAIT_MS = 5000;
 
 class OpenInterestIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 30) {
@@ -37,6 +42,75 @@ class OpenInterestIndicator extends IndicatorBase {
     // NUEVO: Estados de carga y error
     this._isFetching = false;
     this._fetchError = null;
+
+    // Rango ya pedido a la serie local, alrededor de las velas visibles
+    this._rangeFrom = null;
+    this._rangeTo = null;
+    this._rangeLoading = false;
+    this._rangeRetryAt = 0;
+  }
+
+  /**
+   * Pide el OI alrededor de las velas visibles si aún no está cargado.
+   * Así cualquier fecha del backtest tiene datos, sin traer toda la historia de una vez.
+   */
+  _loadVisibleRange(visibleCandles) {
+    const first = visibleCandles[0].timestamp;
+    const last = visibleCandles[visibleCandles.length - 1].timestamp;
+
+    if (this._rangeLoading || performance.now() < this._rangeRetryAt) return;
+    if (this._rangeFrom !== null && first >= this._rangeFrom && last <= this._rangeTo) return;
+
+    const pad = Math.max(last - first, OI_PAD_POINTS * Math.max(TF_MS[this.interval] || 0, OI_STEP_MS));
+    const start = first - pad;
+    const end = last + pad;
+
+    this._rangeLoading = true;
+    this._isFetching = true;
+
+    const params = new URLSearchParams({
+      interval: this.interval,
+      start_timestamp_ms: String(start),
+      end_timestamp_ms: String(end),
+      local_only: 'true'
+    });
+
+    fetch(`${API_BASE_URL}/api/open-interest/${this.symbol}?${params}`)
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(result => {
+        this._rangeFrom = start;
+        this._rangeTo = end;
+        if (result.success) this._mergeRange(result);
+      })
+      .catch(error => {
+        console.warn(`[${this.symbol}] OI local no disponible:`, error.message);
+        this._rangeRetryAt = performance.now() + OI_RETRY_WAIT_MS;
+      })
+      .finally(() => {
+        this._rangeLoading = false;
+        this._isFetching = false;
+        this.requestRedraw?.();
+      });
+  }
+
+  _mergeRange(result) {
+    if (!this.dataMap) this.dataMap = new Map();
+    result.data.forEach(item => this.dataMap.set(item.timestamp, item.openInterest));
+
+    this._sortedTimestamps = Array.from(this.dataMap.keys()).sort((a, b) => a - b);
+    this.data = this._sortedTimestamps.map(timestamp => ({
+      timestamp,
+      openInterest: this.dataMap.get(timestamp)
+    }));
+
+    this.oiFirstTimestamp = result.oi_first_timestamp;
+    this.oiLastTimestamp = result.oi_last_timestamp;
+    this.oiFirstDate = result.oi_first_date;
+    this.oiLastDate = result.oi_last_date;
+    this.oiInterval = result.oi_interval;
   }
 
   /**
@@ -115,6 +189,8 @@ class OpenInterestIndicator extends IndicatorBase {
 
         this.data = result.data;
         this._sortedTimestamps = null; // Invalidar cache de timestamps ordenados
+        this._rangeFrom = null; // Esta carga reemplaza lo unido antes: la ventana se vuelve a pedir
+        this._rangeTo = null;
 
         // Guardar metadata de cobertura OI
         this.oiFirstTimestamp = result.oi_first_timestamp || null;
@@ -188,6 +264,8 @@ class OpenInterestIndicator extends IndicatorBase {
 
       this.data = oiData;
       this._sortedTimestamps = null; // Invalidar cache de timestamps ordenados
+      this._rangeFrom = null;
+      this._rangeTo = null;
       this._loggedMatch = false;
       this._loggedNoMatch = false;
 
@@ -554,6 +632,8 @@ class OpenInterestIndicator extends IndicatorBase {
   render(ctx, bounds, visibleCandles) {
     if (!this.enabled) return;
     if (!visibleCandles || visibleCandles.length === 0) return;
+
+    this._loadVisibleRange(visibleCandles);
 
     if (!this.dataMap || this.data.length === 0) {
       this.renderNoDataMessage(ctx, bounds);

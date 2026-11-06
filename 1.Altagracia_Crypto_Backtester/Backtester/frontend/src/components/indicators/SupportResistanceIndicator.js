@@ -514,7 +514,7 @@ class SupportResistanceIndicator extends IndicatorBase {
       // 🎯 FIX: Si no hay playbackTime pero hay visibleCandles, usar la última visible como referencia
       // Esto ocurre cuando el precálculo no se ejecutó (MiniCharts no estaban listos)
       if (this._currentPlaybackTime) {
-        candlesToUse = allCandles.filter(c => c.timestamp <= this._currentPlaybackTime);
+        candlesToUse = priceContext?.knownCandles || allCandles.filter(c => c.timestamp <= this._currentPlaybackTime);
       } else if (visibleCandles && visibleCandles.length > 0) {
         // Usar el timestamp de la última vela visible como playback time
         const lastVisibleTs = visibleCandles[visibleCandles.length - 1].timestamp;

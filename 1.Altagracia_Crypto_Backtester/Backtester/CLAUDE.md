@@ -511,6 +511,89 @@ Si ves este log, significa que está usando correctamente las velas de 1 minuto 
 
 ---
 
+## ORDER FLOW SOBRE LAS VELAS (Noviembre 2026)
+
+Reemplaza el enfoque de overlays y panel lateral de la sección siguiente. `FootprintSidebar` sigue en el código, pero `onCandleClick` no está conectado en `MiniChart.jsx`.
+
+### Flujo de datos
+
+```
+OrderFlowData/tape/{SYMBOL}/{AAAA}/{SYMBOL}_{dia}.tape        Trades de Bybit
+        │  tools/build_store.py
+        ▼
+OrderFlowData/store/{SYMBOL}/{AAAA}/{SYMBOL}_{dia}.npz        Minuto × precio: compra, venta, trades
+        │  backend/footprint_store.py
+        ▼
+GET /api/orderflow/historical/{symbol}?interval&start_timestamp&end_timestamp&known_until&step
+GET /api/orderflow/profile/{symbol}?start_timestamp&end_timestamp&low&high&rows&known_until
+GET /api/orderflow/coverage/{symbol}
+```
+
+`ORDERFLOW_STORE` cambia la carpeta del almacén. Sin `start_timestamp` y `end_timestamp`, el endpoint historical sigue leyendo el archivo anterior.
+
+### Sin futuro
+
+- `known_until` corta por minuto cerrado. `complete: false` marca una vela parcial
+- `priceContext.knownUntil` es el `knownUntil` de la vela en formación, o la hora simulada si no hay vela en formación
+- Al retroceder el tiempo, `OrderFlowIndicator` borra lo que aún no se conocía y descarta respuestas pendientes con `generation`
+- Una vela cerrada se vuelve a pedir si su footprint quedó parcial
+
+### Dibujo
+
+| Ancho de vela | Se muestra |
+|---------------|------------|
+| Menos de 16px | Vela normal, líneas de stacked imbalance y rombos de delta contrario a la vela |
+| 16px a 59px | Vela, celdas y perfil |
+| Desde 60px | Además delta bajo la vela. Las cifras por celda aparecen si la columna mide 30px y la celda 10px |
+
+- Con más de 400 velas en pantalla no se piden footprints
+- `step_size` se elige en la primera respuesta y se mantiene. Cambia solo si el precio se aleja 30%. En BTC cerca de 80,000: 1m 5, 5m y 15m 10, 1h 25, 4h 50
+- Imbalance: mismo nivel, ratio 3 o más, ambos lados con volumen. Stacked: 3 o más niveles seguidos en la misma dirección. Igual que App 9
+- Rombo de delta: delta contrario al color de la vela y al menos 20% de su volumen (`deltaMarkMinShare`)
+- `bid_volume` es venta agresiva, `ask_volume` compra agresiva, `delta = ask - bid`
+- MiniChart llama `renderOnChart()` antes de los overlays, como App 9. El indicador no tiene `renderOverlay`
+
+### Perfil y delta reales
+
+- `VolumeProfileFixedRangeIndicator` pide volumen real si el almacén cubre 99% de los minutos del rango y muestra `· real` junto al POC. Si no, usa el reparto por velas
+- `VolumeIndicator` usa delta real solo si todas las velas pedidas lo tienen. El título cambia a "Volume Delta (trades reales)"
+- VP dinámico y CVD siguen estimados
+
+### Open Interest
+
+- `backend/oi_store.py` lee `OrderFlowData/oi/{SYMBOL}_5min.csv` (BTC: agosto de 2020 a noviembre de 2026). `ORDERFLOW_OI` cambia la carpeta
+- 15m, 1h y 4h salen de tomar el dato en el inicio de cada vela. Son los mismos valores que Bybit entrega por marco
+- `GET /api/open-interest/{symbol}?interval&start_timestamp_ms&end_timestamp_ms&local_only=true` responde `source: "local"`, o `success: false` si el símbolo no tiene archivo
+- `OpenInterestIndicator._loadVisibleRange()` pide la ventana visible con margen y la une a lo ya cargado. Sin archivo local queda lo que trae `bulk-data`
+- `tools/oi_download.py` solo descarga hacia atrás: las fechas posteriores al último dato se ven planas
+
+### Altura del gráfico
+
+- `.mini-chart` mide el 100% del panel, sin scroll. Antes la altura salía de la proporción 2:1 del canvas: la mitad del ancho
+- El precio recibe primero `priceChartRatio` del alto disponible (65% por defecto, 30% a 85% con el divisor). Volumen e indicadores se comprimen con la misma escala, con mínimos de 40px y 48px. Si todo cabe, lo que sobra va al precio
+- `IndicatorManager.getPanelHeight()` da la altura real de cada panel. Los divisores se ubican con `priceAreaBottom`, el borde real del precio
+- Un `ResizeObserver` redibuja al cambiar el tamaño de la ventana o del panel lateral
+
+### Pruebas
+
+```bash
+cd frontend
+node tests/replay.test.mjs
+node tests/orderflow.test.mjs
+node tests/fvg.test.mjs
+node tests/oi.test.mjs
+```
+
+### Mantener el almacén
+
+```bash
+python -B C:\Users\inven\OrderFlowData\tools\build_store.py BTCUSDT
+```
+
+Omite los días ya creados. Mide cerca de 0.4 s y 0.3 MB por día.
+
+---
+
 ## 🆕 NUEVO: ORDER FLOW INDICATOR (Octubre 2026) ✅ COMPLETADO
 
 Sistema de visualización de Order Flow basado en footprints del OrderFlowDesktop (App 9), integrado en el Backtester.
@@ -1225,7 +1308,7 @@ El zoom usa `viewStateRef.current.zoom` como multiplicador sobre un ancho base d
 
 ```javascript
 // Formula central aplicada en 4 ubicaciones criticas
-const effectiveBarWidth = Math.max(0.1, Math.min(15, 8 * zoom));
+const effectiveBarWidth = Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * zoom));
 const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
 ```
 
@@ -1234,9 +1317,9 @@ const candlesPerScreen = Math.floor(chartWidth / effectiveBarWidth);
 | Parametro | Valor | Descripcion |
 |-----------|-------|-------------|
 | Min zoom | `0.01` | Zoom out extremo |
-| Max zoom | `5` | Zoom in extremo |
+| Max zoom | `50` | Zoom in extremo (`MAX_ZOOM`) |
 | Min ancho vela | `0.1px` | Compresion maxima |
-| Max ancho vela | `15px` | Expansion maxima |
+| Max ancho vela | `400px` | Expansion maxima (`MAX_BAR_WIDTH`), para leer footprints |
 
 **Capacidad:** En pantalla de 15" (~1422px utiles): `1422 / 0.1 = ~14,220 velas` visibles.
 

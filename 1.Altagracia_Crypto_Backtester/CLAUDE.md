@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Reproducción sin Futuro + Footprints Reales
+
+Velas en formación, órdenes y perfiles solo usan lo ocurrido hasta la hora simulada. Los footprints se leen sobre las velas, desde el almacén diario de trades de Bybit. Detalle en `Backtester/CLAUDE.md`, sección "ORDER FLOW SOBRE LAS VELAS".
+
+---
+
 ### Octubre 2026: OPCIÓN B - Subdivisiones = Main (Optimización de Performance)
 
 **Problema:** Las subdivisiones descargaban velas de timeframes inferiores, causando:

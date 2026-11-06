@@ -390,7 +390,8 @@ class VolumeProfileIndicator extends IndicatorBase {
   render(ctx, bounds, visibleCandles, allCandles, priceContext = null) {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
 
-    const candlesToUse = allCandles || visibleCandles;
+    // En reproducción solo cuentan las velas que ya ocurrieron
+    const candlesToUse = priceContext?.knownCandles || allCandles || visibleCandles;
 
     // Modo fixed con rango personalizado
     if (this.mode === "fixed" && this.fixedRange && this.fixedRange.isCustomRange) {
