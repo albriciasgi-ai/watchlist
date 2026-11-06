@@ -548,10 +548,11 @@ GET /api/orderflow/coverage/{symbol}
 
 - Con más de 400 velas en pantalla no se piden footprints
 - `step_size` se elige en la primera respuesta y se mantiene. Cambia solo si el precio se aleja 30%. En BTC cerca de 80,000: 1m 5, 5m y 15m 10, 1h 25, 4h 50
+- Con step automático el frontend envía `max_levels` (`maxLevels`, 10 por defecto). `_level_group()` une niveles vecinos en grupos redondos, así que cada vela trae su propio `step_size`: 20, 50 o 100 en 15m. El step base no cambia
 - Imbalance: mismo nivel, ratio 3 o más, ambos lados con volumen. Stacked: 3 o más niveles seguidos en la misma dirección. Igual que App 9
 - Rombo de delta: delta contrario al color de la vela y al menos 20% de su volumen (`deltaMarkMinShare`)
 - `bid_volume` es venta agresiva, `ask_volume` compra agresiva, `delta = ask - bid`
-- MiniChart llama `renderOnChart()` antes de los overlays, como App 9. El indicador no tiene `renderOverlay`
+- MiniChart llama `renderOnChart()` después de los overlays: los footprints quedan encima de los perfiles. El indicador no tiene `renderOverlay`
 
 ### Perfil y delta reales
 
@@ -574,6 +575,25 @@ GET /api/orderflow/coverage/{symbol}
 - `IndicatorManager.getPanelHeight()` da la altura real de cada panel. Los divisores se ubican con `priceAreaBottom`, el borde real del precio
 - Un `ResizeObserver` redibuja al cambiar el tamaño de la ventana o del panel lateral
 
+### Orden y altura de los paneles
+
+- `indicators/panelLayout.js` guarda orden y alturas por símbolo en `indicator_panels_{symbol}`. Los marcos del símbolo comparten el mismo objeto, así un cambio les llega a todos
+- Todo sigue en un solo canvas. `IndicatorManager.getPanels()` da el orden, `getRequestedHeight()` la altura pedida y `getPanelRects()` el lugar de cada panel. MiniChart ubica con eso los controles, que son HTML sobre el canvas
+- ▲▼ en el margen derecho mueven el panel. `movePanel()` lo cambia con su vecino a la vista y los paneles apagados conservan su sitio
+- Arrastrar el borde superior cambia solo ese panel. Con paneles comprimidos, subir su altura achicaría a los demás: por eso `resizePanel()` también mueve `priceChartRatio`, y el precio cede o recibe la diferencia
+- El volumen queda fijo bajo el precio, con su divisor naranja
+- Una altura escrita en el modal de OI-Volume Confluence reemplaza la arrastrada
+- La lista de indicadores trae "Restablecer orden y altura de paneles"
+
+### Parámetros
+
+- `OrderFlowSettings.jsx` y `FVGSettings.jsx` se abren con el ⚙️ junto al indicador. Aplican a todos los marcos y se guardan por símbolo en `orderflow_settings_{symbol}` y `fvg_settings_{symbol}`
+- `stepByMinutes` guarda el step por marco, en minutos. Sin valor es automático. Un step escrito se respeta: el backend lo ajusta a múltiplos de la celda guardada y solo lo sube si una vela pasaría de 200 niveles (`MAX_LEVELS_PER_CANDLE`)
+- `/api/orderflow/historical` acepta `imbalance_ratio`, `imbalance_mode` (`level` o `diagonal`), `imbalance_min_volume`, `imbalance_zero` y `stacked_levels`
+- `OrderFlowIndicator.updateConfig()` descarta lo cargado solo si cambia algo que afecta la respuesta (`_dataRules()`)
+- Diagonal: compra del nivel contra venta del nivel inferior, y venta contra compra del superior. Si un nivel cumple ambos, gana el ratio mayor
+- FVG `fillMode`: `trim` se recorta, `touch` termina al primer toque, `whole` conserva su tamaño hasta cruzarlo
+
 ### Pruebas
 
 ```bash
@@ -582,6 +602,15 @@ node tests/replay.test.mjs
 node tests/orderflow.test.mjs
 node tests/fvg.test.mjs
 node tests/oi.test.mjs
+node tests/observer.test.mjs
+node tests/leaks.test.mjs
+node tests/journal.test.mjs
+node tests/orders.test.mjs
+node tests/sessions.test.mjs
+node tests/response.test.mjs
+node tests/panels.test.mjs
+cd ../backend
+.venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py
 ```
 
 ### Mantener el almacén
@@ -591,6 +620,230 @@ python -B C:\Users\inven\OrderFlowData\tools\build_store.py BTCUSDT
 ```
 
 Omite los días ya creados. Mide cerca de 0.4 s y 0.3 MB por día.
+
+---
+
+## INDICADORES SIN FUTURO (Noviembre 2026)
+
+En backtesting, el parámetro `allCandles` de `renderOverlay` trae todo el historial, incluidas las velas futuras. Para calcular se usa `priceContext.knownCandles`, que llega hasta la hora simulada con la vela en formación al final. `priceContext.knownUntil` es la hora conocida y llega en cada dibujo, en cualquier pestaña.
+
+| Indicador | Cuándo se ve | Cómo |
+|-----------|--------------|------|
+| VWAP | Velas cerradas: su punto. Vela en formación: con lo ocurrido | `_pointFor()` y `_formingPoint()`. El cálculo completo sigue usando `allCandles` porque repetirlo en cada vela sería muy lento, y un punto cerrado solo depende del pasado |
+| Swing | `swingBars + 1` velas después de abrir la vela del swing | `_filterByPlaybackTime()`. `_getIntervalMs()` reconoce `1m` a `4h` |
+| Rejection | Al cerrar la vela | `_closedCandlesToDetect()` y el salto de `in_progress` al dibujar |
+| Rejection validado | Al cerrar la vela, y solo con niveles cuyo rango ya terminó | `_loadValidated()` en el frontend, `known_levels_only` en el backend |
+| Double Top/Bottom | `knownAt`: cierre de la última vela que usa | `_set_known_times()`. Toma `candlesPerExtreme`, `postPatternValidationCandles` y `volumeWindowCandles` si ese filtro está activo |
+| Flecha de entrada | `entrySignal.known_at`: cierre de su vela | Si `requireMomentum` está activo, el patrón completo espera a esa vela |
+| Range Detection | Solo analiza velas cerradas al abrir o aplicar el modal | `closedCandles()` en `BacktestingApp`. Un rango automático guardado que termina después de `knownUntil` no se dibuja |
+
+- **Duplicados de Double Top/Bottom:** `_deduplicate_by_zone()` decide en el orden en que se conocen. Si llega uno mejor, el anterior queda con `replacedAt` y se ve hasta esa hora. Antes un patrón podía desaparecer porque más adelante llegaba otro
+- **Double Top/Bottom al activarlo:** `MiniChart` pasa sus velas a `updateIndicatorStates()`, que calcula al marcar la casilla y también si el indicador ya viene activo. `handleInitialize` no sirve para esto: corre antes de que existan los gráficos. Mientras calcula se ve "Double Top/Bottom: calculando...". El envío pesa cerca de 20 MB en 15m, 61 MB en 5m y 122 MB en 1m
+- **Velas perdidas:** con `backtesting: true`, si `cache_key` no está en `DTB_CANDLES_CACHE` el endpoint responde `needsCandles` y el indicador las reenvía. Sin esa marca pediría velas recientes y daría patrones de otra fecha
+- **Rejection validado:** `_loadValidated()` envía a `/api/rejection-patterns/detect` las velas cerradas visibles y las anteriores que necesita el Z-Score (21 por defecto), hasta 1,500 (`MAX_VALIDATED_CANDLES`). Hace una petición a la vez, con 400 ms entre ellas, y pide de nuevo si cierra una vela o cambian la vista, los contextos o los filtros
+- **Niveles ya formados:** cuando llegan `candles`, el backend no pide velas recientes, usa `known_levels_only` y nunca envía alertas. `ReferenceLevel.known_from` es el `endTimestamp` del contexto: un contexto sin esa fecha no valida nada en simulación
+- **VP dinámico como contexto:** queda fijo con los valores que tenía al agregarlo. No se actualiza en modo validado
+- **Sin problema:** CVD, Volume Delta, OI y OI-Volume Confluence solo reciben las velas visibles. Zonas usa la fecha de inicio
+
+### Comprobar
+
+```bash
+cd frontend
+node tests/leaks.test.mjs ruta\velas.json
+```
+
+Con el archivo compara Swing, VWAP y Rejection con velas reales, con y sin el futuro. El archivo trae `{ "5m": [...], "15m": [...], "1h": [...], "4h": [...] }`. `tests/test_dtb_known.py` compara Double Top/Bottom con todos los datos contra solo lo cerrado. `tests/test_rejection_known.py` comprueba que una vela no cambia con velas posteriores y que una simulación no avisa al bot.
+
+---
+
+## OBSERVADOR (Noviembre 2026)
+
+Mide cada operación manual contra la regla del laboratorio, sin mostrar esa lectura antes de decidir.
+
+### Flujo
+
+```
+TradingControls: marcas opcionales en "¿Por qué entras?"
+        │  onOrderCreated → BacktestingApp.observeOrder()
+        ▼
+observer.js → POST /api/observer/orders                 Responde solo { id }
+        ▼
+backend/observer.py: read_at() → journal.jsonl          La lectura queda en disco
+        ▼
+OrderManager: llenado, cierre o cancelación → POST /api/observer/orders/{id}/events
+        ▼
+GET /api/observer/orders                                Trae la comparación solo si la orden terminó
+GET /api/observer/report                                Informe de todo lo registrado
+```
+
+### Registro
+
+- `OrderFlowData/observer/journal.jsonl`. `ORDERFLOW_OBSERVER` cambia la carpeta
+- Una línea por evento: `order`, `fill`, `close`, `cancel` y `blind`. Las líneas solo se agregan. `trades()` arma el estado de cada orden
+- `order.observerId` une los eventos y viaja con la sesión guardada. Una orden sin ese campo no envía eventos
+- `observer.js` envía en cola: el cierre nunca llega antes que la orden
+
+### Lectura
+
+- `read_at()` repite `readAt()` de `research/lab/engine.js`, con las reglas de `research/REGLAS_RONDA3.md` en el diccionario `RULE`
+- Usa minutos anteriores a la hora de la orden, velas cerradas y cada dato de OI 5 minutos después de su marca
+- Lee 45 días hacia atrás (`LOOKBACK_DAYS`). Sin trades en el almacén para esa fecha guarda `available: false`
+- Con las celdas del laboratorio no tiene diferencias. Con el almacén, que tiene celdas más finas, contexto, movimientos y OI son iguales y algunos bordes de cluster cambian un poco
+
+### Oculto hasta terminar
+
+- `record_order()` nunca devuelve la lectura. `public_trade()` quita `reading` siempre y agrega `comparison` solo en órdenes cerradas o canceladas
+- Si un cambio necesita mostrar algo antes, debe pasar por `public_trade()`. La prueba `test_la_lectura_no_sale_mientras_la_orden_sigue_viva` lo vigila
+
+### Retrocesos y fecha oculta
+
+- `maxSimTimeRef` guarda hasta dónde llegó la simulación. Una orden anterior a ese punto queda con `rewound: true` y el informe la excluye salvo que se pida
+- `blindClock.js` guarda el inicio oculto. `maskDate()` muestra `Día 3 14:30` en el encabezado, eje, cruz, historial, rendimiento, dashboard y perfiles fijos
+- El panel Zonas muestra fechas reales: con fecha oculta no se abre
+- `blind_start()` elige un día del tramo sin huecos del almacén, 45 días después de su inicio y 14 antes de su final, separado 14 días de las fechas ya usadas
+- El nivel de precio sigue a la vista y puede dar una pista de la época
+
+### Informe
+
+- `report()` separa órdenes cerradas, sin terminar, canceladas, con fecha oculta y tras retroceder
+- Por condición de la regla y por marca: presencia, acierto y R con y sin ella. R es neto de costos y necesita stop
+- Incluye cuánto se sigue cada parte de la regla (`RULE_PARTS`), tú contra la regla, zona contra azar y mejor tercio contra peor tercio
+- `small_sample` avisa con menos de 30 órdenes cerradas. El intervalo del acierto es Wilson al 95%
+
+### Comprobar contra el laboratorio
+
+```bash
+cd C:\Users\inven\OrderFlowData\research\lab
+node observer_dump.js
+"...\Backtester\backend\.venv\Scripts\python.exe" -B observer_parity.py
+```
+
+Debe decir `diferencias con celdas del laboratorio {}` y detectar cada error metido a propósito.
+
+---
+
+## ÓRDENES (Noviembre 2026)
+
+`TradingControls.jsx` usa `orderPlan.js`, que repite la lógica de `8.AnalizadorDesktop/src/components/trading/OrderForm.jsx`.
+
+- **Caja:** `latestFreeBox()` toma la última caja dibujada que no sea de una orden. Da entrada, stop, objetivo y lado. La casilla "Usarla" vuelve a los campos del panel
+- **Tamaño:** monto fijo, o por riesgo con `cantidad = riesgo / |entrada - stop|`. El riesgo no incluye comisiones: con 10 USDT y stop de 0.77% la pérdida fue 10.98. El modo elegido se guarda en `localStorage`
+- **Automática:** a 0.1% o menos del precio es market. Más lejos, `limit` si el precio debe volver a la entrada y `stop` si debe avanzar hasta ella. App 8 siempre envía limit: aquí una limit en el lado equivocado se llenaría de inmediato
+- **Una orden que usa la caja:** queda en `order.tpslBoxId`. `anchorTPSLBox()` mueve la caja a la entrada real al abrir y `extendTPSLBox()` la termina en la salida. Cancelar la orden deja la caja libre
+- **Caja nueva:** `defaultBoxSize()` da 45 px de riesgo, 130 px de ancho y riesgo beneficio 2, sin salirse del gráfico. Sin escala usa 0.5%
+
+---
+
+## SESIONES (Noviembre 2026)
+
+`indicators/sessionProfile.js` da las sesiones y sus perfiles a VP Periodic. Hay una instancia de `SessionProfiles` por marco.
+
+- `sessionStart()` usa hora UTC. La semana empieza el lunes
+- Un perfil empieza estimado con las velas. Solo una sesión terminada pide volumen real a `/api/orderflow/profile`, cortado en su final, y se usa si el almacén cubre 99% de sus minutos. La sesión en curso sigue estimada
+- **VP Periodic:** un perfil por sesión con POC, VAH y VAL. Solo usa `priceContext.knownCandles`
+
+---
+
+## VOLUMEN DE RESPUESTA (Noviembre 2026)
+
+Concepto del usuario, por observación propia. Al empezar un movimiento sube el volumen vertical. Mientras avanza, las velas a favor pesan más que las de contratendencia. Cerca de una pausa o un giro, el volumen de la retracción se equipara al de la tendencia.
+
+`indicators/responseBalance.js` lo calcula y `ResponseVolumeIndicator.js` lo dibuja. El estudio está en `OrderFlowData/research/response_volume/`, con el resultado en `INFORME.md`.
+
+### Regla
+
+| Parámetro | Fábrica | Significado |
+|-----------|---------|-------------|
+| `legAtr` | 2 | El tramo gira cuando un cierre se aleja 2 ATR del extremo |
+| `window` | 10 | Velas comparadas, sin pasar del inicio del tramo |
+| `top` | 5 | Velas principales de cada lado |
+| `adjustHour` | sí | Cada vela dividida por la mediana de su hora en los 30 días anteriores |
+| `dominance` | 2 | D desde el que se arma la señal |
+| `balance` | 1 | D en el que aparece la señal |
+| `spikeMultiple` | 2 | Veces lo normal de su hora para marcar una flecha |
+
+`D = T / R`, con el promedio de las velas principales de la tendencia y de la respuesta. El lado sale del color de la vela. D queda entre 0.1 y 10.
+
+### Dibujo
+
+- Panel: `presión = dirección × log2(D)`. Arriba de cero pesa la compra y abajo la venta, con tope en cuatro veces. Las líneas punteadas marcan el dominio
+- Precio: flecha en velas de agresión y rombo en la señal, del lado del extremo del tramo
+- Con menos de 2px por vela no hay marcas. La vela en formación no tiene barra ni marca
+
+### Sin futuro
+
+- `ResponseSeries.update()` recibe `priceContext.knownCandles` y solo procesa las velas cerradas que le faltan. Agregar velas nunca cambia lo calculado
+- Al retroceder no recalcula: `known` limita lo que se muestra
+- Cambiar una regla reinicia la serie y cambiar marcas no. 15m completo tarda 0.7 s
+
+### Evidencia
+
+Elegida con datos hasta 2024 y medida una sola vez en 2025 y 2026, contra velas a la misma distancia del extremo y con la misma edad del tramo:
+
+| Marco | Señales | Nuevo extremo con señal | Sin señal | IC 95% |
+|-------|---------|-------------------------|-----------|--------|
+| 15m | 1,156 | 29.2% | 34.8% | [−8.4, −2.7] pts |
+| 1h | 260 | 21.2% | 31.7% | [−16.6, −4.6] pts |
+| 4h | 62 | 32.3% | 36.4% | [−17.8, +12.1] pts |
+
+- Avisa de menos continuidad. No anticipa dirección: el movimiento neto a 20 velas no se distingue
+- No detecta techos ni suelos: cerca del final de un movimiento hay señal casi con la misma frecuencia que al azar
+- Sin ajuste por hora la idea no se sostiene. El delta real no mejora al color de la vela
+- Réplica con la misma regla en ETH y SOL: el signo se repite en los 6 casos. Se sostiene en 1h (−5.5 y −5.8 puntos) y en ETH 4h, y es débil en 15m. Detalle en `research/response_volume/INFORME_OTROS_SIMBOLOS.md`
+
+### Comprobar contra el estudio
+
+```bash
+cd C:\Users\inven\OrderFlowData\research\response_volume
+"...\backend\.venv\Scripts\python.exe" -B export_parity.py ruta\response_parity.json
+cd ...\frontend
+node --max-old-space-size=4096 tests/response.test.mjs ruta\response_parity.json
+```
+
+Debe dar diferencia máxima 0. `responseBalance.js` repite `engine.py`: si cambia una regla, hay que cambiar los dos.
+
+---
+
+## JOURNAL DE TRADES (Noviembre 2026)
+
+Cada trade guarda una imagen del gráfico al abrir y otra varias velas después de cerrar, y queda completo en la sesión.
+
+### Flujo
+
+```
+OrderManager: tradeOpened (mercado al crearla, limit y stop al ejecutarse)
+        │  BacktestingApp, 150 ms después (ENTRY_CAPTURE_DELAY_MS)
+        ▼
+MiniChart.captureScreenshot() → POST /api/screenshots/session/{sesión}
+        ▼
+backend/screenshots/sessions/{sesión}/order_{hora}.png        order.screenshotPath
+        ▼
+saveTradeSession() → SessionManager.mergeSession() → IndexedDB
+
+OrderManager: tradeClosed → order.exitCaptureAt = salida + 10 velas del marco activo
+        │  BacktestingApp revisa exitCapturesDue() cada vez que avanza la hora simulada
+        ▼
+MiniChart.captureScreenshot(..., { showFrom: entrada })       order.exitScreenshotPath
+        ▼
+saveTradeSession()
+
+TradeHistory: 📸 abre ScreenshotModal, con Apertura y Cierre. La fila y 📍 llevan a la línea vertical
+```
+
+### Reglas
+
+- La espera deja que la vela y la caja TP/SL se dibujen. La imagen de apertura es el gráfico activo tal como se ve, sin la cruceta
+- La imagen de cierre espera `EXIT_CAPTURE_CANDLES` (10) velas del marco activo al cerrar. La hora queda en `order.exitCaptureAt`, así sigue pendiente al cargar una sesión. Al tomarla pasa a `null` y no se repite
+- `showFrom` muestra el trade completo: `frameChartFrom()` va a la vela más reciente y aleja si no caben las velas de `candlesToFrame()`. Después de `toBlob()`, que copia la imagen en ese momento, la vista vuelve antes de pintarse la pantalla
+- Si la simulación no llega a esa hora, la imagen queda pendiente y el botón Cierre del visor sale desactivado. En el visor, ← → cambia de imagen y no mueve la simulación
+- Todo dato de un trade va en la orden: `exportToJSON()` lo lleva a la sesión sin más código. `screenshotPath` guarda la imagen y `tpslBoxId` la caja
+- Las líneas verticales no tienen estado propio: `tradeBoundaries()` las arma desde las órdenes en cada dibujo, con `executedAt`. MiniChart las recibe con `getTradeBoundaries`
+- Un trade abierto justo al iniciar una vela cae a la derecha de la última: la línea se marca en el borde hasta que aparece esa vela
+- `saveTradeSession()` corre al crear, ejecutar, cerrar y cancelar, en cola. La primera operación crea la sesión `session_{símbolo}_{hora}`. No corre con cada avance del tiempo: la hora simulada guardada es la del último evento
+- `mergeSession()` conserva nombre, fecha de creación, etiquetas y notas, y actualiza trades y win rate. El auto-guardado también la usa
+- Al pedir una imagen, la extensión se separa antes de `sanitize_filename()`, que quita los puntos
+- Borrar una sesión no borra sus imágenes. `DELETE /api/screenshots/session/{id}` existe, pero la app no lo llama
+- Las sesiones viven en IndexedDB del navegador y las imágenes en disco
 
 ---
 

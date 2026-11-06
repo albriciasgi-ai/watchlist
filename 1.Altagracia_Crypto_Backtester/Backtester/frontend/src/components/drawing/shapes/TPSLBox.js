@@ -1,8 +1,28 @@
 // src/components/drawing/shapes/TPSLBox.js
 // Caja combinada de Take Profit y Stop Loss con punto de entrada
 
+export const DEFAULT_REWARD_RATIO = 2;
+const DEFAULT_RISK_PERCENT = 0.005;
+const BOX_RISK_PX = 45;
+const BOX_WIDTH_PX = 130;
+
+/** Tamaño de una caja nueva: se mide en píxeles para verse igual en cualquier marco, sin salir del gráfico */
+export function defaultBoxSize(scale, y, time) {
+  const candles = scale.visibleCandles;
+  const candleMs = candles.length > 1 ? candles[1].timestamp - candles[0].timestamp : 0;
+  const widthMs = (BOX_WIDTH_PX / (scale.chartWidth / candles.length)) * candleMs;
+  const chartEnd = candles[candles.length - 1].timestamp + candleMs;
+  const timeEnd = Math.min(time + widthMs / 2, chartEnd);
+
+  return {
+    risk: Math.abs(scale.yToPrice(y + BOX_RISK_PX) - scale.yToPrice(y)),
+    timeStart: timeEnd - widthMs,
+    timeEnd
+  };
+}
+
 class TPSLBox {
-  constructor(entryPrice, time, direction = 'long') {
+  constructor(entryPrice, time, direction = 'long', size = {}) {
     this.type = 'tpsl';
     this.id = `tpsl_${Date.now()}_${Math.random()}`;
 
@@ -11,23 +31,17 @@ class TPSLBox {
     this.direction = direction; // 'long' o 'short'
 
     // Por defecto: risk/reward 1:2 (TP es el doble que SL)
-    const defaultRiskPercent = 0.02; // 2% de riesgo
+    const risk = size.risk ?? entryPrice * DEFAULT_RISK_PERCENT;
+    const sign = direction === 'long' ? 1 : -1; // LONG: SL abajo y TP arriba. SHORT al revés
 
-    if (direction === 'long') {
-      // LONG: SL abajo, TP arriba
-      this.slPrice = entryPrice * (1 - defaultRiskPercent);
-      this.tpPrice = entryPrice * (1 + defaultRiskPercent * 2);
-    } else {
-      // SHORT: SL arriba, TP abajo
-      this.slPrice = entryPrice * (1 + defaultRiskPercent);
-      this.tpPrice = entryPrice * (1 - defaultRiskPercent * 2);
-    }
+    this.slPrice = entryPrice - sign * risk;
+    this.tpPrice = entryPrice + sign * risk * DEFAULT_REWARD_RATIO;
 
     // 🔧 FIX: Usar timestamps en vez de número de velas para coherencia entre timeframes
     // Ancho por defecto: 3 horas (10800000 ms)
     const defaultWidthMs = 3 * 60 * 60 * 1000;
-    this.timeStart = time - defaultWidthMs / 2;
-    this.timeEnd = time + defaultWidthMs / 2;
+    this.timeStart = size.timeStart ?? time - defaultWidthMs / 2;
+    this.timeEnd = size.timeEnd ?? time + defaultWidthMs / 2;
 
     this.style = {
       entryColor: '#3B82F6', // Azul para entrada

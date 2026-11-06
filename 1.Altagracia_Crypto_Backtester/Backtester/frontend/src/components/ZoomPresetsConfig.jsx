@@ -159,7 +159,7 @@ const ZoomPresetsConfig = ({ onClose, onApply }) => {
                 ))}
               </select>
 
-              <span style={{ fontSize: '11px', color: '#6c757d', minWidth: '80px' }}>
+              <span style={{ fontSize: '11px', color: '#666', minWidth: '80px' }}>
                 {preset.enabled ? '✓ Activo' : '✗ Desactivado'}
               </span>
             </div>
@@ -208,7 +208,7 @@ const ZoomPresetsConfig = ({ onClose, onApply }) => {
               padding: '8px 16px',
               border: 'none',
               borderRadius: '4px',
-              background: '#007bff',
+              background: '#2962ff',
               color: 'white',
               cursor: 'pointer',
               fontSize: '13px',

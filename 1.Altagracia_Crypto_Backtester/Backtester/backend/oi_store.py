@@ -47,6 +47,12 @@ def _date(timestamp_ms):
     return dt.datetime.fromtimestamp(timestamp_ms / 1000, COLOMBIA).strftime("%Y-%m-%d %H:%M:%S")
 
 
+def points(symbol):
+    """Toda la serie: marcas en minutos y valores, o None si no hay archivo."""
+    loaded = _load(symbol)
+    return None if loaded is None else (loaded[1] // 60000, loaded[2])
+
+
 def series(symbol, interval, start_ms, end_ms):
     """Puntos del marco entre start_ms y end_ms, o None si no hay serie local para ese simbolo."""
     if not str(interval).isdigit():

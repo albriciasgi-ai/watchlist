@@ -196,6 +196,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     this.loading = true;
+    this.requestRedraw?.();
     const startTime = Date.now();
 
     try {
@@ -221,7 +222,8 @@ class DoubleTopBottomIndicator extends IndicatorBase {
         symbol: this.symbol,
         interval: this.interval,
         days: this.days,
-        config: this.config
+        config: this.config,
+        backtesting: this.backtestingMode
       };
 
       if (!this.candlesSentToBackend) {
@@ -244,6 +246,12 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
       const result = await response.json();
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+
+      // El backend se reinició o borró las velas de su memoria: se envían de nuevo
+      if (result.needsCandles && this.candlesSentToBackend) {
+        this.candlesSentToBackend = false;
+        return await this.precalculateWithCandles(candles, playbackStartTime);
+      }
 
       console.log(`[${this.symbol}] 🔍 DEBUG: Respuesta del backend:`, {
         success: result.success,
@@ -814,6 +822,14 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       this._renderLogOnce = true;
     }
 
+    if (this.loading) {
+      ctx.font = '11px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = '#9E9E9E';
+      ctx.fillText('Double Top/Bottom: calculando...', bounds.x + 8, bounds.y + 22);
+    }
+
     if (!this.config.enabled || !this.patterns.length || !priceContext) {
       if (!this._earlyReturnLogged) {
         console.log(`[${this.symbol}] ⚠️ DTB renderOverlay EARLY RETURN:`, {
@@ -828,11 +844,11 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
     const { priceToY, timeToX, minPrice, maxPrice } = priceContext;
 
-    // 🎯 NUEVO: Filtrar patrones según el tiempo actual del playback
-    // Solo mostrar patrones que ya se han "formado" (evita survivorship bias)
-    const currentTime = this._currentPlaybackTime || Date.now();
+    // Un patrón aparece cuando cerró la última vela que usa, no al abrir su segundo extremo.
+    // La hora simulada llega en cada dibujo: también vale en las pestañas que no estaban activas.
+    const currentTime = priceContext.knownCandles ? priceContext.knownUntil : (this._currentPlaybackTime || Date.now());
     const visiblePatterns = this.patterns.filter(pattern =>
-      pattern.secondExtreme.timestamp <= currentTime
+      pattern.knownAt <= currentTime && (pattern.replacedAt === null || currentTime < pattern.replacedAt)
     );
 
     if (!this._loggedPatternInfo) {
@@ -862,7 +878,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       }
 
       // Draw momentum icon and entry arrow (Phase 2)
-      if (pattern.entrySignal && pattern.entrySignal.has_momentum) {
+      if (pattern.entrySignal && pattern.entrySignal.has_momentum && pattern.entrySignal.known_at <= currentTime) {
         if (this.config.visualization.showMomentumIcons) {
           this._drawMomentumIcon(ctx, pattern, allCandles, priceToY, timeToX);
         }

@@ -37,6 +37,11 @@ class DoublePattern:
     volume_average: float = 0.0
     meets_volume_criteria: bool = False
 
+    # Cierre de la ultima vela que usa el patron: antes de eso no se puede conocer
+    known_at: int = 0
+    # Hora en que otro patron de la misma zona lo reemplaza
+    replaced_at: Optional[int] = None
+
 
 class DoubleTopBottomDetector:
     """Main class for detecting double top/bottom patterns"""
@@ -222,6 +227,8 @@ class DoubleTopBottomDetector:
         )
 
         print(f"  [PRUEBA_DBT] After post-validation: {len(detected_patterns)} patterns")
+
+        self._set_known_times(detected_patterns, candles, config)
 
         # Step 5: Remove duplicate patterns in same zone
         detected_patterns = self._filter_duplicate_patterns(
@@ -519,14 +526,14 @@ class DoubleTopBottomDetector:
                 # Validate rejection patterns at both extremes
                 rejection_h1 = self._validate_rejection_pattern(
                     h1['candle'],
-                    all_candles[:h1['candle_index']],
+                    all_candles[max(0, h1['candle_index'] - 1):h1['candle_index']],
                     config,
                     'bearish'  # Double top expects bearish rejection
                 )
 
                 rejection_h2 = self._validate_rejection_pattern(
                     h2['candle'],
-                    all_candles[:h2['candle_index']],
+                    all_candles[max(0, h2['candle_index'] - 1):h2['candle_index']],
                     config,
                     'bearish'
                 )
@@ -704,14 +711,14 @@ class DoubleTopBottomDetector:
                 # Validate rejection patterns
                 rejection_l1 = self._validate_rejection_pattern(
                     l1['candle'],
-                    all_candles[:l1['candle_index']],
+                    all_candles[max(0, l1['candle_index'] - 1):l1['candle_index']],
                     config,
                     'bullish'  # Double bottom expects bullish rejection
                 )
 
                 rejection_l2 = self._validate_rejection_pattern(
                     l2['candle'],
-                    all_candles[:l2['candle_index']],
+                    all_candles[max(0, l2['candle_index'] - 1):l2['candle_index']],
                     config,
                     'bullish'
                 )
@@ -937,6 +944,26 @@ class DoubleTopBottomDetector:
 
         return min(100.0, round(confidence, 2))
 
+    def _set_known_times(self, patterns: List[DoublePattern], candles: List[Dict], config: Dict) -> None:
+        """
+        Hora en que cada patron se puede conocer: el cierre de la ultima vela que usa.
+        El extremo necesita velas a su derecha, y el filtro de volumen y la validacion
+        posterior miran velas siguientes.
+        """
+        settings = config.get('doubleTopBottom', {})
+        candles_after = max(
+            settings.get('candlesPerExtreme', 5),
+            config.get('filters', {}).get('postPatternValidationCandles', 5)
+        )
+        high_volume = settings.get('requireHighVolumeAtExtremes', {})
+        if high_volume.get('enabled', False):
+            candles_after = max(candles_after, high_volume.get('volumeWindowCandles', 3))
+
+        candle_ms = candles[1]['timestamp'] - candles[0]['timestamp']
+        for pattern in patterns:
+            last_index = min(pattern.second_extreme['candle_index'] + candles_after, len(candles) - 1)
+            pattern.known_at = candles[last_index]['timestamp'] + candle_ms
+
     def _add_momentum_confirmation(
         self,
         patterns: List[DoublePattern],
@@ -990,7 +1017,11 @@ class DoubleTopBottomDetector:
             )
 
             if momentum['has_momentum']:
+                candle_ms = all_candles[1]['timestamp'] - all_candles[0]['timestamp']
+                momentum['known_at'] = momentum['entry_candle_timestamp'] + candle_ms
                 pattern.entry_signal = momentum
+                if require_momentum:
+                    pattern.known_at = max(pattern.known_at, momentum['known_at'])
             elif require_momentum:
                 # Skip this pattern if momentum is required but not found
                 continue
@@ -1132,14 +1163,17 @@ class DoubleTopBottomDetector:
     ) -> List[DoublePattern]:
         """
         Helper to deduplicate patterns of the same type by grouping similar zones.
+
+        Decide en el orden en que los patrones se conocen, para que una decision solo use
+        patrones que ya existian. Uno reemplazado sigue en la lista con su hora de reemplazo.
         """
         if len(patterns) <= 1:
             return patterns
 
-        # Sort by first extreme timestamp (earlier patterns first)
-        sorted_patterns = sorted(patterns, key=lambda p: p.first_extreme['timestamp'])
+        sorted_patterns = sorted(patterns, key=lambda p: (p.known_at, p.first_extreme['timestamp']))
 
         kept_patterns = []
+        replaced_patterns = []
 
         for pattern in sorted_patterns:
             # Check if this pattern is a duplicate of any kept pattern
@@ -1159,15 +1193,13 @@ class DoubleTopBottomDetector:
                     # This is a duplicate - check which one is better
                     # Prioritize: 1) Earlier first extreme, 2) Higher confidence, 3) Better rejections
 
-                    if pattern.first_extreme['timestamp'] < kept.first_extreme['timestamp']:
-                        # New pattern is earlier - replace
+                    same_start = pattern.first_extreme['timestamp'] == kept.first_extreme['timestamp']
+                    if pattern.first_extreme['timestamp'] < kept.first_extreme['timestamp'] or \
+                            (same_start and pattern.confidence > kept.confidence):
+                        kept.replaced_at = pattern.known_at
+                        replaced_patterns.append(kept)
                         kept_patterns.remove(kept)
                         kept_patterns.append(pattern)
-                    elif pattern.first_extreme['timestamp'] == kept.first_extreme['timestamp']:
-                        # Same first extreme - compare confidence
-                        if pattern.confidence > kept.confidence:
-                            kept_patterns.remove(kept)
-                            kept_patterns.append(pattern)
 
                     is_duplicate = True
                     break
@@ -1175,7 +1207,7 @@ class DoubleTopBottomDetector:
             if not is_duplicate:
                 kept_patterns.append(pattern)
 
-        return kept_patterns
+        return kept_patterns + replaced_patterns
 
     def _detect_momentum(
         self,
@@ -1376,5 +1408,7 @@ def serialize_pattern(pattern: DoublePattern) -> Dict:
         "candlesBetweenExtremes": pattern.candles_between_extremes,
         "patternDurationHours": pattern.pattern_duration_hours,
         "volumeAverage": pattern.volume_average,
-        "meetsVolumeCriteria": pattern.meets_volume_criteria
+        "meetsVolumeCriteria": pattern.meets_volume_criteria,
+        "knownAt": pattern.known_at,
+        "replacedAt": pattern.replaced_at
     }

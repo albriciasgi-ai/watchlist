@@ -7,6 +7,24 @@ const MAX_FOOTPRINTS_IN_MEMORY = 6000;
 const MIN_REQUEST_GAP_MS = 400;
 const ERROR_WAIT_MS = 5000;
 const STEP_RESET_CHANGE = 0.3; // Si el precio se aleja 30% se elige otro step
+const SETTINGS_KEY = 'orderflow_settings_';
+
+/** Parámetros guardados de un símbolo; sin almacenamiento disponible quedan los de fábrica */
+export function loadOrderFlowSettings(symbol) {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY + symbol)) || {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveOrderFlowSettings(symbol, settings) {
+  try {
+    localStorage.setItem(SETTINGS_KEY + symbol, JSON.stringify(settings));
+  } catch {
+    // Sin almacenamiento los parámetros siguen vigentes hasta recargar
+  }
+}
 
 /**
  * OrderFlowIndicator - Footprints sobre las velas, con el dibujo de App 9
@@ -32,13 +50,14 @@ class OrderFlowIndicator extends IndicatorBase {
     this.generation = 0; // Invalida las respuestas pedidas antes de retroceder el tiempo
     this.stepSize = null;
     this.stepPrice = null;
+    this.cellSize = null; // Celda guardada en el almacén: el step es múltiplo de ella
 
     this.isLoading = false;
     this.error = null;
     this.nextRequestAt = 0;
     this.retryTimer = null;
 
-    this.config = this.getDefaultConfig();
+    this.config = { ...this.getDefaultConfig(), ...loadOrderFlowSettings(symbol) };
 
     // Orden de izquierda a derecha: Vela | Footprint (venta|compra) | Perfil
     this.layout = { candlePct: 0.20, footprintPct: 0.28, profilePct: 0.47, gapPct: 0.05 };
@@ -82,12 +101,31 @@ class OrderFlowIndicator extends IndicatorBase {
       stackedOpacity: 0.7,
       stackedMinVolumeZScore: 0,
       showDeltaMarks: true,
-      deltaMarkMinShare: 0.2 // Parte del volumen de la vela que debe ir contra su color
+      deltaMarkMinShare: 0.2, // Parte del volumen de la vela que debe ir contra su color
+      stepByMinutes: {}, // Step elegido por marco, en minutos. Sin valor es automático
+      maxLevels: 10, // Con step automático, niveles que puede tener una vela
+      imbalanceRatio: 3,
+      imbalanceMode: 'level', // 'level': mismo nivel. 'diagonal': compra contra la venta del nivel inferior
+      imbalanceMinVolume: 0, // Volumen mínimo del lado dominante
+      imbalanceCountZero: false, // Contar el nivel aunque el otro lado no tenga volumen
+      stackedMinLevels: 3
     };
   }
 
+  // Lo que cambia la respuesta del backend: si cambia, lo cargado ya no sirve
+  _dataRules() {
+    const { imbalanceRatio, imbalanceMode, imbalanceMinVolume, imbalanceCountZero, stackedMinLevels, maxLevels } = this.config;
+    return JSON.stringify([this._stepOverride(), imbalanceRatio, imbalanceMode, imbalanceMinVolume, imbalanceCountZero, stackedMinLevels, maxLevels]);
+  }
+
+  _stepOverride() {
+    return this.config.stepByMinutes?.[this.tfMinutes] || null;
+  }
+
   updateConfig(newConfig) {
+    const before = this._dataRules();
     this.config = { ...this.config, ...newConfig };
+    if (this._dataRules() !== before) this._reset();
   }
 
   // ==================== DATOS ====================
@@ -173,7 +211,14 @@ class OrderFlowIndicator extends IndicatorBase {
       end_timestamp: String(end),
       known_until: String(knownUntil)
     });
-    if (this.stepSize) params.append('step', String(this.stepSize));
+    const step = this._stepOverride() || this.stepSize;
+    if (step) params.append('step', String(step));
+    if (!this._stepOverride()) params.append('max_levels', String(this.config.maxLevels));
+    params.append('imbalance_ratio', String(this.config.imbalanceRatio));
+    params.append('imbalance_mode', this.config.imbalanceMode);
+    params.append('imbalance_min_volume', String(this.config.imbalanceMinVolume));
+    params.append('imbalance_zero', String(this.config.imbalanceCountZero));
+    params.append('stacked_levels', String(this.config.stackedMinLevels));
 
     fetch(`${API_BASE_URL}/api/orderflow/historical/${this.symbol}?${params}`)
       .then(response => {
@@ -199,6 +244,7 @@ class OrderFlowIndicator extends IndicatorBase {
 
   _store(data, start, end) {
     const known = data.known_until;
+    if (data.cell_size) this.cellSize = data.cell_size;
 
     data.footprints.forEach(footprint => {
       footprint.knownUntil = known;

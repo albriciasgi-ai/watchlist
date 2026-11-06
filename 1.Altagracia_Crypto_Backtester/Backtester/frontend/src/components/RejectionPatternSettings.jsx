@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './RejectionPatternSettings.css';
+import { isBlind, maskDate } from './backtesting/blindClock.js';
 
 /**
  * Rejection Pattern Settings Component
@@ -15,12 +16,14 @@ const RejectionPatternSettings = ({
   onConfigChange,
   onClose,
   initialConfig,
-  indicatorManager  // NUEVO: recibir el IndicatorManager
+  indicatorManager,  // NUEVO: recibir el IndicatorManager
+  onShowModeChange
 }) => {
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
   const [availableContexts, setAvailableContexts] = useState([]);
   const [showContextModal, setShowContextModal] = useState(false);
-  const [showMode, setShowMode] = useState('all'); // 'all' or 'validated'
+  // 'all' or 'validated'
+  const [showMode, setShowMode] = useState(() => indicatorManager?.getRejectionPatternIndicator()?.showMode || 'all');
 
   useEffect(() => {
     // Load config from localStorage
@@ -130,6 +133,7 @@ const RejectionPatternSettings = ({
   };
 
   const formatDate = (timestamp) => {
+    if (isBlind()) return maskDate(timestamp);
     const date = new Date(timestamp);
     return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
   };
@@ -270,6 +274,7 @@ const RejectionPatternSettings = ({
         console.log(`[${symbol}] Show mode changed to: ${mode}`);
       }
     }
+    onShowModeChange?.(mode);
   };
 
   return (
@@ -281,7 +286,7 @@ const RejectionPatternSettings = ({
 
       <div className="settings-content">
         {/* NEW: Show Mode Toggle */}
-        <section className="settings-section" style={{ background: '#1a1a1a', padding: '15px', borderRadius: '4px', marginBottom: '15px' }}>
+        <section className="settings-section" style={{ background: '#f7f8fa', padding: '15px', borderRadius: '4px', marginBottom: '15px' }}>
           <h4 style={{ marginBottom: '10px' }}>👁️ Visualization Mode</h4>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
@@ -289,9 +294,9 @@ const RejectionPatternSettings = ({
               style={{
                 flex: 1,
                 padding: '10px',
-                background: showMode === 'all' ? '#4a9eff' : '#333',
-                color: 'white',
-                border: showMode === 'all' ? '2px solid #4a9eff' : '1px solid #555',
+                background: showMode === 'all' ? '#2962ff' : '#ffffff',
+                color: showMode === 'all' ? 'white' : '#333',
+                border: showMode === 'all' ? '2px solid #2962ff' : '1px solid #ccc',
                 borderRadius: '4px',
                 cursor: 'pointer',
                 fontWeight: showMode === 'all' ? 'bold' : 'normal'
@@ -299,16 +304,16 @@ const RejectionPatternSettings = ({
             >
               📊 Show All Patterns
               <br />
-              <small style={{ fontSize: '11px', opacity: 0.8 }}>Local detection (no context required)</small>
+              <small style={{ fontSize: '11px' }}>Local detection (no context required)</small>
             </button>
             <button
               onClick={() => handleShowModeChange('validated')}
               style={{
                 flex: 1,
                 padding: '10px',
-                background: showMode === 'validated' ? '#4CAF50' : '#333',
-                color: 'white',
-                border: showMode === 'validated' ? '2px solid #4CAF50' : '1px solid #555',
+                background: showMode === 'validated' ? '#2E7D32' : '#ffffff',
+                color: showMode === 'validated' ? 'white' : '#333',
+                border: showMode === 'validated' ? '2px solid #2E7D32' : '1px solid #ccc',
                 borderRadius: '4px',
                 cursor: 'pointer',
                 fontWeight: showMode === 'validated' ? 'bold' : 'normal'
@@ -316,13 +321,13 @@ const RejectionPatternSettings = ({
             >
               ✓ Validated Only
               <br />
-              <small style={{ fontSize: '11px', opacity: 0.8 }}>Context-validated patterns</small>
+              <small style={{ fontSize: '11px' }}>Context-validated patterns</small>
             </button>
           </div>
-          <p style={{ marginTop: '10px', fontSize: '12px', color: '#888' }}>
+          <p style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
             {showMode === 'all'
               ? '💡 Showing ALL detected patterns in historical data. Use this to verify pattern detection quality.'
-              : '🎯 Showing only patterns validated against your selected reference contexts (POC/VAH/VAL levels).'}
+              : '🎯 Showing only patterns validated against your selected reference contexts (POC/VAH/VAL levels). En backtesting cada vela solo se valida con niveles que ya estaban formados.'}
           </p>
         </section>
 
@@ -727,10 +732,10 @@ const AddContextModal = ({ symbol, availableContexts, onAdd, onClose }) => {
         <div className="modal-body">
           {availableContexts.length === 0 ? (
             <div className="no-contexts-available">
-              <p style={{ color: '#ff9800', padding: '20px', textAlign: 'center' }}>
+              <p style={{ color: '#b25600', padding: '20px', textAlign: 'center' }}>
                 ⚠️ No hay contextos disponibles para {symbol}
               </p>
-              <p style={{ color: '#888', fontSize: '13px', textAlign: 'center' }}>
+              <p style={{ color: '#666', fontSize: '13px', textAlign: 'center' }}>
                 Primero crea un Volume Profile Fixed o activa el Range Detector en el chart.
               </p>
             </div>
@@ -752,8 +757,8 @@ const AddContextModal = ({ symbol, availableContexts, onAdd, onClose }) => {
                         display: 'block',
                         padding: '12px',
                         margin: '8px 0',
-                        background: selectedContextId === context.id ? 'rgba(74, 158, 255, 0.1)' : '#1e1e1e',
-                        border: selectedContextId === context.id ? '2px solid #4a9eff' : '1px solid #333',
+                        background: selectedContextId === context.id ? '#f4f7ff' : '#ffffff',
+                        border: selectedContextId === context.id ? '2px solid #2962ff' : '1px solid #e0e0e0',
                         borderRadius: '4px',
                         cursor: 'pointer',
                         transition: 'all 0.2s'
@@ -767,21 +772,21 @@ const AddContextModal = ({ symbol, availableContexts, onAdd, onClose }) => {
                         onChange={() => setSelectedContextId(context.id)}
                         style={{ marginRight: '8px' }}
                       />
-                      <span style={{ fontWeight: '500', color: '#fff' }}>
+                      <span style={{ fontWeight: '500', color: '#222' }}>
                         {context.label}
                       </span>
                       <br />
-                      <small style={{ color: '#888', marginLeft: '24px' }}>
+                      <small style={{ color: '#666', marginLeft: '24px' }}>
                         {context.description}
                       </small>
                       {context.metadata && context.metadata.hasCalculatedValues ? (
-                        <div style={{ marginLeft: '24px', marginTop: '4px', fontSize: '12px', color: '#4a9eff' }}>
+                        <div style={{ marginLeft: '24px', marginTop: '4px', fontSize: '12px', color: '#1565C0' }}>
                           POC: ${context.metadata.poc.toFixed(2)} |
                           VAH: ${context.metadata.vah.toFixed(2)} |
                           VAL: ${context.metadata.val.toFixed(2)}
                         </div>
                       ) : (
-                        <div style={{ marginLeft: '24px', marginTop: '4px', fontSize: '11px', color: '#ff9800' }}>
+                        <div style={{ marginLeft: '24px', marginTop: '4px', fontSize: '11px', color: '#b25600' }}>
                           ⚠️ Valores no calculados aún (el perfil se calculará cuando se muestren velas en este rango)
                         </div>
                       )}
@@ -790,7 +795,7 @@ const AddContextModal = ({ symbol, availableContexts, onAdd, onClose }) => {
                 </div>
               </div>
 
-              <p className="info-text">
+              <p className="info-text" style={{ color: '#1565C0' }}>
                 💡 Los patrones detectados cerca de los niveles POC, VAH y VAL de este contexto
                 tendrán mayor confianza.
               </p>

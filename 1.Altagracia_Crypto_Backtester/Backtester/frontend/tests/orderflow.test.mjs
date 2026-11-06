@@ -16,7 +16,8 @@ globalThis.fetch = (url) => {
     end: Number(query.get('end_timestamp')),
     known: Number(query.get('known_until')),
     step: query.get('step'),
-    interval: query.get('interval')
+    interval: query.get('interval'),
+    query
   };
   requests.push(request);
   return new Promise((resolve, reject) => {
@@ -280,6 +281,76 @@ test('la marca de delta exige ir contra la vela y un minimo del volumen', () => 
   assert.equal(of.deltaAgainstCandle({ total_delta: -30, total_volume: 100 }, red), false);
   assert.equal(of.deltaAgainstCandle({ total_delta: 10, total_volume: 100 }, red), false);
   assert.equal(of.deltaAgainstCandle({ total_delta: 30, total_volume: 100 }, doji), false);
+});
+
+test('cada peticion lleva las reglas de imbalance', async () => {
+  const of = newIndicator();
+  of.updateConfig({ imbalanceRatio: 4.5, imbalanceMode: 'diagonal', imbalanceMinVolume: 2, imbalanceCountZero: true, stackedMinLevels: 5 });
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  const { query } = requests[0];
+  assert.equal(query.get('imbalance_ratio'), '4.5');
+  assert.equal(query.get('imbalance_mode'), 'diagonal');
+  assert.equal(query.get('imbalance_min_volume'), '2');
+  assert.equal(query.get('imbalance_zero'), 'true');
+  assert.equal(query.get('stacked_levels'), '5');
+});
+
+test('el step elegido es por marco', async () => {
+  const of = newIndicator();
+  of.updateConfig({ stepByMinutes: { 15: 25, 60: 100 } });
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  assert.equal(requests[0].step, '25');
+
+  const hour = new OrderFlowIndicator('BTCUSDT', '1h', 7, true, T0);
+  hour.updateConfig({ stepByMinutes: { 15: 25 } });
+  assert.equal(hour._stepOverride(), null, 'el marco sin valor queda automatico');
+});
+
+test('cambiar una regla descarta lo cargado y vuelve a pedir', async () => {
+  const of = newIndicator();
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  assert.equal(of.footprintMap.size > 0, true);
+  const before = requests.length;
+
+  of.updateConfig({ imbalanceRatio: 5 });
+  assert.equal(of.footprintMap.size, 0);
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  assert.equal(requests.length, before + 1);
+  assert.equal(requests[before].query.get('imbalance_ratio'), '5');
+});
+
+test('una respuesta pedida con reglas viejas no se guarda', async () => {
+  const of = newIndicator();
+  holdResponses = true;
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  of.updateConfig({ imbalanceRatio: 5 });
+  requests[0].answer();
+  await flush();
+  assert.equal(of.footprintMap.size, 0);
+});
+
+test('un parametro de dibujo no vuelve a pedir datos', async () => {
+  const of = newIndicator();
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  const loaded = of.footprintMap.size;
+  of.updateConfig({ fontSize: 12, showDelta: false, stackedOpacity: 0.3, minCandleWidth: 30 });
+  assert.equal(of.footprintMap.size, loaded);
+});
+
+test('los parametros guardados se aplican al crear el indicador', () => {
+  globalThis.localStorage = { getItem: () => JSON.stringify({ imbalanceRatio: 6, stepByMinutes: { 15: 40 } }) };
+  const of = new OrderFlowIndicator('BTCUSDT', '15m', 7, true, T0);
+  delete globalThis.localStorage;
+  assert.equal(of.config.imbalanceRatio, 6);
+  assert.equal(of._stepOverride(), 40);
+  assert.equal(of.config.showDelta, true, 'lo no guardado queda de fabrica');
+});
+
+test('sin almacenamiento quedan los valores de fabrica', () => {
+  const of = new OrderFlowIndicator('BTCUSDT', '15m', 7, true, T0);
+  assert.equal(of.config.imbalanceRatio, 3);
+  assert.equal(of.config.imbalanceMode, 'level');
+  assert.equal(of.config.stackedMinLevels, 3);
 });
 
 let failed = 0;

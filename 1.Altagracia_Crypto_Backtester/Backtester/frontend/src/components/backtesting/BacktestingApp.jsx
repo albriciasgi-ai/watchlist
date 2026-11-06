@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import TimeController from './TimeController';
 import MiniChart from '../MiniChart';
 import OrderManager from './OrderManager';
-import { TF_MS, candlesToSettle, priceAt } from './replayClock';
+import { TF_MS, candlesToSettle, lastClosedIndex, priceAt } from './replayClock';
 import TradingControls from './TradingControls';
 import PerformancePanel from './PerformancePanel';
 import TradeHistory from './TradeHistory';
@@ -18,20 +18,28 @@ import VWAPSettings from '../VWAPSettings';
 import DoubleTopBottomSettings from '../DoubleTopBottomSettings';
 import SwingDetectorSettings from '../SwingDetectorSettings';
 import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
+import OrderFlowSettings from '../OrderFlowSettings';
+import FVGSettings from '../FVGSettings';
+import VPPeriodicSettings from '../VPPeriodicSettings';
+import ResponseVolumeSettings from '../ResponseVolumeSettings';
 import ZoneDetectorTester from '../ZoneDetectorTester';
-import { StrategyBuilder, StrategyList, BacktestResults } from '../strategy';
-import '../strategy/StrategyBuilder.css';
-import '../strategy/BacktestResults.css';
 import DrawingToolbar from '../drawing/DrawingToolbar';
 import DrawingSidebar from '../drawing/DrawingSidebar'; // 🎯 OPTIMIZACIÓN UI: Sidebar vertical
 import FootprintSidebar from './FootprintSidebar'; // 🎯 Order Flow Footprints
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
+import ObserverPanel from './ObserverPanel';
+import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordOrder } from './observer.js';
+import { blindAnchor, isBlind, maskDate, setBlindAnchor } from './blindClock.js';
+import { ENTRY_CAPTURE_DELAY_MS, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
+import { latestFreeBox } from './orderPlan.js';
 import SessionLoadModal from './SessionLoadModal';
 import { API_BASE_URL } from '../../config';
 import '../../backtesting_styles.css';
 import '../drawing/DrawingToolbar.css';
 import '../drawing/DrawingSidebar.css'; // 🎯 OPTIMIZACIÓN UI
+
+const OBSERVER_NOTICE_MS = 8000;
 
 const BacktestingApp = () => {
   // Estado principal
@@ -56,6 +64,8 @@ const BacktestingApp = () => {
       "OI-Volume Confluence": true, // 🎯 Confluencia OI-Volumen (muestra cuando movimientos son fuertes/débiles)
       "Order Flow": false, // 🎯 Order Flow con Footprints (overlays + sidebar)
       "FVG": false, // Fair value gaps abiertos
+      "VP Periodic": false, // Un perfil por sesión
+      "Volumen de Respuesta": false, // Velas principales de la tendencia contra las de la retracción
       "VWAP": false,
       "Range Detection": false,
       "Rejection Patterns": false,        // Siempre deshabilitado por defecto
@@ -154,15 +164,13 @@ const BacktestingApp = () => {
   const [showDoubleTopBottomSettings, setShowDoubleTopBottomSettings] = useState(false);
   const [showSwingDetectorSettings, setShowSwingDetectorSettings] = useState(false);
   const [showOIVolumeConfluenceSettings, setShowOIVolumeConfluenceSettings] = useState(false);
+  const [showOrderFlowSettings, setShowOrderFlowSettings] = useState(false);
+  const [showFVGSettings, setShowFVGSettings] = useState(false);
+  const [showVPPeriodicSettings, setShowVPPeriodicSettings] = useState(false);
+  const [showResponseVolumeSettings, setShowResponseVolumeSettings] = useState(false);
+  const [chartShapes, setChartShapes] = useState([]); // Dibujos del gráfico, para ofrecer la caja TP/SL
   const [showZoneDetectorTester, setShowZoneDetectorTester] = useState(false);
   const [detectedZones, setDetectedZones] = useState([]);
-
-  // 🎯 NUEVO: Estado para Strategy Builder
-  const [selectedStrategyId, setSelectedStrategyId] = useState(null);
-  const [showStrategyBuilder, setShowStrategyBuilder] = useState(false);
-  const [activeStrategy, setActiveStrategy] = useState(null);
-  const [backtestResult, setBacktestResult] = useState(null);
-  const [showBacktestResults, setShowBacktestResults] = useState(false);
 
   // 🎯 Configuraciones de indicadores
   const [vpConfig, setVpConfig] = useState({
@@ -211,23 +219,76 @@ const BacktestingApp = () => {
   const [isDraggingDivider, setIsDraggingDivider] = useState(false);
   const [fullscreenPanel, setFullscreenPanel] = useState(null); // null | 'chart' | 'trading'
 
+  // Observador: fecha oculta y aviso al terminar una orden
+  const [blindRequested, setBlindRequested] = useState(false);
+  const [blindActive, setBlindActive] = useState(false);
+  const [observerRevision, setObserverRevision] = useState(0);
+  const [observerNotice, setObserverNotice] = useState(null);
+  const [observerUnread, setObserverUnread] = useState(0);
+  const maxSimTimeRef = useRef(0); // Hasta dónde llegó la simulación: una orden anterior ya conoce el futuro
+  const rejectionConfigRef = useRef(null); // Último ajuste aplicado: el modal avisa en cada dibujo
+
   // Referencias
   const timeControllerRef = useRef(null);
   const orderManagerRef = useRef(null);
   const indicatorPanelRef = useRef(null);
   const indicatorManagerRef = useRef(null); // Ref para IndicatorManager del tab activo
-  const tradeBoxMapRef = useRef({}); // 🎯 NUEVO: Mapeo tradeId → boxId para extender TP/SL boxes
+  const sessionIdRef = useRef(null); // Sesión que recibe los trades y sus imágenes
+  const sessionSaveRef = useRef(Promise.resolve()); // Los guardados van uno detrás de otro
+  const latestRef = useRef({}); // Valores de este render, para eventos que se conectan una sola vez
+  latestRef.current.symbol = symbol;
 
   // 🎯 FIX CRÍTICO: Refs para almacenar handlers actualizables (soluciona problema HMR)
   // Los listeners se adjuntan UNA VEZ en handleInitialize, pero llaman a estos refs
   // que son actualizados por useEffect cada vez que cambian las dependencias
   const eventHandlersRef = useRef({
     tradeClosed: null,
-    tradeOpened: null
+    tradeOpened: null,
+    orderExecuted: null
   });
 
-  // 🔥 DIAGNÓSTICO: Confirmar que el archivo se carga
-  console.log('%c[BacktestingApp] 🎯 tradeBoxMapRef inicializado', 'background: #4CAF50; color: white; font-size: 16px; padding: 4px;');
+  /** Sesión de los trades. La primera operación la crea aunque no se haya guardado a mano */
+  const ensureSessionId = () => {
+    if (!sessionIdRef.current) {
+      sessionIdRef.current = `session_${latestRef.current.symbol}_${Date.now()}`;
+      setCurrentSessionId(sessionIdRef.current);
+    }
+    return sessionIdRef.current;
+  };
+
+  /** Deja en la sesión el estado actual de órdenes, dibujos y tiempo */
+  const saveTradeSession = () => {
+    sessionSaveRef.current = sessionSaveRef.current
+      .then(() => sessionManager.mergeSession({ ...latestRef.current.captureCurrentState(), sessionId: ensureSessionId() }))
+      .catch(error => console.error('[BacktestingApp] No se pudo guardar la sesión:', error));
+    return sessionSaveRef.current;
+  };
+
+  /** Toma la imagen de la entrada y la deja en el trade */
+  const captureEntry = async (order, miniChart) => {
+    try {
+      Object.assign(order, await miniChart.captureScreenshot(ensureSessionId(), order.id));
+    } catch (error) {
+      console.error(`[BacktestingApp] No se pudo capturar la entrada del trade #${order.id}:`, error);
+    }
+    await saveTradeSession();
+  };
+
+  /** Toma la imagen del trade terminado, con lo que pasó después, y la deja en el trade */
+  const captureExit = async (order, miniChart) => {
+    order.exitCaptureAt = null; // Una sola vez, aunque el tiempo siga avanzando
+    try {
+      const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, {
+        showFrom: order.executedAt ?? order.entryTime
+      });
+      order.exitScreenshotPath = image.screenshotPath;
+      order.exitScreenshotTimestamp = image.screenshotTimestamp;
+      order.exitScreenshotMetadata = image.screenshotMetadata;
+    } catch (error) {
+      console.error(`[BacktestingApp] No se pudo capturar el cierre del trade #${order.id}:`, error);
+    }
+    await saveTradeSession();
+  };
 
   // 🎯 FIX CRÍTICO: useEffect para actualizar handlers (estos se llaman desde los listeners adjuntos en handleInitialize)
   // Este useEffect se ejecuta cada vez que cambia activeTimeframe o currentSessionId,
@@ -235,94 +296,59 @@ const BacktestingApp = () => {
   useEffect(() => {
     console.log('[BacktestingApp] 🔧 Actualizando event handlers del OrderManager...');
 
-    // 📸 NUEVO: Handler para cuando se cierra un trade
-    eventHandlersRef.current.tradeClosed = async (event) => {
+    const redrawCharts = () => AVAILABLE_TIMEFRAMES.forEach(tf => miniChartRefs.current[tf]?.redraw?.());
+
+    // Handler para cuando se cierra un trade
+    eventHandlersRef.current.tradeClosed = (event) => {
       const { order } = event;
-      console.log('[BacktestingApp] 📸 Trade cerrado, capturando screenshot...', order.id);
 
-      // 🎯 CRÍTICO: Dibujar línea de salida PRIMERO (fuera del try-catch del screenshot)
-      const miniChart = miniChartRefs.current[activeTimeframe];
-      if (miniChart && miniChart.updateTradeBoundary) {
-        miniChart.updateTradeBoundary(order.id, order.exitTime);
-        console.log('[BacktestingApp] 🎯 Trade #' + order.id + ' cerrado, dibujando línea de salida');
-      } else {
-        console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para dibujar línea de salida');
-      }
-
-      // 🎯 NUEVO: Extender caja TP/SL hasta el timestamp de cierre
-      const boxId = tradeBoxMapRef.current[order.id];
-      console.log('[BacktestingApp] 🔍 Buscando box para extender:', {
-        tradeId: order.id,
-        boxId,
-        exitTime: order.exitTime,
-        exitTimeDate: new Date(order.exitTime).toISOString(),
-        hasMiniChart: !!miniChart,
-        hasExtendMethod: !!(miniChart && miniChart.extendTPSLBox),
-        allMappedBoxes: Object.keys(tradeBoxMapRef.current).length
+      recordClose(order).then(() => {
+        setObserverRevision(value => value + 1);
+        if (order.observerId) {
+          setObserverNotice(order);
+          setObserverUnread(value => value + 1);
+        }
       });
 
-      if (boxId && miniChart && miniChart.extendTPSLBox) {
-        console.log(`[BacktestingApp] 📞 Llamando a extendTPSLBox con boxId=${boxId}, exitTime=${order.exitTime}`);
-        const extended = miniChart.extendTPSLBox(boxId, order.exitTime);
-        if (extended) {
-          console.log(`[BacktestingApp] ✅ TP/SL box ${boxId} extendida hasta cierre de trade #${order.id}`);
-        } else {
-          console.warn(`[BacktestingApp] ⚠️ No se pudo extender TP/SL box ${boxId}`);
-        }
-      } else {
-        if (!boxId) {
-          console.warn(`[BacktestingApp] ⚠️ No hay boxId mapeado para trade #${order.id}`);
-        } else if (!miniChart) {
-          console.warn('[BacktestingApp] ⚠️ MiniChart no disponible');
-        } else if (!miniChart.extendTPSLBox) {
-          console.warn('[BacktestingApp] ⚠️ Método extendTPSLBox no disponible en MiniChart');
-        }
+      redrawCharts();
+
+      // Extender caja TP/SL hasta el timestamp de cierre
+      if (order.tpslBoxId) {
+        miniChartRefs.current[activeTimeframe]?.extendTPSLBox?.(order.tpslBoxId, order.exitTime);
       }
 
-      try {
-        // Obtener sessionId (generarlo si no existe)
-        const sessionId = currentSessionId || `session_${symbol}_${Date.now()}`;
-        if (!currentSessionId) {
-          setCurrentSessionId(sessionId);
-        }
-
-        // Capturar screenshot del timeframe activo
-        if (miniChart && miniChart.captureScreenshot) {
-          const screenshotData = await miniChart.captureScreenshot(sessionId, order.id);
-
-          // Actualizar la orden con metadata del screenshot
-          order.screenshotPath = screenshotData.screenshotPath;
-          order.screenshotCaptured = screenshotData.screenshotCaptured;
-          order.screenshotTimestamp = screenshotData.screenshotTimestamp;
-          order.screenshotMetadata = screenshotData.screenshotMetadata;
-
-          console.log('[BacktestingApp] ✅ Screenshot capturado y vinculado a orden:', {
-            orderId: order.id,
-            path: screenshotData.screenshotPath
-          });
-        } else {
-          console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para capturar screenshot');
-        }
-      } catch (error) {
-        console.error('[BacktestingApp] ❌ Error capturando screenshot:', error);
-        // No fallar la operación si el screenshot falla
-      }
+      order.exitCaptureAt = exitCaptureTime(order.exitTime, TF_MS[activeTimeframe]);
+      saveTradeSession();
     };
 
-    // 🎯 NUEVO: Handler para cuando se abre un trade
+    // Handler para cuando se abre un trade: de mercado al crearlo, limit o stop al ejecutarse
     eventHandlersRef.current.tradeOpened = (event) => {
       const { order } = event;
-      console.log('[BacktestingApp] 🎯 Trade abierto, dibujando línea de entrada...', order.id);
-
       const miniChart = miniChartRefs.current[activeTimeframe];
-      if (miniChart && miniChart.addTradeBoundary) {
-        miniChart.addTradeBoundary(order.entryTime, order.id);
-      } else {
-        console.warn('[BacktestingApp] ⚠️ MiniChart no disponible para dibujar línea de entrada');
+
+      redrawCharts();
+      setTimeout(() => captureEntry(order, miniChart), ENTRY_CAPTURE_DELAY_MS);
+    };
+
+    // Una orden pendiente se ejecutó: el evento tradeOpened llega justo después
+    eventHandlersRef.current.orderExecuted = (executedOrder) => {
+      recordFill(executedOrder);
+
+      if (executedOrder.tpslBoxId) {
+        miniChartRefs.current[activeTimeframe]?.anchorTPSLBox?.(executedOrder.tpslBoxId, executedOrder.executedAt, executedOrder.executedPrice);
+      } else if (executedOrder.stopLoss || executedOrder.takeProfit) {
+        executedOrder.tpslBoxId = miniChartRefs.current[activeTimeframe]?.addTPSLBox?.(
+          executedOrder.entryPrice,
+          executedOrder.executedAt,
+          executedOrder.side, // 'long' o 'short'
+          executedOrder.stopLoss,
+          executedOrder.takeProfit,
+          5 // 5 velas de ancho
+        ) ?? null;
       }
     };
 
-    console.log('[BacktestingApp] ✅ Event handlers actualizados (tradeClosed, tradeOpened)');
+    console.log('[BacktestingApp] ✅ Event handlers actualizados (tradeClosed, tradeOpened, orderExecuted)');
 
     // NO hay cleanup - los handlers se actualizan pero los listeners permanecen adjuntos
   }, [activeTimeframe, currentSessionId]); // Re-ejecutar cuando cambian estas dependencias
@@ -945,13 +971,24 @@ const BacktestingApp = () => {
       // De lo contrario, usar el primer dato del historial
       let simulationStartTime;
 
+      let blindStart = null;
+      if (blindRequested) {
+        const blind = await fetchBlindStart(symbol, firstCandle.timestamp, lastCandle.timestamp)
+          .catch(failure => ({ reason: `No se pudo elegir la fecha oculta: ${failure.message}` }));
+        if (!blind.timestamp) {
+          setError(`❌ ${blind.reason}`);
+          return;
+        }
+        blindStart = blind.timestamp;
+      }
+
       console.log('[BacktestingApp] DEBUG - startDate:', startDate);
       console.log('[BacktestingApp] DEBUG - firstCandle.timestamp:', firstCandle.timestamp, new Date(firstCandle.timestamp).toISOString());
       console.log('[BacktestingApp] DEBUG - lastCandle.timestamp:', lastCandle.timestamp, new Date(lastCandle.timestamp).toISOString());
 
-      if (startDate && startDate.trim() !== '') {
+      if (blindStart !== null || (startDate && startDate.trim() !== '')) {
         // Crear fecha en hora local del navegador (medianoche)
-        const startTimestamp = new Date(startDate + 'T00:00:00').getTime();
+        const startTimestamp = blindStart ?? new Date(startDate + 'T00:00:00').getTime();
 
         console.log('[BacktestingApp] DEBUG - startDate input:', startDate);
         console.log('[BacktestingApp] DEBUG - startTimestamp calculado:', startTimestamp, new Date(startTimestamp).toISOString());
@@ -1029,6 +1066,10 @@ const BacktestingApp = () => {
         }
       }
 
+      setBlindAnchor(blindStart !== null ? simulationStartTime : null);
+      setBlindActive(blindStart !== null);
+      maxSimTimeRef.current = 0;
+
       // Crear TimeController
       // IMPORTANTE:
       // - startTime = firstCandle.timestamp (para mostrar TODO el historial)
@@ -1055,33 +1096,7 @@ const BacktestingApp = () => {
 
         // 🎯 NUEVO: Conectar callback para cuando una orden pendiente se ejecuta
         orderManagerRef.current.onOrderExecuted = (executedOrder) => {
-          console.log('[BacktestingApp] Orden pendiente ejecutada:', executedOrder);
-          // El popup se mostrará automáticamente en TradingControls a través del callback onOrderCreated
-
-          // 🎯 FIX: Dibujar línea vertical de apertura para limit/stop orders
-          const miniChart = miniChartRefs.current[activeTimeframe];
-          if (miniChart && miniChart.addTradeBoundary) {
-            miniChart.addTradeBoundary(executedOrder.executedAt || currentTime, executedOrder.id);
-          }
-
-          // 🎯 FIX: Crear caja TP/SL cuando limit/stop order se ejecuta
-          if (executedOrder && (executedOrder.stopLoss || executedOrder.takeProfit)) {
-            if (miniChart && miniChart.addTPSLBox) {
-              const boxId = miniChart.addTPSLBox(
-                executedOrder.entryPrice,
-                executedOrder.executedAt || currentTime,
-                executedOrder.side, // 'long' o 'short'
-                executedOrder.stopLoss,
-                executedOrder.takeProfit,
-                5 // 5 velas de ancho
-              );
-              // 🎯 NUEVO: Guardar mapeo tradeId → boxId
-              if (boxId) {
-                tradeBoxMapRef.current[executedOrder.id] = boxId;
-                console.log(`[BacktestingApp] TP/SL box ${boxId} asociada a trade #${executedOrder.id}`);
-              }
-            }
-          }
+          eventHandlersRef.current.orderExecuted?.(executedOrder);
         };
 
         console.log('[BacktestingApp] OrderManager creado');
@@ -1101,6 +1116,12 @@ const BacktestingApp = () => {
             if (eventHandlersRef.current.tradeOpened) {
               eventHandlersRef.current.tradeOpened(event);
             }
+          });
+
+          orderManagerRef.current.on('orderCancelled', ({ order }) => {
+            recordCancel(order, timeControllerRef.current?.currentTime ?? null)
+              .then(() => setObserverRevision(value => value + 1));
+            saveTradeSession();
           });
 
           // Marcar que ya se adjuntaron para no duplicar en re-inicializaciones
@@ -1341,6 +1362,8 @@ const BacktestingApp = () => {
   useEffect(() => {
     if (!marketData || !currentTime) return;
 
+    maxSimTimeRef.current = Math.max(maxSimTimeRef.current, currentTime);
+
     const timeframeData = marketData.timeframes?.[activeTimeframe];
     if (!timeframeData || !timeframeData.main) return;
 
@@ -1352,6 +1375,38 @@ const BacktestingApp = () => {
       settleOrders(marketData.timeframes, currentTime);
     }
   }, [currentTime, marketData, activeTimeframe]);
+
+  /** Registra una orden nueva junto con lo que había en pantalla */
+  const observeOrder = (order) => {
+    const manager = miniChartRefs.current[activeTimeframe]?.getIndicatorManager?.();
+    const indicators = tabStates[activeTimeframe]?.indicatorStates || {};
+
+    recordOrder(order, {
+      symbol,
+      timeframe: activeTimeframe,
+      session: ensureSessionId(),
+      price: currentPrice,
+      rewound: order.entryTime < maxSimTimeRef.current,
+      indicators: Object.keys(indicators).filter(name => indicators[name]),
+      ranges: rangesInUse(manager?.getFixedRangeProfiles?.() || [], order.entryTime)
+    }).then(() => setObserverRevision(value => value + 1));
+  };
+
+  // Imagen de cierre: la simulación ya pasó las velas que siguen al trade
+  useEffect(() => {
+    const due = exitCapturesDue(orderManagerRef.current?.closedOrders, currentTime);
+    due.forEach(order => captureExit(order, miniChartRefs.current[activeTimeframe]));
+  }, [currentTime]);
+
+  useEffect(() => {
+    if (activePanel === 'observer') setObserverUnread(0);
+  }, [activePanel, observerUnread]);
+
+  useEffect(() => {
+    if (!observerNotice) return undefined;
+    const timer = setTimeout(() => setObserverNotice(null), OBSERVER_NOTICE_MS);
+    return () => clearTimeout(timer);
+  }, [observerNotice]);
 
   /**
    * 🎯 NUEVO: Cerrar panel de indicadores al hacer click fuera
@@ -1430,13 +1485,33 @@ const BacktestingApp = () => {
     setShowSwingDetectorSettings(true);
   };
 
+  /** Velas del marco activo ya cerradas en la hora simulada */
+  const closedCandles = () => {
+    const main = marketData?.timeframes?.[activeTimeframe]?.main || [];
+    return main.slice(0, lastClosedIndex(main, activeTimeframe, currentTime) + 1);
+  };
+
+  /** Aplica un cambio de parámetros en los gráficos de todos los marcos y los redibuja */
+  const applyToAllTimeframes = (change) => {
+    AVAILABLE_TIMEFRAMES.forEach(tf => {
+      const miniChart = miniChartRefs.current[tf];
+      const manager = miniChart?.getIndicatorManager?.();
+      if (!manager) return;
+      change(manager);
+      miniChart.forceRedraw?.();
+    });
+  };
+
   const handleOpenOIVolumeConfluenceSettings = (indicatorManager) => {
     indicatorManagerRef.current = indicatorManager;
     setShowOIVolumeConfluenceSettings(true);
   };
 
   const handleRejectionPatternConfigChange = (config) => {
+    if (config === rejectionConfigRef.current) return;
+    rejectionConfigRef.current = config;
     setRejectionPatternConfig(config);
+    applyToAllTimeframes(manager => manager.updateRejectionPatternConfig(config));
   };
 
   /**
@@ -1453,18 +1528,17 @@ const BacktestingApp = () => {
       return;
     }
 
-    // 🔧 FIX: Centrar en la fecha de entrada del trade (no en el punto medio)
-    // para que el usuario vea exactamente dónde inició el trade
-    const targetTimestamp = order.entryTime;
+    // 🔧 FIX: Centrar en la línea vertical del trade (no en el punto medio).
+    // Una orden limit se ejecuta después de crearse: la línea está en la ejecución
+    const targetTimestamp = order.executedAt ?? order.entryTime;
 
     console.log(`[BacktestingApp] 📍 Centrando en timestamp de entrada del trade: ${new Date(targetTimestamp).toISOString()}`);
-    console.log(`[BacktestingApp]   - Entry: ${new Date(order.entryTime).toISOString()}`);
     console.log(`[BacktestingApp]   - Exit: ${new Date(order.exitTime).toISOString()}`);
 
-    // 🎯 NUEVO: Dibujar caja temporal del trade (si tiene SL/TP definidos)
-    if (miniChart.addTPSLBox && (order.stopLoss || order.takeProfit)) {
+    // Dibujar la caja del trade si tiene SL/TP y todavía no la tiene
+    if (!order.tpslBoxId && miniChart.addTPSLBox && (order.stopLoss || order.takeProfit)) {
       // Calcular ancho de la caja basado en duración del trade
-      const tradeDurationMs = order.exitTime - order.entryTime;
+      const tradeDurationMs = order.exitTime - targetTimestamp;
       const intervalMs = {
         '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000
       }[activeTimeframe] || 900000;
@@ -1474,9 +1548,9 @@ const BacktestingApp = () => {
 
       console.log(`[BacktestingApp] 📍 Dibujando caja del trade (${candleWidthCount} velas de ancho)`);
 
-      miniChart.addTPSLBox(
+      order.tpslBoxId = miniChart.addTPSLBox(
         order.entryPrice,
-        order.entryTime,
+        targetTimestamp,
         order.side, // 'long' o 'short'
         order.stopLoss,
         order.takeProfit,
@@ -1489,12 +1563,6 @@ const BacktestingApp = () => {
 
     // 🎯 REMOVED: setSelectedTradeInfo() ya no existe - las líneas permanentes se dibujan
     // automáticamente via eventos tradeOpened/tradeClosed suscritos en líneas 908-918
-
-    // ✅ Actualizar el tiempo de simulación para que el TimeController se sincronice
-    if (order.entryTime && onRequestTimeChange) {
-      console.log('[BacktestingApp] 📍 Actualizando currentTime del TimeController');
-      onRequestTimeChange(order.entryTime);
-    }
   };
 
   /**
@@ -1532,11 +1600,6 @@ const BacktestingApp = () => {
 
     // Centrar el gráfico en el timestamp del footprint
     miniChart.centerOnTimestamp(timestamp);
-
-    // Actualizar el tiempo de simulación
-    if (onRequestTimeChange) {
-      onRequestTimeChange(timestamp);
-    }
   };
 
   /**
@@ -1583,6 +1646,7 @@ const BacktestingApp = () => {
    */
   const handleDrawingsChange = (shapes, sourceInterval) => {
     console.log(`[BacktestingApp] Sincronizando ${shapes.length} dibujos desde ${sourceInterval} a otros tabs`);
+    setChartShapes(shapes);
 
     // Cargar los mismos dibujos en todos los tabs (excepto el origen)
     // skipSync = true para evitar loop infinito
@@ -1608,6 +1672,10 @@ const BacktestingApp = () => {
     setShowDoubleTopBottomSettings(false);
     setShowSwingDetectorSettings(false);
     setShowOIVolumeConfluenceSettings(false);
+    setShowOrderFlowSettings(false);
+    setShowFVGSettings(false);
+    setShowVPPeriodicSettings(false);
+    setShowResponseVolumeSettings(false);
   }, [activeTimeframe]);
 
   // 🔧 FIX: Forzar redibujado del canvas cuando se entra/sale de fullscreen
@@ -1780,6 +1848,10 @@ const BacktestingApp = () => {
       // Estado de órdenes (global)
       orderManagerState,
 
+      // Observador
+      blindAnchor: blindAnchor(),
+      maxSimTime: maxSimTimeRef.current,
+
       // Estado de cada tab (3 timeframes)
       tabs: tabsState
     };
@@ -1794,6 +1866,7 @@ const BacktestingApp = () => {
 
     return state;
   };
+  latestRef.current.captureCurrentState = captureCurrentState;
 
   /**
    * 🎯 NUEVO: Sistema de Sesiones - Restaurar estado de TODOS los tabs
@@ -1828,6 +1901,10 @@ const BacktestingApp = () => {
         console.log('[BacktestingApp] Tab activo restaurado:', session.activeTimeframe);
       }
 
+      setBlindAnchor(session.blindAnchor);
+      setBlindActive(isBlind());
+      maxSimTimeRef.current = session.maxSimTime ?? 0;
+
       // Restaurar estado de simulación (global)
       if (timeControllerRef.current && session.simulationState) {
         timeControllerRef.current.currentTime = session.simulationState.currentTime;
@@ -1854,6 +1931,8 @@ const BacktestingApp = () => {
           closed: orderManagerRef.current.closedOrders.length,
           pending: orderManagerRef.current.pendingOrders.length
         });
+        // Las líneas verticales salen de las órdenes
+        AVAILABLE_TIMEFRAMES.forEach(tf => miniChartRefs.current[tf]?.redraw?.());
       }
 
       // Restaurar estado de cada tab
@@ -1880,7 +1959,7 @@ const BacktestingApp = () => {
             setTabStates(prev => ({
               ...prev,
               [tf]: {
-                indicatorStates: tabData.indicatorStates || {},
+                indicatorStates: { ...getDefaultIndicatorStates(tf), ...tabData.indicatorStates },
                 vpConfig: tabData.vpConfig || {},
                 vpFixedRange: tabData.vpFixedRange || null,
                 rejectionPatternConfig: tabData.rejectionPatternConfig || null
@@ -1903,6 +1982,7 @@ const BacktestingApp = () => {
       }
 
       // Actualizar estado de sesión actual
+      sessionIdRef.current = session.sessionId;
       setCurrentSessionId(session.sessionId);
       setCurrentSessionName(session.sessionName);
 
@@ -1918,6 +1998,7 @@ const BacktestingApp = () => {
    * 🎯 NUEVO: Handler para guardar sesión
    */
   const handleSessionSaved = (sessionData) => {
+    sessionIdRef.current = sessionData.sessionId;
     setCurrentSessionId(sessionData.sessionId);
     setCurrentSessionName(sessionData.sessionName);
     setAutoSaveEnabled(sessionManager.autoSaveInterval !== null);
@@ -1960,10 +2041,23 @@ const BacktestingApp = () => {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                disabled={loading}
+                disabled={loading || blindRequested}
               />
               <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
                 📅 Sin fecha = inicia hace ~1 año. Los datos históricos cubren ~3 años de información.
+              </small>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '10px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={blindRequested}
+                  onChange={(e) => setBlindRequested(e.target.checked)}
+                  disabled={loading}
+                  style={{ width: 'auto' }}
+                />
+                Fecha al azar y oculta
+              </label>
+              <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
+                Elige un día con trades descargados y muestra días relativos, para que no recuerdes qué pasó después.
               </small>
             </div>
 
@@ -2055,7 +2149,7 @@ const BacktestingApp = () => {
           <h2 className="symbol-title">{symbol}</h2>
           {currentTime && (
             <span className="current-time-compact">
-              {new Date(currentTime).toLocaleString('es-CO', {
+              {isBlind() ? maskDate(currentTime) : new Date(currentTime).toLocaleString('es-CO', {
                 timeZone: 'America/Bogota',
                 month: '2-digit',
                 day: '2-digit',
@@ -2206,7 +2300,11 @@ const BacktestingApp = () => {
                     'VWAP': () => setShowVWAPSettings(true),
                     'Double Top/Bottom': () => setShowDoubleTopBottomSettings(true),
                     'Swing Detector': () => setShowSwingDetectorSettings(true),
-                    'OI-Volume Confluence': () => setShowOIVolumeConfluenceSettings(true)
+                    'OI-Volume Confluence': () => setShowOIVolumeConfluenceSettings(true),
+                    'Order Flow': () => setShowOrderFlowSettings(true),
+                    'FVG': () => setShowFVGSettings(true),
+                    'VP Periodic': () => setShowVPPeriodicSettings(true),
+                    'Volumen de Respuesta': () => setShowResponseVolumeSettings(true)
                   };
 
                   const hasSettings = name in settingsMap;
@@ -2319,6 +2417,23 @@ const BacktestingApp = () => {
                     </label>
                   );
                 })}
+                <button
+                  type="button"
+                  onClick={() => AVAILABLE_TIMEFRAMES.forEach(tf => miniChartRefs.current[tf]?.resetPanels?.())}
+                  style={{
+                    width: '100%',
+                    marginTop: '8px',
+                    padding: '4px 8px',
+                    fontSize: '11px',
+                    color: '#333',
+                    background: '#f5f5f5',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Restablecer orden y altura de paneles
+                </button>
               </div>
             )}
           </div>
@@ -2473,6 +2588,7 @@ const BacktestingApp = () => {
                   rejectionPatternConfig={tabStates[tf]?.rejectionPatternConfig}
                   currentTool={currentTool}
                   onToolChange={setCurrentTool}
+                  getTradeBoundaries={() => tradeBoundaries(orderManagerRef.current?.orders)}
                   onRequestPause={handlePause}
                   onRequestTimeChange={(newTime) => {
                     // 🎯 FIX: Permitir navegación a cualquier timestamp del playback
@@ -2558,10 +2674,10 @@ const BacktestingApp = () => {
               🎯 Zonas
             </button>
             <button
-              className={`tab-btn ${activePanel === 'strategy' ? 'active' : ''}`}
-              onClick={() => setActivePanel('strategy')}
+              className={`tab-btn ${activePanel === 'observer' ? 'active' : ''}`}
+              onClick={() => setActivePanel('observer')}
             >
-              🧠 Estrategia
+              🔭 Observador{observerUnread > 0 ? ` (${observerUnread})` : ''}
             </button>
           </div>
 
@@ -2577,14 +2693,21 @@ const BacktestingApp = () => {
                   orderManager={orderManagerRef.current}
                   currentPrice={currentPrice}
                   currentTime={currentTime}
+                  chartBox={latestFreeBox(chartShapes, orderManagerRef.current?.orders)}
                   onOrderCreated={(order) => {
                     console.log('[BacktestingApp] Orden creada:', order);
+                    observeOrder(order);
 
-                    // 🎯 NUEVO: Crear caja TP/SL automática solo para market orders con SL y TP
-                    if (order && order.type === 'market' && (order.stopLoss || order.takeProfit)) {
+                    // Una orden que usa la caja dibujada la lleva a su entrada al abrir
+                    if (order.tpslBoxId) {
+                      if (order.status === 'open') {
+                        miniChartRefs.current[activeTimeframe]?.anchorTPSLBox?.(order.tpslBoxId, order.executedAt, order.executedPrice);
+                      }
+                    } else if (order.type === 'market' && (order.stopLoss || order.takeProfit)) {
+                      // 🎯 NUEVO: Crear caja TP/SL automática solo para market orders con SL y TP
                       const miniChart = miniChartRefs.current[activeTimeframe];
                       if (miniChart && miniChart.addTPSLBox) {
-                        const boxId = miniChart.addTPSLBox(
+                        order.tpslBoxId = miniChart.addTPSLBox(
                           order.entryPrice,
                           order.openTime || currentTime,
                           order.side, // 'long' o 'short'
@@ -2592,13 +2715,10 @@ const BacktestingApp = () => {
                           order.takeProfit,
                           5 // 5 velas de ancho
                         );
-                        // 🎯 NUEVO: Guardar mapeo tradeId → boxId
-                        if (boxId) {
-                          tradeBoxMapRef.current[order.id] = boxId;
-                          console.log(`[BacktestingApp] TP/SL box ${boxId} asociada a trade #${order.id}`);
-                        }
                       }
                     }
+
+                    saveTradeSession();
                   }}
                 />
               </>
@@ -2626,7 +2746,26 @@ const BacktestingApp = () => {
               />
             )}
 
-            {activePanel === 'zones' && (
+            {activePanel === 'observer' && (
+              <ObserverPanel
+                revision={observerRevision}
+                symbol={symbol}
+                blindActive={blindActive}
+                onRevealDate={() => {
+                  setBlindAnchor(null);
+                  setBlindActive(false);
+                  applyToAllTimeframes(() => {});
+                }}
+              />
+            )}
+
+            {blindActive && activePanel === 'zones' && (
+              <div className="observer-note" style={{ margin: '12px' }}>
+                Este panel muestra fechas reales: no está disponible con fecha oculta.
+              </div>
+            )}
+
+            {activePanel === 'zones' && !blindActive && (
               <ZoneDetectorTester
                 symbol={symbol}
                 interval={activeTimeframe}
@@ -2675,64 +2814,6 @@ const BacktestingApp = () => {
               />
             )}
 
-            {activePanel === 'strategy' && (
-              <div className="strategy-panel">
-                {showBacktestResults && backtestResult ? (
-                  <BacktestResults
-                    result={backtestResult}
-                    onClose={() => setShowBacktestResults(false)}
-                    onViewTrade={(trade) => {
-                      // Navegar al timestamp del trade en el chart
-                      if (trade.entry_time && timeControllerRef.current) {
-                        timeControllerRef.current.seekToTime(trade.entry_time);
-                        console.log('[BacktestingApp] Navegando al trade:', trade.id);
-                      }
-                    }}
-                  />
-                ) : showStrategyBuilder ? (
-                  <StrategyBuilder
-                    strategyId={selectedStrategyId}
-                    symbol={symbol}
-                    currentTime={currentTime}
-                    candles={marketData?.timeframes?.[activeTimeframe]?.main || []}
-                    onSave={(strategy) => {
-                      setActiveStrategy(strategy);
-                      setShowStrategyBuilder(false);
-                      console.log('[BacktestingApp] Estrategia guardada:', strategy.name);
-                    }}
-                    onClose={() => setShowStrategyBuilder(false)}
-                    onRunBacktest={(result) => {
-                      setBacktestResult(result);
-                      setShowBacktestResults(true);
-                      console.log('[BacktestingApp] Backtest completado:', result.metrics);
-                    }}
-                  />
-                ) : (
-                  <div className="strategy-list-container">
-                    {backtestResult && (
-                      <button
-                        className="view-results-btn"
-                        onClick={() => setShowBacktestResults(true)}
-                      >
-                        Ver últimos resultados ({backtestResult.metrics?.total_trades || 0} trades)
-                      </button>
-                    )}
-                    <StrategyList
-                      selectedId={selectedStrategyId}
-                      onSelect={(id) => setSelectedStrategyId(id)}
-                      onEdit={(id) => {
-                        setSelectedStrategyId(id);
-                        setShowStrategyBuilder(true);
-                      }}
-                      onNew={() => {
-                        setSelectedStrategyId(null);
-                        setShowStrategyBuilder(true);
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -2745,6 +2826,20 @@ const BacktestingApp = () => {
           title="Mostrar panel de trading (T)"
         >
           📊
+        </button>
+      )}
+
+      {observerNotice && (
+        <button
+          type="button"
+          className="observer-toast"
+          onClick={() => {
+            setShowTradingPanel(true);
+            setActivePanel('observer');
+            setObserverNotice(null);
+          }}
+        >
+          Orden #{observerNotice.id} cerrada ({observerNotice.pnl >= 0 ? '+' : ''}${observerNotice.pnl.toFixed(2)}). Ver qué leyó la regla
         </button>
       )}
 
@@ -2782,7 +2877,7 @@ const BacktestingApp = () => {
             <RangeDetectionSettings
               symbol={symbol}
               indicatorManager={indicatorManagerRef.current}
-              candles={marketData?.timeframes?.[activeTimeframe]?.main || []}
+              candles={closedCandles()}
               onClose={() => setShowRangeDetectionSettings(false)}
             />
           </div>
@@ -2794,6 +2889,7 @@ const BacktestingApp = () => {
           symbol={symbol}
           indicatorManager={indicatorManagerRef.current}
           onConfigChange={handleRejectionPatternConfigChange}
+          onShowModeChange={(mode) => applyToAllTimeframes(manager => manager.getRejectionPatternIndicator()?.setShowMode(mode))}
           onClose={() => setShowRejectionPatternSettings(false)}
           initialConfig={rejectionPatternConfig}
         />
@@ -2997,6 +3093,43 @@ const BacktestingApp = () => {
         </div>
       )}
 
+      {showOrderFlowSettings && indicatorManagerRef.current && (
+        <OrderFlowSettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getOrderFlowIndicator()}
+          activeTimeframe={activeTimeframe}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getOrderFlowIndicator().updateConfig(settings))}
+          onClose={() => setShowOrderFlowSettings(false)}
+        />
+      )}
+
+      {showFVGSettings && indicatorManagerRef.current && (
+        <FVGSettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getFVGIndicator()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getFVGIndicator().updateConfig(settings))}
+          onClose={() => setShowFVGSettings(false)}
+        />
+      )}
+
+      {showVPPeriodicSettings && indicatorManagerRef.current && (
+        <VPPeriodicSettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getVPPeriodicIndicator()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getVPPeriodicIndicator().updateConfig(settings))}
+          onClose={() => setShowVPPeriodicSettings(false)}
+        />
+      )}
+
+      {showResponseVolumeSettings && indicatorManagerRef.current && (
+        <ResponseVolumeSettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getResponseVolumeIndicator()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getResponseVolumeIndicator().updateConfig(settings))}
+          onClose={() => setShowResponseVolumeSettings(false)}
+        />
+      )}
+
       {/* Modal de Swing Detector Settings */}
       {showSwingDetectorSettings && indicatorManagerRef.current && (
         <div className="modal-overlay" onClick={() => setShowSwingDetectorSettings(false)} style={{
@@ -3139,7 +3272,7 @@ const BacktestingApp = () => {
             sessionId: currentSessionId,
             sessionName: currentSessionName
           } : null}
-          getStateCallback={captureCurrentState}
+          getStateCallback={() => latestRef.current.captureCurrentState()}
           onClose={() => setShowSaveModal(false)}
           onSaved={handleSessionSaved}
         />

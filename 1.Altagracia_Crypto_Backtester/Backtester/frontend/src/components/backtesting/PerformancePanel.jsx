@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { isBlind, maskDate } from './blindClock.js';
 
 const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
   const [balance, setBalance] = useState({});
@@ -75,6 +76,7 @@ const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
    * Formatea fecha y hora
    */
   const formatDate = (timestamp) => {
+    if (isBlind()) return maskDate(timestamp);
     const date = new Date(timestamp);
     return date.toLocaleString('es-CO', {
       timeZone: 'America/Bogota',

@@ -5,8 +5,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #1e1e1e;
-  border: 2px solid #333;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
   width: 90%;
   max-width: 800px;
@@ -15,7 +15,7 @@
   display: flex;
   flex-direction: column;
   z-index: 10000;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .settings-header {
@@ -23,20 +23,20 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: #252525;
-  border-bottom: 1px solid #333;
+  background: #f7f8fa;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .settings-header h3 {
   margin: 0;
-  color: #fff;
+  color: #222;
   font-size: 18px;
 }
 
 .close-button {
   background: transparent;
   border: none;
-  color: #999;
+  color: #666;
   font-size: 24px;
   cursor: pointer;
   padding: 0;
@@ -50,8 +50,8 @@
 }
 
 .close-button:hover {
-  background: #333;
-  color: #fff;
+  background: #f5f5f5;
+  color: #222;
 }
 
 .settings-content {
@@ -63,24 +63,24 @@
 .settings-section {
   margin-bottom: 30px;
   padding: 16px;
-  background: #252525;
+  background: #f7f8fa;
   border-radius: 6px;
-  border: 1px solid #333;
+  border: 1px solid #e0e0e0;
 }
 
 .settings-section h4 {
   margin: 0 0 12px 0;
-  color: #4a9eff;
+  color: #2962ff;
   font-size: 16px;
 }
 
 .settings-section.summary {
-  background: #2a2a2a;
-  border-color: #444;
+  background: #f7f8fa;
+  border-color: #ccc;
 }
 
 .help-text {
-  color: #999;
+  color: #666;
   font-size: 13px;
   margin: 0 0 16px 0;
   line-height: 1.5;
@@ -95,15 +95,15 @@
 
 .pattern-item {
   padding: 12px;
-  background: #1e1e1e;
-  border: 1px solid #333;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
   transition: all 0.2s;
 }
 
 .pattern-item.enabled {
-  border-color: #4a9eff;
-  background: rgba(74, 158, 255, 0.05);
+  border-color: #2962ff;
+  background: #f4f7ff;
 }
 
 .pattern-header {
@@ -117,7 +117,7 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  color: #fff;
+  color: #222;
 }
 
 .pattern-label input[type="checkbox"] {
@@ -132,14 +132,14 @@
 
 .pattern-description {
   margin: 8px 0 0 26px;
-  color: #888;
+  color: #666;
   font-size: 12px;
 }
 
 .advanced-toggle {
   background: transparent;
-  border: 1px solid #444;
-  color: #888;
+  border: 1px solid #ccc;
+  color: #666;
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -148,21 +148,21 @@
 }
 
 .advanced-toggle:hover {
-  border-color: #4a9eff;
-  color: #4a9eff;
+  border-color: #2962ff;
+  color: #2962ff;
 }
 
 .pattern-advanced {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #333;
+  border-top: 1px solid #e0e0e0;
 }
 
 .pattern-advanced label {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #aaa;
+  color: #666;
   font-size: 13px;
 }
 
@@ -170,9 +170,9 @@
 .no-contexts {
   padding: 20px;
   text-align: center;
-  color: #888;
-  background: #1e1e1e;
-  border: 1px dashed #444;
+  color: #666;
+  background: #ffffff;
+  border: 1px dashed #ccc;
   border-radius: 4px;
 }
 
@@ -189,15 +189,15 @@
 
 .context-item {
   padding: 12px;
-  background: #1e1e1e;
-  border: 1px solid #333;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
   transition: all 0.2s;
 }
 
 .context-item.enabled {
-  border-color: #4a9eff;
-  background: rgba(74, 158, 255, 0.05);
+  border-color: #2962ff;
+  background: #f4f7ff;
 }
 
 .context-header {
@@ -233,12 +233,12 @@
 }
 
 .context-label strong {
-  color: #fff;
+  color: #222;
   font-size: 14px;
 }
 
 .context-label small {
-  color: #888;
+  color: #666;
   font-size: 12px;
 }
 
@@ -259,23 +259,23 @@
 .context-details {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #333;
+  border-top: 1px solid #e0e0e0;
 }
 
 .weight-label {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #aaa;
+  color: #666;
   font-size: 13px;
 }
 
 .add-context-button {
   width: 100%;
   padding: 10px;
-  background: #333;
-  border: 1px dashed #555;
-  color: #4a9eff;
+  background: #ffffff;
+  border: 1px dashed #ccc;
+  color: #2962ff;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
@@ -283,8 +283,8 @@
 }
 
 .add-context-button:hover {
-  background: #3a3a3a;
-  border-color: #4a9eff;
+  background: #f7f8fa;
+  border-color: #2962ff;
 }
 
 /* Filters */
@@ -296,14 +296,14 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #fff;
+  color: #222;
   font-size: 14px;
 }
 
 .filter-item input[type="range"] {
   width: 100%;
   height: 6px;
-  background: #333;
+  background: #ccc;
   border-radius: 3px;
   outline: none;
   -webkit-appearance: none;
@@ -314,7 +314,7 @@
   appearance: none;
   width: 16px;
   height: 16px;
-  background: #4a9eff;
+  background: #2962ff;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -322,7 +322,7 @@
 .filter-item input[type="range"]::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: #4a9eff;
+  background: #2962ff;
   border-radius: 50%;
   cursor: pointer;
   border: none;
@@ -356,24 +356,24 @@
 
 .config-summary p {
   margin: 0;
-  color: #aaa;
+  color: #666;
   font-size: 13px;
 }
 
 .config-summary .warning {
-  color: #ff9800;
+  color: #b25600;
   padding: 8px;
-  background: rgba(255, 152, 0, 0.1);
+  background: #fff3e0;
   border-radius: 4px;
   border: 1px solid rgba(255, 152, 0, 0.3);
 }
 
 .config-summary .info {
-  color: #4a9eff;
+  color: #1565C0;
   padding: 8px;
-  background: rgba(74, 158, 255, 0.1);
+  background: rgba(41, 98, 255, 0.1);
   border-radius: 4px;
-  border: 1px solid rgba(74, 158, 255, 0.3);
+  border: 1px solid rgba(41, 98, 255, 0.3);
 }
 
 /* Modal */
@@ -391,8 +391,8 @@
 }
 
 .modal-content {
-  background: #1e1e1e;
-  border: 2px solid #333;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
@@ -405,20 +405,20 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: #252525;
-  border-bottom: 1px solid #333;
+  background: #f7f8fa;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .modal-header h3 {
   margin: 0;
-  color: #fff;
+  color: #222;
   font-size: 18px;
 }
 
 .modal-header button {
   background: transparent;
   border: none;
-  color: #999;
+  color: #666;
   font-size: 24px;
   cursor: pointer;
   padding: 0;
@@ -436,7 +436,7 @@
 
 .form-group label {
   display: block;
-  color: #aaa;
+  color: #666;
   margin-bottom: 8px;
   font-size: 14px;
 }
@@ -445,20 +445,20 @@
 .form-group input {
   width: 100%;
   padding: 10px;
-  background: #252525;
-  border: 1px solid #444;
-  color: #fff;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  color: #222;
   border-radius: 4px;
   font-size: 14px;
 }
 
 .info-text {
-  color: #4a9eff;
+  color: #1565C0;
   font-size: 13px;
   padding: 12px;
-  background: rgba(74, 158, 255, 0.1);
+  background: rgba(41, 98, 255, 0.1);
   border-radius: 4px;
-  border: 1px solid rgba(74, 158, 255, 0.3);
+  border: 1px solid rgba(41, 98, 255, 0.3);
   margin: 0;
 }
 
@@ -467,8 +467,8 @@
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 20px;
-  background: #252525;
-  border-top: 1px solid #333;
+  background: #f7f8fa;
+  border-top: 1px solid #e0e0e0;
 }
 
 .modal-footer button {
@@ -481,24 +481,24 @@
 
 .cancel-button {
   background: transparent;
-  border: 1px solid #555;
-  color: #aaa;
+  border: 1px solid #ccc;
+  color: #666;
 }
 
 .cancel-button:hover {
-  background: #333;
-  border-color: #666;
-  color: #fff;
+  background: #f5f5f5;
+  border-color: #999;
+  color: #222;
 }
 
 .add-button {
-  background: #4a9eff;
+  background: #2962ff;
   border: none;
   color: #fff;
 }
 
 .add-button:hover {
-  background: #3a8eef;
+  background: #1f4fd8;
 }
 
 /* Support & Resistance Settings (indicator-settings) */
@@ -517,8 +517,8 @@
 
 .indicator-settings-modal {
   position: relative;
-  background: #1e1e1e;
-  border: 2px solid #333;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
   width: 90%;
   max-width: 800px;
@@ -526,7 +526,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .settings-footer {
@@ -534,8 +534,8 @@
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 20px;
-  background: #252525;
-  border-top: 1px solid #333;
+  background: #f7f8fa;
+  border-top: 1px solid #e0e0e0;
 }
 
 .settings-footer button {
@@ -549,29 +549,29 @@
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid #555 !important;
-  color: #aaa;
+  border: 1px solid #ccc !important;
+  color: #666;
 }
 
 .btn-secondary:hover {
-  background: #333;
-  border-color: #666 !important;
-  color: #fff;
+  background: #f5f5f5;
+  border-color: #999 !important;
+  color: #222 !important;
 }
 
 .btn-primary {
-  background: #4a9eff;
+  background: #2962ff;
   color: #fff;
 }
 
 .btn-primary:hover {
-  background: #3a8eef;
+  background: #1f4fd8;
 }
 
 .close-btn {
   background: transparent;
   border: none;
-  color: #999;
+  color: #666;
   font-size: 24px;
   cursor: pointer;
   padding: 0;
@@ -585,8 +585,8 @@
 }
 
 .close-btn:hover {
-  background: #333;
-  color: #fff;
+  background: #f5f5f5;
+  color: #222;
 }
 
 .setting-row {
@@ -597,16 +597,16 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #fff;
+  color: #222;
   font-size: 14px;
 }
 
 .setting-row input[type="number"],
 .setting-row select {
   padding: 10px;
-  background: #1e1e1e;
-  border: 1px solid #444;
-  color: #fff;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  color: #222;
   border-radius: 4px;
   font-size: 14px;
   width: 100%;
@@ -615,7 +615,7 @@
 .setting-row input[type="number"]:focus,
 .setting-row select:focus {
   outline: none;
-  border-color: #4a9eff;
+  border-color: #2962ff;
 }
 
 .hint {
@@ -626,13 +626,22 @@
 
 .info-box {
   padding: 12px;
-  background: rgba(74, 158, 255, 0.1);
+  background: rgba(41, 98, 255, 0.1);
   border-radius: 4px;
-  border: 1px solid rgba(74, 158, 255, 0.3);
+  border: 1px solid rgba(41, 98, 255, 0.3);
 }
 
 .info-box p {
   margin: 0;
-  color: #4a9eff;
+  color: #1565C0;
   font-size: 13px;
+}
+
+/* Modales de Volume Profile: su color viene de hojas que cargan después */
+.setting-row .setting-hint {
+  color: #666;
+}
+
+.advanced-toggle .toggle-advanced-btn {
+  color: #1565C0;
 }

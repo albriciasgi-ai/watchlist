@@ -83,7 +83,7 @@ const SwingDetectorSettings = ({
             style={{ flex: 1 }}
           />
           <span style={{
-            background: '#2196F3',
+            background: '#2962ff',
             color: 'white',
             padding: '4px 12px',
             borderRadius: '4px',
@@ -112,7 +112,7 @@ const SwingDetectorSettings = ({
             padding: '10px',
             fontSize: '14px',
             borderRadius: '4px',
-            border: '2px solid #2196F3'
+            border: '2px solid #2962ff'
           }}
         >
           <option value="BOTH">BOTH - Mostrar Highs y Lows</option>
@@ -197,7 +197,7 @@ const SwingDetectorSettings = ({
 
         {localConfig.vwapFilter?.enabled && (
           <>
-            <div style={{ fontSize: '11px', color: '#2E7D32', marginBottom: '12px', padding: '8px', background: '#c8e6c9', borderRadius: '4px' }}>
+            <div style={{ fontSize: '11px', color: '#1B5E20', marginBottom: '12px', padding: '8px', background: '#c8e6c9', borderRadius: '4px' }}>
               <strong>Cómo funciona:</strong><br/>
               - Precio cerca de bandas inferiores (-σ) → solo señales LONG<br/>
               - Precio cerca de bandas superiores (+σ) → solo señales SHORT<br/>

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from fastapi import FastAPI, Request, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse, FileResponse
 from contextlib import asynccontextmanager
 from typing import Optional
@@ -13,6 +14,7 @@ import sys
 import numpy as np
 import footprint_store
 import oi_store
+import observer
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import OrderedDict
@@ -1737,8 +1739,12 @@ async def detect_rejection_patterns(request: Request):
       "interval": "4h",
       "days": 7,
       "config": { ... },  # Pattern configuration
-      "referenceContexts": [ ... ]  # Reference contexts
+      "referenceContexts": [ ... ],  # Reference contexts
+      "candles": [ ... ]  # Opcional, backtesting: velas ya cerradas en la hora simulada
     }
+
+    Con candles no se piden velas recientes, cada vela solo se valida con niveles ya formados
+    y no se envian alertas: es una simulacion.
     """
     try:
         body = await request.json()
@@ -1757,23 +1763,29 @@ async def detect_rejection_patterns(request: Request):
         print(f"[REJECTION PATTERNS] Detecting patterns for {symbol} {interval}")
         print(f"  - Active contexts: {len([c for c in reference_contexts if c.get('enabled', False)])}")
 
-        # Get historical candles
-        historical = await _fetch_historical_internal(symbol, interval, days)
+        simulated_candles = body.get('candles')
 
-        if not historical.get('success') or not historical.get('data'):
-            return {
-                "success": False,
-                "error": "Could not fetch historical data"
-            }
+        if simulated_candles:
+            candles = simulated_candles
+        else:
+            # Get historical candles
+            historical = await _fetch_historical_internal(symbol, interval, days)
 
-        candles = historical['data']
+            if not historical.get('success') or not historical.get('data'):
+                return {
+                    "success": False,
+                    "error": "Could not fetch historical data"
+                }
+
+            candles = historical['data']
 
         # Detect patterns
         patterns = rejection_detector.detect_patterns(
             symbol,
             candles,
             config,
-            reference_contexts
+            reference_contexts,
+            known_levels_only=bool(simulated_candles)
         )
 
         # Serialize patterns
@@ -1782,7 +1794,7 @@ async def detect_rejection_patterns(request: Request):
         print(f"[REJECTION PATTERNS] OK Detected {len(patterns)} patterns for {symbol}")
 
         # Send alerts for high-confidence patterns
-        if config.get('alertsEnabled', False):
+        if config.get('alertsEnabled', False) and not simulated_candles:
             for pattern_data in serialized_patterns:
                 if pattern_data['confidence'] >= config.get('filters', {}).get('minConfidence', 60):
                     await send_pattern_alert(
@@ -3248,6 +3260,13 @@ async def detect_double_topbottom(request: Request):
             # Usar velas del caché
             candles = DTB_CANDLES_CACHE[cache_key]
             print(f"[DOUBLE TOP/BOTTOM] [CACHE] Usando {len(candles)} velas del caché para {cache_key}")
+        elif body.get('backtesting'):
+            # Velas recientes de Bybit darian patrones de otra fecha: el frontend las reenvia
+            return {
+                "success": False,
+                "needsCandles": True,
+                "error": "Las velas ya no estan en memoria"
+            }
         else:
             # Fetch desde Bybit API (modo normal)
             print(f"[DOUBLE TOP/BOTTOM] Fetching candles from Bybit API...")
@@ -3376,7 +3395,7 @@ async def get_dtb_chunk(request: Request):
                     # Filtrar patrones individuales por timestamp
                     filtered = [
                         p for p in chunk_patterns
-                        if p.get('secondExtreme', {}).get('timestamp', 0) <= up_to_timestamp
+                        if p.get('knownAt', 0) <= up_to_timestamp
                     ]
                     result_patterns.extend(filtered)
 
@@ -4028,379 +4047,6 @@ async def get_zone_methods():
 
 
 # =============================================================================
-# STRATEGY BUILDER - CRUD de Estrategias
-# =============================================================================
-
-try:
-    from strategy_model import Strategy, get_template, list_templates
-    from strategy_store import strategy_store
-    print("[STARTUP] Strategy Builder modules loaded successfully")
-except ImportError as e:
-    print(f"[STARTUP] Warning: Could not load Strategy Builder modules: {e}")
-    strategy_store = None
-
-
-@app.get("/api/strategies")
-async def list_strategies():
-    """Lista todas las estrategias guardadas"""
-    if strategy_store is None:
-        return {"success": False, "error": "Strategy module not loaded"}
-
-    strategies = strategy_store.list_all()
-    return {
-        "success": True,
-        "strategies": strategies,
-        "count": len(strategies)
-    }
-
-
-@app.get("/api/strategies/templates")
-async def get_strategy_templates():
-    """Lista templates de estrategias disponibles"""
-    if strategy_store is None:
-        return {"success": False, "error": "Strategy module not loaded"}
-
-    templates = strategy_store.get_templates()
-    return {
-        "success": True,
-        "templates": templates
-    }
-
-
-@app.get("/api/strategies/{strategy_id}")
-async def get_strategy(strategy_id: str):
-    """Obtiene una estrategia por ID"""
-    if strategy_store is None:
-        return {"success": False, "error": "Strategy module not loaded"}
-
-    strategy = strategy_store.load(strategy_id)
-    if strategy:
-        return {
-            "success": True,
-            "strategy": strategy.to_dict()
-        }
-    return {"success": False, "error": "Strategy not found"}
-
-
-@app.post("/api/strategies")
-async def create_strategy(request: Request):
-    """Crea una nueva estrategia"""
-    if strategy_store is None:
-        return {"success": False, "error": "Strategy module not loaded"}
-
-    try:
-        body = await request.json()
-
-        # Si se especifica un template, crear desde template
-        template_name = body.get("template")
-        if template_name:
-            strategy = strategy_store.create_from_template(template_name)
-            if strategy:
-                return {
-                    "success": True,
-                    "strategy": strategy.to_dict(),
-                    "message": f"Strategy created from template '{template_name}'"
-                }
-            return {"success": False, "error": f"Template '{template_name}' not found"}
-
-        # Crear estrategia desde datos
-        strategy = Strategy.from_dict(body)
-        if strategy_store.save(strategy):
-            return {
-                "success": True,
-                "strategy": strategy.to_dict(),
-                "message": "Strategy created successfully"
-            }
-        return {"success": False, "error": "Failed to save strategy"}
-
-    except Exception as e:
-        print(f"[ERROR] Create strategy: {e}")
-        return {"success": False, "error": str(e)}
-
-
-@app.put("/api/strategies/{strategy_id}")
-async def update_strategy(strategy_id: str, request: Request):
-    """Actualiza una estrategia existente"""
-    if strategy_store is None:
-        return {"success": False, "error": "Strategy module not loaded"}
-
-    try:
-        if not strategy_store.exists(strategy_id):
-            return {"success": False, "error": "Strategy not found"}
-
-        body = await request.json()
-        body["id"] = strategy_id  # Asegurar que el ID no cambie
-
-        strategy = Strategy.from_dict(body)
-        if strategy_store.save(strategy):
-            return {
-                "success": True,
-                "strategy": strategy.to_dict(),
-                "message": "Strategy updated successfully"
-            }
-        return {"success": False, "error": "Failed to update strategy"}
-
-    except Exception as e:
-        print(f"[ERROR] Update strategy: {e}")
-        return {"success": False, "error": str(e)}
-
-
-@app.delete("/api/strategies/{strategy_id}")
-async def delete_strategy(strategy_id: str):
-    """Elimina una estrategia"""
-    if strategy_store is None:
-        return {"success": False, "error": "Strategy module not loaded"}
-
-    if strategy_store.delete(strategy_id):
-        return {
-            "success": True,
-            "message": "Strategy deleted successfully"
-        }
-    return {"success": False, "error": "Strategy not found or failed to delete"}
-
-
-@app.post("/api/strategies/{strategy_id}/duplicate")
-async def duplicate_strategy(strategy_id: str, request: Request):
-    """Duplica una estrategia existente"""
-    if strategy_store is None:
-        return {"success": False, "error": "Strategy module not loaded"}
-
-    try:
-        body = await request.json()
-        new_name = body.get("name")
-
-        new_strategy = strategy_store.duplicate(strategy_id, new_name)
-        if new_strategy:
-            return {
-                "success": True,
-                "strategy": new_strategy.to_dict(),
-                "message": "Strategy duplicated successfully"
-            }
-        return {"success": False, "error": "Failed to duplicate strategy"}
-
-    except Exception as e:
-        print(f"[ERROR] Duplicate strategy: {e}")
-        return {"success": False, "error": str(e)}
-
-
-@app.post("/api/strategies/validate")
-async def validate_strategy(request: Request):
-    """Valida la sintaxis de una estrategia sin guardarla"""
-    if strategy_store is None:
-        return {"success": False, "error": "Strategy module not loaded"}
-
-    try:
-        body = await request.json()
-        strategy = Strategy.from_dict(body)
-
-        # Validaciones básicas
-        errors = []
-        warnings = []
-
-        if not strategy.name or len(strategy.name) < 3:
-            errors.append("El nombre debe tener al menos 3 caracteres")
-
-        if not strategy.entry.conditions:
-            warnings.append("No hay condiciones de entrada definidas")
-
-        if strategy.risk_management.sizing.risk_percent > 5:
-            warnings.append("Riesgo por trade mayor a 5% es muy agresivo")
-
-        if strategy.risk_management.take_profit.risk_reward_ratio < 1:
-            warnings.append("Risk/Reward menor a 1:1 no es recomendado")
-
-        if strategy.filters.max_daily_loss_percent > 10:
-            warnings.append("Pérdida diaria máxima mayor a 10% es muy alta")
-
-        return {
-            "success": len(errors) == 0,
-            "valid": len(errors) == 0,
-            "errors": errors,
-            "warnings": warnings,
-            "strategy_preview": strategy.to_dict()
-        }
-
-    except Exception as e:
-        return {
-            "success": False,
-            "valid": False,
-            "errors": [f"Error de sintaxis: {str(e)}"],
-            "warnings": []
-        }
-
-
-# =============================================================================
-# STRATEGY EXECUTOR - Backtesting de estrategias
-# =============================================================================
-
-try:
-    from strategy_executor import StrategyExecutor, create_executor
-    print("[STARTUP] Strategy Executor module loaded successfully")
-except ImportError as e:
-    print(f"[STARTUP] Warning: Could not load Strategy Executor module: {e}")
-    StrategyExecutor = None
-
-
-@app.post("/api/strategies/{strategy_id}/backtest")
-@limiter.limit("10/minute")
-async def run_strategy_backtest(strategy_id: str, request: Request):
-    """
-    Ejecuta backtesting de una estrategia.
-
-    Body:
-    - symbol: Par de trading (ej: BTCUSDT)
-    - interval: Timeframe (ej: 60 para 1h)
-    - days: Días de datos históricos
-    - start_timestamp: (opcional) Timestamp de inicio
-    - end_timestamp: (opcional) Timestamp de fin
-    - initial_capital: (opcional) Capital inicial (default 10000)
-    """
-    if strategy_store is None or StrategyExecutor is None:
-        return {"success": False, "error": "Strategy modules not loaded"}
-
-    try:
-        body = await request.json()
-        symbol = body.get('symbol')
-        interval = body.get('interval', '60')
-        days = body.get('days', 365)
-        start_timestamp = body.get('start_timestamp')
-        end_timestamp = body.get('end_timestamp')
-        initial_capital = body.get('initial_capital', 10000)
-
-        if not symbol:
-            return {"success": False, "error": "Symbol is required"}
-
-        # Cargar estrategia
-        strategy = strategy_store.load(strategy_id)
-        if not strategy:
-            return {"success": False, "error": "Strategy not found"}
-
-        print(f"[BACKTEST] Running strategy '{strategy.name}' on {symbol} {interval}m, {days} days")
-
-        # Obtener datos históricos
-        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "Could not fetch historical data"}
-
-        candles = historical['data']
-        print(f"[BACKTEST] Got {len(candles)} candles")
-
-        # Filtrar por timestamps si se proporcionan
-        if end_timestamp:
-            candles = [c for c in candles if c['timestamp'] < end_timestamp]
-
-        # Detectar zonas para la estrategia
-        if zone_detector is None:
-            return {"success": False, "error": "Zone Detector not loaded"}
-
-        zone_params = ZoneDetectionParams()
-        zone_config = strategy.zone_config
-        for key, value in zone_config.params.items():
-            if hasattr(zone_params, key):
-                setattr(zone_params, key, value)
-
-        zones = zone_detector.detect_zones(candles, zone_config.method, zone_params)
-        zones_dict = [z.to_dict() for z in zones]
-        print(f"[BACKTEST] Detected {len(zones)} zones using method '{zone_config.method}'")
-
-        # Crear executor y correr backtest
-        executor = StrategyExecutor(strategy, zones_dict, initial_capital)
-        result = executor.run(candles, start_timestamp, end_timestamp)
-
-        # Agregar info del símbolo
-        result.symbol = symbol
-        result.interval = interval
-
-        return {
-            "success": True,
-            "result": result.to_dict(),
-            "zones_used": len(zones_dict)
-        }
-
-    except Exception as e:
-        print(f"[ERROR] Strategy backtest: {e}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-@app.post("/api/strategies/quick-backtest")
-@limiter.limit("10/minute")
-async def quick_backtest(request: Request):
-    """
-    Backtest rápido sin guardar estrategia.
-    Recibe la estrategia completa en el body.
-    """
-    if StrategyExecutor is None:
-        return {"success": False, "error": "Strategy Executor not loaded"}
-
-    try:
-        body = await request.json()
-        strategy_data = body.get('strategy')
-        symbol = body.get('symbol')
-        interval = body.get('interval', '60')
-        days = body.get('days', 365)
-        end_timestamp = body.get('end_timestamp')
-        initial_capital = body.get('initial_capital', 10000)
-
-        if not strategy_data:
-            return {"success": False, "error": "Strategy data is required"}
-        if not symbol:
-            return {"success": False, "error": "Symbol is required"}
-
-        # Crear estrategia desde datos
-        strategy = Strategy.from_dict(strategy_data)
-
-        print(f"[QUICK_BACKTEST] Running on {symbol} {interval}m, {days} days")
-
-        # Obtener datos históricos
-        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "Could not fetch historical data"}
-
-        candles = historical['data']
-
-        # Filtrar por timestamp
-        if end_timestamp:
-            candles = [c for c in candles if c['timestamp'] < end_timestamp]
-
-        print(f"[QUICK_BACKTEST] Using {len(candles)} candles")
-
-        # Detectar zonas
-        if zone_detector is None:
-            return {"success": False, "error": "Zone Detector not loaded"}
-
-        zone_params = ZoneDetectionParams()
-        zone_config = strategy.zone_config
-        for key, value in zone_config.params.items():
-            if hasattr(zone_params, key):
-                setattr(zone_params, key, value)
-
-        zones = zone_detector.detect_zones(candles, zone_config.method, zone_params)
-        zones_dict = [z.to_dict() for z in zones]
-        print(f"[QUICK_BACKTEST] Detected {len(zones)} zones")
-
-        # Ejecutar
-        executor = StrategyExecutor(strategy, zones_dict, initial_capital)
-        result = executor.run(candles)
-
-        result.symbol = symbol
-        result.interval = interval
-
-        return {
-            "success": True,
-            "result": result.to_dict(),
-            "zones_used": len(zones_dict)
-        }
-
-    except Exception as e:
-        print(f"[ERROR] Quick backtest: {e}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-# =============================================================================
 # ZONE QUALITY ANALYSIS - Optimización de parámetros
 # =============================================================================
 
@@ -4771,42 +4417,13 @@ async def get_screenshot(request: Request, session_id: str, filename: str):
         FileResponse con la imagen PNG
     """
     try:
-        # 🔍 DEBUG: Log de parámetros recibidos
-        print(f"\n{'='*80}")
-        print(f"[SCREENSHOT GET] 📥 REQUEST RECIBIDO EN ENDPOINT!")
-        print(f"{'='*80}")
-        print(f"  session_id (raw): {session_id}")
-        print(f"  filename (raw): {filename}")
-
-        # Sanitizar parámetros
         safe_session_id = sanitize_filename(session_id)
-        safe_filename = sanitize_filename(filename)
+        # sanitize_filename quita el punto: la extensión se separa antes
+        stem = filename[:-4] if filename.lower().endswith('.png') else filename
+        safe_filename = f"{sanitize_filename(stem)}.png"
 
-        print(f"  session_id (sanitized): {safe_session_id}")
-        print(f"  filename (sanitized): {safe_filename}")
-
-        if not safe_session_id or not safe_filename:
-            raise HTTPException(status_code=400, detail="Parámetros inválidos")
-
-        # Agregar extensión .png si no la tiene
-        if not safe_filename.endswith('.png'):
-            safe_filename += '.png'
-            print(f"  filename (with .png): {safe_filename}")
-
-        # Construir path
         file_path = SCREENSHOTS_DIR / safe_session_id / safe_filename
-        print(f"  file_path: {file_path}")
-        print(f"  exists: {file_path.exists()}")
-
-        # Verificar que existe
         if not file_path.exists():
-            # Listar lo que hay en el directorio de la sesión
-            session_dir = SCREENSHOTS_DIR / safe_session_id
-            if session_dir.exists():
-                files = list(session_dir.glob("*.png"))
-                print(f"  ⚠️ Archivos disponibles en {safe_session_id}: {[f.name for f in files]}")
-            else:
-                print(f"  ⚠️ Directorio de sesión no existe: {session_dir}")
             raise HTTPException(status_code=404, detail="Screenshot no encontrado")
 
         return FileResponse(
@@ -4939,6 +4556,52 @@ async def save_screenshot(request: Request, session_id: str, file: UploadFile = 
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== OBSERVADOR ====================
+
+@app.post("/api/observer/orders")
+@limiter.limit("120/minute")
+async def observer_record_order(request: Request):
+    """Guarda una orden con la lectura de ese minuto. La respuesta no incluye la lectura."""
+    order = await request.json()
+    if not all(key in order for key in ("id", "symbol", "side", "time")):
+        raise HTTPException(status_code=400, detail="Faltan datos de la orden")
+    order["symbol"] = sanitize_filename(order["symbol"])
+    return await run_in_threadpool(observer.record_order, order)
+
+
+@app.post("/api/observer/orders/{order_id}/events")
+@limiter.limit("240/minute")
+async def observer_record_event(request: Request, order_id: str):
+    """Registra el llenado, el cierre o la cancelación de una orden."""
+    details = await request.json()
+    event = details.pop("event", None)
+    try:
+        return observer.record_event(order_id, event, details)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+
+@app.get("/api/observer/orders")
+@limiter.limit("120/minute")
+async def observer_orders(request: Request, limit: int = 50):
+    """Órdenes registradas. La lectura solo aparece cuando la orden terminó."""
+    return {"orders": observer.list_trades(limit)}
+
+
+@app.get("/api/observer/report")
+@limiter.limit("60/minute")
+async def observer_report(request: Request, symbol: Optional[str] = None, blind: str = "all", include_rewound: bool = False):
+    """Informe de condiciones, marcas y resultados de lo registrado."""
+    return await run_in_threadpool(observer.report, symbol, blind, include_rewound)
+
+
+@app.get("/api/observer/blind-start/{symbol}")
+@limiter.limit("30/minute")
+async def observer_blind_start(request: Request, symbol: str, first: int, last: int):
+    """Fecha de inicio al azar entre first y last, con trades descargados."""
+    return observer.blind_start(sanitize_filename(symbol), first, last)
+
+
 # ==================== ORDER FLOW ====================
 
 @app.get("/api/orderflow/historical/{symbol}")
@@ -4951,7 +4614,13 @@ async def get_orderflow_historical(
     start_timestamp: Optional[int] = None,
     end_timestamp: Optional[int] = None,
     known_until: Optional[int] = None,
-    step: Optional[float] = None
+    step: Optional[float] = None,
+    imbalance_ratio: float = 3.0,
+    imbalance_mode: str = "level",
+    imbalance_min_volume: float = 0.0,
+    imbalance_zero: bool = False,
+    stacked_levels: int = 3,
+    max_levels: Optional[int] = None
 ):
     """
     Retorna footprints históricos para backtesting.
@@ -4972,12 +4641,21 @@ async def get_orderflow_historical(
 
         if start_timestamp is not None and end_timestamp is not None and interval.isdigit():
             cut = known_until if known_until is not None else end_timestamp
-            result = footprint_store.footprints(sanitize_filename(symbol), int(interval), start_timestamp, end_timestamp, cut, step)
+            rules = {
+                "ratio": max(1.01, imbalance_ratio),
+                "mode": imbalance_mode,
+                "min_volume": max(0.0, imbalance_min_volume),
+                "count_zero": imbalance_zero,
+                "stacked_levels": max(2, stacked_levels),
+            }
+            limit = max(2, max_levels) if max_levels else None
+            result = footprint_store.footprints(sanitize_filename(symbol), int(interval), start_timestamp, end_timestamp, cut, step, rules, limit)
             return {
                 "success": True,
                 "footprints": result["footprints"],
                 "count": len(result["footprints"]),
                 "step_size": result["step_size"],
+                "cell_size": result.get("cell_size"),
                 "known_until": result["known_until"],
                 "interval": interval,
                 "source": "store"

@@ -315,11 +315,10 @@ class SwingDetectorIndicator extends IndicatorBase {
       return signals; // Sin playback, mostrar todas
     }
 
-    // Solo mostrar señales cuyo timestamp sea <= al tiempo actual de playback
-    // La señal se confirma swingBars velas después, así que usamos:
-    // timestamp de la señal + (swingBars * intervaloMs)
+    // La señal se conoce cuando cierra la última de las swingBars velas de su derecha,
+    // es decir swingBars + 1 velas después de la apertura de la vela del swing
     const intervalMs = this._getIntervalMs();
-    const confirmationDelay = this.swingBars * intervalMs;
+    const confirmationDelay = (this.swingBars + 1) * intervalMs;
 
     return signals.filter(signal => {
       const confirmationTime = signal.timestamp + confirmationDelay;
@@ -330,13 +329,18 @@ class SwingDetectorIndicator extends IndicatorBase {
   _getIntervalMs() {
     const intervalMap = {
       '1': 60000,
+      '1m': 60000,
       '3': 180000,
       '5': 300000,
+      '5m': 300000,
       '15': 900000,
+      '15m': 900000,
       '30': 1800000,
       '60': 3600000,
+      '1h': 3600000,
       '120': 7200000,
       '240': 14400000,
+      '4h': 14400000,
       'D': 86400000,
       'W': 604800000
     };
@@ -484,6 +488,9 @@ class SwingDetectorIndicator extends IndicatorBase {
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
     if (!this.enabled) return;
+
+    // La hora simulada llega en cada dibujo: también vale en las pestañas que no estaban activas
+    if (priceContext?.knownCandles) this._currentPlaybackTime = priceContext.knownUntil;
 
     const candlesToUse = allCandles || visibleCandles;
     this.detectSwings(candlesToUse);

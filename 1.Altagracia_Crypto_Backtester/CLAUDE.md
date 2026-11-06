@@ -6,6 +6,36 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Orden y Altura de Paneles
+
+Cada panel de indicador se mueve con ▲▼ y su altura cambia al arrastrar su borde superior, sin tocar los demás paneles. Se guarda por símbolo y lo comparten los marcos. Detalle en `Backtester/CLAUDE.md`, sección "Orden y altura de los paneles".
+
+---
+
+### Noviembre 2026: Órdenes por Riesgo, VP Periodic y Volumen de Respuesta
+
+Órdenes por capital arriesgado y automáticas desde la caja TP/SL, como en App 8. VP Periodic, Volumen de Respuesta medido con el histórico de BTC, máximo de 10 niveles por vela y modales claros. La pestaña Estrategia se quitó del código porque sus resultados dependían del futuro. Detalle en `Backtester/CLAUDE.md`, secciones "ÓRDENES", "SESIONES" y "VOLUMEN DE RESPUESTA".
+
+---
+
+### Noviembre 2026: Journal de Trades con Imagen
+
+Cada trade guarda una imagen del gráfico al abrir y otra 10 velas después de cerrar, y se ven con 📸 en el historial. Las líneas verticales salen de las órdenes y la sesión se guarda sola con cada operación. Detalle en `Backtester/CLAUDE.md`, sección "JOURNAL DE TRADES".
+
+---
+
+### Noviembre 2026: Indicadores sin Futuro
+
+VWAP, Swing, Rejection, Double Top/Bottom y Range Detection solo muestran lo que ya se podía conocer en la hora simulada. Double Top/Bottom calcula al marcar su casilla y Rejection validado funciona en backtesting. Detalle en `Backtester/CLAUDE.md`, sección "INDICADORES SIN FUTURO". El filtro por `secondExtreme.timestamp` que aparece más abajo fue reemplazado por `knownAt`.
+
+---
+
+### Noviembre 2026: Observador + Parámetros de Order Flow y FVG
+
+Cada orden manual queda registrada en disco con la lectura de la regla del laboratorio, oculta hasta que la orden termina. Los modales de Order Flow y FVG cambian step, imbalances y gaps. Detalle en `Backtester/CLAUDE.md`, sección "OBSERVADOR".
+
+---
+
 ### Noviembre 2026: Reproducción sin Futuro + Footprints Reales
 
 Velas en formación, órdenes y perfiles solo usan lo ocurrido hasta la hora simulada. Los footprints se leen sobre las velas, desde el almacén diario de trades de Bybit. Detalle en `Backtester/CLAUDE.md`, sección "ORDER FLOW SOBRE LAS VELAS".
@@ -262,7 +292,8 @@ async def detect_double_topbottom(request: Request):
     #   "interval": "240",      # 4 horas
     #   "days": 730,            # 2 años de datos
     #   "config": {...},        # Configuración del detector
-    #   "candles": [...]        # OPCIONAL: velas (solo primera vez)
+    #   "candles": [...],       # OPCIONAL: velas (solo primera vez)
+    #   "backtesting": true     # OPCIONAL: sin velas en memoria responde needsCandles
     # }
 ```
 
@@ -273,7 +304,8 @@ async def detect_double_topbottom(request: Request):
    ↓
 2. Verifica si las velas están en caché (DTB_CANDLES_CACHE)
    - SI: Usa caché (~instantáneo)
-   - NO: Espera que frontend envíe velas (~11MB)
+   - NO, en backtesting: responde needsCandles y el frontend las reenvía
+   - NO, fuera de backtesting: pide velas recientes a Bybit
    ↓
 3. Crea instancia de DoubleTopBottomDetector
    ↓
@@ -661,9 +693,11 @@ console.log(`  Fin: ${formatDate(maxVisibleTimestamp)}`);
 
 ```javascript
 const visiblePatterns = this.patterns.filter(pattern =>
-  pattern.secondExtreme.timestamp <= currentTime
+  pattern.knownAt <= currentTime && (pattern.replacedAt === null || currentTime < pattern.replacedAt)
 );
 ```
+
+`knownAt` es el cierre de la última vela que usa el patrón. El segundo extremo no basta: necesita velas a su derecha.
 
 ### 4. Optimización de Carga de Velas (~11MB)
 
@@ -992,7 +1026,7 @@ DTB_PATTERNS_CACHE = {}   # Patrones divididos por chunks trimestrales
 1. Verificar `_currentPlaybackTime` se actualiza con playback
 2. Verificar filtro en `renderOverlay`:
    ```javascript
-   pattern.secondExtreme.timestamp <= currentTime
+   pattern.knownAt <= currentTime
    ```
 
 ---

@@ -139,7 +139,7 @@ const DoubleTopBottomSettings = ({
     heading: { marginTop: 0, marginBottom: '16px', fontSize: '16px', color: '#333' },
     settingGroup: { marginBottom: '20px' },
     label: { display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px', fontWeight: '500' },
-    settingValue: { color: '#4CAF50', fontWeight: 'bold' },
+    settingValue: { color: '#2E7D32', fontWeight: 'bold' },
     description: { fontSize: '12px', color: '#666', margin: '4px 0 0 0' },
     rangeInput: { width: '100%', cursor: 'pointer' },
     checkbox: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' },
@@ -551,7 +551,7 @@ const DoubleTopBottomSettings = ({
       )}
 
       <h3 style={{marginTop: '30px'}}>High-Volume Extreme Filter</h3>
-      <p style={{fontSize: '12px', color: '#888', marginBottom: '15px'}}>
+      <p style={{fontSize: '12px', color: '#666', marginBottom: '15px'}}>
         ⚠️ Reject extremes (highs/lows) with low volume. Ensures big players are involved at key levels.
       </p>
 
@@ -778,7 +778,7 @@ const DoubleTopBottomSettings = ({
           </div>
 
           <h4 style={{marginTop: '30px'}}>Volume Filter 📊</h4>
-          <p style={{fontSize: '12px', color: '#888', marginBottom: '15px'}}>
+          <p style={{fontSize: '12px', color: '#666', marginBottom: '15px'}}>
             Validates that momentum patterns have institutional backing (high volume).
           </p>
 
@@ -1191,7 +1191,7 @@ const DoubleTopBottomSettings = ({
             1 Hour
           </button>
         </div>
-        <div style={{ fontSize: '11px', color: '#6c757d', marginTop: '8px' }}>
+        <div style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>
           Click a preset to automatically adjust all parameters for optimal detection in that timeframe
         </div>
       </div>
@@ -1335,7 +1335,7 @@ const DoubleTopBottomSettings = ({
             cursor: 'pointer',
             fontSize: '14px',
             fontWeight: 'bold',
-            color: config.alertsEnabled ? '#2E7D32' : '#F57C00'
+            color: config.alertsEnabled ? '#2E7D32' : '#b25600'
           }}>
             <input
               type="checkbox"
@@ -1354,7 +1354,7 @@ const DoubleTopBottomSettings = ({
                 <br />
                 • Double Top → Señal SHORT 📉
                 <br />
-                <em style={{ fontSize: '11px', color: '#999' }}>
+                <em style={{ fontSize: '11px', color: '#666' }}>
                   Las alertas se envían a http://localhost:5000/api/watchlist-alert
                 </em>
               </span>
@@ -1375,7 +1375,7 @@ const DoubleTopBottomSettings = ({
               padding: '8px 16px',
               background: testAlertStatus === 'testing' ? '#9E9E9E' :
                          testAlertStatus === 'success' ? '#4CAF50' :
-                         testAlertStatus === 'error' ? '#F44336' : '#2196F3',
+                         testAlertStatus === 'error' ? '#F44336' : '#2962ff',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
@@ -1396,7 +1396,7 @@ const DoubleTopBottomSettings = ({
               marginTop: '8px',
               marginLeft: '26px',
               fontSize: '11px',
-              color: '#4CAF50'
+              color: '#2E7D32'
             }}>
               ✓ Revisa la consola del navegador y el servicio de alertas (puerto 5000)
             </div>
@@ -1407,7 +1407,7 @@ const DoubleTopBottomSettings = ({
               marginTop: '8px',
               marginLeft: '26px',
               fontSize: '11px',
-              color: '#F44336'
+              color: '#C62828'
             }}>
               ✗ Verifica que el backend esté corriendo (puerto 8000) y revisa la consola
             </div>

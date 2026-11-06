@@ -53,6 +53,111 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 6 Noviembre 2026: Orden y Altura de Paneles + Estrategia Eliminada
+
+**Cambios:**
+1. **Orden:** cada panel de indicador tiene ▲▼ en el margen derecho
+2. **Altura:** se arrastra el borde superior de cada panel. Solo cambia ese panel: el precio cede o recibe la diferencia
+3. **Reparto:** se guarda por símbolo y lo comparten todos los marcos. La lista de indicadores trae un botón para restablecerlo
+4. **Estrategia:** se quitaron la pestaña, `components/strategy/`, los endpoints `/api/strategies` y `strategy_*.py`. El panel Zonas no dependía de ella
+
+**IMPORTANTE:** todo sigue en un solo canvas. El intento anterior con paneles separados dejó de dibujar los indicadores: los controles son HTML encima del canvas y el dibujo sigue centralizado en `renderIndicators()`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "Orden y altura de los paneles"
+
+---
+
+### APP 1 (Backtester) - 6 Noviembre 2026: Volumen de Respuesta con Evidencia
+
+**Problema:** el indicador usaba respuesta e iniciativa de Market Profile, que no es el concepto del usuario. Su idea viene de observación propia: cerca de una pausa o un giro, el volumen de la retracción se equipara al de la tendencia.
+
+**Cambios:**
+1. **Panel:** velas principales de compra contra las de venta. Arriba de cero pesa la compra y abajo la venta
+2. **Señales:** rombo cuando la tendencia dominó y la respuesta la igualó. Flecha en velas con el doble o más del volumen normal de su hora
+3. **Volumen por hora:** cada vela se compara con su misma hora en los 30 días anteriores. Sin ese ajuste la idea no se sostiene
+4. **Evidencia:** en 2025 y 2026 el precio hizo nuevo extremo 5.6 pts menos en 15m y 10.6 menos en 1h que en situaciones iguales sin señal. En 4h no hay muestra. No anticipa dirección ni detecta techos o suelos
+5. **Sin futuro:** `ResponseSeries` solo mira hacia atrás y se extiende con cada vela cerrada. 15m completo tarda 0.7 s
+
+**IMPORTANTE:** `responseBalance.js` repite `research/response_volume/engine.py`. Si cambia la regla, hay que cambiar los dos y correr la paridad.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "VOLUMEN DE RESPUESTA" y `OrderFlowData/research/response_volume/INFORME.md`
+
+---
+
+### APP 1 (Backtester) - 6 Noviembre 2026: Órdenes por Riesgo, VP Periodic y Volumen de Respuesta
+
+**Cambios:**
+1. **Órdenes:** tamaño por monto fijo o por capital arriesgado, y tipo automático como en App 8. Toman entrada, stop y objetivo de la última caja TP/SL libre. Lejos del precio esperan: limit si el precio debe volver, stop si debe avanzar. Lógica en `orderPlan.js`
+2. **Cajas TP/SL:** nacen con 45 px de riesgo, 130 px de ancho y riesgo beneficio 2, sin salirse del gráfico. Se miden en píxeles para verse igual en cualquier marco
+3. **VP Periodic:** traído de App 8, con sesiones en hora UTC. Solo usa velas ya ocurridas y volumen real en sesiones terminadas
+4. **Volumen de Respuesta:** ver la entrada "Volumen de Respuesta con Evidencia"
+5. **Step:** con step automático una vela no pasa de 10 niveles (`maxLevels`). Una vela ancha une niveles y sube su propio step. Un step escrito a mano se respeta hasta 200 niveles
+6. **Footprints:** se dibujan encima de los perfiles y demás indicadores
+7. **Modales:** los de indicadores y el Observador quedaron en modo claro
+8. **Pestaña Estrategia:** eliminada del frontend y del backend. Sus resultados dependían del futuro: detectaba las zonas con todas las velas antes de simular. También se borraron sus 8 estrategias guardadas, que siguen en el historial de git. El panel Zonas no dependía de ella
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "ÓRDENES", "SESIONES" y "ORDER FLOW SOBRE LAS VELAS"
+
+---
+
+### APP 1 (Backtester) - 6 Noviembre 2026: Journal de Trades con Imagen
+
+**Problema:** la imagen de cada trade nunca se pudo ver. El archivo se guardaba, pero al pedirlo `sanitize_filename()` le quitaba el punto y el backend buscaba `order_123png.png`. Además se tomaba al cerrar, y nada llegaba a la sesión sin guardarla a mano.
+
+**Cambios:**
+1. **Imagen de apertura:** se toma al abrir la posición, con indicadores y caja TP/SL. Mercado al crearla, limit y stop al ejecutarse. `OrderManager` ahora emite `tradeOpened` en los dos casos
+2. **Imagen de cierre:** 10 velas después de cerrar (`EXIT_CAPTURE_CANDLES`), con el trade completo encuadrado sin cambiar la vista del usuario. Si la simulación no ha llegado, queda pendiente en `order.exitCaptureAt`, también al cargar la sesión
+3. **Historial:** columna 📸 que abre las imágenes, con Apertura y Cierre. La fila y 📍 siguen llevando a la línea vertical
+4. **Líneas verticales:** salen de las órdenes con `tradeBoundaries()`. Se ven en todos los marcos y vuelven al cargar una sesión. Antes solo existían en el marco activo y se perdían
+5. **Navegación:** va a la ejecución del trade. En una orden limit iba a la hora en que se creó
+6. **Sesión:** cada orden, ejecución, cierre y cancelación se guarda sola con `saveTradeSession()`. La primera operación crea la sesión si no existe. `mergeSession()` conserva nombre, fecha y notas
+7. **Caja TP/SL:** su id queda en `order.tpslBoxId` y al cerrar termina en la hora de salida. `extendTPSLBox()` buscaba el tipo `tpslbox`, pero el tipo real es `tpsl`, así que nunca la encontraba
+
+**IMPORTANTE:** todo dato nuevo de un trade va en la orden. `exportToJSON()` lo lleva a la sesión sin más código.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "JOURNAL DE TRADES"
+
+---
+
+### APP 1 (Backtester) - 6 Noviembre 2026: Indicadores sin Futuro
+
+**Problema:** VWAP, Swing, Rejection, Double Top/Bottom y Range Detection dejaban ver información que todavía no ocurría en la reproducción.
+
+**Cambios:**
+1. **VWAP:** la vela en formación salía de la vela final. En 4h eso anticipaba la dirección del resto de la vela en 81% de los casos. Ahora `_pointFor()` la calcula con lo ya ocurrido
+2. **Swing:** no reconocía los marcos `1m` a `4h` y en 4h usaba 1 hora. Ahora una señal aparece al cerrar la última vela de su derecha
+3. **Rejection:** marcaba la forma final de la vela mientras se formaba. Ahora solo marca velas cerradas y ya no analiza todo el historial en cada dibujo
+4. **Double Top/Bottom:** todos los patrones aparecían 6 velas antes de poder conocerse. El detector entrega `knownAt` y `replacedAt`, y la flecha de entrada espera a que cierre su vela
+5. **Range Detection:** el modal analizaba todas las velas, incluidas las futuras. Ahora recibe las cerradas y se ocultan rangos guardados que terminan después de la hora simulada
+6. **Hora simulada:** Swing y Double Top/Bottom la leen de `priceContext.knownUntil` en cada dibujo. Antes solo la recibía la pestaña activa
+7. **Double Top/Bottom al marcarlo:** calcula con la casilla, sin abrir ⚙️. Antes el precálculo corría cuando los gráficos aún no existían. Si el backend perdió las velas responde `needsCandles` y el indicador las reenvía. El detector ya no copia el historial por cada extremo: 15m completo tarda 0.7 s
+8. **Rejection validado:** ahora sirve en backtesting. Envía las velas cerradas de la hora simulada y el backend valida cada vela solo con niveles cuyo rango ya terminó. Antes pedía velas recientes y el modal nunca le entregaba su configuración. Una simulación no envía alertas al bot
+
+**IMPORTANTE:** un indicador nuevo que mire velas a la derecha debe decir cuándo se conoce cada señal. `allCandles` trae el futuro en backtesting: para calcular se usa `priceContext.knownCandles`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "INDICADORES SIN FUTURO"
+
+---
+
+### APP 1 (Backtester) - 6 Noviembre 2026: Observador + Parámetros de Order Flow y FVG
+
+**Problema:** faltaba poder cambiar step, imbalances y FVG, y faltaba medir cada operación manual contra la regla del laboratorio.
+
+**Cambios:**
+1. **Modal de Order Flow:** step por marco, ratio, comparación por nivel o diagonal, volumen mínimo, stacked, qué se muestra y zoom. El ⚙️ está junto al indicador. Aplica a todos los marcos y se guarda por símbolo
+2. **Modal de FVG:** tamaño mínimo, cuándo deja de estar abierto, edad máxima, colores y opacidad
+3. **Observador:** cada orden queda en `OrderFlowData/observer/journal.jsonl` con hora simulada, marco, perfiles, marcas y la lectura de la regla en ese minuto: contexto, movimiento, zona, OI y volumen
+4. **Lectura oculta:** el backend no entrega la lectura hasta que la orden se cierra o se cancela. Ahí la pestaña 🔭 Observador muestra en qué coincidieron
+5. **Informe:** qué condiciones se repiten, con y sin cada una, tú contra la regla, zona contra azar y mejores contra peores. Avisa si la muestra es pequeña
+6. **Fecha oculta:** opción al iniciar. Elige un día al azar con trades descargados y muestra días relativos
+7. **Retrocesos:** una orden creada después de retroceder el tiempo queda marcada y el informe la excluye por defecto
+
+**IMPORTANTE:** `backend/observer.py` repite `readAt()` de `research/lab/engine.js`. Si cambia la regla, hay que cambiar los dos y correr `observer_parity.py`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "OBSERVADOR"
+
+---
+
 ### APP 1 (Backtester) - 6 Noviembre 2026: Reproducción sin Futuro + Footprints Reales sobre las Velas
 
 **Problema:** la reproducción dejaba ver el futuro, la vista seguía 35% de pantalla detrás de la hora simulada y el order flow usaba un archivo de un mes. App 1 pasa a ser el puesto de trabajo manual, con los footprints de App 9 sobre las velas.

@@ -20,8 +20,11 @@ import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator"; // 🎯 Zone De
 import OIVolumeConfluenceIndicator from "./OIVolumeConfluenceIndicator"; // 🎯 OI-Volume Confluence
 import OrderFlowIndicator from "./OrderFlowIndicator"; // 🎯 Order Flow (Footprints)
 import FVGIndicator from "./FVGIndicator";
+import VolumeProfilePeriodicIndicator from "./VolumeProfilePeriodicIndicator";
+import ResponseVolumeIndicator from "./ResponseVolumeIndicator";
+import { SessionProfiles } from "./sessionProfile.js";
+import { MIN_PANEL_HEIGHT, clearPanelLayout, movePanel, orderPanels, panelLayout, savePanelLayout } from "./panelLayout.js";
 
-const MIN_PANEL_HEIGHT = 48; // Por debajo de esto un panel ya no se alcanza a leer
 
 class IndicatorManager {
   constructor(symbol, interval, days = 30) {
@@ -30,6 +33,7 @@ class IndicatorManager {
     this.days = days;
     this.indicators = [];
     this.heightScale = 1.0;
+    this.panelLayout = panelLayout(symbol);
     this.fixedRangeProfiles = [];
     this.fixedRangeIndicators = []; // ✅ Instancias de fixed ranges
 
@@ -80,6 +84,12 @@ class IndicatorManager {
 
     // 🎯 Crear indicador de Order Flow con fecha de inicio de simulación
     this.orderFlowIndicator = new OrderFlowIndicator(this.symbol, this.interval, this.days, backtestingMode, simulationStartTime);
+    this.fvgIndicator = new FVGIndicator(this.symbol, this.interval, this.days);
+    const sessionProfiles = new SessionProfiles(this.symbol);
+    this.vpPeriodicIndicator = new VolumeProfilePeriodicIndicator(this.symbol, this.interval, this.days, sessionProfiles);
+    this.responseVolumeIndicator = new ResponseVolumeIndicator(this.symbol, this.interval, this.days);
+    const doubleTopBottomIndicator = new DoubleTopBottomIndicator(this.symbol, this.interval, this.days, { backtestingMode });
+    doubleTopBottomIndicator.requestRedraw = () => this.requestRedraw?.();
     volumeIndicator.setDeltaSource(this.orderFlowIndicator);
 
     this.indicators = [
@@ -88,15 +98,17 @@ class IndicatorManager {
       new CVDIndicator(this.symbol, this.interval, this.days),
       this.openInterestIndicator,
       confluenceIndicator, // 🎯 OI-Volume Confluence
-      new RejectionPatternIndicator(this.symbol, this.interval, this.days),
-      new DoubleTopBottomIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
+      new RejectionPatternIndicator(this.symbol, this.interval, this.days, backtestingMode),
+      doubleTopBottomIndicator,
       this.supportResistanceIndicator,
       this.supportResistance2Indicator,
       new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       new SwingDetectorIndicator(this.symbol, this.interval, this.days), // 🎯 Swing High/Low
       this.zoneVisualizer, // 🎯 Zone Visualizer (Zone Detector 2.0)
       this.orderFlowIndicator, // 🎯 Order Flow (Footprints)
-      new FVGIndicator(this.symbol, this.interval, this.days)
+      this.fvgIndicator,
+      this.vpPeriodicIndicator,
+      this.responseVolumeIndicator
     ];
 
     // Habilitar el indicador de patrones por defecto
@@ -104,6 +116,7 @@ class IndicatorManager {
     if (patternIndicator) {
       patternIndicator.enabled = true;
       patternIndicator.setShowMode('all'); // Mostrar todos los patrones por defecto
+      patternIndicator.getRangeProfile = (rangeId) => this.fixedRangeIndicators.find(item => item.rangeId === rangeId)?.profile;
     }
 
     // 🎯 Conectar SwingDetector con VWAPIndicator para el filtro VWAP
@@ -263,9 +276,12 @@ class IndicatorManager {
    * 🎯 NUEVO: Actualiza estados de indicadores SIN recrear el IndicatorManager
    * @param {Object} indicatorStates - Objeto con estados {indicatorName: true/false}
    * @param {boolean} backtestingMode - Si está en modo backtesting
+   * @param {Array} candles - Velas del marco, para los indicadores que se calculan al activarse
    */
-  async updateIndicatorStates(indicatorStates, backtestingMode = false) {
+  async updateIndicatorStates(indicatorStates, backtestingMode = false, candles = null) {
     console.log(`[${this.symbol}] 🔄 Actualizando estados de indicadores:`, JSON.stringify(indicatorStates));
+
+    if (candles?.length > 0) this.allCandles = candles;
 
     const promises = [];
 
@@ -353,6 +369,12 @@ class IndicatorManager {
               promises.push(indicator.fetchData());
             }
           }
+          // DTB en backtesting: una sesión restaurada lo trae activo sin haberlo calculado
+          else if (indicator.name === "Double Top/Bottom") {
+            if (!indicator.candlesSentToBackend && !indicator.loading && this.allCandles?.length > 0) {
+              promises.push(indicator.precalculateWithCandles(this.allCandles));
+            }
+          }
           // Rejection Patterns: verificar si tiene patrones
           else if (indicator.name === "Rejection Patterns") {
             if (!indicator.patterns || indicator.patterns.length === 0) {
@@ -396,6 +418,11 @@ class IndicatorManager {
   async applyConfig(name, config, candles = null, playbackStartTime = null) {
     const indicator = this.indicators.find(ind => ind.name === name);
     if (indicator && indicator.applyConfig) {
+      // Una altura escrita en el modal reemplaza la que se arrastró en el gráfico
+      if (config?.height !== undefined && config.height !== indicator.height) {
+        delete this.panelLayout.heights[name];
+        this.savePanels();
+      }
       // 🎯 Si se proporcionan velas, usarlas y actualizarlas en allCandles
       if (candles && candles.length > 0) {
         this.allCandles = candles;
@@ -534,8 +561,14 @@ class IndicatorManager {
     return this.zoneVisualizer ? this.zoneVisualizer.getZones() : [];
   }
 
+  // Altura pedida para un panel: la que eligió el usuario o la de fábrica
+  getRequestedHeight(indicator) {
+    const height = indicator.getHeight();
+    return height > 0 ? this.panelLayout.heights[indicator.name] ?? height : 0;
+  }
+
   getTotalHeight() {
-    return this.indicators.reduce((sum, ind) => sum + ind.getHeight(), 0);
+    return this.indicators.reduce((sum, ind) => sum + this.getRequestedHeight(ind), 0);
   }
 
   setHeightScale(scale) {
@@ -544,7 +577,7 @@ class IndicatorManager {
 
   // Altura de un panel con la escala actual, sin bajar de lo legible
   getPanelHeight(indicator) {
-    const height = indicator.getHeight();
+    const height = this.getRequestedHeight(indicator);
     if (height <= 0) return 0;
     return Math.max(Math.min(height, MIN_PANEL_HEIGHT), Math.floor(height * this.heightScale));
   }
@@ -625,6 +658,11 @@ class IndicatorManager {
         return true;
       }
 
+      // Un rango que termina después de la hora simulada viene de un análisis con velas posteriores
+      if (priceContext?.knownCandles && profile.endTimestamp > priceContext.knownUntil) {
+        return false;
+      }
+
       // Si es auto-detectado, verificar timeframe
       if (showOtherTimeframes) {
         return true; // Mostrar todos los timeframes
@@ -645,70 +683,46 @@ class IndicatorManager {
     });
   }
 
-  /**
-   * 🎯 NUEVO: Obtener indicadores renderizables (tienen render() y altura > 0)
-   * Usado por IndicatorPanel para el sistema de resize/reorder
-   */
-  getRenderableIndicators() {
-    return this.indicators.filter(indicator => {
-      const indicatorHeight = indicator.getHeight ? indicator.getHeight() : indicator.height || 0;
-      return indicator.enabled && indicator.render && indicatorHeight > 0;
+  /** Paneles a la vista, en el orden elegido */
+  getPanels() {
+    const panels = this.indicators.filter(indicator => indicator.enabled && indicator.render && indicator.getHeight() > 0);
+    const names = orderPanels(panels.map(panel => panel.name), this.panelLayout.order);
+    return names.map(name => panels.find(panel => panel.name === name));
+  }
+
+  /** Lugar de cada panel, apilados desde top */
+  getPanelRects(top) {
+    let y = top;
+    return this.getPanels().map(indicator => {
+      const rect = { name: indicator.name, top: y, height: this.getPanelHeight(indicator), requested: this.getRequestedHeight(indicator) };
+      y += rect.height;
+      return rect;
     });
   }
 
-  /**
-   * 🎯 MODIFICADO: Ahora soporta layout dinámico opcional
-   * Si no se proporciona layout, usa el comportamiento por defecto (apilamiento secuencial)
-   * @param {CanvasRenderingContext2D} ctx - Contexto del canvas
-   * @param {Object} bounds - Límites del área de renderizado
-   * @param {Array} visibleCandles - Velas visibles
-   * @param {Object} layout - OPCIONAL: { order: [], heights: {} } para sistema dinámico
-   */
-  renderIndicators(ctx, bounds, visibleCandles, layout = null) {
-    let currentY = bounds.y;
+  movePanel(name, step) {
+    const names = this.indicators.map(indicator => indicator.name);
+    const visible = this.getPanels().map(panel => panel.name);
+    this.panelLayout.order = movePanel(this.panelLayout.order, names, visible, name, step);
+    this.savePanels();
+  }
 
-    // 🎯 MODO 1: Con layout dinámico (resize/reorder habilitado)
-    if (layout && layout.order && layout.heights) {
-      for (const indicatorName of layout.order) {
-        const indicator = this.indicators.find(ind => ind.name === indicatorName);
-        if (!indicator || !indicator.enabled || !indicator.render) continue;
+  setPanelHeight(name, height) {
+    this.panelLayout.heights[name] = height;
+  }
 
-        const indicatorHeight = layout.heights[indicatorName] || 80;
-        const indicatorBounds = {
-          x: bounds.x,
-          y: currentY,
-          width: bounds.width,
-          height: indicatorHeight
-        };
+  savePanels() {
+    savePanelLayout(this.symbol);
+  }
 
-        try {
-          indicator.render(ctx, indicatorBounds, visibleCandles);
-        } catch (error) {
-          console.error(`[${this.symbol}] Error renderizando ${indicatorName}:`, error);
-        }
+  resetPanels() {
+    clearPanelLayout(this.symbol);
+  }
 
-        currentY += indicatorHeight;
-      }
-    }
-    // 🎯 MODO 2: Comportamiento por defecto (sin layout dinámico)
-    else {
-      this.indicators.forEach(indicator => {
-        // 🎯 FIX: Verificar si el indicador necesita panel usando getHeight()
-        // Esto permite que indicadores como VWAP tengan overlay Y panel (barras de volatilidad)
-        const indicatorHeight = this.getPanelHeight(indicator);
-
-        if (indicator.enabled && indicator.render && indicatorHeight > 0) {
-          const indicatorBounds = {
-            x: bounds.x,
-            y: currentY,
-            width: bounds.width,
-            height: indicatorHeight
-          };
-
-          indicator.render(ctx, indicatorBounds, visibleCandles);
-          currentY += indicatorHeight;
-        }
-      });
+  renderIndicators(ctx, bounds, visibleCandles) {
+    for (const { name, top, height } of this.getPanelRects(bounds.y)) {
+      const indicator = this.indicators.find(item => item.name === name);
+      indicator.render(ctx, { x: bounds.x, y: top, width: bounds.width, height }, visibleCandles);
     }
   }
 
@@ -1286,6 +1300,18 @@ class IndicatorManager {
   /**
    * Obtiene el indicador de Order Flow
    */
+  getFVGIndicator() {
+    return this.fvgIndicator;
+  }
+
+  getVPPeriodicIndicator() {
+    return this.vpPeriodicIndicator;
+  }
+
+  getResponseVolumeIndicator() {
+    return this.responseVolumeIndicator;
+  }
+
   getOrderFlowIndicator() {
     return this.orderFlowIndicator;
   }

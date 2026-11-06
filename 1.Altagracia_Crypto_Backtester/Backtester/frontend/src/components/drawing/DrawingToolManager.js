@@ -7,7 +7,7 @@ import VerticalLine from './shapes/VerticalLine';
 import Rectangle from './shapes/Rectangle';
 import FibonacciRetracement from './shapes/FibonacciRetracement';
 import MeasurementShape from './shapes/MeasurementShape';
-import TPSLBox from './shapes/TPSLBox';
+import TPSLBox, { defaultBoxSize } from './shapes/TPSLBox';
 import TextBox from './shapes/TextBox';
 
 class DrawingToolManager {
@@ -130,7 +130,7 @@ class DrawingToolManager {
     }
 
     if (this.currentTool === 'tpsl') {
-      const box = new TPSLBox(price, time, 'long');
+      const box = new TPSLBox(price, time, 'long', defaultBoxSize(scaleConverter, y, time));
       this.addShape(box);
       this.saveToHistory();
       // NO cambiar tool, permitir dibujar múltiples cajas
@@ -138,7 +138,7 @@ class DrawingToolManager {
     }
 
     if (this.currentTool === 'tpsl-short') {
-      const box = new TPSLBox(price, time, 'short');
+      const box = new TPSLBox(price, time, 'short', defaultBoxSize(scaleConverter, y, time));
       this.addShape(box);
       this.saveToHistory();
       // NO cambiar tool, permitir dibujar múltiples cajas

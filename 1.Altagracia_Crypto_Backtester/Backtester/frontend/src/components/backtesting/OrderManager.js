@@ -35,7 +35,8 @@ class OrderManager {
       tradeOpened: [],
       tradeClosed: [],
       balanceChanged: [],
-      orderExecuted: []
+      orderExecuted: [],
+      orderCancelled: []
     };
 
     console.log('[OrderManager] Inicializado con balance:', initialBalance);
@@ -124,7 +125,12 @@ class OrderManager {
       screenshotPath: null, // Ruta relativa: "session_123/order_456.png"
       screenshotCaptured: false, // Flag indicando si se capturó screenshot
       screenshotTimestamp: null, // Timestamp de cuando se capturó
-      screenshotMetadata: null // Metadata: { width, height, size }
+      screenshotMetadata: null, // Metadata: { width, height, size }
+      exitCaptureAt: null, // Hora simulada en que toca la imagen de cierre
+      exitScreenshotPath: null, // Imagen varias velas después de cerrar
+      exitScreenshotTimestamp: null,
+      exitScreenshotMetadata: null,
+      tpslBoxId: null // Caja TP/SL del gráfico, para extenderla al cerrar
     };
 
     // 🎯 NUEVO: Para market orders, ejecutar inmediatamente
@@ -402,6 +408,12 @@ class OrderManager {
     if (this.onOrderExecuted) {
       this.onOrderExecuted(order);
     }
+
+    this.emit('tradeOpened', {
+      order,
+      balance: this.getBalance(),
+      timestamp: currentTime
+    });
   }
 
   /**
@@ -430,6 +442,8 @@ class OrderManager {
       side: order.side,
       entryPrice: order.entryPrice
     });
+
+    this.emit('orderCancelled', { order });
 
     return true;
   }

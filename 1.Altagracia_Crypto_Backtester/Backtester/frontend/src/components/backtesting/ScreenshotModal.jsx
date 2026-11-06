@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../config.js';
+import { EXIT_CAPTURE_CANDLES } from './tradeJournal.js';
 
-const API_BASE_URL = 'http://localhost:9000';
-
-const ScreenshotModal = ({ screenshotPath, orderId, side, pnl, onClose }) => {
+const ScreenshotModal = ({ screenshotPath, exitScreenshotPath, orderId, side, pnl, onClose }) => {
+  const [view, setView] = useState(screenshotPath ? 'entry' : 'exit');
+  const activePath = view === 'entry' ? screenshotPath : exitScreenshotPath;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -11,7 +13,7 @@ const ScreenshotModal = ({ screenshotPath, orderId, side, pnl, onClose }) => {
    * Carga la imagen desde el backend
    */
   useEffect(() => {
-    if (!screenshotPath) {
+    if (!activePath) {
       setError('Ruta de screenshot no válida');
       setLoading(false);
       return;
@@ -25,9 +27,9 @@ const ScreenshotModal = ({ screenshotPath, orderId, side, pnl, onClose }) => {
         // Construir URL completa
         // screenshotPath tiene formato: "sessionId/filename.png"
         // Necesitamos separarlo para el endpoint: /api/screenshots/session/{sessionId}/{filename}
-        const pathParts = screenshotPath.split('/');
+        const pathParts = activePath.split('/');
         if (pathParts.length !== 2) {
-          throw new Error(`Formato de screenshotPath inválido: ${screenshotPath}`);
+          throw new Error(`Formato de screenshotPath inválido: ${activePath}`);
         }
         const [sessionId, filename] = pathParts;
         const url = `${API_BASE_URL}/api/screenshots/session/${sessionId}/${filename}`;
@@ -54,7 +56,7 @@ const ScreenshotModal = ({ screenshotPath, orderId, side, pnl, onClose }) => {
     };
 
     loadImage();
-  }, [screenshotPath]);
+  }, [activePath]);
 
   /**
    * Maneja el clic en el overlay (cerrar modal)
@@ -72,13 +74,20 @@ const ScreenshotModal = ({ screenshotPath, orderId, side, pnl, onClose }) => {
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
+        e.stopPropagation(); // Escape también oculta el panel de trading
         onClose();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.stopPropagation(); // Las flechas también mueven la simulación
+        e.preventDefault();
+        if (screenshotPath && exitScreenshotPath) {
+          setView(current => (current === 'entry' ? 'exit' : 'entry'));
+        }
       }
     };
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [onClose]);
+  }, [onClose, screenshotPath, exitScreenshotPath]);
 
   /**
    * Determina el color del badge según el PnL
@@ -118,6 +127,28 @@ const ScreenshotModal = ({ screenshotPath, orderId, side, pnl, onClose }) => {
               }}
             >
               {pnl >= 0 ? '+' : ''}{pnl.toFixed(2)} USD
+            </span>
+            <span style={{ display: 'flex', gap: '6px', marginLeft: '16px' }}>
+              {[['entry', 'Apertura', screenshotPath], ['exit', 'Cierre', exitScreenshotPath]].map(([key, label, path]) => (
+                <button
+                  key={key}
+                  disabled={!path}
+                  onClick={() => setView(key)}
+                  title={path ? '← → cambia de imagen' : `Se toma ${EXIT_CAPTURE_CANDLES} velas después de cerrar`}
+                  style={{
+                    background: view === key ? '#2962ff' : '#e0e0e0',
+                    color: view === key ? 'white' : '#333',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '3px 12px',
+                    fontSize: '13px',
+                    cursor: path ? 'pointer' : 'not-allowed',
+                    opacity: path ? 1 : 0.5
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
             </span>
           </div>
           <button className="screenshot-modal-close" onClick={onClose}>

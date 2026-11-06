@@ -21,6 +21,7 @@ class ReferenceLevel:
     source_id: str  # ID of the source context
     source_type: str  # "VOLUME_PROFILE_DYNAMIC", "VOLUME_PROFILE_FIXED", "RANGE_DETECTOR"
     weight: float  # Weight in confidence calculation (0.0 - 1.0)
+    known_from: Optional[int] = None  # Ultima vela que usa el nivel: antes no se conocia
 
 
 @dataclass
@@ -47,7 +48,8 @@ class RejectionDetector:
         symbol: str,
         candles: List[Dict],
         config: Dict,
-        reference_contexts: List[Dict]
+        reference_contexts: List[Dict],
+        known_levels_only: bool = False
     ) -> List[RejectionPattern]:
         """
         Detects rejection patterns validated by reference contexts
@@ -57,6 +59,7 @@ class RejectionDetector:
             candles: List of OHLCV candles
             config: Pattern detection configuration
             reference_contexts: List of active reference contexts
+            known_levels_only: En backtesting, cada vela solo se valida con niveles ya formados
 
         Returns:
             List of detected patterns with validation
@@ -74,10 +77,20 @@ class RejectionDetector:
                   f"Detection disabled to avoid false positives.")
             return []
 
+        all_levels = reference_levels
+
         # 2. Detect patterns in each candle
         for i in range(1, len(candles)):  # Start at 1 to have at least 1 previous candle
             candle = candles[i]
             prev_candles = candles[max(0, i-20):i]  # 20 previous candles for context
+
+            if known_levels_only:
+                reference_levels = [
+                    level for level in all_levels
+                    if level.known_from is not None and level.known_from <= candle['timestamp']
+                ]
+                if not reference_levels:
+                    continue
 
             # Detect each pattern type if enabled
             if config.get('patterns', {}).get('hammer', {}).get('enabled', False):
@@ -155,18 +168,20 @@ class RejectionDetector:
 
             # Get metadata which should contain the actual levels
             metadata = context.get('metadata', {})
+            known_from = metadata.get('endTimestamp')
 
             if context_type in ["VOLUME_PROFILE_DYNAMIC", "VOLUME_PROFILE_FIXED"]:
                 # Extract VP levels from metadata
                 for level_type in context.get('levels', ['POC', 'VAH', 'VAL']):
                     level_key = level_type.lower()
-                    if level_key in metadata:
+                    if metadata.get(level_key) is not None:
                         levels.append(ReferenceLevel(
                             price=float(metadata[level_key]),
                             type=level_type,
                             source_id=context_id,
                             source_type=context_type,
-                            weight=weight
+                            weight=weight,
+                            known_from=known_from
                         ))
 
             elif context_type == "RANGE_DETECTOR":
@@ -180,21 +195,24 @@ class RejectionDetector:
                         type='TOP',
                         source_id=context_id,
                         source_type=context_type,
-                        weight=weight
+                        weight=weight,
+                        known_from=known_from
                     ))
                     levels.append(ReferenceLevel(
                         price=bottom,
                         type='BOTTOM',
                         source_id=context_id,
                         source_type=context_type,
-                        weight=weight
+                        weight=weight,
+                        known_from=known_from
                     ))
                     levels.append(ReferenceLevel(
                         price=(top + bottom) / 2,
                         type='MIDDLE',
                         source_id=context_id,
                         source_type=context_type,
-                        weight=weight * 0.7  # Lower weight for middle level
+                        weight=weight * 0.7,  # Lower weight for middle level
+                        known_from=known_from
                     ))
 
         return levels

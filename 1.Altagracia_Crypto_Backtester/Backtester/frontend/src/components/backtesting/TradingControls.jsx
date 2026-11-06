@@ -1,14 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import OrderConfirmationModal from './OrderConfirmationModal';
+import ObserverMarks from './ObserverMarks';
+import { emptyMarks } from './observer.js';
+import { autoOrderType, orderPreview, orderQuantity, priceAtPercent } from './orderPlan.js';
 
-const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreated }) => {
-  const [orderType, setOrderType] = useState('market');
+const SIZE_MODE_KEY = 'backtesting_order_size_mode';
+
+function savedSizeMode() {
+  try {
+    return localStorage.getItem(SIZE_MODE_KEY) === 'risk' ? 'risk' : 'fixed';
+  } catch {
+    return 'fixed';
+  }
+}
+
+const TradingControls = ({ orderManager, currentPrice, currentTime, chartBox, onOrderCreated }) => {
+  const [orderType, setOrderType] = useState('auto');
   const [orderSide, setOrderSide] = useState('long');
+  const [sizeMode, setSizeMode] = useState(savedSizeMode); // 'fixed' o 'risk'
+  const [useChartBox, setUseChartBox] = useState(true);
+  const [riskUSDT, setRiskUSDT] = useState('10');
   const [quantityUSDT, setQuantityUSDT] = useState('100'); // 🎯 NUEVO: Cantidad en USDT en lugar de monedas
   const [entryPrice, setEntryPrice] = useState('');
   const [stopLossPercent, setStopLossPercent] = useState('');
   const [takeProfitPercent, setTakeProfitPercent] = useState('');
   const [notes, setNotes] = useState('');
+  const [marks, setMarks] = useState(emptyMarks);
   const [useCurrentPrice, setUseCurrentPrice] = useState(true);
 
   // 🎯 Estado para modal de confirmación
@@ -44,6 +61,31 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
     }
   }, [orderType]);
 
+  // La orden sale de la caja del gráfico o, sin caja, de los campos del panel
+  const box = useChartBox ? chartBox : null;
+  const side = box ? box.side : orderSide;
+  const entry = box ? box.entryPrice : parseFloat(entryPrice);
+  const stopLoss = box ? box.slPrice : priceAtPercent(entry, side, stopLossPercent, false);
+  const takeProfit = box ? box.tpPrice : priceAtPercent(entry, side, takeProfitPercent, true);
+  const finalType = orderType === 'auto' && currentPrice && entry > 0 ? autoOrderType(entry, currentPrice, side) : orderType;
+  const fillPrice = finalType === 'market' ? currentPrice : entry;
+  const quantity = orderQuantity({
+    mode: sizeMode,
+    amount: parseFloat(sizeMode === 'risk' ? riskUSDT : quantityUSDT),
+    entry: fillPrice,
+    stopLoss
+  });
+  const preview = orderPreview({ quantity, entry: fillPrice, stopLoss, takeProfit });
+
+  const changeSizeMode = (mode) => {
+    setSizeMode(mode);
+    try {
+      localStorage.setItem(SIZE_MODE_KEY, mode);
+    } catch {
+      // Sin almacenamiento el modo sigue vigente hasta recargar
+    }
+  };
+
   /**
    * Maneja la creación de una orden
    */
@@ -66,93 +108,75 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       return;
     }
 
-    // 🎯 NUEVO: Calcular cantidad de monedas desde USDT
-    const usdtAmount = parseFloat(quantityUSDT);
-    const price = parseFloat(entryPrice);
-    const qty = usdtAmount / price; // Convertir USDT a cantidad de monedas
-
-    // 🎯 NUEVO: Convertir porcentajes a precios USDT
-    const slPercent = stopLossPercent ? parseFloat(stopLossPercent) : null;
-    const tpPercent = takeProfitPercent ? parseFloat(takeProfitPercent) : null;
-
-    let sl = null;
-    let tp = null;
-
-    if (slPercent !== null) {
-      sl = orderSide === 'long'
-        ? price * (1 - slPercent / 100)
-        : price * (1 + slPercent / 100);
-    }
-
-    if (tpPercent !== null) {
-      tp = orderSide === 'long'
-        ? price * (1 + tpPercent / 100)
-        : price * (1 - tpPercent / 100);
-    }
-
     // Validaciones
-    if (isNaN(qty) || qty <= 0) {
-      alert('Cantidad inválida');
-      return;
-    }
-
-    if (isNaN(price) || price <= 0) {
+    if (isNaN(entry) || entry <= 0) {
       alert('Precio de entrada inválido');
       return;
     }
 
-    if (slPercent !== null && (isNaN(slPercent) || slPercent <= 0)) {
+    if (!box && stopLossPercent && !stopLoss) {
       alert('Stop Loss % inválido');
       return;
     }
 
-    if (tpPercent !== null && (isNaN(tpPercent) || tpPercent <= 0)) {
+    if (!box && takeProfitPercent && !takeProfit) {
       alert('Take Profit % inválido');
       return;
     }
 
-    // Ya no necesitamos validar SL/TP vs precio porque la conversión % siempre
-    // respeta la dirección correcta (long: SL < price, TP > price, etc.)
+    if (sizeMode === 'risk' && !stopLoss) {
+      alert('Para calcular por riesgo la orden necesita un Stop Loss');
+      return;
+    }
+
+    if (quantity <= 0) {
+      alert('Cantidad inválida');
+      return;
+    }
 
     // Crear orden
     console.log('[TradingControls] Creando orden con:', {
-      entryPrice: price,
+      type: finalType,
+      entryPrice: entry,
       currentPrice: currentPrice,
       currentTime: new Date(currentTime).toISOString(),
-      side: orderSide,
-      quantity: qty
+      side,
+      quantity
     });
 
     const order = orderManager.createOrder({
-      type: orderType,
-      side: orderSide,
-      quantity: qty,
-      entryPrice: price,
+      type: finalType,
+      side,
+      quantity,
+      entryPrice: fillPrice,
       currentTime,
       currentPrice, // 🎯 NUEVO: Pasar precio actual del mercado
-      stopLoss: sl,
-      takeProfit: tp,
+      stopLoss,
+      takeProfit,
       notes
     });
+    order.marks = marks;
+    order.tpslBoxId = box?.id ?? null;
 
     console.log('[TradingControls] Orden creada:', order);
 
     // 🎯 Mostrar modal de confirmación SOLO para market orders
     // Las limit orders mostrarán el popup cuando se ejecuten
-    if (orderType === 'market') {
+    if (finalType === 'market') {
       setLastCreatedOrder(order);
       setShowConfirmation(true);
     } else {
       // Para limit/stop, mostrar mensaje en consola
-      console.log(`[TradingControls] Orden ${orderType.toUpperCase()} pendiente creada - Se ejecutará cuando el precio llegue a $${price.toFixed(2)}`);
+      console.log(`[TradingControls] Orden ${finalType.toUpperCase()} pendiente creada - Se ejecutará cuando el precio llegue a $${entry.toFixed(2)}`);
     }
 
     if (onOrderCreated) {
       onOrderCreated(order);
     }
 
-    // Limpiar notas
+    // Limpiar notas y marcas
     setNotes('');
+    setMarks(emptyMarks());
   };
 
   /**
@@ -206,24 +230,50 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       <div className="control-section">
         <label>Tipo de Orden</label>
         <select value={orderType} onChange={(e) => setOrderType(e.target.value)}>
+          <option value="auto">Automática</option>
           <option value="market">Market</option>
           <option value="limit">Limit</option>
           <option value="stop">Stop</option>
         </select>
+        {orderType === 'auto' && (
+          <div className="price-hint">Se ejecutará como {finalType.toUpperCase()}. Si la entrada está a más de 0.1% del precio, espera ese precio.</div>
+        )}
       </div>
+
+      {chartBox && (
+        <div className="control-section">
+          <label>
+            Caja TP/SL del gráfico
+            <input
+              type="checkbox"
+              checked={useChartBox}
+              onChange={(e) => setUseChartBox(e.target.checked)}
+              style={{ marginLeft: '10px' }}
+            />
+            <span style={{ fontSize: '12px', marginLeft: '5px' }}>Usarla</span>
+          </label>
+          {box && (
+            <div className="price-hint">
+              {side.toUpperCase()} · Entrada ${box.entryPrice.toFixed(2)} · SL ${box.slPrice.toFixed(2)} · TP ${box.tpPrice.toFixed(2)}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="control-section">
         <label>Lado</label>
         <div className="side-buttons">
           <button
-            className={`btn-side ${orderSide === 'long' ? 'btn-long active' : 'btn-long'}`}
+            className={`btn-side ${side === 'long' ? 'btn-long active' : 'btn-long'}`}
             onClick={() => setOrderSide('long')}
+            disabled={!!box}
           >
             LONG 📈
           </button>
           <button
-            className={`btn-side ${orderSide === 'short' ? 'btn-short active' : 'btn-short'}`}
+            className={`btn-side ${side === 'short' ? 'btn-short active' : 'btn-short'}`}
             onClick={() => setOrderSide('short')}
+            disabled={!!box}
           >
             SHORT 📉
           </button>
@@ -231,16 +281,48 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       </div>
 
       <div className="control-section">
-        <label>Cantidad (USDT)</label>
-        <input
-          type="number"
-          step="10"
-          value={quantityUSDT}
-          onChange={(e) => setQuantityUSDT(e.target.value)}
-          placeholder="100"
-        />
+        <label>Tamaño de la orden</label>
+        <div className="quick-sltp">
+          {[['fixed', 'Monto fijo'], ['risk', 'Por riesgo']].map(([mode, label]) => (
+            <button
+              key={mode}
+              className="btn-quick"
+              onClick={() => changeSizeMode(mode)}
+              style={sizeMode === mode ? { background: '#2962ff', color: 'white' } : undefined}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {sizeMode === 'fixed' ? (
+          <input
+            type="number"
+            step="10"
+            value={quantityUSDT}
+            onChange={(e) => setQuantityUSDT(e.target.value)}
+            placeholder="Monto en USDT"
+          />
+        ) : (
+          <input
+            type="number"
+            step="1"
+            value={riskUSDT}
+            onChange={(e) => setRiskUSDT(e.target.value)}
+            placeholder="USDT a arriesgar"
+          />
+        )}
+        <div className="price-hint">
+          {quantity > 0
+            ? `Inversión $${preview.investment.toFixed(2)}`
+            : (sizeMode === 'risk' ? 'Por riesgo necesita un Stop Loss' : 'Escribe el monto')}
+          {preview.loss !== null && quantity > 0 && ` · Pierde $${preview.loss.toFixed(2)}`}
+          {preview.profit !== null && quantity > 0 && ` · Gana $${preview.profit.toFixed(2)}`}
+          {preview.ratio !== null && quantity > 0 && ` · R/R 1:${preview.ratio.toFixed(2)}`}
+        </div>
       </div>
 
+      {!box && (
+      <>
       <div className="control-section">
         <label>
           Precio de Entrada
@@ -273,14 +355,11 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
           min="0"
           value={stopLossPercent}
           onChange={(e) => setStopLossPercent(e.target.value)}
-          placeholder="Ej: 2 (= 2%)"
+          placeholder="Ej: 0.5 (= 0.5%)"
         />
         {stopLossPercent && entryPrice && (
           <div className="price-hint">
-            ${(orderSide === 'long'
-              ? parseFloat(entryPrice) * (1 - parseFloat(stopLossPercent) / 100)
-              : parseFloat(entryPrice) * (1 + parseFloat(stopLossPercent) / 100)
-            ).toFixed(2)}
+            ${(stopLoss || 0).toFixed(2)}
           </div>
         )}
       </div>
@@ -293,14 +372,11 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
           min="0"
           value={takeProfitPercent}
           onChange={(e) => setTakeProfitPercent(e.target.value)}
-          placeholder="Ej: 4 (= 4%)"
+          placeholder="Ej: 1 (= 1%)"
         />
         {takeProfitPercent && entryPrice && (
           <div className="price-hint">
-            ${(orderSide === 'long'
-              ? parseFloat(entryPrice) * (1 + parseFloat(takeProfitPercent) / 100)
-              : parseFloat(entryPrice) * (1 - parseFloat(takeProfitPercent) / 100)
-            ).toFixed(2)}
+            ${(takeProfit || 0).toFixed(2)}
           </div>
         )}
       </div>
@@ -308,17 +384,19 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
       <div className="control-section">
         <label>SL/TP Rápido</label>
         <div className="quick-sltp">
+          <button onClick={() => handleAutoSLTP(0.5, 1)} className="btn-quick">
+            SL 0.5% / TP 1%
+          </button>
+          <button onClick={() => handleAutoSLTP(1, 2)} className="btn-quick">
+            SL 1% / TP 2%
+          </button>
           <button onClick={() => handleAutoSLTP(2, 4)} className="btn-quick">
             SL 2% / TP 4%
           </button>
-          <button onClick={() => handleAutoSLTP(3, 6)} className="btn-quick">
-            SL 3% / TP 6%
-          </button>
-          <button onClick={() => handleAutoSLTP(5, 10)} className="btn-quick">
-            SL 5% / TP 10%
-          </button>
         </div>
       </div>
+      </>
+      )}
 
       <div className="control-section">
         <label>Notas (Opcional)</label>
@@ -330,12 +408,14 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, onOrderCreat
         />
       </div>
 
+      <ObserverMarks marks={marks} onChange={setMarks} />
+
       <div className="control-actions">
         <button
-          className={`btn-create-order ${orderSide === 'long' ? 'btn-long' : 'btn-short'}`}
+          className={`btn-create-order ${side === 'long' ? 'btn-long' : 'btn-short'}`}
           onClick={handleCreateOrder}
         >
-          {orderSide === 'long' ? '🟢 COMPRAR (LONG)' : '🔴 VENDER (SHORT)'}
+          {side === 'long' ? '🟢 COMPRAR (LONG)' : '🔴 VENDER (SHORT)'}
         </button>
 
         <button

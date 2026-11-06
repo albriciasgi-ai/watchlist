@@ -1,0 +1,295 @@
+/* Observador: marcas en el panel de trading, lista de órdenes e informe */
+
+.observer-marks-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.observer-marks-row.wrap {
+  flex-wrap: wrap;
+}
+
+.observer-marks-name {
+  width: 22px;
+  font-size: 11px;
+  color: #666;
+}
+
+.observer-chip {
+  padding: 3px 8px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  color: #666;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.observer-chip:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.observer-chip.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: #fff;
+}
+
+.observer-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.observer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.observer-header h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.observer-blind,
+.observer-warning {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.observer-blind {
+  background: #eef0fd;
+  color: #4453b8;
+}
+
+.observer-warning {
+  background: #fff3e0;
+  color: #b25600;
+}
+
+.observer-note {
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  color: #666;
+  font-size: 12px;
+}
+
+.observer-subnote {
+  margin-top: 2px;
+  color: #666;
+  font-size: 11px;
+}
+
+.observer-order {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.observer-order-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
+  text-align: left;
+}
+
+.observer-order-head:hover {
+  background: #f8f9fa;
+}
+
+.observer-side {
+  font-weight: 600;
+}
+
+.observer-side.long,
+.observer-result.win {
+  color: #1a8356;
+}
+
+.observer-side.short,
+.observer-result.loss {
+  color: #d03b3b;
+}
+
+.observer-status {
+  margin-left: auto;
+  color: #666;
+}
+
+.observer-result {
+  font-weight: 600;
+}
+
+.observer-order-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 8px 8px;
+}
+
+.observer-compare {
+  width: 100%;
+  margin-top: 4px;
+  border-collapse: collapse;
+  font-size: 11px;
+  color: #333;
+}
+
+.observer-compare th {
+  padding: 3px 4px;
+  color: #666;
+  font-weight: 500;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.observer-compare td {
+  padding: 4px;
+  vertical-align: top;
+  border-bottom: 1px solid #f0f1f3;
+}
+
+.observer-block {
+  color: #666;
+  width: 72px;
+}
+
+.observer-verdict {
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.observer-verdict.agree {
+  color: #1a8356;
+}
+
+.observer-verdict.differ {
+  color: #d03b3b;
+}
+
+.observer-toast {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #333;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Informe: usa el modal claro de los ajustes de indicadores */
+
+.observer-report {
+  max-width: 900px;
+}
+
+.observer-filters {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  color: #333;
+  font-size: 13px;
+}
+
+.observer-filters select {
+  padding: 6px 8px;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #222;
+}
+
+.observer-filters label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.observer-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.observer-kpis div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.observer-kpis strong {
+  color: #222;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.observer-kpis span {
+  color: #666;
+  font-size: 11px;
+}
+
+.observer-report-note {
+  margin: 10px 0 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.observer-report-warning {
+  margin: 10px 0 0;
+  color: #b25600;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.observer-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #333;
+  font-size: 12px;
+}
+
+.observer-table th {
+  padding: 5px 8px;
+  color: #666;
+  font-weight: 500;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.observer-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid #e8eaed;
+}
+
+.observer-count,
+.observer-empty-cell {
+  color: #666;
+}

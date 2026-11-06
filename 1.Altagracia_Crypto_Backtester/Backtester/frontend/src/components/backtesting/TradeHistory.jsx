@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import ScreenshotModal from './ScreenshotModal';
+import { isBlind, maskDate } from './blindClock.js';
 
 const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
   const [closedOrders, setClosedOrders] = useState([]);
   const [filterSide, setFilterSide] = useState('all'); // 'all', 'long', 'short'
   const [filterResult, setFilterResult] = useState('all'); // 'all', 'win', 'loss'
   const [selectedTradeIndex, setSelectedTradeIndex] = useState(0); // 🎯 NUEVO: Índice del trade seleccionado
+  const [screenshotOrder, setScreenshotOrder] = useState(null); // Trade cuya imagen está abierta
 
   /**
    * Actualiza historial periódicamente
@@ -13,7 +17,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
     if (!orderManager) return;
 
     const updateHistory = () => {
-      setClosedOrders(orderManager.getClosedOrders());
+      setClosedOrders([...orderManager.getClosedOrders()]);
     };
 
     // Actualizar inmediatamente
@@ -30,6 +34,8 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
    */
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (screenshotOrder) return; // Con la imagen abierta las flechas no mueven el gráfico de atrás
+
       // Solo procesar si el modal está visible y hay trades filtrados
       const filteredOrders = getFilteredOrders();
       if (filteredOrders.length === 0) return;
@@ -62,7 +68,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedTradeIndex, closedOrders, filterSide, filterResult, onNavigateToTrade]);
+  }, [selectedTradeIndex, closedOrders, filterSide, filterResult, onNavigateToTrade, screenshotOrder]);
 
   /**
    * 🎯 NUEVO: Resetear índice seleccionado cuando cambian los filtros
@@ -99,6 +105,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
    * Formatea timestamp a fecha legible
    */
   const formatDate = (timestamp) => {
+    if (isBlind()) return maskDate(timestamp);
     const date = new Date(timestamp);
     return date.toLocaleString('es-CO', {
       timeZone: 'America/Bogota',
@@ -221,6 +228,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
                 <th>Cierre</th>
                 <th>Notas</th>
                 <th>📍</th>
+                <th>📸</th>
               </tr>
             </thead>
             <tbody>
@@ -272,6 +280,22 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
                       📍
                     </button>
                   </td>
+                  <td className="trade-screenshot">
+                    {order.screenshotPath || order.exitScreenshotPath ? (
+                      <button
+                        className="screenshot-button"
+                        onClick={(e) => {
+                          e.stopPropagation(); // La fila navega al trade
+                          setScreenshotOrder(order);
+                        }}
+                        title="Ver las imágenes del trade"
+                      >
+                        📸
+                      </button>
+                    ) : (
+                      <span className="no-screenshot" title="Este trade no tiene imagen">—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -279,6 +303,18 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
         </div>
       )}
 
+      {/* El panel lateral encerraría el modal: se monta en el body */}
+      {screenshotOrder && createPortal(
+        <ScreenshotModal
+          screenshotPath={screenshotOrder.screenshotPath}
+          exitScreenshotPath={screenshotOrder.exitScreenshotPath}
+          orderId={screenshotOrder.id}
+          side={screenshotOrder.side}
+          pnl={screenshotOrder.pnl}
+          onClose={() => setScreenshotOrder(null)}
+        />,
+        document.body
+      )}
     </div>
   );
 };

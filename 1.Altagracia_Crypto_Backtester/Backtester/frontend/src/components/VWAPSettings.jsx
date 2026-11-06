@@ -385,7 +385,7 @@ const VWAPSettings = ({
           background: applyGlobally ? '#fff3e0' : '#e3f2fd',
           padding: '12px',
           borderRadius: '8px',
-          border: `2px solid ${applyGlobally ? '#FF9800' : '#2196F3'}`,
+          border: `2px solid ${applyGlobally ? '#FF9800' : '#2962ff'}`,
           marginBottom: '16px'
         }}>
           <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontWeight: 'bold' }}>
@@ -396,9 +396,9 @@ const VWAPSettings = ({
               style={{ marginRight: '8px', cursor: 'pointer' }}
             />
             {applyGlobally ? (
-              <span style={{ color: '#FF9800' }}>🌐 Modificando preset GLOBAL (todas las monedas)</span>
+              <span style={{ color: '#b25600' }}>🌐 Modificando preset GLOBAL (todas las monedas)</span>
             ) : (
-              <span style={{ color: '#2196F3' }}>✏️ Modificando solo {currentSymbol}</span>
+              <span style={{ color: '#1565C0' }}>✏️ Modificando solo {currentSymbol}</span>
             )}
           </label>
           <div style={{ fontSize: '11px', color: '#666', marginTop: '4px', marginLeft: '24px' }}>
@@ -417,7 +417,7 @@ const VWAPSettings = ({
             style={{
               width: '100%',
               padding: '12px',
-              background: showPresets ? '#4CAF50' : '#2196F3',
+              background: showPresets ? '#4CAF50' : '#2962ff',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
@@ -440,7 +440,7 @@ const VWAPSettings = ({
           }}>
             {/* Guardar nuevo preset */}
             <div style={{ marginBottom: '16px' }}>
-              <h5 style={{ margin: '0 0 12px 0', color: '#4CAF50' }}>💾 Guardar Configuración Actual</h5>
+              <h5 style={{ margin: '0 0 12px 0', color: '#2E7D32' }}>💾 Guardar Configuración Actual</h5>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <input
                   type="text"
@@ -479,7 +479,7 @@ const VWAPSettings = ({
             {/* Lista de presets guardados */}
             {savedPresets.length > 0 && (
               <div>
-                <h5 style={{ margin: '0 0 12px 0', color: '#4CAF50' }}>📂 Presets Guardados</h5>
+                <h5 style={{ margin: '0 0 12px 0', color: '#2E7D32' }}>📂 Presets Guardados</h5>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {savedPresets.map((preset, idx) => (
                     <div
@@ -507,7 +507,7 @@ const VWAPSettings = ({
                           onClick={() => handleLoadPreset(preset)}
                           style={{
                             padding: '6px 12px',
-                            background: '#2196F3',
+                            background: '#2962ff',
                             color: 'white',
                             border: 'none',
                             borderRadius: '4px',
@@ -633,10 +633,10 @@ const VWAPSettings = ({
                   padding: '10px',
                   fontSize: '16px',
                   fontWeight: 'bold',
-                  border: '2px solid #2196F3',
+                  border: '2px solid #2962ff',
                   borderRadius: '6px',
                   textAlign: 'center',
-                  color: '#2196F3'
+                  color: '#2962ff'
                 }}
               />
             </div>
@@ -681,7 +681,7 @@ const VWAPSettings = ({
         {/* Volatility Indicators Section */}
         {localConfig.showBands && (
           <div style={{ background: '#e1f5fe', padding: '12px', borderRadius: '8px', marginTop: '16px', marginBottom: '16px', border: '2px solid #03A9F4' }}>
-            <h5 style={{ margin: '0 0 12px 0', color: '#0277BD', fontSize: '15px' }}>
+            <h5 style={{ margin: '0 0 12px 0', color: '#01579B', fontSize: '15px' }}>
               📊 Indicadores de Volatilidad
             </h5>
             <div style={{ fontSize: '12px', color: '#555', marginBottom: '12px', background: 'white', padding: '8px', borderRadius: '4px' }}>
@@ -753,7 +753,7 @@ const VWAPSettings = ({
             {/* Volatility Indicators Advanced Config */}
             {(localConfig.showBandWidth || localConfig.showBBWP || localConfig.showTTMSqueeze) && (
               <div style={{ marginBottom: '24px', padding: '16px', background: '#f0f4ff', borderRadius: '8px', border: '2px solid #03A9F4' }}>
-                <h5 style={{ margin: '0 0 16px 0', color: '#0277BD' }}>⚙️ Configuración de Indicadores de Volatilidad</h5>
+                <h5 style={{ margin: '0 0 16px 0', color: '#01579B' }}>⚙️ Configuración de Indicadores de Volatilidad</h5>
 
                 {/* BandWidth Thresholds */}
                 {localConfig.showBandWidth && (
@@ -796,7 +796,7 @@ const VWAPSettings = ({
                               style={{ width: '80px' }}
                             />
                             <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>%</span>
-                            <span style={{ fontSize: '11px', color: '#2196F3', marginLeft: '8px', fontWeight: 'bold' }}>
+                            <span style={{ fontSize: '11px', color: '#2962ff', marginLeft: '8px', fontWeight: 'bold' }}>
                               (Recomendado: {recommended.squeeze}%)
                             </span>
                           </div>
@@ -816,7 +816,7 @@ const VWAPSettings = ({
                               style={{ width: '80px' }}
                             />
                             <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>%</span>
-                            <span style={{ fontSize: '11px', color: '#2196F3', marginLeft: '8px', fontWeight: 'bold' }}>
+                            <span style={{ fontSize: '11px', color: '#2962ff', marginLeft: '8px', fontWeight: 'bold' }}>
                               (Recomendado: {recommended.consolidation}%)
                             </span>
                           </div>
@@ -836,12 +836,12 @@ const VWAPSettings = ({
                               style={{ width: '80px' }}
                             />
                             <span style={{ fontSize: '11px', color: '#666', marginLeft: '8px' }}>%</span>
-                            <span style={{ fontSize: '11px', color: '#2196F3', marginLeft: '8px', fontWeight: 'bold' }}>
+                            <span style={{ fontSize: '11px', color: '#2962ff', marginLeft: '8px', fontWeight: 'bold' }}>
                               (Recomendado: {recommended.normal}%)
                             </span>
                           </div>
 
-                          <div style={{ fontSize: '10px', color: '#777', marginTop: '8px', background: '#f5f5f5', padding: '6px', borderRadius: '4px' }}>
+                          <div style={{ fontSize: '10px', color: '#666', marginTop: '8px', background: '#f5f5f5', padding: '6px', borderRadius: '4px' }}>
                             Valores {'>'}normal% = Trending (rojo). Timeframe actual: {interval} min
                           </div>
                         </>
@@ -1025,7 +1025,7 @@ const VWAPSettings = ({
 
             {/* Sección de Estilo de Líneas */}
             <div style={{ marginTop: '20px', padding: '12px', background: '#fff3e0', borderRadius: '8px', border: '2px solid #FF9800' }}>
-              <h5 style={{ marginTop: 0, marginBottom: '12px', color: '#F57C00' }}>🎨 Estilo de Líneas</h5>
+              <h5 style={{ marginTop: 0, marginBottom: '12px', color: '#b25600' }}>🎨 Estilo de Líneas</h5>
 
               {/* Color VWAP */}
               <div className="setting-row" style={{ marginBottom: '12px' }}>
@@ -1082,7 +1082,7 @@ const VWAPSettings = ({
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                     <label style={{ fontWeight: 'bold' }}>Grosor líneas bandas:</label>
                     <span style={{
-                      background: '#2196F3',
+                      background: '#2962ff',
                       color: 'white',
                       padding: '2px 8px',
                       borderRadius: '4px',
@@ -1112,7 +1112,7 @@ const VWAPSettings = ({
               {/* Colores de bandas individuales */}
               {localConfig.showBands && (
                 <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #ddd' }}>
-                  <h6 style={{ margin: '0 0 12px 0', color: '#F57C00' }}>🌈 Colores de Bandas de Desviación</h6>
+                  <h6 style={{ margin: '0 0 12px 0', color: '#b25600' }}>🌈 Colores de Bandas de Desviación</h6>
 
                   {/* Banda 1 */}
                   <div className="setting-row" style={{ marginBottom: '10px' }}>

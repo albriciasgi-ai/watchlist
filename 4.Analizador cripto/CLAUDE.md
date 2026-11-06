@@ -362,8 +362,6 @@ else:
 
 Sistema para detectar zonas de consolidación y crear estrategias de trading basadas en ellas.
 
-**Plan completo:** Ver `1.Altagracia_Crypto_Backtester/STRATEGY_TESTER_PLAN.md`
-
 ## Estado Actual
 
 ### Completado - Phase 1: Zone Detector

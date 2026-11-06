@@ -378,7 +378,7 @@ const RangeDetectionSettings = ({ symbol, indicatorManager, candles, onClose }) 
             </div>
 
             {autoRanges.length === 0 ? (
-              <p style={{ fontSize: '13px', color: '#999', fontStyle: 'italic' }}>
+              <p style={{ fontSize: '13px', color: '#666', fontStyle: 'italic' }}>
                 No hay rangos detectados aún
               </p>
             ) : (
@@ -457,7 +457,7 @@ const RangeDetectionSettings = ({ symbol, indicatorManager, candles, onClose }) 
           style={{
             flex: 1,
             padding: '10px',
-            background: '#2196F3',
+            background: '#2962ff',
             color: 'white',
             border: 'none',
             borderRadius: '4px',

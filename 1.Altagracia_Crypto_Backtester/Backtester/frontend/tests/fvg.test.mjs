@@ -10,12 +10,12 @@ const test = (name, run) => tests.push([name, run]);
 
 test('gap alcista entre la primera y la tercera vela', () => {
   const gaps = findFairValueGaps([bar(1, 100, 110), bar(2, 105, 130), bar(3, 120, 135)]);
-  assert.deepEqual(gaps, [{ bullish: true, bottom: 110, top: 120, start: 2 }]);
+  assert.deepEqual(gaps, [{ bullish: true, bottom: 110, top: 120, start: 2, bornAt: 2 }]);
 });
 
 test('gap bajista entre la primera y la tercera vela', () => {
   const gaps = findFairValueGaps([bar(1, 120, 130), bar(2, 90, 125), bar(3, 95, 110)]);
-  assert.deepEqual(gaps, [{ bullish: false, bottom: 110, top: 120, start: 2 }]);
+  assert.deepEqual(gaps, [{ bullish: false, bottom: 110, top: 120, start: 2, bornAt: 2 }]);
 });
 
 test('sin hueco no hay gap', () => {
@@ -64,6 +64,43 @@ test('varios gaps conviven y cada uno se cierra por su cuenta', () => {
   ];
   const gaps = findFairValueGaps(candles);
   assert.deepEqual(gaps.map(gap => [gap.bottom, gap.top]), [[110, 120]], 'la ultima vela cierra solo el gap de arriba');
+});
+
+test('al primer toque el gap termina si se pide', () => {
+  const entered = [bar(1, 100, 110), bar(2, 105, 130), bar(3, 120, 135), bar(4, 118, 136)];
+  assert.deepEqual(findFairValueGaps(entered, 0.03, { fillMode: 'touch' }), []);
+  const touched = [bar(1, 100, 110), bar(2, 105, 130), bar(3, 120, 135), bar(4, 120, 136)];
+  assert.deepEqual(findFairValueGaps(touched, 0.03, { fillMode: 'touch' }), [], 'llegar al borde cuenta como toque');
+  const away = [bar(1, 100, 110), bar(2, 105, 130), bar(3, 120, 135), bar(4, 121, 136)];
+  assert.equal(findFairValueGaps(away, 0.03, { fillMode: 'touch' }).length, 1);
+});
+
+test('un gap bajista tambien termina al primer toque', () => {
+  const candles = [bar(1, 120, 130), bar(2, 90, 125), bar(3, 95, 110), bar(4, 90, 111)];
+  assert.deepEqual(findFairValueGaps(candles, 0.03, { fillMode: 'touch' }), []);
+});
+
+test('sin recorte el gap conserva su tamano hasta cruzarlo', () => {
+  const inside = [bar(1, 100, 110), bar(2, 105, 130), bar(3, 120, 135), bar(4, 112, 136)];
+  const [gap] = findFairValueGaps(inside, 0.03, { fillMode: 'whole' });
+  assert.deepEqual([gap.bottom, gap.top], [110, 120]);
+  const crossed = [bar(1, 100, 110), bar(2, 105, 130), bar(3, 120, 135), bar(4, 110, 136)];
+  assert.deepEqual(findFairValueGaps(crossed, 0.03, { fillMode: 'whole' }), []);
+});
+
+test('un gap bajista sin recorte termina al llegar a su techo', () => {
+  const inside = [bar(1, 120, 130), bar(2, 90, 125), bar(3, 95, 110), bar(4, 90, 119)];
+  assert.equal(findFairValueGaps(inside, 0.03, { fillMode: 'whole' }).length, 1);
+  const crossed = [bar(1, 120, 130), bar(2, 90, 125), bar(3, 95, 110), bar(4, 90, 120)];
+  assert.deepEqual(findFairValueGaps(crossed, 0.03, { fillMode: 'whole' }), []);
+});
+
+test('la edad maxima retira los gaps viejos', () => {
+  const later = [bar(4, 125, 136), bar(5, 125, 136), bar(6, 125, 136)];
+  const candles = [bar(1, 100, 110), bar(2, 105, 130), bar(3, 120, 135), ...later];
+  assert.equal(findFairValueGaps(candles, 0.03, { maxAge: 3 }).length, 1, 'nace en la vela 3 y a la vela 6 tiene 3 velas');
+  assert.deepEqual(findFairValueGaps(candles, 0.03, { maxAge: 2 }), []);
+  assert.equal(findFairValueGaps(candles, 0.03, { maxAge: 0 }).length, 1, 'cero es sin limite');
 });
 
 // Con velas reales: agregar velas nunca crea un gap en el pasado ni lo agranda

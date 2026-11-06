@@ -4,6 +4,22 @@ import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import LocalPatternDetector from './LocalPatternDetector.js';
 
+const MAX_VALIDATED_CANDLES = 1500; // Con más velas en pantalla los puntos no se alcanzan a leer
+const MIN_REQUEST_GAP_MS = 400;
+const ERROR_WAIT_MS = 5000;
+
+// Posición de la primera vela con timestamp igual o mayor
+function lowerBound(candles, timestamp) {
+  let low = 0;
+  let high = candles.length;
+  while (low < high) {
+    const middle = (low + high) >> 1;
+    if (candles[middle].timestamp < timestamp) low = middle + 1;
+    else high = middle;
+  }
+  return low;
+}
+
 /**
  * Rejection Pattern Indicator
  *
@@ -12,9 +28,15 @@ import LocalPatternDetector from './LocalPatternDetector.js';
  * - Mode "Validated Only": Shows only patterns validated against reference contexts (backend)
  */
 class RejectionPatternIndicator extends IndicatorBase {
-  constructor(symbol, interval, days = 30) {
+  constructor(symbol, interval, days = 30, backtestingMode = false) {
     super(symbol, interval, days);
     this.name = "Rejection Patterns";
+    this.backtestingMode = backtestingMode;
+    this.validatedKey = null; // Velas, contextos y filtros de la última petición
+    this.validatedRequest = 0; // Una respuesta vieja no reemplaza a una nueva
+    this.validatedLoading = false;
+    this.validatedNextAt = 0;
+    this.validatedTimer = null;
     this.patterns = []; // Validated patterns from backend
     this.localPatterns = []; // All patterns from local detection
     this.config = this.loadConfig();
@@ -76,7 +98,86 @@ class RejectionPatternIndicator extends IndicatorBase {
     localStorage.setItem(`rejection_pattern_config_${this.symbol}`, JSON.stringify(config));
 
     // Refetch patterns with new config
+    this.validatedKey = null;
     this.fetchData();
+  }
+
+  // Contextos activos, con los valores actuales de su perfil si ya está calculado
+  _activeContexts() {
+    return (this.config.referenceContexts || []).filter(context => context.enabled).map(context => {
+      const profile = this.getRangeProfile?.(context.id);
+      if (!profile) return context;
+      return {
+        ...context,
+        metadata: {
+          ...context.metadata,
+          poc: profile.poc?.price ?? context.metadata?.poc,
+          vah: profile.valueArea?.vahPrice ?? context.metadata?.vah,
+          val: profile.valueArea?.valPrice ?? context.metadata?.val
+        }
+      };
+    });
+  }
+
+  /**
+   * En backtesting el modo validado analiza las velas de la hora simulada. Pide de nuevo solo si
+   * cerró una vela, cambió la vista o cambiaron los contextos o filtros.
+   */
+  _loadValidated(visibleCandles, priceContext) {
+    const contexts = this._activeContexts();
+    if (contexts.length === 0) {
+      this.patterns = [];
+      this.validatedKey = null;
+      return;
+    }
+
+    const candles = this._closedCandlesToDetect(visibleCandles, null, priceContext).slice(-MAX_VALIDATED_CANDLES);
+    if (candles.length < 2) return;
+
+    const key = JSON.stringify([candles[0].timestamp, candles[candles.length - 1].timestamp, contexts, this.config.patterns, this.config.filters]);
+    if (key === this.validatedKey || this.validatedLoading) return;
+
+    const wait = this.validatedNextAt - performance.now();
+    if (wait > 0) {
+      if (!this.validatedTimer) {
+        this.validatedTimer = setTimeout(() => {
+          this.validatedTimer = null;
+          priceContext.requestRedraw?.();
+        }, wait);
+      }
+      return;
+    }
+
+    this.validatedKey = key;
+    this.validatedLoading = true;
+    this.validatedNextAt = performance.now() + MIN_REQUEST_GAP_MS;
+    const request = ++this.validatedRequest;
+
+    fetch(`${API_BASE_URL}/api/rejection-patterns/detect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        symbol: this.symbol,
+        interval: this.interval,
+        config: this.config,
+        referenceContexts: contexts,
+        candles: candles.map(({ timestamp, open, high, low, close, volume }) => ({ timestamp, open, high, low, close, volume }))
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) throw new Error(data.error || 'Sin respuesta del detector');
+        if (request === this.validatedRequest) this.patterns = data.patterns || [];
+      })
+      .catch(error => {
+        console.error(`[${this.symbol}] Error en patrones validados:`, error);
+        this.validatedKey = null;
+        this.validatedNextAt = performance.now() + ERROR_WAIT_MS;
+      })
+      .finally(() => {
+        this.validatedLoading = false;
+        priceContext.requestRedraw?.();
+      });
   }
 
   /**
@@ -103,6 +204,10 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   async fetchData() {
+    if (this.backtestingMode) {
+      return; // Se pide al dibujar, con las velas de la hora simulada
+    }
+
     if (!this.config.enabled) {
       this.patterns = [];
       return;
@@ -149,15 +254,38 @@ class RejectionPatternIndicator extends IndicatorBase {
     }
   }
 
+  /**
+   * Velas cerradas de la vista, con las anteriores que necesita el Z-Score de volumen.
+   * Un patrón describe la forma final de la vela: la vela en formación todavía no la tiene.
+   */
+  _closedCandlesToDetect(visibleCandles, allCandles, priceContext) {
+    const known = priceContext?.knownCandles || allCandles;
+    const lookback = (this.config.volumeZScore?.lookbackPeriod || 20) + 1;
+    const first = lowerBound(known, visibleCandles[0].timestamp);
+    const end = lowerBound(known, visibleCandles[visibleCandles.length - 1].timestamp) + 1;
+    return known.slice(Math.max(0, first - lookback), end).filter(candle => !candle.in_progress);
+  }
+
   // Método para overlay (llamado por IndicatorManager)
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
-    if (!this.enabled || !this.config.enabled) {
+    if (!this.enabled || !this.config.enabled || visibleCandles.length === 0) {
       return;
     }
 
     // Detectar patrones localmente si está en modo "all"
     if (this.showMode === 'all' && allCandles && allCandles.length > 0) {
-      this.detectLocalPatterns(allCandles);
+      this.detectLocalPatterns(this._closedCandlesToDetect(visibleCandles, allCandles, priceContext));
+    }
+
+    if (this.showMode === 'validated' && this.backtestingMode && priceContext?.knownCandles) {
+      this._loadValidated(visibleCandles, priceContext);
+      if (this._activeContexts().length === 0) {
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#9E9E9E';
+        ctx.fillText('Rejection validado: agrega un contexto de referencia', bounds.x + 8, bounds.y + 38);
+      }
     }
 
     // Elegir qué patrones mostrar según el modo
@@ -187,7 +315,7 @@ class RejectionPatternIndicator extends IndicatorBase {
       const candle = visibleCandles[i];
       const pattern = patternMap.get(candle.timestamp);
 
-      if (!pattern) continue;
+      if (!pattern || candle.in_progress) continue;
 
       const x = bounds.x + i * candleWidth + candleWidth / 2;
       const y = priceToY(candle.high) - 20; // Position above the candle

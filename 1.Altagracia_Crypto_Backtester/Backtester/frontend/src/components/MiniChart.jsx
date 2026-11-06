@@ -3,6 +3,8 @@
 
 import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import { API_BASE_URL } from "../config";
+import { DEFAULT_REWARD_RATIO } from "./drawing/shapes/TPSLBox";
+import { candlesToFrame } from "./backtesting/tradeJournal.js";
 import wsManager from "./WebSocketManager";
 import IndicatorManager from "./indicators/IndicatorManager";
 import FixedRangeProfilesManager from "./FixedRangeProfilesManager";
@@ -12,12 +14,27 @@ import DrawingToolManager from "./drawing/DrawingToolManager";
 import MeasurementTool from "./drawing/MeasurementTool";
 import TPSLBox from "./drawing/shapes/TPSLBox"; // 🎯 Para crear cajas TP/SL programáticamente
 import { formingCandle, lastClosedIndex } from './backtesting/replayClock';
+import { DEFAULT_PRICE_RATIO, resizePanel } from './indicators/panelLayout.js';
+import { isBlind, maskDate } from './backtesting/blindClock';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
 const MAX_ZOOM = MAX_BAR_WIDTH / 8;
 const FOOTPRINT_ZOOM = 20; // Velas de 160px: se leen las cifras del footprint
 const MIN_VOLUME_HEIGHT = 40;
+const PRICE_AXIS_WIDTH = 65;
+const PANEL_BUTTON_STYLE = {
+  width: '18px',
+  height: '16px',
+  padding: 0,
+  fontSize: '9px',
+  lineHeight: '14px',
+  border: '1px solid #CFD8DC',
+  borderRadius: '3px',
+  background: '#FFFFFF',
+  color: '#546E7A',
+  cursor: 'pointer'
+};
 
 // ==================== LOGGING SYSTEM ====================
 const DEBUG_MODE = false;
@@ -135,6 +152,7 @@ const MiniChart = forwardRef(({
   vpConfig,
   vpFixedRange,
   oiMode,
+  getTradeBoundaries,
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -184,7 +202,6 @@ const MiniChart = forwardRef(({
 
   // 🎯 NUEVO: Array de límites de trades (para dibujar líneas verticales permanentes)
   // 🔧 FIX: Cambiar de single trade a array para acumular todos los trades
-  const tradeBoundariesRef = useRef([]); // [{ entryTime, exitTime, tradeNumber }, ...]
 
   // Actualizar fullscreenOiMode cuando cambia oiMode del padre
   useEffect(() => {
@@ -281,6 +298,13 @@ const MiniChart = forwardRef(({
     getIndicatorManager: () => {
       return indicatorManagerRef.current;
     },
+    // Orden y altura de fábrica, también para la parte del precio que se movió al arrastrar
+    resetPanels: () => {
+      indicatorManagerRef.current?.resetPanels();
+      localStorage.removeItem(`priceChartRatio_${symbol}`);
+      setPriceChartRatio(DEFAULT_PRICE_RATIO);
+      setPanelVersion(version => version + 1);
+    },
     // 🎯 NUEVO: Precalcular todos los indicadores con velas completas
     precalculateIndicators: async (candles, playbackStartTime = null) => {
       if (indicatorManagerRef.current && candles && candles.length > 0) {
@@ -320,12 +344,16 @@ const MiniChart = forwardRef(({
       box.timeEnd = time + boxWidthMs;
       box.time = time + boxWidthMs / 2; // Centro
 
-      // Usar TP/SL de la orden si se proporcionan
-      if (stopLoss !== null && stopLoss !== undefined) {
+      // Usar TP/SL de la orden. Si falta uno, se completa con riesgo beneficio de 2
+      const hasStop = stopLoss !== null && stopLoss !== undefined;
+      const hasTarget = takeProfit !== null && takeProfit !== undefined;
+      if (hasStop) {
         box.slPrice = stopLoss;
+        if (!hasTarget) box.tpPrice = entryPrice + (entryPrice - stopLoss) * DEFAULT_REWARD_RATIO;
       }
-      if (takeProfit !== null && takeProfit !== undefined) {
+      if (hasTarget) {
         box.tpPrice = takeProfit;
+        if (!hasStop) box.slPrice = entryPrice - (takeProfit - entryPrice) / DEFAULT_REWARD_RATIO;
       }
 
       // Agregar al manager
@@ -350,6 +378,22 @@ const MiniChart = forwardRef(({
 
       return box.id;
     },
+    // La caja dibujada pasa a ser la del trade: empieza en la entrada real
+    anchorTPSLBox: (boxId, time, entryPrice) => {
+      const box = drawingManagerRef.current?.shapes.find(shape => shape.id === boxId && shape.type === 'tpsl');
+      if (!box) return false;
+
+      const width = box.timeEnd - box.timeStart;
+      box.timeStart = time;
+      box.timeEnd = time + width;
+      box.time = time + width / 2;
+      box.entryPrice = entryPrice;
+
+      drawingManagerRef.current.saveToHistory();
+      saveDrawings();
+      drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+      return true;
+    },
     // 🎯 NUEVO: Extender caja TP/SL hasta el timestamp de cierre del trade
     extendTPSLBox: (boxId, exitTime) => {
       console.log(`[MiniChart ${symbol} ${interval}] 🔍 Intentando extender TP/SL box:`, {
@@ -372,7 +416,7 @@ const MiniChart = forwardRef(({
 
       // Buscar la caja por ID
       const box = drawingManagerRef.current.shapes.find(shape =>
-        shape.id === boxId && shape.type === 'tpslbox'
+        shape.id === boxId && shape.type === 'tpsl'
       );
 
       if (!box) {
@@ -570,8 +614,8 @@ const MiniChart = forwardRef(({
         console.log(`[MiniChart ${symbol}] 🎯 Centrado instantáneo en timestamp ${timestamp} (índice ${targetIndex}, offset ${viewStateRef.current.offset})`);
       }
     },
-    // 📸 NUEVO: Capturar screenshot del canvas para guardar con sesión
-    captureScreenshot: async (sessionId, orderId) => {
+    // 📸 Guarda una imagen del gráfico. Con showFrom la encuadra desde esa hora sin cambiar la vista del usuario
+    captureScreenshot: async (sessionId, orderId, { showFrom = null } = {}) => {
       return new Promise((resolve, reject) => {
         const canvas = canvasRef.current;
         if (!canvas) {
@@ -580,6 +624,14 @@ const MiniChart = forwardRef(({
         }
 
         console.log(`[MiniChart ${symbol}] 📸 Capturando screenshot para order ${orderId}...`);
+
+        const userView = { ...viewStateRef.current };
+        if (showFrom) frameChartFrom(showFrom);
+
+        // Lo más reciente y sin la cruceta del mouse
+        if (candlesRef.current?.length > 0) {
+          drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
+        }
 
         // Convertir canvas a blob (PNG)
         canvas.toBlob(async (blob) => {
@@ -625,36 +677,19 @@ const MiniChart = forwardRef(({
             reject(error);
           }
         }, 'image/png');
+
+        // toBlob ya copió la imagen: la vista vuelve antes de que se pinte la pantalla
+        if (showFrom) {
+          Object.assign(viewStateRef.current, userView);
+          drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
+        }
       });
     },
-    // 🎯 NUEVO: Agregar un límite de trade (línea de entrada) cuando se abre el trade
-    addTradeBoundary: (entryTime, tradeNumber) => {
-      tradeBoundariesRef.current.push({ entryTime, exitTime: null, tradeNumber });
-      // Forzar redibujado para mostrar la línea de entrada inmediatamente
+    // Vuelve a dibujar cuando cambian los trades
+    redraw: () => {
       if (candlesRef.current && candlesRef.current.length > 0) {
-        drawChart(candlesRef.current, lastPriceRef.current, null, null);
+        drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
       }
-      console.log(`[MiniChart ${symbol}] 🎯 Trade #${tradeNumber} abierto: entry=${new Date(entryTime).toISOString()}`);
-    },
-    // 🎯 NUEVO: Actualizar un límite de trade con la línea de salida cuando se cierra
-    updateTradeBoundary: (tradeNumber, exitTime) => {
-      const trade = tradeBoundariesRef.current.find(t => t.tradeNumber === tradeNumber);
-      if (trade) {
-        trade.exitTime = exitTime;
-        // Forzar redibujado para mostrar la línea de salida inmediatamente
-        if (candlesRef.current && candlesRef.current.length > 0) {
-          drawChart(candlesRef.current, lastPriceRef.current, null, null);
-        }
-        console.log(`[MiniChart ${symbol}] 🎯 Trade #${tradeNumber} cerrado: exit=${new Date(exitTime).toISOString()}`);
-      }
-    },
-    // 🎯 NUEVO: Limpiar todos los límites de trades (borrar todas las líneas)
-    clearAllTradeBoundaries: () => {
-      tradeBoundariesRef.current = [];
-      if (candlesRef.current && candlesRef.current.length > 0) {
-        drawChart(candlesRef.current, lastPriceRef.current, null, null);
-      }
-      console.log(`[MiniChart ${symbol}] 🎯 Todos los límites de trades limpiados`);
     }
   }), [symbol, interval]);
 
@@ -683,7 +718,7 @@ const MiniChart = forwardRef(({
   // 🎯 NUEVO: Estado para divisor redimensionable (proporción de altura del precio chart)
   const [priceChartRatio, setPriceChartRatio] = useState(() => {
     const saved = localStorage.getItem(`priceChartRatio_${symbol}`);
-    return saved ? parseFloat(saved) : 0.65; // 65% por defecto
+    return saved ? parseFloat(saved) : DEFAULT_PRICE_RATIO;
   });
   const [isDraggingDivider, setIsDraggingDivider] = useState(false);
   const [priceAreaBottom, setPriceAreaBottom] = useState(null); // Dónde termina el precio, en píxeles
@@ -694,6 +729,13 @@ const MiniChart = forwardRef(({
     return saved ? parseInt(saved) : 80; // 80px por defecto (aumentado de 50)
   });
   const [isDraggingVolumeDivider, setIsDraggingVolumeDivider] = useState(false);
+
+  // Paneles a la vista, para ubicar sus bordes y flechas sobre el canvas
+  const [panels, setPanels] = useState([]);
+  const [panelVersion, setPanelVersion] = useState(0);
+  const [resizingPanel, setResizingPanel] = useState(null);
+  const panelsKeyRef = useRef('');
+  const panelResizeRef = useRef(null);
 
   // 🎯 NUEVO: Estados para parámetros de visualización de volumen
   const [showVolumeSettings, setShowVolumeSettings] = useState(false);
@@ -955,7 +997,7 @@ const MiniChart = forwardRef(({
 
     priceScaleRef.current = {
       minPrice, maxPrice, marginTop, marginLeft, priceChartHeight, chartWidth, startIdx,
-      priceAreaEnd, availableHeight,
+      priceAreaEnd, availableHeight, heightScale,
       visibleCount: visibleCandles.length,
       totalCount: displayCandles.length
     };
@@ -1063,9 +1105,6 @@ const MiniChart = forwardRef(({
         timeToX
       };
 
-      // Los footprints van debajo de los demás overlays, como en App 9
-      orderFlowIndicator?.renderOnChart(ctx, overlayBounds, visibleCandles, priceContext, orderFlowReplacesCandles);
-
       const allCandlesForCalculation = backtestingMode && allCandlesRef.current && allCandlesRef.current.length > 0
         ? allCandlesRef.current
         : displayCandles;
@@ -1077,6 +1116,9 @@ const MiniChart = forwardRef(({
       ctx.clip();
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, allCandlesForCalculation, priceContext);
       ctx.restore();
+
+      // Los footprints van encima de los perfiles y demás indicadores, para leer sus cifras
+      orderFlowIndicator?.renderOnChart(ctx, overlayBounds, visibleCandles, priceContext, orderFlowReplacesCandles);
     }
 
     // 🎯 NUEVO: Calcular z-score de volúmenes para mejoras visuales
@@ -1223,7 +1265,7 @@ const MiniChart = forwardRef(({
       const prevCandle = i > 0 ? visibleCandles[i - timeStep] : null;
       const x = marginLeft + (i * barWidth) + (barWidth / 2);
       
-      const timeText = formatAxisTime(
+      const timeText = isBlind() ? maskDate(candle.timestamp) : formatAxisTime(
         candle.datetime_colombia || colombiaTime(candle.timestamp),
         prevCandle && (prevCandle.datetime_colombia || colombiaTime(prevCandle.timestamp))
       );
@@ -1237,7 +1279,8 @@ const MiniChart = forwardRef(({
 
     ctx.fillStyle = "#666";
     ctx.font = "10px Inter, sans-serif";
-    const candleInfo = `${visibleCandles.length}/${displayCandles.length} velas`;
+    // El total de velas dejaría calcular la fecha oculta
+    const candleInfo = isBlind() ? `${visibleCandles.length} velas` : `${visibleCandles.length}/${displayCandles.length} velas`;
     ctx.fillText(candleInfo, marginLeft + 80, 18);
 
     // 🎯 NUEVO: Mostrar timeframe en la esquina superior derecha
@@ -1249,14 +1292,21 @@ const MiniChart = forwardRef(({
     ctx.fillStyle = "#FFFFFF";
     ctx.fillText(timeframeText, width - marginRight - timeframeWidth - 10, 20);
 
-    if (indicatorManagerRef.current && indicatorsHeight > 0) {
+    if (indicatorManagerRef.current) {
       const indicatorsBounds = {
         x: marginLeft,
         y: marginTop + priceChartHeight + volumeHeightCalculated + timeAxisHeight,
         width: chartWidth,
         height: indicatorsHeight
       };
-      indicatorManagerRef.current.renderIndicators(ctx, indicatorsBounds, visibleCandles);
+      if (indicatorsHeight > 0) indicatorManagerRef.current.renderIndicators(ctx, indicatorsBounds, visibleCandles);
+
+      const rects = indicatorManagerRef.current.getPanelRects(indicatorsBounds.y);
+      const rectsKey = JSON.stringify(rects);
+      if (rectsKey !== panelsKeyRef.current) {
+        panelsKeyRef.current = rectsKey;
+        setPanels(rects);
+      }
     }
 
     // 🎯 NUEVO: Renderizar dibujos (DESPUÉS de velas, ANTES de crosshair)
@@ -1287,16 +1337,23 @@ const MiniChart = forwardRef(({
       }
     }
 
-    // 🎯 NUEVO: Dibujar líneas verticales de TODOS los trades (acumulación permanente)
-    // 🔧 FIX: Cambiar de single trade a array para mostrar todos los trades simultáneamente
-    if (tradeBoundariesRef.current.length > 0 && scaleConverterRef.current) {
+    // 🎯 Líneas verticales de todos los trades. Salen de las órdenes, que son lo que guarda la sesión
+    const tradeLines = getTradeBoundaries?.() || [];
+    if (tradeLines.length > 0 && scaleConverterRef.current) {
       const scaleConverter = scaleConverterRef.current;
 
-      tradeBoundariesRef.current.forEach(({ entryTime, exitTime, tradeNumber }) => {
+      // Un trade abierto justo al iniciar una vela cae a la derecha de la última: se marca en el borde
+      const rightEdge = width - marginRight;
+      const tradeX = (time) => {
+        const x = scaleConverter.timeToX(time);
+        return x > rightEdge && x <= rightEdge + barWidth ? rightEdge : x;
+      };
+
+      tradeLines.forEach(({ entryTime, exitTime, tradeNumber }) => {
         try {
           // Convertir timestamps a coordenadas X
-          const entryX = scaleConverter.timeToX(entryTime);
-          const exitX = exitTime ? scaleConverter.timeToX(exitTime) : null;
+          const entryX = tradeX(entryTime);
+          const exitX = exitTime ? tradeX(exitTime) : null;
 
           // Solo dibujar si al menos una línea está visible
           if ((entryX >= marginLeft && entryX <= width - marginRight) ||
@@ -1402,7 +1459,7 @@ const MiniChart = forwardRef(({
           const month = months[date.getMonth()];
           const hours = String(date.getHours()).padStart(2, '0');
           const minutes = String(date.getMinutes()).padStart(2, '0');
-          const dateText = `${day} ${month} ${hours}:${minutes}`;
+          const dateText = isBlind() ? maskDate(interpolatedTimestamp) : `${day} ${month} ${hours}:${minutes}`;
 
           const textWidth = ctx.measureText(dateText).width;
           const labelX = mouseX - textWidth / 2;
@@ -1443,6 +1500,23 @@ const MiniChart = forwardRef(({
 
   // ==================== DRAWING PERSISTENCE ====================
 
+  // Encuadra desde una hora hasta la vela más reciente, con velas anteriores como contexto
+  const frameChartFrom = (time) => {
+    const candles = candlesRef.current;
+    const chartWidth = priceScaleRef.current?.chartWidth;
+    if (!candles?.length || !chartWidth) return;
+
+    const first = candles.findIndex(candle => candle.timestamp >= time);
+    const needed = candlesToFrame(first < 0 ? 1 : candles.length - first);
+    const view = viewStateRef.current;
+    const barWidth = Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * view.zoom));
+
+    view.offset = 0;
+    view.verticalZoom = 1;
+    view.verticalOffset = 0;
+    if (needed > Math.floor(chartWidth / barWidth)) view.zoom = chartWidth / (needed * 8);
+  };
+
   // Extraer rectángulos del DrawingToolManager para el modal VP Fixed
   drawChartRef.current = drawChart;
 
@@ -1465,7 +1539,7 @@ const MiniChart = forwardRef(({
     if (candlesRef.current?.length > 0) {
       drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
     }
-  }, [priceChartRatio, volumeHeight]);
+  }, [priceChartRatio, volumeHeight, panelVersion]);
 
   const updateChartRectangles = () => {
     if (!drawingManagerRef.current) return;
@@ -1891,9 +1965,13 @@ const MiniChart = forwardRef(({
 
     // 🎯 NUEVO: Left click para drawing manager
     if (e.button === 0 && drawingManagerRef.current && scaleConverter) {
+      const shapesBefore = drawingManagerRef.current.shapes.length;
       const handled = drawingManagerRef.current.handleMouseDown(x, y, scaleConverter);
 
       if (handled) {
+        // Un dibujo nuevo se avisa de una vez: la caja TP/SL alimenta el panel de órdenes
+        if (drawingManagerRef.current.shapes.length !== shapesBefore) saveDrawings();
+
         // El drawing manager consumió el evento
         drawChart(candlesRef.current, lastPriceRef.current, null, null);
 
@@ -2403,7 +2481,7 @@ const MiniChart = forwardRef(({
 
       // 🎯 FIX: Usar updateIndicatorStates para que haga fetchData de S/R y otros
       if (indicatorStates) {
-        await indicatorManagerRef.current.updateIndicatorStates(indicatorStates, backtestingMode);
+        await indicatorManagerRef.current.updateIndicatorStates(indicatorStates, backtestingMode, allCandlesRef.current);
       }
 
       if (vpConfig) {
@@ -2565,7 +2643,7 @@ const MiniChart = forwardRef(({
     console.log(`[MiniChart] Modo backtesting:`, backtestingMode);
 
     // 🎯 CRÍTICO: Llamar al nuevo método updateIndicatorStates() en lugar de recrear
-    indicatorManagerRef.current.updateIndicatorStates(indicatorStates, backtestingMode)
+    indicatorManagerRef.current.updateIndicatorStates(indicatorStates, backtestingMode, allCandlesRef.current)
       .then(() => {
         // Redibujar después de actualizar
         if (candlesRef.current && candlesRef.current.length > 0) {
@@ -2577,6 +2655,53 @@ const MiniChart = forwardRef(({
         console.error(`[MiniChart ${symbol} ${interval}] Error actualizando indicadores:`, error);
       });
   }, [indicatorStates]); // Solo reaccionar a cambios en indicatorStates
+
+  const handlePanelMove = (name, step) => {
+    indicatorManagerRef.current?.movePanel(name, step);
+    setPanelVersion(version => version + 1);
+  };
+
+  const handlePanelResizeStart = (e, panel) => {
+    e.preventDefault();
+    const { availableHeight, heightScale } = priceScaleRef.current;
+    panelResizeRef.current = {
+      name: panel.name,
+      startY: e.clientY,
+      shown: panel.height,
+      scale: heightScale,
+      others: volumeHeight + indicatorManagerRef.current.getTotalHeight() - panel.requested,
+      availableHeight,
+      ratio: priceChartRatio
+    };
+    setResizingPanel(panel.name);
+  };
+
+  // Arrastrar el borde superior de un panel solo cambia ese panel: el precio cede o recibe la diferencia
+  useEffect(() => {
+    if (!resizingPanel) return undefined;
+
+    const handleMove = (e) => {
+      const drag = panelResizeRef.current;
+      const { height, ratio } = resizePanel({ ...drag, delta: drag.startY - e.clientY });
+      drag.lastRatio = ratio;
+      indicatorManagerRef.current.setPanelHeight(drag.name, height);
+      setPriceChartRatio(ratio);
+      setPanelVersion(version => version + 1);
+    };
+    const handleUp = () => {
+      const { lastRatio } = panelResizeRef.current;
+      indicatorManagerRef.current.savePanels();
+      if (lastRatio !== undefined) localStorage.setItem(`priceChartRatio_${symbol}`, lastRatio.toString());
+      setResizingPanel(null);
+    };
+
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+    };
+  }, [resizingPanel, symbol]);
 
   // 🎯 NUEVO: Handlers para divisor redimensionable
   const handleDividerMouseDown = (e) => {
@@ -3062,6 +3187,43 @@ const MiniChart = forwardRef(({
             ⚙️
           </button>
         </div>
+
+        {panels.map((panel, i) => (
+          <React.Fragment key={panel.name}>
+            <div
+              onMouseDown={(e) => handlePanelResizeStart(e, panel)}
+              title={`Arrastra para cambiar la altura de ${panel.name}`}
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: PRICE_AXIS_WIDTH,
+                top: panel.top - 2,
+                height: '5px',
+                background: resizingPanel === panel.name ? '#2196F3' : 'transparent',
+                cursor: 'ns-resize',
+                zIndex: 1000,
+                transition: resizingPanel ? 'none' : 'background 0.2s'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#2196F3'; }}
+              onMouseLeave={(e) => {
+                if (resizingPanel !== panel.name) e.currentTarget.style.background = 'transparent';
+              }}
+            />
+            <div style={{ position: 'absolute', right: '12px', top: panel.top + 4, display: 'flex', gap: '2px', zIndex: 1000 }}>
+              {[[-1, '▲', 'Subir', i === 0], [1, '▼', 'Bajar', i === panels.length - 1]].map(([step, label, action, disabled]) => (
+                <button
+                  key={label}
+                  disabled={disabled}
+                  onClick={() => handlePanelMove(panel.name, step)}
+                  title={`${action} ${panel.name}`}
+                  style={{ ...PANEL_BUTTON_STYLE, opacity: disabled ? 0.35 : 1, cursor: disabled ? 'default' : 'pointer' }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </React.Fragment>
+        ))}
       </div>
 
       {showFixedRangeManager && (

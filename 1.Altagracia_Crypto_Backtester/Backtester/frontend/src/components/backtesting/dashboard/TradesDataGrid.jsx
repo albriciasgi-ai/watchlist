@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { isBlind, maskDate } from '../blindClock.js';
 
 const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
   const [filterSide, setFilterSide] = useState('all'); // 'all', 'long', 'short'
@@ -10,6 +11,7 @@ const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
    * Formatea timestamp a fecha legible
    */
   const formatDate = (timestamp) => {
+    if (isBlind()) return maskDate(timestamp);
     const date = new Date(timestamp);
     return date.toLocaleString('es-CO', {
       timeZone: 'America/Bogota',

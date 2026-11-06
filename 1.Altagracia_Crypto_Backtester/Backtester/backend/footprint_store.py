@@ -7,6 +7,7 @@ cualquier marco y step, siempre cortados en la hora simulada para no mostrar el 
 import datetime as dt
 import math
 import os
+import threading
 from collections import OrderedDict
 from pathlib import Path
 
@@ -17,11 +18,15 @@ MAX_DAYS_IN_MEMORY = 96
 IMBALANCE_RATIO = 3.0
 STACKED_MIN_LEVELS = 3
 ZSCORE_LOOKBACK = 20
+MAX_RATIO = 99.99  # Imbalance contra un lado en cero: la division no tiene valor finito
+MAX_LEVELS_PER_CANDLE = 200  # Un step muy fino en velas anchas pesaria decenas de MB por respuesta
+LEVEL_GROUPS = (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000)  # Niveles que se unen en una vela ancha
 
 # Tamano de celda por marco, como parte del precio. En BTC a 80,000: 5, 10, 10, 25 y 50 USD.
 STEP_BY_INTERVAL = {1: 0.00006, 5: 0.0001, 15: 0.000125, 60: 0.0003, 240: 0.0006}
 
 _days = OrderedDict()
+_days_lock = threading.Lock()  # El observador lee en otro hilo
 
 
 def _day_path(symbol, day):
@@ -30,17 +35,19 @@ def _day_path(symbol, day):
 
 def _load_day(symbol, day):
     key = (symbol, day)
-    if key in _days:
-        _days.move_to_end(key)
-        return _days[key]
+    with _days_lock:
+        if key in _days:
+            _days.move_to_end(key)
+            return _days[key]
     path = _day_path(symbol, day)
     if not path.exists():
         return None
     with np.load(path) as z:
         data = {name: z[name] for name in z.files}
-    _days[key] = data
-    while len(_days) > MAX_DAYS_IN_MEMORY:
-        _days.popitem(last=False)
+    with _days_lock:
+        _days[key] = data
+        while len(_days) > MAX_DAYS_IN_MEMORY:
+            _days.popitem(last=False)
     return data
 
 
@@ -48,6 +55,19 @@ def coverage(symbol):
     """Primer dia, ultimo dia y cantidad de dias disponibles."""
     days = sorted(p.stem.rsplit("_", 1)[1] for p in (STORE_DIR / symbol).glob("*/*.npz"))
     return {"first": days[0], "last": days[-1], "days": len(days)} if days else {"first": None, "last": None, "days": 0}
+
+
+def continuous_days(symbol):
+    """Primer y ultimo dia del tramo sin huecos mas reciente del almacen."""
+    days = sorted(dt.date.fromisoformat(p.stem.rsplit("_", 1)[1]) for p in (STORE_DIR / symbol).glob("*/*.npz"))
+    if not days:
+        return None
+    first = days[-1]
+    for day in reversed(days[:-1]):
+        if (first - day).days > 1:
+            break
+        first = day
+    return first, days[-1]
 
 
 def auto_step(price, interval_minutes, cell):
@@ -59,21 +79,42 @@ def auto_step(price, interval_minutes, cell):
     return max(cell, round(best / cell) * cell)
 
 
-def _imbalances(levels):
+def _ratio(big, small, rules):
+    """Ratio del lado dominante, o None si no alcanza las condiciones."""
+    if big <= 0 or big < rules.get("min_volume", 0):
+        return None
+    if small <= 0:
+        return MAX_RATIO if rules.get("count_zero") else None
+    ratio = big / small
+    return min(ratio, MAX_RATIO) if ratio >= rules.get("ratio", IMBALANCE_RATIO) else None
+
+
+def _imbalances(levels, rules=None):
+    """
+    Mismo nivel: compra contra venta del nivel.
+    Diagonal: compra del nivel contra venta del nivel inferior, y venta contra compra del superior.
+    """
+    rules = rules or {}
+    diagonal = rules.get("mode") == "diagonal"
     result = []
     for i, lv in enumerate(levels):
-        small, big = sorted((lv["bid_volume"], lv["ask_volume"]))
-        if small > 0 and big / small >= IMBALANCE_RATIO:
-            result.append({"level_index": i, "type": "BUY" if lv["ask_volume"] > lv["bid_volume"] else "SELL", "ratio": round(big / small, 2)})
+        below = levels[i - 1]["bid_volume"] if i > 0 else 0.0
+        above = levels[i + 1]["ask_volume"] if i + 1 < len(levels) else 0.0
+        buy = _ratio(lv["ask_volume"], below if diagonal else lv["bid_volume"], rules)
+        sell = _ratio(lv["bid_volume"], above if diagonal else lv["ask_volume"], rules)
+        if buy is None and sell is None:
+            continue
+        side = "BUY" if sell is None or (buy is not None and buy >= sell) else "SELL"
+        result.append({"level_index": i, "type": side, "ratio": round(buy if side == "BUY" else sell, 2)})
     return result
 
 
-def _stacked(levels, imbalances):
+def _stacked(levels, imbalances, min_levels=STACKED_MIN_LEVELS):
     by_level = {x["level_index"]: x for x in imbalances}
     result, streak, side = [], [], None
 
     def close():
-        if len(streak) >= STACKED_MIN_LEVELS:
+        if len(streak) >= min_levels:
             ratios = [by_level[i]["ratio"] for i in streak]
             result.append({
                 "type": "STACKED_IMBALANCE", "direction": side, "levels": streak.copy(), "levels_count": len(streak),
@@ -149,22 +190,67 @@ def _cell_sums(parts, tf, step_ticks):
     }
 
 
-def _levels(cells, first, stop, step_ticks, ps):
-    """Niveles de una vela, de menor a mayor precio, sin huecos entre el minimo y el maximo."""
-    found = {int(lv): i for i, lv in enumerate(cells["level"][first:stop].tolist(), first)}
+def _level_group(low, high, max_levels):
+    """Menor union redonda de niveles que deja la vela dentro del maximo."""
+    for group in LEVEL_GROUPS:
+        if high // group - low // group + 1 <= max_levels:
+            return group
+    return LEVEL_GROUPS[-1]
+
+
+def _levels(cells, first, stop, step_ticks, ps, max_levels=None):
+    """
+    Niveles de una vela, de menor a mayor precio, sin huecos entre el minimo y el maximo.
+    Con max_levels une niveles vecinos para no pasar de ese numero. Devuelve tambien su step.
+    """
+    raw = [int(level) for level in cells["level"][first:stop].tolist()]
+    group = _level_group(min(raw), max(raw), max_levels) if max_levels else 1
+
+    found = {}
+    for i, level in enumerate(raw, first):
+        item = found.setdefault(level // group, [0.0, 0.0, 0])
+        item[0] += float(cells["buy"][i])
+        item[1] += float(cells["sell"][i])
+        item[2] += int(cells["count"][i])
+
+    size = step_ticks * group
     levels = []
     for level in range(min(found), max(found) + 1):
-        low = level * step_ticks / ps
-        high = (level + 1) * step_ticks / ps
-        i = found.get(level)
-        buy = float(cells["buy"][i]) if i is not None else 0.0
-        sell = float(cells["sell"][i]) if i is not None else 0.0
+        low = level * size / ps
+        high = (level + 1) * size / ps
+        buy, sell, count = found.get(level, (0.0, 0.0, 0))
         levels.append({
             "price": (low + high) / 2, "price_min": low, "price_max": high, "price_mid": (low + high) / 2,
             "bid_volume": round(sell, 6), "ask_volume": round(buy, 6), "delta": round(buy - sell, 6),
-            "total_volume": round(buy + sell, 6), "trade_count": int(cells["count"][i]) if i is not None else 0,
+            "total_volume": round(buy + sell, 6), "trade_count": count,
         })
-    return levels
+    return levels, size / ps
+
+
+def minutes(symbol, start_min, end_min):
+    """Precio y volumen de cada minuto negociado entre start_min y end_min, o None sin datos."""
+    parts = _parts(symbol, start_min, end_min)
+    if not parts:
+        return None
+
+    def join(name):
+        return np.concatenate([d[name][a:b] / d["info"][0] for d, a, b, _, _ in parts])
+
+    return {
+        "m": np.concatenate([d["m"][a:b] for d, a, b, _, _ in parts]),
+        "o": join("o"), "h": join("h"), "l": join("l"), "c": join("c"),
+        "v": np.concatenate([(d["buy"][a:b] + d["sell"][a:b]) / d["info"][1] for d, a, b, _, _ in parts]),
+    }
+
+
+def cells(symbol, start_min, end_min):
+    """Precio medio y volumen de cada celda negociada entre start_min y end_min."""
+    prices, volumes = [np.empty(0)], [np.empty(0)]
+    for data, _, _, first, stop in _parts(symbol, start_min, end_min):
+        ps, qs, ticks = (int(x) for x in data["info"])
+        prices.append((data["cl"][first:stop] + 0.5) * ticks / ps)
+        volumes.append((data["cb"][first:stop] + data["cs"][first:stop]) / qs)
+    return np.concatenate(prices), np.concatenate(volumes)
 
 
 def profile(symbol, start_ms, end_ms, known_until_ms, low, high, rows):
@@ -193,11 +279,14 @@ def profile(symbol, start_ms, end_ms, known_until_ms, low, high, rows):
     }
 
 
-def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, step=None):
+def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, step=None, imbalance=None, max_levels=None):
     """
     Footprints de las velas que empiezan entre start_ms y end_ms.
     known_until_ms corta la informacion: un minuto solo cuenta si ya termino en ese instante.
+    imbalance acepta ratio, mode, min_volume, count_zero y stacked_levels.
+    max_levels es el tope por vela con step automatico: una vela ancha sube su propio step.
     """
+    imbalance = imbalance or {}
     tf = int(interval_minutes)
     start_min = (start_ms // 60000) // tf * tf
     end_min = -(-end_ms // 60000)
@@ -211,14 +300,21 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     if not wanted:
         return empty
     data0 = wanted[-1][0]
-    ps, _, ticks = (int(x) for x in data0["info"])
+    ps = int(data0["info"][0])
+    ticks = max(int(d["info"][2]) for d, *_ in wanted)
     cell = ticks / ps
     price_ref = float(data0["c"][wanted[-1][2] - 1]) / ps
     used_step = float(step) if step else auto_step(price_ref, tf, cell)
-    step_ticks = max(ticks, int(round(used_step * ps)))
 
     # Las velas anteriores solo sirven para medir el volumen relativo de la primera vela pedida
     candles = _candles(_parts(symbol, start_min - tf * ZSCORE_LOOKBACK, end_min), tf)
+
+    # El step es multiplo de la celda guardada, para que todos los niveles midan lo mismo
+    shown = candles["start"] >= start_min
+    widest = float((candles["high"] - candles["low"])[shown].max()) if shown.any() else 0.0
+    least = 0 if max_levels else math.ceil(widest * ps / MAX_LEVELS_PER_CANDLE / ticks) * ticks
+    step_ticks = max(ticks, int(round(used_step * ps / ticks)) * ticks, least)
+
     cells = _cell_sums(wanted, tf, step_ticks)
     volumes = candles["buy"] + candles["sell"]
 
@@ -229,23 +325,24 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
         first, stop = np.searchsorted(cells["start"], [t, t + 1])
         if first == stop:
             continue
-        levels = _levels(cells, first, stop, step_ticks, ps)
+        levels, level_step = _levels(cells, first, stop, step_ticks, ps, max_levels)
         poc = max(range(len(levels)), key=lambda i: levels[i]["total_volume"])
         past = volumes[max(0, index - ZSCORE_LOOKBACK):index]
         mean = float(past.mean()) if len(past) else 0.0
         std = float(past.std()) if len(past) else 0.0
-        found = _imbalances(levels)
+        found = _imbalances(levels, imbalance)
         buy, sell = float(candles["buy"][index]), float(candles["sell"][index])
         result.append({
             "candle_timestamp": t * 60000, "symbol": symbol, "interval": str(tf),
             "candle_open": float(candles["open"][index]), "candle_high": float(candles["high"][index]),
             "candle_low": float(candles["low"][index]), "candle_close": float(candles["close"][index]),
-            "step_size": step_ticks / ps, "levels": levels, "num_levels": len(levels),
+            "step_size": level_step, "levels": levels, "num_levels": len(levels),
             "poc_index": poc, "poc_price": levels[poc]["price_mid"], "poc": levels[poc]["price_mid"],
             "total_delta": round(buy - sell, 6), "delta": round(buy - sell, 6),
             "total_volume": round(buy + sell, 6), "trade_count": int(candles["trades"][index]),
-            "imbalances": found, "stacked_imbalances": _stacked(levels, found),
+            "imbalances": found,
+            "stacked_imbalances": _stacked(levels, found, imbalance.get("stacked_levels", STACKED_MIN_LEVELS)),
             "volume_zscore": round((buy + sell - mean) / std, 2) if std > 0 else 0.0,
             "complete": t + tf <= end_min, "estimated": False,
         })
-    return {"footprints": result, "step_size": step_ticks / ps, "known_until": end_min * 60000}
+    return {"footprints": result, "step_size": step_ticks / ps, "cell_size": cell, "known_until": end_min * 60000}

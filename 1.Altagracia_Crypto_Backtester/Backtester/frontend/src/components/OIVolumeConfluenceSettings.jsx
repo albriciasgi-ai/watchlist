@@ -110,9 +110,9 @@ const OIVolumeConfluenceSettings = ({
           padding: '12px',
           borderRadius: '8px',
           marginBottom: '16px',
-          border: '2px solid #2196F3'
+          border: '2px solid #2962ff'
         }}>
-          <h5 style={{ margin: '0 0 12px 0', color: '#1976D2' }}>
+          <h5 style={{ margin: '0 0 12px 0', color: '#1565C0' }}>
             📊 Filtros de Señales
           </h5>
 
@@ -187,7 +187,7 @@ const OIVolumeConfluenceSettings = ({
           marginBottom: '16px',
           border: '2px solid #FF9800'
         }}>
-          <h5 style={{ margin: '0 0 12px 0', color: '#F57C00' }}>
+          <h5 style={{ margin: '0 0 12px 0', color: '#b25600' }}>
             🎨 Visualización
           </h5>
 
@@ -234,7 +234,7 @@ const OIVolumeConfluenceSettings = ({
             style={{
               width: '100%',
               padding: '12px',
-              background: showAdvanced ? '#4CAF50' : '#2196F3',
+              background: showAdvanced ? '#4CAF50' : '#2962ff',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
@@ -312,8 +312,8 @@ const OIVolumeConfluenceSettings = ({
           border: '1px solid #c5cae9'
         }}>
           💡 <strong>OI-Volume Confluence</strong> muestra solo cuando Open Interest y Volumen
-          se mueven juntos en la misma dirección: <strong style={{color: '#34C759'}}>Verde</strong> = ambos alcistas (respaldo institucional fuerte para subida),
-          <strong style={{color: '#FF3B30'}}> Rojo</strong> = ambos bajistas (respaldo institucional fuerte para caída).
+          se mueven juntos en la misma dirección: <strong style={{color: '#1B5E20'}}>Verde</strong> = ambos alcistas (respaldo institucional fuerte para subida),
+          <strong style={{color: '#C62828'}}> Rojo</strong> = ambos bajistas (respaldo institucional fuerte para caída).
           Los clusters indican zonas de alto respaldo institucional.
         </div>
       </div>

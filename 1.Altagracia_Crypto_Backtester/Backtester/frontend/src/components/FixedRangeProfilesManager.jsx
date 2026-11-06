@@ -2,6 +2,7 @@
 // Componente para crear y gestionar multiples Volume Profile Fixed Range
 
 import React, { useState, useMemo } from "react";
+import { isBlind, maskDate } from "./backtesting/blindClock.js";
 
 const FixedRangeProfilesManager = ({
   symbol,
@@ -71,6 +72,7 @@ const FixedRangeProfilesManager = ({
   };
 
   const formatDate = (timestamp) => {
+    if (isBlind()) return maskDate(timestamp);
     const date = new Date(timestamp);
     return date.toLocaleDateString('es-ES', {
       day: '2-digit',
@@ -151,7 +153,7 @@ const FixedRangeProfilesManager = ({
       )}
 
       {profiles.length === 0 && (
-        <p className="no-profiles-message">
+        <p className="no-profiles-message" style={{ color: '#666' }}>
           No hay perfiles de rango fijo. Haz clic en "+ Nuevo Rango" para crear uno.
         </p>
       )}
@@ -234,7 +236,7 @@ const FixedRangeProfilesManager = ({
                                 {rect.label ? `[${rect.label}] ` : ''}
                                 {formatPrice(rect.priceLow)} - {formatPrice(rect.priceHigh)}
                               </div>
-                              <div style={{ color: '#888', marginTop: '2px' }}>
+                              <div style={{ color: '#666', marginTop: '2px' }}>
                                 {formatDate(rect.timeStart)} - {formatDate(rect.timeEnd)}
                               </div>
                             </div>
@@ -256,7 +258,7 @@ const FixedRangeProfilesManager = ({
                     )}
 
                     {!showRectPicker && (
-                      <div style={{ fontSize: '11px', color: '#888' }}>
+                      <div style={{ fontSize: '11px', color: '#666' }}>
                         Selecciona un rectangulo existente o dibuja uno nuevo en el chart
                       </div>
                     )}
@@ -271,7 +273,7 @@ const FixedRangeProfilesManager = ({
                         Desde rectangulo del chart
                       </span>
                     </div>
-                    <div style={{ fontSize: '12px', color: '#888', marginBottom: '10px' }}>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>
                       No hay rectangulos dibujados en el chart. Dibuja uno para definir visualmente el rango del VP Fixed.
                     </div>
                     {onStartDrawRectangle && (

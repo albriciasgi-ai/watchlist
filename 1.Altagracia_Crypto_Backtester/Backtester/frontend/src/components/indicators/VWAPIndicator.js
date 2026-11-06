@@ -4,6 +4,8 @@
 import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
 
+const MIN_SESSION_MS = 23 * 60 * 60 * 1000;
+
 class VWAPIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 7, config = {}) {
     super(symbol, interval, days);
@@ -62,6 +64,9 @@ class VWAPIndicator extends IndicatorBase {
     this.dataMap = new Map();
     this._lastCalculatedLength = 0; // 🎯 Para detectar cuando necesitamos recalcular
     this._calculationValid = false; // 🎯 Flag para indicar si el cálculo es válido
+    this._knownCandles = null; // En backtesting: lo que ya ocurrió en la hora simulada
+    this._formingKey = null;
+    this._formingValue = null;
 
     // Volatility state tracking
     this.volatilityStateChanges = [];
@@ -319,7 +324,10 @@ class VWAPIndicator extends IndicatorBase {
         timestamp: candle.timestamp,
         vwap: vwap,
         typical_price: typicalPrice,
-        volume: volume
+        volume: volume,
+        cum_pv: cumulativePV,
+        cum_volume: cumulativeVolume,
+        session_start: sessionStartTimestamp
       });
     }
 
@@ -390,7 +398,9 @@ class VWAPIndicator extends IndicatorBase {
         timestamp: candle.timestamp,
         vwap: vwap,
         typical_price: typicalPrice,
-        volume: volume
+        volume: volume,
+        cum_pv: cumulativePV,
+        cum_volume: cumulativeVolume
       });
     }
 
@@ -401,74 +411,127 @@ class VWAPIndicator extends IndicatorBase {
   _calculateStdBands(candles, vwapData) {
     if (candles.length !== vwapData.length) return vwapData;
 
+    for (let i = 0; i < vwapData.length; i++) {
+      vwapData[i].bands = this._bandsAt(candles, i, vwapData[i].vwap);
+    }
+
+    return vwapData;
+  }
+
+  // Bandas de la vela i, con las velas de su ventana
+  _bandsAt(candles, i, vwapValue) {
     // Aplicar ajuste de crypto a los multiplicadores si está habilitado
     const cryptoAdjustment = this.applyCryptoAdjustment ? 1.15 : 1.0;
     const adjustedMultipliers = this.bandMultipliers.map(m => m * cryptoAdjustment);
 
-    for (let i = 0; i < vwapData.length; i++) {
-      const vwapPoint = vwapData[i];
-      const vwapValue = vwapPoint.vwap;
-
-      // Determinar ventana según tipo de VWAP
-      let windowCandles;
-      if (this.vwapType === 'rolling') {
-        const startIdx = Math.max(0, i - this.rollingPeriod + 1);
-        windowCandles = candles.slice(startIdx, i + 1);
-      } else if (this.vwapType === 'session') {
-        // Para session, buscar desde el inicio de la sesión
-        let sessionStartIdx = 0;
-        for (let j = i; j >= 0; j--) {
-          const candleDate = new Date(candles[j].timestamp);
-          const hourUTC = candleDate.getUTCHours();
-          if (hourUTC === this.resetHour && j < i) {
-            const timeDiff = candles[i].timestamp - candles[j].timestamp;
-            if (timeDiff >= (23 * 60 * 60 * 1000)) {
-              sessionStartIdx = j;
-              break;
-            }
+    // Determinar ventana según tipo de VWAP
+    let windowCandles;
+    if (this.vwapType === 'rolling') {
+      const startIdx = Math.max(0, i - this.rollingPeriod + 1);
+      windowCandles = candles.slice(startIdx, i + 1);
+    } else if (this.vwapType === 'session') {
+      // Para session, buscar desde el inicio de la sesión
+      let sessionStartIdx = 0;
+      for (let j = i; j >= 0; j--) {
+        const candleDate = new Date(candles[j].timestamp);
+        const hourUTC = candleDate.getUTCHours();
+        if (hourUTC === this.resetHour && j < i) {
+          const timeDiff = candles[i].timestamp - candles[j].timestamp;
+          if (timeDiff >= MIN_SESSION_MS) {
+            sessionStartIdx = j;
+            break;
           }
         }
-        windowCandles = candles.slice(sessionStartIdx, i + 1);
-      } else {
-        // Anchored: desde inicio hasta actual
-        windowCandles = candles.slice(0, i + 1);
       }
-
-      if (windowCandles.length < 2) {
-        // No hay suficientes datos para calcular varianza
-        vwapPoint.bands = {};
-        adjustedMultipliers.forEach((_, idx) => {
-          vwapPoint.bands[`upper_${idx + 1}`] = vwapValue;
-          vwapPoint.bands[`lower_${idx + 1}`] = vwapValue;
-        });
-        continue;
-      }
-
-      // Calcular varianza ponderada
-      let totalWeightedSqDiff = 0;
-      let totalVolume = 0;
-
-      for (const candle of windowCandles) {
-        const typicalPrice = (candle.high + candle.low + candle.close) / 3.0;
-        const volume = candle.volume;
-        const sqDiff = Math.pow(typicalPrice - vwapValue, 2);
-        totalWeightedSqDiff += sqDiff * volume;
-        totalVolume += volume;
-      }
-
-      // Desviación estándar
-      const variance = totalVolume > 0 ? totalWeightedSqDiff / totalVolume : 0;
-      const stdDev = Math.sqrt(variance);
-
-      // Crear bandas
-      vwapPoint.bands = {};
-      adjustedMultipliers.forEach((mult, idx) => {
-        vwapPoint.bands[`upper_${idx + 1}`] = vwapValue + (stdDev * mult);
-        vwapPoint.bands[`lower_${idx + 1}`] = vwapValue - (stdDev * mult);
-      });
+      windowCandles = candles.slice(sessionStartIdx, i + 1);
+    } else {
+      // Anchored: desde inicio hasta actual
+      windowCandles = candles.slice(0, i + 1);
     }
 
-    return vwapData;
+    const bands = {};
+
+    if (windowCandles.length < 2) {
+      // No hay suficientes datos para calcular varianza
+      adjustedMultipliers.forEach((_, idx) => {
+        bands[`upper_${idx + 1}`] = vwapValue;
+        bands[`lower_${idx + 1}`] = vwapValue;
+      });
+      return bands;
+    }
+
+    // Calcular varianza ponderada
+    let totalWeightedSqDiff = 0;
+    let totalVolume = 0;
+
+    for (const candle of windowCandles) {
+      const typicalPrice = (candle.high + candle.low + candle.close) / 3.0;
+      const volume = candle.volume;
+      const sqDiff = Math.pow(typicalPrice - vwapValue, 2);
+      totalWeightedSqDiff += sqDiff * volume;
+      totalVolume += volume;
+    }
+
+    // Desviación estándar
+    const variance = totalVolume > 0 ? totalWeightedSqDiff / totalVolume : 0;
+    const stdDev = Math.sqrt(variance);
+
+    // Crear bandas
+    adjustedMultipliers.forEach((mult, idx) => {
+      bands[`upper_${idx + 1}`] = vwapValue + (stdDev * mult);
+      bands[`lower_${idx + 1}`] = vwapValue - (stdDev * mult);
+    });
+
+    return bands;
+  }
+
+  /**
+   * Punto de una vela visible. El punto guardado de la vela en formación viene de la vela
+   * final, con precios que todavía no ocurrieron: ese se calcula con lo ya conocido.
+   */
+  _pointFor(candle) {
+    if (!candle.in_progress || !this._knownCandles) return this.dataMap.get(candle.timestamp);
+
+    const key = `${candle.timestamp}|${candle.knownUntil}`;
+    if (key !== this._formingKey) {
+      this._formingKey = key;
+      this._formingValue = this._formingPoint(this._knownCandles);
+    }
+    return this._formingValue;
+  }
+
+  // VWAP y bandas de la última vela conocida, a partir de la vela cerrada anterior
+  _formingPoint(known) {
+    const index = known.length - 1;
+    const candle = known[index];
+    if (this.vwapType === 'anchored' && candle.timestamp < (this.anchorTimestamp || 0)) return undefined;
+
+    const previous = index > 0 ? this.dataMap.get(known[index - 1].timestamp) : undefined;
+    const typicalPrice = (candle.high + candle.low + candle.close) / 3.0;
+    let vwap;
+
+    if (this.vwapType === 'rolling') {
+      vwap = this._calculateRollingVWAP(known.slice(Math.max(0, index - this.rollingPeriod + 1))).pop().vwap;
+    } else {
+      const startsSession = this.vwapType === 'session' && previous
+        && new Date(candle.timestamp).getUTCHours() === this.resetHour
+        && candle.timestamp - previous.session_start >= MIN_SESSION_MS;
+      const base = previous && !startsSession ? previous : { cum_pv: 0, cum_volume: 0 };
+      const volume = base.cum_volume + candle.volume;
+      vwap = volume > 0 ? (base.cum_pv + typicalPrice * candle.volume) / volume : typicalPrice;
+    }
+
+    const point = { timestamp: candle.timestamp, vwap, typical_price: typicalPrice, volume: candle.volume };
+    if (this.showBands && previous?.bands) point.bands = this._bandsAt(known, index, vwap);
+    return point;
+  }
+
+  // Último punto con velas cerradas en la hora simulada
+  _latestPoint() {
+    const known = this._knownCandles;
+    if (!known) return this.dataMap.get(Array.from(this.dataMap.keys()).pop());
+    const newest = known[known.length - 1];
+    return newest?.in_progress ? this.dataMap.get(known[known.length - 2]?.timestamp) : this.dataMap.get(newest?.timestamp);
   }
 
   // ✅ Calculate ATR (Average True Range) for TTM Squeeze
@@ -765,6 +828,8 @@ class VWAPIndicator extends IndicatorBase {
     if (!this.enabled) return;
     if (!visibleCandles || visibleCandles.length === 0) return;
 
+    this._knownCandles = priceContext?.knownCandles || null;
+
     // 🎯 VALIDACIÓN CRÍTICA: allCandles puede llegar como displayCandles en lugar de allCandlesRef
     if (!allCandles || allCandles.length === 0) {
       console.error(`[${this.symbol}] VWAP CRÍTICO: allCandles está vacío - length=${allCandles?.length}`);
@@ -828,7 +893,7 @@ class VWAPIndicator extends IndicatorBase {
     // Collect valid points first
     for (let i = 0; i < visibleCandles.length; i++) {
       const candle = visibleCandles[i];
-      const vwapPoint = this.dataMap.get(candle.timestamp);
+      const vwapPoint = this._pointFor(candle);
       if (!vwapPoint) continue;
 
       const candleX = x + (i * candleWidth) + (candleWidth / 2);
@@ -883,7 +948,7 @@ class VWAPIndicator extends IndicatorBase {
       const candleWidth = width / visibleCandles.length;
 
       visibleCandles.forEach((candle, i) => {
-        const vwapPoint = this.dataMap.get(candle.timestamp);
+        const vwapPoint = this._pointFor(candle);
         if (!vwapPoint || !vwapPoint.bands) return;
 
         const candleX = x + (i * candleWidth) + (candleWidth / 2);
@@ -913,7 +978,7 @@ class VWAPIndicator extends IndicatorBase {
       firstPoint = true;
 
       visibleCandles.forEach((candle, i) => {
-        const vwapPoint = this.dataMap.get(candle.timestamp);
+        const vwapPoint = this._pointFor(candle);
         if (!vwapPoint || !vwapPoint.bands) return;
 
         const candleX = x + (i * candleWidth) + (candleWidth / 2);
@@ -1032,7 +1097,7 @@ class VWAPIndicator extends IndicatorBase {
 
     // Draw bar segments for each candle
     visibleCandles.forEach((candle, i) => {
-      const point = this.dataMap.get(candle.timestamp);
+      const point = this._pointFor(candle);
       if (!point) return;
 
       const candleX = x + (i * candleWidth);
@@ -1116,8 +1181,7 @@ class VWAPIndicator extends IndicatorBase {
     ctx.textBaseline = 'top';
 
     // Get latest data point
-    const latestTimestamp = Array.from(this.dataMap.keys()).pop();
-    const latestPoint = this.dataMap.get(latestTimestamp);
+    const latestPoint = this._latestPoint();
 
     if (!latestPoint) return;
 

@@ -3,6 +3,8 @@
  * Permite guardar y restaurar estado completo: órdenes, dibujos, configuraciones
  */
 
+import { tradeStats } from './tradeJournal.js';
+
 class SessionManager {
   constructor() {
     this.dbName = 'backtestingSessions';
@@ -83,6 +85,20 @@ class SessionManager {
         console.error('[SessionManager] Error al guardar sesión:', request.error);
         reject(request.error);
       };
+    });
+  }
+
+  /**
+   * Guarda el estado sin perder el nombre, la fecha de creación ni las notas de la sesión
+   */
+  async mergeSession(state) {
+    const previous = await this.loadSession(state.sessionId);
+
+    return this.saveSession({
+      ...state,
+      sessionName: previous?.sessionName ?? state.sessionName,
+      createdAt: previous?.createdAt ?? state.createdAt,
+      metadata: { ...previous?.metadata, ...tradeStats(state.orderManagerState?.orders) }
     });
   }
 
@@ -253,7 +269,7 @@ class SessionManager {
         const state = getStateCallback();
         if (state) {
           state.sessionId = sessionId;
-          await this.saveSession(state);
+          await this.mergeSession(state);
           console.log('[SessionManager] Auto-guardado ejecutado');
         }
       } catch (error) {
