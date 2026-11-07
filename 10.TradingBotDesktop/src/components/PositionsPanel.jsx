@@ -69,10 +69,14 @@ const PositionsPanel = () => {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        // En modo hedge puede haber LONG y SHORT a la vez: el backend manda todas en "positions"
+        const open = Array.isArray(data.positions) && data.positions.length > 0
+          ? data.positions
+          : (data.hasPosition ? [data] : []);
         setPositions(prev => ({
           ...prev,
           [symbol]: {
-            hasPosition: data.hasPosition || false,
+            hasPosition: open.length > 0,
             size: data.size || 0,
             side: data.side || '',
             entryPrice: data.entryPrice || '0',
@@ -80,6 +84,16 @@ const PositionsPanel = () => {
             markPrice: data.markPrice || '0',
             leverage: data.leverage || '0',
             liqPrice: data.liqPrice || '0',
+            open: open.map(p => ({
+              side: p.side || '',
+              size: p.size || 0,
+              entryPrice: p.entryPrice || '0',
+              unrealizedPnl: parseFloat(p.unrealizedPnl || '0'),
+              markPrice: p.markPrice || '0',
+              leverage: p.leverage || '0',
+              stopLoss: p.stopLoss || null,
+              takeProfit: p.takeProfit || null,
+            })),
             lastChecked: new Date().toISOString(),
           },
         }));
@@ -143,9 +157,12 @@ const PositionsPanel = () => {
 
     Object.values(positions).forEach(pos => {
       if (pos?.hasPosition) {
-        stats.open++;
-        if (pos.side === 'Buy') stats.long++;
-        else if (pos.side === 'Sell') stats.short++;
+        const open = pos.open && pos.open.length > 0 ? pos.open : [pos];
+        open.forEach(p => {
+          stats.open++;
+          if (p.side === 'Buy') stats.long++;
+          else if (p.side === 'Sell') stats.short++;
+        });
       } else if (pos !== null) {
         stats.closed++;
       }
@@ -228,6 +245,7 @@ const PositionsPanel = () => {
             const position = positions[symbol];
             const isChecking = checking[symbol];
             const hasPosition = position?.hasPosition;
+            const openList = hasPosition ? (position.open && position.open.length > 0 ? position.open : [position]) : [];
 
             return (
               <div
@@ -238,9 +256,11 @@ const PositionsPanel = () => {
                   <div className="position-symbol">
                     <span className="symbol-name">{symbol}</span>
                     {hasPosition ? (
-                      <span className={`position-badge position-badge-${position.side === 'Buy' ? 'long' : 'short'}`}>
-                        {position.side === 'Buy' ? 'LONG' : 'SHORT'}
-                      </span>
+                      openList.map((p, i) => (
+                        <span key={`${p.side}-${i}`} className={`position-badge position-badge-${p.side === 'Buy' ? 'long' : 'short'}`}>
+                          {p.side === 'Buy' ? 'LONG' : 'SHORT'}
+                        </span>
+                      ))
                     ) : (
                       <span className="position-badge position-badge-closed">
                         NO POSITION
@@ -259,36 +279,54 @@ const PositionsPanel = () => {
                 {position && (
                   <div className="position-details">
                     {hasPosition ? (
-                      <>
-                        <div className="position-detail">
-                          <span className="detail-label">Size:</span>
-                          <span className="detail-value">{position.size}</span>
-                        </div>
-                        <div className="position-detail">
-                          <span className="detail-label">Entry Price:</span>
-                          <span className="detail-value">${position.entryPrice}</span>
-                        </div>
-                        {position.unrealizedPnl !== undefined && (
+                      openList.map((p, i) => (
+                        <div key={`${p.side}-${i}`}>
+                          {openList.length > 1 && (
+                            <div className="position-detail">
+                              <span className="detail-label">Side:</span>
+                              <span className="detail-value">{p.side === 'Buy' ? 'LONG' : 'SHORT'}</span>
+                            </div>
+                          )}
                           <div className="position-detail">
-                            <span className="detail-label">Unrealized P&L:</span>
-                            <span className={`detail-value ${position.unrealizedPnl >= 0 ? 'text-success' : 'text-danger'}`}>
-                              {position.unrealizedPnl >= 0 ? '+' : ''}{position.unrealizedPnl > 0 || position.unrealizedPnl < 0 ? `$${Math.abs(position.unrealizedPnl).toFixed(2)}` : '$0.00'}
+                            <span className="detail-label">Size:</span>
+                            <span className="detail-value">{p.size}</span>
+                          </div>
+                          <div className="position-detail">
+                            <span className="detail-label">Entry Price:</span>
+                            <span className="detail-value">${p.entryPrice}</span>
+                          </div>
+                          {p.unrealizedPnl !== undefined && (
+                            <div className="position-detail">
+                              <span className="detail-label">Unrealized P&L:</span>
+                              <span className={`detail-value ${p.unrealizedPnl >= 0 ? 'text-success' : 'text-danger'}`}>
+                                {p.unrealizedPnl >= 0 ? '+' : ''}{p.unrealizedPnl > 0 || p.unrealizedPnl < 0 ? `$${Math.abs(p.unrealizedPnl).toFixed(2)}` : '$0.00'}
+                              </span>
+                            </div>
+                          )}
+                          {p.markPrice && p.markPrice !== '0' && (
+                            <div className="position-detail">
+                              <span className="detail-label">Mark Price:</span>
+                              <span className="detail-value">${p.markPrice}</span>
+                            </div>
+                          )}
+                          {p.leverage && (
+                            <div className="position-detail">
+                              <span className="detail-label">Leverage:</span>
+                              <span className="detail-value">{p.leverage}x</span>
+                            </div>
+                          )}
+                          <div className="position-detail">
+                            <span className="detail-label">Stop Loss:</span>
+                            <span className={`detail-value ${p.stopLoss ? '' : 'text-danger'}`}>
+                              {p.stopLoss ? `$${p.stopLoss}` : 'SIN STOP LOSS'}
                             </span>
                           </div>
-                        )}
-                        {position.markPrice && position.markPrice !== '0' && (
                           <div className="position-detail">
-                            <span className="detail-label">Mark Price:</span>
-                            <span className="detail-value">${position.markPrice}</span>
+                            <span className="detail-label">Take Profit:</span>
+                            <span className="detail-value">{p.takeProfit ? `$${p.takeProfit}` : 'N/A'}</span>
                           </div>
-                        )}
-                        {position.leverage && (
-                          <div className="position-detail">
-                            <span className="detail-label">Leverage:</span>
-                            <span className="detail-value">{position.leverage}x</span>
-                          </div>
-                        )}
-                      </>
+                        </div>
+                      ))
                     ) : (
                       <div className="position-empty">
                         {position.error ? (

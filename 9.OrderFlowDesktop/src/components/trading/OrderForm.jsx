@@ -69,7 +69,8 @@ const OrderForm = ({
     let qty = investment / entryPrice;
 
     // Aplicar StepSize
-    const stepSize = parseFloat(symbolConfig.stepSize) || 0.001;
+    // El bot entrega step_size (snake_case); stepSize nunca existia y siempre caia en 0.001
+    const stepSize = parseFloat(symbolConfig.step_size ?? symbolConfig.stepSize) || 0.001;
     qty = Math.floor(qty / stepSize) * stepSize;
 
     // Redondear a la precisión correcta

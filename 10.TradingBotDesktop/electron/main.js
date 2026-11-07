@@ -57,6 +57,38 @@ let powerSaveBlockerId = null;
 const isDev = !app.isPackaged;
 const DEV_SERVER_URL = 'http://localhost:5001';
 
+// Backend del bot (proceso aparte: sigue operando aunque esta ventana se cierre)
+const BOT_API = 'http://127.0.0.1:5000';
+
+function showTrayNotification(body) {
+  if (Notification.isSupported()) {
+    new Notification({
+      title: 'Trading Bot Desktop',
+      body,
+      icon: path.join(__dirname, '../assets/icon.ico')
+    }).show();
+  }
+}
+
+async function toggleBotPause() {
+  try {
+    const current = await fetch(`${BOT_API}/api/settings/trading-paused`).then(r => r.json());
+    const next = !(current.trading_paused === true);
+    const result = await fetch(`${BOT_API}/api/settings/trading-paused`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paused: next })
+    }).then(r => r.json());
+    const paused = result.trading_paused === true;
+    if (tray) {
+      tray.setToolTip(`Trading Bot Desktop - ${paused ? 'EN PAUSA' : 'activo'}`);
+    }
+    showTrayNotification(paused ? 'Bot en pausa: no abrira operaciones nuevas' : 'Bot reanudado');
+  } catch (e) {
+    showTrayNotification('No se pudo contactar al backend del bot (puerto 5000)');
+  }
+}
+
 // ============================================================
 // FUNCIONES PRINCIPALES
 // ============================================================
@@ -154,6 +186,12 @@ function createTray() {
       }
     },
     {
+      label: 'Pausar / reanudar bot',
+      click: () => {
+        toggleBotPause();
+      }
+    },
+    {
       label: 'Reiniciar',
       click: () => {
         app.relaunch();
@@ -162,8 +200,10 @@ function createTray() {
     },
     { type: 'separator' },
     {
-      label: 'Cerrar',
+      // Solo se cierra la interfaz: el backend del bot es otro proceso y sigue operando
+      label: 'Cerrar interfaz (el bot sigue operando)',
       click: () => {
+        showTrayNotification('La interfaz se cerro. El backend del bot sigue corriendo y puede abrir operaciones. Usa "Pausar" para detenerlo.');
         app.isQuitting = true;
         app.quit();
       }

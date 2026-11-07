@@ -9,6 +9,7 @@ const CredentialsPanel = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [hasCredentials, setHasCredentials] = useState(false);
+  const [mode, setMode] = useState(null); // 'demo' | 'live' segun las credenciales cargadas en el bot
   // Execution method setting
   const [useIntegratedTpsl, setUseIntegratedTpsl] = useState(false);
   const [settingsLoading, setSettingsLoading] = useState(false);
@@ -24,6 +25,10 @@ const CredentialsPanel = () => {
       if (response.ok) {
         const data = await response.json();
         setHasCredentials(data.has_credentials);
+        setMode(data.mode || null);
+        if (data.mode) {
+          setIsDemo(data.mode === 'demo');
+        }
       }
     } catch (error) {
       console.error('Error checking credentials:', error);
@@ -95,13 +100,19 @@ const CredentialsPanel = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ type: 'success', text: data.message || 'Credentials saved successfully!' });
+        if (data.validated === false) {
+          // Guardadas, pero Bybit las rechazo (clave mala, de otro entorno o sin permisos)
+          setMessage({ type: 'error', text: data.validation_message || data.message });
+        } else {
+          setMessage({ type: 'success', text: data.validation_message || data.message || 'Credentials saved successfully!' });
+        }
         setHasCredentials(true);
+        setMode(data.mode || null);
         // Clear inputs after successful save
         setApiKey('');
         setApiSecret('');
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to save credentials' });
+        setMessage({ type: 'error', text: data.detail || data.error || 'Failed to save credentials' });
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Network error: ' + error.message });
@@ -121,7 +132,9 @@ const CredentialsPanel = () => {
       <div className="panel-header">
         <h2>Bybit API Credentials</h2>
         {hasCredentials && (
-          <span className="badge badge-success">Configured</span>
+          <span className={`badge ${mode === 'live' ? 'badge-danger' : 'badge-success'}`}>
+            Configured{mode === 'demo' ? ' - DEMO' : mode === 'live' ? ' - REAL' : ''}
+          </span>
         )}
       </div>
 
@@ -224,7 +237,7 @@ const CredentialsPanel = () => {
               <small style={{ display: 'block', marginTop: '4px', color: '#94a3b8' }}>
                 {useIntegratedTpsl
                   ? 'Fast mode: Market/Limit + TP + SL in single API call'
-                  : 'Safe mode: 3 separate API calls (Market -> SL -> TP)'}
+                  : 'Sequential: Market order, then TP/SL on the position'}
               </small>
             </span>
           </label>
@@ -233,8 +246,9 @@ const CredentialsPanel = () => {
         <div className="credentials-info" style={{ marginTop: '12px' }}>
           <h4 style={{ marginBottom: '8px', fontSize: '14px' }}>Method Comparison:</h4>
           <ul style={{ fontSize: '13px' }}>
-            <li><strong>Sequential (3 calls):</strong> More reliable, confirms each step before next</li>
-            <li><strong>Integrated (1 call):</strong> Faster execution, all orders sent together</li>
+            <li><strong>Sequential:</strong> confirms the real fill price, then sets TP/SL on the position (slower)</li>
+            <li><strong>Integrated (1 call):</strong> Faster execution, TP/SL sent with the order</li>
+            <li>In both methods the bot checks the Stop Loss and closes the position if it cannot set one</li>
             <li>Integrated also supports <strong>Limit orders</strong> with TP/SL</li>
           </ul>
         </div>

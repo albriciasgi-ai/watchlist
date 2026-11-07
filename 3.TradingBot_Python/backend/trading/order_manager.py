@@ -7,13 +7,23 @@ Optimizations (January 2026):
 - Intelligent polling instead of fixed sleeps
 - Automatic retry for SL/TP with critical alerts
 - Detailed timing logs
+
+Robustez (Noviembre 2026):
+- Precision real de Bybit (paso de cantidad, tick y minimo) en vez de una tabla fija
+- La cantidad nunca se redondea hacia arriba: si no alcanza el minimo la orden no se envia
+- Precios redondeados al tick hacia el lado que no aumenta el riesgo
+- Metodo secuencial: entrada a mercado, precio real de llenado del lado operado y TP/SL de
+  posicion (trading-stop). Si el SL no queda puesto, la posicion se cierra a mercado
+- Metodo integrado: tras una entrada a mercado se verifica que la posicion tenga SL
+- Respuesta perdida de Bybit: se comprueba la posicion antes de dar la orden por fallida
+- Apalancamiento de la configuracion fijado en Bybit antes de abrir
 """
 
 import asyncio
 import time
 import logging
-from typing import Dict, Any, Optional, Callable
-from decimal import Decimal, ROUND_DOWN
+from typing import Dict, Any, Optional, Callable, Tuple
+from decimal import Decimal, ROUND_FLOOR, ROUND_CEILING
 from .bybit_client import BybitClient
 
 logger = logging.getLogger("order_manager")
@@ -29,30 +39,6 @@ class OrderManager:
     - Automatic retry for stop loss and take profit orders
     - Critical alerts when protection orders fail
     """
-
-    # StepSize mapping from C# bot (CRITICAL for correct order placement)
-    STEP_SIZES = {
-        "BTCUSDT": Decimal("0.001"),
-        "ETHUSDT": Decimal("0.01"),
-        "SOLUSDT": Decimal("0.1"),
-        "ADAUSDT": Decimal("1"),
-        "AVAXUSDT": Decimal("0.1"),
-        "GALAUSDT": Decimal("10"),
-        "INJUSDT": Decimal("0.1"),
-        "IOTAUSDT": Decimal("0.1"),
-        "TRXUSDT": Decimal("1"),
-        "UNIUSDT": Decimal("0.1"),
-        "XRPUSDT": Decimal("0.1"),
-        "CAKEUSDT": Decimal("0.01"),
-        "POLUSDT": Decimal("1"),
-        "MUBARAKUSDT": Decimal("1000"),
-        "HIFIUSDT": Decimal("1"),
-        "ARBUSDT": Decimal("1"),
-        "DOGEUSDT": Decimal("1"),
-        "DOTUSDT": Decimal("0.1"),
-        "LINKUSDT": Decimal("0.01"),
-        "NEARUSDT": Decimal("0.1"),
-    }
 
     # Polling configuration
     POSITION_POLL_INTERVAL_MS = 200  # Poll every 200ms
@@ -85,68 +71,62 @@ class OrderManager:
             self._symbol_locks[symbol] = asyncio.Lock()
         return self._symbol_locks[symbol]
 
-    def _get_step_size(self, symbol: str) -> Decimal:
-        """Get StepSize for symbol"""
-        return self.STEP_SIZES.get(symbol, Decimal("0.01"))
+    # ------------------------------------------------------------------
+    # Precision y formato
+    # ------------------------------------------------------------------
 
-    def _adjust_to_step_size(self, qty: Decimal, step_size: Decimal) -> Decimal:
-        """Adjust quantity to valid StepSize"""
-        if step_size == 0:
-            return qty
+    async def precision_for(self, symbol: str, config: Dict[str, Any]) -> Dict[str, Any]:
+        """Paso, tick y minimo reales de Bybit; si no se pueden leer, los de la configuracion."""
+        live = None
+        try:
+            live = await self.client.get_precision(symbol, config.get("category", "linear"))
+        except Exception as e:
+            logger.warning(f"[EXECUTE] Precision de Bybit no disponible para {symbol}: {e}")
+        if live:
+            return {"qty_step": live["qty_step"], "tick_size": live["tick_size"], "min_qty": live["min_qty"],
+                    "max_qty": live.get("max_qty") or Decimal("0"), "source": "bybit"}
+        logger.warning(f"[EXECUTE] {symbol}: usando la precision de trading_config.json")
+        return {
+            "qty_step": Decimal(str(config.get("step_size") or "0.001")),
+            "tick_size": Decimal(str(config.get("tick_size") or "0.01")),
+            "min_qty": Decimal(str(config.get("min_qty") or "0")),
+            "max_qty": Decimal(str(config.get("max_qty") or "0")),
+            "source": "config",
+        }
 
-        adjusted = (qty // step_size) * step_size
+    @staticmethod
+    def _floor_to_step(value: Decimal, step: Decimal) -> Decimal:
+        if step <= 0:
+            return value
+        return (value / step).to_integral_value(rounding=ROUND_FLOOR) * step
 
-        # If adjusted is 0, use minimum step_size
-        if adjusted == 0 and qty > 0:
-            adjusted = step_size
-
-        return adjusted
-
-    def _format_quantity(self, qty: Decimal, step_size: Decimal) -> str:
-        """Format quantity as string with correct decimals"""
-        # Determine decimal places from step_size
-        if step_size >= 1000:
-            return f"{int(qty)}"
-        elif step_size >= 100:
-            return f"{int(qty)}"
-        elif step_size >= 10:
-            return f"{int(qty)}"
-        elif step_size >= 1:
-            return f"{int(qty)}"
-        elif step_size >= Decimal("0.1"):
-            return f"{qty:.1f}"
-        elif step_size >= Decimal("0.01"):
-            return f"{qty:.2f}"
-        elif step_size >= Decimal("0.001"):
-            return f"{qty:.3f}"
-        elif step_size >= Decimal("0.0001"):
-            return f"{qty:.4f}"
-        else:
-            return f"{qty:.8f}"
-
-    def _adjust_price_to_tick_size(self, price: Decimal, tick_size: Decimal) -> Decimal:
-        """Adjust price to valid TickSize"""
-        if tick_size == 0:
+    @staticmethod
+    def _round_to_tick(price: Decimal, tick: Decimal, rounding) -> Decimal:
+        if tick <= 0:
             return price
+        return (price / tick).to_integral_value(rounding=rounding) * tick
 
-        return (price // tick_size) * tick_size
+    @staticmethod
+    def _fmt(value: Decimal, step: Decimal) -> str:
+        """Texto con los decimales del paso (el valor ya debe ser multiplo del paso)."""
+        exp = step.normalize().as_tuple().exponent if step > 0 else -8
+        quantum = Decimal(1).scaleb(exp) if exp < 0 else Decimal(1)
+        return format(value.quantize(quantum, rounding=ROUND_FLOOR), "f")
 
-    def _format_price(self, price: Decimal, tick_size: Decimal) -> str:
-        """Format price as string with correct decimals"""
-        if tick_size >= 1:
-            return f"{int(price)}"
-        elif tick_size >= Decimal("0.1"):
-            return f"{price:.1f}"
-        elif tick_size >= Decimal("0.01"):
-            return f"{price:.2f}"
-        elif tick_size >= Decimal("0.001"):
-            return f"{price:.3f}"
-        elif tick_size >= Decimal("0.0001"):
-            return f"{price:.4f}"
-        elif tick_size >= Decimal("0.00001"):
-            return f"{price:.5f}"
-        else:
-            return f"{price:.8f}"
+    def prepare_quantity(self, quantity: Any, prec: Dict[str, Any]) -> Tuple[Optional[Decimal], Optional[str], Optional[str]]:
+        """Cantidad al paso real, sin redondear nunca hacia arriba. Devuelve (qty, texto, error)."""
+        qty = self._floor_to_step(Decimal(str(quantity)), prec["qty_step"])
+        max_qty = prec.get("max_qty") or Decimal("0")
+        if max_qty > 0 and qty > max_qty:
+            qty = self._floor_to_step(max_qty, prec["qty_step"])
+        if qty <= 0 or (prec["min_qty"] > 0 and qty < prec["min_qty"]):
+            return None, None, (f"Cantidad {quantity} por debajo del minimo de Bybit "
+                                f"(minimo {prec['min_qty']}, paso {prec['qty_step']}): orden no enviada")
+        return qty, self._fmt(qty, prec["qty_step"]), None
+
+    def _round_entry(self, price: Decimal, side: str, tick: Decimal) -> Decimal:
+        """Precio limite al tick sin empeorarlo: compra hacia abajo, venta hacia arriba."""
+        return self._round_to_tick(price, tick, ROUND_FLOOR if side == "Buy" else ROUND_CEILING)
 
     def _get_opposite_side(self, side: str) -> str:
         """Get opposite side for closing position"""
@@ -205,127 +185,212 @@ class OrderManager:
 
         return (sl_valid, tp_valid)
 
+    def compute_sl_tp(self, entry_price: Decimal, side: str, config: Dict[str, Any], tick: Decimal):
+        """
+        SL y TP para una entrada, en este orden: distancia de la alerta, precio de la alerta o
+        porcentaje de la configuracion. Redondea al tick hacia el lado que no aumenta el riesgo.
+        Devuelve (sl, tp, origen_sl, origen_tp). Lanza ValueError si el SL queda en el precio.
+        """
+        sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
+        tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
+
+        if config.get("sl_distance"):
+            sl_dist = Decimal(str(config["sl_distance"]))
+            sl_price = entry_price - sl_dist if side == "Buy" else entry_price + sl_dist
+            sl_source = f"distance {sl_dist}"
+        elif config.get("custom_stop_loss"):
+            sl_price = Decimal(str(config["custom_stop_loss"]))
+            sl_source = "custom"
+        else:
+            sl_price = self._calculate_sl_price(entry_price, side, sl_percent)
+            sl_source = f"{sl_percent*100:.2f}%"
+
+        if config.get("tp_distance"):
+            tp_dist = Decimal(str(config["tp_distance"]))
+            tp_price = entry_price + tp_dist if side == "Buy" else entry_price - tp_dist
+            tp_source = f"distance {tp_dist}"
+        elif config.get("custom_take_profit"):
+            tp_price = Decimal(str(config["custom_take_profit"]))
+            tp_source = "custom"
+        else:
+            tp_price = self._calculate_tp_price(entry_price, side, tp_percent)
+            tp_source = f"{tp_percent*100:.2f}%"
+
+        sl_valid, tp_valid = self._validate_tpsl_coherence(entry_price, side, sl_price, tp_price)
+        if not sl_valid:
+            logger.warning(f"[EXECUTE] SL {sl_price} invalido para {side} en {entry_price}: se usa {sl_percent*100:.2f}%")
+            sl_price = self._calculate_sl_price(entry_price, side, sl_percent)
+            sl_source = f"{sl_percent*100:.2f}% (recalculado)"
+        if not tp_valid:
+            logger.warning(f"[EXECUTE] TP {tp_price} invalido para {side} en {entry_price}: se usa {tp_percent*100:.2f}%")
+            tp_price = self._calculate_tp_price(entry_price, side, tp_percent)
+            tp_source = f"{tp_percent*100:.2f}% (recalculado)"
+
+        # Redondeo al tick: SL hacia la entrada (menos riesgo), TP hacia la entrada (mas facil de alcanzar)
+        if side == "Buy":
+            sl_price = self._round_to_tick(sl_price, tick, ROUND_CEILING)
+            tp_price = self._round_to_tick(tp_price, tick, ROUND_FLOOR)
+        else:
+            sl_price = self._round_to_tick(sl_price, tick, ROUND_FLOOR)
+            tp_price = self._round_to_tick(tp_price, tick, ROUND_CEILING)
+
+        sl_valid, tp_valid = self._validate_tpsl_coherence(entry_price, side, sl_price, tp_price)
+        if not sl_valid:
+            raise ValueError(f"El SL queda en el precio de entrada al redondear al tick {tick} (entrada {entry_price})")
+        if not tp_valid:
+            tp_price = self._round_to_tick(self._calculate_tp_price(entry_price, side, tp_percent), tick,
+                                           ROUND_FLOOR if side == "Buy" else ROUND_CEILING)
+            tp_source = f"{tp_percent*100:.2f}% (recalculado)"
+        return sl_price, tp_price, sl_source, tp_source
+
+    # ------------------------------------------------------------------
+    # Posiciones
+    # ------------------------------------------------------------------
+
+    async def _side_size(self, symbol: str, side: str) -> Optional[Decimal]:
+        """Tamano actual de la posicion de ese lado. None si Bybit no respondio."""
+        pos = await self.client.get_position(symbol)
+        if not pos.get("success"):
+            return None
+        total = Decimal("0")
+        for p in pos.get("positions", []):
+            if p.get("side") == side:
+                total += Decimal(str(p.get("size", 0)))
+        return total
+
     async def _wait_for_position(
         self,
         symbol: str,
+        side: str,
+        before: Optional[Decimal] = None,
         timeout_seconds: float = None
     ) -> Optional[Dict[str, Any]]:
         """
-        Intelligently poll for position confirmation.
-        Much faster than fixed sleep - typically returns in 200-600ms.
-
-        Args:
-            symbol: Trading pair
-            timeout_seconds: Max time to wait (default: POSITION_POLL_TIMEOUT_S)
-
-        Returns:
-            Position dict if found, None if timeout
+        Espera a que la posicion DEL LADO OPERADO crezca respecto de 'before'.
+        En hedge no confunde la posicion nueva con la del lado contrario.
         """
         timeout = timeout_seconds or self.POSITION_POLL_TIMEOUT_S
+        before = before or Decimal("0")
         start_time = time.monotonic()
         poll_count = 0
 
         while (time.monotonic() - start_time) < timeout:
             poll_count += 1
-            position = await self.client.get_position(symbol)
-
-            if position.get("hasPosition") and position.get("entryPrice"):
-                elapsed_ms = (time.monotonic() - start_time) * 1000
-                logger.info(f"[EXECUTE] Position confirmed in {elapsed_ms:.0f}ms ({poll_count} polls)")
-                return position
-
-            # Wait before next poll
+            pos = await self.client.get_position(symbol)
+            if pos.get("success"):
+                for p in pos.get("positions", []):
+                    if p.get("side") == side and Decimal(str(p.get("size", 0))) > before:
+                        elapsed_ms = (time.monotonic() - start_time) * 1000
+                        logger.info(f"[EXECUTE] Position {side} confirmed in {elapsed_ms:.0f}ms ({poll_count} polls)")
+                        return p
             await asyncio.sleep(self.POSITION_POLL_INTERVAL_MS / 1000.0)
 
         elapsed_ms = (time.monotonic() - start_time) * 1000
         logger.warning(f"[EXECUTE] Position poll TIMEOUT after {elapsed_ms:.0f}ms ({poll_count} polls)")
         return None
 
-    async def _place_sl_with_retry(
-        self,
-        symbol: str,
-        side: str,
-        qty: str,
-        trigger_price: str,
-        category: str = "linear"
-    ) -> Dict[str, Any]:
+    async def _fill_info(self, symbol: str, order_result: Dict[str, Any], side: str,
+                         before: Optional[Decimal], category: str):
         """
-        Place stop loss with automatic retry.
+        Precio real de llenado de una orden a mercado.
+        Devuelve (precio, estado) con estado "filled", "not_filled" o "unknown".
+        """
+        order_id = (order_result.get("result") or {}).get("orderId")
+        info = order_result.get("order")
+        if order_id and not (info and Decimal(str(info.get("cumExecQty") or "0")) > 0):
+            info = await self.client.find_order(symbol, order_id=order_id, category=category, attempts=2, delay=0.3)
+        if info:
+            cum = Decimal(str(info.get("cumExecQty") or "0"))
+            avg = Decimal(str(info.get("avgPrice") or "0"))
+            if cum > 0 and avg > 0:
+                return avg, "filled"
+            if info.get("orderStatus") in ("Cancelled", "Rejected", "Deactivated", "PartiallyFilledCanceled") and cum == 0:
+                return None, "not_filled"
+        pos = await self._wait_for_position(symbol, side, before)
+        if pos:
+            return Decimal(str(pos.get("entryPrice") or "0")), "filled"
+        return None, "unknown"
 
-        Returns:
-            Result dict with success status
+    async def close_position(self, symbol: str, side: str, category: str = "linear") -> Dict[str, Any]:
+        """Cierra a mercado (reduce-only) la posicion de ese lado."""
+        pos = await self.client.get_position(symbol, category)
+        if not pos.get("success"):
+            return {"closed": False, "error": pos.get("error", "No se pudo leer la posicion")}
+        size_raw = None
+        for p in pos.get("positions", []):
+            if p.get("side") == side:
+                size_raw = p.get("sizeRaw") or p.get("size")
+                break
+        if not size_raw or Decimal(str(size_raw)) <= 0:
+            return {"closed": True, "note": "sin posicion abierta"}
+        qty_str = format(Decimal(str(size_raw)).normalize(), "f")
+        result = await self.client.place_market_order(symbol, self._get_opposite_side(side), qty_str, category, reduce_only=True)
+        if result.get("retCode") == 0:
+            return {"closed": True, "order": result}
+        if result.get("outcome_unknown"):
+            left = await self._side_size(symbol, side)
+            if left is not None and left == 0:
+                return {"closed": True, "order": result}
+        return {"closed": False, "error": f"{result.get('retMsg')} (retCode={result.get('retCode')})"}
+
+    @staticmethod
+    def _sl_crossed(side: str, sl: Decimal, last: Decimal) -> bool:
+        return last <= sl if side == "Buy" else last >= sl
+
+    @staticmethod
+    def _tp_crossed(side: str, tp: Decimal, last: Decimal) -> bool:
+        return last >= tp if side == "Buy" else last <= tp
+
+    async def _protect_position(self, symbol: str, side: str, sl: Decimal, tp: Optional[Decimal],
+                                category: str, tick: Decimal) -> Dict[str, Any]:
         """
+        Pone TP/SL de posicion. Si el SL no queda puesto tras los reintentos, o el precio ya lo
+        cruzo, cierra la posicion a mercado. Nunca deja una posicion abierta sin SL sin avisar.
+        """
+        f_sl = self._fmt(sl, tick)
+        f_tp = self._fmt(tp, tick) if tp is not None else None
+        last_error = None
         for attempt in range(self.SL_TP_MAX_RETRIES):
-            result = await self.client.place_stop_loss_order(
-                symbol=symbol,
-                side=side,
-                qty=qty,
-                trigger_price=trigger_price,
-                category=category
-            )
-
-            if result.get("retCode") == 0:
-                return result
-
-            # Log retry attempt
-            error_msg = result.get("retMsg", "Unknown error")
-            logger.warning(f"[EXECUTE] [SL RETRY] Attempt {attempt + 1}/{self.SL_TP_MAX_RETRIES} failed: {error_msg}")
-
+            r = await self.client.set_trading_stop(symbol, side, take_profit=f_tp, stop_loss=f_sl, category=category)
+            if r.get("retCode") == 0:
+                return {"ok": True, "stop_loss": f_sl, "take_profit": f_tp}
+            last_error = f"{r.get('retMsg')} (retCode={r.get('retCode')})"
+            logger.warning(f"[EXECUTE] [SL/TP RETRY] Attempt {attempt + 1}/{self.SL_TP_MAX_RETRIES} failed: {last_error}")
+            last = await self.client.get_last_price(symbol, category)
+            if last is not None:
+                if self._sl_crossed(side, sl, last):
+                    last_error = f"el precio ({last}) ya cruzo el SL ({f_sl})"
+                    break
+                if f_tp is not None and self._tp_crossed(side, tp, last):
+                    # El TP ya quedo atras: se protege solo con el SL
+                    r2 = await self.client.set_trading_stop(symbol, side, stop_loss=f_sl, category=category)
+                    if r2.get("retCode") == 0:
+                        self._failed_tp_count += 1
+                        await self._send_critical_alert(symbol, "TP_SKIPPED",
+                                                        f"El precio ({last}) ya paso el TP ({f_tp}). La posicion queda solo con SL {f_sl}.")
+                        return {"ok": True, "stop_loss": f_sl, "take_profit": None, "tp_skipped": True}
             if attempt < self.SL_TP_MAX_RETRIES - 1:
                 await asyncio.sleep(self.SL_TP_RETRY_DELAY_MS / 1000.0)
 
-        # All retries failed - send critical alert
         self._failed_sl_count += 1
-        await self._send_critical_alert(
-            symbol=symbol,
-            alert_type="SL_FAILED",
-            message=f"Stop Loss placement failed after {self.SL_TP_MAX_RETRIES} retries! Position is UNPROTECTED!"
-        )
+        closed = await self.close_position(symbol, side, category)
+        if closed.get("closed"):
+            await self._send_critical_alert(symbol, "SL_FAILED_CLOSED",
+                                            f"No se pudo poner el Stop Loss ({last_error}). La posicion se cerro a mercado.")
+            return {"ok": False, "closed": True, "error": last_error}
+        await self._send_critical_alert(symbol, "SL_FAILED",
+                                        f"No se pudo poner el Stop Loss ({last_error}) ni cerrar la posicion "
+                                        f"({closed.get('error')}). Position is UNPROTECTED! Cierrala en Bybit.")
+        return {"ok": False, "closed": False, "error": last_error}
 
-        return result
-
-    async def _place_tp_with_retry(
-        self,
-        symbol: str,
-        side: str,
-        qty: str,
-        price: str,
-        category: str = "linear"
-    ) -> Dict[str, Any]:
-        """
-        Place take profit with automatic retry.
-
-        Returns:
-            Result dict with success status
-        """
-        for attempt in range(self.SL_TP_MAX_RETRIES):
-            result = await self.client.place_take_profit_order(
-                symbol=symbol,
-                side=side,
-                qty=qty,
-                price=price,
-                category=category
-            )
-
-            if result.get("retCode") == 0:
-                return result
-
-            # Log retry attempt
-            error_msg = result.get("retMsg", "Unknown error")
-            logger.warning(f"[EXECUTE] [TP RETRY] Attempt {attempt + 1}/{self.SL_TP_MAX_RETRIES} failed: {error_msg}")
-
-            if attempt < self.SL_TP_MAX_RETRIES - 1:
-                await asyncio.sleep(self.SL_TP_RETRY_DELAY_MS / 1000.0)
-
-        # All retries failed - send critical alert (less urgent than SL)
-        self._failed_tp_count += 1
-        await self._send_critical_alert(
-            symbol=symbol,
-            alert_type="TP_FAILED",
-            message=f"Take Profit placement failed after {self.SL_TP_MAX_RETRIES} retries."
-        )
-
-        return result
+    async def _ensure_leverage(self, symbol: str, config: Dict[str, Any], result: Dict[str, Any]) -> None:
+        leverage = config.get("leverage")
+        if not leverage:
+            return
+        r = await self.client.ensure_leverage(symbol, leverage, config.get("category", "linear"))
+        if r.get("retCode") != 0:
+            result["leverage_warning"] = f"No se pudo fijar {leverage}x: {r.get('retMsg')}"
+            logger.warning(f"[EXECUTE] {symbol}: {result['leverage_warning']}")
 
     async def _send_critical_alert(
         self,
@@ -339,7 +404,7 @@ class OrderManager:
             "symbol": symbol,
             "message": message,
             "timestamp": time.time(),
-            "severity": "CRITICAL" if "SL" in alert_type else "WARNING"
+            "severity": "CRITICAL" if ("SL" in alert_type or "UNKNOWN" in alert_type) else "WARNING"
         }
 
         # Log prominently
@@ -352,6 +417,70 @@ class OrderManager:
             except Exception as e:
                 logger.error(f"[EXECUTE] Failed to send critical alert callback: {e}")
 
+    @staticmethod
+    def _new_result(symbol: str, side: str, method: str, order_type: str) -> Dict[str, Any]:
+        return {
+            "symbol": symbol,
+            "side": side,
+            "order_type": order_type,
+            "method": method,
+            "market_order": None,
+            "integrated_order": None,
+            "stop_loss": None,
+            "take_profit": None,
+            "entry_price": None,
+            "qty": None,
+            "status": "failed",
+            "success": False,
+            "timing": {}
+        }
+
+    def _finish(self, result: Dict[str, Any], status: str, start: float) -> Dict[str, Any]:
+        result["status"] = status
+        result["success"] = status in ("success", "pending")
+        if result["success"]:
+            self._successful_executions += 1
+        result["timing"]["total_ms"] = (time.monotonic() - start) * 1000
+        level = logging.INFO if result["success"] else logging.WARNING
+        logger.log(level, f"[EXECUTE] {result['side']} {result['symbol']} -> {status} "
+                          f"(entry={result.get('entry_price')} SL={result.get('stop_loss')} TP={result.get('take_profit')} "
+                          f"qty={result.get('qty')}) {result.get('error') or ''}")
+        return result
+
+    async def _entry_outcome(self, symbol: str, side: str, order: Dict[str, Any], before: Optional[Decimal],
+                             category: str, result: Dict[str, Any]) -> Tuple[Optional[Decimal], Optional[str]]:
+        """
+        Despues de enviar una entrada a mercado: precio real o el estado final si no hay posicion.
+        Devuelve (precio, None) o (None, "failed"|"unknown").
+        """
+        if order.get("retCode") != 0:
+            if not order.get("outcome_unknown"):
+                result["error"] = f"Order failed: {order.get('retMsg', 'Unknown Bybit error')} (retCode={order.get('retCode')})"
+                return None, "failed"
+            # No se sabe si llego: la posicion lo dice
+            pos = await self._wait_for_position(symbol, side, before, timeout_seconds=4.0)
+            if not pos:
+                result["error"] = (f"No se sabe si Bybit recibio la orden ({order.get('retMsg')}) y no aparece posicion. "
+                                   f"Revisa Bybit.")
+                await self._send_critical_alert(symbol, "ORDER_UNKNOWN", result["error"])
+                return None, "unknown"
+            result["recovered"] = True
+            return Decimal(str(pos.get("entryPrice") or "0")), None
+
+        price, state = await self._fill_info(symbol, order, side, before, category)
+        if state == "filled" and price and price > 0:
+            return price, None
+        if state == "not_filled":
+            result["error"] = "Bybit cancelo la orden a mercado sin llenarla"
+            return None, "failed"
+        result["error"] = "La orden fue aceptada pero no aparece la posicion. Revisa Bybit."
+        await self._send_critical_alert(symbol, "ORDER_UNKNOWN", result["error"])
+        return None, "unknown"
+
+    # ------------------------------------------------------------------
+    # Secuencias
+    # ------------------------------------------------------------------
+
     async def execute_complete_sequence(
         self,
         symbol: str,
@@ -360,200 +489,76 @@ class OrderManager:
         config: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
-        Execute complete trading sequence: Market Order + SL + TP
-
-        Now uses per-symbol locking for parallel execution and
-        intelligent polling instead of fixed sleeps.
-
-        Args:
-            symbol: Trading pair
-            side: "Buy" or "Sell"
-            quantity: Quantity to trade
-            config: Coin configuration with SL%, TP%, TickSize, etc.
-
-        Returns:
-            Dict with execution results
+        Metodo secuencial: entrada a mercado, precio real de llenado y TP/SL de posicion.
+        Si el SL no se puede poner, la posicion se cierra a mercado.
         """
-        # Use per-symbol lock (allows parallel execution of different symbols)
         symbol_lock = self._get_symbol_lock(symbol)
 
         async with symbol_lock:
             sequence_start = time.monotonic()
             self._total_executions += 1
-
-            logger.info(f"[EXECUTE] ========== Complete Sequence: {side} {symbol} ==========")
-
-            result = {
-                "symbol": symbol,
-                "side": side,
-                "market_order": None,
-                "stop_loss": None,
-                "take_profit": None,
-                "success": False,
-                "timing": {}
-            }
+            category = config.get("category", "linear")
+            logger.info(f"[EXECUTE] ========== Sequential: {side} {symbol} ==========")
+            result = self._new_result(symbol, side, "sequential", "Market")
 
             try:
-                # Step 1: Format quantity
-                step_size = self._get_step_size(symbol)
-                adjusted_qty = self._adjust_to_step_size(quantity, step_size)
-                formatted_qty = self._format_quantity(adjusted_qty, step_size)
+                prec = await self.precision_for(symbol, config)
+                qty, f_qty, err = self.prepare_quantity(quantity, prec)
+                if err:
+                    result["error"] = err
+                    return self._finish(result, "failed", sequence_start)
+                result["qty"] = f_qty
+                logger.info(f"[EXECUTE] Quantity: {quantity} -> '{f_qty}' (step={prec['qty_step']}, {prec['source']})")
 
-                logger.info(f"[EXECUTE] Quantity: {quantity} -> {adjusted_qty} -> '{formatted_qty}' (step={step_size})")
+                await self._ensure_leverage(symbol, config, result)
+                before = await self._side_size(symbol, side)
+                if before is None:
+                    result["error"] = "No se pudo leer la posicion antes de enviar la orden"
+                    return self._finish(result, "failed", sequence_start)
 
-                # Step 2: Execute Market Order
                 market_start = time.monotonic()
-                market_result = await self.client.place_market_order(
-                    symbol=symbol,
-                    side=side,
-                    qty=formatted_qty,
-                    category=config.get("category", "linear")
-                )
+                market_result = await self.client.place_market_order(symbol=symbol, side=side, qty=f_qty, category=category)
                 result["timing"]["market_order_ms"] = (time.monotonic() - market_start) * 1000
-
                 result["market_order"] = market_result
 
-                if market_result.get("retCode") != 0:
-                    error_msg = market_result.get("retMsg", "Unknown Bybit error")
-                    logger.error(f"[EXECUTE] Market order failed: retCode={market_result.get('retCode')}, retMsg={error_msg}")
-                    result["error"] = f"Market order failed: {error_msg} (retCode={market_result.get('retCode')})"
-                    return result
+                entry_price, final = await self._entry_outcome(symbol, side, market_result, before, category, result)
+                if final:
+                    return self._finish(result, final, sequence_start)
+                result["entry_price"] = str(entry_price)
+                logger.info(f"[EXECUTE] Real execution price: ${entry_price}")
 
-                # Step 3: Wait for position with intelligent polling (NOT fixed sleep)
-                poll_start = time.monotonic()
-                position = await self._wait_for_position(symbol)
-                result["timing"]["position_poll_ms"] = (time.monotonic() - poll_start) * 1000
-
-                if position and position.get("hasPosition"):
-                    real_price = Decimal(position["entryPrice"])
-                    logger.info(f"[EXECUTE] Real execution price: ${real_price}")
-                else:
-                    logger.warning(f"[EXECUTE] Could not get real price, using config price")
-                    real_price = Decimal(str(config.get("current_price", 0)))
-
-                if real_price == 0:
-                    logger.error(f"[EXECUTE] Invalid real price (0), aborting SL/TP")
-                    result["error"] = "Could not determine execution price (price=0)"
-                    return result
-
-                # Step 4: Calculate SL and TP prices
-                tick_size = Decimal(str(config.get("tick_size", "0.01")))
-                sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
-                tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
-
-                # Use custom SL/TP if provided, otherwise calculate from percentages
-                if config.get("custom_stop_loss"):
-                    sl_price = Decimal(str(config["custom_stop_loss"]))
-                    sl_source = "custom"
-                else:
-                    sl_price = self._calculate_sl_price(real_price, side, sl_percent)
-                    sl_source = f"{sl_percent*100:.1f}%"
-
-                if config.get("custom_take_profit"):
-                    tp_price = Decimal(str(config["custom_take_profit"]))
-                    tp_source = "custom"
-                else:
-                    tp_price = self._calculate_tp_price(real_price, side, tp_percent)
-                    tp_source = f"{tp_percent*100:.1f}%"
-
-                # Validate custom TP/SL coherence with real execution price
-                # If execution price differs significantly, custom values may be invalid
-                sl_valid, tp_valid = self._validate_tpsl_coherence(real_price, side, sl_price, tp_price)
-
-                if not sl_valid:
-                    old_sl = sl_price
-                    sl_price = self._calculate_sl_price(real_price, side, sl_percent)
-                    sl_source = f"{sl_percent*100:.1f}% (recalculated, custom ${old_sl} invalid for entry ${real_price})"
-                    logger.warning(f"[EXECUTE] Custom SL ${old_sl} invalid for {side} at ${real_price}, recalculated to ${sl_price}")
-
-                if not tp_valid:
-                    old_tp = tp_price
-                    tp_price = self._calculate_tp_price(real_price, side, tp_percent)
-                    tp_source = f"{tp_percent*100:.1f}% (recalculated, custom ${old_tp} invalid for entry ${real_price})"
-                    logger.warning(f"[EXECUTE] Custom TP ${old_tp} invalid for {side} at ${real_price}, recalculated to ${tp_price}")
-
-                sl_price = self._adjust_price_to_tick_size(sl_price, tick_size)
-                tp_price = self._adjust_price_to_tick_size(tp_price, tick_size)
-
-                formatted_sl = self._format_price(sl_price, tick_size)
-                formatted_tp = self._format_price(tp_price, tick_size)
-
-                logger.info(f"[EXECUTE] SL=${formatted_sl} ({sl_source}) | TP=${formatted_tp} ({tp_source})")
-
-                # Step 5: Place Stop Loss with retry
-                opposite_side = self._get_opposite_side(side)
-
-                sl_start = time.monotonic()
-                sl_result = await self._place_sl_with_retry(
-                    symbol=symbol,
-                    side=opposite_side,
-                    qty=formatted_qty,
-                    trigger_price=formatted_sl,
-                    category=config.get("category", "linear")
-                )
-                result["timing"]["stop_loss_ms"] = (time.monotonic() - sl_start) * 1000
-
-                result["stop_loss"] = sl_result
-
-                if sl_result.get("retCode") != 0:
-                    logger.warning(f"[EXECUTE] Stop Loss placement failed after retries")
+                try:
+                    sl_price, tp_price, sl_source, tp_source = self.compute_sl_tp(entry_price, side, config, prec["tick_size"])
+                except ValueError as e:
+                    result["error"] = str(e)
+                    closed = await self.close_position(symbol, side, category)
+                    await self._send_critical_alert(symbol, "SL_FAILED_CLOSED" if closed.get("closed") else "SL_FAILED",
+                                                    f"{e}. {'Posicion cerrada a mercado.' if closed.get('closed') else 'No se pudo cerrar: cierrala en Bybit.'}")
                     result["sl_failed"] = True
+                    return self._finish(result, "closed_unprotected" if closed.get("closed") else "unprotected", sequence_start)
+                logger.info(f"[EXECUTE] SL={sl_price} ({sl_source}) | TP={tp_price} ({tp_source})")
 
-                # Step 6: Place Take Profit with retry
-                tp_start = time.monotonic()
-                tp_result = await self._place_tp_with_retry(
-                    symbol=symbol,
-                    side=opposite_side,
-                    qty=formatted_qty,
-                    price=formatted_tp,
-                    category=config.get("category", "linear")
-                )
-                result["timing"]["take_profit_ms"] = (time.monotonic() - tp_start) * 1000
-
-                result["take_profit"] = tp_result
-
-                if tp_result.get("retCode") != 0:
-                    logger.warning(f"[EXECUTE] Take Profit placement failed after retries")
+                prot_start = time.monotonic()
+                prot = await self._protect_position(symbol, side, sl_price, tp_price, category, prec["tick_size"])
+                result["timing"]["tpsl_ms"] = (time.monotonic() - prot_start) * 1000
+                result["stop_loss"] = prot.get("stop_loss") or self._fmt(sl_price, prec["tick_size"])
+                result["take_profit"] = prot.get("take_profit")
+                if not prot["ok"]:
+                    result["sl_failed"] = True
+                    result["error"] = f"Stop Loss no colocado: {prot.get('error')}"
+                    return self._finish(result, "closed_unprotected" if prot.get("closed") else "unprotected", sequence_start)
+                if prot.get("tp_skipped"):
                     result["tp_failed"] = True
-
-                # Determine overall success
-                result["success"] = market_result.get("retCode") == 0
-                if result["success"]:
-                    self._successful_executions += 1
-
-                # Calculate total time
-                total_time_ms = (time.monotonic() - sequence_start) * 1000
-                result["timing"]["total_ms"] = total_time_ms
-
-                if result["success"]:
-                    logger.info(f"[EXECUTE] SUCCESS {side} {symbol} in {total_time_ms:.0f}ms "
-                                f"(market={result['timing'].get('market_order_ms', 0):.0f}ms "
-                                f"poll={result['timing'].get('position_poll_ms', 0):.0f}ms "
-                                f"sl={result['timing'].get('stop_loss_ms', 0):.0f}ms "
-                                f"tp={result['timing'].get('take_profit_ms', 0):.0f}ms)")
-                else:
-                    logger.warning(f"[EXECUTE] Sequence {side} {symbol} completed with WARNINGS in {total_time_ms:.0f}ms")
-
-                return result
+                return self._finish(result, "success", sequence_start)
 
             except Exception as e:
                 logger.error(f"[EXECUTE] Critical error in order sequence: {e}", exc_info=True)
                 result["error"] = str(e)
-                # Check if market order succeeded despite later errors
-                if result.get("market_order", {}).get("retCode") == 0:
-                    result["success"] = True
-                    result["partial"] = True
-                    logger.warning(f"[EXECUTE] Market Order succeeded, but SL/TP failed: {str(e)}")
-
-                    # Send critical alert for partial execution
-                    await self._send_critical_alert(
-                        symbol=symbol,
-                        alert_type="PARTIAL_EXECUTION",
-                        message=f"Market order succeeded but SL/TP failed: {str(e)}"
-                    )
-                else:
-                    result["success"] = False
-                return result
+                if (result.get("market_order") or {}).get("retCode") == 0:
+                    await self._send_critical_alert(symbol, "PARTIAL_EXECUTION",
+                                                    f"La entrada se envio pero fallo el resto de la secuencia: {e}. Revisa la posicion en Bybit.")
+                    return self._finish(result, "unknown", sequence_start)
+                return self._finish(result, "failed", sequence_start)
 
     async def execute_integrated_sequence(
         self,
@@ -566,7 +571,7 @@ class OrderManager:
     ) -> Dict[str, Any]:
         """
         Execute trading with integrated TP/SL in a single API call.
-        Much faster than execute_complete_sequence (1 call vs 3).
+        Tras una entrada a mercado verifica que la posicion tenga SL (y lo pone si falta).
 
         Args:
             symbol: Trading pair
@@ -584,168 +589,112 @@ class OrderManager:
         async with symbol_lock:
             sequence_start = time.monotonic()
             self._total_executions += 1
-
-            order_type_display = order_type.upper()
+            category = config.get("category", "linear")
+            is_limit = order_type.upper() == "LIMIT"
             logger.info(f"[EXECUTE] {'='*50}")
-            logger.info(f"[EXECUTE] {order_type_display} + TP/SL: {side} {symbol}")
-            logger.info(f"[EXECUTE] {'='*50}")
-
-            result = {
-                "symbol": symbol,
-                "side": side,
-                "order_type": order_type,
-                "integrated_order": None,
-                "success": False,
-                "timing": {},
-                "method": "integrated"
-            }
+            logger.info(f"[EXECUTE] {order_type.upper()} + TP/SL: {side} {symbol}")
+            result = self._new_result(symbol, side, "integrated", order_type)
 
             try:
-                # Step 1: Format quantity
-                step_size = self._get_step_size(symbol)
-                adjusted_qty = self._adjust_to_step_size(quantity, step_size)
-                formatted_qty = self._format_quantity(adjusted_qty, step_size)
+                prec = await self.precision_for(symbol, config)
+                tick = prec["tick_size"]
+                qty, f_qty, err = self.prepare_quantity(quantity, prec)
+                if err:
+                    result["error"] = err
+                    return self._finish(result, "failed", sequence_start)
+                result["qty"] = f_qty
+                logger.info(f"[EXECUTE] Quantity: {quantity} -> '{f_qty}' (step={prec['qty_step']}, {prec['source']})")
 
-                logger.info(f"[EXECUTE] Quantity: {quantity} -> {adjusted_qty} -> '{formatted_qty}' (step={step_size})")
-
-                # Step 2: Calculate prices
-                tick_size = Decimal(str(config.get("tick_size", "0.01")))
-
-                # Determine entry price for TP/SL calculation
-                if order_type.upper() == "LIMIT" and limit_price:
-                    entry_price = limit_price
-                    formatted_limit = self._format_price(
-                        self._adjust_price_to_tick_size(entry_price, tick_size),
-                        tick_size
-                    )
+                formatted_limit = None
+                if is_limit:
+                    if not limit_price:
+                        result["error"] = "limit_price required for Limit orders"
+                        return self._finish(result, "failed", sequence_start)
+                    entry_price = self._round_entry(Decimal(str(limit_price)), side, tick)
+                    formatted_limit = self._fmt(entry_price, tick)
                     logger.info(f"[EXECUTE] LIMIT Entry Price: ${formatted_limit}")
                 else:
-                    # For market orders, get REAL current price from Bybit
-                    # (alert price may be historical and differ from current market)
-                    logger.info(f"[EXECUTE] Fetching real market price from Bybit for {symbol}...")
-                    real_market_price = await self.client.get_last_price(symbol, config.get("category", "linear"))
+                    real_market_price = await self.client.get_last_price(symbol, category)
                     if real_market_price and real_market_price > 0:
                         entry_price = real_market_price
-                        alert_price = Decimal(str(config.get("current_price", 0)))
-                        slippage = abs(float(entry_price - alert_price)) if alert_price > 0 else 0
-                        logger.info(f"[EXECUTE] Market price: ${entry_price} (alert was ${alert_price}, diff=${slippage:.2f})")
                     else:
-                        entry_price = Decimal(str(config.get("current_price", 0)))
+                        entry_price = Decimal(str(config.get("current_price", 0) or 0))
                         logger.warning(f"[EXECUTE] Fallback to alert price: ${entry_price} (Bybit price fetch failed)")
-                    formatted_limit = None
 
-                if entry_price == 0:
-                    logger.error(f"[EXECUTE] No valid price for TP/SL calculation")
+                if entry_price <= 0:
                     result["error"] = "No valid price for TP/SL calculation (price=0)"
-                    return result
+                    return self._finish(result, "failed", sequence_start)
 
-                # Calculate SL price
-                sl_percent = Decimal(str(config.get("stop_loss_percent", "0.01")))
-                tp_percent = Decimal(str(config.get("take_profit_percent", "0.02")))
+                try:
+                    sl_price, tp_price, sl_source, tp_source = self.compute_sl_tp(entry_price, side, config, tick)
+                except ValueError as e:
+                    result["error"] = str(e)
+                    return self._finish(result, "failed", sequence_start)
+                formatted_sl = self._fmt(sl_price, tick)
+                formatted_tp = self._fmt(tp_price, tick)
+                logger.info(f"[EXECUTE] SL: ${formatted_sl} ({sl_source}) | TP: ${formatted_tp} ({tp_source})")
 
-                if config.get("sl_distance"):
-                    # Distance-based SL: aplica la distancia al precio real de ejecucion
-                    sl_dist = Decimal(str(config["sl_distance"]))
-                    if side == "Buy":
-                        sl_price = entry_price - sl_dist
-                    else:
-                        sl_price = entry_price + sl_dist
-                    sl_source = f"distance {sl_dist}"
-                elif config.get("custom_stop_loss"):
-                    sl_price = Decimal(str(config["custom_stop_loss"]))
-                    sl_source = "custom"
-                else:
-                    sl_price = self._calculate_sl_price(entry_price, side, sl_percent)
-                    sl_source = f"{sl_percent*100:.1f}%"
+                await self._ensure_leverage(symbol, config, result)
+                before = None
+                if not is_limit:
+                    before = await self._side_size(symbol, side)
+                    if before is None:
+                        result["error"] = "No se pudo leer la posicion antes de enviar la orden"
+                        return self._finish(result, "failed", sequence_start)
 
-                # Calculate TP price
-                if config.get("tp_distance"):
-                    # Distance-based TP: aplica la distancia al precio real de ejecucion
-                    tp_dist = Decimal(str(config["tp_distance"]))
-                    if side == "Buy":
-                        tp_price = entry_price + tp_dist
-                    else:
-                        tp_price = entry_price - tp_dist
-                    tp_source = f"distance {tp_dist}"
-                elif config.get("custom_take_profit"):
-                    tp_price = Decimal(str(config["custom_take_profit"]))
-                    tp_source = "custom"
-                else:
-                    tp_price = self._calculate_tp_price(entry_price, side, tp_percent)
-                    tp_source = f"{tp_percent*100:.1f}%"
-
-                # Validate custom TP/SL coherence with entry price
-                sl_valid, tp_valid = self._validate_tpsl_coherence(entry_price, side, sl_price, tp_price)
-
-                if not sl_valid:
-                    old_sl = sl_price
-                    sl_price = self._calculate_sl_price(entry_price, side, sl_percent)
-                    sl_source = f"{sl_percent*100:.1f}% (recalculated, custom ${old_sl} invalid for {side} at ${entry_price})"
-                    logger.warning(f"[EXECUTE] Custom SL ${old_sl} invalid for {side} at ${entry_price}, recalculated to ${sl_price}")
-
-                if not tp_valid:
-                    old_tp = tp_price
-                    tp_price = self._calculate_tp_price(entry_price, side, tp_percent)
-                    tp_source = f"{tp_percent*100:.1f}% (recalculated, custom ${old_tp} invalid for {side} at ${entry_price})"
-                    logger.warning(f"[EXECUTE] Custom TP ${old_tp} invalid for {side} at ${entry_price}, recalculated to ${tp_price}")
-
-                sl_price = self._adjust_price_to_tick_size(sl_price, tick_size)
-                tp_price = self._adjust_price_to_tick_size(tp_price, tick_size)
-
-                formatted_sl = self._format_price(sl_price, tick_size)
-                formatted_tp = self._format_price(tp_price, tick_size)
-
-                r_distance = abs(float(entry_price - sl_price))
-                rr_ratio = abs(float(tp_price - entry_price)) / r_distance if r_distance > 0 else 0
-                logger.info(f"[EXECUTE] SL: ${formatted_sl} ({sl_source})")
-                logger.info(f"[EXECUTE] TP: ${formatted_tp} ({tp_source})")
-                logger.info(f"[EXECUTE] R={r_distance:.2f} RR={rr_ratio:.1f}x")
-
-                # Step 3: Execute single integrated order
                 order_start = time.monotonic()
                 order_result = await self.client.place_order_with_tpsl(
                     symbol=symbol,
                     side=side,
-                    qty=formatted_qty,
+                    qty=f_qty,
                     order_type=order_type,
                     limit_price=formatted_limit,
                     take_profit=formatted_tp,
                     stop_loss=formatted_sl,
-                    category=config.get("category", "linear")
+                    category=category
                 )
                 result["timing"]["order_ms"] = (time.monotonic() - order_start) * 1000
-
                 result["integrated_order"] = order_result
-                result["success"] = order_result.get("retCode") == 0
+                result["stop_loss"] = formatted_sl
+                result["take_profit"] = formatted_tp
 
-                if result["success"]:
-                    self._successful_executions += 1
+                if is_limit:
+                    if order_result.get("retCode") == 0:
+                        result["entry_price"] = formatted_limit
+                        result["recovered"] = bool(order_result.get("recovered"))
+                        return self._finish(result, "pending", sequence_start)
+                    if order_result.get("outcome_unknown"):
+                        result["error"] = (f"No se sabe si la orden limit llego a Bybit ({order_result.get('retMsg')}). "
+                                           f"Revisa las ordenes abiertas.")
+                        await self._send_critical_alert(symbol, "ORDER_UNKNOWN", result["error"])
+                        return self._finish(result, "unknown", sequence_start)
+                    result["error"] = f"Integrated order failed: {order_result.get('retMsg', 'Unknown error')} (retCode={order_result.get('retCode')})"
+                    return self._finish(result, "failed", sequence_start)
 
-                # Calculate total time
-                total_time_ms = (time.monotonic() - sequence_start) * 1000
-                result["timing"]["total_ms"] = total_time_ms
+                fill_price, final = await self._entry_outcome(symbol, side, order_result, before, category, result)
+                if final:
+                    return self._finish(result, final, sequence_start)
+                result["entry_price"] = str(fill_price)
 
-                logger.info(f"[EXECUTE] {'='*50}")
-                if result["success"]:
-                    order_id = order_result.get("result", {}).get("orderId", "N/A")
-                    logger.info(f"[EXECUTE] SUCCESS in {total_time_ms:.0f}ms | orderId={order_id}")
-                    logger.info(f"[EXECUTE] API call: {result['timing'].get('order_ms', 0):.0f}ms")
-                    logger.info(f"[EXECUTE] Bybit retCode={order_result.get('retCode')} retMsg={order_result.get('retMsg', '')}")
-                else:
-                    error_msg = order_result.get("retMsg", "Unknown error")
-                    result["error"] = f"Integrated order failed: {error_msg} (retCode={order_result.get('retCode')})"
-                    logger.error(f"[EXECUTE] FAILED: {result['error']}")
-                    logger.error(f"[EXECUTE] Full Bybit response: {order_result}")
-                logger.info(f"[EXECUTE] {'='*50}")
-
-                return result
+                # La posicion debe tener SL: si no lo tiene (o no se ve), se pone a nivel de posicion
+                pos = await self._wait_for_position(symbol, side, before, timeout_seconds=3.0)
+                if not pos or not pos.get("stopLoss"):
+                    logger.warning(f"[EXECUTE] {symbol} {side}: la posicion no muestra SL, se pone con trading-stop")
+                    prot = await self._protect_position(symbol, side, sl_price, tp_price, category, tick)
+                    if not prot["ok"]:
+                        result["sl_failed"] = True
+                        result["error"] = f"Stop Loss no colocado: {prot.get('error')}"
+                        return self._finish(result, "closed_unprotected" if prot.get("closed") else "unprotected", sequence_start)
+                return self._finish(result, "success", sequence_start)
 
             except Exception as e:
-                logger.error(f"[EXECUTE] Critical error in integrated sequence: {e}")
-                import traceback
-                traceback.print_exc()
+                logger.error(f"[EXECUTE] Critical error in integrated sequence: {e}", exc_info=True)
                 result["error"] = str(e)
-                return result
+                if (result.get("integrated_order") or {}).get("retCode") == 0 and not is_limit:
+                    await self._send_critical_alert(symbol, "PARTIAL_EXECUTION",
+                                                    f"La orden se envio pero fallo la verificacion: {e}. Revisa la posicion en Bybit.")
+                    return self._finish(result, "unknown", sequence_start)
+                return self._finish(result, "failed", sequence_start)
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get order manager statistics"""

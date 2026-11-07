@@ -53,6 +53,42 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### TradingBot + App 10 - 7 Noviembre 2026: Auditoría de Órdenes en Bybit
+
+**Problema:** la auditoría de App 10 y del bot encontró 17 fallos que podían abrir operaciones sin stop, duplicarlas o darlas por fallidas cuando sí se ejecutaron. También fallaban el redondeo de precios en las alertas del Analizador y de OrderFlow, y el paso de cantidad en los formularios de App 8 y App 9.
+
+**Cambios:**
+1. **SL heredado:** cada alerta trabaja con una copia de la configuración (`get_coin_config()`), así que su SL o TP no pasa a la siguiente. Al cargar se limpian los restos guardados en `trading_config.json`
+2. **Respuesta perdida:** `order/create` no se reenvía a ciegas. El bot busca la orden por su `orderLinkId` y revisa la posición. Si no la encuentra, queda `unknown` con aviso crítico
+3. **Posiciones sin SL:** los dos métodos comprueban el SL de la posición. Si no se puede poner, la posición se cierra a mercado (`closed_unprotected`) con aviso crítico. El secuencial pone TP y SL sobre la posición
+4. **Duplicados:** una alerta se salta si ya hay una entrada pendiente en la moneda. Un Limit automático que ya cruza el mercado se rechaza. Se descartan las alertas repetidas y las que llegan más de 120 s tarde (`sent_at`)
+5. **Tamaño:** el riesgo incluye la comisión taker de entrada y salida, y a mercado se usa el último precio de Bybit. Si el mínimo de Bybit arriesga más que lo configurado, la orden no se envía. Paso, tick y mínimo salen de `instruments-info`
+6. **Riesgo diario:** se reserva bajo un candado común antes de ejecutar, también en `/api/alert` y `/api/trade/manual`
+7. **Apalancamiento:** se fija en Bybit el `leverage` de la configuración, una vez por moneda. El modo de posición y el de margen no se cambian
+8. **API local:** escucha solo en `127.0.0.1` y rechaza peticiones de otras páginas web (CORS, `Origin` y Host)
+9. **Pausa:** "Pausar todo el trading" en el panel de orígenes y en la bandeja (`/api/settings/trading-paused`)
+10. **App 10:** notificación del sistema cuando una posición queda sin protección. En modo cobertura muestra los dos lados, cada uno con su SL y TP
+11. **Otras apps:** el Analizador y OrderFlow ya no redondean a 2 decimales precios, distancias ni SL/TP, y mandan `sent_at`. El envío por lotes del Analizador solo manda zonas con el trade abierto. Los formularios de App 8 y App 9 leen `step_size`
+
+**IMPORTANTE:** reiniciar el bot y los backends de App 4 y App 5 para aplicar los cambios. Las 26 pruebas pasan contra un Bybit simulado, y 25 fallan con el código anterior, pero nada se probó contra Bybit real: hay que confirmarlo en modo Demo antes de operar en real. Las copias de `TradingBot_Python` dentro de App 2, 4 y 5 no se tocaron y conservan los fallos.
+
+**Ver:** `10.TradingBotDesktop/CLAUDE.md` sección "Correcciones de la auditoria"
+
+---
+
+### Panel Order Flow - 7 Noviembre 2026: Descargas de Bybit y Collector de App 9
+
+**Cambios:**
+1. **Descargas:** ventana tkinter en `PanelOrderFlow/` (doble clic en `Abrir panel.bat`). Descarga cualquier moneda, la pausa, la reanuda y la detiene, maneja la cola de `queue.txt` y arma el almacén de App 1
+2. **Collector:** una segunda pestaña muestra el estado de la nube (Northflank), del backend local en el puerto 11000 y de la copia de App 9. "Buscar huecos" revisa las últimas 6 horas
+3. **Qué toca:** solo escribe `control.json` y `queue.txt`, y lanza `ingest.py`, `build_store.py` y `queue_runner.py`. No modifica las herramientas ni borra archivos. "Detener ya" corta solo los procesos de esas herramientas
+
+**IMPORTANTE:** del 2021-12-05 hacia atrás, Bybit entrega los archivos de BTC con las filas invertidas, y esos días quedan para "revisar": el volumen no cuadra en 180 a 270 de los 1,440 minutos. Falta investigarlo.
+
+**Ver:** `PanelOrderFlow/LEEME.md`
+
+---
+
 ### APP 1 (Backtester) - 7 Noviembre 2026: Filtro VWAP del Swing con Rectángulos, Imágenes con Contexto e Historial sin Retroceso
 
 **Problema:** el filtro VWAP del Swing no actuaba en App 1. La primera imagen de cada trade salía con el zoom de leer footprints y mostraba pocas velas. Ir a un trade desde el historial retrocedía la hora simulada y ocultaba las velas posteriores. Los círculos del visor del Observador se confundían con los aros morados del gráfico.

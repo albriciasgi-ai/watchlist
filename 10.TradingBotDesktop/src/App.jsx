@@ -27,6 +27,25 @@ function App() {
   // Detectar si estamos en Electron
   const isElectron = window.electronAPI?.isElectron || false
 
+  // Aviso del sistema operativo (no cambia la ventana)
+  const notify = (title, body) => {
+    try {
+      if (window.electronAPI?.showNotification) {
+        window.electronAPI.showNotification(title, body)
+      } else if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+          new Notification(title, { body })
+        } else if (Notification.permission !== 'denied') {
+          Notification.requestPermission().then(p => {
+            if (p === 'granted') new Notification(title, { body })
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Notification error:', error)
+    }
+  }
+
   // WebSocket connection
   useEffect(() => {
     const connectWebSocket = () => {
@@ -35,6 +54,17 @@ function App() {
       websocket.onopen = () => {
         console.log('WebSocket connected')
         setIsConnected(true)
+        // Recupera los logs que se perdieron mientras no habia conexion
+        fetch(`${API_BASE_URL}/api/logs?limit=1000`)
+          .then(r => r.json())
+          .then(data => {
+            if (!Array.isArray(data.logs)) return
+            setLogs(prev => {
+              const seen = new Set(data.logs.map(l => `${l.timestamp}|${l.message}`))
+              return [...data.logs, ...prev.filter(l => !seen.has(`${l.timestamp}|${l.message}`))].slice(-1000)
+            })
+          })
+          .catch(() => {})
       }
 
       websocket.onmessage = (event) => {
@@ -43,6 +73,16 @@ function App() {
 
           if (message.type === 'log') {
             setLogs(prev => [...prev, message.data].slice(-1000))
+          } else if (message.type === 'critical_alert') {
+            // Ej: "Position is UNPROTECTED!" o posicion cerrada por no poder poner el SL
+            const alert = message.data || {}
+            notify(`ALERTA CRITICA ${alert.symbol || ''}`.trim(), alert.message || alert.type || 'Revisa el bot')
+          } else if (message.type === 'daily_limit_reached') {
+            const info = message.data || {}
+            notify('Limite diario alcanzado',
+              `${info.symbol || ''} ${info.side || ''}: usado $${Number(info.used || 0).toFixed(2)} de $${Number(info.limit || 0).toFixed(2)}`)
+          } else if (message.type === 'trading_paused') {
+            notify('Trading Bot', message.data?.paused ? 'Bot en pausa: no abrira operaciones' : 'Bot reanudado')
           }
         } catch (error) {
           console.error('WebSocket message error:', error)

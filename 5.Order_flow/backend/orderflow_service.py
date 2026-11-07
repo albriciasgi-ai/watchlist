@@ -645,10 +645,13 @@ class OrderFlowService:
             "origin": "ORDERFLOW",
             "symbol": footprint.symbol,
             "interval": footprint.interval,
+            # Hora de envio: el bot descarta alertas que llegan tarde
+            "sent_at": int(time.time() * 1000),
             "pattern": {
                 "patternType": pattern.get("type", "STACKED_IMBALANCE"),
                 "direction": pattern.get("direction", ""),
-                "price": round(avg_price, 2),
+                # Sin redondear: con round(x, 2) el precio de GALA o DOGE quedaba en 0.00 o 0.07
+                "price": float(avg_price),
                 "confidence": round(confidence, 1),
                 "timestamp": footprint.candle_timestamp,
                 "details": {

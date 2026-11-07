@@ -51,8 +51,8 @@ const AlertPanel = () => {
           message: data.message,
         });
         setMessage({
-          type: 'success',
-          text: data.message || `Processed ${data.total || 1} alert(s) successfully!`
+          type: data.success ? 'success' : 'error',
+          text: data.message || `Processed ${data.total || 1} alert(s)`
         });
       } else {
         // Extract detailed error message
@@ -85,7 +85,7 @@ const AlertPanel = () => {
     setShowManualModal(true);
     setManualTrade({
       symbol: result?.symbol || '',
-      side: result?.side || 'long',
+      side: result?.side === 'Sell' ? 'Sell' : 'Buy',
       price: result?.price || '',
     });
   };
@@ -115,22 +115,23 @@ const AlertPanel = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          symbol: manualTrade.symbol,
+          symbol: manualTrade.symbol.trim().toUpperCase(),
           side: manualTrade.side,
-          price: parseFloat(manualTrade.price),
+          current_price: parseFloat(manualTrade.price),
         }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.ok && data.success) {
         setMessage({
           type: 'success',
           text: `Manual trade executed: ${data.message || 'Success'}`
         });
         closeManualModal();
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to execute trade' });
+        const errorMsg = data.detail || data.message || data.error || (data.result && data.result.error) || 'Failed to execute trade';
+        setMessage({ type: 'error', text: errorMsg });
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Network error: ' + error.message });

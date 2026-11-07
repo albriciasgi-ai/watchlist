@@ -811,7 +811,8 @@ class SwingService:
                 "timestamp": signal.timestamp,
                 "direction": signal.direction,
                 "volumeZScore": signal.volume_zscore
-            }
+            },
+            "sent_at": int(time.time() * 1000),  # el bot descarta alertas que llegan tarde
         }
 
         try:

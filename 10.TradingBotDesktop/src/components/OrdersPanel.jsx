@@ -74,7 +74,19 @@ const OrdersPanel = () => {
 
   const formatPrice = (price) => {
     if (!price) return 'N/A';
-    return `$${parseFloat(price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const value = parseFloat(price);
+    // Monedas de centavos (GALA, DOGE...) necesitan mas decimales
+    const maxDigits = Math.abs(value) >= 1 ? 2 : 8;
+    return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: maxDigits })}`;
+  };
+
+  // pending = Limit colocado sin llenar; closed_unprotected/unprotected/unknown = revisar en Bybit
+  const FAILED_STATUSES = ['failed', 'closed_unprotected', 'unprotected', 'unknown'];
+  const statusBadge = (status) => {
+    if (status === 'success') return 'success';
+    if (status === 'partial') return 'warning';
+    if (status === 'pending') return 'info';
+    return 'danger';
   };
 
   const formatQuantity = (qty) => {
@@ -170,8 +182,8 @@ const OrdersPanel = () => {
                     <td>{formatPrice(order.stop_loss)}</td>
                     <td>{formatPrice(order.take_profit)}</td>
                     <td>
-                      <span className={`badge badge-${order.status === 'success' ? 'success' : order.status === 'partial' ? 'warning' : 'danger'}`}>
-                        {order.status.toUpperCase()}
+                      <span className={`badge badge-${statusBadge(order.status)}`} title={order.error || ''}>
+                        {(order.status || 'unknown').toUpperCase()}
                       </span>
                     </td>
                   </tr>
@@ -197,7 +209,7 @@ const OrdersPanel = () => {
         </div>
         <div className="stat-card stat-danger">
           <div className="stat-label">Failed</div>
-          <div className="stat-value">{orders.filter(o => o.status === 'failed').length}</div>
+          <div className="stat-value">{orders.filter(o => FAILED_STATUSES.includes(o.status)).length}</div>
         </div>
       </div>
     </div>

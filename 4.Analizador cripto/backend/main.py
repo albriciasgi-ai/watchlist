@@ -6606,7 +6606,8 @@ async def send_zone_alert(request: Request):
                 "price": float(entry_price),
                 "confidence": float(confidence),
                 "direction": pattern_direction
-            }
+            },
+            "sent_at": int(time.time() * 1000),  # el bot descarta alertas que llegan tarde
         }
 
         if order_type == "limit":
@@ -6690,7 +6691,7 @@ async def send_zone_alert(request: Request):
 async def send_zone_alerts_batch(request: Request):
     """
     Envia alertas para multiples zonas con breakout al TradingBot.
-    Solo envia zonas con trade_result != 'SKIPPED' y != 'NO_ENTRY' que tengan entry_price, sl_price y tp_price.
+    Solo envia zonas con el trade abierto (trade_result == 'OPEN') que tengan entry_price, sl_price y tp_price.
     """
     try:
         body = await request.json()
@@ -6707,7 +6708,9 @@ async def send_zone_alerts_batch(request: Request):
         valid_zones = []
         for z in zones:
             trade_result = z.get("trade_result", "")
-            if trade_result in ("SKIPPED", "NO_ENTRY", ""):
+            # Solo zonas con el trade todavia abierto. WIN y LOSS son trades que ya terminaron en
+            # el historico: mandarlas como orden real abriria una operacion vieja al precio de hoy.
+            if trade_result != "OPEN":
                 continue
             if not z.get("entry_price"):
                 continue
@@ -6744,8 +6747,11 @@ async def send_zone_alerts_batch(request: Request):
                         "patternType": f"ZONE_BREAKOUT_{entry_mode.upper()}",
                         "price": float(z["entry_price"]),
                         "confidence": float(z.get("trading_score", 70)),
-                        "direction": pattern_direction
-                    }
+                        "direction": pattern_direction,
+                        # Identifica la zona: el bot no ejecuta dos veces la misma senal
+                        "timestamp": z.get("breakout_timestamp") or z.get("entry_timestamp") or z.get("id")
+                    },
+                    "sent_at": int(time.time() * 1000),  # el bot descarta alertas que llegan tarde
                 }
 
                 if order_type == "limit":

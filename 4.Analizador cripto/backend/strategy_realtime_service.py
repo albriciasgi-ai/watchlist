@@ -1285,8 +1285,10 @@ class StrategyRealtimeService:
                 "confidence": 75,
                 "direction": direction,
             },
-            "sl_distance": round(sl_distance, 2),
-            "tp_distance": round(tp_distance, 2),
+            # Sin redondear: con round(x, 2) una distancia de 1% en monedas de centavos llegaba como 0.00
+            "sl_distance": float(sl_distance),
+            "tp_distance": float(tp_distance),
+            "sent_at": int(time.time() * 1000),  # el bot descarta alertas que llegan tarde
         }
 
         try:

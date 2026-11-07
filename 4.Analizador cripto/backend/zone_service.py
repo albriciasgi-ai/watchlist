@@ -881,7 +881,9 @@ class ZoneService:
                 r_distance = zone_height
                 tp_price = entry_price - (zone_height * tp_rr)
 
-        return (round(sl_price, 2), round(tp_price, 2), round(r_distance, 2))
+        # Sin redondear a 2 decimales: en monedas de centavos (GALA, DOGE...) el SL se deformaba o quedaba en 0.
+        # El bot ajusta cada precio al tick real de Bybit.
+        return (float(sl_price), float(tp_price), float(r_distance))
 
     # --------------------------------------------------
     # Detection logic
@@ -1401,8 +1403,10 @@ class ZoneService:
                 "confidence": float(zone.trading_score),
                 "direction": direction,
             },
-            "sl_distance": round(sl_distance, 2),
-            "tp_distance": round(tp_distance, 2),
+            # Sin redondear: con round(x, 2) una distancia de 1% en monedas de centavos llegaba como 0.00
+            "sl_distance": float(sl_distance),
+            "tp_distance": float(tp_distance),
+            "sent_at": int(time.time() * 1000),  # el bot descarta alertas que llegan tarde
         }
 
         try:

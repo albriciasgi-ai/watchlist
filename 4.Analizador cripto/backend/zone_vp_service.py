@@ -422,6 +422,7 @@ class VPZoneService:
             },
             "custom_stop_loss": trade.get('sl_price'),
             "custom_take_profit": trade.get('tp_price'),
+            "sent_at": int(time.time() * 1000),  # el bot descarta alertas que llegan tarde
         }
 
         try:

@@ -1318,6 +1318,7 @@ class ZoneServiceV2:
             },
             "custom_stop_loss": trade['sl_price'],
             "custom_take_profit": trade['tp_price'],
+            "sent_at": int(time.time() * 1000),  # el bot descarta alertas que llegan tarde
         }
 
         try:

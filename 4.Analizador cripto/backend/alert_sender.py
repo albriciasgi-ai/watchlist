@@ -136,7 +136,9 @@ class AlertSender:
             "pattern": pattern_with_action,
             "symbol": symbol,
             "price": price,
-            "confidence": confidence
+            "confidence": confidence,
+            # Hora de creacion: el bot descarta alertas que pasaron demasiado tiempo en la cola
+            "sent_at": int(datetime.now().timestamp() * 1000)
         }
 
         # Include strategy data if present (Entry, Stop Loss, Take Profit)
