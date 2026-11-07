@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './OrderConfirmationModal.css';
 
 /**
@@ -7,13 +7,15 @@ import './OrderConfirmationModal.css';
  */
 const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
   const [countdown, setCountdown] = useState(5);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
           clearInterval(timer);
-          onClose();
+          closeRef.current();
           return 0;
         }
         return prev - 1;
@@ -21,7 +23,7 @@ const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [onClose]);
+  }, []);
 
   /**
    * Calcula métricas de la orden (R:R, riesgo, etc.)

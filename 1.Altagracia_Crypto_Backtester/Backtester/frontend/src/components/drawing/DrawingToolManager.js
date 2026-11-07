@@ -242,7 +242,7 @@ class DrawingToolManager {
   // Undo/Redo system
   saveToHistory() {
     // Serializar estado actual
-    const state = this.shapes.map(shape => shape.serialize());
+    const state = this.getShapes();
 
     // Eliminar estados futuros si estamos en medio del history
     if (this.historyIndex < this.history.length - 1) {
@@ -289,6 +289,12 @@ class DrawingToolManager {
   }
 
   deserializeShape(data) {
+    const shape = this.buildShape(data);
+    if (shape) shape.createdAt = data.createdAt ?? null;
+    return shape;
+  }
+
+  buildShape(data) {
     switch (data.type) {
       case 'trendline':
         return TrendLine.deserialize(data);
@@ -314,7 +320,7 @@ class DrawingToolManager {
 
   // Persistencia
   getShapes() {
-    return this.shapes.map(shape => shape.serialize());
+    return this.shapes.map(shape => ({ ...shape.serialize(), createdAt: shape.createdAt ?? null }));
   }
 
   loadShapes(shapesData) {
@@ -330,7 +336,7 @@ class DrawingToolManager {
     }
 
     // Inicializar history con estado cargado
-    this.history = [this.shapes.map(s => s.serialize())];
+    this.history = [this.getShapes()];
     this.historyIndex = 0;
   }
 

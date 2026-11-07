@@ -4,7 +4,35 @@
 import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
 
-const MIN_SESSION_MS = 23 * 60 * 60 * 1000;
+const HOUR_MS = 60 * 60 * 1000;
+const MIN_SESSION_MS = 23 * HOUR_MS;
+
+// Lecturas de volatilidad de fábrica por marco, para el VWAP de sesión con la ventana de su sesión.
+// Medidas en BTC de octubre 2021 a noviembre 2026 (1m desde octubre 2024):
+// - minSessionCandles: primera vela de la sesión en que menos del 90% de las sesiones marca squeeze
+//   en BandWidth y en TTM. Antes la banda casi no existe: la primera vela siempre tiene ancho cero
+// - bandWidthThresholds: cada estado conserva la frecuencia que tenía con la ventana anterior, que
+//   empezaba el día antes y daba bandas más anchas: cerca de 40% squeeze, 45% consolidación,
+//   13% normal y 2% tendencia
+// - ttmATRMultiplier: Keltner que enciende el squeeze tan seguido como el TTM clásico (Bollinger de
+//   20 velas a 2σ dentro de Keltner de 20 velas a 1.5 ATR) en las mismas velas: 10% en 1m, 20% en 5m
+//   y entre 31% y 37% en 15m, 1h y 4h
+const VOLATILITY_DEFAULTS = {
+  '1m': { bandWidthThresholds: { squeeze: 0.8, consolidation: 2.3, normal: 4.75 }, ttmATRMultiplier: 4.2, minSessionCandles: 85 },
+  '5m': { bandWidthThresholds: { squeeze: 0.8, consolidation: 2.2, normal: 4.5 }, ttmATRMultiplier: 2.2, minSessionCandles: 24 },
+  '15m': { bandWidthThresholds: { squeeze: 0.8, consolidation: 2.15, normal: 4.45 }, ttmATRMultiplier: 1.35, minSessionCandles: 10 },
+  '1h': { bandWidthThresholds: { squeeze: 0.7, consolidation: 2.05, normal: 4.35 }, ttmATRMultiplier: 0.6, minSessionCandles: 3 },
+  '4h': { bandWidthThresholds: { squeeze: 0.65, consolidation: 2.05, normal: 4.3 }, ttmATRMultiplier: 0.2, minSessionCandles: 2 }
+};
+// Los mismos marcos con el código de Bybit
+const INTERVAL_NAMES = { '1': '1m', '5': '5m', '15': '15m', '60': '1h', '240': '4h' };
+
+// Otro marco usa los umbrales de 15m, el Keltner clásico y solo deja sin leer la primera vela
+export function volatilityDefaults(interval) {
+  const values = VOLATILITY_DEFAULTS[INTERVAL_NAMES[interval] || interval]
+    || { ...VOLATILITY_DEFAULTS['15m'], ttmATRMultiplier: 1.5, minSessionCandles: 2 };
+  return { ...values, bandWidthThresholds: { ...values.bandWidthThresholds } };
+}
 
 class VWAPIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 7, config = {}) {
@@ -39,8 +67,11 @@ class VWAPIndicator extends IndicatorBase {
     this.showBBWP = config.showBBWP !== undefined ? config.showBBWP : false;
     this.showTTMSqueeze = config.showTTMSqueeze !== undefined ? config.showTTMSqueeze : false;
 
+    // Valores de fábrica del marco, calibrados para el VWAP de sesión
+    const volatility = volatilityDefaults(interval);
+
     // BandWidth thresholds (%) - Adaptive by timeframe
-    this.bandWidthThresholds = config.bandWidthThresholds || this._getDefaultBandWidthThresholds(interval);
+    this.bandWidthThresholds = config.bandWidthThresholds || volatility.bandWidthThresholds;
 
     // Log thresholds for debugging
     console.log(`[${symbol}] BandWidth thresholds for ${interval}:`, this.bandWidthThresholds);
@@ -54,7 +85,10 @@ class VWAPIndicator extends IndicatorBase {
 
     // TTM Squeeze configuration
     this.ttmATRLength = config.ttmATRLength || 20;
-    this.ttmATRMultiplier = config.ttmATRMultiplier || 1.5;
+    this.ttmATRMultiplier = config.ttmATRMultiplier || volatility.ttmATRMultiplier;
+
+    // Velas que debe tener la sesión antes de leer BandWidth, BBWP y TTM
+    this.minSessionCandles = config.minSessionCandles ?? volatility.minSessionCandles;
 
     // Volatility bar visualization
     this.volatilityBarHeight = config.volatilityBarHeight || 8;
@@ -64,6 +98,7 @@ class VWAPIndicator extends IndicatorBase {
     this.dataMap = new Map();
     this._lastCalculatedLength = 0; // 🎯 Para detectar cuando necesitamos recalcular
     this._calculationValid = false; // 🎯 Flag para indicar si el cálculo es válido
+    this.calculations = 0; // Veces que cambió dataMap: el filtro VWAP del Swing se recalcula con cada una
     this._knownCandles = null; // En backtesting: lo que ya ocurrió en la hora simulada
     this._formingKey = null;
     this._formingValue = null;
@@ -77,31 +112,6 @@ class VWAPIndicator extends IndicatorBase {
     // Auto-refresh timer para actualizar VWAP periódicamente
     this.refreshInterval = null;
     this.refreshIntervalMs = 30000; // 30 segundos
-  }
-
-  // Get default BandWidth thresholds based on timeframe
-  _getDefaultBandWidthThresholds(interval) {
-    // Timeframes cortos tienen BandWidth mucho más alto debido a mayor volatilidad intradiaria
-    const thresholdsByTimeframe = {
-      // Ultra-short (scalping): bandas muy amplias
-      '1': { squeeze: 8, consolidation: 12, normal: 18 },    // 1 min
-      '3': { squeeze: 6, consolidation: 10, normal: 15 },    // 3 min
-      '5': { squeeze: 5, consolidation: 8, normal: 12 },     // 5 min
-
-      // Short-term (intraday): bandas moderadas
-      '15': { squeeze: 3.5, consolidation: 6, normal: 10 },  // 15 min
-      '30': { squeeze: 3, consolidation: 5, normal: 8 },     // 30 min
-      '60': { squeeze: 2.5, consolidation: 4.5, normal: 7 }, // 1 hora
-
-      // Medium-term (swing): bandas estándar
-      '240': { squeeze: 2, consolidation: 4, normal: 6 },    // 4 horas
-      'D': { squeeze: 1.5, consolidation: 3, normal: 5 },    // Diario
-
-      // Long-term (position): bandas estrechas
-      'W': { squeeze: 1, consolidation: 2, normal: 4 }       // Semanal
-    };
-
-    return thresholdsByTimeframe[interval] || { squeeze: 2, consolidation: 5, normal: 10 };
   }
 
   async fetchData() {
@@ -148,6 +158,7 @@ class VWAPIndicator extends IndicatorBase {
           this.dataMap.set(point.timestamp, point);
         });
         this._calculationValid = true; // Validar después de cargar
+        this.calculations += 1;
 
         console.log(`[${this.symbol}] ✅ VWAP loaded: ${this.vwapData.length} points`);
 
@@ -260,6 +271,7 @@ class VWAPIndicator extends IndicatorBase {
     if (config.bbwpThresholds) this.bbwpThresholds = config.bbwpThresholds;
     if (config.ttmATRLength !== undefined) this.ttmATRLength = config.ttmATRLength;
     if (config.ttmATRMultiplier !== undefined) this.ttmATRMultiplier = config.ttmATRMultiplier;
+    if (config.minSessionCandles !== undefined) this.minSessionCandles = config.minSessionCandles;
     if (config.volatilityBarHeight !== undefined) this.volatilityBarHeight = config.volatilityBarHeight;
 
     // Refresh data if configuration that affects calculation changed
@@ -407,22 +419,112 @@ class VWAPIndicator extends IndicatorBase {
     return vwapData;
   }
 
-  // ✅ Calcular bandas de desviación estándar
-  _calculateStdBands(candles, vwapData) {
-    if (candles.length !== vwapData.length) return vwapData;
+  // Inicio de la ventana de cada vela. Da lo mismo que recorrer hacia atrás en _bandsAt
+  _windowStarts(candles, vwapData) {
+    const starts = new Int32Array(candles.length);
+    if (this.vwapType === 'rolling') {
+      for (let i = 0; i < candles.length; i++) starts[i] = Math.max(0, i - this.rollingPeriod + 1);
+    } else if (this.vwapType === 'session') {
+      // Primera vela con timestamp >= session_start: la misma sesión del VWAP, como en
+      // backend/vwap_calculator.py. Antes empezaba casi siempre el día anterior
+      let start = 0;
+      for (let i = 0; i < candles.length; i++) {
+        while (start < i && candles[start].timestamp < vwapData[i].session_start) start++;
+        starts[i] = start;
+      }
+    }
+    return starts;
+  }
 
-    for (let i = 0; i < vwapData.length; i++) {
-      vwapData[i].bands = this._bandsAt(candles, i, vwapData[i].vwap);
+  // ✅ Calcular bandas de desviación estándar con sumas acumuladas: una pasada por todas las velas.
+  // Las sumas de sesión y ancladas se reinician donde empieza cada ventana y se centran en su
+  // primer precio: una ventana corta, como el inicio de una sesión, no pierde precisión.
+  // La ventana móvil se suma directo: es corta y en un tramo tranquilo las sumas de todo el
+  // historial no alcanzan a medir su variación
+  _calculateStdBands(candles, vwapData) {
+    if (candles.length !== vwapData.length || candles.length === 0) return vwapData;
+
+    const typical = (candle) => (candle.high + candle.low + candle.close) / 3.0;
+    const multipliers = this._bandMultipliers();
+    const starts = this._windowStarts(candles, vwapData);
+
+    let windowStart = -1;
+    let center = 0;
+    let volumes = 0;
+    let prices = 0;
+    let squares = 0;
+    const add = (candle) => {
+      const price = typical(candle) - center;
+      volumes += candle.volume;
+      prices += candle.volume * price;
+      squares += candle.volume * price * price;
+    };
+
+    for (let i = 0; i < candles.length; i++) {
+      const start = starts[i];
+      const vwap = vwapData[i].vwap;
+      vwapData[i].band_candles = i - start + 1;
+
+      if (this.vwapType !== 'rolling') {
+        if (start !== windowStart) {
+          windowStart = start;
+          center = typical(candles[start]);
+          volumes = 0;
+          prices = 0;
+          squares = 0;
+          for (let j = start; j < i; j++) add(candles[j]);
+        }
+        add(candles[i]);
+      }
+
+      if (i - start + 1 < 2) {
+        vwapData[i].bands = this._bandsFrom(vwap, 0, multipliers);
+        continue;
+      }
+
+      let volume = 0;
+      let weighted = 0;
+      if (this.vwapType === 'rolling') {
+        for (let j = start; j <= i; j++) {
+          const gap = typical(candles[j]) - vwap;
+          weighted += gap * gap * candles[j].volume;
+          volume += candles[j].volume;
+        }
+      } else {
+        volume = volumes;
+        const offset = vwap - center;
+        weighted = squares - 2 * offset * prices + offset * offset * volume;
+      }
+      const stdDev = volume > 0 ? Math.sqrt(Math.max(0, weighted / volume)) : 0;
+      vwapData[i].bands = this._bandsFrom(vwap, stdDev, multipliers);
     }
 
     return vwapData;
   }
 
-  // Bandas de la vela i, con las velas de su ventana
-  _bandsAt(candles, i, vwapValue) {
-    // Aplicar ajuste de crypto a los multiplicadores si está habilitado
+  _bandMultipliers() {
     const cryptoAdjustment = this.applyCryptoAdjustment ? 1.15 : 1.0;
-    const adjustedMultipliers = this.bandMultipliers.map(m => m * cryptoAdjustment);
+    return this.bandMultipliers.map(m => m * cryptoAdjustment);
+  }
+
+  // Una banda de sesión se lee desde minSessionCandles velas: antes casi no existe y marcaría squeeze
+  _readable(point) {
+    return this.vwapType !== 'session' || point.band_candles === undefined || point.band_candles >= this.minSessionCandles;
+  }
+
+  _bandsFrom(vwapValue, stdDev, multipliers) {
+    const bands = {};
+    multipliers.forEach((mult, idx) => {
+      bands[`upper_${idx + 1}`] = vwapValue + (stdDev * mult);
+      bands[`lower_${idx + 1}`] = vwapValue - (stdDev * mult);
+    });
+    return bands;
+  }
+
+  // Bandas de la vela i, con las velas de su ventana. sessionStart es el session_start de su VWAP
+  _bandsAt(candles, i, vwapValue, sessionStart) {
+    // Aplicar ajuste de crypto a los multiplicadores si está habilitado
+    const adjustedMultipliers = this._bandMultipliers();
 
     // Determinar ventana según tipo de VWAP
     let windowCandles;
@@ -430,35 +532,17 @@ class VWAPIndicator extends IndicatorBase {
       const startIdx = Math.max(0, i - this.rollingPeriod + 1);
       windowCandles = candles.slice(startIdx, i + 1);
     } else if (this.vwapType === 'session') {
-      // Para session, buscar desde el inicio de la sesión
-      let sessionStartIdx = 0;
-      for (let j = i; j >= 0; j--) {
-        const candleDate = new Date(candles[j].timestamp);
-        const hourUTC = candleDate.getUTCHours();
-        if (hourUTC === this.resetHour && j < i) {
-          const timeDiff = candles[i].timestamp - candles[j].timestamp;
-          if (timeDiff >= MIN_SESSION_MS) {
-            sessionStartIdx = j;
-            break;
-          }
-        }
-      }
+      // Desde la primera vela de la sesión, igual que _windowStarts
+      let sessionStartIdx = i;
+      while (sessionStartIdx > 0 && candles[sessionStartIdx - 1].timestamp >= sessionStart) sessionStartIdx--;
       windowCandles = candles.slice(sessionStartIdx, i + 1);
     } else {
       // Anchored: desde inicio hasta actual
       windowCandles = candles.slice(0, i + 1);
     }
 
-    const bands = {};
-
-    if (windowCandles.length < 2) {
-      // No hay suficientes datos para calcular varianza
-      adjustedMultipliers.forEach((_, idx) => {
-        bands[`upper_${idx + 1}`] = vwapValue;
-        bands[`lower_${idx + 1}`] = vwapValue;
-      });
-      return bands;
-    }
+    // Sin suficientes datos no hay varianza
+    if (windowCandles.length < 2) return this._bandsFrom(vwapValue, 0, adjustedMultipliers);
 
     // Calcular varianza ponderada
     let totalWeightedSqDiff = 0;
@@ -476,13 +560,7 @@ class VWAPIndicator extends IndicatorBase {
     const variance = totalVolume > 0 ? totalWeightedSqDiff / totalVolume : 0;
     const stdDev = Math.sqrt(variance);
 
-    // Crear bandas
-    adjustedMultipliers.forEach((mult, idx) => {
-      bands[`upper_${idx + 1}`] = vwapValue + (stdDev * mult);
-      bands[`lower_${idx + 1}`] = vwapValue - (stdDev * mult);
-    });
-
-    return bands;
+    return this._bandsFrom(vwapValue, stdDev, adjustedMultipliers);
   }
 
   /**
@@ -509,6 +587,7 @@ class VWAPIndicator extends IndicatorBase {
     const previous = index > 0 ? this.dataMap.get(known[index - 1].timestamp) : undefined;
     const typicalPrice = (candle.high + candle.low + candle.close) / 3.0;
     let vwap;
+    let sessionStart;
 
     if (this.vwapType === 'rolling') {
       vwap = this._calculateRollingVWAP(known.slice(Math.max(0, index - this.rollingPeriod + 1))).pop().vwap;
@@ -519,10 +598,12 @@ class VWAPIndicator extends IndicatorBase {
       const base = previous && !startsSession ? previous : { cum_pv: 0, cum_volume: 0 };
       const volume = base.cum_volume + candle.volume;
       vwap = volume > 0 ? (base.cum_pv + typicalPrice * candle.volume) / volume : typicalPrice;
+      // Su sesión: la de la vela anterior, o ella misma si abre una
+      sessionStart = previous && !startsSession ? previous.session_start : candle.timestamp;
     }
 
     const point = { timestamp: candle.timestamp, vwap, typical_price: typicalPrice, volume: candle.volume };
-    if (this.showBands && previous?.bands) point.bands = this._bandsAt(known, index, vwap);
+    if (this.showBands && previous?.bands) point.bands = this._bandsAt(known, index, vwap, sessionStart);
     return point;
   }
 
@@ -590,7 +671,7 @@ class VWAPIndicator extends IndicatorBase {
     for (let i = 0; i < vwapData.length; i++) {
       const point = vwapData[i];
 
-      if (!point.bands || !point.bands.upper_1 || !point.bands.lower_1) {
+      if (!point.bands || !point.bands.upper_1 || !point.bands.lower_1 || !this._readable(point)) {
         bandWidthData.push({
           timestamp: point.timestamp,
           bandwidth: 0,
@@ -645,14 +726,20 @@ class VWAPIndicator extends IndicatorBase {
     if (!bandWidthData || bandWidthData.length === 0) return [];
 
     const bbwpData = [];
-    const lookback = Math.min(this.bbwpLookback, bandWidthData.length);
+    // Solo anchos con lectura: una vela sin lectura no recibe percentil ni entra al historial
+    const widths = [];
 
     for (let i = 0; i < bandWidthData.length; i++) {
       const currentBW = bandWidthData[i].bandwidth;
+      if (bandWidthData[i].state === 'unknown') {
+        bbwpData.push({ timestamp: bandWidthData[i].timestamp, percentile: 0, state: 'unknown' });
+        continue;
+      }
+      widths.push(currentBW);
 
       // Get historical window
-      const startIdx = Math.max(0, i - lookback + 1);
-      const historicalBWs = bandWidthData.slice(startIdx, i + 1).map(d => d.bandwidth);
+      const lookback = Math.min(this.bbwpLookback, widths.length);
+      const historicalBWs = widths.slice(Math.max(0, widths.length - lookback));
 
       // Count how many historical BWs are less than current BW
       const countBelow = historicalBWs.filter(bw => bw < currentBW).length;
@@ -712,6 +799,11 @@ class VWAPIndicator extends IndicatorBase {
           squeeze: false,
           state: 'off'
         });
+        continue;
+      }
+
+      if (!this._readable(point)) {
+        squeezeData.push({ timestamp: point.timestamp, squeeze: false, state: 'unknown' });
         continue;
       }
 
@@ -821,6 +913,7 @@ class VWAPIndicator extends IndicatorBase {
     // Guardar la longitud para detectar cambios futuros
     this._lastCalculatedLength = allCandles.length;
     this._calculationValid = true; // Marcar cálculo como válido
+    this.calculations += 1;
     console.log(`[${this.symbol}] VWAP: ✅ Cálculo completado - ${this.dataMap.size} puntos en dataMap`);
   }
 
@@ -1130,7 +1223,7 @@ class VWAPIndicator extends IndicatorBase {
         state = point.squeezeState;
         if (state === 'on') {
           barColor = 'rgba(0, 150, 0, 0.9)'; // Verde oscuro - Squeeze ON (oportunidad)
-        } else {
+        } else if (state === 'off') {
           barColor = 'rgba(255, 193, 7, 0.85)'; // Amarillo - Squeeze OFF (normal)
         }
       }
@@ -1340,6 +1433,7 @@ class VWAPIndicator extends IndicatorBase {
       bbwpThresholds: this.bbwpThresholds,
       ttmATRLength: this.ttmATRLength,
       ttmATRMultiplier: this.ttmATRMultiplier,
+      minSessionCandles: this.minSessionCandles,
       volatilityBarHeight: this.volatilityBarHeight
     };
   }
@@ -1364,6 +1458,7 @@ class VWAPIndicator extends IndicatorBase {
     if (config.bbwpThresholds !== undefined) this.bbwpThresholds = config.bbwpThresholds;
     if (config.ttmATRLength !== undefined) this.ttmATRLength = config.ttmATRLength;
     if (config.ttmATRMultiplier !== undefined) this.ttmATRMultiplier = config.ttmATRMultiplier;
+    if (config.minSessionCandles !== undefined) this.minSessionCandles = config.minSessionCandles;
     if (config.volatilityBarHeight !== undefined) this.volatilityBarHeight = config.volatilityBarHeight;
   }
 

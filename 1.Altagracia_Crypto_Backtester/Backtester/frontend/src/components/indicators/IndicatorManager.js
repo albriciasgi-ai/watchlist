@@ -16,7 +16,6 @@ import OpenInterestIndicator from "./OpenInterestIndicator";
 import VWAPIndicator from "./VWAPIndicator";
 import DoubleTopBottomIndicator from "./DoubleTopBottomIndicator";
 import SwingDetectorIndicator from "./SwingDetectorIndicator"; // 🎯 Swing High/Low
-import ZoneVisualizerIndicator from "./ZoneVisualizerIndicator"; // 🎯 Zone Detector 2.0
 import OIVolumeConfluenceIndicator from "./OIVolumeConfluenceIndicator"; // 🎯 OI-Volume Confluence
 import OrderFlowIndicator from "./OrderFlowIndicator"; // 🎯 Order Flow (Footprints)
 import FVGIndicator from "./FVGIndicator";
@@ -50,8 +49,6 @@ class IndicatorManager {
     // 📊 NUEVO: Open Interest Indicator
     this.openInterestIndicator = null; // Indicador de Open Interest (solo si está habilitado)
 
-    // 🎯 NUEVO: Zone Visualizer (Zone Detector 2.0)
-    this.zoneVisualizer = null;
 
     console.log(`[${this.symbol}] 🔧 IndicatorManager: Inicializando con ${days} días @ ${interval}`);
   }
@@ -64,6 +61,7 @@ class IndicatorManager {
 
     // Crear el indicador de S/R
     this.supportResistanceIndicator = new SupportResistanceIndicator(this.symbol, this.interval, this.days);
+    this.supportResistanceIndicator.localOnly = backtestingMode;
 
     // Crear el indicador de S/R v2 (Swing Points Based)
     this.supportResistance2Indicator = new SupportResistance2Indicator(this.symbol, this.interval, this.days);
@@ -72,8 +70,6 @@ class IndicatorManager {
     this.openInterestIndicator = new OpenInterestIndicator(this.symbol, this.interval, this.days);
     this.openInterestIndicator.requestRedraw = () => this.requestRedraw?.();
 
-    // 🎯 Crear el Zone Visualizer
-    this.zoneVisualizer = new ZoneVisualizerIndicator(this.symbol, this.interval, this.days);
 
     // 🎯 Crear indicador de OI-Volume Confluence
     const volumeIndicator = new VolumeIndicator(this.symbol, this.interval, this.days);
@@ -104,7 +100,6 @@ class IndicatorManager {
       this.supportResistance2Indicator,
       new VWAPIndicator(this.symbol, this.interval, this.days, { backtestingMode }),
       new SwingDetectorIndicator(this.symbol, this.interval, this.days), // 🎯 Swing High/Low
-      this.zoneVisualizer, // 🎯 Zone Visualizer (Zone Detector 2.0)
       this.orderFlowIndicator, // 🎯 Order Flow (Footprints)
       this.fvgIndicator,
       this.vpPeriodicIndicator,
@@ -124,6 +119,11 @@ class IndicatorManager {
     const vwapIndicator = this.indicators.find(ind => ind.name === "VWAP");
     if (swingDetector && vwapIndicator) {
       swingDetector.setVWAPIndicator(vwapIndicator);
+    }
+    if (swingDetector) {
+      // Los rectángulos del gráfico marcan dónde actúa su filtro VWAP. Los que definen un VP Fixed no cuentan
+      swingDetector.setDrawingManager(() => this.getDrawingManager?.());
+      swingDetector.getProfileRectIds = () => new Set(this.getFixedRangeProfiles().map(profile => profile.sourceRectId).filter(Boolean));
     }
 
     // 🎯 OPTIMIZACIÓN: NO cargar datos de indicadores pesados aquí
@@ -288,16 +288,7 @@ class IndicatorManager {
     // 🎯 Indicadores que requieren datos del backend
     const backendIndicators = ["VWAP", "Open Interest", "Double Top/Bottom", "Support & Resistance", "Rejection Patterns", "Order Flow"];
 
-    // 🎯 NUEVO: Indicadores internos que NO deben ser controlados por el UI
-    // Zone Visualizer se controla manualmente desde el Zone Detector Tester
-    const internalIndicators = ["Zone Visualizer"];
-
     for (const indicator of this.indicators) {
-      // 🎯 Skip indicadores internos - mantienen su estado actual
-      if (internalIndicators.includes(indicator.name)) {
-        continue;
-      }
-
       const shouldBeEnabled = indicatorStates[indicator.name] || false;
       const wasEnabled = indicator.enabled;
 
@@ -442,19 +433,8 @@ class IndicatorManager {
    * @param {number} timestamp - Timestamp actual del playback
    */
   async updateDTBPlaybackDate(timestamp) {
-    console.log(`[${this.symbol}] 🔍 IndicatorManager.updateDTBPlaybackDate called with timestamp: ${timestamp} (${new Date(timestamp).toISOString()})`);
-    console.log(`[${this.symbol}] 🔍 Total indicators: ${this.indicators.length}`);
-
     const dtbIndicator = this.indicators.find(ind => ind.name === "Double Top/Bottom");
-    console.log(`[${this.symbol}] 🔍 DTB indicator found: ${!!dtbIndicator}, has method: ${!!(dtbIndicator?.updatePlaybackDate)}`);
-
-    if (dtbIndicator && dtbIndicator.updatePlaybackDate) {
-      console.log(`[${this.symbol}] ✅ Calling DTB updatePlaybackDate`);
-      await dtbIndicator.updatePlaybackDate(timestamp);
-      console.log(`[${this.symbol}] ✅ DTB updatePlaybackDate completed`);
-    } else {
-      console.warn(`[${this.symbol}] ⚠️ DTB indicator not found or missing updatePlaybackDate method`);
-    }
+    if (dtbIndicator && dtbIndicator.updatePlaybackDate) await dtbIndicator.updatePlaybackDate(timestamp);
   }
 
   /**
@@ -473,15 +453,9 @@ class IndicatorManager {
    * @param {number} timestamp - Timestamp actual del playback
    */
   updateSRPlaybackTime(timestamp) {
-    // S&R v1
     const srIndicator = this.indicators.find(ind => ind.name === "Support & Resistance");
     if (srIndicator && srIndicator.updatePlaybackDate) {
       srIndicator.updatePlaybackDate(timestamp);
-    }
-    // S&R v2
-    const sr2Indicator = this.indicators.find(ind => ind.name === "S&R v2");
-    if (sr2Indicator && sr2Indicator.updatePlaybackDate) {
-      sr2Indicator.updatePlaybackDate(timestamp);
     }
   }
 
@@ -529,36 +503,6 @@ class IndicatorManager {
     if (indicator && indicator.setFixedRange) {
       indicator.setFixedRange(start, end);
     }
-  }
-
-  // 🎯 NUEVO: Métodos para Zone Visualizer (Zone Detector 2.0)
-  setZones(zones) {
-    console.log(`[${this.symbol}] 🎯 IndicatorManager.setZones() llamado con ${zones?.length || 0} zonas`);
-    console.log(`[${this.symbol}] 🎯 zoneVisualizer existe:`, !!this.zoneVisualizer);
-
-    if (this.zoneVisualizer) {
-      this.zoneVisualizer.setZones(zones);
-      this.zoneVisualizer.enabled = true;
-      console.log(`[${this.symbol}] 🎯 IndicatorManager: ${zones.length} zonas establecidas, enabled=${this.zoneVisualizer.enabled}`);
-
-      // Log primera zona para debug
-      if (zones.length > 0) {
-        console.log(`[${this.symbol}] 🎯 Primera zona:`, zones[0]);
-      }
-    } else {
-      console.error(`[${this.symbol}] ❌ zoneVisualizer NO existe!`);
-    }
-  }
-
-  clearZones() {
-    if (this.zoneVisualizer) {
-      this.zoneVisualizer.clearZones();
-      console.log(`[${this.symbol}] 🎯 IndicatorManager: Zonas limpiadas`);
-    }
-  }
-
-  getZones() {
-    return this.zoneVisualizer ? this.zoneVisualizer.getZones() : [];
   }
 
   // Altura pedida para un panel: la que eligió el usuario o la de fábrica
@@ -616,16 +560,8 @@ class IndicatorManager {
       if (indicator.renderOverlay && indicator.enabled) {
         // ✅ SOLUCIÓN 1: Si es Volume Profile y debe ocultarse cuando hay Fixed Ranges activos
         if (indicator.name === "Volume Profile") {
-          // Debug: mostrar estado del indicador
-          if (indicator.hideWhenFixedRanges) {
-            console.log(`[${this.symbol}] 🔍 Volume Profile - hideWhenFixedRanges=true, hasActiveFixedRanges=${hasActiveFixedRanges}`);
-          }
-
-          if (indicator.hideWhenFixedRanges && hasActiveFixedRanges) {
-            // No renderizar el Volume Profile dinámico
-            console.log(`[${this.symbol}] 👁️ Volume Profile OCULTO (hay ${activeFixedRanges.length} Fixed Ranges activos)`);
-            return;
-          }
+          // No renderizar el Volume Profile dinámico
+          if (indicator.hideWhenFixedRanges && hasActiveFixedRanges) return;
         }
 
         // Renderizar el indicador normalmente
@@ -645,6 +581,7 @@ class IndicatorManager {
     const showOtherTimeframes = this.rangeDetector?.config.showOtherTimeframes || false;
 
     // Filtrar rangos según símbolo, enabled, y timeframe
+    this.rangesAhead = new Set();
     const activeIndicators = this.fixedRangeIndicators.filter(indicator => {
       if (!indicator.enabled || indicator.symbol !== this.symbol) {
         return false;
@@ -660,6 +597,7 @@ class IndicatorManager {
 
       // Un rango que termina después de la hora simulada viene de un análisis con velas posteriores
       if (priceContext?.knownCandles && profile.endTimestamp > priceContext.knownUntil) {
+        this.rangesAhead.add(indicator);
         return false;
       }
 
@@ -681,6 +619,15 @@ class IndicatorManager {
         console.error(`[${this.symbol}] Error renderizando fixed range ${indicator.rangeId}:`, error);
       }
     });
+  }
+
+  /** Niveles a la vista que se pueden incluir en el análisis */
+  getSelectableLevels() {
+    const rangesActive = this.fixedRangeIndicators.some(item => item.enabled && item.symbol === this.symbol);
+    return [...this.indicators, ...this.fixedRangeIndicators]
+      .filter(indicator => indicator.enabled && indicator.selectableLevels && !this.rangesAhead?.has(indicator))
+      .filter(indicator => !(indicator.hideWhenFixedRanges && rangesActive))
+      .flatMap(indicator => indicator.selectableLevels());
   }
 
   /** Paneles a la vista, en el orden elegido */
@@ -988,7 +935,7 @@ class IndicatorManager {
         }
 
         // Guardar cambios
-        this.saveFixedRangeProfiles();
+        this.saveFixedRangeProfilesToStorage();
       }
       return; // Ya existe y fue actualizado
     }

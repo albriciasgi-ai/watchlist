@@ -1,4 +1,5 @@
 import IndicatorBase from './IndicatorBase.js';
+import { candleItemId } from './analysisLevels.js';
 
 const MAX_VISIBLE_CANDLES = 1500; // Con más velas en pantalla los gaps no se alcanzan a leer
 const SETTINGS_KEY = 'fvg_settings_';
@@ -65,9 +66,9 @@ export function findFairValueGaps(candles, minPct = 0.03, { fillMode = 'trim', m
     const start = candles[i - 1].timestamp;
 
     if (candle.low > first.high * (1 + margin)) {
-      open.push({ bullish: true, bottom: first.high, top: candle.low, start, bornAt: i });
+      open.push({ bullish: true, bottom: first.high, top: candle.low, start, bornAt: i, bornTop: candle.low, bornBottom: first.high });
     } else if (candle.high < first.low * (1 - margin)) {
-      open.push({ bullish: false, bottom: candle.high, top: first.low, start, bornAt: i });
+      open.push({ bullish: false, bottom: candle.high, top: first.low, start, bornAt: i, bornTop: first.low, bornBottom: candle.high });
     }
   });
 
@@ -104,6 +105,7 @@ class FVGIndicator extends IndicatorBase {
     this.config = { ...defaultFVGConfig(), ...loadFVGSettings(symbol) };
     this.cacheKey = null;
     this.gaps = [];
+    this.shownGaps = []; // Los dibujados en el último cuadro
   }
 
   async fetchData() {
@@ -132,7 +134,21 @@ class FVGIndicator extends IndicatorBase {
     return this.gaps;
   }
 
+  /** Bordes y mitad de cada gap a la vista, para elegirlos como niveles */
+  selectableLevels() {
+    return this.shownGaps.flatMap(gap => {
+      const side = gap.bullish ? 'alcista' : 'bajista';
+      // El id usa los bordes con que nació: un gap que se recorta sigue siendo el mismo
+      const born = [gap.bornTop, (gap.bornTop + gap.bornBottom) / 2, gap.bornBottom];
+      return [['borde alto', gap.top], ['50%', (gap.top + gap.bottom) / 2], ['borde bajo', gap.bottom]].map(([edge, price], k) => {
+        const kind = `FVG ${side}, ${edge}`;
+        return { id: candleItemId('FVG', kind, gap.start, born[k]), source: 'FVG', kind, price, start: gap.start, time: gap.start };
+      });
+    });
+  }
+
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
+    this.shownGaps = [];
     if (!this.enabled || !priceContext || visibleCandles.length === 0) return;
     if (visibleCandles.length > MAX_VISIBLE_CANDLES) return;
 
@@ -145,6 +161,7 @@ class FVGIndicator extends IndicatorBase {
 
       const left = Math.max(bounds.x, priceContext.timeToX(gap.start) ?? bounds.x);
       if (left >= right) continue;
+      this.shownGaps.push({ ...gap });
 
       const color = gap.bullish ? bullishColor : bearishColor;
       const y = priceContext.priceToY(gap.top);

@@ -378,7 +378,7 @@ def record_order(order):
 
 
 def record_event(order_id, event, details):
-    if event not in ("fill", "close", "cancel"):
+    if event not in ("fill", "close", "cancel", "marks", "image"):
         raise ValueError(f"Evento desconocido: {event}")
     _append({**details, "event": event, "id": order_id, "at": _now()})
     return {"id": order_id}
@@ -403,6 +403,13 @@ def trades():
                 )
             elif kind == "cancel":
                 trade.update(status="cancelled", cancel_time=event.get("time"))
+            elif kind == "marks":
+                trade.update(marks=event.get("marks"))
+            elif kind == "image":
+                image = {key: event.get(key) for key in ("path", "sim_time", "frame")}
+                if event.get("markers"):
+                    image["markers"] = event["markers"]  # Donde quedo en la imagen cada nivel o marca de la orden
+                trade.setdefault("images", {})[event.get("kind")] = image
     return result
 
 
@@ -485,6 +492,8 @@ def public_trade(trade):
     public["r"] = r_multiple(trade)
     if trade.get("status") in ("closed", "cancelled"):
         public["comparison"] = compare(trade)
+    else:
+        public.pop("images", None)
     return public
 
 
@@ -675,7 +684,9 @@ def report(symbol=None, blind="all", include_rewound=False):
         scope = [trade for trade in scope if not trade.get("blind")]
 
     closed = [trade for trade in scope if trade["status"] == "closed"]
-    read = [trade for trade in scope if _reading(trade)]
+    # Una orden viva no aporta su lectura: el informe la revelaría antes de que termine
+    finished = [trade for trade in scope if trade["status"] in ("closed", "cancelled")]
+    read = [trade for trade in finished if _reading(trade)]
     entries = [_reading(trade)["entry"] for trade in read if _reading(trade).get("entry")]
     reasons = sorted({reason for trade in scope for reason in ((trade.get("marks") or {}).get("reasons") or [])})
 
@@ -685,14 +696,14 @@ def report(symbol=None, blind="all", include_rewound=False):
             "pending": sum(trade["status"] == "pending" for trade in scope),
             "cancelled": sum(trade["status"] == "cancelled" for trade in scope),
             "blind": sum(bool(trade.get("blind")) for trade in scope),
-            "rewound": len(rewound), "without_reading": len(scope) - len(read),
+            "rewound": len(rewound), "without_reading": len(finished) - len(read),
         },
         "overall": _stats(closed),
         "small_sample": len(closed) < SMALL_SAMPLE,
         "conditions": [_condition_row(key, label, closed, check) for key, label, check in CONDITIONS],
         "habits": _habits(read),
         "marks": [_condition_row(reason, reason, closed, _marked(reason)) for reason in reasons],
-        "agreement": _agreement(scope),
+        "agreement": _agreement(finished),
         "zones": {
             "orders": len(entries), "near": sum(bool(entry["near"]) for entry in entries),
             "chance": sum(entry["chance"] for entry in entries) / len(entries) if entries else None,

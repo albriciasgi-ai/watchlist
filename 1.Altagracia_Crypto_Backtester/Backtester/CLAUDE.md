@@ -394,6 +394,8 @@ ESCENARIO 5: EXPANSIÓN DE LÍMITES (config cambia de 3 años → 5 años)
 
 ## 🔧 FIX CRÍTICO: Gráfico Congelado en Timeframe 5m (Octubre 2026) ✅ RESUELTO
 
+**Noviembre 2026:** `subdivisions` ya no existe. Era copia exacta de `main`, así que MiniChart usa `main` en todos los marcos y la vela en formación sale de `formingCandle()`. Lo de abajo queda como historia.
+
 ### Problema
 
 Al reproducir el backtesting en el timeframe de **5 minutos**, el gráfico se quedaba congelado:
@@ -544,7 +546,7 @@ GET /api/orderflow/coverage/{symbol}
 |---------------|------------|
 | Menos de 16px | Vela normal, líneas de stacked imbalance y rombos de delta contrario a la vela |
 | 16px a 59px | Vela, celdas y perfil |
-| Desde 60px | Además delta bajo la vela. Las cifras por celda aparecen si la columna mide 30px y la celda 10px |
+| Desde 60px | Además delta bajo la vela, con su propio tamaño (`deltaFontSize`, 13 px por defecto, de 8 a 24 en el modal). Las cifras por celda aparecen si la columna mide 30px y la celda 10px |
 
 - Con más de 400 velas en pantalla no se piden footprints
 - `step_size` se elige en la primera respuesta y se mantiene. Cambia solo si el precio se aleja 30%. En BTC cerca de 80,000: 1m 5, 5m y 15m 10, 1h 25, 4h 50
@@ -609,9 +611,17 @@ node tests/orders.test.mjs
 node tests/sessions.test.mjs
 node tests/response.test.mjs
 node tests/panels.test.mjs
+node tests/levels.test.mjs
+node tests/swinglevels.test.mjs
+node tests/clock.test.mjs
+node tests/light.test.mjs
+node tests/analysis.test.mjs
+node tests/marketdata.test.mjs
 cd ../backend
-.venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py
+.venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py
 ```
+
+`light.test.mjs` compara VWAP con `backend/vwap_calculator.py`: usa `BACKEND_PYTHON`, `backend/.venv` o un python con numpy.
 
 ### Mantener el almacén
 
@@ -643,7 +653,7 @@ En backtesting, el parámetro `allCandles` de `renderOverlay` trae todo el histo
 - **Rejection validado:** `_loadValidated()` envía a `/api/rejection-patterns/detect` las velas cerradas visibles y las anteriores que necesita el Z-Score (21 por defecto), hasta 1,500 (`MAX_VALIDATED_CANDLES`). Hace una petición a la vez, con 400 ms entre ellas, y pide de nuevo si cierra una vela o cambian la vista, los contextos o los filtros
 - **Niveles ya formados:** cuando llegan `candles`, el backend no pide velas recientes, usa `known_levels_only` y nunca envía alertas. `ReferenceLevel.known_from` es el `endTimestamp` del contexto: un contexto sin esa fecha no valida nada en simulación
 - **VP dinámico como contexto:** queda fijo con los valores que tenía al agregarlo. No se actualiza en modo validado
-- **Sin problema:** CVD, Volume Delta, OI y OI-Volume Confluence solo reciben las velas visibles. Zonas usa la fecha de inicio
+- **Sin problema:** CVD, Volume Delta, OI y OI-Volume Confluence solo reciben las velas visibles
 
 ### Comprobar
 
@@ -663,7 +673,7 @@ Mide cada operación manual contra la regla del laboratorio, sin mostrar esa lec
 ### Flujo
 
 ```
-TradingControls: marcas opcionales en "¿Por qué entras?"
+TradingControls: orden nueva, con los niveles elegidos en el gráfico
         │  onOrderCreated → BacktestingApp.observeOrder()
         ▼
 observer.js → POST /api/observer/orders                 Responde solo { id }
@@ -679,7 +689,7 @@ GET /api/observer/report                                Informe de todo lo regis
 ### Registro
 
 - `OrderFlowData/observer/journal.jsonl`. `ORDERFLOW_OBSERVER` cambia la carpeta
-- Una línea por evento: `order`, `fill`, `close`, `cancel` y `blind`. Las líneas solo se agregan. `trades()` arma el estado de cada orden
+- Una línea por evento: `order`, `fill`, `close`, `cancel`, `marks` y `blind`. Las líneas solo se agregan. `trades()` arma el estado de cada orden
 - `order.observerId` une los eventos y viaja con la sesión guardada. Una orden sin ese campo no envía eventos
 - `observer.js` envía en cola: el cierre nunca llega antes que la orden
 
@@ -699,7 +709,6 @@ GET /api/observer/report                                Informe de todo lo regis
 
 - `maxSimTimeRef` guarda hasta dónde llegó la simulación. Una orden anterior a ese punto queda con `rewound: true` y el informe la excluye salvo que se pida
 - `blindClock.js` guarda el inicio oculto. `maskDate()` muestra `Día 3 14:30` en el encabezado, eje, cruz, historial, rendimiento, dashboard y perfiles fijos
-- El panel Zonas muestra fechas reales: con fecha oculta no se abre
 - `blind_start()` elige un día del tramo sin huecos del almacén, 45 días después de su inicio y 14 antes de su final, separado 14 días de las fechas ya usadas
 - El nivel de precio sigue a la vista y puede dar una pista de la época
 
@@ -722,6 +731,83 @@ Debe decir `diferencias con celdas del laboratorio {}` y detectar cada error met
 
 ---
 
+## REGISTRO AUTOMÁTICO (Noviembre 2026)
+
+Cada orden queda medida sola, sin llenar nada antes de entrar. Sirve para encontrar qué tienen en común las entradas y cuáles de esas condiciones se sostienen en el histórico.
+
+### Flujo
+
+```
+MiniChart: clic en un nivel o una marca → analysisLevels.js (papel y nota)
+BacktestingApp.observeOrder(): drawingsForOrder() + knownLevels()
+        ▼
+observer.js → POST /api/observer/orders                 Hechos de la orden, dibujos y niveles
+        ▼
+measures.py: una fila por vela de 15m cerrada
+patterns.py: reading() cruza la orden con esa tabla
+        ▼
+GET  /api/observer/orders                               Medidas solo si la orden terminó
+GET  /api/observer/patterns/{symbol}                    Entradas contra momentos sin entrada
+POST /api/observer/rule-test/{symbol}                   Regla en fechas no operadas
+GET  /api/observer/export/{symbol}                      CSV de todo el registro
+```
+
+### Tabla de medidas
+
+- `measures.py` arma `OrderFlowData/observer/measures/{symbol}.npz` desde el caché de velas. BTC: 176,633 filas, 25 s, 22 MB
+- 58 medidas de 15m, 1h y 4h en `MEASURES`: contexto, tramo, volumen, Volumen de Respuesta, volatilidad, FVG, perfil, OI, delta y hora UTC. La sesión del mercado se quitó porque cripto opera 24/7. Una tabla hecha antes conserva esa columna sin usarla hasta reconstruirse: por eso `VERSION` no cambió
+- Sale siempre del mismo cálculo, sin importar los indicadores en pantalla. Por eso una orden vieja se puede releer y una regla se puede probar en todo el histórico
+- Una fila solo usa lo conocido al cierre de su vela: agregar velas no cambia las filas ya calculadas
+- Distancias en ATR y volumen contra la mediana de su hora en 30 días, para comparar fechas distintas
+- `column()` lee cada medida a favor de la orden. El último elemento de `MEASURES` dice cómo: `1` cambia el signo, `0` no cambia, `"mirror"` da la vuelta a una posición de 0 a 1 y un par elige la columna de cada lado
+- `table_for()` no bloquea. Si falta la tabla, o una orden queda después de su final y el caché es más nuevo, `_start_build()` la prepara en otro proceso y devuelve lo que haya. El panel lo avisa y vuelve a preguntar
+- `_cache_path()` usa una ruta relativa: el proceso debe correr en `backend/`
+- `reading()` se calcula al pedirla: no se guarda en el registro, así que una tabla nueva relee las órdenes viejas sin hacer nada
+
+### Lectura de cada orden
+
+- `reading()` da `decision` (última vela cerrada al crearla), `fill` (al llenarse, si cambió de vela), `order`, `references` y `outcome`
+- `order_measures()`: lo que se decidió en la orden, en ATR
+- `outcome()`: R neto, lo máximo a favor y en contra con velas de 5m, duración y espera. Una cancelada queda con `filled: false`
+- `orders()` agrega `automatic` solo en órdenes cerradas o canceladas. Mientras sigue viva no sale ninguna medida
+
+### Dibujos y niveles
+
+- `drawingsForOrder()` guarda línea horizontal, línea vertical, tendencia, rectángulo y Fibonacci (0, 27, 61.8 y 100%) trazados en las últimas 100 velas (`DRAWING_WINDOW_CANDLES`) o que tocan esas velas. Quedan fuera TP/SL, medición y texto
+- `shape.createdAt` es la hora simulada del trazo. Un dibujo posterior a la orden, o anclado solo en su futuro, no cuenta. Los dibujos viejos sin esa hora se juzgan por sus anclas
+- `selectableLevels()` de cada indicador dice qué se puede elegir: solo lo que está dibujado. VP Fixed y VP Periodic se alcanzan dentro de sus horas. S&R respeta sus casillas de resistencias y soportes. El Volume Profile oculto por `hideWhenFixedRanges` no ofrece nada
+- FVG ofrece borde alto, 50% y borde bajo de cada gap a la vista, desde su vela. Order Flow, solo con footprints a la vista, ofrece el POC de cada vela, sus stacked y, con cifras, sus imbalances sueltos; con velas angostas, la línea de stacked y el rombo de delta contrario. No dibuja nada para eso: el gráfico no se satura
+- Marcas: rombos y flechas de Volumen de Respuesta, señales de Swing, entradas de Double Top/Bottom, rechazos y delta contrario. Llegan con `mark: true` y su lugar ya calculado en el dibujo (`x`, `y`, `r`). Una zona llega con `left`, `right`, `top` y `bottom`
+- `levelTargets()` da el lugar en pantalla y deja tal cual lo que el indicador ya ubicó. `levelsNear()` alcanza una línea a 6 px, una marca dentro de su círculo y una zona en su alto con 3 px de margen. Con varios cerca, el menú los lista todos
+- Al marcar la casilla aparece su papel: Soporte, Resistencia, Entrada u Objetivo. Un nivel entra como resistencia si está arriba del precio y como soporte si está abajo; una marca entra como "Solo marca". También lleva una nota: por qué es importante
+- Un elegido guarda precio, `selectedAt` con la hora simulada, papel (`role`), nota y, si nace en una vela, `time`, `low`, `high` y `mark`. Nunca su lugar en pantalla. Al retroceder no aparecen los elegidos después. La lista se guarda en `analysis_levels_{symbol}` y la comparten los marcos. Un nivel elegido antes de los papeles queda como "Nivel"
+- `references()` mide cada referencia desde la entrada en ATR, con positivo detrás de la entrada. A 0.25 ATR o menos cuenta como "en el nivel" (`NEAR_ATR`). Una marca sin papel no es una referencia. `ref_entry_atr` y `ref_target_atr` miden la entrada contra el nivel de papel Entrada más cercano y el objetivo contra el de papel Objetivo; van al informe y al CSV
+- Al escribir una nota, Delete no borra el dibujo seleccionado y las flechas no cambian de trade
+- Lo que nace en una vela lleva su marco en el id (`candleItemId(..., interval)`): el rombo de 1h no es el de 15m. Los bordes de un FVG usan los precios con que nació el gap, así siguen siendo el mismo cuando se recorta, y valen en todos los marcos
+- Al retroceder, el menú solo da por elegido lo elegido hasta esa hora (`chosenLevel(symbol, id, time)`). Elegirlo antes reemplaza al elegido después, sin su papel ni su nota. "Quitar todos" solo quita lo que se ve
+- Lo elegido en otro marco se ubica en la vela de este marco que contiene su hora (`candleCenterX`), en el gráfico y en las imágenes
+- El menú se acomoda al crecer para no salirse del gráfico, y las marcas del visor siguen a la imagen cuando cambia la ventana
+
+### Informe y reglas
+
+- `control_rows()`: 10 momentos sin entrada por orden, a 7 días o menos y a más de 120 minutos de cualquier entrada. La semilla sale del id, así que no cambian entre lecturas
+- `compare_groups()`: mide con AUC y marca `clear` solo si supera el umbral de 300 permutaciones sobre todas las medidas juntas. Con menos de 5 datos por grupo no compara
+- `small_sample` avisa con menos de 30 entradas. La hora no se compara como número
+- `rule_test()`: hasta 3 condiciones, entrando al cierre de la vela. Excluye las fechas operadas con un día de margen, para no probar una idea en los datos que la sugirieron. Stop 1.5 ATR, objetivo 2R, horizonte 96 velas y 16 velas entre señales por defecto. Si stop y objetivo caen en la misma vela cuenta el stop. Costos de taker a la entrada y la salida
+- Compara contra la base: la misma simulación con todas las velas permitidas. Sin esa base, un resultado positivo puede ser solo la tendencia del periodo
+
+### Lo que no hace
+
+- Los resultados son del histórico y no anticipan el futuro. Con pocas órdenes el informe solo describe
+- Los motivos son opcionales: `ObserverReading` los pide al terminar la orden y se guardan como evento `marks`
+- Las órdenes guardadas antes de este cambio no traen dibujos ni niveles
+
+### Si cambia una fórmula
+
+Subir `VERSION` en `measures.py`: `_load()` rechaza la tabla vieja y se reconstruye sola. `balance()`, `equilibrium()` y `hour_volume()` repiten `responseBalance.js` y `research/response_volume/engine.py`. Si cambia esa regla, hay que cambiar los tres.
+
+---
+
 ## ÓRDENES (Noviembre 2026)
 
 `TradingControls.jsx` usa `orderPlan.js`, que repite la lógica de `8.AnalizadorDesktop/src/components/trading/OrderForm.jsx`.
@@ -731,6 +817,8 @@ Debe decir `diferencias con celdas del laboratorio {}` y detectar cada error met
 - **Automática:** a 0.1% o menos del precio es market. Más lejos, `limit` si el precio debe volver a la entrada y `stop` si debe avanzar hasta ella. App 8 siempre envía limit: aquí una limit en el lado equivocado se llenaría de inmediato
 - **Una orden que usa la caja:** queda en `order.tpslBoxId`. `anchorTPSLBox()` mueve la caja a la entrada real al abrir y `extendTPSLBox()` la termina en la salida. Cancelar la orden deja la caja libre
 - **Caja nueva:** `defaultBoxSize()` da 45 px de riesgo, 130 px de ancho y riesgo beneficio 2, sin salirse del gráfico. Sin escala usa 0.5%
+- **Precio del momento:** `orderEntry()` da la entrada: la de la caja o, con "Usar precio actual", el precio de ese momento. Antes salía del campo del panel, que copia el precio un dibujo después: un clic en ese intervalo dejaba la orden automática pendiente como stop o limit al precio anterior
+- **Caja de una orden viva:** `boxesFollowOrders()` corre en cada cambio de dibujos y devuelve la caja de una orden pendiente o abierta a su entrada (la ejecutada si ya abrió), su stop y su objetivo. Para cambiar una orden pendiente se cancela: su caja queda libre
 
 ---
 
@@ -804,15 +892,70 @@ Debe dar diferencia máxima 0. `responseBalance.js` repite `engine.py`: si cambi
 
 ---
 
+## REPRODUCCIÓN LIGERA (Noviembre 2026)
+
+Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la app con 15m, cinco indicadores y S&R v2 con z=1.5 a 10000x: de 4.5 ticks por segundo y 9 s bloqueados de cada 10 a la velocidad pedida exacta, 60 cuadros por segundo y 9% del navegador. En 1m, de 60% a 4%.
+
+### Reloj (TimeController.js)
+
+- Cuenta el tiempo simulado que debió pasar. Si un tick llega tarde, o la velocidad pide más de lo que da un intervalo de 16 ms, avanza varias subdivisiones
+- Tras un bloqueo largo no recupera más de 1 s de tiempo real
+- Las subdivisiones salen del marco con que se creó el reloj, no del marco activo
+
+### Tick (BacktestingApp.handleTimeUpdate)
+
+- `settleOrders()` corre en cada tick. Una orden nunca depende de cuánto se redibuje
+- `setCurrentTime` y `setCurrentPrice` corren cada `SCREEN_UPDATE_MS` (100 ms) mientras reproduce, y siempre al pausar, detener o saltar
+- Una orden nueva baja `settledTimeRef` a su hora, porque la pantalla puede ir un poco detrás del reloj
+- El efecto de `currentTime` solo liquida con el reloj detenido y en su misma hora (`tickAlreadySettled`). Con una hora vieja repasaría velas: una orden recién llena se cerraba con velas anteriores a su entrada
+- `updateOrders` ignora en una orden abierta las velas que cierran antes de `executedAt`, también al retroceder de verdad
+- Al cambiar la velocidad la hora se publica enseguida: a 1x el siguiente tick tarda 5 minutos reales
+- `observerViewer` toma lo vivido del reloj y no de la pantalla, o el Observador ocultaría una orden recién cerrada. `maxSimTimeRef` sigue a la pantalla porque `rewound` compara contra ella
+
+### Gráfico (MiniChart.jsx)
+
+- Solo el marco visible (`isActive`) sigue la hora. Los demás se ponen al día al mostrarse
+- `syncKnownCandles()` cambia `candlesRef` en sitio: `knownCandles` es el mismo arreglo entre ticks. Un indicador que lo guarde lo verá cambiar, y uno que quiera detectar un cambio debe mirar largo y timestamps
+- Las velas se validan al cargarlas. `drawChart` no copia ni filtra en reproducción
+- El límite de 33 ms actúa desde el segundo dibujo y siempre dibuja lo último pedido
+
+### Indicadores
+
+- Nada recorre todo el historial en un dibujo: `countBefore`, `timestampIndex` y `candlesBetween` de `replayClock.js` buscan por timestamp
+- VWAP arma las bandas de sesión y ancladas con sumas acumuladas. Antes bloqueaba 2 s en 15m y 23 s en 5m al activarse. La ventana móvil se suma directo: es corta, y en un tramo tranquilo las sumas de todo el historial no alcanzan a medir su variación
+- La ventana de las bandas de sesión empieza en la primera vela de la sesión (`session_start`), igual que `backend/vwap_calculator.py`, también en la vela en formación. Las sumas se reinician en cada sesión, centradas en su primer precio. Antes empezaba el día anterior y la banda salía de 2.5 a 3.7 veces más ancha
+- `volatilityDefaults()` da por marco los umbrales de BandWidth, el Keltner del TTM y `minSessionCandles`. Se calibraron con BTC para que cada estado salga tan seguido como con la ventana vieja y el TTM tanto como el clásico. Antes de `minSessionCandles` las tres lecturas quedan en gris. Aun así marcan más squeeze al inicio de la sesión que al final
+- `Swing._checkVWAPFilter` lee `upper_N` y `lower_N` de las bandas elegidas. El margen es la parte de la distancia de la banda al VWAP que el precio puede quedar por dentro, como en los backends de Swing
+- El filtro actúa dentro de los rectángulos del gráfico (`_rectangleZones()`, con el `DrawingToolManager` que entrega `IndicatorManager.getDrawingManager`) y solo con el indicador VWAP activo. No son lista blanca: afuera las señales no cambian. No cuentan los rectángulos que definen un VP Fixed (`getProfileRectIds`). Entre bandas la señal se descarta
+- El caché del Swing se rehace con la geometría de los rectángulos y con `VWAPIndicator.calculations`, que sube con cada cálculo del VWAP. Mientras un rectángulo se arrastra o cambia de tamaño siguen los de antes: se recalcula una vez al soltarlo. Un cálculo sin señales también queda guardado
+- Un preset de VWAP guarda su marco. Cargado en otro marco, sin marco o anterior a esta ronda, conserva los umbrales, el Keltner y `minSessionCandles` del marco actual (`withTimeframeValues`)
+- Un indicador apagado cuesta 0.03 ms por tick en total. Quitar indicadores no acelera nada
+- `Double Top/Bottom` costaba 69 a 280 ms por dibujo; S&R v2 con filtro, 233 a 938 ms por tick
+
+### Backend
+
+- `subdivisions` ya no viaja: era copia exacta de `main` en los 5 marcos. `drop_duplicate_subdivisions()` la quita al cargar el caché solo si es idéntica, y el frontend la descarta con `withoutSubdivisions()` al recibir datos y al leer o guardar IndexedDB. La respuesta de BTCUSDT bajó de 422 a 238 MB. Lo más lento que queda es `jsonable_encoder`, unos 26 s
+- La expansión hacia atrás sigue con la actualización de velas nuevas y guarda una sola vez. `fetch_historical_candles_backwards` devuelve si Bybit ya no tiene velas más viejas, y el marco guarda `first_available_ts` para no repetirla. El OI nuevo se suma por hora al guardado en vez de reemplazarlo
+- La tabla de medidas sigue escribiendo la columna `session` sin usarla, para que el código anterior con `VERSION` 1 la lea
+- Footprints, perfil real y OI van en un hilo. Los footprints también se serializan ahí: `jsonable_encoder` corre en el loop
+
+### Pruebas
+
+`node tests/clock.test.mjs`, `node tests/light.test.mjs` y `node tests/swinglevels.test.mjs`. Cada atajo se compara contra el cálculo largo que reemplaza.
+
+---
+
 ## JOURNAL DE TRADES (Noviembre 2026)
 
-Cada trade guarda una imagen del gráfico al abrir y otra varias velas después de cerrar, y queda completo en la sesión.
+Cada trade guarda una imagen del gráfico al abrir y otra varias velas después de cerrar, y queda completo en la sesión. Una orden limit o stop guarda además lo que se veía al dejarla en espera.
 
 ### Flujo
 
 ```
+Orden limit o stop nueva → captureDecision()                   order.decisionScreenshotPath
+
 OrderManager: tradeOpened (mercado al crearla, limit y stop al ejecutarse)
-        │  BacktestingApp, 150 ms después (ENTRY_CAPTURE_DELAY_MS)
+        │  CaptureHold: reloj detenido y 150 ms después (ENTRY_CAPTURE_DELAY_MS)
         ▼
 MiniChart.captureScreenshot() → POST /api/screenshots/session/{sesión}
         ▼
@@ -827,12 +970,22 @@ MiniChart.captureScreenshot(..., { showFrom: entrada })       order.exitScreensh
         ▼
 saveTradeSession()
 
-TradeHistory: 📸 abre ScreenshotModal, con Apertura y Cierre. La fila y 📍 llevan a la línea vertical
+TradeHistory: 📸 abre ScreenshotModal, con Decisión, Apertura y Cierre. La fila y 📍 llevan la vista a la entrada, sin mover la hora simulada
+Observador: TradeImages muestra las miniaturas y abre ScreenshotModal con las medidas al lado
 ```
 
 ### Reglas
 
-- La espera deja que la vela y la caja TP/SL se dibujen. La imagen de apertura es el gráfico activo tal como se ve, sin la cruceta
+- La espera deja que la vela y la caja TP/SL se dibujen. `CaptureHold` detiene el reloj en ese momento, porque a 10000x 150 ms son 25 minutos simulados. Lo suelta al copiar el gráfico, sin esperar la subida ni el guardado, y con varias imágenes espera a la última. El marco se elige al tomar la imagen, no antes. La imagen de apertura es el gráfico activo tal como se ve, sin la cruceta, y vuelve a la última vela solo si quien opera se había alejado (`keepInView`)
+- La de decisión y la de apertura muestran unas 5 veces las velas a la vista (`context: true`, `contextBarWidth()`), con la vela de la derecha en su lugar y el precio ajustado solo. Nunca bajan de 3 px por vela ni acercan la vista. La vista de quien opera vuelve igual al copiar la imagen. La de cierre sigue encuadrando el trade completo (`showFrom`)
+- Cada imagen va al registro con un evento `image`: ruta, hora simulada, marco y `markers`. Las órdenes anteriores la toman de su sesión la primera vez que se abre el Observador (`withSessionImages`)
+- `markers` dice dónde quedó en esa imagen cada nivel o marca de la orden (`order.analysisItems`), como fracción del ancho y del alto. Sale de `itemPositions()`: en la marca que el indicador dibujó, o en su vela y precio, o junto al borde derecho para un nivel sin vela
+- En el Observador, `ScreenshotModal` pone cada marca numerada sobre la imagen. El número es su lugar en la lista de la orden y coincide con "Marcas y notas" de la lectura. Al pasar el mouse muestra papel y nota; con un clic aparece "Ir al gráfico". Los círculos y los números de la lectura son azul claro, para no confundirse con los aros morados que el gráfico dibuja en lo elegido y que salen en la imagen
+- "Ir al gráfico" (`goToItem`) cambia al marco donde se eligió y llama `MiniChart.focusOn()`: mueve la vista, nunca la hora simulada, y marca la vela 15 s en azul claro. Un momento posterior a la hora simulada no se abre. Un nivel sin vela va a la hora en que se eligió
+- El historial (fila, 📍 y flechas) también usa `focusOn()`, sin la marca: el trade ya tiene su línea. Las velas posteriores siguen a la vista y la hora simulada no cambia. Un trade posterior a la hora simulada, después de retroceder el reloj, no se abre
+- `imageBlock()` no muestra una imagen que pase de lo que esta corrida ya vivió (`maxSimTimeRef`, no la hora actual: el reloj se puede retroceder) ni, con fecha oculta, una con fechas reales. "Ver igual" la muestra
+- Si un trade entero cabe en un tick, la apertura sale después del cierre: el rótulo lo avisa
+- Con el gráfico oculto no se toman imágenes: `toBlob` copiaría un momento anterior. La de cierre espera a que vuelva
 - La imagen de cierre espera `EXIT_CAPTURE_CANDLES` (10) velas del marco activo al cerrar. La hora queda en `order.exitCaptureAt`, así sigue pendiente al cargar una sesión. Al tomarla pasa a `null` y no se repite
 - `showFrom` muestra el trade completo: `frameChartFrom()` va a la vela más reciente y aleja si no caben las velas de `candlesToFrame()`. Después de `toBlob()`, que copia la imagen en ese momento, la vista vuelve antes de pintarse la pantalla
 - Si la simulación no llega a esa hora, la imagen queda pendiente y el botón Cierre del visor sale desactivado. En el visor, ← → cambia de imagen y no mueve la simulación
@@ -841,6 +994,9 @@ TradeHistory: 📸 abre ScreenshotModal, con Apertura y Cierre. La fila y 📍 l
 - Un trade abierto justo al iniciar una vela cae a la derecha de la última: la línea se marca en el borde hasta que aparece esa vela
 - `saveTradeSession()` corre al crear, ejecutar, cerrar y cancelar, en cola. La primera operación crea la sesión `session_{símbolo}_{hora}`. No corre con cada avance del tiempo: la hora simulada guardada es la del último evento
 - `mergeSession()` conserva nombre, fecha de creación, etiquetas y notas, y actualiza trades y win rate. El auto-guardado también la usa
+- `public_trade`, informe y CSV no usan la lectura ni las imágenes de una orden viva. Con fecha oculta el CSV deja vacías las fechas de esas órdenes y las pone al final (`hide_dates`), y el Excel las enmascara
+- Controles del informe y reglas reciben `until`, la hora más lejana de la corrida: no usan velas que todavía no se vivieron. Por eso la tabla por año de una regla termina en el año simulado, y con fecha oculta no se muestra (`yearsToShow`)
+- `orderAhead()` oculta el resultado de una orden que terminó después de lo vivido, para cuando se repiten fechas
 - Al pedir una imagen, la extensión se separa antes de `sanitize_filename()`, que quita los puntos
 - Borrar una sesión no borra sus imágenes. `DELETE /api/screenshots/session/{id}` existe, pero la app no lo llama
 - Las sesiones viven en IndexedDB del navegador y las imágenes en disco
@@ -2672,6 +2828,8 @@ orderManagerRef.current.onOrderExecuted = (executedOrder) => {
 ---
 
 ## FIX: NAVEGACIÓN A TRADES HISTÓRICOS (Octubre 2026)
+
+> Reemplazado el 7 de noviembre de 2026: ir a un trade ya no mueve la hora simulada. `handleNavigateToTrade` usa `focusOn()` (ver "JOURNAL DE TRADES"). `centerOnTimestamp` solo lo usa la lista de footprints anclados (`FootprintSidebar`), que hoy no se puede abrir: `MiniChart` nunca llama `onCandleClick`, así que nada ancla un footprint
 
 ### Problema
 

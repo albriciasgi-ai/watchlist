@@ -11,6 +11,18 @@ export function priceAtPercent(entry, side, percent, inFavor) {
   return entry * (1 + (up ? value : -value) / 100);
 }
 
+/**
+ * Entrada de la orden: la de la caja o, sin caja, el precio del momento si se usa el precio actual.
+ * El campo del panel copia el precio después de cada dibujo: leerlo podía dar el precio anterior, y una
+ * orden que debía entrar a mercado quedaba esperando ese precio como stop o limit.
+ */
+export function orderEntry({ box, useCurrentPrice, currentPrice, typedEntry, orderType }) {
+  if (box) return box.entryPrice;
+  // Con limit el campo no sigue el precio aunque la casilla esté marcada: vale lo que muestra el campo
+  if (useCurrentPrice && orderType !== 'limit' && currentPrice > 0) return currentPrice;
+  return parseFloat(typedEntry);
+}
+
 /** Cerca del precio entra a mercado. Lejos espera: limit si el precio debe volver, stop si debe avanzar */
 export function autoOrderType(entry, currentPrice, side) {
   if (Math.abs(entry - currentPrice) <= currentPrice * AUTO_ENTRY_DISTANCE) return 'market';
@@ -45,4 +57,27 @@ export function latestFreeBox(shapes = [], orders = []) {
     tpPrice: box.tpPrice,
     side: box.tpPrice < box.entryPrice ? 'short' : 'long'
   };
+}
+
+/**
+ * La caja de una orden pendiente o abierta muestra los precios de esa orden. Moverla no cambia la orden:
+ * si se movió, vuelve a la entrada (la ejecutada si ya abrió), al stop y al objetivo de la orden.
+ * Un precio que la orden no tiene queda como está. Devuelve las formas corregidas, o null si ninguna cambió.
+ */
+export function boxesFollowOrders(shapes = [], orders = []) {
+  const live = new Map(orders
+    .filter(order => (order.status === 'pending' || order.status === 'open') && order.tpslBoxId)
+    .map(order => [order.tpslBoxId, order]));
+  let changed = false;
+  const kept = shapes.map(shape => {
+    const order = shape.type === 'tpsl' ? live.get(shape.id) : null;
+    if (!order) return shape;
+    const prices = { entryPrice: order.status === 'open' ? (order.executedPrice ?? order.entryPrice) : order.entryPrice };
+    if (order.stopLoss !== null && order.stopLoss !== undefined) prices.slPrice = order.stopLoss;
+    if (order.takeProfit !== null && order.takeProfit !== undefined) prices.tpPrice = order.takeProfit;
+    if (Object.keys(prices).every(key => shape[key] === prices[key])) return shape;
+    changed = true;
+    return { ...shape, ...prices };
+  });
+  return changed ? kept : null;
 }

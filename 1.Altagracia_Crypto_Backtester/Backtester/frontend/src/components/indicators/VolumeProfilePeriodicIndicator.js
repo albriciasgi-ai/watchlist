@@ -1,3 +1,4 @@
+import { profileLevels } from './analysisLevels.js';
 import IndicatorBase from './IndicatorBase.js';
 import { candlesBetween, sessionLength, sessionStart } from './sessionProfile.js';
 
@@ -89,9 +90,17 @@ class VolumeProfilePeriodicIndicator extends IndicatorBase {
     const known = priceContext.knownCandles || allCandles;
     if (!known?.length) return;
 
-    for (const session of this.sessionsInView(visibleCandles, known, priceContext)) {
+    this.shownSessions = this.sessionsInView(visibleCandles, known, priceContext);
+    for (const session of this.shownSessions) {
       this._drawSession(ctx, bounds, session, priceContext);
     }
+  }
+
+  selectableLevels() {
+    const length = sessionLength(this.config.periodHours);
+    return (this.shownSessions || []).flatMap(({ start, profile }) => (
+      profileLevels(profile, 'VP Periodic', { start, end: start + length })
+    ));
   }
 
   _drawSession(ctx, bounds, { candles, profile }, priceContext) {

@@ -252,4 +252,5 @@ const TradingDashboard = ({ orderManager, symbol }) => {
   );
 };
 
-export default TradingDashboard;
+// Sus datos llegan por eventos del OrderManager: no debe redibujarse con cada cambio de hora
+export default React.memo(TradingDashboard);

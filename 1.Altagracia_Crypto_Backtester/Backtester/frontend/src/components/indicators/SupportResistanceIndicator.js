@@ -1,8 +1,11 @@
 // src/components/indicators/SupportResistanceIndicator.js
 // Support & Resistance Indicator con niveles detectados por volumen
 
+import { priceLevels } from './analysisLevels.js';
 import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
+
+const RAW_REFRESH_BARS = 20; // Cada cuántas velas nuevas se buscan pivots otra vez
 
 class SupportResistanceIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 60) {
@@ -52,162 +55,17 @@ class SupportResistanceIndicator extends IndicatorBase {
     this._noDataLoggedOnce = false;
     this._fallbackLoggedOnce = false;
 
-    // 🎯 NUEVO: Caché en IndexedDB
-    this._dbName = 'SupportResistanceCache';
-    this._storeName = 'levels';
-    this._dbVersion = 1;
     this._cachedRawLevels = null; // Niveles sin filtrar por activo/roto
-  }
-
-  // ==================== IndexedDB Cache Methods ====================
-
-  /**
-   * Abre conexión a IndexedDB
-   */
-  async _openDB() {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this._dbName, this._dbVersion);
-
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains(this._storeName)) {
-          db.createObjectStore(this._storeName, { keyPath: 'key' });
-        }
-      };
-    });
-  }
-
-  /**
-   * Genera la clave de caché basada en símbolo, intervalo y parámetros
-   */
-  _getCacheKey() {
-    return `sr_${this.symbol}_${this.interval}`;
-  }
-
-  /**
-   * Genera un hash de los parámetros de cálculo
-   */
-  _getParamsHash() {
-    return JSON.stringify({
-      leftBars: this.leftBars,
-      rightBars: this.rightBars,
-      minTouches: this.minTouches,
-      clusterDistance: this.clusterDistance
-    });
-  }
-
-  /**
-   * Guarda niveles calculados en IndexedDB
-   */
-  async _saveLevelsToCache(resistances, supports, candlesLength) {
-    try {
-      const db = await this._openDB();
-      const transaction = db.transaction([this._storeName], 'readwrite');
-      const store = transaction.objectStore(this._storeName);
-
-      const cacheData = {
-        key: this._getCacheKey(),
-        paramsHash: this._getParamsHash(),
-        candlesLength: candlesLength,
-        resistances: resistances,
-        supports: supports,
-        calculatedAt: Date.now()
-      };
-
-      store.put(cacheData);
-
-      await new Promise((resolve, reject) => {
-        transaction.oncomplete = resolve;
-        transaction.onerror = () => reject(transaction.error);
-      });
-
-      console.log(`[${this.symbol}] 💾 S&R: Caché guardado en IndexedDB (${resistances.length} R, ${supports.length} S)`);
-      db.close();
-    } catch (error) {
-      console.warn(`[${this.symbol}] ⚠️ S&R: Error guardando en IndexedDB:`, error);
-    }
-  }
-
-  /**
-   * Carga niveles desde IndexedDB si el caché es válido
-   * @returns {object|null} - { resistances, supports } o null si no hay caché válido
-   */
-  async _loadLevelsFromCache(candlesLength) {
-    try {
-      const db = await this._openDB();
-      const transaction = db.transaction([this._storeName], 'readonly');
-      const store = transaction.objectStore(this._storeName);
-      const request = store.get(this._getCacheKey());
-
-      const result = await new Promise((resolve, reject) => {
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
-
-      db.close();
-
-      if (!result) {
-        console.log(`[${this.symbol}] 📭 S&R: No hay caché en IndexedDB`);
-        return null;
-      }
-
-      // Verificar si los parámetros coinciden
-      if (result.paramsHash !== this._getParamsHash()) {
-        console.log(`[${this.symbol}] 🔄 S&R: Parámetros cambiaron, invalidando caché`);
-        return null;
-      }
-
-      // Verificar si la cantidad de velas es compatible (permite pequeñas diferencias)
-      const lengthDiff = Math.abs(result.candlesLength - candlesLength);
-      const maxAllowedDiff = Math.max(10, candlesLength * 0.01); // 1% o mínimo 10 velas
-
-      if (lengthDiff > maxAllowedDiff) {
-        console.log(`[${this.symbol}] 🔄 S&R: Cantidad de velas cambió significativamente (${result.candlesLength} → ${candlesLength}), invalidando caché`);
-        return null;
-      }
-
-      const ageMinutes = ((Date.now() - result.calculatedAt) / 1000 / 60).toFixed(1);
-      console.log(`[${this.symbol}] ✅ S&R: Usando caché de IndexedDB (edad: ${ageMinutes} min, ${result.resistances.length} R, ${result.supports.length} S)`);
-
-      return {
-        resistances: result.resistances,
-        supports: result.supports
-      };
-    } catch (error) {
-      console.warn(`[${this.symbol}] ⚠️ S&R: Error leyendo IndexedDB:`, error);
-      return null;
-    }
-  }
-
-  /**
-   * Invalida el caché (llamar cuando cambian parámetros)
-   */
-  async _invalidateCache() {
-    try {
-      const db = await this._openDB();
-      const transaction = db.transaction([this._storeName], 'readwrite');
-      const store = transaction.objectStore(this._storeName);
-      store.delete(this._getCacheKey());
-
-      await new Promise((resolve, reject) => {
-        transaction.oncomplete = resolve;
-        transaction.onerror = () => reject(transaction.error);
-      });
-
-      console.log(`[${this.symbol}] 🗑️ S&R: Caché invalidado`);
-      db.close();
-    } catch (error) {
-      console.warn(`[${this.symbol}] ⚠️ S&R: Error invalidando caché:`, error);
-    }
+    this._rawLength = 0;          // Velas con las que se calcularon
+    this.localOnly = false;       // En reproducción el backend solo conoce el presente
   }
 
   /**
    * Fetch Support & Resistance data from backend
    */
   async fetchData() {
+    if (this.localOnly) return true;
+
     console.log(`%c[${this.symbol}] 📊 S/R fetchData CALLED`, 'background: #2196F3; color: white; font-weight: bold; padding: 2px 4px;');
     console.log(`[${this.symbol}] S/R config: interval=${this.interval}, days=${this.days}, enabled=${this.enabled}`);
 
@@ -454,10 +312,11 @@ class SupportResistanceIndicator extends IndicatorBase {
   }
 
   /**
-   * 🎯 NUEVO: Calcula S&R con soporte de caché IndexedDB
+   * Calcula S&R. Los niveles crudos se reusan mientras se avanza; al retroceder traerían
+   * pivots posteriores a la hora simulada y se vuelven a calcular.
    * @param {Array} candles - Array de velas con formato {timestamp, open, high, low, close, volume}
    */
-  async calculateFromCandles(candles) {
+  calculateFromCandles(candles) {
     if (!candles || candles.length < this.leftBars + this.rightBars + 1) {
       console.warn(`[${this.symbol}] S&R calculateFromCandles: No hay suficientes velas (${candles?.length || 0})`);
       return;
@@ -465,33 +324,14 @@ class SupportResistanceIndicator extends IndicatorBase {
 
     console.log(`[${this.symbol}] 📊 S&R: Procesando ${candles.length} velas (params: leftBars=${this.leftBars}, rightBars=${this.rightBars}, minTouches=${this.minTouches})`);
 
-    let rawLevels = null;
-
-    // 1. Intentar cargar desde caché
-    if (!this._cachedRawLevels) {
-      const cached = await this._loadLevelsFromCache(candles.length);
-      if (cached) {
-        rawLevels = cached;
-        this._cachedRawLevels = cached;
-      }
-    } else {
-      // Ya tenemos caché en memoria
-      rawLevels = this._cachedRawLevels;
-      console.log(`[${this.symbol}] ⚡ S&R: Usando caché en memoria`);
+    const age = candles.length - this._rawLength;
+    if (!this._cachedRawLevels || age < 0 || age >= RAW_REFRESH_BARS) {
+      this._cachedRawLevels = this._calculateRawLevels(candles);
+      this._rawLength = candles.length;
     }
 
-    // 2. Si no hay caché válido, calcular
-    if (!rawLevels) {
-      console.log(`[${this.symbol}] 🔄 S&R: Calculando niveles (sin caché)...`);
-      rawLevels = this._calculateRawLevels(candles);
-      this._cachedRawLevels = rawLevels;
-
-      // Guardar en IndexedDB (async, no bloqueante)
-      this._saveLevelsToCache(rawLevels.resistances, rawLevels.supports, candles.length);
-    }
-
-    // 3. Clasificar según precio actual (siempre se ejecuta, es rápido)
-    this._classifyLevels(rawLevels, candles);
+    // Clasificar según precio actual (siempre se ejecuta, es rápido)
+    this._classifyLevels(this._cachedRawLevels, candles);
 
     this._lastCalculatedLength = candles.length;
     this._calculationValid = true;
@@ -503,6 +343,13 @@ class SupportResistanceIndicator extends IndicatorBase {
    * Renderiza los niveles de S/R sobre el precio (main chart)
    * IMPORTANTE: Este método se llama desde IndicatorManager.renderOverlays()
    */
+  selectableLevels() {
+    return [
+      ...priceLevels(this.showResistances ? this.resistances : [], 'Support & Resistance', 'Resistencia'),
+      ...priceLevels(this.showSupports ? this.supports : [], 'Support & Resistance', 'Soporte')
+    ];
+  }
+
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
     if (!this.enabled) return;
 
@@ -513,8 +360,10 @@ class SupportResistanceIndicator extends IndicatorBase {
 
       // 🎯 FIX: Si no hay playbackTime pero hay visibleCandles, usar la última visible como referencia
       // Esto ocurre cuando el precálculo no se ejecutó (MiniCharts no estaban listos)
-      if (this._currentPlaybackTime) {
-        candlesToUse = priceContext?.knownCandles || allCandles.filter(c => c.timestamp <= this._currentPlaybackTime);
+      if (priceContext?.knownCandles) {
+        candlesToUse = priceContext.knownCandles;
+      } else if (this._currentPlaybackTime) {
+        candlesToUse = allCandles.filter(c => c.timestamp <= this._currentPlaybackTime);
       } else if (visibleCandles && visibleCandles.length > 0) {
         // Usar el timestamp de la última vela visible como playback time
         const lastVisibleTs = visibleCandles[visibleCandles.length - 1].timestamp;
@@ -845,9 +694,7 @@ class SupportResistanceIndicator extends IndicatorBase {
       this._calculationValid = false;
       this._renderLoggedOnce = false; // Reset log flag para mostrar nuevo cálculo
 
-      // 🎯 NUEVO: Invalidar caché en memoria e IndexedDB
       this._cachedRawLevels = null;
-      this._invalidateCache(); // Async, no bloqueante
 
       // NO limpiar los datos aquí - dejar que renderOverlay los recalcule
       // Esto evita que desaparezcan mientras esperamos el siguiente render

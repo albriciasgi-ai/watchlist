@@ -1,6 +1,8 @@
 // src/components/drawing/shapes/VerticalLine.js
 // Línea vertical para marcar eventos/tiempos importantes
 
+import { isBlind, maskDate } from '../../backtesting/blindClock.js';
+
 class VerticalLine {
   constructor(price, time) {
     this.type = 'vertical';
@@ -78,7 +80,9 @@ class VerticalLine {
     ctx.fillStyle = this.style.color;
     ctx.font = 'bold 11px Arial';
     const date = new Date(this.time);
-    const label = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+    const label = isBlind()
+      ? maskDate(this.time)
+      : `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
 
     // Rotar texto 90 grados para que sea vertical
     ctx.save();

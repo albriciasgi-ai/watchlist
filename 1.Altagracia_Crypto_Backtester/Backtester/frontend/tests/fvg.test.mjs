@@ -10,12 +10,12 @@ const test = (name, run) => tests.push([name, run]);
 
 test('gap alcista entre la primera y la tercera vela', () => {
   const gaps = findFairValueGaps([bar(1, 100, 110), bar(2, 105, 130), bar(3, 120, 135)]);
-  assert.deepEqual(gaps, [{ bullish: true, bottom: 110, top: 120, start: 2, bornAt: 2 }]);
+  assert.deepEqual(gaps, [{ bullish: true, bottom: 110, top: 120, start: 2, bornAt: 2, bornTop: 120, bornBottom: 110 }]);
 });
 
 test('gap bajista entre la primera y la tercera vela', () => {
   const gaps = findFairValueGaps([bar(1, 120, 130), bar(2, 90, 125), bar(3, 95, 110)]);
-  assert.deepEqual(gaps, [{ bullish: false, bottom: 110, top: 120, start: 2, bornAt: 2 }]);
+  assert.deepEqual(gaps, [{ bullish: false, bottom: 110, top: 120, start: 2, bornAt: 2, bornTop: 120, bornBottom: 110 }]);
 });
 
 test('sin hueco no hay gap', () => {

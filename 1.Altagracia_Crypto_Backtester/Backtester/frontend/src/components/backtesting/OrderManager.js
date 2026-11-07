@@ -329,6 +329,8 @@ class OrderManager {
     // Recorrer órdenes abiertas
     this.openOrders.forEach(order => {
       if (!isActive(order)) return;
+      // Una vela anterior al llenado no la cierra, aunque se repita al retroceder
+      if (typeof currentTime === 'number' && order.executedAt !== null && currentTime < order.executedAt) return;
       // Calcular PnL no realizado - usar el precio ejecutado real
       const entryPriceForCalc = order.executedPrice || order.entryPrice;
       const pnlInfo = this.calculatePnL({...order, entryPrice: entryPriceForCalc}, currentPrice);

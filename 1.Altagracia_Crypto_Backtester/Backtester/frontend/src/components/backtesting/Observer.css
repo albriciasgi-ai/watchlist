@@ -293,3 +293,457 @@
 .observer-empty-cell {
   color: #666;
 }
+
+/* Menú sobre un nivel del gráfico */
+.level-menu {
+  position: absolute;
+  z-index: 1100;
+  width: 280px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  color: #333;
+}
+
+.level-menu-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.level-menu-title button {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.level-menu label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  cursor: pointer;
+}
+
+.level-menu label span {
+  flex: 1;
+  overflow: hidden;
+  color: #666;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.level-menu label em {
+  font-style: normal;
+}
+
+/* Niveles elegidos en el panel de órdenes */
+.analysis-levels-hint {
+  font-size: 11px;
+  color: #666;
+}
+
+.analysis-level {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: 12px;
+  color: #333;
+}
+
+.analysis-level-name {
+  font-weight: 600;
+  color: #7c3aed;
+}
+
+.analysis-level-source {
+  flex: 1;
+  overflow: hidden;
+  color: #666;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.analysis-level button {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Lo registrado solo en cada orden */
+.observer-reading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.observer-reading summary {
+  font-size: 12px;
+  color: #667eea;
+  cursor: pointer;
+}
+
+.observer-outcome {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.observer-outcome div {
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.observer-outcome strong {
+  font-size: 12px;
+  color: #333;
+}
+
+.observer-outcome span {
+  font-size: 10px;
+  color: #666;
+}
+
+.observer-measures {
+  width: 100%;
+  margin-top: 4px;
+  border-collapse: collapse;
+  font-size: 11px;
+  color: #333;
+}
+
+.observer-measures th {
+  padding: 4px 2px 2px;
+  text-align: left;
+  color: #666;
+}
+
+.observer-measures td {
+  padding: 2px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.observer-measures td:not(:first-child),
+.observer-measures thead th:not(:first-child) {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.observer-row-clear td {
+  background: #eef2ff;
+  font-weight: 600;
+}
+
+/* Prueba de reglas */
+.observer-rule-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.observer-rule-row select:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.observer-rule-row input {
+  width: 80px;
+}
+
+.observer-rule-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.observer-rule-options label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+  color: #666;
+}
+
+.observer-rule-options input {
+  width: 90px;
+}
+
+.observer-rule-result {
+  margin-top: 10px;
+}
+
+/* Imágenes de la orden y su revisión junto a las medidas */
+.observer-images {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  margin: 4px 0;
+}
+
+.observer-image {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px;
+  font-size: 10px;
+  color: #666;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.observer-image:hover {
+  border-color: #667eea;
+}
+
+.observer-image img {
+  display: block;
+  width: 100%;
+  height: 72px;
+  object-fit: cover;
+  object-position: right center;
+  border-radius: 2px;
+}
+
+.observer-image-missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.screenshot-modal-content.with-aside {
+  width: 95vw;
+  height: 95vh;
+}
+
+/* La imagen usa todo el alto: el visor se cierra con la X o con Esc */
+.screenshot-modal-content.with-aside .screenshot-modal-footer {
+  display: none;
+}
+
+.screenshot-review .screenshot-modal-image {
+  max-height: 100%;
+}
+
+.screenshot-modal-image {
+  cursor: zoom-in;
+}
+
+.screenshot-modal-body.actual-size {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.screenshot-modal-body.actual-size .screenshot-modal-image {
+  max-width: none;
+  max-height: none;
+  cursor: zoom-out;
+}
+
+.screenshot-review {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.screenshot-review .screenshot-modal-body {
+  min-width: 0;
+}
+
+.screenshot-review-aside {
+  flex: 0 0 360px;
+  padding: 12px;
+  overflow-y: auto;
+  background: #fff;
+  border-left: 1px solid #dee2e6;
+}
+
+/* Papel y nota de lo elegido en el gráfico */
+.level-menu-item + .level-menu-item {
+  border-top: 1px solid #f1f3f5;
+}
+
+.level-menu-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 0 6px 20px;
+}
+
+.level-menu-detail select,
+.analysis-level-role {
+  padding: 2px 4px;
+  font-size: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+}
+
+.level-menu-detail textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+  font-size: 12px;
+  font-family: inherit;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.analysis-level-entry + .analysis-level-entry {
+  border-top: 1px solid #f1f3f5;
+}
+
+.analysis-level-role {
+  max-width: 96px;
+}
+
+.analysis-level-note {
+  padding: 0 0 4px 4px;
+  overflow: hidden;
+  font-size: 11px;
+  color: #555;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Marcas sobre la imagen de un trade */
+.screenshot-modal-body {
+  position: relative;
+}
+
+.screenshot-markers {
+  position: absolute;
+  pointer-events: none;
+}
+
+.screenshot-marker {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  padding: 0;
+  border: 2px solid #38bdf8;
+  border-radius: 50%;
+  background: rgba(224, 242, 254, 0.95);
+  color: #0369a1;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.screenshot-marker.selected,
+.screenshot-marker:hover {
+  background: #38bdf8;
+  color: #082f49;
+}
+
+.screenshot-marker-note {
+  position: absolute;
+  z-index: 2;
+  width: 240px;
+  margin: 14px 0 0 14px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  color: #333;
+  text-align: left;
+  pointer-events: auto;
+}
+
+.screenshot-marker-note.to-left {
+  transform: translateX(calc(-100% - 28px));
+}
+
+.screenshot-marker-note p {
+  margin: 6px 0;
+  white-space: pre-wrap;
+}
+
+.screenshot-marker-role {
+  font-size: 11px;
+  color: #0369a1;
+}
+
+.screenshot-marker-empty,
+.screenshot-marker-hint {
+  color: #888;
+  font-size: 11px;
+}
+
+.screenshot-marker-problem {
+  margin-top: 4px;
+  color: #c0392b;
+  font-size: 11px;
+}
+
+/* Marcas y notas en la lectura de una orden */
+.observer-chosen {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.observer-chosen-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: #333;
+}
+
+.observer-chosen-item > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.observer-chosen-number {
+  flex: 0 0 18px;
+  height: 18px;
+  border: 2px solid #38bdf8;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
+  text-align: center;
+}
+
+.observer-chosen-note {
+  color: #555;
+  white-space: pre-wrap;
+}

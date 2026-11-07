@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import OrderManager from '../src/components/backtesting/OrderManager.js';
 import SessionManager from '../src/components/backtesting/SessionManager.js';
 import {
-  EXIT_CAPTURE_CANDLES, candlesToFrame, exitCaptureTime, exitCapturesDue, tradeBoundaries, tradeStats
+  CaptureHold, EXIT_CAPTURE_CANDLES, candlesToFrame, contextBarWidth, exitCaptureTime, exitCapturesDue, tradeBoundaries, tradeStats
 } from '../src/components/backtesting/tradeJournal.js';
 
 console.log = ((log) => (...args) => {
@@ -114,6 +114,19 @@ test('encuadre: un trade corto deja 20 velas antes de la entrada', () => {
   assert.equal(candlesToFrame(1), 21);
 });
 
+test('contexto: la primera imagen muestra unas 5 veces las velas a la vista', () => {
+  assert.equal(contextBarWidth(160), 32);
+  assert.equal(contextBarWidth(40), 8);
+  assert.equal(contextBarWidth(15), 3);
+});
+
+test('contexto: sin velas de menos de 3 px y sin acercar la vista', () => {
+  assert.equal(contextBarWidth(8), 3);
+  assert.equal(contextBarWidth(3), 3);
+  assert.equal(contextBarWidth(2), 2);
+  assert.equal(contextBarWidth(0.5), 0.5);
+});
+
 test('encuadre: un trade largo deja una cuarta parte de contexto', () => {
   assert.equal(candlesToFrame(400), 500);
   assert.equal(candlesToFrame(401), 502);
@@ -219,6 +232,142 @@ test('guardado: el automático usa la misma protección', async () => {
   assert.ok(writes.length > 0);
   assert.equal(writes[0].sessionName, 'Junio');
   assert.equal(writes[0].metadata.notes, 'nota');
+});
+
+// ---- Llenado y cierre
+
+const candleAt = (minute, low, high, close = high) => ({ timestamp: START + minute * MINUTE, open: close, high, low, close, volume: 1 });
+const settle = (manager, candle) => manager.updateOrders(candle, candle.timestamp + MINUTE);
+const limitOrder = (manager) => manager.createOrder({
+  type: 'limit', side: 'long', quantity: 1, entryPrice: 100, currentPrice: 105, currentTime: START, stopLoss: 95, takeProfit: 103
+});
+
+test('orden: una vela anterior al llenado no la cierra aunque se repita', () => {
+  const manager = new OrderManager(10000);
+  const order = limitOrder(manager);
+  const before = candleAt(2, 102, 103.2);
+
+  settle(manager, before);
+  settle(manager, candleAt(4, 100, 101));
+  assert.equal(order.status, 'open');
+
+  settle(manager, before);
+  assert.equal(order.status, 'open');
+
+  settle(manager, candleAt(6, 101, 103.5));
+  assert.equal(order.status, 'closed');
+  assert.equal(order.exitTime, START + 7 * MINUTE);
+});
+
+test('orden: la vela del llenado revisa su stop en el mismo paso', () => {
+  const manager = new OrderManager(10000);
+  const order = limitOrder(manager);
+  settle(manager, candleAt(4, 94, 101, 96));
+  assert.equal(order.status, 'closed');
+  assert.equal(order.closeReason, 'stop_loss');
+  assert.equal(order.exitTime, order.executedAt);
+});
+
+// ---- Retención del reloj
+
+const turn = () => new Promise(resolve => setTimeout(resolve, 5));
+
+function holdClock(isPlaying = true) {
+  return { isPlaying, plays: 0, pause() { this.isPlaying = false; }, play() { this.isPlaying = true; this.plays++; } };
+}
+
+test('retención: detiene el reloj hasta copiar el gráfico, sin esperar la subida', async () => {
+  const clock = holdClock();
+  const hold = new CaptureHold(() => clock, 0);
+  let uploaded;
+  hold.run(async (release) => {
+    assert.equal(clock.isPlaying, false);
+    release();
+    await new Promise(resolve => { uploaded = resolve; });
+  });
+  assert.equal(clock.isPlaying, false);
+  await turn();
+  assert.equal(clock.isPlaying, true);
+  uploaded();
+});
+
+test('retención: sin aviso el reloj sigue cuando termina la imagen', async () => {
+  const clock = holdClock();
+  new CaptureHold(() => clock, 0).run(async () => {});
+  await turn();
+  assert.equal(clock.isPlaying, true);
+});
+
+test('retención: con dos imágenes espera a la última', async () => {
+  const clock = holdClock();
+  const hold = new CaptureHold(() => clock, 0);
+  let second;
+  hold.run(async () => {});
+  hold.run(() => new Promise(resolve => { second = resolve; }));
+  await turn();
+  assert.equal(clock.isPlaying, false);
+  second();
+  await turn();
+  assert.deepEqual([clock.isPlaying, clock.plays], [true, 1]);
+});
+
+test('retención: si una imagen falla el reloj sigue', async () => {
+  const clock = holdClock();
+  const failures = [];
+  const report = (reason) => failures.push(reason.message);
+  process.once('unhandledRejection', report);
+  new CaptureHold(() => clock, 0).run(async () => { throw new Error('Gráfico oculto'); });
+  await turn();
+  process.off('unhandledRejection', report);
+  assert.equal(clock.isPlaying, true);
+});
+
+test('retención: avisar dos veces no suelta el reloj de otra imagen', async () => {
+  const clock = holdClock();
+  const hold = new CaptureHold(() => clock, 0);
+  let second;
+  hold.run(async (release) => { release(); release(); });
+  hold.run(() => new Promise(resolve => { second = resolve; }));
+  await turn();
+  assert.equal(clock.isPlaying, false);
+  second();
+  await turn();
+});
+
+test('retención: si quien opera pausa, la imagen no pone a andar el reloj', async () => {
+  const clock = holdClock();
+  const hold = new CaptureHold(() => clock, 0);
+  hold.run(async () => {});
+  hold.cancel();
+  await turn();
+  assert.equal(clock.plays, 0);
+});
+
+test('retención: con el reloj quieto no lo pone a andar', async () => {
+  const clock = holdClock(false);
+  new CaptureHold(() => clock, 0).run(async () => {});
+  await turn();
+  assert.equal(clock.plays, 0);
+});
+
+test('retención: si el reloj cambió sigue el nuevo y no el anterior', async () => {
+  const old = holdClock();
+  const current = holdClock(false);
+  let clock = old;
+  const hold = new CaptureHold(() => clock, 0);
+  hold.run(async () => { clock = current; });
+  await turn();
+  assert.deepEqual([old.plays, current.plays], [0, 1]);
+});
+
+test('retención: espera a que se dibuje antes de tomar la imagen', async () => {
+  const hold = new CaptureHold(() => holdClock(), 40);
+  let taken = false;
+  hold.run(async () => { taken = true; });
+  await turn();
+  assert.equal(taken, false);
+  await new Promise(resolve => setTimeout(resolve, 60));
+  assert.equal(taken, true);
 });
 
 let failed = 0;

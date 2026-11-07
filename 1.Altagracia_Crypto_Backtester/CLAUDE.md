@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Registro Automático de Operaciones
+
+Cada orden guarda sola las medidas de 15m, 1h y 4h, los dibujos de las últimas 100 velas y los niveles elegidos con clic en el gráfico. El Observador compara las entradas con momentos sin entrada y prueba reglas en el histórico. El Zone Detector de esta app se eliminó. Detalle en `Backtester/CLAUDE.md` sección "REGISTRO AUTOMÁTICO".
+
+---
+
 ### Noviembre 2026: Orden y Altura de Paneles
 
 Cada panel de indicador se mueve con ▲▼ y su altura cambia al arrastrar su borde superior, sin tocar los demás paneles. Se guarda por símbolo y lo comparten los marcos. Detalle en `Backtester/CLAUDE.md`, sección "Orden y altura de los paneles".
@@ -131,6 +137,9 @@ npm install && npm run dev
 │   ├── rejection_detector.py        # Detector patrones rechazo (~19KB)
 │   ├── alert_sender.py              # Sistema alertas (~10KB)
 │   ├── vwap_calculator.py           # Calculador VWAP (~13KB)
+│   ├── observer.py                  # Registro de órdenes y lectura de la regla
+│   ├── measures.py                  # Tabla de medidas por vela de 15m
+│   ├── patterns.py                  # Lectura de cada orden, informe y prueba de reglas
 │   ├── cache/                       # Caché datos históricos
 │   ├── backtesting_cache/           # Caché específico backtesting
 │   └── drawings/                    # Dibujos guardados (JSON)
@@ -151,6 +160,7 @@ npm install && npm run dev
 │   │   │   ├── DoubleTopBottomIndicator.js  # DTB (~96KB) ⭐
 │   │   │   ├── RejectionPatternIndicator.js # Rejection (~114KB)
 │   │   │   ├── SupportResistance2Indicator.js # S&R v2 basado en Swing Points ⭐
+│   │   │   ├── swingLevels.js                 # Niveles de S&R v2
 │   │   │   └── ... (otros indicadores)
 │   │   ├── SupportResistance2Settings.jsx # Modal config S&R v2
 │   │   ├── MiniChart.jsx            # Gráfico con indicadores (~92KB)
@@ -190,6 +200,10 @@ npm install && npm run dev
 | `/api/rejection-patterns/available-contexts/{symbol}` | GET | Contextos de referencia |
 | `/api/double-topbottom/detect` | POST | Detecta Double Top/Bottom ⭐ |
 | `/api/double-topbottom/chunk` | POST | Obtiene patrones por chunks ⭐ |
+| `/api/observer/patterns/{symbol}` | GET | Entradas contra momentos sin entrada |
+| `/api/observer/rule-test/{symbol}` | POST | Prueba una regla en fechas no operadas |
+| `/api/observer/measures/{symbol}` | GET | Catálogo de medidas y estado de la tabla |
+| `/api/observer/export/{symbol}` | GET | Registro completo en CSV |
 | `/api/clear-cache` | POST | Limpia caché |
 
 ---
@@ -832,39 +846,30 @@ getDefaultConfig() {
 
 # ⭐ INDICADOR S&R v2 (Support & Resistance basado en Swing Points)
 
-Sistema de detección de soportes y resistencias más preciso que el original, basado en Swing Points con clustering.
+Mapa de los swings que el precio no ha superado. Medido en BTC de 2023 a 2026 contra un nivel al azar a la misma distancia, ni estos niveles ni el filtro de volumen aguantan más que un precio cualquiera: no presentar el filtro ni el strength como calidad del nivel.
 
 ## Archivos
 
 | Archivo | Descripción |
 |---------|-------------|
-| `SupportResistance2Indicator.js` | Indicador principal (~750 líneas) |
-| `SupportResistance2Settings.jsx` | Modal de configuración |
+| `swingLevels.js` | `LevelBook`: recorre las velas cerradas y lleva los niveles |
+| `SupportResistance2Indicator.js` | Parámetros y dibujo |
+| `SupportResistance2Settings.jsx` | Modal, con el efecto de los valores antes de aplicar |
 
-## Algoritmo
+## Reglas
 
 ```
-1. DETECCIÓN DE SWING POINTS
-   - Swing High: máximo local confirmado (N barras a cada lado más bajas)
-   - Swing Low: mínimo local confirmado (N barras a cada lado más altas)
-   - Parámetro: swingBars (default: 5)
-
-2. FILTRO POR RANGO DE PRECIO
-   - Solo busca niveles dentro de ±priceRangePct% del precio actual
-   - Parámetro: priceRangePct (default: 10%)
-
-3. CLUSTERING
-   - Agrupa swings cercanos en precio
-   - Parámetro: clusterDistancePct (default: 0.3%)
-
-4. CÁLCULO DE STRENGTH
-   - strength = (touches × 2) + volumeBonus + recencyBonus
-   - volumeBonus: 0-3 puntos según z-score del volumen
-   - recencyBonus: 0-3 puntos según qué tan reciente es el nivel
-
-5. CLASIFICACIÓN ACTIVO/ROTO
-   - Activo: precio no ha cruzado el nivel recientemente
-   - Roto: precio cruzó el nivel en las últimas N velas
+1. Un swing se conoce cuando cierra la última vela de su derecha. Empatar con una vecina no cuenta
+2. Un swing nuevo refuerza el nivel activo más cercano a menos de clusterDistancePct de su primer toque.
+   Si no hay ninguno, abre un nivel
+3. El filtro de volumen deja fuera los swings con z-score menor a minVolumeZScore. Cada z se calcula con
+   las volumeLookbackBars velas que terminan en el swing y no cambia después
+4. Activo: ninguna vela cerró más allá de todos sus toques. Una mecha sin cierre no lo rompe
+5. Roto: se dibuja punteado brokenKeepBars velas, de cualquier lado del precio
+6. La vela en formación no confirma ni rompe nada: solo mueve el precio actual
+7. priceRangePct decide lo que se dibuja, no lo que existe
+8. strength = toques × 2 + z promedio (0 a 3) + recencia (0 a 3), con tope de 10.
+   La recencia baja a 0 en 1000 velas sin toques
 ```
 
 ## Parámetros de Configuración
@@ -872,43 +877,32 @@ Sistema de detección de soportes y resistencias más preciso que el original, b
 | Parámetro | Default | Descripción |
 |-----------|---------|-------------|
 | `swingBars` | 5 | Velas a cada lado para confirmar swing (2-15) |
-| `priceRangePct` | 10.0 | % arriba/abajo del precio actual para buscar niveles |
-| `clusterDistancePct` | 0.3 | % máximo de distancia para agrupar swings |
-| `minTouches` | 1 | Toques mínimos para considerar nivel válido |
-| `maxLevels` | 5 | Máximo niveles por lado (resistencias/soportes) |
+| `priceRangePct` | 10.0 | % arriba/abajo del precio que se dibuja |
+| `clusterDistancePct` | 0.3 | % de distancia al primer toque para reforzar un nivel |
+| `minTouches` | 1 | Toques mínimos para dibujar un nivel |
+| `maxLevels` | 5 | Máximo por lado, para activos y rotos por separado |
 | `minVolumeZScore` | 0 | Filtro de volumen (0 = sin filtro) |
-| `volumeLookbackBars` | 50 | Velas para calcular z-score de volumen |
+| `volumeLookbackBars` | 50 | Velas para calcular el z-score de cada swing |
+| `brokenKeepBars` | 50 | Velas que sigue dibujado un nivel roto |
+
+Se guardan en `support_resistance_2_config_{símbolo}`, valen para todos los marcos y el indicador los lee al crearse. `cleanLevelConfig()` descarta lo que no sea número y acota los valores a los rangos del modal: un `null` guardado o un 0 en `swingBars` no llegan al libro.
 
 ## Visualización
 
-- **Líneas rojas**: Resistencias (niveles arriba del precio actual)
-- **Líneas verdes**: Soportes (niveles debajo del precio actual)
-- **Líneas sólidas**: Niveles activos (no rotos)
-- **Líneas punteadas**: Niveles rotos recientemente
-- **Etiquetas**: Lado izquierdo, formato `R1: $price (Nt, S★)`
-
-## Diferencias con S&R Original
-
-| Aspecto | S&R Original | S&R v2 |
-|---------|--------------|--------|
-| Método | Pivots simples | Swing Points confirmados |
-| Filtro de precio | No | Sí (±priceRangePct%) |
-| Clustering | Básico | Avanzado con distancia % |
-| Strength | touches × 2 | touches + volume + recency |
-| Clasificación | Activo/Roto | Activo/Roto con detección reciente |
+- **Líneas rojas**: Resistencias, nacidas de máximos
+- **Líneas verdes**: Soportes, nacidos de mínimos
+- **Líneas sólidas**: Niveles activos
+- **Líneas punteadas**: Rotos hace poco. Una roja puede quedar debajo del precio
+- **Etiquetas**: Lado izquierdo, formato `R1: $price (Nt, S★, z Z)`
 
 ## Uso en Backtesting
 
-El indicador se sincroniza con el playback:
-- `updatePlaybackDate(timestamp)`: Actualiza el tiempo de referencia
-- Recalcula niveles cuando cambia el precio de referencia
-- Invalida caché automáticamente al cambiar parámetros
-
-## Caché
-
-- **IndexedDB**: Almacena swings detectados para evitar recálculos
-- **Memoria**: `_cachedRawLevels` para acceso rápido
-- **Invalidación**: Automática al cambiar parámetros o precio de referencia (>2%)
+- Siempre usa `priceContext.knownCandles`
+- `LevelBook.advance()` revisa solo las velas cerradas nuevas: cuesta menos de 0.2 ms por tick
+- Si se retrocede o cambian las velas empieza de cero: 108 ms en 15m, 312 ms en 5m y 418 ms en 1m, con todo el historial
+- `_breakLevels()` guarda el nivel activo más cercano: solo recorre los demás si un cierre lo pasa
+- La vista previa del modal espera 250 ms sin cambios y no corre con las casillas de mostrar
+- El z-score crudo favorece las horas de más volumen: con z>=1.5 pasan 2.5 veces más swings de las 14h UTC que de las 3h. No se ajusta por hora
 
 ---
 
@@ -1054,297 +1048,6 @@ DTB_PATTERNS_CACHE = {}   # Patrones divididos por chunks trimestrales
 | **Órdenes** | Simuladas | No ejecuta |
 | **TimeController** | SÍ | NO |
 | **DTB Chunks** | SÍ (evita sesgo) | NO (tiempo real) |
-
----
-
-# ⭐ ZONE DETECTOR 2.0 (Febrero 2026)
-
-Sistema de detección automática de zonas de consolidación (rangos laterales) para identificar áreas de acumulación/distribución antes de breakouts.
-
-## Archivos del Sistema
-
-| Archivo | Descripción |
-|---------|-------------|
-| `backend/zone_detector.py` | Algoritmos de detección (~1100 líneas) |
-| `backend/zone_evaluator.py` | Evaluación de calidad de zonas |
-| `backend/zone_optimizer.py` | Optimización de parámetros (grid search, walk-forward) |
-| `frontend/src/components/ZoneDetectorTester.jsx` | UI modal para testing |
-| `frontend/src/components/ZoneDetectorTester.css` | Estilos del modal |
-| `frontend/src/components/indicators/ZoneVisualizerIndicator.js` | Renderiza zonas en el gráfico |
-
-## Métodos de Detección Disponibles
-
-| Método | Descripción | Mejor para |
-|--------|-------------|------------|
-| `pivot_cluster` | Agrupa pivots cercanos en precio | Zonas de S/R tradicionales |
-| `atr_based` | Detecta períodos de baja volatilidad | Consolidaciones por ATR |
-| `volume_profile` | Identifica zonas de alto volumen | POC, VAH, VAL |
-| `price_action` | Cuenta toques a niveles de precio | Niveles psicológicos |
-| `consolidation` | **RECOMENDADO** - Detecta rangos laterales compactos | Acumulación/Distribución |
-
-## Método Consolidation (Algoritmo Principal)
-
-### Concepto
-
-Detecta zonas de consolidación lateral donde el precio se mueve horizontalmente antes de un breakout. Ideal para identificar:
-- Zonas de acumulación (antes de subida)
-- Zonas de distribución (antes de bajada)
-- Rangos de trading laterales
-
-### Algoritmo v3 (Febrero 2026)
-
-```python
-def _consolidation_method(self, candles, params):
-    """
-    Algoritmo de detección de consolidaciones laterales.
-
-    FASE 1: BÚSQUEDA DE INICIO
-    - Escanea velas buscando inicio de consolidación
-    - Ventana inicial de consol_min_bars velas
-    - Verifica criterios:
-      * Rango de precio <= consol_max_range_pct%
-      * ATR local / ATR global <= consol_atr_ratio
-      * Ratio cuerpo/rango promedio <= consol_body_ratio
-
-    FASE 2: EXTENSIÓN HORIZONTAL
-    - El rango vertical (high/low) SE FIJA con las primeras velas
-    - La zona solo crece HORIZONTALMENTE (en tiempo)
-    - Una vela "toca" el rango si su high/low intersectan con él
-
-    FASE 3: DETECCIÓN DE BREAKOUT
-    - Cuenta velas consecutivas COMPLETAMENTE fuera del rango
-    - Si consecutive_outside >= consol_max_outside_bars → cierra zona
-    - Si una vela vuelve a tocar el rango → resetea contador
-
-    CLAVE: El rango vertical NUNCA se expande después de fijarse
-    """
-```
-
-### Parámetros de Configuración
-
-| Parámetro | Default | Rango | Descripción |
-|-----------|---------|-------|-------------|
-| `consol_min_bars` | 8 | 5-30 | Mínimo de velas para considerar consolidación |
-| `consol_max_bars` | 50 | 20-300 | Máximo de velas en una zona |
-| `consol_max_range_pct` | 3.0 | 1.0-10.0 | Máximo % de rango vertical de precio |
-| `consol_atr_ratio` | 0.6 | 0.3-2.0 | ATR local / ATR global (menor = menos volátil) |
-| `consol_body_ratio` | 0.5 | 0.3-0.8 | Ratio cuerpo/rango promedio (menor = más indecisión) |
-| `consol_max_outside_bars` | 3 | 1-10 | Velas consecutivas fuera antes de cerrar zona |
-
-### Comportamiento del Algoritmo
-
-```
-EJEMPLO VISUAL:
-
-Precio
-  |     ┌─────────────────────────────────┐
-  |  ───┤     Zona de Consolidación       ├─── range_high (FIJO)
-  |     │   /\    /\    /\                │
-  |     │  /  \  /  \  /  \    BREAKOUT   │
-  |     │ /    \/    \/    \      ↓       │
-  |  ───┤                    \────────────┴─── range_low (FIJO)
-  |     └─────────────────────────────────┘
-  |                                    ↑
-  |                          consol_max_outside_bars
-  └──────────────────────────────────────────────── Tiempo
-
-1. Se detecta inicio cuando hay consol_min_bars velas dentro del rango
-2. El rango vertical (range_high, range_low) SE FIJA y no cambia
-3. La zona se extiende horizontalmente mientras velas toquen el rango
-4. Si una vela sale pero vuelve antes de N velas → zona sigue
-5. Si N velas consecutivas están COMPLETAMENTE fuera → zona termina
-```
-
-### Lecciones Aprendidas (Iteraciones del Algoritmo)
-
-**Problema v1**: Las zonas se cortaban prematuramente
-- Causa: Cualquier vela con close fuera del rango cortaba la zona
-- Fix: Usar intersección de high/low en lugar de solo close
-
-**Problema v2**: Las zonas incluían movimientos direccionales completos
-- Causa: El rango se expandía verticalmente para incluir nuevas velas
-- Fix: Fijar el rango vertical con las primeras velas y NUNCA expandirlo
-
-**Problema v3**: Velas de momentum cortaban inmediatamente
-- Causa: Condición `is_momentum_candle` tenía prioridad sobre contador
-- Fix: Eliminar condición de momentum, usar solo `consol_max_outside_bars`
-
-## Endpoints API
-
-| Endpoint | Método | Descripción |
-|----------|--------|-------------|
-| `/api/zones/methods` | GET | Lista métodos disponibles y sus parámetros |
-| `/api/zones/detect` | POST | Detecta zonas con método especificado |
-| `/api/zones/evaluate` | POST | Evalúa calidad de zonas detectadas |
-| `/api/zones/compare-methods` | POST | Compara todos los métodos |
-| `/api/zones/optimize` | POST | Optimiza parámetros (grid search / walk-forward) |
-
-### Ejemplo de Request
-
-```json
-POST /api/zones/detect
-{
-  "symbol": "BTCUSDT",
-  "interval": "15",
-  "days": 365,
-  "method": "consolidation",
-  "end_timestamp": 1706745600000,
-  "params": {
-    "consol_min_bars": 8,
-    "consol_max_bars": 100,
-    "consol_max_range_pct": 5.0,
-    "consol_atr_ratio": 0.8,
-    "consol_body_ratio": 0.5,
-    "consol_max_outside_bars": 10
-  }
-}
-```
-
-### Estructura de una Zona
-
-```python
-@dataclass
-class Zone:
-    id: str                    # UUID único
-    min_price: float           # Precio mínimo del rango
-    max_price: float           # Precio máximo del rango
-    start_timestamp: int       # Timestamp inicio (ms)
-    end_timestamp: int         # Timestamp fin (ms)
-    touches_support: int       # Toques al soporte
-    touches_resistance: int    # Toques a la resistencia
-    total_touches: int         # Total de toques
-    duration_hours: float      # Duración en horas
-    avg_volume: float          # Volumen promedio
-    volume_score: float        # Score de volumen (0-100)
-    method: str                # Método de detección usado
-    score: float               # Score total (0-100)
-    candles_in_zone: int       # Cantidad de velas en la zona
-    price_range_pct: float     # % de rango de precio
-```
-
-## Visualización (ZoneVisualizerIndicator.js)
-
-### Colores por Método
-
-```javascript
-colors: {
-  pivot_cluster: { fill: 'rgba(74, 111, 165, 0.15)', border: '#4a6fa5' },
-  atr_based: { fill: 'rgba(165, 74, 74, 0.15)', border: '#a54a4a' },
-  volume_profile: { fill: 'rgba(74, 165, 74, 0.15)', border: '#4aa54a' },
-  price_action: { fill: 'rgba(165, 165, 74, 0.15)', border: '#a5a54a' },
-  consolidation: { fill: 'rgba(255, 152, 0, 0.20)', border: '#FF9800' }  // Naranja
-}
-```
-
-### Renderizado de Zonas
-
-- **Rectángulo con relleno semitransparente**
-- **Bordes horizontales punteados** (soporte/resistencia)
-- **Bordes verticales sólidos** (inicio/fin temporal)
-- **Label con número de zona** (`#1`, `#2`, etc.) en fuente bold 16px
-
-### Ordenamiento
-
-Las zonas se ordenan **cronológicamente** (por `start_timestamp`):
-- Zona #1 = la más antigua
-- Zona #N = la más reciente
-
-Esto permite al usuario navegar las zonas en orden temporal.
-
-## Integración con Backtesting
-
-### Anti-Sesgo de Supervivencia
-
-El parámetro `end_timestamp` filtra las velas para usar solo datos ANTERIORES a la fecha de inicio del playback:
-
-```javascript
-// En ZoneDetectorTester.jsx
-if (playbackStartTime) {
-  requestBody.end_timestamp = playbackStartTime;
-}
-```
-
-```python
-# En main.py - /api/zones/detect
-if end_timestamp:
-    candles = [c for c in candles if c['timestamp'] < end_timestamp]
-```
-
-### Navegación a Zonas
-
-Al hacer click en una zona de la lista:
-1. `ZoneDetectorTester` llama a `onZoneClick(zone)`
-2. `BacktestingApp` calcula `midTimestamp` y llama a `miniChart.centerOnTimestamp()`
-3. `MiniChart` usa `allCandlesRef` para encontrar la vela y actualiza `currentTime`
-4. El playback navega a esa fecha mostrando la zona
-
-```javascript
-// MiniChart.jsx - centerOnTimestamp
-centerOnTimestamp: (timestamp) => {
-  // En modo backtesting, usar allCandlesRef para buscar en TODAS las velas
-  const sourceCandles = backtestingMode && allCandlesRef.current.length > 0
-    ? allCandlesRef.current
-    : candlesRef.current;
-
-  // Encontrar vela y actualizar currentTime
-  if (backtestingMode && onRequestTimeChange) {
-    onRequestTimeChange(targetCandle.timestamp);
-  }
-}
-```
-
-## UI del Modal (ZoneDetectorTester.jsx)
-
-### Tabs Disponibles
-
-1. **Detectar**: Detecta zonas con parámetros configurables
-2. **Evaluar**: Evalúa calidad de zonas (win rate, bounces, fakeouts)
-3. **Comparar**: Compara todos los métodos entre sí
-4. **Optimizar**: Grid search o walk-forward para encontrar mejores parámetros
-
-### Lista de Zonas Detectadas
-
-Cada zona muestra:
-- **Número** (#1, #2, etc.) - ordenado cronológicamente
-- **Score** (0-100)
-- **Método** usado
-- **Rango de precios** ($min - $max)
-- **Fechas** (inicio → fin)
-- **Estadísticas** (toques, duración, vol score)
-
-Click en una zona navega el chart a esa fecha.
-
-## Troubleshooting
-
-**Zonas no aparecen en el gráfico:**
-1. Verificar que ZoneVisualizerIndicator está habilitado
-2. Verificar `onZonesDetected` llama a `miniChart.setZones()`
-3. Revisar consola por logs `[ZoneVisualizer]`
-
-**Zonas demasiado pequeñas/grandes:**
-- Ajustar `consol_min_bars` / `consol_max_bars`
-- Ajustar `consol_max_range_pct` para el rango vertical
-
-**Zonas se cortan prematuramente:**
-- Aumentar `consol_max_outside_bars` (ej: 10-15)
-- Verificar que el algoritmo usa la versión v3
-
-**Zonas incluyen movimientos direccionales:**
-- El rango vertical NO debe expandirse
-- Verificar que `range_high` y `range_low` se fijan en la fase inicial
-
-**Click en zona no navega correctamente:**
-- Verificar `onRequestTimeChange` está conectado en BacktestingApp
-- Verificar `allCandlesRef` tiene todas las velas cargadas
-
-**Parámetros no se actualizan:**
-- Los parámetros vienen del endpoint `/api/zones/methods`
-- Reiniciar el backend después de modificar `main.py`
-- Verificar que no hay procesos zombie en puerto 9000:
-  ```bash
-  netstat -ano | findstr :9000
-  taskkill /F /PID <pid>
-  ```
 
 ---
 

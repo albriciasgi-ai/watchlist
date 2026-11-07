@@ -19,7 +19,7 @@ const FINE_TO_COARSE = ['1m', '5m', '15m', '1h', '4h'];
 const candlesOf = (timeframes, tf) => timeframes?.[tf]?.main || [];
 
 // Cantidad de velas con timestamp menor a t
-function countBefore(candles, t) {
+export function countBefore(candles, t) {
   let lo = 0;
   let hi = candles.length;
   while (lo < hi) {
@@ -28,6 +28,17 @@ function countBefore(candles, t) {
     else hi = mid;
   }
   return lo;
+}
+
+// Indice de la vela con ese timestamp exacto, o -1
+export function timestampIndex(candles, t) {
+  const index = countBefore(candles, t);
+  return candles[index]?.timestamp === t ? index : -1;
+}
+
+// Velas con timestamp entre start y end, ambos incluidos
+export function candlesBetween(candles, start, end) {
+  return candles.slice(countBefore(candles, start), countBefore(candles, end + 1));
 }
 
 // Indice de la ultima vela cerrada en "now", o -1 si todavia no hay ninguna
@@ -77,6 +88,24 @@ export function formingCandle(timeframes, tf, now) {
   }
   return null;
 }
+
+// Deja en "known" las velas cerradas hasta lastIndex y la vela en formacion. Cambia el arreglo en
+// lugar de copiar todo el historial en cada avance: cuesta solo lo que cambio
+export function syncKnownCandles(known, all, lastIndex, forming) {
+  if (known[known.length - 1]?.in_progress) known.pop();
+
+  const closed = lastIndex + 1;
+  if (known.length > closed) known.length = closed;
+  if (known.length > 0 && known[known.length - 1] !== all[known.length - 1]) known.length = 0;
+  for (let i = known.length; i < closed; i++) known.push(all[i]);
+
+  if (forming) known.push(forming);
+  return known;
+}
+
+// Cada tick revisa las ordenes con la hora exacta. La pantalla va detras del reloj: si las revisara
+// con su hora repetiria velas, y una orden recien llena responderia a velas anteriores a su entrada
+export const tickAlreadySettled = (clock, time) => !!clock && (clock.isPlaying || clock.currentTime !== time);
 
 // Ultimo precio negociado que ya se conoce en "now"
 export function priceAt(timeframes, now) {

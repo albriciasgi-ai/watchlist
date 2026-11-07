@@ -41,7 +41,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
       if (filteredOrders.length === 0) return;
 
       // Evitar conflicto con inputs enfocados
-      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') {
+      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
         return;
       }
 
@@ -281,7 +281,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
                     </button>
                   </td>
                   <td className="trade-screenshot">
-                    {order.screenshotPath || order.exitScreenshotPath ? (
+                    {order.decisionScreenshotPath || order.screenshotPath || order.exitScreenshotPath ? (
                       <button
                         className="screenshot-button"
                         onClick={(e) => {
@@ -306,6 +306,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
       {/* El panel lateral encerraría el modal: se monta en el body */}
       {screenshotOrder && createPortal(
         <ScreenshotModal
+          decisionScreenshotPath={screenshotOrder.decisionScreenshotPath}
           screenshotPath={screenshotOrder.screenshotPath}
           exitScreenshotPath={screenshotOrder.exitScreenshotPath}
           orderId={screenshotOrder.id}

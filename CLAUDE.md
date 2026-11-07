@@ -53,6 +53,91 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 7 Noviembre 2026: Filtro VWAP del Swing con Rectángulos, Imágenes con Contexto e Historial sin Retroceso
+
+**Problema:** el filtro VWAP del Swing no actuaba en App 1. La primera imagen de cada trade salía con el zoom de leer footprints y mostraba pocas velas. Ir a un trade desde el historial retrocedía la hora simulada y ocultaba las velas posteriores. Los círculos del visor del Observador se confundían con los aros morados del gráfico.
+
+**Cambios:**
+1. **Swing:** con su filtro VWAP encendido y el indicador VWAP activo, el filtro actúa dentro de los rectángulos dibujados en el gráfico. Afuera las señales no cambian: los rectángulos no son lista blanca. No cuentan los rectángulos que definen un VP Fixed. Entre bandas la señal se descarta; cerca de la banda inferior solo quedan mínimos y cerca de la superior solo máximos
+2. **Caché del Swing:** se recalcula al cambiar un rectángulo (al soltarlo, no mientras se arrastra) y con cada cálculo nuevo del VWAP. En reproducción no se recalcula en cada tick
+3. **Imágenes:** la de decisión y la de apertura muestran unas 5 veces las velas que había a la vista, sin bajar de 3 px por vela. Tu vista no cambia. La de cierre sigue encuadrando el trade completo
+4. **Historial:** la fila y 📍 llevan la vista a la entrada del trade sin mover la hora simulada, con lo que pasó después a la derecha. Para volver al presente está "Ir a última vela". Un trade posterior a la hora simulada, después de retroceder el reloj, no se abre
+5. **Observador:** los círculos numerados sobre las imágenes y los números de "Marcas y notas" son azul claro, igual que la marca de "Ir al gráfico". Los aros de lo elegido en el gráfico siguen morados
+
+**IMPORTANTE:** no hay cambios en el backend: basta recargar la página.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "JOURNAL DE TRADES" y "REPRODUCCIÓN LIGERA"
+
+---
+
+### APP 1 (Backtester) - 7 Noviembre 2026: Niveles con Papel, Marcas con Nota y Carga sin Velas Duplicadas
+
+**Problema:** las medidas del Observador no decían qué papel cumplía cada nivel ni por qué importaba una señal, y desde la imagen de un trade no se podía volver al punto exacto del gráfico. Además algunas órdenes no se abrían, la carga inicial enviaba cada vela dos veces y seguían pendientes las bandas de VWAP y el filtro del Swing.
+
+**Cambios:**
+1. **Papel:** al elegir un nivel con un clic se marca si es Soporte, Resistencia, Entrada u Objetivo, con una nota de por qué importa. Se ve en el menú, en el panel, en el gráfico y en la lectura de la orden
+2. **Más niveles:** FVG (borde alto, 50% y borde bajo), la línea de Double Top/Bottom y Order Flow (POC de la vela, stacked e imbalances sueltos). Order Flow solo ofrece con footprints a la vista y no dibuja nada extra
+3. **Marcas con nota:** rombos y flechas de Volumen de Respuesta, señales de Swing, extremos de Double Top/Bottom, rechazos y rombos de delta contrario. Entran como "Solo marca" y pueden recibir un papel
+4. **Imágenes:** cada imagen guarda dónde quedó cada nivel o marca de la orden. En el Observador salen numeradas sobre la imagen, con su nota al pasar el mouse. "Ir al gráfico" lleva la vista a ese punto sin mover la hora simulada
+5. **Delta:** debajo de los footprints a 13 px, con tamaño elegible en el modal de Order Flow
+6. **Órdenes que no se abrían:** con "Automática" y "Usar precio actual", un clic justo cuando cambiaba el precio dejaba la orden pendiente al precio anterior: 1 de cada 6 a 10 clics con la app cargada. Ahora entra a mercado. La caja TP/SL de una orden viva se podía mover y la orden seguía en sus precios: ahora vuelve a los de la orden
+7. **Carga inicial:** cada vela viajaba dos veces, porque `subdivisions` era copia de `main`. La respuesta bajó de 422 a 238 MB y la primera carga de unos 80 s a unos 60 s. Baja a unos 40 s cuando el caché del servidor se guarde sin la copia
+8. **VWAP:** las bandas de sesión empiezan en la primera vela de su sesión, como el backend. Antes salían de 2.5 a 3.7 veces más anchas. BandWidth, BBWP y TTM se recalibraron por marco y las primeras velas de cada sesión quedan en gris
+9. **Swing:** el filtro VWAP lee las bandas correctas. Actúa dentro de los rectángulos del gráfico desde la entrada "Filtro VWAP del Swing con Rectángulos, Imágenes con Contexto e Historial sin Retroceso"
+10. **Observador:** sin análisis por sesión del mercado, porque cripto opera 24/7. La hora UTC se queda
+11. **ARB, SUI y TRX:** no recibían velas nuevas desde el 22-23 de octubre. La expansión hacia atrás terminaba sin la actualización ni el guardado. Ahora sigue con las velas nuevas y guarda `first_available_ts` para no repetirla. El Open Interest nuevo se suma por hora al guardado: antes reemplazaba una serie larga por unas semanas
+12. **Presets de VWAP:** uno guardado en otro marco, sin marco o antes de esta ronda conserva la calibración del marco donde se carga
+
+**IMPORTANTE:** reiniciar el backend de App 1 para aplicar los cambios. Un indicador nuevo con ayudas visuales las ofrece en `selectableLevels()` con su lugar ya calculado en el dibujo (`x`, `y`, `r`, o `left`, `right`, `top`, `bottom`) y sin dibujar nada para eso.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "REGISTRO AUTOMÁTICO", "JOURNAL DE TRADES", "ÓRDENES", "REPRODUCCIÓN LIGERA" y "ORDER FLOW SOBRE LAS VELAS"
+
+---
+
+### APP 1 (Backtester) - 7 Noviembre 2026: Reproducción Ligera, S&R v2 Nuevo e Imágenes en el Observador
+
+**Problema:** la reproducción se frenaba, el filtro z-score de S&R v2 no parecía hacer nada y las medidas del Observador no se podían confirmar a ojo.
+
+**Cambios:**
+1. **Reproducción:** con S&R v2 y z=1.5 en 15m pasó de 4.5 ticks por segundo y bloqueos de 475 ms a la velocidad pedida exacta, sin bloqueos y con 9% del navegador. El Observador no era la causa: cuesta 0.1 ms por tick
+2. **Reloj:** si un tick llega tarde recupera el tiempo debido. Las velocidades sobre 18750x ya funcionan. Las órdenes se revisan en cada tick y la pantalla se actualiza 10 veces por segundo
+3. **Gráfico:** solo trabaja el marco visible, no copia ni filtra todo el historial en cada dibujo, y el límite de 33 ms ya actúa al mover el mouse. Salieron unos 55 console.log por tick
+4. **Indicadores:** Double Top/Bottom, Swing, VP Fixed y VWAP dejaron de recorrer todo el historial. VWAP en 5m bloqueaba 23 s al activarse
+5. **S&R v2:** recorre las velas hacia adelante (`swingLevels.js`). Un nivel vale hasta que una vela cierra más allá de todos sus toques. El filtro ahora quita líneas y el modal muestra su efecto antes de aplicar. Se aplica a todos los marcos y se conserva al reiniciar. Un campo vacío no se aplica y un valor fuera de rango queda en el límite del modal
+6. **S&R clásico:** ya no usa velas ni niveles futuros (caché, backend y vela final)
+7. **Imágenes en el Observador:** miniaturas de Decisión, Apertura y Cierre. Al abrirlas se ven junto a las medidas. Cada imagen dice su marco y su hora simulada. Las limit y stop guardan además lo que se veía al decidir
+8. **Sin futuro:** el reloj se detiene un momento para tomar cada imagen. Informe y CSV ya no usan la lectura de órdenes vivas. Controles del informe y reglas solo usan lo que la corrida ya vivió. Una imagen o un resultado no se muestran si pasan de lo vivido o si revelan la fecha oculta, salvo con "Ver igual". Ir a un trade de la vela en curso ya no adelanta el reloj. La línea vertical, el CSV y el Excel también ocultan la fecha. Con fecha oculta la prueba de reglas no muestra la tabla por año y el CSV deja esas órdenes al final
+9. **Órdenes:** una orden ya no puede cerrarse antes de llenarse. Con el equipo cargado, el efecto de la hora repasaba velas viejas y la orden salía con un resultado que no ocurrió. El fallo ya existía antes de esta ronda
+10. **Configurar:** el reloj anterior se detiene al iniciar otra vez, y el nuevo toma la velocidad del selector. Antes quedaba andando sin poder pausarlo
+
+**Pendiente, anterior a esta ronda:** las bandas de VWAP de sesión y el filtro VWAP del Swing. Se corrigieron en la entrada "Niveles con Papel, Marcas con Nota y Carga sin Velas Duplicadas".
+
+**IMPORTANTE:** medido en BTC contra niveles al azar, los niveles de S&R v2 no aguantan más que un precio cualquiera, con o sin filtro de volumen. Es un mapa de estructura. Un indicador nuevo no debe recorrer `knownCandles` entero en cada dibujo: usa búsqueda binaria o calcula al cerrar una vela.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "REPRODUCCIÓN LIGERA" y "JOURNAL DE TRADES", y `1.Altagracia_Crypto_Backtester/CLAUDE.md` sección S&R v2
+
+---
+
+### APP 1 (Backtester) - 6 Noviembre 2026: Registro Automático de Operaciones + Zone Detector Eliminado
+
+**Problema:** marcar motivos antes de entrar depende de la memoria y estorba la decisión. Para encontrar patrones en las operaciones hacían falta datos que se guardaran solos y momentos sin entrada con qué compararlas.
+
+**Cambios:**
+1. **Medidas:** `measures.py` arma una tabla con una fila por vela de 15m cerrada y 58 medidas de 15m, 1h y 4h: contexto, tramo, volumen contra lo normal de su hora, Volumen de Respuesta, volatilidad, FVG, perfil, OI, delta y hora UTC. Cada orden se lee ahí al decidir y al llenarse. Nada se muestra hasta que la orden termina
+2. **Dibujos:** cada orden guarda los trazos hechos en las últimas 100 velas o que tocan esas velas. Los posteriores a la orden no cuentan
+3. **Niveles:** clic sobre un POC, VAH, VAL, soporte o resistencia en el canvas abre un menú con la casilla "Incluir en el análisis". Sirve en Volume Profile, VP Fixed Range, VP Periodic, S&R y S&R v2. La lista queda en el panel de trading y viaja con cada orden
+4. **Resultado:** R neto, lo máximo a favor y en contra, duración y espera. Las canceladas también cuentan
+5. **Motivos:** salieron de la entrada. Son opcionales y se agregan cuando la orden termina
+6. **Informe:** qué distingue las entradas de 10 momentos sin entrada por orden, qué separa ganadoras de perdedoras y referencias. Una diferencia se marca solo si supera lo que da el azar
+7. **Reglas:** hasta 3 condiciones probadas en fechas no operadas, con costos, por año y contra la base sin condición. También hay CSV con todo el registro
+8. **Zone Detector:** eliminado de App 1: pestaña Zonas, `ZoneDetectorTester`, `ZoneVisualizerIndicator`, `/api/zones/*`, `zone_*.py` y sus exportes. Las otras apps tienen el suyo y no dependían de este
+
+**IMPORTANTE:** `measures.py` repite la regla de `responseBalance.js` y `research/response_volume/engine.py`. Si cambia una fórmula, hay que subir `VERSION` en `measures.py` para reconstruir la tabla.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "REGISTRO AUTOMÁTICO"
+
+---
+
 ### APP 1 (Backtester) - 6 Noviembre 2026: Orden y Altura de Paneles + Estrategia Eliminada
 
 **Cambios:**

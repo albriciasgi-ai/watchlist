@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ExcelJS from 'exceljs';
 import html2canvas from 'html2canvas';
+import { isBlind, maskDate } from '../blindClock.js';
 
 const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
   const [isExporting, setIsExporting] = useState(false);
@@ -104,8 +105,8 @@ const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
           quantity: trade.quantity,
           pnl: trade.pnl,
           pnlPercent: trade.pnlPercent,
-          entryTime: new Date(trade.entryTime).toISOString(),
-          exitTime: new Date(trade.exitTime).toISOString(),
+          entryTime: isBlind() ? maskDate(trade.entryTime) : new Date(trade.entryTime).toISOString(),
+          exitTime: isBlind() ? maskDate(trade.exitTime) : new Date(trade.exitTime).toISOString(),
           duration: formatDuration(trade.entryTime, trade.exitTime),
           closeReason: trade.closeReason,
           notes: trade.notes || ''

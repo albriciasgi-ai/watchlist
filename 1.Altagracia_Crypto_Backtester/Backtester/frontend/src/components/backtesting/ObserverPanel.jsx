@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
-  describeComparison, fetchOrders, formatR, observerError, reasonLabel, simulatedDate, statusName
+  describeComparison, fetchMeasures, fetchOrders, formatR, observerError, orderAhead, reasonLabel, simulatedDate, statusName, withSessionImages
 } from './observer.js';
+import ObserverReading from './ObserverReading';
 import ObserverReport from './ObserverReport';
+import TradeImages from './TradeImages';
 import './Observer.css';
+
+const MEASURES_PENDING = ['building', 'missing'];
+const MEASURES_POLL_MS = 5000;
 
 const Comparison = ({ comparison }) => {
   const { rows, missing } = describeComparison(comparison);
@@ -33,8 +38,10 @@ const Comparison = ({ comparison }) => {
   );
 };
 
-const OrderRow = ({ trade, expanded, onToggle }) => {
+const OrderRow = ({ trade, catalog, viewer, expanded, onToggle, onGoTo }) => {
+  const [revealed, setRevealed] = useState(false);
   const ended = trade.status === 'closed' || trade.status === 'cancelled';
+  const hidden = !revealed && orderAhead(trade, viewer());
   const reasons = trade.marks?.reasons || [];
 
   return (
@@ -43,13 +50,19 @@ const OrderRow = ({ trade, expanded, onToggle }) => {
         <span className={`observer-side ${trade.side}`}>{trade.side === 'long' ? 'LONG' : 'SHORT'}</span>
         <span className="observer-entry">{trade.type} {Number(trade.entry).toFixed(1)}</span>
         <span className="observer-status">{statusName(trade.status)}</span>
-        {trade.status === 'closed' && (
+        {trade.status === 'closed' && !hidden && (
           <span className={`observer-result ${trade.pnl > 0 ? 'win' : 'loss'}`}>
             {trade.r !== null ? formatR(trade.r) : `$${trade.pnl.toFixed(2)}`}
           </span>
         )}
       </button>
-      {expanded && (
+      {expanded && hidden && (
+        <div className="observer-order-body">
+          <div className="observer-note">Esta orden terminó después de la hora simulada: su resultado queda oculto.</div>
+          <button type="button" className="btn-quick" onClick={() => setRevealed(true)}>Ver igual</button>
+        </div>
+      )}
+      {expanded && !hidden && (
         <div className="observer-order-body">
           <div className="observer-subnote">
             {simulatedDate(trade, trade.time)} · {trade.timeframe}
@@ -58,8 +71,14 @@ const OrderRow = ({ trade, expanded, onToggle }) => {
           {reasons.length > 0 && <div className="observer-subnote">Motivos: {reasons.map(reasonLabel).join(', ')}</div>}
           {trade.notes && <div className="observer-subnote">“{trade.notes}”</div>}
           {ended
-            ? <Comparison comparison={trade.comparison} />
-            : <div className="observer-note">La lectura de la regla queda oculta hasta que la orden termine.</div>}
+            ? (
+              <>
+                <TradeImages trade={trade} catalog={catalog} viewer={viewer} onGoTo={onGoTo} />
+                <ObserverReading trade={trade} catalog={catalog} onGoTo={onGoTo} />
+                <Comparison comparison={trade.comparison} />
+              </>
+            )
+            : <div className="observer-note">Las medidas y la lectura de la regla quedan ocultas hasta que la orden termine.</div>}
         </div>
       )}
     </div>
@@ -67,23 +86,38 @@ const OrderRow = ({ trade, expanded, onToggle }) => {
 };
 
 /** Órdenes registradas y, cuando terminan, en qué coincidieron con la regla */
-const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate }) => {
+const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate, sessionManager, viewer, onGoToItem }) => {
   const [orders, setOrders] = useState(null);
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = useState(null);
   const [showReport, setShowReport] = useState(false);
+  const [catalog, setCatalog] = useState([]);
 
   useEffect(() => {
     let active = true;
-    fetchOrders()
+    fetchMeasures(symbol).then(data => active && setCatalog(data.measures)).catch(() => {});
+    return () => { active = false; };
+  }, [symbol]);
+
+  useEffect(() => {
+    let active = true;
+    let timer = null;
+    const load = () => fetchOrders()
+      .then(list => withSessionImages(list, id => sessionManager.loadSession(id)))
       .then(list => {
         if (!active) return;
         setOrders(list);
         setError(null);
         setExpanded(current => current ?? list[0]?.id ?? null);
+        // La primera vez las medidas tardan cerca de un minuto en prepararse
+        if (list.some(trade => MEASURES_PENDING.includes(trade.automatic?.status))) timer = setTimeout(load, MEASURES_POLL_MS);
       })
       .catch(failure => active && setError(failure.message));
-    return () => { active = false; };
+    load();
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
   }, [revision]);
 
   const saveError = observerError();
@@ -106,7 +140,7 @@ const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate }) => {
 
       {orders?.length === 0 && (
         <div className="observer-note">
-          Cada orden que envíes queda aquí. Al terminar verás en qué coincidió con la regla.
+          Cada orden que envíes queda aquí con sus medidas, tus dibujos y tus niveles. Al terminar verás su resultado y en qué coincidió con la regla.
         </div>
       )}
 
@@ -114,14 +148,18 @@ const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate }) => {
         <OrderRow
           key={trade.id}
           trade={trade}
+          catalog={catalog}
+          viewer={viewer}
+          onGoTo={onGoToItem}
           expanded={expanded === trade.id}
           onToggle={() => setExpanded(current => (current === trade.id ? null : trade.id))}
         />
       ))}
 
-      {showReport && <ObserverReport symbol={symbol} onClose={() => setShowReport(false)} />}
+      {showReport && <ObserverReport symbol={symbol} reached={viewer().reached} onClose={() => setShowReport(false)} />}
     </div>
   );
 };
 
-export default ObserverPanel;
+// La hora simulada cambia sin parar y el panel no la usa: no debe redibujarse con cada una
+export default React.memo(ObserverPanel);

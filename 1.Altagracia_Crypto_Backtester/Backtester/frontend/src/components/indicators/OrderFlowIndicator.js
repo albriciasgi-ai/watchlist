@@ -1,3 +1,4 @@
+import { candleItemId } from './analysisLevels.js';
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 
@@ -92,6 +93,7 @@ class OrderFlowIndicator extends IndicatorBase {
       showImbalances: true,
       showDelta: true,
       fontSize: 9,
+      deltaFontSize: 13, // El delta se lee de lejos: va más grande que las cifras de las celdas
       minCandleWidth: 16, // Desde este ancho el footprint reemplaza la vela
       minCandleWidthFull: 60, // Desde este ancho se muestran cifras y delta
       stackedLineWidth: 2,
@@ -314,7 +316,63 @@ class OrderFlowIndicator extends IndicatorBase {
     return move * delta < 0 && Math.abs(delta) >= footprint.total_volume * this.config.deltaMarkMinShare;
   }
 
+  /** POC, stacked e imbalances a la vista, y marcas de delta contrario, para elegirlos con un clic */
+  selectableLevels() {
+    return this.targets;
+  }
+
+  _target(kind, candle, price, geometry, extra = {}) {
+    const id = candleItemId('Order Flow', kind, candle.timestamp, price, this.interval);
+    this.targets.push({ id, source: 'Order Flow', kind, price, time: candle.timestamp, ...extra, ...geometry });
+  }
+
+  // Zona de precio de unos niveles del footprint
+  _span(footprint, indexes) {
+    const levels = indexes.map(index => footprint.levels[index]).filter(Boolean);
+    if (!levels.length) return null;
+    const low = Math.min(...levels.map(level => level.price_min));
+    const high = Math.max(...levels.map(level => level.price_max));
+    return { low, high, price: (low + high) / 2 };
+  }
+
+  _stackedShown(footprint) {
+    const minZScore = this.config.stackedMinVolumeZScore || 0;
+    if (minZScore > 0 && (footprint.volume_zscore || 0) < minZScore) return [];
+    return footprint.stacked_imbalances || [];
+  }
+
+  /** Lo que se puede elegir en una vela con su footprint a la vista. No dibuja nada más */
+  _unitTargets(candle, footprint, unitX, unitWidth, cells, priceToY, fullMode) {
+    const { levels, poc_index: pocIndex } = footprint;
+    const unit = { left: unitX, right: unitX + unitWidth };
+
+    const poc = levels[pocIndex];
+    if (poc) {
+      const price = poc.price_mid ?? (poc.price_min + poc.price_max) / 2;
+      this._target('POC de la vela', candle, price, { ...unit, y: priceToY(price) });
+    }
+
+    const inStacked = new Set();
+    for (const stacked of this._stackedShown(footprint)) {
+      const span = this._span(footprint, stacked.levels || []);
+      if (!span) continue;
+      (stacked.levels || []).forEach(index => inStacked.add(index));
+      const kind = stacked.direction === 'BUY' ? 'Stacked de compra' : 'Stacked de venta';
+      this._target(kind, candle, span.price, { ...cells, top: priceToY(span.high), bottom: priceToY(span.low) }, { low: span.low, high: span.high });
+    }
+
+    if (!fullMode) return;
+    for (const imbalance of footprint.imbalances || []) {
+      if (inStacked.has(imbalance.level_index)) continue;
+      const span = this._span(footprint, [imbalance.level_index]);
+      if (!span) continue;
+      const kind = imbalance.type === 'BUY' ? 'Imbalance de compra' : 'Imbalance de venta';
+      this._target(kind, candle, span.price, { ...cells, top: priceToY(span.high), bottom: priceToY(span.low) }, { low: span.low, high: span.high });
+    }
+  }
+
   renderOnChart(ctx, bounds, visibleCandles, priceContext, replacesCandles) {
+    this.targets = [];
     if (!this.enabled || !this.config.enabled || visibleCandles.length === 0) return;
 
     this._loadVisible(visibleCandles, priceContext);
@@ -428,6 +486,8 @@ class OrderFlowIndicator extends IndicatorBase {
     if (this.config.showDelta && fullMode) {
       this.renderDelta(ctx, footprint, unitX, unitWidth, low, priceToY);
     }
+
+    this._unitTargets(candle, footprint, unitX, unitWidth, { left: footprintX, right: footprintX + footprintWidth }, priceToY, fullMode);
   }
 
   renderJapaneseCandle(ctx, candle, x, width, priceToY, high, low) {
@@ -592,7 +652,7 @@ class OrderFlowIndicator extends IndicatorBase {
     const delta = footprint.total_delta;
     if (Math.abs(delta) < 0.001) return;
 
-    ctx.font = `bold ${this.config.fontSize}px Arial`;
+    ctx.font = `bold ${this.config.deltaFontSize ?? this.config.fontSize}px Arial`;
     ctx.fillStyle = delta >= 0 ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
@@ -650,6 +710,10 @@ class OrderFlowIndicator extends IndicatorBase {
 
       if (this.config.showDeltaMarks && this.deltaAgainstCandle(footprint, candle)) {
         this.renderDeltaMark(ctx, candle, footprint, candleX + candleWidth / 2, priceToY, candleWidth);
+        const buying = footprint.total_delta > 0;
+        const size = Math.min(5, Math.max(2.5, candleWidth * 0.5));
+        const markY = buying ? priceToY(candle.low) + size + 3 : priceToY(candle.high) - size - 3;
+        this._target('Delta contrario', candle, null, { x: candleX + candleWidth / 2, y: markY, r: 7 }, { mark: true, price: buying ? candle.low : candle.high });
       }
 
       if (!footprint.stacked_imbalances?.length) return;
@@ -661,6 +725,13 @@ class OrderFlowIndicator extends IndicatorBase {
       for (const stacked of footprint.stacked_imbalances) {
         const rgb = stacked.direction === 'BUY' ? stackedBuyColor : stackedSellColor;
         ctx.strokeStyle = `rgba(${rgb}, ${stackedOpacity})`;
+
+        const span = this._span(footprint, stacked.levels || []);
+        if (span) {
+          const kind = stacked.direction === 'BUY' ? 'Stacked de compra' : 'Stacked de venta';
+          const geometry = { left: startX, right: endX, top: priceToY(span.high) - 2, bottom: priceToY(span.low) + 2 };
+          this._target(kind, candle, span.price, geometry, { low: span.low, high: span.high });
+        }
 
         for (const index of stacked.levels || []) {
           const level = footprint.levels[index];

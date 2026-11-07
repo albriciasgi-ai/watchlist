@@ -2,6 +2,8 @@
 
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
+import { timestampIndex } from '../backtesting/replayClock.js';
+import { candleItemId } from './analysisLevels.js';
 
 /**
  * Double Top/Bottom Pattern Indicator
@@ -810,7 +812,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     this.notificationPermissionRequested = true;
   }
 
+  /** Flechas de entrada a la vista, para elegirlas como marcas con una nota */
+  selectableLevels() {
+    return this.marks || [];
+  }
+
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
+    this.marks = [];
     // 🎯 DEBUG: Log de entrada a renderOverlay
     if (!this._renderLogOnce) {
       console.log(`[${this.symbol}] 🎨 renderOverlay CALLED:`, {
@@ -986,6 +994,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     ctx.setLineDash([]);
     ctx.restore();
 
+    // La línea del patrón se puede elegir como nivel, desde su primer extremo
+    const kind = pattern.type === 'DOUBLE_TOP' ? 'Doble techo' : 'Doble suelo';
+    this.marks.push({
+      id: candleItemId(this.name, kind, pattern.firstExtreme.timestamp, pattern.levelPrice, this.interval), source: this.name, kind,
+      price: pattern.levelPrice, time: pattern.firstExtreme.timestamp, left: Math.min(startX, endX), right: Math.max(startX, endX), y
+    });
+
     // Draw pattern label
     ctx.save();
     ctx.font = 'bold 10px sans-serif';
@@ -1008,13 +1023,14 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       const x1 = timeToX(pattern.firstExtreme.timestamp);
       if (x1 !== null) {  // 🎯 FIX: Verificar si la vela está visible
         const y1 = priceToY(pattern.firstExtreme.price);
-        this._drawIcon(
+        const drawn = this._drawIcon(
           ctx,
           x1,
           y1,
           pattern.firstExtreme.rejection_pattern,
           pattern.type === 'DOUBLE_TOP' ? 'above' : 'below'
         );
+        if (drawn) this._extremeMark(pattern, pattern.firstExtreme, 'Primer', x1, drawn.y);
       }
     }
 
@@ -1024,15 +1040,25 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       const x2 = timeToX(pattern.secondExtreme.timestamp);
       if (x2 !== null) {  // 🎯 FIX: Verificar si la vela está visible
         const y2 = priceToY(pattern.secondExtreme.price);
-        this._drawIcon(
+        const drawn = this._drawIcon(
           ctx,
           x2,
           y2,
           pattern.secondExtreme.rejection_pattern,
           pattern.type === 'DOUBLE_TOP' ? 'above' : 'below'
         );
+        if (drawn) this._extremeMark(pattern, pattern.secondExtreme, 'Segundo', x2, drawn.y);
       }
     }
+  }
+
+  /** El icono de rechazo de un extremo, como marca que se elige con un clic */
+  _extremeMark(pattern, extreme, order, x, y) {
+    const kind = `${order} ${pattern.type === 'DOUBLE_TOP' ? 'techo' : 'suelo'}`;
+    this.marks.push({
+      id: candleItemId(this.name, kind, extreme.timestamp, null, this.interval), source: this.name, kind, price: extreme.price,
+      time: extreme.timestamp, mark: true, x, y, r: 12
+    });
   }
 
   _drawIcon(ctx, x, y, patternType, position) {
@@ -1055,6 +1081,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     ctx.fillText(icon, x, y + offsetY);
 
     ctx.restore();
+    return { y: y + offsetY };
   }
 
   _drawMomentumIcon(ctx, pattern, allCandles, priceToY, timeToX) {
@@ -1105,6 +1132,12 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       ? this.config.visualization.colors.entryLong
       : this.config.visualization.colors.entryShort;
 
+    const kind = direction === 'LONG' ? 'Entrada larga' : 'Entrada corta';
+    this.marks.push({
+      id: candleItemId(this.name, kind, candle.timestamp, null, this.interval), source: this.name, kind, price: direction === 'LONG' ? candle.low : candle.high,
+      time: candle.timestamp, mark: true, x, y, r: 12
+    });
+
     ctx.save();
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
@@ -1141,7 +1174,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
   }
 
   _findCandleByTimestamp(candles, timestamp) {
-    return candles.find(c => c.timestamp === timestamp);
+    return candles[timestampIndex(candles, timestamp)];
   }
 
   // Required by IndicatorBase but not used (overlay indicator)

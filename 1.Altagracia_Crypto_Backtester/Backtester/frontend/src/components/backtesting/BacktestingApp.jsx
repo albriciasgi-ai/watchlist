@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import TimeController from './TimeController';
 import MiniChart from '../MiniChart';
 import OrderManager from './OrderManager';
-import { TF_MS, candlesToSettle, lastClosedIndex, priceAt } from './replayClock';
+import { TF_MS, candlesToSettle, lastClosedIndex, priceAt, tickAlreadySettled } from './replayClock';
+import { withoutSubdivisions } from './marketData';
 import TradingControls from './TradingControls';
 import PerformancePanel from './PerformancePanel';
 import TradeHistory from './TradeHistory';
@@ -22,17 +23,18 @@ import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
 import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
-import ZoneDetectorTester from '../ZoneDetectorTester';
 import DrawingToolbar from '../drawing/DrawingToolbar';
 import DrawingSidebar from '../drawing/DrawingSidebar'; // 🎯 OPTIMIZACIÓN UI: Sidebar vertical
 import FootprintSidebar from './FootprintSidebar'; // 🎯 Order Flow Footprints
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
 import ObserverPanel from './ObserverPanel';
-import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordOrder } from './observer.js';
+import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordImage, recordOrder } from './observer.js';
 import { blindAnchor, isBlind, maskDate, setBlindAnchor } from './blindClock.js';
-import { ENTRY_CAPTURE_DELAY_MS, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
-import { latestFreeBox } from './orderPlan.js';
+import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
+import { boxesFollowOrders, latestFreeBox } from './orderPlan.js';
+import { drawingsForOrder } from './tradeContext.js';
+import { knownLevels } from '../indicators/analysisLevels.js';
 import SessionLoadModal from './SessionLoadModal';
 import { API_BASE_URL } from '../../config';
 import '../../backtesting_styles.css';
@@ -40,6 +42,7 @@ import '../drawing/DrawingToolbar.css';
 import '../drawing/DrawingSidebar.css'; // 🎯 OPTIMIZACIÓN UI
 
 const OBSERVER_NOTICE_MS = 8000;
+const SCREEN_UPDATE_MS = 100; // Cada cuánto llega la hora simulada a la pantalla mientras reproduce
 
 const BacktestingApp = () => {
   // Estado principal
@@ -169,8 +172,6 @@ const BacktestingApp = () => {
   const [showVPPeriodicSettings, setShowVPPeriodicSettings] = useState(false);
   const [showResponseVolumeSettings, setShowResponseVolumeSettings] = useState(false);
   const [chartShapes, setChartShapes] = useState([]); // Dibujos del gráfico, para ofrecer la caja TP/SL
-  const [showZoneDetectorTester, setShowZoneDetectorTester] = useState(false);
-  const [detectedZones, setDetectedZones] = useState([]);
 
   // 🎯 Configuraciones de indicadores
   const [vpConfig, setVpConfig] = useState({
@@ -264,26 +265,55 @@ const BacktestingApp = () => {
     return sessionSaveRef.current;
   };
 
+  /** Deja la imagen en el registro y avisa al Observador */
+  const linkImage = (order, kind, image) => recordImage(order, kind, {
+    path: image.screenshotPath,
+    sim_time: image.screenshotSimTime,
+    frame: image.screenshotFrame,
+    markers: image.screenshotMarkers || []
+  }).then(() => setObserverRevision(value => value + 1));
+
   /** Toma la imagen de la entrada y la deja en el trade */
-  const captureEntry = async (order, miniChart) => {
+  const captureEntry = async (order, miniChart, onCopied) => {
     try {
-      Object.assign(order, await miniChart.captureScreenshot(ensureSessionId(), order.id));
+      const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, { keepInView: order.executedAt ?? order.entryTime, context: true, onCopied, items: order.analysisItems });
+      Object.assign(order, image);
+      linkImage(order, 'entry', image);
     } catch (error) {
       console.error(`[BacktestingApp] No se pudo capturar la entrada del trade #${order.id}:`, error);
     }
     await saveTradeSession();
   };
 
+  /** Toma lo que había a la vista al dejar una orden en espera, con más velas: su llenado puede tardar días */
+  const captureDecision = async (order, miniChart, onCopied) => {
+    try {
+      const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, { context: true, onCopied, items: order.analysisItems });
+      order.decisionScreenshotPath = image.screenshotPath;
+      order.decisionScreenshotSimTime = image.screenshotSimTime;
+      order.decisionScreenshotFrame = image.screenshotFrame;
+      linkImage(order, 'decision', image);
+    } catch (error) {
+      console.error(`[BacktestingApp] No se pudo capturar la decisión del trade #${order.id}:`, error);
+    }
+    await saveTradeSession();
+  };
+
   /** Toma la imagen del trade terminado, con lo que pasó después, y la deja en el trade */
   const captureExit = async (order, miniChart) => {
+    if (!miniChart?.isShown?.()) return; // Con el gráfico oculto espera a que vuelva
     order.exitCaptureAt = null; // Una sola vez, aunque el tiempo siga avanzando
     try {
       const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, {
-        showFrom: order.executedAt ?? order.entryTime
+        showFrom: order.executedAt ?? order.entryTime,
+        items: order.analysisItems
       });
       order.exitScreenshotPath = image.screenshotPath;
       order.exitScreenshotTimestamp = image.screenshotTimestamp;
       order.exitScreenshotMetadata = image.screenshotMetadata;
+      order.exitScreenshotSimTime = image.screenshotSimTime;
+      order.exitScreenshotFrame = image.screenshotFrame;
+      linkImage(order, 'exit', image);
     } catch (error) {
       console.error(`[BacktestingApp] No se pudo capturar el cierre del trade #${order.id}:`, error);
     }
@@ -324,10 +354,10 @@ const BacktestingApp = () => {
     // Handler para cuando se abre un trade: de mercado al crearlo, limit o stop al ejecutarse
     eventHandlersRef.current.tradeOpened = (event) => {
       const { order } = event;
-      const miniChart = miniChartRefs.current[activeTimeframe];
 
       redrawCharts();
-      setTimeout(() => captureEntry(order, miniChart), ENTRY_CAPTURE_DELAY_MS);
+      // El marco se elige al tomar la imagen: durante la espera se puede cambiar de pestaña
+      captureHold.run(release => captureEntry(order, miniChartRefs.current[activeTimeframeRef.current], release));
     };
 
     // Una orden pendiente se ejecutó: el evento tradeOpened llega justo después
@@ -389,6 +419,8 @@ const BacktestingApp = () => {
   const marketDataRef = useRef(null);
   const activeTimeframeRef = useRef('15m');
   const settledTimeRef = useRef(null); // Hasta dónde ya se revisaron las órdenes
+  const lastScreenUpdateRef = useRef(0); // Última vez que la hora simulada llegó a la pantalla
+  const captureHold = useMemo(() => new CaptureHold(() => timeControllerRef.current), []);
 
   // 🎯 FIX: Sincronizar refs con valores actuales
   useEffect(() => {
@@ -598,7 +630,7 @@ const BacktestingApp = () => {
       const url = `${API_BASE_URL}/api/backtesting/bulk-data/${symbolToLoad}${queryString ? '?' + queryString : ''}`;
 
       const response = await fetch(url);
-      const data = await response.json();
+      const data = withoutSubdivisions(await response.json());
 
       if (!data.success) {
         throw new Error(data.error || 'Error al cargar datos');
@@ -694,7 +726,7 @@ const BacktestingApp = () => {
 
           const saveRequest = store.put({
             symbol: symbol,
-            data: data,
+            data: withoutSubdivisions(data), // Cada vela se guarda una sola vez
             savedAt: Date.now()
           });
 
@@ -746,9 +778,10 @@ const BacktestingApp = () => {
         getRequest.onsuccess = () => {
           if (getRequest.result) {
             console.log(`[IndexedDB] Datos encontrados para ${symbol}`);
-            // Retornar tanto los datos como el timestamp de cuándo se guardaron
+            // Retornar tanto los datos como el timestamp de cuándo se guardaron.
+            // Un caché guardado antes trae la copia "subdivisions": se descarta y sigue sirviendo
             resolve({
-              data: getRequest.result.data,
+              data: withoutSubdivisions(getRequest.result.data),
               savedAt: getRequest.result.savedAt
             });
           } else {
@@ -885,7 +918,7 @@ const BacktestingApp = () => {
             try {
               // Verificar si el backend tiene velas más recientes
               const backendResponse = await fetch(`${API_BASE_URL}/api/backtesting/bulk-data/${symbol}?timeframe=${activeTimeframe}`);
-              const backendData = await backendResponse.json();
+              const backendData = withoutSubdivisions(await backendResponse.json());
 
               if (backendData.success && backendData.timeframes?.[activeTimeframe]) {
                 const backendCandles = backendData.timeframes[activeTimeframe].main;
@@ -927,16 +960,6 @@ const BacktestingApp = () => {
             console.log(`[BacktestingApp] ⚡ Cache reciente (${cacheAgeHours.toFixed(1)}h) - usando directamente sin verificar actualizaciones`);
             shouldUseCachedData = true;
             data = cachedResult.data;
-
-            // 🔍 DEBUG: Verificar subdivisiones
-            console.log(`%c[BacktestingApp] 🔍 VERIFICANDO SUBDIVISIONES EN MARKETDATA`, 'background: #FF00FF; color: white; font-weight: bold;');
-            ['1m', '5m', '15m', '1h', '4h'].forEach(tf => {
-              const tfData = data.timeframes?.[tf];
-              if (tfData) {
-                console.log(`[BacktestingApp] ${tf}: main=${tfData.main?.length || 0}, subdivisions=${tfData.subdivisions?.length || 0}`);
-              }
-            });
-
             setMarketData(data);
           }
         }
@@ -950,15 +973,6 @@ const BacktestingApp = () => {
       // 🔧 FIX: NO pasar activeTimeframe - descargar TODOS los timeframes en la carga inicial
       // Esto asegura que todos los timeframes (1m, 5m, 15m, 1h, 4h) se descarguen de una vez
       data = await loadBacktestingData(symbol, false, null);
-
-      // 🔍 DEBUG: Verificar subdivisiones después de descargar
-      console.log(`%c[BacktestingApp] 🔍 VERIFICANDO SUBDIVISIONES DESPUÉS DE DESCARGA`, 'background: #FF00FF; color: white; font-weight: bold;');
-      ['1m', '5m', '15m', '1h', '4h'].forEach(tf => {
-        const tfData = data.timeframes?.[tf];
-        if (tfData) {
-          console.log(`[BacktestingApp] ${tf}: main=${tfData.main?.length || 0}, subdivisions=${tfData.subdivisions?.length || 0}`);
-        }
-      });
     }
 
     if (data && data.timeframes && data.timeframes[activeTimeframe]) {
@@ -1070,6 +1084,12 @@ const BacktestingApp = () => {
       setBlindActive(blindStart !== null);
       maxSimTimeRef.current = 0;
 
+      // Al volver de Configurar el reloj anterior puede seguir andando
+      timeControllerRef.current?.destroy();
+      captureHold.cancel();
+      settledTimeRef.current = null;
+      setIsPlaying(false);
+
       // Crear TimeController
       // IMPORTANTE:
       // - startTime = firstCandle.timestamp (para mostrar TODO el historial)
@@ -1083,6 +1103,7 @@ const BacktestingApp = () => {
         handleTimeUpdate,           // callback
         simulationStartTime         // simulationStartTime: donde empieza la simulación
       );
+      controller.setSpeed(playbackSpeed); // El selector conserva su valor al volver de Configurar
 
       // Inicializar sincronización multi-pestaña
       const sessionId = `${symbol}_multi_${Date.now()}`;
@@ -1265,52 +1286,32 @@ const BacktestingApp = () => {
    * Callback cuando el tiempo cambia
    */
   const handleTimeUpdate = (newTime) => {
-    console.log(`[BacktestingApp] [ENTRY] handleTimeUpdate called with timestamp: ${newTime} (${new Date(newTime).toISOString()})`);
-    setCurrentTime(newTime);
-
     // 🎯 FIX: Usar refs para acceder a valores actuales (no del closure)
-    const currentMarketData = marketDataRef.current;
+    const timeframes = marketDataRef.current?.timeframes;
     const currentActiveTimeframe = activeTimeframeRef.current;
+    const hasData = !!timeframes?.[currentActiveTimeframe];
 
-    console.log(`[BacktestingApp] CHECK1: marketData=${!!currentMarketData}, timeframes=${!!currentMarketData?.timeframes}, activeTimeframe=${currentActiveTimeframe}, hasData=${!!currentMarketData?.timeframes?.[currentActiveTimeframe]}`);
+    // Revisa TP, SL y órdenes pendientes con las velas ya cerradas, en cada tick
+    if (hasData) settleOrders(timeframes, newTime);
 
-    if (currentMarketData && currentMarketData.timeframes && currentMarketData.timeframes[currentActiveTimeframe]) {
-      const timeframeData = currentMarketData.timeframes[currentActiveTimeframe];
-      console.log(`[BacktestingApp] CHECK2: timeframeData.main.length=${timeframeData.main?.length}`);
+    // La pantalla no necesita cada tick: el gráfico se dibuja 10 veces por segundo como mucho
+    const now = performance.now();
+    if (timeControllerRef.current?.isPlaying && now - lastScreenUpdateRef.current < SCREEN_UPDATE_MS) return;
+    lastScreenUpdateRef.current = now;
 
-      // Último precio que ya ocurrió en la hora simulada
-      const knownPrice = priceAt(currentMarketData.timeframes, newTime);
+    setCurrentTime(newTime);
+    if (!hasData) return;
 
-      if (knownPrice !== null) {
-        setCurrentPrice(knownPrice);
+    // Último precio que ya ocurrió en la hora simulada
+    const knownPrice = priceAt(timeframes, newTime);
+    if (knownPrice === null) return;
+    setCurrentPrice(knownPrice);
 
-        // Revisa TP, SL y órdenes pendientes con las velas ya cerradas
-        settleOrders(currentMarketData.timeframes, newTime);
-
-        // 🎯 NUEVO: Actualizar fecha de playback para Double Top/Bottom (chunks progresivos)
-        // Esto permite que nuevos patrones aparezcan a medida que avanza el playback
-        const miniChart = miniChartRefs.current[currentActiveTimeframe];
-        const indicatorManager = miniChart?.getIndicatorManager?.();
-        console.log(`[BacktestingApp] 🔍 DEBUG updateDTB: activeTimeframe=${currentActiveTimeframe}, hasMiniChart=${!!miniChart}, hasManager=${!!indicatorManager}, hasMethod=${!!(indicatorManager?.updateDTBPlaybackDate)}`);
-
-        if (indicatorManager && indicatorManager.updateDTBPlaybackDate) {
-          console.log(`[BacktestingApp] ✅ Calling updateDTBPlaybackDate with timestamp: ${newTime} (${new Date(newTime).toISOString()})`);
-          indicatorManager.updateDTBPlaybackDate(newTime);
-        } else {
-          console.warn(`[BacktestingApp] ⚠️ Cannot update DTB: manager=${!!indicatorManager}, method=${!!(indicatorManager?.updateDTBPlaybackDate)}`);
-        }
-
-        // 🎯 Actualizar también el Swing Detector para playback
-        if (indicatorManager && indicatorManager.updateSwingPlaybackTime) {
-          indicatorManager.updateSwingPlaybackTime(newTime);
-        }
-
-        // 🎯 Actualizar S&R para playback (evita sesgo de supervivencia)
-        if (indicatorManager && indicatorManager.updateSRPlaybackTime) {
-          indicatorManager.updateSRPlaybackTime(newTime);
-        }
-      }
-    }
+    // Double Top/Bottom y Swing siguen la hora simulada
+    const indicatorManager = miniChartRefs.current[currentActiveTimeframe]?.getIndicatorManager?.();
+    indicatorManager?.updateDTBPlaybackDate?.(newTime);
+    indicatorManager?.updateSwingPlaybackTime?.(newTime);
+    indicatorManager?.updateSRPlaybackTime?.(newTime);
   };
 
   /**
@@ -1332,17 +1333,21 @@ const BacktestingApp = () => {
 
   const handlePause = () => {
     console.log('[BacktestingApp] handlePause clicked');
+    captureHold.cancel();
     if (timeControllerRef.current) {
       timeControllerRef.current.pause();
       setIsPlaying(false);
+      handleTimeUpdate(timeControllerRef.current.currentTime); // La pantalla queda en la hora exacta
     }
   };
 
   const handleStop = () => {
     console.log('[BacktestingApp] handleStop clicked');
+    captureHold.cancel();
     if (timeControllerRef.current) {
       timeControllerRef.current.stop();
       setIsPlaying(false);
+      handleTimeUpdate(timeControllerRef.current.currentTime); // La pantalla queda en la hora exacta
       // Stop ya no resetea el tiempo, solo pausa
       // El currentTime se mantiene en la posición actual
     }
@@ -1352,6 +1357,9 @@ const BacktestingApp = () => {
     if (timeControllerRef.current) {
       timeControllerRef.current.setSpeed(speed);
       setPlaybackSpeed(speed);
+      // A velocidad baja el siguiente tick tarda: la pantalla no se queda atrás del reloj
+      lastScreenUpdateRef.current = 0;
+      handleTimeUpdate(timeControllerRef.current.currentTime);
     }
   };
 
@@ -1363,6 +1371,8 @@ const BacktestingApp = () => {
     if (!marketData || !currentTime) return;
 
     maxSimTimeRef.current = Math.max(maxSimTimeRef.current, currentTime);
+
+    if (tickAlreadySettled(timeControllerRef.current, currentTime)) return;
 
     const timeframeData = marketData.timeframes?.[activeTimeframe];
     if (!timeframeData || !timeframeData.main) return;
@@ -1376,10 +1386,62 @@ const BacktestingApp = () => {
     }
   }, [currentTime, marketData, activeTimeframe]);
 
+  // Estables para que el panel del Observador no se redibuje con cada cambio de hora
+  const observerViewer = useCallback(() => ({
+    // Lo vivido llega hasta el reloj: la pantalla puede ir atrás de una orden que ya cerró
+    reached: Math.max(maxSimTimeRef.current, timeControllerRef.current?.currentTime ?? 0),
+    blindActive: isBlind(),
+    sessionId: sessionIdRef.current
+  }), []);
+
+  // "Ir al gráfico" desde una imagen o una lectura: mueve la vista y nunca la hora simulada
+  const pendingFocusRef = useRef(null);
+  const focusPending = () => {
+    const pending = pendingFocusRef.current;
+    if (!pending) return;
+    const chart = miniChartRefs.current[pending.tf];
+    if (chart?.focusOn?.(pending.time, pending.price)) {
+      pendingFocusRef.current = null;
+    } else if (pending.tries++ < 10) {
+      setTimeout(focusPending, 100); // El marco recién mostrado todavía no se dibuja
+    } else {
+      pendingFocusRef.current = null;
+    }
+  };
+
+  const goToItem = useCallback((item) => {
+    const time = item.time ?? item.selectedAt;
+    if (!Number.isFinite(time)) return 'No tiene un momento al cual ir.';
+    const now = timeControllerRef.current?.currentTime;
+    if (Number.isFinite(now) && time > now) return 'Ese momento está después de la hora simulada.';
+
+    const tf = ['1m', '5m', '15m', '1h', '4h'].includes(item.timeframe) ? item.timeframe : activeTimeframeRef.current;
+    pendingFocusRef.current = { time, price: Number.isFinite(item.price) ? item.price : null, tf, tries: 0 };
+    if (tf !== activeTimeframeRef.current) latestRef.current.handleTabChange?.(tf);
+    else focusPending();
+    return null;
+  }, []);
+
+  useEffect(() => {
+    focusPending();
+  }, [activeTimeframe]);
+
+  const revealDate = useCallback(() => {
+    setBlindAnchor(null);
+    setBlindActive(false);
+    latestRef.current.applyToAllTimeframes(() => {});
+  }, []);
+
   /** Registra una orden nueva junto con lo que había en pantalla */
   const observeOrder = (order) => {
-    const manager = miniChartRefs.current[activeTimeframe]?.getIndicatorManager?.();
+    // La pantalla puede ir un poco detrás del reloj: la orden se revisa desde su propia hora
+    settledTimeRef.current = Math.min(settledTimeRef.current ?? order.entryTime, order.entryTime);
+
+    const miniChart = miniChartRefs.current[activeTimeframe];
+    const manager = miniChart?.getIndicatorManager?.();
     const indicators = tabStates[activeTimeframe]?.indicatorStates || {};
+    // Niveles y marcas elegidos hasta ese momento: van con la orden y se ubican en cada imagen suya
+    order.analysisItems = knownLevels(symbol, order.entryTime);
 
     recordOrder(order, {
       symbol,
@@ -1388,7 +1450,9 @@ const BacktestingApp = () => {
       price: currentPrice,
       rewound: order.entryTime < maxSimTimeRef.current,
       indicators: Object.keys(indicators).filter(name => indicators[name]),
-      ranges: rangesInUse(manager?.getFixedRangeProfiles?.() || [], order.entryTime)
+      ranges: rangesInUse(manager?.getFixedRangeProfiles?.() || [], order.entryTime),
+      drawings: drawingsForOrder(miniChart?.getDrawings?.(), order.entryTime, TF_MS[activeTimeframe]),
+      levels: order.analysisItems
     }).then(() => setObserverRevision(value => value + 1));
   };
 
@@ -1501,6 +1565,7 @@ const BacktestingApp = () => {
       miniChart.forceRedraw?.();
     });
   };
+  latestRef.current.applyToAllTimeframes = applyToAllTimeframes;
 
   const handleOpenOIVolumeConfluenceSettings = (indicatorManager) => {
     indicatorManagerRef.current = indicatorManager;
@@ -1515,22 +1580,30 @@ const BacktestingApp = () => {
   };
 
   /**
-   * 📍 NUEVO: Navegar al trade en el gráfico
-   * Centra el gráfico en la ubicación del trade con margen
-   * y dibuja una caja temporal resaltando Entry/SL/TP
+   * 📍 Navegar al trade en el gráfico
+   * Lleva la vista a la entrada del trade sin mover la hora simulada: el trade ya ocurrió y lo que
+   * vino después ya se vio. Dibuja la caja Entry/SL/TP si no la tiene
    */
-  const handleNavigateToTrade = (order, tradeNumber) => {
+  // Estable para que el Historial no se rearme con cada cambio de hora
+  const handleNavigateToTrade = useCallback((order, tradeNumber) => {
     console.log(`[BacktestingApp] 📍 Navegando al trade #${tradeNumber || '?'}:`, order);
 
     const miniChart = miniChartRefs.current[activeTimeframe];
-    if (!miniChart || !miniChart.centerOnTimestamp) {
-      console.warn('[BacktestingApp] ⚠️ MiniChart o centerOnTimestamp no disponible');
+    if (!miniChart || !miniChart.focusOn) {
+      console.warn('[BacktestingApp] ⚠️ MiniChart o focusOn no disponible');
       return;
     }
 
     // 🔧 FIX: Centrar en la línea vertical del trade (no en el punto medio).
     // Una orden limit se ejecuta después de crearse: la línea está en la ejecución
     const targetTimestamp = order.executedAt ?? order.entryTime;
+
+    // Tras retroceder el tiempo, un trade posterior a la hora simulada no se puede mostrar sin adelantarla
+    const now = timeControllerRef.current?.currentTime;
+    if (Number.isFinite(now) && targetTimestamp > now) {
+      console.warn(`[BacktestingApp] El trade #${tradeNumber || '?'} está después de la hora simulada`);
+      return;
+    }
 
     console.log(`[BacktestingApp] 📍 Centrando en timestamp de entrada del trade: ${new Date(targetTimestamp).toISOString()}`);
     console.log(`[BacktestingApp]   - Exit: ${new Date(order.exitTime).toISOString()}`);
@@ -1558,12 +1631,12 @@ const BacktestingApp = () => {
       );
     }
 
-    // Centrar el gráfico en el trade (en la entrada)
-    miniChart.centerOnTimestamp(targetTimestamp);
+    // Llevar la vista a la entrada, con lo que pasó después a la derecha
+    miniChart.focusOn(targetTimestamp, null, { mark: false });
 
     // 🎯 REMOVED: setSelectedTradeInfo() ya no existe - las líneas permanentes se dibujan
     // automáticamente via eventos tradeOpened/tradeClosed suscritos en líneas 908-918
-  };
+  }, [activeTimeframe]);
 
   /**
    * 🎯 Order Flow: Anclar/desanclar footprint
@@ -1640,21 +1713,24 @@ const BacktestingApp = () => {
       }
     }, 50);
   };
+  latestRef.current.handleTabChange = handleTabChange;
 
   /**
    * 🔧 FIX: Handler para sincronizar dibujos en tiempo real entre tabs
    */
   const handleDrawingsChange = (shapes, sourceInterval) => {
     console.log(`[BacktestingApp] Sincronizando ${shapes.length} dibujos desde ${sourceInterval} a otros tabs`);
-    setChartShapes(shapes);
+    // La caja de una orden viva no se separa de la orden: si se movió, vuelve a sus precios, también en el origen
+    const kept = boxesFollowOrders(shapes, orderManagerRef.current?.orders);
+    setChartShapes(kept || shapes);
 
-    // Cargar los mismos dibujos en todos los tabs (excepto el origen)
+    // Cargar los mismos dibujos en todos los tabs (el origen solo si una caja volvió a su orden)
     // skipSync = true para evitar loop infinito
     AVAILABLE_TIMEFRAMES.forEach(tf => {
-      if (tf !== sourceInterval) {
+      if (tf !== sourceInterval || kept) {
         const miniChart = miniChartRefs.current[tf];
         if (miniChart && miniChart.loadDrawings) {
-          miniChart.loadDrawings(shapes, true); // true = skipSync
+          miniChart.loadDrawings(kept || shapes, true); // true = skipSync
         }
       }
     });
@@ -1986,6 +2062,7 @@ const BacktestingApp = () => {
       setCurrentSessionId(session.sessionId);
       setCurrentSessionName(session.sessionName);
 
+      setObserverRevision(value => value + 1);
       console.log('[BacktestingApp] ✅ Sesión restaurada exitosamente:', session.sessionName);
       alert(`✅ Sesión cargada: ${session.sessionName}`);
     } catch (error) {
@@ -2546,13 +2623,10 @@ const BacktestingApp = () => {
                   const now = Date.now();
                   const daysNeeded = Math.ceil((now - simulationStartTime) / (24 * 60 * 60 * 1000));
                   // Usar el mínimo entre días necesarios y límite del backend
-                  const result = Math.min(daysNeeded, maxDays);
-                  console.log(`[BacktestingApp] 📊 ${tf} OI days: simulationStart=${new Date(simulationStartTime).toISOString().split('T')[0]}, daysNeeded=${daysNeeded}, maxDays=${maxDays}, usando=${result}`);
-                  return result;
+                  return Math.min(daysNeeded, maxDays);
                 }
 
                 // Sin fecha de inicio, usar el máximo permitido
-                console.log(`[BacktestingApp] 📊 ${tf} OI days: Sin simulationStartTime, usando maxDays=${maxDays}`);
                 return maxDays;
               };
 
@@ -2569,6 +2643,7 @@ const BacktestingApp = () => {
                   symbol={symbol}
                   interval={tf}
                   days={tfDays}
+                  isActive={activeTimeframe === tf}
                   indicatorStates={tabStates[tf]?.indicatorStates}
                   backtestingMode={true}
                   backtestingData={marketData}
@@ -2668,12 +2743,6 @@ const BacktestingApp = () => {
               📊 Dashboard
             </button>
             <button
-              className={`tab-btn ${activePanel === 'zones' ? 'active' : ''}`}
-              onClick={() => setActivePanel('zones')}
-            >
-              🎯 Zonas
-            </button>
-            <button
               className={`tab-btn ${activePanel === 'observer' ? 'active' : ''}`}
               onClick={() => setActivePanel('observer')}
             >
@@ -2690,6 +2759,7 @@ const BacktestingApp = () => {
                   currentPrice={currentPrice}
                 />
                 <TradingControls
+                  symbol={symbol}
                   orderManager={orderManagerRef.current}
                   currentPrice={currentPrice}
                   currentTime={currentTime}
@@ -2697,6 +2767,9 @@ const BacktestingApp = () => {
                   onOrderCreated={(order) => {
                     console.log('[BacktestingApp] Orden creada:', order);
                     observeOrder(order);
+                    if (order.status === 'pending') {
+                      captureHold.run(release => captureDecision(order, miniChartRefs.current[activeTimeframeRef.current], release));
+                    }
 
                     // Una orden que usa la caja dibujada la lleva a su entrada al abrir
                     if (order.tpslBoxId) {
@@ -2750,67 +2823,11 @@ const BacktestingApp = () => {
               <ObserverPanel
                 revision={observerRevision}
                 symbol={symbol}
+                sessionManager={sessionManager}
+                viewer={observerViewer}
                 blindActive={blindActive}
-                onRevealDate={() => {
-                  setBlindAnchor(null);
-                  setBlindActive(false);
-                  applyToAllTimeframes(() => {});
-                }}
-              />
-            )}
-
-            {blindActive && activePanel === 'zones' && (
-              <div className="observer-note" style={{ margin: '12px' }}>
-                Este panel muestra fechas reales: no está disponible con fecha oculta.
-              </div>
-            )}
-
-            {activePanel === 'zones' && !blindActive && (
-              <ZoneDetectorTester
-                symbol={symbol}
-                interval={activeTimeframe}
-                playbackStartTime={simulationStartTime}
-                onZonesDetected={(zones) => {
-                  setDetectedZones(zones);
-                  console.log(`[BacktestingApp] 🎯 ${zones.length} zonas detectadas, activeTimeframe=${activeTimeframe}`);
-                  console.log(`[BacktestingApp] 🎯 Zonas:`, zones.slice(0, 2)); // Log primeras 2 zonas
-
-                  // Las zonas se renderizarán en el chart
-                  const miniChart = miniChartRefs.current[activeTimeframe];
-                  console.log(`[BacktestingApp] 🎯 miniChart ref:`, !!miniChart, `setZones:`, !!miniChart?.setZones);
-
-                  if (miniChart && miniChart.setZones) {
-                    miniChart.setZones(zones);
-                    // Forzar redibujado después de establecer zonas
-                    if (miniChart.forceRedraw) {
-                      setTimeout(() => miniChart.forceRedraw(), 100);
-                    }
-                  } else {
-                    console.error(`[BacktestingApp] ❌ No se pudo establecer zonas - miniChart o setZones no disponible`);
-                  }
-                }}
-                // 🎯 NUEVO: Callback para centrar el chart en una zona seleccionada
-                onZoneClick={(zone) => {
-                  console.log(`[BacktestingApp] 🎯 Navegando a zona #${detectedZones.indexOf(zone) + 1}:`, zone.id);
-                  const miniChart = miniChartRefs.current[activeTimeframe];
-                  if (miniChart && miniChart.centerOnTimestamp) {
-                    // Centrar en el punto medio de la zona
-                    const midTimestamp = Math.floor((zone.start_timestamp + zone.end_timestamp) / 2);
-                    miniChart.centerOnTimestamp(midTimestamp);
-                    console.log(`[BacktestingApp] 🎯 Centrando en timestamp: ${midTimestamp} (${new Date(midTimestamp).toISOString()})`);
-                  } else {
-                    console.warn(`[BacktestingApp] ⚠️ centerOnTimestamp no disponible en miniChart`);
-                  }
-                }}
-                // 🎯 NUEVO: Callback para limpiar zonas del chart
-                onClearZones={() => {
-                  console.log(`[BacktestingApp] 🧹 Limpiando zonas detectadas`);
-                  setDetectedZones([]);
-                  const miniChart = miniChartRefs.current[activeTimeframe];
-                  if (miniChart && miniChart.clearZones) {
-                    miniChart.clearZones();
-                  }
-                }}
+                onRevealDate={revealDate}
+                onGoToItem={goToItem}
               />
             )}
 
@@ -2907,6 +2924,7 @@ const BacktestingApp = () => {
         <SupportResistance2Settings
           symbol={symbol}
           indicatorManager={indicatorManagerRef.current}
+          onConfigChange={config => applyToAllTimeframes(manager => manager.supportResistance2Indicator?.updateConfig(config))}
           onClose={() => setShowSupportResistance2Settings(false)}
         />
       )}

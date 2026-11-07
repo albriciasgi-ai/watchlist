@@ -1,10 +1,10 @@
 // src/components/MiniChart.jsx
 // ✅ SOLUCIÓN COMPLETA: Sincronización automática de indicadores + Detección de gaps + Zoom Dinámico + Presets
 
-import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import { API_BASE_URL } from "../config";
 import { DEFAULT_REWARD_RATIO } from "./drawing/shapes/TPSLBox";
-import { candlesToFrame } from "./backtesting/tradeJournal.js";
+import { candlesToFrame, contextBarWidth } from "./backtesting/tradeJournal.js";
 import wsManager from "./WebSocketManager";
 import IndicatorManager from "./indicators/IndicatorManager";
 import FixedRangeProfilesManager from "./FixedRangeProfilesManager";
@@ -13,15 +13,25 @@ import ZoomPresetsConfig from "./ZoomPresetsConfig";
 import DrawingToolManager from "./drawing/DrawingToolManager";
 import MeasurementTool from "./drawing/MeasurementTool";
 import TPSLBox from "./drawing/shapes/TPSLBox"; // 🎯 Para crear cajas TP/SL programáticamente
-import { formingCandle, lastClosedIndex } from './backtesting/replayClock';
+import { TF_MS, countBefore, formingCandle, lastClosedIndex, syncKnownCandles, timestampIndex } from './backtesting/replayClock';
 import { DEFAULT_PRICE_RATIO, resizePanel } from './indicators/panelLayout.js';
+import {
+  ROLES, candleCenterX, chosenLevel, drawChosenLevels, drawChosenMarks, imageMarkers, itemPositions, knownLevels, levelTargets, levelsNear,
+  subscribeLevels, toggleLevel, updateLevel, withinArea
+} from './indicators/analysisLevels.js';
+import './backtesting/Observer.css';
 import { isBlind, maskDate } from './backtesting/blindClock';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
 const MAX_ZOOM = MAX_BAR_WIDTH / 8;
 const FOOTPRINT_ZOOM = 20; // Velas de 160px: se leen las cifras del footprint
+const FOCUS_MIN_BAR_WIDTH = 6; // Al ir a un punto, velas más angostas no dejan distinguirlo
+const FOCUS_MARK_MS = 15000; // Cuánto queda marcado el punto al que se fue
 const MIN_VOLUME_HEIGHT = 40;
+const isValidCandle = (d) => d.open > 0 && d.high > 0 && d.low > 0 && d.close > 0 &&
+  d.high >= d.low && d.high >= d.open && d.high >= d.close &&
+  d.low <= d.open && d.low <= d.close;
 const PRICE_AXIS_WIDTH = 65;
 const PANEL_BUTTON_STYLE = {
   width: '18px',
@@ -166,6 +176,7 @@ const MiniChart = forwardRef(({
   backtestingMode = false,
   backtestingData = null,
   currentTime = null,
+  isActive = true,  // Solo el gráfico a la vista sigue la reproducción
   simulationStartTime = null,  // 🎯 NUEVO: Fecha de inicio de la simulación (para anti-sesgo en Order Flow)
   onRequestPause = null,  // 🎯 NUEVO: Callback para pausar reproducción al hacer paneo
   onRequestTimeChange = null,  // 🎯 NUEVO: Callback para cambiar el tiempo de playback (navegación a zonas)
@@ -221,8 +232,10 @@ const MiniChart = forwardRef(({
   // 🎯 NUEVO: Handler para teclas Delete y Escape
   useEffect(() => {
     const handleKeyDown = (e) => {
+      const typing = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+
       // Delete: borrar shape seleccionado
-      if (e.key === 'Delete' && drawingManagerRef.current) {
+      if (e.key === 'Delete' && drawingManagerRef.current && !typing) {
         drawingManagerRef.current.deleteSelected();
         saveDrawings();
         drawChart(candlesRef.current, lastPriceRef.current, null, null);
@@ -459,27 +472,6 @@ const MiniChart = forwardRef(({
       console.log(`[MiniChart ${symbol} ${interval}] ✅ TP/SL box ${boxId} extendido hasta ${new Date(exitTime).toISOString()}`);
       return true;
     },
-    // 🎯 NUEVO: Establecer zonas detectadas (Zone Detector 2.0)
-    setZones: (zones) => {
-      if (indicatorManagerRef.current) {
-        indicatorManagerRef.current.setZones(zones);
-        // Forzar redibujado
-        if (candlesRef.current && candlesRef.current.length > 0) {
-          drawChart(candlesRef.current, lastPriceRef.current, null, null);
-        }
-        console.log(`[MiniChart ${symbol} ${interval}] 🎯 ${zones.length} zonas establecidas`);
-      }
-    },
-    // 🎯 NUEVO: Limpiar zonas
-    clearZones: () => {
-      if (indicatorManagerRef.current) {
-        indicatorManagerRef.current.clearZones();
-        if (candlesRef.current && candlesRef.current.length > 0) {
-          drawChart(candlesRef.current, lastPriceRef.current, null, null);
-        }
-        console.log(`[MiniChart ${symbol} ${interval}] 🎯 Zonas limpiadas`);
-      }
-    },
     // 🎯 NUEVO: Centrar el chart en un timestamp específico
     centerOnTimestamp: (timestamp, options = {}) => {
       const { animate = true, duration = 500 } = options;
@@ -531,7 +523,7 @@ const MiniChart = forwardRef(({
         const wasManualPan = manualPanRef.current;
         manualPanRef.current = true;
 
-        onRequestTimeChange(targetCandle.timestamp);
+        onRequestTimeChange(Math.min(targetCandle.timestamp, simulatedNowRef.current ?? targetCandle.timestamp));
 
         // Restaurar el estado original después de que el useEffect termine
         setTimeout(() => {
@@ -614,24 +606,75 @@ const MiniChart = forwardRef(({
         console.log(`[MiniChart ${symbol}] 🎯 Centrado instantáneo en timestamp ${timestamp} (índice ${targetIndex}, offset ${viewStateRef.current.offset})`);
       }
     },
-    // 📸 Guarda una imagen del gráfico. Con showFrom la encuadra desde esa hora sin cambiar la vista del usuario
-    captureScreenshot: async (sessionId, orderId, { showFrom = null } = {}) => {
+    isShown: () => (canvasRef.current?.getBoundingClientRect().width ?? 0) > 0,
+
+    // Lleva la vista a una vela ya ocurrida, sin mover la hora simulada, y la marca un momento
+    // (sin marca con mark: false, como al ir a un trade, que ya tiene su línea)
+    focusOn: (time, price = null, { mark = true } = {}) => {
+      const candles = candlesRef.current;
+      const chartWidth = priceScaleRef.current?.chartWidth;
+      if (!candles?.length || !chartWidth) return false;
+
+      const index = countBefore(candles, time + 1) - 1;
+      if (index < 0) return false;
+
+      const view = viewStateRef.current;
+      if (8 * view.zoom < FOCUS_MIN_BAR_WIDTH) view.zoom = FOCUS_MIN_BAR_WIDTH / 8;
+      const perScreen = Math.floor(chartWidth / Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * view.zoom)));
+      // El punto queda a 40% del ancho: a la derecha se ve lo que pasó después
+      view.offset = Math.max(0, candles.length - perScreen - (index - Math.floor(perScreen * 0.4)));
+      view.verticalZoom = 1;
+      view.verticalOffset = 0;
+      manualPanRef.current = true;
+      setShowFollowButton(true);
+      onRequestPause?.();
+
+      if (mark) {
+        focusMarkRef.current = { time: candles[index].timestamp, price, until: performance.now() + FOCUS_MARK_MS };
+        setTimeout(() => {
+          if (candlesRef.current?.length > 0) drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
+        }, FOCUS_MARK_MS + 50);
+      }
+      drawChartRef.current?.(candles, lastPriceRef.current, null, null, true);
+      return true;
+    },
+
+    // 📸 Guarda una imagen del gráfico. Con showFrom la encuadra desde esa hora sin cambiar la vista
+    // del usuario. keepInView hace lo mismo solo si quien opera se alejó de la vela más reciente.
+    // Con context muestra unas 5 veces las velas a la vista, también sin cambiar la vista
+    captureScreenshot: async (sessionId, orderId, { showFrom = null, keepInView = null, context = false, onCopied = null, items = null } = {}) => {
       return new Promise((resolve, reject) => {
         const canvas = canvasRef.current;
         if (!canvas) {
           reject(new Error('Canvas no disponible'));
           return;
         }
+        // Oculto no se redibuja: la imagen mostraría un momento anterior
+        if (canvas.getBoundingClientRect().width === 0) {
+          reject(new Error('Gráfico oculto'));
+          return;
+        }
 
         console.log(`[MiniChart ${symbol}] 📸 Capturando screenshot para order ${orderId}...`);
 
+        const shownAt = simulatedNowRef.current;
         const userView = { ...viewStateRef.current };
-        if (showFrom) frameChartFrom(showFrom);
+        const frameFrom = showFrom ?? (viewStateRef.current.offset > 0 ? keepInView : null);
+        if (frameFrom) frameChartFrom(frameFrom);
+        if (context) widenChart();
+        const viewChanged = Boolean(frameFrom || context);
 
-        // Lo más reciente y sin la cruceta del mouse
+        // Lo más reciente y sin la cruceta del mouse ni la marca de "Ir al gráfico"
+        const focus = focusMarkRef.current;
+        focusMarkRef.current = null;
         if (candlesRef.current?.length > 0) {
           drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
         }
+        focusMarkRef.current = focus;
+
+        // Dónde quedó en la imagen cada nivel o marca de la orden
+        const drawn = lastAreaRef.current;
+        const markers = items?.length && drawn ? imageMarkers(itemPositions(items, drawn.offered, drawn.area), canvas.width, canvas.height) : [];
 
         // Convertir canvas a blob (PNG)
         canvas.toBlob(async (blob) => {
@@ -663,6 +706,9 @@ const MiniChart = forwardRef(({
                 screenshotPath: result.screenshotPath,
                 screenshotCaptured: true,
                 screenshotTimestamp: Date.now(),
+                screenshotSimTime: shownAt,
+                screenshotFrame: interval,
+                screenshotMarkers: markers,
                 screenshotMetadata: {
                   width: canvas.width,
                   height: canvas.height,
@@ -679,10 +725,11 @@ const MiniChart = forwardRef(({
         }, 'image/png');
 
         // toBlob ya copió la imagen: la vista vuelve antes de que se pinte la pantalla
-        if (showFrom) {
+        if (viewChanged) {
           Object.assign(viewStateRef.current, userView);
           drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
         }
+        onCopied?.();
       });
     },
     // Vuelve a dibujar cuando cambian los trades
@@ -704,6 +751,7 @@ const MiniChart = forwardRef(({
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
   const manualPanRef = useRef(false); // 🎯 NUEVO: Detectar si el usuario hizo paneo manual
   const rafRef = useRef(null); // Para requestAnimationFrame
+  const pendingDrawRef = useRef(null); // Lo último que se pidió dibujar mientras se espera el cuadro
   const allCandlesRef = useRef([]); // Almacena todas las velas para binary search
   const lastIndexRef = useRef(-1); // Para detectar cambios reales de vela
   const formingKeyRef = useRef(0); // Para detectar avances de la vela en formacion
@@ -729,6 +777,30 @@ const MiniChart = forwardRef(({
     return saved ? parseInt(saved) : 80; // 80px por defecto (aumentado de 50)
   });
   const [isDraggingVolumeDivider, setIsDraggingVolumeDivider] = useState(false);
+
+  // Niveles y marcas que se pueden incluir en el análisis, y el menú abierto sobre uno
+  const levelTargetsRef = useRef([]);
+  const lastAreaRef = useRef(null); // Escala y elegibles del último dibujo, para ubicar las marcas de una imagen
+  const levelMenuRef = useRef(null);
+  const focusMarkRef = useRef(null); // Punto al que se fue desde una imagen
+  const [levelMenu, setLevelMenu] = useState(null);
+  const [, setLevelVersion] = useState(0);
+
+  // El menú crece al marcar: se acomoda para no salirse del gráfico, también al agrandar una nota
+  useLayoutEffect(() => {
+    const menu = levelMenuRef.current;
+    if (!levelMenu || !menu || typeof ResizeObserver === 'undefined') return undefined;
+    const fit = () => {
+      const box = menu.offsetParent;
+      if (!box) return;
+      menu.style.top = `${Math.max(0, Math.min(levelMenu.y, box.clientHeight - menu.offsetHeight))}px`;
+      menu.style.left = `${Math.max(0, Math.min(levelMenu.x, box.clientWidth - menu.offsetWidth))}px`;
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(menu);
+    return () => observer.disconnect();
+  }, [levelMenu]);
 
   // Paneles a la vista, para ubicar sus bordes y flechas sobre el canvas
   const [panels, setPanels] = useState([]);
@@ -880,16 +952,18 @@ const MiniChart = forwardRef(({
     const isFirstRender = !initialRenderDoneRef.current;
 
     if (!forceRender && !isFirstRender && now - lastRenderTimeRef.current < FRAME_BUDGET_MS) {
-      // Programar un render para el próximo frame disponible si no hay uno pendiente
+      // El próximo cuadro dibuja lo último pedido: si el mouse se detiene, la cruz queda en su sitio
+      pendingDrawRef.current = [candles, livePrice, mouseX, mouseY];
       if (!rafRef.current) {
         rafRef.current = requestAnimationFrame(() => {
           rafRef.current = null;
-          drawChart(candles, livePrice, mouseX, mouseY, true);
+          drawChart(...pendingDrawRef.current, true);
         });
       }
       return;
     }
     lastRenderTimeRef.current = now;
+    initialRenderDoneRef.current = true;
 
     const canvas = canvasRef.current;
     if (!canvas || candles.length === 0) return;
@@ -946,17 +1020,13 @@ const MiniChart = forwardRef(({
 
     const marginBottom = volumeHeightCalculated + timeAxisHeight + indicatorsHeight;
 
-    let displayCandles = [...candles];
-    
-    if (inProgressCandleRef.current) {
-      displayCandles.push(inProgressCandleRef.current);
+    // En reproducción las velas se validan una vez al cargarlas, no en cada dibujo
+    let displayCandles = candles;
+    if (!backtestingMode || inProgressCandleRef.current) {
+      displayCandles = [...candles];
+      if (inProgressCandleRef.current) displayCandles.push(inProgressCandleRef.current);
+      displayCandles = displayCandles.filter(isValidCandle);
     }
-
-    displayCandles = displayCandles.filter(d => 
-      d.open > 0 && d.high > 0 && d.low > 0 && d.close > 0 &&
-      d.high >= d.low && d.high >= d.open && d.high >= d.close &&
-      d.low <= d.open && d.low <= d.close
-    );
 
     const chartWidth = width - marginLeft - marginRight;
     const effectiveBarWidth = Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * viewStateRef.current.zoom));
@@ -1075,7 +1145,7 @@ const MiniChart = forwardRef(({
 
       const timeToX = (timestamp) => {
         if (!visibleCandles || visibleCandles.length === 0) return null;
-        const exactIndex = visibleCandles.findIndex(c => c.timestamp === timestamp);
+        const exactIndex = timestampIndex(visibleCandles, timestamp);
         if (exactIndex !== -1) {
           return marginLeft + (exactIndex * barWidth) + (barWidth / 2);
         }
@@ -1115,10 +1185,36 @@ const MiniChart = forwardRef(({
       ctx.rect(0, marginTop, width, priceChartHeight);
       ctx.clip();
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, allCandlesForCalculation, priceContext);
+
+      // Lo elegido en otro marco va en la vela de este marco que contiene su hora
+      const candleX = (timestamp) => candleCenterX(visibleCandles, TF_MS[interval], marginLeft, barWidth, timestamp) ?? timeToX(timestamp);
+      const area = { priceToY, timeToX, candleX, left: marginLeft, right: marginLeft + chartWidth, top: marginTop, bottom: marginTop + priceChartHeight };
+      const chosen = knownLevels(symbol, simulatedNowRef.current ?? priceContext.knownUntil);
+      drawChosenLevels(ctx, chosen, area);
       ctx.restore();
 
       // Los footprints van encima de los perfiles y demás indicadores, para leer sus cifras
       orderFlowIndicator?.renderOnChart(ctx, overlayBounds, visibleCandles, priceContext, orderFlowReplacesCandles);
+
+      // Lo que se puede elegir con un clic, ya ubicado por los indicadores en este cuadro. No se dibuja nada más
+      const offered = indicatorManagerRef.current.getSelectableLevels().filter(target => withinArea(target, area));
+      const positions = itemPositions(chosen, offered, area);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, marginTop, width, priceChartHeight);
+      ctx.clip();
+      drawChosenMarks(ctx, positions);
+      drawFocusMark(ctx, area);
+      ctx.restore();
+
+      const chosenTargets = [
+        ...chosen.filter(item => !item.mark),
+        ...positions.filter(({ item }) => item.mark).map(({ item, x, y }) => ({ ...item, x, y, r: 10 }))
+      ];
+      const shownIds = new Set();
+      levelTargetsRef.current = levelTargets([...chosenTargets, ...offered], area)
+        .filter(level => !shownIds.has(level.id) && shownIds.add(level.id));
+      lastAreaRef.current = { area, offered };
     }
 
     // 🎯 NUEVO: Calcular z-score de volúmenes para mejoras visuales
@@ -1500,6 +1596,28 @@ const MiniChart = forwardRef(({
 
   // ==================== DRAWING PERSISTENCE ====================
 
+  // Línea y aro en el punto al que se fue desde una imagen
+  const drawFocusMark = (ctx, { priceToY, timeToX, top, bottom, left, right }) => {
+    const focus = focusMarkRef.current;
+    if (!focus || performance.now() > focus.until) return;
+    const x = timeToX(focus.time);
+    if (x === null || x < left || x > right) return;
+
+    ctx.strokeStyle = '#38BDF8';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x, top);
+    ctx.lineTo(x, bottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (Number.isFinite(focus.price)) {
+      ctx.beginPath();
+      ctx.arc(x, priceToY(focus.price), 12, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  };
+
   // Encuadra desde una hora hasta la vela más reciente, con velas anteriores como contexto
   const frameChartFrom = (time) => {
     const candles = candlesRef.current;
@@ -1515,6 +1633,14 @@ const MiniChart = forwardRef(({
     view.verticalZoom = 1;
     view.verticalOffset = 0;
     if (needed > Math.floor(chartWidth / barWidth)) view.zoom = chartWidth / (needed * 8);
+  };
+
+  // Aleja la vista para una imagen con contexto: la vela de la derecha queda en su lugar y el precio se ajusta solo
+  const widenChart = () => {
+    const view = viewStateRef.current;
+    view.zoom = contextBarWidth(Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * view.zoom))) / 8;
+    view.verticalZoom = 1;
+    view.verticalOffset = 0;
   };
 
   // Extraer rectángulos del DrawingToolManager para el modal VP Fixed
@@ -1533,6 +1659,12 @@ const MiniChart = forwardRef(({
     observer.observe(canvas);
     return () => observer.disconnect();
   }, []);
+
+  // Un nivel elegido o quitado en otro marco o en el panel de órdenes se ve de una vez
+  useEffect(() => subscribeLevels(symbol, () => {
+    setLevelVersion(version => version + 1);
+    if (candlesRef.current?.length > 0) drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+  }), [symbol]);
 
   // Al mover los divisores, el reparto de altura se ve mientras se arrastra
   useEffect(() => {
@@ -1942,7 +2074,25 @@ const MiniChart = forwardRef(({
     } else {
       setMousePos({ x, y });
       drawChart(candlesRef.current, lastPriceRef.current, x, y);
+      canvas.style.cursor = levelsNear(levelTargetsRef.current, x, y).length ? 'pointer' : 'crosshair';
     }
+  };
+
+  // Clic sin arrastrar sobre un nivel: abre el menú para incluirlo en el análisis
+  const handleChartClick = (e) => {
+    const drag = dragStateRef.current;
+    const canvas = canvasRef.current;
+    if (!drag.isDragging || drag.drawingHandled || e.button !== 0 || !canvas) return;
+    if (drawingManagerRef.current && drawingManagerRef.current.currentTool !== 'select') return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    if (Math.hypot(x - drag.startX, y - drag.startY) > 4) return;
+
+    const levels = levelsNear(levelTargetsRef.current, x, y);
+    const menuHeight = 40 + levels.length * 30 + 90; // Con un elegido abierto, su papel y su nota
+    setLevelMenu(levels.length ? { x: Math.min(x + 10, rect.width - 290), y: Math.max(0, Math.min(y + 10, rect.height - menuHeight)), levels } : null);
   };
 
   const handleMouseDown = (e) => {
@@ -2003,7 +2153,7 @@ const MiniChart = forwardRef(({
     canvas.style.cursor = 'grabbing';
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
     // 🎯 NUEVO: Finalizar measurement tool
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring()) {
       measurementToolRef.current.handleMouseUp();
@@ -2026,6 +2176,8 @@ const MiniChart = forwardRef(({
       }
       return;
     }
+
+    handleChartClick(e);
 
     // 🔧 FIX: Limpiar potentialDrag
     dragStateRef.current.isDragging = false;
@@ -2328,34 +2480,11 @@ const MiniChart = forwardRef(({
     }
 
     const timeframeData = backtestingData.timeframes?.[interval];
-    console.log(`[MiniChart ${symbol} ${interval}] 🔍 timeframeData:`, {
-      hasMain: !!timeframeData?.main,
-      mainLength: timeframeData?.main?.length || 0,
-      hasSubdivisions: !!(timeframeData?.subdivisions && timeframeData.subdivisions.length > 0),
-      subdivisionsLength: timeframeData?.subdivisions?.length || 0
-    });
 
     if (timeframeData?.main) {
-      // 🎯 FIX CRÍTICO: En modo backtesting, usar SUBDIVISIONES si existen
-      // Esto permite que el playback avance correctamente con estados intravela
-      // Ejemplo: timeframe 5m usa velas de 1m para avanzar de 5 en 5 subdivisiones
-      const hasSubdivisions = timeframeData.subdivisions && timeframeData.subdivisions.length > 0;
-
-      if (hasSubdivisions) {
-        console.log(`%c[MiniChart ${symbol} ${interval}] ✅ USANDO SUBDIVISIONES: ${timeframeData.subdivisions.length} velas`, 'background: #00FF00; color: black; font-weight: bold;');
-        console.log(`[MiniChart ${symbol} ${interval}] 📊 Subdivisiones en lugar de ${timeframeData.main.length} main`);
-
-        // Log de primeras y últimas velas de subdivisiones
-        const firstSub = timeframeData.subdivisions[0];
-        const lastSub = timeframeData.subdivisions[timeframeData.subdivisions.length - 1];
-        console.log(`[MiniChart ${symbol} ${interval}] 🔍 Primera subdivisión: ${new Date(firstSub.timestamp).toISOString()}`);
-        console.log(`[MiniChart ${symbol} ${interval}] 🔍 Última subdivisión: ${new Date(lastSub.timestamp).toISOString()}`);
-
-        allCandlesRef.current = timeframeData.subdivisions;
-      } else {
-        console.log(`%c[MiniChart ${symbol} ${interval}] ⚠️ NO HAY SUBDIVISIONES - Usando main: ${timeframeData.main.length} velas`, 'background: #FFFF00; color: black; font-weight: bold;');
-        allCandlesRef.current = timeframeData.main;
-      }
+      // Las velas del marco llegan una sola vez, en main. La vela en formación se arma con
+      // los marcos menores ya cerrados (formingCandle), no con velas de este arreglo
+      allCandlesRef.current = timeframeData.main.filter(isValidCandle);
 
       console.log(`[MiniChart ${symbol} ${interval}] 🔍 allCandlesRef.current.length = ${allCandlesRef.current.length}`);
 
@@ -2364,48 +2493,30 @@ const MiniChart = forwardRef(({
     } else {
       console.warn(`%c[MiniChart ${symbol} ${interval}] ❌ NO HAY DATOS MAIN en timeframe`, 'background: #FF0000; color: white; font-weight: bold;');
     }
-  }, [backtestingMode, backtestingData, backtestingData?.timeframes?.[interval]?.main?.length, backtestingData?.timeframes?.[interval]?.subdivisions?.length, interval, symbol]);
+  }, [backtestingMode, backtestingData, backtestingData?.timeframes?.[interval]?.main?.length, interval, symbol]);
 
   // 🎯 ELIMINADO - Ya no es necesario, el Binary Search maneja todo desde el inicio
 
   // 🎯 OPTIMIZADO: Efecto para modo backtesting - filtrar velas con Binary Search
   useEffect(() => {
     // IMPORTANTE: Solo ejecutar en modo backtesting con datos disponibles
-    if (!backtestingMode || !backtestingData || allCandlesRef.current.length === 0) {
-      console.log(`%c[MiniChart ${symbol} ${interval}] ⏭️ BINARY SEARCH SKIPPED: mode=${backtestingMode}, data=${!!backtestingData}, allCandles=${allCandlesRef.current.length}`, 'background: #888; color: white;');
-      return;
-    }
-    if (!currentTime) {
-      console.log(`%c[MiniChart ${symbol} ${interval}] ⏭️ BINARY SEARCH SKIPPED: currentTime=${currentTime}`, 'background: #888; color: white;');
-      return;
-    }
-
-    console.log(`%c[MiniChart ${symbol} ${interval}] 🔍 BINARY SEARCH START`, 'background: #0000FF; color: white; font-weight: bold;');
-    console.log(`[MiniChart ${symbol} ${interval}] 🔍 currentTime=${new Date(currentTime).toISOString()}, allCandles=${allCandlesRef.current.length}, lastIndex=${lastIndexRef.current}`);
+    if (!backtestingMode || !backtestingData || allCandlesRef.current.length === 0) return;
+    if (!currentTime || !isActive) return; // Los marcos ocultos se ponen al día cuando se muestran
 
     // Solo velas cerradas en la hora simulada, mas la vela en formacion armada con velas menores
     const lastIndex = lastClosedIndex(allCandlesRef.current, interval, currentTime);
     const forming = formingCandle(backtestingData.timeframes, interval, currentTime);
     const formingKey = forming ? forming.knownUntil : 0;
 
-    console.log(`[MiniChart ${symbol} ${interval}] 🔍 Binary search result: lastIndex=${lastIndex}, lastIndexRef=${lastIndexRef.current}`);
-
     // Solo actualizar si cerró una vela o avanzó la vela en formación
-    if ((lastIndex < 0 && !forming) || (lastIndex === lastIndexRef.current && formingKey === formingKeyRef.current)) {
-      console.log(`%c[MiniChart ${symbol} ${interval}] ⏭️ NO UPDATE: lastIndex=${lastIndex}, same as before`, 'background: #FFA500; color: black;');
-      return;
-    }
+    if ((lastIndex < 0 && !forming) || (lastIndex === lastIndexRef.current && formingKey === formingKeyRef.current)) return;
 
     // Actualizar refs
     lastIndexRef.current = lastIndex;
     formingKeyRef.current = formingKey;
 
-    // Usar slice en lugar de filter
-    candlesRef.current = allCandlesRef.current.slice(0, lastIndex + 1);
-    if (forming) candlesRef.current.push(forming);
+    candlesRef.current = syncKnownCandles(candlesRef.current, allCandlesRef.current, lastIndex, forming);
     inProgressCandleRef.current = null;
-
-    console.log(`%c[MiniChart ${symbol} ${interval}] ✅ UPDATED candlesRef: ${candlesRef.current.length} velas hasta ${new Date(candlesRef.current[candlesRef.current.length - 1]?.timestamp).toISOString()}`, 'background: #00FF00; color: black; font-weight: bold;');
 
     // Actualizar precio actual
     const lastCandle = candlesRef.current[candlesRef.current.length - 1];
@@ -2418,31 +2529,13 @@ const MiniChart = forwardRef(({
       viewStateRef.current.offset = 0;
     }
 
-    // 🎯 CRITICAL: Throttle agresivo para alta velocidad
-    // Limitar renders a 10 FPS (100ms) para evitar saturar el navegador
-    const now = performance.now();
-    const timeSinceLastRender = now - lastRenderTimeRef.current;
-
-    // Si han pasado menos de 100ms, cancelar render anterior y programar nuevo
+    // La hora llega a lo sumo 10 veces por segundo. Un cuadro pendiente se reemplaza por este
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-    if (timeSinceLastRender < 100) {
-      // Throttle: esperar 100ms desde el último render
-      rafRef.current = requestAnimationFrame(() => {
-        const checkTime = performance.now();
-        if (checkTime - lastRenderTimeRef.current >= 100) {
-          lastRenderTimeRef.current = checkTime;
-          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-        }
-      });
-    } else {
-      // Render inmediato si ya pasaron 100ms
-      lastRenderTimeRef.current = now;
-      rafRef.current = requestAnimationFrame(() => {
-        drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-      });
-    }
-  }, [backtestingMode, backtestingData, currentTime, interval]);
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y, true);
+    });
+  }, [backtestingMode, backtestingData, currentTime, interval, isActive]);
 
   // ==================== MAIN EFFECT ====================
 
@@ -2453,6 +2546,8 @@ const MiniChart = forwardRef(({
 
     const initIndicators = async () => {
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
+      // El Swing toma de aquí los rectángulos del gráfico para su filtro VWAP
+      indicatorManagerRef.current.getDrawingManager = () => drawingManagerRef.current;
 
       // 🎯 NUEVO: En modo backtesting, PRE-cargar Open Interest ANTES de initialize()
       if (backtestingMode && backtestingData) {
@@ -2519,6 +2614,7 @@ const MiniChart = forwardRef(({
     // 🎯 NUEVO: Inicializar sistema de dibujo
     drawingManagerRef.current = new DrawingToolManager(symbol, interval, null, (shape) => {
       // Callback cuando se agrega un shape: actualizar rectángulos disponibles
+      if (shape) shape.createdAt = simulatedNowRef.current ?? null;
       updateChartRectangles();
 
       // Auto-crear VP Fixed si el usuario dibujó un rectángulo desde el modal
@@ -3187,6 +3283,50 @@ const MiniChart = forwardRef(({
             ⚙️
           </button>
         </div>
+
+        {levelMenu && (
+          <div ref={levelMenuRef} className="level-menu" style={{ left: levelMenu.x, top: levelMenu.y }} onMouseDown={(e) => e.stopPropagation()}>
+            <div className="level-menu-title">
+              Incluir en el análisis
+              <button type="button" title="Cerrar" onClick={() => setLevelMenu(null)}>×</button>
+            </div>
+            {levelMenu.levels.map(level => {
+              const chosen = chosenLevel(symbol, level.id, simulatedNowRef.current ?? Infinity);
+              return (
+                <div className="level-menu-item" key={level.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={!!chosen}
+                      onChange={() => toggleLevel(symbol, level, simulatedNowRef.current ?? Date.now(), interval, lastPriceRef.current)}
+                    />
+                    <strong>{level.kind}</strong>
+                    <span>{level.source}</span>
+                    <em>{level.mark || !Number.isFinite(level.price) ? '' : level.price.toFixed(1)}</em>
+                  </label>
+                  {chosen && (
+                    <div className="level-menu-detail">
+                      <select
+                        value={chosen.role ?? ''}
+                        title="Papel en el trade"
+                        onChange={(e) => updateLevel(symbol, level.id, { role: e.target.value })}
+                      >
+                        {level.mark ? <option value="">Solo marca</option> : (chosen.role ?? null) === null && <option value="" disabled>Elige su papel</option>}
+                        {ROLES.map(role => <option key={role.value} value={role.value}>{role.label}</option>)}
+                      </select>
+                      <textarea
+                        rows={2}
+                        placeholder="¿Por qué es importante?"
+                        value={chosen.note ?? ''}
+                        onChange={(e) => updateLevel(symbol, level.id, { note: e.target.value })}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {panels.map((panel, i) => (
           <React.Fragment key={panel.name}>

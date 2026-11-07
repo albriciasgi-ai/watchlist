@@ -1,4 +1,5 @@
 import IndicatorBase from './IndicatorBase.js';
+import { candleItemId } from './analysisLevels.js';
 import { ResponseSeries, defaultResponseConfig } from './responseBalance.js';
 
 const SETTINGS_KEY = 'response_balance_settings_';
@@ -37,6 +38,7 @@ class ResponseVolumeIndicator extends IndicatorBase {
     this.enabled = false;
     this.config = { ...defaultResponseConfig(), ...loadResponseVolumeSettings(symbol) };
     this.series = new ResponseSeries(this.config);
+    this.marks = []; // Las dibujadas en el último cuadro
   }
 
   async fetchData() {
@@ -50,9 +52,20 @@ class ResponseVolumeIndicator extends IndicatorBase {
     if (changed) this.series.reset();
   }
 
+  /** Rombos y flechas a la vista, para elegirlos como marcas con una nota */
+  selectableLevels() {
+    return this.marks;
+  }
+
+  _mark(kind, candle, price, x, y, r) {
+    const id = candleItemId(this.name, kind, candle.timestamp, null, this.interval);
+    this.marks.push({ id, source: this.name, kind, price, time: candle.timestamp, mark: true, x, y, r });
+  }
+
   // Los paneles no reciben las velas conocidas: la serie se actualiza aquí, en cada dibujo del precio
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext = null) {
     this.series.update(priceContext?.knownCandles || allCandles);
+    this.marks = [];
 
     const { showArrows, showSignals } = this.config;
     if ((!showArrows && !showSignals) || !visibleCandles?.length || !priceContext?.priceToY || !priceContext.timeToX) return;
@@ -82,6 +95,8 @@ class ResponseVolumeIndicator extends IndicatorBase {
         ctx.lineTo(x + size, tip + (buying ? size * 1.6 : -size * 1.6));
         ctx.closePath();
         ctx.fill();
+        const kind = buying ? 'Flecha de compra' : 'Flecha de venta';
+        this._mark(kind, candle, buying ? candle.low : candle.high, x, tip + (buying ? size * 0.8 : -size * 0.8), Math.max(7, size + 3));
       }
 
       if (signal) {
@@ -90,6 +105,7 @@ class ResponseVolumeIndicator extends IndicatorBase {
         const clear = principal && above !== buying ? size * 1.6 + 6 : 4;
         const y = priceContext.priceToY(above ? candle.high : candle.low) + (above ? -clear - size : clear + size);
         this.drawDiamond(ctx, x, y, size);
+        this._mark('Rombo', candle, above ? candle.high : candle.low, x, y, Math.max(7, size + 3));
       }
     }
   }

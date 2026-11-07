@@ -1,9 +1,10 @@
 // VolumeProfileFixedRangeIndicator.js
 // ✅ VERSION 3.0 - Correcciones de formato visual y configuración
 
+import { profileLevels } from './analysisLevels.js';
 import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
-import { TF_MS } from "../backtesting/replayClock";
+import { TF_MS, candlesBetween } from "../backtesting/replayClock";
 
 const MIN_REAL_COVERAGE = 0.99; // Con menos minutos en el almacén se usa el perfil estimado
 
@@ -274,9 +275,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
   }
 
   filterCandlesByRange(allCandles, startTimestamp, endTimestamp) {
-    return allCandles.filter(candle => 
-      candle.timestamp >= startTimestamp && candle.timestamp <= endTimestamp
-    );
+    return candlesBetween(allCandles, startTimestamp, endTimestamp);
   }
 
   findCandleIndex(timestamp, visibleCandles) {
@@ -383,8 +382,8 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     };
 
     // 🎯 Obtener high/low del rango desde las velas del rango
-    const rangeHigh = Math.max(...this.rangeCandles.map(c => c.high));
-    const rangeLow = Math.min(...this.rangeCandles.map(c => c.low));
+    const rangeHigh = this.profile.maxPrice;
+    const rangeLow = this.profile.minPrice;
 
     // 🎯 Convertir precios del rango a coordenadas Y
     const rangeHighY = priceToY(rangeHigh);
@@ -587,6 +586,10 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
         enabled: this.enabled
       });
     }
+  }
+
+  selectableLevels() {
+    return profileLevels(this.profile, 'VP Fixed Range', { start: this.startTimestamp, end: this.endTimestamp });
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext = null) {

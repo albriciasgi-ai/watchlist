@@ -14,6 +14,7 @@ const NUMBER_LIMITS = {
   minCandleWidth: [4, 200],
   minCandleWidthFull: [20, 400],
   fontSize: [7, 14],
+  deltaFontSize: [8, 24],
   deltaMarkMinShare: [0.01, 1],
   stackedLineWidth: [1, 6],
   stackedLineExtend: [1, 8],
@@ -213,6 +214,12 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
               step="1" min="7" max="14"
               value={values.fontSize}
               onChange={(value) => set('fontSize', value)}
+            />
+            <NumberRow
+              label="Tamaño del delta debajo de la vela (px)"
+              step="1" min="8" max="24"
+              value={values.deltaFontSize}
+              onChange={(value) => set('deltaFontSize', value)}
             />
           </div>
 

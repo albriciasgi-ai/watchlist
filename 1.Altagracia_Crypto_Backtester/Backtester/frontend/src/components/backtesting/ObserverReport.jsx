@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { fetchReport, formatR, reasonLabel } from './observer.js';
+import { exportUrl, fetchReport, formatR, reasonLabel } from './observer.js';
+import ObserverPatterns from './ObserverPatterns';
+import ObserverRules from './ObserverRules';
 import '../RejectionPatternSettings.css';
 import './Observer.css';
 
@@ -77,7 +79,7 @@ const Summary = ({ data, includeRewound }) => {
 };
 
 /** Informe de todo lo registrado: qué condiciones se repiten y cuáles acompañan los mejores resultados */
-const ObserverReport = ({ symbol, onClose }) => {
+const ObserverReport = ({ symbol, reached, onClose }) => {
   const [blind, setBlind] = useState('all');
   const [includeRewound, setIncludeRewound] = useState(false);
   const [data, setData] = useState(null);
@@ -129,6 +131,8 @@ const ObserverReport = ({ symbol, onClose }) => {
           {data && data.counts.total > 0 && (
             <>
               <Summary data={data} includeRewound={includeRewound} />
+
+              <ObserverPatterns symbol={symbol} blind={blind} includeRewound={includeRewound} until={reached} />
 
               {data.agreement.length > 0 && (
                 <div className="settings-section">
@@ -201,9 +205,12 @@ const ObserverReport = ({ symbol, onClose }) => {
               )}
             </>
           )}
+
+          <ObserverRules symbol={symbol} until={reached} />
         </div>
 
         <div className="settings-footer">
+          <a className="btn-secondary" href={exportUrl(symbol)} download>Descargar registro (CSV)</a>
           <button className="btn-primary" onClick={onClose}>Cerrar</button>
         </div>
       </div>

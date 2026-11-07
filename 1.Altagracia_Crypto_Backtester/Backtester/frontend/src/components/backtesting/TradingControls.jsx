@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import OrderConfirmationModal from './OrderConfirmationModal';
-import ObserverMarks from './ObserverMarks';
-import { emptyMarks } from './observer.js';
-import { autoOrderType, orderPreview, orderQuantity, priceAtPercent } from './orderPlan.js';
+import AnalysisLevels from './AnalysisLevels';
+import { autoOrderType, orderEntry, orderPreview, orderQuantity, priceAtPercent } from './orderPlan.js';
 
 const SIZE_MODE_KEY = 'backtesting_order_size_mode';
 
@@ -14,7 +13,7 @@ function savedSizeMode() {
   }
 }
 
-const TradingControls = ({ orderManager, currentPrice, currentTime, chartBox, onOrderCreated }) => {
+const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, chartBox, onOrderCreated }) => {
   const [orderType, setOrderType] = useState('auto');
   const [orderSide, setOrderSide] = useState('long');
   const [sizeMode, setSizeMode] = useState(savedSizeMode); // 'fixed' o 'risk'
@@ -25,7 +24,6 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, chartBox, on
   const [stopLossPercent, setStopLossPercent] = useState('');
   const [takeProfitPercent, setTakeProfitPercent] = useState('');
   const [notes, setNotes] = useState('');
-  const [marks, setMarks] = useState(emptyMarks);
   const [useCurrentPrice, setUseCurrentPrice] = useState(true);
 
   // 🎯 Estado para modal de confirmación
@@ -49,7 +47,6 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, chartBox, on
     if (useCurrentPrice && currentPrice && orderType !== 'limit') {
       const newPrice = currentPrice.toFixed(2);
       setEntryPrice(newPrice);
-      console.log(`[TradingControls] Precio actualizado automáticamente: ${newPrice}`);
     }
   }, [currentPrice, useCurrentPrice, orderType]);
 
@@ -64,7 +61,7 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, chartBox, on
   // La orden sale de la caja del gráfico o, sin caja, de los campos del panel
   const box = useChartBox ? chartBox : null;
   const side = box ? box.side : orderSide;
-  const entry = box ? box.entryPrice : parseFloat(entryPrice);
+  const entry = orderEntry({ box, useCurrentPrice, currentPrice, typedEntry: entryPrice, orderType });
   const stopLoss = box ? box.slPrice : priceAtPercent(entry, side, stopLossPercent, false);
   const takeProfit = box ? box.tpPrice : priceAtPercent(entry, side, takeProfitPercent, true);
   const finalType = orderType === 'auto' && currentPrice && entry > 0 ? autoOrderType(entry, currentPrice, side) : orderType;
@@ -155,7 +152,6 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, chartBox, on
       takeProfit,
       notes
     });
-    order.marks = marks;
     order.tpslBoxId = box?.id ?? null;
 
     console.log('[TradingControls] Orden creada:', order);
@@ -174,9 +170,7 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, chartBox, on
       onOrderCreated(order);
     }
 
-    // Limpiar notas y marcas
     setNotes('');
-    setMarks(emptyMarks());
   };
 
   /**
@@ -408,7 +402,7 @@ const TradingControls = ({ orderManager, currentPrice, currentTime, chartBox, on
         />
       </div>
 
-      <ObserverMarks marks={marks} onChange={setMarks} />
+      <AnalysisLevels symbol={symbol} time={currentTime} />
 
       <div className="control-actions">
         <button

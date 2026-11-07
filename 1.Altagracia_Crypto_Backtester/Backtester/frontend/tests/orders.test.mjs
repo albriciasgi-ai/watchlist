@@ -1,7 +1,7 @@
 // Tamaño y tipo de orden, y cajas TP/SL. Uso: node tests/orders.test.mjs
 import assert from 'node:assert/strict';
 import {
-  AUTO_ENTRY_DISTANCE, autoOrderType, latestFreeBox, orderPreview, orderQuantity, priceAtPercent
+  AUTO_ENTRY_DISTANCE, autoOrderType, boxesFollowOrders, latestFreeBox, orderEntry, orderPreview, orderQuantity, priceAtPercent
 } from '../src/components/backtesting/orderPlan.js';
 import TPSLBox, { DEFAULT_REWARD_RATIO, defaultBoxSize } from '../src/components/drawing/shapes/TPSLBox.js';
 
@@ -166,6 +166,84 @@ test('tamaño: la escala manda sobre el porcentaje', () => {
   close(box.tpPrice, 820);
   close(ratio(box), 2);
   assert.equal(box.timeEnd, size.timeEnd, 'el ancho también sale de la escala');
+});
+
+// En la app, con carga, 5 de 50 órdenes automáticas quedaron como stop o limit: el clic llegó entre el
+// precio nuevo y la copia de ese precio en el campo de entrada
+test('entrada: con "Usar precio actual" vale el precio del momento, no el que quedó en el campo', () => {
+  const stale = '64938.00';
+  const price = 64850;
+  assert.equal(autoOrderType(parseFloat(stale), price, 'long'), 'stop', 'con el campo atrasado la orden esperaba');
+  const entry = orderEntry({ box: null, useCurrentPrice: true, currentPrice: price, typedEntry: stale });
+  assert.equal(entry, price);
+  assert.equal(autoOrderType(entry, price, 'long'), 'market');
+  assert.equal(autoOrderType(entry, price, 'short'), 'market');
+});
+
+test('entrada: sin redondear el precio del momento', () => {
+  assert.equal(orderEntry({ box: null, useCurrentPrice: true, currentPrice: 0.35127, typedEntry: '0.35' }), 0.35127);
+});
+
+test('entrada: sin la casilla vale lo escrito, y la caja manda sobre todo', () => {
+  assert.equal(orderEntry({ box: null, useCurrentPrice: false, currentPrice: 100, typedEntry: '97.5' }), 97.5);
+  assert.equal(orderEntry({ box: { entryPrice: 95 }, useCurrentPrice: true, currentPrice: 100, typedEntry: '100' }), 95);
+  // Con limit el campo no sigue el precio aunque la casilla esté marcada: vale lo que muestra
+  assert.equal(orderEntry({ box: null, useCurrentPrice: true, currentPrice: 100, typedEntry: '97.5', orderType: 'limit' }), 97.5);
+  for (const orderType of ['auto', 'market', 'stop']) {
+    assert.equal(orderEntry({ box: null, useCurrentPrice: true, currentPrice: 100, typedEntry: '97.5', orderType }), 100, orderType);
+  }
+  assert.equal(orderEntry({ box: { entryPrice: 95 }, useCurrentPrice: true, currentPrice: 100, typedEntry: '97.5', orderType: 'limit' }), 95);
+  assert.equal(orderEntry({ box: null, useCurrentPrice: true, currentPrice: null, typedEntry: '99' }), 99, 'sin precio todavía');
+  assert.ok(Number.isNaN(orderEntry({ box: null, useCurrentPrice: false, currentPrice: 100, typedEntry: '' })));
+});
+
+const pendingFromBox = (extra = {}) => ({ status: 'pending', tpslBoxId: 'a', entryPrice: 63658.4, stopLoss: 63276.4, takeProfit: 64422.3, executedPrice: null, ...extra });
+
+test('caja de una orden: si se mueve mientras espera, vuelve a la orden', () => {
+  const moved = shape('a', { entryPrice: 63883.4, slPrice: 63501.4, tpPrice: 64647.3, timeStart: 10, timeEnd: 20 });
+  const free = shape('b');
+  const kept = boxesFollowOrders([moved, free], [pendingFromBox()]);
+  assert.equal(kept[0].entryPrice, 63658.4);
+  assert.equal(kept[0].slPrice, 63276.4);
+  assert.equal(kept[0].tpPrice, 64422.3);
+  assert.equal(kept[0].timeStart, 10, 'el ancho y la hora no cambian');
+  assert.equal(kept[0].timeEnd, 20);
+  assert.equal(kept[1], free, 'una caja libre sigue igual');
+  assert.equal(moved.entryPrice, 63883.4, 'no cambia la forma recibida');
+});
+
+test('caja de una orden: el caso de la sesión del 6/11, caja movida 10.55 mientras esperaba', () => {
+  const order = { status: 'pending', tpslBoxId: 'a', entryPrice: 86855.9461593628, stopLoss: 86247.11064224243, takeProfit: 87865.84767451431 };
+  const box = shape('a', { entryPrice: 86845.3924, slPrice: 86236.55685436365, tpPrice: 87855.29388663553 });
+  const [kept] = boxesFollowOrders([box], [order]);
+  assert.equal(kept.entryPrice, order.entryPrice);
+  assert.equal(kept.slPrice, order.stopLoss);
+  assert.equal(kept.tpPrice, order.takeProfit);
+});
+
+test('caja de una orden abierta: muestra la entrada ejecutada', () => {
+  const order = pendingFromBox({ status: 'open', type: 'market', entryPrice: 63660, executedPrice: 63661.5 });
+  const [kept] = boxesFollowOrders([shape('a', { entryPrice: 63700, slPrice: 63276.4, tpPrice: 64422.3 })], [order]);
+  assert.equal(kept.entryPrice, 63661.5);
+});
+
+test('caja de una orden: sin cambios, libre, cerrada o cancelada no se toca', () => {
+  const same = shape('a', { entryPrice: 63658.4, slPrice: 63276.4, tpPrice: 64422.3 });
+  assert.equal(boxesFollowOrders([same], [pendingFromBox()]), null);
+  const moved = shape('a', { entryPrice: 1 });
+  assert.equal(boxesFollowOrders([moved], []), null);
+  assert.equal(boxesFollowOrders([moved], [pendingFromBox({ status: 'closed' })]), null);
+  assert.equal(boxesFollowOrders([moved], [pendingFromBox({ status: 'cancelled' })]), null);
+  assert.equal(boxesFollowOrders([{ type: 'rectangle', id: 'a', entryPrice: 1 }], [pendingFromBox()]), null);
+  assert.equal(boxesFollowOrders(undefined, undefined), null);
+});
+
+test('caja de una orden: un precio que la orden no tiene queda como está', () => {
+  const order = pendingFromBox({ stopLoss: null, takeProfit: undefined });
+  const [kept] = boxesFollowOrders([shape('a', { entryPrice: 63700, slPrice: 63000, tpPrice: 64000 })], [order]);
+  assert.equal(kept.entryPrice, 63658.4);
+  assert.equal(kept.slPrice, 63000);
+  assert.equal(kept.tpPrice, 64000);
 });
 
 test('caja: se guarda y se recupera igual', () => {

@@ -2,7 +2,8 @@
 // Uso: node tests/observer.test.mjs
 import assert from 'node:assert/strict';
 import {
-  describeComparison, emptyMarks, formatR, rangesInUse, recordCancel, recordClose, recordFill, recordOrder, simulatedDate
+  describeComparison, emptyMarks, formatR, imageBlock, imageCaption, imageSlots, orderAhead, rangesInUse, recordCancel, recordClose, recordFill,
+  recordImage, recordOrder, screenshotUrl, simulatedDate, withSessionImages, yearsToShow
 } from '../src/components/backtesting/observer.js';
 import { blindAnchor, isBlind, maskDate, setBlindAnchor } from '../src/components/backtesting/blindClock.js';
 
@@ -36,7 +37,168 @@ const context = { symbol: 'BTCUSDT', timeframe: '15m', session: 's1', price: 820
 const tests = [];
 const test = (name, run) => tests.push([name, run]);
 
-test('la orden guarda hora simulada, marco, precios, motivos y lo que habia en pantalla', async () => {
+const closedTrade = (extra = {}) => ({
+  id: 'o1', session: 's1', order_number: 3, status: 'closed', time: START, fill_time: START + 1000, exit_time: START + 2000, ...extra
+});
+const shot = (path, sim_time = START + 1000, frame = '15m') => ({ path, sim_time, frame });
+const later = { reached: START + 3000, blindActive: false, sessionId: 's1' };
+
+test('imagen: va al registro con su hora simulada y su marco', async () => {
+  sent = [];
+  await recordImage({ observerId: 'o1' }, 'entry', shot('s1/a.png'));
+  assert.deepEqual(sent, [{ path: '/api/observer/orders/o1/events', body: { event: 'image', kind: 'entry', path: 's1/a.png', sim_time: START + 1000, frame: '15m' } }]);
+});
+
+test('imagen: sin orden registrada o sin archivo no envía nada', async () => {
+  sent = [];
+  await recordImage({}, 'entry', shot('s1/a.png'));
+  await recordImage({ observerId: 'o1' }, 'entry', { path: undefined });
+  assert.deepEqual(sent, []);
+});
+
+test('imagen: la dirección separa sesión y archivo', () => {
+  assert.equal(new URL(screenshotUrl('sesion/order_1.png')).pathname, '/api/screenshots/session/sesion/order_1.png');
+});
+
+test('imágenes: las órdenes viejas las toman de su sesión y quedan en el registro', async () => {
+  sent = [];
+  const session = { orderManagerState: { orders: [{ id: 3, screenshotPath: 's1/a.png' }, { id: 4, screenshotPath: 's1/z.png' }] } };
+  const trades = await withSessionImages([closedTrade()], async () => session);
+  assert.deepEqual(trades[0].images, { entry: { path: 's1/a.png', sim_time: null, frame: null } });
+  assert.deepEqual(sent.map(item => item.body.path), ['s1/a.png']);
+});
+
+test('imágenes: una sesión se lee una sola vez', async () => {
+  let reads = 0;
+  const load = async () => { reads++; return null; };
+  await withSessionImages([closedTrade(), closedTrade({ id: 'o2', order_number: 4 })], load);
+  assert.equal(reads, 1);
+});
+
+test('imágenes: no busca las que ya están ni las de órdenes vivas', async () => {
+  let reads = 0;
+  const load = async () => { reads++; return null; };
+  await withSessionImages([
+    closedTrade({ images: { entry: shot('a'), exit: shot('b') } }),
+    closedTrade({ status: 'open' }),
+    closedTrade({ session: undefined })
+  ], load);
+  assert.equal(reads, 0);
+});
+
+test('imágenes: sin la sesión la orden queda como estaba', async () => {
+  const trades = await withSessionImages([closedTrade()], async () => { throw new Error('sin base'); });
+  assert.equal(trades[0].images, undefined);
+});
+
+test('imágenes: dos lecturas cruzadas no duplican el evento', async () => {
+  sent = [];
+  const session = { orderManagerState: { orders: [{ id: 3, screenshotPath: 's1/a.png' }] } };
+  const read = () => withSessionImages([closedTrade({ id: 'cruzada' })], async () => session);
+  await Promise.all([read(), read()]);
+  assert.deepEqual(sent.map(item => item.path), ['/api/observer/orders/cruzada/events']);
+});
+
+test('imágenes: no reemplaza lo que ya estaba en el registro', async () => {
+  sent = [];
+  const session = { orderManagerState: { orders: [{ id: 3, screenshotPath: 'vieja.png', exitScreenshotPath: 's1/b.png' }] } };
+  const trades = await withSessionImages([closedTrade({ images: { entry: shot('s1/a.png') } })], async () => session);
+  assert.equal(trades[0].images.entry.path, 's1/a.png');
+  assert.equal(trades[0].images.exit.path, 's1/b.png');
+  assert.deepEqual(sent.map(item => item.body.kind), ['exit']);
+});
+
+test('lugares: una orden cerrada sin imagen de cierre explica por qué', () => {
+  const slots = imageSlots(closedTrade({ images: { entry: shot('a') } }));
+  assert.deepEqual(slots.map(slot => slot.kind), ['entry', 'exit']);
+  assert.match(slots[1].missing, /10 velas/);
+});
+
+test('lugares: una limit muestra primero la decisión', () => {
+  const slots = imageSlots(closedTrade({ images: { decision: shot('d'), entry: shot('a'), exit: shot('b') } }));
+  assert.deepEqual(slots.map(slot => slot.label), ['Decisión', 'Apertura', 'Cierre']);
+});
+
+test('lugares: una cancelada solo tiene su decisión', () => {
+  const slots = imageSlots(closedTrade({ status: 'cancelled', images: { decision: shot('d') } }));
+  assert.deepEqual(slots.map(slot => slot.kind), ['decision']);
+});
+
+test('lugares: sin imágenes no hay nada que mostrar', () => {
+  assert.deepEqual(imageSlots(closedTrade()), []);
+  assert.deepEqual(imageSlots(closedTrade({ images: {} })), []);
+});
+
+test('sin futuro: una imagen ya alcanzada por la hora simulada se ve', () => {
+  assert.equal(imageBlock(closedTrade({ images: { entry: shot('a') } }), 'entry', later), null);
+});
+
+test('sin futuro: una imagen posterior a la hora simulada se oculta', () => {
+  const trade = closedTrade({ images: { entry: shot('a', START + 5000) } });
+  assert.equal(imageBlock(trade, 'entry', later), 'future');
+  assert.equal(imageBlock(trade, 'entry', { ...later, reached: START + 5000 }), null);
+});
+
+test('sin futuro: sin hora guardada usa el momento de la orden', () => {
+  const images = { decision: shot('d', null), entry: shot('a', null), exit: shot('b', null) };
+  const trade = closedTrade({ images });
+  const at = (reached) => ['decision', 'entry', 'exit'].map(kind => imageBlock(trade, kind, { ...later, reached }));
+  assert.deepEqual(at(START), [null, 'future', 'future']);
+  assert.deepEqual(at(START + 1000), [null, null, 'future']);
+  assert.deepEqual(at(START + 2000), [null, null, null]);
+});
+
+test('sin futuro: la imagen de cierre sin hora cuenta las velas que espera', () => {
+  const trade = closedTrade({ timeframe: '1h', images: { exit: shot('b', null) } });
+  const exit = trade.exit_time;
+  assert.equal(imageBlock(trade, 'exit', { ...later, reached: exit + 9 * 3600000 }), 'future');
+  assert.equal(imageBlock(trade, 'exit', { ...later, reached: exit + 10 * 3600000 }), null);
+});
+
+test('sin futuro: una orden que terminó después de lo vivido queda oculta', () => {
+  assert.equal(orderAhead(closedTrade(), { reached: START + 1999 }), true);
+  assert.equal(orderAhead(closedTrade(), { reached: START + 2000 }), false);
+  assert.equal(orderAhead(closedTrade({ exit_time: undefined, cancel_time: START + 500 }), { reached: START }), true);
+  assert.equal(orderAhead(closedTrade(), { reached: 0 }), false);
+});
+
+test('sin futuro: antes de empezar la corrida no bloquea', () => {
+  assert.equal(imageBlock(closedTrade({ images: { entry: shot('a') } }), 'entry', { ...later, reached: 0 }), null);
+});
+
+test('fecha oculta: una imagen de otra sesión se oculta', () => {
+  const trade = closedTrade({ blind: true, session: 'vieja', images: { entry: shot('a') } });
+  assert.equal(imageBlock(trade, 'entry', { ...later, blindActive: true }), 'date');
+  assert.equal(imageBlock(trade, 'entry', later), null);
+});
+
+test('fecha oculta: una imagen con fecha real de esta sesión también se oculta', () => {
+  const trade = closedTrade({ blind: false, images: { entry: shot('a') } });
+  assert.equal(imageBlock(trade, 'entry', { ...later, blindActive: true }), 'date');
+});
+
+test('fecha oculta: las imágenes ocultas de esta sesión se ven', () => {
+  const trade = closedTrade({ blind: true, images: { entry: shot('a') } });
+  assert.equal(imageBlock(trade, 'entry', { ...later, blindActive: true }), null);
+});
+
+test('rótulo: dice marco y hora', () => {
+  const caption = imageCaption(closedTrade({ images: { entry: shot('a', START + 1000, '4h') } }), 'entry');
+  assert.match(caption, /^4h · /);
+  assert.equal(caption.split(' · ').length, 2);
+});
+
+test('rótulo: avisa si la apertura salió después del cierre', () => {
+  const caption = imageCaption(closedTrade({ images: { entry: shot('a', START + 2000) } }), 'entry');
+  assert.match(caption, /tomada después del cierre/);
+});
+
+test('rótulo: una imagen vieja no dice su hora', () => {
+  assert.equal(imageCaption(closedTrade({ images: { entry: shot('a', null, null) } }), 'entry'), null);
+  assert.equal(imageCaption(closedTrade(), 'entry'), null);
+});
+
+test('la orden guarda hora simulada, marco, precios y lo que habia en pantalla, sin motivos', async () => {
   sent = [];
   const target = order();
   await recordOrder(target, context);
@@ -51,7 +213,7 @@ test('la orden guarda hora simulada, marco, precios, motivos y lo que habia en p
   assert.equal(body.target, 83000);
   assert.equal(body.market, 82000);
   assert.equal(body.notes, 'zona');
-  assert.deepEqual(body.marks.reasons, ['fvg']);
+  assert.deepEqual(body.marks, emptyMarks());
   assert.deepEqual(body.indicators, ['FVG']);
   assert.equal(body.rewound, false);
   assert.equal(body.blind, false);
@@ -62,12 +224,6 @@ test('una orden a mercado viaja ya llena', async () => {
   await recordOrder(order({ type: 'market', executedAt: START, executedPrice: 82000 }), context);
   assert.equal(sent[0].body.fill_time, START);
   assert.equal(sent[0].body.fill_price, 82000);
-});
-
-test('sin marcas se envian vacias', async () => {
-  sent = [];
-  await recordOrder(order({ marks: undefined }), context);
-  assert.deepEqual(sent[0].body.marks, emptyMarks());
 });
 
 test('cada orden tiene su propia identidad', async () => {
@@ -212,6 +368,20 @@ test('resultado en R', () => {
   assert.equal(formatR(1.5), '+1.50R');
   assert.equal(formatR(-1), '-1.00R');
   assert.equal(formatR(null), '—');
+});
+
+test('reglas: con fecha oculta la tabla por año no delata el año', () => {
+  const years = [{ year: 2024, signals: 3 }, { year: 2025, signals: 1 }];
+  assert.deepEqual(yearsToShow(years), years);
+  setBlindAnchor(START);
+  assert.deepEqual(yearsToShow(years), []);
+  setBlindAnchor(null);
+});
+
+test('imagen: viaja con la posición de cada nivel o marca de la orden', async () => {
+  sent = [];
+  await recordImage({ observerId: 'x1' }, 'entry', { path: 's/a.png', sim_time: 1, frame: '15m', markers: [{ id: 'a', x: 0.5, y: 0.25 }] });
+  assert.deepEqual(sent[0].body.markers, [{ id: 'a', x: 0.5, y: 0.25 }]);
 });
 
 let failed = 0;

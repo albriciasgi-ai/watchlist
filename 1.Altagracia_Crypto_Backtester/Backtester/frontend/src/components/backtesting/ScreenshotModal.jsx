@@ -1,62 +1,73 @@
-import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../../config.js';
+import React, { useState, useEffect, useRef } from 'react';
+import { roleLabel } from '../indicators/analysisLevels.js';
+import { screenshotUrl } from './observer.js';
 import { EXIT_CAPTURE_CANDLES } from './tradeJournal.js';
 
-const ScreenshotModal = ({ screenshotPath, exitScreenshotPath, orderId, side, pnl, onClose }) => {
-  const [view, setView] = useState(screenshotPath ? 'entry' : 'exit');
-  const activePath = view === 'entry' ? screenshotPath : exitScreenshotPath;
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
+/**
+ * Imágenes de un trade. "captions" dice qué muestra cada una y "aside" es lo que se quiere leer
+ * junto a la imagen, como las medidas de la orden. "markers" ubica en cada imagen los niveles y
+ * marcas elegidos ("items"): al pasar el mouse se ve su nota, y con "onGoTo" se va a ese punto.
+ */
+const ScreenshotModal = ({
+  screenshotPath, exitScreenshotPath, decisionScreenshotPath, orderId, side, pnl, onClose, initialView, captions = {}, aside,
+  markers = {}, items = [], onGoTo = null
+}) => {
+  const views = [
+    ...(decisionScreenshotPath ? [['decision', 'Decisión', decisionScreenshotPath]] : []),
+    ['entry', 'Apertura', screenshotPath],
+    ['exit', 'Cierre', exitScreenshotPath]
+  ];
+  const available = views.filter(([, , path]) => path).map(([key]) => key);
 
-  /**
-   * Carga la imagen desde el backend
-   */
+  const [view, setView] = useState(initialView ?? available[0]);
+  const activePath = views.find(([key]) => key === view)?.[2];
+  const [loadedPath, setLoadedPath] = useState(null);
+  const [failedPath, setFailedPath] = useState(null);
+  const [actualSize, setActualSize] = useState(false);
+  const imageRef = useRef(null);
+  const [box, setBox] = useState(null);
+  const [hovered, setHovered] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [goProblem, setGoProblem] = useState(null);
+
+  const error = !activePath ? 'Ruta de screenshot no válida' : failedPath === activePath ? 'No se pudo cargar la imagen' : null;
+  const loading = !error && loadedPath !== activePath;
+
+  // Cada marca con lo elegido que representa. El número es su lugar en la lista de la orden
+  const shownMarkers = (markers[view] || []).flatMap(marker => {
+    const index = items.findIndex(item => item.id === marker.id);
+    return index < 0 ? [] : [{ ...marker, item: items[index], number: index + 1 }];
+  });
+  const focused = shownMarkers.find(marker => marker.id === (selected ?? hovered));
+
   useEffect(() => {
-    if (!activePath) {
-      setError('Ruta de screenshot no válida');
-      setLoading(false);
-      return;
+    setSelected(null);
+    setHovered(null);
+    setGoProblem(null);
+  }, [view]);
+
+  // Las marcas van sobre la imagen tal como se ve, también a tamaño real
+  useEffect(() => {
+    const image = imageRef.current;
+    if (!image || loading || error) {
+      setBox(null);
+      return undefined;
     }
+    const update = () => setBox({ left: image.offsetLeft, top: image.offsetTop, width: image.offsetWidth, height: image.offsetHeight });
+    update();
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(update);
+    observer.observe(image);
+    // Al cambiar la ventana el cuerpo puede recentrar la imagen sin cambiarle el tamaño
+    if (image.parentElement) observer.observe(image.parentElement);
+    return () => observer.disconnect();
+  }, [loading, error, activePath, actualSize]);
 
-    const loadImage = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Construir URL completa
-        // screenshotPath tiene formato: "sessionId/filename.png"
-        // Necesitamos separarlo para el endpoint: /api/screenshots/session/{sessionId}/{filename}
-        const pathParts = activePath.split('/');
-        if (pathParts.length !== 2) {
-          throw new Error(`Formato de screenshotPath inválido: ${activePath}`);
-        }
-        const [sessionId, filename] = pathParts;
-        const url = `${API_BASE_URL}/api/screenshots/session/${sessionId}/${filename}`;
-
-        console.log('[ScreenshotModal] Cargando screenshot:', url);
-
-        // Verificar que la imagen existe
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // Usar la URL directamente en el img
-        setImageUrl(url);
-        setLoading(false);
-
-        console.log('[ScreenshotModal] ✅ Screenshot cargado correctamente');
-      } catch (err) {
-        console.error('[ScreenshotModal] ❌ Error cargando screenshot:', err);
-        setError(`Error cargando screenshot: ${err.message}`);
-        setLoading(false);
-      }
-    };
-
-    loadImage();
-  }, [activePath]);
+  const goTo = (item) => {
+    const problem = onGoTo(item);
+    if (problem) setGoProblem(problem);
+    else onClose();
+  };
 
   /**
    * Maneja el clic en el overlay (cerrar modal)
@@ -79,15 +90,14 @@ const ScreenshotModal = ({ screenshotPath, exitScreenshotPath, orderId, side, pn
       } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         e.stopPropagation(); // Las flechas también mueven la simulación
         e.preventDefault();
-        if (screenshotPath && exitScreenshotPath) {
-          setView(current => (current === 'entry' ? 'exit' : 'entry'));
-        }
+        const step = e.key === 'ArrowRight' ? 1 : -1;
+        setView(current => available[(available.indexOf(current) + step + available.length) % available.length]);
       }
     };
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [onClose, screenshotPath, exitScreenshotPath]);
+  }, [onClose, available.join()]);
 
   /**
    * Determina el color del badge según el PnL
@@ -98,9 +108,82 @@ const ScreenshotModal = ({ screenshotPath, exitScreenshotPath, orderId, side, pn
     return '#757575'; // Gris para empate
   };
 
+  const body = (
+    <div className={`screenshot-modal-body${actualSize ? ' actual-size' : ''}`}>
+      {loading && (
+        <div className="screenshot-modal-loading">
+          <div className="spinner"></div>
+          <p>Cargando screenshot...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="screenshot-modal-error">
+          <span style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</span>
+          <p>{error}</p>
+          <button onClick={onClose}>Cerrar</button>
+        </div>
+      )}
+
+      {activePath && !error && (
+        <img
+          ref={imageRef}
+          src={screenshotUrl(activePath)}
+          alt={`Screenshot del trade #${orderId}`}
+          className="screenshot-modal-image"
+          title={actualSize ? 'Ajustar a la ventana' : 'Ver a tamaño real'}
+          style={loading ? { display: 'none' } : undefined}
+          onClick={() => setActualSize(current => !current)}
+          onLoad={() => setLoadedPath(activePath)}
+          onError={() => setFailedPath(activePath)}
+        />
+      )}
+
+      {box && shownMarkers.length > 0 && (
+        <div className="screenshot-markers" style={{ left: box.left, top: box.top, width: box.width, height: box.height }}>
+          {shownMarkers.map(marker => (
+            <button
+              key={marker.id}
+              type="button"
+              className={`screenshot-marker${selected === marker.id ? ' selected' : ''}`}
+              style={{ left: `${marker.x * 100}%`, top: `${marker.y * 100}%` }}
+              onMouseEnter={() => setHovered(marker.id)}
+              onMouseLeave={() => setHovered(current => (current === marker.id ? null : current))}
+              onClick={(e) => {
+                e.stopPropagation();
+                setGoProblem(null);
+                setSelected(current => (current === marker.id ? null : marker.id));
+              }}
+            >
+              {marker.number}
+            </button>
+          ))}
+          {focused && (
+            <div
+              className={`screenshot-marker-note${focused.x > 0.6 ? ' to-left' : ''}`}
+              style={{ left: `${focused.x * 100}%`, top: `${focused.y * 100}%` }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div><strong>{focused.item.kind}</strong> · {focused.item.source}</div>
+              <div className="screenshot-marker-role">{roleLabel(focused.item.role)}</div>
+              {focused.item.note
+                ? <p>{focused.item.note}</p>
+                : <p className="screenshot-marker-empty">Sin nota</p>}
+              {selected === focused.id && onGoTo && (
+                <button type="button" className="btn-quick" onClick={() => goTo(focused.item)}>Ir al gráfico</button>
+              )}
+              {selected === focused.id && goProblem && <div className="screenshot-marker-problem">{goProblem}</div>}
+              {selected !== focused.id && onGoTo && <div className="screenshot-marker-hint">Clic en la marca para ir a ese punto</div>}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="screenshot-modal-overlay" onClick={handleOverlayClick}>
-      <div className="screenshot-modal-content">
+      <div className={`screenshot-modal-content${aside ? ' with-aside' : ''}`}>
         {/* Header */}
         <div className="screenshot-modal-header">
           <div className="screenshot-modal-title">
@@ -119,17 +202,19 @@ const ScreenshotModal = ({ screenshotPath, exitScreenshotPath, orderId, side, pn
             >
               {side === 'long' ? '📈 LONG' : '📉 SHORT'}
             </span>
-            <span
-              style={{
-                marginLeft: '8px',
-                color: getBadgeColor(),
-                fontWeight: 'bold'
-              }}
-            >
-              {pnl >= 0 ? '+' : ''}{pnl.toFixed(2)} USD
-            </span>
+            {typeof pnl === 'number' && (
+              <span
+                style={{
+                  marginLeft: '8px',
+                  color: getBadgeColor(),
+                  fontWeight: 'bold'
+                }}
+              >
+                {pnl >= 0 ? '+' : ''}{pnl.toFixed(2)} USD
+              </span>
+            )}
             <span style={{ display: 'flex', gap: '6px', marginLeft: '16px' }}>
-              {[['entry', 'Apertura', screenshotPath], ['exit', 'Cierre', exitScreenshotPath]].map(([key, label, path]) => (
+              {views.map(([key, label, path]) => (
                 <button
                   key={key}
                   disabled={!path}
@@ -150,6 +235,9 @@ const ScreenshotModal = ({ screenshotPath, exitScreenshotPath, orderId, side, pn
                 </button>
               ))}
             </span>
+            {captions[view] && (
+              <span style={{ marginLeft: '12px', fontSize: '12px', fontWeight: 'normal', color: '#666' }}>{captions[view]}</span>
+            )}
           </div>
           <button className="screenshot-modal-close" onClick={onClose}>
             ✕
@@ -157,37 +245,17 @@ const ScreenshotModal = ({ screenshotPath, exitScreenshotPath, orderId, side, pn
         </div>
 
         {/* Body */}
-        <div className="screenshot-modal-body">
-          {loading && (
-            <div className="screenshot-modal-loading">
-              <div className="spinner"></div>
-              <p>Cargando screenshot...</p>
+        {aside
+          ? (
+            <div className="screenshot-review">
+              {body}
+              <div className="screenshot-review-aside">{aside}</div>
             </div>
-          )}
-
-          {error && (
-            <div className="screenshot-modal-error">
-              <span style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</span>
-              <p>{error}</p>
-              <button onClick={onClose}>Cerrar</button>
-            </div>
-          )}
-
-          {imageUrl && !loading && !error && (
-            <img
-              src={imageUrl}
-              alt={`Screenshot del trade #${orderId}`}
-              className="screenshot-modal-image"
-              onError={() => {
-                setError('No se pudo cargar la imagen');
-                setImageUrl(null);
-              }}
-            />
-          )}
-        </div>
+          )
+          : body}
 
         {/* Footer */}
-        {imageUrl && !loading && !error && (
+        {!loading && !error && (
           <div className="screenshot-modal-footer">
             <button onClick={onClose} className="screenshot-modal-close-button">
               Cerrar

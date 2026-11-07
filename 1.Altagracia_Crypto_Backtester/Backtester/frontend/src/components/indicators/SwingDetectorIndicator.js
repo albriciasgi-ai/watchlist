@@ -2,6 +2,8 @@
 // Swing High/Low Detector for Backtester - Full implementation with zones and filters
 
 import IndicatorBase from './IndicatorBase.js';
+import { countBefore } from '../backtesting/replayClock.js';
+import { candleItemId } from './analysisLevels.js';
 
 /**
  * SwingDetectorIndicator - Detects and displays swing highs/lows locally
@@ -71,6 +73,7 @@ class SwingDetectorIndicator extends IndicatorBase {
     this._lastCalculatedLength = 0;
     this._lastConfig = null;
     this._allDetectedSignals = []; // Todas las señales detectadas (sin filtro de tiempo)
+    this._rectangleAreas = []; // Rectángulos del gráfico en el último cálculo
 
     console.log(`[${this.symbol}] SwingDetectorIndicator initialized (full backtesting mode)`);
   }
@@ -79,6 +82,7 @@ class SwingDetectorIndicator extends IndicatorBase {
     this.vwapIndicator = vwapIndicator;
   }
 
+  /** El administrador de dibujos del gráfico, o una función que lo entrega al dibujar */
   setDrawingManager(drawingManager) {
     this.drawingManager = drawingManager;
   }
@@ -176,17 +180,23 @@ class SwingDetectorIndicator extends IndicatorBase {
       return [];
     }
 
+    // El filtro VWAP necesita el indicador VWAP activo y actúa dentro de los rectángulos del gráfico
+    const vwap = this.vwapFilter.enabled && this.vwapIndicator?.enabled ? this.vwapIndicator : null;
+    const rectangleZones = vwap ? this._rectangleZones() : [];
+
     const configHash = JSON.stringify({
       swingBars: this.swingBars,
       direction: this.direction,
       volumeFilter: this.volumeFilter,
-      vwapFilter: this.vwapFilter.enabled,
-      priceZones: this.priceZones.map(z => z.id + z.enabled)
+      vwapFilter: this.vwapFilter,
+      priceZones: this.priceZones.map(z => z.id + z.enabled),
+      rectangles: rectangleZones.map(z => [z.sourceRectId, z.min, z.max, z.timeStart, z.timeEnd]),
+      // Cada cálculo nuevo del VWAP puede cambiar sus bandas
+      vwapCalculation: vwap ? vwap.calculations || 0 : null
     });
 
     if (candles.length === this._lastCalculatedLength &&
-        this._lastConfig === configHash &&
-        this._allDetectedSignals.length > 0) {
+        this._lastConfig === configHash) {
       // 🎯 FIX: Actualizar this.signals también cuando usamos caché
       // Esto permite que nuevas señales aparezcan a medida que avanza el playback
       this.signals = this._filterByPlaybackTime(this._allDetectedSignals);
@@ -199,10 +209,7 @@ class SwingDetectorIndicator extends IndicatorBase {
     const volumes = candles.map(c => c.volume || 0);
 
     // VWAP data map
-    let vwapMap = new Map();
-    if (this.vwapFilter.enabled && this.vwapIndicator?.dataMap) {
-      vwapMap = this.vwapIndicator.dataMap;
-    }
+    const vwapMap = vwap?.dataMap || new Map();
 
     // Zonas filtradas por símbolo
     const activeZones = this.priceZones.filter(z =>
@@ -237,11 +244,12 @@ class SwingDetectorIndicator extends IndicatorBase {
         continue;
       }
 
-      // 4. Verificar si estamos dentro de un rectángulo activo
-      const isInRectangle = this._isInsideActiveRectangle(price, timestamp, activeZones);
+      // 4. Verificar si estamos dentro de un rectángulo: del gráfico o de una zona que viene de uno
+      const isInRectangle = this._isInsideActiveRectangle(price, timestamp, activeZones) ||
+        this._isInsideActiveRectangle(price, timestamp, rectangleZones);
 
-      // 5. Filtro VWAP (solo cuando está dentro de un rectángulo con VWAP habilitado)
-      if (this.vwapFilter.enabled && isInRectangle && vwapMap.size > 0) {
+      // 5. Filtro VWAP: solo dentro de un rectángulo y con el VWAP activo. Afuera la señal no cambia
+      if (vwap && isInRectangle && vwapMap.size > 0) {
         const vwapValidation = this._checkVWAPFilter(timestamp, price, vwapMap);
 
         if (vwapValidation === null) {
@@ -320,10 +328,7 @@ class SwingDetectorIndicator extends IndicatorBase {
     const intervalMs = this._getIntervalMs();
     const confirmationDelay = (this.swingBars + 1) * intervalMs;
 
-    return signals.filter(signal => {
-      const confirmationTime = signal.timestamp + confirmationDelay;
-      return confirmationTime <= this._currentPlaybackTime;
-    });
+    return signals.slice(0, countBefore(signals, this._currentPlaybackTime - confirmationDelay + 1));
   }
 
   _getIntervalMs() {
@@ -410,6 +415,27 @@ class SwingDetectorIndicator extends IndicatorBase {
     return false;
   }
 
+  /**
+   * Rectángulos del gráfico como zonas donde actúa el filtro VWAP. No son lista blanca: afuera las señales
+   * no cambian. No cuentan los que definen un VP Fixed. Mientras uno se arrastra o cambia de tamaño
+   * siguen los de antes, así el Swing se recalcula una sola vez al soltarlo
+   */
+  _rectangleZones() {
+    const manager = typeof this.drawingManager === 'function' ? this.drawingManager() : this.drawingManager;
+    const rectangles = (manager?.shapes || []).filter(shape => shape?.type === 'rectangle');
+    if (rectangles.some(shape => shape.isDragging || shape.isResizing)) return this._rectangleAreas;
+
+    const profileRects = this.getProfileRectIds?.() || new Set();
+    this._rectangleAreas = rectangles
+      .filter(shape => !profileRects.has(shape.id) &&
+        [shape.priceLow, shape.priceHigh, shape.timeStart, shape.timeEnd].every(Number.isFinite))
+      .map(shape => ({
+        id: `rect_${shape.id}`, sourceRectId: shape.id, enabled: true, direction: 'BOTH', timeBound: true,
+        min: shape.priceLow, max: shape.priceHigh, timeStart: shape.timeStart, timeEnd: shape.timeEnd
+      }));
+    return this._rectangleAreas;
+  }
+
   // ==================== FILTERS ====================
 
   _isSwingHigh(candles, idx, bars) {
@@ -465,19 +491,23 @@ class SwingDetectorIndicator extends IndicatorBase {
 
     if (!vwapPoint || !vwapPoint.bands) return 'BOTH';
 
+    // Igual que _check_vwap_filter de los backends de Swing: las bandas se llaman upper_N y lower_N,
+    // se revisan las de deviations de la más cercana al VWAP hacia afuera y marginPercent es la parte
+    // de la distancia de la banda al VWAP que el precio puede quedar por dentro de ella
     const bands = vwapPoint.bands;
-    const marginFactor = 1 + (this.vwapFilter.marginPercent / 100);
+    const vwap = vwapPoint.vwap;
+    const margin = this.vwapFilter.marginPercent / 100;
 
-    // Precio por debajo de bandas inferiores = LONG
-    const lowestBand = bands['lower3'] || bands['lower2'] || bands['lower1'];
-    if (lowestBand && price <= lowestBand * marginFactor) {
-      return 'LONG';
-    }
+    for (const deviation of [...(this.vwapFilter.deviations || [1, 2, 3])].sort((a, b) => a - b)) {
+      const upper = bands[`upper_${deviation}`];
+      const lower = bands[`lower_${deviation}`];
+      if (upper === undefined || lower === undefined) continue;
 
-    // Precio por encima de bandas superiores = SHORT
-    const highestBand = bands['upper3'] || bands['upper2'] || bands['upper1'];
-    if (highestBand && price >= highestBand / marginFactor) {
-      return 'SHORT';
+      // Precio por encima de la banda superior = SHORT
+      if (price >= upper - (upper - vwap) * margin) return 'SHORT';
+
+      // Precio por debajo de la banda inferior = LONG
+      if (price <= lower + (vwap - lower) * margin) return 'LONG';
     }
 
     // Precio entre bandas = sin señal clara
@@ -486,7 +516,13 @@ class SwingDetectorIndicator extends IndicatorBase {
 
   // ==================== RENDERING ====================
 
+  /** Señales a la vista, para elegirlas como marcas con una nota */
+  selectableLevels() {
+    return this.marks || [];
+  }
+
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
+    this.marks = [];
     if (!this.enabled) return;
 
     // La hora simulada llega en cada dibujo: también vale en las pestañas que no estaban activas
@@ -510,9 +546,12 @@ class SwingDetectorIndicator extends IndicatorBase {
     // 2. Dibujar señales
     if (this.signals.length === 0) return;
 
+    // Solo las de las velas a la vista: las señales van en orden de tiempo
     const signalMap = new Map();
-    for (const signal of this.signals) {
-      signalMap.set(signal.timestamp, signal);
+    const firstSignal = countBefore(this.signals, visibleCandles[0].timestamp);
+    const endSignal = countBefore(this.signals, visibleCandles[visibleCandles.length - 1].timestamp + 1);
+    for (let i = firstSignal; i < endSignal; i++) {
+      signalMap.set(this.signals[i].timestamp, this.signals[i]);
     }
 
     const candleWidth = bounds.width / visibleCandles.length;
@@ -528,6 +567,14 @@ class SwingDetectorIndicator extends IndicatorBase {
       const lowY = priceToY(candle.low);
 
       this._drawSwingArrow(ctx, x, highY, lowY, signal);
+
+      const isLong = signal.type === 'SWING_LOW';
+      const kind = isLong ? 'Swing bajo' : 'Swing alto';
+      const arrowY = isLong ? lowY + this.arrowOffset + this.arrowSize : highY - this.arrowOffset - this.arrowSize;
+      this.marks.push({
+        id: candleItemId(this.name, kind, candle.timestamp, null, this.interval), source: this.name, kind, price: isLong ? candle.low : candle.high,
+        time: candle.timestamp, mark: true, x, y: arrowY, r: Math.max(8, this.arrowSize + 3)
+      });
     }
   }
 

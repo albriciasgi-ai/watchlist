@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { configStorageKey } from './indicators/SupportResistance2Indicator';
+import { DEFAULT_LEVEL_CONFIG } from './indicators/swingLevels';
 import './RejectionPatternSettings.css';
+
+const PREVIEW_DELAY_MS = 250; // Rehacer los niveles tarda: espera a que se deje de escribir
 
 /**
  * Support & Resistance v2 Settings Component
  *
- * S&R basado en Swing Points - más preciso que el original
- * Solo busca niveles dentro de un rango de precio cercano al actual
+ * S&R basado en los swings que el precio no ha superado
+ * Solo dibuja niveles dentro de un rango de precio cercano al actual
  */
 const SupportResistance2Settings = ({
   symbol,
@@ -16,6 +20,7 @@ const SupportResistance2Settings = ({
 }) => {
   const [config, setConfig] = useState(initialConfig || getDefaultConfig());
   const [enabled, setEnabled] = useState(false);
+  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     // Check if indicator is enabled
@@ -26,28 +31,17 @@ const SupportResistance2Settings = ({
       // Load current config from indicator
       const indicator = indicatorManager.supportResistance2Indicator;
       setConfig({
-        swingBars: indicator.swingBars || 5,
-        clusterDistancePct: indicator.clusterDistancePct || 0.3,
-        minTouches: indicator.minTouches || 2,
-        maxLevels: indicator.maxLevels || 5,
-        priceRangePct: indicator.priceRangePct || 5.0,
-        minVolumeZScore: indicator.minVolumeZScore || 0,
-        volumeLookbackBars: indicator.volumeLookbackBars || 50,
+        swingBars: indicator.swingBars,
+        clusterDistancePct: indicator.clusterDistancePct,
+        minTouches: indicator.minTouches,
+        maxLevels: indicator.maxLevels,
+        priceRangePct: indicator.priceRangePct,
+        minVolumeZScore: indicator.minVolumeZScore,
+        volumeLookbackBars: indicator.volumeLookbackBars,
         showResistances: indicator.showResistances !== false,
         showSupports: indicator.showSupports !== false,
         showLabels: indicator.showLabels !== false
       });
-    }
-
-    // Load config from localStorage
-    const savedConfig = localStorage.getItem(`support_resistance_2_config_${symbol}`);
-    if (savedConfig) {
-      try {
-        const parsed = JSON.parse(savedConfig);
-        setConfig(parsed);
-      } catch (e) {
-        console.error('Failed to load S&R v2 config:', e);
-      }
     }
   }, [symbol, indicatorManager]);
 
@@ -79,13 +73,13 @@ const SupportResistance2Settings = ({
   };
 
   const handleSave = () => {
-    // Save config to localStorage
-    localStorage.setItem(`support_resistance_2_config_${symbol}`, JSON.stringify(config));
+    let applied = config;
 
     // Apply config to indicator
     if (indicatorManager && indicatorManager.supportResistance2Indicator) {
       const indicator = indicatorManager.supportResistance2Indicator;
       indicator.updateConfig(config);
+      applied = indicator.currentConfig(); // Un campo vacío conserva su valor
 
       // Force chart redraw
       if (indicatorManager.requestRedraw) {
@@ -93,9 +87,12 @@ const SupportResistance2Settings = ({
       }
     }
 
+    // Save config to localStorage
+    localStorage.setItem(configStorageKey(symbol), JSON.stringify(applied));
+
     // Notify parent
     if (onConfigChange) {
-      onConfigChange(config);
+      onConfigChange(applied);
     }
 
     if (onClose) {
@@ -106,8 +103,18 @@ const SupportResistance2Settings = ({
   const handleReset = () => {
     const defaultConfig = getDefaultConfig();
     setConfig(defaultConfig);
-    localStorage.removeItem(`support_resistance_2_config_${symbol}`);
+    localStorage.removeItem(configStorageKey(symbol));
   };
+
+  // Efecto de los valores escritos sobre las velas de la hora simulada, antes de aplicarlos.
+  // Las casillas de mostrar no cambian los niveles
+  const levelValues = Object.keys(DEFAULT_LEVEL_CONFIG).map(key => config[key]).join();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPreview(indicatorManager?.supportResistance2Indicator?.preview(config) ?? null);
+    }, PREVIEW_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [indicatorManager, levelValues]);
 
   return (
     <div className="indicator-settings-overlay">
@@ -241,6 +248,15 @@ const SupportResistance2Settings = ({
               />
               <span className="hint">Velas para calcular z-score (20-200)</span>
             </div>
+
+            {preview && (
+              <div className="info-box">
+                <p>
+                  Pasan {preview.kept.resistance} de {preview.swings.resistance} máximos y {preview.kept.support} de {preview.swings.support} mínimos.
+                  A la vista: {preview.resistances.length} resistencias y {preview.supports.length} soportes.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Display Options */}
@@ -286,12 +302,15 @@ const SupportResistance2Settings = ({
             <h4>ℹ️ Cómo funciona S&R v2</h4>
             <div className="info-box">
               <p><strong>Swing Points:</strong> Detecta máximos/mínimos locales confirmados (N barras a cada lado)</p>
-              <p><strong>Filtro de precio:</strong> Solo busca niveles dentro del rango especificado</p>
-              <p><strong>Clustering:</strong> Agrupa swings cercanos para crear niveles más fuertes</p>
+              <p><strong>Vigencia:</strong> Un nivel vale hasta que una vela cierra más allá de todos sus toques. Una mecha no lo rompe</p>
+              <p><strong>Filtro de precio:</strong> Solo dibuja niveles dentro del rango especificado</p>
+              <p><strong>Clustering:</strong> Un swing cercano refuerza un nivel que sigue vigente</p>
               <p><strong>Strength:</strong> Basado en toques + volumen + recencia</p>
+              <p><strong>Etiqueta:</strong> toques, strength y z-score promedio del volumen de sus swings</p>
               <p style={{ marginTop: '10px', borderTop: '1px solid #ddd', paddingTop: '10px' }}>
                 <strong>Líneas sólidas:</strong> Niveles activos<br/>
-                <strong>Líneas punteadas:</strong> Niveles rotos recientemente
+                <strong>Líneas punteadas:</strong> Rotos hace poco, de cualquier lado del precio<br/>
+                Es un mapa de estructura: medido en BTC, estos niveles no aguantan más que un precio al azar
               </p>
             </div>
           </div>

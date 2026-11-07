@@ -1,0 +1,202 @@
+// Reloj de la reproducción: mantiene la velocidad elegida aunque un tick llegue tarde.
+// Uso: node tests/clock.test.mjs
+import assert from 'node:assert/strict';
+import { candlesBetween, tickAlreadySettled, timestampIndex } from '../src/components/backtesting/replayClock.js';
+
+const log = console.log;
+console.log = () => {};
+
+const { default: TimeController } = await import('../src/components/backtesting/TimeController.js');
+
+const MINUTE = 60000;
+const STEP = 5 * MINUTE; // Subdivisión de 15m
+const START = 1000 * STEP;
+const END = START + 100000 * STEP;
+
+const tests = [];
+const test = (name, run) => tests.push([name, run]);
+
+/** Controla el tiempo real: cada "advance" hace llegar un tick del intervalo */
+function fakeClock() {
+  let now = 0;
+  let tick = null;
+  let every = null;
+  globalThis.setInterval = (run, ms) => { tick = run; every = ms; return 1; };
+  globalThis.clearInterval = () => { tick = null; };
+  Object.defineProperty(globalThis.performance, 'now', { value: () => now, configurable: true });
+  return {
+    advance: (ms) => { now += ms; tick?.(); },
+    every: () => every,
+    running: () => tick !== null
+  };
+}
+
+function playing(speed, end = END) {
+  const clock = fakeClock();
+  const times = [];
+  const controller = new TimeController(START, end, '15m', time => times.push(time), START);
+  controller.playbackSpeed = speed;
+  controller.play();
+  return { clock, controller, times };
+}
+
+test('a tiempo: cada tick avanza una subdivisión', () => {
+  const { clock, times } = playing(1000);
+  assert.equal(clock.every(), 300);
+  clock.advance(300);
+  clock.advance(300);
+  assert.deepEqual(times, [START + STEP, START + 2 * STEP]);
+});
+
+test('tarde: un tick demorado recupera lo que debía avanzar', () => {
+  const { clock, times } = playing(1000);
+  clock.advance(900);
+  assert.deepEqual(times, [START + 3 * STEP]);
+});
+
+test('tarde: después de recuperar sigue al ritmo normal', () => {
+  const { clock, times } = playing(1000);
+  clock.advance(900);
+  clock.advance(300);
+  assert.deepEqual(times, [START + 3 * STEP, START + 4 * STEP]);
+});
+
+test('lenta: un tick que llega un poco antes no se pierde', () => {
+  const { clock, times } = playing(1);
+  clock.advance(299998);
+  assert.deepEqual(times, [START + STEP]);
+});
+
+test('lenta: el adelanto no se acumula', () => {
+  const { clock, controller } = playing(1);
+  for (let i = 0; i < 1000; i++) clock.advance(i % 2 ? 299990 : 300010);
+  assert.equal(controller.currentTime, START + 1000 * STEP);
+});
+
+test('velocidad alta: pide más que un tick y el reloj la cumple', () => {
+  const { clock, controller } = playing(50000);
+  assert.equal(clock.every(), 16);
+  for (let i = 0; i < 300; i++) clock.advance(16);
+  const expected = 300 * 16 * 50000;
+  assert.ok(Math.abs(controller.currentTime - START - expected) <= STEP);
+});
+
+test('velocidad alta: la hora sigue cayendo en subdivisiones', () => {
+  const { clock, times } = playing(50000);
+  for (let i = 0; i < 50; i++) clock.advance(16);
+  assert.ok(times.every(time => (time - START) % STEP === 0));
+});
+
+test('bloqueo largo: no salta más de un segundo de tiempo real', () => {
+  const { clock, times } = playing(1000);
+  clock.advance(600000);
+  assert.equal(times[0], START + Math.round(1300 * 1000 / STEP) * STEP);
+});
+
+test('bloqueo largo: a velocidad lenta el tope no acorta el tick normal', () => {
+  const { clock, times } = playing(1);
+  clock.advance(300000);
+  assert.deepEqual(times, [START + STEP]);
+});
+
+test('sin deuda: un tick que llega muy pronto no avanza', () => {
+  const { clock, times } = playing(1000);
+  clock.advance(100);
+  assert.deepEqual(times, []);
+});
+
+test('final: se detiene en la última hora y avisa ya pausado', () => {
+  const clock = fakeClock();
+  const seen = [];
+  const controller = new TimeController(START, START + 2 * STEP, '15m', time => seen.push([time, controller.isPlaying]), START);
+  controller.playbackSpeed = 1000;
+  controller.play();
+  clock.advance(3000);
+  assert.deepEqual(seen, [[START + 2 * STEP, false]]);
+  assert.equal(clock.running(), false);
+});
+
+test('pausa: al seguir no cobra el tiempo detenido', () => {
+  const { clock, controller, times } = playing(1000);
+  clock.advance(300);
+  controller.pause();
+  clock.advance(100000);
+  controller.play();
+  clock.advance(300);
+  assert.deepEqual(times, [START + STEP, START + 2 * STEP]);
+});
+
+test('velocidad: cambiarla reinicia la cuenta', () => {
+  const { clock, controller, times } = playing(1000);
+  clock.advance(100);
+  controller.setSpeed(2000);
+  assert.equal(clock.every(), 150);
+  clock.advance(150);
+  assert.deepEqual(times, [START + STEP]);
+});
+
+const candles = [100, 200, 300, 400, 500].map(timestamp => ({ timestamp }));
+
+test('buscar: halla el timestamp exacto', () => {
+  assert.equal(timestampIndex(candles, 300), 2);
+  assert.equal(timestampIndex(candles, 100), 0);
+  assert.equal(timestampIndex(candles, 500), 4);
+});
+
+test('buscar: sin vela en esa hora da -1', () => {
+  assert.equal(timestampIndex(candles, 250), -1);
+  assert.equal(timestampIndex(candles, 50), -1);
+  assert.equal(timestampIndex(candles, 900), -1);
+  assert.equal(timestampIndex([], 100), -1);
+});
+
+test('rango: incluye los dos extremos', () => {
+  assert.deepEqual(candlesBetween(candles, 200, 400).map(c => c.timestamp), [200, 300, 400]);
+});
+
+test('rango: extremos que no son velas', () => {
+  assert.deepEqual(candlesBetween(candles, 150, 450).map(c => c.timestamp), [200, 300, 400]);
+  assert.deepEqual(candlesBetween(candles, 0, 1000).length, 5);
+  assert.deepEqual(candlesBetween(candles, 600, 900), []);
+  assert.deepEqual(candlesBetween(candles, 300, 300).map(c => c.timestamp), [300]);
+});
+
+test('rango: da lo mismo que filtrar todas las velas', () => {
+  const list = Array.from({ length: 200 }, (_, i) => ({ timestamp: i * 7 }));
+  for (let start = -5; start < 1500; start += 13) {
+    for (const span of [0, 1, 6, 7, 8, 100, 2000]) {
+      const expected = list.filter(c => c.timestamp >= start && c.timestamp <= start + span);
+      assert.deepEqual(candlesBetween(list, start, start + span), expected);
+    }
+  }
+});
+
+test('pantalla: con el reloj andando cada tick ya revisó las órdenes', () => {
+  assert.equal(tickAlreadySettled({ isPlaying: true, currentTime: START }, START), true);
+});
+
+test('pantalla: con el reloj detenido una hora vieja no revisa órdenes', () => {
+  const clock = { isPlaying: false, currentTime: START + STEP };
+  assert.equal(tickAlreadySettled(clock, START), true);
+});
+
+test('pantalla: detenido y en la hora del reloj sí revisa órdenes', () => {
+  assert.equal(tickAlreadySettled({ isPlaying: false, currentTime: START }, START), false);
+});
+
+test('pantalla: sin reloj todavía sí revisa órdenes', () => {
+  assert.equal(tickAlreadySettled(null, START), false);
+});
+
+let failed = 0;
+for (const [name, run] of tests) {
+  try {
+    await run();
+    log(`ok    ${name}`);
+  } catch (error) {
+    failed++;
+    log(`FALLA ${name}\n${error.message}`);
+  }
+}
+log(`${tests.length - failed} de ${tests.length} correctas`);
+process.exit(failed ? 1 : 0);

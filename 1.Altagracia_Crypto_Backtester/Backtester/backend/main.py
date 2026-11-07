@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Request, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, Response
 from contextlib import asynccontextmanager
 from typing import Optional
 import httpx
@@ -15,6 +15,8 @@ import numpy as np
 import footprint_store
 import oi_store
 import observer
+import measures
+import patterns
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import OrderedDict
@@ -692,7 +694,7 @@ async def get_open_interest(
 
         # Con un rango, primero la serie local: cubre años y no depende de lo que Bybit conserve
         if start_timestamp_ms is not None and end_timestamp_ms is not None:
-            local = oi_store.series(sanitize_filename(symbol), interval_final, start_timestamp_ms, end_timestamp_ms)
+            local = await run_in_threadpool(oi_store.series, sanitize_filename(symbol), interval_final, start_timestamp_ms, end_timestamp_ms)
             if local is not None:
                 return {"symbol": symbol, "interval": interval_final, "indicator": "openInterest",
                         "success": True, "source": "local", **local}
@@ -2030,6 +2032,26 @@ def save_backtesting_cache(symbol: str, data: dict):
         print(f"[BACKTESTING CACHE] Eliminado archivo antiguo .json de {safe_symbol}")
 
 
+def drop_duplicate_subdivisions(data: dict) -> dict:
+    """
+    Quita "subdivisions" de cada marco cuando son las mismas velas de "main".
+
+    Desde la OPCIÓN B las subdivisiones apuntan a main: se guardaban y se enviaban dos veces
+    (en BTCUSDT la respuesta pesaba 422 MB en vez de 238 MB). Un caché guardado así deja de
+    tener la copia al cargarlo y la pierde en disco al guardarse otra vez. Si un marco trae
+    subdivisiones distintas de main no se tocan: no son una copia.
+    """
+    for tf_name, tf_data in (data.get("timeframes") or {}).items():
+        subdivisions = tf_data.get("subdivisions")
+        if subdivisions is None:
+            continue
+        if subdivisions is tf_data.get("main") or subdivisions == tf_data.get("main"):
+            del tf_data["subdivisions"]
+        else:
+            print(f"[BACKTESTING CACHE] AVISO {tf_name}: subdivisions distinto de main, se conserva")
+    return data
+
+
 def load_backtesting_cache(symbol: str):
     """Carga datos de backtesting del caché (gzip con fallback a json para migración)"""
     safe_symbol = sanitize_filename(symbol)
@@ -2038,7 +2060,7 @@ def load_backtesting_cache(symbol: str):
     if gz_file.exists():
         try:
             with gzip.open(gz_file, 'rb') as f:
-                data = json.loads(f.read().decode('utf-8'))
+                data = drop_duplicate_subdivisions(json.loads(f.read().decode('utf-8')))
             print(f"[BACKTESTING CACHE] Cargado {safe_symbol} desde caché gzip - {gz_file.stat().st_size / (1024*1024):.1f} MB en disco")
             return data
         except Exception as e:
@@ -2048,7 +2070,7 @@ def load_backtesting_cache(symbol: str):
     if json_file.exists():
         try:
             with open(json_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+                data = drop_duplicate_subdivisions(json.load(f))
             print(f"[BACKTESTING CACHE] Cargado {safe_symbol} desde caché JSON antiguo - {json_file.stat().st_size / (1024*1024):.1f} MB")
             # Migrar automáticamente a gzip
             print(f"[BACKTESTING CACHE] Migrando {safe_symbol} a formato gzip...")
@@ -2338,7 +2360,7 @@ async def fetch_incremental_candles(symbol: str, interval: str, since_timestamp_
         return candles
 
     except Exception as e:
-        print(f"[ERROR] Incremental fetch {symbol} @ {interval}m: {str(e)}")
+        print(f"[ERROR] Incremental fetch {symbol} @ {interval}m: {type(e).__name__} {str(e)}")
         return []
 
 
@@ -2354,8 +2376,11 @@ async def fetch_historical_candles_backwards(symbol: str, interval: str, before_
         days_needed: Cuántos días hacia atrás necesitamos
 
     Returns:
-        Lista de velas históricas (ordenadas cronológicamente)
+        (velas históricas ordenadas, reached_start). reached_start es True cuando Bybit respondió
+        bien y no tiene velas entre el inicio pedido y la primera que trajo: el símbolo empieza ahí.
+        Un error de Bybit o de red deja reached_start en False para volver a intentar.
     """
+    reached_start = False
     try:
         interval_minutes = get_interval_minutes(interval)
         minutes_in_period = days_needed * 24 * 60
@@ -2404,6 +2429,11 @@ async def fetch_historical_candles_backwards(symbol: str, interval: str, before_
 
                 # Bybit retorna en orden descendente, invertir a cronológico
                 batch_candles.reverse()
+
+                # Bybit entrega las primeras velas desde "start": si la primera llega más de una vela
+                # después, no hay velas más viejas y el símbolo empieza ahí
+                if request_count == 1 and int(batch_candles[0][0]) - start_ms >= interval_minutes * 60 * 1000:
+                    reached_start = True
 
                 # Filtrar velas que están ANTES del límite (no incluir velas del caché existente)
                 filtered_batch = []
@@ -2460,14 +2490,16 @@ async def fetch_historical_candles_backwards(symbol: str, interval: str, before_
             first_ts = candles[0]["timestamp"]
             last_ts = candles[-1]["timestamp"]
             print(f"  - Rango: {datetime.fromtimestamp(first_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d')} → {datetime.fromtimestamp(last_ts/1000, tz=COLOMBIA_TZ).strftime('%Y-%m-%d')}")
+        if reached_start:
+            print(f"[BACKTESTING EXPANSION] {symbol} @ {interval}m - Bybit no tiene velas más viejas")
 
-        return candles
+        return candles, reached_start
 
     except Exception as e:
         print(f"[ERROR] Backwards fetch {symbol} @ {interval}m: {str(e)}")
         import traceback
         traceback.print_exc()
-        return []
+        return [], False
 
 
 def merge_candles(existing: list, new_candles: list) -> list:
@@ -2494,22 +2526,17 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
     - timeframe: si se especifica (ej: "15m"), solo descarga ese timeframe
     - Sin force_refresh: usa cache + carga incremental si faltan velas recientes
 
-    Retorna:
+    Retorna (cada vela va una sola vez, en "main"):
     {
         "symbol": "BTCUSDT",
         "timeframes": {
             "15m": {
                 "main": [...],  // Velas de 15 minutos
-                "subdivisions": [...]  // Velas de 5 minutos
+                "subdivision_count": 3,
+                "open_interest": [...]
             },
-            "1h": {
-                "main": [...],
-                "subdivisions": [...]  // Velas de 15 minutos
-            },
-            "4h": {
-                "main": [...],
-                "subdivisions": [...]  // Velas de 1 hora
-            }
+            "1h": {...},
+            "4h": {...}
         },
         "metadata": {
             "cached_at": timestamp,
@@ -2570,6 +2597,9 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                         print(f"[BACKTESTING] {tf_name}: Solo {actual_candles:,} velas (< {min_candles_required:,}) - NECESITA DESCARGA COMPLETA")
                         needs_full_download = True
                         break
+                    elif actual_candles < expected_candles_config * 0.95 and tf_data.get("first_available_ts") == main_candles[0]["timestamp"]:
+                        # Bybit ya dijo que no tiene velas más viejas: el símbolo nació después del máximo
+                        print(f"[BACKTESTING] {tf_name}: {actual_candles:,} velas ({coverage_pct:.1f}%) - desde el inicio del símbolo en Bybit")
                     elif actual_candles < expected_candles_config * 0.95:
                         # Tiene datos útiles pero le faltan para completar el máximo configurado
                         # Expandir hacia atrás en lugar de re-descargar todo
@@ -2601,10 +2631,12 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                     else:
                         print(f"[BACKTESTING] Descartando caché completo - necesita descarga desde cero")
                         cached_data = None
-                elif needs_backwards_expansion:
+                elif needs_backwards_expansion or age_hours > 1.0:
+                  updated = False     # hay algo que guardar
+                  refreshed = False   # llegaron velas nuevas u OI: solo eso renueva cached_at
+                  if needs_backwards_expansion:
                     # 🎯 NUEVA FUNCIONALIDAD: Expandir caché existente hacia atrás
                     print(f"\n[BACKTESTING] ⚡ EXPANSIÓN INCREMENTAL HACIA ATRÁS - {len(expansion_info)} timeframes")
-                    updated = False
 
                     for tf_name, info in expansion_info.items():
                         tf_data = cached_data["timeframes"][tf_name]
@@ -2612,7 +2644,7 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
 
                         # Expandir velas principales hacia atrás
                         print(f"\n[{tf_name}] Expandiendo velas principales...")
-                        historical_main = await fetch_historical_candles_backwards(
+                        historical_main, reached_start = await fetch_historical_candles_backwards(
                             symbol,
                             config["interval"],
                             info["first_candle_ts"],
@@ -2624,32 +2656,17 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                             tf_data["main"] = historical_main + tf_data["main"]
                             print(f"  [{tf_name}] main: +{len(historical_main):,} velas históricas (total: {len(tf_data['main']):,})")
                             updated = True
+                        if reached_start:
+                            # No volver a expandir este marco en cada carga
+                            tf_data["first_available_ts"] = tf_data["main"][0]["timestamp"]
+                            updated = True
 
-                        # 🔧 OPCIÓN B: Subdivisiones = Main (actualización automática)
-                        # Como subdivisions apunta a main, se actualiza automáticamente
-                        # No necesita código de expansión separado
-                        tf_data["subdivisions"] = tf_data["main"]  # Mantener referencia
-                        print(f"  [{tf_name}] subs: Actualizado automáticamente (apunta a main)")
-
-                    if updated:
-                        # Actualizar metadata y guardar
-                        cached_data["metadata"]["cached_at"] = int(time.time() * 1000)
-                        cached_data["metadata"]["cached_at_colombia"] = datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S")
-                        save_backtesting_cache(symbol, cached_data)
-                        print(f"\n[BACKTESTING] ✅ Cache expandido y guardado")
-
-                    return {
-                        "success": True,
-                        "from_cache": True,
-                        "backwards_expansion": True,
-                        **cached_data
-                    }
-                elif age_hours > 1.0:
+                  # Después de expandir (o sin velas más viejas) siguen las velas nuevas
+                  if age_hours > 1.0:
                     # Carga incremental: solo descargar velas nuevas
                     # Si se pidió un timeframe específico, solo actualizar ese
                     tfs_to_update = {timeframe: cached_data.get("timeframes", {}).get(timeframe, {})} if (timeframe and timeframe in cached_data.get("timeframes", {})) else cached_data.get("timeframes", {})
                     print(f"[BACKTESTING] Cache de {age_hours:.1f}h - actualizando incrementalmente ({len(tfs_to_update)} timeframes)...")
-                    updated = False
                     for tf_name, tf_data in tfs_to_update.items():
                         config = BACKTESTING_CONFIG.get(tf_name)
                         if not config:
@@ -2661,11 +2678,7 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                             if new_main:
                                 tf_data["main"] = merge_candles(main_candles, new_main)
                                 print(f"  [{tf_name}] main: +{len(new_main)} velas (total: {len(tf_data['main'])})")
-                                updated = True
-                        # 🔧 OPCIÓN B: Subdivisiones = Main (actualización automática)
-                        # Como subdivisions apunta a main, se actualiza automáticamente
-                        tf_data["subdivisions"] = tf_data["main"]  # Mantener referencia
-                        print(f"  [{tf_name}] subs: Actualizado automáticamente (apunta a main)")
+                                updated = refreshed = True
 
                         # OI: descargar si falta, está vacío, o tiene cobertura insuficiente
                         oi_data = tf_data.get("open_interest", [])
@@ -2701,22 +2714,33 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                             )
                             new_oi = oi_response.get("data", []) if oi_response.get("success") else []
                             if new_oi:
-                                tf_data["open_interest"] = new_oi
-                                print(f"  [{tf_name}] OI: {len(new_oi)} puntos descargados (intervalo: {oi_interval_str})")
-                                updated = True
+                                # El caché permanente de OI guarda unas semanas: no reemplaza una serie más
+                                # larga, se suman sus puntos a los que ya había (orden descendente, como antes)
+                                merged_oi = {p["timestamp"]: p for p in oi_data}
+                                known_points = len(merged_oi)
+                                for p in new_oi:
+                                    merged_oi.setdefault(p["timestamp"], p)
+                                if len(merged_oi) > known_points:
+                                    tf_data["open_interest"] = sorted(merged_oi.values(), key=lambda p: p["timestamp"], reverse=True)
+                                    print(f"  [{tf_name}] OI: +{len(merged_oi) - known_points} puntos (total {len(merged_oi)}, intervalo: {oi_interval_str})")
+                                    updated = refreshed = True
+                                else:
+                                    print(f"  [{tf_name}] OI: {len(new_oi)} puntos recibidos, ninguno nuevo")
 
-                    if updated:
-                        cached_data["metadata"]["cached_at"] = now_ms
-                        cached_data["metadata"]["cached_at_colombia"] = datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S")
-                        save_backtesting_cache(symbol, cached_data)
-                        print(f"[BACKTESTING] Cache actualizado incrementalmente")
+                  if updated:
+                      if refreshed:
+                          cached_data["metadata"]["cached_at"] = now_ms
+                          cached_data["metadata"]["cached_at_colombia"] = datetime.now(COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S")
+                      save_backtesting_cache(symbol, cached_data)
+                      print(f"[BACKTESTING] Cache actualizado (expansión y/o velas nuevas)")
 
-                    return {
-                        "success": True,
-                        "from_cache": True,
-                        "incremental_update": updated,
-                        **cached_data
-                    }
+                  return {
+                      "success": True,
+                      "from_cache": True,
+                      "backwards_expansion": needs_backwards_expansion,
+                      "incremental_update": refreshed,
+                      **cached_data
+                  }
                 else:
                     print(f"[BACKTESTING CACHE] OK Cache reciente ({age_hours:.1f}h)")
                     return {
@@ -2751,11 +2775,8 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                 print(f"[ERROR] No se pudieron obtener datos para {tf_name}")
                 continue
 
-            # 🔧 OPCIÓN B: Subdivisiones = Main (sin descarga extra)
-            # Las subdivisiones apuntan al mismo array que main para evitar descargas masivas
-            # El playback funcionará correctamente pero sin datos intravela reales
-            subdivision_candles = main_candles  # Referencia directa, no copia
-            print(f"[BACKTESTING] Subdivisiones = Main (mismo array, sin descarga extra)")
+            # 🔧 OPCIÓN B: sin subdivisiones aparte. Eran las mismas velas de main y se enviaban
+            # dos veces; la vela en formación se arma con los marcos menores (replayClock.js)
 
             min_candle_ts = min(c["timestamp"] for c in main_candles)
             max_candle_ts = max(c["timestamp"] for c in main_candles)
@@ -2785,14 +2806,12 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
 
             timeframes_data[tf_name] = {
                 "main": main_candles,
-                "subdivisions": subdivision_candles,
                 "subdivision_count": config["subdivisions"]["count"],
                 "open_interest": oi_data
             }
 
             print(f"[BACKTESTING] {tf_name} completado:")
             print(f"  - Main: {len(main_candles)} velas de {main_interval}m")
-            print(f"  - Subdivisions: {len(subdivision_candles)} velas de {main_interval}m (mismo array que main)")
             print(f"  - Open Interest: {len(oi_data)} puntos")
 
         # Calcular metadata
@@ -2946,7 +2965,6 @@ async def update_backtesting_data(symbol: str):
         # Actualizar cada timeframe
         for tf_name, tf_data in cached_data.get("timeframes", {}).items():
             main_candles = tf_data.get("main", [])
-            subdivision_candles = tf_data.get("subdivisions", [])
 
             if not main_candles:
                 print(f"[BACKTESTING UPDATE] [WARN] {tf_name}: Sin datos en caché, saltando...")
@@ -2964,7 +2982,6 @@ async def update_backtesting_data(symbol: str):
                 continue
 
             main_interval = config["interval"]
-            subdivision_interval = config["subdivisions"]["interval"]
 
             # Calcular cuántos días han pasado
             now_ms = int(time.time() * 1000)
@@ -2982,17 +2999,9 @@ async def update_backtesting_data(symbol: str):
                 total_new_candles += len(truly_new_main)
                 print(f"[BACKTESTING UPDATE] {tf_name} main: +{len(truly_new_main)} velas nuevas")
 
-            # Fetch nuevas subdivisiones
-            new_subdivision_candles = await fetch_backtesting_timeframe(symbol, subdivision_interval, fetch_days)
-            if new_subdivision_candles:
-                last_subdivision_ts = subdivision_candles[-1]["timestamp"] if subdivision_candles else 0
-                truly_new_subdivisions = [c for c in new_subdivision_candles if c["timestamp"] > last_subdivision_ts]
-                subdivision_candles.extend(truly_new_subdivisions)
-                print(f"[BACKTESTING UPDATE] {tf_name} subdivisions: +{len(truly_new_subdivisions)} velas nuevas")
-
-            # Actualizar en cached_data
+            # Actualizar en cached_data. Las subdivisiones eran las mismas velas de main:
+            # ya no se descargan dos veces ni se guardan aparte
             cached_data["timeframes"][tf_name]["main"] = main_candles
-            cached_data["timeframes"][tf_name]["subdivisions"] = subdivision_candles
 
             # Actualizar Open Interest (opcional - solo si hay datos nuevos)
             min_candle_ts = main_candles[0]["timestamp"] if main_candles else 0
@@ -3597,785 +3606,6 @@ async def get_vwap(
         }
 
 
-# =============================================================================
-# ZONE DETECTOR 2.0 - Strategy Tester
-# =============================================================================
-
-# Imports movidos aquí para evitar problemas de orden
-try:
-    from zone_detector import ZoneDetector, ZoneDetectionParams, zone_detector
-    from zone_evaluator import ZoneEvaluator, EvaluationParams, zone_evaluator
-    from zone_optimizer import ZoneOptimizer, OptimizationConfig, zone_optimizer
-    from zone_quality_analyzer import ZoneQualityAnalyzer, ZoneParameterOptimizer, BreakoutAnalysis
-    print("[STARTUP] Zone Detector 2.0 modules loaded successfully")
-    print("[STARTUP] Zone Quality Analyzer loaded successfully")
-except ImportError as e:
-    print(f"[STARTUP] Warning: Could not load Zone Detector modules: {e}")
-    zone_detector = None
-    zone_evaluator = None
-    zone_optimizer = None
-
-
-@app.post("/api/zones/detect")
-@limiter.limit("30/minute")
-async def detect_zones(request: Request):
-    """
-    Detecta zonas de consolidación usando el método especificado.
-
-    Parámetros opcionales:
-    - end_timestamp: Timestamp (ms) de la fecha límite para los datos.
-                     Si se proporciona, solo se usan velas ANTES de esta fecha.
-                     Esto es útil para backtesting donde queremos detectar zonas
-                     solo con datos anteriores a la fecha de inicio de la simulación.
-    """
-    try:
-        if zone_detector is None:
-            return {"success": False, "error": "Zone Detector module not loaded"}
-
-        body = await request.json()
-        symbol = body.get('symbol')
-        interval = body.get('interval', '60')
-        days = body.get('days', 365)
-        method = body.get('method', 'pivot_cluster')
-        params_dict = body.get('params', {})
-        end_timestamp = body.get('end_timestamp')  # 🎯 NUEVO: Fecha límite para los datos
-
-        if not symbol:
-            return {"success": False, "error": "Symbol is required"}
-
-        # Obtener velas históricas (skip_day_limit=True para backtesting con años de datos)
-        print(f"[ZONE_DETECTOR] Fetching {days} days of {interval}m candles for {symbol}...")
-        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
-
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "Could not fetch historical data"}
-
-        candles = historical['data']
-        print(f"[ZONE_DETECTOR] Got {len(candles)} candles total")
-
-        # 🎯 NUEVO: Filtrar velas si se proporciona end_timestamp
-        # Solo usar velas ANTERIORES a la fecha de inicio de playback
-        if end_timestamp:
-            original_count = len(candles)
-            candles = [c for c in candles if c['timestamp'] < end_timestamp]
-            print(f"[ZONE_DETECTOR] Filtered to {len(candles)} candles (before playback start: {end_timestamp})")
-            print(f"[ZONE_DETECTOR] Playback start date: {datetime.fromtimestamp(end_timestamp/1000).isoformat()}")
-
-            if len(candles) == 0:
-                return {"success": False, "error": f"No candles found before playback start date ({datetime.fromtimestamp(end_timestamp/1000).isoformat()})"}
-
-        print(f"[ZONE_DETECTOR] Using {len(candles)} candles for detection")
-
-        # Configurar parámetros
-        params = ZoneDetectionParams()
-        for key, value in params_dict.items():
-            if hasattr(params, key):
-                setattr(params, key, value)
-
-        # Detectar zonas
-        if method == "all":
-            # Ejecutar todos los métodos
-            all_results = zone_detector.detect_all_methods(candles, params)
-            zones_by_method = {
-                m: [z.to_dict() for z in zones]
-                for m, zones in all_results.items()
-            }
-            total_zones = sum(len(zones) for zones in all_results.values())
-
-            return {
-                "success": True,
-                "symbol": symbol,
-                "interval": interval,
-                "days": days,
-                "candles_count": len(candles),
-                "method": "all",
-                "zones_by_method": zones_by_method,
-                "total_zones": total_zones
-            }
-        else:
-            zones = zone_detector.detect_zones(candles, method, params)
-
-            return {
-                "success": True,
-                "symbol": symbol,
-                "interval": interval,
-                "days": days,
-                "candles_count": len(candles),
-                "method": method,
-                "zones": [z.to_dict() for z in zones],
-                "total_zones": len(zones)
-            }
-
-    except Exception as e:
-        print(f"[ERROR] Zone detection: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-@app.post("/api/zones/evaluate")
-@limiter.limit("30/minute")
-async def evaluate_zones(request: Request):
-    """
-    Detecta y evalúa zonas usando datos históricos.
-    """
-    try:
-        if zone_evaluator is None:
-            return {"success": False, "error": "Zone Evaluator module not loaded"}
-
-        body = await request.json()
-        symbol = body.get('symbol')
-        interval = body.get('interval', '60')
-        days = body.get('days', 365)
-        method = body.get('method', 'pivot_cluster')
-        detection_params_dict = body.get('detection_params', {})
-        eval_params_dict = body.get('eval_params', {})
-        end_timestamp = body.get('end_timestamp')  # 🎯 Fecha límite para los datos
-
-        if not symbol:
-            return {"success": False, "error": "Symbol is required"}
-
-        # Obtener velas históricas (skip_day_limit=True para backtesting con años de datos)
-        print(f"[ZONE_EVALUATOR] Fetching {days} days of {interval}m candles for {symbol}...")
-        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
-
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "Could not fetch historical data"}
-
-        candles = historical['data']
-        print(f"[ZONE_EVALUATOR] Got {len(candles)} candles total")
-
-        # 🎯 Filtrar velas si se proporciona end_timestamp
-        if end_timestamp:
-            candles = [c for c in candles if c['timestamp'] < end_timestamp]
-            print(f"[ZONE_EVALUATOR] Filtered to {len(candles)} candles (before playback: {datetime.fromtimestamp(end_timestamp/1000).isoformat()})")
-
-        # Configurar parámetros de detección
-        detection_params = ZoneDetectionParams()
-        for key, value in detection_params_dict.items():
-            if hasattr(detection_params, key):
-                setattr(detection_params, key, value)
-
-        # Configurar parámetros de evaluación
-        eval_params = EvaluationParams()
-        for key, value in eval_params_dict.items():
-            if hasattr(eval_params, key):
-                setattr(eval_params, key, value)
-
-        # Dividir datos: 70% para detección, 30% para evaluación
-        split_idx = int(len(candles) * 0.7)
-        detection_candles = candles[:split_idx]
-
-        print(f"[ZONE_EVALUATOR] Detection: {len(detection_candles)} candles, Evaluation: {len(candles) - split_idx} candles")
-
-        # Detectar zonas
-        zones = zone_detector.detect_zones(detection_candles, method, detection_params)
-        print(f"[ZONE_EVALUATOR] Detected {len(zones)} zones with method '{method}'")
-
-        # Evaluar zonas
-        evaluations = zone_evaluator.evaluate_zones_batch(zones, candles, eval_params)
-
-        # Calcular métricas agregadas
-        tradeable = [e for e in evaluations if e.tradeable]
-        total_bounces = sum(e.total_bounces for e in evaluations)
-        successful_bounces = sum(e.successful_bounces for e in evaluations)
-
-        return {
-            "success": True,
-            "symbol": symbol,
-            "interval": interval,
-            "days": days,
-            "method": method,
-            "candles_total": len(candles),
-            "candles_detection": len(detection_candles),
-            "zones_detected": len(zones),
-            "zones_tradeable": len(tradeable),
-            "tradeable_rate": len(tradeable) / len(zones) if zones else 0,
-            "total_bounces": total_bounces,
-            "successful_bounces": successful_bounces,
-            "overall_win_rate": successful_bounces / total_bounces if total_bounces > 0 else 0,
-            "evaluations": [e.to_dict() for e in evaluations[:20]],  # Limitar a 20 para no sobrecargar
-            "summary": {
-                "avg_score": sum(e.overall_score for e in evaluations) / len(evaluations) if evaluations else 0,
-                "avg_fakeout_rate": sum(e.fakeout_rate for e in evaluations) / len(evaluations) if evaluations else 0,
-                "strategies": {
-                    "range_trade_aggressive": sum(1 for e in evaluations if "aggressive" in e.recommended_strategy),
-                    "range_trade_conservative": sum(1 for e in evaluations if "conservative" in e.recommended_strategy),
-                    "breakout_trade": sum(1 for e in evaluations if "breakout" in e.recommended_strategy),
-                    "avoid": sum(1 for e in evaluations if "avoid" in e.recommended_strategy)
-                }
-            }
-        }
-
-    except Exception as e:
-        print(f"[ERROR] Zone evaluation: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-@app.post("/api/zones/compare-methods")
-@limiter.limit("10/minute")
-async def compare_zone_methods(request: Request):
-    """
-    Compara todos los métodos de detección de zonas.
-    """
-    try:
-        if zone_evaluator is None:
-            return {"success": False, "error": "Zone modules not loaded"}
-
-        body = await request.json()
-        symbol = body.get('symbol')
-        interval = body.get('interval', '60')
-        days = body.get('days', 365)
-        end_timestamp = body.get('end_timestamp')  # 🎯 Fecha límite para los datos
-
-        if not symbol:
-            return {"success": False, "error": "Symbol is required"}
-
-        # Obtener velas históricas (skip_day_limit=True para backtesting)
-        print(f"[ZONE_COMPARE] Fetching {days} days of {interval}m candles for {symbol}...")
-        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
-
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "Could not fetch historical data"}
-
-        candles = historical['data']
-        print(f"[ZONE_COMPARE] Got {len(candles)} candles total")
-
-        # 🎯 Filtrar velas si se proporciona end_timestamp
-        if end_timestamp:
-            candles = [c for c in candles if c['timestamp'] < end_timestamp]
-            print(f"[ZONE_COMPARE] Filtered to {len(candles)} candles (before playback: {datetime.fromtimestamp(end_timestamp/1000).isoformat()})")
-
-        print(f"[ZONE_COMPARE] Comparing methods with {len(candles)} candles...")
-
-        # Comparar métodos
-        results = zone_evaluator.compare_methods(candles)
-
-        # Encontrar mejor método
-        best_method = max(
-            results.keys(),
-            key=lambda m: results[m].get('overall_win_rate', 0) * results[m].get('tradeable_rate', 0)
-        )
-
-        return {
-            "success": True,
-            "symbol": symbol,
-            "interval": interval,
-            "days": days,
-            "candles_count": len(candles),
-            "best_method": best_method,
-            "methods": results,
-            "recommendation": f"Use '{best_method}' for best results on {symbol} {interval}m"
-        }
-
-    except Exception as e:
-        print(f"[ERROR] Zone comparison: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-@app.post("/api/zones/optimize")
-@limiter.limit("5/minute")
-async def optimize_zone_params(request: Request):
-    """
-    Optimiza parámetros de detección de zonas usando grid search.
-    """
-    try:
-        if zone_optimizer is None:
-            return {"success": False, "error": "Zone Optimizer module not loaded"}
-
-        body = await request.json()
-        symbol = body.get('symbol')
-        interval = body.get('interval', '60')
-        days = body.get('days', 1095)  # Default: 3 años
-        method = body.get('method', 'pivot_cluster')
-        walk_forward = body.get('walk_forward', False)
-        end_timestamp = body.get('end_timestamp')  # 🎯 Fecha límite para los datos
-
-        if not symbol:
-            return {"success": False, "error": "Symbol is required"}
-
-        # Obtener velas históricas (skip_day_limit=True para backtesting con 3 años)
-        print(f"[ZONE_OPTIMIZER] Fetching {days} days of {interval}m candles for {symbol}...")
-        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
-
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "Could not fetch historical data"}
-
-        candles = historical['data']
-        print(f"[ZONE_OPTIMIZER] Got {len(candles)} candles total")
-
-        # 🎯 Filtrar velas si se proporciona end_timestamp
-        if end_timestamp:
-            candles = [c for c in candles if c['timestamp'] < end_timestamp]
-            print(f"[ZONE_OPTIMIZER] Filtered to {len(candles)} candles (before playback: {datetime.fromtimestamp(end_timestamp/1000).isoformat()})")
-
-        print(f"[ZONE_OPTIMIZER] Optimizing with {len(candles)} candles...")
-
-        config = OptimizationConfig()
-
-        if walk_forward:
-            if method == "all":
-                # Walk-forward para todos los métodos
-                results = {}
-                for m in ZoneDetector.METHODS:
-                    print(f"[ZONE_OPTIMIZER] Walk-forward optimizing: {m}")
-                    results[m] = zone_optimizer.walk_forward_optimize(candles, m, config)
-
-                # Encontrar mejor método robusto
-                robust_methods = [
-                    m for m in results
-                    if 'error' not in results[m] and results[m].get('degradation', {}).get('is_robust', False)
-                ]
-
-                if robust_methods:
-                    best_method = max(
-                        robust_methods,
-                        key=lambda m: results[m]['out_of_sample']['avg_fitness']
-                    )
-                else:
-                    valid_methods = [m for m in results if 'error' not in results[m]]
-                    best_method = max(
-                        valid_methods,
-                        key=lambda m: results[m].get('out_of_sample', {}).get('avg_fitness', 0)
-                    ) if valid_methods else None
-
-                return {
-                    "success": True,
-                    "symbol": symbol,
-                    "interval": interval,
-                    "days": days,
-                    "candles_count": len(candles),
-                    "optimization_type": "walk_forward_all",
-                    "best_method": best_method,
-                    "best_params": results[best_method]['recommended_params'] if best_method else None,
-                    "methods": results
-                }
-            else:
-                # Walk-forward para un método específico
-                result = zone_optimizer.walk_forward_optimize(candles, method, config)
-                return {
-                    "success": True,
-                    "symbol": symbol,
-                    "interval": interval,
-                    "days": days,
-                    "candles_count": len(candles),
-                    "optimization_type": "walk_forward",
-                    "method": method,
-                    **result
-                }
-        else:
-            # Optimización simple (grid search)
-            if method == "all":
-                result = zone_optimizer.optimize_all_methods(candles, config)
-            else:
-                result = zone_optimizer.optimize(candles, method, config)
-
-            return {
-                "success": True,
-                "symbol": symbol,
-                "interval": interval,
-                "days": days,
-                "candles_count": len(candles),
-                "optimization_type": "grid_search",
-                **result
-            }
-
-    except Exception as e:
-        print(f"[ERROR] Zone optimization: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-@app.get("/api/zones/methods")
-async def get_zone_methods():
-    """Retorna lista de métodos disponibles y sus parámetros"""
-    if zone_detector is None:
-        return {"success": False, "error": "Zone Detector not loaded", "methods": []}
-
-    return {
-        "success": True,
-        "methods": ZoneDetector.METHODS,
-        "parameters": {
-            "pivot_cluster": {
-                "pivot_tolerance_pct": {"default": 0.3, "range": [0.1, 1.0], "description": "% de distancia para agrupar pivots"},
-                "pivot_min_touches": {"default": 3, "range": [2, 10], "description": "Mínimo de toques para zona válida"},
-                "pivot_min_duration_hours": {"default": 4.0, "range": [1, 48], "description": "Duración mínima de zona en horas"},
-                "pivot_swing_bars": {"default": 5, "range": [2, 15], "description": "Velas a cada lado para confirmar pivot"}
-            },
-            "atr_based": {
-                "atr_period": {"default": 14, "range": [5, 30], "description": "Período para calcular ATR"},
-                "atr_threshold": {"default": 0.7, "range": [0.3, 1.0], "description": "Multiplicador de ATR para baja volatilidad"},
-                "atr_min_bars": {"default": 10, "range": [5, 30], "description": "Mínimo de velas en zona"}
-            },
-            "volume_profile": {
-                "vp_value_area_pct": {"default": 70, "range": [50, 90], "description": "% de volumen para Value Area"},
-                "vp_min_volume_ratio": {"default": 1.5, "range": [1.0, 3.0], "description": "Ratio mínimo de volumen vs promedio"},
-                "vp_price_bins": {"default": 50, "range": [20, 100], "description": "Número de bins de precio"}
-            },
-            "price_action": {
-                "pa_touch_tolerance_pct": {"default": 0.2, "range": [0.1, 0.5], "description": "Tolerancia para contar toques"},
-                "pa_min_touches": {"default": 3, "range": [2, 10], "description": "Mínimo de toques en nivel"},
-                "pa_lookback_bars": {"default": 100, "range": [50, 500], "description": "Velas de lookback"},
-                "pa_min_separation_bars": {"default": 5, "range": [2, 20], "description": "Separación mínima entre toques"}
-            },
-            "consolidation": {
-                "consol_min_bars": {"default": 8, "range": [5, 30], "description": "Mínimo de velas en consolidación"},
-                "consol_max_bars": {"default": 50, "range": [20, 300], "description": "Máximo de velas en consolidación"},
-                "consol_max_range_pct": {"default": 3.0, "range": [1.0, 10.0], "description": "Máximo % de rango de precio"},
-                "consol_atr_ratio": {"default": 0.6, "range": [0.3, 2.0], "description": "ATR local/global (menor = menos volátil)"},
-                "consol_body_ratio": {"default": 0.5, "range": [0.3, 0.8], "description": "Ratio cuerpo/rango de velas (menor = más indecisión)"},
-                "consol_max_outside_bars": {"default": 3, "range": [1, 10], "description": "Velas fuera del rango antes de cerrar zona"}
-            },
-            "trading_zones": {
-                "consol_min_bars": {"default": 8, "range": [3, 50], "description": "Mínimo de velas en consolidación"},
-                "consol_max_bars": {"default": 50, "range": [10, 300], "description": "Máximo de velas en consolidación"},
-                "consol_max_range_pct": {"default": 3.0, "range": [0.5, 10.0], "description": "Máximo % de rango de precio"},
-                "consol_atr_ratio": {"default": 0.6, "range": [0.2, 2.0], "description": "ATR local/global (menor = menos volátil)"},
-                "consol_body_ratio": {"default": 0.5, "range": [0.2, 0.9], "description": "Ratio cuerpo/rango (menor = más indecisión)"},
-                "consol_max_outside_bars": {"default": 3, "range": [1, 10], "description": "Velas fuera del rango antes de cerrar"},
-                "lookforward_bars": {"default": 100, "range": [20, 500], "description": "Velas hacia adelante para simular trade"},
-                "breakout_search_bars": {"default": 20, "range": [5, 50], "description": "Velas para buscar breakout después de consolidación"},
-                "include_no_breakout": {"default": True, "type": "boolean", "description": "Incluir zonas sin breakout claro"}
-            }
-        }
-    }
-
-
-# =============================================================================
-# ZONE QUALITY ANALYSIS - Optimización de parámetros
-# =============================================================================
-
-@app.post("/api/zones/quality-simulation")
-@limiter.limit("2/minute")
-async def run_zone_quality_simulation(request: Request):
-    """
-    Ejecuta simulación completa para encontrar parámetros óptimos de zonas de consolidación.
-
-    Analiza zonas detectadas con diferentes parámetros y evalúa la calidad del breakout
-    basándose en:
-    - R-Multiple (distancia del movimiento vs altura de zona)
-    - Momentum (fuerza y persistencia del breakout)
-    - Volumen (acumulación pre-breakout y confirmación post-breakout)
-
-    Retorna métricas detalladas y recomendaciones de parámetros.
-    """
-    try:
-        body = await request.json()
-        symbol = body.get('symbol', 'BTCUSDT')
-        interval = body.get('interval', '5')  # Default 5 minutos
-        days = body.get('days', 1095)  # Default 3 años
-        quality_threshold = body.get('quality_threshold', 60.0)
-        lookforward_bars = body.get('lookforward_bars', 100)
-
-        # Modo de ejecución: "simultaneous" (múltiples trades) o "sequential" (un trade a la vez)
-        trade_mode = body.get('trade_mode', 'simultaneous')
-
-        # Grid de parámetros a probar
-        param_grid = body.get('param_grid', {
-            "consol_min_bars": [5, 8, 12, 15],
-            "consol_max_bars": [30, 50, 80, 120],
-            "consol_max_range_pct": [1.5, 2.0, 3.0, 4.0],
-            "consol_atr_ratio": [0.4, 0.6, 0.8, 1.0],
-            "consol_body_ratio": [0.4, 0.5, 0.6],
-            "consol_max_outside_bars": [2, 3, 5, 8]
-        })
-
-        print(f"[QUALITY_SIM] Starting simulation for {symbol} {interval}m with {days} days...")
-
-        # Obtener velas históricas
-        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
-
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "Could not fetch historical data"}
-
-        candles = historical['data']
-        print(f"[QUALITY_SIM] Loaded {len(candles)} candles")
-        print(f"[QUALITY_SIM] Date range: {datetime.fromtimestamp(candles[0]['timestamp']/1000)} to {datetime.fromtimestamp(candles[-1]['timestamp']/1000)}")
-
-        # Crear optimizador
-        optimizer = ZoneParameterOptimizer(candles)
-
-        # Ejecutar grid search
-        from itertools import product
-
-        param_names = list(param_grid.keys())
-        param_values = list(param_grid.values())
-        combinations = list(product(*param_values))
-
-        print(f"[QUALITY_SIM] Testing {len(combinations)} parameter combinations...")
-
-        results = []
-        progress_interval = max(1, len(combinations) // 10)
-
-        for i, combo in enumerate(combinations):
-            params_dict = dict(zip(param_names, combo))
-
-            try:
-                # Crear parámetros
-                params = ZoneDetectionParams(**params_dict)
-
-                # Detectar zonas
-                zones = zone_detector.detect_zones(candles, method="consolidation", params=params)
-
-                if len(zones) < 3:
-                    continue
-
-                # Convertir a diccionarios
-                zones_dict = [z.to_dict() for z in zones]
-
-                # Analizar calidad según el modo de ejecución
-                sequential_stats = None
-                if trade_mode == "sequential":
-                    analyses, sequential_stats = optimizer.quality_analyzer.analyze_zones_sequential(zones_dict, lookforward_bars)
-                else:
-                    analyses = optimizer.quality_analyzer.analyze_multiple_zones(zones_dict, lookforward_bars)
-
-                if len(analyses) < 3:
-                    continue
-
-                # Generar estadísticas
-                stats = optimizer.quality_analyzer.generate_statistics(analyses, quality_threshold)
-
-                result = {
-                    "params": params_dict,
-                    "total_zones": stats['total_zones'],
-                    "quality_zones": stats['quality_zones'],
-                    "avg_r_multiple": round(stats['avg_r_multiple'], 2),
-                    "median_r_multiple": round(stats['median_r_multiple'], 2),
-                    "pct_reached_2r": round(stats['pct_reached_2r'], 1),
-                    "pct_reached_3r": round(stats['pct_reached_3r'], 1),
-                    "avg_quality_score": round(stats['avg_quality_score'], 1),
-                    "avg_bars_to_2r": round(stats['avg_bars_to_2r'], 0) if stats['avg_bars_to_2r'] else None,
-                    "score_distribution": stats['score_distribution'],
-                    # MÉTRICAS DE TRADING REAL (TP vs SL)
-                    "real_win_rate": round(stats['real_win_rate'], 1),  # % donde TP(2R) hit antes que SL(1R)
-                    "total_wins": stats['total_wins'],
-                    "total_losses": stats['total_losses'],
-                    "total_still_open": stats['total_still_open'],  # Trades sin cerrar aún
-                    "total_pnl_r": round(stats['total_pnl_r'], 1),  # P&L total en R
-                    "expectancy_r": round(stats['expectancy_r'], 3),  # Expectancy por trade
-                    "is_profitable": stats['is_profitable'],  # True si expectancy > 0
-                    # DURACIÓN DE TRADES
-                    "avg_bars_to_close": round(stats['avg_bars_to_close'], 1) if stats.get('avg_bars_to_close') else None,
-                    "avg_win_duration": round(stats['avg_win_duration'], 1) if stats.get('avg_win_duration') else None,
-                    "avg_loss_duration": round(stats['avg_loss_duration'], 1) if stats.get('avg_loss_duration') else None,
-                    # SECUENCIALIDAD (solo si trade_mode == "sequential")
-                    "sequential_stats": sequential_stats
-                }
-
-                results.append(result)
-
-            except Exception as e:
-                print(f"[QUALITY_SIM] Error with params {params_dict}: {e}")
-                continue
-
-            if (i + 1) % progress_interval == 0:
-                print(f"[QUALITY_SIM] Progress: {i + 1}/{len(combinations)} ({((i+1)/len(combinations)*100):.0f}%)")
-
-        # Ordenar por mejor rendimiento de TRADING REAL
-        # Priorizar: 1) Expectancy (E>0 = rentable), 2) Real Win Rate, 3) Avg quality score
-        results.sort(key=lambda x: (x['expectancy_r'], x['real_win_rate'], x['avg_quality_score']), reverse=True)
-
-        # Analizar parámetros de los mejores resultados
-        top_results = results[:10] if len(results) >= 10 else results
-
-        param_recommendations = {}
-        if top_results:
-            for param in param_names:
-                values = [r['params'][param] for r in top_results]
-                param_recommendations[param] = {
-                    "recommended": float(np.median(values)),
-                    "range": [float(min(values)), float(max(values))],
-                    "values_in_top_10": values
-                }
-
-        print(f"[QUALITY_SIM] Completed. {len(results)} valid combinations found.")
-
-        return {
-            "success": True,
-            "symbol": symbol,
-            "interval": interval,
-            "days": days,
-            "trade_mode": trade_mode,
-            "candles_analyzed": len(candles),
-            "combinations_tested": len(combinations),
-            "valid_results": len(results),
-            "quality_threshold": quality_threshold,
-            "best_result": results[0] if results else None,
-            "top_10_results": top_results,
-            "all_results": results,
-            "parameter_recommendations": param_recommendations,
-            "summary": {
-                # MÉTRICAS DE TRADING REAL
-                "best_real_win_rate": max(r['real_win_rate'] for r in results) if results else 0,
-                "best_expectancy_r": max(r['expectancy_r'] for r in results) if results else 0,
-                "profitable_combinations": len([r for r in results if r['is_profitable']]),
-                "unprofitable_combinations": len([r for r in results if not r['is_profitable']]),
-                # DURACIÓN DE TRADES
-                "avg_trade_duration_bars": np.mean([r['avg_bars_to_close'] for r in results if r.get('avg_bars_to_close')]) if results else None,
-                "avg_win_duration_bars": np.mean([r['avg_win_duration'] for r in results if r.get('avg_win_duration')]) if results else None,
-                "avg_loss_duration_bars": np.mean([r['avg_loss_duration'] for r in results if r.get('avg_loss_duration')]) if results else None,
-                # Métricas auxiliares
-                "best_pct_2r": max(r['pct_reached_2r'] for r in results) if results else 0,
-                "best_avg_r": max(r['avg_r_multiple'] for r in results) if results else 0,
-                "avg_zones_per_config": np.mean([r['total_zones'] for r in results]) if results else 0
-            }
-        }
-
-    except Exception as e:
-        print(f"[ERROR] Zone quality simulation: {e}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-@app.post("/api/zones/analyze-quality")
-@limiter.limit("10/minute")
-async def analyze_zones_quality(request: Request):
-    """
-    Analiza la calidad de zonas ya detectadas.
-
-    Recibe zonas específicas y retorna métricas detalladas de cada breakout.
-    Útil para visualizar zonas individuales en el gráfico.
-    """
-    try:
-        body = await request.json()
-        symbol = body.get('symbol', 'BTCUSDT')
-        interval = body.get('interval', '5')
-        days = body.get('days', 1095)
-        zones = body.get('zones', [])  # Lista de zonas a analizar
-        params = body.get('params', {})  # Si no se pasan zonas, detectar con estos params
-        lookforward_bars = body.get('lookforward_bars', 100)
-        quality_threshold = body.get('quality_threshold', 60.0)
-
-        # Obtener velas
-        historical = await _fetch_historical_internal(symbol, interval, days, skip_day_limit=True)
-
-        if not historical.get('success') or not historical.get('data'):
-            return {"success": False, "error": "Could not fetch historical data"}
-
-        candles = historical['data']
-
-        # Si no se pasan zonas, detectar con parámetros dados
-        if not zones and params:
-            zone_params = ZoneDetectionParams(**params)
-            detected = zone_detector.detect_zones(candles, method="consolidation", params=zone_params)
-            zones = [z.to_dict() for z in detected]
-
-        if not zones:
-            return {"success": False, "error": "No zones provided and no params to detect"}
-
-        # Analizar cada zona
-        analyzer = ZoneQualityAnalyzer(candles)
-        analyses = analyzer.analyze_multiple_zones(zones, lookforward_bars)
-
-        # Generar estadísticas
-        stats = analyzer.generate_statistics(analyses, quality_threshold)
-
-        # Convertir análisis a diccionarios con información para visualización
-        analyses_dict = []
-        for a in analyses:
-            d = a.to_dict()
-            # Añadir clasificación de calidad
-            if a.quality_score >= 80:
-                d['quality_class'] = 'excellent'
-            elif a.quality_score >= 60:
-                d['quality_class'] = 'good'
-            elif a.quality_score >= 40:
-                d['quality_class'] = 'average'
-            else:
-                d['quality_class'] = 'poor'
-            analyses_dict.append(d)
-
-        # Ordenar por quality_score descendente
-        analyses_dict.sort(key=lambda x: x['quality_score'], reverse=True)
-
-        return {
-            "success": True,
-            "symbol": symbol,
-            "interval": interval,
-            "zones_analyzed": len(analyses),
-            "statistics": stats,
-            "analyses": analyses_dict,
-            "quality_zones": [a for a in analyses_dict if a['quality_score'] >= quality_threshold],
-            "visualization_data": {
-                "zones_by_quality": {
-                    "excellent": [a for a in analyses_dict if a['quality_class'] == 'excellent'],
-                    "good": [a for a in analyses_dict if a['quality_class'] == 'good'],
-                    "average": [a for a in analyses_dict if a['quality_class'] == 'average'],
-                    "poor": [a for a in analyses_dict if a['quality_class'] == 'poor']
-                }
-            }
-        }
-
-    except Exception as e:
-        print(f"[ERROR] Zone quality analysis: {e}")
-        import traceback
-        traceback.print_exc()
-        return {"success": False, "error": str(e)}
-
-
-@app.get("/api/zones/quality-metrics")
-async def get_quality_metrics_info():
-    """
-    Retorna información sobre las métricas de calidad disponibles.
-    """
-    return {
-        "success": True,
-        "metrics": {
-            "r_multiple": {
-                "description": "Ratio entre el movimiento del precio después del breakout y la altura de la zona",
-                "formula": "MFE / zone_height",
-                "interpretation": {
-                    "< 1.0": "Breakout débil - no alcanzó ni siquiera 1x la altura de la zona",
-                    "1.0 - 2.0": "Breakout aceptable - movimiento moderado",
-                    "2.0 - 3.0": "Breakout bueno - movimiento significativo",
-                    "> 3.0": "Breakout excelente - movimiento muy fuerte"
-                }
-            },
-            "momentum_score": {
-                "description": "Evalúa la fuerza y persistencia del breakout",
-                "components": {
-                    "breakout_body_ratio": "Tamaño del cuerpo de la vela de breakout vs ATR",
-                    "continuation_bars": "Velas consecutivas en la dirección del breakout",
-                    "pullback_depth": "Máximo retroceso antes de continuar"
-                }
-            },
-            "volume_score": {
-                "description": "Evalúa la confirmación de volumen",
-                "components": {
-                    "zone_volume_vs_avg": "Volumen de la zona vs promedio histórico",
-                    "breakout_volume_spike": "Volumen de breakout vs promedio de la zona",
-                    "volume_confirmation_bars": "Velas con volumen > promedio después del breakout"
-                }
-            },
-            "quality_score": {
-                "description": "Score compuesto ponderado",
-                "formula": "40% R-Multiple + 35% Momentum + 25% Volume",
-                "thresholds": {
-                    "excellent": ">= 80",
-                    "good": "60 - 80",
-                    "average": "40 - 60",
-                    "poor": "< 40"
-                }
-            }
-        },
-        "recommended_params_for_2r": {
-            "consol_min_bars": "8-12 (zonas más formadas)",
-            "consol_max_bars": "50-80 (evitar zonas muy largas)",
-            "consol_max_range_pct": "2.0-3.0% (rangos compactos)",
-            "consol_atr_ratio": "0.5-0.7 (baja volatilidad)",
-            "consol_body_ratio": "0.4-0.5 (velas de indecisión)",
-            "consol_max_outside_bars": "3-5 (tolerancia a wick)"
-        }
-    }
-
-
 # ==================== SCREENSHOT ENDPOINTS ====================
 # IMPORTANTE: Rutas específicas ANTES de rutas con parámetros para evitar conflictos
 
@@ -4404,7 +3634,7 @@ async def test_screenshots_root():
 
 
 @app.get("/api/screenshots/session/{session_id}/{filename}")
-@limiter.limit("60/minute")
+@limiter.limit("600/minute")
 async def get_screenshot(request: Request, session_id: str, filename: str):
     """
     Retorna un screenshot de una sesión de backtesting.
@@ -4566,7 +3796,9 @@ async def observer_record_order(request: Request):
     if not all(key in order for key in ("id", "symbol", "side", "time")):
         raise HTTPException(status_code=400, detail="Faltan datos de la orden")
     order["symbol"] = sanitize_filename(order["symbol"])
-    return await run_in_threadpool(observer.record_order, order)
+    result = await run_in_threadpool(observer.record_order, order)
+    await run_in_threadpool(measures.table_for, order["symbol"], order["time"])  # Si falta, se prepara aparte
+    return result
 
 
 @app.post("/api/observer/orders/{order_id}/events")
@@ -4584,8 +3816,8 @@ async def observer_record_event(request: Request, order_id: str):
 @app.get("/api/observer/orders")
 @limiter.limit("120/minute")
 async def observer_orders(request: Request, limit: int = 50):
-    """Órdenes registradas. La lectura solo aparece cuando la orden terminó."""
-    return {"orders": observer.list_trades(limit)}
+    """Órdenes registradas. La lectura y las medidas solo aparecen cuando la orden terminó."""
+    return {"orders": await run_in_threadpool(patterns.orders, limit)}
 
 
 @app.get("/api/observer/report")
@@ -4593,6 +3825,44 @@ async def observer_orders(request: Request, limit: int = 50):
 async def observer_report(request: Request, symbol: Optional[str] = None, blind: str = "all", include_rewound: bool = False):
     """Informe de condiciones, marcas y resultados de lo registrado."""
     return await run_in_threadpool(observer.report, symbol, blind, include_rewound)
+
+
+@app.get("/api/observer/measures/{symbol}")
+@limiter.limit("120/minute")
+async def observer_measures(request: Request, symbol: str):
+    """Medidas disponibles y estado de la tabla del símbolo. Si falta, se prepara aparte."""
+    safe = sanitize_filename(symbol)
+    await run_in_threadpool(measures.table_for, safe)
+    return {"status": await run_in_threadpool(measures.status, safe), "measures": measures.catalog()}
+
+
+@app.get("/api/observer/patterns/{symbol}")
+@limiter.limit("30/minute")
+async def observer_patterns(request: Request, symbol: str, blind: str = "all", include_rewound: bool = False, until: Optional[int] = None):
+    """Qué distingue las entradas de los momentos sin entrada, y las ganadoras de las perdedoras."""
+    return await run_in_threadpool(patterns.report, sanitize_filename(symbol), blind, include_rewound, until)
+
+
+@app.get("/api/observer/export/{symbol}")
+@limiter.limit("30/minute")
+async def observer_export(request: Request, symbol: str, hide_dates: bool = False):
+    """Registro completo en CSV: hechos, medidas y resultado de cada orden."""
+    safe = sanitize_filename(symbol)
+    content = await run_in_threadpool(patterns.export_csv, safe, hide_dates)
+    headers = {"Content-Disposition": f'attachment; filename="registro_{safe}.csv"'}
+    return Response(content="﻿" + content, media_type="text/csv; charset=utf-8", headers=headers)
+
+
+@app.post("/api/observer/rule-test/{symbol}")
+@limiter.limit("30/minute")
+async def observer_rule_test(request: Request, symbol: str):
+    """Prueba una regla en las fechas que no se operaron."""
+    body = await request.json()
+    options = {key: body[key] for key in ("side", "stop_atr", "target_r", "horizon", "cooldown", "until") if key in body}
+    try:
+        return await run_in_threadpool(patterns.rule_test, sanitize_filename(symbol), body.get("conditions") or [], **options)
+    except (TypeError, ValueError) as error:
+        raise HTTPException(status_code=400, detail=str(error))
 
 
 @app.get("/api/observer/blind-start/{symbol}")
@@ -4603,6 +3873,21 @@ async def observer_blind_start(request: Request, symbol: str, first: int, last: 
 
 
 # ==================== ORDER FLOW ====================
+
+def _footprints_body(symbol, interval, start, end, cut, step, rules, limit):
+    """Calcula y serializa en un hilo: al desplazarse son hasta 200 ms que detendrían todo el backend."""
+    result = footprint_store.footprints(symbol, int(interval), start, end, cut, step, rules, limit)
+    return json.dumps({
+        "success": True,
+        "footprints": result["footprints"],
+        "count": len(result["footprints"]),
+        "step_size": result["step_size"],
+        "cell_size": result.get("cell_size"),
+        "known_until": result["known_until"],
+        "interval": interval,
+        "source": "store"
+    }, allow_nan=False, separators=(",", ":")).encode("utf-8")
+
 
 @app.get("/api/orderflow/historical/{symbol}")
 @limiter.limit("600/minute")
@@ -4649,17 +3934,10 @@ async def get_orderflow_historical(
                 "stacked_levels": max(2, stacked_levels),
             }
             limit = max(2, max_levels) if max_levels else None
-            result = footprint_store.footprints(sanitize_filename(symbol), int(interval), start_timestamp, end_timestamp, cut, step, rules, limit)
-            return {
-                "success": True,
-                "footprints": result["footprints"],
-                "count": len(result["footprints"]),
-                "step_size": result["step_size"],
-                "cell_size": result.get("cell_size"),
-                "known_until": result["known_until"],
-                "interval": interval,
-                "source": "store"
-            }
+            body = await run_in_threadpool(
+                _footprints_body, sanitize_filename(symbol), interval, start_timestamp, end_timestamp, cut, step, rules, limit
+            )
+            return Response(content=body, media_type="application/json")
 
         # 2. Validar límite de días
         max_days = MAX_DAYS_BY_INTERVAL.get(interval, 30)
@@ -4778,7 +4056,9 @@ async def get_orderflow_profile(
 ):
     """Volumen real por franja de precio en un rango, cortado en la hora simulada."""
     rows = max(1, min(rows, 2000))
-    result = footprint_store.profile(sanitize_filename(symbol), start_timestamp, end_timestamp, known_until, low, high, rows)
+    result = await run_in_threadpool(
+        footprint_store.profile, sanitize_filename(symbol), start_timestamp, end_timestamp, known_until, low, high, rows
+    )
     return {"success": True, **result}
 
 

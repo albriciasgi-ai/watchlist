@@ -3,6 +3,17 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import LocalPatternDetector from './LocalPatternDetector.js';
+import { candleItemId } from './analysisLevels.js';
+
+// Nombre de cada rechazo para una marca elegida
+const PATTERN_NAMES = {
+  HAMMER: 'Martillo',
+  SHOOTING_STAR: 'Estrella fugaz',
+  ENGULFING_BULLISH: 'Envolvente alcista',
+  ENGULFING_BEARISH: 'Envolvente bajista',
+  DOJI_DRAGONFLY: 'Doji libélula',
+  DOJI_GRAVESTONE: 'Doji lápida'
+};
 
 const MAX_VALIDATED_CANDLES = 1500; // Con más velas en pantalla los puntos no se alcanzan a leer
 const MIN_REQUEST_GAP_MS = 400;
@@ -267,7 +278,13 @@ class RejectionPatternIndicator extends IndicatorBase {
   }
 
   // Método para overlay (llamado por IndicatorManager)
+  /** Rechazos a la vista, para elegirlos como marcas con una nota */
+  selectableLevels() {
+    return this.marks || [];
+  }
+
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
+    this.marks = [];
     if (!this.enabled || !this.config.enabled || visibleCandles.length === 0) {
       return;
     }
@@ -322,7 +339,14 @@ class RejectionPatternIndicator extends IndicatorBase {
 
       // Draw pattern marker (diferente visualización según modo)
       const isValidated = this.showMode === 'validated';
-      this.drawPatternMarker(ctx, x, y, pattern, isValidated);
+      const drawn = this.drawPatternMarker(ctx, x, y, pattern, isValidated);
+
+      const patternType = pattern.type || pattern.patternType;
+      const kind = PATTERN_NAMES[patternType] || 'Rechazo';
+      this.marks.push({
+        id: candleItemId(this.name, kind, candle.timestamp, null, this.interval), source: this.name, kind, price: drawn.bullish ? candle.low : candle.high,
+        time: candle.timestamp, mark: true, x, y: drawn.y, r: Math.max(8, drawn.radius + 3)
+      });
     }
   }
 
@@ -393,6 +417,8 @@ class RejectionPatternIndicator extends IndicatorBase {
       ctx.fillText('✓', x + radius + 2, dotY - radius - 2);
       ctx.restore();
     }
+
+    return { y: dotY, radius, bullish: isBullish };
   }
 
   hexToRgba(hex, alpha) {

@@ -1,5 +1,6 @@
 // src/components/indicators/VolumeProfileIndicator.js
 
+import { profileLevels } from './analysisLevels.js';
 import IndicatorBase from "./IndicatorBase";
 
 class VolumeProfileIndicator extends IndicatorBase {
@@ -640,6 +641,10 @@ class VolumeProfileIndicator extends IndicatorBase {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  selectableLevels() {
+    return profileLevels(this.profile, 'Volume Profile');
   }
 
   // ✅ NUEVO: Método renderOverlay para compatibilidad con IndicatorManager

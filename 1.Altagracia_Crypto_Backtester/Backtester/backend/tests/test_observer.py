@@ -394,7 +394,7 @@ def test_informe_de_marcas_y_coincidencias(journal, monkeypatch):
 def test_informe_compara_zona_contra_azar(journal, monkeypatch):
     fill_report(monkeypatch)
     zones = observer.report()["zones"]
-    assert zones["orders"] == 8 and zones["near"] == 6 and zones["chance"] == pytest.approx(0.4)
+    assert zones["orders"] == 7 and zones["near"] == 6 and zones["chance"] == pytest.approx(0.4)
 
 
 def test_mejores_contra_peores(journal, monkeypatch):
@@ -411,7 +411,7 @@ def test_informe_ordena_lo_que_mas_se_repite(journal, monkeypatch):
     assert shares == sorted(shares, reverse=True)
     assert {row["id"] for row in habits} == set(observer.RULE_PARTS)
     oi = next(row for row in habits if row["id"] == "oi_up")
-    assert oi["share"] == pytest.approx(5 / 8), "todas las ordenes con lectura, no solo las cerradas"
+    assert oi["share"] == pytest.approx(4 / 7), "las terminadas con lectura, cerradas o canceladas, no las vivas"
 
 
 def test_informe_vacio(journal):
@@ -504,3 +504,73 @@ def test_fecha_oculta_respeta_las_velas_cargadas(journal, monkeypatch):
 def test_fecha_oculta_sin_almacen(journal, monkeypatch):
     monkeypatch.setattr(footprint_store, "continuous_days", lambda symbol: None)
     assert observer.blind_start("BTCUSDT", 0, 1)["timestamp"] is None
+
+
+def image(kind, path, sim_time=2):
+    return {"kind": kind, "path": path, "sim_time": sim_time, "frame": "15m"}
+
+
+def test_la_imagen_no_sale_mientras_la_orden_sigue_viva(journal, monkeypatch):
+    with_reading(monkeypatch)
+    observer.record_order(order())
+    observer.record_event("a", "image", image("decision", "s/a.png"))
+    assert "images" not in observer.list_trades()[0]
+    observer.record_event("a", "fill", {"time": 2, "price": 100.0})
+    observer.record_event("a", "image", image("entry", "s/b.png"))
+    assert "images" not in observer.list_trades()[0]
+    close("a", 5.0)
+    assert observer.list_trades()[0]["images"] == {
+        "decision": {"path": "s/a.png", "sim_time": 2, "frame": "15m"},
+        "entry": {"path": "s/b.png", "sim_time": 2, "frame": "15m"},
+    }
+
+
+def test_la_imagen_guarda_donde_quedo_cada_marca(journal, monkeypatch):
+    with_reading(monkeypatch)
+    observer.record_order(order())
+    observer.record_event("a", "fill", {"time": 2, "price": 100.0})
+    markers = [{"id": "Volumen de Respuesta|Rombo|7", "x": 0.4, "y": 0.6}]
+    observer.record_event("a", "image", {**image("entry", "s/b.png"), "markers": markers})
+    close("a", 5.0)
+    assert observer.list_trades()[0]["images"]["entry"]["markers"] == markers
+
+
+def test_la_imagen_de_cierre_llega_despues_de_cerrar(journal, monkeypatch):
+    with_reading(monkeypatch)
+    observer.record_order(order())
+    observer.record_event("a", "fill", {"time": 2, "price": 100.0})
+    close("a", 5.0)
+    observer.record_event("a", "image", image("exit", "s/c.png", 9))
+    assert observer.list_trades()[0]["images"]["exit"]["sim_time"] == 9
+
+
+def test_una_orden_cancelada_muestra_la_imagen_de_su_decision(journal, monkeypatch):
+    with_reading(monkeypatch)
+    observer.record_order(order())
+    observer.record_event("a", "image", image("decision", "s/a.png"))
+    observer.record_event("a", "cancel", {"time": 3})
+    assert list(observer.list_trades()[0]["images"]) == ["decision"]
+
+
+def test_imagen_de_una_orden_desconocida_se_ignora(journal, monkeypatch):
+    with_reading(monkeypatch)
+    observer.record_order(order())
+    observer.record_event("otra", "image", image("entry", "s/a.png"))
+    assert "images" not in observer.trades()["a"]
+
+
+def test_la_imagen_no_cambia_la_orden(journal, monkeypatch):
+    with_reading(monkeypatch)
+    observer.record_order(order())
+    observer.record_event("a", "fill", {"time": 2, "price": 100.0})
+    before = dict(observer.trades()["a"])
+    observer.record_event("a", "image", image("entry", "s/a.png"))
+    after = dict(observer.trades()["a"])
+    after.pop("images")
+    assert after == before
+
+
+def test_el_informe_no_cuenta_los_motivos_de_una_orden_viva(journal, monkeypatch):
+    with_reading(monkeypatch)
+    observer.record_order(order(marks={"reasons": ["volume", "profile"]}))
+    assert observer.report()["agreement"] == []

@@ -199,9 +199,10 @@ const SwingDetectorSettings = ({
           <>
             <div style={{ fontSize: '11px', color: '#1B5E20', marginBottom: '12px', padding: '8px', background: '#c8e6c9', borderRadius: '4px' }}>
               <strong>Cómo funciona:</strong><br/>
+              - Actúa solo dentro de los rectángulos dibujados en el gráfico; afuera las señales no cambian. No cuentan los rectángulos de un VP Fixed<br/>
               - Precio cerca de bandas inferiores (-σ) → solo señales LONG<br/>
               - Precio cerca de bandas superiores (+σ) → solo señales SHORT<br/>
-              - Precio entre bandas → ambas direcciones permitidas
+              - Precio entre bandas → la señal se descarta
             </div>
 
             <div style={{ marginBottom: '12px' }}>

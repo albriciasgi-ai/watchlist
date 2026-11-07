@@ -1,6 +1,7 @@
 // src/components/VWAPSettings.jsx
 import React, { useState, useEffect, useRef } from "react";
 import PresetManager from "../utils/PresetManager";
+import { volatilityDefaults } from "./indicators/VWAPIndicator";
 import "./VWAPSettings.css";
 
 const DEBUG = true;
@@ -37,28 +38,17 @@ const hexToRgba = (hex, alpha = 0.3) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-// Get recommended BandWidth thresholds by timeframe (same logic as VWAPIndicator)
-const getRecommendedBandWidthThresholds = (interval) => {
-  const thresholdsByTimeframe = {
-    // Ultra-short (scalping): bandas muy amplias
-    '1': { squeeze: 8, consolidation: 12, normal: 18 },
-    '3': { squeeze: 6, consolidation: 10, normal: 15 },
-    '5': { squeeze: 5, consolidation: 8, normal: 12 },
-
-    // Short-term (intraday): bandas moderadas
-    '15': { squeeze: 3.5, consolidation: 6, normal: 10 },
-    '30': { squeeze: 3, consolidation: 5, normal: 8 },
-    '60': { squeeze: 2.5, consolidation: 4.5, normal: 7 },
-
-    // Medium-term (swing): bandas estándar
-    '240': { squeeze: 2, consolidation: 4, normal: 6 },
-    'D': { squeeze: 1.5, consolidation: 3, normal: 5 },
-
-    // Long-term (position): bandas estrechas
-    'W': { squeeze: 1, consolidation: 2, normal: 4 }
-  };
-
-  return thresholdsByTimeframe[interval] || { squeeze: 2, consolidation: 5, normal: 10 };
+// Umbrales de BandWidth, Keltner del TTM y velas mínimas de sesión se calibran por marco
+// (volatilityDefaults). Un preset de otro marco, uno guardado sin marco o el preset global no los
+// cambian: se conservan los del marco actual
+const TIMEFRAME_KEYS = ['bandWidthThresholds', 'ttmATRMultiplier', 'minSessionCandles'];
+const withTimeframeValues = (config, current) => {
+  const result = { ...config };
+  TIMEFRAME_KEYS.forEach(key => {
+    if (current?.[key] !== undefined) result[key] = current[key];
+    else delete result[key];
+  });
+  return result;
 };
 
 const VWAPSettings = ({
@@ -116,6 +106,7 @@ const VWAPSettings = ({
 
     const newPreset = {
       name: presetName.trim(),
+      interval,
       config: { ...localConfig },
       createdAt: new Date().toISOString()
     };
@@ -133,13 +124,14 @@ const VWAPSettings = ({
   const handleLoadPreset = (preset) => {
     if (DEBUG) console.log('[VWAPSettings] Cargando preset:', preset);
 
-    setLocalConfig(preset.config);
+    const loaded = preset.interval === interval ? preset.config : withTimeframeValues(preset.config, localConfig);
+    setLocalConfig(loaded);
 
     if (applyGlobally) {
-      PresetManager.updateGlobalPreset("VWAP", preset.config);
-      onConfigChange(preset.config, false);
+      PresetManager.updateGlobalPreset("VWAP", loaded);
+      onConfigChange(loaded, false);
     } else {
-      onConfigChange(preset.config, true);
+      onConfigChange(loaded, true);
     }
 
     alert(`✅ Preset "${preset.name}" cargado`);
@@ -156,25 +148,28 @@ const VWAPSettings = ({
     }
   };
 
-  // Restaurar valores por defecto de volatilidad para el timeframe actual
+  // Restaurar valores por defecto de volatilidad para el timeframe actual. Va en un solo cambio:
+  // varios handleConfigChange seguidos parten del mismo localConfig y solo quedaba el último
   const handleRestoreDefaults = () => {
-    const recommended = getRecommendedBandWidthThresholds(interval);
+    const recommended = volatilityDefaults(interval);
 
     const defaultConfig = {
       ...localConfig,
-      bandWidthThresholds: recommended,
+      bandWidthThresholds: recommended.bandWidthThresholds,
       bbwpLookback: 252,
       bbwpThresholds: { squeeze: 20, normal: 80 },
       ttmATRLength: 20,
-      ttmATRMultiplier: 1.5
+      ttmATRMultiplier: recommended.ttmATRMultiplier,
+      minSessionCandles: recommended.minSessionCandles
     };
 
+    isUpdatingRef.current = true;
     setLocalConfig(defaultConfig);
-    handleConfigChange('bandWidthThresholds', recommended);
-    handleConfigChange('bbwpLookback', 252);
-    handleConfigChange('bbwpThresholds', { squeeze: 20, normal: 80 });
-    handleConfigChange('ttmATRLength', 20);
-    handleConfigChange('ttmATRMultiplier', 1.5);
+    if (applyGlobally) PresetManager.updateGlobalPreset("VWAP", defaultConfig);
+    onConfigChange(defaultConfig, !applyGlobally);
+    setTimeout(() => {
+      isUpdatingRef.current = false;
+    }, 100);
 
     alert(`✅ Valores restaurados a los recomendados para ${interval} min`);
   };
@@ -208,10 +203,10 @@ const VWAPSettings = ({
 
     if (applyGlobally) {
       const globalPreset = PresetManager.getGlobalPreset("VWAP");
-      const presetWithDefaults = {
+      const presetWithDefaults = withTimeframeValues({
         ...globalPreset,
         rollingPeriod: globalPreset.rollingPeriod !== undefined ? globalPreset.rollingPeriod : 20
-      };
+      }, localConfig);
       if (DEBUG) console.log('[VWAPSettings] Cargando preset global:', presetWithDefaults);
       setLocalConfig(presetWithDefaults);
     } else {
@@ -264,7 +259,7 @@ const VWAPSettings = ({
 
     if (currentSymbol && hasOverride) {
       PresetManager.clearSymbolOverride(currentSymbol, "VWAP");
-      const globalConfig = PresetManager.getGlobalPreset("VWAP");
+      const globalConfig = withTimeframeValues(PresetManager.getGlobalPreset("VWAP"), localConfig);
       setLocalConfig(globalConfig);
       onConfigChange(globalConfig, false);
       console.log(`[VWAPSettings] 🔄 ${currentSymbol} reseteado a preset global`);
@@ -778,15 +773,15 @@ const VWAPSettings = ({
                     </div>
 
                     {(() => {
-                      const recommended = getRecommendedBandWidthThresholds(interval);
+                      const recommended = volatilityDefaults(interval).bandWidthThresholds;
                       return (
                         <>
                           <div className="setting-row" style={{ marginBottom: '8px' }}>
                             <label>Squeeze (Verde):</label>
                             <input
                               type="number"
-                              step="0.5"
-                              min="0.5"
+                              step="0.05"
+                              min="0.05"
                               max="20"
                               value={localConfig.bandWidthThresholds?.squeeze || 2}
                               onChange={(e) => handleConfigChange('bandWidthThresholds', {
@@ -805,8 +800,8 @@ const VWAPSettings = ({
                             <label>Consolidation (Amarillo):</label>
                             <input
                               type="number"
-                              step="0.5"
-                              min="0.5"
+                              step="0.05"
+                              min="0.05"
                               max="20"
                               value={localConfig.bandWidthThresholds?.consolidation || 5}
                               onChange={(e) => handleConfigChange('bandWidthThresholds', {
@@ -825,8 +820,8 @@ const VWAPSettings = ({
                             <label>Normal (Naranja):</label>
                             <input
                               type="number"
-                              step="0.5"
-                              min="0.5"
+                              step="0.05"
+                              min="0.05"
                               max="30"
                               value={localConfig.bandWidthThresholds?.normal || 10}
                               onChange={(e) => handleConfigChange('bandWidthThresholds', {
@@ -928,8 +923,8 @@ const VWAPSettings = ({
                       <label>ATR Multiplier (Keltner):</label>
                       <input
                         type="number"
-                        step="0.1"
-                        min="0.5"
+                        step="0.05"
+                        min="0.1"
                         max="5"
                         value={localConfig.ttmATRMultiplier || 1.5}
                         onChange={(e) => handleConfigChange('ttmATRMultiplier', parseFloat(e.target.value))}

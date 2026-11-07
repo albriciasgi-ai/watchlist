@@ -8,6 +8,9 @@
  * - Sincronización entre múltiples gráficos (via BroadcastChannel)
  */
 
+const MIN_TICK_MS = 16;      // El navegador no da intervalos mucho menores
+const MAX_CATCH_UP_MS = 1000; // Tras un bloqueo largo no se salta más que esto de tiempo real
+
 class TimeController {
   constructor(startTime, endTime, timeframe, onTimeUpdate, simulationStartTime = null) {
     this.startTime = startTime; // timestamp en ms - INICIO DEL HISTORIAL (para mostrar todo)
@@ -147,14 +150,10 @@ class TimeController {
    * Inicia la reproducción
    */
   play() {
-    if (this.isPlaying) {
-      console.log('[TimeController] Ya está reproduciendo');
-      return;
-    }
+    if (this.isPlaying) return;
 
     // Si estamos al final, resetear automáticamente al inicio de la simulación para poder reproducir
     if (this.currentTime >= this.endTime) {
-      console.log('[TimeController] Estamos al final, reseteando al inicio de la simulación para reproducir...');
       this.currentTime = this.simulationStartTime;
       if (this.onTimeUpdate) {
         this.onTimeUpdate(this.currentTime);
@@ -163,50 +162,37 @@ class TimeController {
 
     this.isPlaying = true;
 
-    // Calcular intervalo de actualización basado en velocidad y subdivisiones
-    // El intervalo base es el tiempo real del timeframe en ms
-    // Ejemplo: 15min @ 1x = 15 * 60 * 1000 = 900,000ms
-    // Pero dividimos por el número de subdivisiones para mostrar estados intravela
+    // En 1x cada subdivisión dura su tiempo real.
+    // Ejemplo: 15min con 3 subdivisiones = 300,000ms por subdivisión; en 15x, 20 segundos
     const subdivisions = this.subdivisionConfig[this.timeframe];
-    const timeframeMs = this.timeframeMinutes[this.timeframe] * 60 * 1000;
-    const subdivisionMs = (subdivisions.interval * 60 * 1000);
+    const stepMs = this.getTimeIncrement();
+    const updateIntervalMs = Math.max(MIN_TICK_MS, stepMs / this.playbackSpeed);
+    const maxElapsedMs = updateIntervalMs + MAX_CATCH_UP_MS;
 
-    // Calcular el intervalo de actualización según la velocidad
-    // En 1x, cada subdivisión debe tardar su tiempo real
-    // Ejemplo: 15min @ 1x con 3 subdivisiones = 5min por subdivisión = 300,000ms
-    // En 15x: 300,000ms / 15 = 20,000ms = 20 segundos por subdivisión
-    const updateIntervalMs = Math.max(16, subdivisionMs / this.playbackSpeed); // mínimo 16ms (60fps)
-
-    console.log(`[TimeController] ▶️ Play @ ${this.playbackSpeed}x - interval: ${updateIntervalMs}ms - subdivisiones: ${subdivisions.count} - currentTime: ${new Date(this.currentTime).toISOString()}`);
+    let lastTick = performance.now();
+    let owedMs = 0; // Tiempo simulado que ya debió pasar a esta velocidad
 
     this.interval = setInterval(() => {
-      const increment = this.getTimeIncrement();
-      this.currentTime += increment;
+      const now = performance.now();
+      owedMs += Math.min(now - lastTick, maxElapsedMs) * this.playbackSpeed;
+      lastTick = now;
 
-      // Avanzar subdivisión
-      this.currentSubdivision++;
-      if (this.currentSubdivision >= subdivisions.count) {
-        this.currentSubdivision = 0;
-      }
+      // Si el tick llegó tarde, o la velocidad pide más que un tick, avanza varias subdivisiones.
+      // Las órdenes no se saltan nada: se liquidan con todas las velas cerradas en el intervalo.
+      const steps = Math.round(owedMs / stepMs);
+      if (steps <= 0) return;
+      owedMs -= steps * stepMs;
 
-      console.log(`[TimeController] Tick - currentTime: ${new Date(this.currentTime).toISOString()}, increment: ${increment}ms, subdivision: ${this.currentSubdivision}/${subdivisions.count}`);
+      this.currentTime += steps * stepMs;
+      this.currentSubdivision = (this.currentSubdivision + steps) % subdivisions.count;
 
       // Si llegamos al final, pausar
       if (this.currentTime >= this.endTime) {
         this.currentTime = this.endTime;
-        console.log('[TimeController] Llegamos al final');
         this.pause();
       }
 
-      // Notificar cambio
-      console.log(`[TimeController] 🔍 DEBUG: onTimeUpdate exists? ${!!this.onTimeUpdate}, type: ${typeof this.onTimeUpdate}`);
-      if (this.onTimeUpdate) {
-        console.log(`[TimeController] ✅ Calling onTimeUpdate with timestamp: ${this.currentTime}`);
-        this.onTimeUpdate(this.currentTime);
-        console.log(`[TimeController] ✅ onTimeUpdate completed`);
-      } else {
-        console.warn('[TimeController] ⚠️ No hay callback onTimeUpdate');
-      }
+      if (this.onTimeUpdate) this.onTimeUpdate(this.currentTime);
 
       // Sincronizar con otras pestañas
       this.broadcastState();
@@ -228,7 +214,6 @@ class TimeController {
     }
 
     this.broadcastState();
-    console.log('[TimeController] ⏸️ Pause');
   }
 
   /**
@@ -239,7 +224,6 @@ class TimeController {
     this.pause();
     // NO resetear currentTime - mantener posición actual
     // Si el usuario quiere volver al inicio, puede usar el método reset()
-    console.log('[TimeController] ⏹️ Stop (mantiene posición actual)');
   }
 
   /**
@@ -254,7 +238,6 @@ class TimeController {
     }
 
     this.broadcastState();
-    console.log('[TimeController] 🔄 Reset al inicio de la simulación');
   }
 
   /**
@@ -279,7 +262,6 @@ class TimeController {
     }
 
     this.broadcastState();
-    console.log(`[TimeController] ⏭️ Jump to ${new Date(this.currentTime).toISOString()}`);
   }
 
   /**
@@ -299,7 +281,6 @@ class TimeController {
     }
 
     this.broadcastState();
-    console.log(`[TimeController] ⚡ Speed: ${speed}x`);
   }
 
   /**
