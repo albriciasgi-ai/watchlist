@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Indicador de Liquidaciones
+
+Zonas donde se liquidó mucho dinero en los últimos 30 días, cerca del precio, que cambian al avanzar la reproducción. Usa MarginPad, Coinalyze, Binance Coin-M y Bitfinex sin mezclarlas, y dice cuál usa. Detalle en `Backtester/CLAUDE.md`, sección "LIQUIDACIONES".
+
+---
+
 ### Noviembre 2026: Registro Automático de Operaciones
 
 Cada orden guarda sola las medidas de 15m, 1h y 4h, los dibujos de las últimas 100 velas y los niveles elegidos con clic en el gráfico. El Observador compara las entradas con momentos sin entrada y prueba reglas en el histórico. El Zone Detector de esta app se eliminó. Detalle en `Backtester/CLAUDE.md` sección "REGISTRO AUTOMÁTICO".
@@ -204,6 +210,7 @@ npm install && npm run dev
 | `/api/observer/rule-test/{symbol}` | POST | Prueba una regla en fechas no operadas |
 | `/api/observer/measures/{symbol}` | GET | Catálogo de medidas y estado de la tabla |
 | `/api/observer/export/{symbol}` | GET | Registro completo en CSV |
+| `/api/liquidations/{symbol}` | GET | Liquidaciones conocidas en la ventana, cortadas en `known_until`, y el tramo de cada fuente |
 | `/api/clear-cache` | POST | Limpia caché |
 
 ---

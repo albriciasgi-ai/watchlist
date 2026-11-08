@@ -13,6 +13,7 @@ import gzip
 import sys
 import numpy as np
 import footprint_store
+import liq_store
 import oi_store
 import observer
 import measures
@@ -4067,6 +4068,31 @@ async def get_orderflow_profile(
 async def get_orderflow_coverage(request: Request, symbol: str):
     """Días disponibles en el almacén de trades para un símbolo."""
     return {"success": True, **footprint_store.coverage(sanitize_filename(symbol))}
+
+
+# ==================== LIQUIDACIONES ====================
+
+def _liquidations_body(symbol, start, end, known_until):
+    """Lee y serializa en un hilo, como los footprints."""
+    return json.dumps({"success": True, **liq_store.window(symbol, start, end, known_until)},
+                      allow_nan=False, separators=(",", ":")).encode("utf-8")
+
+
+@app.get("/api/liquidations/{symbol}")
+@limiter.limit("600/minute")
+async def get_liquidations(
+    request: Request,
+    symbol: str,
+    start_timestamp: int,
+    end_timestamp: int,
+    known_until: Optional[int] = None
+):
+    """
+    Liquidaciones conocidas en (start_timestamp, min(end_timestamp, known_until)], de todas las fuentes
+    del símbolo, con el tramo que cubre cada una. Un día de MarginPad se conoce al cerrar: nada sale antes.
+    """
+    body = await run_in_threadpool(_liquidations_body, sanitize_filename(symbol), start_timestamp, end_timestamp, known_until)
+    return Response(content=body, media_type="application/json")
 
 
 def aggregate_footprints(footprints_1min, target_interval):

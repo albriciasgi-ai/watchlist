@@ -53,6 +53,26 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 7 Noviembre 2026: Indicador de Liquidaciones
+
+**Problema:** el usuario usa las liquidaciones como zonas de barrido violento para estar alerta, y App 1 no tenía ese dato. Pidió "una especie de heatmap" con pocos niveles cerca del precio que cambien al avanzar la reproducción.
+
+**Cambios:**
+1. **Indicador "Liquidaciones":** hasta 3 zonas arriba y 3 abajo, a menos de 6%, con lo liquidado en 30 días. Rosada si se liquidaron largos y celeste si cortos, más opaca cuanto más dinero. Dos zonas mostradas dejan 0.25% de espacio, así un barrido ancho no llena el gráfico. Una zona que el precio atravesó queda tenue, punteada y marcada "cruzada"
+2. **Fuentes:** MarginPad (todo el mercado, precio real por día), Coinalyze (todo el mercado, precio estimado con velas de 5 minutos), Binance Coin-M (un mercado) y Bitfinex (un mercado pequeño). En cada fecha manda la primera que la cubre, nunca se mezclan, y el gráfico dice cuál usa. En ⚙️ se puede fijar una
+3. **Cobertura:** BTC tiene Coinalyze de julio 2021 a hoy, MarginPad del 08/10 al 07/11/2026, Coin-M de junio 2023 a octubre 2024 y Bitfinex en tramos sueltos. Las otras 6 monedas de App 1 tienen Coinalyze desde que Bybit tiene sus velas y MarginPad desde el 10/10/2026. Fuera de eso el indicador avisa y no dibuja nada
+4. **Sin futuro:** el backend corta en la hora simulada. Un día de MarginPad se conoce al cerrar, un intervalo de Coinalyze también, y un evento en su hora. Con fecha oculta no muestra fuente, fechas ni montos
+5. **Evidencia:** las zonas de Coinalyze coinciden con 76% de las de MarginPad, contra 33% por azar. Bitfinex acierta el lado como el azar, así que queda al final
+6. **Velocidad:** a 10000x en 15m, 60 cuadros por segundo y ninguna tarea larga, igual que con el indicador apagado
+7. **Datos:** `backend/liq_update.py` arma `OrderFlowData/liquidations`. La clave de Coinalyze la creó el usuario y está en `coinalyze_key.txt`, fuera del repositorio
+8. **Actualización automática:** tarea programada de Windows "App1 Liquidaciones", todos los días a las 7:30 (`backend/liq_auto.py`, sin ventana). Coinalyze cada día y MarginPad cada 5 días. Registro en `OrderFlowData/liquidations/actualizacion.log`
+
+**IMPORTANTE:** reiniciar el backend de App 1 para aplicar los cambios. MarginPad solo alcanza 30 días hacia atrás y Coinalyze unos 20 días en intervalos de 15 minutos: si la tarea deja de correr más de dos semanas, se pierde ese detalle.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LIQUIDACIONES"
+
+---
+
 ### TradingBot + App 10 - 7 Noviembre 2026: Auditoría de Órdenes en Bybit
 
 **Problema:** la auditoría de App 10 y del bot encontró 17 fallos que podían abrir operaciones sin stop, duplicarlas o darlas por fallidas cuando sí se ejecutaron. También fallaban el redondeo de precios en las alertas del Analizador y de OrderFlow, y el paso de cantidad en los formularios de App 8 y App 9.

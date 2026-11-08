@@ -617,8 +617,9 @@ node tests/clock.test.mjs
 node tests/light.test.mjs
 node tests/analysis.test.mjs
 node tests/marketdata.test.mjs
+node tests/liquidations.test.mjs
 cd ../backend
-.venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py
+.venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
 
 `light.test.mjs` compara VWAP con `backend/vwap_calculator.py`: usa `BACKEND_PYTHON`, `backend/.venv` o un python con numpy.
@@ -1000,6 +1001,130 @@ Observador: TradeImages muestra las miniaturas y abre ScreenshotModal con las me
 - Al pedir una imagen, la extensión se separa antes de `sanitize_filename()`, que quita los puntos
 - Borrar una sesión no borra sus imágenes. `DELETE /api/screenshots/session/{id}` existe, pero la app no lo llama
 - Las sesiones viven en IndexedDB del navegador y las imágenes en disco
+
+---
+
+## LIQUIDACIONES (Noviembre 2026)
+
+Precios donde se liquidó mucho dinero en los últimos días, cerca del precio actual. El usuario los usa como zonas de barrido violento para estar alerta, no como entrada ni como imán. Lo pidió el 7/11 como "una especie de heatmap" con pocos niveles que cambien al avanzar el precio.
+
+### Flujo
+
+```
+MarginPad, Coinalyze, Binance Coin-M, Bitfinex
+        │  backend/liq_update.py (se corre a mano)
+        ▼
+OrderFlowData/liquidations/{SYMBOL}_{fuente}.csv     Un archivo por fuente. raw/ guarda lo bajado
+        │  backend/liq_store.py
+        ▼
+GET /api/liquidations/{symbol}?start_timestamp&end_timestamp&known_until
+        │  celdas [known, start, end, low, high, long, short, fuente] y el tramo de cada fuente
+        ▼
+indicators/LiquidationsIndicator.js + liquidationZones.js
+```
+
+### Fuentes
+
+| Fuente | Qué es | Se conoce | BTC |
+|--------|--------|-----------|-----|
+| MarginPad | Todo el mercado, por día y precio real | Al cerrar el día UTC | 08/10/2026 a 07/11/2026 |
+| Coinalyze | Perpetuos de todos los exchanges, por intervalo, con precio estimado | Al cerrar el intervalo | 01/07/2021 a 07/11/2026 |
+| Binance Coin-M | Un solo mercado (contratos inversos), eventos con hora | En su hora | 25/06/2023 a 14/10/2024 |
+| Bitfinex | Un mercado pequeño, eventos con hora | En su hora | 01/08 a 04/09/2021, 01 a 20/06/2023 y 01/02 a 06/03/2024 |
+
+- Otras monedas, al 07/11/2026 (Coinalyze empieza cuando hay velas de Bybit):
+
+| Moneda | MarginPad | Coinalyze | Binance Coin-M | Bitfinex |
+|--------|-----------|-----------|----------------|----------|
+| ETH | desde 10/10/2026 | desde 01/07/2021 | 25/06/2023 a 14/10/2024 | 3 tramos |
+| SOL | desde 10/10/2026 | desde 15/10/2021 | 25/06/2023 a 14/10/2024 | 3 tramos |
+| SUI | desde 10/10/2026 | desde 03/05/2023 | 19/09 a 14/10/2024 | no |
+| TRX | desde 10/10/2026 | desde 31/08/2021 | 6 tramos | 4 tramos |
+| ARB | desde 10/10/2026 | desde 23/03/2023 | no | 2 tramos |
+| GALA | desde 10/10/2026 | desde 03/02/2022 | no | 2 tramos |
+- **Automática:** manda la primera de la lista que cubre la fecha. Nunca se mezclan dos fuentes, porque sus montos no se comparan. ⚙️ permite fijar una para comparar fuentes en la misma fecha
+- **Tramos:** `ranges` corta la cobertura donde pasan más de 7 días sin datos (`GAP_DAYS`). Una fuente no cubre las fechas que le faltan a su descarga
+- **Coinalyze:** guarda de 1,500 a 2,000 puntos intradía por mercado y todo el diario. La historia intradía vieja trae solo algunos mercados (en BTC, 2 de 10 en diciembre de 2023): `_complete_days()` usa un intervalo fino solo en los días en que su suma coincide con la diaria (10%). BTC: diario hasta 16/10/2024, 12 h hasta 28/02/2026, 4 h hasta 31/08/2026, 1 h hasta 17/10/2026 y 15 min después
+- **Precio estimado** (`attribute()`): con velas de 5 minutos de Bybit dentro del intervalo. Los largos se reparten entre los mínimos nuevos, cada uno según lo que bajó y su volumen. Los cortos, entre los máximos nuevos. Sin mínimos nuevos, por la mecha y su volumen. Cada tramo se parte en pedazos de 0.05% del precio
+- **Clave de Coinalyze:** la creó el usuario y está en `OrderFlowData/liquidations/coinalyze_key.txt`, fuera del repositorio. Va en la cabecera `api_key` y nunca se imprime
+
+### Comparación de fuentes (BTC)
+
+Zonas que vería el usuario (3 por lado, 6%, 30 días), cada 3 o 6 horas. Dos zonas coinciden si se tocan con 0.15% de margen. El azar mueve las zonas candidatas a otro lugar dentro de la misma distancia.
+
+| Referencia | Candidata | Período | Coinciden | Azar | Mismo lado |
+|------------|-----------|---------|-----------|------|------------|
+| MarginPad | Coinalyze, como se arma | 15/10 a 07/11/2026 | 76% | 33% | 100% |
+| MarginPad | Coinalyze, solo diario | igual | 86% | 37% | 97% |
+| Binance Coin-M | Coinalyze | 25/07/2023 a 14/10/2024 | 56% | 37% | 64% |
+| Binance Coin-M | Coinalyze | febrero 2024 | 52% | 30% | 67% |
+| Binance Coin-M | Bitfinex | febrero 2024 | 50% | 30% | 48% |
+
+- Coinalyze reproduce bien las zonas de todo el mercado con precio real: por eso va antes que Binance y Bitfinex. Con Coin-M coincide menos porque Coin-M es un solo mercado: Coinalyze suma 18 veces más dinero en ese tramo
+- Bitfinex acierta el lado como el azar y casi nunca la zona mayor (7%, Coinalyze 35%). Su descarga quedó parcial: con más de unas 10 consultas seguidas Bitfinex bloquea la IP, y todo el historial tomaría horas
+- La única referencia de todo el mercado es un mes de MarginPad. Es buena evidencia, no prueba
+
+### Zonas (`liquidationZones.js`)
+
+- Franjas de 0.1% del precio redondeado (`niceStep`), nunca más finas que la celda de la fuente (MarginPad BTC: 50 USD). El ancho se mantiene hasta que el precio se aleja 30%
+- Histograma suavizado (¼, ½, ¼). Cada pico es una zona: su núcleo, con las vecinas que tienen al menos la mitad del pico (`maxHalfBins` 1, `halfFraction` 0.5). Mide hasta 3 franjas
+- Una zona nace cuando junta la mitad de su dinero (`birth`)
+- `pickZones()`: de la mayor a la menor, 3 por lado a menos de 6%, con al menos 5% de la mayor de la ventana y 0.25% de espacio libre con las ya elegidas. Las que tienen el precio adentro también entran. Sin el espacio, un barrido ancho (30/10/2026: 317M entre 76,300 y 77,900) llenaba el gráfico de zonas pegadas
+- Intensidad: raíz de su parte de la mayor zona de la ventana, de cualquier precio
+- Cruzada (`CrossTracker`): el precio salió de la zona con un cierre y después pasó su borde contrario. La misma subida que formó la zona no la cruza. Se dibuja con la mitad de opacidad, línea punteada y "cruzada". Solo revisa las velas nuevas; la vela en formación se mira sin guardarse
+
+### Sin futuro
+
+- El backend nunca entrega una celda con `known` posterior a `known_until`. MarginPad se conoce a las 00:00 UTC del día siguiente. Coinalyze, al cerrar el intervalo, y su precio sale de las velas de ese intervalo. Los eventos, en su hora
+- `_sync()` pide primero (hora − ventana − 2 días, hora] y después solo lo nuevo, (cargado, hora], con 5 minutos simulados y 400 ms reales de distancia. Con fuentes por día pregunta al pasar la medianoche, y sin fuente que pueda tener datos no pregunta
+- Al retroceder quita lo conocido después, descarta las respuestas pendientes (`generation`) y el cruce empieza de cero
+- La prueba con datos reales recorre BTC en las cuatro fuentes por partes y con retrocesos (5,823 momentos): las zonas son siempre las de calcular todo de una vez con lo conocido
+
+### Dibujo
+
+- Franja desde que nace hasta el borde derecho: rosada si se liquidaron largos (el precio bajó hasta ahí), celeste si fueron cortos. Línea en la franja con más dinero
+- Etiqueta `L 85.2M · 2d` donde nace. Si nace en el 40% derecho del gráfico va a la izquierda, para no tapar las últimas velas. El otro lado se agrega si pesa al menos un cuarto
+- `▲ 2 zonas · 3.4%` arriba y `▼` abajo: zonas elegidas fuera de la vista y distancia a la más cercana
+- Arriba a la izquierda: fuente, ventana y avisos (datos desde, datos hasta, intervalos de 15 min, sin datos en esta fecha y qué tramos hay)
+- Fecha oculta: sin fuente, sin fechas y con la parte de la mayor zona en vez del monto, porque cada fuente cubre una época
+- Es el primer indicador de la lista: sus franjas quedan debajo de los demás dibujos
+
+### Observador
+
+`selectableLevels()` ofrece cada zona dibujada con `left`, `right`, `top` y `bottom`, `price` en su pico, `low`, `high` y `time` en su nacimiento. Id `Liquidaciones|<tipo>|<pico>`.
+
+### Parámetros
+
+⚙️ junto al indicador (`LiquidationsSettings.jsx`, modal claro). Se guardan por símbolo en `liquidations_settings_{symbol}` y valen para todos los marcos. Solo se guarda lo que el modal muestra (`USER_KEYS`). `cleanLiquidationsSettings()` acota los números y vuelve a automática una fuente que no existe.
+
+### Velocidad
+
+En la app de prueba, 15m a 10000x con Binance Coin-M: 60 cuadros por segundo y ninguna tarea larga, igual que con el indicador apagado. Una ventana de 5,000 celdas se calcula en 0.5 ms y solo cuando cambian las celdas de la ventana. Un cuadro cuesta 0.04 ms. `_trim()` suelta cada semana simulada lo que salió de la ventana, así una reproducción de meses no llena la memoria.
+
+### Mantener los datos
+
+MarginPad alcanza 30 días hacia atrás y Coinalyze unos 20 días en intervalos de 15 minutos: lo que no se baja a tiempo se pierde. Por eso hay una tarea programada de Windows, creada el 7/11/2026 a pedido del usuario:
+
+- **"App1 Liquidaciones":** todos los días a las 7:30, con `backend\.venv\Scripts\pythonw.exe -B liq_auto.py` (sin ventana). Si el equipo estaba apagado corre apenas se encienda, solo con red y hasta 3 horas. Corre con la sesión del usuario abierta
+- `liq_auto.py`: Coinalyze en cada corrida y MarginPad cuando el día más nuevo guardado tiene 5 días o más, para las 7 monedas de App 1. Bitfinex no. Un candado (`actualizacion.lock`) evita dos corridas a la vez. La corrida de prueba del 7/11 duró 22 minutos, casi todo esperando el límite de Coinalyze, y terminó sin errores
+- Registro en `OrderFlowData\liquidations\actualizacion.log`. `python -B liq_auto.py --revisar` dice qué haría sin bajar nada
+- Quitarla: `Unregister-ScheduledTask -TaskName "App1 Liquidaciones"` en PowerShell, o desde el Programador de tareas
+
+A mano:
+
+```bash
+cd backend
+python -B liq_update.py marginpad BTCUSDT ETHUSDT SOLUSDT SUIUSDT TRXUSDT ARBUSDT GALAUSDT
+python -B liq_update.py coinalyze BTCUSDT ETHUSDT SOLUSDT SUIUSDT TRXUSDT ARBUSDT GALAUSDT
+python -B liq_update.py bitfinex --tramo 2021-08-01 2023-06-01 BTCUSDT                       # reanuda Bitfinex
+```
+
+- Solo agrega: nunca borra ni cambia lo guardado. Coinalyze baja unos 15 minutos de velas por moneda la primera vez
+- `coinalyze-armar` vuelve a estimar los precios con lo ya bajado
+
+### Pruebas
+
+`node tests/liquidations.test.mjs` (33) y `pytest tests/test_liq_store.py` (10).
 
 ---
 
