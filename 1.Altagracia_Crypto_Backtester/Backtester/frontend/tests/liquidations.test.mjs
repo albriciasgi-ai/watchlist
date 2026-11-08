@@ -514,7 +514,7 @@ test('dibujo: franjas, aviso fuera de la vista, estado con la fuente y zonas par
   assert.ok(texts.some(text => text === '▲ 1 zona · 2.8%'), texts.join(' | '));
   assert.ok(texts.some(text => text.startsWith('Liquidaciones · Binance Coin-M, un solo mercado · 30 d')), texts.join(' | '));
 
-  const levels = indicator.selectableLevels();
+  const levels = indicator.selectableLevels().filter(level => !Z.pinEdge(level));
   assert.equal(levels.length, 2);
   for (const level of levels) {
     assert.equal(level.source, 'Liquidaciones');
@@ -525,7 +525,7 @@ test('dibujo: franjas, aviso fuera de la vista, estado con la fuente y zonas par
   }
   const again = fakeContext();
   indicator.renderOverlay(again, BOUNDS, candles, candles, context);
-  assert.deepEqual(indicator.selectableLevels().map(level => level.id), levels.map(level => level.id), 'el mismo id entre cuadros');
+  assert.deepEqual(indicator.selectableLevels().filter(level => !Z.pinEdge(level)).map(level => level.id), levels.map(level => level.id), 'el mismo id entre cuadros');
 });
 
 test('dibujo: una zona cruzada queda tenue, punteada y avisa', async () => {
@@ -583,7 +583,7 @@ test('sin datos en la fecha: dice qué tramos hay y no dibuja zonas', async () =
   indicator.renderOverlay(ctx, BOUNDS, candles, candles, chart(candles, time, 59000, 61000));
   const texts = ctx.calls.fillText.map(([text]) => text);
   assert.deepEqual(texts, ['Liquidaciones: sin datos en esta fecha · hay Binance Coin-M 25/06/2023–13/10/2024']);
-  assert.deepEqual(indicator.selectableLevels(), []);
+  assert.deepEqual(indicator.selectableLevels().filter(level => !Z.pinEdge(level)), [], 'ninguna zona; las velas se siguen ofreciendo');
 });
 
 test('apagado no pide nada ni dibuja', async () => {
@@ -645,6 +645,183 @@ test('IndicatorManager: lo tiene primero, con su modal y en lo que se puede eleg
   await settle();
   manager.renderOverlays(fakeContext(), BOUNDS, candles, candles, chart(candles, T0, 59000, 61000));
   assert.ok(manager.getSelectableLevels().some(level => level.source === 'Liquidaciones'));
+});
+
+// ------------------------------------------------------------------ velas fijadas
+
+const { toggleLevel, knownLevels, takeLevels } = await import('../src/components/indicators/analysisLevels.js');
+const { pinsAt, togglePin, clearPins, removePin } = await import('../src/components/indicators/liquidationPins.js');
+const { pinAmounts } = await import('../src/components/indicators/LiquidationsIndicator.js');
+
+/** Fija una vela como lo hace el menú de niveles con el elegible del indicador */
+const pinTarget = (id, edge, price, time, low, high) => ({ id, source: 'Liquidaciones', kind: Z.PIN_KINDS[edge], edge, price, time, low, high });
+
+test('vela fijada: su mitad del lado elegido, solo lo que se cruza con la vela', () => {
+  const day = (start, price, short) => ({ known: start + D, start, end: start + D, low: price - 25, high: price + 25, long: 0, short });
+  const cells = [
+    cell(T0, 60450, 0, 1e5), // En la apertura: cuenta
+    cell(T0 + 10 * 60000, 60450, 0, 5e5),
+    cell(T0 + 20 * 60000, 60100, 3e5), // Mitad de abajo
+    cell(T0 + H, 60450, 0, 9e9), // La vela siguiente
+    cell(T0 - 1, 60450, 0, 9e9), // La anterior
+    day(T0 - 5 * H, 60400, 2e6), // Un día que contiene la vela
+    day(T0 - 5 * H, 61000, 9e9) // Ese día, pero fuera de los precios de la vela
+  ];
+  const pin = { time: T0, high: 60500, low: 60000 };
+  const high = Z.pinSummary(cells, { ...pin, edge: 'high' }, H, 30);
+  assert.deepEqual([high.short, high.long, high.count, high.spanMs], [2.6e6, 0, 3, D]);
+  assert.equal(high.side, 'short');
+  const low = Z.pinSummary(cells, { ...pin, edge: 'low' }, H, 30);
+  assert.deepEqual([low.long, low.short, low.spanMs], [3e5, 0, 0]);
+  assert.equal(pinAmounts({ long: 1e6, short: 3e6, total: 4e6 }), 'C 3.0M + L 1.0M');
+  assert.equal(pinAmounts({ long: 1e6, short: 3e6, total: 4e6 }, true), 'C 75% · L 25%');
+  assert.equal(pinAmounts({ long: 0, short: 0, total: 0 }), 'sin liquidaciones');
+  assert.equal(Z.pinEdge({ source: 'Liquidaciones', kind: Z.PIN_KINDS.low }), 'low');
+  assert.equal(Z.pinEdge({ source: 'Liquidaciones', kind: 'Liquidaciones de largos' }), null);
+});
+
+function pinCandles(from, count) {
+  // Velas de 1h con máximos y mínimos distintos; la última en formación
+  return Array.from({ length: count }, (_, i) => bar(from + i * H, 60000 + i, 60500 + i, 60300 + i, i === count - 1 ? { in_progress: true } : {}));
+}
+
+// Velas de hoy, por debajo de la vela fijada: no la cruzan
+const belowCandles = (from, count) => Array.from({ length: count }, (_, i) => bar(from + i * H, 59000, 59400, 59200));
+
+test('velas elegibles: máximo y mínimo de cada vela cerrada, nada con velas angostas o apagado', async () => {
+  fakeBackend([], SOURCES_EVENTS);
+  const indicator = new LiquidationsIndicator('BTCUSDT', '1h');
+  indicator.enabled = true;
+  const candles = pinCandles(T0 - 100 * H, 100);
+  indicator.renderOverlay(fakeContext(), BOUNDS, candles, candles, chart(candles, T0, 59000, 61500));
+  const tips = indicator.selectableLevels().filter(level => Z.pinEdge(level));
+  assert.equal(tips.length, 2 * 99, 'la vela en formación no se ofrece');
+  const first = tips.find(level => level.time === candles[0].timestamp && level.kind === Z.PIN_KINDS.high);
+  assert.equal(first.price, 60500);
+  assert.equal(first.high, 60500);
+  assert.equal(first.low, 60000);
+  assert.ok(first.top < first.bottom && first.left < first.right);
+  assert.ok(first.id.endsWith('|1h'), 'el id lleva el marco: el máximo de 1h no es el de 15m');
+
+  // El menú usa su propia lista: fijarla no la pone en lo elegido para el trade
+  clearPins('BTCUSDT');
+  assert.equal(first.choice.chosen(T0), null);
+  first.choice.toggle(T0, '1h');
+  assert.equal(first.choice.chosen(T0).edge, 'high');
+  assert.equal(knownLevels('BTCUSDT', T0).length, 0, 'no pasa por la lista del Observador');
+  first.choice.toggle(T0, '1h');
+  assert.equal(pinsAt('BTCUSDT', T0).length, 0, 'marcarla otra vez la suelta');
+
+  const narrow = pinCandles(T0 - 400 * H, 400);
+  indicator.renderOverlay(fakeContext(), BOUNDS, narrow, narrow, chart(narrow, T0, 59000, 61500));
+  assert.equal(indicator.selectableLevels().filter(level => Z.pinEdge(level)).length, 0, 'con 2 px por vela no se alcanzan a elegir');
+
+  indicator.updateConfig({ offerCandles: false });
+  indicator.renderOverlay(fakeContext(), BOUNDS, candles, candles, chart(candles, T0, 59000, 61500));
+  assert.equal(indicator.selectableLevels().filter(level => Z.pinEdge(level)).length, 0);
+});
+
+test('vela fijada de hace meses: franja propia con su fuente, sin futuro, sigue tras cada orden y fuera al retroceder', async () => {
+  const OLD = Date.UTC(2024, 2, 5, 14); // Una vela de 1h en tiempos de Binance Coin-M
+  const NOW = Date.UTC(2026, 9, 20, 12); // Hoy manda MarginPad
+  const sources = [
+    { id: 'marginpad', label: 'MarginPad', scope: 'todo el mercado', kind: 'days', first: Date.UTC(2026, 9, 8), last: Date.UTC(2026, 10, 8), cell_width: 50 },
+    { id: 'binance_cm', label: 'Binance Coin-M', scope: 'un solo mercado', kind: 'events', first: Date.UTC(2023, 5, 25), last: Date.UTC(2024, 9, 14), cell_width: 0 }
+  ];
+  const cells = [
+    { ...cell(OLD + 10 * 60000, 60480, 0, 4e6), source: 1 },
+    { ...cell(OLD + 30 * 60000, 60050, 1e6), source: 1 },
+    { ...cell(OLD + 2 * H, 60480, 0, 9e9), source: 1 } // Otra vela: no cuenta
+  ];
+  const backend = fakeBackend(cells, sources);
+  clearPins('BTCUSDT');
+  togglePin('BTCUSDT', pinTarget('vela-vieja', 'high', 60500, OLD, 60000, 60500), NOW - D, '1h');
+  assert.equal(pinsAt('BTCUSDT', NOW).length, 1);
+
+  const indicator = new LiquidationsIndicator('BTCUSDT', '1h');
+  indicator.enabled = true;
+  const candles = belowCandles(NOW - 100 * H, 100);
+  const context = chart(candles, NOW, 58500, 61500);
+  indicator.renderOverlay(fakeContext(), BOUNDS, candles, candles, context);
+  await settle();
+  const pinCall = backend.calls.find(call => call.start === OLD - 1);
+  assert.ok(pinCall, 'pide aparte la ventana de la vela');
+  assert.equal(pinCall.known, Date.UTC(2024, 2, 6), 'hasta el cierre del día de la vela, nunca después de la hora simulada');
+
+  const ctx = fakeContext();
+  indicator.renderOverlay(ctx, BOUNDS, candles, candles, context);
+  const texts = ctx.calls.fillText.map(([text]) => text);
+  assert.ok(texts.includes('Vela 1h · Binance Coin-M: C 4.0M'), texts.join(' | '));
+  assert.ok(ctx.calls.fillRect.some(([style]) => style.startsWith('rgba(245, 158, 11')), 'franja en el color de las velas fijadas');
+
+  // Su franja se puede incluir en el análisis de un trade; al crear la orden pasa a ella y la vela sigue fijada
+  const band = indicator.selectableLevels().find(level => level.kind === Z.PINNED_KIND);
+  assert.ok(band && band.top < band.bottom && band.left < band.right && band.price === 60500, 'la franja se ofrece con su lugar');
+  assert.ok(!band.choice, 'la franja va a la lista del Observador');
+  toggleLevel('BTCUSDT', band, NOW, '1h', 59200);
+  assert.equal(knownLevels('BTCUSDT', NOW).length, 1);
+  const taken = takeLevels('BTCUSDT', NOW);
+  assert.equal(taken[0].kind, Z.PINNED_KIND, 'la orden se lleva la franja con su papel');
+  assert.equal(knownLevels('BTCUSDT', NOW).length, 0);
+  assert.equal(pinsAt('BTCUSDT', NOW).length, 1, 'la vela fijada no se vacía con la orden');
+  const after = fakeContext();
+  indicator.renderOverlay(after, BOUNDS, candles, candles, context);
+  assert.ok(after.calls.fillText.some(([text]) => text === 'Vela 1h · Binance Coin-M: C 4.0M'), 'se sigue dibujando');
+
+  setBlindAnchor(NOW - 3 * D);
+  try {
+    const hidden = fakeContext();
+    indicator.renderOverlay(hidden, BOUNDS, candles, candles, context);
+    assert.ok(hidden.calls.fillText.some(([text]) => text === 'Vela 1h: C 100% · L 0%'), hidden.calls.fillText.map(([t]) => t).join(' | '));
+  } finally {
+    setBlindAnchor(null);
+  }
+
+  // Una vela nueva que pasa por encima de la franja la deja cruzada
+  const crossing = [...candles, bar(NOW, 59300, 60700, 60650, { in_progress: true })];
+  const crossed = fakeContext();
+  indicator.renderOverlay(crossed, BOUNDS, crossing, crossing, chart(crossing, NOW + 10 * 60000, 58500, 61500));
+  assert.ok(crossed.calls.fillText.some(([text]) => text === 'Vela 1h · Binance Coin-M: C 4.0M · cruzada'), crossed.calls.fillText.map(([t]) => t).join(' | '));
+
+  // Antes de fijarla no existe
+  const earlier = fakeContext();
+  indicator.renderOverlay(earlier, BOUNDS, candles, candles, chart(candles, NOW - 2 * D, 58500, 61500));
+  assert.ok(!earlier.calls.fillText.some(([text]) => text.startsWith('Vela 1h')));
+
+  // Soltarla la quita
+  removePin('BTCUSDT', 'vela-vieja');
+  const gone = fakeContext();
+  indicator.renderOverlay(gone, BOUNDS, candles, candles, context);
+  assert.ok(!gone.calls.fillText.some(([text]) => text.startsWith('Vela 1h')));
+});
+
+test('vela fijada reciente: con datos por día queda parcial hasta que cierra su día', async () => {
+  const CANDLE = Date.UTC(2026, 9, 20, 10);
+  const sources = [{ id: 'marginpad', label: 'MarginPad', scope: 'todo el mercado', kind: 'days', first: Date.UTC(2026, 9, 8), last: Date.UTC(2026, 10, 8), cell_width: 50 }];
+  const dayStart = Date.UTC(2026, 9, 20);
+  const cells = [{ known: dayStart + D, start: dayStart, end: dayStart + D, low: 60475, high: 60525, long: 0, short: 7e6 }];
+  fakeBackend(cells, sources);
+  clearPins('BTCUSDT');
+  togglePin('BTCUSDT', pinTarget('pin-reciente', 'high', 60500, CANDLE, 60000, 60500), CANDLE + 2 * H, '1h');
+  const indicator = new LiquidationsIndicator('BTCUSDT', '1h');
+  indicator.enabled = true;
+  let time = CANDLE + 3 * H;
+  const candles = belowCandles(time - 100 * H, 100);
+  indicator.renderOverlay(fakeContext(), BOUNDS, candles, candles, chart(candles, time, 58500, 61500));
+  await settle();
+  let ctx = fakeContext();
+  indicator.renderOverlay(ctx, BOUNDS, candles, candles, chart(candles, time, 58500, 61500));
+  assert.ok(ctx.calls.fillText.some(([text]) => text === 'Vela 1h · MarginPad: sin liquidaciones · parcial'), ctx.calls.fillText.map(([t]) => t).join(' | '));
+
+  // Al cerrar el día se conoce, y el dato es del día completo
+  clock += 1000;
+  time = dayStart + D + H;
+  indicator.renderOverlay(fakeContext(), BOUNDS, candles, candles, chart(candles, time, 58500, 61500));
+  await settle();
+  ctx = fakeContext();
+  indicator.renderOverlay(ctx, BOUNDS, candles, candles, chart(candles, time, 58500, 61500));
+  assert.ok(ctx.calls.fillText.some(([text]) => text === 'Vela 1h · MarginPad: C 7.0M · dato de 1 día'), ctx.calls.fillText.map(([t]) => t).join(' | '));
+  clearPins('BTCUSDT');
 });
 
 // ------------------------------------------------------------------ velocidad

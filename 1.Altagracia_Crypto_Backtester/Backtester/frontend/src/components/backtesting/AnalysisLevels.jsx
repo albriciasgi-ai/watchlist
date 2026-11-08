@@ -7,7 +7,7 @@ const candleTime = (time) => (isBlind() ? maskDate(time) : new Date(time).toLoca
   day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
 }));
 
-/** Niveles y marcas elegidos en el gráfico, con su papel y su nota. Viajan con cada orden que se crea */
+/** Niveles y marcas elegidos en el gráfico, con su papel y su nota. Pasan a la orden que se crea y la lista queda vacía */
 const AnalysisLevels = ({ symbol, time }) => {
   const [, setVersion] = useState(0);
 
@@ -20,7 +20,7 @@ const AnalysisLevels = ({ symbol, time }) => {
       <label>Niveles y marcas en análisis</label>
       {levels.length === 0 && (
         <div className="analysis-levels-hint">
-          Haz clic sobre un POC, VAH, VAL, soporte, resistencia, FVG, footprint o rombo en el gráfico para incluirlo.
+          Haz clic sobre un POC, VAH, VAL, soporte, resistencia, FVG, footprint o rombo en el gráfico para incluirlo. Con Liquidaciones activo, también la franja de una vela fijada.
         </div>
       )}
       {levels.map(level => (

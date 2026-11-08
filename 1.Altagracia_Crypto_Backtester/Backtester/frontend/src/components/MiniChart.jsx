@@ -19,6 +19,7 @@ import {
   ROLES, candleCenterX, chosenLevel, drawChosenLevels, drawChosenMarks, imageMarkers, itemPositions, knownLevels, levelTargets, levelsNear,
   subscribeLevels, toggleLevel, updateLevel, withinArea
 } from './indicators/analysisLevels.js';
+import { subscribePins } from './indicators/liquidationPins.js';
 import './backtesting/Observer.css';
 import { isBlind, maskDate } from './backtesting/blindClock';
 
@@ -641,7 +642,8 @@ const MiniChart = forwardRef(({
 
     // 📸 Guarda una imagen del gráfico. Con showFrom la encuadra desde esa hora sin cambiar la vista
     // del usuario. keepInView hace lo mismo solo si quien opera se alejó de la vela más reciente.
-    // Con context muestra unas 5 veces las velas a la vista, también sin cambiar la vista
+    // Con context muestra unas 5 veces las velas a la vista, también sin cambiar la vista.
+    // Con items dibuja lo elegido para esa orden, no la lista del panel, que ya es la del trade siguiente
     captureScreenshot: async (sessionId, orderId, { showFrom = null, keepInView = null, context = false, onCopied = null, items = null } = {}) => {
       return new Promise((resolve, reject) => {
         const canvas = canvasRef.current;
@@ -667,9 +669,12 @@ const MiniChart = forwardRef(({
         // Lo más reciente y sin la cruceta del mouse ni la marca de "Ir al gráfico"
         const focus = focusMarkRef.current;
         focusMarkRef.current = null;
+        const ownItems = Array.isArray(items);
+        captureItemsRef.current = ownItems ? items : null;
         if (candlesRef.current?.length > 0) {
           drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
         }
+        captureItemsRef.current = null;
         focusMarkRef.current = focus;
 
         // Dónde quedó en la imagen cada nivel o marca de la orden
@@ -724,9 +729,9 @@ const MiniChart = forwardRef(({
           }
         }, 'image/png');
 
-        // toBlob ya copió la imagen: la vista vuelve antes de que se pinte la pantalla
-        if (viewChanged) {
-          Object.assign(viewStateRef.current, userView);
+        // toBlob ya copió la imagen: la vista y lo elegido vuelven antes de que se pinte la pantalla
+        if (viewChanged || ownItems) {
+          if (viewChanged) Object.assign(viewStateRef.current, userView);
           drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
         }
         onCopied?.();
@@ -781,6 +786,7 @@ const MiniChart = forwardRef(({
   // Niveles y marcas que se pueden incluir en el análisis, y el menú abierto sobre uno
   const levelTargetsRef = useRef([]);
   const lastAreaRef = useRef(null); // Escala y elegibles del último dibujo, para ubicar las marcas de una imagen
+  const captureItemsRef = useRef(null); // Lo elegido para la orden mientras se toma su imagen
   const levelMenuRef = useRef(null);
   const focusMarkRef = useRef(null); // Punto al que se fue desde una imagen
   const [levelMenu, setLevelMenu] = useState(null);
@@ -1189,7 +1195,8 @@ const MiniChart = forwardRef(({
       // Lo elegido en otro marco va en la vela de este marco que contiene su hora
       const candleX = (timestamp) => candleCenterX(visibleCandles, TF_MS[interval], marginLeft, barWidth, timestamp) ?? timeToX(timestamp);
       const area = { priceToY, timeToX, candleX, left: marginLeft, right: marginLeft + chartWidth, top: marginTop, bottom: marginTop + priceChartHeight };
-      const chosen = knownLevels(symbol, simulatedNowRef.current ?? priceContext.knownUntil);
+      // Al tomar la imagen de una orden, lo elegido para ella
+      const chosen = captureItemsRef.current ?? knownLevels(symbol, simulatedNowRef.current ?? priceContext.knownUntil);
       drawChosenLevels(ctx, chosen, area);
       ctx.restore();
 
@@ -1662,6 +1669,12 @@ const MiniChart = forwardRef(({
 
   // Un nivel elegido o quitado en otro marco o en el panel de órdenes se ve de una vez
   useEffect(() => subscribeLevels(symbol, () => {
+    setLevelVersion(version => version + 1);
+    if (candlesRef.current?.length > 0) drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+  }), [symbol]);
+
+  // Igual con una vela fijada de Liquidaciones, también al soltarla desde su modal
+  useEffect(() => subscribePins(symbol, () => {
     setLevelVersion(version => version + 1);
     if (candlesRef.current?.length > 0) drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
   }), [symbol]);
@@ -3291,20 +3304,24 @@ const MiniChart = forwardRef(({
               <button type="button" title="Cerrar" onClick={() => setLevelMenu(null)}>×</button>
             </div>
             {levelMenu.levels.map(level => {
-              const chosen = chosenLevel(symbol, level.id, simulatedNowRef.current ?? Infinity);
+              // Un elegible con su propia lista (las velas fijadas de Liquidaciones) no pasa a la orden ni lleva papel
+              const own = level.choice;
+              const chosen = own ? own.chosen(simulatedNowRef.current ?? Infinity) : chosenLevel(symbol, level.id, simulatedNowRef.current ?? Infinity);
               return (
                 <div className="level-menu-item" key={level.id}>
                   <label>
                     <input
                       type="checkbox"
                       checked={!!chosen}
-                      onChange={() => toggleLevel(symbol, level, simulatedNowRef.current ?? Date.now(), interval, lastPriceRef.current)}
+                      onChange={() => (own
+                        ? own.toggle(simulatedNowRef.current ?? Date.now(), interval)
+                        : toggleLevel(symbol, level, simulatedNowRef.current ?? Date.now(), interval, lastPriceRef.current))}
                     />
                     <strong>{level.kind}</strong>
                     <span>{level.source}</span>
                     <em>{level.mark || !Number.isFinite(level.price) ? '' : level.price.toFixed(1)}</em>
                   </label>
-                  {chosen && (
+                  {chosen && !own && (
                     <div className="level-menu-detail">
                       <select
                         value={chosen.role ?? ''}

@@ -87,7 +87,7 @@ test('papel y nota: se cambian, se guardan y lo inválido se ignora', () => {
   levels.updateLevel(name, 'Fuente|POC|100', { role: 'otro', note: 5 });
   const item = levels.chosenLevel(name, 'Fuente|POC|100');
   assert.deepEqual([item.role, item.note, levels.roleLabel(item.role)], ['entry', 'Rechazo con volumen', 'Entrada']);
-  assert.match(stored.get(`analysis_levels_${name}`), /Rechazo con volumen/);
+  assert.match(stored.get(`analysis_levels_v2_${name}`), /Rechazo con volumen/);
 });
 
 test('papel: una marca puede volverse nivel', () => {

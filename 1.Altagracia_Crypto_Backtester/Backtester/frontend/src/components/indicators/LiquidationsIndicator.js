@@ -1,9 +1,12 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import { isBlind } from '../backtesting/blindClock.js';
+import { TF_MS } from '../backtesting/replayClock.js';
+import { candleItemId } from './analysisLevels.js';
+import { pinnedAt, pinsAt, togglePin } from './liquidationPins.js';
 import {
-  CrossTracker, DAY_MS, activeSource, binWidthFor, buildZones, coverageText, defaultPickRules, defaultZoneRules, knownAfter, money,
-  pickZones, windowRange
+  CrossTracker, DAY_MS, PINNED_KIND, PIN_KINDS, activeSource, binWidthFor, buildZones, coverageText, defaultPickRules, defaultZoneRules,
+  knownAfter, money, pickZones, pinEdge, pinSummary, windowRange
 } from './liquidationZones.js';
 
 const SETTINGS_KEY = 'liquidations_settings_';
@@ -17,12 +20,16 @@ const MIN_ALPHA = 0.06;
 const CROSSED_DIM = 0.5; // Una zona que el precio ya atravesó queda como referencia, más tenue
 const LABEL_GAP_PX = 12;
 const LABEL_RIGHT_LIMIT = 0.6; // Una etiqueta no empieza en el 40% derecho del gráfico
+const MIN_TIP_BAR_PX = 4; // Con velas más angostas no se ofrecen sus máximos y mínimos: no se alcanzan a elegir
+const TIP_HALF_PX = 4; // Alto que alcanza un clic sobre la punta de una vela
+const PIN_PAD_PCT = 0.1; // Margen exterior de la vela fijada, por redondeo de precios
+const PIN_BAND_PCT = 0.2; // Alto de la franja de una vela fijada, como % del precio
 
 // Lo que el modal deja cambiar. Las reglas internas de las zonas (maxHalfBins, halfFraction) no se guardan:
 // así un cambio de sus valores de fábrica llega también a quien ya guardó parámetros
 const USER_KEYS = [
   'lookbackDays', 'binPct', 'perSide', 'maxDistancePct', 'minShare', 'minGapPct', 'showLongs', 'showShorts', 'source',
-  'longColor', 'shortColor', 'maxOpacity', 'showLabels', 'showOffscreen'
+  'longColor', 'shortColor', 'maxOpacity', 'showLabels', 'showOffscreen', 'showPins', 'offerCandles', 'pinColor'
 ];
 const userPart = (settings) => Object.fromEntries(USER_KEYS.filter(key => settings?.[key] !== undefined).map(key => [key, settings[key]]));
 
@@ -52,7 +59,10 @@ export function defaultLiquidationsConfig() {
     shortColor: '#00ACC1', // Cortos liquidados: el precio subió hasta ahí
     maxOpacity: 0.35,
     showLabels: true,
-    showOffscreen: true // Aviso de zonas elegidas que quedan arriba o abajo de la vista
+    showOffscreen: true, // Aviso de zonas elegidas que quedan arriba o abajo de la vista
+    showPins: true, // Franjas de las velas fijadas en el gráfico, aunque sean de hace meses
+    offerCandles: true, // Un clic en el máximo o el mínimo de una vela la ofrece en el menú de niveles
+    pinColor: '#F59E0B' // Velas elegidas: otro color que las zonas cerca del precio
   };
 }
 
@@ -86,14 +96,34 @@ export function cleanLiquidationsSettings(values) {
   }
   for (const key of INTEGERS) clean[key] = Math.round(clean[key]);
   if (!SOURCE_CHOICES.some(([id]) => id === clean.source)) clean.source = 'auto';
-  for (const key of ['showLongs', 'showShorts', 'showLabels', 'showOffscreen']) clean[key] = !!clean[key];
-  for (const key of ['longColor', 'shortColor']) if (!/^#[0-9a-fA-F]{6}$/.test(clean[key])) clean[key] = defaults[key];
+  for (const key of ['showLongs', 'showShorts', 'showLabels', 'showOffscreen', 'showPins', 'offerCandles']) clean[key] = !!clean[key];
+  for (const key of ['longColor', 'shortColor', 'pinColor']) if (!/^#[0-9a-fA-F]{6}$/.test(clean[key])) clean[key] = defaults[key];
   return clean;
+}
+
+/** Montos de una vela fijada: los dos lados, o con fecha oculta la parte de cada uno */
+export function pinAmounts(summary, blind = false) {
+  if (!(summary.total > 0)) return 'sin liquidaciones';
+  if (blind) return `C ${Math.round(summary.short / summary.total * 100)}% · L ${Math.round(summary.long / summary.total * 100)}%`;
+  const parts = [];
+  if (summary.short > 0) parts.push(`C ${money(summary.short)}`);
+  if (summary.long > 0) parts.push(`L ${money(summary.long)}`);
+  return parts.join(' + ');
 }
 
 function withOpacity(hex, opacity) {
   const value = parseInt(hex.slice(1), 16);
   return `rgba(${value >> 16}, ${(value >> 8) & 255}, ${value & 255}, ${opacity})`;
+}
+
+/** Altura de una etiqueta dentro del área de precio: en un borde quedaría cortada, y arriba está la línea de estado */
+const labelInside = (y, bounds) => Math.min(bounds.y + bounds.height - 8, Math.max(bounds.y + 25, y));
+
+/** El mismo color más oscuro, para que el texto se lea sobre fondo blanco */
+function darken(hex, factor) {
+  const value = parseInt(hex.slice(1), 16);
+  const channel = (shift) => Math.round(((value >> shift) & 255) * factor);
+  return `rgb(${channel(16)}, ${channel(8)}, ${channel(0)})`;
 }
 
 const utcDate = (timestamp) => new Date(timestamp).toISOString().slice(0, 10).split('-').reverse().join('/');
@@ -152,7 +182,11 @@ class LiquidationsIndicator extends IndicatorBase {
     this.binWidth = null;
     this.spanMs = null; // Largo del intervalo más reciente de una fuente con precio estimado
     this.cross = new CrossTracker();
+    this.lastTime = null;
     this.shown = []; // Zonas dibujadas en el último cuadro, con su lugar
+    this.pins = new Map(); // id de la vela fijada → celdas de su vela, pedidas aparte porque puede ser de hace meses
+    this.candleTargets = []; // Máximos y mínimos de las velas a la vista, para fijarlos con un clic
+    this.pinTargets = []; // Franjas de las velas fijadas a la vista, para incluirlas en el análisis de un trade
   }
 
   async fetchData() {
@@ -293,9 +327,90 @@ class LiquidationsIndicator extends IndicatorBase {
     return { source, zones: this.zones };
   }
 
+  /** Celdas de una vela fijada, conocidas en la hora simulada. Se piden aparte y se completan si faltaba algo */
+  _pinCells(item, time) {
+    const frameMs = TF_MS[item.timeframe] || TF_MS[this.interval] || 0;
+    // Los días de MarginPad y los intervalos de Coinalyze van alineados a la medianoche UTC: lo que se cruza con la
+    // vela se conoce a más tardar al cerrar el día en que termina la vela. Un evento, en su hora
+    const reach = Math.ceil((item.time + frameMs) / DAY_MS) * DAY_MS;
+    let entry = this.pins.get(item.id);
+    if (!entry) {
+      entry = { cells: [], sources: [], cut: null, loading: false, generation: 0, lastRequestAt: -Infinity, retryAt: 0, key: null, summary: null };
+      this.pins.set(item.id, entry);
+    }
+    if (entry.cut !== null && time < entry.cut) {
+      // Al retroceder, lo conocido después todavía no se sabía
+      entry.cells = entry.cells.filter(cell => cell.known <= time);
+      entry.cut = time;
+      entry.generation += 1;
+      entry.loading = false;
+      entry.key = null;
+    }
+    const now = performance.now();
+    const due = entry.cut === null || (entry.cut < reach && time - entry.cut >= ADVANCE_MS);
+    if (due && !entry.loading && now >= entry.retryAt && now - entry.lastRequestAt >= REQUEST_GAP_MS) {
+      this._pinRequest(item.id, entry, item.time - 1, Math.min(reach, time));
+    }
+    return { entry, frameMs, reach };
+  }
+
+  _pinRequest(id, entry, start, cut) {
+    const generation = entry.generation;
+    entry.loading = true;
+    entry.lastRequestAt = performance.now();
+    const params = new URLSearchParams({
+      start_timestamp: String(Math.floor(start)),
+      end_timestamp: String(Math.floor(cut)),
+      known_until: String(Math.floor(cut))
+    });
+    fetch(`${API_BASE_URL}/api/liquidations/${this.symbol}?${params}`)
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(result => {
+        if (generation !== entry.generation || this.pins.get(id) !== entry) return;
+        if (!result.success) throw new Error(result.message || 'respuesta sin datos');
+        entry.sources = result.sources || [];
+        const ids = entry.sources.map(source => source.id);
+        entry.cells = (result.cells || []).map(([known, cellStart, cellEnd, low, high, long, short, source]) => (
+          { known, start: cellStart, end: cellEnd, low, high, long, short, source: ids[source] }
+        ));
+        entry.cut = Math.min(cut, result.known_until ?? cut);
+        entry.key = null;
+        entry.error = null;
+      })
+      .catch(error => {
+        if (generation !== entry.generation) return;
+        entry.error = error.message;
+        entry.retryAt = performance.now() + RETRY_WAIT_MS;
+      })
+      .finally(() => {
+        if (generation === entry.generation) entry.loading = false;
+        this.requestRedraw?.();
+      });
+  }
+
+  /** Liquidaciones de una vela fijada, con la fuente que cubre la fecha de esa vela (no la de hoy) */
+  _pinState(item, time) {
+    const { entry, frameMs, reach } = this._pinCells(item, time);
+    if (entry.cut === null) return { loading: true, error: entry.error };
+    const source = activeSource(entry.sources, item.time, this.config.lookbackDays * DAY_MS, this.config.source);
+    if (!source) return { source: null };
+    const key = `${source.id}|${entry.cut}|${entry.cells.length}`;
+    if (entry.key !== key) {
+      const pin = { time: item.time, high: item.high ?? item.price, low: item.low ?? item.price, edge: pinEdge(item) };
+      entry.summary = pinSummary(entry.cells.filter(cell => cell.source === source.id), pin, frameMs, item.price * PIN_PAD_PCT / 100);
+      entry.key = key;
+    }
+    // Con datos por día o por intervalo, una celda que se cruza con la vela puede cerrar después de la hora simulada
+    const partial = source.kind !== 'events' && time < reach && entry.cut < reach;
+    return { source, summary: entry.summary, partial, frameMs };
+  }
+
   /** Zonas dibujadas, para elegirlas como nivel: su lugar ya calculado en este cuadro */
   selectableLevels() {
-    return this.shown.map(({ zone, left, right, top, bottom }) => {
+    const zones = this.shown.map(({ zone, left, right, top, bottom }) => {
       const kind = zone.side === 'long' ? 'Liquidaciones de largos' : 'Liquidaciones de cortos';
       return {
         id: `Liquidaciones|${kind}|${zone.peak.toFixed(2)}`,
@@ -311,16 +426,21 @@ class LiquidationsIndicator extends IndicatorBase {
         bottom
       };
     });
+    return [...zones, ...this.pinTargets, ...this.candleTargets];
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
     this.shown = [];
+    this.candleTargets = [];
+    this.pinTargets = [];
     if (!this.enabled || !priceContext || !visibleCandles?.length) return;
     if (priceContext.requestRedraw) this.requestRedraw = priceContext.requestRedraw;
 
     const time = priceContext.knownUntil;
     const known = priceContext.knownCandles?.length ? priceContext.knownCandles : allCandles;
     const price = known?.[known.length - 1]?.close;
+    if (this.lastTime !== null && time < this.lastTime) this.cross.reset(); // Lo que el precio hizo después todavía no pasó
+    this.lastTime = time;
     this._sync(time);
 
     const { source, zones } = Number.isFinite(price) ? this._zonesAt(time, price) : { source: null, zones: [] };
@@ -332,8 +452,137 @@ class LiquidationsIndicator extends IndicatorBase {
     const offscreen = this._drawZones(ctx, bounds, picked.zones, priceContext);
     if (this.config.showLabels) this._drawLabels(ctx, bounds, time, blind);
     if (this.config.showOffscreen) this._drawOffscreen(ctx, bounds, offscreen);
+    if (this.config.showPins) this._drawPins(ctx, bounds, time, priceContext, known, blind);
     this._drawStatus(ctx, bounds, time, source, blind, zones.length > 0 && picked.zones.length === 0, zones.length === 0);
     ctx.restore();
+    if (this.config.offerCandles) this._offerCandles(visibleCandles, bounds, priceContext);
+  }
+
+  /**
+   * Máximo y mínimo de cada vela cerrada a la vista, para fijarlos con un clic. No dibuja nada.
+   * Traen su propia lista (choice): el menú de niveles las fija o las suelta en liquidationPins.js, sin pasar por
+   * lo elegido para el trade, que se vacía con cada orden
+   */
+  _offerCandles(visibleCandles, bounds, { priceToY, timeToX }) {
+    const barWidth = bounds.width / visibleCandles.length;
+    if (barWidth < MIN_TIP_BAR_PX) return;
+    const half = Math.max(3, barWidth / 2);
+    const right = bounds.x + bounds.width;
+    const bottom = bounds.y + bounds.height;
+    const symbol = this.symbol;
+    for (const candle of visibleCandles) {
+      if (candle.in_progress) continue; // Su máximo y su mínimo todavía pueden cambiar
+      const x = timeToX(candle.timestamp);
+      if (x === null || x < bounds.x || x > right) continue;
+      for (const edge of ['high', 'low']) {
+        const price = candle[edge];
+        const y = priceToY(price);
+        if (y < bounds.y || y > bottom) continue;
+        const kind = PIN_KINDS[edge];
+        const target = {
+          id: candleItemId('Liquidaciones', kind, candle.timestamp, price, this.interval),
+          source: 'Liquidaciones',
+          kind,
+          edge,
+          price,
+          time: candle.timestamp,
+          low: candle.low,
+          high: candle.high,
+          left: x - half,
+          right: x + half,
+          top: y - TIP_HALF_PX,
+          bottom: y + TIP_HALF_PX
+        };
+        target.choice = {
+          chosen: (time) => pinnedAt(symbol, target.id, time),
+          toggle: (time, timeframe) => togglePin(symbol, target, time, timeframe)
+        };
+        this.candleTargets.push(target);
+      }
+    }
+  }
+
+  /** Texto de una vela fijada: marco, fuente, montos y qué tan fino es el dato */
+  _pinLabel(item, state, blind, crossed) {
+    const head = `Vela ${item.timeframe || this.interval}`;
+    if (state.loading) return `${head}: ${state.error ? 'el backend no respondió' : 'cargando...'}`;
+    if (!state.source) return `${head}: sin datos de liquidaciones en su fecha`;
+    const parts = [`${head}${blind ? '' : ` · ${state.source.label}`}: ${pinAmounts(state.summary, blind)}`];
+    if (state.summary.spanMs > state.frameMs) parts.push(`dato de ${spanText(state.summary.spanMs)}`);
+    if (state.partial) parts.push('parcial');
+    if (crossed) parts.push('cruzada');
+    return parts.join(' · ');
+  }
+
+  /**
+   * Velas fijadas en el gráfico (desde el menú de niveles): una franja en su máximo o su mínimo desde esa vela hasta
+   * el borde derecho, con lo liquidado en esa mitad de la vela. Otro color que las zonas cerca del precio.
+   * La franja se ofrece al Observador para incluirla en el análisis de un trade; la vela sigue fijada después
+   */
+  _drawPins(ctx, bounds, time, { priceToY, timeToX }, known, blind) {
+    const items = pinsAt(this.symbol, time).filter(item => pinEdge(item) && Number.isFinite(item.price) && Number.isFinite(item.time));
+    if (!items.length) return;
+    const color = this.config.pinColor;
+    const top = bounds.y;
+    const bottom = bounds.y + bounds.height;
+    const right = bounds.x + bounds.width;
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+
+    for (const item of items) {
+      const state = this._pinState(item, time);
+      const frameMs = TF_MS[item.timeframe] || TF_MS[this.interval] || 0;
+      const half = item.price * PIN_BAND_PCT / 200;
+      const zone = { birth: item.time + frameMs, low: item.price - half, high: item.price + half };
+      const yTop = priceToY(zone.high);
+      const yBottom = priceToY(zone.low);
+      if (yBottom < top || yTop > bottom) continue;
+      const born = timeToX(item.time);
+      if (born !== null && born > right) continue; // La vela está después de lo que se ve
+      const left = Math.max(bounds.x, born ?? bounds.x);
+      const crossed = this.cross.crossed(zone, known);
+      const alpha = this.config.maxOpacity * 0.8 * (crossed ? CROSSED_DIM : 1);
+
+      const y = Math.max(top, yTop);
+      const height = Math.max(3, Math.min(bottom, yBottom) - y);
+      ctx.fillStyle = withOpacity(color, alpha);
+      ctx.fillRect(left, y, right - left, height);
+      this.pinTargets.push({
+        id: `Liquidaciones|${PINNED_KIND}|${item.id}`,
+        source: 'Liquidaciones',
+        kind: PINNED_KIND,
+        price: item.price,
+        time: item.time,
+        low: zone.low,
+        high: zone.high,
+        left,
+        right,
+        top: y,
+        bottom: y + height
+      });
+      const lineY = Math.round(priceToY(item.price)) + 0.5;
+      ctx.strokeStyle = withOpacity(color, Math.min(0.95, alpha + 0.5));
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash(crossed ? [4, 3] : []);
+      ctx.beginPath();
+      ctx.moveTo(left, lineY);
+      ctx.lineTo(right, lineY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (!this.config.showLabels) continue;
+      const text = this._pinLabel(item, state, blind, crossed);
+      const x = left > bounds.x + bounds.width * LABEL_RIGHT_LIMIT ? bounds.x + 4 : left + 4;
+      const labelY = labelInside(lineY, bounds);
+      const width = ctx.measureText(text).width + 6;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.fillRect(x - 3, labelY - 7, width, 14);
+      ctx.globalAlpha = crossed ? 0.65 : 1;
+      ctx.fillStyle = darken(color, 0.65);
+      ctx.fillText(text, x, labelY);
+      ctx.globalAlpha = 1;
+    }
   }
 
   _drawZones(ctx, bounds, zones, { priceToY, timeToX }) {
@@ -391,16 +640,17 @@ class LiquidationsIndicator extends IndicatorBase {
     for (const { zone, left, peakY } of [...this.shown].sort((a, b) => b.zone.total - a.zone.total)) {
       // Donde nace la zona; si nace cerca del borde derecho, a la izquierda: no tapa las últimas velas
       const x = left > bounds.x + bounds.width * LABEL_RIGHT_LIMIT ? bounds.x + 4 : left + 4;
-      if (placed.some(other => Math.abs(other.y - peakY) < LABEL_GAP_PX && Math.abs(other.x - x) < 140)) continue;
+      const labelY = labelInside(peakY, bounds);
+      if (placed.some(other => Math.abs(other.y - labelY) < LABEL_GAP_PX && Math.abs(other.x - x) < 140)) continue;
       const text = `${zoneLabel(zone, blind)} · ${ageText(time - zone.birth)}${zone.crossed ? ' · cruzada' : ''}`;
       const width = ctx.measureText(text).width + 6;
       ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-      ctx.fillRect(x - 3, peakY - 7, width, 14);
+      ctx.fillRect(x - 3, labelY - 7, width, 14);
       ctx.globalAlpha = zone.crossed ? 0.6 : 1;
       ctx.fillStyle = zone.side === 'long' ? this.config.longColor : this.config.shortColor;
-      ctx.fillText(text, x, peakY);
+      ctx.fillText(text, x, labelY);
       ctx.globalAlpha = 1;
-      placed.push({ x, y: peakY });
+      placed.push({ x, y: labelY });
     }
   }
 

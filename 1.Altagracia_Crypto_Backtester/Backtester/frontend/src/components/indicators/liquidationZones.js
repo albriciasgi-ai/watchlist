@@ -282,6 +282,48 @@ export class CrossTracker {
   }
 }
 
+// El máximo y el mínimo de cada vela, en el menú de niveles: al marcarlos la vela queda fijada (liquidationPins.js),
+// con las liquidaciones de esa vela, y no pasa a la orden como lo elegido en el Observador
+export const PIN_KINDS = { high: 'Fijar liq. del máximo', low: 'Fijar liq. del mínimo' };
+// La franja de una vela fijada: esa sí se puede incluir en el análisis de un trade
+export const PINNED_KIND = 'Liq. de vela fijada';
+
+/** 'high' o 'low' si es el máximo o el mínimo de una vela que se puede fijar, o una vela fijada; si no, null */
+export function pinEdge(item) {
+  if (item?.edge === 'high' || item?.edge === 'low') return item.edge;
+  if (item?.source !== 'Liquidaciones') return null;
+  if (item.kind === PIN_KINDS.high) return 'high';
+  if (item.kind === PIN_KINDS.low) return 'low';
+  return null;
+}
+
+/**
+ * Liquidaciones de una vela fijada, en la mitad de la vela del lado elegido: el máximo junta su mitad de arriba
+ * y el mínimo su mitad de abajo. Cuentan las celdas que se cruzan con la vela en el tiempo y caen en esos precios.
+ * Una celda más larga que la vela (un día de MarginPad, un intervalo de Coinalyze) entra completa: spanMs lo dice.
+ * pin: { time, high, low, edge }. pad agranda un poco el borde exterior, por redondeo de precios.
+ */
+export function pinSummary(cells, pin, frameMs, pad = 0) {
+  const start = pin.time;
+  const end = pin.time + frameMs;
+  const middle = (pin.high + pin.low) / 2;
+  const [low, high] = pin.edge === 'high' ? [middle, pin.high + pad] : [pin.low - pad, middle];
+  let long = 0;
+  let short = 0;
+  let spanMs = 0;
+  let count = 0;
+  for (const cell of cells) {
+    if (cell.start >= end || Math.max(cell.end, cell.start + 1) <= start) continue; // No se cruza con la vela
+    const price = (cell.low + cell.high) / 2;
+    if (price < low || price > high) continue;
+    long += cell.long;
+    short += cell.short;
+    count += 1;
+    spanMs = Math.max(spanMs, cell.end - cell.start);
+  }
+  return { long, short, total: long + short, count, spanMs, side: long >= short ? 'long' : 'short' };
+}
+
 /** Monto corto: 950, 12.3K, 4.5M, 1.2B */
 export function money(usd) {
   const value = Math.abs(usd);

@@ -1,17 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './RejectionPatternSettings.css';
 import {
   SOURCE_CHOICES, cleanLiquidationsSettings, defaultLiquidationsConfig, saveLiquidationsSettings
 } from './indicators/LiquidationsIndicator.js';
 import { coverageText } from './indicators/liquidationZones.js';
+import { clearPins, pinsAt, removePin, subscribePins } from './indicators/liquidationPins.js';
+import { isBlind } from './backtesting/blindClock.js';
 
 const pick = (config) => Object.fromEntries(Object.keys(defaultLiquidationsConfig()).map(key => [key, config[key]]));
+
+/** Una vela fijada en la lista: marco, lado, precio y, sin fecha oculta, su fecha */
+const pinText = (pin) => {
+  const when = isBlind() ? '' : ` del ${new Date(pin.time).toLocaleString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+  return `Vela ${pin.timeframe}${when} · ${pin.edge === 'high' ? 'máximo' : 'mínimo'} ${pin.price.toFixed(1)}`;
+};
 
 /** Zonas de liquidaciones. Aplica a todos los marcos del símbolo. */
 const LiquidationsSettings = ({ symbol, indicator, onApply, onClose }) => {
   const [values, setValues] = useState(() => pick(indicator.config));
   const set = (key, value) => setValues(previous => ({ ...previous, [key]: value }));
   const sources = indicator.sources || [];
+  const [, setPinVersion] = useState(0);
+  useEffect(() => subscribePins(symbol, () => setPinVersion(version => version + 1)), [symbol]);
+  const pins = pinsAt(symbol, Infinity);
 
   const handleApply = () => {
     const settings = cleanLiquidationsSettings(values);
@@ -118,6 +129,45 @@ const LiquidationsSettings = ({ symbol, indicator, onApply, onClose }) => {
                 <input type="color" value={values.shortColor} onChange={(e) => set('shortColor', e.target.value)} />
               </div>
             </div>
+          </div>
+
+          <div className="settings-section">
+            <h4>Velas fijadas</h4>
+            <span className="hint" style={{ display: 'block', marginBottom: '10px' }}>
+              Haz clic en el máximo o el mínimo de una vela y marca "Fijar liq. del máximo" o "Fijar liq. del mínimo" en el menú.
+              Queda una franja desde esa vela hasta hoy con lo liquidado en esa mitad de la vela, aunque sea de hace meses:
+              las liquidaciones muy grandes suelen volverse soportes y resistencias. Sigue ahí después de cada orden, hasta que la sueltes.
+              Para usarla en el análisis de un trade, haz clic en su franja y marca "Liq. de vela fijada".
+            </span>
+            <div className="setting-row" style={{ marginBottom: '8px' }}>
+              <label className="checkbox-label">
+                <input type="checkbox" checked={!!values.offerCandles} onChange={(e) => set('offerCandles', e.target.checked)} />
+                Ofrecer el máximo y el mínimo de cada vela al hacer clic
+              </label>
+            </div>
+            <div className="setting-row" style={{ marginBottom: '8px' }}>
+              <label className="checkbox-label">
+                <input type="checkbox" checked={!!values.showPins} onChange={(e) => set('showPins', e.target.checked)} />
+                Mostrar las velas fijadas
+              </label>
+            </div>
+            <div className="setting-row">
+              <label>Color de las velas fijadas</label>
+              <input type="color" value={values.pinColor} onChange={(e) => set('pinColor', e.target.value)} />
+            </div>
+            {pins.length > 0 && (
+              <div style={{ marginTop: '8px' }}>
+                {pins.map(pin => (
+                  <div key={pin.id} className="setting-row" style={{ marginBottom: '4px' }}>
+                    <span className="hint">{pinText(pin)}</span>
+                    <button type="button" className="btn-secondary" title="Soltar esta vela" onClick={() => removePin(symbol, pin.id)}>×</button>
+                  </div>
+                ))}
+                {pins.length > 1 && (
+                  <button type="button" className="btn-secondary" onClick={() => clearPins(symbol)}>Soltar todas</button>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="settings-section">

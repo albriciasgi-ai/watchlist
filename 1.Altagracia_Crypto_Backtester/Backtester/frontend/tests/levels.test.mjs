@@ -82,10 +82,83 @@ test('lista: cada símbolo tiene la suya', () => {
 
 test('lista: se guarda y vuelve al abrir', () => {
   const name = symbol();
-  stored.set(`analysis_levels_${name}`, JSON.stringify([{ ...level(), selectedAt: 1 }]));
+  stored.set(`analysis_levels_v2_${name}`, JSON.stringify([{ ...level(), selectedAt: 1 }]));
   assert.equal(levels.knownLevels(name, 2).length, 1);
   levels.toggleLevel(name, level(300), 1, '1h');
-  assert.equal(JSON.parse(stored.get(`analysis_levels_${name}`)).length, 2);
+  assert.equal(JSON.parse(stored.get(`analysis_levels_v2_${name}`)).length, 2);
+});
+
+test('lista: la de antes, que juntaba lo elegido para todos los trades, no se carga', () => {
+  const name = symbol();
+  stored.set(`analysis_levels_${name}`, JSON.stringify([{ ...level(), selectedAt: 1 }]));
+  assert.deepEqual(levels.knownLevels(name, 2), []);
+});
+
+test('trade: lo elegido pasa a la orden y la lista queda vacía', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  levels.toggleLevel(name, level(200, { id: 'Fuente|VAH|200', kind: 'VAH' }), 2000, '1h');
+  const taken = levels.takeLevels(name, 3000);
+  assert.deepEqual(taken.map(item => [item.kind, item.price, item.timeframe]), [['POC', 100, '15m'], ['VAH', 200, '1h']]);
+  assert.deepEqual(levels.knownLevels(name, 3000), []);
+  assert.equal(levels.isChosen(name, 'Fuente|POC|100'), false);
+  assert.equal(levels.chosenLevel(name, 'Fuente|VAH|200', 3000), null);
+});
+
+test('trade: el siguiente lleva solo lo elegido para él', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  const first = levels.takeLevels(name, 1500);
+  levels.toggleLevel(name, level(300), 2000, '15m');
+  const second = levels.takeLevels(name, 2500);
+  const third = levels.takeLevels(name, 3000);
+  assert.deepEqual(first.map(item => item.price), [100]);
+  assert.deepEqual(second.map(item => item.price), [300]);
+  assert.deepEqual(third, []);
+});
+
+test('trade: la orden conserva su papel y su nota aunque se vuelva a elegir lo mismo', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  levels.updateLevel(name, 'Fuente|POC|100', { role: 'support', note: 'rebote' });
+  const taken = levels.takeLevels(name, 1500);
+  levels.toggleLevel(name, level(100), 2000, '15m');
+  levels.updateLevel(name, 'Fuente|POC|100', { role: 'resistance', note: 'otra idea' });
+  assert.deepEqual([taken[0].role, taken[0].note, taken[0].selectedAt], ['support', 'rebote', 1000]);
+  assert.deepEqual(levels.knownLevels(name, 2000).map(item => [item.role, item.note]), [['resistance', 'otra idea']]);
+});
+
+test('trade: lo elegido después de la hora de la orden, tras retroceder, sigue guardado', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  levels.toggleLevel(name, level(200), 9000, '15m');
+  assert.deepEqual(levels.takeLevels(name, 5000).map(item => item.price), [100]);
+  assert.deepEqual(levels.knownLevels(name, 9000).map(item => item.price), [200]);
+});
+
+test('trade: lo elegido en la misma hora de la orden también pasa a ella', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  assert.deepEqual(levels.takeLevels(name, 1000).map(item => item.price), [100]);
+});
+
+test('trade: avisa al panel y al gráfico al vaciar la lista, y sin nada elegido no avisa', () => {
+  const name = symbol();
+  let calls = 0;
+  const stop = levels.subscribeLevels(name, () => { calls += 1; });
+  assert.deepEqual(levels.takeLevels(name, 1000), []);
+  assert.equal(calls, 0);
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  levels.takeLevels(name, 1500);
+  assert.equal(calls, 2);
+  stop();
+});
+
+test('trade: al recargar, la lista sigue vacía', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  levels.takeLevels(name, 1500);
+  assert.deepEqual(JSON.parse(stored.get(`analysis_levels_v2_${name}`)), []);
 });
 
 test('lista: avisa los cambios y deja de avisar', () => {

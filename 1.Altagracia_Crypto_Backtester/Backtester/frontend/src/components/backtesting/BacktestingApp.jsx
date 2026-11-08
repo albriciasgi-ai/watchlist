@@ -35,7 +35,7 @@ import { blindAnchor, isBlind, maskDate, setBlindAnchor } from './blindClock.js'
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
 import { boxesFollowOrders, latestFreeBox } from './orderPlan.js';
 import { drawingsForOrder } from './tradeContext.js';
-import { knownLevels } from '../indicators/analysisLevels.js';
+import { takeLevels } from '../indicators/analysisLevels.js';
 import SessionLoadModal from './SessionLoadModal';
 import { API_BASE_URL } from '../../config';
 import '../../backtesting_styles.css';
@@ -279,7 +279,7 @@ const BacktestingApp = () => {
   /** Toma la imagen de la entrada y la deja en el trade */
   const captureEntry = async (order, miniChart, onCopied) => {
     try {
-      const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, { keepInView: order.executedAt ?? order.entryTime, context: true, onCopied, items: order.analysisItems });
+      const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, { keepInView: order.executedAt ?? order.entryTime, context: true, onCopied, items: order.analysisItems || [] });
       Object.assign(order, image);
       linkImage(order, 'entry', image);
     } catch (error) {
@@ -291,7 +291,7 @@ const BacktestingApp = () => {
   /** Toma lo que había a la vista al dejar una orden en espera, con más velas: su llenado puede tardar días */
   const captureDecision = async (order, miniChart, onCopied) => {
     try {
-      const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, { context: true, onCopied, items: order.analysisItems });
+      const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, { context: true, onCopied, items: order.analysisItems || [] });
       order.decisionScreenshotPath = image.screenshotPath;
       order.decisionScreenshotSimTime = image.screenshotSimTime;
       order.decisionScreenshotFrame = image.screenshotFrame;
@@ -309,7 +309,7 @@ const BacktestingApp = () => {
     try {
       const image = await miniChart.captureScreenshot(ensureSessionId(), order.id, {
         showFrom: order.executedAt ?? order.entryTime,
-        items: order.analysisItems
+        items: order.analysisItems || []
       });
       order.exitScreenshotPath = image.screenshotPath;
       order.exitScreenshotTimestamp = image.screenshotTimestamp;
@@ -1443,8 +1443,9 @@ const BacktestingApp = () => {
     const miniChart = miniChartRefs.current[activeTimeframe];
     const manager = miniChart?.getIndicatorManager?.();
     const indicators = tabStates[activeTimeframe]?.indicatorStates || {};
-    // Niveles y marcas elegidos hasta ese momento: van con la orden y se ubican en cada imagen suya
-    order.analysisItems = knownLevels(symbol, order.entryTime);
+    // Niveles y marcas elegidos hasta ese momento: valen solo para esta orden. Van con ella, se ubican en
+    // cada imagen suya y salen de la lista, que queda vacía para el trade siguiente
+    order.analysisItems = takeLevels(symbol, order.entryTime);
 
     recordOrder(order, {
       symbol,

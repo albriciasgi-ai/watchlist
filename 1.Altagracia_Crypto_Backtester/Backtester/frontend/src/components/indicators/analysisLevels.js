@@ -2,10 +2,12 @@
 // Un nivel guarda el precio que tenía al elegirlo y el papel que cumple: soporte, resistencia,
 // entrada u objetivo. Una marca de un indicador, como un rombo, guarda la vela donde estaba.
 // Los dos pueden llevar una nota. Los marcos de un símbolo comparten la misma lista.
+// Lo elegido vale para un solo trade: al crear la orden pasa a ella y la lista queda vacía para el siguiente.
 
 import { countBefore } from '../backtesting/replayClock.js';
 
-const STORAGE_KEY = 'analysis_levels_';
+// v2: una lista por trade. La de antes juntaba lo elegido para todos los trades y no se carga
+const STORAGE_KEY = 'analysis_levels_v2_';
 const CLICK_TOLERANCE_PX = 6;
 const LEVEL_COLOR = '#7C3AED';
 
@@ -107,6 +109,16 @@ export function clearLevels(symbol, time = Infinity) {
   const current = store(symbol);
   current.items = current.items.filter(item => item.selectedAt > time);
   changed(symbol);
+}
+
+/**
+ * Lo elegido hasta esa hora pasa a la orden que se crea y sale de la lista: el trade siguiente empieza sin
+ * nada elegido. Lo elegido después de esa hora, que solo existe tras retroceder el reloj, sigue guardado
+ */
+export function takeLevels(symbol, time) {
+  const taken = knownLevels(symbol, time);
+  if (taken.length > 0) clearLevels(symbol, time);
+  return taken;
 }
 
 export function subscribeLevels(symbol, listener) {

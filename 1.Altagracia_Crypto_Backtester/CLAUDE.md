@@ -8,7 +8,7 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ### Noviembre 2026: Indicador de Liquidaciones
 
-Zonas donde se liquidó mucho dinero en los últimos 30 días, cerca del precio, que cambian al avanzar la reproducción. Usa MarginPad, Coinalyze, Binance Coin-M y Bitfinex sin mezclarlas, y dice cuál usa. Detalle en `Backtester/CLAUDE.md`, sección "LIQUIDACIONES".
+Zonas donde se liquidó mucho dinero en los últimos 30 días, cerca del precio, que cambian al avanzar la reproducción. Usa MarginPad, Coinalyze, Binance Coin-M y Bitfinex sin mezclarlas, y dice cuál usa. El 8/11 se agregó fijar el máximo o el mínimo de una vela, aunque sea de hace meses, para dejar sus liquidaciones como nivel hasta soltarla. Detalle en `Backtester/CLAUDE.md`, sección "LIQUIDACIONES".
 
 ---
 

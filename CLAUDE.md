@@ -53,6 +53,39 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 8 Noviembre 2026: Niveles Elegidos por Trade
+
+**Problema:** los niveles y marcas elegidos para un trade seguían elegidos al abrir el siguiente, y cada orden nueva se los volvía a llevar. Valen solo para el caso en que se eligieron.
+
+**Cambios:**
+1. **Al crear la orden:** lo elegido pasa a ella con su papel y su nota (`takeLevels()`), y la lista del panel queda vacía para el trade siguiente. En el gráfico se quitan sus líneas y aros, y el menú los muestra sin marcar
+2. **Registro:** la orden conserva su copia. El historial, el Observador y el informe la siguen usando igual
+3. **Imágenes:** cada imagen dibuja los niveles de su orden, no la lista del panel. La de una limit que se llena después no muestra lo elegido para otro trade
+4. **Lista anterior:** la lista guardada antes de este cambio juntaba lo elegido para todos los trades y ya no se carga (`analysis_levels_v2_`). Después de la actualización empieza vacía
+
+**IMPORTANTE:** no hay cambios en el backend: basta recargar la página.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "REGISTRO AUTOMÁTICO" y "JOURNAL DE TRADES"
+
+---
+
+### APP 1 (Backtester) - 8 Noviembre 2026: Liquidaciones de Velas Fijadas
+
+**Problema:** las zonas del indicador Liquidaciones solo miran 30 días hacia atrás, pero un barrido muy grande de hace meses puede seguir siendo soporte o resistencia.
+
+**Cambios:**
+1. **Fijar una vela:** con Liquidaciones activo, un clic en el máximo o el mínimo de una vela abre el menú de niveles con "Fijar liq. del máximo" o "Fijar liq. del mínimo"
+2. **Franja propia:** queda una franja ámbar en ese precio, desde la vela hasta hoy, con lo liquidado en esa mitad de la vela y la fuente de su fecha. Si el precio la cruza queda tenue y punteada
+3. **Lista propia:** las velas fijadas no son lo elegido para un trade. Siguen después de cada orden hasta que se sueltan, desde el menú o desde la lista del modal ⚙️ de Liquidaciones
+4. **Análisis del trade:** un clic en la franja ofrece "Liq. de vela fijada", que entra con papel y nota a lo elegido y pasa a la orden como los demás niveles del Observador
+5. **Sin futuro:** cada vela pide aparte sus liquidaciones, cortadas en la hora simulada. Con datos por día queda "parcial" hasta que cierra su día
+
+**IMPORTANTE:** basta recargar la página: no hay cambios en el backend.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LIQUIDACIONES", "Velas fijadas"
+
+---
+
 ### APP 1 (Backtester) - 7 Noviembre 2026: Indicador de Liquidaciones
 
 **Problema:** el usuario usa las liquidaciones como zonas de barrido violento para estar alerta, y App 1 no tenía ese dato. Pidió "una especie de heatmap" con pocos niveles cerca del precio que cambien al avanzar la reproducción.

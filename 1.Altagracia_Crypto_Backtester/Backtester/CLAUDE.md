@@ -740,7 +740,7 @@ Cada orden queda medida sola, sin llenar nada antes de entrar. Sirve para encont
 
 ```
 MiniChart: clic en un nivel o una marca → analysisLevels.js (papel y nota)
-BacktestingApp.observeOrder(): drawingsForOrder() + knownLevels()
+BacktestingApp.observeOrder(): drawingsForOrder() + takeLevels()   Lo elegido pasa a la orden y sale de la lista
         ▼
 observer.js → POST /api/observer/orders                 Hechos de la orden, dibujos y niveles
         ▼
@@ -781,7 +781,8 @@ GET  /api/observer/export/{symbol}                      CSV de todo el registro
 - Marcas: rombos y flechas de Volumen de Respuesta, señales de Swing, entradas de Double Top/Bottom, rechazos y delta contrario. Llegan con `mark: true` y su lugar ya calculado en el dibujo (`x`, `y`, `r`). Una zona llega con `left`, `right`, `top` y `bottom`
 - `levelTargets()` da el lugar en pantalla y deja tal cual lo que el indicador ya ubicó. `levelsNear()` alcanza una línea a 6 px, una marca dentro de su círculo y una zona en su alto con 3 px de margen. Con varios cerca, el menú los lista todos
 - Al marcar la casilla aparece su papel: Soporte, Resistencia, Entrada u Objetivo. Un nivel entra como resistencia si está arriba del precio y como soporte si está abajo; una marca entra como "Solo marca". También lleva una nota: por qué es importante
-- Un elegido guarda precio, `selectedAt` con la hora simulada, papel (`role`), nota y, si nace en una vela, `time`, `low`, `high` y `mark`. Nunca su lugar en pantalla. Al retroceder no aparecen los elegidos después. La lista se guarda en `analysis_levels_{symbol}` y la comparten los marcos. Un nivel elegido antes de los papeles queda como "Nivel"
+- Un elegido guarda precio, `selectedAt` con la hora simulada, papel (`role`), nota y, si nace en una vela, `time`, `low`, `high` y `mark`. Nunca su lugar en pantalla. Al retroceder no aparecen los elegidos después. La lista se guarda en `analysis_levels_v2_{symbol}` y la comparten los marcos. La de antes, `analysis_levels_{symbol}`, juntaba lo elegido para todos los trades y no se carga. Un nivel elegido antes de los papeles queda como "Nivel"
+- Lo elegido vale para un solo trade. Al crear la orden, `takeLevels()` lo pasa a `order.analysisItems` y lo quita de la lista: el trade siguiente empieza sin nada elegido y el menú lo muestra sin marcar. La orden conserva su copia, con papel y nota, y con ella van el registro, el Observador, el historial y las imágenes. Lo elegido después de la hora de la orden, que solo existe tras retroceder el reloj, sigue en la lista
 - `references()` mide cada referencia desde la entrada en ATR, con positivo detrás de la entrada. A 0.25 ATR o menos cuenta como "en el nivel" (`NEAR_ATR`). Una marca sin papel no es una referencia. `ref_entry_atr` y `ref_target_atr` miden la entrada contra el nivel de papel Entrada más cercano y el objetivo contra el de papel Objetivo; van al informe y al CSV
 - Al escribir una nota, Delete no borra el dibujo seleccionado y las flechas no cambian de trade
 - Lo que nace en una vela lleva su marco en el id (`candleItemId(..., interval)`): el rombo de 1h no es el de 15m. Los bordes de un FVG usan los precios con que nació el gap, así siguen siendo el mismo cuando se recorta, y valen en todos los marcos
@@ -980,6 +981,7 @@ Observador: TradeImages muestra las miniaturas y abre ScreenshotModal con las me
 - La espera deja que la vela y la caja TP/SL se dibujen. `CaptureHold` detiene el reloj en ese momento, porque a 10000x 150 ms son 25 minutos simulados. Lo suelta al copiar el gráfico, sin esperar la subida ni el guardado, y con varias imágenes espera a la última. El marco se elige al tomar la imagen, no antes. La imagen de apertura es el gráfico activo tal como se ve, sin la cruceta, y vuelve a la última vela solo si quien opera se había alejado (`keepInView`)
 - La de decisión y la de apertura muestran unas 5 veces las velas a la vista (`context: true`, `contextBarWidth()`), con la vela de la derecha en su lugar y el precio ajustado solo. Nunca bajan de 3 px por vela ni acercan la vista. La vista de quien opera vuelve igual al copiar la imagen. La de cierre sigue encuadrando el trade completo (`showFrom`)
 - Cada imagen va al registro con un evento `image`: ruta, hora simulada, marco y `markers`. Las órdenes anteriores la toman de su sesión la primera vez que se abre el Observador (`withSessionImages`)
+- Cada imagen dibuja los niveles y marcas de su orden, no la lista del panel: `captureScreenshot` recibe `items` y los dibuja por `captureItemsRef` solo en ese cuadro. La imagen de una limit que se llena después no muestra lo elegido para el trade siguiente. Una orden de una sesión vieja, sin `analysisItems`, sale sin ninguno
 - `markers` dice dónde quedó en esa imagen cada nivel o marca de la orden (`order.analysisItems`), como fracción del ancho y del alto. Sale de `itemPositions()`: en la marca que el indicador dibujó, o en su vela y precio, o junto al borde derecho para un nivel sin vela
 - En el Observador, `ScreenshotModal` pone cada marca numerada sobre la imagen. El número es su lugar en la lista de la orden y coincide con "Marcas y notas" de la lectura. Al pasar el mouse muestra papel y nota; con un clic aparece "Ir al gráfico". Los círculos y los números de la lectura son azul claro, para no confundirse con los aros morados que el gráfico dibuja en lo elegido y que salen en la imagen
 - "Ir al gráfico" (`goToItem`) cambia al marco donde se eligió y llama `MiniChart.focusOn()`: mueve la vista, nunca la hora simulada, y marca la vela 15 s en azul claro. Un momento posterior a la hora simulada no se abre. Un nivel sin vela va a la hora en que se eligió
@@ -1089,13 +1091,27 @@ Zonas que vería el usuario (3 por lado, 6%, 30 días), cada 3 o 6 horas. Dos zo
 - Fecha oculta: sin fuente, sin fechas y con la parte de la mayor zona en vez del monto, porque cada fuente cubre una época
 - Es el primer indicador de la lista: sus franjas quedan debajo de los demás dibujos
 
+### Velas fijadas
+
+Pedido del usuario el 8/11: elegir una vela del gráfico y dejar en su máximo las liquidaciones que hubo ahí, aunque sea de hace meses, porque los niveles de liquidaciones muy grandes se vuelven soportes y resistencias.
+
+- Con el indicador activo, un clic en el máximo o el mínimo de una vela cerrada abre el menú de niveles con "Fijar liq. del máximo" o "Fijar liq. del mínimo" (`_offerCandles()`, id con `candleItemId(..., interval)`). Solo con 4 px o más por vela, y nunca la vela en formación. `offerCandles` lo apaga
+- Una vela fijada va a su propia lista (`liquidationPins.js`, en `liquidation_pins_{symbol}`), que comparten los marcos. No es lo elegido para un trade: `takeLevels()` no la toca y sigue después de cada orden, hasta que se suelta desmarcándola en el menú, con × en el modal ⚙️ o con "Soltar todas". Guarda id, lado (`edge`), precio, vela (`time`, `low`, `high`), marco y `selectedAt`. Al retroceder antes de fijarla no aparece
+- El menú reconoce estos elegibles por `choice` (`chosen(time)` y `toggle(time, timeframe)`): marcan la lista propia, sin papel ni nota. MiniChart redibuja con `subscribePins()`, también cuando se suelta desde el modal
+- La franja de una vela fijada se ofrece al Observador como "Liq. de vela fijada" (id `Liquidaciones|Liq. de vela fijada|<id de la vela>`, con su lugar en el dibujo). Marcada, entra a lo elegido para el trade con papel y nota y pasa a la orden como cualquier nivel. La vela sigue fijada
+- `_drawPins()` dibuja una franja de 0.2% del precio en ese máximo o mínimo, desde la vela hasta el borde derecho, en `pinColor` (ámbar), con una línea en el precio y la etiqueta `Vela 1h · Coinalyze: C 4.0M + L 1.1M`. Si el precio la cruza queda tenue y punteada
+- `pinSummary()`: cuenta lo liquidado en la mitad de la vela del lado elegido (el máximo, su mitad de arriba; el mínimo, la de abajo), en celdas que se cruzan con la vela en el tiempo. Una celda más larga que la vela (un día de MarginPad o un intervalo de Coinalyze) entra completa y la etiqueta dice `dato de 1 día`
+- La fuente es la que cubre la fecha de la vela, no la de hoy: una vela de 2024 puede salir de Coinalyze o Binance Coin-M aunque hoy mande MarginPad
+- Sin futuro: cada vela fijada pide aparte su ventana, `(vela − 1, cierre del día UTC en que termina la vela]`, cortada en la hora simulada. Mientras ese día no cierra, la etiqueta dice `parcial` y se vuelve a pedir cada 5 minutos simulados. Al retroceder se quita lo conocido después
+- Fecha oculta: sin fuente y con la parte de cada lado en vez del monto. La lista del modal no muestra la fecha de la vela
+
 ### Observador
 
-`selectableLevels()` ofrece cada zona dibujada con `left`, `right`, `top` y `bottom`, `price` en su pico, `low`, `high` y `time` en su nacimiento. Id `Liquidaciones|<tipo>|<pico>`.
+`selectableLevels()` ofrece cada zona dibujada con `left`, `right`, `top` y `bottom`, `price` en su pico, `low`, `high` y `time` en su nacimiento. Id `Liquidaciones|<tipo>|<pico>`. También ofrece el máximo y el mínimo de cada vela para fijarlos y la franja de cada vela fijada (ver "Velas fijadas").
 
 ### Parámetros
 
-⚙️ junto al indicador (`LiquidationsSettings.jsx`, modal claro). Se guardan por símbolo en `liquidations_settings_{symbol}` y valen para todos los marcos. Solo se guarda lo que el modal muestra (`USER_KEYS`). `cleanLiquidationsSettings()` acota los números y vuelve a automática una fuente que no existe.
+⚙️ junto al indicador (`LiquidationsSettings.jsx`, modal claro). Se guardan por símbolo en `liquidations_settings_{symbol}` y valen para todos los marcos. Solo se guarda lo que el modal muestra (`USER_KEYS`). `cleanLiquidationsSettings()` acota los números y vuelve a automática una fuente que no existe. Las velas fijadas no son parámetros: su lista va aparte y "Restablecer" no la toca.
 
 ### Velocidad
 
@@ -1124,7 +1140,7 @@ python -B liq_update.py bitfinex --tramo 2021-08-01 2023-06-01 BTCUSDT          
 
 ### Pruebas
 
-`node tests/liquidations.test.mjs` (33) y `pytest tests/test_liq_store.py` (10).
+`node tests/liquidations.test.mjs` (37) y `pytest tests/test_liq_store.py` (10).
 
 ---
 
