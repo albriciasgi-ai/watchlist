@@ -4,8 +4,9 @@ Ventana para bajar los trades diarios de Bybit (los `.tape` de `C:\Users\inven\O
 
 ## Abrir
 
-- Doble clic en `Abrir panel.bat` (o en `panel.pyw`).
-- Para tenerlo en el escritorio: clic derecho en `Abrir panel.bat` → Mostrar más opciones → Enviar a → Escritorio (crear acceso directo).
+- Doble clic en "Panel Order Flow" del escritorio, el ícono de tres velas. También sirve doble clic en `Abrir panel.bat` o en `panel.pyw`.
+- Si falta el acceso directo: clic derecho en `Abrir panel.bat` → Mostrar más opciones → Enviar a → Escritorio (crear acceso directo).
+- Es una sola ventana con dos pestañas: "Descargas de Bybit" y "Collector de App 9".
 - Cerrar la ventana no detiene ninguna descarga. Si el panel ya está abierto, avisa y no abre otro.
 
 ## Descargar una moneda

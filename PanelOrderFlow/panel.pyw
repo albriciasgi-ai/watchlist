@@ -2312,6 +2312,10 @@ def main():
         pass
     lock = single_instance(paths)
     root = tk.Tk()
+    try:
+        root.iconbitmap(default=str(Path(__file__).with_name('panel.ico')))
+    except Exception:
+        pass
     if lock is None:
         root.withdraw()
         messagebox.showinfo('Panel Order Flow', 'El panel ya está abierto en otra ventana.')
