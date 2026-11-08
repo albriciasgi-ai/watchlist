@@ -1,6 +1,8 @@
 // src/components/drawing/shapes/HorizontalLine.js
 // Línea horizontal para niveles de soporte/resistencia
 
+import { alignY, crispWidth } from '../../chartPixels.js';
+
 class HorizontalLine {
   constructor(price, time) {
     this.type = 'horizontal';
@@ -58,12 +60,13 @@ class HorizontalLine {
     ctx.save();
 
     ctx.strokeStyle = isPreview ? 'rgba(139, 92, 246, 0.5)' : this.style.color;
-    ctx.lineWidth = isSelected ? this.style.lineWidth + 1 : this.style.lineWidth;
+    const lineWidth = isSelected ? this.style.lineWidth + 1 : this.style.lineWidth;
+    ctx.lineWidth = crispWidth(lineWidth);
     ctx.setLineDash(this.style.dash);
 
     ctx.beginPath();
-    ctx.moveTo(startX, y);
-    ctx.lineTo(endX, y);
+    ctx.moveTo(startX, alignY(y, lineWidth));
+    ctx.lineTo(endX, alignY(y, lineWidth));
     ctx.stroke();
 
     ctx.setLineDash([]);
@@ -76,11 +79,11 @@ class HorizontalLine {
     // Efecto hover
     if (isHovered && !isSelected && !isPreview) {
       ctx.strokeStyle = 'rgba(139, 92, 246, 0.3)';
-      ctx.lineWidth = this.style.lineWidth + 4;
+      ctx.lineWidth = crispWidth(this.style.lineWidth + 4);
       ctx.setLineDash([]);
       ctx.beginPath();
-      ctx.moveTo(startX, y);
-      ctx.lineTo(endX, y);
+      ctx.moveTo(startX, alignY(y, this.style.lineWidth + 4));
+      ctx.lineTo(endX, alignY(y, this.style.lineWidth + 4));
       ctx.stroke();
     }
 

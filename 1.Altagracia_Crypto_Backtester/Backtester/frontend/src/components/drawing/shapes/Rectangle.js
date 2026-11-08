@@ -1,6 +1,8 @@
 // src/components/drawing/shapes/Rectangle.js
 // Rectángulo para zonas de Take Profit / Stop Loss
 
+import { crispWidth, rectEdge } from '../../chartPixels.js';
+
 class Rectangle {
   constructor(price1, time1, price2, time2, label = null) {
     this.type = 'rectangle';
@@ -221,12 +223,14 @@ class Rectangle {
     // Label
     this.renderLabel(ctx, x1, y1, x2, y2, width, scaleConverter);
 
-    // Línea del precio inferior (punteada)
+    // Línea del precio inferior (punteada), sobre el borde ya alineado a píxeles reales
+    const lineY = rectEdge(y2, isSelected ? 2 : 1.5);
     ctx.strokeStyle = this.style.stroke;
+    ctx.lineWidth = crispWidth(isSelected ? 2 : 1.5);
     ctx.setLineDash([3, 3]);
     ctx.beginPath();
-    ctx.moveTo(x1, y2);
-    ctx.lineTo(x2, y2);
+    ctx.moveTo(x1, lineY);
+    ctx.lineTo(x2, lineY);
     ctx.stroke();
     ctx.setLineDash([]);
 

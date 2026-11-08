@@ -2,6 +2,7 @@
 // ✅ VERSION 3.0 - Correcciones de formato visual y configuración
 
 import { profileLevels } from './analysisLevels.js';
+import { alignX, alignY, crispWidth } from '../chartPixels.js';
 import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
 import { TF_MS, candlesBetween } from "../backtesting/replayClock";
@@ -397,19 +398,24 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     // 🎯 Dibujar bordes del rectángulo (high, low, inicio, fin)
     // Usar el baseColor para el borde (morado para auto-detectados, azul para manuales)
     ctx.strokeStyle = this.baseColor;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = crispWidth(2);
     ctx.setLineDash([]);
 
+    // Bordes enteros en píxeles reales
+    const borderLeft = alignX(clampedStartX, 2);
+    const borderRight = alignX(clampedEndX, 2);
+    const borderTop = alignY(rangeHighY, 2);
+    const borderBottom = alignY(rangeLowY, 2);
     ctx.beginPath();
     // Borde superior (high)
-    ctx.moveTo(clampedStartX, rangeHighY);
-    ctx.lineTo(clampedEndX, rangeHighY);
+    ctx.moveTo(borderLeft, borderTop);
+    ctx.lineTo(borderRight, borderTop);
     // Borde derecho
-    ctx.lineTo(clampedEndX, rangeLowY);
+    ctx.lineTo(borderRight, borderBottom);
     // Borde inferior (low)
-    ctx.lineTo(clampedStartX, rangeLowY);
+    ctx.lineTo(borderLeft, borderBottom);
     // Borde izquierdo
-    ctx.lineTo(clampedStartX, rangeHighY);
+    ctx.lineTo(borderLeft, borderTop);
     ctx.stroke();
 
     ctx.setLineDash([]);
@@ -451,11 +457,11 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     const pocY = priceToY(this.profile.poc.price);
     if (pocY >= y && pocY <= y + height) {
       ctx.strokeStyle = this.pocColor;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = crispWidth(2);
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
-      ctx.moveTo(clampedStartX, pocY);
-      ctx.lineTo(clampedEndX, pocY);
+      ctx.moveTo(clampedStartX, alignY(pocY, 2));
+      ctx.lineTo(clampedEndX, alignY(pocY, 2));
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -464,20 +470,20 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     const valY = priceToY(this.profile.valueArea.valPrice);
     
     ctx.strokeStyle = this.vahValColor;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.globalAlpha = 0.4;
-    
+
     if (vahY >= y && vahY <= y + height) {
       ctx.beginPath();
-      ctx.moveTo(clampedStartX, vahY);
-      ctx.lineTo(clampedEndX, vahY);
+      ctx.moveTo(clampedStartX, alignY(vahY));
+      ctx.lineTo(clampedEndX, alignY(vahY));
       ctx.stroke();
     }
-    
+
     if (valY >= y && valY <= y + height) {
       ctx.beginPath();
-      ctx.moveTo(clampedStartX, valY);
-      ctx.lineTo(clampedEndX, valY);
+      ctx.moveTo(clampedStartX, alignY(valY));
+      ctx.lineTo(clampedEndX, alignY(valY));
       ctx.stroke();
     }
     

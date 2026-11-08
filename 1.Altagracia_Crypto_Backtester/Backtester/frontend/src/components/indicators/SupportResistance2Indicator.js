@@ -2,6 +2,7 @@
 // S&R v2: mapa de los swings que el precio no ha superado. La detección está en swingLevels.js
 
 import { priceLevels } from './analysisLevels.js';
+import { alignY, crispWidth } from '../chartPixels.js';
 import IndicatorBase from "./IndicatorBase";
 import { DEFAULT_LEVEL_CONFIG, LevelBook, cleanLevelConfig } from './swingLevels.js';
 
@@ -125,10 +126,10 @@ class SupportResistance2Indicator extends IndicatorBase {
 
     ctx.beginPath();
     ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = lineWidth;
+    ctx.lineWidth = crispWidth(lineWidth);
     ctx.setLineDash(lineStyle);
-    ctx.moveTo(startX, y);
-    ctx.lineTo(endX, y);
+    ctx.moveTo(startX, alignY(y, lineWidth));
+    ctx.lineTo(endX, alignY(y, lineWidth));
     ctx.stroke();
     ctx.setLineDash([]);
 

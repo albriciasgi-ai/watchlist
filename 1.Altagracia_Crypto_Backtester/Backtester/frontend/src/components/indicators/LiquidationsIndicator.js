@@ -4,6 +4,7 @@ import { isBlind } from '../backtesting/blindClock.js';
 import { TF_MS } from '../backtesting/replayClock.js';
 import { candleItemId } from './analysisLevels.js';
 import { pinnedAt, pinsAt, togglePin } from './liquidationPins.js';
+import { alignY, crispWidth } from '../chartPixels.js';
 import {
   CrossTracker, DAY_MS, PINNED_KIND, PIN_KINDS, activeSource, binWidthFor, buildZones, coverageText, defaultPickRules, defaultZoneRules,
   knownAfter, money, pickZones, pinEdge, pinSummary, windowRange
@@ -561,9 +562,9 @@ class LiquidationsIndicator extends IndicatorBase {
         top: y,
         bottom: y + height
       });
-      const lineY = Math.round(priceToY(item.price)) + 0.5;
+      const lineY = alignY(priceToY(item.price), 1.5); // Entera en píxeles reales, en cualquier pantalla
       ctx.strokeStyle = withOpacity(color, Math.min(0.95, alpha + 0.5));
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = crispWidth(1.5);
       ctx.setLineDash(crossed ? [4, 3] : []);
       ctx.beginPath();
       ctx.moveTo(left, lineY);
@@ -615,10 +616,10 @@ class LiquidationsIndicator extends IndicatorBase {
       ctx.fillRect(left, y, right - left, height);
 
       // Línea en la franja con más dinero de la zona. Punteada si el precio ya la atravesó
-      const peakY = Math.round(priceToY(zone.peak)) + 0.5;
+      const peakY = alignY(priceToY(zone.peak), 1); // Entera en píxeles reales, en cualquier pantalla
       if (peakY >= top && peakY <= bottom) {
         ctx.strokeStyle = withOpacity(color, Math.min(0.9, alpha + (zone.crossed ? 0.25 : 0.4)));
-        ctx.lineWidth = 1;
+        ctx.lineWidth = crispWidth(1);
         ctx.setLineDash(zone.crossed ? [3, 3] : []);
         ctx.beginPath();
         ctx.moveTo(left, peakY);

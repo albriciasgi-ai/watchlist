@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Nitidez del Gráfico
+
+El lienzo del gráfico usa los píxeles reales de la pantalla, y velas, líneas, perfiles, footprints y dibujos caen en píxeles enteros: nítido a 100% y en monitores con escala, sin cambiar colores ni disposición. El texto del gráfico sale con ClearType y las imágenes de trades se guardan al doble de resolución. Detalle en `Backtester/CLAUDE.md`, sección "NITIDEZ DEL GRÁFICO".
+
+---
+
 ### Noviembre 2026: Indicador de Liquidaciones
 
 Zonas donde se liquidó mucho dinero en los últimos 30 días, cerca del precio, que cambian al avanzar la reproducción. Usa MarginPad, Coinalyze, Binance Coin-M y Bitfinex sin mezclarlas, y dice cuál usa. El 8/11 se agregó fijar el máximo o el mínimo de una vela, aunque sea de hace meses, para dejar sus liquidaciones como nivel hasta soltarla. Detalle en `Backtester/CLAUDE.md`, sección "LIQUIDACIONES".

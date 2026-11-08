@@ -1,6 +1,8 @@
 // src/components/drawing/shapes/FibonacciRetracement.js
 // Fibonacci Retracement con todos los niveles (básicos + extendidos)
 
+import { alignY, crispWidth } from '../../chartPixels.js';
+
 class FibonacciRetracement {
   constructor(price1, time1, price2, time2) {
     this.type = 'fibonacci';
@@ -179,12 +181,13 @@ class FibonacciRetracement {
 
       // Línea horizontal
       ctx.strokeStyle = isPreview ? `${level.color}80` : level.color;
-      ctx.lineWidth = isSelected && idx === 4 ? 2 : 1; // 61.8% más grueso si está seleccionado
+      const levelWidth = isSelected && idx === 4 ? 2 : 1; // 61.8% más grueso si está seleccionado
+      ctx.lineWidth = crispWidth(levelWidth);
       ctx.setLineDash([5, 3]);
 
       ctx.beginPath();
-      ctx.moveTo(xStart, y);
-      ctx.lineTo(xEnd, y);
+      ctx.moveTo(xStart, alignY(y, levelWidth));
+      ctx.lineTo(xEnd, alignY(y, levelWidth));
       ctx.stroke();
 
       ctx.setLineDash([]);

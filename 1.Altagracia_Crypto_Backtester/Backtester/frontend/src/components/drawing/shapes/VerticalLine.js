@@ -2,6 +2,7 @@
 // Línea vertical para marcar eventos/tiempos importantes
 
 import { isBlind, maskDate } from '../../backtesting/blindClock.js';
+import { alignX, crispWidth } from '../../chartPixels.js';
 
 class VerticalLine {
   constructor(price, time) {
@@ -66,12 +67,13 @@ class VerticalLine {
     ctx.save();
 
     ctx.strokeStyle = isPreview ? 'rgba(245, 158, 11, 0.5)' : this.style.color;
-    ctx.lineWidth = isSelected ? this.style.lineWidth + 1 : this.style.lineWidth;
+    const lineWidth = isSelected ? this.style.lineWidth + 1 : this.style.lineWidth;
+    ctx.lineWidth = crispWidth(lineWidth, 'x');
     ctx.setLineDash(this.style.dash);
 
     ctx.beginPath();
-    ctx.moveTo(x, startY);
-    ctx.lineTo(x, endY);
+    ctx.moveTo(alignX(x, lineWidth), startY);
+    ctx.lineTo(alignX(x, lineWidth), endY);
     ctx.stroke();
 
     ctx.setLineDash([]);
@@ -94,11 +96,11 @@ class VerticalLine {
     // Efecto hover
     if (isHovered && !isSelected && !isPreview) {
       ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
-      ctx.lineWidth = this.style.lineWidth + 4;
+      ctx.lineWidth = crispWidth(this.style.lineWidth + 4, 'x');
       ctx.setLineDash([]);
       ctx.beginPath();
-      ctx.moveTo(x, startY);
-      ctx.lineTo(x, endY);
+      ctx.moveTo(alignX(x, this.style.lineWidth + 4), startY);
+      ctx.lineTo(alignX(x, this.style.lineWidth + 4), endY);
       ctx.stroke();
     }
 

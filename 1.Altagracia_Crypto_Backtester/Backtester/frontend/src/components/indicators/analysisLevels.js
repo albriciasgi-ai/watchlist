@@ -5,6 +5,7 @@
 // Lo elegido vale para un solo trade: al crear la orden pasa a ella y la lista queda vacía para el siguiente.
 
 import { countBefore } from '../backtesting/replayClock.js';
+import { alignY, crispWidth } from '../chartPixels.js';
 
 // v2: una lista por trade. La de antes juntaba lo elegido para todos los trades y no se carga
 const STORAGE_KEY = 'analysis_levels_v2_';
@@ -219,7 +220,7 @@ export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left
   ctx.font = '10px Inter, sans-serif';
   ctx.textBaseline = 'middle';
   ctx.textAlign = 'right';
-  ctx.lineWidth = 1;
+  ctx.lineWidth = crispWidth(1);
   for (const level of levels) {
     if (!isPriceLevel(level)) continue;
     const y = priceToY(level.price);
@@ -229,8 +230,8 @@ export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left
     ctx.strokeStyle = LEVEL_COLOR;
     ctx.setLineDash([2, 3]);
     ctx.beginPath();
-    ctx.moveTo(from, y);
-    ctx.lineTo(right, y);
+    ctx.moveTo(from, alignY(y));
+    ctx.lineTo(right, alignY(y));
     ctx.stroke();
     ctx.setLineDash([]);
 

@@ -4,6 +4,7 @@ import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import { timestampIndex } from '../backtesting/replayClock.js';
 import { candleItemId } from './analysisLevels.js';
+import { alignY, crispWidth } from '../chartPixels.js';
 
 /**
  * Double Top/Bottom Pattern Indicator
@@ -983,12 +984,13 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     // Draw line ONLY BETWEEN the two extremes (no extension to the right)
     ctx.save();
     ctx.strokeStyle = color;
-    ctx.lineWidth = this.config.visualization.lineStyle.width;
+    const levelWidth = this.config.visualization.lineStyle.width;
+    ctx.lineWidth = crispWidth(levelWidth);
     ctx.setLineDash(this.config.visualization.lineStyle.dash);
 
     ctx.beginPath();
-    ctx.moveTo(startX, y);
-    ctx.lineTo(endX, y);
+    ctx.moveTo(startX, alignY(y, levelWidth));
+    ctx.lineTo(endX, alignY(y, levelWidth));
     ctx.stroke();
 
     ctx.setLineDash([]);

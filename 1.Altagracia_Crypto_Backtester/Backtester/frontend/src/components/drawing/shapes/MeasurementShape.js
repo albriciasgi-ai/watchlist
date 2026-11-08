@@ -1,6 +1,8 @@
 // src/components/drawing/shapes/MeasurementShape.js
 // Medición persistente (guardada con doble click)
 
+import { pixelRatio } from '../../chartPixels.js';
+
 class MeasurementShape {
   constructor(price1, time1, price2, time2) {
     this.type = 'measurement';
@@ -290,18 +292,19 @@ class MeasurementShape {
     const boxHeight = 85;
 
     // Ajustar si se sale de la pantalla
-    if (boxX + boxWidth > canvas.width) {
+    // Ancho en píxeles CSS: el lienzo tiene los píxeles reales de la pantalla
+    if (boxX + boxWidth > (canvas.clientWidth || canvas.width)) {
       boxX = endX - boxWidth - 15;
     }
     if (boxY < 0) {
       boxY = endY + 15;
     }
 
-    // Fondo del box
+    // Fondo del box. La sombra no sigue la escala del lienzo
     ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
+    ctx.shadowBlur = 10 * pixelRatio();
+    ctx.shadowOffsetX = 2 * pixelRatio();
+    ctx.shadowOffsetY = 2 * pixelRatio();
 
     ctx.fillStyle = 'rgba(33, 150, 243, 0.95)';
     ctx.fillRect(boxX, boxY, boxWidth, boxHeight);

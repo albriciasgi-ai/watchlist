@@ -3,6 +3,7 @@
 // ✅ CORREGIDO: INCLUYE vela en progreso para mostrar última barra en tiempo real
 
 import IndicatorBase from "./IndicatorBase";
+import { alignY, crispWidth } from '../chartPixels.js';
 
 class VolumeIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 30) {
@@ -85,10 +86,10 @@ class VolumeIndicator extends IndicatorBase {
 
     // Linea separadora superior
     ctx.strokeStyle = "#DDE2E7";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + width, y);
+    ctx.moveTo(x, alignY(y));
+    ctx.lineTo(x + width, alignY(y));
     ctx.stroke();
 
     // Titulo
@@ -116,8 +117,8 @@ class VolumeIndicator extends IndicatorBase {
     ctx.strokeStyle = "#DDE2E7";
     ctx.setLineDash([2, 2]);
     ctx.beginPath();
-    ctx.moveTo(x, zeroY);
-    ctx.lineTo(x + width, zeroY);
+    ctx.moveTo(x, alignY(zeroY));
+    ctx.lineTo(x + width, alignY(zeroY));
     ctx.stroke();
     ctx.setLineDash([]);
 

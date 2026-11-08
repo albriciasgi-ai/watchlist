@@ -20,6 +20,10 @@ import {
   subscribeLevels, toggleLevel, updateLevel, withinArea
 } from './indicators/analysisLevels.js';
 import { subscribePins } from './indicators/liquidationPins.js';
+import {
+  alignX, alignY, candleColumns, crispWidth, installCrispRects, pixelRatio, resetCanvasMoves, screenDensity,
+  setCanvasPixels, snapEdge, snapSpanY
+} from './chartPixels.js';
 import './backtesting/Observer.css';
 import { isBlind, maskDate } from './backtesting/blindClock';
 
@@ -29,6 +33,7 @@ const MAX_ZOOM = MAX_BAR_WIDTH / 8;
 const FOOTPRINT_ZOOM = 20; // Velas de 160px: se leen las cifras del footprint
 const FOCUS_MIN_BAR_WIDTH = 6; // Al ir a un punto, velas más angostas no dejan distinguirlo
 const FOCUS_MARK_MS = 15000; // Cuánto queda marcado el punto al que se fue
+const CAPTURE_DENSITY = 2; // Píxeles de imagen por píxel CSS en las imágenes de trades, como mínimo
 const MIN_VOLUME_HEIGHT = 40;
 const isValidCandle = (d) => d.open > 0 && d.high > 0 && d.low > 0 && d.close > 0 &&
   d.high >= d.low && d.high >= d.open && d.high >= d.close &&
@@ -543,7 +548,7 @@ const MiniChart = forwardRef(({
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      const chartWidth = canvas.width;
+      const chartWidth = Math.floor(canvas.getBoundingClientRect().width); // En píxeles CSS, no los del lienzo
       const candleWidth = 8;
       const zoom = viewStateRef.current.zoom || 1;
       const candlesPerScreen = Math.floor(chartWidth / (candleWidth * zoom));
@@ -671,15 +676,20 @@ const MiniChart = forwardRef(({
         focusMarkRef.current = null;
         const ownItems = Array.isArray(items);
         captureItemsRef.current = ownItems ? items : null;
+        // La imagen sale con al menos el doble de píxeles que la pantalla: se puede ampliar sin perder detalle
+        const screen = screenDensity();
+        captureDensityRef.current = screen === null ? null : Math.max(CAPTURE_DENSITY, screen);
         if (candlesRef.current?.length > 0) {
           drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
         }
         captureItemsRef.current = null;
         focusMarkRef.current = focus;
+        const imageSize = { width: canvas.width, height: canvas.height };
 
-        // Dónde quedó en la imagen cada nivel o marca de la orden
+        // Dónde quedó en la imagen cada nivel o marca de la orden, como parte del ancho y del alto
         const drawn = lastAreaRef.current;
-        const markers = items?.length && drawn ? imageMarkers(itemPositions(items, drawn.offered, drawn.area), canvas.width, canvas.height) : [];
+        const size = drawnSizeRef.current;
+        const markers = items?.length && drawn && size ? imageMarkers(itemPositions(items, drawn.offered, drawn.area), size.width, size.height) : [];
 
         // Convertir canvas a blob (PNG)
         canvas.toBlob(async (blob) => {
@@ -715,8 +725,8 @@ const MiniChart = forwardRef(({
                 screenshotFrame: interval,
                 screenshotMarkers: markers,
                 screenshotMetadata: {
-                  width: canvas.width,
-                  height: canvas.height,
+                  width: imageSize.width,
+                  height: imageSize.height,
                   size: result.metadata.size
                 }
               });
@@ -729,10 +739,14 @@ const MiniChart = forwardRef(({
           }
         }, 'image/png');
 
-        // toBlob ya copió la imagen: la vista y lo elegido vuelven antes de que se pinte la pantalla
-        if (viewChanged || ownItems) {
+        // toBlob ya copió la imagen: la vista, lo elegido y la densidad de la pantalla vuelven antes de que se pinte
+        const densityChanged = captureDensityRef.current !== null;
+        captureDensityRef.current = null;
+        if (viewChanged || ownItems || densityChanged) {
           if (viewChanged) Object.assign(viewStateRef.current, userView);
-          drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
+          if (candlesRef.current?.length > 0) {
+            drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
+          }
         }
         onCopied?.();
       });
@@ -751,6 +765,9 @@ const MiniChart = forwardRef(({
   const viewStateRef = useRef({ offset: 0, zoom: 1, verticalOffset: 0, verticalZoom: 1 });
   const priceScaleRef = useRef(null); // Escala del último dibujo
   const drawChartRef = useRef(null); // Última versión de drawChart, para redibujar desde indicadores
+  const devicePixelsRef = useRef(null); // Píxeles reales que ocupa el lienzo en pantalla, del ResizeObserver
+  const captureDensityRef = useRef(null); // Densidad pedida al tomar una imagen de trade
+  const drawnSizeRef = useRef(null); // Tamaño CSS del lienzo en el último dibujo
   const simulatedNowRef = useRef(null);
   simulatedNowRef.current = currentTime;
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
@@ -974,17 +991,37 @@ const MiniChart = forwardRef(({
     const canvas = canvasRef.current;
     if (!canvas || candles.length === 0) return;
 
-    const ctx = canvas.getContext("2d");
+    // Lienzo opaco: el texto del gráfico sale con suavizado ClearType, como el resto de la pantalla.
+    // El fondo blanco se pinta entero en cada cuadro. Con "chart_pixel_ratio" en "off" queda transparente, como antes
+    const ctx = canvas.getContext("2d", { alpha: screenDensity() === null });
     const rect = canvas.getBoundingClientRect();
     const width = Math.floor(rect.width);
     const height = Math.floor(rect.height);
 
     if (width === 0 || height === 0) return;
 
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
+    // El lienzo tiene los píxeles reales de la pantalla y se dibuja en píxeles CSS con esa escala:
+    // el navegador no lo estira y se ve nítido. Una imagen de trade puede pedir otra densidad
+    const density = captureDensityRef.current ?? screenDensity();
+    const exact = density !== null && !captureDensityRef.current ? devicePixelsRef.current : null;
+    const fits = (size, css) => size && Math.abs(size / density - css) < 1;
+    const bitmapWidth = density === null ? width
+      : (fits(exact?.width, rect.width) ? exact.width : Math.max(1, Math.round(rect.width * density)));
+    const bitmapHeight = density === null ? height
+      : (fits(exact?.height, rect.height) ? exact.height : Math.max(1, Math.round(rect.height * density)));
+
+    if (canvas.width !== bitmapWidth || canvas.height !== bitmapHeight) {
+      canvas.width = bitmapWidth;
+      canvas.height = bitmapHeight;
     }
+
+    const scaleX = density === null ? 1 : bitmapWidth / rect.width;
+    const scaleY = density === null ? 1 : bitmapHeight / rect.height;
+    installCrispRects(ctx);
+    ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+    resetCanvasMoves(ctx);
+    setCanvasPixels(scaleX, scaleY, density !== null);
+    drawnSizeRef.current = { width: rect.width, height: rect.height };
 
     const bullColor = "#34C759";
     const bearColor = "#FF3B30";
@@ -1045,7 +1082,7 @@ const MiniChart = forwardRef(({
     const visibleCandles = displayCandles.slice(startIdx, endIdx);
 
     ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, density === null ? width : rect.width, density === null ? height : rect.height);
 
     if (visibleCandles.length === 0) return;
 
@@ -1092,22 +1129,24 @@ const MiniChart = forwardRef(({
     ctx.strokeStyle = axisColor;
     ctx.fillStyle = textColor;
     ctx.font = "10px Inter, sans-serif";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
 
     for (let i = 0; i <= 4; i++) {
       const price = minPrice + (priceRange * i / 4);
       const y = marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
-      
+      const lineY = alignY(y);
+
       ctx.beginPath();
-      ctx.moveTo(marginLeft, y);
-      ctx.lineTo(width - marginRight, y);
+      ctx.moveTo(marginLeft, lineY);
+      ctx.lineTo(width - marginRight, lineY);
       ctx.stroke();
-      
+
       ctx.fillText(price.toFixed(2), width - marginRight + 5, y + 4);
     }
 
     // 🎯 DIBUJAR VELAS PRIMERO (para que los overlays se vean encima)
     ctx.lineWidth = 1;
+    const crispCandles = barWidth * pixelRatio() >= 1;
     if (!orderFlowReplacesCandles) visibleCandles.forEach((d, i) => {
       const x = marginLeft + (i * barWidth);
       const yOpen = marginTop + priceChartHeight - (d.open - minPrice) * yScale + verticalOffset;
@@ -1118,6 +1157,19 @@ const MiniChart = forwardRef(({
       const color = d.close >= d.open ? bullColor : bearColor;
       ctx.strokeStyle = color;
       ctx.fillStyle = color;
+
+      // Mecha y cuerpo en píxeles reales enteros, con la mecha al centro del cuerpo.
+      // Con velas más angostas que un píxel real se dibujan como siempre: miles caen en cada columna
+      const columns = crispCandles ? candleColumns(x + barWidth / 2, Math.max(barWidth * 0.7, 2)) : null;
+      if (columns) {
+        const openCloseHeight = Math.abs(yClose - yOpen);
+        const bodyTop = openCloseHeight < 2 ? (yOpen + yClose) / 2 - 1.5 : Math.min(yOpen, yClose);
+        const [wickY, wickHeight] = snapSpanY(yHigh, yLow);
+        const [bodyY, bodyHeightPx] = snapSpanY(bodyTop, bodyTop + (openCloseHeight < 2 ? 3 : Math.max(openCloseHeight, 2)));
+        ctx.fillRect(columns.wickX, wickY, columns.wickWidth, wickHeight);
+        ctx.fillRect(columns.bodyX, bodyY, columns.bodyWidth, bodyHeightPx);
+        return;
+      }
 
       ctx.beginPath();
       ctx.moveTo(x + barWidth / 2, yHigh);
@@ -1188,7 +1240,7 @@ const MiniChart = forwardRef(({
       // Con zoom vertical los overlays no invaden los paneles de abajo
       ctx.save();
       ctx.beginPath();
-      ctx.rect(0, marginTop, width, priceChartHeight);
+      ctx.rect(0, snapEdge(marginTop), width, snapEdge(marginTop + priceChartHeight) - snapEdge(marginTop));
       ctx.clip();
       indicatorManagerRef.current.renderOverlays(ctx, overlayBounds, visibleCandles, allCandlesForCalculation, priceContext);
 
@@ -1208,7 +1260,7 @@ const MiniChart = forwardRef(({
       const positions = itemPositions(chosen, offered, area);
       ctx.save();
       ctx.beginPath();
-      ctx.rect(0, marginTop, width, priceChartHeight);
+      ctx.rect(0, snapEdge(marginTop), width, snapEdge(marginTop + priceChartHeight) - snapEdge(marginTop));
       ctx.clip();
       drawChosenMarks(ctx, positions);
       drawFocusMark(ctx, area);
@@ -1343,7 +1395,7 @@ const MiniChart = forwardRef(({
       // 🎯 Glow effect para volúmenes excepcionales (solo si NO está en cluster)
       // Los clusters tienen su propio color destacado, no necesitan glow adicional
       if (!isInCluster && zScore > volumeVisualParams.glowThreshold) {
-        ctx.shadowBlur = volumeVisualParams.glowBlur;
+        ctx.shadowBlur = volumeVisualParams.glowBlur * pixelRatio(); // La sombra no sigue la escala del lienzo
         ctx.shadowColor = baseColor;
         ctx.fillStyle = baseColor;
         ctx.fillRect(x + barWidth * 0.1, volumeStartY + volumeHeightCalculated - volHeight, barWidth * 0.8, volHeight);
@@ -1464,22 +1516,22 @@ const MiniChart = forwardRef(({
 
             // Estilo para las líneas verticales
             ctx.strokeStyle = '#FF9800'; // Naranja
-            ctx.lineWidth = 2;
+            ctx.lineWidth = crispWidth(2, 'x');
             ctx.setLineDash([5, 3]); // Línea punteada
 
             // Línea vertical en entry time (siempre existe)
             if (entryX >= marginLeft && entryX <= width - marginRight) {
               ctx.beginPath();
-              ctx.moveTo(entryX, marginTop);
-              ctx.lineTo(entryX, marginTop + priceChartHeight);
+              ctx.moveTo(alignX(entryX, 2), marginTop);
+              ctx.lineTo(alignX(entryX, 2), marginTop + priceChartHeight);
               ctx.stroke();
             }
 
             // Línea vertical en exit time (solo si el trade está cerrado)
             if (exitX && exitX >= marginLeft && exitX <= width - marginRight) {
               ctx.beginPath();
-              ctx.moveTo(exitX, marginTop);
-              ctx.lineTo(exitX, marginTop + priceChartHeight);
+              ctx.moveTo(alignX(exitX, 2), marginTop);
+              ctx.lineTo(alignX(exitX, 2), marginTop + priceChartHeight);
               ctx.stroke();
             }
 
@@ -1523,11 +1575,11 @@ const MiniChart = forwardRef(({
       // Línea vertical del crosshair
       if (mouseX >= marginLeft && mouseX <= width - marginRight) {
         ctx.strokeStyle = "#999";
-        ctx.lineWidth = 2; // Más grueso para mejor visibilidad
+        ctx.lineWidth = crispWidth(2, 'x'); // Más grueso para mejor visibilidad
         ctx.setLineDash([2, 2]);
         ctx.beginPath();
-        ctx.moveTo(mouseX, marginTop);
-        ctx.lineTo(mouseX, height - timeAxisHeight);
+        ctx.moveTo(alignX(mouseX, 2), marginTop);
+        ctx.lineTo(alignX(mouseX, 2), height - timeAxisHeight);
         ctx.stroke();
         ctx.setLineDash([]);
 
@@ -1583,11 +1635,11 @@ const MiniChart = forwardRef(({
         const price = minPrice + ((marginTop + priceChartHeight - mouseY + verticalOffset) / yScale);
 
         ctx.strokeStyle = "#999";
-        ctx.lineWidth = 2; // Más grueso para mejor visibilidad
+        ctx.lineWidth = crispWidth(2); // Más grueso para mejor visibilidad
         ctx.setLineDash([2, 2]);
         ctx.beginPath();
-        ctx.moveTo(marginLeft, mouseY);
-        ctx.lineTo(width - marginRight, mouseY);
+        ctx.moveTo(marginLeft, alignY(mouseY, 2));
+        ctx.lineTo(width - marginRight, alignY(mouseY, 2));
         ctx.stroke();
         ctx.setLineDash([]);
 
@@ -1611,12 +1663,13 @@ const MiniChart = forwardRef(({
     if (x === null || x < left || x > right) return;
 
     ctx.strokeStyle = '#38BDF8';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = crispWidth(2, 'x');
     ctx.setLineDash([5, 4]);
     ctx.beginPath();
-    ctx.moveTo(x, top);
-    ctx.lineTo(x, bottom);
+    ctx.moveTo(alignX(x, 2), top);
+    ctx.lineTo(alignX(x, 2), bottom);
     ctx.stroke();
+    ctx.lineWidth = 2;
     ctx.setLineDash([]);
     if (Number.isFinite(focus.price)) {
       ctx.beginPath();
@@ -1658,12 +1711,19 @@ const MiniChart = forwardRef(({
     const canvas = canvasRef.current;
     if (!canvas || typeof ResizeObserver === 'undefined') return;
 
-    const observer = new ResizeObserver(() => {
+    // También avisa si cambia la densidad: zoom del navegador o la ventana pasa a otro monitor
+    const observer = new ResizeObserver((entries) => {
+      const box = entries[entries.length - 1]?.devicePixelContentBoxSize?.[0];
+      devicePixelsRef.current = box ? { width: box.inlineSize, height: box.blockSize } : null;
       if (candlesRef.current?.length > 0) {
         drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
       }
     });
-    observer.observe(canvas);
+    try {
+      observer.observe(canvas, { box: 'device-pixel-content-box' });
+    } catch {
+      observer.observe(canvas);
+    }
     return () => observer.disconnect();
   }, []);
 

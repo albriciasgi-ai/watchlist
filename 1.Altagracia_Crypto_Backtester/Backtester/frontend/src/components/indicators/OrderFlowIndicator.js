@@ -1,6 +1,15 @@
 import { candleItemId } from './analysisLevels.js';
+import { alignX, alignY, candleColumns, crispWidth, pixelRatio, snapEdge, snapSpanY } from '../chartPixels.js';
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
+
+// Fila de un nivel del footprint o del perfil en píxeles reales enteros: de su borde al del nivel
+// siguiente, menos un hueco parejo de 1 px. Filas de menos de dos píxeles reales quedan como antes
+function levelRow(top, levelHeight, height) {
+  if ((levelHeight - 1) * pixelRatio() < 2) return [top, height];
+  const start = snapEdge(top);
+  return [start, snapEdge(top + levelHeight) - crispWidth(1) - start];
+}
 
 const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 const MAX_CANDLES_TO_LOAD = 400; // Con más velas en pantalla no se piden footprints
@@ -434,10 +443,10 @@ class OrderFlowIndicator extends IndicatorBase {
     const bodyHeight = Math.max(1, Math.max(openY, closeY) - bodyTop);
 
     ctx.strokeStyle = this.colors.CANDLE_WICK;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1, 'x');
     ctx.beginPath();
-    ctx.moveTo(centerX, priceToY(candle.high));
-    ctx.lineTo(centerX, priceToY(candle.low));
+    ctx.moveTo(alignX(centerX), snapEdge(priceToY(candle.high)));
+    ctx.lineTo(alignX(centerX), snapEdge(priceToY(candle.low)));
     ctx.stroke();
 
     ctx.fillStyle = color;
@@ -501,6 +510,17 @@ class OrderFlowIndicator extends IndicatorBase {
     const bodyBottom = Math.max(openY, closeY);
     const bodyHeight = Math.max(1, bodyBottom - bodyTop);
 
+    // En píxeles reales enteros: el cuerpo con su borde de 1 px, como antes, y la mecha al centro
+    const columns = candleColumns(centerX, bodyWidth + 1);
+    if (columns) {
+      const [wickY, wickHeight] = snapSpanY(priceToY(high), priceToY(low));
+      const [bodyY, bodyHeightPx] = snapSpanY(bodyTop - 0.5, bodyTop + bodyHeight + 0.5);
+      ctx.fillStyle = color;
+      ctx.fillRect(columns.wickX, wickY, columns.wickWidth, wickHeight);
+      ctx.fillRect(columns.bodyX, bodyY, columns.bodyWidth, bodyHeightPx);
+      return;
+    }
+
     ctx.strokeStyle = color;
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -530,14 +550,16 @@ class OrderFlowIndicator extends IndicatorBase {
       const barWidth = width * (level.total_volume / maxVolume);
       const isPOC = i === pocIndex;
       ctx.fillStyle = isPOC ? this.colors.PROFILE_POC : this.colors.PROFILE_BAR;
-      ctx.fillRect(x, topY, barWidth, Math.max(1, levelHeight - 1));
+      // Barra de borde a borde del nivel en píxeles reales, con un hueco parejo de 1 px
+      const [barY, barHeight] = levelRow(topY, levelHeight, Math.max(1, levelHeight - 1));
+      ctx.fillRect(x, barY, barWidth, barHeight);
 
       if (isPOC && this.config.showPOC) {
         ctx.strokeStyle = this.colors.POC_LINE;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = crispWidth(2);
         ctx.beginPath();
-        ctx.moveTo(x, topY + levelHeight / 2);
-        ctx.lineTo(x + barWidth, topY + levelHeight / 2);
+        ctx.moveTo(x, alignY(topY + levelHeight / 2, 2));
+        ctx.lineTo(x + barWidth, alignY(topY + levelHeight / 2, 2));
         ctx.stroke();
       }
     }
@@ -567,8 +589,9 @@ class OrderFlowIndicator extends IndicatorBase {
     for (const level of extraLevels) {
       const y = priceToY(level.price_max);
       if (isOutside(y)) continue;
+      const [cellY, cellH] = levelRow(y, levelHeight, cellHeight);
       ctx.fillStyle = this.colors.EMPTY_BG;
-      ctx.fillRect(x, y, width, cellHeight);
+      ctx.fillRect(x, cellY, width, cellH);
     }
 
     for (let i = 0; i < levels.length; i++) {
@@ -576,26 +599,28 @@ class OrderFlowIndicator extends IndicatorBase {
       const y = priceToY(level.price_max);
       if (isOutside(y)) continue;
 
+      // La celda va de borde a borde de su nivel en píxeles reales, con un hueco parejo de 1 px
+      const [cellY, cellH] = levelRow(y, levelHeight, cellHeight);
       const textY = y + levelHeight / 2;
       const isEmpty = level.total_volume === 0;
       const sellDominates = level.bid_volume > level.ask_volume;
       const buyDominates = level.ask_volume > level.bid_volume;
 
       ctx.fillStyle = isEmpty ? this.colors.EMPTY_BG : (sellDominates ? this.colors.BID_BG_STRONG : this.colors.BID_BG_WEAK);
-      ctx.fillRect(x, y, halfWidth - 0.5, cellHeight);
+      ctx.fillRect(x, cellY, halfWidth - 0.5, cellH);
 
       ctx.fillStyle = isEmpty ? this.colors.EMPTY_BG : (buyDominates ? this.colors.ASK_BG_STRONG : this.colors.ASK_BG_WEAK);
-      ctx.fillRect(x + halfWidth + 0.5, y, halfWidth - 0.5, cellHeight);
+      ctx.fillRect(x + halfWidth + 0.5, cellY, halfWidth - 0.5, cellH);
 
       ctx.strokeStyle = 'rgba(0,0,0,0.3)';
       ctx.lineWidth = 0.5;
-      ctx.strokeRect(x, y, width, cellHeight);
+      ctx.strokeRect(x, cellY, width, cellH);
 
       ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-      ctx.lineWidth = 1;
+      ctx.lineWidth = crispWidth(1, 'x');
       ctx.beginPath();
-      ctx.moveTo(x + halfWidth, y);
-      ctx.lineTo(x + halfWidth, y + cellHeight);
+      ctx.moveTo(alignX(x + halfWidth), cellY);
+      ctx.lineTo(alignX(x + halfWidth), cellY + cellH);
       ctx.stroke();
 
       if (this.config.showPOC && i === pocIndex) {
@@ -608,25 +633,25 @@ class OrderFlowIndicator extends IndicatorBase {
         const opacity = this.config.stackedOpacity;
 
         ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.4})`;
-        ctx.fillRect(x, y, width, cellHeight);
+        ctx.fillRect(x, cellY, width, cellH);
         ctx.strokeStyle = `rgba(${rgb}, 0.95)`;
         ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, width, cellHeight);
+        ctx.strokeRect(x, cellY, width, cellH);
 
         // La franja sigue hacia la izquierda, por detrás de la vela
         const extendLeft = x - unitX;
         if (extendLeft > 0) {
           ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.6})`;
-          ctx.fillRect(unitX, y, extendLeft, cellHeight);
+          ctx.fillRect(unitX, cellY, extendLeft, cellH);
           ctx.strokeStyle = `rgba(${rgb}, ${opacity * 0.8})`;
           ctx.lineWidth = 1;
-          ctx.strokeRect(unitX, y, extendLeft, cellHeight);
+          ctx.strokeRect(unitX, cellY, extendLeft, cellH);
         }
       } else if (this.config.showImbalances && imbalanceSet.has(i) && levelHeight >= 6) {
         // En celdas muy bajas el borde taparía el color de la celda
         ctx.strokeStyle = this.colors.IMBALANCE_BORDER;
         ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, width, cellHeight);
+        ctx.strokeRect(x, cellY, width, cellH);
       }
 
       if (fullMode && width >= 30 && levelHeight >= 10) {
@@ -700,7 +725,7 @@ class OrderFlowIndicator extends IndicatorBase {
     const minZScore = this.config.stackedMinVolumeZScore || 0;
     const extraHalf = (candleWidth * stackedLineExtend - candleWidth) / 2;
 
-    ctx.lineWidth = stackedLineWidth;
+    ctx.lineWidth = crispWidth(stackedLineWidth);
 
     visibleCandles.forEach((candle, i) => {
       const footprint = this.footprintMap.get(candle.timestamp);
@@ -736,7 +761,7 @@ class OrderFlowIndicator extends IndicatorBase {
         for (const index of stacked.levels || []) {
           const level = footprint.levels[index];
           if (!level) continue;
-          const y = priceToY(level.price_mid);
+          const y = alignY(priceToY(level.price_mid), stackedLineWidth);
           ctx.beginPath();
           ctx.moveTo(startX, y);
           ctx.lineTo(endX, y);

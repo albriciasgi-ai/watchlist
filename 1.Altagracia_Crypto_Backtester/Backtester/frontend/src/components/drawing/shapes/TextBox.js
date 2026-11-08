@@ -1,6 +1,8 @@
 // src/components/drawing/shapes/TextBox.js
 // Caja de texto para comentarios y anotaciones
 
+import { pixelRatio } from '../../chartPixels.js';
+
 class TextBox {
   constructor(price, time, text = 'Texto...') {
     this.type = 'textbox';
@@ -122,9 +124,9 @@ class TextBox {
     // Sombra
     if (!isPreview) {
       ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-      ctx.shadowBlur = 8;
-      ctx.shadowOffsetX = 2;
-      ctx.shadowOffsetY = 2;
+      ctx.shadowBlur = 8 * pixelRatio(); // La sombra no sigue la escala del lienzo
+      ctx.shadowOffsetX = 2 * pixelRatio();
+      ctx.shadowOffsetY = 2 * pixelRatio();
     }
 
     // Fondo (sticky note amarillo)

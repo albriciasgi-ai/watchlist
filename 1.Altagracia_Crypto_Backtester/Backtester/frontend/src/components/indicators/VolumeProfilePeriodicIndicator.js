@@ -1,4 +1,5 @@
 import { profileLevels } from './analysisLevels.js';
+import { alignX, alignY, crispWidth } from '../chartPixels.js';
 import IndicatorBase from './IndicatorBase.js';
 import { candlesBetween, sessionLength, sessionStart } from './sessionProfile.js';
 
@@ -115,13 +116,16 @@ class VolumeProfilePeriodicIndicator extends IndicatorBase {
 
     const top = bounds.y;
     const bottom = bounds.y + bounds.height;
+    // Las líneas son verticales u horizontales: su grosor cae entero en píxeles reales
     const line = (color, width, dash, x1, y1, x2, y2) => {
+      const vertical = x1 === x2;
+      const horizontal = y1 === y2;
       ctx.strokeStyle = color;
-      ctx.lineWidth = width;
+      ctx.lineWidth = vertical ? crispWidth(width, 'x') : (horizontal ? crispWidth(width) : width);
       ctx.setLineDash(dash);
       ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
+      ctx.moveTo(vertical ? alignX(x1, width) : x1, horizontal ? alignY(y1, width) : y1);
+      ctx.lineTo(vertical ? alignX(x2, width) : x2, horizontal ? alignY(y2, width) : y2);
       ctx.stroke();
       ctx.setLineDash([]);
     };

@@ -618,6 +618,7 @@ node tests/light.test.mjs
 node tests/analysis.test.mjs
 node tests/marketdata.test.mjs
 node tests/liquidations.test.mjs
+node tests/pixels.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -1003,6 +1004,63 @@ Observador: TradeImages muestra las miniaturas y abre ScreenshotModal con las me
 - Al pedir una imagen, la extensión se separa antes de `sanitize_filename()`, que quita los puntos
 - Borrar una sesión no borra sus imágenes. `DELETE /api/screenshots/session/{id}` existe, pero la app no lo llama
 - Las sesiones viven en IndexedDB del navegador y las imágenes en disco
+- Una imagen sale con el doble de píxeles que la pantalla, como mínimo (`CAPTURE_DENSITY`): el gráfico se redibuja a esa densidad solo para copiarla y vuelve antes de pintarse. Pesa unos 250 KB. `markers` se mide contra el tamaño CSS del lienzo (`drawnSizeRef`), no contra sus píxeles, y `screenshotMetadata` guarda los píxeles de la imagen. En el visor, "Ver a tamaño real" la muestra al doble del gráfico
+
+---
+
+## NITIDEZ DEL GRÁFICO (Noviembre 2026)
+
+Pedido del usuario el 8/11: el gráfico se veía borroso y en monitores más grandes no mejoraba. Su portátil es de 15.3" a 1366x768 y escala 100%. Colores, letras y disposición no cambian.
+
+### Causas
+
+- El lienzo tenía tantos píxeles como píxeles CSS. Con escala de Windows (125% o 150%, comunes en monitores 1440p y 4K) o zoom del navegador distinto de 100%, el navegador lo estiraba
+- Velas, mechas de 1 px, líneas y celdas caían entre dos píxeles y se pintaban a medio tono en los dos. Pasaba también a 100%
+- El texto del lienzo usaba suavizado gris; el HTML usa ClearType
+
+### Cómo funciona
+
+- `drawChart` da al lienzo los píxeles reales que ocupa en pantalla (`devicePixelContentBoxSize` del `ResizeObserver`, o el tamaño CSS por la densidad) y dibuja en píxeles CSS con `setTransform`. Mouse, márgenes, tolerancias de clic, `priceContext` y `selectableLevels()` siguen en píxeles CSS
+- El `ResizeObserver` mira `device-pixel-content-box`: también avisa si cambia la densidad, al cambiar el zoom del navegador o pasar la ventana a otro monitor
+- Lienzo opaco (`getContext('2d', { alpha: false })`): el texto sale con ClearType. El fondo blanco se pinta entero en cada cuadro
+- `components/chartPixels.js`:
+  - `installCrispRects(ctx)`: `fillRect` y `strokeRect` de ese lienzo llevan sus bordes a píxeles enteros. Un lado de menos de un píxel real queda como estaba, para que miles de velas angostas no se vean más densas. `strokeRect` centra el borde en la orilla: dos zonas que comparten orilla (TP y SL de una caja) pintan en el mismo lugar. Un borde más fino que un píxel real se dibuja de un píxel con la misma tinta
+  - `alignY(y, grosor)` y `alignX(x, grosor)`: centro de una línea horizontal o vertical para que su grosor caiga entero. Van con `crispWidth(grosor, eje)`, que redondea el grosor a píxeles reales
+  - `candleColumns()` y `snapSpanY()`: mecha y cuerpo de una vela con la mecha centrada. Con velas de menos de un píxel real `drawChart` las dibuja como antes
+  - `rectEdge()`: dónde pinta `strokeRect` una orilla, para trazar otra línea encima (la punteada del rectángulo)
+  - `pixelRatio()`: para `shadowBlur` y `shadowOffset`, que no siguen la escala del lienzo
+- Footprint (`levelRow()` en `OrderFlowIndicator.js`): cada celda y cada barra del perfil de la vela van del borde de su nivel al del siguiente, con un hueco parejo de 1 px
+- Una línea fina semitransparente (VAL del perfil dinámico, separadores) antes repartía su tinta en dos filas; ahora cae en una y se ve más definida
+
+### Interruptor
+
+- `localStorage.chart_pixel_ratio = "off"` y recargar: dibujo anterior, lienzo transparente y sin alinear. `removeItem` lo deshace
+- Un número de 0.5 a 4 fija la densidad sin recargar: muestra en este equipo lo que se ve en un monitor con escala, a costa de que la pantalla lo reduzca
+
+### Para indicadores nuevos
+
+- `fillRect` y `strokeRect` no necesitan nada
+- Línea horizontal: `ctx.lineWidth = crispWidth(w)` y `moveTo(x1, alignY(y, w))`, `lineTo(x2, alignY(y, w))`. Vertical: `crispWidth(w, 'x')` y `alignX(x, w)`
+- Curvas y diagonales (VWAP, tendencia, flujo de OI) se dejan como están
+- No usar `canvas.width` como tamaño del gráfico: son píxeles reales. En CSS es `canvas.clientWidth` o `getBoundingClientRect()`
+
+### Medido
+
+Vista 1366x700 (lienzo 1164x658), BTCUSDT 15m con Volume Delta, VP, OI, OI-Volume Confluence, Order Flow, FVG, VP Periodic, Volumen de Respuesta, Liquidaciones y S&R v2:
+
+| | Antes | Ahora |
+|---|---|---|
+| Redibujo al mover el mouse, mediana | 3.9 ms | 3.8 ms a 1x, 3.9 a 1.5x, 3.5 a 2.25x, 3.9 a 3x |
+| Reproducción 10000x | 60 fps, sin tareas largas | igual a 1x, 1.5x, 2.25x y 3x (lienzo de 6.9 Mpx) |
+| Imagen de trade | unos 110 KB, al tamaño de la pantalla | unos 250 KB, al doble |
+| Memoria del lienzo | 3 MB | 3 MB a 100%; unos 10 MB en 1440p a 125% y 22 MB en 4K a 150% |
+
+- Con miles de velas a la vista (10,890 en 15m) el redibujo tarda de 140 a 230 ms con o sin esta mejora: ya era así
+- La tarjeta gráfica del portátil (Radeon integrada) no frenó en ninguna prueba
+
+### Pruebas
+
+`node tests/pixels.test.mjs` (11): alineación de líneas a 7 densidades, mecha centrada, rectángulos vecinos, bordes compartidos, bordes finos, traslado y giro, y el interruptor apagado. Detecta una mecha sin centrar, un borde impar sin medio píxel y un relleno angosto alineado.
 
 ---
 

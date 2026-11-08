@@ -1,6 +1,7 @@
 // src/components/indicators/VolumeProfileIndicator.js
 
 import { profileLevels } from './analysisLevels.js';
+import { alignX, alignY, crispWidth } from '../chartPixels.js';
 import IndicatorBase from "./IndicatorBase";
 
 class VolumeProfileIndicator extends IndicatorBase {
@@ -366,11 +367,11 @@ class VolumeProfileIndicator extends IndicatorBase {
     // Dibujar lÃ­nea vertical izquierda (inicio del rango) - solo si el inicio estÃ¡ visible
     if (startTimestamp >= firstVisibleTimestamp) {
       ctx.strokeStyle = "#000000";
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = crispWidth(1.5, 'x');
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
-      ctx.moveTo(rangeStartX, y);
-      ctx.lineTo(rangeStartX, y + height);
+      ctx.moveTo(alignX(rangeStartX, 1.5), y);
+      ctx.lineTo(alignX(rangeStartX, 1.5), y + height);
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -378,11 +379,11 @@ class VolumeProfileIndicator extends IndicatorBase {
     // Dibujar lÃ­nea vertical derecha (fin del rango) - solo si el fin estÃ¡ visible
     if (endTimestamp <= lastVisibleTimestamp) {
       ctx.strokeStyle = "#000000";
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = crispWidth(1.5, 'x');
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
-      ctx.moveTo(rangeEndX, y);
-      ctx.lineTo(rangeEndX, y + height);
+      ctx.moveTo(alignX(rangeEndX, 1.5), y);
+      ctx.lineTo(alignX(rangeEndX, 1.5), y + height);
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -558,11 +559,11 @@ class VolumeProfileIndicator extends IndicatorBase {
     // Dibujar lÃƒÂ­nea del POC
     const pocY = priceToY(this.profile.poc.price);
     ctx.strokeStyle = this.pocColor;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = crispWidth(2);
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
-    ctx.moveTo(x, pocY);
-    ctx.lineTo(chartRight, pocY);
+    ctx.moveTo(x, alignY(pocY, 2));
+    ctx.lineTo(chartRight, alignY(pocY, 2));
     ctx.stroke();
     ctx.setLineDash([]);
 
@@ -571,17 +572,17 @@ class VolumeProfileIndicator extends IndicatorBase {
     const valY = priceToY(this.profile.valueArea.valPrice);
     
     ctx.strokeStyle = this.vahValColor;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.globalAlpha = 0.5;
-    
+
     ctx.beginPath();
-    ctx.moveTo(x, vahY);
-    ctx.lineTo(chartRight, vahY);
+    ctx.moveTo(x, alignY(vahY));
+    ctx.lineTo(chartRight, alignY(vahY));
     ctx.stroke();
-    
+
     ctx.beginPath();
-    ctx.moveTo(x, valY);
-    ctx.lineTo(chartRight, valY);
+    ctx.moveTo(x, alignY(valY));
+    ctx.lineTo(chartRight, alignY(valY));
     ctx.stroke();
     
     ctx.globalAlpha = 1.0;

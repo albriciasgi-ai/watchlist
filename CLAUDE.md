@@ -53,6 +53,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 8 Noviembre 2026: Nitidez del Gráfico
+
+**Problema:** el gráfico se veía borroso y en pantallas grandes no mejoraba. El lienzo no usaba la densidad de la pantalla: con escala de Windows o zoom del navegador distinto de 100% el navegador lo estiraba. Además velas, mechas, líneas y celdas del footprint caían entre dos píxeles y se pintaban a medio tono, incluso a 100%. Las imágenes de trades se guardaban al tamaño de la pantalla.
+
+**Cambios:**
+1. **Densidad real:** el lienzo tiene los píxeles reales de la pantalla y se dibuja en píxeles CSS con esa escala. Se ajusta solo al mover la ventana a otro monitor o cambiar el zoom del navegador
+2. **Píxeles enteros:** `components/chartPixels.js` lleva rectángulos y líneas horizontales y verticales a píxeles reales enteros: velas, volumen, ejes, cruz, perfiles, footprints, paneles, niveles y dibujos. Las mechas quedan centradas en el cuerpo
+3. **Texto:** el lienzo es opaco, así el texto del gráfico sale con ClearType como el resto de la pantalla
+4. **Imágenes de trades:** con el doble de píxeles que la pantalla, como mínimo. "Ver a tamaño real" del visor deja leer las cifras del footprint. Las marcas del Observador siguen en su lugar
+5. **Sin cambios de estilo:** mismos colores, tamaños de letra y disposición. Una línea fina semitransparente ahora cae en una sola fila de píxeles y se ve más definida
+6. **Velocidad:** igual que antes: 60 cuadros por segundo a 10000x con el lienzo a 1x, 1.5x, 2.25x y 3x, sin tareas largas, y el redibujo cuesta lo mismo (unos 4 ms)
+
+**IMPORTANTE:** basta recargar la página: no hay cambios en el backend. En la consola, `localStorage.setItem('chart_pixel_ratio', 'off')` y recargar vuelve al dibujo anterior; `removeItem` lo deshace. Un indicador nuevo dibuja sus líneas horizontales con `alignY` y `crispWidth`, y las verticales con `alignX`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "NITIDEZ DEL GRÁFICO"
+
+---
+
 ### APP 1 (Backtester) - 8 Noviembre 2026: Niveles Elegidos por Trade
 
 **Problema:** los niveles y marcas elegidos para un trade seguían elegidos al abrir el siguiente, y cada orden nueva se los volvía a llevar. Valen solo para el caso en que se eligieron.

@@ -1,6 +1,7 @@
 import IndicatorBase from './IndicatorBase.js';
 import { candleItemId } from './analysisLevels.js';
 import { ResponseSeries, defaultResponseConfig } from './responseBalance.js';
+import { alignY, crispWidth } from '../chartPixels.js';
 
 const SETTINGS_KEY = 'response_balance_settings_';
 const PRESSURE_LIMIT = 2; // El panel llega hasta cuatro veces de ventaja
@@ -136,10 +137,10 @@ class ResponseVolumeIndicator extends IndicatorBase {
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(x, y, width, height);
     ctx.strokeStyle = '#DDE2E7';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + width, y);
+    ctx.moveTo(x, alignY(y));
+    ctx.lineTo(x + width, alignY(y));
     ctx.stroke();
 
     const top = y + 20;
@@ -152,7 +153,7 @@ class ResponseVolumeIndicator extends IndicatorBase {
     ctx.strokeStyle = '#E5E9ED';
     ctx.setLineDash([3, 3]);
     for (const level of [dominance, -dominance]) {
-      const lineY = zero - Math.max(-PRESSURE_LIMIT, Math.min(PRESSURE_LIMIT, level)) * scale;
+      const lineY = alignY(zero - Math.max(-PRESSURE_LIMIT, Math.min(PRESSURE_LIMIT, level)) * scale);
       ctx.beginPath();
       ctx.moveTo(x, lineY);
       ctx.lineTo(x + width, lineY);
@@ -161,8 +162,8 @@ class ResponseVolumeIndicator extends IndicatorBase {
     ctx.setLineDash([]);
     ctx.strokeStyle = '#B0BEC5';
     ctx.beginPath();
-    ctx.moveTo(x, zero);
-    ctx.lineTo(x + width, zero);
+    ctx.moveTo(x, alignY(zero));
+    ctx.lineTo(x + width, alignY(zero));
     ctx.stroke();
 
     let lastIndex = -1;

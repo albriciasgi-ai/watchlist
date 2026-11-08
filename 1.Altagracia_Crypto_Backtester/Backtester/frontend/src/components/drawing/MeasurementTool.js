@@ -1,6 +1,8 @@
 // src/components/drawing/MeasurementTool.js
 // Herramienta de medición activada con middle click (rueda del mouse)
 
+import { pixelRatio } from '../chartPixels.js';
+
 class MeasurementTool {
   constructor() {
     this.startPoint = null;
@@ -194,18 +196,19 @@ class MeasurementTool {
     const boxHeight = 85;
 
     // Ajustar si se sale de la pantalla
-    if (boxX + boxWidth > ctx.canvas.width) {
+    // Ancho en píxeles CSS: el lienzo tiene los píxeles reales de la pantalla
+    if (boxX + boxWidth > (ctx.canvas.clientWidth || ctx.canvas.width)) {
       boxX = this.endPoint.x - boxWidth - 15;
     }
     if (boxY < 0) {
       boxY = this.endPoint.y + 15;
     }
 
-    // Fondo del box (semi-transparente con sombra)
+    // Fondo del box (semi-transparente con sombra). La sombra no sigue la escala del lienzo
     ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
+    ctx.shadowBlur = 10 * pixelRatio();
+    ctx.shadowOffsetX = 2 * pixelRatio();
+    ctx.shadowOffsetY = 2 * pixelRatio();
 
     ctx.fillStyle = 'rgba(33, 150, 243, 0.95)';
     ctx.fillRect(boxX, boxY, boxWidth, boxHeight);

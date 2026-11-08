@@ -3,6 +3,7 @@
 // ✅ CORREGIDO: INCLUYE vela en progreso para mostrar última barra en tiempo real
 
 import IndicatorBase from "./IndicatorBase";
+import { alignX, alignY, crispWidth } from '../chartPixels.js';
 
 class CVDIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 30) {
@@ -92,10 +93,10 @@ class CVDIndicator extends IndicatorBase {
 
     // Linea separadora superior
     ctx.strokeStyle = "#DDE2E7";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + width, y);
+    ctx.moveTo(x, alignY(y));
+    ctx.lineTo(x + width, alignY(y));
     ctx.stroke();
 
     // Titulo
@@ -133,11 +134,11 @@ class CVDIndicator extends IndicatorBase {
       // Si es reset, dibujar linea vertical indicadora
       if (d.isReset && i > 0) {
         ctx.strokeStyle = "#FF9500";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = crispWidth(2, 'x');
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
-        ctx.moveTo(barX, chartY);
-        ctx.lineTo(barX, chartY + chartHeight);
+        ctx.moveTo(alignX(barX, 2), chartY);
+        ctx.lineTo(alignX(barX, 2), chartY + chartHeight);
         ctx.stroke();
         ctx.setLineDash([]);
         ctx.lineWidth = 1;
@@ -180,11 +181,11 @@ class CVDIndicator extends IndicatorBase {
     if (minCVD < 0 && maxCVD > 0) {
       const zeroY = chartY + chartHeight - ((0 - minCVD) * cvdScale);
       ctx.strokeStyle = "#666";
-      ctx.lineWidth = 1;
+      ctx.lineWidth = crispWidth(1);
       ctx.setLineDash([2, 2]);
       ctx.beginPath();
-      ctx.moveTo(x, zeroY);
-      ctx.lineTo(x + width, zeroY);
+      ctx.moveTo(x, alignY(zeroY));
+      ctx.lineTo(x + width, alignY(zeroY));
       ctx.stroke();
       ctx.setLineDash([]);
     }

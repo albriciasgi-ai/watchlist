@@ -8,6 +8,7 @@
 import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
 import { TF_MS } from "../backtesting/replayClock.js";
+import { alignY, crispWidth } from '../chartPixels.js';
 
 const OI_STEP_MS = 300000; // Resolución de la serie local
 const OI_PAD_POINTS = 2000; // Puntos de margen a cada lado de las velas visibles
@@ -669,10 +670,10 @@ class OpenInterestIndicator extends IndicatorBase {
 
     // Línea separadora
     ctx.strokeStyle = "#DDE2E7";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + width, y);
+    ctx.moveTo(x, alignY(y));
+    ctx.lineTo(x + width, alignY(y));
     ctx.stroke();
 
     // Título
@@ -718,8 +719,8 @@ class OpenInterestIndicator extends IndicatorBase {
     ctx.strokeStyle = "#DDE2E7";
     ctx.setLineDash([2, 2]);
     ctx.beginPath();
-    ctx.moveTo(x, zeroY);
-    ctx.lineTo(x + width, zeroY);
+    ctx.moveTo(x, alignY(zeroY));
+    ctx.lineTo(x + width, alignY(zeroY));
     ctx.stroke();
     ctx.setLineDash([]);
 
@@ -779,10 +780,10 @@ class OpenInterestIndicator extends IndicatorBase {
 
     // Línea separadora
     ctx.strokeStyle = "#DDE2E7";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + width, y);
+    ctx.moveTo(x, alignY(y));
+    ctx.lineTo(x + width, alignY(y));
     ctx.stroke();
 
     // Título
@@ -850,11 +851,11 @@ class OpenInterestIndicator extends IndicatorBase {
     if (minCumulative < 0 && maxCumulative > 0) {
       const zeroY = chartY + chartHeight - ((0 - minCumulative) * cumulativeScale);
       ctx.strokeStyle = "#666";
-      ctx.lineWidth = 1;
+      ctx.lineWidth = crispWidth(1);
       ctx.setLineDash([2, 2]);
       ctx.beginPath();
-      ctx.moveTo(x, zeroY);
-      ctx.lineTo(x + width, zeroY);
+      ctx.moveTo(x, alignY(zeroY));
+      ctx.lineTo(x + width, alignY(zeroY));
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -890,10 +891,10 @@ class OpenInterestIndicator extends IndicatorBase {
 
     // Línea separadora
     ctx.strokeStyle = "#DDE2E7";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + width, y);
+    ctx.moveTo(x, alignY(y));
+    ctx.lineTo(x + width, alignY(y));
     ctx.stroke();
 
     // Título
@@ -941,11 +942,11 @@ class OpenInterestIndicator extends IndicatorBase {
     if (minOIFlow < 0 && maxOIFlow > 0) {
       const zeroY = chartY + chartHeight - ((0 - minOIFlow) * oiScale);
       ctx.strokeStyle = "#666";
-      ctx.lineWidth = 1;
+      ctx.lineWidth = crispWidth(1);
       ctx.setLineDash([2, 2]);
       ctx.beginPath();
-      ctx.moveTo(x, zeroY);
-      ctx.lineTo(x + width, zeroY);
+      ctx.moveTo(x, alignY(zeroY));
+      ctx.lineTo(x + width, alignY(zeroY));
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -1034,10 +1035,10 @@ class OpenInterestIndicator extends IndicatorBase {
     ctx.fillRect(x, y, width, height);
 
     ctx.strokeStyle = "#DDE2E7";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + width, y);
+    ctx.moveTo(x, alignY(y));
+    ctx.lineTo(x + width, alignY(y));
     ctx.stroke();
 
     // MEJORADO: Mostrar diferentes mensajes según el estado

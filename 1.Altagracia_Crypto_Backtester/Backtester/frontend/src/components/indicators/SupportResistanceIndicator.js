@@ -2,6 +2,7 @@
 // Support & Resistance Indicator con niveles detectados por volumen
 
 import { priceLevels } from './analysisLevels.js';
+import { alignY, crispWidth } from '../chartPixels.js';
 import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
 
@@ -464,17 +465,17 @@ class SupportResistanceIndicator extends IndicatorBase {
 
     // Borde superior e inferior
     ctx.strokeStyle = "rgba(156, 39, 176, 0.3)";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = crispWidth(1);
     ctx.setLineDash([4, 4]);
 
     ctx.beginPath();
-    ctx.moveTo(x, maxPriceY);
-    ctx.lineTo(x + width, maxPriceY);
+    ctx.moveTo(x, alignY(maxPriceY));
+    ctx.lineTo(x + width, alignY(maxPriceY));
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.moveTo(x, minPriceY);
-    ctx.lineTo(x + width, minPriceY);
+    ctx.moveTo(x, alignY(minPriceY));
+    ctx.lineTo(x + width, alignY(minPriceY));
     ctx.stroke();
 
     ctx.setLineDash([]);
@@ -527,12 +528,12 @@ class SupportResistanceIndicator extends IndicatorBase {
     // Dibujar línea
     ctx.strokeStyle = color;
     ctx.globalAlpha = alpha;
-    ctx.lineWidth = lineWidth;
+    ctx.lineWidth = crispWidth(lineWidth);
     ctx.setLineDash(lineStyle);
 
     ctx.beginPath();
-    ctx.moveTo(x, priceY);
-    ctx.lineTo(x + width, priceY);
+    ctx.moveTo(x, alignY(priceY, lineWidth));
+    ctx.lineTo(x + width, alignY(priceY, lineWidth));
     ctx.stroke();
 
     ctx.setLineDash([]);
