@@ -53,6 +53,21 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 9 Noviembre 2026: Footprints al Alejar la Vista
+
+**Problema:** con la simulación iniciada el 01/01/2026, el Order Flow solo se dibujaba desde el 24/12/2025, aunque el almacén tiene todo 2025. El indicador dejaba de pedir footprints con más de 400 velas en pantalla, unos 4 días en 15m. Lo ya cargado se seguía viendo y lo anterior quedaba vacío, sin aviso.
+
+**Cambios:**
+1. **Más velas:** pide footprints con hasta 1600 velas en pantalla, sin pasar de 70 días de trades. En 4h queda casi igual: hasta 420 velas
+2. **Pedidos acotados:** al desplazarse pide media pantalla de más a cada lado, hasta 200 velas, y ningún pedido pasa de 70 días
+3. **Aviso:** con más velas, el gráfico dice "Order Flow: acerca el zoom para cargar los footprints", y lo ya cargado se sigue dibujando
+
+**IMPORTANTE:** basta recargar la página: no hay cambios en el backend. Reproducido y probado en una copia: con 481 velas, el desplazamiento hacia atrás antes se detenía en el 21/12 y ahora carga hasta el 15/12. Medido en el backend: 1600 velas de 15m tardan 0.3 a 0.6 s (3 MB); 1600 de 1h, 2 s la primera vez.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ORDER FLOW SOBRE LAS VELAS", "Dibujo"
+
+---
+
 ### APP 1 (Backtester) - 9 Noviembre 2026: Colores Propios en los Modales de los Indicadores
 
 **Problema:** con el estilo Nítido, un color cambiado en el modal del perfil de volumen no cambiaba nada; desde el modal "Estilo" sí. El usuario pidió que el estilo ponga los colores de todo, pero que lo cambiado en el modal de cada indicador se respete, incluidos el degradado y las intensidades de los perfiles.

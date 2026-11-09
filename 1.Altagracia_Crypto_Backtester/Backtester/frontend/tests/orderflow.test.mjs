@@ -181,11 +181,69 @@ test('si el precio se aleja mucho se elige otro step', async () => {
 
 test('con demasiadas velas en pantalla no pide nada', async () => {
   const of = newIndicator();
-  const candles = Array.from({ length: 401 }, (_, i) => closed(i));
-  await draw(of, candles, T0 + 401 * TF);
+  const candles = Array.from({ length: 1601 }, (_, i) => closed(i));
+  await draw(of, candles, T0 + 1601 * TF);
   assert.equal(requests.length, 0);
-  await draw(of, candles.slice(0, 400), T0 + 401 * TF);
+  await draw(of, candles.slice(0, 1600), T0 + 1601 * TF);
   assert.equal(requests.length, 1);
+});
+
+test('una vista alejada de 481 velas se carga: antes no pedia nada desde 401', async () => {
+  const of = newIndicator();
+  const candles = Array.from({ length: 481 }, (_, i) => closed(i + 300));
+  await draw(of, candles, T0 + 1000 * TF);
+  assert.equal(requests.length, 1);
+  assert.ok(candles.every(candle => of.footprintMap.has(candle.timestamp)));
+});
+
+test('al desplazarse pide media pantalla de mas a cada lado, hasta 200 velas', async () => {
+  const of = newIndicator();
+  await draw(of, Array.from({ length: 100 }, (_, i) => closed(i + 500)), T0 + 2000 * TF);
+  assert.equal(requests[0].start, T0 + 450 * TF);
+  assert.equal(requests[0].end, T0 + 650 * TF);
+
+  const wide = newIndicator();
+  await draw(wide, Array.from({ length: 1000 }, (_, i) => closed(i + 500)), T0 + 3000 * TF);
+  assert.equal(requests[0].start, T0 + 300 * TF);
+  assert.equal(requests[0].end, T0 + 1700 * TF);
+});
+
+test('ningun pedido pasa de 70 dias de trades: en 4h, hasta 420 velas', async () => {
+  const H4 = 4 * 3600000;
+  const make = () => {
+    const of = newIndicator();
+    const h4 = new OrderFlowIndicator('BTCUSDT', '4h', 7, true, T0);
+    h4.enabled = true;
+    respond = ({ end }) => ({ success: true, footprints: [], step_size: 10, known_until: end });
+    return [of, h4];
+  };
+  const candles = count => Array.from({ length: count }, (_, i) => ({ ...closed(0), timestamp: T0 + i * H4 }));
+
+  let [, h4] = make();
+  await draw(h4, candles(421), T0 + 500 * H4);
+  assert.equal(requests.length, 0, '421 velas de 4h son mas de 70 dias');
+
+  [, h4] = make();
+  await draw(h4, candles(400), T0 + 500 * H4);
+  assert.equal(requests.length, 1);
+  assert.ok(requests[0].end - requests[0].start <= 70 * 86400000, 'la ventana de mas no pasa el tope');
+  assert.equal(requests[0].start, T0 - 10 * H4);
+});
+
+test('con mas velas de las que se cargan avisa que hay que acercar el zoom', () => {
+  const of = newIndicator();
+  const texts = [];
+  const ctx = { fillText: text => texts.push(text) };
+  const bounds = { x: 0, y: 0, width: 1000, height: 500 };
+  const candles = Array.from({ length: 1601 }, (_, i) => closed(i));
+  of._renderNotice(ctx, bounds, candles);
+  assert.deepEqual(texts, ['Order Flow: acerca el zoom para cargar los footprints']);
+
+  // Si todo lo visible ya está cargado o no tiene trades, no hay aviso
+  candles.forEach((candle, i) => (i % 2 ? of.noData.set(candle.timestamp, T0) : of.footprintMap.set(candle.timestamp, { levels: [] })));
+  texts.length = 0;
+  of._renderNotice(ctx, bounds, candles);
+  assert.deepEqual(texts, []);
 });
 
 test('solo una peticion a la vez y una espera entre peticiones', async () => {

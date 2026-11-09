@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Footprints al Alejar la Vista
+
+Order Flow dejaba de pedir footprints con más de 400 velas en pantalla, unos 4 días en 15m. Al alejar la vista, las velas anteriores quedaban sin footprints, sin aviso, aunque el almacén los tuviera. Ahora pide hasta 1600 velas y 70 días de trades por vista, y con más avisa que hay que acercar el zoom. Detalle en `Backtester/CLAUDE.md`, sección "ORDER FLOW SOBRE LAS VELAS", "Dibujo".
+
+---
+
 ### Noviembre 2026: Colores Propios en los Modales de los Indicadores
 
 Con Nítido, lo cambiado en el modal de un indicador gana sobre el estilo: perfil de volumen, VP de rango fijo, Order Flow, confluencia OI y volumen, y volumen. Cada modal tiene cómo volver a los colores del estilo. También se corrigió el área de valor del perfil dinámico: abarcaba todo el perfil, con VAH y VAL en sus extremos, también en el Clásico. Detalle en `Backtester/CLAUDE.md`, sección "ESTILO NÍTIDO", "Ajustes propios en el modal de cada indicador".

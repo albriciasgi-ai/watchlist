@@ -16,7 +16,10 @@ function levelRow(top, levelHeight, height) {
 }
 
 const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
-const MAX_CANDLES_TO_LOAD = 400; // Con más velas en pantalla no se piden footprints
+const MAX_CANDLES_TO_LOAD = 1600; // Con más velas en pantalla no se piden footprints: quedan a menos de 1 px por vela
+const MAX_DAYS_TO_LOAD = 70; // Ni con más días de trades: el almacén lee un archivo por día (400 velas de 4h, unos 2 s)
+const MAX_PAD_CANDLES = 200; // Velas de más a cada lado al desplazarse: media pantalla, hasta este tope
+const DAY_MS = 86400000;
 const MAX_FOOTPRINTS_IN_MEMORY = 6000;
 const MIN_REQUEST_GAP_MS = 400;
 const ERROR_WAIT_MS = 5000;
@@ -190,21 +193,30 @@ class OrderFlowIndicator extends IndicatorBase {
     return seen < target;
   }
 
+  /** Vista que se puede cargar: hasta MAX_CANDLES_TO_LOAD velas y MAX_DAYS_TO_LOAD días de trades */
+  _canLoad(visibleCandles) {
+    if (visibleCandles.length > MAX_CANDLES_TO_LOAD) return false;
+    const span = visibleCandles[visibleCandles.length - 1].timestamp + this.tfMs - visibleCandles[0].timestamp;
+    return span <= MAX_DAYS_TO_LOAD * DAY_MS;
+  }
+
   _loadVisible(visibleCandles, priceContext) {
     const { knownUntil, requestRedraw } = priceContext;
     if (!knownUntil) return;
 
     this._syncClock(knownUntil, visibleCandles[visibleCandles.length - 1].close);
-    if (visibleCandles.length > MAX_CANDLES_TO_LOAD) return;
+    if (!this._canLoad(visibleCandles)) return;
 
     const missing = visibleCandles.filter(candle => this._needsData(candle));
     if (missing.length === 0) return;
 
-    // Al desplazarse se trae una ventana de más; una vela que avanza solo se pide a sí misma
-    const pad = missing.length > 4 ? Math.ceil(visibleCandles.length / 2) * this.tfMs : 0;
-    const start = missing[0].timestamp - pad;
-    const end = missing[missing.length - 1].timestamp + this.tfMs + pad;
-    this._request(start, end, knownUntil, requestRedraw);
+    // Al desplazarse se trae media pantalla de más a cada lado, sin pasar del tope de velas ni de días
+    // por pedido; una vela que avanza solo se pide a sí misma
+    const first = missing[0].timestamp;
+    const last = missing[missing.length - 1].timestamp + this.tfMs;
+    const room = Math.floor(Math.max(0, MAX_DAYS_TO_LOAD * DAY_MS - (last - first)) / 2 / this.tfMs);
+    const pad = missing.length > 4 ? Math.min(Math.ceil(visibleCandles.length / 2), MAX_PAD_CANDLES, room) * this.tfMs : 0;
+    this._request(first - pad, last + pad, knownUntil, requestRedraw);
   }
 
   _request(start, end, knownUntil, redraw) {
@@ -426,7 +438,12 @@ class OrderFlowIndicator extends IndicatorBase {
     let text = null;
     if (this.error) {
       text = 'Order Flow: no se pudo leer el almacén de trades';
-    } else if (!this.isLoading && visibleCandles.length <= MAX_CANDLES_TO_LOAD
+    } else if (!this._canLoad(visibleCandles)) {
+      // Lo ya cargado se sigue dibujando; lo demás espera a que la vista tenga menos velas
+      if (visibleCandles.some(candle => !this.footprintMap.has(candle.timestamp) && !this.noData.has(candle.timestamp))) {
+        text = 'Order Flow: acerca el zoom para cargar los footprints';
+      }
+    } else if (!this.isLoading
       && visibleCandles.every(candle => !this.footprintMap.has(candle.timestamp) && this.noData.has(candle.timestamp))) {
       text = 'Order Flow: sin trades descargados para este rango';
     }

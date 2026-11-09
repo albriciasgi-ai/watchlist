@@ -548,7 +548,10 @@ GET /api/orderflow/coverage/{symbol}
 | 16px a 59px | Vela, celdas y perfil |
 | Desde 60px | Además delta bajo la vela, con su propio tamaño (`deltaFontSize`, 13 px por defecto, de 8 a 24 en el modal). Las cifras por celda aparecen si la columna mide 30px y la celda 10px |
 
-- Con más de 400 velas en pantalla no se piden footprints
+- Se piden footprints con hasta 1600 velas en pantalla (`MAX_CANDLES_TO_LOAD`), sin pasar de 70 días de trades (`MAX_DAYS_TO_LOAD`): en 4h, hasta 420 velas
+  - Al desplazarse se pide media pantalla de más a cada lado, hasta 200 velas (`MAX_PAD_CANDLES`), y ningún pedido pasa de 70 días
+  - Con más velas, lo ya cargado se sigue dibujando y el gráfico avisa "Order Flow: acerca el zoom para cargar los footprints"
+  - Hasta el 9/11 el tope era 400 velas, unos 4 días en 15m, y sin aviso: al alejar la vista, las velas anteriores quedaban sin footprints aunque el almacén los tuviera. En el backend, 1600 velas de 15m tardan 0.3 a 0.6 s (3 MB); 1600 de 1h, 2 s la primera vez
 - `step_size` se elige en la primera respuesta y se mantiene. Cambia solo si el precio se aleja 30%. En BTC cerca de 80,000: 1m 5, 5m y 15m 10, 1h 25, 4h 50
 - Con step automático el frontend envía `max_levels` (`maxLevels`, 10 por defecto). `_level_group()` une niveles vecinos en grupos redondos, así que cada vela trae su propio `step_size`: 20, 50 o 100 en 15m. El step base no cambia
 - Imbalance: mismo nivel, ratio 3 o más, ambos lados con volumen. Stacked: 3 o más niveles seguidos en la misma dirección. Igual que App 9
