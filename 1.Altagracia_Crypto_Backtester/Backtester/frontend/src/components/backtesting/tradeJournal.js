@@ -79,6 +79,33 @@ export function candlesToFrame(tradeCandles) {
   return tradeCandles + Math.max(EXIT_CONTEXT_CANDLES, Math.ceil(tradeCandles * 0.25));
 }
 
+// Velas de aire que una imagen deja como mínimo junto a una marca de la orden, para que su número no quede en el borde
+export const ITEM_FRAME_MARGIN = 3;
+
+// Una imagen se aleja hasta 3 veces sus velas para alcanzar una marca de la orden. Más lejos, la de cierre
+// dejaría el trade en un rincón: la marca queda en el borde y la imagen no cambia
+export const ITEM_FRAME_MAX_GROWTH = 3;
+
+/**
+ * Vista de una imagen que también alcanza las velas first y last (índices; null si ese lado no importa)
+ * sin perder lo que ya mostraba: se aleja hacia la izquierda y, si hace falta, corre el borde derecho.
+ * room es el aire junto a la marca como parte de las velas que abarca: al alejarse, una vela mide menos
+ * y hacen falta más. Un lado que pediría más de ITEM_FRAME_MAX_GROWTH veces las velas no se mueve.
+ * Devuelve el offset nuevo y cuántas velas deben caber, o null si la vista no cambia
+ */
+export function viewIncluding({ length, perScreen, offset }, first, last, room = 0) {
+  const end = length - Math.min(offset, Math.max(0, length - perScreen));
+  const start = Math.max(0, end - perScreen);
+  const limit = Math.max(perScreen, Math.round(perScreen * ITEM_FRAME_MAX_GROWTH));
+  const air = (span) => Math.max(ITEM_FRAME_MARGIN, Math.ceil(span * room));
+  let to = last === null ? end : Math.min(length, Math.max(end, last + 1 + air(last + 1 - start)));
+  if (to - start > limit) to = end;
+  let from = first === null ? start : Math.max(0, Math.min(start, first - air(to - first)));
+  if (to - from > limit) from = start;
+  if (from === start && to === end) return null;
+  return { offset: length - to, count: to - from };
+}
+
 /** Líneas verticales de los trades. Salen de las órdenes para que la sesión las recupere sola */
 export function tradeBoundaries(orders = []) {
   return orders

@@ -11,6 +11,7 @@ import { alignY, crispWidth } from '../chartPixels.js';
 const STORAGE_KEY = 'analysis_levels_v2_';
 const CLICK_TOLERANCE_PX = 6;
 const LEVEL_COLOR = '#7C3AED';
+const EDGE_MARK_PX = 12; // Lo elegido sin su vela a la vista se marca a esta distancia del borde
 
 export const ROLES = [
   { value: 'support', label: 'Soporte' },
@@ -246,8 +247,12 @@ export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left
   ctx.restore();
 }
 
-/** Dónde está hoy en pantalla cada elegido: en su marca si el indicador la dibujó, o en su vela y precio */
-export function itemPositions(items, targets, { priceToY, timeToX, candleX, left, right, top, bottom }) {
+/**
+ * Dónde está hoy en pantalla cada elegido: en su marca si el indicador la dibujó, o en su vela y precio.
+ * Con edges, para la imagen de una orden, lo que nace antes o después de la vista queda en el borde de
+ * ese lado y a su precio: un nivel se ve desde ahí, como su línea, y el número de una marca dice que está más allá
+ */
+export function itemPositions(items, targets, { priceToY, timeToX, candleX, left, right, top, bottom }, { edges = false } = {}) {
   const at = candleX ?? timeToX; // En la vela que contiene su hora, aunque se haya elegido en otro marco
   const drawn = new Map(targets.map(target => [target.id, target]));
   return items.flatMap(item => {
@@ -262,8 +267,13 @@ export function itemPositions(items, targets, { priceToY, timeToX, candleX, left
     } else if (item.time !== undefined && Number.isFinite(item.price)) {
       x = at(item.time);
       y = priceToY(item.price);
+      if (edges) {
+        // Sin lugar para su hora, la línea de un nivel también empieza en el borde izquierdo
+        if (x === null || x === undefined || x < left) x = left + EDGE_MARK_PX;
+        else if (x > right) x = right - EDGE_MARK_PX;
+      }
     } else if (Number.isFinite(item.price)) {
-      x = right - 12;
+      x = right - EDGE_MARK_PX;
       y = priceToY(item.price);
     }
     if (x === null || x === undefined || x < left || x > right || y < top || y > bottom) return [];
@@ -283,6 +293,36 @@ export function drawChosenMarks(ctx, positions) {
     ctx.stroke();
   }
   ctx.restore();
+}
+
+/**
+ * Rango de precio que también contiene el precio de cada elegido: la imagen de una orden muestra todos sus
+ * niveles. room es el aire más allá del nivel que agranda el rango, como parte del rango nuevo
+ */
+export function priceRangeWith(items, low, high, room = 0) {
+  let from = low;
+  let to = high;
+  for (const { price } of items) {
+    if (!Number.isFinite(price)) continue;
+    from = Math.min(from, price);
+    to = Math.max(to, price);
+  }
+  const extra = (to - from) * room;
+  return { low: from < low ? from - extra : low, high: to > high ? to + extra : high };
+}
+
+/**
+ * Horas que la imagen de una orden debe alcanzar. first: la marca más vieja, que solo se ve en su vela.
+ * last: lo más nuevo, marca o inicio de un nivel. Un nivel que nace antes no aleja la imagen: su línea
+ * se ve desde el borde izquierdo. null si no hay nada que alcanzar de ese lado
+ */
+export function framedTimes(items) {
+  const marks = items.filter(item => item.mark && Number.isFinite(item.time)).map(item => item.time);
+  const starts = items.filter(item => Number.isFinite(item.time)).map(item => item.time);
+  return {
+    first: marks.length ? Math.min(...marks) : null,
+    last: starts.length ? Math.max(...starts) : null
+  };
 }
 
 /** Marcas para una imagen: posición de cada elegido como fracción del ancho y del alto */

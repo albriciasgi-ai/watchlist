@@ -4,7 +4,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import { API_BASE_URL } from "../config";
 import { DEFAULT_REWARD_RATIO } from "./drawing/shapes/TPSLBox";
-import { candlesToFrame, contextBarWidth } from "./backtesting/tradeJournal.js";
+import { candlesToFrame, contextBarWidth, viewIncluding } from "./backtesting/tradeJournal.js";
 import wsManager from "./WebSocketManager";
 import IndicatorManager from "./indicators/IndicatorManager";
 import FixedRangeProfilesManager from "./FixedRangeProfilesManager";
@@ -16,8 +16,8 @@ import TPSLBox from "./drawing/shapes/TPSLBox"; // 🎯 Para crear cajas TP/SL p
 import { TF_MS, countBefore, formingCandle, lastClosedIndex, syncKnownCandles, timestampIndex } from './backtesting/replayClock';
 import { DEFAULT_PRICE_RATIO, resizePanel } from './indicators/panelLayout.js';
 import {
-  ROLES, candleCenterX, chosenLevel, drawChosenLevels, drawChosenMarks, imageMarkers, itemPositions, knownLevels, levelTargets, levelsNear,
-  subscribeLevels, toggleLevel, updateLevel, withinArea
+  ROLES, candleCenterX, chosenLevel, drawChosenLevels, drawChosenMarks, framedTimes, imageMarkers, itemPositions, knownLevels, levelTargets,
+  levelsNear, priceRangeWith, subscribeLevels, toggleLevel, updateLevel, withinArea
 } from './indicators/analysisLevels.js';
 import { subscribePins } from './indicators/liquidationPins.js';
 import {
@@ -34,6 +34,8 @@ const FOOTPRINT_ZOOM = 20; // Velas de 160px: se leen las cifras del footprint
 const FOCUS_MIN_BAR_WIDTH = 6; // Al ir a un punto, velas más angostas no dejan distinguirlo
 const FOCUS_MARK_MS = 15000; // Cuánto queda marcado el punto al que se fue
 const CAPTURE_DENSITY = 2; // Píxeles de imagen por píxel CSS en las imágenes de trades, como mínimo
+const CAPTURE_LEVEL_ROOM_PX = 12; // Aire de un nivel que agranda el precio de una imagen: su etiqueta no queda cortada
+const CAPTURE_MARK_ROOM_PX = 16; // Aire junto a una marca que aleja una imagen: su aro y su número no quedan en el borde
 const MIN_VOLUME_HEIGHT = 40;
 const isValidCandle = (d) => d.open > 0 && d.high > 0 && d.low > 0 && d.close > 0 &&
   d.high >= d.low && d.high >= d.open && d.high >= d.close &&
@@ -648,7 +650,8 @@ const MiniChart = forwardRef(({
     // 📸 Guarda una imagen del gráfico. Con showFrom la encuadra desde esa hora sin cambiar la vista
     // del usuario. keepInView hace lo mismo solo si quien opera se alejó de la vela más reciente.
     // Con context muestra unas 5 veces las velas a la vista, también sin cambiar la vista.
-    // Con items dibuja lo elegido para esa orden, no la lista del panel, que ya es la del trade siguiente
+    // Con items dibuja lo elegido para esa orden, no la lista del panel, que ya es la del trade siguiente,
+    // y lo deja todo en la imagen: el precio abarca cada nivel y la vista alcanza la vela de cada marca
     captureScreenshot: async (sessionId, orderId, { showFrom = null, keepInView = null, context = false, onCopied = null, items = null } = {}) => {
       return new Promise((resolve, reject) => {
         const canvas = canvasRef.current;
@@ -666,15 +669,16 @@ const MiniChart = forwardRef(({
 
         const shownAt = simulatedNowRef.current;
         const userView = { ...viewStateRef.current };
+        const ownItems = Array.isArray(items);
         const frameFrom = showFrom ?? (viewStateRef.current.offset > 0 ? keepInView : null);
         if (frameFrom) frameChartFrom(frameFrom);
         if (context) widenChart();
-        const viewChanged = Boolean(frameFrom || context);
+        const itemsFramed = ownItems && frameItems(items);
+        const viewChanged = Boolean(frameFrom || context || itemsFramed);
 
         // Lo más reciente y sin la cruceta del mouse ni la marca de "Ir al gráfico"
         const focus = focusMarkRef.current;
         focusMarkRef.current = null;
-        const ownItems = Array.isArray(items);
         captureItemsRef.current = ownItems ? items : null;
         // La imagen sale con al menos el doble de píxeles que la pantalla: se puede ampliar sin perder detalle
         const screen = screenDensity();
@@ -689,7 +693,9 @@ const MiniChart = forwardRef(({
         // Dónde quedó en la imagen cada nivel o marca de la orden, como parte del ancho y del alto
         const drawn = lastAreaRef.current;
         const size = drawnSizeRef.current;
-        const markers = items?.length && drawn && size ? imageMarkers(itemPositions(items, drawn.offered, drawn.area), size.width, size.height) : [];
+        const markers = items?.length && drawn && size
+          ? imageMarkers(itemPositions(items, drawn.offered, drawn.area, { edges: true }), size.width, size.height)
+          : [];
 
         // Convertir canvas a blob (PNG)
         canvas.toBlob(async (blob) => {
@@ -1102,6 +1108,11 @@ const MiniChart = forwardRef(({
         minPrice = Math.min(minPrice, extent.low);
         maxPrice = Math.max(maxPrice, extent.high);
       }
+    }
+
+    // La imagen de una orden muestra cada nivel elegido para ella: al alejar la vista podía quedar fuera del precio
+    if (captureItemsRef.current?.length) {
+      ({ low: minPrice, high: maxPrice } = priceRangeWith(captureItemsRef.current, minPrice, maxPrice, CAPTURE_LEVEL_ROOM_PX / priceChartHeight));
     }
 
     const priceRange = maxPrice - minPrice;
@@ -1701,6 +1712,32 @@ const MiniChart = forwardRef(({
     view.zoom = contextBarWidth(Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * view.zoom))) / 8;
     view.verticalZoom = 1;
     view.verticalOffset = 0;
+  };
+
+  // La imagen de una orden alcanza la vela de cada marca elegida para ella y el inicio de cada nivel, sin
+  // perder lo que ya mostraba. Un nivel más viejo no la aleja: su línea se ve desde el borde izquierdo
+  const frameItems = (items) => {
+    const candles = candlesRef.current;
+    const chartWidth = priceScaleRef.current?.chartWidth;
+    const { first, last } = framedTimes(items);
+    if ((first === null && last === null) || !candles?.length || !chartWidth) return false;
+
+    // Una hora anterior a las velas cargadas no se puede mostrar
+    const indexOf = (time) => {
+      const index = time === null ? -1 : countBefore(candles, time + 1) - 1;
+      return index < 0 ? null : index;
+    };
+    const view = viewStateRef.current;
+    const perScreen = Math.floor(chartWidth / Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * view.zoom)));
+    const room = CAPTURE_MARK_ROOM_PX / Math.max(1, chartWidth - CAPTURE_MARK_ROOM_PX);
+    const span = viewIncluding({ length: candles.length, perScreen, offset: view.offset }, indexOf(first), indexOf(last), room);
+    if (!span) return false;
+
+    view.offset = span.offset;
+    if (span.count > perScreen) view.zoom = chartWidth / (span.count * 8);
+    view.verticalZoom = 1;
+    view.verticalOffset = 0;
+    return true;
   };
 
   // Extraer rectángulos del DrawingToolManager para el modal VP Fixed

@@ -53,6 +53,22 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 8 Noviembre 2026: Referencias en las Tres Imágenes
+
+**Problema:** en el Observador, algunas referencias de un trade faltaban en una o dos de sus imágenes (Decisión, Apertura y Cierre) y sí salían en las otras. Un nivel nacido antes del borde izquierdo de la imagen se dibujaba, pero quedaba sin número. Uno fuera del rango de precio de la imagen no se dibujaba, como un objetivo justo debajo de las velas. Una marca fuera de la vista tampoco tenía número.
+
+**Cambios:**
+1. **Precio:** cada imagen abarca el precio de todos los niveles de su orden, con aire para su etiqueta
+2. **Niveles anteriores:** un nivel que nace antes de la primera vela de la imagen lleva su número en el borde izquierdo, donde empieza su línea
+3. **Marcas:** la imagen se aleja hasta la vela de cada marca, sin perder lo que mostraba y hasta 3 veces sus velas. Más lejos la imagen no cambia, para no dejar el trade en un rincón, y el número de la marca queda en el borde izquierdo, a su precio
+4. **Gráfico:** no cambia. Solo las imágenes de los trades nuevos usan esto
+
+**IMPORTANTE:** las imágenes ya tomadas no cambian: les siguen faltando esos números. No hay cambios en el backend: basta recargar la página.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "JOURNAL DE TRADES"
+
+---
+
 ### APP 1 (Backtester) - 8 Noviembre 2026: Nitidez del Gráfico
 
 **Problema:** el gráfico se veía borroso y en pantallas grandes no mejoraba. El lienzo no usaba la densidad de la pantalla: con escala de Windows o zoom del navegador distinto de 100% el navegador lo estiraba. Además velas, mechas, líneas y celdas del footprint caían entre dos píxeles y se pintaban a medio tono, incluso a 100%. Las imágenes de trades se guardaban al tamaño de la pantalla.

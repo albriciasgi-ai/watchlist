@@ -257,6 +257,48 @@ test('posiciones: lo que queda fuera del área no aparece', () => {
   assert.deepEqual(levels.itemPositions(items, [], area).map(({ item }) => item.id), [mark().id]);
 });
 
+test('imagen: un nivel que nace antes del borde izquierdo se marca en el borde, donde empieza su línea', () => {
+  const early = { ...level(100), id: 'temprano', time: 50 }; // timeToX da 5: a la izquierda del área
+  const [position] = levels.itemPositions([early], [], area, { edges: true });
+  assert.deepEqual([position.x, position.y], [22, 400]);
+  const ctx = recorder();
+  levels.drawChosenLevels(ctx, [early], area);
+  assert.deepEqual(ctx.calls.moveTo, [[10, 400]], 'la línea también empieza en el borde');
+});
+
+test('imagen: sin lugar para su hora, un nivel también se marca en el borde izquierdo', () => {
+  const [position] = levels.itemPositions([{ ...level(100), time: 50 }], [], { ...area, candleX: () => null, timeToX: () => null }, { edges: true });
+  assert.deepEqual([position.x, position.y], [22, 400]);
+});
+
+test('imagen: una marca fuera de la vista queda en el borde de su lado, a su precio', () => {
+  const items = [mark({ time: 50 }), { ...level(100), id: 'después', time: 9000 }, { ...level(100), id: 'sin línea', time: 50, role: '' }];
+  assert.deepEqual(levels.itemPositions(items, [], area, { edges: true }).map(({ x, y }) => [x, y]), [[22, 380], [388, 400], [22, 400]]);
+});
+
+test('gráfico: sin edges, lo que nace fuera de la vista no se ubica ni recibe aro', () => {
+  const items = [mark({ time: 50 }), { ...level(100), id: 'temprano', time: 50 }, { ...level(100), id: 'después', time: 9000 }];
+  assert.deepEqual(levels.itemPositions(items, [], area), []);
+});
+
+test('precio: la imagen abarca cada nivel elegido, con aire del lado que crece', () => {
+  const items = [{ price: 90 }, { price: 105 }, { price: Number.NaN }, {}];
+  assert.deepEqual(levels.priceRangeWith(items, 95, 110, 0.1), { low: 88, high: 110 });
+  assert.deepEqual(levels.priceRangeWith([{ price: 90 }, { price: 120 }], 95, 110, 0.1), { low: 87, high: 123 });
+});
+
+test('precio: lo que ya está en el rango no lo cambia', () => {
+  assert.deepEqual(levels.priceRangeWith([{ price: 100 }, { price: 95 }], 95, 110, 0.1), { low: 95, high: 110 });
+  assert.deepEqual(levels.priceRangeWith([], 95, 110, 0.1), { low: 95, high: 110 });
+});
+
+test('encuadre: la marca más vieja y lo más nuevo, sea marca o nivel', () => {
+  const items = [mark({ time: 5000 }), mark({ time: 3000 }), level(100, { time: 7000 }), level(100, { time: 1000 }), level(150)];
+  assert.deepEqual(levels.framedTimes(items), { first: 3000, last: 7000 });
+  assert.deepEqual(levels.framedTimes([level(100, { time: 1000 }), level(150)]), { first: null, last: 1000 }, 'un nivel viejo no aleja la imagen');
+  assert.deepEqual(levels.framedTimes([level(150)]), { first: null, last: null });
+});
+
 test('imagen: cada marca como fracción del ancho y del alto', () => {
   assert.deepEqual(levels.imageMarkers([{ item: { id: 'a' }, x: 50, y: 25 }], 200, 100), [{ id: 'a', x: 0.25, y: 0.25 }]);
   assert.deepEqual(levels.imageMarkers([{ item: { id: 'a' }, x: 50, y: 25 }], 0, 100), []);

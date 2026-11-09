@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import OrderManager from '../src/components/backtesting/OrderManager.js';
 import SessionManager from '../src/components/backtesting/SessionManager.js';
 import {
-  CaptureHold, EXIT_CAPTURE_CANDLES, candlesToFrame, contextBarWidth, exitCaptureTime, exitCapturesDue, tradeBoundaries, tradeStats
+  CaptureHold, EXIT_CAPTURE_CANDLES, candlesToFrame, contextBarWidth, exitCaptureTime, exitCapturesDue, tradeBoundaries, tradeStats, viewIncluding
 } from '../src/components/backtesting/tradeJournal.js';
 
 console.log = ((log) => (...args) => {
@@ -125,6 +125,40 @@ test('contexto: sin velas de menos de 3 px y sin acercar la vista', () => {
   assert.equal(contextBarWidth(3), 3);
   assert.equal(contextBarWidth(2), 2);
   assert.equal(contextBarWidth(0.5), 0.5);
+});
+
+test('encuadre: la imagen se aleja hasta la marca más vieja sin mover el borde derecho', () => {
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 100, offset: 0 }, 850, 950), { offset: 0, count: 153 });
+});
+
+test('encuadre: si todo se ve, la imagen no cambia', () => {
+  assert.equal(viewIncluding({ length: 1000, perScreen: 100, offset: 0 }, 950, 990), null);
+  assert.equal(viewIncluding({ length: 1000, perScreen: 100, offset: 0 }, null, null), null);
+});
+
+test('encuadre: una marca pegada al borde deja velas de aire', () => {
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 100, offset: 0 }, 901, null), { offset: 0, count: 102 });
+});
+
+test('encuadre: al alejarse mucho, el aire junto a la marca crece con las velas que abarca', () => {
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 200, offset: 0 }, 500, null, 0.02), { offset: 0, count: 510 });
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 100, offset: 0 }, 850, null, 0.02), { offset: 0, count: 153 }, 'cerca, el mínimo de 3 velas');
+});
+
+test('encuadre: una marca a más de 3 veces las velas no aleja la imagen', () => {
+  assert.equal(viewIncluding({ length: 1000, perScreen: 100, offset: 0 }, 500, null), null);
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 100, offset: 0 }, 703, null), { offset: 0, count: 300 }, 'justo en el límite sí');
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 100, offset: 200 }, 100, 850), { offset: 146, count: 154 }, 'el otro lado sí se mueve');
+});
+
+test('encuadre: con la vista corrida, lo que queda a la derecha mueve el borde derecho y conserva lo que se veía', () => {
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 100, offset: 200 }, null, 850), { offset: 146, count: 154 });
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 100, offset: 200 }, 600, 850), { offset: 146, count: 257 });
+});
+
+test('encuadre: no pasa del inicio ni del final de las velas', () => {
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 400, offset: 0 }, 1, null), { offset: 0, count: 1000 });
+  assert.deepEqual(viewIncluding({ length: 1000, perScreen: 100, offset: 10 }, null, 999), { offset: 0, count: 110 });
 });
 
 test('encuadre: un trade largo deja una cuarta parte de contexto', () => {
