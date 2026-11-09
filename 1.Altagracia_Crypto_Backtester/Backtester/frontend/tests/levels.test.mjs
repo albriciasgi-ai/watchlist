@@ -326,6 +326,22 @@ test('indicadores: cada uno ofrece los niveles que muestra', () => {
   }
 });
 
+test('perfiles: el área de valor y el ancho llegan como porcentaje o como fracción', () => {
+  const dynamic = new VolumeProfile('X', '15');
+  dynamic.updateConfig({ valueAreaPercent: 70 }); // Así llega de la configuración por defecto de App 1
+  assert.equal(dynamic.valueAreaPercent, 0.7);
+  dynamic.updateConfig({ valueAreaPercent: 0.65 }); // Así llega del modal
+  assert.equal(dynamic.valueAreaPercent, 0.65);
+
+  const fixed = new FixedRange('X', '15', 'r1');
+  fixed.updateConfig({ valueAreaPercent: 70, histogramMaxWidth: 20 });
+  assert.deepEqual([fixed.valueAreaPercent, fixed.histogramMaxWidth], [0.7, 0.2]);
+  // Un perfil guardado por el modal anterior traía fracciones: antes quedaba en 0.7% y 0.25%
+  fixed.loadFromData({ rangeId: 'r1', startTimestamp: 1000, endTimestamp: 2000, valueAreaPercent: 0.7, histogramMaxWidth: 0.25 });
+  assert.deepEqual([fixed.valueAreaPercent, fixed.histogramMaxWidth], [0.7, 0.25]);
+  assert.equal(fixed.toJSON().histogramMaxWidth, 25); // Se guarda como porcentaje
+});
+
 test('indicadores: soportes o resistencias ocultos no se ofrecen', () => {
   for (const Indicator of [SupportResistance, SupportResistance2]) {
     const target = new Indicator('X', '15', 30);

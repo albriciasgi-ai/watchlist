@@ -2,6 +2,11 @@
 // Modal de configuracion para un Volume Profile Fixed Range especifico
 
 import React, { useState, useEffect } from "react";
+import { customList, isCustom, isNewTheme } from "./uiTheme.js";
+import { VP_FIXED_FACTORY, vpFixedThemeValue } from "./indicators/VolumeProfileFixedRangeIndicator.js";
+
+// Lo que deja "Restaurar Defecto", como antes
+const RESET_VALUES = { useGradient: true, baseColor: "#2196F3", valueAreaColor: "#FF9800", pocColor: "#F44336", vahValColor: "#2196F3", clusterColor: "#9C27B0" };
 
 const VolumeProfileFixedSettings = ({ 
   profileId,
@@ -30,31 +35,42 @@ const VolumeProfileFixedSettings = ({
   // Configuracion avanzada
   const [showAdvanced, setShowAdvanced] = useState(false);
 
+  // Con Nítido, lo visual que el usuario cambia aquí queda como suyo y gana sobre el estilo
+  const nitido = isNewTheme();
+  const [touched, setTouched] = useState(() => new Set());
+  const [resetVisual, setResetVisual] = useState(false);
+  const shownValue = (key, value) => (nitido && !isCustom(currentConfig || {}, key, VP_FIXED_FACTORY[key]) ? vpFixedThemeValue(key) : value);
+  const visual = (key, setter) => value => { setTouched(prev => new Set(prev).add(key)); setter(value); };
+
   // Cargar configuracion actual al montar
   useEffect(() => {
     if (currentConfig) {
+      setTouched(new Set());
+      setResetVisual(false);
       setRows(currentConfig.rows || 24);
-      setValueAreaPercent(currentConfig.valueAreaPercent || 0.70);
-      setHistogramMaxWidth(currentConfig.histogramMaxWidth || 0.25);
-      setUseGradient(currentConfig.useGradient !== undefined ? currentConfig.useGradient : true);
+      // El perfil guarda porcentajes (70, 25) y el modal trabaja con fracciones (0.70, 0.25)
+      const asFraction = (value, fallback) => (value > 1 ? value / 100 : (value || fallback));
+      setValueAreaPercent(asFraction(currentConfig.valueAreaPercent, 0.70));
+      setHistogramMaxWidth(asFraction(currentConfig.histogramMaxWidth, 0.25));
+      setUseGradient(shownValue('useGradient', currentConfig.useGradient !== undefined ? currentConfig.useGradient : true));
       
-      setBaseColor(currentConfig.baseColor || "#2196F3");
-      setValueAreaColor(currentConfig.valueAreaColor || "#FF9800");
-      setPocColor(currentConfig.pocColor || "#F44336");
-      setVahValColor(currentConfig.vahValColor || "#2196F3");
+      setBaseColor(shownValue('baseColor', currentConfig.baseColor || "#2196F3"));
+      setValueAreaColor(shownValue('valueAreaColor', currentConfig.valueAreaColor || "#FF9800"));
+      setPocColor(shownValue('pocColor', currentConfig.pocColor || "#F44336"));
+      setVahValColor(shownValue('vahValColor', currentConfig.vahValColor || "#2196F3"));
       setRangeShadeColor(currentConfig.rangeShadeColor || "#E0E0E0");
       
       setEnableClusterDetection(currentConfig.enableClusterDetection || false);
       setClusterThreshold(currentConfig.clusterThreshold || 1.5);
-      setClusterColor(currentConfig.clusterColor || "#9C27B0");
+      setClusterColor(shownValue('clusterColor', currentConfig.clusterColor || "#9C27B0"));
     }
   }, [currentConfig]);
 
   const handleApply = () => {
     const config = {
       rows,
-      valueAreaPercent,
-      histogramMaxWidth,
+      valueAreaPercent: Math.round(valueAreaPercent * 100),
+      histogramMaxWidth: Math.round(histogramMaxWidth * 100),
       useGradient,
       baseColor,
       valueAreaColor,
@@ -66,6 +82,17 @@ const VolumeProfileFixedSettings = ({
       clusterColor
     };
     
+    // Lo visual que no se tocó conserva lo guardado (con Nítido el modal mostraba el color del estilo)
+    const original = currentConfig || {};
+    for (const key of Object.keys(VP_FIXED_FACTORY)) {
+      if (touched.has(key)) continue;
+      if (resetVisual) config[key] = RESET_VALUES[key];
+      else if (original[key] !== undefined) config[key] = original[key];
+    }
+    const chosen = new Set(resetVisual ? [] : customList(original, VP_FIXED_FACTORY));
+    touched.forEach(key => chosen.add(key));
+    config.customVisual = [...chosen];
+
     onApply(profileId, config);
     onClose();
   };
@@ -86,6 +113,18 @@ const VolumeProfileFixedSettings = ({
       setEnableClusterDetection(false);
       setClusterThreshold(1.5);
       setClusterColor("#9C27B0");
+
+      // Vuelve a los colores del estilo (con Nítido) o a los de fábrica (clásico)
+      setTouched(new Set());
+      setResetVisual(true);
+      if (nitido) {
+        setUseGradient(true);
+        setBaseColor(vpFixedThemeValue('baseColor'));
+        setValueAreaColor(vpFixedThemeValue('valueAreaColor'));
+        setPocColor(vpFixedThemeValue('pocColor'));
+        setVahValColor(vpFixedThemeValue('vahValColor'));
+        setClusterColor(vpFixedThemeValue('clusterColor'));
+      }
     }
   };
 
@@ -155,7 +194,7 @@ const VolumeProfileFixedSettings = ({
                   <input 
                     type="checkbox" 
                     checked={useGradient}
-                    onChange={(e) => setUseGradient(e.target.checked)}
+                    onChange={(e) => visual('useGradient', setUseGradient)(e.target.checked)}
                   />
                   Usar Gradiente
                   <span className="setting-hint">Opacidad basada en volumen</span>
@@ -218,7 +257,7 @@ const VolumeProfileFixedSettings = ({
                       <input 
                         type="color" 
                         value={baseColor}
-                        onChange={(e) => setBaseColor(e.target.value)}
+                        onChange={(e) => visual('baseColor', setBaseColor)(e.target.value)}
                       />
                     </div>
 
@@ -227,7 +266,7 @@ const VolumeProfileFixedSettings = ({
                       <input 
                         type="color" 
                         value={valueAreaColor}
-                        onChange={(e) => setValueAreaColor(e.target.value)}
+                        onChange={(e) => visual('valueAreaColor', setValueAreaColor)(e.target.value)}
                       />
                     </div>
 
@@ -236,7 +275,7 @@ const VolumeProfileFixedSettings = ({
                       <input 
                         type="color" 
                         value={pocColor}
-                        onChange={(e) => setPocColor(e.target.value)}
+                        onChange={(e) => visual('pocColor', setPocColor)(e.target.value)}
                       />
                     </div>
 
@@ -245,7 +284,7 @@ const VolumeProfileFixedSettings = ({
                       <input 
                         type="color" 
                         value={vahValColor}
-                        onChange={(e) => setVahValColor(e.target.value)}
+                        onChange={(e) => visual('vahValColor', setVahValColor)(e.target.value)}
                       />
                     </div>
 
@@ -264,7 +303,7 @@ const VolumeProfileFixedSettings = ({
                         <input 
                           type="color" 
                           value={clusterColor}
-                          onChange={(e) => setClusterColor(e.target.value)}
+                          onChange={(e) => visual('clusterColor', setClusterColor)(e.target.value)}
                         />
                       </div>
                     )}

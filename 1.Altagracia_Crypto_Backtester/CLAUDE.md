@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Colores Propios en los Modales de los Indicadores
+
+Con Nítido, lo cambiado en el modal de un indicador gana sobre el estilo: perfil de volumen, VP de rango fijo, Order Flow, confluencia OI y volumen, y volumen. Cada modal tiene cómo volver a los colores del estilo. También se corrigió el área de valor del perfil dinámico: abarcaba todo el perfil, con VAH y VAL en sus extremos, también en el Clásico. Detalle en `Backtester/CLAUDE.md`, sección "ESTILO NÍTIDO", "Ajustes propios en el modal de cada indicador".
+
+---
+
 ### Noviembre 2026: Estilo Nítido
 
 App 1 abre con el estilo Nítido:

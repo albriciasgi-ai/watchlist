@@ -1109,9 +1109,50 @@ Pedido el 8/11. El usuario comparó App 1 con ATAS abierto en su PC y la encontr
 ### Modal "Estilo y colores"
 
 - **Dónde:** botón "Estilo" en el encabezado (🎨 en clásico).
-- **Qué cambia:** elige Nítido o Clásico y cambia 20 colores en seis grupos: velas y volumen, footprint (compra, venta, POC y perfil), perfil de volumen, gráfico (fondo, rejilla, cruz y etiquetas), interfaz (barras, acento y textos) y paneles.
+- **Qué cambia:** elige Nítido o Clásico y cambia 21 colores en seis grupos: velas y volumen, footprint (compra, venta, POC y perfil), perfil de volumen (área de valor, fuera del área, POC y clusters), gráfico (fondo, rejilla, cruz y etiquetas), interfaz (barras, acento y textos) y paneles.
 - **Cómo se aplica:** el cambio se ve al instante y se guarda en `ui_theme_colors`, solo con lo distinto a Nítido. Cada color cambiado tiene su botón para volver, y además está "Restablecer los colores de Nítido".
 - **Contraste:** avisa si un color de datos casi no se ve sobre el fondo. Los textos derivados (`upText`, `downText`, desequilibrios) se oscurecen solos hasta 4.5:1 o 7:1 de contraste.
+
+### Ajustes propios en el modal de cada indicador (9/11)
+
+Pedido el 8/11: con Nítido, un color cambiado en el modal del perfil de volumen no se veía, y desde "Estilo" sí. El usuario quiere que el estilo ponga los colores de todo, pero que lo cambiado en el modal de cada indicador se respete, también el degradado y las intensidades de los perfiles.
+
+- **Regla:** cada indicador guarda en su configuración `customVisual`, la lista de ajustes visuales que el usuario cambió en su modal.
+  - Con Nítido, lo que está en la lista se dibuja como el usuario lo dejó y el resto toma el color del estilo.
+  - Con Clásico se dibuja con lo del modal, como siempre.
+  - Una configuración guardada antes de la lista cuenta como propia si difiere del valor de fábrica del indicador. Desde que existe la lista, manda la lista (`isCustom()`, `markCustom()` y `customList()` en `uiTheme.js`).
+- **Qué cubre:**
+  - Perfil de volumen y VP de rango fijo: colores de base, área de valor, POC, VAH/VAL y clusters, y el degradado.
+  - Order Flow: color del stacked de compra y de venta, y tamaño de las cifras.
+  - Confluencia OI y volumen: colores alcista y bajista. Su configuración sigue sin guardarse al recargar, como antes.
+  - Volumen: cambiar intensidad, opacidad, degradado o brillo vuelve al dibujo con degradado. Los colores de cluster elegidos se respetan.
+- **El modal muestra lo que se dibuja:** con Nítido, el color del estilo mientras el usuario no elija otro.
+- **Volver al estilo:**
+  - "Usar los del estilo" en el perfil de volumen y en la confluencia, con cuántos ajustes son propios;
+  - "Restaurar Defecto" en el VP fijo, "Restablecer" en Order Flow y "Restaurar Valores por Defecto" en el volumen.
+- **Perfil de volumen por marco:** el modal editaba un estado que los gráficos no leían, y por eso nada cambiaba. Ahora cambia el marco activo, y los ajustes visuales pasan a todos los marcos (`handleVpConfigChange` en `BacktestingApp.jsx`).
+
+**Fallos anteriores corregidos en la misma ronda:**
+- **Área de valor del perfil dinámico:** App 1 le pasaba 70 donde el indicador esperaba 0.70. El área de valor abarcaba todo el perfil, con VAH y VAL en sus extremos.
+  - Ahora acepta las dos formas. En BTC 15m al 25/10: antes VAH 81472.96 y VAL 79186.95, ahora 81057.32 y 79925.86.
+  - También cambia el Clásico, y es su único cambio.
+  - Un VAH o VAL del perfil dinámico elegido para un trade anterior quedó en el extremo del perfil. La validación de Rejection con el contexto "VP Dinámico" usaba esos mismos VAH y VAL.
+- **VP de rango fijo:** el modal mandaba el ancho y el área de valor como fracción, y el perfil los espera como porcentaje.
+  - "Restaurar Defecto" dejaba el ancho en 0.25% y las barras no se veían.
+  - Ahora el modal manda porcentajes y el perfil acepta las dos formas.
+- **Volumen:**
+  - "Restaurar Valores por Defecto" borraba los colores de cluster, y una vela en cluster rompía el dibujo del gráfico hasta recargar. Ahora usa `VOLUME_VISUAL_DEFAULTS`.
+  - Cada cambio del modal se dibujaba con el valor anterior. Ahora el gráfico se redibuja al cambiar `volumeVisualParams`.
+
+**Comprobado en Edge sin ventana, con el gráfico visible:**
+- Con Nítido:
+  - el color propio del área de valor del VP fijo pasó de 19 a 1567 píxeles verdes;
+  - el alcista propio de la confluencia, de 3 a 139 magenta;
+  - el stacked de compra propio, de 162 a 1636 amarillos;
+  - con intensidad propia, el volumen pasó de 2 a 30 colores, por el degradado.
+- Cada uno volvió al estilo con su botón.
+- Clásico contra el código anterior: 0 píxeles distintos sin el perfil de volumen, en la vista general y en el footprint. Con el perfil activo cambia solo el área de valor.
+- Hay un MiniChart por marco montado en la página: una prueba debe buscar los botones entre los elementos visibles.
 
 ### Para indicadores nuevos
 
@@ -1119,14 +1160,21 @@ Pedido el 8/11. El usuario comparó App 1 con ATAS abierto en su PC y la encontr
 - Escribir el texto con la familia "Inter" o con `THEME.font`. Con Nítido, el lienzo cambia la familia a Segoe UI y "bold" a 600.
 - Para un color nuevo configurable: agregarlo a `DEFAULT_COLORS` y a `COLOR_GROUPS`. La prueba exige que estén los mismos en los dos.
 - Un botón o panel HTML nuevo usa las variables `--t-*` bajo `body.theme-nitido`.
+- Si su modal tiene colores o ajustes visuales:
+  - exportar sus valores de fábrica, como `VP_FACTORY`, `VP_FIXED_FACTORY`, `OF_FACTORY` u `OIVOL_FACTORY`;
+  - en el modal, agregar a `customVisual` con `markCustom()` lo que el usuario cambia, y ofrecer cómo volver al estilo;
+  - al dibujar con Nítido, `isCustom(config, clave, fábrica)` decide entre lo del modal y `THEME`.
 
 ### Pruebas
 
-`node tests/theme.test.mjs` (10) cubre:
+`node tests/theme.test.mjs` (14) cubre:
 - colores cambiados, inválidos y restablecidos;
 - contraste del texto derivado;
 - pasos redondos, horas de Colombia y decimales;
-- que el modal ofrezca cada color una vez.
+- que el modal ofrezca cada color una vez;
+- ajustes propios: manda la lista, las configuraciones anteriores cuentan si difieren de fábrica (también claves anidadas, mayúsculas y espacios) y un ajuste nuevo se suma sin perder los anteriores.
+
+`node tests/levels.test.mjs` comprueba que los perfiles acepten el área de valor y el ancho como porcentaje o como fracción.
 
 Detecta una hora de Colombia corrida, un texto sin oscurecer y un color inválido aceptado. La igualdad del clásico se midió con capturas del lienzo en Edge sin ventana.
 

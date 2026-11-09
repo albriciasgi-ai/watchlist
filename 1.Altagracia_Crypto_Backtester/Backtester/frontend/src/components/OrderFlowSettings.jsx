@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './RejectionPatternSettings.css';
-import { saveOrderFlowSettings } from './indicators/OrderFlowIndicator.js';
+import { OF_FACTORY, saveOrderFlowSettings } from './indicators/OrderFlowIndicator.js';
+import { THEME, customList, isNewTheme } from './uiTheme.js';
 
 const TIMEFRAMES = [['1m', 1], ['5m', 5], ['15m', 15], ['1h', 60], ['4h', 240]];
 
@@ -69,10 +70,17 @@ const NumberRow = ({ label, hint, value, onChange, step = 1, min, max }) => (
  * trades; lo demás solo cambia el dibujo. Aplica a todos los marcos del símbolo.
  */
 const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClose }) => {
-  const [values, setValues] = useState(() => pick(indicator.config));
+  const [values, setValues] = useState(() => ({ ...pick(indicator.config), customVisual: customList(indicator.config, OF_FACTORY) }));
   const defaults = indicator.getDefaultConfig();
-
-  const set = (key, value) => setValues(previous => ({ ...previous, [key]: value }));
+  // Lo visual que el usuario cambia aquí queda como suyo: gana sobre el estilo Nítido
+  const set = (key, value) => setValues(previous => {
+    const chosen = previous.customVisual || [];
+    const visual = key in OF_FACTORY && !chosen.includes(key) ? { customVisual: [...chosen, key] } : {};
+    return { ...previous, [key]: value, ...visual };
+  });
+  // Con Nítido se muestra lo que se dibuja: el valor del estilo mientras el usuario no elija otro
+  const nitido = isNewTheme();
+  const styled = key => nitido && !(values.customVisual || []).includes(key);
   const setStep = (minutes, value) => setValues(previous => ({
     ...previous,
     stepByMinutes: { ...previous.stepByMinutes, [minutes]: value }
@@ -212,7 +220,7 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
             <NumberRow
               label="Tamaño de las cifras (px)"
               step="1" min="7" max="14"
-              value={values.fontSize}
+              value={styled('fontSize') ? THEME.fontSize : values.fontSize}
               onChange={(value) => set('fontSize', value)}
             />
             <NumberRow
@@ -246,18 +254,18 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
             <div style={{ display: 'flex', gap: '24px' }}>
               <div className="setting-row">
                 <label>Compra</label>
-                <input type="color" value={rgbToHex(values.stackedBuyColor)} onChange={(e) => set('stackedBuyColor', hexToRgb(e.target.value))} />
+                <input type="color" value={styled('stackedBuyColor') ? THEME.fpBuy.toLowerCase() : rgbToHex(values.stackedBuyColor)} onChange={(e) => set('stackedBuyColor', hexToRgb(e.target.value))} />
               </div>
               <div className="setting-row">
                 <label>Venta</label>
-                <input type="color" value={rgbToHex(values.stackedSellColor)} onChange={(e) => set('stackedSellColor', hexToRgb(e.target.value))} />
+                <input type="color" value={styled('stackedSellColor') ? THEME.fpSell.toLowerCase() : rgbToHex(values.stackedSellColor)} onChange={(e) => set('stackedSellColor', hexToRgb(e.target.value))} />
               </div>
             </div>
           </div>
         </div>
 
         <div className="settings-footer">
-          <button className="btn-secondary" onClick={() => setValues(pick(defaults))}>Restablecer</button>
+          <button className="btn-secondary" onClick={() => setValues({ ...pick(defaults), customVisual: [] })}>Restablecer</button>
           <button className="btn-primary" onClick={handleApply}>Aplicar y cerrar</button>
         </div>
       </div>

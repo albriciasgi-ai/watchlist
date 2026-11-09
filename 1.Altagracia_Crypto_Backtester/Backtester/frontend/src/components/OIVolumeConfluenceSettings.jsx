@@ -1,6 +1,8 @@
 // src/components/OIVolumeConfluenceSettings.jsx
 import React, { useState, useEffect } from "react";
 import "./OIVolumeConfluenceSettings.css";
+import { THEME, isCustom, isNewTheme, markCustom } from "./uiTheme.js";
+import { OIVOL_FACTORY } from "./indicators/OIVolumeConfluenceIndicator.js";
 
 const OIVolumeConfluenceSettings = ({
   config,
@@ -22,16 +24,26 @@ const OIVolumeConfluenceSettings = ({
   };
 
   const handleNestedConfigChange = (parentKey, childKey, value) => {
+    // Un color cambiado aquí queda como del usuario: gana sobre el estilo Nítido
+    const key = `${parentKey}.${childKey}`;
+    const visual = key in OIVOL_FACTORY ? { customVisual: markCustom(localConfig, key, OIVOL_FACTORY) } : {};
     const newConfig = {
       ...localConfig,
       [parentKey]: {
         ...localConfig[parentKey],
         [childKey]: value
-      }
+      },
+      ...visual
     };
     setLocalConfig(newConfig);
     onConfigChange(newConfig);
   };
+
+  // Con Nítido se muestra lo que se dibuja: el color del estilo mientras el usuario no elija otro
+  const nitido = isNewTheme();
+  const shownColor = (key, fallback, themeColor) => (nitido && !isCustom(localConfig, key, OIVOL_FACTORY[key])
+    ? themeColor.toLowerCase() : (key.split('.').reduce((obj, part) => obj?.[part], localConfig) || fallback));
+  const customColors = Object.keys(OIVOL_FACTORY).filter(key => isCustom(localConfig, key, OIVOL_FACTORY[key])).length;
 
   return (
     <div className="oivolume-confluence-settings">
@@ -273,17 +285,27 @@ const OIVolumeConfluenceSettings = ({
 
             {/* Colores */}
             <h6 style={{ margin: '16px 0 12px 0', color: '#666' }}>🌈 Colores de Barras</h6>
+            {nitido && (
+              <div className="setting-row" style={{ marginBottom: '8px', fontSize: 12, color: '#5F6670' }}>
+                <span>{customColors > 0 ? `${customColors} ${customColors === 1 ? 'color propio' : 'colores propios'}; el resto sigue el estilo` : 'Sigue los colores del estilo Nítido'}</span>
+                {customColors > 0 && (
+                  <button type="button" onClick={() => handleConfigChange('customVisual', [])} style={{ marginLeft: 8, fontSize: 12, padding: '2px 8px', border: '1px solid #D0D5DD', borderRadius: 4, background: '#fff', cursor: 'pointer' }}>
+                    Usar los del estilo
+                  </button>
+                )}
+              </div>
+            )}
 
             <div className="setting-row" style={{ marginBottom: '8px' }}>
               <label>Confluencia Alcista:</label>
               <input
                 type="color"
-                value={localConfig.colors?.bullish || '#34C759'}
+                value={shownColor('colors.bullish', '#34C759', THEME.up)}
                 onChange={(e) => handleNestedConfigChange('colors', 'bullish', e.target.value)}
                 style={{ width: '60px', height: '30px', cursor: 'pointer', border: 'none', borderRadius: '4px' }}
               />
               <span style={{ marginLeft: '8px', fontSize: '12px', fontFamily: 'monospace' }}>
-                {localConfig.colors?.bullish || '#34C759'}
+                {shownColor('colors.bullish', '#34C759', THEME.up)}
               </span>
             </div>
 
@@ -291,12 +313,12 @@ const OIVolumeConfluenceSettings = ({
               <label>Confluencia Bajista:</label>
               <input
                 type="color"
-                value={localConfig.colors?.bearish || '#FF3B30'}
+                value={shownColor('colors.bearish', '#FF3B30', THEME.down)}
                 onChange={(e) => handleNestedConfigChange('colors', 'bearish', e.target.value)}
                 style={{ width: '60px', height: '30px', cursor: 'pointer', border: 'none', borderRadius: '4px' }}
               />
               <span style={{ marginLeft: '8px', fontSize: '12px', fontFamily: 'monospace' }}>
-                {localConfig.colors?.bearish || '#FF3B30'}
+                {shownColor('colors.bearish', '#FF3B30', THEME.down)}
               </span>
             </div>
           </div>

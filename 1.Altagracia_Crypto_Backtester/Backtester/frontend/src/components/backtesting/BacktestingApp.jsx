@@ -29,6 +29,7 @@ import DrawingSidebar from '../drawing/DrawingSidebar'; // 🎯 OPTIMIZACIÓN UI
 import { useUiTheme } from '../useUiTheme.js'; // Estilo Nítido
 import { isNewTheme } from '../uiTheme.js';
 import ThemeSettings from '../ThemeSettings.jsx';
+import { VP_FACTORY } from '../indicators/VolumeProfileIndicator.js';
 import { Icon } from '../uiIcons.jsx';
 import FootprintSidebar from './FootprintSidebar'; // 🎯 Order Flow Footprints
 import SessionManager from './SessionManager';
@@ -1516,8 +1517,17 @@ const BacktestingApp = () => {
     setShowVpSettings(true);
   };
 
+  // El modal del perfil edita el perfil de los gráficos: antes cambiaba un estado que ningún gráfico leía.
+  // Todo va al marco activo; los colores y el degradado, a todos los marcos, como el Order Flow
   const handleVpConfigChange = (newConfig) => {
     setVpConfig(newConfig);
+    const visual = Object.fromEntries(
+      [...Object.keys(VP_FACTORY), 'customVisual'].filter(key => newConfig[key] !== undefined).map(key => [key, newConfig[key]])
+    );
+    setTabStates(prev => Object.fromEntries(Object.entries(prev).map(([tf, state]) => [tf, {
+      ...state,
+      vpConfig: tf === activeTimeframe ? { ...(state?.vpConfig || {}), ...newConfig } : { ...(state?.vpConfig || {}), ...visual }
+    }])));
   };
 
   const handleVpFixedRangeChange = (startTimestamp, endTimestamp) => {
@@ -2515,7 +2525,7 @@ const BacktestingApp = () => {
                           onMouseLeave={(e) => e.target.style.opacity = '0.7'}
                           title={`Configurar ${name}`}
                         >
-                          ⚙️
+                          {isNewTheme() ? <Icon name="sliders" size={13} /> : '⚙️'}
                         </span>
                       )}
                     </label>
@@ -2903,7 +2913,7 @@ const BacktestingApp = () => {
             </div>
             <div className="modal-body">
               <VolumeProfileSettings
-                config={vpConfig}
+                config={{ ...vpConfig, ...(tabStates[activeTimeframe]?.vpConfig || {}) }}
                 onConfigChange={handleVpConfigChange}
                 onFixedRangeChange={handleVpFixedRangeChange}
                 applyToAll={vpApplyToAll}

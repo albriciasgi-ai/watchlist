@@ -2,8 +2,9 @@
 // Uso: node tests/theme.test.mjs
 import assert from 'node:assert/strict';
 import {
-  COLOR_GROUPS, DEFAULT_COLORS, THEME, contrast, crossTime, isNewTheme, isTimeTick, niceStep, niceTimeStep,
-  priceDecimals, resetThemeColors, setThemeColors, themeColors, themeRevision, timeTick
+  COLOR_GROUPS, DEFAULT_COLORS, THEME, contrast, crossTime, customList, hexOfRgb, isCustom, isNewTheme, isTimeTick,
+  markCustom, niceStep, niceTimeStep, priceDecimals, resetThemeColors, rgbOf, setThemeColors, themeColors,
+  themeRevision, timeTick
 } from '../src/components/uiTheme.js';
 
 let count = 0;
@@ -78,6 +79,41 @@ t('los decimales del precio salen de las velas de la moneda', () => {
   assert.equal(priceDecimals([{ open: 80907.2, close: 80910 }, { open: 1, close: 2.5 }]), 1);
   assert.equal(priceDecimals([{ open: 0.5123, close: 0.51 }]), 4);
   assert.equal(priceDecimals([{ open: 100, close: 101 }]), 0);
+});
+
+// Lo que el usuario elige en el modal de un indicador gana sobre el estilo
+const VP = { baseColor: '#2196F3', valueAreaColor: '#FF9800', vahValColor: ['#9C27B0', '#2196F3'], useGradient: true };
+
+t('lo elegido en el modal del indicador gana: manda la lista customVisual', () => {
+  const config = { valueAreaColor: '#FF9800', baseColor: '#123456', customVisual: ['valueAreaColor'] };
+  assert.equal(isCustom(config, 'valueAreaColor', VP.valueAreaColor), true); // Aunque sea el color de fábrica
+  assert.equal(isCustom(config, 'baseColor', VP.baseColor), false); // No está en la lista
+});
+
+t('ajustes de antes de la lista: cuenta lo que difiere de fábrica', () => {
+  const config = { valueAreaColor: '#ff9800', baseColor: '#9C27B0', vahValColor: '#2196f3', useGradient: false };
+  assert.equal(isCustom(config, 'valueAreaColor', VP.valueAreaColor), false); // Igual, sin importar mayúsculas
+  assert.equal(isCustom(config, 'baseColor', VP.baseColor), true);
+  assert.equal(isCustom(config, 'vahValColor', VP.vahValColor), false); // Cualquiera de los de fábrica
+  assert.equal(isCustom(config, 'useGradient', VP.useGradient), true);
+  assert.equal(isCustom({}, 'baseColor', VP.baseColor), false); // Sin valor no hay elección
+  assert.equal(isCustom({ colors: { bullish: '#00FF00' } }, 'colors.bullish', '#34C759'), true); // Clave anidada
+  assert.equal(isCustom({ stackedBuyColor: '38, 166, 154' }, 'stackedBuyColor', '38,166,154'), false); // Espacios no cuentan
+});
+
+t('al cambiar un ajuste se agrega a la lista sin perder lo elegido antes', () => {
+  const legacy = { baseColor: '#9C27B0', valueAreaColor: '#FF9800' };
+  assert.deepEqual(customList(legacy, VP), ['baseColor']);
+  assert.deepEqual(markCustom(legacy, 'valueAreaColor', VP), ['baseColor', 'valueAreaColor']);
+  const listed = { customVisual: ['useGradient'] };
+  assert.deepEqual(markCustom(listed, 'useGradient', VP), ['useGradient']);
+  assert.deepEqual(markCustom({ customVisual: [] }, 'baseColor', VP), ['baseColor']);
+});
+
+t('conversión de colores para transparencias', () => {
+  assert.equal(rgbOf('#2563EB'), '37, 99, 235');
+  assert.equal(rgbOf('azul'), null);
+  assert.equal(hexOfRgb('38,166,154'), '#26A69A');
 });
 
 console.log(`${count} de ${count} pruebas correctas`);

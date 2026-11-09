@@ -2,7 +2,10 @@ import { candleItemId } from './analysisLevels.js';
 import { alignX, alignY, candleColumns, crispWidth, pixelRatio, snapEdge, snapSpanY } from '../chartPixels.js';
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
-import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
+import { THEME, isCustom, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
+
+/** Valores de fábrica de lo visual que el estilo Nítido reemplaza. Lo que el usuario elige en el modal gana */
+export const OF_FACTORY = { stackedBuyColor: '38,166,154', stackedSellColor: '239,83,80', fontSize: 9 };
 
 // Fila de un nivel del footprint o del perfil en píxeles reales enteros: de su borde al del nivel
 // siguiente, menos un hueco parejo de 1 px. Filas de menos de dos píxeles reales quedan como antes
@@ -138,6 +141,11 @@ class OrderFlowIndicator extends IndicatorBase {
     const before = this._dataRules();
     this.config = { ...this.config, ...newConfig };
     if (this._dataRules() !== before) this._reset();
+  }
+
+  /** Color "r, g, b" del stacked con Nítido: el del modal si el usuario lo eligió, si no el del estilo */
+  _stackedRgb(key, themeRgb) {
+    return isCustom(this.config, key, OF_FACTORY[key]) ? this.config[key] : themeRgb;
   }
 
   // ==================== DATOS ====================
@@ -626,20 +634,25 @@ class OrderFlowIndicator extends IndicatorBase {
       ctx.fillStyle = level.ask_volume > 0 ? `rgba(${THEME.fpBuyRgb}, ${buyInk})` : THEME.fpEmpty;
       ctx.fillRect(x + halfWidth + 0.5, cellY, halfWidth - 0.5, cellH);
 
-      // Stacked: una barra de 2 px en el lado que empuja y una franja tenue por detrás de la vela
+      // Stacked: una barra de 2 px en el lado que empuja y una franja tenue por detrás de la vela,
+      // con el color y la opacidad del modal del Order Flow si el usuario los eligió
       if (this.config.showImbalances && stackedSet.has(i)) {
         const buying = stackedSet.get(i) === 'BUY';
-        ctx.fillStyle = buying ? THEME.fpBuy : THEME.fpSell;
+        const rgb = buying ? this._stackedRgb('stackedBuyColor', THEME.fpBuyRgb) : this._stackedRgb('stackedSellColor', THEME.fpSellRgb);
+        const opacity = this.config.stackedOpacity ?? 0.7;
+        ctx.fillStyle = `rgba(${rgb}, ${Math.min(1, opacity / 0.7)})`;
         ctx.fillRect(buying ? x + width - 2 : x, cellY, 2, cellH);
         const extendLeft = x - unitX;
         if (extendLeft > 0) {
-          ctx.fillStyle = `rgba(${buying ? THEME.fpBuyRgb : THEME.fpSellRgb}, 0.12)`;
+          ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.17})`;
           ctx.fillRect(unitX, cellY, extendLeft, cellH);
         }
       }
 
       if (fullMode && width >= 30 && levelHeight >= 10) {
-        const fontSize = Math.min(Math.max(this.config.fontSize, THEME.fontSize), levelHeight - 2, THEME.fontSize);
+        // El tamaño elegido en el modal del Order Flow gana; si no, el del estilo
+        const size = isCustom(this.config, 'fontSize', OF_FACTORY.fontSize) ? this.config.fontSize : THEME.fontSize;
+        const fontSize = Math.min(size, levelHeight - 2);
         ctx.textBaseline = 'middle';
         const write = (volume, strong, color, align, textX) => {
           ctx.font = `${strong ? '700' : '400'} ${fontSize}px ${THEME.font}`;
@@ -784,7 +797,7 @@ class OrderFlowIndicator extends IndicatorBase {
 
     if (isNewTheme()) {
       // Sin contorno: el color ya dice el lado
-      ctx.font = `600 ${Math.max(this.config.deltaFontSize ?? this.config.fontSize, THEME.fontSize)}px ${THEME.font}`;
+      ctx.font = `600 ${this.config.deltaFontSize ?? this.config.fontSize}px ${THEME.font}`;
       ctx.fillStyle = delta >= 0 ? THEME.upText : THEME.downText;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
@@ -824,8 +837,8 @@ class OrderFlowIndicator extends IndicatorBase {
     const size = Math.min(5, Math.max(2.5, candleWidth * 0.5));
     const y = buying ? priceToY(candle.low) + size + 3 : priceToY(candle.high) - size - 3;
 
-    const buyRgb = isNewTheme() ? THEME.fpBuyRgb : this.config.stackedBuyColor;
-    const sellRgb = isNewTheme() ? THEME.fpSellRgb : this.config.stackedSellColor;
+    const buyRgb = isNewTheme() ? this._stackedRgb('stackedBuyColor', THEME.fpBuyRgb) : this.config.stackedBuyColor;
+    const sellRgb = isNewTheme() ? this._stackedRgb('stackedSellColor', THEME.fpSellRgb) : this.config.stackedSellColor;
     ctx.fillStyle = `rgb(${buying ? buyRgb : sellRgb})`;
     ctx.beginPath();
     ctx.moveTo(centerX, y - size);
@@ -839,8 +852,8 @@ class OrderFlowIndicator extends IndicatorBase {
   /** Con velas angostas: líneas de stacked imbalance y marcas de delta contrario a la vela */
   renderImbalanceMarkers(ctx, bounds, visibleCandles, priceToY, candleWidth) {
     const { stackedLineWidth, stackedLineExtend, stackedOpacity } = this.config;
-    const stackedBuyColor = isNewTheme() ? THEME.fpBuyRgb : this.config.stackedBuyColor;
-    const stackedSellColor = isNewTheme() ? THEME.fpSellRgb : this.config.stackedSellColor;
+    const stackedBuyColor = isNewTheme() ? this._stackedRgb('stackedBuyColor', THEME.fpBuyRgb) : this.config.stackedBuyColor;
+    const stackedSellColor = isNewTheme() ? this._stackedRgb('stackedSellColor', THEME.fpSellRgb) : this.config.stackedSellColor;
     const minZScore = this.config.stackedMinVolumeZScore || 0;
     const extraHalf = (candleWidth * stackedLineExtend - candleWidth) / 2;
 

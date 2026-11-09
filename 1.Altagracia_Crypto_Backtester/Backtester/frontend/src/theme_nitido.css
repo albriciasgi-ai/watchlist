@@ -196,6 +196,15 @@ body.theme-nitido .zoom-preset-btn[style*="ff9800"] {
   background: var(--t-accent-soft) !important;
 }
 
+/* Botón del modal de volumen, junto al borde del panel de volumen */
+body.theme-nitido .volume-settings-btn {
+  background: var(--t-chart) !important;
+  color: var(--t-muted) !important;
+  border: 1px solid var(--t-control) !important;
+  border-radius: 4px !important;
+}
+body.theme-nitido .volume-settings-btn:hover { background: var(--t-hover) !important; color: var(--t-text) !important; }
+
 /* El botón VP tenía posición absoluta y quedaba encima de los otros: va en la fila como los demás */
 body.theme-nitido .vp-chart-settings-btn {
   position: static !important;

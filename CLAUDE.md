@@ -53,6 +53,34 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 9 Noviembre 2026: Colores Propios en los Modales de los Indicadores
+
+**Problema:** con el estilo Nítido, un color cambiado en el modal del perfil de volumen no cambiaba nada; desde el modal "Estilo" sí. El usuario pidió que el estilo ponga los colores de todo, pero que lo cambiado en el modal de cada indicador se respete, incluidos el degradado y las intensidades de los perfiles.
+
+**Cambios:**
+1. **Regla:** cada indicador guarda en `customVisual` lo que el usuario cambió en su modal. Con Nítido eso se dibuja como lo dejó y el resto sigue el estilo. Una configuración anterior cuenta como propia si difiere del valor de fábrica
+2. **Modales:**
+   - perfil de volumen y VP de rango fijo: colores, clusters y degradado;
+   - Order Flow: stacked de compra y de venta, y tamaño de las cifras;
+   - confluencia OI y volumen: colores alcista y bajista;
+   - volumen: intensidad, opacidad, degradado y brillo.
+3. **Volver al estilo:** "Usar los del estilo" en el perfil y en la confluencia, y el botón de restablecer de los otros modales. Con Nítido, cada modal muestra el color que se dibuja
+4. **Perfil de volumen:** el modal editaba un estado que los gráficos no leían. Ahora cambia el marco activo y sus colores pasan a todos los marcos. El modal "Estilo" suma el color "Clusters"
+5. **Área de valor:** el perfil dinámico recibía 70 donde esperaba 0.70. Su área de valor abarcaba todo el perfil, con VAH y VAL en los extremos. En BTC 15m al 25/10 pasó de 81472.96 / 79186.95 a 81057.32 / 79925.86. Cambia también el Clásico
+6. **VP de rango fijo:** el modal guardaba el ancho y el área de valor en otra unidad, y "Restaurar Defecto" dejaba las barras invisibles
+7. **Volumen:** "Restaurar Valores por Defecto" borraba los colores de cluster y podía romper el dibujo hasta recargar. Además, cada cambio del modal se dibujaba con el valor anterior
+
+**IMPORTANTE:**
+- Basta recargar la página: no hay cambios en el backend.
+- El Clásico da 0 píxeles distintos sin el perfil de volumen. Con el perfil activo, cambian solo el área de valor y sus líneas.
+- Un VAH o VAL del perfil dinámico elegido para un trade anterior quedó en el extremo del perfil, y Rejection con el contexto "VP Dinámico" usaba esos mismos valores.
+- La confluencia no guarda sus colores al recargar, como antes.
+- Un indicador nuevo con colores en su modal sigue el patrón de `VP_FACTORY` con `isCustom()`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ESTILO NÍTIDO", "Ajustes propios en el modal de cada indicador"
+
+---
+
 ### APP 1 (Backtester) - 8 Noviembre 2026: Estilo Nítido con Colores Configurables
 
 **Problema:** el usuario comparó App 1 con ATAS en su PC: App 1 se veía menos profesional. Mezclaba tres letras (el gráfico pedía "Inter", que no se carga y caía en Arial) y 240 colores sueltos de cuatro estilos distintos. Usaba 69 emojis como íconos, el eje de precios ponía valores sueltos y el footprint coloreaba oscuro el lado dominante aunque tuviera poco volumen. Pidió el cambio de estilo, eligió "Nítido" entre cinco paletas de prueba y pidió poder cambiar cada color.

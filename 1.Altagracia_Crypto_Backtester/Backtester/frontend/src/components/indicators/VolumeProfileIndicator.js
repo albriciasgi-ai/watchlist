@@ -2,8 +2,24 @@
 
 import { profileLevels } from './analysisLevels.js';
 import { alignX, alignY, crispWidth } from '../chartPixels.js';
-import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
+import { THEME, isCustom, isNewTheme, rgbOf } from '../uiTheme.js'; // Estilo Nítido
 import IndicatorBase from "./IndicatorBase";
+
+/** Valores de fábrica de lo visual: lo que difiere (o está en customVisual) lo eligió el usuario */
+export const VP_FACTORY = {
+  baseColor: '#2196F3',
+  valueAreaColor: '#FF9800',
+  pocColor: '#F44336',
+  vahValColor: '#2196F3',
+  clusterColor: '#9C27B0',
+  useGradient: true
+};
+
+/** Color de cada ajuste con el estilo Nítido, para mostrarlo en el modal */
+export const vpThemeValue = key => ({
+  baseColor: THEME.vpOutside, valueAreaColor: THEME.vpValueArea, pocColor: THEME.vpPoc,
+  vahValColor: THEME.vpVahVal, clusterColor: THEME.vpCluster, useGradient: true
+}[key]);
 
 class VolumeProfileIndicator extends IndicatorBase {
   constructor(symbol, interval) {
@@ -48,8 +64,13 @@ class VolumeProfileIndicator extends IndicatorBase {
    * Actualiza la configuraciÃƒÂ³n del indicador
    */
   updateConfig(config) {
+    if (config.customVisual !== undefined) this.customVisual = config.customVisual; // Lo elegido en el modal
     if (config.rows !== undefined) this.rows = config.rows;
-    if (config.valueAreaPercent !== undefined) this.valueAreaPercent = config.valueAreaPercent;
+    // Llega como fracción (0.70, del modal) o como porcentaje (70, de la configuración por defecto de App 1).
+    // Con 70 sin convertir el área de valor abarcaba todo el perfil
+    if (config.valueAreaPercent !== undefined) {
+      this.valueAreaPercent = config.valueAreaPercent > 1 ? config.valueAreaPercent / 100 : config.valueAreaPercent;
+    }
     if (config.histogramWidth !== undefined) this.histogramWidth = config.histogramWidth;
     if (config.histogramPosition !== undefined) this.histogramPosition = config.histogramPosition;
     if (config.useGradient !== undefined) this.useGradient = config.useGradient;
@@ -503,6 +524,13 @@ class VolumeProfileIndicator extends IndicatorBase {
       };
     }
 
+    // Lo que el usuario eligió en el modal del perfil gana sobre el estilo Nítido
+    const look = {
+      customVisual: this.customVisual, baseColor: this.baseColor, valueAreaColor: this.valueAreaColor,
+      pocColor: this.pocColor, vahValColor: this.vahValColor, clusterColor: this.clusterColor, useGradient: this.useGradient
+    };
+    const own = key => isCustom(look, key, VP_FACTORY[key]);
+
     // Dibujar barras del perfil
     for (const level of this.profile.levels) {
       // En modo fixed, solo dibujar niveles con volumen > 0 (precios que realmente se visitaron)
@@ -529,9 +557,14 @@ class VolumeProfileIndicator extends IndicatorBase {
       
       // FASE 3: Gradiente mejorado
       if (isNewTheme()) {
-        // Estilo Nítido: área de valor y resto con sus colores, más intensos con más volumen
-        const rgb = level.isValueArea ? THEME.vpValueAreaRgb : THEME.vpOutsideRgb;
-        color = `rgba(${rgb}, ${0.22 + volumeFraction * 0.4})`;
+        // Estilo Nítido: colores del estilo, salvo los que el usuario eligió en el modal del perfil
+        let rgb;
+        if (this.enableClusterDetection && level.isCluster) rgb = (own('clusterColor') && rgbOf(this.clusterColor)) || THEME.vpClusterRgb;
+        else if (level.isValueArea) rgb = (own('valueAreaColor') && rgbOf(this.valueAreaColor)) || THEME.vpValueAreaRgb;
+        else rgb = (own('baseColor') && rgbOf(this.baseColor)) || THEME.vpOutsideRgb;
+        // Con degradado, más tinta con más volumen
+        const graded = own('useGradient') ? this.useGradient : true;
+        color = `rgba(${rgb}, ${graded ? 0.22 + volumeFraction * 0.4 : 0.45})`;
       } else if (this.useGradient) {
         const alpha = 0.15 + (volumeFraction * 0.75); // De 15% a 90% opacidad
         color = this.hexToRgba(color, alpha);
@@ -565,7 +598,7 @@ class VolumeProfileIndicator extends IndicatorBase {
     const pocY = priceToY(this.profile.poc.price);
     const nuevo = isNewTheme();
     const pocWidth = nuevo ? 1 : 2;
-    ctx.strokeStyle = nuevo ? THEME.vpPoc : this.pocColor;
+    ctx.strokeStyle = nuevo && !own('pocColor') ? THEME.vpPoc : this.pocColor;
     ctx.lineWidth = crispWidth(pocWidth);
     ctx.setLineDash(nuevo ? [] : [4, 4]);
     ctx.beginPath();
@@ -578,7 +611,7 @@ class VolumeProfileIndicator extends IndicatorBase {
     const vahY = priceToY(this.profile.valueArea.vahPrice);
     const valY = priceToY(this.profile.valueArea.valPrice);
 
-    ctx.strokeStyle = nuevo ? THEME.vpVahVal : this.vahValColor;
+    ctx.strokeStyle = nuevo && !own('vahValColor') ? THEME.vpVahVal : this.vahValColor;
     ctx.lineWidth = crispWidth(1);
     ctx.globalAlpha = nuevo ? 0.9 : 0.5;
     if (nuevo) ctx.setLineDash([3, 3]);

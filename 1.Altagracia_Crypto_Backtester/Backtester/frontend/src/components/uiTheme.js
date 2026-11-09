@@ -24,6 +24,7 @@ export const DEFAULT_COLORS = {
   vpValueArea: '#C9A05C',
   vpOutside: '#8091C4',
   vpPoc: '#5A6170',
+  vpCluster: '#6B4FBB',
   chartBg: '#FFFFFF',
   grid: '#E4E7EC',
   crosshair: '#8A919C',
@@ -41,7 +42,7 @@ export const DEFAULT_COLORS = {
 export const COLOR_GROUPS = [
   { title: 'Velas y volumen', fields: [['up', 'Sube'], ['down', 'Baja']] },
   { title: 'Footprint', fields: [['fpBuy', 'Compra'], ['fpSell', 'Venta'], ['fpPoc', 'POC'], ['fpProfile', 'Perfil de la vela']] },
-  { title: 'Perfil de volumen', fields: [['vpValueArea', 'Área de valor'], ['vpOutside', 'Fuera del área'], ['vpPoc', 'Línea del POC']] },
+  { title: 'Perfil de volumen', fields: [['vpValueArea', 'Área de valor'], ['vpOutside', 'Fuera del área'], ['vpPoc', 'Línea del POC'], ['vpCluster', 'Clusters']] },
   { title: 'Gráfico', fields: [['chartBg', 'Fondo'], ['grid', 'Rejilla'], ['crosshair', 'Cruz'], ['tagBg', 'Etiquetas de la cruz']] },
   { title: 'Interfaz', fields: [['surface', 'Barras'], ['accent', 'Acento'], ['text', 'Texto'], ['textMuted', 'Texto secundario']] },
   { title: 'Paneles', fields: [['oiUp', 'Interés abierto sube'], ['oiDown', 'Interés abierto baja'], ['divergence', 'Divergencia']] }
@@ -127,6 +128,7 @@ function build() {
     fpFrame: mix(c.textMuted, c.chartBg, 0.55),
     vpValueAreaRgb: rgbText(c.vpValueArea),
     vpOutsideRgb: rgbText(c.vpOutside),
+    vpClusterRgb: rgbText(c.vpCluster),
     vpVahVal: mix(c.vpPoc, c.chartBg, 0.45),
     textFaint: mix(c.textMuted, c.chartBg, 0.4),
     line: mix(c.text, c.surface, 0.88),
@@ -194,6 +196,42 @@ export function onThemeChange(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);
 }
+
+// ==================== AJUSTES PROPIOS DE CADA INDICADOR ====================
+//
+// El estilo da los colores de todo, pero lo que el usuario elige en el modal de un indicador gana.
+// Cada indicador guarda en su configuración la lista customVisual con lo que el usuario eligió ahí.
+// Los ajustes guardados antes de existir la lista cuentan como elegidos si difieren del valor de fábrica.
+
+const sameValue = (a, b) => String(a).replace(/\s+/g, '').toLowerCase() === String(b).replace(/\s+/g, '').toLowerCase();
+const valueAt = (config, key) => key.split('.').reduce((obj, part) => (obj == null ? undefined : obj[part]), config);
+
+/** ¿El usuario eligió este ajuste en el modal del indicador? `factory` puede ser uno o varios valores de fábrica */
+export function isCustom(config, key, factory) {
+  if (Array.isArray(config?.customVisual)) return config.customVisual.includes(key);
+  const value = valueAt(config, key);
+  if (value === undefined || value === null) return false;
+  return !(Array.isArray(factory) ? factory : [factory]).some(option => sameValue(value, option));
+}
+
+/** Lo que el usuario eligió: la lista guardada o, en ajustes de antes, lo que difiere de fábrica */
+export function customList(config, factoryValues) {
+  if (Array.isArray(config?.customVisual)) return config.customVisual;
+  const legacy = { ...config, customVisual: undefined };
+  return Object.keys(factoryValues).filter(name => isCustom(legacy, name, factoryValues[name]));
+}
+
+/** La lista customVisual con `key` agregada */
+export function markCustom(config, key, factoryValues) {
+  const list = customList(config, factoryValues);
+  return list.includes(key) ? list : [...list, key];
+}
+
+/** "#RRGGBB" → "r, g, b" para usar con transparencia; null si no es un color así */
+export const rgbOf = hex => (typeof hex === 'string' && HEX_RE.test(hex) ? rgbText(hex) : null);
+
+/** Un color "r,g,b" (como los guarda el footprint) → "#RRGGBB" */
+export const hexOfRgb = rgb => toHex(String(rgb).split(',').map(Number));
 
 // ==================== LETRA DEL LIENZO ====================
 

@@ -3,11 +3,31 @@
 
 import { profileLevels } from './analysisLevels.js';
 import { alignX, alignY, crispWidth } from '../chartPixels.js';
+import { THEME, isCustom, isNewTheme, rgbOf } from '../uiTheme.js'; // Estilo Nítido
 import IndicatorBase from "./IndicatorBase";
+
+/** Valores de fábrica de lo visual de un perfil manual. Los auto-detectados (morados) y de tendencia (azules)
+ *  difieren y por eso conservan sus colores con Nítido */
+export const VP_FIXED_FACTORY = {
+  baseColor: '#2196F3',
+  valueAreaColor: '#FF9800',
+  pocColor: '#F44336',
+  vahValColor: ['#9C27B0', '#2196F3'],
+  clusterColor: ['#4CAF50', '#9C27B0'],
+  useGradient: true
+};
+
+/** Color de cada ajuste con el estilo Nítido, para mostrarlo en el modal */
+export const vpFixedThemeValue = key => ({
+  baseColor: THEME.vpOutside, valueAreaColor: THEME.vpValueArea, pocColor: THEME.vpPoc,
+  vahValColor: THEME.vpVahVal, clusterColor: THEME.vpCluster, useGradient: true
+}[key]);
 import { API_BASE_URL } from "../../config";
 import { TF_MS, candlesBetween } from "../backtesting/replayClock";
 
 const MIN_REAL_COVERAGE = 0.99; // Con menos minutos en el almacén se usa el perfil estimado
+// Los perfiles guardan porcentajes (70, 25); el modal anterior a veces guardaba fracciones (0.70, 0.25)
+const asFraction = value => (value > 1 ? value / 100 : value);
 
 class VolumeProfileFixedRangeIndicator extends IndicatorBase {
   constructor(symbol, interval, rangeId = null) {
@@ -62,9 +82,10 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
   }
 
   updateConfig(config) {
+    if (config.customVisual !== undefined) this.customVisual = config.customVisual; // Lo elegido en el modal
     if (config.rows !== undefined) this.rows = config.rows;
-    if (config.valueAreaPercent !== undefined) this.valueAreaPercent = config.valueAreaPercent / 100;
-    if (config.histogramMaxWidth !== undefined) this.histogramMaxWidth = config.histogramMaxWidth / 100;
+    if (config.valueAreaPercent !== undefined) this.valueAreaPercent = asFraction(config.valueAreaPercent);
+    if (config.histogramMaxWidth !== undefined) this.histogramMaxWidth = asFraction(config.histogramMaxWidth);
     if (config.useGradient !== undefined) this.useGradient = config.useGradient;
     
     if (config.baseColor !== undefined) this.baseColor = config.baseColor;
@@ -395,17 +416,27 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     ctx.fillStyle = this.hexToRgba(this.rangeShadeColor, 0.15);
     ctx.fillRect(clampedStartX, rangeHighY, rangeWidth, rangeHeightY);
 
+    // Lo que el usuario eligió en el modal del perfil gana sobre el estilo Nítido
+    const nitido = isNewTheme();
+    const look = {
+      customVisual: this.customVisual, baseColor: this.baseColor, valueAreaColor: this.valueAreaColor,
+      pocColor: this.pocColor, vahValColor: this.vahValColor, clusterColor: this.clusterColor, useGradient: this.useGradient
+    };
+    const own = key => isCustom(look, key, VP_FIXED_FACTORY[key]);
+    const styled = key => nitido && !own(key);
+
     // 🎯 Dibujar bordes del rectángulo (high, low, inicio, fin)
-    // Usar el baseColor para el borde (morado para auto-detectados, azul para manuales)
-    ctx.strokeStyle = this.baseColor;
-    ctx.lineWidth = crispWidth(2);
+    // Usar el baseColor para el borde (morado para auto-detectados, azul para manuales). Con Nítido, fino y gris
+    const borderWidth = styled('baseColor') ? 1 : 2;
+    ctx.strokeStyle = styled('baseColor') ? THEME.vpVahVal : this.baseColor;
+    ctx.lineWidth = crispWidth(borderWidth);
     ctx.setLineDash([]);
 
     // Bordes enteros en píxeles reales
-    const borderLeft = alignX(clampedStartX, 2);
-    const borderRight = alignX(clampedEndX, 2);
-    const borderTop = alignY(rangeHighY, 2);
-    const borderBottom = alignY(rangeLowY, 2);
+    const borderLeft = alignX(clampedStartX, borderWidth);
+    const borderRight = alignX(clampedEndX, borderWidth);
+    const borderTop = alignY(rangeHighY, borderWidth);
+    const borderBottom = alignY(rangeLowY, borderWidth);
     ctx.beginPath();
     // Borde superior (high)
     ctx.moveTo(borderLeft, borderTop);
@@ -443,7 +474,14 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
         color = this.valueAreaColor;
       }
       
-      if (this.useGradient) {
+      if (nitido) {
+        let rgb;
+        if (this.enableClusterDetection && level.isCluster) rgb = (own('clusterColor') && rgbOf(this.clusterColor)) || THEME.vpClusterRgb;
+        else if (level.isValueArea) rgb = (own('valueAreaColor') && rgbOf(this.valueAreaColor)) || THEME.vpValueAreaRgb;
+        else rgb = (own('baseColor') && rgbOf(this.baseColor)) || THEME.vpOutsideRgb;
+        const graded = own('useGradient') ? this.useGradient : true;
+        color = `rgba(${rgb}, ${graded ? 0.22 + volumeFraction * 0.4 : 0.45})`;
+      } else if (this.useGradient) {
         const alpha = 0.2 + (volumeFraction * 0.7);
         color = this.hexToRgba(color, alpha);
       } else {
@@ -456,12 +494,13 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
 
     const pocY = priceToY(this.profile.poc.price);
     if (pocY >= y && pocY <= y + height) {
-      ctx.strokeStyle = this.pocColor;
-      ctx.lineWidth = crispWidth(2);
-      ctx.setLineDash([4, 4]);
+      const pocWidth = nitido ? 1 : 2;
+      ctx.strokeStyle = styled('pocColor') ? THEME.vpPoc : this.pocColor;
+      ctx.lineWidth = crispWidth(pocWidth);
+      ctx.setLineDash(nitido ? [] : [4, 4]);
       ctx.beginPath();
-      ctx.moveTo(clampedStartX, alignY(pocY, 2));
-      ctx.lineTo(clampedEndX, alignY(pocY, 2));
+      ctx.moveTo(clampedStartX, alignY(pocY, pocWidth));
+      ctx.lineTo(clampedEndX, alignY(pocY, pocWidth));
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -469,9 +508,10 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     const vahY = priceToY(this.profile.valueArea.vahPrice);
     const valY = priceToY(this.profile.valueArea.valPrice);
     
-    ctx.strokeStyle = this.vahValColor;
+    ctx.strokeStyle = styled('vahValColor') ? THEME.vpVahVal : this.vahValColor;
     ctx.lineWidth = crispWidth(1);
-    ctx.globalAlpha = 0.4;
+    ctx.globalAlpha = nitido ? 0.9 : 0.4;
+    if (nitido) ctx.setLineDash([3, 3]);
 
     if (vahY >= y && vahY <= y + height) {
       ctx.beginPath();
@@ -488,6 +528,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     }
     
     ctx.globalAlpha = 1.0;
+    ctx.setLineDash([]);
 
     // 🎯 NUEVO: Dibujar etiqueta alfabética en esquina superior derecha
     if (this.rangeLabel) {
@@ -495,11 +536,12 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       const labelTopY = rangeHighY + 20; // 20px desde el borde superior
 
       // Fondo para la etiqueta
-      ctx.fillStyle = this.hexToRgba(this.baseColor, 0.9);
+      const labelColor = styled('baseColor') ? THEME.vpPoc : this.baseColor;
+      ctx.fillStyle = this.hexToRgba(labelColor, 0.9);
       ctx.fillRect(labelRightX, labelTopY - 15, 25, 18);
 
       // Borde
-      ctx.strokeStyle = this.baseColor;
+      ctx.strokeStyle = labelColor;
       ctx.lineWidth = 1;
       ctx.strokeRect(labelRightX, labelTopY - 15, 25, 18);
 
@@ -511,7 +553,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       ctx.textAlign = "left"; // Restaurar
     }
 
-    ctx.fillStyle = "#333";
+    ctx.fillStyle = nitido ? THEME.textMuted : "#333";
     ctx.font = "10px Inter, sans-serif";
 
     const labelX = clampedStartX + 5;
@@ -523,7 +565,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       labelY += 12;
     }
 
-    ctx.fillStyle = this.pocColor;
+    ctx.fillStyle = styled('pocColor') ? THEME.text : this.pocColor;
     ctx.fillText(`POC: ${this.profile.poc.price.toFixed(2)}${this.profile.isReal ? ' · real' : ''}`, labelX, labelY);
   }
 
@@ -551,6 +593,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       enableClusterDetection: this.enableClusterDetection,
       clusterThreshold: this.clusterThreshold,
       clusterColor: this.clusterColor,
+      customVisual: this.customVisual,
       enabled: this.enabled,
       rangeLabel: this.rangeLabel  // 🎯 AGREGAR rangeLabel
     };
@@ -561,9 +604,10 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       this.setTimeRange(data.startTimestamp, data.endTimestamp);
     }
     
+    if (data.customVisual !== undefined) this.customVisual = data.customVisual; // Lo elegido en el modal
     this.rows = data.rows || this.rows;
-    this.valueAreaPercent = (data.valueAreaPercent !== undefined ? data.valueAreaPercent / 100 : this.valueAreaPercent);
-    this.histogramMaxWidth = (data.histogramMaxWidth !== undefined ? data.histogramMaxWidth / 100 : this.histogramMaxWidth);
+    this.valueAreaPercent = (data.valueAreaPercent !== undefined ? asFraction(data.valueAreaPercent) : this.valueAreaPercent);
+    this.histogramMaxWidth = (data.histogramMaxWidth !== undefined ? asFraction(data.histogramMaxWidth) : this.histogramMaxWidth);
     this.useGradient = data.useGradient !== undefined ? data.useGradient : this.useGradient;
     
     this.baseColor = data.baseColor || this.baseColor;

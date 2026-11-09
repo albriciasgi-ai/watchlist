@@ -1,5 +1,8 @@
 // src/components/VolumeProfileSettings.jsx
 import React, { useState } from "react";
+import { isCustom, isNewTheme, markCustom } from "./uiTheme.js";
+import { useUiTheme } from "./useUiTheme.js";
+import { VP_FACTORY, vpThemeValue } from "./indicators/VolumeProfileIndicator.js";
 
 const VolumeProfileSettings = ({ 
   config, 
@@ -13,9 +16,20 @@ const VolumeProfileSettings = ({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  useUiTheme();
+  const nitido = isNewTheme();
+
+  // Lo visual que el usuario cambia aquí queda como suyo: gana sobre el estilo Nítido
   const handleConfigChange = (key, value) => {
-    onConfigChange({ ...config, [key]: value });
+    const visual = key in VP_FACTORY ? { customVisual: markCustom(config, key, VP_FACTORY) } : {};
+    onConfigChange({ ...config, [key]: value, ...visual });
   };
+
+  // Con Nítido se muestra lo que se dibuja: el color del estilo mientras el usuario no elija otro
+  const shown = key => (nitido && !isCustom(config, key, VP_FACTORY[key]) ? vpThemeValue(key) : config[key]);
+  const customCount = Object.keys(VP_FACTORY).filter(key => isCustom(config, key, VP_FACTORY[key])).length;
+  // El área de valor puede venir como porcentaje (70) o como fracción (0.70)
+  const valueAreaFraction = config.valueAreaPercent > 1 ? config.valueAreaPercent / 100 : (config.valueAreaPercent ?? 0.7);
 
   const handleApplyRange = () => {
     if (!startDate || !endDate) {
@@ -107,12 +121,12 @@ const VolumeProfileSettings = ({
 
         {/* Width */}
         <div className="setting-row">
-          <label>Ancho ({config.histogramWidth}%):</label>
+          <label>Ancho ({config.histogramWidth ?? 50}%):</label>
           <input 
             type="range" 
             min="20" 
             max="80" 
-            value={config.histogramWidth}
+            value={config.histogramWidth ?? 50}
             onChange={(e) => handleConfigChange('histogramWidth', parseInt(e.target.value))}
           />
         </div>
@@ -122,7 +136,7 @@ const VolumeProfileSettings = ({
           <label>
             <input 
               type="checkbox" 
-              checked={config.useGradient}
+              checked={!!shown('useGradient')}
               onChange={(e) => handleConfigChange('useGradient', e.target.checked)}
             />
             Gradiente
@@ -216,13 +230,13 @@ const VolumeProfileSettings = ({
 
             {/* Value Area % */}
             <div className="setting-row">
-              <label>Value Area ({(config.valueAreaPercent * 100).toFixed(0)}%):</label>
+              <label>Value Area ({(valueAreaFraction * 100).toFixed(0)}%):</label>
               <input 
                 type="range" 
                 min="0.50" 
                 max="0.90" 
                 step="0.05"
-                value={config.valueAreaPercent}
+                value={valueAreaFraction}
                 onChange={(e) => handleConfigChange('valueAreaPercent', parseFloat(e.target.value))}
               />
             </div>
@@ -230,12 +244,22 @@ const VolumeProfileSettings = ({
             {/* Colors */}
             <div className="color-settings">
               <h5>Colores</h5>
+              {nitido && (
+                <div className="setting-row" style={{ fontSize: 12, color: '#5F6670' }}>
+                  <span>{customCount > 0 ? `${customCount} ${customCount === 1 ? 'ajuste propio' : 'ajustes propios'}; el resto sigue el estilo` : 'Sigue los colores del estilo Nítido'}</span>
+                  {customCount > 0 && (
+                    <button type="button" onClick={() => onConfigChange({ ...config, customVisual: [] })} style={{ marginLeft: 8, fontSize: 12, padding: '2px 8px', border: '1px solid #D0D5DD', borderRadius: 4, background: '#fff', cursor: 'pointer' }}>
+                      Usar los del estilo
+                    </button>
+                  )}
+                </div>
+              )}
               
               <div className="setting-row">
                 <label>Base:</label>
                 <input 
                   type="color" 
-                  value={config.baseColor}
+                  value={shown('baseColor')}
                   onChange={(e) => handleConfigChange('baseColor', e.target.value)}
                 />
               </div>
@@ -244,7 +268,7 @@ const VolumeProfileSettings = ({
                 <label>Value Area:</label>
                 <input 
                   type="color" 
-                  value={config.valueAreaColor}
+                  value={shown('valueAreaColor')}
                   onChange={(e) => handleConfigChange('valueAreaColor', e.target.value)}
                 />
               </div>
@@ -253,7 +277,7 @@ const VolumeProfileSettings = ({
                 <label>POC:</label>
                 <input 
                   type="color" 
-                  value={config.pocColor}
+                  value={shown('pocColor')}
                   onChange={(e) => handleConfigChange('pocColor', e.target.value)}
                 />
               </div>
@@ -262,7 +286,7 @@ const VolumeProfileSettings = ({
                 <label>VAH/VAL:</label>
                 <input 
                   type="color" 
-                  value={config.vahValColor}
+                  value={shown('vahValColor')}
                   onChange={(e) => handleConfigChange('vahValColor', e.target.value)}
                 />
               </div>
@@ -272,7 +296,7 @@ const VolumeProfileSettings = ({
                   <label>Clusters:</label>
                   <input 
                     type="color" 
-                    value={config.clusterColor}
+                    value={shown('clusterColor')}
                     onChange={(e) => handleConfigChange('clusterColor', e.target.value)}
                   />
                 </div>

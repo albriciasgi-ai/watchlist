@@ -25,7 +25,7 @@ import {
   setCanvasPixels, snapEdge, snapSpanY
 } from './chartPixels.js';
 import {
-  THEME, crossTime, installThemeFonts, isNewTheme, isTimeTick, niceStep, niceTimeStep, priceDecimals, timeTick
+  THEME, crossTime, installThemeFonts, isNewTheme, isTimeTick, niceStep, niceTimeStep, priceDecimals, rgbOf, timeTick
 } from './uiTheme.js';
 import { useUiTheme } from './useUiTheme.js';
 import { Icon } from './uiIcons.jsx';
@@ -39,6 +39,31 @@ const FOOTPRINT_ZOOM = 20; // Velas de 160px: se leen las cifras del footprint
 const FOCUS_MIN_BAR_WIDTH = 6; // Al ir a un punto, velas más angostas no dejan distinguirlo
 const FOCUS_MARK_MS = 15000; // Cuánto queda marcado el punto al que se fue
 const CAPTURE_DENSITY = 2; // Píxeles de imagen por píxel CSS en las imágenes de trades, como mínimo
+
+// Parámetros de fábrica del dibujo del volumen (modal de volumen)
+const VOLUME_VISUAL_DEFAULTS = {
+  intensityMin: 0.3,
+  intensityMax: 1.0,
+  intensityDivisor: 3,
+  opacityMin: 0.4,
+  opacityMax: 0.9,
+  opacityBase: 0.5,
+  opacityDivisor: 4,
+  gradientBottomMultiplier: 0.3,
+  glowThreshold: 2.0,
+  glowBlur: 8,
+  // 🎯 NUEVO: Detección de clusters de volumen alto consecutivo
+  clusterDetection: true,
+  clusterMinBars: 3,              // Mínimo de velas consecutivas para considerar cluster
+  clusterThreshold: 0.5,           // Umbral promedio de z-score para cluster (0.5 = volumen moderadamente alto)
+  clusterColorBullish: '#4CAF50',  // Color para clusters alcistas (verde)
+  clusterColorBearish: '#F44336'   // Color para clusters bajistas (rojo)
+};
+// Con Nítido el volumen va en barras planas; si el usuario cambia alguno de estos en el modal, vuelve el degradado
+const VOLUME_LOOK_KEYS = [
+  'intensityMin', 'intensityMax', 'intensityDivisor', 'opacityMin', 'opacityMax', 'opacityBase', 'opacityDivisor',
+  'gradientBottomMultiplier', 'glowThreshold', 'glowBlur'
+];
 const CAPTURE_LEVEL_ROOM_PX = 12; // Aire de un nivel que agranda el precio de una imagen: su etiqueta no queda cortada
 const CAPTURE_MARK_ROOM_PX = 16; // Aire junto a una marca que aleja una imagen: su aro y su número no quedan en el borde
 const MIN_VOLUME_HEIGHT = 40;
@@ -849,24 +874,7 @@ const MiniChart = forwardRef(({
   const [showVolumeSettings, setShowVolumeSettings] = useState(false);
   const [volumeVisualParams, setVolumeVisualParams] = useState(() => {
     // 🔧 FIX: Merge de valores guardados con defaults para evitar propiedades undefined
-    const defaults = {
-      intensityMin: 0.3,
-      intensityMax: 1.0,
-      intensityDivisor: 3,
-      opacityMin: 0.4,
-      opacityMax: 0.9,
-      opacityBase: 0.5,
-      opacityDivisor: 4,
-      gradientBottomMultiplier: 0.3,
-      glowThreshold: 2.0,
-      glowBlur: 8,
-      // 🎯 NUEVO: Detección de clusters de volumen alto consecutivo
-      clusterDetection: true,
-      clusterMinBars: 3,              // Mínimo de velas consecutivas para considerar cluster
-      clusterThreshold: 0.5,           // Umbral promedio de z-score para cluster (0.5 = volumen moderadamente alto)
-      clusterColorBullish: '#4CAF50',  // Color para clusters alcistas (verde)
-      clusterColorBearish: '#F44336'   // Color para clusters bajistas (rojo)
-    };
+    const defaults = VOLUME_VISUAL_DEFAULTS;
 
     const saved = localStorage.getItem(`volumeVisualParams_${symbol}`);
     if (saved) {
@@ -1391,16 +1399,28 @@ const MiniChart = forwardRef(({
       });
     }
 
+    // Con Nítido, lo que el usuario cambió en el modal del volumen gana: la intensidad, la opacidad, el
+    // degradado o el brillo vuelven al dibujo con degradado, y los colores de cluster elegidos se respetan
+    const volumeLookCustom = isNew && VOLUME_LOOK_KEYS.some(key => volumeVisualParams[key] !== VOLUME_VISUAL_DEFAULTS[key]);
+    const clusterColorBull = isNew && volumeVisualParams.clusterColorBullish === VOLUME_VISUAL_DEFAULTS.clusterColorBullish
+      ? THEME.up : volumeVisualParams.clusterColorBullish;
+    const clusterColorBear = isNew && volumeVisualParams.clusterColorBearish === VOLUME_VISUAL_DEFAULTS.clusterColorBearish
+      ? THEME.down : volumeVisualParams.clusterColorBearish;
+
     // 🎯 Renderizar volumen con mejoras visuales basadas en z-score
-    if (isNew) {
+    if (isNew && !volumeLookCustom) {
       // Barras planas del color de la vela, sin brillo: el volumen alto se nota por la altura y un poco más de tinta
+      const clusterBullRgb = rgbOf(clusterColorBull) || THEME.upRgb;
+      const clusterBearRgb = rgbOf(clusterColorBear) || THEME.downRgb;
       visibleCandles.forEach((d, i) => {
         const x = marginLeft + (i * barWidth);
         const volHeight = d.volume * volumeScale;
         const inCluster = clusterIndices.has(i);
-        const rising = inCluster ? clusterDirections.get(i) === 'bullish' : d.close >= d.open;
+        const rgb = inCluster
+          ? (clusterDirections.get(i) === 'bullish' ? clusterBullRgb : clusterBearRgb)
+          : (d.close >= d.open ? THEME.upRgb : THEME.downRgb);
         const alpha = inCluster ? 0.7 : 0.3 + 0.32 * Math.max(0, Math.min(1, (volumeZScores[i] + 1) / 4));
-        ctx.fillStyle = `rgba(${rising ? THEME.upRgb : THEME.downRgb}, ${alpha})`;
+        ctx.fillStyle = `rgba(${rgb}, ${alpha})`;
         ctx.fillRect(x + barWidth * 0.15, volumeStartY + volumeHeightCalculated - volHeight, barWidth * 0.7, volHeight);
       });
     } else visibleCandles.forEach((d, i) => {
@@ -1414,9 +1434,7 @@ const MiniChart = forwardRef(({
 
       if (isInCluster) {
         const direction = clusterDirections.get(i);
-        baseColor = direction === 'bullish'
-          ? volumeVisualParams.clusterColorBullish
-          : volumeVisualParams.clusterColorBearish;
+        baseColor = direction === 'bullish' ? clusterColorBull : clusterColorBear;
       } else {
         baseColor = d.close >= d.open ? bullColor : bearColor;
       }
@@ -2703,7 +2721,8 @@ const MiniChart = forwardRef(({
           rangeShadeColor: profile.rangeShadeColor,
           enableClusterDetection: profile.enableClusterDetection,
           clusterThreshold: profile.clusterThreshold,
-          clusterColor: profile.clusterColor
+          clusterColor: profile.clusterColor,
+          customVisual: profile.customVisual
         };
         
         setCurrentProfileConfig(config);
@@ -2729,6 +2748,11 @@ const MiniChart = forwardRef(({
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     }
   }, [vpConfig]);
+
+  // Lo cambiado en el modal del volumen se ve al instante: el redibujo del propio modal todavía usaba los valores anteriores
+  useEffect(() => {
+    if (candlesRef.current?.length) drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+  }, [volumeVisualParams]);
 
   useEffect(() => {
     if (indicatorManagerRef.current && indicatorManagerRef.current.days !== parseInt(days)) {
@@ -3548,6 +3572,8 @@ const MiniChart = forwardRef(({
 
           {/* 🎯 NUEVO: Botón de configuración de visualización de volumen */}
           <button
+            className="volume-settings-btn"
+            title="Configurar el dibujo del volumen"
             onClick={(e) => {
               e.stopPropagation();
               setShowVolumeSettings(!showVolumeSettings);
@@ -3582,7 +3608,7 @@ const MiniChart = forwardRef(({
               }
             }}
           >
-            ⚙️
+            {isNewTheme() ? <Icon name="sliders" size={12} /> : '⚙️'}
           </button>
         </div>
 
@@ -4113,22 +4139,9 @@ const MiniChart = forwardRef(({
             {/* Botón de reset */}
             <button
               onClick={() => {
-                const defaultParams = {
-                  intensityMin: 0.3,
-                  intensityMax: 1.0,
-                  intensityDivisor: 3,
-                  opacityMin: 0.4,
-                  opacityMax: 0.9,
-                  opacityBase: 0.5,
-                  opacityDivisor: 4,
-                  gradientBottomMultiplier: 0.3,
-                  glowThreshold: 2.0,
-                  glowBlur: 8,
-                  clusterDetection: true,
-                  clusterMinBars: 3,
-                  clusterThreshold: 0.5,
-                  clusterColor: '#FFA726'
-                };
+                // Los mismos valores con que arranca el volumen. La lista anterior no traía los colores de
+                // cluster, y una vela en cluster rompía el dibujo del gráfico hasta recargar
+                const defaultParams = { ...VOLUME_VISUAL_DEFAULTS };
                 setVolumeVisualParams(defaultParams);
                 localStorage.setItem(`volumeVisualParams_${symbol}`, JSON.stringify(defaultParams));
                 if (candlesRef.current && candlesRef.current.length > 0) {
