@@ -91,19 +91,48 @@ contextBridge.exposeInMainWorld('electron', {
   },
 
   /**
-   * Escribe un archivo.
+   * Escribe un archivo de forma segura: primero a un temporal y luego reemplaza el original.
+   * Si el proceso se corta a mitad, el archivo anterior queda intacto, y quien lo lea nunca
+   * ve uno a medio escribir (antes una lectura en ese momento devolvía vacío y se perdía el historial).
    */
   writeFile: async (filePath, content) => {
+    const tmpPath = `${filePath}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
     try {
       // Asegurar que el directorio existe
       const dir = path.dirname(filePath);
       await fs.mkdir(dir, { recursive: true });
 
-      await fs.writeFile(filePath, content, 'utf-8');
-      return true;
+      await fs.writeFile(tmpPath, content, 'utf-8');
+
+      // En Windows el reemplazo puede fallar un instante si otro proceso tiene el archivo abierto
+      let lastError = null;
+      for (let attempt = 0; attempt < 8; attempt++) {
+        try {
+          await fs.rename(tmpPath, filePath);
+          return true;
+        } catch (error) {
+          lastError = error;
+          if (!['EPERM', 'EBUSY', 'EACCES'].includes(error.code)) break;
+          await new Promise(resolve => setTimeout(resolve, 100 * (attempt + 1)));
+        }
+      }
+      throw lastError;
     } catch (error) {
       console.error(`[Preload] Error escribiendo ${filePath}:`, error);
+      try { await fs.unlink(tmpPath); } catch (_) { /* el temporal puede no existir */ }
       throw error;
+    }
+  },
+
+  /**
+   * Tamaño y fecha de modificación de un archivo (para saber si cambió sin leerlo).
+   */
+  getFileInfo: async (filePath) => {
+    try {
+      const stats = await fs.stat(filePath);
+      return { exists: true, size: stats.size, mtimeMs: stats.mtimeMs };
+    } catch {
+      return { exists: false, size: 0, mtimeMs: 0 };
     }
   },
 

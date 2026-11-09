@@ -4,6 +4,176 @@ import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import pollingCoordinator from '../../utils/PollingCoordinator.js';
 import { getFootprintArchiver } from '../../services/FootprintArchiverElectron.js';
+
+// ============================================================================
+// Estado compartido entre instancias del indicador (por moneda)
+// ============================================================================
+
+// Auto-descarga del archivo local: una sola a la vez por moneda y un intento cada 15 min.
+// Antes cada sondeo de 5 s lanzaba otra descarga de 48 h sin esperar la anterior.
+const AUTO_DOWNLOAD_RETRY_MS = 15 * 60 * 1000;
+const autoDownloadState = new Map(); // symbol -> { inFlight, lastAttempt }
+
+// Archivo local ya leido por moneda: se vuelve a leer solo si cambia en disco.
+// Antes se leia y parseaba entero (hasta 89 MB) en cada sondeo de 5 s.
+const ARCHIVE_CACHE_MAX = 2;
+const archiveCache = new Map(); // symbol -> { path, size, mtimeMs, footprints }
+
+// Pedidos al backend: completo cada 60 s y, entre medio, solo los ultimos footprints
+const BACKEND_FULL_REFRESH_MS = 60 * 1000;
+const BACKEND_RECENT_LIMIT = 10;
+
+// Step e imbalances configurados en el backend: se consultan como mucho cada 15 s
+const BACKEND_SETTINGS_TTL_MS = 15 * 1000;
+const DEFAULT_IMBALANCE_SETTINGS = { imbalanceThreshold: 3.0, stackedMinLevels: 3 };
+
+// Seguridad: una vela agregada nunca tiene mas celdas que esto (sube el step en multiplos si hace falta)
+const MAX_CELLS_PER_CANDLE = 600;
+const GRID_EPS = 1e-7;
+
+function decimalsOf(x) {
+  const text = String(x);
+  if (text.includes('e-')) {
+    const [mantissa, exponent] = text.split('e-');
+    return (mantissa.split('.')[1]?.length || 0) + parseInt(exponent, 10);
+  }
+  return text.split('.')[1]?.length || 0;
+}
+
+function roundTo(x, decimals) {
+  return Number(x.toFixed(decimals));
+}
+
+// Step "redondo" (1, 2 o 5 por potencia de 10) para datos sin step conocido
+function niceStep(x) {
+  if (!(x > 0)) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(x)));
+  const m = x / p;
+  return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p;
+}
+
+function groupByInterval(footprints, intervalMs) {
+  const groups = new Map();
+  for (const fp of footprints) {
+    const ts = fp.candle_timestamp;
+    if (typeof ts !== 'number') continue;
+    const start = Math.floor(ts / intervalMs) * intervalMs;
+    let group = groups.get(start);
+    if (!group) {
+      group = [];
+      groups.set(start, group);
+    }
+    group.push(fp);
+  }
+  return groups;
+}
+
+// Une dos listas de footprints de 1 minuto. En los minutos repetidos manda "preferred".
+function mergeByTimestamp(base, preferred) {
+  if (!base || base.length === 0) return preferred ? [...preferred] : [];
+  if (!preferred || preferred.length === 0) return [...base];
+  const map = new Map();
+  for (const fp of base) map.set(fp.candle_timestamp, fp);
+  for (const fp of preferred) map.set(fp.candle_timestamp, fp);
+  return Array.from(map.values()).sort((a, b) => a.candle_timestamp - b.candle_timestamp);
+}
+
+// Misma regla que el backend en 1m (orderflow_service._calculate_imbalances_from_levels):
+// imbalance si max/min >= umbral en el mismo nivel; si un lado es 0 no cuenta;
+// stacked = niveles consecutivos en la misma direccion.
+function computeImbalances(levels, threshold, minConsecutive) {
+  const imbalances = [];
+  const byIndex = new Map();
+  for (let i = 0; i < levels.length; i++) {
+    const bid = levels[i].bid_volume || 0;
+    const ask = levels[i].ask_volume || 0;
+    if (bid + ask <= 0) continue;
+    const minVol = Math.min(bid, ask);
+    const maxVol = Math.max(bid, ask);
+    if (minVol <= 0) continue;
+    const ratio = maxVol / minVol;
+    if (ratio >= threshold) {
+      const imbalance = {
+        level_index: i,
+        type: ask > bid ? 'BUY' : 'SELL',
+        ratio: Math.round(ratio * 100) / 100,
+        price_min: levels[i].price_min,
+        price_max: levels[i].price_max,
+        price_mid: levels[i].price_mid
+      };
+      imbalances.push(imbalance);
+      byIndex.set(i, imbalance);
+    }
+  }
+
+  const stacked = [];
+  let streak = [];
+  let direction = null;
+  const flush = () => {
+    if (streak.length >= minConsecutive) {
+      const first = levels[streak[0]];
+      const last = levels[streak[streak.length - 1]];
+      const low = Math.min(first.price_min, last.price_min);
+      const high = Math.max(first.price_max, last.price_max);
+      const ratios = streak.map(i => byIndex.get(i).ratio);
+      stacked.push({
+        type: 'STACKED_IMBALANCE',
+        direction,
+        levels: streak.slice(),
+        levels_count: streak.length,
+        start_price: low,
+        end_price: high,
+        mid_price: (low + high) / 2,
+        avg_ratio: Math.round((ratios.reduce((a, b) => a + b, 0) / ratios.length) * 100) / 100
+      });
+    }
+  };
+  for (let i = 0; i < levels.length; i++) {
+    const imbalance = byIndex.get(i);
+    if (imbalance) {
+      if (imbalance.type === direction) {
+        streak.push(i);
+      } else {
+        flush();
+        streak = [i];
+        direction = imbalance.type;
+      }
+    } else {
+      flush();
+      streak = [];
+      direction = null;
+    }
+  }
+  flush();
+  return { imbalances, stacked };
+}
+
+// Z-score del volumen contra las 20 velas anteriores, como el backend en 1m
+function applyVolumeZScores(footprints, lookback = 20) {
+  const buffer = [];
+  let sum = 0;
+  let sumSq = 0;
+  for (const fp of footprints) {
+    const volume = fp.total_volume || 0;
+    if (buffer.length >= 2) {
+      const n = buffer.length;
+      const mean = sum / n;
+      const std = Math.sqrt(Math.max(0, sumSq / n - mean * mean));
+      fp.volume_zscore = std > 0 ? Math.round(((volume - mean) / std) * 100) / 100 : 0;
+    } else {
+      fp.volume_zscore = 0;
+    }
+    buffer.push(volume);
+    sum += volume;
+    sumSq += volume * volume;
+    if (buffer.length > lookback) {
+      const old = buffer.shift();
+      sum -= old;
+      sumSq -= old * old;
+    }
+  }
+}
+
 /**
  * OrderFlowIndicator - Professional Footprint Chart Visualization
  *
@@ -145,6 +315,7 @@ class OrderFlowIndicator extends IndicatorBase {
     const oldCount = this.footprints.length;
     this.interval = newInterval;
     this.footprints = [];
+    this._archiveAggCache = null;
     console.log(`[OrderFlow] [${this.symbol}] setInterval: ${oldInterval} -> ${newInterval} (footprints cleared: ${oldCount} -> 0)`);
   }
 
@@ -203,21 +374,184 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   /**
-   * Carga footprints desde el archivo local (fallback cuando backend no tiene datos)
+   * Step objetivo para agregar: el del backend (modal), si no el override local,
+   * si no la moda de los datos. null = cada vela usa el step de sus propios datos.
    */
+  _resolveTargetStep(footprints1min, backendStepSize) {
+    const valid = (s) => typeof s === 'number' && isFinite(s) && s > 0;
+    if (valid(backendStepSize)) return { step: backendStepSize, source: 'backend' };
+    const configStepSize = this.config.stepSizeOverride;
+    if (valid(configStepSize)) return { step: configStepSize, source: 'config' };
+    const counts = new Map();
+    for (const fp of footprints1min) {
+      if (valid(fp.step_size)) counts.set(fp.step_size, (counts.get(fp.step_size) || 0) + 1);
+    }
+    let mode = null;
+    let best = 0;
+    for (const [stepSize, count] of counts) {
+      if (count > best) {
+        best = count;
+        mode = stepSize;
+      }
+    }
+    if (mode != null) return { step: mode, source: 'mode' };
+    return { step: null, source: 'datos' };
+  }
+
+  /**
+   * Agrega footprints de 1 minuto de un mismo intervalo (ej: 5 minutos) en una sola vela.
+   *
+   * Reglas (8 nov 2026):
+   * - Cada nivel de origen va entero a UNA celda: la que contiene su precio medio. Antes se sumaba
+   *   completo en todas las celdas que tocaba: con step 5 sobre datos de step 10 cada celda
+   *   mostraba el doble del volumen real.
+   * - El step de la vela es el mayor entre el objetivo y el de sus datos: no se puede mostrar
+   *   mas fino que lo que se grabo.
+   * - Se aceptan steps chicos (monedas baratas). Antes todo lo menor a 0.01 se cambiaba a 0.1.
+   * - Se recalculan POC, imbalances y stacked con la misma regla que usa el backend en 1m.
+   */
+  _aggregateGroup(groupFootprints, intervalStart, targetInterval, targetStep, settings) {
+    if (!groupFootprints || groupFootprints.length === 0) return null;
+    const fps = groupFootprints.length > 1
+      ? [...groupFootprints].sort((a, b) => a.candle_timestamp - b.candle_timestamp)
+      : groupFootprints;
+
+    let high = -Infinity;
+    let low = Infinity;
+    let sourceStep = 0;
+    let totalVolume = 0;
+    let totalDelta = 0;
+    const entries = [];
+
+    for (const fp of fps) {
+      const h = fp.candle_high ?? fp.high;
+      const l = fp.candle_low ?? fp.low;
+      if (typeof h === 'number' && isFinite(h) && h > high) high = h;
+      if (typeof l === 'number' && isFinite(l) && l < low) low = l;
+      if (typeof fp.step_size === 'number' && fp.step_size > sourceStep) sourceStep = fp.step_size;
+      totalVolume += fp.total_volume || 0;
+      totalDelta += fp.total_delta ?? fp.delta ?? 0;
+
+      const levels = fp.levels || fp.price_levels || [];
+      for (const level of levels) {
+        const mid = level.price_mid ?? level.price ?? ((level.price_min + level.price_max) / 2);
+        if (typeof mid !== 'number' || !isFinite(mid)) continue;
+        const bid = level.bid_volume || 0;
+        const ask = level.ask_volume || 0;
+        entries.push({
+          mid,
+          bid,
+          ask,
+          total: level.total_volume ?? (bid + ask),
+          delta: level.delta ?? (ask - bid),
+          trades: level.trade_count || 0
+        });
+      }
+    }
+
+    // Rango a cubrir: extremos de la vela y precios medios de los niveles
+    let rangeLow = low;
+    let rangeHigh = high;
+    for (const entry of entries) {
+      if (entry.mid < rangeLow) rangeLow = entry.mid;
+      if (entry.mid > rangeHigh) rangeHigh = entry.mid;
+    }
+    if (!isFinite(rangeLow) || !isFinite(rangeHigh)) return null;
+
+    let step = Math.max(targetStep || 0, sourceStep || 0);
+    if (!(step > 0)) step = rangeHigh > rangeLow ? niceStep((rangeHigh - rangeLow) / 20) : 1;
+
+    let idxLow = Math.floor(rangeLow / step + GRID_EPS);
+    let idxHigh = Math.floor(rangeHigh / step + GRID_EPS);
+    const cellCount = idxHigh - idxLow + 1;
+    if (cellCount > MAX_CELLS_PER_CANDLE) {
+      step = step * Math.ceil(cellCount / MAX_CELLS_PER_CANDLE);
+      idxLow = Math.floor(rangeLow / step + GRID_EPS);
+      idxHigh = Math.floor(rangeHigh / step + GRID_EPS);
+    }
+
+    // Celdas por indice entero (sin claves de punto flotante), de mayor a menor precio
+    const decimals = Math.min(12, decimalsOf(step) + 2);
+    const cells = new Map();
+    for (let i = idxHigh; i >= idxLow; i--) {
+      const priceMin = roundTo(i * step, decimals);
+      const priceMax = roundTo((i + 1) * step, decimals);
+      const priceMid = roundTo((i + 0.5) * step, decimals);
+      cells.set(i, {
+        price: priceMid,
+        price_min: priceMin,
+        price_max: priceMax,
+        price_mid: priceMid,
+        bid_volume: 0,
+        ask_volume: 0,
+        total_volume: 0,
+        delta: 0,
+        trade_count: 0
+      });
+    }
+    for (const entry of entries) {
+      const cell = cells.get(Math.floor(entry.mid / step + GRID_EPS));
+      if (!cell) continue;
+      cell.bid_volume += entry.bid;
+      cell.ask_volume += entry.ask;
+      cell.total_volume += entry.total;
+      cell.delta += entry.delta;
+      cell.trade_count += entry.trades;
+    }
+
+    const levels = Array.from(cells.values());
+    let pocIndex = -1;
+    let maxVolume = 0;
+    for (let i = 0; i < levels.length; i++) {
+      if (levels[i].total_volume > maxVolume) {
+        maxVolume = levels[i].total_volume;
+        pocIndex = i;
+      }
+    }
+    const poc = pocIndex >= 0 ? levels[pocIndex].price : null;
+    const thresholds = settings || DEFAULT_IMBALANCE_SETTINGS;
+    const { imbalances, stacked } = computeImbalances(
+      levels, thresholds.imbalanceThreshold, thresholds.stackedMinLevels
+    );
+
+    const first = fps[0];
+    const last = fps[fps.length - 1];
+    return {
+      candle_timestamp: intervalStart,
+      symbol: this.symbol,
+      interval: targetInterval,
+      candle_open: first.candle_open ?? first.open,
+      candle_high: Math.max(isFinite(high) ? high : -Infinity, levels[0].price_max),
+      candle_low: Math.min(isFinite(low) ? low : Infinity, levels[levels.length - 1].price_min),
+      candle_close: last.candle_close ?? last.close,
+      step_size: step,
+      levels,
+      num_levels: levels.length,
+      total_volume: totalVolume,
+      total_delta: totalDelta,
+      delta: totalDelta,
+      poc,
+      poc_price: poc,
+      poc_index: pocIndex,
+      imbalances,
+      stacked_imbalances: stacked,
+      source_minutes: fps.length
+    };
+  }
+
   /**
    * Agrega footprints de 1 minuto a intervalos mayores (5min, 15min, 1h, etc.)
    *
-   * IMPORTANTE: Maneja dos formatos de footprints:
-   * - Formato archivo: candle_open/high/low/close, levels[] con price_mid
-   * - Formato backend: open/high/low/close, price_levels[] con price
+   * Maneja los dos formatos (archivo de la nube y backend): candle_open/high/low/close o
+   * open/high/low/close, y levels[] o price_levels[].
    *
    * @param {Array} footprints1min - Footprints de 1 minuto
    * @param {string} targetInterval - Intervalo objetivo ("5", "15", "60", etc.)
-   * @param {number} backendStepSize - Step size configurado en el backend (opcional, priority 1)
-   * @returns {Array} - Footprints agregados
+   * @param {number} backendStepSize - Step size configurado en el backend (opcional, prioridad 1)
+   * @param {Object} settings - { imbalanceThreshold, stackedMinLevels } (opcional)
+   * @returns {Array} - Footprints agregados, ordenados por tiempo
    */
-  async _aggregateFootprints(footprints1min, targetInterval, backendStepSize = null) {
+  async _aggregateFootprints(footprints1min, targetInterval, backendStepSize = null, settings = null) {
     if (targetInterval === "1") {
       return footprints1min; // No agregar si ya es 1min
     }
@@ -228,218 +562,106 @@ class OrderFlowIndicator extends IndicatorBase {
       return [];
     }
 
-    // Log solo en primera agregación
-    if (!this._loggedAggregation) {
-      this._loggedAggregation = true;
-      console.log(`[OrderFlow] [${this.symbol}] Agregando ${footprints1min.length} fps de 1min a ${intervalMinutes}min`);
-    }
-
-    // ✅ FASE 1 FIX FINAL: Sistema de Prioridades COMPLETO
-    // Priority 1: Backend step_size (configurado vía modal/API)
-    // Priority 2: Config override (stepSizeOverride en localStorage)
-    // Priority 3: Mode de footprints A AGREGAR (valor más frecuente en datos)
-    // Priority 4: Default fallback
-
-    const allStepSizes = footprints1min.map(fp => fp.step_size).filter(s => s != null && s > 0);
-
-    // Calcular MODA (step_size más frecuente) de los footprints QUE SE ESTÁN AGREGANDO
-    const stepSizeDistribution = {};
-    allStepSizes.forEach(s => {
-      stepSizeDistribution[s] = (stepSizeDistribution[s] || 0) + 1;
-    });
-
-    let modeStepSize = 0.1; // default absoluto
-    let maxCount = 0;
-    for (const [stepSize, count] of Object.entries(stepSizeDistribution)) {
-      if (count > maxCount) {
-        maxCount = count;
-        modeStepSize = parseFloat(stepSize);
-      }
-    }
-
-    // Override de configuración del usuario (localStorage)
-    const configStepSize = this.config.stepSizeOverride;
-
-    // SISTEMA DE PRIORIDADES COMPLETO
-    let globalStepSize;
-    let source;
-
-    if (backendStepSize != null && backendStepSize > 0) {
-      // Priority 1: Backend step_size (configurado vía modal)
-      globalStepSize = backendStepSize;
-      source = 'backend';
-    } else if (configStepSize != null && configStepSize > 0) {
-      // Priority 2: Config override
-      globalStepSize = configStepSize;
-      source = 'config';
-    } else if (allStepSizes.length > 0) {
-      // Priority 3: MODA de los footprints que se están agregando
-      globalStepSize = modeStepSize;
-      source = 'mode';
-    } else {
-      // Priority 4: Default fallback
-      globalStepSize = 0.1;
-      source = 'default';
-    }
-
-    // VALIDACIÓN: step_size debe estar en rango [0.01, 100]
-    if (globalStepSize < 0.01 || globalStepSize > 100) {
-      console.warn(`[OrderFlow] [${this.symbol}] ⚠️ step_size inválido: ${globalStepSize} (fuente: ${source})`);
-      console.warn(`[OrderFlow] [${this.symbol}] ⚠️ Usando fallback a default: 0.1`);
-      globalStepSize = 0.1;
-      source = 'default (fallback)';
-    }
-
-    // Log step_size solo en primera agregación
+    const { step: targetStep, source } = this._resolveTargetStep(footprints1min, backendStepSize);
     if (!this._loggedStepSize) {
       this._loggedStepSize = true;
-      console.log(`[OrderFlow] [${this.symbol}] STEP_SIZE: ${globalStepSize} (fuente: ${source})`);
+      console.log(`[OrderFlow] [${this.symbol}] STEP_SIZE objetivo: ${targetStep ?? 'el de los datos'} (fuente: ${source})`);
     }
 
-    // Agrupar por intervalo
-    const groups = new Map();
-
-    for (const fp of footprints1min) {
-      // Redondear timestamp al inicio del intervalo
-      const timestamp = fp.candle_timestamp;
-      const intervalStart = Math.floor(timestamp / (intervalMinutes * 60 * 1000)) * (intervalMinutes * 60 * 1000);
-
-      if (!groups.has(intervalStart)) {
-        groups.set(intervalStart, []);
-      }
-      groups.get(intervalStart).push(fp);
-    }
-
-    // Agregar cada grupo
+    const groups = groupByInterval(footprints1min, intervalMinutes * 60 * 1000);
     const aggregated = [];
-
     for (const [intervalStart, groupFootprints] of groups) {
-      if (groupFootprints.length === 0) continue;
+      const footprint = this._aggregateGroup(groupFootprints, intervalStart, targetInterval, targetStep, settings);
+      if (footprint) aggregated.push(footprint);
+    }
+    aggregated.sort((a, b) => a.candle_timestamp - b.candle_timestamp);
+    applyVolumeZScores(aggregated);
+    return aggregated;
+  }
 
-      // ✅ ESTRATEGIA CORREGIDA: Regenerar levels con step_size uniforme
-      // PROBLEMA ANTERIOR: Combinar levels expandiendo rangos causaba alturas inconsistentes
-      // SOLUCIÓN: Dividir el rango OHLC en steps uniformes y redistribuir volúmenes
+  /**
+   * Agrega archivo + backend reutilizando las velas que solo dependen del archivo:
+   * esas se agregan una vez por version del archivo y las que tocan minutos del backend se rehacen
+   * en cada sondeo con la union por minuto (el backend manda en los minutos que tiene).
+   */
+  _aggregateWithCache(archived1m, backend1m, settings) {
+    const intervalMinutes = parseInt(this.interval);
+    const intervalMs = intervalMinutes * 60 * 1000;
+    const reference = archived1m.length > 0 ? archived1m : backend1m;
+    const { step: targetStep, source } = this._resolveTargetStep(reference, settings.stepSize);
 
-      // 1. Calcular OHLC del intervalo agregado PRIMERO
-      const candle_open = groupFootprints[0].candle_open || groupFootprints[0].open;
-      const candle_close = groupFootprints[groupFootprints.length - 1].candle_close || groupFootprints[groupFootprints.length - 1].close;
-      const candle_high = Math.max(...groupFootprints.map(fp => fp.candle_high || fp.high));
-      const candle_low = Math.min(...groupFootprints.map(fp => fp.candle_low || fp.low));
-
-      // 2. ✅ USAR step_size GLOBAL (calculado una sola vez al inicio)
-      // NO calcular step_size por grupo - esto causaba alturas inconsistentes
-      const step_size = globalStepSize;
-
-      // 3. Generar price levels UNIFORMES desde low hasta high
-      const uniformLevels = new Map(); // price_min -> level
-
-      // Redondear low hacia abajo al múltiplo más cercano de step_size
-      let currentPriceMin = Math.floor(candle_low / step_size) * step_size;
-
-      while (currentPriceMin <= candle_high) {
-        const currentPriceMax = currentPriceMin + step_size;
-        const currentPriceMid = (currentPriceMin + currentPriceMax) / 2;
-
-        uniformLevels.set(currentPriceMin, {
-          price: currentPriceMid,
-          price_min: currentPriceMin,
-          price_max: currentPriceMax,
-          price_mid: currentPriceMid,
-          bid_volume: 0,
-          ask_volume: 0,
-          total_volume: 0,
-          delta: 0
-        });
-
-        currentPriceMin = parseFloat((currentPriceMin + step_size).toFixed(8)); // Evitar errores de punto flotante
+    const cacheKey = [this._archiveVersion || 'none', this.interval, targetStep,
+      settings.imbalanceThreshold, settings.stackedMinLevels].join('|');
+    if (!this._archiveAggCache || this._archiveAggCache.key !== cacheKey) {
+      const minutes = groupByInterval(archived1m, intervalMs);
+      const groups = new Map();
+      for (const [intervalStart, groupFootprints] of minutes) {
+        const footprint = this._aggregateGroup(groupFootprints, intervalStart, this.interval, targetStep, settings);
+        if (footprint) groups.set(intervalStart, footprint);
       }
-
-      // 4. Distribuir volúmenes de footprints originales en levels uniformes
-      for (const fp of groupFootprints) {
-        const originalLevels = fp.levels || fp.price_levels || [];
-
-        for (const origLevel of originalLevels) {
-          const origPriceMid = origLevel.price_mid || origLevel.price;
-          const origPriceMin = origLevel.price_min || origPriceMid;
-          const origPriceMax = origLevel.price_max || origPriceMid;
-
-          // Encontrar levels uniformes que intersectan con este level original
-          for (const [uniformMin, uniformLevel] of uniformLevels) {
-            const uniformMax = uniformLevel.price_max;
-
-            // Verificar intersección: los rangos se solapan si NO están completamente separados
-            const intersects = !(origPriceMax <= uniformMin || origPriceMin >= uniformMax);
-
-            if (intersects) {
-              // Sumar volúmenes (distribución simple: si hay intersección, suma completo)
-              uniformLevel.bid_volume += origLevel.bid_volume || 0;
-              uniformLevel.ask_volume += origLevel.ask_volume || 0;
-              uniformLevel.total_volume += origLevel.total_volume || 0;
-              uniformLevel.delta += origLevel.delta || 0;
-            }
-          }
-        }
+      this._archiveAggCache = { key: cacheKey, minutes, groups };
+      if (!this._loggedStepSize || this._lastStepLogKey !== cacheKey) {
+        this._loggedStepSize = true;
+        this._lastStepLogKey = cacheKey;
+        console.log(`[OrderFlow] [${this.symbol}] Agregación ${this.interval}m: step objetivo ${targetStep ?? 'el de los datos'} (fuente: ${source}), ${groups.size} velas del archivo`);
       }
-
-      // 5. Convertir a array y ordenar descendente (NO FILTRAR - mantener levels vacíos)
-      // Los levels vacíos son necesarios para que el footprint cubra toda la altura de la vela
-      const levels = Array.from(uniformLevels.values())
-        .sort((a, b) => b.price - a.price);
-
-      // Sumar volúmenes totales
-      const total_volume = groupFootprints.reduce((sum, fp) => sum + (fp.total_volume || 0), 0);
-
-      // Calcular delta total sumando deltas individuales de los footprints
-      const total_delta = groupFootprints.reduce((sum, fp) => sum + (fp.total_delta || fp.delta || 0), 0);
-
-      // Calcular POC (Point of Control) - nivel con mayor volumen Y su índice
-      let poc = null;
-      let poc_index = -1;
-      let max_volume = 0;
-      for (let i = 0; i < levels.length; i++) {
-        const level = levels[i];
-        if (level.total_volume > max_volume) {
-          max_volume = level.total_volume;
-          poc = level.price;
-          poc_index = i;  // ✅ Guardar el índice del POC
-        }
-      }
-
-      // ✅ SINCRONIZAR: Asegurar que el rango OHLC de la vela cubra TODOS los levels agregados
-      // Calcular el rango real de los levels
-      const levelsHigh = Math.max(...levels.map(l => l.price_max));
-      const levelsLow = Math.min(...levels.map(l => l.price_min));
-
-      // Extender candle_high/low si los levels van más allá
-      const synchronized_high = Math.max(candle_high, levelsHigh);
-      const synchronized_low = Math.min(candle_low, levelsLow);
-
-      // ✅ NORMALIZAR AL FORMATO DEL BACKEND (con campo "levels" en lugar de "price_levels")
-      const aggregatedFootprint = {
-        candle_timestamp: intervalStart,
-        symbol: this.symbol,
-        interval: targetInterval,
-        candle_open,
-        candle_high: synchronized_high,  // ✅ Usar valores sincronizados
-        candle_low: synchronized_low,    // ✅ Usar valores sincronizados
-        candle_close,
-        step_size: step_size,  // ✅ Usar step_size real (no hardcoded)
-        levels,  // ✅ Campo "levels" con rangos UNIFORMES (no "price_levels")
-        num_levels: levels.length,
-        total_volume,
-        total_delta,
-        delta: total_delta,
-        poc,
-        poc_index  // ✅ Agregar poc_index para renderizado completo
-      };
-
-      aggregated.push(aggregatedFootprint);
     }
 
-    // Ordenar por timestamp
-    aggregated.sort((a, b) => a.candle_timestamp - b.candle_timestamp);
+    const result = new Map(this._archiveAggCache.groups);
+    const backendGroups = groupByInterval(backend1m, intervalMs);
+    for (const [intervalStart, backendMinutes] of backendGroups) {
+      const archiveMinutes = this._archiveAggCache.minutes.get(intervalStart) || [];
+      const merged = mergeByTimestamp(archiveMinutes, backendMinutes);
+      const footprint = this._aggregateGroup(merged, intervalStart, this.interval, targetStep, settings);
+      if (footprint) result.set(intervalStart, footprint);
+    }
 
+    const aggregated = Array.from(result.values()).sort((a, b) => a.candle_timestamp - b.candle_timestamp);
+    applyVolumeZScores(aggregated);
     return aggregated;
+  }
+
+  /**
+   * Step e imbalances configurados en el backend (modal de Order Flow), con cache de 15 s.
+   * Si el backend no responde se conservan los ultimos valores conocidos.
+   */
+  async _getBackendSettings(force = false) {
+    const now = Date.now();
+    if (!force && this._backendSettings && now - (this._backendSettingsAt || 0) < BACKEND_SETTINGS_TTL_MS) {
+      return this._backendSettings;
+    }
+    const settings = {
+      stepSize: this._backendSettings?.stepSize ?? null,
+      imbalanceThreshold: this._backendSettings?.imbalanceThreshold ?? DEFAULT_IMBALANCE_SETTINGS.imbalanceThreshold,
+      stackedMinLevels: this._backendSettings?.stackedMinLevels ?? DEFAULT_IMBALANCE_SETTINGS.stackedMinLevels
+    };
+    try {
+      const [stepResponse, configResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/orderflow/step-size/${this.symbol}`),
+        fetch(`${API_BASE_URL}/api/orderflow/config`)
+      ]);
+      if (stepResponse.ok) {
+        const data = await stepResponse.json();
+        if (data.success && data.step_size > 0) settings.stepSize = data.step_size;
+      }
+      if (configResponse.ok) {
+        const data = await configResponse.json();
+        if (data.imbalance_threshold > 0) settings.imbalanceThreshold = data.imbalance_threshold;
+        if (data.stacked_min_levels > 0) settings.stackedMinLevels = data.stacked_min_levels;
+      }
+    } catch (error) {
+      console.warn(`[OrderFlow] [${this.symbol}] ⚠️ No se pudo consultar la config del backend: ${error.message}`);
+    }
+    this._backendSettings = settings;
+    this._backendSettingsAt = now;
+    return settings;
+  }
+
+  /** Olvida la config cacheada del backend (al guardar un step nuevo en el modal). */
+  invalidateBackendSettings() {
+    this._backendSettings = null;
+    this._backendSettingsAt = 0;
+    this._archiveAggCache = null;
   }
 
   /**
@@ -447,70 +669,73 @@ class OrderFlowIndicator extends IndicatorBase {
    * @returns {Promise<number|null>} - Step size o null si falla
    */
   async _fetchBackendStepSize() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/orderflow/step-size/${this.symbol}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.step_size != null) {
-          console.log(`[OrderFlow] [${this.symbol}] ✅ Backend step_size consultado: ${data.step_size}`);
-          return data.step_size;
-        }
-      }
-    } catch (error) {
-      console.warn(`[OrderFlow] [${this.symbol}] ⚠️ No se pudo consultar step_size del backend: ${error.message}`);
-    }
-    return null;
+    const settings = await this._getBackendSettings();
+    return settings.stepSize;
   }
 
+  /**
+   * Footprints de 1 minuto del archivo local (solo Electron).
+   * Se vuelve a leer del disco solo si el archivo cambio (tamaño o fecha); la agregación se hace
+   * después de unirlo con el backend.
+   */
   async _loadFromArchive() {
     try {
-      if (!window.electron || !window.electron.getUserDataPath || !window.electron.readFile || !window.electron.fileExists) {
+      const api = window.electron;
+      if (!api || !api.getUserDataPath || !api.readFile || !api.fileExists) {
+        this._archiveVersion = 'none';
         return [];
       }
 
-      const userDataPath = await window.electron.getUserDataPath();
+      const userDataPath = await api.getUserDataPath();
       const archivePath = `${userDataPath}/footprint_archive/${this.symbol}_1.json`;
-      const exists = await window.electron.fileExists(archivePath);
 
-      if (!exists) {
+      let info = null;
+      if (api.getFileInfo) {
+        info = await api.getFileInfo(archivePath);
+        if (!info || !info.exists) {
+          this._archiveVersion = 'none';
+          return [];
+        }
+      } else if (!(await api.fileExists(archivePath))) {
+        this._archiveVersion = 'none';
         return [];
       }
 
-      const content = await window.electron.readFile(archivePath);
-
-      const data = JSON.parse(content);
-      const footprints1min = data.footprints || [];
-
-      if (footprints1min.length > 0 && !this._loggedArchiveLoad) {
-        this._loggedArchiveLoad = true;
+      const cached = archiveCache.get(this.symbol);
+      let footprints1min;
+      if (info && cached && cached.path === archivePath && cached.size === info.size && cached.mtimeMs === info.mtimeMs) {
+        footprints1min = cached.footprints;
+      } else {
+        const content = await api.readFile(archivePath);
+        const data = JSON.parse(content);
+        footprints1min = Array.isArray(data.footprints) ? data.footprints : [];
+        for (let i = 1; i < footprints1min.length; i++) {
+          if (footprints1min[i].candle_timestamp < footprints1min[i - 1].candle_timestamp) {
+            footprints1min.sort((a, b) => a.candle_timestamp - b.candle_timestamp);
+            break;
+          }
+        }
+        if (info) {
+          archiveCache.delete(this.symbol);
+          archiveCache.set(this.symbol, { path: archivePath, size: info.size, mtimeMs: info.mtimeMs, footprints: footprints1min });
+          while (archiveCache.size > ARCHIVE_CACHE_MAX) {
+            archiveCache.delete(archiveCache.keys().next().value);
+          }
+        }
         console.log(`[OrderFlow] [${this.symbol}] Archivo: ${footprints1min.length} fps de 1min`);
       }
 
-      // ✅ AUTO-CHECK: Verificar si el archivo está desactualizado y descargar automáticamente
-      if (footprints1min.length > 0) {
-        const lastFp = footprints1min[footprints1min.length - 1];
-        const lastTimestamp = lastFp.candle_timestamp;
-        const now = Date.now();
-        const ageHours = (now - lastTimestamp) / (1000 * 60 * 60);
+      const lastTs = footprints1min.length > 0 ? footprints1min[footprints1min.length - 1].candle_timestamp : 0;
+      this._archiveVersion = info ? `${info.size}:${info.mtimeMs}` : `${footprints1min.length}:${lastTs}`;
 
-        // Si el archivo tiene más de 12 horas de antigüedad, descargar automáticamente
+      // Archivo con más de 12 h de antigüedad: pedir a la nube lo que falta (con candado y espera)
+      if (footprints1min.length > 0) {
+        const ageHours = (Date.now() - lastTs) / (1000 * 60 * 60);
         if (ageHours > 12) {
-          console.log(`[OrderFlow] [${this.symbol}] Archivo desactualizado (${ageHours.toFixed(0)}h), descargando...`);
-          // Descargar en background (no esperar)
-          this._autoDownloadArchive().catch(err => {
-            console.error(`[OrderFlow] [${this.symbol}] ❌ Auto-descarga falló: ${err.message}`);
-          });
+          this._maybeAutoDownload(ageHours);
         }
       }
 
-      // Si el intervalo no es 1min, agregar los footprints
-      if (this.interval !== "1") {
-        const backendStepSize = await this._fetchBackendStepSize();
-        const aggregated = await this._aggregateFootprints(footprints1min, this.interval, backendStepSize);
-        return aggregated;
-      }
-
-      // Para interval="1", retornar footprints del archivo
       return footprints1min;
 
     } catch (error) {
@@ -520,24 +745,94 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   /**
-   * Descarga automática de footprints actualizados cuando el archivo está desactualizado
+   * Lanza la auto-descarga solo si no hay otra en curso para la moneda y pasaron 15 min
+   * desde el último intento. Descarga las horas que faltan (mínimo 48, máximo 168).
+   */
+  _maybeAutoDownload(ageHours) {
+    const state = autoDownloadState.get(this.symbol) || { inFlight: false, lastAttempt: 0 };
+    if (state.inFlight || Date.now() - state.lastAttempt < AUTO_DOWNLOAD_RETRY_MS) return;
+    state.inFlight = true;
+    state.lastAttempt = Date.now();
+    autoDownloadState.set(this.symbol, state);
+
+    const hours = Math.min(168, Math.max(48, Math.ceil(ageHours) + 2));
+    console.log(`[OrderFlow] [${this.symbol}] Archivo desactualizado (${ageHours.toFixed(0)}h): descargando ${hours}h de la nube...`);
+    this._autoDownloadArchive(hours).finally(() => {
+      state.inFlight = false;
+    });
+  }
+
+  /**
+   * Descarga automática de footprints actualizados cuando el archivo está desactualizado.
+   * No vuelve a leer el archivo: el siguiente sondeo lo hace si cambió en disco.
    * @returns {Promise<void>}
    */
-  async _autoDownloadArchive() {
+  async _autoDownloadArchive(hours = 48) {
     try {
       const archiver = getFootprintArchiver();
       if (!archiver) return;
 
-      const result = await archiver.archiveSymbol(this.symbol, 48);
+      const result = await archiver.archiveSymbol(this.symbol, hours);
 
       if (result.success) {
         console.log(`[OrderFlow] [${this.symbol}] Auto-descarga: +${result.added || 0} fps`);
-        await this._loadFromArchive();
       } else {
-        throw new Error(result.error || 'Descarga falló');
+        console.warn(`[OrderFlow] [${this.symbol}] Auto-descarga sin cambios: ${result.error || 'sin datos'} (nuevo intento en 15 min)`);
       }
     } catch (error) {
       console.error(`[OrderFlow] [${this.symbol}] Auto-descarga falló: ${error.message}`);
+    }
+  }
+
+  /**
+   * Footprints de 1 minuto del backend. Pide la ventana completa cada 60 s y, entre medio,
+   * solo los últimos minutos, que se unen a lo ya recibido.
+   * @returns {Promise<{footprints: Array, failed: boolean}>}
+   */
+  async _fetchBackendFootprints() {
+    const hours = this.config.historyHours || 12;
+    const now = Date.now();
+    const cache = this._backendCache;
+    const needFull = !cache || cache.hours !== hours || now - cache.fetchedAt > BACKEND_FULL_REFRESH_MS;
+    const url = needFull
+      ? `${API_BASE_URL}/api/orderflow/footprint/${this.symbol}?interval=1&limit=2000&hours=${hours}`
+      : `${API_BASE_URL}/api/orderflow/footprint/${this.symbol}?interval=1&limit=${BACKEND_RECENT_LIMIT}`;
+
+    // Timeout de 120 segundos para el fetch
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      this._retryCount = 0; // Reset retry count on success
+
+      if (!response.ok) {
+        console.error(`[OrderFlow] [${this.symbol}] Backend HTTP error ${response.status}`);
+        return { footprints: cache ? cache.footprints : [], failed: true };
+      }
+      const data = await response.json();
+      if (!data.success || !Array.isArray(data.footprints)) {
+        console.warn(`[OrderFlow] [${this.symbol}] Backend retornó success=false`);
+        return { footprints: cache ? cache.footprints : [], failed: true };
+      }
+
+      let footprints;
+      if (needFull) {
+        footprints = [...data.footprints].sort((a, b) => a.candle_timestamp - b.candle_timestamp);
+        this._backendCache = { hours, fetchedAt: now, footprints };
+      } else {
+        const cutoff = now - hours * 3600 * 1000;
+        footprints = mergeByTimestamp(cache.footprints, data.footprints)
+          .filter(fp => fp.candle_timestamp >= cutoff);
+        cache.footprints = footprints;
+      }
+      return { footprints, failed: false };
+
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      console.warn(`[OrderFlow] [${this.symbol}] Backend error: ${fetchError.message}`);
+      return { footprints: cache ? cache.footprints : [], failed: true };
     }
   }
 
@@ -552,79 +847,30 @@ class OrderFlowIndicator extends IndicatorBase {
       const supportedIntervals = ["1", "5"];
 
       if (!supportedIntervals.includes(this.interval)) {
-        console.log(`[OrderFlow] [${this.symbol}] fetchFootprints: interval ${this.interval} not supported (only 1, 5)`);
+        if (!this._loggedUnsupportedInterval) {
+          this._loggedUnsupportedInterval = true;
+          console.log(`[OrderFlow] [${this.symbol}] fetchFootprints: interval ${this.interval} not supported (only 1, 5)`);
+        }
         this.footprints = [];
         return false;
       }
 
-      // PASO 1: Cargar desde archivo local
-      let archivedFootprints = [];
+      // PASO 1: archivo local de 1 minuto (se relee solo si cambió en disco)
+      let archived1m = [];
       try {
-        archivedFootprints = await this._loadFromArchive();
+        archived1m = await this._loadFromArchive();
       } catch (archiveError) {
         // Silenciar - no es crítico
       }
 
-      // =====================================================================
-      // PASO 2: Intentar obtener datos del backend
-      // =====================================================================
-      const hours = this.config.historyHours || 12;
+      // PASO 2: backend, siempre en 1 minuto
+      const { footprints: backend1m, failed: backendFailed } = await this._fetchBackendFootprints();
 
-      // ✅ FIX CRÍTICO: SIEMPRE pedir interval="1" al backend
-      // Si el usuario está en 5min/15min/1h/4h, agregamos LOCALMENTE desde footprints de 1min
-      // Esto asegura que todos los footprints usen el mismo step_size configurado
-      const backendInterval = "1";  // SIEMPRE pedir 1 minuto
-      const url = `${API_BASE_URL}/api/orderflow/footprint/${this.symbol}?interval=${backendInterval}&limit=2000&hours=${hours}`;
+      if (this._destroyed) return false;
 
-      // Timeout de 120 segundos para el fetch (cloud service puede tardar)
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000);
-
-      let backendFootprints = [];
-      let backendFailed = false;
-
-      try {
-        const response = await fetch(url, { signal: controller.signal });
-        clearTimeout(timeoutId);
-        this._retryCount = 0; // Reset retry count on success
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.footprints) {
-            backendFootprints = data.footprints;
-          } else {
-            console.warn(`[OrderFlow] [${this.symbol}] Backend retornó success=false`);
-            backendFailed = true;
-          }
-        } else {
-          console.error(`[OrderFlow] [${this.symbol}] Backend HTTP error ${response.status}`);
-          backendFailed = true;
-        }
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-        backendFailed = true;
-        console.warn(`[OrderFlow] [${this.symbol}] Backend error: ${fetchError.message}`);
-      }
-
-      // =====================================================================
-      // PASO 2.5: Si interval != 1min, agregar footprints del backend de 1min al interval target
-      // ANTES del merge, para que ambas fuentes estén en el mismo intervalo
-      // =====================================================================
-      let backendAggregated = backendFootprints;
-
-      if (this.interval !== "1" && backendFootprints.length > 0) {
-        const backendStepSize = await this._fetchBackendStepSize();
-        backendAggregated = await this._aggregateFootprints(backendFootprints, this.interval, backendStepSize);
-      }
-
-      // =====================================================================
-      // PASO 3: Merge inteligente de archivo + backend
-      // Ambos están ahora en el MISMO intervalo (ej: 5min)
-      // =====================================================================
       const oldCount = this.footprints.length;
-      let finalFootprints = [];
 
-      if (archivedFootprints.length === 0 && backendAggregated.length === 0) {
+      if (archived1m.length === 0 && backend1m.length === 0) {
         // No hay datos de ninguna fuente
         console.warn(`[OrderFlow] [${this.symbol}] ❌ No hay footprints disponibles (ni archivo ni backend)`);
 
@@ -647,53 +893,18 @@ class OrderFlowIndicator extends IndicatorBase {
 
         this.footprints = [];
         return false;
+      }
 
-      } else if (archivedFootprints.length > 0 && backendAggregated.length === 0) {
-        // Solo archivo disponible
-        finalFootprints = archivedFootprints;
-        console.log(`[OrderFlow] [${this.symbol}] ✅ Usando solo archivo local (${finalFootprints.length} footprints)`);
-
-      } else if (archivedFootprints.length === 0 && backendAggregated.length > 0) {
-        // Solo backend disponible
-        finalFootprints = backendAggregated;
-        console.log(`[OrderFlow] [${this.symbol}] ✅ Usando solo backend (${finalFootprints.length} footprints)`);
-
+      // PASO 3: unir en 1 minuto y agregar. El backend manda en los minutos que tiene.
+      // Antes se agregaba cada fuente por separado y la vela de 5 min del borde entre
+      // archivo y backend podía quedar con solo una parte de sus minutos.
+      let finalFootprints;
+      if (this.interval === "1") {
+        finalFootprints = mergeByTimestamp(archived1m, backend1m);
       } else {
-        // Ambas fuentes disponibles - MERGE INTELIGENTE
-        // Ambos son del MISMO intervalo (ej: ambos 5min)
-
-        // 1. Usar TODO el archivo como base
-        const mergedMap = new Map();
-        for (const fp of archivedFootprints) {
-          mergedMap.set(fp.candle_timestamp, fp);
-        }
-
-        // 2. Agregar footprints del backend (ya agregados al mismo intervalo)
-        const archiveNewestTs = archivedFootprints.length > 0
-          ? archivedFootprints[archivedFootprints.length - 1].candle_timestamp
-          : 0;
-
-        const updateThresholdTs = archiveNewestTs - (30 * 5 * 60 * 1000); // últimos 2.5h del archivo
-
-        let backendUpdated = 0;
-        let backendAdded = 0;
-        let backendIgnored = 0;
-
-        for (const fp of backendAggregated) {
-          if (fp.candle_timestamp > archiveNewestTs) {
-            mergedMap.set(fp.candle_timestamp, fp);
-            backendAdded++;
-          } else if (fp.candle_timestamp >= updateThresholdTs) {
-            mergedMap.set(fp.candle_timestamp, fp);
-            backendUpdated++;
-          } else {
-            backendIgnored++;
-          }
-        }
-
-        // 3. Convertir a array y ordenar
-        finalFootprints = Array.from(mergedMap.values()).sort((a, b) => a.candle_timestamp - b.candle_timestamp);
-
+        const settings = await this._getBackendSettings();
+        if (this._destroyed) return false;
+        finalFootprints = this._aggregateWithCache(archived1m, backend1m, settings);
       }
 
       this.footprints = finalFootprints;
@@ -705,7 +916,7 @@ class OrderFlowIndicator extends IndicatorBase {
       const significantChange = Math.abs(newCount - oldCount) > 10;
 
       if (isFirstLoad) {
-        console.log(`[OrderFlow] [${this.symbol}] INITIAL LOAD: ${newCount} footprints`);
+        console.log(`[OrderFlow] [${this.symbol}] INITIAL LOAD: ${newCount} footprints (archivo ${archived1m.length}, backend ${backend1m.length} de 1min)`);
       } else if (hasNewFootprints) {
         console.log(`[OrderFlow] [${this.symbol}] +${newCount - oldCount} footprints (total: ${newCount})`);
       } else if (significantChange) {
@@ -713,7 +924,6 @@ class OrderFlowIndicator extends IndicatorBase {
       } else if (newCount === 0 && oldCount > 0) {
         console.warn(`[OrderFlow] [${this.symbol}] footprints LOST: ${oldCount} -> 0`);
       }
-      // Si no hay cambios, no loguear nada
 
       return true;
     } catch (error) {
@@ -813,20 +1023,46 @@ class OrderFlowIndicator extends IndicatorBase {
       return footprintMap.get(candleTimestamp);
     }
 
-    // Si no hay match exacto, buscar dentro de la tolerancia
-    // Usar el footprint mas cercano en tiempo
+    // Si no hay match exacto, el más cercano dentro de la tolerancia.
+    // Búsqueda binaria sobre los timestamps ordenados: antes se recorrían todos los footprints
+    // por cada vela sin footprint, en cada cuadro.
+    const timestamps = footprintMap.sortedTimestamps;
+    if (!timestamps || timestamps.length === 0) return null;
+    let lo = 0;
+    let hi = timestamps.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (timestamps[mid] < candleTimestamp) lo = mid + 1;
+      else hi = mid;
+    }
     let bestMatch = null;
     let bestDiff = Infinity;
-
-    for (const [fpTs, fp] of footprintMap) {
-      const diff = Math.abs(fpTs - candleTimestamp);
+    for (const i of [lo - 1, lo]) {
+      if (i < 0 || i >= timestamps.length) continue;
+      const diff = Math.abs(timestamps[i] - candleTimestamp);
       if (diff <= toleranceMs && diff < bestDiff) {
         bestDiff = diff;
-        bestMatch = fp;
+        bestMatch = footprintMap.get(timestamps[i]);
       }
     }
-
     return bestMatch;
+  }
+
+  /**
+   * Mapa timestamp -> footprint, reconstruido solo cuando cambia la lista de footprints
+   * (antes se rehacía en cada cuadro). Lleva los timestamps ordenados para buscar con tolerancia.
+   */
+  _getFootprintMap() {
+    if (this._footprintMapSource !== this.footprints || !this._footprintMap) {
+      const map = new Map();
+      for (const fp of this.footprints) {
+        map.set(fp.candle_timestamp, fp);
+      }
+      map.sortedTimestamps = Array.from(map.keys()).sort((a, b) => a - b);
+      this._footprintMap = map;
+      this._footprintMapSource = this.footprints;
+    }
+    return this._footprintMap;
   }
 
   /**
@@ -873,11 +1109,8 @@ class OrderFlowIndicator extends IndicatorBase {
       return bounds.y + ((maxPrice - price) / (maxPrice - minPrice)) * bounds.height;
     };
 
-    // Create footprint map by timestamp
-    const footprintMap = new Map();
-    for (const fp of this.footprints) {
-      footprintMap.set(fp.candle_timestamp, fp);
-    }
+    // Footprint map by timestamp (cached while the footprint list does not change)
+    const footprintMap = this._getFootprintMap();
 
     ctx.save();
 
@@ -961,7 +1194,8 @@ class OrderFlowIndicator extends IndicatorBase {
 
     // ✅ Obtener levels del footprint (ya vienen del backend o de la agregación)
     let levels = footprint.levels || footprint.price_levels || [];
-    let pocIndex = footprint.poc_index || -1;
+    // poc_index puede ser 0 (con "|| -1" se perdía y el perfil no marcaba el POC en la mitad de las velas de 1m)
+    let pocIndex = footprint.poc_index ?? -1;
     const step_size = footprint.step_size || 1.0;
 
     // Si no hay levels, renderizar vela simple
@@ -1022,8 +1256,11 @@ class OrderFlowIndicator extends IndicatorBase {
         }
       }
 
-      // Ordenar levels (descendente por precio)
-      expandedLevels.sort((a, b) => b.price - a.price);
+      // Ordenar levels (descendente por precio). Los niveles del backend no traen "price":
+      // se ordena por price_min, y el POC se vuelve a ubicar por objeto, no por posición.
+      const pocLevel = pocIndex >= 0 && pocIndex < levels.length ? levels[pocIndex] : null;
+      expandedLevels.sort((a, b) => (b.price_min ?? b.price) - (a.price_min ?? a.price));
+      pocIndex = pocLevel ? expandedLevels.indexOf(pocLevel) : -1;
 
       // Reemplazar levels con la versión expandida
       levels = expandedLevels;
@@ -1323,8 +1560,12 @@ class OrderFlowIndicator extends IndicatorBase {
     const totalDelta = footprint.total_delta;
     if (Math.abs(totalDelta) < 0.001) return;
 
-    // Position below the lowest level
-    const lowestLevel = levels[0];
+    // Position below the lowest level. Los niveles pueden venir en orden ascendente (backend)
+    // o descendente (velas agregadas): levels[0] ponía el delta arriba, encima de las celdas.
+    let lowestLevel = levels[0];
+    for (const level of levels) {
+      if (level.price_min < lowestLevel.price_min) lowestLevel = level;
+    }
     const bottomY = priceToY(lowestLevel.price_min) + 14;
 
     ctx.font = `bold ${this.config.fontSize}px Arial`;
@@ -1485,11 +1726,8 @@ class OrderFlowIndicator extends IndicatorBase {
 
     ctx.save();
 
-    // Build footprint map for fast lookup
-    const fpMap = new Map();
-    for (const fp of this.footprints) {
-      fpMap.set(fp.candle_timestamp, fp);
-    }
+    // Footprint map for fast lookup (cached while the footprint list does not change)
+    const fpMap = this._getFootprintMap();
 
     const { x: boundsX } = bounds;
     const lineWidth = this.config.stackedLineWidth || 2;

@@ -39,7 +39,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 | `6.Trading_Journal/` | Diario de trading con metricas y screenshots | 12000 | 12001 |
 | `7.WatchlistDesktop/` | Watchlist version Electron (en desarrollo) | 8000 | Electron |
 | `8.AnalizadorDesktop/` | **Analizador Desktop - Version Electron sin throttling** | 10001 | 5174 |
-| `9.OrderFlowDesktop/` | **Order Flow Desktop - Version Electron optimizada** | 11000 | 5175 |
+| `9.OrderFlowDesktop/` | **Order Flow Desktop - Version Electron optimizada** | 11000 | 11001 (Vite) |
 | `10.TradingBotDesktop/` | **Trading Bot Desktop - Version Electron** | 5000 | 5001 |
 | `11.TradingJournalDesktop/` | **Trading Journal Desktop - Version Electron** | 12000 | 12002 |
 
@@ -52,6 +52,38 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 ---
 
 ## HISTORIAL DE CAMBIOS RECIENTES
+
+### APP 9 (OrderFlowDesktop) - 8 Noviembre 2026: Pruebas y Correcciones de Datos, Trading y Footprints
+
+**Problema:** las pruebas de App 9 encontraron fallos que perdían datos, arriesgaban dinero real o mostraban footprints equivocados. El archivo local de footprints no se actualizaba desde el 05/11: cada sondeo de 5 s lanzaba otra descarga de 48 h a la nube, y la nube terminaba cortándolas. En BTC 5m las celdas mostraban el doble del volumen real, y en las monedas baratas cada vela quedaba en una sola celda.
+
+**Cambios:**
+1. **Panel de Trading:** abrirlo ya no deja el timeframe en `[object Promise]`: el temporizador del panel llamaba al setter del timeframe. La caja TP/SL se vuelve a leer cada 5 s y al cambiar de moneda, así que una orden ya no puede salir con el SL/TP de otra moneda. El badge muestra LIVE, TESTNET o DEMO según el bot, y los precios usan el tick de la moneda. Si la posición queda sin stop o el resultado es desconocido, un aviso pide no reintentar
+2. **Archivo local:** una sola descarga por moneda a la vez y un intento cada 15 min. Baja las horas que faltan (48 a 168), comprimida y con corte real a los 180 s. Escribe primero a un temporal y luego reemplaza el archivo, en JSON compacto: BTC pasó de 89 a 64 MB con más datos. Si el archivo existente no se puede leer, no se sobrescribe. Se relee del disco solo si cambió
+3. **Aplicar a historial:** ya no borra el archivo local y pausa de verdad el sondeo de Order Flow. El backend también limpia su caché en memoria: antes devolvía lo mismo. El historial conserva el step con que se grabó
+4. **Footprints de 5m:** cada nivel va entero a la celda de su precio medio. El step de cada vela es el mayor entre el configurado y el de sus datos, y se aceptan steps menores de 0.01 (antes pasaban a 0.1). Volumen y delta se conservan exactos. POC, imbalances, stacked y z-score siguen la regla del backend en 1m. Archivo y backend se unen por minuto antes de agregar, y las velas del archivo quedan en caché
+5. **Sondeo al backend:** pide los footprints completos cada 60 s y, entre medio, solo los últimos 10
+6. **Gráfico:** con poco zoom o pocos días, Order Flow, VWAP y los paneles usan el mismo ancho por vela que las velas; antes se estiraban. El delta va debajo de la vela y el perfil marca el POC aunque sea el primer nivel. El campo de step size acepta valores como 0.002
+7. **WebSocket de velas:** se reconecta tras un corte, envía ping cada 20 s y reconecta si pasan 60 s sin datos o vuelve la red
+8. **Backend (App 5):**
+   - La caché de velas se refresca al vencer; antes devolvía la misma foto hasta reiniciar
+   - La consulta a la nube va en segundo plano; antes congelaba todo el backend hasta 50 s
+   - El DELETE de caché valida el símbolo
+   - Rejection solo avisa al bot por patrones de la vela actual o la anterior, con la hora del patrón para que el bot no repita la señal
+9. **Arranque:** `1.START_ALL_ultimo.bat` espera hasta 10 min al backend y lo levanta solo en 127.0.0.1
+
+**IMPORTANTE:** reiniciar el backend (11000) y App 9 para aplicar los cambios. Todo se probó en una copia aislada: backend en 11300, frontend en 11301, Electron oculto con una copia del archivo y un bot falso. Nada se probó contra el bot ni contra Bybit real.
+
+**Pendiente (fases 3 y 4):**
+- Swing cambia la config global desde el gráfico
+- Steps del collector en la nube (XRP sigue en 0.005: 1 o 2 celdas por vela)
+- Imbalance diagonal y tope de 100 niveles
+- El relleno desde la nube al arrancar no llega a la API
+- Hueco de 41 h del 03/11 en el archivo de BTC: se rellena con "Descargar ahora" del panel de Archivo
+
+**Ver:** `9.OrderFlowDesktop/CLAUDE.md` sección "Pruebas y Correcciones (8 Noviembre 2026)"
+
+---
 
 ### APP 1 (Backtester) - 8 Noviembre 2026: Referencias en las Tres Imágenes
 

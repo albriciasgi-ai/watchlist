@@ -260,6 +260,37 @@ class FootprintStorage:
         self._cloud_loaded[key] = True
         return added
 
+    def save_many(self, footprint_dicts: List[dict]) -> int:
+        """
+        Guarda varios footprints de una vez: un solo merge y un solo orden por simbolo+intervalo.
+        (save_footprint recorre y ordena toda la lista en cada llamada.)
+
+        Returns:
+            Cantidad de footprints guardados
+        """
+        by_key = defaultdict(list)
+        for footprint_dict in footprint_dicts:
+            symbol = footprint_dict.get("symbol")
+            interval = footprint_dict.get("interval")
+            if not symbol or not interval:
+                continue
+            by_key[(symbol, str(interval))].append(footprint_dict)
+
+        saved = 0
+        for (symbol, interval), items in by_key.items():
+            key = self._get_key(symbol, interval)
+            if key not in self._cache:
+                self.load(symbol, interval)
+            merged = {fp.get("candle_timestamp"): fp for fp in self._cache[key]}
+            for footprint_dict in items:
+                merged[footprint_dict.get("candle_timestamp")] = footprint_dict
+                saved += 1
+            self._cache[key] = sorted(merged.values(), key=lambda x: x.get("candle_timestamp", 0))
+            self._dirty[key] = True
+            if time.time() - self._last_save.get(key, 0) > 30:
+                self._flush_to_disk(symbol, interval)
+        return saved
+
     def save_footprint(self, footprint_dict: dict) -> bool:
         """
         Guarda un footprint nuevo.

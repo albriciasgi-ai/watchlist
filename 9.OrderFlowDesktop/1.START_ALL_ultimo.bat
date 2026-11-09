@@ -10,7 +10,9 @@ echo.
 :: Configuracion
 set BACKEND_DIR=..\5.Order_flow\backend
 set BACKEND_PORT=11000
-set MAX_WAIT_SECONDS=120
+:: El backend tarda varios minutos en responder (historial de Swing, chequeo de cache y nube):
+:: con 120 s el script se rendia y no abria la app
+set MAX_WAIT_SECONDS=600
 set CHECK_INTERVAL=1
 
 :: Verificar que existe el directorio del backend
@@ -31,12 +33,12 @@ if %ERRORLEVEL% EQU 0 (
 
 :: Iniciar el backend en una nueva ventana
 echo [2/3] Iniciando backend en puerto %BACKEND_PORT%...
-start "Order Flow Backend" cmd /c "cd /d %BACKEND_DIR% && call .venv\Scripts\activate.bat && uvicorn main:app --host 0.0.0.0 --port %BACKEND_PORT%"
+start "Order Flow Backend" cmd /c "cd /d %BACKEND_DIR% && call .venv\Scripts\activate.bat && uvicorn main:app --host 127.0.0.1 --port %BACKEND_PORT%"
 
 :: Esperar a que el backend este listo
 echo.
 echo Esperando a que el backend inicie (maximo %MAX_WAIT_SECONDS% segundos)...
-echo Esto puede tardar 1-2 minutos mientras carga los footprints del disco.
+echo Esto puede tardar varios minutos mientras carga Swing, el cache y la nube.
 echo.
 
 set /a WAITED=0

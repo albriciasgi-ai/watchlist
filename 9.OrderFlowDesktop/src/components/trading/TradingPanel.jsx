@@ -139,7 +139,8 @@ const TradingPanel = ({
           ...prev,
           connected: true,
           hasCredentials: data.credentials_configured || false,
-          mode: data.trading_mode || 'demo',
+          // El bot responde "mode" ("demo", "testnet" o "live"); "trading_mode" no existe y dejaba siempre DEMO
+          mode: data.mode || data.trading_mode || 'demo',
           checking: false
         }));
         return true;
@@ -223,6 +224,16 @@ const TradingPanel = ({
       return;
     }
 
+    // La orden se prepara con la caja TP/SL de una moneda: si no es la del panel, no se envia
+    if (orderData.symbol && orderData.symbol !== symbol) {
+      setOrderStatus({
+        loading: false,
+        success: false,
+        error: `La caja TP/SL es de ${orderData.symbol}, no de ${symbol}. Vuelve a preparar la orden.`
+      });
+      return;
+    }
+
     setOrderStatus({ loading: true, success: null, error: null });
 
     try {
@@ -244,11 +255,28 @@ const TradingPanel = ({
 
       const data = await response.json();
       console.log('[TradingPanel] Response:', data);
+      const status = data.status || data.result?.status;
 
       if (response.ok && data.success) {
-        setOrderStatus({ loading: false, success: true, error: null });
+        let message = null;
+        if (status === 'pending') {
+          message = 'Orden enviada: queda pendiente en Bybit';
+        } else if (data.result?.tp_failed) {
+          message = 'Orden ejecutada, pero el Take Profit no se pudo poner: revísalo en Bybit';
+        }
+        setOrderStatus({ loading: false, success: true, error: null, message });
         // Recargar posición después de ejecutar
         setTimeout(loadPosition, 2000);
+      } else if (status === 'unprotected' || status === 'closed_unprotected' || status === 'unknown') {
+        // La orden sí llegó a Bybit: reintentar puede duplicar la posición
+        const messages = {
+          unprotected: 'POSICIÓN ABIERTA SIN STOP LOSS: ponlo a mano en Bybit ahora. No reintentes la orden.',
+          closed_unprotected: 'No se pudo poner el Stop Loss y el bot cerró la posición a mercado. Revisa Bybit antes de reintentar.',
+          unknown: 'No se sabe si la orden se ejecutó: revisa la posición en Bybit antes de reintentar.'
+        };
+        console.error('[TradingPanel] Order needs attention:', status, data);
+        setOrderStatus({ loading: false, success: false, error: messages[status] });
+        setTimeout(loadPosition, 1000);
       } else {
         // Extract error message from various possible locations
         const errorMsg = data.detail || data.error || data.message ||
@@ -281,6 +309,13 @@ const TradingPanel = ({
       if (positionPollRef.current) clearInterval(positionPollRef.current);
     };
   }, [isOpen, checkBotConnection]);
+
+  // Al cambiar de moneda no se arrastran la config, la posición ni el resultado de la anterior
+  useEffect(() => {
+    setSymbolConfig(null);
+    setPosition(null);
+    setOrderStatus({ loading: false, success: null, error: null });
+  }, [symbol]);
 
   // Cargar config cuando cambia símbolo o conexión
   useEffect(() => {
@@ -351,7 +386,7 @@ const TradingPanel = ({
         {botStatus.connected && (
           <div className="status-details">
             <span className={`mode-badge ${botStatus.mode}`}>
-              {botStatus.mode === 'live' ? '🔴 LIVE' : '🟢 DEMO'}
+              {botStatus.mode === 'live' ? '🔴 LIVE' : botStatus.mode === 'testnet' ? '🟡 TESTNET' : '🟢 DEMO'}
             </span>
             {!botStatus.hasCredentials && (
               <span className="warning-badge">⚠️ Sin API Keys</span>

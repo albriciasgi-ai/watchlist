@@ -666,6 +666,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     const endIdx = Math.min(displayCandles.length, startIdx + candlesPerScreen);
     const visibleCandles = displayCandles.slice(startIdx, endIdx);
 
+    // Ancho que de verdad ocupan las velas (barWidth por vela). Cuando no llenan el grafico
+    // (poco zoom, pocos dias o la fraccion de vela que sobra a la derecha), los indicadores
+    // deben usar este ancho: antes usaban chartWidth y quedaban estirados y corridos.
+    const candleAreaWidth = Math.min(chartWidth, barWidth * visibleCandles.length);
+
     ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(0, 0, width, height);
 
@@ -764,7 +769,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const overlayBounds = {
         x: marginLeft,
         y: marginTop,
-        width: chartWidth,
+        width: candleAreaWidth,
         height: priceChartHeight
       };
 
@@ -789,7 +794,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         }
 
         const relativeIndex = closestIndex - startIdx;
-        const barWidth = chartWidth / visibleCandles.length;
+        // barWidth: el mismo ancho por vela con que se dibujan las velas
         return marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
       };
 
@@ -958,7 +963,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         const overlayBounds = {
           x: marginLeft,
           y: marginTop,
-          width: chartWidth,
+          width: candleAreaWidth,
           height: priceChartHeight
         };
         const priceContext = {
@@ -978,7 +983,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const freshOverlayBounds = {
         x: marginLeft,
         y: marginTop,
-        width: chartWidth,
+        width: candleAreaWidth,
         height: priceChartHeight
       };
       const freshPriceContext = {
@@ -1114,7 +1119,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const indicatorsBounds = {
         x: marginLeft,
         y: marginTop + priceChartHeight + volumeHeight + timeAxisHeight,
-        width: chartWidth,
+        width: candleAreaWidth,
         height: indicatorsHeight
       };
       indicatorManagerRef.current.renderIndicators(ctx, indicatorsBounds, visibleCandles);

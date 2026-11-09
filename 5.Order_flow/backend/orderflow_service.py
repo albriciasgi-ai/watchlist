@@ -128,6 +128,10 @@ class OrderFlowService:
         # Cargar config persistente primero (para tener max_history_hours)
         self._load_config()
 
+        # Relleno desde la nube en segundo plano: una tarea por clave y un intento cada 10 min
+        self._cloud_fill_inflight = set()
+        self._cloud_fill_last: Dict[str, float] = {}
+
         # Storage para persistencia de footprints
         self._storage: FootprintStorage = get_footprint_storage(
             max_age_hours=self.config.max_history_hours
@@ -749,51 +753,17 @@ class OrderFlowService:
             cutoff_ms = int((time.time() - since_hours * 3600) * 1000)
             footprints = [fp for fp in footprints if fp.get("candle_timestamp", 0) >= cutoff_ms]
 
-        # Si tenemos pocos footprints, intentar obtener del Cloud Collector
+        # Si tenemos pocos footprints, pedir a la nube lo que falta EN SEGUNDO PLANO.
+        # Antes se pedia de forma sincrona dentro de esta consulta: el backend entero quedaba
+        # congelado (hasta ~50 s medidos) sin procesar trades ni responder, y con historial de
+        # 7 dias pasaba en cada sondeo. Ahora se responde con lo que hay y el relleno llega
+        # en las consultas siguientes.
         # Esperamos ~60 footprints por hora en intervalo 1min
         expected_footprints = int(hours_to_fetch * 60) if interval == "1" else int(hours_to_fetch * 12)
         min_threshold = expected_footprints * 0.3  # Al menos 30% de lo esperado
 
         if len(footprints) < min_threshold:
-            logger.info(
-                f"[ORDERFLOW_SERVICE] Pocos footprints para {key} ({len(footprints)}/{expected_footprints}), "
-                f"intentando cargar del Cloud Collector..."
-            )
-            try:
-                from footprint_storage import fetch_footprints_from_cloud_sync
-                cloud_footprints = fetch_footprints_from_cloud_sync(symbol, interval, hours=int(hours_to_fetch))
-
-                if cloud_footprints:
-                    # Agregar footprints del cloud que no existan localmente
-                    existing_timestamps = {fp.get("candle_timestamp") for fp in self._footprints[key]}
-                    added = 0
-
-                    for fp in cloud_footprints:
-                        ts = fp.get("candle_timestamp")
-                        if ts and ts not in existing_timestamps:
-                            self._footprints[key].append(fp)
-                            self._storage.save_footprint(fp)
-                            existing_timestamps.add(ts)
-                            added += 1
-
-                    if added > 0:
-                        # Reordenar por timestamp
-                        sorted_fps = sorted(
-                            self._footprints[key],
-                            key=lambda x: x.get("candle_timestamp", 0)
-                        )
-                        self._footprints[key] = deque(sorted_fps, maxlen=self.config.max_footprints_in_memory)
-
-                        logger.info(f"[ORDERFLOW_SERVICE] Agregados {added} footprints del Cloud para {key}")
-
-                        # Actualizar lista de footprints a retornar
-                        footprints = list(self._footprints.get(key, []))
-                        if since_hours:
-                            cutoff_ms = int((time.time() - since_hours * 3600) * 1000)
-                            footprints = [fp for fp in footprints if fp.get("candle_timestamp", 0) >= cutoff_ms]
-
-            except Exception as e:
-                logger.warning(f"[ORDERFLOW_SERVICE] Error obteniendo del Cloud: {e}")
+            self._schedule_cloud_fill(symbol, interval, key, max(1, int(round(hours_to_fetch))))
 
         # Enriquecer footprints que no tengan imbalances/stacked_imbalances calculados
         # (footprints historicos del disco o cloud pueden no tenerlos)
@@ -826,6 +796,56 @@ class OrderFlowService:
             )
 
         return result
+
+    CLOUD_FILL_RETRY_S = 600
+
+    def _schedule_cloud_fill(self, symbol: str, interval: str, key: str, hours: int):
+        """Lanza (si no hay otra en curso ni se intento hace poco) la carga desde la nube."""
+        if key in self._cloud_fill_inflight:
+            return
+        now = time.time()
+        if now - self._cloud_fill_last.get(key, 0) < self.CLOUD_FILL_RETRY_S:
+            return
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            return  # sin event loop (uso desde un script): no se rellena
+        self._cloud_fill_last[key] = now
+        self._cloud_fill_inflight.add(key)
+        logger.info(
+            f"[ORDERFLOW_SERVICE] Pocos footprints para {key}: pidiendo {hours}h al Cloud Collector en segundo plano"
+        )
+        loop.create_task(self._cloud_fill(symbol, interval, key, hours))
+
+    async def _cloud_fill(self, symbol: str, interval: str, key: str, hours: int):
+        """Trae footprints de la nube y agrega a memoria y disco los que falten."""
+        try:
+            from footprint_storage import fetch_footprints_from_cloud
+            cloud_footprints = await fetch_footprints_from_cloud(symbol, interval, hours=hours)
+            if not cloud_footprints:
+                return
+
+            existing_timestamps = {fp.get("candle_timestamp") for fp in self._footprints[key]}
+            new_footprints = []
+            for fp in cloud_footprints:
+                ts = fp.get("candle_timestamp")
+                if ts and ts not in existing_timestamps:
+                    new_footprints.append(fp)
+                    existing_timestamps.add(ts)
+
+            if new_footprints:
+                sorted_fps = sorted(
+                    list(self._footprints[key]) + new_footprints,
+                    key=lambda x: x.get("candle_timestamp", 0)
+                )
+                self._footprints[key] = deque(sorted_fps, maxlen=self.config.max_footprints_in_memory)
+                # Un solo guardado para todos (save_footprint ordenaba la lista en cada llamada)
+                self._storage.save_many(new_footprints)
+                logger.info(f"[ORDERFLOW_SERVICE] Agregados {len(new_footprints)} footprints del Cloud para {key}")
+        except Exception as e:
+            logger.warning(f"[ORDERFLOW_SERVICE] Error obteniendo del Cloud: {e}")
+        finally:
+            self._cloud_fill_inflight.discard(key)
 
     @staticmethod
     def _calculate_imbalances_from_levels(

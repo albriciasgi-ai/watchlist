@@ -140,6 +140,9 @@ class AlertSender:
             # Hora de creacion: el bot descarta alertas que pasaron demasiado tiempo en la cola
             "sent_at": int(datetime.now().timestamp() * 1000)
         }
+        # Hora de la vela del patron: con ella el bot no ejecuta dos veces la misma senal (24 h)
+        if pattern.get('timestamp'):
+            payload["timestamp"] = pattern.get('timestamp')
 
         # Include strategy data if present (Entry, Stop Loss, Take Profit)
         strategy = pattern.get('strategy')

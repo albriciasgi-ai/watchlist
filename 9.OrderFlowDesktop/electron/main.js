@@ -219,50 +219,67 @@ ipcMain.handle('open-folder', (event, folderPath) => {
 
 const fs = require('fs').promises;
 const https = require('https');
+const zlib = require('zlib');
 
 /**
- * Descarga footprints desde el cloud usando Node.js https (sin CORS)
+ * Descarga footprints desde el cloud usando Node.js https (sin CORS).
+ * Pide la respuesta comprimida (gzip): la de 48 h de BTC baja de ~2.6 MB a una fracción y
+ * el proxy de la nube corta menos las respuestas lentas. Si pasan 180 s se cancela de verdad.
  */
 ipcMain.handle('download-footprints', async (event, { symbol, hours, interval }) => {
   const CLOUD_URL = 'https://p01--altagracia--rxv8nrbhxln9.code.run';
-  const url = `${CLOUD_URL}/api/footprints/${symbol}?hours=${hours}&interval=${interval}`;
+  const url = `${CLOUD_URL}/api/footprints/${encodeURIComponent(symbol)}?hours=${encodeURIComponent(hours)}&interval=${encodeURIComponent(interval)}`;
 
   console.log(`[Main] Descargando ${symbol} desde: ${url}`);
 
   return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      reject(new Error('TIMEOUT después de 180 segundos'));
-    }, 180000);
+    let settled = false;
+    let timer = null;
+    const finish = (error, value) => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      if (error) {
+        console.error(`[Main] ❌ Error descargando ${symbol}:`, error.message);
+        reject(error);
+      } else {
+        resolve(value);
+      }
+    };
 
-    https.get(url, { timeout: 180000 }, (res) => {
-      let data = '';
+    const req = https.get(url, { headers: { 'Accept-Encoding': 'gzip', 'User-Agent': 'OrderFlowDesktop' } }, (res) => {
+      if (res.statusCode !== 200) {
+        res.resume();
+        finish(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
+        return;
+      }
 
-      res.on('data', (chunk) => {
-        data += chunk;
+      const chunks = [];
+      res.on('data', (chunk) => chunks.push(chunk));
+      res.on('error', (error) => finish(error));
+      res.on('close', () => {
+        if (!res.complete) finish(new Error('La nube cortó la respuesta antes de terminar'));
       });
-
       res.on('end', () => {
-        clearTimeout(timeout);
-
-        if (res.statusCode !== 200) {
-          reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
-          return;
-        }
-
         try {
-          const json = JSON.parse(data);
+          let body = Buffer.concat(chunks);
+          if (String(res.headers['content-encoding'] || '').includes('gzip')) {
+            body = zlib.gunzipSync(body);
+          }
+          const json = JSON.parse(body.toString('utf8'));
           const footprints = json.footprints || [];
           console.log(`[Main] ✅ ${symbol}: ${footprints.length} footprints descargados`);
-          resolve(footprints);
+          finish(null, footprints);
         } catch (error) {
-          reject(new Error(`Error parseando JSON: ${error.message}`));
+          finish(new Error(`Error leyendo la respuesta: ${error.message}`));
         }
       });
-    }).on('error', (error) => {
-      clearTimeout(timeout);
-      console.error(`[Main] ❌ Error descargando ${symbol}:`, error.message);
-      reject(error);
     });
+
+    req.on('error', (error) => finish(error));
+    timer = setTimeout(() => {
+      req.destroy(new Error('TIMEOUT después de 180 segundos'));
+    }, 180000);
   });
 });
 

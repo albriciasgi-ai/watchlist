@@ -44,6 +44,7 @@ import httpx
 import asyncio
 import time
 import json
+import re
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
@@ -112,7 +113,7 @@ def get_cached_historical(symbol: str, interval: str, days: int):
 
     if age > HISTORICAL_CACHE_TTL:
         # Cache expirado - retornar datos viejos pero marcar para refresh
-        print(f"[CACHE] {symbol}@{interval} - Cache expirado ({age:.0f}s > {HISTORICAL_CACHE_TTL}s), usando datos viejos")
+        print(f"[CACHE] {symbol}@{interval} - Cache vencido ({age:.0f}s > {HISTORICAL_CACHE_TTL}s), se pide de nuevo a Bybit")
         return {"data": cached["data"], "expired": True}
 
     print(f"[CACHE] {symbol}@{interval} - HIT! (edad: {age:.0f}s)")
@@ -121,6 +122,10 @@ def get_cached_historical(symbol: str, interval: str, days: int):
 def set_cached_historical(symbol: str, interval: str, days: int, data: dict):
     """Guarda datos en cache"""
     cache_key = get_cache_key(symbol, interval, days)
+    # Quitar entradas vencidas hace rato para que el diccionario no crezca sin limite
+    now = time.time()
+    for old_key in [k for k, v in HISTORICAL_CACHE.items() if now - v["timestamp"] > HISTORICAL_CACHE_TTL * 4]:
+        HISTORICAL_CACHE.pop(old_key, None)
     HISTORICAL_CACHE[cache_key] = {
         "data": data,
         "timestamp": time.time(),
@@ -422,14 +427,9 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
                 cached_data = cached["data"].copy()
                 cached_data["from_cache"] = True
                 return cached_data
-            elif cached and cached.get("expired", False):
-                # Cache expirado - retornar datos viejos y refrescar en background
-                # Por ahora retornamos datos viejos (lazy refresh simplificado)
-                cached_data = cached["data"].copy()
-                cached_data["from_cache"] = True
-                cached_data["cache_expired"] = True
-                # Nota: El proximo request sin cache traera datos frescos
-                return cached_data
+            # Cache vencido: se vuelve a pedir a Bybit. Antes se devolvia la foto vieja y nunca se
+            # refrescaba: las cargas completas (y S&R, Rejection, DTB...) quedaban sin las velas
+            # nuevas hasta reiniciar el backend.
         # ==================== FIN CACHE CHECK ====================
 
         # CARGA INCREMENTAL: Si se provee since_timestamp, usar ese como inicio
@@ -454,6 +454,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
         limit_per_request = min(1000, total_candles_needed)
 
         all_candles = []
+        bybit_error = False
         current_start = start_ms
 
         # Timeout con valores especificos para connect y read
@@ -497,6 +498,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
 
                 if data.get("retCode") != 0:
                     print(f"[ERROR {symbol}] Bybit error: {data.get('retMsg')}")
+                    bybit_error = True  # datos parciales: no se guardan en cache
                     break
 
                 batch_candles = data["result"]["list"]
@@ -587,7 +589,7 @@ async def get_historical(symbol: str, interval: str = "15", days: int = 30, sinc
 
         # ==================== GUARDAR EN CACHE ====================
         # Solo cachear requests normales (no incrementales)
-        if since_timestamp is None and len(candles) > 0:
+        if since_timestamp is None and len(candles) > 0 and not bybit_error:
             set_cached_historical(symbol, interval_final, days, response_data)
         # ==================== FIN GUARDAR CACHE ====================
 
@@ -841,9 +843,16 @@ async def detect_rejection_patterns(request: Request):
 
         print(f"[REJECTION PATTERNS] [OK] Detected {len(patterns)} patterns for {symbol}")
 
-        # Send alerts for high-confidence patterns
+        # Send alerts for high-confidence patterns.
+        # Solo los de la vela actual o la anterior: antes cada recarga del grafico mandaba al bot
+        # todos los patrones de los dias cargados como si fueran de ahora.
         if config.get('alertsEnabled', False):
+            now_ms = int(time.time() * 1000)
+            max_age_ms = 2 * get_interval_minutes(interval) * 60 * 1000
             for pattern_data in serialized_patterns:
+                pattern_ts = pattern_data.get('timestamp') or 0
+                if now_ms - pattern_ts > max_age_ms:
+                    continue
                 if pattern_data['confidence'] >= config.get('filters', {}).get('minConfidence', 60):
                     await send_pattern_alert(
                         symbol,
@@ -4391,22 +4400,18 @@ async def clear_symbol_cache(symbol: str, interval: str = "1"):
     FIX CRÍTICO: Limpia MEMORIA + DISCO para forzar regeneración con nuevo step_size.
     """
     try:
+        # Solo simbolos validos: con "*" el glob de abajo borraba los archivos de todas las monedas
+        symbol = symbol.upper()
+        if not re.fullmatch(r"[A-Z0-9]{2,30}", symbol):
+            return {"success": False, "error": f"Simbolo invalido: {symbol}"}
+
         cache_dir = Path("footprint_cache")
         deleted_files = []
         memory_cleared = []
 
-        # PASO 1: Eliminar archivos de disco
-        if cache_dir.exists():
-            for file in cache_dir.glob(f"{symbol}_*.json"):
-                try:
-                    file.unlink()
-                    deleted_files.append(file.name)
-                    print(f"[CACHE] Deleted file: {file.name}")
-                except Exception as e:
-                    print(f"[ERROR] Failed to delete {file.name}: {e}")
-
-        # PASO 2: Limpiar footprints en MEMORIA del servicio
         service = get_orderflow_service()
+
+        # PASO 1: Limpiar footprints en MEMORIA del servicio
         if service:
             for key in list(service._footprints.keys()):
                 if key.startswith(f"{symbol}_"):
@@ -4414,6 +4419,35 @@ async def clear_symbol_cache(symbol: str, interval: str = "1"):
                     service._footprints[key].clear()
                     memory_cleared.append(f"{key}: {count} footprints")
                     print(f"[CACHE] Cleared memory for {key}: {count} footprints")
+            # Permitir el relleno desde la nube en la proxima consulta (sin esperar los 10 min)
+            fill_last = getattr(service, "_cloud_fill_last", None)
+            if fill_last is not None:
+                for key in [k for k in fill_last if k.startswith(f"{symbol}_")]:
+                    fill_last.pop(key, None)
+
+        # PASO 2: Limpiar el cache del almacenamiento (RAM + archivo). Antes solo se borraba el
+        # archivo: la siguiente consulta devolvia lo mismo desde la RAM del almacenamiento y el
+        # guardado periodico volvia a escribir el archivo "borrado".
+        storage = getattr(service, "_storage", None) if service else None
+        intervals = set(getattr(getattr(service, "config", None), "intervals", None) or ["1", "5"])
+        if cache_dir.exists():
+            for file in cache_dir.glob(f"{symbol}_*.json"):
+                interval_name = file.stem[len(symbol) + 1:]
+                if interval_name:
+                    intervals.add(interval_name)
+        for interval_name in sorted(intervals):
+            file = cache_dir / f"{symbol}_{interval_name}.json"
+            existed = file.exists()
+            try:
+                if storage:
+                    storage.clear(symbol, interval_name)
+                elif existed:
+                    file.unlink()
+                if existed:
+                    deleted_files.append(file.name)
+                    print(f"[CACHE] Cleared file: {file.name}")
+            except Exception as e:
+                print(f"[ERROR] Failed to clear {file.name}: {e}")
 
         print(f"[CACHE] OK Cache limpiado para {symbol}")
         print(f"[CACHE]    Archivos disco: {len(deleted_files)}")

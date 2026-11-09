@@ -26,7 +26,6 @@ import IndicatorManagerRegistry from "../utils/IndicatorManagerRegistry";
 import Logger from '../utils/Logger.js';
 import { initRobustness, stopRobustness } from '../utils/robustness';
 import pollingCoordinator from '../utils/PollingCoordinator';
-import { getFootprintArchiver } from '../services/FootprintArchiverElectron';
 import { API_BASE_URL } from "../config";
 import { TradingPanel } from "./trading";
 
@@ -76,6 +75,10 @@ const DAYS_OPTIONS_BY_INTERVAL = {
   "D": [30, 60, 90, 180, 270, 365, 540, 720, 1080, 1440],
   "W": [90, 180, 365, 730]
 };
+
+// Compara dos cajas TP/SL por sus valores, para no recrear el objeto en cada lectura periodica
+const sameTpslBox = (a, b) => !!a && !!b && a.symbol === b.symbol && a.entryPrice === b.entryPrice &&
+  a.slPrice === b.slPrice && a.tpPrice === b.tpPrice && a.side === b.side;
 
 const SingleSymbolAnalyzer = () => {
   // Estado principal: UN solo simbolo
@@ -322,10 +325,11 @@ const SingleSymbolAnalyzer = () => {
   }, [interval]);
 
   // Fetch TPSLBox data from drawings API
+  // Devuelve null si la moneda no tiene caja y undefined si no se pudo leer (error de red o HTTP)
   const fetchTPSLBoxData = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
-      if (!response.ok) return null;
+      if (!response.ok) return undefined;
 
       const data = await response.json();
       if (!data.shapes || data.shapes.length === 0) return null;
@@ -348,6 +352,7 @@ const SingleSymbolAnalyzer = () => {
       }
 
       return {
+        symbol,
         entryPrice: tpslBox.entryPrice,
         slPrice: tpslBox.slPrice,
         tpPrice: tpslBox.tpPrice,
@@ -355,7 +360,7 @@ const SingleSymbolAnalyzer = () => {
       };
     } catch (error) {
       log.error('Error fetching TPSLBox data:', error);
-      return null;
+      return undefined;
     }
   }, [symbol]);
 
@@ -411,18 +416,35 @@ const SingleSymbolAnalyzer = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isTradingPanelOpen, fetchTPSLBoxData, fetchCurrentPrice]);
 
-  // Actualizar precio cada 5 segundos cuando el panel esta abierto
+  // Actualizar precio y caja TP/SL cada 5 segundos mientras el panel esta abierto.
+  // La caja se vuelve a leer porque puede moverse o cambiar de moneda con el panel abierto:
+  // antes la orden salia con el SL/TP leidos al abrirlo, incluso de otra moneda.
+  // OJO: en este componente "setInterval" es el setter del timeframe (useState). Usarlo como
+  // temporizador dejaba el timeframe en "[object Promise]", por eso aqui va window.setInterval.
   useEffect(() => {
     if (!isTradingPanelOpen) return;
+    let cancelled = false;
 
-    const updatePrice = async () => {
-      const price = await fetchCurrentPrice();
+    // Al abrir o al cambiar de moneda, descartar una caja que no sea de esta moneda
+    setTpslBoxData(prev => (prev && prev.symbol === symbol ? prev : null));
+
+    const refresh = async () => {
+      const [tpslData, price] = await Promise.all([fetchTPSLBoxData(), fetchCurrentPrice()]);
+      if (cancelled) return;
+      // undefined = no se pudo leer: se conserva la caja actual, que ya es de esta moneda
+      if (tpslData !== undefined) {
+        setTpslBoxData(prev => (sameTpslBox(prev, tpslData) ? prev : tpslData));
+      }
       if (price) setCurrentPrice(price);
     };
 
-    const interval = setInterval(updatePrice, 5000);
-    return () => clearInterval(interval);
-  }, [isTradingPanelOpen, fetchCurrentPrice]);
+    refresh();
+    const timerId = window.setInterval(refresh, 5000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timerId);
+    };
+  }, [isTradingPanelOpen, symbol, fetchTPSLBoxData, fetchCurrentPrice]);
 
   // Handler para cambio de simbolo
   const handleSymbolChange = useCallback((newSymbol) => {
@@ -1134,10 +1156,11 @@ const SingleSymbolAnalyzer = () => {
               <OrderFlowSettings
                 currentSymbol={symbol}
                 currentInterval={interval}
-                indicatorManager={indicatorManagerRef.current}
+                indicatorManager={IndicatorManagerRegistry.get(symbol) || indicatorManagerRef.current}
                 config={orderFlowConfig}
                 onConfigChange={(config) => {
-                  const manager = indicatorManagerRef.current;
+                  // Gestor vigente del registro (el ref puede quedar en uno destruido tras cambiar timeframe)
+                  const manager = IndicatorManagerRegistry.get(symbol) || indicatorManagerRef.current;
                   const ofIndicator = manager?.indicators?.find(ind => ind.name === "Order Flow");
                   if (ofIndicator) {
                     ofIndicator.updateConfig(config);
@@ -1149,11 +1172,13 @@ const SingleSymbolAnalyzer = () => {
                   }
                 }}
                 onBackendConfigSaved={async () => {
-                  console.log('╔═══════════════════════════════════════════════════════════════╗');
-                  console.log('║ [RECARGA FOOTPRINTS] INICIANDO DESPUÉS DE CAMBIO STEP_SIZE    ║');
-                  console.log('╚═══════════════════════════════════════════════════════════════╝');
-
-                  const manager = indicatorManagerRef.current;
+                  // El step nuevo ya quedó guardado en el backend. El historial conserva el step con que
+                  // se grabó (sin los trades no se puede afinar), por eso el archivo local ya NO se borra:
+                  // antes se borraba y se perdían semanas de footprints sin ganar nada. La agregación usa
+                  // el mayor entre el step nuevo y el de los datos.
+                  // El gestor vigente se toma del registro: el ref puede apuntar a uno ya destruido
+                  // después de cambiar timeframe o días.
+                  const manager = IndicatorManagerRegistry.get(symbol) || indicatorManagerRef.current;
                   const ofIndicator = manager?.indicators?.find(ind => ind.name === "Order Flow");
 
                   if (!ofIndicator) {
@@ -1161,81 +1186,34 @@ const SingleSymbolAnalyzer = () => {
                     return;
                   }
 
-                  console.log(`[RECARGA] 📊 Estado ANTES de limpiar:`);
-                  console.log(`  - Footprints en memoria: ${ofIndicator.footprints?.length || 0}`);
-                  console.log(`  - Símbolo: ${ofIndicator.symbol}`);
-                  console.log(`  - Intervalo: ${ofIndicator.interval}`);
-
-                  // PASO 0: PAUSAR PollingCoordinator para evitar race conditions
-                  console.log('[RECARGA] ⏸️ PASO 0: Pausando PollingCoordinator...');
-                  pollingCoordinator.pause();
-
-                  // Esperar 500ms para que cualquier operación en progreso complete
-                  await new Promise(resolve => setTimeout(resolve, 500));
-                  console.log('[RECARGA] ✅ PollingCoordinator pausado y operaciones en progreso completadas');
+                  // Pausar solo el sondeo de Order Flow (pause() sin id no pausaba nada)
+                  const pollingId = ofIndicator._pollingId;
+                  if (pollingId) pollingCoordinator.pause(pollingId);
 
                   try {
-                    // PASO 1: Eliminar archivo local (contiene footprints 1min con step_size antiguo)
-                    console.log('[RECARGA] 🗑️ PASO 1: Eliminando archivo local de footprints...');
-                    try {
-                      const archiver = getFootprintArchiver();
-                      const deleteResult = await archiver.deleteArchiveFile(ofIndicator.symbol);
+                    ofIndicator.invalidateBackendSettings?.();
+                    ofIndicator._backendCache = null;
 
-                      if (deleteResult.success) {
-                        console.log(`[RECARGA] ✅ Archivo local eliminado: ${deleteResult.message}`);
-                      } else {
-                        console.warn(`[RECARGA] ⚠️ No se pudo eliminar archivo: ${deleteResult.error}`);
-                      }
-                    } catch (deleteError) {
-                      console.error('[RECARGA] ❌ Error eliminando archivo local:', deleteError);
-                      // Continuar de todos modos - el backend puede regenerar
+                    // Si había una carga en curso, esperar a que termine para no mezclar datos viejos
+                    for (let i = 0; i < 50 && ofIndicator.isFetching; i++) {
+                      await new Promise(resolve => setTimeout(resolve, 100));
                     }
 
-                    // PASO 2: Limpiar footprints en memoria
                     const oldCount = ofIndicator.footprints?.length || 0;
                     ofIndicator.footprints = [];
-                    console.log(`[RECARGA] 🗑️ PASO 2: Footprints en memoria limpiados: ${oldCount} → 0`);
-
-                    // PASO 3: Recargar footprints desde cero (backend generará con nuevo step_size)
-                    console.log('[RECARGA] 🔄 PASO 3: Recargando desde backend (con nuevo step_size)...');
                     const startTime = Date.now();
-
                     await ofIndicator.fetchData();
                     const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+                    console.log(`[RECARGA] ✅ Footprints recargados en ${elapsed}s: ${oldCount} → ${ofIndicator.footprints?.length || 0}`);
 
-                    console.log(`[RECARGA] ✅ fetchData() completado en ${elapsed}s`);
-                    console.log(`[RECARGA] 📊 Estado DESPUÉS de recargar:`);
-                    console.log(`  - Footprints en memoria: ${ofIndicator.footprints?.length || 0}`);
-
-                    if (ofIndicator.footprints?.length > 0) {
-                      const first = ofIndicator.footprints[0];
-                      const last = ofIndicator.footprints[ofIndicator.footprints.length - 1];
-                      console.log(`  - Primer fp: ${new Date(first.candle_timestamp).toLocaleString()}, step_size=${first.step_size}`);
-                      console.log(`  - Último fp: ${new Date(last.candle_timestamp).toLocaleString()}, step_size=${last.step_size}`);
-                    }
-
-                    // PASO 4: Forzar redraw para mostrar los nuevos footprints
                     if (manager.requestRedraw) {
-                      console.log('[RECARGA] 🎨 PASO 4: Solicitando redraw del gráfico...');
                       manager.requestRedraw();
-                      console.log('[RECARGA] ✅ Redraw completado');
-                    } else {
-                      console.warn('[RECARGA] ⚠️ manager.requestRedraw no disponible');
                     }
-
                   } catch (error) {
                     console.error('[RECARGA] ❌ Error durante recarga:', error);
                   } finally {
-                    // PASO 5: REANUDAR PollingCoordinator
-                    console.log('[RECARGA] ▶️ PASO 5: Reanudando PollingCoordinator...');
-                    pollingCoordinator.resume();
-                    console.log('[RECARGA] ✅ PollingCoordinator reanudado');
+                    if (pollingId) pollingCoordinator.resume(pollingId);
                   }
-
-                  console.log('╔═══════════════════════════════════════════════════════════════╗');
-                  console.log('║ [RECARGA FOOTPRINTS] COMPLETADO - ARCHIVO LOCAL ELIMINADO    ║');
-                  console.log('║ Backend regenerará footprints con nuevo step_size            ║');
-                  console.log('╚═══════════════════════════════════════════════════════════════╝');
                 }}
               />
             </div>

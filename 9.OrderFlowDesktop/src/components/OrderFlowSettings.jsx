@@ -31,7 +31,8 @@ const OrderFlowSettings = ({
   config,
   onConfigChange,
   currentSymbol,
-  onBackendConfigSaved
+  onBackendConfigSaved,
+  indicatorManager
 }) => {
   // Default config if none provided (must match OrderFlowIndicator defaults)
   const defaultConfig = {
@@ -63,6 +64,7 @@ const OrderFlowSettings = ({
   const [defaultStepSize, setDefaultStepSize] = useState(null);
   const [allDefaultStepSizes, setAllDefaultStepSizes] = useState({});
   const [pendingStepSize, setPendingStepSize] = useState(null);
+  const [stepSizeText, setStepSizeText] = useState(null); // texto del campo mientras se escribe
   const [clearingCache, setClearingCache] = useState(false);
 
   // Fetch backend status and symbol step size on mount/symbol change
@@ -238,7 +240,10 @@ const OrderFlowSettings = ({
         setSymbolStepSize(pendingStepSize);
         setPendingStepSize(null);
         // NO llamar callback aquí - solo guardar en backend
-        // El callback se ejecuta solo cuando se hace "Aplicar a historial"
+        // El callback se ejecuta solo cuando se hace "Aplicar a historial".
+        // Sí se avisa al indicador para que el próximo sondeo use el step nuevo al agregar.
+        const ofIndicator = indicatorManager?.indicators?.find(ind => ind.name === "Order Flow");
+        ofIndicator?.invalidateBackendSettings?.();
       } else {
         alert('Error al guardar step size');
       }
@@ -258,13 +263,16 @@ const OrderFlowSettings = ({
     setPendingStepSize(null);
   };
 
-  // Handler para aplicar step_size al historial (elimina archivo y regenera)
+  // Handler para aplicar step_size al historial: limpia el cache reciente del backend y recarga.
+  // El archivo local ya no se borra: el historial conserva el step con que se grabó.
   const handleApplyToHistory = async () => {
     if (!currentSymbol) return;
 
     const confirmed = window.confirm(
-      `¿Regenerar footprints históricos de ${currentSymbol} con step_size=${symbolStepSize}?\n\n` +
-      `Esto eliminará el archivo local y el backend regenerará todos los footprints con el nuevo step_size.\n\n` +
+      `¿Recargar los footprints de ${currentSymbol} con step_size=${symbolStepSize}?\n\n` +
+      `Se limpia el cache reciente del backend y las velas nuevas se arman con el step nuevo.\n` +
+      `El historial guardado conserva el step con que se grabó (no se puede afinar sin los trades); ` +
+      `el archivo local NO se borra.\n\n` +
       `Puede tomar unos segundos.`
     );
 
@@ -285,13 +293,13 @@ const OrderFlowSettings = ({
       const deleteResult = await deleteResponse.json();
       console.log('[OrderFlowSettings] Cache backend eliminado:', deleteResult);
 
-      // 2. Ejecutar callback para eliminar archivo local y recargar
+      // 2. Ejecutar callback para recargar los footprints del indicador
       if (onBackendConfigSaved) {
         console.log('[OrderFlowSettings] Ejecutando callback onBackendConfigSaved...');
         await onBackendConfigSaved();
       }
 
-      alert(`✅ Footprints regenerados con step_size=${symbolStepSize}`);
+      alert(`✅ Footprints recargados. Las velas nuevas usan step_size=${symbolStepSize}`);
     } catch (error) {
       console.error('[OrderFlowSettings] Error al aplicar a historial:', error);
       alert('Error al regenerar footprints. Ver consola para detalles.');
@@ -895,11 +903,19 @@ const OrderFlowSettings = ({
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <input
               type="number"
-              min="0.001"
+              min="0.00000001"
               max="100"
-              step="0.1"
-              value={currentStepSize}
-              onChange={(e) => handleStepSizeChange(parseFloat(e.target.value) || 0.1)}
+              step="any"
+              value={stepSizeText ?? String(currentStepSize)}
+              onChange={(e) => {
+                // Se guarda el texto tal cual mientras se escribe: antes "0" o "0." se cambiaban
+                // a 0.1 al instante y no se podía escribir un step menor que 1 (XRP, ADA, DOGE...)
+                const text = e.target.value;
+                setStepSizeText(text);
+                const parsed = parseFloat(text);
+                if (isFinite(parsed) && parsed > 0) handleStepSizeChange(parsed);
+              }}
+              onBlur={() => setStepSizeText(null)}
               disabled={loading}
               style={{
                 flex: 1,

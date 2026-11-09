@@ -25,7 +25,12 @@ class FootprintArchiverElectron {
       timeout: 300000  // 5 minutos (para descargas grandes de 1 año)
     };
 
-    this._initStorage();
+    // Descargas por moneda, en curso: se encadenan para que dos escrituras del mismo archivo
+    // nunca se crucen (antes la auto-descarga lanzaba varias a la vez)
+    this._symbolQueue = new Map();
+
+    // Los métodos esperan a que la carpeta esté lista (antes podía usarse con storageDir en null)
+    this._ready = this._initStorage();
   }
 
   /**
@@ -98,6 +103,27 @@ class FootprintArchiverElectron {
   }
 
   /**
+   * Lee el archivo para fusionar descargas. Si existe pero no se puede leer, lanza error:
+   * fusionar contra una lista vacía y guardar borraría el historial.
+   */
+  async _readFromFileStrict(symbol) {
+    if (!window.electron || !this.storageDir) {
+      throw new Error('Electron API no disponible');
+    }
+    const filePath = this._getFilePath(symbol);
+    const exists = await window.electron.fileExists(filePath);
+    if (!exists) {
+      return [];
+    }
+    const content = await window.electron.readFile(filePath);
+    const data = JSON.parse(content);
+    if (!Array.isArray(data.footprints)) {
+      throw new Error('El archivo no tiene la lista de footprints');
+    }
+    return data.footprints;
+  }
+
+  /**
    * Guarda footprints en archivo.
    *
    * @param {string} symbol - Símbolo
@@ -130,8 +156,8 @@ class FootprintArchiverElectron {
         footprints: sorted
       };
 
-      // Guardar archivo
-      await window.electron.writeFile(filePath, JSON.stringify(data, null, 2));
+      // Guardar archivo (JSON compacto: con sangría pesaba más y tardaba más en leerse)
+      await window.electron.writeFile(filePath, JSON.stringify(data));
 
       console.log(`[FootprintArchiver] ${symbol}: guardados ${sorted.length} footprints en ${filePath}`);
 
@@ -250,6 +276,18 @@ class FootprintArchiverElectron {
    * @returns {Promise<Object>} - Resultado
    */
   async archiveSymbol(symbol, hours = 168) {
+    // Una descarga por moneda a la vez: si hay otra en curso, esta espera a que termine
+    const previous = this._symbolQueue.get(symbol) || Promise.resolve();
+    const task = previous.catch(() => {}).then(() => this._archiveSymbolNow(symbol, hours));
+    this._symbolQueue.set(symbol, task);
+    task.finally(() => {
+      if (this._symbolQueue.get(symbol) === task) this._symbolQueue.delete(symbol);
+    }).catch(() => {});
+    return task;
+  }
+
+  async _archiveSymbolNow(symbol, hours) {
+    await this._ready;
     const daysRequested = (hours / 24).toFixed(1);
     console.log(`[FootprintArchiver] 📥 Archivando ${symbol} (${hours}h = ~${daysRequested} días)...`);
 
@@ -270,12 +308,30 @@ class FootprintArchiverElectron {
 
       console.log(`[FootprintArchiver] 📦 ${symbol}: Descargados ${downloaded.length} footprints del cloud`);
 
-      // 2. Leer footprints existentes
-      const existing = await this._readFromFile(symbol);
+      // 2. Leer footprints existentes. Si el archivo existe y no se puede leer, no se toca:
+      // antes se fusionaba contra una lista vacía y se guardaban solo las horas descargadas
+      let existing;
+      try {
+        existing = await this._readFromFileStrict(symbol);
+      } catch (readError) {
+        console.error(`[FootprintArchiver] ❌ ${symbol}: no se pudo leer el archivo local (${readError.message}); no se sobrescribe`);
+        return {
+          success: false,
+          symbol,
+          error: `No se pudo leer el archivo local: ${readError.message}`
+        };
+      }
 
       if (existing.length > 0) {
-        const existOldest = new Date(Math.min(...existing.map(fp => fp.candle_timestamp))).toLocaleString('es-ES');
-        const existNewest = new Date(Math.max(...existing.map(fp => fp.candle_timestamp))).toLocaleString('es-ES');
+        // Sin Math.min(...array): con más de ~125 mil footprints reventaba la pila
+        let oldestTs = Infinity;
+        let newestTs = -Infinity;
+        for (const fp of existing) {
+          if (fp.candle_timestamp < oldestTs) oldestTs = fp.candle_timestamp;
+          if (fp.candle_timestamp > newestTs) newestTs = fp.candle_timestamp;
+        }
+        const existOldest = new Date(oldestTs).toLocaleString('es-ES');
+        const existNewest = new Date(newestTs).toLocaleString('es-ES');
         console.log(`[FootprintArchiver] 💾 ${symbol}: ${existing.length} footprints en archivo local (${existOldest} → ${existNewest})`);
       } else {
         console.log(`[FootprintArchiver] 💾 ${symbol}: Archivo local vacío (primera descarga)`);
@@ -423,6 +479,7 @@ class FootprintArchiverElectron {
    * @returns {Promise<Array>} - Footprints
    */
   async getArchivedFootprints(symbol, fromTimestamp = null, toTimestamp = null) {
+    await this._ready;
     const allFootprints = await this._readFromFile(symbol);
 
     if (!fromTimestamp && !toTimestamp) {
@@ -443,6 +500,7 @@ class FootprintArchiverElectron {
    * Obtiene estadísticas del archivo.
    */
   async getArchiveStats() {
+    await this._ready;
     const stats = {
       symbolsArchived: 0,
       totalFootprints: 0,
@@ -519,6 +577,7 @@ class FootprintArchiverElectron {
    * @returns {Promise<Object>} - Resultado de la operación
    */
   async deleteArchiveFile(symbol) {
+    await this._ready;
     if (!window.electron || !this.storageDir) {
       return {
         success: false,
@@ -562,6 +621,7 @@ class FootprintArchiverElectron {
    * Abre la carpeta de almacenamiento en el explorador.
    */
   async openStorageFolder() {
+    await this._ready;
     if (window.electron && this.storageDir) {
       await window.electron.openFolder(this.storageDir);
     }

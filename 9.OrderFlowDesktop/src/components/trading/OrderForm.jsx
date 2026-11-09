@@ -28,6 +28,13 @@ const OrderForm = ({
     }
   }, [tpslBoxData?.side]);
 
+  // Si la caja TP/SL o la moneda cambian con la confirmación abierta, se cancela:
+  // la orden debe confirmarse con los precios que se van a enviar
+  useEffect(() => {
+    setShowConfirmation(false);
+    setPendingOrder(null);
+  }, [tpslBoxData, symbol]);
+
   // Calcular % de SL respecto al entry
   const slPercent = useMemo(() => {
     if (!tpslBoxData) return 0;
@@ -112,6 +119,7 @@ const OrderForm = ({
     if (!tpslBoxData || calculatedQuantity.qty <= 0) return;
 
     const order = {
+      symbol: tpslBoxData.symbol || symbol,
       side,
       quantity: calculatedQuantity.qty,
       stopLoss: tpslBoxData.slPrice,
@@ -124,7 +132,7 @@ const OrderForm = ({
 
     setPendingOrder(order);
     setShowConfirmation(true);
-  }, [side, tpslBoxData, calculatedQuantity, potentialPnL]);
+  }, [symbol, side, tpslBoxData, calculatedQuantity, potentialPnL]);
 
   // Handler para confirmar orden
   const handleConfirmOrder = useCallback(() => {
@@ -141,11 +149,19 @@ const OrderForm = ({
     setPendingOrder(null);
   }, []);
 
-  // Formatear precio según tickSize
+  // Formatear precio según el tick de la moneda.
+  // El bot entrega tick_size (snake_case): con "tickSize" siempre caía en 0.01 y GALA salía como $0.02
   const formatPrice = (price) => {
     if (!price) return '--';
-    const tickSize = parseFloat(symbolConfig?.tickSize) || 0.01;
-    const decimals = tickSize.toString().split('.')[1]?.length || 2;
+    const tickSize = parseFloat(symbolConfig?.tick_size ?? symbolConfig?.tickSize) || 0.01;
+    const text = String(tickSize);
+    let decimals;
+    if (text.includes('e-')) {
+      const [mantissa, exponent] = text.split('e-');
+      decimals = (mantissa.split('.')[1]?.length || 0) + parseInt(exponent, 10);
+    } else {
+      decimals = text.split('.')[1]?.length || 2;
+    }
     return price.toFixed(decimals);
   };
 
@@ -298,7 +314,7 @@ const OrderForm = ({
           {/* Status de orden */}
           {orderStatus.success && (
             <div className="order-status success">
-              ✅ Orden ejecutada exitosamente
+              ✅ {orderStatus.message || 'Orden ejecutada exitosamente'}
             </div>
           )}
           {orderStatus.error && (

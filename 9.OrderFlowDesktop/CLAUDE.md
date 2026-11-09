@@ -6,6 +6,57 @@ Version de escritorio del Order Flow (App 5) empaquetada con Electron. Incluye o
 
 ---
 
+## Pruebas y Correcciones (8 Noviembre 2026)
+
+Se probó App 9 en una copia aislada y se corrigieron las fases 1 (datos y dinero) y 2 (footprints correctos) del diagnóstico. Las fases 3 (Swing y alertas) y 4 (backend y collector) quedan pendientes.
+
+### Lo que estaba mal y cómo quedó
+
+| Área | Antes | Ahora | Dónde |
+|------|-------|-------|-------|
+| Auto-descarga del archivo | Cada sondeo de 5 s lanzaba otra descarga de 48 h si el archivo tenía más de 12 h. Hubo 17 en 100 s, ninguna terminó y el archivo quedó en el 05/11 | Una a la vez por moneda, un intento cada 15 min, horas que faltan (48 a 168) | `OrderFlowIndicator._maybeAutoDownload()` |
+| Escritura del archivo | Una lectura a medio escribir devolvía `[]` y se guardaban solo las horas descargadas | Temporal y luego reemplazo (`preload.writeFile`). Lectura estricta: si el archivo no se puede leer, no se sobrescribe. Descargas de una moneda en cola | `FootprintArchiverElectron.archiveSymbol()` |
+| Lectura del archivo | 89 MB leídos y parseados en cada sondeo | Se relee solo si cambian tamaño o fecha (`getFileInfo`). Caché de 2 monedas | `_loadFromArchive()` |
+| Descarga de la nube | Sin gzip; el timeout no cortaba la petición | `Accept-Encoding: gzip`, corte real a los 180 s, aviso si la respuesta llega cortada | `electron/main.js` |
+| Agregación a 5m | Cada nivel se sumaba completo en todas las celdas que tocaba: BTC con step 5 sobre datos de step 10 daba volumen ×2. Steps < 0.01 se forzaban a 0.1 | Cada nivel va a la celda de su precio medio. Step de la vela = máx(objetivo, step de sus datos). Celdas por índice entero | `_aggregateGroup()` |
+| Imbalances en 5m | No existían | Misma regla que el backend en 1m (`computeImbalances`), más POC y z-score de 20 velas | `_aggregateGroup()`, `applyVolumeZScores()` |
+| Unión archivo + backend | Se agregaba cada fuente aparte; la vela del borde quedaba incompleta | Unión por minuto, el backend manda en sus minutos. Las velas solo del archivo se agregan una vez | `_aggregateWithCache()` |
+| Sondeo al backend | 2 MB cada 5 s | Completo cada 60 s; entre medio `limit=10` | `_fetchBackendFootprints()` |
+| Dibujo | Delta arriba de las celdas (`levels[0]`). POC perdido con `poc_index || -1`. Mapa de footprints rehecho en cada cuadro | Delta bajo el nivel más bajo; `?? -1` y POC por objeto. Mapa en caché con búsqueda binaria | `renderDelta()`, `renderOrderFlowUnit()`, `_getFootprintMap()` |
+| Ancho por vela | Overlays y paneles usaban `chartWidth / velas`. Con poco zoom o pocos días se estiraban; con zoom, un desfase de casi una vela a la derecha | `candleAreaWidth = barWidth * velas` para overlays y paneles | `MiniChart.jsx` |
+| Panel de Trading | `setInterval(updatePrice)` llamaba al setter del timeframe y lo dejaba en `[object Promise]`. Caja TP/SL leída solo al abrir. Badge siempre DEMO. Precios con 2 decimales | `window.setInterval`; caja leída cada 5 s y al cambiar de moneda, que no viaja a otra moneda. `mode` del bot. `tick_size`. Avisos para `unprotected`, `closed_unprotected`, `unknown` y `tp_failed` | `SingleSymbolAnalyzer.jsx`, `TradingPanel.jsx`, `OrderForm.jsx` |
+| Aplicar a historial | Borraba `SYMBOL_1.json` (semanas de datos), `pause()` sin id no pausaba nada y el backend seguía sirviendo lo mismo | No borra el archivo. Pausa el sondeo de Order Flow por id. El DELETE también limpia la RAM del almacenamiento y reinicia la espera del relleno | `SingleSymbolAnalyzer.jsx`, `main.py` |
+| Campo de step size | Al teclear "0" saltaba a 0.1 | Guarda el texto mientras se escribe (`step="any"`) | `OrderFlowSettings.jsx` |
+| WebSocket de velas | Tras un corte quedaba cerrado para siempre | Reconexión con espera creciente, ping cada 20 s, reconexión si pasan 60 s sin datos o vuelve la red | `WebSocketManager.js` |
+
+### Backend (App 5, `5.Order_flow/backend`)
+- **`/api/historical`:** al vencer la caché (300 s) vuelve a pedir a Bybit; antes devolvía la misma foto hasta reiniciar. No guarda respuestas parciales y poda entradas viejas.
+- **`get_footprints`:** si hay pocos footprints, `_schedule_cloud_fill()` pide a la nube en segundo plano (una tarea por clave, un intento cada 10 min) y `save_many()` guarda de una vez. Antes la consulta a la nube era síncrona y congelaba el backend: 49 s medidos.
+- **`DELETE /api/orderflow/cache/{symbol}`:** valida el símbolo, porque `*` borraba los 42 archivos. Limpia deque, almacenamiento (RAM y archivo) y la espera del relleno.
+- **Rejection (`/api/rejection-patterns/detect`):** solo envía al bot patrones de las 2 últimas velas y el payload lleva `timestamp`. Antes enviaba todos los de los días cargados en cada recarga.
+
+### Cómo se probó (sin tocar los datos del usuario)
+- **Backend del worktree en 127.0.0.1:11300**, con un lanzador que bloquea toda conexión a localhost:5000.
+- **Vite en 11301**, con un plugin que reescribe 11000→11300, 5000→5999 y 10000→10999.
+- **Electron oculto:** `userData` temporal, `show()` y `openDevTools` anulados y la bandeja reemplazada interceptando `require('electron')` en `main.js`.
+- **Bot falso en 5999.**
+- **Resultados:**
+  - Una sola descarga (antes 17) y archivo escrito una vez.
+  - Heap de unos 82 MB (antes 200-500 MB).
+  - Volumen y delta exactos en 9,037 velas de 5m de BTC.
+  - Imbalances iguales al backend en 1,439 de 1,439 velas.
+  - Agregación con caché en 16 ms por sondeo.
+  - Footprints de 7 días en 0.8 s (antes 49 s con el backend congelado).
+  - Reconexión del WebSocket en 5 s.
+
+### Ten en cuenta
+- **Step del historial:** no se puede afinar. Velas grabadas con step 10 se ven con step 10 aunque el modal diga 5; solo las velas nuevas usan el step nuevo. Afinar el historial exige los trades (`OrderFlowData`).
+- **XRP:** queda con 1 o 2 celdas por vela de 5m porque el collector graba con step 0.005. Lo resuelve la fase 4 (steps del collector).
+- **15m, 30m, 1h y 4h:** siguen sin footprints. `fetchFootprints` solo acepta 1 y 5.
+- **Hueco del 03/11:** queda un hueco de 41 h en el archivo de BTC desde ese día. "Descargar ahora" del panel de Archivo (720 h) lo rellena si la nube conserva esos días.
+
+---
+
 ## Limpieza de Rendimiento: Eliminación de Logs y Debug (4 Noviembre 2026)
 
 **Problema:** La aplicación se volvió muy lenta debido a exceso de console.log y código de debug acumulado durante las sesiones de investigación del 2-4 de noviembre.
@@ -357,6 +408,8 @@ if (cached && cached.candles.length > 0) {
 | `PollingCoordinator.js` | Reescritura completa a v2 |
 
 ## Fix CRÍTICO: Footprints Históricos No Se Actualizan al Cambiar Step Size (20 Octubre 2026)
+
+> **Reemplazado el 8 Noviembre 2026:** "Aplicar a historial" ya no borra el archivo local. Borrarlo no cambiaba el step del historial y se perdían semanas de datos. Ver "Pruebas y Correcciones (8 Noviembre 2026)".
 
 **Problema:** Después de cambiar step_size en modal + guardar + "Aplicar a historial", los footprints históricos NO se actualizaban visualmente. Solo los footprints en tiempo real mostraban el nuevo step_size correctamente.
 
