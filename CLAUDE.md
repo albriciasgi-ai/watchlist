@@ -53,6 +53,27 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 9 Noviembre 2026: Elementos de Order Flow (fase 1)
+
+**Problema:** los 91 setups de Orderflows Unlocked combinan unos 30 elementos de order flow, y App 1 solo dibujaba imbalances, stacked y delta. Los umbrales del libro son contratos del ES y en BTC marcan entre 30% y 90% de las velas.
+
+**Cambios:**
+1. **Lectura y calibración:** cinco agentes leyeron las 270 láminas de los PDF, y la fase 0 midió cada regla en BTC de 2020 a 2026. Todo quedó en `C:\Users\inven\OrderFlowData\research\orderflows_unlocked\`
+2. **Motor:** `backend/of_elements.py` detecta 27 elementos con un step de análisis fijo por marco. Ocho de ellos (Stacked, Volume Imbalance, Reversal, Reload, Volume Decline, Thin Print, Open POC y ratio de extremos) solo aparecen en velas con volumen ≥ 2 veces la mediana de las 20 anteriores, ajustable en el modal. Los umbrales salen de los 30 días anteriores, para que cada elemento marque cerca del 5% de las velas. Solo usa velas cerradas antes de la hora simulada. Endpoint `/api/orderflow/elements/{symbol}`
+3. **Indicador "Elementos OF":**
+   - franjas que siguen hasta que el precio vuelve;
+   - celdas marcadas, contornos de dos o tres velas y un triángulo con códigos;
+   - panel "Tabla de la vela" (delta, Δ/Vol y delta acumulado del día) y EMA 14 opcional;
+   - modal por grupos: Zonas, Giro en la zona y Continuación;
+   - todo se puede elegir para el análisis del trade.
+4. **Fuera por ahora:** Market Weakness, que las láminas no definen, y Extreme y Small Min/Max Delta, que necesitan el Max/Min Delta exacto (fase 2)
+
+**IMPORTANTE:** reiniciar el backend de App 1 para aplicar los cambios. Son ayudas de lectura, no señales: el estudio de los 91 setups no encontró uno robusto. Solo BTC tiene almacén de trades.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ELEMENTOS DE ORDER FLOW"
+
+---
+
 ### APP 1 (Backtester) - 9 Noviembre 2026: Footprints al Alejar la Vista
 
 **Problema:** con la simulación iniciada el 01/01/2026, el Order Flow solo se dibujaba desde el 24/12/2025, aunque el almacén tiene todo 2025. El indicador dejaba de pedir footprints con más de 400 velas en pantalla, unos 4 días en 15m. Lo ya cargado se seguía viendo y lo anterior quedaba vacío, sin aviso.

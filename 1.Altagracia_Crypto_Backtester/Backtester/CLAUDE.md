@@ -639,6 +639,84 @@ Omite los días ya creados. Mide cerca de 0.4 s y 0.3 MB por día.
 
 ---
 
+## ELEMENTOS DE ORDER FLOW (Noviembre 2026)
+
+Indicador "Elementos OF": los elementos de los setups de Orderflows Unlocked, detectados con los trades reales y dibujados como ayuda de lectura, no como señales. Las reglas salen de leer las láminas de los PDF y la calibración, de medirlas en BTC de 2020 a 2026: `C:\Users\inven\OrderFlowData\research\orderflows_unlocked\` (`LEEME.md`, `CALIBRACION.md`).
+
+### Flujo
+
+```
+OrderFlowData/store (minuto × celda)
+        │  backend/of_elements.py: detect()
+        ▼
+GET /api/orderflow/elements/{symbol}?interval&start_timestamp&end_timestamp&known_until&target&band_days&vol_filter
+        ▼
+OrderFlowElementsIndicator.js: franjas, celdas, contornos, glifos, EMA 14 y la tabla de la vela
+```
+
+### Detección (backend)
+
+- **Step de análisis fijo:** `analysis_step()` toma la fracción de `footprint_store.STEP_BY_INTERVAL` (15m: 10 USD con BTC en 80,000), redondeada a 1, 2 o 5 y múltiplo de la celda. No agrupa niveles: el footprint que se dibuja usa `max_levels` y cada vela queda con su propio step, así que no sirve para detectar
+- **Orientación:** índice 0 = extremo donde empieza la vela (mínimo en verde, máximo en roja). A = agresor a favor del color, P = lado contrario. Un doji no marca nada
+- **Umbrales relativos:** por día, con las velas de los 30 días anteriores, para que cada elemento marque cerca de `target` de las velas (5% por defecto). Nunca usan el día en curso. Con menos de 100 velas de historia responde `warming` y solo da los elementos literales
+- **Sin futuro:** solo velas cerradas antes de `known_until`. La VA abandonada lleva `known` = cierre de la vela siguiente. Un día completo queda en caché (`MAX_CACHED_DAYS`): la primera consulta tarda ~1 s en 15m y las siguientes ~0.3 s
+- Cada evento: `code`, `dir`, `t` (vela), `t0` (primera vela de un contorno), `known`, `lo`, `hi`, `value`, `thr`. Además `bars` trae delta, volumen, Δ/Vol y delta acumulado del día UTC
+
+| Código | Elemento | Forma | Regla |
+|---|---|---|---|
+| VA | VA abandonada | franja | la vela siguiente no entra en el área de valor (70% de a un nivel) |
+| OG | Orderflows Gap | franja | áreas de valor sin solape, hueco ≥ umbral en ATR |
+| AP / SL | POC alineado / Slingshot | franja | mismo POC en dos velas / dos velas del mismo color con el POC hacia atrás |
+| RL | Absorción (propuesta propia) | franja | nivel ≥ p99.5 de 30 días con ≥40% pasivo. No es regla del libro |
+| EX | Exhaustion Print | franja | lado pasivo del extremo casi en cero (umbral relativo) |
+| ZP / DT | Zero Print / Delta Tail | celdas / franja | 0 en una de las dos celdas del inicio / delta contrario en el extremo y a favor en el resto |
+| RS | Retail Suck | franja | pasivo del extremo decrece tres niveles, con tamaño relativo |
+| DD / PD | Delta Divergence / Price Action Divergence | franja / celdas | extremo de 5 velas con delta del color / delta contra el color (relativo) |
+| IV | Inverse Imbalance | celdas | dos desequilibrios contrarios seguidos en la mitad lejana (diagonal 4x) |
+| AD | Acumulación/Distribución | franja | mayor celda en el lado contrario y en el tercio del inicio |
+| SW / VL / SQ | Sweep / Vertical Liquidity / Sequencing | franja / celdas / celdas | rachas de niveles: sin contrapartida, con agresor ≥ p90 de 30 días, agresor creciente. Mínimos 3, 3 y 4 |
+| DB / PW | Delta Breakout / POC Wave | contorno | salto de delta entre dos velas del mismo color sobre el volumen típico / tres velas como el libro |
+| DV | Delta/Volume extremo | tabla | Δ/Vol a favor ≥ umbral relativo |
+
+**Con filtro de volumen** (`vol_filter`, 2 por defecto): solo en velas con volumen ≥ 2 veces la mediana de las 20 anteriores. Sin el filtro marcan del 12% al 74% de las velas de 15m (`research/orderflows_unlocked/filtro_volumen.py`). Vienen apagados en el modal, que los marca con "vol.". Las tasas son las de BTC del 02/10 al 01/11/2025, con filtro 2:
+
+| Código | Elemento | Forma | Regla | 15m | 1h |
+|---|---|---|---|---|---|
+| ST | Stacked Imbalance | franja | 3 desequilibrios diagonales 4x seguidos a favor del color | 11.7% | 5.4% |
+| VI | Volume Imbalance | contorno | 3 o más desequilibrios a favor, seguidos o no | 17.2% | 11.4% |
+| IR | Imbalance Reversal | franja | desequilibrio contrario en uno de los dos precios del inicio | 4.7% | 3.2% |
+| RD | Imbalance Reload | franja | desequilibrio al mismo precio en dos velas seguidas del mismo color | 4.3% | 1.7% |
+| VD | Volume Decline | celdas | pasivo crece del 1.º al 3.º precio desde el inicio | 8.1% | 11.8% |
+| TP | Thin Print | celdas | nivel interior con contrapartida 0, hasta 3 por vela | 8.7% | 2.8% |
+| OP | Open POC | franja | POC fuera del rango de las 5 velas previas por al menos 0.25 ATR | 7.5% | 7.4% |
+| RX | Ratio de extremos | celdas | 2.º precio ÷ extremo, en el lado pasivo, < 0.70 o > 30 | 5.0% | 3.3% |
+
+El filtro elige velas de mucho volumen más que elementos: Volume Imbalance, Volume Decline, Reversal y Ratio marcan casi la misma parte de esas velas que del total. Solo Stacked, Open POC y Thin Print se concentran en ellas.
+
+Quedan fuera: Market Weakness (sin regla en las láminas), y Extreme y Small Min/Max Delta. Estos dos últimos necesitan el Max/Min Delta exacto: con 1 minuto, Small Min/Max acierta menos de la mitad (`delta_exacto.py`).
+
+### Dibujo (frontend)
+
+- `ofElements.js`: catálogo, grupos del modal (Zonas, Giro en la zona, Continuación, Tabla), parámetros y `bandEnd()`. Es lógica pura y se prueba en Node
+- **Franjas:** desde la vela que las crea hasta la primera vela que empieza después de `known` y entra en su precio. Se cortan con `priceContext.knownCandles`, también con la vela en formación. Al retroceder se revisan de nuevo. Se dibujan las `maxBands` más recientes
+- **Glifos:** ▲ bajo la vela si es alcista y ▼ sobre ella si es bajista, desde 4 px. Los códigos aparecen desde 16 px
+- **Carga:** pide la vista con media pantalla de más (hasta 3 días) y `band_days` = 3. Si solo avanza la hora, pide desde cuatro velas antes de lo cargado. Con más de 60 días a la vista avisa que se acerque el zoom
+- **Tabla de la vela:** panel con delta, Δ/Vol y delta acumulado del día. Δ/Vol se rellena cuando es extremo
+- **EMA 14:** el "Momentum Strength" de las láminas. Se colorea si su pendiente pasa de 0.25 ATR en 3 velas
+- `selectableLevels()` ofrece franjas, celdas, contornos y glifos al menú "Incluir en el análisis"
+- Parámetros en `of_elements_settings_{symbol}`, para todos los marcos. Colores: compra y venta del estilo (`THEME.upRgb`, `THEME.downRgb`), o los de siempre en Clásico
+
+### Pruebas
+
+```bash
+node tests/ofelements.test.mjs
+.venv\Scripts\python.exe -m pytest tests/test_of_elements.py
+```
+
+La prueba del backend arma un almacén sintético de 34 días: reglas por vela, que lo conocido no cambie al avanzar la hora y que sin historia no haya umbrales relativos. Probado además en una copia aislada (backend 9300, Vite 9301) con BTC 15m: franjas que terminan al tocarse, códigos, modal, EMA, reproducción a 5000x (17 pedidos sin error) y el menú de análisis.
+
+---
+
 ## INDICADORES SIN FUTURO (Noviembre 2026)
 
 En backtesting, el parámetro `allCandles` de `renderOverlay` trae todo el historial, incluidas las velas futuras. Para calcular se usa `priceContext.knownCandles`, que llega hasta la hora simulada con la vela en formación al final. `priceContext.knownUntil` es la hora conocida y llega en cada dibujo, en cualquier pestaña.

@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Elementos de Order Flow
+
+Indicador "Elementos OF": 27 elementos de los setups (8 de ellos solo en velas de mucho volumen) de Orderflows Unlocked detectados con los trades reales, como franjas que siguen hasta que el precio vuelve, celdas, contornos y un triángulo con códigos, más la tabla de la vela y la EMA 14. Umbrales calibrados con los 30 días anteriores y solo velas cerradas. Detalle en `Backtester/CLAUDE.md`, sección "ELEMENTOS DE ORDER FLOW".
+
+---
+
 ### Noviembre 2026: Footprints al Alejar la Vista
 
 Order Flow dejaba de pedir footprints con más de 400 velas en pantalla, unos 4 días en 15m. Al alejar la vista, las velas anteriores quedaban sin footprints, sin aviso, aunque el almacén los tuviera. Ahora pide hasta 1600 velas y 70 días de trades por vista, y con más avisa que hay que acercar el zoom. Detalle en `Backtester/CLAUDE.md`, sección "ORDER FLOW SOBRE LAS VELAS", "Dibujo".

@@ -22,6 +22,7 @@ import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
 import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
 import LiquidationsSettings from '../LiquidationsSettings';
+import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
 import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
 import DrawingToolbar from '../drawing/DrawingToolbar';
@@ -76,6 +77,7 @@ const BacktestingApp = () => {
       "VP Periodic": false, // Un perfil por sesión
       "Volumen de Respuesta": false, // Velas principales de la tendencia contra las de la retracción
       "Liquidaciones": false, // Zonas donde se liquidó mucho dinero, cerca del precio
+      "Elementos OF": false, // Elementos de Orderflows Unlocked con los trades reales
       "VWAP": false,
       "Range Detection": false,
       "Rejection Patterns": false,        // Siempre deshabilitado por defecto
@@ -180,6 +182,7 @@ const BacktestingApp = () => {
   const [showVPPeriodicSettings, setShowVPPeriodicSettings] = useState(false);
   const [showResponseVolumeSettings, setShowResponseVolumeSettings] = useState(false);
   const [showLiquidationsSettings, setShowLiquidationsSettings] = useState(false);
+  const [showOFElementsSettings, setShowOFElementsSettings] = useState(false);
   const [chartShapes, setChartShapes] = useState([]); // Dibujos del gráfico, para ofrecer la caja TP/SL
 
   // 🎯 Configuraciones de indicadores
@@ -1773,6 +1776,7 @@ const BacktestingApp = () => {
     setShowVPPeriodicSettings(false);
     setShowResponseVolumeSettings(false);
     setShowLiquidationsSettings(false);
+    setShowOFElementsSettings(false);
   }, [activeTimeframe]);
 
   // 🔧 FIX: Forzar redibujado del canvas cuando se entra/sale de fullscreen
@@ -2418,7 +2422,8 @@ const BacktestingApp = () => {
                     'FVG': () => setShowFVGSettings(true),
                     'VP Periodic': () => setShowVPPeriodicSettings(true),
                     'Volumen de Respuesta': () => setShowResponseVolumeSettings(true),
-                    'Liquidaciones': () => setShowLiquidationsSettings(true)
+                    'Liquidaciones': () => setShowLiquidationsSettings(true),
+                    'Elementos OF': () => setShowOFElementsSettings(true)
                   };
 
                   const hasSettings = name in settingsMap;
@@ -3191,6 +3196,15 @@ const BacktestingApp = () => {
           indicator={indicatorManagerRef.current.getLiquidationsIndicator()}
           onApply={(settings) => applyToAllTimeframes(manager => manager.getLiquidationsIndicator().updateConfig(settings))}
           onClose={() => setShowLiquidationsSettings(false)}
+        />
+      )}
+
+      {showOFElementsSettings && indicatorManagerRef.current && (
+        <OrderFlowElementsSettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getOFElementsIndicator()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getOFElementsIndicator().updateConfig(settings))}
+          onClose={() => setShowOFElementsSettings(false)}
         />
       )}
 

@@ -22,6 +22,7 @@ import FVGIndicator from "./FVGIndicator";
 import VolumeProfilePeriodicIndicator from "./VolumeProfilePeriodicIndicator";
 import ResponseVolumeIndicator from "./ResponseVolumeIndicator";
 import LiquidationsIndicator from "./LiquidationsIndicator";
+import OrderFlowElementsIndicator from "./OrderFlowElementsIndicator";
 import { SessionProfiles } from "./sessionProfile.js";
 import { MIN_PANEL_HEIGHT, clearPanelLayout, movePanel, orderPanels, panelLayout, savePanelLayout } from "./panelLayout.js";
 
@@ -87,12 +88,14 @@ class IndicatorManager {
     this.responseVolumeIndicator = new ResponseVolumeIndicator(this.symbol, this.interval, this.days);
     this.liquidationsIndicator = new LiquidationsIndicator(this.symbol, this.interval, this.days);
     this.liquidationsIndicator.requestRedraw = () => this.requestRedraw?.();
+    this.ofElementsIndicator = new OrderFlowElementsIndicator(this.symbol, this.interval, this.days);
     const doubleTopBottomIndicator = new DoubleTopBottomIndicator(this.symbol, this.interval, this.days, { backtestingMode });
     doubleTopBottomIndicator.requestRedraw = () => this.requestRedraw?.();
     volumeIndicator.setDeltaSource(this.orderFlowIndicator);
 
     this.indicators = [
       this.liquidationsIndicator, // Primero: sus franjas quedan debajo de los demás dibujos
+      this.ofElementsIndicator, // Franjas y marcas de order flow, debajo de los perfiles y footprints
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       volumeIndicator,
       new CVDIndicator(this.symbol, this.interval, this.days),
@@ -1257,6 +1260,10 @@ class IndicatorManager {
 
   getLiquidationsIndicator() {
     return this.liquidationsIndicator;
+  }
+
+  getOFElementsIndicator() {
+    return this.ofElementsIndicator;
   }
 
   getVPPeriodicIndicator() {

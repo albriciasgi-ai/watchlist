@@ -14,6 +14,7 @@ import sys
 import numpy as np
 import footprint_store
 import liq_store
+import of_elements
 import oi_store
 import observer
 import measures
@@ -4061,6 +4062,37 @@ async def get_orderflow_profile(
         footprint_store.profile, sanitize_filename(symbol), start_timestamp, end_timestamp, known_until, low, high, rows
     )
     return {"success": True, **result}
+
+
+def _elements_body(symbol, interval, start, end, known_until, target, band_days, vol_filter):
+    """Detecta y serializa en un hilo: la primera vez lee 30 días previos para calibrar."""
+    result = of_elements.detect(symbol, interval, start, end, known_until, target, band_days, vol_filter)
+    return json.dumps({"success": True, "catalog": {k: v[:2] for k, v in of_elements.CATALOG.items()}, **result},
+                      allow_nan=False, separators=(",", ":")).encode("utf-8")
+
+
+@app.get("/api/orderflow/elements/{symbol}")
+@limiter.limit("600/minute")
+async def get_orderflow_elements(
+    request: Request,
+    symbol: str,
+    interval: str,
+    start_timestamp: int,
+    end_timestamp: int,
+    known_until: Optional[int] = None,
+    target: float = 0.05,
+    band_days: int = 3,
+    vol_filter: float = 2.0
+):
+    """
+    Elementos de Orderflows Unlocked de las velas cerradas entre start y end, cortados en known_until.
+    Los umbrales relativos salen de los 30 días anteriores a cada vela.
+    """
+    if not interval.isdigit() or int(interval) not in (1, 5, 15, 60, 240):
+        return {"success": False, "message": f"Interval '{interval}' no soportado", "events": [], "bars": []}
+    body = await run_in_threadpool(_elements_body, sanitize_filename(symbol), int(interval), start_timestamp,
+                                   end_timestamp, known_until, target, max(0, min(band_days, 14)), vol_filter)
+    return Response(content=body, media_type="application/json")
 
 
 @app.get("/api/orderflow/coverage/{symbol}")
