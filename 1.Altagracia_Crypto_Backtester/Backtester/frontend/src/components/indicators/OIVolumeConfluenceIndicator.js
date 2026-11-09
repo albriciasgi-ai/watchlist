@@ -3,6 +3,7 @@
 // Muestra cuando ambos confirman un movimiento (fuerte) vs cuando divergen (débil)
 
 import IndicatorBase from "./IndicatorBase";
+import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 import { alignY, crispWidth } from '../chartPixels.js';
 
 class OIVolumeConfluenceIndicator extends IndicatorBase {
@@ -306,13 +307,15 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
 
     const { x, y, width, height } = bounds;
+    const nuevo = isNewTheme();
+    const tint = (rgb, alpha) => `rgba(${rgb}, ${alpha})`;
 
     // Fondo
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = nuevo ? THEME.chartBg : "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
     // Línea separadora superior
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = nuevo ? THEME.line : "#DDE2E7";
     ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
     ctx.moveTo(x, alignY(y));
@@ -320,9 +323,9 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
     ctx.stroke();
 
     // Título
-    ctx.fillStyle = "#666";
+    ctx.fillStyle = nuevo ? THEME.textMuted : "#666";
     ctx.font = "bold 11px Inter, sans-serif";
-    ctx.fillText("OI-Volume Confluence", x + 5, y + 15);
+    ctx.fillText(nuevo ? "Confluencia de interés abierto y volumen" : "OI-Volume Confluence", x + 5, y + 15);
 
     // Calcular confluencia
     const confluenceData = this.calculateConfluence(visibleCandles);
@@ -348,8 +351,8 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
 
     // 🎯 MEJORADO: Línea cero más prominente
     const zeroY = histogramY + histogramHeight / 2;
-    ctx.strokeStyle = "#B0B0B0"; // Más oscuro que antes (#DDE2E7)
-    ctx.lineWidth = crispWidth(1.5); // Más grueso
+    ctx.strokeStyle = nuevo ? THEME.control : "#B0B0B0"; // Más oscuro que antes (#DDE2E7)
+    ctx.lineWidth = crispWidth(nuevo ? 1 : 1.5); // Más grueso
     ctx.setLineDash([]); // Línea sólida en lugar de punteada
     ctx.beginPath();
     ctx.moveTo(x, alignY(zeroY, 1.5));
@@ -396,8 +399,8 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
 
         // Color de fondo según dirección del cluster
         const clusterColor = cluster.direction === 'bullish_strong'
-          ? 'rgba(52, 199, 89, 0.15)'   // Verde muy transparente
-          : 'rgba(255, 59, 48, 0.15)';  // Rojo muy transparente
+          ? (nuevo ? tint(THEME.upRgb, 0.1) : 'rgba(52, 199, 89, 0.15)')   // Verde muy transparente
+          : (nuevo ? tint(THEME.downRgb, 0.1) : 'rgba(255, 59, 48, 0.15)');  // Rojo muy transparente
 
         // Dibujar rectángulo de fondo
         ctx.fillStyle = clusterColor;
@@ -405,8 +408,8 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
 
         // Dibujar borde del cluster
         ctx.strokeStyle = cluster.direction === 'bullish_strong'
-          ? 'rgba(52, 199, 89, 0.4)'
-          : 'rgba(255, 59, 48, 0.4)';
+          ? (nuevo ? tint(THEME.upRgb, 0.4) : 'rgba(52, 199, 89, 0.4)')
+          : (nuevo ? tint(THEME.downRgb, 0.4) : 'rgba(255, 59, 48, 0.4)');
         ctx.lineWidth = 1;
         ctx.setLineDash([3, 3]); // Línea punteada
         ctx.strokeRect(clusterX, histogramY, clusterWidth, histogramHeight);
@@ -414,7 +417,7 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
 
         // Etiqueta de cluster (pequeña, arriba del rectángulo)
         const clusterLabel = `${cluster.bars.length}x`;
-        ctx.fillStyle = cluster.direction === 'bullish_strong' ? '#34C759' : '#FF3B30';
+        ctx.fillStyle = cluster.direction === 'bullish_strong' ? (nuevo ? THEME.upText : '#34C759') : (nuevo ? THEME.downText : '#FF3B30');
         ctx.font = 'bold 9px Inter, sans-serif';
         const labelWidth = ctx.measureText(clusterLabel).width;
         ctx.fillText(clusterLabel, clusterX + (clusterWidth - labelWidth) / 2, histogramY + 10);
@@ -433,7 +436,11 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
       const barHeight = Math.min(rawHeight, histogramHeight / 2);
 
       // Color con opacidad dinámica incluida
-      const color = this.getConfluenceColor(d.confluenceType, d.strength);
+      const strengthAlpha = 0.35 + 0.5 * Math.min(1, Math.abs(d.strength || 0) / 3);
+      const color = !nuevo ? this.getConfluenceColor(d.confluenceType, d.strength)
+        : d.confluenceType === 'bullish_strong' ? tint(THEME.upRgb, strengthAlpha)
+        : d.confluenceType === 'bearish_strong' ? tint(THEME.downRgb, strengthAlpha)
+        : THEME.divergence;
       ctx.fillStyle = color;
 
       // 🎯 NUEVO: Usar ancho de barra de la configuración
@@ -451,16 +458,16 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
     // 🎯 MEJORADO: Leyenda más compacta en la parte inferior (usar colores del config)
     const legendY = y + height - 8;
     const legendItems = [
-      { label: "Conf ▲", color: this.config.colors.bullish },
-      { label: "Conf ▼", color: this.config.colors.bearish },
-      { label: "Diverg", color: this.config.colors.divergence }
+      { label: nuevo ? "Sube" : "Conf ▲", color: nuevo ? THEME.up : this.config.colors.bullish },
+      { label: nuevo ? "Baja" : "Conf ▼", color: nuevo ? THEME.down : this.config.colors.bearish },
+      { label: nuevo ? "Diverge" : "Diverg", color: nuevo ? THEME.divergence : this.config.colors.divergence }
     ];
 
     let legendX = x + width - 220;
     legendItems.forEach(item => {
       ctx.fillStyle = item.color;
       ctx.fillRect(legendX, legendY - 6, 8, 8);
-      ctx.fillStyle = "#666";
+      ctx.fillStyle = nuevo ? THEME.textMuted : "#666";
       ctx.font = "9px Inter, sans-serif";
       ctx.fillText(item.label, legendX + 10, legendY);
       legendX += 70;
@@ -472,17 +479,17 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
 
       // Etiqueta compacta del estado actual
       const label = {
-        bullish_strong: "CONF ▲",
-        bearish_strong: "CONF ▼",
-        divergence: "DIVERG",
+        bullish_strong: nuevo ? "Sube" : "CONF ▲",
+        bearish_strong: nuevo ? "Baja" : "CONF ▼",
+        divergence: nuevo ? "Diverge" : "DIVERG",
         neutral: "━"
       }[lastData.confluenceType] || "━";
 
       // Color base sin opacidad para el texto
       const baseColors = {
-        bullish_strong: "#34C759",
-        bearish_strong: "#FF3B30",
-        divergence: "#FF9800",
+        bullish_strong: nuevo ? THEME.upText : "#34C759",
+        bearish_strong: nuevo ? THEME.downText : "#FF3B30",
+        divergence: nuevo ? THEME.divergence : "#FF9800",
         neutral: "#999"
       };
 
@@ -491,7 +498,7 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
       ctx.fillText(label, x + 5, y + height - 8);
 
       // Mostrar Z-Scores de forma más compacta
-      ctx.fillStyle = "#666";
+      ctx.fillStyle = nuevo ? THEME.textMuted : "#666";
       ctx.font = "9px Inter, sans-serif";
       const volZText = `V:${lastData.volumeZScore >= 0 ? '+' : ''}${lastData.volumeZScore.toFixed(1)}`;
       const oiZText = `OI:${lastData.oiZScore >= 0 ? '+' : ''}${lastData.oiZScore.toFixed(1)}`;

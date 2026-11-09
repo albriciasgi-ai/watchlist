@@ -2,6 +2,7 @@
 
 import { profileLevels } from './analysisLevels.js';
 import { alignX, alignY, crispWidth } from '../chartPixels.js';
+import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 import IndicatorBase from "./IndicatorBase";
 
 class VolumeProfileIndicator extends IndicatorBase {
@@ -527,7 +528,11 @@ class VolumeProfileIndicator extends IndicatorBase {
       }
       
       // FASE 3: Gradiente mejorado
-      if (this.useGradient) {
+      if (isNewTheme()) {
+        // Estilo Nítido: área de valor y resto con sus colores, más intensos con más volumen
+        const rgb = level.isValueArea ? THEME.vpValueAreaRgb : THEME.vpOutsideRgb;
+        color = `rgba(${rgb}, ${0.22 + volumeFraction * 0.4})`;
+      } else if (this.useGradient) {
         const alpha = 0.15 + (volumeFraction * 0.75); // De 15% a 90% opacidad
         color = this.hexToRgba(color, alpha);
       } else {
@@ -558,22 +563,25 @@ class VolumeProfileIndicator extends IndicatorBase {
 
     // Dibujar lÃƒÂ­nea del POC
     const pocY = priceToY(this.profile.poc.price);
-    ctx.strokeStyle = this.pocColor;
-    ctx.lineWidth = crispWidth(2);
-    ctx.setLineDash([4, 4]);
+    const nuevo = isNewTheme();
+    const pocWidth = nuevo ? 1 : 2;
+    ctx.strokeStyle = nuevo ? THEME.vpPoc : this.pocColor;
+    ctx.lineWidth = crispWidth(pocWidth);
+    ctx.setLineDash(nuevo ? [] : [4, 4]);
     ctx.beginPath();
-    ctx.moveTo(x, alignY(pocY, 2));
-    ctx.lineTo(chartRight, alignY(pocY, 2));
+    ctx.moveTo(x, alignY(pocY, pocWidth));
+    ctx.lineTo(chartRight, alignY(pocY, pocWidth));
     ctx.stroke();
     ctx.setLineDash([]);
 
     // Dibujar lÃƒÂ­neas VAH y VAL
     const vahY = priceToY(this.profile.valueArea.vahPrice);
     const valY = priceToY(this.profile.valueArea.valPrice);
-    
-    ctx.strokeStyle = this.vahValColor;
+
+    ctx.strokeStyle = nuevo ? THEME.vpVahVal : this.vahValColor;
     ctx.lineWidth = crispWidth(1);
-    ctx.globalAlpha = 0.5;
+    ctx.globalAlpha = nuevo ? 0.9 : 0.5;
+    if (nuevo) ctx.setLineDash([3, 3]);
 
     ctx.beginPath();
     ctx.moveTo(x, alignY(vahY));
@@ -584,11 +592,36 @@ class VolumeProfileIndicator extends IndicatorBase {
     ctx.moveTo(x, alignY(valY));
     ctx.lineTo(chartRight, alignY(valY));
     ctx.stroke();
-    
+
     ctx.globalAlpha = 1.0;
+    ctx.setLineDash([]);
+
+    // Estilo Nítido: etiquetas en gris, una por línea, con el decimal del precio
+    if (this.showLabels && nuevo) {
+      const labelX = this.histogramPosition === "left" ? x + 5 : chartRight - histogramMaxWidth + 5;
+      const digits = this.profile.poc.price >= 1000 ? 1 : 2;
+      const rows = [
+        [this.mode === "fixed" ? "Perfil fijo" : "Perfil dinámico", ""],
+        ["POC", this.profile.poc.price.toFixed(digits)],
+        ["VAH", this.profile.valueArea.vahPrice.toFixed(digits)],
+        ["VAL", this.profile.valueArea.valPrice.toFixed(digits)]
+      ];
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      rows.forEach(([name, value], i) => {
+        const rowY = y + 16 + i * 15;
+        ctx.font = `${i === 0 ? '600 ' : ''}${THEME.fontSize}px ${THEME.font}`;
+        ctx.fillStyle = i === 0 ? THEME.textMuted : THEME.textFaint;
+        ctx.fillText(name, labelX, rowY);
+        if (value) {
+          ctx.fillStyle = THEME.text;
+          ctx.fillText(value, labelX + 32, rowY);
+        }
+      });
+    }
 
     // Labels informativos
-    if (this.showLabels) {
+    if (this.showLabels && !nuevo) {
       ctx.fillStyle = "#666";
       ctx.font = "10px Inter, sans-serif";
       

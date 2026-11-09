@@ -24,6 +24,11 @@ import {
   alignX, alignY, candleColumns, crispWidth, installCrispRects, pixelRatio, resetCanvasMoves, screenDensity,
   setCanvasPixels, snapEdge, snapSpanY
 } from './chartPixels.js';
+import {
+  THEME, crossTime, installThemeFonts, isNewTheme, isTimeTick, niceStep, niceTimeStep, priceDecimals, timeTick
+} from './uiTheme.js';
+import { useUiTheme } from './useUiTheme.js';
+import { Icon } from './uiIcons.jsx';
 import './backtesting/Observer.css';
 import { isBlind, maskDate } from './backtesting/blindClock';
 
@@ -774,6 +779,8 @@ const MiniChart = forwardRef(({
   const devicePixelsRef = useRef(null); // Píxeles reales que ocupa el lienzo en pantalla, del ResizeObserver
   const captureDensityRef = useRef(null); // Densidad pedida al tomar una imagen de trade
   const drawnSizeRef = useRef(null); // Tamaño CSS del lienzo en el último dibujo
+  const priceDecimalsRef = useRef(null); // Decimales del precio de la moneda, para los ejes de Nítido
+  const uiTheme = useUiTheme();
   const simulatedNowRef = useRef(null);
   simulatedNowRef.current = currentTime;
   const dragStateRef = useRef({ isDragging: false, startX: 0, startY: 0, startOffset: 0, startVerticalOffset: 0 });
@@ -1024,15 +1031,18 @@ const MiniChart = forwardRef(({
     const scaleX = density === null ? 1 : bitmapWidth / rect.width;
     const scaleY = density === null ? 1 : bitmapHeight / rect.height;
     installCrispRects(ctx);
+    installThemeFonts(ctx);
     ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
     resetCanvasMoves(ctx);
     setCanvasPixels(scaleX, scaleY, density !== null);
     drawnSizeRef.current = { width: rect.width, height: rect.height };
 
-    const bullColor = "#34C759";
-    const bearColor = "#FF3B30";
-    const axisColor = "#DDE2E7";
-    const textColor = "#666";
+    // Estilo Nítido (uiTheme.js). Con el clásico todo queda como antes
+    const isNew = isNewTheme();
+    const bullColor = isNew ? THEME.up : "#34C759";
+    const bearColor = isNew ? THEME.down : "#FF3B30";
+    const axisColor = isNew ? THEME.grid : "#DDE2E7";
+    const textColor = isNew ? THEME.textMuted : "#666";
 
     const marginLeft = 10;
     const marginRight = 65;
@@ -1087,7 +1097,12 @@ const MiniChart = forwardRef(({
     const endIdx = Math.min(displayCandles.length, startIdx + candlesPerScreen);
     const visibleCandles = displayCandles.slice(startIdx, endIdx);
 
-    ctx.fillStyle = "#FFFFFF";
+    if (priceDecimalsRef.current?.symbol !== symbol && displayCandles.length) {
+      priceDecimalsRef.current = { symbol, value: priceDecimals(displayCandles) };
+    }
+    const pxDecimals = priceDecimalsRef.current?.value ?? 2;
+
+    ctx.fillStyle = isNew ? THEME.chartBg : "#FFFFFF";
     ctx.fillRect(0, 0, density === null ? width : rect.width, density === null ? height : rect.height);
 
     if (visibleCandles.length === 0) return;
@@ -1142,7 +1157,30 @@ const MiniChart = forwardRef(({
     ctx.font = "10px Inter, sans-serif";
     ctx.lineWidth = crispWidth(1);
 
-    for (let i = 0; i <= 4; i++) {
+    if (isNew) {
+      // Precios redondos con los decimales de la moneda, uno cada ~56 px, y rejilla muy suave
+      const priceAt = y => minPrice + (marginTop + priceChartHeight - y + verticalOffset) / yScale;
+      const topPrice = priceAt(marginTop);
+      const bottomPrice = priceAt(marginTop + priceChartHeight);
+      const step = niceStep(topPrice - bottomPrice, priceChartHeight, 56, Math.pow(10, -pxDecimals));
+      const first = Math.ceil(bottomPrice / step);
+      ctx.font = `${THEME.fontSize}px ${THEME.font}`;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      for (let k = first; k * step <= topPrice; k++) {
+        const price = k * step;
+        const y = marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
+        if (y < marginTop + 4 || y > marginTop + priceChartHeight - 4) continue;
+        ctx.strokeStyle = THEME.grid;
+        ctx.beginPath();
+        ctx.moveTo(marginLeft, alignY(y));
+        ctx.lineTo(width - marginRight, alignY(y));
+        ctx.stroke();
+        ctx.fillStyle = THEME.textMuted;
+        ctx.fillText(price.toFixed(pxDecimals), width - marginRight + 8, Math.round(y));
+      }
+      ctx.textBaseline = 'alphabetic';
+    } else for (let i = 0; i <= 4; i++) {
       const price = minPrice + (priceRange * i / 4);
       const y = marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
       const lineY = alignY(y);
@@ -1354,7 +1392,18 @@ const MiniChart = forwardRef(({
     }
 
     // 🎯 Renderizar volumen con mejoras visuales basadas en z-score
-    visibleCandles.forEach((d, i) => {
+    if (isNew) {
+      // Barras planas del color de la vela, sin brillo: el volumen alto se nota por la altura y un poco más de tinta
+      visibleCandles.forEach((d, i) => {
+        const x = marginLeft + (i * barWidth);
+        const volHeight = d.volume * volumeScale;
+        const inCluster = clusterIndices.has(i);
+        const rising = inCluster ? clusterDirections.get(i) === 'bullish' : d.close >= d.open;
+        const alpha = inCluster ? 0.7 : 0.3 + 0.32 * Math.max(0, Math.min(1, (volumeZScores[i] + 1) / 4));
+        ctx.fillStyle = `rgba(${rising ? THEME.upRgb : THEME.downRgb}, ${alpha})`;
+        ctx.fillRect(x + barWidth * 0.15, volumeStartY + volumeHeightCalculated - volHeight, barWidth * 0.7, volHeight);
+      });
+    } else visibleCandles.forEach((d, i) => {
       const x = marginLeft + (i * barWidth);
       const volHeight = d.volume * volumeScale;
       const zScore = volumeZScores[i];
@@ -1422,11 +1471,34 @@ const MiniChart = forwardRef(({
 
     const timeStep = Math.max(Math.floor(visibleCandles.length / 5), 1);
     const timeY = volumeStartY + volumeHeightCalculated + 15;
-    
+
     ctx.fillStyle = textColor;
     ctx.font = "10px Inter, sans-serif";
-    
-    for (let i = 0; i < visibleCandles.length; i += timeStep) {
+
+    if (isNew) {
+      // Horas redondas en hora de Colombia, separadas al menos 90 px; el cambio de día en negrita
+      const candleMs = TF_MS[interval] || Math.max(60000, (visibleCandles[1]?.timestamp ?? 60000) - visibleCandles[0].timestamp);
+      const step = niceTimeStep(barWidth, candleMs, 90);
+      ctx.textAlign = 'center';
+      let lastRight = -Infinity;
+      for (let i = 0; i < visibleCandles.length; i++) {
+        const timestamp = visibleCandles[i].timestamp;
+        if (!isTimeTick(timestamp, step)) continue;
+        let { text, strong } = timeTick(timestamp, step);
+        if (isBlind()) {
+          const [word, day, clock] = maskDate(timestamp).split(' ');
+          text = strong ? `${word} ${day}` : clock;
+        }
+        ctx.font = `${strong ? '600 ' : ''}${THEME.fontSize}px ${THEME.font}`;
+        const x = marginLeft + (i * barWidth) + (barWidth / 2);
+        const half = ctx.measureText(text).width / 2;
+        if (x - half < lastRight + 10 || x - half < 2) continue;
+        ctx.fillStyle = strong ? THEME.text : THEME.textMuted;
+        ctx.fillText(text, x, timeY);
+        lastRight = x + half;
+      }
+      ctx.textAlign = 'left';
+    } else for (let i = 0; i < visibleCandles.length; i += timeStep) {
       const candle = visibleCandles[i];
       const prevCandle = i > 0 ? visibleCandles[i - timeStep] : null;
       const x = marginLeft + (i * barWidth) + (barWidth / 2);
@@ -1439,6 +1511,38 @@ const MiniChart = forwardRef(({
       ctx.fillText(timeText, Math.max(2, x - textWidth / 2), timeY);
     }
 
+    if (isNew) {
+      // Leyenda: moneda y marco, y apertura, máximo, mínimo, cierre y volumen de la vela bajo la cruz (o la última)
+      let legendCandle = visibleCandles[visibleCandles.length - 1];
+      if (mouseX !== null && mouseX >= marginLeft && mouseX <= width - marginRight) {
+        const index = Math.floor((mouseX - marginLeft) / barWidth);
+        if (index >= 0 && index < visibleCandles.length) legendCandle = visibleCandles[index];
+      }
+      const rising = legendCandle.close >= legendCandle.open;
+      const valueColor = rising ? THEME.upText : THEME.downText;
+      const legendY = 17;
+      let legendX = marginLeft + 4;
+      const put = (text, color, font, gap) => {
+        ctx.font = font;
+        ctx.fillStyle = color;
+        ctx.fillText(text, legendX, legendY);
+        legendX += ctx.measureText(text).width + gap;
+      };
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      put(`${symbol} · ${interval}`, THEME.text, `600 13px ${THEME.font}`, 16);
+      const small = `${THEME.fontSize}px ${THEME.font}`;
+      for (const [label, value] of [['O', legendCandle.open], ['H', legendCandle.high], ['L', legendCandle.low], ['C', legendCandle.close]]) {
+        put(label, THEME.textMuted, small, 3);
+        put(value.toFixed(pxDecimals), valueColor, small, 10);
+      }
+      const change = legendCandle.open ? ((legendCandle.close - legendCandle.open) / legendCandle.open) * 100 : 0;
+      put(`${change >= 0 ? '+' : ''}${change.toFixed(2)}%`, valueColor, small, 14);
+      const volume = legendCandle.volume || 0;
+      const volumeText = volume >= 1e6 ? `${(volume / 1e6).toFixed(2)}M` : volume >= 1e4 ? `${(volume / 1e3).toFixed(1)}K` : volume.toFixed(volume >= 100 ? 0 : 1);
+      put('V', THEME.textMuted, small, 3);
+      put(volumeText, THEME.text, small, 0);
+    } else {
     ctx.fillStyle = "#222";
     ctx.font = "bold 13px Inter, sans-serif";
     ctx.fillText(symbol, marginLeft + 5, 18);
@@ -1457,6 +1561,7 @@ const MiniChart = forwardRef(({
     ctx.fillRect(width - marginRight - timeframeWidth - 16, 6, timeframeWidth + 12, 20);
     ctx.fillStyle = "#FFFFFF";
     ctx.fillText(timeframeText, width - marginRight - timeframeWidth - 10, 20);
+    }
 
     if (indicatorManagerRef.current) {
       const indicatorsBounds = {
@@ -1581,8 +1686,88 @@ const MiniChart = forwardRef(({
       });
     }
 
+    // Nítido: último precio en el eje, del color de la vela, con una línea punteada
+    if (isNew) {
+      const lastCandle = displayCandles[displayCandles.length - 1];
+      const lastY = Math.round(marginTop + priceChartHeight - (lastCandle.close - minPrice) * yScale + verticalOffset);
+      if (lastY >= marginTop && lastY <= marginTop + priceChartHeight) {
+        const color = lastCandle.close >= lastCandle.open ? THEME.up : THEME.down;
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = 0.85;
+        ctx.lineWidth = crispWidth(1);
+        ctx.setLineDash([1, 2]);
+        ctx.beginPath();
+        ctx.moveTo(marginLeft, alignY(lastY));
+        ctx.lineTo(width - marginRight, alignY(lastY));
+        ctx.stroke();
+        ctx.restore();
+
+        const tagX = width - marginRight + 1;
+        const tagRight = width - 1;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(tagX, lastY);
+        ctx.lineTo(tagX + 6, lastY - 9);
+        ctx.lineTo(tagRight, lastY - 9);
+        ctx.lineTo(tagRight, lastY + 9);
+        ctx.lineTo(tagX + 6, lastY + 9);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = `600 ${THEME.fontSize}px ${THEME.font}`;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(lastCandle.close.toFixed(pxDecimals), tagX + 8, lastY);
+        ctx.textBaseline = 'alphabetic';
+      }
+    }
+
     // 🎯 NUEVO: Crosshair estilo TradingView - mostrar info en los ejes
-    if (mouseX !== null && mouseY !== null) {
+    if (mouseX !== null && mouseY !== null && isNew) {
+      // Nítido: cruz fina y etiquetas en los ejes con la misma letra
+      ctx.save();
+      ctx.strokeStyle = THEME.crosshair;
+      ctx.lineWidth = crispWidth(1);
+      ctx.setLineDash([4, 4]);
+      if (mouseX >= marginLeft && mouseX <= width - marginRight) {
+        ctx.beginPath();
+        ctx.moveTo(alignX(mouseX), marginTop);
+        ctx.lineTo(alignX(mouseX), height - timeAxisHeight);
+        ctx.stroke();
+      }
+      if (mouseY >= marginTop && mouseY <= marginTop + priceChartHeight) {
+        ctx.beginPath();
+        ctx.moveTo(marginLeft, alignY(mouseY));
+        ctx.lineTo(width - marginRight, alignY(mouseY));
+        ctx.stroke();
+      }
+      ctx.restore();
+      ctx.font = `600 ${THEME.fontSize}px ${THEME.font}`;
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';
+      if (mouseX >= marginLeft && mouseX <= width - marginRight && visibleCandles.length > 0) {
+        const index = Math.max(0, Math.min(visibleCandles.length - 1, Math.floor((mouseX - marginLeft) / barWidth)));
+        const stamp = visibleCandles[index].timestamp;
+        const dateText = isBlind() ? maskDate(stamp) : crossTime(stamp);
+        const textWidth = ctx.measureText(dateText).width;
+        const boxX = Math.round(Math.max(marginLeft, Math.min(width - marginRight - textWidth - 12, mouseX - textWidth / 2 - 6)));
+        const boxY = Math.round(height - timeAxisHeight + 3);
+        ctx.fillStyle = THEME.tagBg;
+        ctx.fillRect(boxX, boxY, Math.round(textWidth + 12), 18);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(dateText, boxX + 6, boxY + 9);
+      }
+      if (mouseY >= marginTop && mouseY <= marginTop + priceChartHeight) {
+        const price = minPrice + ((marginTop + priceChartHeight - mouseY + verticalOffset) / yScale);
+        const boxY = Math.round(mouseY) - 9;
+        ctx.fillStyle = THEME.tagBg;
+        ctx.fillRect(width - marginRight + 1, boxY, marginRight - 2, 18);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(price.toFixed(pxDecimals), width - marginRight + 8, boxY + 9);
+      }
+      ctx.textBaseline = 'alphabetic';
+    } else if (mouseX !== null && mouseY !== null) {
       // Línea vertical del crosshair
       if (mouseX >= marginLeft && mouseX <= width - marginRight) {
         ctx.strokeStyle = "#999";
@@ -1742,6 +1927,13 @@ const MiniChart = forwardRef(({
 
   // Extraer rectángulos del DrawingToolManager para el modal VP Fixed
   drawChartRef.current = drawChart;
+
+  // Al cambiar el estilo o un color se redibuja al instante
+  useEffect(() => {
+    if (candlesRef.current?.length > 0) {
+      drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null, true);
+    }
+  }, [uiTheme]);
 
   // Redibujar al cambiar el tamaño de la ventana, del panel lateral o de la pestaña visible
   useEffect(() => {
@@ -3030,7 +3222,7 @@ const MiniChart = forwardRef(({
               fontWeight: 'bold'
             }}
           >
-            ⚙️
+            {isNewTheme() ? <Icon name="sliders" size={14} /> : '⚙️'}
           </button>
 
           {zoomPresets.filter(p => p.enabled).map((preset) => (
@@ -3071,7 +3263,7 @@ const MiniChart = forwardRef(({
                 fontWeight: 'bold'
               }}
             >
-              ⛶
+              {isNewTheme() ? <Icon name="maximize" size={14} /> : '⛶'}
             </button>
           )}
 
@@ -3092,7 +3284,7 @@ const MiniChart = forwardRef(({
                 animation: 'pulse 2s infinite'
               }}
             >
-              📍 Follow
+              {isNewTheme() ? 'Seguir' : '📍 Follow'}
             </button>
           )}
 
@@ -3111,7 +3303,7 @@ const MiniChart = forwardRef(({
               fontWeight: 'bold'
             }}
           >
-            →|
+            {isNewTheme() ? <Icon name="toEnd" size={14} /> : '→|'}
           </button>
           {onOpenVpSettings && indicatorStates && indicatorStates["Volume Profile"] && (
             <button
@@ -3149,7 +3341,7 @@ const MiniChart = forwardRef(({
                 marginLeft: '4px'
               }}
             >
-              📊 Patterns
+              {isNewTheme() ? 'Rechazos' : '📊 Patterns'}
             </button>
           )}
           {onOpenRangeDetectionSettings && (
@@ -3169,7 +3361,7 @@ const MiniChart = forwardRef(({
                 marginLeft: '4px'
               }}
             >
-              🎯
+              {isNewTheme() ? 'Rangos' : '🎯'}
             </button>
           )}
           {onOpenSupportResistanceSettings && (
@@ -3189,7 +3381,7 @@ const MiniChart = forwardRef(({
                 marginLeft: '4px'
               }}
             >
-              ⚡
+              {isNewTheme() ? 'S&R' : '⚡'}
             </button>
           )}
           {onOpenVWAPSettings && (
@@ -3267,7 +3459,7 @@ const MiniChart = forwardRef(({
               fontWeight: 'bold'
             }}
           >
-            📊
+            {isNewTheme() ? 'VP fijo' : '📊'}
           </button>
         </div>
 

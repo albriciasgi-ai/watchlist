@@ -2,6 +2,7 @@ import { candleItemId } from './analysisLevels.js';
 import { alignX, alignY, candleColumns, crispWidth, pixelRatio, snapEdge, snapSpanY } from '../chartPixels.js';
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
+import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 
 // Fila de un nivel del footprint o del perfil en píxeles reales enteros: de su borde al del nivel
 // siguiente, menos un hueco parejo de 1 px. Filas de menos de dos píxeles reales quedan como antes
@@ -435,14 +436,15 @@ class OrderFlowIndicator extends IndicatorBase {
     const margin = width * 0.1;
     const bodyWidth = width - margin * 2;
     const centerX = x + width / 2;
-    const color = candle.close >= candle.open ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN;
+    const rising = candle.close >= candle.open;
+    const color = isNewTheme() ? (rising ? THEME.up : THEME.down) : (rising ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN);
 
     const openY = priceToY(candle.open);
     const closeY = priceToY(candle.close);
     const bodyTop = Math.min(openY, closeY);
     const bodyHeight = Math.max(1, Math.max(openY, closeY) - bodyTop);
 
-    ctx.strokeStyle = this.colors.CANDLE_WICK;
+    ctx.strokeStyle = isNewTheme() ? color : this.colors.CANDLE_WICK;
     ctx.lineWidth = crispWidth(1, 'x');
     ctx.beginPath();
     ctx.moveTo(alignX(centerX), snapEdge(priceToY(candle.high)));
@@ -502,7 +504,8 @@ class OrderFlowIndicator extends IndicatorBase {
   renderJapaneseCandle(ctx, candle, x, width, priceToY, high, low) {
     const centerX = x + width / 2;
     const bodyWidth = Math.max(2, width * 0.6);
-    const color = candle.close >= candle.open ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN;
+    const rising = candle.close >= candle.open;
+    const color = isNewTheme() ? (rising ? THEME.up : THEME.down) : (rising ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN);
 
     const openY = priceToY(candle.open);
     const closeY = priceToY(candle.close);
@@ -549,12 +552,16 @@ class OrderFlowIndicator extends IndicatorBase {
 
       const barWidth = width * (level.total_volume / maxVolume);
       const isPOC = i === pocIndex;
-      ctx.fillStyle = isPOC ? this.colors.PROFILE_POC : this.colors.PROFILE_BAR;
+      if (isNewTheme()) {
+        ctx.fillStyle = isPOC ? THEME.fpPoc : THEME.fpProfile;
+      } else {
+        ctx.fillStyle = isPOC ? this.colors.PROFILE_POC : this.colors.PROFILE_BAR;
+      }
       // Barra de borde a borde del nivel en píxeles reales, con un hueco parejo de 1 px
       const [barY, barHeight] = levelRow(topY, levelHeight, Math.max(1, levelHeight - 1));
       ctx.fillRect(x, barY, barWidth, barHeight);
 
-      if (isPOC && this.config.showPOC) {
+      if (isPOC && this.config.showPOC && !isNewTheme()) {
         ctx.strokeStyle = this.colors.POC_LINE;
         ctx.lineWidth = crispWidth(2);
         ctx.beginPath();
@@ -565,8 +572,106 @@ class OrderFlowIndicator extends IndicatorBase {
     }
   }
 
+  /**
+   * Estilo Nítido: el color de cada celda crece con su volumen, como en ATAS. Casi todo queda
+   * pálido y lo grande resalta; cifras sin contorno, desequilibrios en negrita y un marco fino.
+   */
+  renderFootprintGraded(ctx, footprint, extraLevels, x, width, priceToY, fullMode, unitX, bounds) {
+    const { levels, step_size: step } = footprint;
+    const imbalances = new Map((footprint.imbalances || []).map(item => [item.level_index, item.type]));
+
+    const stackedSet = new Map();
+    const minZScore = this.config.stackedMinVolumeZScore || 0;
+    if (minZScore <= 0 || (footprint.volume_zscore || 0) >= minZScore) {
+      for (const stacked of footprint.stacked_imbalances || []) {
+        for (const index of stacked.levels || []) stackedSet.set(index, stacked.direction);
+      }
+    }
+
+    const halfWidth = width / 2;
+    const reference = levels[0].price_max;
+    const levelHeight = Math.max(Math.abs(priceToY(reference - step) - priceToY(reference)), 1.5);
+    const cellHeight = levelHeight - 1;
+    const isOutside = y => y > bounds.y + bounds.height || y + levelHeight < bounds.y;
+    const maxSide = levels.reduce((max, level) => Math.max(max, level.bid_volume, level.ask_volume), 0) || 1;
+    const ink = volume => (volume > 0 ? 0.07 + 0.5 * Math.pow(volume / maxSide, 0.8) : 0);
+
+    let top = Infinity;
+    let bottom = -Infinity;
+    for (const level of extraLevels) {
+      const y = priceToY(level.price_max);
+      if (isOutside(y)) continue;
+      const [cellY, cellH] = levelRow(y, levelHeight, cellHeight);
+      ctx.fillStyle = THEME.fpEmpty;
+      ctx.fillRect(x, cellY, width, cellH);
+      top = Math.min(top, cellY);
+      bottom = Math.max(bottom, cellY + cellH);
+    }
+
+    for (let i = 0; i < levels.length; i++) {
+      const level = levels[i];
+      const y = priceToY(level.price_max);
+      if (isOutside(y)) continue;
+
+      const [cellY, cellH] = levelRow(y, levelHeight, cellHeight);
+      top = Math.min(top, cellY);
+      bottom = Math.max(bottom, cellY + cellH);
+      const textY = y + levelHeight / 2;
+      const imbalance = this.config.showImbalances ? imbalances.get(i) : null;
+
+      const sellInk = ink(level.bid_volume) + (imbalance === 'SELL' ? 0.12 : 0);
+      const buyInk = ink(level.ask_volume) + (imbalance === 'BUY' ? 0.12 : 0);
+      ctx.fillStyle = level.bid_volume > 0 ? `rgba(${THEME.fpSellRgb}, ${sellInk})` : THEME.fpEmpty;
+      ctx.fillRect(x, cellY, halfWidth - 0.5, cellH);
+      ctx.fillStyle = level.ask_volume > 0 ? `rgba(${THEME.fpBuyRgb}, ${buyInk})` : THEME.fpEmpty;
+      ctx.fillRect(x + halfWidth + 0.5, cellY, halfWidth - 0.5, cellH);
+
+      // Stacked: una barra de 2 px en el lado que empuja y una franja tenue por detrás de la vela
+      if (this.config.showImbalances && stackedSet.has(i)) {
+        const buying = stackedSet.get(i) === 'BUY';
+        ctx.fillStyle = buying ? THEME.fpBuy : THEME.fpSell;
+        ctx.fillRect(buying ? x + width - 2 : x, cellY, 2, cellH);
+        const extendLeft = x - unitX;
+        if (extendLeft > 0) {
+          ctx.fillStyle = `rgba(${buying ? THEME.fpBuyRgb : THEME.fpSellRgb}, 0.12)`;
+          ctx.fillRect(unitX, cellY, extendLeft, cellH);
+        }
+      }
+
+      if (fullMode && width >= 30 && levelHeight >= 10) {
+        const fontSize = Math.min(Math.max(this.config.fontSize, THEME.fontSize), levelHeight - 2, THEME.fontSize);
+        ctx.textBaseline = 'middle';
+        const write = (volume, strong, color, align, textX) => {
+          ctx.font = `${strong ? '700' : '400'} ${fontSize}px ${THEME.font}`;
+          ctx.fillStyle = strong ? color : (volume / maxSide < 0.2 ? THEME.fpTextFaint : THEME.fpText);
+          ctx.textAlign = align;
+          ctx.fillText(this.formatVolumeShort(volume), textX, textY);
+        };
+        if (level.bid_volume > 0) write(level.bid_volume, imbalance === 'SELL', THEME.fpImbDownText, 'right', x + halfWidth - 3);
+        if (level.ask_volume > 0) write(level.ask_volume, imbalance === 'BUY', THEME.fpImbUpText, 'left', x + halfWidth + 3);
+      }
+    }
+
+    // Un solo marco fino alrededor del footprint
+    if (top < bottom) {
+      ctx.strokeStyle = THEME.fpFrame;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x - 1, top - 1, width + 2, bottom - top + 2);
+    }
+  }
+
+  formatVolumeShort(volume) {
+    const abs = Math.abs(volume);
+    if (abs >= 1000000) return (volume / 1000000).toFixed(1) + 'M';
+    if (abs >= 1000) return (volume / 1000).toFixed(1) + 'K';
+    if (abs >= 100) return Math.round(volume).toString();
+    if (abs < 0.05) return '0';
+    return volume.toFixed(1);
+  }
+
   /** Celdas de venta (izquierda) y compra (derecha) por nivel */
   renderFootprint(ctx, footprint, extraLevels, x, width, priceToY, fullMode, unitX, bounds) {
+    if (isNewTheme()) return this.renderFootprintGraded(ctx, footprint, extraLevels, x, width, priceToY, fullMode, unitX, bounds);
     const { levels, poc_index: pocIndex, step_size: step } = footprint;
     const imbalanceSet = new Set((footprint.imbalances || []).map(item => item.level_index));
 
@@ -677,6 +782,16 @@ class OrderFlowIndicator extends IndicatorBase {
     const delta = footprint.total_delta;
     if (Math.abs(delta) < 0.001) return;
 
+    if (isNewTheme()) {
+      // Sin contorno: el color ya dice el lado
+      ctx.font = `600 ${Math.max(this.config.deltaFontSize ?? this.config.fontSize, THEME.fontSize)}px ${THEME.font}`;
+      ctx.fillStyle = delta >= 0 ? THEME.upText : THEME.downText;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(delta >= 0 ? `+${this.formatVolumeShort(delta)}` : this.formatVolumeShort(delta), unitX + unitWidth / 2, priceToY(lowestPrice) + 14);
+      return;
+    }
+
     ctx.font = `bold ${this.config.deltaFontSize ?? this.config.fontSize}px Arial`;
     ctx.fillStyle = delta >= 0 ? this.colors.CANDLE_UP : this.colors.CANDLE_DOWN;
     ctx.textAlign = 'center';
@@ -709,7 +824,9 @@ class OrderFlowIndicator extends IndicatorBase {
     const size = Math.min(5, Math.max(2.5, candleWidth * 0.5));
     const y = buying ? priceToY(candle.low) + size + 3 : priceToY(candle.high) - size - 3;
 
-    ctx.fillStyle = `rgb(${buying ? this.config.stackedBuyColor : this.config.stackedSellColor})`;
+    const buyRgb = isNewTheme() ? THEME.fpBuyRgb : this.config.stackedBuyColor;
+    const sellRgb = isNewTheme() ? THEME.fpSellRgb : this.config.stackedSellColor;
+    ctx.fillStyle = `rgb(${buying ? buyRgb : sellRgb})`;
     ctx.beginPath();
     ctx.moveTo(centerX, y - size);
     ctx.lineTo(centerX + size, y);
@@ -721,7 +838,9 @@ class OrderFlowIndicator extends IndicatorBase {
 
   /** Con velas angostas: líneas de stacked imbalance y marcas de delta contrario a la vela */
   renderImbalanceMarkers(ctx, bounds, visibleCandles, priceToY, candleWidth) {
-    const { stackedLineWidth, stackedLineExtend, stackedBuyColor, stackedSellColor, stackedOpacity } = this.config;
+    const { stackedLineWidth, stackedLineExtend, stackedOpacity } = this.config;
+    const stackedBuyColor = isNewTheme() ? THEME.fpBuyRgb : this.config.stackedBuyColor;
+    const stackedSellColor = isNewTheme() ? THEME.fpSellRgb : this.config.stackedSellColor;
     const minZScore = this.config.stackedMinVolumeZScore || 0;
     const extraHalf = (candleWidth * stackedLineExtend - candleWidth) / 2;
 

@@ -8,6 +8,7 @@
 import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
 import { TF_MS } from "../backtesting/replayClock.js";
+import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 import { alignY, crispWidth } from '../chartPixels.js';
 
 const OI_STEP_MS = 300000; // Resolución de la serie local
@@ -661,15 +662,16 @@ class OpenInterestIndicator extends IndicatorBase {
    */
   renderHistogramMode(ctx, bounds, visibleCandles) {
     const { x, y, width, height } = bounds;
-    const bullColor = "#1E88E5"; // Azul oscuro
-    const bearColor = "#F57C00"; // Naranja oscuro
+    const nuevo = isNewTheme();
+    const bullColor = nuevo ? THEME.oiUp : "#1E88E5"; // Azul oscuro
+    const bearColor = nuevo ? THEME.oiDown : "#F57C00"; // Naranja oscuro
 
     // Fondo
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = nuevo ? THEME.chartBg : "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
     // Línea separadora
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = nuevo ? THEME.line : "#DDE2E7";
     ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
     ctx.moveTo(x, alignY(y));
@@ -677,9 +679,9 @@ class OpenInterestIndicator extends IndicatorBase {
     ctx.stroke();
 
     // Título
-    ctx.fillStyle = "#666";
+    ctx.fillStyle = nuevo ? THEME.textMuted : "#666";
     ctx.font = "bold 11px Inter, sans-serif";
-    ctx.fillText("Open Interest Delta (Histogram)", x + 5, y + 15);
+    ctx.fillText(nuevo ? "Interés abierto · cambio por vela" : "Open Interest Delta (Histogram)", x + 5, y + 15);
 
     // Calcular datos
     const data = this.calculateHistogramMode(visibleCandles);
@@ -716,7 +718,7 @@ class OpenInterestIndicator extends IndicatorBase {
 
     // Línea cero
     const zeroY = histogramY + histogramHeight / 2;
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = nuevo ? THEME.grid : "#DDE2E7";
     ctx.setLineDash([2, 2]);
     ctx.beginPath();
     ctx.moveTo(x, alignY(zeroY));
@@ -739,7 +741,7 @@ class OpenInterestIndicator extends IndicatorBase {
       const color = delta >= 0 ? bullColor : bearColor;
 
       ctx.fillStyle = color;
-      ctx.globalAlpha = 0.7;
+      ctx.globalAlpha = nuevo ? 0.6 : 0.7;
 
       if (delta >= 0) {
         ctx.fillRect(barX, zeroY - barHeight, barWidth * 0.8, barHeight);
@@ -751,7 +753,7 @@ class OpenInterestIndicator extends IndicatorBase {
     ctx.globalAlpha = 1.0;
 
     // Labels
-    ctx.fillStyle = "#999";
+    ctx.fillStyle = nuevo ? THEME.textFaint : "#999";
     ctx.font = "9px Inter, sans-serif";
     ctx.fillText(`+${maxDelta.toFixed(0)}`, x + width - 50, histogramY + 10);
     ctx.fillText(`-${maxDelta.toFixed(0)}`, x + width - 50, histogramY + histogramHeight - 5);
@@ -762,7 +764,7 @@ class OpenInterestIndicator extends IndicatorBase {
       const lastOI = data[data.length - 1].oiValue;
       ctx.fillStyle = lastDelta >= 0 ? bullColor : bearColor;
       ctx.font = "bold 10px Inter, sans-serif";
-      ctx.fillText(`Δ: ${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)} | OI: ${lastOI.toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
+      ctx.fillText(nuevo ? `Δ ${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)} · OI ${lastOI.toFixed(0)}` : `Δ: ${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)} | OI: ${lastOI.toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
     }
   }
 

@@ -3,6 +3,9 @@
 
 import React from 'react';
 import './DrawingSidebar.css';
+import { useUiTheme } from '../useUiTheme.js';
+import { isNewTheme } from '../uiTheme.js';
+import { Icon } from '../uiIcons.jsx';
 
 const DrawingSidebar = ({
   selectedTool,
@@ -15,29 +18,36 @@ const DrawingSidebar = ({
   onToggleCollapse
 }) => {
   const tools = [
-    { id: 'select', label: 'Cursor', icon: '↖', shortcut: 'V' },
-    { id: 'trendline', label: 'Línea Tendencia', icon: '📈', shortcut: 'T' },
-    { id: 'horizontal', label: 'Línea Horizontal', icon: '—', shortcut: 'H' },
-    { id: 'vertical', label: 'Línea Vertical', icon: '|', shortcut: 'L' },
-    { id: 'rectangle', label: 'Rectángulo', icon: '▭', shortcut: 'R' },
-    { id: 'fibonacci', label: 'Fibonacci', icon: 'φ', shortcut: 'F' },
-    { id: 'tpsl', label: 'TP/SL Long', icon: '🎯', shortcut: 'P' },
-    { id: 'tpsl-short', label: 'TP/SL Short', icon: '🔻', shortcut: 'S' }
+    { id: 'select', label: 'Cursor', icon: '↖', svg: 'cursor', shortcut: 'V' },
+    { id: 'trendline', label: 'Línea Tendencia', icon: '📈', svg: 'trend', shortcut: 'T' },
+    { id: 'horizontal', label: 'Línea Horizontal', icon: '—', svg: 'hline', shortcut: 'H' },
+    { id: 'vertical', label: 'Línea Vertical', icon: '|', svg: 'vline', shortcut: 'L' },
+    { id: 'rectangle', label: 'Rectángulo', icon: '▭', svg: 'rect', shortcut: 'R' },
+    { id: 'fibonacci', label: 'Fibonacci', icon: 'φ', svg: 'fib', shortcut: 'F' },
+    { id: 'tpsl', label: 'TP/SL Long', icon: '🎯', svg: 'long', shortcut: 'P' },
+    { id: 'tpsl-short', label: 'TP/SL Short', icon: '🔻', svg: 'short', shortcut: 'S' }
   ];
 
+  // Estilo Nítido: íconos de línea con su nombre; al contraerla quedan solo los íconos
+  useUiTheme();
+  const isNew = isNewTheme();
+  const compact = isCollapsed;
+
   return (
-    <div className={`drawing-sidebar ${isCollapsed ? 'collapsed' : ''} ${isHidden ? 'hidden' : ''}`}>
+    <div className={`drawing-sidebar ${compact ? 'collapsed' : ''} ${isHidden ? 'hidden' : ''}`}>
       {/* Header con botón de colapsar */}
       <div className="sidebar-header-draw">
         <span className="sidebar-title-draw">
-          {isCollapsed ? '🖌' : '🖌 Dibujo'}
+          {isNew
+            ? <><Icon name="pencil" size={15} />{!isCollapsed && <span>Dibujo</span>}</>
+            : (isCollapsed ? '🖌' : '🖌 Dibujo')}
         </span>
         <button
           className="btn-collapse-draw"
           onClick={onToggleCollapse}
           title={isCollapsed ? 'Click: Ocultar (D)' : 'Click: Contraer (D)'}
         >
-          {isCollapsed ? '✕' : '◀'}
+          {isNew ? <Icon name={isCollapsed ? 'close' : 'chevronLeft'} size={13} /> : (isCollapsed ? '✕' : '◀')}
         </button>
       </div>
 
@@ -50,8 +60,8 @@ const DrawingSidebar = ({
             onClick={() => onToolChange(tool.id)}
             title={`${tool.label} (${tool.shortcut})`}
           >
-            <span className="tool-icon-side">{tool.icon}</span>
-            {!isCollapsed && <span className="tool-label-side">{tool.label}</span>}
+            <span className="tool-icon-side">{isNew ? <Icon name={tool.svg} size={18} /> : tool.icon}</span>
+            {!compact && <span className="tool-label-side">{tool.label}</span>}
           </button>
         ))}
       </div>
@@ -66,8 +76,8 @@ const DrawingSidebar = ({
           onClick={onUndo}
           title="Deshacer (Ctrl+Z)"
         >
-          <span className="action-icon">↶</span>
-          {!isCollapsed && <span className="action-label">Deshacer</span>}
+          <span className="action-icon">{isNew ? <Icon name="undo" size={17} /> : '↶'}</span>
+          {!compact && <span className="action-label">Deshacer</span>}
         </button>
 
         <button
@@ -75,8 +85,8 @@ const DrawingSidebar = ({
           onClick={onRedo}
           title="Rehacer (Ctrl+Y)"
         >
-          <span className="action-icon">↷</span>
-          {!isCollapsed && <span className="action-label">Rehacer</span>}
+          <span className="action-icon">{isNew ? <Icon name="redo" size={17} /> : '↷'}</span>
+          {!compact && <span className="action-label">Rehacer</span>}
         </button>
 
         <button
@@ -84,15 +94,15 @@ const DrawingSidebar = ({
           onClick={onClearAll}
           title="Limpiar todo"
         >
-          <span className="action-icon">🗑</span>
-          {!isCollapsed && <span className="action-label">Limpiar</span>}
+          <span className="action-icon">{isNew ? <Icon name="trash" size={17} /> : '🗑'}</span>
+          {!compact && <span className="action-label">Limpiar</span>}
         </button>
       </div>
 
       {/* Helper text solo cuando no está colapsado */}
-      {!isCollapsed && (
+      {!compact && (
         <div className="sidebar-helper">
-          <div className="helper-item">💡 Rueda: medir</div>
+          <div className="helper-item">{isNew ? 'Rueda: medir' : '💡 Rueda: medir'}</div>
           <div className="helper-item">Esc: cancelar</div>
           <div className="helper-item">Del: borrar</div>
         </div>

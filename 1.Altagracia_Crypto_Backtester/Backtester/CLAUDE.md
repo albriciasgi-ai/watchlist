@@ -619,6 +619,7 @@ node tests/analysis.test.mjs
 node tests/marketdata.test.mjs
 node tests/liquidations.test.mjs
 node tests/pixels.test.mjs
+node tests/theme.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -1062,6 +1063,72 @@ Vista 1366x700 (lienzo 1164x658), BTCUSDT 15m con Volume Delta, VP, OI, OI-Volum
 ### Pruebas
 
 `node tests/pixels.test.mjs` (11): alineación de líneas a 7 densidades, mecha centrada, rectángulos vecinos, bordes compartidos, bordes finos, traslado y giro, y el interruptor apagado. Detecta una mecha sin centrar, un borde impar sin medio píxel y un relleno angosto alineado.
+
+---
+
+## ESTILO NÍTIDO (Noviembre 2026)
+
+Pedido el 8/11. El usuario comparó App 1 con ATAS abierto en su PC y la encontró menos profesional. La causa no era el modo claro: App 1 no tenía un tema central. Cada parte traía sus propios colores y letras: 115 colores en el CSS y 124 en el código, de estilos iPhone, Material, TradingView y un degradado de plantillas. Además usaba tres letras y 69 emojis como íconos. Probó cinco paletas en una copia, eligió "Nítido" y pidió poder cambiar cada color. Autorizó cambiar estilos para esto.
+
+### Qué hace
+
+- **Dos estilos:**
+  - Nítido es el que abre por defecto.
+  - Clásico es el aspecto anterior: idéntico, 0 píxeles distintos en el gráfico y en el footprint, comparado con el código anterior en la misma vista.
+- **Letra:** Segoe UI en la interfaz y el lienzo. El texto de los indicadores escrito en "Inter" sube a 11 y 12 px. Las cifras que se ajustan a una celda no cambian de tamaño.
+- **Ejes:** precios redondos (pasos de 1, 2, 2.5 o 5) cada ~56 px, con los decimales de la moneda. Horas redondas en hora de Colombia, al menos cada 90 px, con el día en negrita al cambiar.
+- **Leyenda:** O, H, L, C, cambio y volumen de la vela bajo la cruz, o de la última.
+- **Último precio:** etiqueta en el eje del color de la vela, con una línea punteada.
+- **Cruz:** de 1 px, con etiquetas en la misma letra.
+- **Volumen:** barras planas, más tinta con más volumen, sin brillo.
+- **Footprint** (`renderFootprintGraded`):
+  - el color de cada celda crece con su volumen;
+  - cifras sin contorno, grises si son chicas;
+  - desequilibrios en negrita oscura;
+  - stacked como barra de 2 px en el lado que empuja;
+  - un marco fino por footprint;
+  - el POC del perfil en el color de acento.
+- **Perfil de volumen:** área de valor y resto en sus colores, POC en línea fina y etiquetas "Perfil dinámico / POC / VAH / VAL".
+- **Interfaz:** íconos SVG de línea (`components/uiIcons.jsx`) en lugar de emojis. Barra de dibujo con íconos y nombres, que se contrae a solo íconos. Botones neutros sobre el gráfico (el botón VP ya no queda encima de los otros). Pestaña angosta para el panel lateral y paneles con títulos en español.
+
+### Archivos
+
+- `components/uiTheme.js`:
+  - el estado (`isNewTheme()`, `setTheme`, `setThemeColors`, `resetThemeColors`) y los colores por defecto (`DEFAULT_COLORS`, `COLOR_GROUPS`);
+  - `THEME`, que son los colores activos con los derivados: texto legible, tintes y variables CSS;
+  - la letra del lienzo (`installThemeFonts`) y las ayudas de ejes (`niceStep`, `niceTimeStep`, `timeTick`, `crossTime`, `priceDecimals`).
+  - No usa React, así que las pruebas de Node lo importan sin problema: sin navegador dibuja en clásico.
+- `components/useUiTheme.js`: gancho que vuelve a pintar al cambiar estilo o color.
+- `components/ThemeSettings.jsx` y `.css`: el modal.
+- `src/theme_nitido.css`: reglas bajo `body.theme-nitido`, con colores de las variables `--t-*` que pone `uiTheme.js`.
+- Ramas `isNewTheme()` en:
+  - `MiniChart.jsx`: ejes, leyenda, último precio, cruz, volumen y fondo;
+  - `OrderFlowIndicator.js`, `VolumeProfileIndicator.js`, `VolumeIndicator.js`, `OpenInterestIndicator.js` y `OIVolumeConfluenceIndicator.js`;
+  - `DrawingSidebar.jsx` y el encabezado de `BacktestingApp.jsx`.
+
+### Modal "Estilo y colores"
+
+- **Dónde:** botón "Estilo" en el encabezado (🎨 en clásico).
+- **Qué cambia:** elige Nítido o Clásico y cambia 20 colores en seis grupos: velas y volumen, footprint (compra, venta, POC y perfil), perfil de volumen, gráfico (fondo, rejilla, cruz y etiquetas), interfaz (barras, acento y textos) y paneles.
+- **Cómo se aplica:** el cambio se ve al instante y se guarda en `ui_theme_colors`, solo con lo distinto a Nítido. Cada color cambiado tiene su botón para volver, y además está "Restablecer los colores de Nítido".
+- **Contraste:** avisa si un color de datos casi no se ve sobre el fondo. Los textos derivados (`upText`, `downText`, desequilibrios) se oscurecen solos hasta 4.5:1 o 7:1 de contraste.
+
+### Para indicadores nuevos
+
+- Al dibujar, preguntar `isNewTheme()` y tomar los colores de `THEME` (`THEME.up`, `THEME.upRgb`, `THEME.textMuted`, `THEME.grid`, etc.). Con el clásico, dibujar como siempre.
+- Escribir el texto con la familia "Inter" o con `THEME.font`. Con Nítido, el lienzo cambia la familia a Segoe UI y "bold" a 600.
+- Para un color nuevo configurable: agregarlo a `DEFAULT_COLORS` y a `COLOR_GROUPS`. La prueba exige que estén los mismos en los dos.
+- Un botón o panel HTML nuevo usa las variables `--t-*` bajo `body.theme-nitido`.
+
+### Pruebas
+
+`node tests/theme.test.mjs` (10) cubre:
+- colores cambiados, inválidos y restablecidos;
+- contraste del texto derivado;
+- pasos redondos, horas de Colombia y decimales;
+- que el modal ofrezca cada color una vez.
+
+Detecta una hora de Colombia corrida, un texto sin oscurecer y un color inválido aceptado. La igualdad del clásico se midió con capturas del lienzo en Edge sin ventana.
 
 ---
 

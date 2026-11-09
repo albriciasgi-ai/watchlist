@@ -1,0 +1,227 @@
+/*
+ * MUESTRA de los estilos nuevos de App 1 (solo en la copia de prueba).
+ * Todo va bajo body.theme-nitido: con el aspecto actual nada de esto aplica.
+ * Los colores salen de la paleta elegida: uiTheme.js los pone como variables en <body>.
+ * Una sola letra (Segoe UI), grises para la estructura, un solo color de acento,
+ * bordes de 1 px, radio de 4 px y sin degradados ni sombras en barras y botones.
+ */
+
+body.theme-nitido {
+  --t-font: "Segoe UI", system-ui, sans-serif;
+  font-family: var(--t-font);
+  color: var(--t-text);
+  background: var(--t-page);
+}
+
+/* Una sola letra en toda la interfaz, con cifras de ancho fijo */
+body.theme-nitido *:not(svg):not(path):not(circle):not(rect) {
+  font-family: var(--t-font) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==================== Encabezado ==================== */
+body.theme-nitido .backtesting-header.compact {
+  background: var(--t-surface);
+  border-bottom: 1px solid var(--t-line);
+  box-shadow: none;
+}
+body.theme-nitido .app-title { display: none; }
+body.theme-nitido .symbol-title { font-size: 14px; font-weight: 600; color: var(--t-text); }
+body.theme-nitido .current-time-compact {
+  background: transparent;
+  color: var(--t-muted);
+  font-size: 12px;
+  font-weight: 400;
+  padding: 0 2px;
+}
+body.theme-nitido .current-price-compact { color: var(--t-text); font-size: 13px; font-weight: 600; }
+
+body.theme-nitido .btn-control-compact,
+body.theme-nitido .btn-action-compact,
+body.theme-nitido .speed-control-compact {
+  background: var(--t-chart) !important;
+  border: 1px solid var(--t-control) !important;
+  border-radius: 4px !important;
+  color: var(--t-text) !important;
+  height: 26px;
+  font-size: 12px !important;
+  box-shadow: none !important;
+}
+body.theme-nitido .btn-action-compact { gap: 6px; padding: 3px 9px !important; }
+body.theme-nitido .btn-control-compact:hover,
+body.theme-nitido .btn-action-compact:hover { background: var(--t-hover) !important; }
+body.theme-nitido .btn-control-compact.active {
+  background: var(--t-accent-soft) !important;
+  border-color: var(--t-accent) !important;
+  color: var(--t-accent) !important;
+}
+body.theme-nitido .btn-control-compact:active,
+body.theme-nitido .btn-action-compact:active { transform: none; }
+
+/* ==================== Temporalidades ==================== */
+body.theme-nitido .tab-emoji,
+body.theme-nitido .tabs-info { display: none !important; }
+body.theme-nitido .timeframe-tabs { gap: 2px; }
+body.theme-nitido .timeframe-tab {
+  color: var(--t-muted) !important;
+  border: 1px solid transparent !important;
+  border-bottom-color: transparent !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  padding: 3px 9px !important;
+  box-shadow: none !important;
+}
+body.theme-nitido .timeframe-tab:hover { background: var(--t-hover) !important; color: var(--t-text) !important; }
+body.theme-nitido .timeframe-tab.active {
+  color: var(--t-accent) !important;
+  background: var(--t-accent-soft) !important;
+  border-color: transparent !important;
+  font-weight: 600 !important;
+}
+body.theme-nitido .tab-badge { background: var(--t-accent) !important; }
+
+/* ==================== Barra de dibujo: íconos con nombre; contraída, solo íconos ==================== */
+body.theme-nitido .drawing-sidebar {
+  background: var(--t-surface);
+  border-right: 1px solid var(--t-line);
+  box-shadow: none;
+}
+body.theme-nitido .sidebar-header-draw {
+  background: var(--t-surface);
+  border-bottom: 1px solid var(--t-line);
+  padding: 8px 10px;
+  min-height: 38px;
+  color: var(--t-muted);
+}
+body.theme-nitido .sidebar-title-draw {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--t-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+body.theme-nitido .btn-collapse-draw { color: var(--t-faint); padding: 4px; display: flex; }
+body.theme-nitido .btn-collapse-draw:hover { background: var(--t-hover); color: var(--t-text); }
+body.theme-nitido .drawing-sidebar.collapsed .sidebar-header-draw {
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 4px;
+}
+body.theme-nitido .sidebar-tools { padding: 6px; gap: 2px; }
+body.theme-nitido .sidebar-tool-btn,
+body.theme-nitido .sidebar-action-btn {
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  padding: 7px 10px !important;
+  border: 1px solid transparent !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: var(--t-text) !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+}
+body.theme-nitido .drawing-sidebar.collapsed .sidebar-tool-btn,
+body.theme-nitido .drawing-sidebar.collapsed .sidebar-action-btn {
+  justify-content: center !important;
+  padding: 8px 0 !important;
+}
+body.theme-nitido .sidebar-tool-btn:hover,
+body.theme-nitido .sidebar-action-btn:hover { background: var(--t-hover) !important; }
+body.theme-nitido .sidebar-tool-btn.active {
+  background: var(--t-accent-soft) !important;
+  color: var(--t-accent) !important;
+  font-weight: 600;
+}
+body.theme-nitido .sidebar-action-btn.danger { color: #B42318 !important; }
+body.theme-nitido .tool-icon-side,
+body.theme-nitido .action-icon { width: 20px; display: flex; justify-content: center; color: inherit; }
+body.theme-nitido .tool-label-side,
+body.theme-nitido .action-label { font-size: 13px; }
+body.theme-nitido .sidebar-divider { background: var(--t-line); margin: 6px 10px; }
+body.theme-nitido .sidebar-actions { padding: 2px 6px; }
+body.theme-nitido .sidebar-helper { color: var(--t-faint); border-top: 1px solid var(--t-line); }
+body.theme-nitido .helper-item { font-size: 12px; color: var(--t-faint); }
+
+body.theme-nitido .btn-show-drawing-sidebar {
+  background: var(--t-surface) !important;
+  color: var(--t-text) !important;
+  border: 1px solid var(--t-control) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  width: 32px;
+  height: 32px;
+}
+body.theme-nitido .btn-show-drawing-sidebar:hover { background: var(--t-hover) !important; transform: none; }
+
+/* ==================== Botones sobre el gráfico ==================== */
+body.theme-nitido .zoom-presets-config-btn,
+body.theme-nitido .zoom-preset-btn,
+body.theme-nitido .fullscreen-btn,
+body.theme-nitido .follow-btn,
+body.theme-nitido .goto-latest-btn,
+body.theme-nitido .vp-chart-settings-btn,
+body.theme-nitido .rejection-pattern-settings-btn,
+body.theme-nitido .rd-chart-settings-btn,
+body.theme-nitido .sr-chart-settings-btn,
+body.theme-nitido .vwap-chart-settings-btn,
+body.theme-nitido .dtb-chart-settings-btn,
+body.theme-nitido .oivolume-chart-settings-btn,
+body.theme-nitido .fixed-range-manager-btn {
+  background: var(--t-chart) !important;
+  color: var(--t-text) !important;
+  border: 1px solid var(--t-control) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  opacity: 1 !important;
+  /* Algunos tenían ancho fijo para un emoji: con texto se montaban sobre el vecino */
+  width: auto !important;
+  min-width: 26px !important;
+  height: 24px !important;
+  padding: 0 8px !important;
+}
+body.theme-nitido .zoom-preset-btn[style*="FF9800"],
+body.theme-nitido .zoom-preset-btn[style*="ff9800"] {
+  color: var(--t-accent) !important;
+  border-color: var(--t-accent) !important;
+  background: var(--t-accent-soft) !important;
+}
+
+/* El botón VP tenía posición absoluta y quedaba encima de los otros: va en la fila como los demás */
+body.theme-nitido .vp-chart-settings-btn {
+  position: static !important;
+  transform: none !important;
+}
+
+/* Botón del panel lateral: una pestaña angosta en el borde, que no tapa el eje de precios */
+body.theme-nitido .floating-panel-toggle {
+  right: 0 !important;
+  width: 14px;
+  padding: 22px 0 !important;
+  font-size: 0 !important;
+  background: var(--t-surface) !important;
+  color: var(--t-muted) !important;
+  border: 1px solid var(--t-control) !important;
+  border-right: none !important;
+  border-radius: 4px 0 0 4px !important;
+  box-shadow: none !important;
+}
+body.theme-nitido .floating-panel-toggle::before {
+  content: "‹";
+  font-size: 15px;
+  line-height: 1;
+}
+body.theme-nitido .floating-panel-toggle:hover {
+  background: var(--t-hover) !important;
+  transform: translateY(-50%) !important;
+  box-shadow: none !important;
+}

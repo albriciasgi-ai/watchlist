@@ -6,6 +6,19 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Estilo Nítido
+
+App 1 abre con el estilo Nítido:
+- una sola letra;
+- color solo en los datos;
+- ejes con números y horas redondos, leyenda y último precio;
+- footprint graduado por volumen;
+- íconos de línea y paneles en español.
+
+El botón "Estilo" abre un modal para cambiar cada color o volver al aspecto clásico, que queda idéntico al anterior. Detalle en `Backtester/CLAUDE.md`, sección "ESTILO NÍTIDO".
+
+---
+
 ### Noviembre 2026: Nitidez del Gráfico
 
 El lienzo del gráfico usa los píxeles reales de la pantalla, y velas, líneas, perfiles, footprints y dibujos caen en píxeles enteros: nítido a 100% y en monitores con escala, sin cambiar colores ni disposición. El texto del gráfico sale con ClearType y las imágenes de trades se guardan al doble de resolución. Detalle en `Backtester/CLAUDE.md`, sección "NITIDEZ DEL GRÁFICO".

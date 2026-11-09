@@ -3,6 +3,7 @@
 // ✅ CORREGIDO: INCLUYE vela en progreso para mostrar última barra en tiempo real
 
 import IndicatorBase from "./IndicatorBase";
+import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 import { alignY, crispWidth } from '../chartPixels.js';
 
 class VolumeIndicator extends IndicatorBase {
@@ -77,15 +78,16 @@ class VolumeIndicator extends IndicatorBase {
     if (!this.enabled || !visibleCandles || visibleCandles.length === 0) return;
 
     const { x, y, width, height } = bounds;
-    const bullColor = "#34C759";
-    const bearColor = "#FF3B30";
+    const nuevo = isNewTheme();
+    const bullColor = nuevo ? THEME.up : "#34C759";
+    const bearColor = nuevo ? THEME.down : "#FF3B30";
 
     // Fondo
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = nuevo ? THEME.chartBg : "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
     // Linea separadora superior
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = nuevo ? THEME.line : "#DDE2E7";
     ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
     ctx.moveTo(x, alignY(y));
@@ -93,12 +95,14 @@ class VolumeIndicator extends IndicatorBase {
     ctx.stroke();
 
     // Titulo
-    ctx.fillStyle = "#666";
+    ctx.fillStyle = nuevo ? THEME.textMuted : "#666";
     ctx.font = "bold 11px Inter, sans-serif";
 
     // ✅ CALCULAR en tiempo real desde las velas visibles
     const volumeDeltaData = this.calculateVolumeDelta(visibleCandles);
-    ctx.fillText(this.usesRealDelta ? "Volume Delta (trades reales)" : "Volume Delta (Real-time)", x + 5, y + 15);
+    ctx.fillText(nuevo
+      ? (this.usesRealDelta ? "Delta de volumen · trades reales" : "Delta de volumen · tiempo real")
+      : (this.usesRealDelta ? "Volume Delta (trades reales)" : "Volume Delta (Real-time)"), x + 5, y + 15);
     
     if (volumeDeltaData.length === 0) return;
 
@@ -114,7 +118,7 @@ class VolumeIndicator extends IndicatorBase {
 
     // Linea cero del histograma
     const zeroY = histogramY + histogramHeight / 2;
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = nuevo ? THEME.grid : "#DDE2E7";
     ctx.setLineDash([2, 2]);
     ctx.beginPath();
     ctx.moveTo(x, alignY(zeroY));
@@ -136,9 +140,9 @@ class VolumeIndicator extends IndicatorBase {
       
       // ✅ Si es vela en progreso, usar transparencia reducida para indicar que es temporal
       if (d.in_progress) {
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = nuevo ? 0.35 : 0.5;
       } else {
-        ctx.globalAlpha = 0.7;
+        ctx.globalAlpha = nuevo ? 0.6 : 0.7;
       }
       
       if (delta >= 0) {
@@ -153,7 +157,7 @@ class VolumeIndicator extends IndicatorBase {
     ctx.globalAlpha = 1.0;
 
     // Labels de escala
-    ctx.fillStyle = "#999";
+    ctx.fillStyle = nuevo ? THEME.textFaint : "#999";
     ctx.font = "9px Inter, sans-serif";
     ctx.fillText(`+${maxVolumeDelta.toFixed(0)}`, x + width - 50, histogramY + 10);
     ctx.fillText(`-${maxVolumeDelta.toFixed(0)}`, x + width - 50, histogramY + histogramHeight - 5);
@@ -161,10 +165,10 @@ class VolumeIndicator extends IndicatorBase {
     // Valor de la última barra
     if (volumeDeltaData.length > 0) {
       const lastDelta = volumeDeltaData[volumeDeltaData.length - 1].volumeDelta;
-      const color = lastDelta >= 0 ? bullColor : bearColor;
+      const color = nuevo ? (lastDelta >= 0 ? THEME.upText : THEME.downText) : (lastDelta >= 0 ? bullColor : bearColor);
       ctx.fillStyle = color;
       ctx.font = "bold 10px Inter, sans-serif";
-      ctx.fillText(`Δ: ${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
+      ctx.fillText(`${nuevo ? 'Δ ' : 'Δ: '}${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
     }
   }
 }

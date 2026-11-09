@@ -53,6 +53,32 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 8 Noviembre 2026: Estilo Nítido con Colores Configurables
+
+**Problema:** el usuario comparó App 1 con ATAS en su PC: App 1 se veía menos profesional. Mezclaba tres letras (el gráfico pedía "Inter", que no se carga y caía en Arial) y 240 colores sueltos de cuatro estilos distintos. Usaba 69 emojis como íconos, el eje de precios ponía valores sueltos y el footprint coloreaba oscuro el lado dominante aunque tuviera poco volumen. Pidió el cambio de estilo, eligió "Nítido" entre cinco paletas de prueba y pidió poder cambiar cada color.
+
+**Cambios:**
+1. **Estilo Nítido (por defecto):**
+   - una sola letra, Segoe UI de 12 px;
+   - velas #089981 y #F23645, con contraste parejo;
+   - precios y horas redondos en los ejes, con el decimal de la moneda y la hora de Colombia;
+   - leyenda con O, H, L, C, cambio y volumen de la vela bajo la cruz, y último precio en el eje;
+   - sin brillo en el volumen.
+2. **Footprint graduado:** cada celda toma color según su volumen. Las cifras van sin contorno y los desequilibrios en negrita, sin recuadro amarillo. El POC del perfil va en el color de acento.
+3. **Interfaz:**
+   - íconos de línea en lugar de emojis;
+   - barra de dibujo con íconos y nombres, que se contrae a solo íconos;
+   - botones neutros sobre el gráfico;
+   - paneles de Delta, Interés abierto y Confluencia con títulos en español.
+4. **Modal "Estilo y colores":** botón "Estilo" en el encabezado. Elige Nítido o Clásico y cambia 20 colores en seis grupos. Se ve al instante, se guarda en `localStorage` (`ui_theme`, `ui_theme_colors`) y se restablece. Los colores de texto se oscurecen solos si no se leen.
+5. **Clásico:** el aspecto anterior queda idéntico, 0 píxeles distintos en el gráfico y el footprint.
+
+**IMPORTANTE:** el usuario autorizó este cambio de estilos el 8/11. Basta recargar la página: el backend no cambió. Un indicador nuevo pregunta `isNewTheme()` al dibujar y toma sus colores de `THEME` (`components/uiTheme.js`).
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ESTILO NÍTIDO"
+
+---
+
 ### APP 9 (OrderFlowDesktop) - 8 Noviembre 2026: Pruebas y Correcciones de Datos, Trading y Footprints
 
 **Problema:** las pruebas de App 9 encontraron fallos que perdían datos, arriesgaban dinero real o mostraban footprints equivocados. El archivo local de footprints no se actualizaba desde el 05/11: cada sondeo de 5 s lanzaba otra descarga de 48 h a la nube, y la nube terminaba cortándolas. En BTC 5m las celdas mostraban el doble del volumen real, y en las monedas baratas cada vela quedaba en una sola celda.

@@ -26,6 +26,10 @@ import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
 import DrawingToolbar from '../drawing/DrawingToolbar';
 import DrawingSidebar from '../drawing/DrawingSidebar'; // 🎯 OPTIMIZACIÓN UI: Sidebar vertical
+import { useUiTheme } from '../useUiTheme.js'; // Estilo Nítido
+import { isNewTheme } from '../uiTheme.js';
+import ThemeSettings from '../ThemeSettings.jsx';
+import { Icon } from '../uiIcons.jsx';
 import FootprintSidebar from './FootprintSidebar'; // 🎯 Order Flow Footprints
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
@@ -141,6 +145,7 @@ const BacktestingApp = () => {
   // Estado de UI
   const [activePanel, setActivePanel] = useState('trading'); // 'trading', 'performance', 'history'
   const [showIndicatorPanel, setShowIndicatorPanel] = useState(false);
+  const [showThemeSettings, setShowThemeSettings] = useState(false); // Modal "Estilo y colores"
   // 🎯 OPTIMIZACIÓN UI: Estado para menú dropdown compacto de acciones
   const [showActionsMenu, setShowActionsMenu] = useState(false);
 
@@ -199,6 +204,7 @@ const BacktestingApp = () => {
 
   // 🎯 OPTIMIZACIÓN UI: Estados para sidebar de dibujo (D para toggle: expandido → colapsado → oculto)
   const [drawingSidebarCollapsed, setDrawingSidebarCollapsed] = useState(false);
+  useUiTheme(); // Se vuelve a pintar al cambiar el estilo
   const [drawingSidebarHidden, setDrawingSidebarHidden] = useState(false);
 
   // 🎯 Order Flow: Estado para footprints anclados (hasta 10)
@@ -2219,9 +2225,11 @@ const BacktestingApp = () => {
           }}
           title="Mostrar sidebar de dibujo expandido (D)"
         >
-          🖌
+          {isNewTheme() ? <Icon name="pencil" size={16} /> : '🖌'}
         </button>
       )}
+
+      {showThemeSettings && <ThemeSettings onClose={() => setShowThemeSettings(false)} />}
 
       {/* 🎯 OPTIMIZACIÓN UI: Header único consolidado (fusión main.jsx + backtesting) */}
       <div className="backtesting-header compact">
@@ -2242,7 +2250,9 @@ const BacktestingApp = () => {
           )}
           {currentPrice && (
             <span className="current-price-compact">
-              ${currentPrice.toFixed(2)}
+              {isNewTheme()
+                ? currentPrice.toFixed(currentPrice >= 1000 ? 1 : currentPrice >= 1 ? 2 : 4)
+                : `$${currentPrice.toFixed(2)}`}
             </span>
           )}
         </div>
@@ -2254,7 +2264,7 @@ const BacktestingApp = () => {
             onClick={isPlaying ? handlePause : handlePlay}
             title={isPlaying ? 'Pausar (Espacio)' : 'Reproducir (Espacio)'}
           >
-            {isPlaying ? '⏸' : '▶'}
+            {isNewTheme() ? <Icon name={isPlaying ? 'pause' : 'play'} size={15} /> : (isPlaying ? '⏸' : '▶')}
           </button>
 
           <button
@@ -2262,7 +2272,7 @@ const BacktestingApp = () => {
             onClick={handleStop}
             title="Detener"
           >
-            ⏹
+            {isNewTheme() ? <Icon name="stop" size={15} /> : '⏹'}
           </button>
 
           <select
@@ -2333,9 +2343,18 @@ const BacktestingApp = () => {
               }}
               title={`Actualizar datos desde Bybit\nÚltima actualización: ${new Date(marketData.metadata.date_range.end).toLocaleDateString('es-CO')}`}
             >
-              🔄
+              {isNewTheme() ? <Icon name="refresh" size={15} /> : '🔄'}
             </button>
           )}
+
+          {/* Estilo y colores */}
+          <button
+            className="btn-action-compact theme-settings-btn"
+            onClick={() => setShowThemeSettings(true)}
+            title="Estilo y colores"
+          >
+            {isNewTheme() ? <><Icon name="palette" size={15} /><span>Estilo</span></> : '🎨'}
+          </button>
 
           {/* Selector de indicadores */}
           <div className="indicator-selector-compact" ref={indicatorPanelRef}>
@@ -2348,7 +2367,9 @@ const BacktestingApp = () => {
                 padding: '4px 8px'
               }}
             >
-              📊 ({Object.values(tabStates[activeTimeframe]?.indicatorStates || {}).filter(v => v).length})
+              {isNewTheme()
+                ? <><Icon name="layers" size={15} /><span>Indicadores {Object.values(tabStates[activeTimeframe]?.indicatorStates || {}).filter(v => v).length}</span></>
+                : `📊 (${Object.values(tabStates[activeTimeframe]?.indicatorStates || {}).filter(v => v).length})`}
             </button>
 
             {showIndicatorPanel && (
