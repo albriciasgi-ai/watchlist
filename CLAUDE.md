@@ -53,6 +53,22 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 9 Noviembre 2026: Liquidaciones de Velas Fijadas en su Mecha
+
+**Problema:** al fijar el máximo o el mínimo de una vela en el indicador Liquidaciones, se contaba lo liquidado en la mitad de la vela de ese lado, y la franja medía siempre 0.2%. El usuario preguntó si era solo el precio del máximo. Pidió contar el pabilo, como un rango de precios con un alto máximo en % que él pueda ajustar.
+
+**Cambios:**
+1. **Rango:** el máximo cuenta su mecha de arriba, del cuerpo al extremo; el mínimo, la de abajo. Suma 0.1% por fuera por redondeo, como antes
+2. **Mínimo y tope:** hacia adentro toma al menos 0.1%, así una vela que cerró en su extremo cuenta lo de ese precio, y a lo sumo el "Alto máximo de la mecha (% del precio)" del modal ⚙️: 0.5% por defecto, de 0.1 a 5
+3. **Franja y etiqueta:** la franja cubre el rango contado y la etiqueta lo dice (`rango 0.24%`), con `(tope)` si la mecha era más larga
+4. **Velas fijadas antes:** no guardaron su cuerpo y cuentan la mitad de la vela, ahora con el tope. Para pasarlas a la mecha, soltarlas y fijarlas de nuevo
+
+**IMPORTANTE:** basta recargar la página: no hay cambios en el backend. Probado en una copia con una vela de BTC 15m del 24/10 con mecha de 0.237%: la franja fue del cuerpo a 0.1% sobre el máximo. Con tope de 0.12% se acortó y la etiqueta dijo "(tope)". Con datos por día de MarginPad, el monto es el del día completo en esos precios, como antes.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LIQUIDACIONES", "Velas fijadas"
+
+---
+
 ### APP 1 (Backtester) - 9 Noviembre 2026: Footprints al Alejar la Vista
 
 **Problema:** con la simulación iniciada el 01/01/2026, el Order Flow solo se dibujaba desde el 24/12/2025, aunque el almacén tiene todo 2025. El indicador dejaba de pedir footprints con más de 400 velas en pantalla, unos 4 días en 15m. Lo ya cargado se seguía viendo y lo anterior quedaba vacío, sin aviso.

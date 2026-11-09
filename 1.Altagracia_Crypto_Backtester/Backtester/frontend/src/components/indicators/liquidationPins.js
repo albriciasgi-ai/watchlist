@@ -39,15 +39,16 @@ export const pinnedAt = (symbol, id, time = Infinity) =>
 
 /**
  * Fija o suelta el máximo o el mínimo de una vela. target trae id, edge ('high' o 'low'), price, time (inicio de la
- * vela), low y high. Una fijada después de esta hora, que solo existe tras retroceder, se reemplaza
+ * vela), low, high, open y close: el cuerpo dice dónde termina la mecha. Una fijada después de esta hora, que solo
+ * existe tras retroceder, se reemplaza
  */
 export function togglePin(symbol, target, time, timeframe) {
   const current = store(symbol);
   if (pinnedAt(symbol, target.id, time)) {
     current.items = current.items.filter(pin => pin.id !== target.id);
   } else {
-    const { id, edge, price, low, high } = target;
-    const pin = { id, edge, price, time: target.time, low, high, timeframe, selectedAt: time };
+    const { id, edge, price, low, high, open, close } = target;
+    const pin = { id, edge, price, time: target.time, low, high, open, close, timeframe, selectedAt: time };
     current.items = [...current.items.filter(other => other.id !== id), pin];
   }
   changed(symbol);

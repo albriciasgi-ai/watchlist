@@ -7,7 +7,7 @@ import { pinnedAt, pinsAt, togglePin } from './liquidationPins.js';
 import { alignY, crispWidth } from '../chartPixels.js';
 import {
   CrossTracker, DAY_MS, PINNED_KIND, PIN_KINDS, activeSource, binWidthFor, buildZones, coverageText, defaultPickRules, defaultZoneRules,
-  knownAfter, money, pickZones, pinEdge, pinSummary, windowRange
+  knownAfter, money, pickZones, pinEdge, pinRange, pinSummary, windowRange
 } from './liquidationZones.js';
 
 const SETTINGS_KEY = 'liquidations_settings_';
@@ -23,14 +23,13 @@ const LABEL_GAP_PX = 12;
 const LABEL_RIGHT_LIMIT = 0.6; // Una etiqueta no empieza en el 40% derecho del gráfico
 const MIN_TIP_BAR_PX = 4; // Con velas más angostas no se ofrecen sus máximos y mínimos: no se alcanzan a elegir
 const TIP_HALF_PX = 4; // Alto que alcanza un clic sobre la punta de una vela
-const PIN_PAD_PCT = 0.1; // Margen exterior de la vela fijada, por redondeo de precios
-const PIN_BAND_PCT = 0.2; // Alto de la franja de una vela fijada, como % del precio
+const PIN_PAD_PCT = 0.1; // Margen de la vela fijada por redondeo de precios: por fuera, y lo mínimo hacia adentro
 
 // Lo que el modal deja cambiar. Las reglas internas de las zonas (maxHalfBins, halfFraction) no se guardan:
 // así un cambio de sus valores de fábrica llega también a quien ya guardó parámetros
 const USER_KEYS = [
   'lookbackDays', 'binPct', 'perSide', 'maxDistancePct', 'minShare', 'minGapPct', 'showLongs', 'showShorts', 'source',
-  'longColor', 'shortColor', 'maxOpacity', 'showLabels', 'showOffscreen', 'showPins', 'offerCandles', 'pinColor'
+  'longColor', 'shortColor', 'maxOpacity', 'showLabels', 'showOffscreen', 'showPins', 'offerCandles', 'pinColor', 'pinWickMaxPct'
 ];
 const userPart = (settings) => Object.fromEntries(USER_KEYS.filter(key => settings?.[key] !== undefined).map(key => [key, settings[key]]));
 
@@ -63,7 +62,8 @@ export function defaultLiquidationsConfig() {
     showOffscreen: true, // Aviso de zonas elegidas que quedan arriba o abajo de la vista
     showPins: true, // Franjas de las velas fijadas en el gráfico, aunque sean de hace meses
     offerCandles: true, // Un clic en el máximo o el mínimo de una vela la ofrece en el menú de niveles
-    pinColor: '#F59E0B' // Velas elegidas: otro color que las zonas cerca del precio
+    pinColor: '#F59E0B', // Velas elegidas: otro color que las zonas cerca del precio
+    pinWickMaxPct: 0.5 // Una vela fijada cuenta su mecha hasta este alto, como % del precio
   };
 }
 
@@ -83,7 +83,8 @@ const NUMBER_LIMITS = {
   lookbackDays: [1, 90],
   binPct: [0.02, 1],
   minShare: [0, 1],
-  maxOpacity: [0.05, 0.8]
+  maxOpacity: [0.05, 0.8],
+  pinWickMaxPct: [0.1, 5]
 };
 const INTEGERS = ['perSide', 'lookbackDays'];
 
@@ -392,16 +393,21 @@ class LiquidationsIndicator extends IndicatorBase {
       });
   }
 
-  /** Liquidaciones de una vela fijada, con la fuente que cubre la fecha de esa vela (no la de hoy) */
-  _pinState(item, time) {
+  /** Precios de una vela fijada: su mecha, sin pasar del alto máximo del modal */
+  _pinRange(item) {
+    const pin = { edge: pinEdge(item), high: item.high ?? item.price, low: item.low ?? item.price, open: item.open, close: item.close };
+    return pinRange(pin, this.config.pinWickMaxPct, PIN_PAD_PCT);
+  }
+
+  /** Liquidaciones de una vela fijada en sus precios, con la fuente que cubre la fecha de esa vela (no la de hoy) */
+  _pinState(item, time, range) {
     const { entry, frameMs, reach } = this._pinCells(item, time);
     if (entry.cut === null) return { loading: true, error: entry.error };
     const source = activeSource(entry.sources, item.time, this.config.lookbackDays * DAY_MS, this.config.source);
     if (!source) return { source: null };
-    const key = `${source.id}|${entry.cut}|${entry.cells.length}`;
+    const key = `${source.id}|${entry.cut}|${entry.cells.length}|${range.low}|${range.high}`;
     if (entry.key !== key) {
-      const pin = { time: item.time, high: item.high ?? item.price, low: item.low ?? item.price, edge: pinEdge(item) };
-      entry.summary = pinSummary(entry.cells.filter(cell => cell.source === source.id), pin, frameMs, item.price * PIN_PAD_PCT / 100);
+      entry.summary = pinSummary(entry.cells.filter(cell => cell.source === source.id), { time: item.time }, frameMs, range);
       entry.key = key;
     }
     // Con datos por día o por intervalo, una celda que se cruza con la vela puede cerrar después de la hora simulada
@@ -489,6 +495,8 @@ class LiquidationsIndicator extends IndicatorBase {
           time: candle.timestamp,
           low: candle.low,
           high: candle.high,
+          open: candle.open, // El cuerpo dice dónde termina la mecha
+          close: candle.close,
           left: x - half,
           right: x + half,
           top: y - TIP_HALF_PX,
@@ -503,12 +511,14 @@ class LiquidationsIndicator extends IndicatorBase {
     }
   }
 
-  /** Texto de una vela fijada: marco, fuente, montos y qué tan fino es el dato */
-  _pinLabel(item, state, blind, crossed) {
+  /** Texto de una vela fijada: marco, fuente, montos, rango de precios contado y qué tan fino es el dato */
+  _pinLabel(item, state, blind, crossed, range) {
     const head = `Vela ${item.timeframe || this.interval}`;
     if (state.loading) return `${head}: ${state.error ? 'el backend no respondió' : 'cargando...'}`;
     if (!state.source) return `${head}: sin datos de liquidaciones en su fecha`;
     const parts = [`${head}${blind ? '' : ` · ${state.source.label}`}: ${pinAmounts(state.summary, blind)}`];
+    // Lo contado hacia adentro desde el extremo; "tope" si la mecha era más larga que el alto máximo del modal
+    parts.push(`rango ${(range.depth / range.price * 100).toFixed(2)}%${range.capped ? ' (tope)' : ''}`);
     if (state.summary.spanMs > state.frameMs) parts.push(`dato de ${spanText(state.summary.spanMs)}`);
     if (state.partial) parts.push('parcial');
     if (crossed) parts.push('cruzada');
@@ -516,8 +526,8 @@ class LiquidationsIndicator extends IndicatorBase {
   }
 
   /**
-   * Velas fijadas en el gráfico (desde el menú de niveles): una franja en su máximo o su mínimo desde esa vela hasta
-   * el borde derecho, con lo liquidado en esa mitad de la vela. Otro color que las zonas cerca del precio.
+   * Velas fijadas en el gráfico (desde el menú de niveles): una franja en los precios de su mecha (pinRange), desde
+   * esa vela hasta el borde derecho, con lo liquidado ahí. Otro color que las zonas cerca del precio.
    * La franja se ofrece al Observador para incluirla en el análisis de un trade; la vela sigue fijada después
    */
   _drawPins(ctx, bounds, time, { priceToY, timeToX }, known, blind) {
@@ -532,10 +542,10 @@ class LiquidationsIndicator extends IndicatorBase {
     ctx.textAlign = 'left';
 
     for (const item of items) {
-      const state = this._pinState(item, time);
+      const range = this._pinRange(item);
+      const state = this._pinState(item, time, range);
       const frameMs = TF_MS[item.timeframe] || TF_MS[this.interval] || 0;
-      const half = item.price * PIN_BAND_PCT / 200;
-      const zone = { birth: item.time + frameMs, low: item.price - half, high: item.price + half };
+      const zone = { birth: item.time + frameMs, low: range.low, high: range.high };
       const yTop = priceToY(zone.high);
       const yBottom = priceToY(zone.low);
       if (yBottom < top || yTop > bottom) continue;
@@ -573,7 +583,7 @@ class LiquidationsIndicator extends IndicatorBase {
       ctx.setLineDash([]);
 
       if (!this.config.showLabels) continue;
-      const text = this._pinLabel(item, state, blind, crossed);
+      const text = this._pinLabel(item, state, blind, crossed, range);
       const x = left > bounds.x + bounds.width * LABEL_RIGHT_LIMIT ? bounds.x + 4 : left + 4;
       const labelY = labelInside(lineY, bounds);
       const width = ctx.measureText(text).width + 6;

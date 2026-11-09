@@ -1273,11 +1273,18 @@ Zonas que vería el usuario (3 por lado, 6%, 30 días), cada 3 o 6 horas. Dos zo
 Pedido del usuario el 8/11: elegir una vela del gráfico y dejar en su máximo las liquidaciones que hubo ahí, aunque sea de hace meses, porque los niveles de liquidaciones muy grandes se vuelven soportes y resistencias.
 
 - Con el indicador activo, un clic en el máximo o el mínimo de una vela cerrada abre el menú de niveles con "Fijar liq. del máximo" o "Fijar liq. del mínimo" (`_offerCandles()`, id con `candleItemId(..., interval)`). Solo con 4 px o más por vela, y nunca la vela en formación. `offerCandles` lo apaga
-- Una vela fijada va a su propia lista (`liquidationPins.js`, en `liquidation_pins_{symbol}`), que comparten los marcos. No es lo elegido para un trade: `takeLevels()` no la toca y sigue después de cada orden, hasta que se suelta desmarcándola en el menú, con × en el modal ⚙️ o con "Soltar todas". Guarda id, lado (`edge`), precio, vela (`time`, `low`, `high`), marco y `selectedAt`. Al retroceder antes de fijarla no aparece
+- Una vela fijada va a su propia lista (`liquidationPins.js`, en `liquidation_pins_{symbol}`), que comparten los marcos. No es lo elegido para un trade: `takeLevels()` no la toca y sigue después de cada orden, hasta que se suelta desmarcándola en el menú, con × en el modal ⚙️ o con "Soltar todas". Guarda id, lado (`edge`), precio, vela (`time`, `low`, `high`, `open`, `close`), marco y `selectedAt`. Al retroceder antes de fijarla no aparece
 - El menú reconoce estos elegibles por `choice` (`chosen(time)` y `toggle(time, timeframe)`): marcan la lista propia, sin papel ni nota. MiniChart redibuja con `subscribePins()`, también cuando se suelta desde el modal
 - La franja de una vela fijada se ofrece al Observador como "Liq. de vela fijada" (id `Liquidaciones|Liq. de vela fijada|<id de la vela>`, con su lugar en el dibujo). Marcada, entra a lo elegido para el trade con papel y nota y pasa a la orden como cualquier nivel. La vela sigue fijada
-- `_drawPins()` dibuja una franja de 0.2% del precio en ese máximo o mínimo, desde la vela hasta el borde derecho, en `pinColor` (ámbar), con una línea en el precio y la etiqueta `Vela 1h · Coinalyze: C 4.0M + L 1.1M`. Si el precio la cruza queda tenue y punteada
-- `pinSummary()`: cuenta lo liquidado en la mitad de la vela del lado elegido (el máximo, su mitad de arriba; el mínimo, la de abajo), en celdas que se cruzan con la vela en el tiempo. Una celda más larga que la vela (un día de MarginPad o un intervalo de Coinalyze) entra completa y la etiqueta dice `dato de 1 día`
+- **Rango de precios** (`pinRange()`, pedido del usuario el 9/11): la mecha del lado elegido, del cuerpo al extremo. El máximo cuenta su mecha de arriba y el mínimo la de abajo.
+  - Por fuera suma 0.1% del precio por redondeo (`PIN_PAD_PCT`).
+  - Hacia adentro llega al menos a ese 0.1%: una vela que cerró en su extremo cuenta lo que pasó junto a él.
+  - Y a lo sumo a `pinWickMaxPct`: "Alto máximo de la mecha (% del precio)" en el modal ⚙️, 0.5% por defecto, de 0.1 a 5.
+  - Una vela fijada antes del 9/11 no guardó su cuerpo: cuenta la mitad de la vela, como antes, también con el tope.
+  - Hasta el 9/11 se contaba siempre la mitad de la vela y la franja medía 0.2%.
+- `_drawPins()` dibuja la franja en ese rango, desde la vela hasta el borde derecho, en `pinColor` (ámbar), con una línea en el precio. Una mecha de menos de 0.1% deja la franja de 0.2% de antes. Si el precio la cruza queda tenue y punteada
+- La etiqueta dice lo contado hacia adentro: `Vela 1h · Coinalyze: C 4.0M + L 1.1M · rango 0.24%`, con `(tope)` si la mecha era más larga que el alto máximo
+- `pinSummary()`: cuenta lo liquidado en ese rango, en celdas que se cruzan con la vela en el tiempo y tienen su precio medio en el rango, como las zonas. Una celda más larga que la vela (un día de MarginPad o un intervalo de Coinalyze) entra completa y la etiqueta dice `dato de 1 día`
 - La fuente es la que cubre la fecha de la vela, no la de hoy: una vela de 2024 puede salir de Coinalyze o Binance Coin-M aunque hoy mande MarginPad
 - Sin futuro: cada vela fijada pide aparte su ventana, `(vela − 1, cierre del día UTC en que termina la vela]`, cortada en la hora simulada. Mientras ese día no cierra, la etiqueta dice `parcial` y se vuelve a pedir cada 5 minutos simulados. Al retroceder se quita lo conocido después
 - Fecha oculta: sin fuente y con la parte de cada lado en vez del monto. La lista del modal no muestra la fecha de la vela
@@ -1317,7 +1324,7 @@ python -B liq_update.py bitfinex --tramo 2021-08-01 2023-06-01 BTCUSDT          
 
 ### Pruebas
 
-`node tests/liquidations.test.mjs` (37) y `pytest tests/test_liq_store.py` (10).
+`node tests/liquidations.test.mjs` (39) y `pytest tests/test_liq_store.py` (10).
 
 ---
 

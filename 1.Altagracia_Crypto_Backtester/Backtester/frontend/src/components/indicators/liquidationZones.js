@@ -298,16 +298,32 @@ export function pinEdge(item) {
 }
 
 /**
- * Liquidaciones de una vela fijada, en la mitad de la vela del lado elegido: el máximo junta su mitad de arriba
- * y el mínimo su mitad de abajo. Cuentan las celdas que se cruzan con la vela en el tiempo y caen en esos precios.
- * Una celda más larga que la vela (un día de MarginPad, un intervalo de Coinalyze) entra completa: spanMs lo dice.
- * pin: { time, high, low, edge }. pad agranda un poco el borde exterior, por redondeo de precios.
+ * Precios que cuenta una vela fijada: la mecha del lado elegido, del cuerpo al extremo, y padPct del precio por fuera
+ * por redondeo. Hacia adentro llega al menos a padPct, así una vela sin mecha cuenta lo de su extremo, y a lo sumo a
+ * maxPct del precio. Una vela fijada antes del 9/11/2026 no guardó su cuerpo: toma la mitad de la vela, como entonces.
+ * pin: { edge, high, low, open, close }. depth: lo que se cuenta hacia adentro. capped: la mecha pasaba de maxPct.
  */
-export function pinSummary(cells, pin, frameMs, pad = 0) {
+export function pinRange(pin, maxPct, padPct) {
+  const up = pin.edge === 'high';
+  const price = up ? pin.high : pin.low;
+  const pad = price * padPct / 100;
+  const cap = Math.max(pad, price * maxPct / 100);
+  const hasBody = Number.isFinite(pin.open) && Number.isFinite(pin.close);
+  const inner = hasBody ? (up ? Math.max(pin.open, pin.close) : Math.min(pin.open, pin.close)) : (pin.high + pin.low) / 2;
+  const wick = Math.max(pad, Math.abs(price - inner));
+  const depth = Math.min(cap, wick);
+  return { low: up ? price - depth : price - pad, high: up ? price + pad : price + depth, price, depth, capped: wick > cap };
+}
+
+/**
+ * Liquidaciones de una vela fijada en sus precios (range, de pinRange). Cuentan las celdas que se cruzan con la vela
+ * en el tiempo y tienen su precio medio en el rango. Una celda más larga que la vela (un día de MarginPad, un
+ * intervalo de Coinalyze) entra completa: spanMs lo dice. pin: { time }.
+ */
+export function pinSummary(cells, pin, frameMs, range) {
   const start = pin.time;
   const end = pin.time + frameMs;
-  const middle = (pin.high + pin.low) / 2;
-  const [low, high] = pin.edge === 'high' ? [middle, pin.high + pad] : [pin.low - pad, middle];
+  const { low, high } = range;
   let long = 0;
   let short = 0;
   let spanMs = 0;
