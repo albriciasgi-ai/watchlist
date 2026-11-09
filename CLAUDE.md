@@ -74,6 +74,49 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### APP 1 (Backtester) - 9 Noviembre 2026: Estilos Oscuro, Personalizado y Muhammad
+
+**Pedido:** tres estilos más:
+- un modo oscuro;
+- un Personalizado basado en Nítido que guarde los colores cambiados sin tocar el Nítido original;
+- Muhammad, basado en Nítido con una paleta del arte islámico investigada a fondo.
+
+**Cambios:**
+1. **Cinco estilos** en el modal "Estilo": Nítido, Oscuro, Personalizado, Muhammad y Clásico. Oscuro, Personalizado y Muhammad dejan cambiar sus colores; Nítido queda fijo, con sus colores grises y una nota
+2. **Colores propios por estilo:** cada estilo editable guarda solo lo distinto a su paleta: `ui_theme_colors` (Personalizado, que parte de Nítido), `ui_theme_colors_oscuro` y `ui_theme_colors_muhammad`. Cada color y cada estilo vuelven a su paleta con un botón. Lo que antes se cambiaba en Nítido queda ahora en Personalizado, y Nítido vuelve a sus colores de fábrica
+3. **Oscuro, en el lienzo:** fondo `#131722`, barras `#1E222D`, texto con 12:1 de contraste y velas como Nítido. Los textos derivados se aclaran en vez de oscurecerse. CVD, Volumen de Respuesta, Interés abierto, Liquidaciones, S&R, S&R v2 y el perfil dejan sus blancos y negros fijos
+4. **Oscuro, fuera del lienzo:**
+   - el encabezado, las barras y los botones toman las variables del estilo;
+   - el panel de trading, los menús, la pantalla de inicio y los modales se oscurecen con un filtro que invierte la luz y devuelve el tono, así un botón verde sigue verde;
+   - fotos y selectores de color mantienen sus colores reales;
+   - la confirmación de orden y "Nuevo VP Fixed Range" van al body, para que el filtro no los encierre
+5. **Muhammad:** papel marfil de manuscrito, turquesa de cobre y rojo bol de Iznik en las velas, cobalto en el POC, oro de iluminación en el área de valor, azul y verde nazaríes medidos en la Alhambra, morado de manganeso, minio, tinta negra y acento verde esmeralda. Texto 16:1 y datos 3.3:1 o más. Fuentes: mediciones publicadas de la Alhambra y de un santuario safávida, fotos del Art Institute of Chicago, V&A, Khalili y Ashmolean
+
+**IMPORTANTE:**
+- Basta recargar la página: no hay cambios en el backend.
+- Comparado con el código de antes en Edge sin ventana, con ocho indicadores, Nítido y Clásico dan 0 píxeles distintos en la vista general y en el footprint.
+- Un indicador nuevo dibuja sus paneles con `THEME.chartBg`, sus etiquetas con `THEME.labelBg` y sus textos de color fijo con `chartInk()`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ESTILO NÍTIDO", "Oscuro, Personalizado y Muhammad" y "Paleta Muhammad"
+
+---
+
+### APP 1 (Backtester) - 9 Noviembre 2026: Liquidaciones de Velas Fijadas en su Mecha
+
+**Problema:** al fijar el máximo o el mínimo de una vela en el indicador Liquidaciones, se contaba lo liquidado en la mitad de la vela de ese lado, y la franja medía siempre 0.2%. El usuario preguntó si era solo el precio del máximo. Pidió contar el pabilo, como un rango de precios con un alto máximo en % que él pueda ajustar.
+
+**Cambios:**
+1. **Rango:** el máximo cuenta su mecha de arriba, del cuerpo al extremo; el mínimo, la de abajo. Suma 0.1% por fuera por redondeo, como antes
+2. **Mínimo y tope:** hacia adentro toma al menos 0.1%, así una vela que cerró en su extremo cuenta lo de ese precio, y a lo sumo el "Alto máximo de la mecha (% del precio)" del modal ⚙️: 0.5% por defecto, de 0.1 a 5
+3. **Franja y etiqueta:** la franja cubre el rango contado y la etiqueta lo dice (`rango 0.24%`), con `(tope)` si la mecha era más larga
+4. **Velas fijadas antes:** no guardaron su cuerpo y cuentan la mitad de la vela, ahora con el tope. Para pasarlas a la mecha, soltarlas y fijarlas de nuevo
+
+**IMPORTANTE:** basta recargar la página: no hay cambios en el backend. Probado en una copia con una vela de BTC 15m del 24/10 con mecha de 0.237%: la franja fue del cuerpo a 0.1% sobre el máximo. Con tope de 0.12% se acortó y la etiqueta dijo "(tope)". Con datos por día de MarginPad, el monto es el del día completo en esos precios, como antes.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LIQUIDACIONES", "Velas fijadas"
+
+---
+
 ### APP 1 (Backtester) - 9 Noviembre 2026: Footprints al Alejar la Vista
 
 **Problema:** con la simulación iniciada el 01/01/2026, el Order Flow solo se dibujaba desde el 24/12/2025, aunque el almacén tiene todo 2025. El indicador dejaba de pedir footprints con más de 400 velas en pantalla, unos 4 días en 15m. Lo ya cargado se seguía viendo y lo anterior quedaba vacío, sin aviso.

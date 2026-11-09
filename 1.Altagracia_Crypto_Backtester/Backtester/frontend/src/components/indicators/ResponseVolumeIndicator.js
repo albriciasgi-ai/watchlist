@@ -2,6 +2,7 @@ import IndicatorBase from './IndicatorBase.js';
 import { candleItemId } from './analysisLevels.js';
 import { ResponseSeries, defaultResponseConfig } from './responseBalance.js';
 import { alignY, crispWidth } from '../chartPixels.js';
+import { THEME, isNewTheme } from '../uiTheme.js'; // Estilos nuevos: fondo del gráfico; con Oscuro, líneas y títulos
 
 const SETTINGS_KEY = 'response_balance_settings_';
 const PRESSURE_LIMIT = 2; // El panel llega hasta cuatro veces de ventaja
@@ -134,9 +135,9 @@ class ResponseVolumeIndicator extends IndicatorBase {
     if (!this.enabled || !visibleCandles?.length) return;
 
     const { x, y, width, height } = bounds;
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = isNewTheme() ? THEME.chartBg : '#FFFFFF';
     ctx.fillRect(x, y, width, height);
-    ctx.strokeStyle = '#DDE2E7';
+    ctx.strokeStyle = THEME.dark ? THEME.grid : '#DDE2E7';
     ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
     ctx.moveTo(x, alignY(y));
@@ -150,7 +151,7 @@ class ResponseVolumeIndicator extends IndicatorBase {
     const barWidth = width / visibleCandles.length;
     const dominance = Math.log2(this.config.dominance);
 
-    ctx.strokeStyle = '#E5E9ED';
+    ctx.strokeStyle = THEME.dark ? THEME.grid : '#E5E9ED';
     ctx.setLineDash([3, 3]);
     for (const level of [dominance, -dominance]) {
       const lineY = alignY(zero - Math.max(-PRESSURE_LIMIT, Math.min(PRESSURE_LIMIT, level)) * scale);
@@ -160,7 +161,7 @@ class ResponseVolumeIndicator extends IndicatorBase {
       ctx.stroke();
     }
     ctx.setLineDash([]);
-    ctx.strokeStyle = '#B0BEC5';
+    ctx.strokeStyle = THEME.dark ? THEME.crosshair : '#B0BEC5';
     ctx.beginPath();
     ctx.moveTo(x, alignY(zero));
     ctx.lineTo(x + width, alignY(zero));
@@ -186,13 +187,13 @@ class ResponseVolumeIndicator extends IndicatorBase {
 
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = THEME.dark ? THEME.textMuted : '#666';
     ctx.font = 'bold 11px Inter, sans-serif';
     ctx.fillText('Volumen de Respuesta', x + 5, y + 15);
 
     if (lastIndex >= 0) {
       ctx.font = '10px Inter, sans-serif';
-      ctx.fillStyle = '#888';
+      ctx.fillStyle = THEME.dark ? THEME.textFaint : '#888';
       ctx.fillText(this.reading(lastIndex), x + 140, y + 15);
     }
   }

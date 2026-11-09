@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import './OrderConfirmationModal.css';
 
 /**
@@ -57,7 +58,9 @@ const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
 
   const metrics = calculateMetrics();
 
-  return (
+  // En el body, como las imágenes del historial: el panel de trading puede llevar un filtro (estilo Oscuro) y un
+  // elemento fijo dentro de él quedaría encerrado en su caja en vez de cubrir la pantalla
+  return createPortal(
     <div className="order-modal-overlay" onClick={onClose}>
       <div className="order-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="order-modal-header">
@@ -142,7 +145,8 @@ const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

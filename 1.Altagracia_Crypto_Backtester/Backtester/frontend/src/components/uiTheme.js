@@ -1,19 +1,23 @@
 // Estilo visual de App 1.
 //
-// "nitido" (el que abre por defecto): una sola letra (Segoe UI de 12 px), color solo en los datos,
-// precios y horas redondos en los ejes, leyenda con la vela bajo la cruz, último precio en el eje y
-// footprint graduado por volumen. Sus colores se cambian en el modal "Estilo y colores".
+// Cuatro estilos con el mismo dibujo: una sola letra (Segoe UI de 12 px), color solo en los datos, precios y
+// horas redondos en los ejes, leyenda con la vela bajo la cruz, último precio en el eje y footprint graduado
+// por volumen. Cambian sus colores:
+//   "nitido" (el que abre por defecto): colores fijos, nunca cambian.
+//   "oscuro" (fondo, lienzo y barras oscuros), "personalizado" (parte de Nítido) y "muhammad" (paleta del arte
+//   islámico: azulejos de Iznik, Isfahán y la Alhambra, manuscritos iluminados): el usuario cambia sus colores en
+//   el modal "Estilo y colores" y cada uno guarda lo suyo.
 // "clasico": el aspecto anterior, sin ningún cambio.
 //
-// Se guarda en localStorage: "ui_theme" ("nitido" | "clasico") y "ui_theme_colors" (los colores que
-// el usuario cambió). Un indicador nuevo pregunta isNewTheme() al dibujar y toma sus colores de THEME.
+// Se guarda en localStorage: "ui_theme" (el estilo) y los colores cambiados de cada estilo, solo lo distinto a su
+// paleta: "ui_theme_colors" (Personalizado), "ui_theme_colors_oscuro" y "ui_theme_colors_muhammad".
+// Un indicador nuevo pregunta isNewTheme() al dibujar y toma sus colores de THEME.
 
 const STYLE_KEY = 'ui_theme';
-const COLORS_KEY = 'ui_theme_colors';
 const DEFAULT_STYLE = 'nitido';
 const listeners = new Set();
 
-/** Colores de Nítido. Son los que el modal deja cambiar */
+/** Colores de Nítido. Personalizado parte de ellos */
 export const DEFAULT_COLORS = {
   up: '#089981',
   down: '#F23645',
@@ -37,6 +41,76 @@ export const DEFAULT_COLORS = {
   oiDown: '#F57C00',
   divergence: '#F59E0B'
 };
+
+/** Oscuro: fondo y barras como los gráficos oscuros de siempre. Texto 12:1 y datos 4.5:1 o más sobre el fondo */
+export const DARK_COLORS = {
+  up: '#089981',
+  down: '#F23645',
+  fpBuy: '#089981',
+  fpSell: '#F23645',
+  fpPoc: '#5B8CFF',
+  fpProfile: '#4A5573',
+  vpValueArea: '#C9A05C',
+  vpOutside: '#8091C4',
+  vpPoc: '#9AA3B5',
+  vpCluster: '#9B7FE8',
+  chartBg: '#131722',
+  grid: '#242936',
+  crosshair: '#758696',
+  tagBg: '#3F4659',
+  surface: '#1E222D',
+  accent: '#5B8CFF',
+  text: '#D1D4DC',
+  textMuted: '#8B93A5',
+  oiUp: '#5B8CFF',
+  oiDown: '#FF9800',
+  divergence: '#F5B70B'
+};
+
+/**
+ * Muhammad: paleta del arte islámico sobre papel marfil de manuscrito, con el dibujo de Nítido.
+ * Turquesa de cobre y rojo bol de Iznik en las velas, cobalto de Iznik, oro de iluminación (shamsa iraní), azul y
+ * verde nazaríes medidos en la Alhambra, morado de manganeso, minio, negro de tinta y verde esmeralda de acento.
+ * Texto 16:1 y datos 3.3:1 o más sobre el fondo. Fuentes en Backtester/CLAUDE.md, "Paleta Muhammad".
+ */
+export const MUHAMMAD_COLORS = {
+  up: '#0E8794',
+  down: '#B8352B',
+  fpBuy: '#0E8794',
+  fpSell: '#B8352B',
+  fpPoc: '#1251CE',
+  fpProfile: '#B6CFE7',
+  vpValueArea: '#C4A23B',
+  vpOutside: '#859EB4',
+  vpPoc: '#475D53',
+  vpCluster: '#6F4A7E',
+  chartBg: '#FBF9F4',
+  grid: '#E6E1D6',
+  crosshair: '#8A847A',
+  tagBg: '#2C2925',
+  surface: '#FBF9F4',
+  accent: '#1D6B4C',
+  text: '#1F1C18',
+  textMuted: '#5E574E',
+  oiUp: '#1251CE',
+  oiDown: '#B85A1C',
+  divergence: '#A6850C'
+};
+
+/** Paleta de partida de cada estilo. Nítido no cambia; los demás suman lo que el usuario cambió */
+const PALETTES = { nitido: DEFAULT_COLORS, oscuro: DARK_COLORS, personalizado: DEFAULT_COLORS, muhammad: MUHAMMAD_COLORS };
+/** Estilos que el usuario puede cambiar y dónde guarda cada uno sus colores. Personalizado conserva la clave de siempre */
+const EDITABLE_KEYS = { oscuro: 'ui_theme_colors_oscuro', personalizado: 'ui_theme_colors', muhammad: 'ui_theme_colors_muhammad' };
+
+/** Estilos del modal, en su orden */
+export const STYLES = [
+  { id: 'nitido', name: 'Nítido', text: 'Una sola letra, color solo en los datos, ejes con números redondos y footprint graduado por volumen. Sus colores no cambian.' },
+  { id: 'oscuro', name: 'Oscuro', text: 'El mismo dibujo con fondo, lienzo y barras oscuros. Sus colores se cambian abajo.' },
+  { id: 'personalizado', name: 'Personalizado', text: 'Parte de Nítido y guarda los colores que cambies abajo. Nítido queda como está.' },
+  { id: 'muhammad', name: 'Muhammad', text: 'El dibujo de Nítido con colores del arte islámico. Sus colores se cambian abajo.' },
+  { id: 'clasico', name: 'Clásico', text: 'El aspecto anterior de App 1, sin ningún cambio.' }
+];
+const STYLE_IDS = new Set(STYLES.map(style => style.id));
 
 /** Cómo se agrupan en el modal */
 export const COLOR_GROUPS = [
@@ -72,10 +146,13 @@ export const contrast = (a, b) => {
   const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 };
-/** El mismo color, oscurecido lo justo para leerse como texto sobre el fondo */
+/** Hacia dónde se lleva un texto para leerse sobre ese fondo: negro sobre uno claro, blanco sobre uno oscuro */
+const inkFor = background => (contrast('#FFFFFF', background) > contrast('#000000', background) ? '#FFFFFF' : '#000000');
+/** El mismo color, oscurecido (o aclarado sobre un fondo oscuro) lo justo para leerse como texto sobre el fondo */
 const readable = (hex, background, ratio) => {
+  const ink = inkFor(background);
   let color = hex;
-  for (let i = 0; i < 20 && contrast(color, background) < ratio; i++) color = mix(color, '#000000', 0.08);
+  for (let i = 0; i < 20 && contrast(color, background) < ratio; i++) color = mix(color, ink, 0.08);
   return color;
 };
 
@@ -84,16 +161,17 @@ const readable = (hex, background, ratio) => {
 function readStyle() {
   try {
     const value = window.localStorage?.getItem(STYLE_KEY);
-    return value === 'clasico' ? 'clasico' : (value ? 'nitido' : DEFAULT_STYLE);
+    return STYLE_IDS.has(value) ? value : DEFAULT_STYLE;
   } catch {
     return DEFAULT_STYLE;
   }
 }
 
-function readColors() {
+/** Colores cambiados de un estilo, guardados en su clave */
+function readColors(key) {
   try {
-    const saved = JSON.parse(window.localStorage?.getItem(COLORS_KEY) || '{}');
-    return Object.fromEntries(Object.entries(saved).filter(([key, value]) => key in DEFAULT_COLORS && HEX_RE.test(value)));
+    const saved = JSON.parse(window.localStorage?.getItem(key) || '{}');
+    return Object.fromEntries(Object.entries(saved).filter(([name, value]) => name in DEFAULT_COLORS && HEX_RE.test(value)));
   } catch {
     return {};
   }
@@ -102,29 +180,46 @@ function readColors() {
 // Sin navegador (pruebas de Node) se dibuja como siempre
 const inBrowser = typeof window !== 'undefined';
 let current = inBrowser ? readStyle() : 'clasico';
-let custom = inBrowser ? readColors() : {};
+/** Lo que el usuario cambió en cada estilo editable */
+const changes = Object.fromEntries(Object.entries(EDITABLE_KEYS).map(([name, key]) => [name, inBrowser ? readColors(key) : {}]));
 let revision = 0;
 
-/** Colores y medidas del estilo Nítido con los cambios del usuario. Se lee al dibujar */
+/** Colores de un estilo: su paleta, más lo que el usuario cambió si es editable. Nítido y el clásico, los de Nítido */
+function paletteOf(name) {
+  return { ...(PALETTES[name] || DEFAULT_COLORS), ...(changes[name] || {}) };
+}
+
+function saveChanges(name) {
+  try {
+    if (Object.keys(changes[name]).length) window.localStorage?.setItem(EDITABLE_KEYS[name], JSON.stringify(changes[name]));
+    else window.localStorage?.removeItem(EDITABLE_KEYS[name]);
+  } catch { /* sin almacenamiento */ }
+}
+
+/** Colores y medidas del estilo activo. Se lee al dibujar */
 export const THEME = {};
 
 function build() {
-  const c = { ...DEFAULT_COLORS, ...custom };
+  const c = paletteOf(current);
+  const ink = inkFor(c.chartBg);
+  const dark = ink === '#FFFFFF';
   for (const key of Object.keys(THEME)) delete THEME[key];
   Object.assign(THEME, c, {
     font: '"Segoe UI", system-ui, sans-serif',
     fontSize: 12,
+    dark, // Fondo oscuro: lo que no sale de la paleta (etiquetas, celdas vacías) se dibuja claro sobre oscuro
     upRgb: rgbText(c.up),
     downRgb: rgbText(c.down),
     upText: readable(c.up, c.chartBg, 4.5),
     downText: readable(c.down, c.chartBg, 4.5),
     fpBuyRgb: rgbText(c.fpBuy),
     fpSellRgb: rgbText(c.fpSell),
-    fpImbUpText: readable(mix(c.fpBuy, '#000000', 0.35), c.chartBg, 7),
-    fpImbDownText: readable(mix(c.fpSell, '#000000', 0.35), c.chartBg, 7),
+    fpImbUpText: readable(mix(c.fpBuy, ink, 0.35), c.chartBg, 7),
+    fpImbDownText: readable(mix(c.fpSell, ink, 0.35), c.chartBg, 7),
     fpText: c.text,
     fpTextFaint: mix(c.textMuted, c.chartBg, 0.4),
-    fpEmpty: 'rgba(0, 0, 0, 0.035)',
+    fpEmpty: dark ? 'rgba(255, 255, 255, 0.045)' : 'rgba(0, 0, 0, 0.035)',
+    labelBg: `rgba(${rgbText(c.chartBg)}, 0.85)`, // Fondo de una etiqueta sobre el gráfico
     fpFrame: mix(c.textMuted, c.chartBg, 0.55),
     vpValueAreaRgb: rgbText(c.vpValueArea),
     vpOutsideRgb: rgbText(c.vpOutside),
@@ -144,6 +239,8 @@ function applyToDocument() {
   const body = document.body;
   const on = current !== 'clasico';
   body.classList.toggle('theme-nitido', on);
+  body.classList.toggle('theme-dark', on && THEME.dark);
+  body.style.colorScheme = on && THEME.dark ? 'dark' : ''; // Barras de desplazamiento y controles del sistema
   const vars = {
     '--t-text': THEME.text, '--t-muted': THEME.textMuted, '--t-faint': THEME.textFaint,
     '--t-line': THEME.line, '--t-control': THEME.control, '--t-hover': THEME.hover,
@@ -164,31 +261,40 @@ function changed() {
 
 export const isNewTheme = () => current !== 'clasico';
 export const themeName = () => current;
+/** Solo Personalizado deja cambiar sus colores: los demás estilos quedan como son */
+export const themeEditable = () => current in EDITABLE_KEYS;
 /** Cambia en cada ajuste de estilo o de color: sirve para redibujar */
 export const themeRevision = () => revision;
-/** Los colores actuales, para el modal */
-export const themeColors = () => ({ ...DEFAULT_COLORS, ...custom });
+/** Los colores del estilo activo, para el modal */
+export const themeColors = () => ({ ...paletteOf(current) });
+/** La paleta de partida del estilo activo: a ella vuelve un color cambiado */
+export const themeBaseColors = () => ({ ...(PALETTES[current] || DEFAULT_COLORS) });
 
 export function setTheme(name) {
-  current = name === 'clasico' ? 'clasico' : 'nitido';
+  current = STYLE_IDS.has(name) ? name : DEFAULT_STYLE;
   try { window.localStorage?.setItem(STYLE_KEY, current); } catch { /* sin almacenamiento */ }
   changed();
 }
 
-/** Cambia uno o varios colores de Nítido y los guarda */
+/** Cambia uno o varios colores del estilo activo y los guarda: solo lo distinto a su paleta. Nítido no cambia */
 export function setThemeColors(colors) {
+  const own = changes[current];
+  if (!own) return;
+  const base = PALETTES[current];
   for (const [key, value] of Object.entries(colors)) {
     if (!(key in DEFAULT_COLORS) || !HEX_RE.test(value)) continue;
-    if (value.toUpperCase() === DEFAULT_COLORS[key].toUpperCase()) delete custom[key];
-    else custom[key] = value.toUpperCase();
+    if (value.toUpperCase() === base[key].toUpperCase()) delete own[key];
+    else own[key] = value.toUpperCase();
   }
-  try { window.localStorage?.setItem(COLORS_KEY, JSON.stringify(custom)); } catch { /* sin almacenamiento */ }
+  saveChanges(current);
   changed();
 }
 
+/** El estilo activo vuelve a su paleta */
 export function resetThemeColors() {
-  custom = {};
-  try { window.localStorage?.removeItem(COLORS_KEY); } catch { /* sin almacenamiento */ }
+  if (!changes[current]) return;
+  changes[current] = {};
+  saveChanges(current);
   changed();
 }
 
@@ -226,6 +332,12 @@ export function markCustom(config, key, factoryValues) {
   const list = customList(config, factoryValues);
   return list.includes(key) ? list : [...list, key];
 }
+
+/**
+ * Color de un texto o una línea de indicador sobre el gráfico. Con un estilo oscuro se aclara lo justo para leerse
+ * (ratio de contraste); con los claros y el clásico queda igual
+ */
+export const chartInk = (hex, ratio = 4.5) => (current !== 'clasico' && THEME.dark && HEX_RE.test(hex) ? readable(hex, THEME.chartBg, ratio) : hex);
 
 /** "#RRGGBB" → "r, g, b" para usar con transparencia; null si no es un color así */
 export const rgbOf = hex => (typeof hex === 'string' && HEX_RE.test(hex) ? rgbText(hex) : null);

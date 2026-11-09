@@ -777,11 +777,11 @@ class OpenInterestIndicator extends IndicatorBase {
     const bearColor = "#F57C00"; // Naranja oscuro
 
     // Fondo
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = isNewTheme() ? THEME.chartBg : "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
     // Línea separadora
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = THEME.dark ? THEME.grid : "#DDE2E7";
     ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
     ctx.moveTo(x, alignY(y));
@@ -789,7 +789,7 @@ class OpenInterestIndicator extends IndicatorBase {
     ctx.stroke();
 
     // Título
-    ctx.fillStyle = "#666";
+    ctx.fillStyle = THEME.dark ? THEME.textMuted : "#666";
     ctx.font = "bold 11px Inter, sans-serif";
     ctx.fillText("Open Interest Cumulative Delta", x + 5, y + 15);
 
@@ -852,7 +852,7 @@ class OpenInterestIndicator extends IndicatorBase {
     // Línea de cero
     if (minCumulative < 0 && maxCumulative > 0) {
       const zeroY = chartY + chartHeight - ((0 - minCumulative) * cumulativeScale);
-      ctx.strokeStyle = "#666";
+      ctx.strokeStyle = THEME.dark ? THEME.textMuted : "#666";
       ctx.lineWidth = crispWidth(1);
       ctx.setLineDash([2, 2]);
       ctx.beginPath();
@@ -888,11 +888,11 @@ class OpenInterestIndicator extends IndicatorBase {
     const priceSentimentColor = "rgba(149, 152, 161, 0.5)";
 
     // Fondo
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = isNewTheme() ? THEME.chartBg : "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
     // Línea separadora
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = THEME.dark ? THEME.grid : "#DDE2E7";
     ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
     ctx.moveTo(x, alignY(y));
@@ -900,7 +900,7 @@ class OpenInterestIndicator extends IndicatorBase {
     ctx.stroke();
 
     // Título
-    ctx.fillStyle = "#666";
+    ctx.fillStyle = THEME.dark ? THEME.textMuted : "#666";
     ctx.font = "bold 11px Inter, sans-serif";
     ctx.fillText(`Open Interest Flow Sentiment (Smoothing: ${this.smoothing})`, x + 5, y + 15);
 
@@ -943,7 +943,7 @@ class OpenInterestIndicator extends IndicatorBase {
     // Línea de cero
     if (minOIFlow < 0 && maxOIFlow > 0) {
       const zeroY = chartY + chartHeight - ((0 - minOIFlow) * oiScale);
-      ctx.strokeStyle = "#666";
+      ctx.strokeStyle = THEME.dark ? THEME.textMuted : "#666";
       ctx.lineWidth = crispWidth(1);
       ctx.setLineDash([2, 2]);
       ctx.beginPath();
@@ -1033,10 +1033,10 @@ class OpenInterestIndicator extends IndicatorBase {
   renderNoDataMessage(ctx, bounds) {
     const { x, y, width, height } = bounds;
 
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = isNewTheme() ? THEME.chartBg : "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = THEME.dark ? THEME.grid : "#DDE2E7";
     ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
     ctx.moveTo(x, alignY(y));

@@ -1153,8 +1153,9 @@ Pedido el 8/11. El usuario comparó App 1 con ATAS abierto en su PC y la encontr
 
 ### Qué hace
 
-- **Dos estilos:**
-  - Nítido es el que abre por defecto.
+- **Cinco estilos** (desde el 9/11; ver "Oscuro, Personalizado y Muhammad"):
+  - Nítido es el que abre por defecto, con colores fijos.
+  - Oscuro, Personalizado y Muhammad usan el mismo dibujo con otros colores, y el usuario los puede cambiar: cada uno guarda lo suyo.
   - Clásico es el aspecto anterior: idéntico, 0 píxeles distintos en el gráfico y en el footprint, comparado con el código anterior en la misma vista.
 - **Letra:** Segoe UI en la interfaz y el lienzo. El texto de los indicadores escrito en "Inter" sube a 11 y 12 px. Las cifras que se ajustan a una celda no cambian de tamaño.
 - **Ejes:** precios redondos (pasos de 1, 2, 2.5 o 5) cada ~56 px, con los decimales de la moneda. Horas redondas en hora de Colombia, al menos cada 90 px, con el día en negrita al cambiar.
@@ -1190,9 +1191,76 @@ Pedido el 8/11. El usuario comparó App 1 con ATAS abierto en su PC y la encontr
 ### Modal "Estilo y colores"
 
 - **Dónde:** botón "Estilo" en el encabezado (🎨 en clásico).
-- **Qué cambia:** elige Nítido o Clásico y cambia 21 colores en seis grupos: velas y volumen, footprint (compra, venta, POC y perfil), perfil de volumen (área de valor, fuera del área, POC y clusters), gráfico (fondo, rejilla, cruz y etiquetas), interfaz (barras, acento y textos) y paneles.
-- **Cómo se aplica:** el cambio se ve al instante y se guarda en `ui_theme_colors`, solo con lo distinto a Nítido. Cada color cambiado tiene su botón para volver, y además está "Restablecer los colores de Nítido".
+- **Qué cambia:** elige uno de los cinco estilos y muestra sus 21 colores en seis grupos: velas y volumen, footprint (compra, venta, POC y perfil), perfil de volumen (área de valor, fuera del área, POC y clusters), gráfico (fondo, rejilla, cruz y etiquetas), interfaz (barras, acento y textos) y paneles. Se pueden cambiar con Oscuro, Personalizado y Muhammad; con Nítido quedan grises y una nota dice cómo cambiarlos.
+- **Cómo se aplica:**
+  - el cambio se ve al instante y se guarda por estilo, solo con lo distinto a su paleta: `ui_theme_colors` (Personalizado), `ui_theme_colors_oscuro` y `ui_theme_colors_muhammad`;
+  - cada color cambiado tiene su botón para volver al de su estilo (Personalizado vuelve al de Nítido), y además está "Volver a los colores de …".
 - **Contraste:** avisa si un color de datos casi no se ve sobre el fondo. Los textos derivados (`upText`, `downText`, desequilibrios) se oscurecen solos hasta 4.5:1 o 7:1 de contraste.
+
+### Oscuro, Personalizado y Muhammad (9/11)
+
+Pedido del usuario el 9/11: un modo oscuro; un Personalizado basado en Nítido, que guarde los colores cambiados sin tocar el Nítido original; y Muhammad, basado en Nítido con una paleta del arte islámico investigada a fondo.
+
+- **Paletas** en `uiTheme.js`:
+  - `DEFAULT_COLORS` es Nítido;
+  - `DARK_COLORS` es Oscuro;
+  - `MUHAMMAD_COLORS` es Muhammad;
+  - Personalizado parte de Nítido (`PALETTES`).
+  - Oscuro, Personalizado y Muhammad suman lo que el usuario cambió, cada uno en su clave (`EDITABLE_KEYS`): el 9/11 el usuario pidió que todos se puedan cambiar menos Nítido.
+  - `themeEditable()` es verdadero con esos tres y `themeBaseColors()` da la paleta a la que vuelve un color. `STYLES` da el orden y los textos del modal.
+  - `THEME.dark` sale del fondo: si en Oscuro se aclara el fondo deja de ser oscuro, y un estilo claro con fondo oscuro pasa a serlo.
+- **Lo cambiado antes del 9/11** en el modal se guardaba como cambios de Nítido en `ui_theme_colors`. Ahora esos mismos cambios son los de Personalizado, y Nítido muestra siempre sus colores de fábrica.
+- **Oscuro:**
+  - fondo `#131722`, barras `#1E222D`, texto `#D1D4DC` (12:1 sobre el fondo) y secundario `#8B93A5` (5.8:1);
+  - velas como Nítido (5:1 y 4.6:1 sobre el fondo) y acento `#5B8CFF`.
+  - `THEME.dark` sale del fondo. Con él, lo que se deriva para leerse se aclara en vez de oscurecerse (`readable()` va hacia el blanco), las celdas vacías del footprint son claras sobre oscuro y `THEME.labelBg` toma el fondo del gráfico.
+- **Oscuro fuera del lienzo:** `body.theme-dark`, con `color-scheme: dark` para barras de desplazamiento y controles del sistema.
+  - Lo que ya usa las variables (encabezado, pestañas, barra de dibujo, botones del gráfico, el modal de estilo) toma los colores del estilo.
+  - El panel de trading, la lista de indicadores, el menú ☰, el menú de niveles, la pantalla de inicio y los modales tienen colores escritos a mano. Se oscurecen con `filter: invert(1) hue-rotate(180deg) contrast(0.8)`, que invierte la luz y devuelve el tono: un botón verde sigue verde.
+  - Fotos, videos y selectores de color llevan el filtro contrario (`contrast(1.25) hue-rotate(180deg) invert(1)`) y se ven como son. La sombra de lo filtrado se quita: invertida sería un halo claro.
+  - Un elemento con posición fija dentro de algo filtrado queda encerrado en su caja. Por eso la confirmación de orden (`OrderConfirmationModal`) y el modal "Nuevo VP Fixed Range" van al body con `createPortal`, como ya iban las imágenes del historial y el informe del Observador.
+  - La lista de indicadores lleva la clase `indicator-list-panel` y los botones ▲▼ de los paneles `panel-move-btn`.
+- **Oscuro en el lienzo:** CVD, Volumen de Respuesta, Interés abierto (modos acumulado y flujo y el aviso sin datos), Liquidaciones, S&R, S&R v2 y los bordes del rango del perfil tomaban blanco, negro o grises fijos. Ahora, con Oscuro, usan los del estilo. Con los estilos claros y el clásico quedan iguales: `THEME.labelBg` es el mismo blanco y `chartInk()` solo cambia algo con fondo oscuro.
+- **Comprobado** contra el código de antes, en Edge sin ventana, con ocho indicadores (CVD, FVG, VWAP, Liquidaciones, Volumen de Respuesta, S&R, S&R v2 y Order Flow):
+  - Nítido y Clásico, 0 píxeles distintos en la vista general y en el footprint;
+  - Personalizado guarda el color cambiado (`{"up":"#2563EB"}`), el gráfico lo usa, y al pasar a Nítido vuelven sus colores de fábrica sin poder cambiarlos.
+- **Muhammad:** ver "Paleta Muhammad".
+
+### Paleta Muhammad
+
+Investigada el 9/11 en museos y textos académicos. Por cómo se obtuvo cada color:
+- **Medidos:** los de la Alhambra y un santuario safávida, que son piezas desgastadas y se ven más apagadas que el original.
+- **De fotos:** los de Iznik salen del color dominante que publica el Art Institute of Chicago (AIC).
+- **Aproximados:** los demás, desde descripciones del V&A, la colección Khalili y el Ashmolean.
+
+| Color | Hex | Origen |
+|---|---|---|
+| Sube y compra | `#0E8794` | Turquesa de cobre (iljaní, Iznik). Más azul que en Nítido: con daltonismo rojo-verde se separa mejor del rojo |
+| Baja y venta | `#B8352B` | Rojo bol "tomate" de Iznik, desde 1557 |
+| POC del footprint e interés abierto sube | `#1251CE` | Cobalto de Iznik (AIC 6762) |
+| Perfil de la vela | `#B6CFE7` | Azul nazarí medido en la Alhambra, aclarado |
+| Área de valor | `#C4A23B` | Oro de iluminación (shamsa iraní, AIC 187831) |
+| Fuera del área | `#859EB4` | Azul nazarí medido |
+| Línea del POC | `#475D53` | Verde nazarí medido |
+| Clusters | `#6F4A7E` | Morado de manganeso de Iznik |
+| Fondo y barras | `#FBF9F4` | Papel marfil bruñido de los manuscritos persas |
+| Rejilla y cruz | `#E6E1D6`, `#8A847A` | Tinta diluida |
+| Etiquetas de la cruz | `#2C2925` | Negro de tinta; el texto blanco encima da 14.5:1 |
+| Acento | `#1D6B4C` | Verde esmeralda de Iznik, el verde del Paraíso en el Corán (18:31, 76:21) |
+| Texto y secundario | `#1F1C18`, `#5E574E` | Negro de tinta (16:1) y tinta sepia (6.8:1) |
+| Interés abierto baja | `#B85A1C` | Minio de la pintura persa |
+| Divergencia | `#A6850C` | Oro u ocre timúrida (3.3:1, el más justo) |
+
+- **Contraste** sobre el fondo: texto 16:1, secundario 6.8:1 y colores de datos 3.3:1 o más. `theme.test.mjs` lo exige.
+- **Daltonismo:** sube y baja se distinguen mejor que en Nítido con protanopía y deuteranopía (ΔE2000 de 32.7 y 37.5, contra 17.3 y 22.8). El par más débil es baja contra divergencia con deuteranopía.
+- **Alternativa no aplicada:** si no se quiere verde en los botones, el acento puede ser lapislázuli `#2B4C9B`.
+- **Fuentes:**
+  - Martínez-Domingo et al., Sensors 24:3872 (2024), zócalo nazarí medido;
+  - Fahim, Ghasemi y Hosseini Zori, Adv. Ceram. Prog. 8(1) (2022), azulejo safávida;
+  - API del Art Institute of Chicago (campo `color`);
+  - V&A 242-1876, 725-1893 y 139-1891; Khalili POT 1290; Ashmolean (Iznik y el tratado de Abu'l-Qasim);
+  - Purinton y Watters, JAIC 30(2) (1991), pigmentos de la pintura persa;
+  - Cardell et al., Bol. Soc. Esp. Cerám. Vidr. (2026), esmaltes nazaríes.
 
 ### Ajustes propios en el modal de cada indicador (9/11)
 
@@ -1241,6 +1309,12 @@ Pedido el 8/11: con Nítido, un color cambiado en el modal del perfil de volumen
 - Escribir el texto con la familia "Inter" o con `THEME.font`. Con Nítido, el lienzo cambia la familia a Segoe UI y "bold" a 600.
 - Para un color nuevo configurable: agregarlo a `DEFAULT_COLORS` y a `COLOR_GROUPS`. La prueba exige que estén los mismos en los dos.
 - Un botón o panel HTML nuevo usa las variables `--t-*` bajo `body.theme-nitido`.
+- Para que se vea bien con Oscuro:
+  - el fondo de un panel propio es `isNewTheme() ? THEME.chartBg : <su color>`;
+  - el fondo de una etiqueta sobre el gráfico es `THEME.labelBg`, que con los estilos claros es el mismo blanco;
+  - un texto o una línea de color fijo pasa por `chartInk(color)`, que solo lo aclara con fondo oscuro;
+  - un gris fijo usa `THEME.dark ? THEME.textMuted : <su gris>`;
+  - un modal con posición fija que se abre dentro del panel de trading o de otro modal va al body con `createPortal`; si no, el filtro de Oscuro lo encierra en su caja.
 - Si su modal tiene colores o ajustes visuales:
   - exportar sus valores de fábrica, como `VP_FACTORY`, `VP_FIXED_FACTORY`, `OF_FACTORY` u `OIVOL_FACTORY`;
   - en el modal, agregar a `customVisual` con `markCustom()` lo que el usuario cambia, y ofrecer cómo volver al estilo;
@@ -1248,8 +1322,12 @@ Pedido el 8/11: con Nítido, un color cambiado en el modal del perfil de volumen
 
 ### Pruebas
 
-`node tests/theme.test.mjs` (14) cubre:
-- colores cambiados, inválidos y restablecidos;
+`node tests/theme.test.mjs` (20) cubre:
+- colores de Personalizado cambiados, inválidos y restablecidos, sin tocar Nítido;
+- Oscuro y Muhammad editables, cada uno con lo suyo y de vuelta a su paleta, y Nítido sin aceptar cambios;
+- que un fondo aclarado u oscurecido cambie `THEME.dark`;
+- que cada estilo traiga los 21 colores válidos y que uno desconocido vuelva a Nítido;
+- contraste de Oscuro y Muhammad (texto, secundario, datos y etiquetas de la cruz) y que con Oscuro lo derivado se aclare;
 - contraste del texto derivado;
 - pasos redondos, horas de Colombia y decimales;
 - que el modal ofrezca cada color una vez;
@@ -1351,11 +1429,18 @@ Zonas que vería el usuario (3 por lado, 6%, 30 días), cada 3 o 6 horas. Dos zo
 Pedido del usuario el 8/11: elegir una vela del gráfico y dejar en su máximo las liquidaciones que hubo ahí, aunque sea de hace meses, porque los niveles de liquidaciones muy grandes se vuelven soportes y resistencias.
 
 - Con el indicador activo, un clic en el máximo o el mínimo de una vela cerrada abre el menú de niveles con "Fijar liq. del máximo" o "Fijar liq. del mínimo" (`_offerCandles()`, id con `candleItemId(..., interval)`). Solo con 4 px o más por vela, y nunca la vela en formación. `offerCandles` lo apaga
-- Una vela fijada va a su propia lista (`liquidationPins.js`, en `liquidation_pins_{symbol}`), que comparten los marcos. No es lo elegido para un trade: `takeLevels()` no la toca y sigue después de cada orden, hasta que se suelta desmarcándola en el menú, con × en el modal ⚙️ o con "Soltar todas". Guarda id, lado (`edge`), precio, vela (`time`, `low`, `high`), marco y `selectedAt`. Al retroceder antes de fijarla no aparece
+- Una vela fijada va a su propia lista (`liquidationPins.js`, en `liquidation_pins_{symbol}`), que comparten los marcos. No es lo elegido para un trade: `takeLevels()` no la toca y sigue después de cada orden, hasta que se suelta desmarcándola en el menú, con × en el modal ⚙️ o con "Soltar todas". Guarda id, lado (`edge`), precio, vela (`time`, `low`, `high`, `open`, `close`), marco y `selectedAt`. Al retroceder antes de fijarla no aparece
 - El menú reconoce estos elegibles por `choice` (`chosen(time)` y `toggle(time, timeframe)`): marcan la lista propia, sin papel ni nota. MiniChart redibuja con `subscribePins()`, también cuando se suelta desde el modal
 - La franja de una vela fijada se ofrece al Observador como "Liq. de vela fijada" (id `Liquidaciones|Liq. de vela fijada|<id de la vela>`, con su lugar en el dibujo). Marcada, entra a lo elegido para el trade con papel y nota y pasa a la orden como cualquier nivel. La vela sigue fijada
-- `_drawPins()` dibuja una franja de 0.2% del precio en ese máximo o mínimo, desde la vela hasta el borde derecho, en `pinColor` (ámbar), con una línea en el precio y la etiqueta `Vela 1h · Coinalyze: C 4.0M + L 1.1M`. Si el precio la cruza queda tenue y punteada
-- `pinSummary()`: cuenta lo liquidado en la mitad de la vela del lado elegido (el máximo, su mitad de arriba; el mínimo, la de abajo), en celdas que se cruzan con la vela en el tiempo. Una celda más larga que la vela (un día de MarginPad o un intervalo de Coinalyze) entra completa y la etiqueta dice `dato de 1 día`
+- **Rango de precios** (`pinRange()`, pedido del usuario el 9/11): la mecha del lado elegido, del cuerpo al extremo. El máximo cuenta su mecha de arriba y el mínimo la de abajo.
+  - Por fuera suma 0.1% del precio por redondeo (`PIN_PAD_PCT`).
+  - Hacia adentro llega al menos a ese 0.1%: una vela que cerró en su extremo cuenta lo que pasó junto a él.
+  - Y a lo sumo a `pinWickMaxPct`: "Alto máximo de la mecha (% del precio)" en el modal ⚙️, 0.5% por defecto, de 0.1 a 5.
+  - Una vela fijada antes del 9/11 no guardó su cuerpo: cuenta la mitad de la vela, como antes, también con el tope.
+  - Hasta el 9/11 se contaba siempre la mitad de la vela y la franja medía 0.2%.
+- `_drawPins()` dibuja la franja en ese rango, desde la vela hasta el borde derecho, en `pinColor` (ámbar), con una línea en el precio. Una mecha de menos de 0.1% deja la franja de 0.2% de antes. Si el precio la cruza queda tenue y punteada
+- La etiqueta dice lo contado hacia adentro: `Vela 1h · Coinalyze: C 4.0M + L 1.1M · rango 0.24%`, con `(tope)` si la mecha era más larga que el alto máximo
+- `pinSummary()`: cuenta lo liquidado en ese rango, en celdas que se cruzan con la vela en el tiempo y tienen su precio medio en el rango, como las zonas. Una celda más larga que la vela (un día de MarginPad o un intervalo de Coinalyze) entra completa y la etiqueta dice `dato de 1 día`
 - La fuente es la que cubre la fecha de la vela, no la de hoy: una vela de 2024 puede salir de Coinalyze o Binance Coin-M aunque hoy mande MarginPad
 - Sin futuro: cada vela fijada pide aparte su ventana, `(vela − 1, cierre del día UTC en que termina la vela]`, cortada en la hora simulada. Mientras ese día no cierra, la etiqueta dice `parcial` y se vuelve a pedir cada 5 minutos simulados. Al retroceder se quita lo conocido después
 - Fecha oculta: sin fuente y con la parte de cada lado en vez del monto. La lista del modal no muestra la fecha de la vela
@@ -1395,7 +1480,7 @@ python -B liq_update.py bitfinex --tramo 2021-08-01 2023-06-01 BTCUSDT          
 
 ### Pruebas
 
-`node tests/liquidations.test.mjs` (37) y `pytest tests/test_liq_store.py` (10).
+`node tests/liquidations.test.mjs` (39) y `pytest tests/test_liq_store.py` (10).
 
 ---
 

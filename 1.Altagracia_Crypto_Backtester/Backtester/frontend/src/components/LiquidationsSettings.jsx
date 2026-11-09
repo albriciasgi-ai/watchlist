@@ -135,7 +135,7 @@ const LiquidationsSettings = ({ symbol, indicator, onApply, onClose }) => {
             <h4>Velas fijadas</h4>
             <span className="hint" style={{ display: 'block', marginBottom: '10px' }}>
               Haz clic en el máximo o el mínimo de una vela y marca "Fijar liq. del máximo" o "Fijar liq. del mínimo" en el menú.
-              Queda una franja desde esa vela hasta hoy con lo liquidado en esa mitad de la vela, aunque sea de hace meses:
+              Queda una franja desde esa vela hasta hoy con lo liquidado en su mecha, del cuerpo al extremo, aunque sea de hace meses:
               las liquidaciones muy grandes suelen volverse soportes y resistencias. Sigue ahí después de cada orden, hasta que la sueltes.
               Para usarla en el análisis de un trade, haz clic en su franja y marca "Liq. de vela fijada".
             </span>
@@ -150,6 +150,14 @@ const LiquidationsSettings = ({ symbol, indicator, onApply, onClose }) => {
                 <input type="checkbox" checked={!!values.showPins} onChange={(e) => set('showPins', e.target.checked)} />
                 Mostrar las velas fijadas
               </label>
+            </div>
+            <div className="setting-row">
+              <label>Alto máximo de la mecha (% del precio)</label>
+              <input type="number" min="0.1" max="5" step="0.05" value={values.pinWickMaxPct ?? ''} onChange={(e) => set('pinWickMaxPct', e.target.value)} />
+              <span className="hint">
+                Cuenta lo liquidado desde el extremo hasta el cuerpo de la vela, sin pasar de este alto. Una vela sin mecha cuenta el 0.1% junto a su extremo.
+                La etiqueta dice el rango usado y "tope" si la mecha era más larga.
+              </span>
             </div>
             <div className="setting-row">
               <label>Color de las velas fijadas</label>

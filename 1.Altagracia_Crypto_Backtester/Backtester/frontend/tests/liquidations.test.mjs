@@ -656,22 +656,41 @@ const { pinAmounts } = await import('../src/components/indicators/LiquidationsIn
 /** Fija una vela como lo hace el menú de niveles con el elegible del indicador */
 const pinTarget = (id, edge, price, time, low, high) => ({ id, source: 'Liquidaciones', kind: Z.PIN_KINDS[edge], edge, price, time, low, high });
 
-test('vela fijada: su mitad del lado elegido, solo lo que se cruza con la vela', () => {
+test('vela fijada: su rango es la mecha, al menos 0.1% y a lo sumo el alto maximo', () => {
+  // Máximo 60500 con el cuerpo hasta 60300: mecha de 200 (0.33%)
+  const pin = { time: T0, high: 60500, low: 60000, open: 60100, close: 60300, edge: 'high' };
+  const wick = Z.pinRange(pin, 0.5, 0.1);
+  assert.deepEqual([wick.low, wick.high, wick.depth, wick.capped], [60300, 60560.5, 200, false]);
+  const capped = Z.pinRange(pin, 0.2, 0.1);
+  assert.deepEqual([capped.low, capped.high, capped.capped], [60379, 60560.5, true], 'tope de 0.2%: 121 bajo el máximo');
+  const noWick = Z.pinRange({ ...pin, close: 60500 }, 0.5, 0.1);
+  assert.deepEqual([noWick.low, noWick.high, noWick.capped], [60439.5, 60560.5, false], 'cerró en su máximo: cuenta 0.1% junto al extremo');
+  const low = Z.pinRange({ ...pin, edge: 'low' }, 0.5, 0.1);
+  assert.deepEqual([low.low, low.high, low.depth], [59940, 60100, 100], 'el mínimo cuenta su mecha de abajo');
+  const old = Z.pinRange({ high: 60500, low: 60000, edge: 'high' }, 0.5, 0.1);
+  assert.deepEqual([old.low, old.high], [60250, 60560.5], 'fijada sin cuerpo guardado: la mitad de la vela, como antes');
+  assert.equal(Z.pinRange({ high: 60500, low: 59000, edge: 'high' }, 0.5, 0.1).low, 60197.5, 'la mitad de una vela grande también tiene tope');
+});
+
+test('vela fijada: cuenta lo de su rango, solo lo que se cruza con la vela', () => {
   const day = (start, price, short) => ({ known: start + D, start, end: start + D, low: price - 25, high: price + 25, long: 0, short });
   const cells = [
-    cell(T0, 60450, 0, 1e5), // En la apertura: cuenta
-    cell(T0 + 10 * 60000, 60450, 0, 5e5),
-    cell(T0 + 20 * 60000, 60100, 3e5), // Mitad de abajo
+    cell(T0, 60450, 0, 1e5), // En la mecha, en la apertura: cuenta
+    cell(T0 + 10 * 60000, 60350, 0, 5e5), // En la mecha
+    cell(T0 + 15 * 60000, 60250, 0, 7e5), // En el cuerpo: no cuenta
+    cell(T0 + 20 * 60000, 60100, 3e5), // Abajo
     cell(T0 + H, 60450, 0, 9e9), // La vela siguiente
     cell(T0 - 1, 60450, 0, 9e9), // La anterior
     day(T0 - 5 * H, 60400, 2e6), // Un día que contiene la vela
     day(T0 - 5 * H, 61000, 9e9) // Ese día, pero fuera de los precios de la vela
   ];
-  const pin = { time: T0, high: 60500, low: 60000 };
-  const high = Z.pinSummary(cells, { ...pin, edge: 'high' }, H, 30);
+  const pin = { time: T0, high: 60500, low: 60000, open: 60100, close: 60300 };
+  const high = Z.pinSummary(cells, pin, H, Z.pinRange({ ...pin, edge: 'high' }, 0.5, 0.1));
   assert.deepEqual([high.short, high.long, high.count, high.spanMs], [2.6e6, 0, 3, D]);
   assert.equal(high.side, 'short');
-  const low = Z.pinSummary(cells, { ...pin, edge: 'low' }, H, 30);
+  const top = Z.pinSummary(cells, pin, H, Z.pinRange({ ...pin, edge: 'high' }, 0.2, 0.1));
+  assert.equal(top.short, 2.1e6, 'con tope de 0.2% queda fuera lo de 60350');
+  const low = Z.pinSummary(cells, pin, H, Z.pinRange({ ...pin, edge: 'low' }, 0.5, 0.1));
   assert.deepEqual([low.long, low.short, low.spanMs], [3e5, 0, 0]);
   assert.equal(pinAmounts({ long: 1e6, short: 3e6, total: 4e6 }), 'C 3.0M + L 1.0M');
   assert.equal(pinAmounts({ long: 1e6, short: 3e6, total: 4e6 }, true), 'C 75% · L 25%');
@@ -708,6 +727,7 @@ test('velas elegibles: máximo y mínimo de cada vela cerrada, nada con velas an
   assert.equal(first.choice.chosen(T0), null);
   first.choice.toggle(T0, '1h');
   assert.equal(first.choice.chosen(T0).edge, 'high');
+  assert.deepEqual([first.choice.chosen(T0).open, first.choice.chosen(T0).close], [60300, 60300], 'guarda el cuerpo: ahí termina la mecha');
   assert.equal(knownLevels('BTCUSDT', T0).length, 0, 'no pasa por la lista del Observador');
   first.choice.toggle(T0, '1h');
   assert.equal(pinsAt('BTCUSDT', T0).length, 0, 'marcarla otra vez la suelta');
@@ -751,7 +771,7 @@ test('vela fijada de hace meses: franja propia con su fuente, sin futuro, sigue 
   const ctx = fakeContext();
   indicator.renderOverlay(ctx, BOUNDS, candles, candles, context);
   const texts = ctx.calls.fillText.map(([text]) => text);
-  assert.ok(texts.includes('Vela 1h · Binance Coin-M: C 4.0M'), texts.join(' | '));
+  assert.ok(texts.includes('Vela 1h · Binance Coin-M: C 4.0M · rango 0.41%'), texts.join(' | '));
   assert.ok(ctx.calls.fillRect.some(([style]) => style.startsWith('rgba(245, 158, 11')), 'franja en el color de las velas fijadas');
 
   // Su franja se puede incluir en el análisis de un trade; al crear la orden pasa a ella y la vela sigue fijada
@@ -766,13 +786,13 @@ test('vela fijada de hace meses: franja propia con su fuente, sin futuro, sigue 
   assert.equal(pinsAt('BTCUSDT', NOW).length, 1, 'la vela fijada no se vacía con la orden');
   const after = fakeContext();
   indicator.renderOverlay(after, BOUNDS, candles, candles, context);
-  assert.ok(after.calls.fillText.some(([text]) => text === 'Vela 1h · Binance Coin-M: C 4.0M'), 'se sigue dibujando');
+  assert.ok(after.calls.fillText.some(([text]) => text === 'Vela 1h · Binance Coin-M: C 4.0M · rango 0.41%'), 'se sigue dibujando');
 
   setBlindAnchor(NOW - 3 * D);
   try {
     const hidden = fakeContext();
     indicator.renderOverlay(hidden, BOUNDS, candles, candles, context);
-    assert.ok(hidden.calls.fillText.some(([text]) => text === 'Vela 1h: C 100% · L 0%'), hidden.calls.fillText.map(([t]) => t).join(' | '));
+    assert.ok(hidden.calls.fillText.some(([text]) => text === 'Vela 1h: C 100% · L 0% · rango 0.41%'), hidden.calls.fillText.map(([t]) => t).join(' | '));
   } finally {
     setBlindAnchor(null);
   }
@@ -781,7 +801,7 @@ test('vela fijada de hace meses: franja propia con su fuente, sin futuro, sigue 
   const crossing = [...candles, bar(NOW, 59300, 60700, 60650, { in_progress: true })];
   const crossed = fakeContext();
   indicator.renderOverlay(crossed, BOUNDS, crossing, crossing, chart(crossing, NOW + 10 * 60000, 58500, 61500));
-  assert.ok(crossed.calls.fillText.some(([text]) => text === 'Vela 1h · Binance Coin-M: C 4.0M · cruzada'), crossed.calls.fillText.map(([t]) => t).join(' | '));
+  assert.ok(crossed.calls.fillText.some(([text]) => text === 'Vela 1h · Binance Coin-M: C 4.0M · rango 0.41% · cruzada'), crossed.calls.fillText.map(([t]) => t).join(' | '));
 
   // Antes de fijarla no existe
   const earlier = fakeContext();
@@ -811,7 +831,7 @@ test('vela fijada reciente: con datos por día queda parcial hasta que cierra su
   await settle();
   let ctx = fakeContext();
   indicator.renderOverlay(ctx, BOUNDS, candles, candles, chart(candles, time, 58500, 61500));
-  assert.ok(ctx.calls.fillText.some(([text]) => text === 'Vela 1h · MarginPad: sin liquidaciones · parcial'), ctx.calls.fillText.map(([t]) => t).join(' | '));
+  assert.ok(ctx.calls.fillText.some(([text]) => text === 'Vela 1h · MarginPad: sin liquidaciones · rango 0.41% · parcial'), ctx.calls.fillText.map(([t]) => t).join(' | '));
 
   // Al cerrar el día se conoce, y el dato es del día completo
   clock += 1000;
@@ -820,7 +840,44 @@ test('vela fijada reciente: con datos por día queda parcial hasta que cierra su
   await settle();
   ctx = fakeContext();
   indicator.renderOverlay(ctx, BOUNDS, candles, candles, chart(candles, time, 58500, 61500));
-  assert.ok(ctx.calls.fillText.some(([text]) => text === 'Vela 1h · MarginPad: C 7.0M · dato de 1 día'), ctx.calls.fillText.map(([t]) => t).join(' | '));
+  assert.ok(ctx.calls.fillText.some(([text]) => text === 'Vela 1h · MarginPad: C 7.0M · rango 0.41% · dato de 1 día'), ctx.calls.fillText.map(([t]) => t).join(' | '));
+  clearPins('BTCUSDT');
+});
+
+test('vela fijada con su cuerpo: cuenta la mecha, la franja la cubre y el alto maximo del modal la acorta', async () => {
+  assert.equal(cleanLiquidationsSettings({ pinWickMaxPct: 9 }).pinWickMaxPct, 5);
+  assert.equal(cleanLiquidationsSettings({ pinWickMaxPct: 0 }).pinWickMaxPct, 0.1);
+  assert.equal(cleanLiquidationsSettings({ pinWickMaxPct: 'x' }).pinWickMaxPct, 0.5);
+
+  const CANDLE = Date.UTC(2026, 9, 20, 10);
+  const sources = [{ id: 'binance_cm', label: 'Binance Coin-M', scope: 'un solo mercado', kind: 'events', first: Date.UTC(2026, 9, 1), last: Date.UTC(2026, 10, 8), cell_width: 0 }];
+  const cells = [
+    cell(CANDLE + 5 * 60000, 60480, 0, 4e6), // Junto al máximo
+    cell(CANDLE + 9 * 60000, 60340, 0, 2e6), // Más abajo en la mecha
+    cell(CANDLE + 20 * 60000, 60200, 0, 9e9) // En el cuerpo: no cuenta
+  ];
+  fakeBackend(cells, sources);
+  clearPins('BTCUSDT');
+  togglePin('BTCUSDT', { ...pinTarget('pin-cuerpo', 'high', 60500, CANDLE, 60000, 60500), open: 60100, close: 60300 }, CANDLE + 2 * H, '1h');
+  const indicator = new LiquidationsIndicator('BTCUSDT', '1h');
+  indicator.enabled = true;
+  const time = CANDLE + 3 * H;
+  const candles = belowCandles(time - 100 * H, 100);
+  const context = chart(candles, time, 58500, 61500);
+  indicator.renderOverlay(fakeContext(), BOUNDS, candles, candles, context);
+  await settle();
+  let ctx = fakeContext();
+  indicator.renderOverlay(ctx, BOUNDS, candles, candles, context);
+  const labels = (drawn) => drawn.calls.fillText.map(([text]) => text);
+  assert.ok(labels(ctx).includes('Vela 1h · Binance Coin-M: C 6.0M · rango 0.33%'), labels(ctx).join(' | '));
+  const band = indicator.selectableLevels().find(level => level.kind === Z.PINNED_KIND);
+  assert.deepEqual([band.low, band.high], [60300, 60560.5], 'la franja es el rango contado');
+  assert.ok(Math.abs(band.bottom - context.priceToY(60300)) < 0.01 && Math.abs(band.top - context.priceToY(60560.5)) < 0.01, 'se dibuja en esos precios');
+
+  indicator.updateConfig({ pinWickMaxPct: 0.2 });
+  ctx = fakeContext();
+  indicator.renderOverlay(ctx, BOUNDS, candles, candles, context);
+  assert.ok(labels(ctx).includes('Vela 1h · Binance Coin-M: C 4.0M · rango 0.20% (tope)'), labels(ctx).join(' | '));
   clearPins('BTCUSDT');
 });
 

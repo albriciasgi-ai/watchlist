@@ -1,8 +1,10 @@
-// Modal "Estilo y colores": elige entre Nítido y el aspecto clásico y cambia cada color de Nítido.
+// Modal "Estilo y colores": elige el estilo (Nítido, Oscuro, Personalizado, Muhammad o el aspecto clásico) y cambia
+// los colores del estilo activo. Nítido no cambia; Oscuro, Personalizado y Muhammad guardan cada uno lo suyo.
 // Los cambios se ven al instante y quedan guardados (uiTheme.js).
 import React, { useEffect } from 'react';
 import {
-  COLOR_GROUPS, DEFAULT_COLORS, contrast, isNewTheme, resetThemeColors, setTheme, setThemeColors, themeColors
+  COLOR_GROUPS, STYLES, contrast, isNewTheme, resetThemeColors, setTheme, setThemeColors, themeBaseColors, themeColors,
+  themeEditable, themeName
 } from './uiTheme.js';
 import { useUiTheme } from './useUiTheme.js';
 import { Icon } from './uiIcons.jsx';
@@ -14,8 +16,13 @@ const ON_CHART = new Set(['up', 'down', 'fpBuy', 'fpSell', 'fpPoc', 'vpPoc', 'cr
 export default function ThemeSettings({ onClose }) {
   useUiTheme();
   const colors = themeColors();
-  const nitido = isNewTheme();
-  const changedCount = Object.keys(colors).filter(key => colors[key].toUpperCase() !== DEFAULT_COLORS[key]).length;
+  const base = themeBaseColors();
+  const active = themeName();
+  const editable = themeEditable();
+  const activeName = STYLES.find(style => style.id === active)?.name || 'Nítido';
+  // Personalizado parte de Nítido: sus colores vuelven a los de Nítido; los demás, a los de su estilo
+  const baseName = active === 'personalizado' ? 'Nítido' : activeName;
+  const changedCount = editable ? Object.keys(colors).filter(key => colors[key].toUpperCase() !== base[key].toUpperCase()).length : 0;
 
   useEffect(() => {
     const onKey = event => { if (event.key === 'Escape') onClose(); };
@@ -32,36 +39,35 @@ export default function ThemeSettings({ onClose }) {
         </header>
 
         <section className="ts-styles">
-          <label className={`ts-style ${nitido ? 'on' : ''}`}>
-            <input type="radio" name="ui-style" checked={nitido} onChange={() => setTheme('nitido')} />
-            <span>
-              <strong>Nítido</strong>
-              <small>Una sola letra, color solo en los datos, ejes con números redondos y footprint graduado por volumen. Sus colores se cambian abajo.</small>
-            </span>
-          </label>
-          <label className={`ts-style ${nitido ? '' : 'on'}`}>
-            <input type="radio" name="ui-style" checked={!nitido} onChange={() => setTheme('clasico')} />
-            <span>
-              <strong>Clásico</strong>
-              <small>El aspecto anterior de App 1, sin ningún cambio.</small>
-            </span>
-          </label>
+          {STYLES.map(style => (
+            <label key={style.id} className={`ts-style ${active === style.id ? 'on' : ''}`}>
+              <input type="radio" name="ui-style" checked={active === style.id} onChange={() => setTheme(style.id)} />
+              <span>
+                <strong>{style.name}</strong>
+                <small>{style.text}</small>
+              </span>
+            </label>
+          ))}
         </section>
 
-        <section className={`ts-colors ${nitido ? '' : 'disabled'}`} aria-disabled={!nitido}>
+        {isNewTheme() && !editable && (
+          <p className="ts-note">Los colores de {activeName} son fijos. Para cambiar colores elige Oscuro, Personalizado o Muhammad: cada uno guarda lo que cambies.</p>
+        )}
+
+        <section className={`ts-colors ${editable ? '' : 'disabled'}`} aria-disabled={!editable}>
           {COLOR_GROUPS.map(group => (
             <div className="ts-group" key={group.title}>
               <h4>{group.title}</h4>
               {group.fields.map(([key, label]) => {
                 const value = colors[key].toUpperCase();
-                const isDefault = value === DEFAULT_COLORS[key];
+                const isDefault = value === base[key].toUpperCase();
                 const faint = ON_CHART.has(key) && contrast(value, colors.chartBg) < 1.8;
                 return (
                   <div className="ts-field" key={key}>
                     <input
                       type="color"
                       value={value.toLowerCase()}
-                      disabled={!nitido}
+                      disabled={!editable}
                       onChange={event => setThemeColors({ [key]: event.target.value })}
                       aria-label={`${group.title}: ${label}`}
                     />
@@ -69,8 +75,8 @@ export default function ThemeSettings({ onClose }) {
                       {label}
                       {faint && <em className="ts-hint">casi no se ve sobre el fondo</em>}
                     </span>
-                    {!isDefault && (
-                      <button className="ts-undo" disabled={!nitido} onClick={() => setThemeColors({ [key]: DEFAULT_COLORS[key] })} title="Volver al color de Nítido">
+                    {editable && !isDefault && (
+                      <button className="ts-undo" onClick={() => setThemeColors({ [key]: base[key] })} title={`Volver al color de ${baseName}`}>
                         <Icon name="undo" size={13} />
                       </button>
                     )}
@@ -82,8 +88,8 @@ export default function ThemeSettings({ onClose }) {
         </section>
 
         <footer>
-          <button className="ts-reset" disabled={!nitido || changedCount === 0} onClick={resetThemeColors}>
-            Restablecer los colores de Nítido{changedCount > 0 ? ` (${changedCount} ${changedCount === 1 ? 'cambiado' : 'cambiados'})` : ''}
+          <button className="ts-reset" disabled={!editable || changedCount === 0} onClick={resetThemeColors}>
+            Volver a los colores de {baseName}{changedCount > 0 ? ` (${changedCount} ${changedCount === 1 ? 'cambiado' : 'cambiados'})` : ''}
           </button>
           <button className="ts-done" onClick={onClose}>Listo</button>
         </footer>

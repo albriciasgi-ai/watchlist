@@ -6,6 +6,33 @@ Version de escritorio del Order Flow (App 5) empaquetada con Electron. Incluye o
 
 ---
 
+## Pendiente: Indicador de Liquidaciones en Tiempo Real (recomendación del 9 Noviembre 2026)
+
+El usuario pidió dejar anotada esta recomendación para cuando se lleve a App 9 el indicador Liquidaciones de App 1. Hoy ni App 9 ni su backend (App 5) tienen liquidaciones; solo el panel de trading muestra el precio de liquidación de la posición.
+
+### Fuentes, revisadas el 9/11/2026
+
+- **Bybit, canal `allLiquidation.{symbol}`** (WebSocket público V5, por ejemplo `allLiquidation.BTCUSDT`):
+  - según su documentación publica todas las liquidaciones de Bybit cada 500 ms, con hora (`T`), lado (`S`: `Buy` es un largo liquidado), tamaño (`v`) y precio (`p`);
+  - `p` es el precio de quiebra de la posición, no el de ejecución: queda más allá de donde se disparó la liquidación, del orden del margen de mantenimiento (cerca de 0.5% en BTC). Conviene ubicarla con su hora y el precio de la vela de 1 minuto de ese momento;
+  - solo cubre Bybit y no guarda historia: hay que grabarla desde que se conecta, como el collector de footprints.
+- **Coinalyze** (`/v1/liquidation-history`; la clave del usuario está en `OrderFlowData/liquidations/coinalyze_key.txt` y va en la cabecera `api_key`, nunca en la dirección):
+  - todo el mercado: suma los perpetuos de varios exchanges (BTC: 26 mercados, 11 con datos);
+  - casi en tiempo real: el 9/11 a las 13:14:48 UTC ya traía el minuto 13:14 de Binance, y a las 13:15:59 el de las 13:15. Solo devuelve los intervalos que tuvieron liquidaciones;
+  - no trae precio: se estima con velas de 1 minuto, con la regla de `attribute()` en `1.Altagracia_Crypto_Backtester/Backtester/backend/liq_update.py` (mínimos nuevos con volumen para los largos, máximos para los cortos), que hoy usa velas de 5 minutos. En la historia de BTC sus zonas coincidieron con el 76% de las de MarginPad (33% por azar), con el mismo lado en 97-100%;
+  - 40 consultas por minuto por clave, y cada mercado de un pedido cuenta como una: refrescar cada minuto los 11 mercados de BTC gasta 11, y no caben todas las monedas cada minuto con una sola clave. Guarda 1,500 a 2,000 puntos por mercado (un día en intervalos de 1 minuto);
+  - según la documentación de Binance, su canal público solo publica la última liquidación de cada símbolo por segundo: Coinalyze y cualquier agregador se quedan cortos con Binance en los barridos fuertes. Es un límite del exchange. La página de Binance no se pudo volver a abrir el 9/11 para confirmarlo.
+- **MarginPad:** lo que usa App 1 es la diferencia día a día de su ventana de 30 días, así que solo se conoce al cerrar el día UTC. Su consulta de recientes no trae la hora de cada liquidación y repite conteos (lo que falla en Liquidation Clusters de App 8). No sirve para tiempo real; sí para revisar los últimos 30 días con precio real.
+
+### Recomendación
+
+1. El canal `allLiquidation` de Bybit para lo que pasa en el exchange del usuario, con hora exacta
+2. Coinalyze cada minuto para el tamaño del barrido en todo el mercado, con el precio estimado con velas de 1 minuto
+3. MarginPad solo para la historia de 30 días
+4. Partir de lo ya probado en App 1: zonas, zonas cruzadas y velas fijadas en su mecha (`liquidationZones.js`, `LiquidationsIndicator.js`), lectura de datos (`backend/liq_store.py`) y la tarea programada "App1 Liquidaciones", que guarda la historia de Coinalyze y MarginPad antes de que se pierda. Detalle en `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, sección "LIQUIDACIONES"
+
+---
+
 ## Pruebas y Correcciones (8 Noviembre 2026)
 
 Se probó App 9 en una copia aislada y se corrigieron las fases 1 (datos y dinero) y 2 (footprints correctos) del diagnóstico. Las fases 3 (Swing y alertas) y 4 (backend y collector) quedan pendientes.

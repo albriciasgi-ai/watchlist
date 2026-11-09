@@ -3,6 +3,7 @@
 
 import { priceLevels } from './analysisLevels.js';
 import { alignY, crispWidth } from '../chartPixels.js';
+import { THEME, chartInk } from '../uiTheme.js'; // Con Oscuro: etiquetas con el fondo del gráfico y texto aclarado
 import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
 
@@ -557,10 +558,10 @@ class SupportResistanceIndicator extends IndicatorBase {
       const labelX = x + width - labelWidth - 5;
       const labelY = priceY - labelHeight / 2;
 
-      ctx.fillStyle = isBroken ? "rgba(200, 200, 200, 0.7)" : "rgba(255, 255, 255, 0.9)";
+      ctx.fillStyle = THEME.dark ? THEME.labelBg : (isBroken ? "rgba(200, 200, 200, 0.7)" : "rgba(255, 255, 255, 0.9)");
       ctx.fillRect(labelX, labelY, labelWidth, labelHeight);
 
-      ctx.fillStyle = color;
+      ctx.fillStyle = chartInk(color);
       ctx.fillText(labelText, labelX + 4, priceY + (isBroken ? 3 : 4));
       ctx.globalAlpha = 1.0;
     }

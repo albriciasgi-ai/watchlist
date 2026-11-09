@@ -1,4 +1,5 @@
-/* Modal "Estilo y colores". Se ve igual con Nítido y con el aspecto clásico; el botón principal toma el acento */
+/* Modal "Estilo y colores". Se ve igual con los estilos claros y con el aspecto clásico; el botón principal toma el
+   acento. Con un estilo oscuro toma sus colores (al final del archivo) */
 
 .theme-settings-overlay {
   position: fixed;
@@ -48,10 +49,11 @@
 
 .ts-styles {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   padding: 12px 16px 4px;
 }
+.ts-note { margin: 8px 16px 0; font-size: 12px; line-height: 1.4; color: #5F6670; }
 .ts-style {
   display: flex;
   align-items: flex-start;
@@ -122,3 +124,27 @@
   background: var(--t-accent, #2962FF);
   color: #FFFFFF;
 }
+
+/* Estilo oscuro: el modal toma los colores del estilo (variables que pone uiTheme.js) */
+body.theme-dark .theme-settings-overlay { background: rgba(0, 0, 0, 0.3); }
+body.theme-dark .theme-settings {
+  background: var(--t-surface);
+  border-color: var(--t-control);
+  color: var(--t-text);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+body.theme-dark .theme-settings header { border-bottom-color: var(--t-line); }
+body.theme-dark .theme-settings footer { border-top-color: var(--t-line); }
+body.theme-dark .ts-close,
+body.theme-dark .ts-undo { color: var(--t-muted); }
+body.theme-dark .ts-close:hover,
+body.theme-dark .ts-undo:hover { background: var(--t-hover); color: var(--t-text); }
+body.theme-dark .ts-style { border-color: var(--t-control); }
+body.theme-dark .ts-style.on { background: var(--t-accent-soft); }
+body.theme-dark .ts-style small,
+body.theme-dark .ts-note,
+body.theme-dark .ts-group h4 { color: var(--t-muted); }
+body.theme-dark .ts-field input[type="color"] { border-color: var(--t-control); }
+body.theme-dark .ts-hint { color: #F87171; }
+body.theme-dark .ts-reset { border-color: var(--t-control); background: var(--t-surface); color: var(--t-text); }
+body.theme-dark .ts-reset:hover:not(:disabled) { background: var(--t-hover); }

@@ -384,6 +384,8 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     ctx.beginPath();
     ctx.rect(bounds.x, bounds.y, bounds.width, bounds.height);
     ctx.clip();
+    ctx.fillStyle = isNewTheme() ? THEME.chartBg : '#FFFFFF'; // Fondo propio del panel, también con Oscuro
+    ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     ctx.strokeStyle = isNewTheme() ? THEME.grid : 'rgba(0,0,0,0.08)';
     ctx.lineWidth = crispWidth(1);
     TABLE_ROWS.forEach((_, row) => {

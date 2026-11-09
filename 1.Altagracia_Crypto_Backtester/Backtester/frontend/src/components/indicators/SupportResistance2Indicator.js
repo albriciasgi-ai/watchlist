@@ -3,6 +3,7 @@
 
 import { priceLevels } from './analysisLevels.js';
 import { alignY, crispWidth } from '../chartPixels.js';
+import { chartInk } from '../uiTheme.js'; // Con Oscuro, el texto de las etiquetas se aclara para leerse
 import IndicatorBase from "./IndicatorBase";
 import { DEFAULT_LEVEL_CONFIG, LevelBook, cleanLevelConfig } from './swingLevels.js';
 
@@ -140,7 +141,7 @@ class SupportResistance2Indicator extends IndicatorBase {
       const labelY = y - 3;
 
       ctx.font = '10px Arial';
-      ctx.fillStyle = this._hexToRgba(baseColor, level.status === 'broken' ? 0.6 : 1);
+      ctx.fillStyle = this._hexToRgba(chartInk(baseColor), level.status === 'broken' ? 0.6 : 1);
       ctx.textAlign = 'left';
       ctx.fillText(labelText, labelX, labelY);
     }
