@@ -6,6 +6,19 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Estilos Oscuro, Personalizado y Muhammad
+
+El modal "Estilo" ofrece cinco estilos:
+- **Nítido**, con sus colores fijos: es el único que no se puede cambiar;
+- **Oscuro**, con lienzo, barras, panel de trading, menús y modales oscuros;
+- **Personalizado**, que parte de Nítido;
+- **Muhammad**, con una paleta del arte islámico investigada en museos y textos académicos;
+- **Clásico**.
+
+Oscuro, Personalizado y Muhammad dejan cambiar sus colores y cada uno guarda lo suyo. Nítido y Clásico no cambian: 0 píxeles distintos. Detalle en `Backtester/CLAUDE.md`, sección "ESTILO NÍTIDO", "Oscuro, Personalizado y Muhammad" y "Paleta Muhammad".
+
+---
+
 ### Noviembre 2026: Liquidaciones de Velas Fijadas en su Mecha
 
 Una vela fijada en Liquidaciones cuenta lo liquidado en su mecha: el máximo, de su cuerpo hacia arriba; el mínimo, hacia abajo. Toma al menos 0.1% junto al extremo y a lo sumo el "Alto máximo de la mecha" del modal ⚙️ (0.5% por defecto). La franja cubre ese rango y la etiqueta lo dice. Antes se contaba la mitad de la vela. Detalle en `Backtester/CLAUDE.md`, sección "LIQUIDACIONES", "Velas fijadas".

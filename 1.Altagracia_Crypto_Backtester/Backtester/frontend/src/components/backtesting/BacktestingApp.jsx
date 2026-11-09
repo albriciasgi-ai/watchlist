@@ -2384,6 +2384,7 @@ const BacktestingApp = () => {
 
             {showIndicatorPanel && (
               <div
+                className="indicator-list-panel"
                 onClick={(e) => e.stopPropagation()}
                 onMouseDown={(e) => e.stopPropagation()}
                 style={{

@@ -234,3 +234,43 @@ body.theme-nitido .floating-panel-toggle:hover {
   transform: translateY(-50%) !important;
   box-shadow: none !important;
 }
+
+/* Fondo de la app y botones ▲▼ de los paneles: el del estilo. Con Nítido es el mismo blanco de antes */
+body.theme-nitido .backtesting-container { background: var(--t-page); }
+body.theme-nitido .panel-move-btn { background: var(--t-chart) !important; }
+
+/* ==================== Estilo oscuro ==================== */
+/*
+ * Lo que el estilo pinta con sus variables (encabezado, barras, botones, lienzo) ya queda oscuro.
+ * El panel de trading, los menús y los modales tienen sus colores escritos a mano: se oscurecen con un filtro que
+ * invierte la luz y devuelve el tono a su lugar, así un botón verde sigue verde. Las fotos y los selectores de color
+ * llevan el filtro contrario y se ven como son. Un modal con posición fija no puede ir dentro de algo filtrado
+ * (quedaría encerrado en su caja): la confirmación de orden y el modal de "Nuevo rango" van al body.
+ */
+body.theme-dark .backtesting-container { color: var(--t-text); }
+body.theme-dark .sidebar-helper { background: var(--t-surface); border-top-color: var(--t-line); }
+body.theme-dark .sidebar-action-btn.danger { color: #F87171 !important; }
+body.theme-dark .panel-move-btn {
+  border-color: var(--t-control) !important;
+  color: var(--t-muted) !important;
+}
+
+body.theme-dark .backtesting-sidebar,
+body.theme-dark .indicator-list-panel,
+body.theme-dark .actions-dropdown,
+body.theme-dark .level-menu,
+body.theme-dark .backtesting-setup,
+body.theme-dark .modal-overlay > *,
+body.theme-dark .indicator-settings-modal,
+body.theme-dark .session-modal-content,
+body.theme-dark .order-modal-content,
+body.theme-dark .screenshot-modal-overlay > *,
+body.theme-dark .alert-config-modal {
+  filter: invert(1) hue-rotate(180deg) contrast(0.8);
+  box-shadow: none !important; /* Invertida sería un halo claro */
+}
+body.theme-dark :is(.backtesting-sidebar, .indicator-list-panel, .actions-dropdown, .level-menu,
+  .backtesting-setup, .modal-overlay > *, .indicator-settings-modal, .session-modal-content, .order-modal-content,
+  .screenshot-modal-overlay > *, .alert-config-modal) :is(img, video, input[type="color"]) {
+  filter: contrast(1.25) hue-rotate(180deg) invert(1);
+}

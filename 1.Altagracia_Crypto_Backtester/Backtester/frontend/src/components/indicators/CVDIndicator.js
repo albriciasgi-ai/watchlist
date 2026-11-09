@@ -4,6 +4,7 @@
 
 import IndicatorBase from "./IndicatorBase";
 import { alignX, alignY, crispWidth } from '../chartPixels.js';
+import { THEME, isNewTheme } from '../uiTheme.js'; // Estilos nuevos: fondo del gráfico; con Oscuro, líneas y títulos
 
 class CVDIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 30) {
@@ -87,12 +88,12 @@ class CVDIndicator extends IndicatorBase {
     const bullColor = "#34C759";
     const bearColor = "#FF3B30";
 
-    // Fondo
-    ctx.fillStyle = "#FFFFFF";
+    // Fondo: el del gráfico con los estilos nuevos (en Nítido, el mismo blanco)
+    ctx.fillStyle = isNewTheme() ? THEME.chartBg : "#FFFFFF";
     ctx.fillRect(x, y, width, height);
 
     // Linea separadora superior
-    ctx.strokeStyle = "#DDE2E7";
+    ctx.strokeStyle = THEME.dark ? THEME.grid : "#DDE2E7";
     ctx.lineWidth = crispWidth(1);
     ctx.beginPath();
     ctx.moveTo(x, alignY(y));
@@ -100,7 +101,7 @@ class CVDIndicator extends IndicatorBase {
     ctx.stroke();
 
     // Titulo
-    ctx.fillStyle = "#666";
+    ctx.fillStyle = THEME.dark ? THEME.textMuted : "#666";
     ctx.font = "bold 11px Inter, sans-serif";
     ctx.fillText(`CVD (Real-time, Reset cada ${this.resetPeriod})`, x + 5, y + 15);
 
@@ -180,7 +181,7 @@ class CVDIndicator extends IndicatorBase {
     // Linea de cero
     if (minCVD < 0 && maxCVD > 0) {
       const zeroY = chartY + chartHeight - ((0 - minCVD) * cvdScale);
-      ctx.strokeStyle = "#666";
+      ctx.strokeStyle = THEME.dark ? THEME.textMuted : "#666";
       ctx.lineWidth = crispWidth(1);
       ctx.setLineDash([2, 2]);
       ctx.beginPath();

@@ -388,7 +388,7 @@ class VolumeProfileIndicator extends IndicatorBase {
 
     // Dibujar lÃ­nea vertical izquierda (inicio del rango) - solo si el inicio estÃ¡ visible
     if (startTimestamp >= firstVisibleTimestamp) {
-      ctx.strokeStyle = "#000000";
+      ctx.strokeStyle = THEME.dark ? THEME.textMuted : "#000000";
       ctx.lineWidth = crispWidth(1.5, 'x');
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
@@ -400,7 +400,7 @@ class VolumeProfileIndicator extends IndicatorBase {
 
     // Dibujar lÃ­nea vertical derecha (fin del rango) - solo si el fin estÃ¡ visible
     if (endTimestamp <= lastVisibleTimestamp) {
-      ctx.strokeStyle = "#000000";
+      ctx.strokeStyle = THEME.dark ? THEME.textMuted : "#000000";
       ctx.lineWidth = crispWidth(1.5, 'x');
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
@@ -586,7 +586,7 @@ class VolumeProfileIndicator extends IndicatorBase {
 
       // FASE 3: Labels de volumen en cada nivel (opcional)
       if (this.showVolumeLabels && volumeFraction > 0.3) { // Solo mostrar para niveles significativos
-        ctx.fillStyle = "#333";
+        ctx.fillStyle = THEME.dark ? THEME.text : "#333";
         ctx.font = "8px Inter, sans-serif";
         const volumeText = this.formatVolume(level.volume);
         const textX = this.histogramPosition === "left" ? histoStartX + barWidth + 3 : histoEndX - barWidth - 25;

@@ -2,6 +2,7 @@
 // Componente para crear y gestionar multiples Volume Profile Fixed Range
 
 import React, { useState, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { isBlind, maskDate } from "./backtesting/blindClock.js";
 
 const FixedRangeProfilesManager = ({
@@ -158,8 +159,9 @@ const FixedRangeProfilesManager = ({
         </p>
       )}
 
-      {/* Modal para crear nuevo perfil */}
-      {showModal && (
+      {/* Modal para crear nuevo perfil. En el body: este gestor ya va dentro de un modal, que con el estilo Oscuro
+          lleva un filtro y encerraría en su caja a otro modal fijo */}
+      {showModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content small" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
@@ -338,7 +340,8 @@ const FixedRangeProfilesManager = ({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

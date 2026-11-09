@@ -1,10 +1,10 @@
-// Estilo Nítido: colores configurables, contraste del texto, ejes redondos y horas de Colombia.
+// Estilos Nítido, Oscuro, Personalizado y Muhammad: colores, contraste del texto, ejes redondos y horas de Colombia.
 // Uso: node tests/theme.test.mjs
 import assert from 'node:assert/strict';
 import {
-  COLOR_GROUPS, DEFAULT_COLORS, THEME, contrast, crossTime, customList, hexOfRgb, isCustom, isNewTheme, isTimeTick,
-  markCustom, niceStep, niceTimeStep, priceDecimals, resetThemeColors, rgbOf, setThemeColors, themeColors,
-  themeRevision, timeTick
+  COLOR_GROUPS, DARK_COLORS, DEFAULT_COLORS, MUHAMMAD_COLORS, STYLES, THEME, contrast, crossTime, customList, hexOfRgb,
+  isCustom, isNewTheme, isTimeTick, markCustom, niceStep, niceTimeStep, priceDecimals, resetThemeColors, rgbOf,
+  setTheme, setThemeColors, themeBaseColors, themeColors, themeEditable, themeName, themeRevision, timeTick
 } from '../src/components/uiTheme.js';
 
 let count = 0;
@@ -26,7 +26,9 @@ t('el texto de compra, venta y desequilibrios se lee sobre el fondo', () => {
   for (const key of ['fpImbUpText', 'fpImbDownText']) assert.ok(contrast(THEME[key], THEME.chartBg) >= 7, key);
 });
 
-t('un color cambiado se aplica, se guarda y vuelve al de Nítido', () => {
+t('Personalizado: un color cambiado se aplica, se guarda y vuelve al de Nítido', () => {
+  setTheme('personalizado');
+  assert.equal(themeEditable(), true);
   const before = themeRevision();
   setThemeColors({ up: '#2563eb' });
   assert.equal(themeColors().up, '#2563EB');
@@ -38,19 +40,126 @@ t('un color cambiado se aplica, se guarda y vuelve al de Nítido', () => {
   setThemeColors({ down: '#000000', grid: '#FFFFFF' });
   resetThemeColors();
   assert.deepEqual(themeColors(), DEFAULT_COLORS);
+  setTheme('clasico');
+});
+
+t('Nítido queda como es: los colores de Personalizado no lo tocan', () => {
+  setTheme('personalizado');
+  setThemeColors({ up: '#2563eb', chartBg: '#FAFAF0' });
+  setTheme('nitido');
+  assert.equal(themeEditable(), false);
+  assert.deepEqual(themeColors(), DEFAULT_COLORS);
+  assert.equal(THEME.up, DEFAULT_COLORS.up);
+  setTheme('personalizado');
+  assert.equal(THEME.up, '#2563EB', 'Personalizado conserva lo suyo');
+  assert.equal(THEME.chartBg, '#FAFAF0');
+  resetThemeColors();
+  setTheme('clasico');
+});
+
+t('Oscuro y Muhammad se cambian: cada uno guarda lo suyo y vuelve a su paleta; Nítido no cambia', () => {
+  setTheme('nitido');
+  setThemeColors({ up: '#00FF00' });
+  assert.deepEqual(themeColors(), DEFAULT_COLORS, 'Nítido no acepta cambios');
+
+  setTheme('oscuro');
+  assert.equal(themeEditable(), true);
+  setThemeColors({ up: '#00ff00', chartBg: '#000000' });
+  assert.equal(THEME.up, '#00FF00');
+  assert.equal(THEME.chartBg, '#000000');
+  assert.deepEqual(themeBaseColors(), DARK_COLORS);
+
+  setTheme('muhammad');
+  assert.equal(themeEditable(), true);
+  assert.equal(THEME.up, MUHAMMAD_COLORS.up, 'lo de Oscuro no llega a Muhammad');
+  setThemeColors({ down: '#aa0000' });
+  assert.equal(THEME.down, '#AA0000');
+  setThemeColors({ down: MUHAMMAD_COLORS.down }); // Volver a su color lo quita de lo guardado
+  assert.deepEqual(themeColors(), MUHAMMAD_COLORS);
+  setThemeColors({ text: '#000000' });
+
+  setTheme('personalizado');
+  assert.deepEqual(themeColors(), DEFAULT_COLORS, 'Personalizado no recibe lo de los otros');
+
+  setTheme('oscuro');
+  assert.equal(THEME.up, '#00FF00', 'Oscuro conserva lo suyo');
+  resetThemeColors();
+  assert.deepEqual(themeColors(), DARK_COLORS);
+  setTheme('muhammad');
+  assert.equal(THEME.text, '#000000');
+  resetThemeColors();
+  assert.deepEqual(themeColors(), MUHAMMAD_COLORS);
+  setTheme('clasico');
+});
+
+t('un estilo oscuro que el usuario aclara deja de ser oscuro, y uno claro que oscurece pasa a serlo', () => {
+  setTheme('oscuro');
+  setThemeColors({ chartBg: '#FFFFFF' });
+  assert.equal(THEME.dark, false);
+  resetThemeColors();
+  assert.equal(THEME.dark, true);
+  setTheme('personalizado');
+  setThemeColors({ chartBg: '#101010' });
+  assert.equal(THEME.dark, true);
+  resetThemeColors();
+  setTheme('clasico');
 });
 
 t('colores inválidos o campos desconocidos no cambian nada', () => {
+  setTheme('personalizado');
   setThemeColors({ up: 'rojo', nope: '#000000', down: '#12345' });
   assert.deepEqual(themeColors(), DEFAULT_COLORS);
   assert.equal(THEME.nope, undefined);
+  setTheme('clasico');
 });
 
 t('un verde muy claro se oscurece lo justo para leerse como texto', () => {
+  setTheme('personalizado');
   setThemeColors({ up: '#A7F3D0' });
   assert.ok(contrast(THEME.upText, THEME.chartBg) >= 4.5);
   assert.equal(THEME.up, '#A7F3D0'); // La vela conserva el color elegido
   resetThemeColors();
+  setTheme('clasico');
+});
+
+t('cada estilo trae los 21 colores, todos válidos, y uno desconocido vuelve a Nítido', () => {
+  assert.deepEqual(STYLES.map(style => style.id), ['nitido', 'oscuro', 'personalizado', 'muhammad', 'clasico']);
+  for (const palette of [DEFAULT_COLORS, DARK_COLORS, MUHAMMAD_COLORS]) {
+    assert.deepEqual(Object.keys(palette).sort(), Object.keys(DEFAULT_COLORS).sort());
+    for (const value of Object.values(palette)) assert.match(value, /^#[0-9A-F]{6}$/);
+  }
+  setTheme('no-existe');
+  assert.equal(themeName(), 'nitido');
+  setTheme('clasico');
+});
+
+t('Oscuro: texto y datos se leen sobre el fondo oscuro y lo que se deriva se aclara', () => {
+  setTheme('oscuro');
+  assert.equal(THEME.dark, true);
+  assert.ok(contrast(THEME.text, THEME.chartBg) >= 7);
+  assert.ok(contrast(THEME.textMuted, THEME.chartBg) >= 4.5);
+  for (const key of ['up', 'down', 'fpBuy', 'fpSell', 'fpPoc', 'oiUp', 'oiDown', 'divergence', 'crosshair']) {
+    assert.ok(contrast(THEME[key], THEME.chartBg) >= 3, key);
+  }
+  for (const key of ['upText', 'downText']) assert.ok(contrast(THEME[key], THEME.chartBg) >= 4.5, key);
+  for (const key of ['fpImbUpText', 'fpImbDownText']) assert.ok(contrast(THEME[key], THEME.chartBg) >= 7, key);
+  assert.ok(contrast('#FFFFFF', THEME.tagBg) >= 7, 'texto blanco en las etiquetas de la cruz');
+  assert.match(THEME.fpEmpty, /^rgba\(255, 255, 255/);
+  assert.equal(THEME.labelBg, 'rgba(19, 23, 34, 0.85)');
+  setTheme('clasico');
+  assert.equal(THEME.dark, false);
+});
+
+t('Muhammad: fondo claro, texto y datos que se leen sobre él', () => {
+  setTheme('muhammad');
+  assert.equal(THEME.dark, false);
+  assert.ok(contrast(THEME.text, THEME.chartBg) >= 7);
+  assert.ok(contrast(THEME.textMuted, THEME.chartBg) >= 4.5);
+  for (const key of ['up', 'down', 'fpBuy', 'fpSell', 'fpPoc', 'oiUp', 'oiDown', 'divergence']) {
+    assert.ok(contrast(THEME[key], THEME.chartBg) >= 3, key);
+  }
+  assert.ok(contrast('#FFFFFF', THEME.tagBg) >= 4.5, 'texto blanco en las etiquetas de la cruz');
+  setTheme('clasico');
 });
 
 t('precios redondos: pasos de 1, 2, 2.5 o 5 por potencia de 10', () => {

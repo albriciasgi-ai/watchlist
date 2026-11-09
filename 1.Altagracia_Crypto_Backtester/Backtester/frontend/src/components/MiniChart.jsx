@@ -3685,6 +3685,7 @@ const MiniChart = forwardRef(({
               {[[-1, '▲', 'Subir', i === 0], [1, '▼', 'Bajar', i === panels.length - 1]].map(([step, label, action, disabled]) => (
                 <button
                   key={label}
+                  className="panel-move-btn"
                   disabled={disabled}
                   onClick={() => handlePanelMove(panel.name, step)}
                   title={`${action} ${panel.name}`}

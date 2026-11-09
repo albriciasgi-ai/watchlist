@@ -5,6 +5,7 @@ import { TF_MS } from '../backtesting/replayClock.js';
 import { candleItemId } from './analysisLevels.js';
 import { pinnedAt, pinsAt, togglePin } from './liquidationPins.js';
 import { alignY, crispWidth } from '../chartPixels.js';
+import { THEME, chartInk } from '../uiTheme.js'; // Etiquetas con el fondo del gráfico; con Oscuro, texto aclarado
 import {
   CrossTracker, DAY_MS, PINNED_KIND, PIN_KINDS, activeSource, binWidthFor, buildZones, coverageText, defaultPickRules, defaultZoneRules,
   knownAfter, money, pickZones, pinEdge, pinRange, pinSummary, windowRange
@@ -587,10 +588,10 @@ class LiquidationsIndicator extends IndicatorBase {
       const x = left > bounds.x + bounds.width * LABEL_RIGHT_LIMIT ? bounds.x + 4 : left + 4;
       const labelY = labelInside(lineY, bounds);
       const width = ctx.measureText(text).width + 6;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.fillStyle = THEME.labelBg;
       ctx.fillRect(x - 3, labelY - 7, width, 14);
       ctx.globalAlpha = crossed ? 0.65 : 1;
-      ctx.fillStyle = darken(color, 0.65);
+      ctx.fillStyle = THEME.dark ? chartInk(color) : darken(color, 0.65);
       ctx.fillText(text, x, labelY);
       ctx.globalAlpha = 1;
     }
@@ -655,10 +656,10 @@ class LiquidationsIndicator extends IndicatorBase {
       if (placed.some(other => Math.abs(other.y - labelY) < LABEL_GAP_PX && Math.abs(other.x - x) < 140)) continue;
       const text = `${zoneLabel(zone, blind)} · ${ageText(time - zone.birth)}${zone.crossed ? ' · cruzada' : ''}`;
       const width = ctx.measureText(text).width + 6;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.fillStyle = THEME.labelBg;
       ctx.fillRect(x - 3, labelY - 7, width, 14);
       ctx.globalAlpha = zone.crossed ? 0.6 : 1;
-      ctx.fillStyle = zone.side === 'long' ? this.config.longColor : this.config.shortColor;
+      ctx.fillStyle = chartInk(zone.side === 'long' ? this.config.longColor : this.config.shortColor);
       ctx.fillText(text, x, labelY);
       ctx.globalAlpha = 1;
       placed.push({ x, y: labelY });
@@ -675,9 +676,9 @@ class LiquidationsIndicator extends IndicatorBase {
       const nearest = zones.reduce((best, zone) => (Math.abs(zone.distancePct) < Math.abs(best.distancePct) ? zone : best));
       const text = `${arrow} ${zones.length === 1 ? '1 zona' : `${zones.length} zonas`} · ${Math.abs(nearest.distancePct).toFixed(1)}%`;
       const width = ctx.measureText(text).width + 8;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.fillStyle = THEME.labelBg;
       ctx.fillRect(right - width + 4, y - 7, width, 14);
-      ctx.fillStyle = nearest.side === 'long' ? this.config.longColor : this.config.shortColor;
+      ctx.fillStyle = chartInk(nearest.side === 'long' ? this.config.longColor : this.config.shortColor);
       ctx.fillText(text, right, y);
     };
     tag(above, '▲', bounds.y + 10);
@@ -714,9 +715,9 @@ class LiquidationsIndicator extends IndicatorBase {
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     const width = ctx.measureText(text).width + 8;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.fillStyle = THEME.labelBg;
     ctx.fillRect(bounds.x + 2, bounds.y + 3, width, 14);
-    ctx.fillStyle = '#6B7280';
+    ctx.fillStyle = THEME.dark ? THEME.textMuted : '#6B7280';
     ctx.fillText(text, bounds.x + 6, bounds.y + 10);
   }
 }
