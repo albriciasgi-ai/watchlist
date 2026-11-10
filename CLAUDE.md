@@ -53,6 +53,21 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 10 Noviembre 2026: Elementos de Order Flow con Delta Exacto y Órdenes Reales (fase 2)
+
+**Problema:** el almacén guarda compra y venta por minuto, así que el Max/Min Delta de una vela salía con resolución de 1 minuto. En BTC 15m eso marcaba Small Min/Max en 30% de las velas contra 12% exacto. Tampoco había forma de ver una orden que cruza varios precios ni las órdenes grandes.
+
+**Cambios:**
+1. **Almacén de flujo:** `OrderFlowData/tools/build_flow.py` guarda por minuto el máximo y el mínimo del delta dentro del minuto, y las órdenes agresivas de 3 precios o más (desde 100,000 USD) o de 250,000 USD o más. BTC completo: 2,416 días y 116 MB. `build_store.py` lo arma también para los días nuevos que descarga el panel
+2. **Cuatro elementos nuevos en "Elementos OF":** Extreme Delta (XD) y Small Min/Max Delta (SM) en la tabla de la vela, barrido real (BR) y orden grande (GR) como franjas. Cada uno marca cerca del 5% de las velas
+3. **Tabla de la vela:** suma Máx Δ y Mín Δ exactos
+
+**IMPORTANTE:** reiniciar el backend de App 1. Del 07/12/2021 al 19/12/2022 Bybit publicó la hora en segundos: esos días tienen delta exacto, pero no barridos ni órdenes grandes.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ELEMENTOS DE ORDER FLOW"
+
+---
+
 ### APP 1 (Backtester) - 9 Noviembre 2026: Elementos de Order Flow (fase 1)
 
 **Problema:** los 91 setups de Orderflows Unlocked combinan unos 30 elementos de order flow, y App 1 solo dibujaba imbalances, stacked y delta. Los umbrales del libro son contratos del ES y en BTC marcan entre 30% y 90% de las velas.

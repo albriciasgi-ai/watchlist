@@ -16,8 +16,9 @@ const BAND_DAYS = 3; // Franjas nacidas antes de la vista que pueden seguir viva
 const REQUEST_GAP_MS = 500;
 const ERROR_WAIT_MS = 5000;
 const MAX_EVENTS = 30000;
-const TABLE_HEIGHT = 66;
-const TABLE_ROWS = [['delta', 'Delta'], ['dv', 'Δ/Vol'], ['cum', 'Δ acum.']];
+const TABLE_HEIGHT = 92;
+const TABLE_ROWS = [['delta', 'Delta'], ['maxd', 'Máx Δ'], ['mind', 'Mín Δ'], ['dv', 'Δ/Vol'], ['cum', 'Δ acum.']];
+const SMALL_RGB = '245, 158, 11'; // Máx o Mín Δ casi en cero: ámbar, distinto de compra y venta
 const MIN_GLYPH_PX = 4; // Con velas más angostas no caben los triángulos
 const MIN_CODE_PX = 16; // Desde este ancho van los códigos bajo el triángulo
 const MIN_TABLE_TEXT_PX = 30;
@@ -49,6 +50,8 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     this.events = new Map(); // clave → evento
     this.bars = new Map(); // inicio de vela → delta, volumen, Δ/Vol y delta acumulado del día
     this.dvMarks = new Map(); // inicio de vela → lado del Delta/Volume extremo
+    this.xdMarks = new Map(); // inicio de vela → lado del Extreme Delta
+    this.smMarks = new Map(); // inicio de vela → color de la vela con Small Min/Max Delta
     this.loaded = null; // { start, end }: lo pedido y conocido
     this.memos = new Map(); // clave de franja → hasta dónde se revisó
     this.clock = null;
@@ -90,6 +93,8 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     this.events.clear();
     this.bars.clear();
     this.dvMarks.clear();
+    this.xdMarks.clear();
+    this.smMarks.clear();
     this.memos.clear();
     this.loaded = null;
     this.generation += 1;
@@ -171,6 +176,8 @@ class OrderFlowElementsIndicator extends IndicatorBase {
       this.events.clear();
       this.bars.clear();
       this.dvMarks.clear();
+      this.xdMarks.clear();
+      this.smMarks.clear();
       this.memos.clear();
       this.loaded = { start, end };
     } else {
@@ -179,6 +186,8 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     this.warming = !!data.warming;
     for (const event of data.events) {
       if (event.code === 'DV') this.dvMarks.set(event.t, event.dir);
+      else if (event.code === 'XD') this.xdMarks.set(event.t, event.dir);
+      else if (event.code === 'SM') this.smMarks.set(event.t, event.dir);
       else this.events.set(eventKey(event), event);
     }
     for (const bar of data.bars) this.bars.set(bar.t, bar);
@@ -405,26 +414,35 @@ class OrderFlowElementsIndicator extends IndicatorBase {
       const bar = this.bars.get(candle.timestamp);
       if (!bar) return;
       const x = bounds.x + i * width;
-      const dir = bar.delta >= 0 ? 1 : -1;
-      const strength = Math.min(1, Math.abs(bar.dv) / 0.5);
-      // Delta: tinte por la parte del volumen; Δ/Vol: color pleno si es extremo
-      ctx.fillStyle = `rgba(${this._rgb(dir)}, ${0.08 + 0.3 * strength})`;
-      ctx.fillRect(x + 0.5, bounds.y + titleH + 1, width - 1, rowH - 2);
-      const mark = this.dvMarks.get(candle.timestamp);
-      if (mark !== undefined) {
-        ctx.fillStyle = `rgba(${this._rgb(mark)}, 0.75)`;
-        ctx.fillRect(x + 0.5, bounds.y + titleH + rowH + 1, width - 1, rowH - 2);
-      }
-      ctx.fillStyle = `rgba(${this._rgb(bar.cum >= 0 ? 1 : -1)}, 0.12)`;
-      ctx.fillRect(x + 0.5, bounds.y + titleH + 2 * rowH + 1, width - 1, rowH - 2);
-      if (!showText) return;
-      const values = {
-        delta: (bar.delta >= 0 ? '+' : '') + shortNumber(bar.delta),
-        dv: `${Math.round(bar.dv * 100)}%`,
-        cum: (bar.cum >= 0 ? '+' : '') + shortNumber(bar.cum)
+      const cell = (row, fill) => {
+        ctx.fillStyle = fill;
+        ctx.fillRect(x + 0.5, bounds.y + titleH + row * rowH + 1, width - 1, rowH - 2);
       };
+      const rowOf = (key) => TABLE_ROWS.findIndex(([name]) => name === key);
+      const strength = Math.min(1, Math.abs(bar.dv) / 0.5);
+      // Tinte suave por la parte del volumen; color pleno donde hay un elemento de la tabla
+      const xd = this.config.codes.XD ? this.xdMarks.get(candle.timestamp) : undefined;
+      const dv = this.config.codes.DV ? this.dvMarks.get(candle.timestamp) : undefined;
+      const sm = this.config.codes.SM ? this.smMarks.get(candle.timestamp) : undefined;
+      const smRow = sm === undefined ? -1 : rowOf(sm > 0 ? 'mind' : 'maxd'); // El lado que no tuvo el control
+      cell(rowOf('delta'), xd !== undefined ? `rgba(${this._rgb(xd)}, 0.75)` : `rgba(${this._rgb(bar.delta >= 0 ? 1 : -1)}, ${0.08 + 0.3 * strength})`);
+      if (bar.maxd != null) cell(rowOf('maxd'), `rgba(${this._rgb(1)}, 0.08)`);
+      if (bar.mind != null) cell(rowOf('mind'), `rgba(${this._rgb(-1)}, 0.08)`);
+      if (smRow >= 0) cell(smRow, `rgba(${SMALL_RGB}, 0.75)`);
+      if (dv !== undefined) cell(rowOf('dv'), `rgba(${this._rgb(dv)}, 0.75)`);
+      cell(rowOf('cum'), `rgba(${this._rgb(bar.cum >= 0 ? 1 : -1)}, 0.12)`);
+      if (!showText) return;
+      const signed = (value) => (value >= 0 ? '+' : '') + shortNumber(value);
+      const values = {
+        delta: signed(bar.delta),
+        maxd: bar.maxd != null ? signed(bar.maxd) : '·',
+        mind: bar.mind != null ? signed(bar.mind) : '·',
+        dv: `${Math.round(bar.dv * 100)}%`,
+        cum: signed(bar.cum)
+      };
+      const strong = new Set([xd !== undefined && 'delta', dv !== undefined && 'dv', smRow >= 0 && TABLE_ROWS[smRow][0]]);
       TABLE_ROWS.forEach(([key], row) => {
-        ctx.fillStyle = key === 'dv' && mark !== undefined ? '#FFFFFF' : text;
+        ctx.fillStyle = strong.has(key) ? '#FFFFFF' : text;
         ctx.fillText(values[key], x + width / 2, bounds.y + titleH + row * rowH + rowH / 2);
       });
     });

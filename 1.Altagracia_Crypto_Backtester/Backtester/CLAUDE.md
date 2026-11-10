@@ -693,7 +693,22 @@ OrderFlowElementsIndicator.js: franjas, celdas, contornos, glifos, EMA 14 y la t
 
 El filtro elige velas de mucho volumen más que elementos: Volume Imbalance, Volume Decline, Reversal y Ratio marcan casi la misma parte de esas velas que del total. Solo Stacked, Open POC y Thin Print se concentran en ellas.
 
-Quedan fuera: Market Weakness (sin regla en las láminas), y Extreme y Small Min/Max Delta. Estos dos últimos necesitan el Max/Min Delta exacto: con 1 minuto, Small Min/Max acierta menos de la mitad (`delta_exacto.py`).
+**Con el almacén de flujo** (fase 2, 10/11): `OrderFlowData/flow/{SYMBOL}/{AAAA}/{SYMBOL}_{dia}.npz`, armado por `tools/build_flow.py` desde los `.tape` (`ORDERFLOW_FLOW` cambia la carpeta). `build_store.py` lo arma también al correr solo con la moneda, como lo lanza el panel. BTC completo: 2,416 días, 116 MB, unos 5 minutos en tres procesos.
+
+- **Por minuto:** `dmx` y `dmn`, el máximo y el mínimo del delta dentro del minuto desde su inicio. El Max/Min Delta de una vela es exacto: `max_k(delta acumulado antes del minuto k + dmx_k)`. Medido en 30 días de BTC 15m, con resolución de 1 minuto Small Min/Max marcaba 30% de las velas contra 12% exacto y solo coincidía en 40% (`research/orderflows_unlocked/delta_exacto.py`)
+- **Órdenes agresivas:** trades seguidos del mismo lado en el mismo instante son una orden. Se guardan las que cruzan 3 precios o más con 100,000 USD o más, y las de 250,000 USD o más (`ot` en ms, `os`, `oq`, `op0`, `op1`, `on` = precios cruzados)
+- **Días sin órdenes:** del 07/12/2021 al 19/12/2022 Bybit publicó la hora en segundos y no se pueden separar órdenes (`info[2]` = 0). El delta exacto sí vale
+
+| Código | Elemento | Forma | Regla | 15m | 1h |
+|---|---|---|---|---|---|
+| XD | Extreme Delta | tabla (celda Delta) | delta en 95% o más de su máximo o mínimo exacto, y \|Δ/Vol\| sobre el umbral relativo | 6.2% | 5.6% |
+| SM | Small Min/Max Delta | tabla (celda ámbar) | el lado contrario al color apenas movió el delta: Mín Δ en una verde, Máx Δ en una roja, con umbral relativo | 6.4% | 5.4% |
+| BR | Barrido real | franja | la mayor orden de la vela que cruzó 3 precios o más, con USD sobre el umbral relativo | 4.7% | 5.6% |
+| GR | Orden grande | franja | la mayor orden de la vela, con USD sobre el umbral relativo | 4.5% | 6.1% |
+
+Tasas de BTC del 02/10 al 01/11/2026. Los umbrales de XD y SM usan solo velas con flujo, y los de BR y GR solo velas de días con órdenes. La tabla de la vela suma las filas Máx Δ y Mín Δ (`maxd`, `mind` en `bars`; `null` sin flujo).
+
+Queda fuera Market Weakness, sin regla en las láminas. Estos dos últimos necesitan el Max/Min Delta exacto: con 1 minuto, Small Min/Max acierta menos de la mitad (`delta_exacto.py`).
 
 ### Dibujo (frontend)
 
@@ -701,7 +716,7 @@ Quedan fuera: Market Weakness (sin regla en las láminas), y Extreme y Small Min
 - **Franjas:** desde la vela que las crea hasta la primera vela que empieza después de `known` y entra en su precio. Se cortan con `priceContext.knownCandles`, también con la vela en formación. Al retroceder se revisan de nuevo. Se dibujan las `maxBands` más recientes
 - **Glifos:** ▲ bajo la vela si es alcista y ▼ sobre ella si es bajista, desde 4 px. Los códigos aparecen desde 16 px
 - **Carga:** pide la vista con media pantalla de más (hasta 3 días) y `band_days` = 3. Si solo avanza la hora, pide desde cuatro velas antes de lo cargado. Con más de 60 días a la vista avisa que se acerque el zoom
-- **Tabla de la vela:** panel con delta, Δ/Vol y delta acumulado del día. Δ/Vol se rellena cuando es extremo
+- **Tabla de la vela:** panel con delta, Máx Δ, Mín Δ, Δ/Vol y delta acumulado del día. Delta se rellena con Extreme Delta, Máx o Mín Δ en ámbar con Small Min/Max, y Δ/Vol cuando es extremo. Con varios paneles queda baja: se agranda arrastrando su borde
 - **EMA 14:** el "Momentum Strength" de las láminas. Se colorea si su pendiente pasa de 0.25 ATR en 3 velas
 - `selectableLevels()` ofrece franjas, celdas, contornos y glifos al menú "Incluir en el análisis"
 - Parámetros en `of_elements_settings_{symbol}`, para todos los marcos. Colores: compra y venta del estilo (`THEME.upRgb`, `THEME.downRgb`), o los de siempre en Clásico

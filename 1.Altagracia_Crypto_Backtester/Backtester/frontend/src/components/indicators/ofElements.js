@@ -33,18 +33,23 @@ export const OF_ELEMENTS = {
   ST: { name: 'Stacked Imbalance', shape: 'band', group: 'trend', volume: true },
   VI: { name: 'Volume Imbalance (3 o más)', shape: 'box', group: 'trend', volume: true },
   RD: { name: 'Imbalance Reload', shape: 'band', group: 'trend', volume: true },
-  TP: { name: 'Thin Print', shape: 'mark', group: 'trend', volume: true }
+  TP: { name: 'Thin Print', shape: 'mark', group: 'trend', volume: true },
+  // Con el almacén de flujo: delta exacto dentro de la vela y órdenes agresivas reales
+  GR: { name: 'Orden grande', shape: 'band', group: 'zones', flow: true },
+  BR: { name: 'Barrido real (3 precios o más)', shape: 'band', group: 'trend', flow: true },
+  XD: { name: 'Extreme Delta (cierra en su extremo)', shape: 'table', group: 'table', flow: true },
+  SM: { name: 'Small Min/Max Delta', shape: 'table', group: 'table', flow: true }
 };
 
 export const OF_GROUPS = [
   ['zones', 'Zonas', 'Franjas que siguen vivas hasta que el precio vuelve'],
   ['turn', 'Giro en la zona', 'Agotamiento, absorción y divergencias en el extremo de la vela'],
   ['trend', 'Continuación', 'Agresión que empuja: barridos, liquidez vertical, saltos de delta'],
-  ['table', 'Tabla de la vela', 'Se marca en el panel, no sobre las velas']
+  ['table', 'Tabla de la vela', 'Se marca en el panel, no sobre las velas: Δ/Vol, Delta en su extremo y Máx o Mín Δ casi en cero']
 ];
 
 // Los de fábrica: unos pocos por grupo, para no saturar el gráfico. El resto se activa en el modal
-const DEFAULT_CODES = ['VA', 'OG', 'EX', 'DT', 'DD', 'AD', 'SW', 'VL', 'DB', 'DV'];
+const DEFAULT_CODES = ['VA', 'OG', 'EX', 'DT', 'DD', 'AD', 'SW', 'VL', 'DB', 'DV', 'GR', 'BR', 'XD', 'SM'];
 
 export function defaultOFElementsConfig() {
   return {

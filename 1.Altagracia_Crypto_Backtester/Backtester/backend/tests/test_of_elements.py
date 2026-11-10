@@ -86,6 +86,35 @@ def test_desequilibrios_apilados_reversal_decline_thin_y_ratio():
     assert facts(ask=[5, 10, 30], bid=[10, 3, 8], o=1, c=3)["ratio"] is True  # 3 / 10 = 0.3
 
 
+def test_max_min_delta_exacto_y_ordenes_del_flujo():
+    # Dos minutos con delta +5 y -3. Dentro del primero el delta llegó a +8 y a -2; en el segundo a +1 y -6
+    qs, ps = 1000, 10
+    flow = {"info": np.array([ps, qs, 1, 4]), "m": np.array([100, 101]),
+            "dmx": np.array([8, 1]) * qs, "dmn": np.array([-2, -6]) * qs,
+            "ot": np.array([100 * 60000 + 5, 101 * 60000 + 9]), "os": np.array([1, -1]),
+            "oq": np.array([3 * qs, 40 * qs]), "op0": np.array([800000, 800100]), "op1": np.array([800050, 800100]),
+            "on": np.array([4, 1])}
+    f = {}
+    oe._flow_facts(flow, f, 100, 2, np.array([5.0, -3.0]))
+    assert f["xmaxd"] == 8  # max(0 + 8, 5 + 1)
+    assert f["xmind"] == -2  # min(0 - 2, 5 - 6)
+    assert f["sweep_real"][1] == 1 and f["sweep_real"][4] == 4  # El barrido de 4 precios es de compra
+    assert f["big"][1] == -1  # La orden grande (40 BTC) es de venta
+    # Con hora en segundos no se separan órdenes, pero el delta exacto sí vale
+    flow["info"] = np.array([ps, qs, 0, 0])
+    g = {}
+    oe._flow_facts(flow, g, 100, 2, np.array([5.0, -3.0]))
+    assert g["xmaxd"] == 8 and "sweep_real" not in g and "big" not in g
+
+
+def test_extremo_y_lado_que_no_tuvo_el_control():
+    f = {"delta": 96.0, "vol": 400.0, "xmaxd": 100.0, "xmind": -1.0, "col": 1}
+    assert oe._extreme(f) == pytest.approx(0.24)  # Cierra en 96% de su máximo
+    assert oe._small(f) == pytest.approx(1 / 400)  # Los vendedores nunca pasaron de -1
+    f["delta"] = 90.0
+    assert oe._extreme(f) is None
+
+
 def test_area_de_valor_crece_de_a_un_nivel():
     # Total 73, 70% = 51.1: al POC (50) se suma el vecino mayor, 10 abajo, y ya alcanza
     poc, lo, hi = oe._value_area(np.array([1, 2, 10, 50, 9, 1, 0], float))

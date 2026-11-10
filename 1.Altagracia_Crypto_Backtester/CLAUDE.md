@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Delta Exacto y Órdenes Reales en Elementos OF
+
+Almacén de flujo nuevo (`OrderFlowData/flow`): el delta dentro de cada minuto y las órdenes agresivas reales. Con él, "Elementos OF" suma Extreme Delta, Small Min/Max Delta, barridos reales y órdenes grandes, y la tabla de la vela muestra Máx Δ y Mín Δ exactos. Detalle en `Backtester/CLAUDE.md`, sección "ELEMENTOS DE ORDER FLOW".
+
+---
+
 ### Noviembre 2026: Elementos de Order Flow
 
 Indicador "Elementos OF": 27 elementos de los setups (8 de ellos solo en velas de mucho volumen) de Orderflows Unlocked detectados con los trades reales, como franjas que siguen hasta que el precio vuelve, celdas, contornos y un triángulo con códigos, más la tabla de la vela y la EMA 14. Umbrales calibrados con los 30 días anteriores y solo velas cerradas. Detalle en `Backtester/CLAUDE.md`, sección "ELEMENTOS DE ORDER FLOW".

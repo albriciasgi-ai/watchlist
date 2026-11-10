@@ -36,7 +36,7 @@ Baja las monedas de `queue.txt` una tras otra. Salta las que terminaron su últi
 
 ## Almacén de App 1
 
-"Armar almacén de App 1" corre `tools\build_store.py` para la moneda elegida y omite los días ya armados. Con la casilla marcada se arma solo cuando una descarga termina sin que la detengas, si el panel está abierto en ese momento. App 1 ve los días nuevos sin reiniciar.
+"Armar almacén de App 1" corre `tools\build_store.py` para la moneda elegida y omite los días ya armados. Desde el 10/11/2026 arma también el almacén de flujo (`OrderFlowData\flow`, con `tools\build_flow.py`): delta exacto dentro de cada minuto y órdenes agresivas. Con la casilla marcada se arma solo cuando una descarga termina sin que la detengas, si el panel está abierto en ese momento. App 1 ve los días nuevos sin reiniciar.
 
 ## Collector de App 9
 

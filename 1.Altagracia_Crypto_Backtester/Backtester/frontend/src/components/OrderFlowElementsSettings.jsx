@@ -68,7 +68,7 @@ const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose }) => {
                     <label className="checkbox-label">
                       <input type="checkbox" checked={!!values.codes[code]} onChange={(e) => setCode(code, e.target.checked)} />
                       <strong style={{ width: '24px', display: 'inline-block' }}>{code}</strong> {info.name}
-                      <span className="hint" style={{ marginLeft: '6px' }}>({SHAPE_TEXT[info.shape]}{info.volume ? ', vol.' : ''})</span>
+                      <span className="hint" style={{ marginLeft: '6px' }}>({SHAPE_TEXT[info.shape]}{info.volume ? ', vol.' : ''}{info.flow ? ', flujo' : ''})</span>
                     </label>
                   </div>
                 ))}
@@ -81,7 +81,7 @@ const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose }) => {
             {[
               ['showBands', 'Franjas: siguen hasta que el precio vuelve'],
               ['showGlyphs', 'Triángulo con los códigos bajo o sobre la vela'],
-              ['showTable', 'Panel con la tabla de la vela (delta, Δ/Vol y delta acumulado del día)'],
+              ['showTable', 'Panel con la tabla de la vela (delta, Máx y Mín Δ exactos, Δ/Vol y delta acumulado del día)'],
               ['showEMA', 'EMA 14: el "Momentum Strength" de las láminas, coloreada si tiene pendiente']
             ].map(([key, label]) => (
               <div className="setting-row" style={{ marginBottom: '6px' }} key={key}>

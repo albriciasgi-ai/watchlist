@@ -14,8 +14,10 @@ máximo en una roja). A = lado agresor a favor del color, P = lado contrario.
 """
 import datetime as dt
 import math
+import os
 import threading
 from collections import OrderedDict
+from pathlib import Path
 
 import numpy as np
 
@@ -66,6 +68,16 @@ CATALOG = {
     "OP": ("Open POC", "band", False, None),
     "RX": ("Ratio de extremos", "mark", False, None),
 }
+CATALOG.update({
+    # Con el almacén de flujo (OrderFlowData/flow, tools/build_flow.py): delta exacto y órdenes agresivas
+    "XD": ("Extreme Delta", "table", True, None),
+    "SM": ("Small Min/Max Delta", "table", True, None),
+    "BR": ("Barrido real", "band", True, None),
+    "GR": ("Orden grande", "band", True, None),
+})
+FLOW_CODES = {"XD", "SM", "BR", "GR"}
+FLOW_DIR = Path(os.environ.get("ORDERFLOW_FLOW", r"C:\Users\inven\OrderFlowData\flow"))
+EXTREME_SHARE = 0.95  # Delta en 95% o más de su máximo o mínimo, como la celda cian o magenta del libro
 VOLUME_FILTERED = {"ST", "VI", "IR", "RD", "VD", "TP", "OP", "RX"}
 DEFAULT_VOL_FILTER = 2.0
 VOLUME_BARS = 20
@@ -188,7 +200,7 @@ def _load_bars(symbol, tf, day, known_min):
     if data is None:
         result = []
     else:
-        result = _compute_day(data, tf, min(known_min, day_start + 1440))
+        result = _compute_day(data, tf, min(known_min, day_start + 1440), _load_flow(symbol, day))
     if complete:
         with _lock:
             _cache[key] = result
@@ -197,7 +209,41 @@ def _load_bars(symbol, tf, day, known_min):
     return result
 
 
-def _compute_day(data, tf, known_min):
+def _load_flow(symbol, day):
+    """Delta dentro de cada minuto y órdenes agresivas del día, o None si no se armó."""
+    path = FLOW_DIR / symbol / day.isoformat()[:4] / f"{symbol}_{day.isoformat()}.npz"
+    if not path.exists():
+        return None
+    with np.load(path) as z:
+        return {name: z[name] for name in z.files}
+
+
+def _flow_facts(flow, f, t0_min, tf, delta_minutes):
+    """Max/Min Delta exacto de la vela y su mejor barrido y orden grande, solo con minutos cerrados."""
+    ps, qs, orders_ok = int(flow["info"][0]), int(flow["info"][1]), bool(flow["info"][2])
+    a, e = np.searchsorted(flow["m"], [t0_min, t0_min + tf])
+    if e <= a or e - a != len(delta_minutes):
+        return
+    before = np.r_[0.0, np.cumsum(delta_minutes)[:-1]]
+    f["xmaxd"] = max(0.0, float(np.max(before + flow["dmx"][a:e] / qs)))
+    f["xmind"] = min(0.0, float(np.min(before + flow["dmn"][a:e] / qs)))
+    f["orders_ok"] = orders_ok
+    if not orders_ok:
+        return
+    lo, hi = np.searchsorted(flow["ot"], [t0_min * 60000, (t0_min + tf) * 60000])
+    if hi <= lo:
+        return
+    usd = flow["oq"][lo:hi] / qs * (flow["op0"][lo:hi] + flow["op1"][lo:hi]) / 2 / ps
+    sweeps = np.nonzero(flow["on"][lo:hi] >= 3)[0]
+    if len(sweeps):
+        k = sweeps[np.argmax(usd[sweeps])]
+        f["sweep_real"] = (float(usd[k]), int(flow["os"][lo + k]), flow["op0"][lo + k] / ps, flow["op1"][lo + k] / ps,
+                           int(flow["on"][lo + k]))
+    k = int(np.argmax(usd))
+    f["big"] = (float(usd[k]), int(flow["os"][lo + k]), flow["op0"][lo + k] / ps, flow["op1"][lo + k] / ps)
+
+
+def _compute_day(data, tf, known_min, flow=None):
     ps, qs, ticks = (int(x) for x in data["info"])
     m = data["m"]
     keep = m < known_min
@@ -229,6 +275,8 @@ def _compute_day(data, tf, known_min):
         cum = np.cumsum(md[a:e])
         f.update(t=t0 * 60000, o=o, c=c, h=float(data["h"][a:e].max()) / ps, l=float(data["l"][a:e].min()) / ps,
                  lo=lo, step=st / ps, maxd=max(0.0, float(cum.max())), mind=min(0.0, float(cum.min())))
+        if flow is not None and np.array_equal(flow["m"][np.searchsorted(flow["m"], m[a]):][:e - a], m[a:e]):
+            _flow_facts(flow, f, t0, tf, md[a:e])
         bars.append(f)
     return bars
 
@@ -298,7 +346,31 @@ def _thresholds(window, target):
         gaps.append(g[2] / atr[i] if g and atr[i] > 0 else None)
     thr["DB"] = _kth_largest(jumps, target)
     thr["OG"] = _kth_largest(gaps, target)
+    # Con flujo: solo cuentan las velas que lo tienen, para no bajar el umbral con días sin datos
+    exact = [f for f in window if "xmaxd" in f and f["vol"] > 0]
+    thr["XD"] = _kth_largest([_extreme(f) for f in exact], target)
+    thr["SM"] = _kth_largest([-_small(f) if _small(f) is not None else None for f in exact], target)
+    with_orders = [f for f in window if f.get("orders_ok")]
+    thr["BR"] = _kth_largest([f["sweep_real"][0] if "sweep_real" in f else None for f in with_orders], target)
+    thr["GR"] = _kth_largest([f["big"][0] if "big" in f else None for f in with_orders], target)
     return thr
+
+
+def _extreme(f):
+    """|Δ/Vol| de una vela cuyo delta cierra en 95% o más de su máximo o mínimo exacto; None si no."""
+    d = f["delta"]
+    if (d > 0 and d >= EXTREME_SHARE * f["xmaxd"]) or (d < 0 and d <= EXTREME_SHARE * f["xmind"]):
+        return abs(d) / f["vol"]
+    return None
+
+
+def _small(f):
+    """Parte del volumen que alcanzó el lado contrario al color: Mín Δ en una verde, Máx Δ en una roja."""
+    if f["col"] > 0:
+        return -f["xmind"] / f["vol"]
+    if f["col"] < 0:
+        return f["xmaxd"] / f["vol"]
+    return None
 
 
 def _contiguous(f, p, tf):
@@ -419,7 +491,9 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
             cum += f["delta"]
             result["bars"].append({"t": f["t"], "delta": round(f["delta"], 6), "vol": round(f["vol"], 6),
                                    "dv": round(f["delta"] / f["vol"], 6) if f["vol"] > 0 else 0.0,
-                                   "cum": round(cum, 6), "step": f["step"]})
+                                   "cum": round(cum, 6), "step": f["step"],
+                                   "maxd": round(f["xmaxd"], 6) if "xmaxd" in f else None,
+                                   "mind": round(f["xmind"], 6) if "xmind" in f else None})
             result["step"] = f["step"]
 
         # Entre velas, sin umbral
@@ -501,6 +575,19 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
         g = _gap(f, p)
         if g and atr[i] > 0 and thr["OG"] is not None and g[2] / atr[i] >= thr["OG"]:
             add("OG", g[0], g[1][0], g[1][1], g[2] / atr[i], thr["OG"], t0=p["t"])
+        if "xmaxd" in f and f["vol"] > 0:
+            value = _extreme(f)
+            if value is not None and thr["XD"] is not None and value >= thr["XD"]:
+                add("XD", 1 if f["delta"] > 0 else -1, f["l"], f["h"], value, thr["XD"])
+            small = _small(f)
+            if small is not None and thr["SM"] is not None and -small >= thr["SM"]:
+                add("SM", col, f["l"], f["h"], small, -thr["SM"])
+        if "sweep_real" in f and thr["BR"] is not None and f["sweep_real"][0] >= thr["BR"]:
+            usd, side, p0, p1, _ = f["sweep_real"]
+            add("BR", side, p0, max(p1, p0 + f["step"]), usd, thr["BR"])
+        if "big" in f and thr["GR"] is not None and f["big"][0] >= thr["GR"]:
+            usd, side, p0, p1 = f["big"]
+            add("GR", side, p0, max(p1, p0 + f["step"]), usd, thr["GR"])
         if "A" not in f:
             continue
         if f["exh"] is not None and thr["EX"] is not None and -f["exh"] >= thr["EX"]:
