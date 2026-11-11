@@ -53,6 +53,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 11 Noviembre 2026: Segundo Gráfico, Observador en Ventana Aparte y Mejoras
+
+**Pedido:** seis mejoras después de probar la fase 4: más indicadores en el Observador, VP fijo de unos 400 niveles, el Observador en una ventana aparte, numeración de trades sin contar los cancelados, caja de texto en los dibujos y un segundo gráfico que siga la reproducción en otra pestaña.
+
+**Cambios:**
+1. **Segundo gráfico:** botón "2.º gráfico" en el encabezado. Abre otra pestaña que sigue la hora simulada de la principal (BroadcastChannel), con su propio marco e indicadores. Las velas salen del caché del navegador. Lo que se elige ahí para el análisis llega a la orden de la principal. No tiene reloj, órdenes ni los dibujos de la principal
+2. **Observador en ventana aparte:** botón "Ventana aparte". Comparte los datos con la principal; el informe y el visor de imágenes se abren en ella
+3. **Más para "Incluir en el análisis":** línea y bandas del VWAP, barras de volumen y la columna de cada vela en Delta de volumen, CVD, Interés abierto, Confluencia OI y volumen y Volumen de Respuesta
+4. **Caja de texto:** botón "Texto" en la barra de dibujo; se escribe al crearla, doble clic la edita. Antes la caja existía en el código pero no tenía botón ni forma de escribir, y seleccionarla daba error
+5. **Números de trade:** se asignan al ejecutarse la orden, así una cancelada no gasta número. Las sesiones viejas se numeran al cargarlas
+6. **VP de rango fijo:** 400 niveles (antes 50), con el modal de 50 a 1000
+
+**IMPORTANTE:** reiniciar el backend de App 1 (el registro guarda el número de trade) y recargar la página. El navegador debe permitir ventanas emergentes para la ventana del Observador. El segundo gráfico ocupa otra vez la memoria de las velas.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11"
+
+---
+
 ### APP 1 (Backtester) - 10 Noviembre 2026: Prueba Manual de los Setups y Precio como Índice (fase 4)
 
 **Pedido:** decidir a mano las reglas de cada setup sin gastar las fechas con que se comprueban. Además, con "Fecha al azar y oculta", que el precio tampoco delate la época: lo que importa son los porcentajes.

@@ -5,7 +5,8 @@
 import VolumeProfileIndicator from "./VolumeProfileIndicator";
 import VolumeIndicator from "./VolumeIndicator";
 import CVDIndicator from "./CVDIndicator";
-import VolumeProfileFixedRangeIndicator from "./VolumeProfileFixedRangeIndicator";
+import VolumeProfileFixedRangeIndicator, { VP_FIXED_ROWS } from "./VolumeProfileFixedRangeIndicator";
+import { candleItemId } from "./analysisLevels.js";
 import RangeDetectionIndicator from "./RangeDetectionIndicator";
 import SwingBasedRangeDetector from "./SwingBasedRangeDetector";
 import ATRBasedRangeDetector from "./ATRBasedRangeDetector";
@@ -634,7 +635,41 @@ class IndicatorManager {
     return [...this.indicators, ...this.fixedRangeIndicators]
       .filter(indicator => indicator.enabled && indicator.selectableLevels && !this.rangesAhead?.has(indicator))
       .filter(indicator => !(indicator.hideWhenFixedRanges && rangesActive))
-      .flatMap(indicator => indicator.selectableLevels());
+      .flatMap(indicator => indicator.selectableLevels())
+      .concat(this.panelTargets());
+  }
+
+  /**
+   * La columna de cada vela en los paneles (delta de volumen, CVD, interés abierto, confluencia, Volumen de
+   * Respuesta), con lo que el panel dice de ella. Entra como marca en la vela, a su cierre
+   */
+  panelTargets() {
+    const offer = this._panelOffer;
+    if (!offer?.visibleCandles?.length) return [];
+    const candleWidth = offer.width / offer.visibleCandles.length;
+    if (candleWidth < 3) return [];
+    const targets = [];
+    for (const { name, top, height } of offer.rects) {
+      const indicator = this.indicators.find(item => item.name === name);
+      if (!indicator?.enabled || !indicator.panelReadings) continue;
+      let readings;
+      try {
+        readings = indicator.panelReadings(offer.visibleCandles);
+      } catch {
+        continue; // Un panel sin datos todavía no ofrece nada
+      }
+      offer.visibleCandles.forEach((candle, i) => {
+        const kind = readings.get(candle.timestamp);
+        if (!kind || candle.in_progress) return;
+        const left = offer.x + i * candleWidth;
+        targets.push({
+          id: candleItemId(name, 'panel', candle.timestamp, null, this.interval),
+          source: name, kind, price: candle.close, time: candle.timestamp, mark: true, panel: true,
+          left, right: left + candleWidth, top: top + 18, bottom: top + height
+        });
+      });
+    }
+    return targets;
   }
 
   /** Paneles a la vista, en el orden elegido */
@@ -674,6 +709,8 @@ class IndicatorManager {
   }
 
   renderIndicators(ctx, bounds, visibleCandles) {
+    // Dónde quedó cada panel en este cuadro, para ofrecer sus velas a "Incluir en el análisis"
+    this._panelOffer = { x: bounds.x, width: bounds.width, rects: this.getPanelRects(bounds.y), visibleCandles };
     for (const { name, top, height } of this.getPanelRects(bounds.y)) {
       const indicator = this.indicators.find(item => item.name === name);
       indicator.render(ctx, { x: bounds.x, y: top, width: bounds.width, height }, visibleCandles);
@@ -692,7 +729,8 @@ class IndicatorManager {
       endTimestamp: endTimestamp,
       sourceRectId: sourceRectId,
       enabled: true,
-      rows: 50,
+      rows: VP_FIXED_ROWS,
+      rowsV2: true,
       valueAreaPercent: 70,
       histogramMaxWidth: 20,
       useGradient: true,
@@ -959,7 +997,8 @@ class IndicatorManager {
       detectionMetrics: range.metrics,
 
       // Configuración visual diferenciada (morado transparente)
-      rows: 50,
+      rows: VP_FIXED_ROWS,
+      rowsV2: true,
       valueAreaPercent: 70,
       histogramMaxWidth: 25,
       useGradient: true,
@@ -1068,7 +1107,8 @@ class IndicatorManager {
           isTrendProfile: true, // 🎯 Marcador especial
 
           // Configuración visual diferenciada (azul/verde para tendencias)
-          rows: 50,
+          rows: VP_FIXED_ROWS,
+          rowsV2: true,
           valueAreaPercent: 70,
           histogramMaxWidth: 25,
           useGradient: true,

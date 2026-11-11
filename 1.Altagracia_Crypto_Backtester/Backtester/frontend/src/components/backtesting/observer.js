@@ -64,6 +64,7 @@ export function recordOrder(order, context) {
   return send('orders', {
     id: order.observerId,
     order_number: order.id,
+    trade_number: order.tradeNumber ?? null, // Solo las órdenes ejecutadas tienen número de trade
     symbol: context.symbol,
     timeframe: context.timeframe,
     session: context.session,
@@ -95,7 +96,7 @@ export function recordMarks(id, marks) {
 
 export function recordFill(order) {
   if (!order.observerId) return queue;
-  return send(`orders/${order.observerId}/events`, { event: 'fill', time: order.executedAt, price: order.executedPrice });
+  return send(`orders/${order.observerId}/events`, { event: 'fill', time: order.executedAt, price: order.executedPrice, trade_number: order.tradeNumber ?? null });
 }
 
 export function recordClose(order) {

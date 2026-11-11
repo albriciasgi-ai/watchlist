@@ -17,6 +17,7 @@ const PATHS = {
   vline: <><path d="M12 6v12" /><circle cx="12" cy="4" r="1.5" /><circle cx="12" cy="20" r="1.5" /></>,
   rect: <rect x="4" y="6" width="16" height="12" rx="1" />,
   fib: <><path d="M3 5h18M3 9.5h18M3 14.5h18M3 19h18" /><path d="M5 19 19 5" opacity="0.55" /></>,
+  text: <><path d="M5 6V4h14v2" /><path d="M12 4v16" /><path d="M9 20h6" /></>,
   long: <><rect x="4" y="4" width="16" height="16" rx="1" /><path d="M4 12h16" /><path d="M12 9V6M10 8l2-2 2 2" /></>,
   short: <><rect x="4" y="4" width="16" height="16" rx="1" /><path d="M4 12h16" /><path d="M12 15v3M10 16l2 2 2-2" /></>,
   undo: <><path d="M9 14 4 9l5-5" /><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" /></>,

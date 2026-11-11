@@ -3,6 +3,7 @@
 
 import IndicatorBase from "./IndicatorBase.js";
 import { API_BASE_URL } from "../../config.js";
+import { candleItemId } from "./analysisLevels.js";
 
 const HOUR_MS = 60 * 60 * 1000;
 const MIN_SESSION_MS = 23 * HOUR_MS;
@@ -975,8 +976,44 @@ class VWAPIndicator extends IndicatorBase {
     // Restore canvas state
     ctx.restore();
 
+    // Lo que se puede elegir para el análisis: la línea y las bandas en cada vela a la vista
+    this._offer = { visibleCandles, x, width, viewport };
+
     // NOTE: Volatility indicators are now drawn separately from MiniChart
     // after the volume panel to avoid confusion
+  }
+
+  /**
+   * VWAP y bandas en cada vela a la vista, para "Incluir en el análisis". Cada uno es el precio en esa
+   * vela: entra como nivel que nace en ella. Con velas de menos de 3 px serían demasiados para elegir uno
+   */
+  selectableLevels() {
+    const offer = this._offer;
+    if (!offer?.viewport?.priceToY || !offer.visibleCandles?.length) return [];
+    const { visibleCandles, x, width, viewport } = offer;
+    const candleWidth = width / visibleCandles.length;
+    if (candleWidth < 3) return [];
+    const targets = [];
+    const add = (kind, price, candle, center) => {
+      if (!Number.isFinite(price)) return;
+      targets.push({
+        id: candleItemId('VWAP', kind, candle.timestamp, null, this.interval),
+        source: 'VWAP', kind, price, time: candle.timestamp,
+        left: center - candleWidth / 2, right: center + candleWidth / 2, y: viewport.priceToY(price)
+      });
+    };
+    visibleCandles.forEach((candle, i) => {
+      const point = this._pointFor(candle);
+      if (!point) return;
+      const center = x + i * candleWidth + candleWidth / 2;
+      add('VWAP', point.vwap, candle, center);
+      if (!this.showBands || !point.bands) return;
+      for (const band of [1, 2, 3]) {
+        add(`Banda superior ${band}`, point.bands[`upper_${band}`], candle, center);
+        add(`Banda inferior ${band}`, point.bands[`lower_${band}`], candle, center);
+      }
+    });
+    return targets;
   }
 
   _drawVWAPLine(ctx, visibleCandles, viewport, x, y, width, height) {

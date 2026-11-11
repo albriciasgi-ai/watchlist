@@ -768,6 +768,55 @@ La prueba del backend arma un almacén sintético de 34 días: reglas por vela, 
 
 ---
 
+## SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11 (Noviembre 2026)
+
+Pedidos del usuario el 11/11, después de la fase 4 de Elementos OF.
+
+### Segundo gráfico en otra pestaña
+
+- Botón "2.º gráfico" en el encabezado (con la simulación iniciada): abre `?grafico=2` en otra pestaña, que se puede llevar a otra pantalla. `main.jsx` monta `SecondaryChartApp` en vez de `BacktestingApp`
+- Sigue la reproducción de la principal: `replayChannel.js` (BroadcastChannel `app1-replay`). La principal publica en cada cambio de hora, símbolo, marco o fecha oculta `{ symbol, currentTime, simulationStartTime, blindAnchor, blindScale, trades }`, y responde al `hello` que manda el segundo al abrirse
+- Tiene su propio marco (1m a 4h) y su propia lista de indicadores, guardados en `app1_grafico2`. Los ajustes de cada indicador son los de la principal (las mismas claves de `localStorage`)
+- No tiene reloj ni órdenes. Las velas salen de la IndexedDB que guardó la principal (`backtestingCache`), o del backend si no están: carga en segundos, pero ocupa otra vez la memoria de las velas
+- Lo que se elige ahí para el análisis llega a la orden de la principal: `analysisLevels.js` escucha el evento `storage` de las otras pestañas
+- No muestra los dibujos de la principal: en backtesting viven en la sesión, no en el backend. Con fecha oculta usa el mismo índice de precios
+
+### Observador en ventana aparte
+
+- "Ventana aparte" en el encabezado del Observador. `PopupWindow.jsx`: la ventana se abre en el clic (`openPopup`) y el panel se dibuja en ella con un portal, así comparte estado y datos con la principal sin cargarlos otra vez
+- Copia los estilos de la página (y los que Vite agrega después) y la clase y las variables del estilo, que viven en el body. Los modales del Observador (informe, visor de imágenes) se abren en esa ventana con `usePortalTarget()`, y el visor escucha el teclado en ella (`useHostDocument()`)
+- La pestaña del Observador dice que está aparte y ofrece "Ir a la ventana" y "Traerlo aquí". Cerrarla a mano lo devuelve. "Ir al gráfico" trae al frente la principal
+- El navegador puede bloquearla: hay que permitir las ventanas emergentes para la página
+
+### Más cosas para "Incluir en el análisis"
+
+- **VWAP:** la línea y las bandas en cada vela a la vista (`VWAPIndicator.selectableLevels()`), como nivel que nace en esa vela. Con velas de menos de 3 px no se ofrecen
+- **Paneles:** la columna de cada vela cerrada en Delta de volumen, CVD, Interés abierto, Confluencia OI y volumen y Volumen de Respuesta, con lo que el panel dice de ella (`panelReadings()` de cada indicador, `IndicatorManager.panelTargets()`). Llegan con `panel: true` y entran como marca en la vela, a su cierre: el aro se dibuja en el precio (`itemPositions`)
+- **Volumen:** cada barra bajo el precio, con su volumen contra la media a la vista y si está en un cluster (`MiniChart`, `volumeBar: true`)
+- `MiniChart` deja pasar los `panel` aunque estén fuera del área de las velas. Los paneles se ofrecen con lo dibujado en el cuadro anterior
+
+### Caja de texto
+
+- Botón "Texto" en la barra de dibujo. Al hacer clic en el gráfico la caja se crea, se abre para escribir y la herramienta vuelve al cursor. Doble clic sobre una caja la edita. Ctrl+Enter o salir del campo guarda; Esc cancela; vacío deja el texto anterior
+- `TextBox.hitTest()` pedía `scaleConverter.canvas`, que no existe: daba error y la caja no se podía seleccionar ni arrastrar. Ahora mide con su propio lienzo
+
+### Número de los trades
+
+- `order.tradeNumber` se asigna al ejecutarse la orden (`nextTradeNumber`): una orden cancelada sin ejecutarse no gasta número. `order.id` sigue igual, porque une la orden con el registro, las imágenes y la caja TP/SL
+- `tradeLabel()` lo muestra en historial, rendimiento, dashboard, Excel, visor de imágenes, líneas verticales y aviso del Observador. El registro lo guarda como `trade_number` (en la orden si es de mercado, o en el evento `fill`)
+- Una sesión guardada antes se numera al cargarla (`numberTrades()`), por hora de ejecución
+
+### VP de rango fijo con 400 niveles
+
+- `VP_FIXED_ROWS` = 400 (antes 50) y el modal va de 50 a 1000, de a 10. Lo guardado antes con la escala vieja (sin `rowsV2`) pasa a 400; lo elegido después se respeta (`fixedRows()`)
+- El reparto por velas recorre solo las franjas que toca cada vela: con 400 niveles recorrerlas todas costaría 8 veces más. Da lo mismo que antes
+
+### Pruebas
+
+`journal.test.mjs` (numeración), `levels.test.mjs` (400 niveles y reparto) y `observer.test.mjs` (`trade_number`). Probado en la copia aislada (9300/9301): caja de texto creada, escrita y editada; menú de análisis en volumen, delta, OI, confluencia y bandas del VWAP; segundo gráfico en otra pestaña, que avanzó con la principal (las dos en 12:50 tras reproducir a 1000x) y mostró lo elegido allá. El panel del navegador bloquea las ventanas emergentes: la del Observador se probó con `window.open` devolviendo un marco de la página (estilos copiados, informe abierto dentro y clics funcionando).
+
+---
+
 ## INDICADORES SIN FUTURO (Noviembre 2026)
 
 En backtesting, el parámetro `allCandles` de `renderOverlay` trae todo el historial, incluidas las velas futuras. Para calcular se usa `priceContext.knownCandles`, que llega hasta la hora simulada con la vela en formación al final. `priceContext.knownUntil` es la hora conocida y llega en cada dibujo, en cualquier pestaña.
@@ -917,7 +966,7 @@ GET  /api/observer/export/{symbol}                      CSV de todo el registro
 - `shape.createdAt` es la hora simulada del trazo. Un dibujo posterior a la orden, o anclado solo en su futuro, no cuenta. Los dibujos viejos sin esa hora se juzgan por sus anclas
 - `selectableLevels()` de cada indicador dice qué se puede elegir: solo lo que está dibujado. VP Fixed y VP Periodic se alcanzan dentro de sus horas. S&R respeta sus casillas de resistencias y soportes. El Volume Profile oculto por `hideWhenFixedRanges` no ofrece nada
 - FVG ofrece borde alto, 50% y borde bajo de cada gap a la vista, desde su vela. Order Flow, solo con footprints a la vista, ofrece el POC de cada vela, sus stacked y, con cifras, sus imbalances sueltos; con velas angostas, la línea de stacked y el rombo de delta contrario. No dibuja nada para eso: el gráfico no se satura
-- Marcas: rombos y flechas de Volumen de Respuesta, señales de Swing, entradas de Double Top/Bottom, rechazos y delta contrario. Llegan con `mark: true` y su lugar ya calculado en el dibujo (`x`, `y`, `r`). Una zona llega con `left`, `right`, `top` y `bottom`
+- Marcas: rombos y flechas de Volumen de Respuesta, señales de Swing, entradas de Double Top/Bottom, rechazos y delta contrario. Desde el 11/11 también la línea y las bandas del VWAP, las barras de volumen y la columna de cada vela en los paneles (ver "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11"). Llegan con `mark: true` y su lugar ya calculado en el dibujo (`x`, `y`, `r`). Una zona llega con `left`, `right`, `top` y `bottom`
 - `levelTargets()` da el lugar en pantalla y deja tal cual lo que el indicador ya ubicó. `levelsNear()` alcanza una línea a 6 px, una marca dentro de su círculo y una zona en su alto con 3 px de margen. Con varios cerca, el menú los lista todos
 - Al marcar la casilla aparece su papel: Soporte, Resistencia, Entrada u Objetivo. Un nivel entra como resistencia si está arriba del precio y como soporte si está abajo; una marca entra como "Solo marca". También lleva una nota: por qué es importante
 - Un elegido guarda precio, `selectedAt` con la hora simulada, papel (`role`), nota y, si nace en una vela, `time`, `low`, `high` y `mark`. Nunca su lugar en pantalla. Al retroceder no aparecen los elegidos después. La lista se guarda en `analysis_levels_v2_{symbol}` y la comparten los marcos. La de antes, `analysis_levels_{symbol}`, juntaba lo elegido para todos los trades y no se carga. Un nivel elegido antes de los papeles queda como "Nivel"

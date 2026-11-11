@@ -16,7 +16,7 @@ import TPSLBox from "./drawing/shapes/TPSLBox"; // 🎯 Para crear cajas TP/SL p
 import { TF_MS, countBefore, formingCandle, lastClosedIndex, syncKnownCandles, timestampIndex } from './backtesting/replayClock';
 import { DEFAULT_PRICE_RATIO, resizePanel } from './indicators/panelLayout.js';
 import {
-  ROLES, candleCenterX, chosenLevel, drawChosenLevels, drawChosenMarks, framedTimes, imageMarkers, itemPositions, knownLevels, levelTargets,
+  ROLES, candleCenterX, candleItemId, chosenLevel, drawChosenLevels, drawChosenMarks, framedTimes, imageMarkers, itemPositions, knownLevels, levelTargets,
   levelsNear, priceRangeWith, subscribeLevels, toggleLevel, updateLevel, withinArea
 } from './indicators/analysisLevels.js';
 import { subscribePins } from './indicators/liquidationPins.js';
@@ -845,6 +845,15 @@ const MiniChart = forwardRef(({
   const levelMenuRef = useRef(null);
   const focusMarkRef = useRef(null); // Punto al que se fue desde una imagen
   const [levelMenu, setLevelMenu] = useState(null);
+  const [textEditor, setTextEditor] = useState(null); // Caja de texto en edición: { id, x, y, width, height, value }
+  const textEditorRef = useRef(null);
+  const textAreaRef = useRef(null);
+  // Al abrir el editor, el cursor queda en él (con doble clic el foco puede quedar en el gráfico)
+  useEffect(() => {
+    if (!textEditor?.id) return undefined;
+    const timer = setTimeout(() => textAreaRef.current?.focus(), 0);
+    return () => clearTimeout(timer);
+  }, [textEditor?.id]);
   const [, setLevelVersion] = useState(0);
 
   // El menú crece al marcar: se acomoda para no salirse del gráfico, también al agrandar una nota
@@ -1316,7 +1325,8 @@ const MiniChart = forwardRef(({
       orderFlowIndicator?.renderOnChart(ctx, overlayBounds, visibleCandles, priceContext, orderFlowReplacesCandles);
 
       // Lo que se puede elegir con un clic, ya ubicado por los indicadores en este cuadro. No se dibuja nada más
-      const offered = indicatorManagerRef.current.getSelectableLevels().filter(target => withinArea(target, area));
+      // Lo de los paneles queda bajo el precio: se ofrece aunque esté fuera del área de las velas
+      const offered = indicatorManagerRef.current.getSelectableLevels().filter(target => target.panel || withinArea(target, area));
       const positions = itemPositions(chosen, offered, area);
       ctx.save();
       ctx.beginPath();
@@ -1489,6 +1499,23 @@ const MiniChart = forwardRef(({
     ctx.fillStyle = textColor;
     ctx.font = "9px Inter, sans-serif";
     ctx.fillText("Vol", marginLeft + 2, volumeStartY + 12);
+
+    // Cada barra de volumen se puede incluir en el análisis, como marca en su vela
+    if (barWidth >= 3 && avgVolume > 0 && levelTargetsRef.current) {
+      const volumeTargets = [];
+      visibleCandles.forEach((d, i) => {
+        if (d.in_progress) return;
+        const left = marginLeft + i * barWidth;
+        const cluster = clusterIndices.has(i) ? ` · cluster ${clusterDirections.get(i) === 'bullish' ? 'alcista' : 'bajista'}` : '';
+        volumeTargets.push({
+          id: candleItemId('Volumen', 'barra', d.timestamp, null, interval),
+          source: 'Volumen', kind: `Volumen ${(d.volume / avgVolume).toFixed(1)}x la media a la vista${cluster}`,
+          price: d.close, time: d.timestamp, mark: true, panel: true, volumeBar: true,
+          left, right: left + barWidth, top: volumeStartY + 14, bottom: volumeStartY + volumeHeightCalculated
+        });
+      });
+      levelTargetsRef.current = [...levelTargetsRef.current.filter(target => !target.volumeBar), ...volumeTargets];
+    }
 
     const timeStep = Math.max(Math.floor(visibleCandles.length / 5), 1);
     const timeY = volumeStartY + volumeHeightCalculated + 15;
@@ -2444,7 +2471,16 @@ const MiniChart = forwardRef(({
 
       if (handled) {
         // Un dibujo nuevo se avisa de una vez: la caja TP/SL alimenta el panel de órdenes
-        if (drawingManagerRef.current.shapes.length !== shapesBefore) saveDrawings();
+        if (drawingManagerRef.current.shapes.length !== shapesBefore) {
+          saveDrawings();
+          // Una caja de texto nueva se escribe enseguida, y la herramienta vuelve al cursor
+          const created = drawingManagerRef.current.shapes[drawingManagerRef.current.shapes.length - 1];
+          if (created?.type === 'textbox') {
+            drawingManagerRef.current.setTool('select');
+            onToolChange?.('select');
+            setTimeout(() => openTextEditor(created), 0);
+          }
+        }
 
         // El drawing manager consumió el evento
         drawChart(candlesRef.current, lastPriceRef.current, null, null);
@@ -2617,6 +2653,36 @@ const MiniChart = forwardRef(({
     console.log(`[${symbol}] Follow mode reactivated`);
   };
 
+  /** Abre el editor sobre una caja de texto del gráfico, en su lugar y con su tamaño */
+  const openTextEditor = (shape) => {
+    const scale = scaleConverterRef.current;
+    const canvas = canvasRef.current;
+    if (!shape || !scale || !canvas) return;
+    const x = scale.timeToX(shape.time);
+    const y = scale.priceToY(shape.price);
+    if (x == null || !Number.isFinite(y)) return;
+    const { width, height } = shape.calculateDimensions(canvas.getContext('2d'));
+    const placeholder = shape.text === 'Escribe aquí...' || shape.text === 'Texto...';
+    const editor = { id: shape.id, x, y, width: Math.max(160, width), height: Math.max(60, height), value: placeholder ? '' : shape.text };
+    textEditorRef.current = editor;
+    setTextEditor(editor);
+  };
+
+  /** Guarda el texto escrito en su caja. Vacío deja la caja con su texto de antes */
+  const closeTextEditor = (save) => {
+    const current = textEditorRef.current;
+    textEditorRef.current = null; // El blur llega después de Esc o Ctrl+Enter: no se guarda dos veces
+    if (!current) return;
+    const shape = drawingManagerRef.current?.shapes.find(item => item.id === current.id);
+    if (save && shape && current.value.trim()) {
+      shape.setText(current.value.replace(/\s+$/, ''));
+      drawingManagerRef.current.saveToHistory();
+      saveDrawings();
+    }
+    setTextEditor(null);
+    drawChart(candlesRef.current, lastPriceRef.current, null, null);
+  };
+
   const handleDoubleClick = (e) => {
     const canvas = canvasRef.current;
     if (!canvas || !candlesRef.current || candlesRef.current.length === 0) return;
@@ -2634,6 +2700,17 @@ const MiniChart = forwardRef(({
     const volumeHeight = 60;
 
     const priceChartHeight = height - marginTop - volumeHeight - timeAxisHeight - 20;
+
+    // Doble clic sobre una caja de texto: escribir en ella
+    const converter = scaleConverterRef.current;
+    const textShape = converter && drawingManagerRef.current?.shapes
+      .filter(shape => shape.type === 'textbox')
+      .reverse()
+      .find(shape => shape.hitTest(x, y, converter, 2));
+    if (textShape) {
+      openTextEditor(textShape);
+      return;
+    }
 
     // 🎯 Verificar si el doble click fue en el área del eje de precios (derecha)
     const isInPriceAxis = x >= (width - marginRight) && x <= width;
@@ -3615,6 +3692,33 @@ const MiniChart = forwardRef(({
             {isNewTheme() ? <Icon name="sliders" size={12} /> : '⚙️'}
           </button>
         </div>
+
+        {textEditor && (
+          <textarea
+            className="chart-text-editor"
+            ref={textAreaRef}
+            autoFocus
+            value={textEditor.value}
+            placeholder="Escribe aquí. Ctrl+Enter guarda, Esc cancela"
+            style={{
+              position: 'absolute', left: textEditor.x, top: textEditor.y, width: textEditor.width, height: textEditor.height,
+              zIndex: 1002, resize: 'both', font: '13px Arial', padding: 8, boxSizing: 'border-box',
+              background: '#FFF8DC', color: '#78350F', border: '2px solid #3B82F6', borderRadius: 2
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (textEditorRef.current) textEditorRef.current = { ...textEditorRef.current, value };
+              setTextEditor(current => current && { ...current, value });
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              if (e.key === 'Escape') closeTextEditor(false);
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) closeTextEditor(true);
+            }}
+            onBlur={() => closeTextEditor(true)}
+          />
+        )}
 
         {levelMenu && (
           <div ref={levelMenuRef} className="level-menu" style={{ left: levelMenu.x, top: levelMenu.y }} onMouseDown={(e) => e.stopPropagation()}>

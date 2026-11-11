@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Segundo Gráfico, Observador en Ventana Aparte y Mejoras
+
+Segundo gráfico en otra pestaña que sigue la reproducción, con su marco e indicadores. Observador en ventana aparte. VWAP, volumen y paneles elegibles para el análisis. Caja de texto en los dibujos. Los trades se numeran sin contar las órdenes canceladas. VP de rango fijo con 400 niveles. Detalle en `Backtester/CLAUDE.md`, "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11".
+
 ### Noviembre 2026: Prueba Manual de los Setups y Precio como Índice en Fecha Oculta
 
 Fase 4: fecha de corte que "Evaluar" nunca mira, "Comprobación final" registrada en lo reservado, versiones de cada receta, tus trades por setup en el informe del Observador y, con fecha oculta, precio como índice base 80-120 y volumen relativo. Corrige que "Evaluar" midiera solo 70 días. Detalle en `Backtester/CLAUDE.md`, "ELEMENTOS DE ORDER FLOW", "Prueba manual", y "OBSERVADOR", "Retrocesos y fecha oculta".

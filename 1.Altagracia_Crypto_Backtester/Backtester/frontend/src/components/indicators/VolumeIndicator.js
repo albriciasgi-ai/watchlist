@@ -7,6 +7,7 @@ import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 import { alignY, crispWidth } from '../chartPixels.js';
 
 import { maskVolume } from '../backtesting/blindClock.js';
+import { volumeText } from '../backtesting/blindClock.js';
 class VolumeIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 30) {
     super(symbol, interval);
@@ -36,6 +37,11 @@ class VolumeIndicator extends IndicatorBase {
 
   // ✅ NUEVO: Calcular Volume Delta directamente desde las velas
   // ✅ CORREGIDO: Ahora INCLUYE velas en progreso
+  /** Lectura de cada vela del panel, para "Incluir en el análisis" */
+  panelReadings(candles) {
+    return new Map(this.calculateVolumeDelta(candles).map(item => [item.timestamp, `Delta de volumen ${volumeText(item.volumeDelta, true)}`]));
+  }
+
   calculateVolumeDelta(candles) {
     if (!candles || candles.length === 0) return [];
     

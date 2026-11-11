@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { isBlind, maskDate, priceLabel, quantityText } from '../blindClock.js';
 
+import { tradeLabel } from '../OrderManager.js';
 const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
   const [filterSide, setFilterSide] = useState('all'); // 'all', 'long', 'short'
   const [filterResult, setFilterResult] = useState('all'); // 'all', 'win', 'loss'
@@ -221,7 +222,7 @@ const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
                         onChange={() => handleToggle(trade.id)}
                       />
                     </td>
-                    <td className="td-id">#{trade.id}</td>
+                    <td className="td-id">#{tradeLabel(trade)}</td>
                     <td>
                       <span className={`badge-side ${trade.side}`}>
                         {trade.side === 'long' ? '📈' : '📉'} {trade.side.toUpperCase()}

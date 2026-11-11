@@ -3,6 +3,7 @@ import ExcelJS from 'exceljs';
 import html2canvas from 'html2canvas';
 import { isBlind, maskDate, maskPrice, maskVolume } from '../blindClock.js';
 
+import { tradeLabel } from '../OrderManager.js';
 const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
   const [isExporting, setIsExporting] = useState(false);
 
@@ -98,7 +99,7 @@ const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
       // Agregar datos
       trades.forEach(trade => {
         const row = tradesSheet.addRow({
-          id: trade.id,
+          id: tradeLabel(trade),
           side: trade.side.toUpperCase(),
           entryPrice: maskPrice(trade.entryPrice),
           exitPrice: maskPrice(trade.exitPrice),

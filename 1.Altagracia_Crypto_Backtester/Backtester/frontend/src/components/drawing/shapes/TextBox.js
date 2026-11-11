@@ -3,6 +3,15 @@
 
 import { pixelRatio } from '../../chartPixels.js';
 
+// Para medir el texto sin depender del lienzo del gráfico: el convertidor de escala no lo trae
+let measureContext = null;
+const measurer = (scaleConverter) => {
+  const own = scaleConverter?.canvas?.getContext?.('2d');
+  if (own) return own;
+  if (!measureContext && typeof document !== 'undefined') measureContext = document.createElement('canvas').getContext('2d');
+  return measureContext;
+};
+
 class TextBox {
   constructor(price, time, text = 'Texto...') {
     this.type = 'textbox';
@@ -36,7 +45,9 @@ class TextBox {
 
     if (!xPos) return false;
 
-    const { width, height } = this.calculateDimensions(scaleConverter.canvas.getContext('2d'));
+    const ctx = measurer(scaleConverter);
+    if (!ctx) return false;
+    const { width, height } = this.calculateDimensions(ctx);
 
     return x >= xPos - tolerance &&
            x <= xPos + width + tolerance &&

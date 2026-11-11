@@ -123,6 +123,16 @@ class ResponseVolumeIndicator extends IndicatorBase {
     ctx.fill();
   }
 
+  /** Lectura de cada vela del panel, para "Incluir en el análisis" */
+  panelReadings(candles) {
+    const readings = new Map();
+    for (const candle of candles) {
+      const index = this.series.indexOf(candle.timestamp);
+      if (index >= 0 && Number.isFinite(this.series.balance[index])) readings.set(candle.timestamp, `Volumen de Respuesta: ${this.reading(index)}`);
+    }
+    return readings;
+  }
+
   /** Texto de la última vela cerrada a la vista */
   reading(index) {
     const balance = this.series.balance[index];

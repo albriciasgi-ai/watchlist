@@ -3,6 +3,7 @@ import { roleLabel } from '../indicators/analysisLevels.js';
 import { screenshotUrl } from './observer.js';
 import { EXIT_CAPTURE_CANDLES } from './tradeJournal.js';
 
+import { useHostDocument } from './PopupWindow';
 /**
  * Imágenes de un trade. "captions" dice qué muestra cada una y "aside" es lo que se quiere leer
  * junto a la imagen, como las medidas de la orden. "markers" ubica en cada imagen los niveles y
@@ -12,6 +13,7 @@ const ScreenshotModal = ({
   screenshotPath, exitScreenshotPath, decisionScreenshotPath, orderId, side, pnl, onClose, initialView, captions = {}, aside,
   markers = {}, items = [], onGoTo = null
 }) => {
+  const hostDocument = useHostDocument();
   const views = [
     ...(decisionScreenshotPath ? [['decision', 'Decisión', decisionScreenshotPath]] : []),
     ['entry', 'Apertura', screenshotPath],
@@ -55,8 +57,10 @@ const ScreenshotModal = ({
     }
     const update = () => setBox({ left: image.offsetLeft, top: image.offsetTop, width: image.offsetWidth, height: image.offsetHeight });
     update();
-    if (typeof ResizeObserver === 'undefined') return undefined;
-    const observer = new ResizeObserver(update);
+    // El de la ventana de la imagen: en la ventana aparte, el de la principal no la mide
+    const Observer = image.ownerDocument?.defaultView?.ResizeObserver || window.ResizeObserver;
+    if (!Observer) return undefined;
+    const observer = new Observer(update);
     observer.observe(image);
     // Al cambiar la ventana el cuerpo puede recentrar la imagen sin cambiarle el tamaño
     if (image.parentElement) observer.observe(image.parentElement);
@@ -95,9 +99,10 @@ const ScreenshotModal = ({
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [onClose, available.join()]);
+    // En la ventana donde se abrió el visor: la principal o la aparte del Observador
+    hostDocument.addEventListener('keydown', handleEscape);
+    return () => hostDocument.removeEventListener('keydown', handleEscape);
+  }, [onClose, available.join(), hostDocument]);
 
   /**
    * Determina el color del badge según el PnL

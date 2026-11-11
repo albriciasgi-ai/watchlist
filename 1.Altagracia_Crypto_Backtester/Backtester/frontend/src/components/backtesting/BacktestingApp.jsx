@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import TimeController from './TimeController';
 import MiniChart from '../MiniChart';
-import OrderManager from './OrderManager';
+import OrderManager, { tradeLabel } from './OrderManager';
 import { TF_MS, candlesToSettle, lastClosedIndex, priceAt, tickAlreadySettled } from './replayClock';
 import { withoutSubdivisions } from './marketData';
 import TradingControls from './TradingControls';
@@ -37,6 +37,8 @@ import FootprintSidebar from './FootprintSidebar'; // 🎯 Order Flow Footprints
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
 import ObserverPanel from './ObserverPanel';
+import PopupWindow, { openPopup } from './PopupWindow';
+import { openReplayChannel, secondaryChartUrl } from './replayChannel.js';
 import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordImage, recordOrder } from './observer.js';
 import { blindAnchor, blindScale, isBlind, maskDate, priceText, pricesHidden, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
@@ -241,6 +243,7 @@ const BacktestingApp = () => {
   const [observerRevision, setObserverRevision] = useState(0);
   const [observerNotice, setObserverNotice] = useState(null);
   const [observerUnread, setObserverUnread] = useState(0);
+  const [observerPopup, setObserverPopup] = useState(null); // Ventana aparte del Observador, abierta desde su pestaña
   const maxSimTimeRef = useRef(0); // Hasta dónde llegó la simulación: una orden anterior ya conoce el futuro
   const rejectionConfigRef = useRef(null); // Último ajuste aplicado: el modal avisa en cada dibujo
 
@@ -1482,8 +1485,50 @@ const BacktestingApp = () => {
   }, [currentTime]);
 
   useEffect(() => {
-    if (activePanel === 'observer') setObserverUnread(0);
-  }, [activePanel, observerUnread]);
+    if (activePanel === 'observer' || observerPopup) setObserverUnread(0);
+  }, [activePanel, observerUnread, observerPopup]);
+
+  // Segundo gráfico en otra pestaña: sigue la hora simulada de esta
+  const replayStateRef = useRef(null);
+  const replayChannelRef = useRef(null);
+  useEffect(() => {
+    const channel = openReplayChannel();
+    replayChannelRef.current = channel;
+    if (channel) {
+      channel.onmessage = (event) => {
+        if (event.data?.type === 'hello' && replayStateRef.current) channel.postMessage(replayStateRef.current);
+      };
+    }
+    return () => channel?.close();
+  }, []);
+
+  useEffect(() => {
+    if (!initialized || !symbol) return;
+    const state = {
+      type: 'state', symbol, currentTime, simulationStartTime, activeTimeframe,
+      blindAnchor: blindAnchor(), blindScale: blindScale(),
+      trades: tradeBoundaries(orderManagerRef.current?.orders)
+    };
+    replayStateRef.current = state;
+    replayChannelRef.current?.postMessage(state);
+  }, [initialized, symbol, currentTime, simulationStartTime, blindActive, activeTimeframe]);
+
+  const openSecondaryChart = useCallback(() => {
+    const tab = window.open(secondaryChartUrl(), 'app1-grafico2');
+    if (!tab) window.alert('El navegador bloqueó la pestaña. Permite las ventanas emergentes para esta página y vuelve a intentarlo.');
+  }, []);
+
+  const popOutObserver = useCallback(() => {
+    const popup = openPopup('app1-observador', { width: 1000, height: 920 });
+    if (popup) setObserverPopup(popup);
+  }, []);
+
+  const bringObserverBack = useCallback(() => {
+    setObserverPopup(current => {
+      if (current && !current.closed) current.close();
+      return null;
+    });
+  }, []);
 
   useEffect(() => {
     if (!observerNotice) return undefined;
@@ -2373,6 +2418,17 @@ const BacktestingApp = () => {
             </button>
           )}
 
+          {/* Segundo gráfico en otra pestaña, con la misma reproducción */}
+          {initialized && (
+            <button
+              className="btn-action-compact theme-settings-btn"
+              onClick={openSecondaryChart}
+              title="Abrir un segundo gráfico en otra pestaña: sigue esta reproducción, con su propio marco e indicadores"
+            >
+              {isNewTheme() ? <><Icon name="layers" size={15} /><span>2.º gráfico</span></> : '🗗'}
+            </button>
+          )}
+
           {/* Estilo y colores */}
           <button
             className="btn-action-compact theme-settings-btn"
@@ -2874,7 +2930,7 @@ const BacktestingApp = () => {
               />
             )}
 
-            {activePanel === 'observer' && (
+            {activePanel === 'observer' && !observerPopup && (
               <ObserverPanel
                 revision={observerRevision}
                 symbol={symbol}
@@ -2883,7 +2939,18 @@ const BacktestingApp = () => {
                 blindActive={blindActive}
                 onRevealDate={revealDate}
                 onGoToItem={goToItem}
+                onPopOut={popOutObserver}
               />
+            )}
+
+            {activePanel === 'observer' && observerPopup && (
+              <div className="observer-panel">
+                <div className="observer-note">El Observador está abierto en una ventana aparte.</div>
+                <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                  <button type="button" className="btn-quick" onClick={() => observerPopup.focus()}>Ir a la ventana</button>
+                  <button type="button" className="btn-quick" onClick={bringObserverBack}>Traerlo aquí</button>
+                </div>
+              </div>
             )}
 
           </div>
@@ -2901,17 +2968,36 @@ const BacktestingApp = () => {
         </button>
       )}
 
+      {observerPopup && (
+        <PopupWindow popup={observerPopup} title={`Observador · ${symbol}`} onClose={() => setObserverPopup(null)}>
+          <div style={{ padding: 12 }}>
+            <ObserverPanel
+              revision={observerRevision}
+              symbol={symbol}
+              sessionManager={sessionManager}
+              viewer={observerViewer}
+              blindActive={blindActive}
+              onRevealDate={revealDate}
+              onGoToItem={(item) => { window.focus(); goToItem(item); }}
+            />
+          </div>
+        </PopupWindow>
+      )}
+
       {observerNotice && (
         <button
           type="button"
           className="observer-toast"
           onClick={() => {
-            setShowTradingPanel(true);
-            setActivePanel('observer');
+            if (observerPopup && !observerPopup.closed) observerPopup.focus();
+            else {
+              setShowTradingPanel(true);
+              setActivePanel('observer');
+            }
             setObserverNotice(null);
           }}
         >
-          Orden #{observerNotice.id} cerrada ({observerNotice.pnl >= 0 ? '+' : ''}${observerNotice.pnl.toFixed(2)}). Ver qué leyó la regla
+          Trade #{tradeLabel(observerNotice)} cerrado ({observerNotice.pnl >= 0 ? '+' : ''}${observerNotice.pnl.toFixed(2)}). Ver qué leyó la regla
         </button>
       )}
 
