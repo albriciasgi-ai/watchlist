@@ -3,7 +3,11 @@ import { createPortal } from 'react-dom';
 import ScreenshotModal from './ScreenshotModal';
 import { isBlind, maskDate, priceLabel, quantityText } from './blindClock.js';
 
+import { tradeLabel } from './OrderManager.js';
+import { useHostDocument, usePortalTarget } from './PopupWindow';
 const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
+  const portalTarget = usePortalTarget(); // En la ventana aparte del panel, si está abierta
+  const hostDocument = useHostDocument();
   const [closedOrders, setClosedOrders] = useState([]);
   const [filterSide, setFilterSide] = useState('all'); // 'all', 'long', 'short'
   const [filterResult, setFilterResult] = useState('all'); // 'all', 'win', 'loss'
@@ -41,7 +45,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
       if (filteredOrders.length === 0) return;
 
       // Evitar conflicto con inputs enfocados
-      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(hostDocument.activeElement?.tagName)) {
         return;
       }
 
@@ -66,9 +70,11 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedTradeIndex, closedOrders, filterSide, filterResult, onNavigateToTrade, screenshotOrder]);
+    // En la ventana donde está el historial: la principal o la aparte del panel
+    const host = hostDocument.defaultView || window;
+    host.addEventListener('keydown', handleKeyDown);
+    return () => host.removeEventListener('keydown', handleKeyDown);
+  }, [selectedTradeIndex, closedOrders, filterSide, filterResult, onNavigateToTrade, screenshotOrder, hostDocument]);
 
   /**
    * 🎯 NUEVO: Resetear índice seleccionado cuando cambian los filtros
@@ -177,7 +183,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
 
     if (onNavigateToTrade) {
       // 🎯 OPTIMIZACIÓN: Pasar index + 1 para mostrar número de trade (1-based)
-      onNavigateToTrade(order, index + 1);
+      onNavigateToTrade(order, tradeLabel(order));
     }
   };
 
@@ -242,7 +248,7 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
                   onClick={() => handleNavigateToTrade(order, index)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <td>#{order.id}</td>
+                  <td>#{tradeLabel(order)}</td>
                   <td>
                     <span className={`badge-side ${order.side}`}>
                       {order.side === 'long' ? '📈' : '📉'} {order.side.toUpperCase()}
@@ -309,12 +315,12 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
           decisionScreenshotPath={screenshotOrder.decisionScreenshotPath}
           screenshotPath={screenshotOrder.screenshotPath}
           exitScreenshotPath={screenshotOrder.exitScreenshotPath}
-          orderId={screenshotOrder.id}
+          orderId={tradeLabel(screenshotOrder)}
           side={screenshotOrder.side}
           pnl={screenshotOrder.pnl}
           onClose={() => setScreenshotOrder(null)}
         />,
-        document.body
+        portalTarget
       )}
     </div>
   );

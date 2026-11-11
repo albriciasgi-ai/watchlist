@@ -238,12 +238,12 @@ test('llenado, cierre y cancelacion viajan con la hora simulada', async () => {
   sent = [];
   const target = order();
   await recordOrder(target, context);
-  await recordFill({ ...target, executedAt: START + 60000, executedPrice: 81800 });
+  await recordFill({ ...target, executedAt: START + 60000, executedPrice: 81800, tradeNumber: 3 });
   await recordClose({ ...target, exitTime: START + 120000, exitPrice: 83000, closeReason: 'take_profit', pnl: 11.9, pnlPercent: 1.4 });
   await recordCancel(target, START + 180000);
   const path = `/api/observer/orders/${target.observerId}/events`;
   assert.deepEqual(sent.slice(1).map(item => item.path), [path, path, path]);
-  assert.deepEqual(sent[1].body, { event: 'fill', time: START + 60000, price: 81800 });
+  assert.deepEqual(sent[1].body, { event: 'fill', time: START + 60000, price: 81800, trade_number: 3 });
   assert.deepEqual(sent[2].body, { event: 'close', time: START + 120000, price: 83000, reason: 'take_profit', pnl: 11.9, pnl_percent: 1.4 });
   assert.deepEqual(sent[3].body, { event: 'cancel', time: START + 180000 });
 });

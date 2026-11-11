@@ -105,3 +105,14 @@ export function quantityText(quantity) {
   if (!Number.isFinite(quantity)) return quantity ?? '–';
   return pricesHidden() ? maskVolume(quantity).toFixed(3) : quantity;
 }
+
+/** Volumen, delta u OI para leer, corto (12.3K, 1.2M) y en la escala oculta si corresponde */
+export function volumeText(value, signed = false) {
+  if (!Number.isFinite(value)) return '–';
+  const shown = maskVolume(value);
+  const abs = Math.abs(shown);
+  const body = abs >= 1e6 ? `${(abs / 1e6).toFixed(2)}M` : abs >= 1e3 ? `${(abs / 1e3).toFixed(1)}K` : abs.toFixed(abs >= 100 ? 0 : 1);
+  const sign = shown < 0 ? '-' : signed && shown > 0 ? '+' : '';
+  return sign + body;
+}
+

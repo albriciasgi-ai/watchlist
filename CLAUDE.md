@@ -91,6 +91,42 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### APP 1 (Backtester) - 11 Noviembre 2026: Panel de Trading Aparte, Cajas TP/SL y Velas que se Forman en el 2.º Gráfico
+
+**Pedido:** después de probar el segundo gráfico, que avance fluido y no por saltos, que dibuje las cajas TP/SL de los trades, que la caja de texto cuadre con el estilo y que el panel de trading se pueda abrir aparte.
+
+**Cambios:**
+1. **Velas que se forman:** el reloj avanzaba con el paso del marco con que se creó (con 1h, de a 15 minutos). Ahora el segundo gráfico avisa su marco y el reloj toma el paso del más fino a la vista (`TimeController.setStepTimeframes()`). La velocidad no cambia
+2. **Cajas TP/SL en el segundo gráfico:** con entrada, stop y objetivo de cada orden no cancelada, hasta su salida o la hora simulada
+3. **Caja de texto:** con los estilos nuevos, fondo del gráfico, borde gris oscuro y texto del estilo. El Clásico sigue amarillo
+4. **Panel de trading en ventana aparte:** botón ⧉ en su encabezado. La confirmación de orden y las imágenes del historial se abren en esa ventana; "Traerlo aquí" lo devuelve
+5. **Sin saltos a velocidad alta (12/11):** al mirar el 2.º gráfico, la principal queda en segundo plano y el navegador frenaba su reloj a un paso por segundo (a 10000x, casi 3 horas por paso). Ahora el tick lo marca un Worker, que el navegador no frena
+6. **Una sola principal:** con dos pestañas principales abiertas, el 2.º gráfico saltaba entre sus horas. Ahora sigue una, y pasa a otra solo si su hora avanza
+
+**IMPORTANTE:** basta recargar la página: no hay cambios en el backend. Probado en una copia aislada; las ventanas se simularon con un marco, porque el panel de pruebas no abre ventanas emergentes.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11"
+
+---
+
+### APP 1 (Backtester) - 11 Noviembre 2026: Segundo Gráfico, Observador en Ventana Aparte y Mejoras
+
+**Pedido:** seis mejoras después de probar la fase 4: más indicadores en el Observador, VP fijo de unos 400 niveles, el Observador en una ventana aparte, numeración de trades sin contar los cancelados, caja de texto en los dibujos y un segundo gráfico que siga la reproducción en otra pestaña.
+
+**Cambios:**
+1. **Segundo gráfico:** botón "2.º gráfico" en el encabezado. Abre otra pestaña que sigue la hora simulada de la principal (BroadcastChannel), con su propio marco e indicadores. Las velas salen del caché del navegador. Lo que se elige ahí para el análisis llega a la orden de la principal. No tiene reloj, órdenes ni los dibujos de la principal
+2. **Observador en ventana aparte:** botón "Ventana aparte". Comparte los datos con la principal; el informe y el visor de imágenes se abren en ella
+3. **Más para "Incluir en el análisis":** línea y bandas del VWAP, barras de volumen y la columna de cada vela en Delta de volumen, CVD, Interés abierto, Confluencia OI y volumen y Volumen de Respuesta
+4. **Caja de texto:** botón "Texto" en la barra de dibujo; se escribe al crearla, doble clic la edita. Antes la caja existía en el código pero no tenía botón ni forma de escribir, y seleccionarla daba error
+5. **Números de trade:** se asignan al ejecutarse la orden, así una cancelada no gasta número. Las sesiones viejas se numeran al cargarlas
+6. **VP de rango fijo:** 400 niveles (antes 50), con el modal de 50 a 1000
+
+**IMPORTANTE:** reiniciar el backend de App 1 (el registro guarda el número de trade) y recargar la página. El navegador debe permitir ventanas emergentes para la ventana del Observador. El segundo gráfico ocupa otra vez la memoria de las velas.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11"
+
+---
+
 ### APP 1 (Backtester) - 10 Noviembre 2026: Prueba Manual de los Setups y Precio como Índice (fase 4)
 
 **Pedido:** decidir a mano las reglas de cada setup sin gastar las fechas con que se comprueban. Además, con "Fecha al azar y oculta", que el precio tampoco delate la época: lo que importa son los porcentajes.

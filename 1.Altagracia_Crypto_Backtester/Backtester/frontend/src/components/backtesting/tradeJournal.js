@@ -113,7 +113,7 @@ export function tradeBoundaries(orders = []) {
     .map(order => ({
       entryTime: order.executedAt ?? order.entryTime,
       exitTime: order.exitTime ?? null,
-      tradeNumber: order.id
+      tradeNumber: order.tradeNumber ?? order.id // El número del trade; las órdenes canceladas no lo gastan
     }));
 }
 

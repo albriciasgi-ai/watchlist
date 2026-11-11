@@ -20,7 +20,7 @@ const { DRAWING_WINDOW_CANDLES, drawingsForOrder } = await import('../src/compon
 const { default: DrawingToolManager } = await import('../src/components/drawing/DrawingToolManager.js');
 const { default: IndicatorManager } = await import('../src/components/indicators/IndicatorManager.js');
 const { default: VolumeProfile } = await import('../src/components/indicators/VolumeProfileIndicator.js');
-const { default: FixedRange } = await import('../src/components/indicators/VolumeProfileFixedRangeIndicator.js');
+const { default: FixedRange, VP_FIXED_ROWS, fixedRows } = await import('../src/components/indicators/VolumeProfileFixedRangeIndicator.js');
 const { default: Periodic } = await import('../src/components/indicators/VolumeProfilePeriodicIndicator.js');
 const { default: SupportResistance } = await import('../src/components/indicators/SupportResistanceIndicator.js');
 const { default: SupportResistance2 } = await import('../src/components/indicators/SupportResistance2Indicator.js');
@@ -35,6 +35,32 @@ const test = (name, run) => tests.push([name, run]);
 let counter = 0;
 const symbol = () => `PRUEBA${++counter}`;
 const level = (price = 100, changes = {}) => ({ id: `Fuente|POC|${price}`, source: 'Fuente', kind: 'POC', price, ...changes });
+
+test('VP fijo: 400 niveles; lo guardado antes con la escala de 50 sube a 400', () => {
+  assert.equal(VP_FIXED_ROWS, 400);
+  assert.equal(new FixedRange('X', '15m').rows, 400);
+  assert.equal(fixedRows({ rows: 50 }), 400, 'el máximo del modal anterior');
+  assert.equal(fixedRows({ rows: 24 }), 400);
+  assert.equal(fixedRows({ rows: 250, rowsV2: true }), 250, 'lo elegido en el modal nuevo se respeta');
+  assert.equal(fixedRows({ rows: 99999, rowsV2: true }), 1000);
+  const profile = new FixedRange('X', '15m');
+  profile.fromJSON({ startTimestamp: 1, endTimestamp: 2, rows: 50 });
+  assert.equal(profile.rows, 400);
+  assert.equal(profile.toJSON().rowsV2, true);
+});
+
+test('VP fijo: repartir solo en las franjas que toca la vela da lo mismo que recorrerlas todas', () => {
+  const profile = new FixedRange('X', '15m');
+  const candles = [
+    { timestamp: 0, open: 100, high: 110, low: 100, close: 105, volume: 50 },
+    { timestamp: 1, open: 105, high: 120, low: 103, close: 118, volume: 80 },
+    { timestamp: 2, open: 118, high: 118, low: 118, close: 118, volume: 9 }
+  ];
+  const result = profile.calculateProfile(candles);
+  const levels = result.levels ?? result.profile ?? result;
+  const total = (Array.isArray(levels) ? levels : []).reduce((sum, item) => sum + item.volume, 0);
+  assert.ok(Math.abs(total - 130) < 1e-6, `volumen repartido ${total}: la vela sin rango no suma, como antes`);
+});
 
 test('elegir: se agrega con la hora simulada y el marco', () => {
   const name = symbol();

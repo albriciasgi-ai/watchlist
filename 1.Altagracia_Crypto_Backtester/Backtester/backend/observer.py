@@ -397,6 +397,8 @@ def trades():
             trade = result[order_id]
             if kind == "fill":
                 trade.update(status="open", fill_time=event.get("time"), fill_price=event.get("price"))
+                if event.get("trade_number") is not None:
+                    trade["trade_number"] = event["trade_number"]
             elif kind == "close":
                 trade.update(
                     status="closed", exit_time=event.get("time"), exit_price=event.get("price"),

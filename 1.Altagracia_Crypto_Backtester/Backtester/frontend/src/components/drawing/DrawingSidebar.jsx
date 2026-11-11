@@ -24,6 +24,7 @@ const DrawingSidebar = ({
     { id: 'vertical', label: 'Línea Vertical', icon: '|', svg: 'vline', shortcut: 'L' },
     { id: 'rectangle', label: 'Rectángulo', icon: '▭', svg: 'rect', shortcut: 'R' },
     { id: 'fibonacci', label: 'Fibonacci', icon: 'φ', svg: 'fib', shortcut: 'F' },
+    { id: 'textbox', label: 'Texto', icon: 'T', svg: 'text', shortcut: 'X' },
     { id: 'tpsl', label: 'TP/SL Long', icon: '🎯', svg: 'long', shortcut: 'P' },
     { id: 'tpsl-short', label: 'TP/SL Short', icon: '🔻', svg: 'short', shortcut: 'S' }
   ];

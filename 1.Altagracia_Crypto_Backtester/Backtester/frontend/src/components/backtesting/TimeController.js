@@ -11,6 +11,40 @@
 const MIN_TICK_MS = 16;      // El navegador no da intervalos mucho menores
 const MAX_CATCH_UP_MS = 1000; // Tras un bloqueo largo no se salta más que esto de tiempo real
 
+/**
+ * Temporizador del reloj. Con la pestaña en segundo plano (por ejemplo, mientras se mira el 2.º gráfico)
+ * el navegador deja los setInterval de la página en uno por segundo, o uno por minuto pasados 5 minutos,
+ * y la reproducción avanzaba a saltos. Los temporizadores de un Worker no se frenan así: el Worker solo
+ * avisa, y el tick corre en la página como antes. Sin Worker (pruebas, navegador viejo) usa setInterval.
+ */
+const TICKER_SOURCE = 'let id=null;onmessage=e=>{clearInterval(id);id=e.data>0?setInterval(()=>postMessage(0),e.data):null;};';
+let tickerUrl = null;
+
+function startTicker(run, ms) {
+  if (typeof Worker !== 'undefined' && typeof Blob !== 'undefined' && typeof URL?.createObjectURL === 'function') {
+    try {
+      tickerUrl = tickerUrl || URL.createObjectURL(new Blob([TICKER_SOURCE], { type: 'text/javascript' }));
+      const worker = new Worker(tickerUrl); // Uno por reproducción: dos relojes no se pisan
+      worker.onmessage = run;
+      worker.postMessage(ms);
+      return { worker };
+    } catch {
+      // Sin permiso para Workers: queda el temporizador de la página
+    }
+  }
+  return { id: setInterval(run, ms) };
+}
+
+function stopTicker(ticker) {
+  if (!ticker) return;
+  if (ticker.worker) {
+    ticker.worker.onmessage = null;
+    ticker.worker.terminate();
+  } else {
+    clearInterval(ticker.id);
+  }
+}
+
 class TimeController {
   constructor(startTime, endTime, timeframe, onTimeUpdate, simulationStartTime = null) {
     this.startTime = startTime; // timestamp en ms - INICIO DEL HISTORIAL (para mostrar todo)
@@ -44,6 +78,10 @@ class TimeController {
 
     // Estado actual de la subdivisión
     this.currentSubdivision = 0; // 0, 1, 2, ... hasta count-1
+
+    // Paso más fino pedido por los gráficos a la vista (el marco activo y el del 2.º gráfico), en minutos.
+    // null usa el del marco con que se creó el reloj
+    this.stepMinutes = null;
 
     // BroadcastChannel para sincronización multi-pestaña
     this.syncChannel = null;
@@ -164,15 +202,15 @@ class TimeController {
 
     // En 1x cada subdivisión dura su tiempo real.
     // Ejemplo: 15min con 3 subdivisiones = 300,000ms por subdivisión; en 15x, 20 segundos
-    const subdivisions = this.subdivisionConfig[this.timeframe];
     const stepMs = this.getTimeIncrement();
+    const subdivisions = { count: Math.max(1, Math.round(this.timeframeMinutes[this.timeframe] * 60000 / stepMs)) };
     const updateIntervalMs = Math.max(MIN_TICK_MS, stepMs / this.playbackSpeed);
     const maxElapsedMs = updateIntervalMs + MAX_CATCH_UP_MS;
 
     let lastTick = performance.now();
     let owedMs = 0; // Tiempo simulado que ya debió pasar a esta velocidad
 
-    this.interval = setInterval(() => {
+    this.interval = startTicker(() => {
       const now = performance.now();
       owedMs += Math.min(now - lastTick, maxElapsedMs) * this.playbackSpeed;
       lastTick = now;
@@ -209,7 +247,7 @@ class TimeController {
     this.isPlaying = false;
 
     if (this.interval) {
-      clearInterval(this.interval);
+      stopTicker(this.interval);
       this.interval = null;
     }
 
@@ -289,10 +327,27 @@ class TimeController {
    * Ejemplo: 15m con 3 subdivisiones → avanza 5 min por tick
    */
   getTimeIncrement() {
-    // Avanzar por subdivisión (estado intravela)
-    const subdivisions = this.subdivisionConfig[this.timeframe];
-    const subdivisionIncrement = subdivisions.interval * 60 * 1000; // ms
-    return subdivisionIncrement;
+    // Avanzar por subdivisión (estado intravela). Con un gráfico de marco menor a la vista, el paso de ese
+    // marco: así su vela se va formando en vez de aparecer de golpe
+    const base = this.subdivisionConfig[this.timeframe].interval;
+    const minutes = this.stepMinutes ? Math.min(base, this.stepMinutes) : base;
+    return minutes * 60 * 1000; // ms
+  }
+
+  /**
+   * Marcos que están a la vista (el activo y el del segundo gráfico). El reloj avanza con el paso del
+   * más fino. La velocidad no cambia: solo cuántos estados intermedios se ven. Si está reproduciendo,
+   * sigue con el paso nuevo
+   */
+  setStepTimeframes(timeframes) {
+    const minutes = timeframes.map(tf => this.subdivisionConfig[tf]?.interval).filter(Boolean);
+    const next = minutes.length ? Math.min(...minutes) : null;
+    if (next === this.stepMinutes) return;
+    this.stepMinutes = next;
+    if (this.isPlaying) {
+      this.pause();
+      this.play();
+    }
   }
 
   /**

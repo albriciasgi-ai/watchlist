@@ -5,6 +5,7 @@
 import IndicatorBase from "./IndicatorBase";
 import { alignX, alignY, crispWidth } from '../chartPixels.js';
 import { maskVolume } from '../backtesting/blindClock.js';
+import { volumeText } from '../backtesting/blindClock.js';
 import { THEME, isNewTheme } from '../uiTheme.js'; // Estilos nuevos: fondo del gráfico; con Oscuro, líneas y títulos
 
 class CVDIndicator extends IndicatorBase {
@@ -29,6 +30,11 @@ class CVDIndicator extends IndicatorBase {
 
   // ✅ NUEVO: Calcular CVD directamente desde las velas
   // ✅ CORREGIDO: Ahora INCLUYE velas en progreso
+  /** Lectura de cada vela del panel, para "Incluir en el análisis" */
+  panelReadings(candles) {
+    return new Map(this.calculateCVD(candles).map(item => [item.timestamp, `CVD ${volumeText(item.closeCVD, true)}`]));
+  }
+
   calculateCVD(candles) {
     if (!candles || candles.length === 0) return [];
     

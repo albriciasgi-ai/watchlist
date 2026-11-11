@@ -23,6 +23,7 @@ class OrderManager {
     this.unrealizedPnL = 0;
     this.realizedPnL = 0;
     this.nextOrderId = 1;
+    this.nextTradeNumber = 1; // Número del trade: solo lo reciben las órdenes que se ejecutan
 
     // Callbacks (legacy support)
     this.onOrderCreated = null;
@@ -136,6 +137,7 @@ class OrderManager {
     // 🎯 NUEVO: Para market orders, ejecutar inmediatamente
     if (type === 'market') {
       order.status = 'open';
+      order.tradeNumber = this.nextTradeNumber++;
       order.executedAt = currentTime;
       order.executedPrice = currentPrice || entryPrice;
       order.commission = order.executedPrice * quantity * FEE_TAKER;
@@ -390,6 +392,7 @@ class OrderManager {
 
     // Actualizar orden
     order.status = 'open';
+    order.tradeNumber = this.nextTradeNumber++;
     order.executedAt = currentTime;
     order.executedPrice = executionPrice;
     order.commission = executionPrice * order.quantity * (order.type === 'limit' ? FEE_MAKER : FEE_TAKER);
@@ -618,6 +621,7 @@ class OrderManager {
     this.unrealizedPnL = 0;
     this.realizedPnL = 0;
     this.nextOrderId = 1;
+    this.nextTradeNumber = 1; // Número del trade: solo lo reciben las órdenes que se ejecutan
 
     console.log('[OrderManager] Reset completo');
 
@@ -650,6 +654,7 @@ class OrderManager {
     this.closedOrders = data.orders.filter(o => o.status === 'closed');
     this.pendingOrders = data.orders.filter(o => o.status === 'pending'); // 🎯 NUEVO
     this.nextOrderId = Math.max(...this.orders.map(o => o.id), 0) + 1;
+    this.nextTradeNumber = numberTrades(this.orders);
 
     // Recalcular PnL
     this.realizedPnL = this.closedOrders.reduce((sum, o) => sum + o.pnl, 0);
@@ -664,3 +669,28 @@ class OrderManager {
 }
 
 export default OrderManager;
+
+/**
+ * Número de los trades de una sesión: los que se ejecutaron, en el orden en que se ejecutaron.
+ * Una sesión guardada antes del 11/11/2026 no lo trae y se numera aquí. Devuelve el siguiente número.
+ */
+export function numberTrades(orders = []) {
+  const filled = orders.filter(order => order.executedAt != null && order.status !== 'pending' && order.status !== 'cancelled');
+  if (filled.some(order => order.tradeNumber == null)) {
+    const taken = new Set(filled.map(order => order.tradeNumber).filter(number => number != null));
+    let next = 1;
+    [...filled]
+      .filter(order => order.tradeNumber == null)
+      .sort((a, b) => a.executedAt - b.executedAt || a.id - b.id)
+      .forEach(order => {
+        while (taken.has(next)) next += 1;
+        order.tradeNumber = next;
+        taken.add(next);
+      });
+  }
+  return Math.max(0, ...filled.map(order => order.tradeNumber)) + 1;
+}
+
+/** Lo que se muestra como número de una orden: su número de trade, o el de la orden si nunca se ejecutó */
+export const tradeLabel = (order) => order?.tradeNumber ?? order?.trade_number ?? order?.id ?? order?.order_number;
+

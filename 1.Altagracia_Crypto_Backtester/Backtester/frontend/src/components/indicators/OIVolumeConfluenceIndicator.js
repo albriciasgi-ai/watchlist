@@ -129,6 +129,14 @@ class OIVolumeConfluenceIndicator extends IndicatorBase {
   /**
    * Calcular confluencia entre OI y Volumen
    */
+  /** Lectura de cada vela del panel, para "Incluir en el análisis". Sin confluencia no se ofrece */
+  panelReadings(candles) {
+    const names = { bullish_strong: 'alcista con respaldo', bearish_strong: 'bajista con respaldo' };
+    return new Map(this.calculateConfluence(candles)
+      .filter(item => item.confluenceType)
+      .map(item => [item.timestamp, `Confluencia OI y volumen: ${names[item.confluenceType] || item.confluenceType} (z vol ${item.volumeZScore.toFixed(1)}, z OI ${item.oiZScore.toFixed(1)})`]));
+  }
+
   calculateConfluence(candles) {
     if (!candles || candles.length === 0) return [];
     if (!this.volumeIndicator || !this.oiIndicator) {

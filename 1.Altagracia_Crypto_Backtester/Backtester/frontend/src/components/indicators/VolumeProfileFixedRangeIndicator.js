@@ -30,6 +30,17 @@ const MIN_REAL_COVERAGE = 0.99; // Con menos minutos en el almacén se usa el pe
 // Los perfiles guardan porcentajes (70, 25); el modal anterior a veces guardaba fracciones (0.70, 0.25)
 const asFraction = value => (value > 1 ? value / 100 : value);
 
+/** Niveles de precio de un perfil fijo. Hasta el 11/11/2026 eran 50 como mucho (modal de 12 a 50) */
+export const VP_FIXED_ROWS = 400;
+export const VP_FIXED_ROWS_MAX = 1000;
+
+/** Niveles de una configuración guardada: las de antes de rowsV2 pasan a 400, lo elegido después se respeta */
+export function fixedRows(data, fallback = VP_FIXED_ROWS) {
+  if (!data || !Number.isFinite(data.rows)) return fallback;
+  if (!data.rowsV2) return VP_FIXED_ROWS;
+  return Math.max(12, Math.min(VP_FIXED_ROWS_MAX, Math.round(data.rows)));
+}
+
 class VolumeProfileFixedRangeIndicator extends IndicatorBase {
   constructor(symbol, interval, rangeId = null) {
     super(symbol, interval);
@@ -37,8 +48,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     this.rangeId = rangeId;
     this.height = 0;
     
-    // ✅ CORREGIDO: rows por defecto 50 (antes 24)
-    this.rows = 50;
+    this.rows = VP_FIXED_ROWS;
     this.valueAreaPercent = 0.70;
     this.histogramMaxWidth = 0.25;
     
@@ -84,7 +94,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
 
   updateConfig(config) {
     if (config.customVisual !== undefined) this.customVisual = config.customVisual; // Lo elegido en el modal
-    if (config.rows !== undefined) this.rows = config.rows;
+    if (config.rows !== undefined) this.rows = fixedRows(config, this.rows);
     if (config.valueAreaPercent !== undefined) this.valueAreaPercent = asFraction(config.valueAreaPercent);
     if (config.histogramMaxWidth !== undefined) this.histogramMaxWidth = asFraction(config.histogramMaxWidth);
     if (config.useGradient !== undefined) this.useGradient = config.useGradient;
@@ -169,7 +179,10 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       const candleHigh = candle.high;
       const candleVolume = candle.volume;
 
-      for (let i = 0; i < this.rows; i++) {
+      // Solo las franjas que toca la vela: con 400 niveles recorrerlas todas costaría 8 veces más
+      const first = Math.max(0, Math.floor((candleLow - minPrice) / step));
+      const last = Math.min(this.rows - 1, Math.floor((candleHigh - minPrice) / step));
+      for (let i = first; i <= last; i++) {
         const level = levels[i];
         const overlapFraction = this.calculateOverlap(
           candleLow, 
@@ -583,6 +596,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
       startTimestamp: this.startTimestamp,
       endTimestamp: this.endTimestamp,
       rows: this.rows,
+      rowsV2: true, // Desde el 11/11: rows ya está en la escala de 400 niveles
       valueAreaPercent: this.valueAreaPercent * 100,
       histogramMaxWidth: this.histogramMaxWidth * 100,
       useGradient: this.useGradient,
@@ -606,7 +620,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     }
     
     if (data.customVisual !== undefined) this.customVisual = data.customVisual; // Lo elegido en el modal
-    this.rows = data.rows || this.rows;
+    this.rows = fixedRows(data, this.rows);
     this.valueAreaPercent = (data.valueAreaPercent !== undefined ? asFraction(data.valueAreaPercent) : this.valueAreaPercent);
     this.histogramMaxWidth = (data.histogramMaxWidth !== undefined ? asFraction(data.histogramMaxWidth) : this.histogramMaxWidth);
     this.useGradient = data.useGradient !== undefined ? data.useGradient : this.useGradient;

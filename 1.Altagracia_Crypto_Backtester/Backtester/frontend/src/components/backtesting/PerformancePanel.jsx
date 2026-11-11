@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { isBlind, maskDate, priceLabel, quantityText } from './blindClock.js';
 
+import { tradeLabel } from './OrderManager.js';
 const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
   const [balance, setBalance] = useState({});
   const [metrics, setMetrics] = useState({});
@@ -232,7 +233,7 @@ const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
               {openOrders.map(order => (
                 <div key={order.id} className={`order-item ${order.side}`}>
                   <div className="order-header">
-                    <span className="order-id">#{order.id}</span>
+                    <span className="order-id">#{tradeLabel(order)}</span>
                     <span className={`order-side-badge ${order.side}`}>
                       {order.side === 'long' ? '📈 LONG' : '📉 SHORT'}
                     </span>

@@ -54,6 +54,21 @@ function store(symbol) {
   return stores.get(symbol);
 }
 
+// Lo elegido en otra pestaña (el segundo gráfico) llega aquí: localStorage avisa a las demás pestañas
+if (typeof window !== 'undefined' && window.addEventListener) {
+  window.addEventListener('storage', (event) => {
+    if (!event.key?.startsWith(STORAGE_KEY)) return;
+    const current = stores.get(event.key.slice(STORAGE_KEY.length));
+    if (!current) return;
+    try {
+      current.items = JSON.parse(event.newValue) || [];
+    } catch {
+      current.items = [];
+    }
+    current.listeners.forEach(listener => listener());
+  });
+}
+
 function changed(symbol) {
   const current = store(symbol);
   try {
@@ -262,7 +277,7 @@ export function itemPositions(items, targets, { priceToY, timeToX, candleX, left
     let y;
     if (target?.x !== undefined) {
       ({ x, y } = target);
-    } else if (target?.top !== undefined) {
+    } else if (target?.top !== undefined && !target.panel) { // Una vela elegida en un panel lleva su aro en el precio
       x = (target.left + target.right) / 2;
       y = (target.top + target.bottom) / 2;
     } else if (item.time !== undefined && Number.isFinite(item.price)) {

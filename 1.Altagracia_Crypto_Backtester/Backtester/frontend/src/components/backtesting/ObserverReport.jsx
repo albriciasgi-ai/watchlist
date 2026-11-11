@@ -6,6 +6,7 @@ import ObserverRules from './ObserverRules';
 import '../RejectionPatternSettings.css';
 import './Observer.css';
 
+import { usePortalTarget } from './PopupWindow';
 const BLOCK_NAMES = {
   context_240: 'Contexto 4 horas',
   context_60: 'Contexto 1 hora',
@@ -80,6 +81,7 @@ const Summary = ({ data, includeRewound }) => {
 
 /** Informe de todo lo registrado: qué condiciones se repiten y cuáles acompañan los mejores resultados */
 const ObserverReport = ({ symbol, reached, onClose }) => {
+  const portalTarget = usePortalTarget(); // En la ventana aparte del Observador, si está abierta
   const [blind, setBlind] = useState('all');
   const [includeRewound, setIncludeRewound] = useState(false);
   const [data, setData] = useState(null);
@@ -232,7 +234,7 @@ const ObserverReport = ({ symbol, reached, onClose }) => {
         </div>
       </div>
     </div>,
-    document.body
+    portalTarget
   );
 };
 

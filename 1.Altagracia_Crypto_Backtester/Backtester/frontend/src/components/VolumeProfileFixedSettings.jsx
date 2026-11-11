@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { customList, isCustom, isNewTheme } from "./uiTheme.js";
-import { VP_FIXED_FACTORY, vpFixedThemeValue } from "./indicators/VolumeProfileFixedRangeIndicator.js";
+import { VP_FIXED_FACTORY, VP_FIXED_ROWS, VP_FIXED_ROWS_MAX, fixedRows, vpFixedThemeValue } from "./indicators/VolumeProfileFixedRangeIndicator.js";
 
 // Lo que deja "Restaurar Defecto", como antes
 const RESET_VALUES = { useGradient: true, baseColor: "#2196F3", valueAreaColor: "#FF9800", pocColor: "#F44336", vahValColor: "#2196F3", clusterColor: "#9C27B0" };
@@ -15,7 +15,7 @@ const VolumeProfileFixedSettings = ({
   onApply
 }) => {
   // Estados para la configuracion
-  const [rows, setRows] = useState(24);
+  const [rows, setRows] = useState(VP_FIXED_ROWS);
   const [valueAreaPercent, setValueAreaPercent] = useState(0.70);
   const [histogramMaxWidth, setHistogramMaxWidth] = useState(0.25);
   const [useGradient, setUseGradient] = useState(true);
@@ -47,7 +47,7 @@ const VolumeProfileFixedSettings = ({
     if (currentConfig) {
       setTouched(new Set());
       setResetVisual(false);
-      setRows(currentConfig.rows || 24);
+      setRows(fixedRows(currentConfig));
       // El perfil guarda porcentajes (70, 25) y el modal trabaja con fracciones (0.70, 0.25)
       const asFraction = (value, fallback) => (value > 1 ? value / 100 : (value || fallback));
       setValueAreaPercent(asFraction(currentConfig.valueAreaPercent, 0.70));
@@ -69,6 +69,7 @@ const VolumeProfileFixedSettings = ({
   const handleApply = () => {
     const config = {
       rows,
+      rowsV2: true,
       valueAreaPercent: Math.round(valueAreaPercent * 100),
       histogramMaxWidth: Math.round(histogramMaxWidth * 100),
       useGradient,
@@ -99,7 +100,7 @@ const VolumeProfileFixedSettings = ({
 
   const handleReset = () => {
     if (confirm("Restaurar configuracion por defecto?")) {
-      setRows(24);
+      setRows(VP_FIXED_ROWS);
       setValueAreaPercent(0.70);
       setHistogramMaxWidth(0.25);
       setUseGradient(true);
@@ -152,8 +153,9 @@ const VolumeProfileFixedSettings = ({
                 </label>
                 <input 
                   type="range" 
-                  min="12" 
-                  max="50" 
+                  min="50"
+                  max={VP_FIXED_ROWS_MAX}
+                  step="10"
                   value={rows}
                   onChange={(e) => setRows(parseInt(e.target.value))}
                 />

@@ -87,7 +87,7 @@ const OrderRow = ({ trade, catalog, viewer, expanded, onToggle, onGoTo }) => {
 };
 
 /** Órdenes registradas y, cuando terminan, en qué coincidieron con la regla */
-const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate, sessionManager, viewer, onGoToItem }) => {
+const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate, sessionManager, viewer, onGoToItem, onPopOut = null }) => {
   const [orders, setOrders] = useState(null);
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = useState(null);
@@ -127,7 +127,10 @@ const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate, sessionMan
     <div className="observer-panel">
       <div className="observer-header">
         <h3>Observador</h3>
-        <button type="button" className="btn-quick" onClick={() => setShowReport(true)}>Ver informe</button>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {onPopOut && <button type="button" className="btn-quick" onClick={onPopOut} title="Abrir el Observador en una ventana aparte, para leerlo con más espacio">Ventana aparte</button>}
+          <button type="button" className="btn-quick" onClick={() => setShowReport(true)}>Ver informe</button>
+        </div>
       </div>
 
       {blindActive && (

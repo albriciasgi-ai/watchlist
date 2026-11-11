@@ -1,6 +1,6 @@
 // Journal de trades: líneas, imágenes y sesión. Uso: node tests/journal.test.mjs
 import assert from 'node:assert/strict';
-import OrderManager from '../src/components/backtesting/OrderManager.js';
+import OrderManager, { numberTrades } from '../src/components/backtesting/OrderManager.js';
 import SessionManager from '../src/components/backtesting/SessionManager.js';
 import {
   CaptureHold, EXIT_CAPTURE_CANDLES, candlesToFrame, contextBarWidth, exitCaptureTime, exitCapturesDue, tradeBoundaries, tradeStats, viewIncluding
@@ -54,6 +54,43 @@ test('línea: una orden cancelada no deja línea', () => {
   const order = limit(manager);
   manager.cancelPendingOrder(order.id);
   assert.deepEqual(tradeBoundaries(manager.orders), []);
+});
+
+test('número: una orden cancelada no gasta número de trade', () => {
+  const manager = new OrderManager();
+  const first = market(manager);
+  const cancelled = limit(manager);
+  manager.cancelPendingOrder(cancelled.id);
+  const second = market(manager);
+  assert.equal(first.tradeNumber, 1);
+  assert.equal(cancelled.tradeNumber, undefined);
+  assert.equal(second.tradeNumber, 2, 'el siguiente sigue en 2 aunque su orden sea la 3');
+  assert.equal(second.id, 3);
+  assert.deepEqual(tradeBoundaries(manager.orders).map(line => line.tradeNumber), [1, 2]);
+});
+
+test('número: una limit recibe número al ejecutarse, no al crearse', () => {
+  const manager = new OrderManager();
+  const waiting = limit(manager);
+  const now = market(manager);
+  manager.executePendingOrder(waiting, 90, START + 45 * MINUTE);
+  assert.equal(now.tradeNumber, 1);
+  assert.equal(waiting.tradeNumber, 2);
+});
+
+test('número: una sesión vieja se numera por hora de ejecución, sin contar canceladas', () => {
+  const orders = [
+    { id: 1, status: 'closed', executedAt: START },
+    { id: 2, status: 'cancelled', executedAt: null },
+    { id: 3, status: 'closed', executedAt: START + 3 * MINUTE },
+    { id: 4, status: 'open', executedAt: START + 2 * MINUTE },
+    { id: 5, status: 'pending', executedAt: null }
+  ];
+  assert.equal(numberTrades(orders), 4);
+  assert.deepEqual(orders.map(order => order.tradeNumber), [1, undefined, 3, 2, undefined]);
+  const manager = new OrderManager();
+  manager.importFromJSON({ initialBalance: 1000, currentBalance: 1000, orders });
+  assert.equal(market(manager).tradeNumber, 4);
 });
 
 test('línea: una orden de una sesión vieja sin ejecución usa la hora de entrada', () => {

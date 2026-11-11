@@ -12,6 +12,7 @@ import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 import { alignY, crispWidth } from '../chartPixels.js';
 
 import { maskVolume } from '../backtesting/blindClock.js';
+import { volumeText } from '../backtesting/blindClock.js';
 const OI_STEP_MS = 300000; // Resolución de la serie local
 const OI_PAD_POINTS = 2000; // Puntos de margen a cada lado de las velas visibles
 const OI_RETRY_WAIT_MS = 5000;
@@ -632,6 +633,14 @@ class OpenInterestIndicator extends IndicatorBase {
   /**
    * Renderiza el indicador según el modo actual
    */
+  /** Lectura de cada vela del panel, para "Incluir en el análisis": cambio del interés abierto en la vela */
+  panelReadings(candles) {
+    if (!this.dataMap || !this.data?.length) return new Map();
+    return new Map(this.calculateHistogramMode(candles)
+      .filter(item => Number.isFinite(item.delta))
+      .map(item => [item.timestamp, `Interés abierto ${volumeText(item.delta, true)} en la vela`]));
+  }
+
   render(ctx, bounds, visibleCandles) {
     if (!this.enabled) return;
     if (!visibleCandles || visibleCandles.length === 0) return;

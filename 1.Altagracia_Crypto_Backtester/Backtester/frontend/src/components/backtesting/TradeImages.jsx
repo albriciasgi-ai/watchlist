@@ -5,6 +5,8 @@ import ScreenshotModal from './ScreenshotModal';
 import { imageBlock, imageCaption, imageSlots, screenshotUrl } from './observer.js';
 import './Observer.css';
 
+import { tradeLabel } from './OrderManager.js';
+import { usePortalTarget } from './PopupWindow';
 const BLOCK_TEXT = {
   date: 'Oculta: es de otra sesión y mostraría la fecha',
   future: 'Oculta: muestra velas posteriores a la hora simulada'
@@ -12,6 +14,7 @@ const BLOCK_TEXT = {
 
 /** Imágenes de una orden terminada. Se abren junto a sus medidas para poder confirmarlas */
 const TradeImages = ({ trade, catalog, viewer, onGoTo = null }) => {
+  const portalTarget = usePortalTarget(); // En la ventana aparte del Observador, si está abierta
   const [view, setView] = useState(null);
   const [revealed, setRevealed] = useState({});
 
@@ -53,7 +56,7 @@ const TradeImages = ({ trade, catalog, viewer, onGoTo = null }) => {
           screenshotPath={shown('entry')}
           exitScreenshotPath={shown('exit')}
           initialView={view}
-          orderId={trade.order_number}
+          orderId={tradeLabel(trade)}
           side={trade.side}
           pnl={trade.pnl}
           captions={captions}
@@ -63,7 +66,7 @@ const TradeImages = ({ trade, catalog, viewer, onGoTo = null }) => {
           aside={<ObserverReading trade={trade} catalog={catalog} review onGoTo={onGoTo && ((item) => onGoTo(item))} />}
           onClose={() => setView(null)}
         />,
-        document.body
+        portalTarget
       )}
     </div>
   );
