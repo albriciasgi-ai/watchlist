@@ -574,3 +574,28 @@ def test_el_informe_no_cuenta_los_motivos_de_una_orden_viva(journal, monkeypatch
     with_reading(monkeypatch)
     observer.record_order(order(marks={"reasons": ["volume", "profile"]}))
     assert observer.report()["agreement"] == []
+
+
+def test_informe_por_setup_cuenta_los_setups_elegidos(journal, monkeypatch):
+    with_reading(monkeypatch)
+    s14 = {"source": "Elementos OF", "kind": "Setup S14 (Delta Breakout) alcista: DB, ST", "price": 100.0, "role": "mark"}
+    s14_otra_vela = {**s14, "kind": "Setup S14 (Delta Breakout) alcista: DB"}
+    propia = {"source": "Elementos OF", "kind": "Setup MR bajista: SW", "price": 100.0}
+    otro = {"source": "S&R", "kind": "Setup S99 alcista", "price": 100.0}
+    observer.record_order(order("a", levels=[s14, s14_otra_vela]))
+    observer.record_event("a", "fill", {"time": 2, "price": 100.0})
+    close("a", 2.0)
+    observer.record_order(order("b", levels=[s14, propia]))
+    observer.record_event("b", "fill", {"time": 2, "price": 100.0})
+    close("b", -1.0, price=99.0)
+    observer.record_order(order("c", levels=[otro]))
+    observer.record_event("c", "fill", {"time": 2, "price": 100.0})
+    close("c", 1.0)
+    observer.record_order(order("d", levels=[s14]))  # Sin cerrar: no cuenta
+
+    rows = {row["id"]: row for row in observer.report()["setups"]}
+    assert set(rows) == {"S14", "MR"}, "solo setups de Elementos OF"
+    assert rows["S14"]["name"] == "Delta Breakout"
+    assert rows["S14"]["with"]["n"] == 2 and rows["S14"]["with"]["wins"] == 1, "una orden cuenta una vez cada setup"
+    assert rows["S14"]["without"]["n"] == 1
+    assert rows["MR"]["with"]["n"] == 1 and rows["MR"]["name"] == "MR"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import './OrderConfirmationModal.css';
+import { priceLabel, quantityText } from './blindClock.js';
 
 /**
  * Modal de confirmación cuando se crea una orden
@@ -83,18 +84,18 @@ const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
 
           <div className="order-detail">
             <span className="order-label">Cantidad:</span>
-            <span className="order-value">{order.quantity}</span>
+            <span className="order-value">{quantityText(order.quantity)}</span>
           </div>
 
           <div className="order-detail order-detail-highlight">
             <span className="order-label">Precio {order.executedPrice ? 'Ejecutado' : 'Entrada'}:</span>
-            <span className="order-value order-price">${(order.executedPrice || order.entryPrice).toFixed(2)}</span>
+            <span className="order-value order-price">{priceLabel((order.executedPrice || order.entryPrice))}</span>
           </div>
 
           {order.type !== 'market' && order.executedPrice && order.entryPrice !== order.executedPrice && (
             <div className="order-detail">
               <span className="order-label">Precio Objetivo:</span>
-              <span className="order-value">${order.entryPrice.toFixed(2)}</span>
+              <span className="order-value">{priceLabel(order.entryPrice)}</span>
             </div>
           )}
 
@@ -102,7 +103,7 @@ const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
             <div className="order-detail">
               <span className="order-label">Stop Loss:</span>
               <span className="order-value order-sl">
-                ${order.stopLoss.toFixed(2)}
+                {priceLabel(order.stopLoss)}
                 {metrics && <span className="order-percent">({metrics.slPercent}%)</span>}
               </span>
             </div>
@@ -112,7 +113,7 @@ const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
             <div className="order-detail">
               <span className="order-label">Take Profit:</span>
               <span className="order-value order-tp">
-                ${order.takeProfit.toFixed(2)}
+                {priceLabel(order.takeProfit)}
                 {metrics && <span className="order-percent">(+{metrics.tpPercent}%)</span>}
               </span>
             </div>

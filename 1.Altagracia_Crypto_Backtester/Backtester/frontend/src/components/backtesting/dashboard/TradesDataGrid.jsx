@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { isBlind, maskDate } from '../blindClock.js';
+import { isBlind, maskDate, priceLabel, quantityText } from '../blindClock.js';
 
 const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
   const [filterSide, setFilterSide] = useState('all'); // 'all', 'long', 'short'
@@ -227,9 +227,9 @@ const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
                         {trade.side === 'long' ? '📈' : '📉'} {trade.side.toUpperCase()}
                       </span>
                     </td>
-                    <td className="td-number">${trade.entryPrice.toFixed(2)}</td>
-                    <td className="td-number">${trade.exitPrice.toFixed(2)}</td>
-                    <td className="td-number">{trade.quantity}</td>
+                    <td className="td-number">{priceLabel(trade.entryPrice)}</td>
+                    <td className="td-number">{priceLabel(trade.exitPrice)}</td>
+                    <td className="td-number">{quantityText(trade.quantity)}</td>
                     <td className={`td-number ${isWin ? 'positive' : 'negative'}`}>
                       {isWin ? '+' : ''}${trade.pnl.toFixed(2)}
                     </td>

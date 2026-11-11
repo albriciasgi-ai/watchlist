@@ -6,6 +6,7 @@ import IndicatorBase from "./IndicatorBase";
 import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 import { alignY, crispWidth } from '../chartPixels.js';
 
+import { maskVolume } from '../backtesting/blindClock.js';
 class VolumeIndicator extends IndicatorBase {
   constructor(symbol, interval, days = 30) {
     super(symbol, interval);
@@ -159,8 +160,8 @@ class VolumeIndicator extends IndicatorBase {
     // Labels de escala
     ctx.fillStyle = nuevo ? THEME.textFaint : "#999";
     ctx.font = "9px Inter, sans-serif";
-    ctx.fillText(`+${maxVolumeDelta.toFixed(0)}`, x + width - 50, histogramY + 10);
-    ctx.fillText(`-${maxVolumeDelta.toFixed(0)}`, x + width - 50, histogramY + histogramHeight - 5);
+    ctx.fillText(`+${maskVolume(maxVolumeDelta).toFixed(0)}`, x + width - 50, histogramY + 10);
+    ctx.fillText(`-${maskVolume(maxVolumeDelta).toFixed(0)}`, x + width - 50, histogramY + histogramHeight - 5);
     
     // Valor de la última barra
     if (volumeDeltaData.length > 0) {
@@ -168,7 +169,7 @@ class VolumeIndicator extends IndicatorBase {
       const color = nuevo ? (lastDelta >= 0 ? THEME.upText : THEME.downText) : (lastDelta >= 0 ? bullColor : bearColor);
       ctx.fillStyle = color;
       ctx.font = "bold 10px Inter, sans-serif";
-      ctx.fillText(`${nuevo ? 'Δ ' : 'Δ: '}${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
+      ctx.fillText(`${nuevo ? 'Δ ' : 'Δ: '}${lastDelta >= 0 ? '+' : ''}${maskVolume(lastDelta).toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
     }
   }
 }

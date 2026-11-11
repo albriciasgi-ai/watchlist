@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Prueba Manual de los Setups y Precio como Índice en Fecha Oculta
+
+Fase 4: fecha de corte que "Evaluar" nunca mira, "Comprobación final" registrada en lo reservado, versiones de cada receta, tus trades por setup en el informe del Observador y, con fecha oculta, precio como índice base 80-120 y volumen relativo. Corrige que "Evaluar" midiera solo 70 días. Detalle en `Backtester/CLAUDE.md`, "ELEMENTOS DE ORDER FLOW", "Prueba manual", y "OBSERVADOR", "Retrocesos y fecha oculta".
+
 ### Noviembre 2026: Setups de Order Flow como Recetas
 
 Los 91 setups de Orderflows Unlocked como recetas de los elementos: misma vela, ventana o secuencia, con filtros de swing, momentum y confirmación de entrada. Se dibujan con su etiqueta y se evalúan en el histórico anterior a la hora simulada, con costos y contra la base. Hay un editor para recetas propias. Detalle en `Backtester/CLAUDE.md`, sección "ELEMENTOS DE ORDER FLOW", "Setups como recetas".

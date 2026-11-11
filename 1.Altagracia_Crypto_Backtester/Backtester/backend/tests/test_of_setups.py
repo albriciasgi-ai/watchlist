@@ -108,3 +108,62 @@ def test_resultado_neto_con_stop_primero_si_toca_los_dos():
 def test_receta_sin_codigos_conocidos_se_descarta():
     assert st.clean_recipe({"slots": [{"codes": ["ZZ"]}]}) is None
     assert st.clean_recipe({"slots": [{"codes": ["EX"]}], "window": 99})["window"] == st.MAX_WINDOW
+
+
+DAY = 86400000
+
+
+def capture_detect(monkeypatch, last="2026-11-01"):
+    """El evaluador con un almacén falso: guarda la ventana pedida y devuelve velas planas."""
+    seen = {}
+
+    def detect(symbol, tf, start, end, known, target, band_days, vol_filter):
+        seen.setdefault("start", start)  # El primer tramo
+        seen.update(end=end, known=known)  # El último
+        return {"bars": bars(200), "events": [], "warming": False}
+
+    monkeypatch.setattr(st.oe, "detect", detect)
+    monkeypatch.setattr(st.oe.fs, "coverage", lambda symbol: {"last": last})
+    return seen
+
+
+def test_el_ajuste_nunca_mira_las_fechas_reservadas(monkeypatch):
+    seen = capture_detect(monkeypatch)
+    reserve = 1751328000000  # 2025-07-01
+    out = st.evaluate("BTCUSDT", TF, {"slots": [{"codes": ["EX"]}]}, reserve + 100 * DAY, days=180, reserve_ms=reserve)
+    assert out["success"] and not out["validation"]
+    assert seen["end"] == reserve and seen["known"] == reserve
+    assert seen["start"] == reserve - 180 * DAY
+    # Antes de la fecha de corte, la hora simulada manda
+    st.evaluate("BTCUSDT", TF, {"slots": [{"codes": ["EX"]}]}, reserve - 30 * DAY, days=180, reserve_ms=reserve)
+    assert seen["end"] == reserve - 30 * DAY
+
+
+def test_la_comprobacion_usa_todo_lo_reservado(monkeypatch):
+    seen = capture_detect(monkeypatch, last="2026-11-01")
+    reserve = 1751328000000
+    out = st.evaluate("BTCUSDT", TF, {"slots": [{"codes": ["EX"]}]}, reserve - 30 * DAY, days=180,
+                      reserve_ms=reserve, validation=True)
+    assert out["success"] and out["validation"]
+    assert seen["start"] == reserve, "desde la fecha de corte, no solo los últimos `days`"
+    assert seen["end"] == 1793491200000 + DAY  # Fin del último día del almacén
+    assert not st.evaluate("BTCUSDT", TF, {"slots": [{"codes": ["EX"]}]}, 0, validation=True)["success"], "sin fecha de corte"
+    # Muy cerca del final del almacén no hay ventana
+    near = st.evaluate("BTCUSDT", TF, {"slots": [{"codes": ["EX"]}]}, 0, reserve_ms=1793491200000, validation=True)
+    assert not near["success"]
+
+
+def test_rangos_largos_se_piden_por_tramos_sin_repetir_velas(monkeypatch):
+    calls = []
+
+    def detect(symbol, tf, start, end, known, target, band_days, vol_filter):
+        calls.append((start, end))
+        first = -(-start // MS) * MS
+        return {"bars": [{"t": t, "o": 1, "h": 1, "l": 1, "c": 1} for t in range(first, end + 1, MS)],
+                "events": [], "warming": False}
+
+    monkeypatch.setattr(st.oe, "detect", detect)
+    out = st._detect_span("BTCUSDT", TF, 0, 180 * DAY, 0.05, 2)
+    assert len(calls) == 3 and all(e - s <= st.oe.MAX_RANGE_DAYS * DAY for s, e in calls)
+    times = [b["t"] for b in out["bars"]]
+    assert times == sorted(set(times)) and len(times) == 180 * DAY // MS + 1

@@ -30,7 +30,7 @@ import {
 import { useUiTheme } from './useUiTheme.js';
 import { Icon } from './uiIcons.jsx';
 import './backtesting/Observer.css';
-import { isBlind, maskDate } from './backtesting/blindClock';
+import { isBlind, maskDate, maskPrice, maskVolume, priceText, pricesHidden, unmaskPrice } from './backtesting/blindClock';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
@@ -1168,15 +1168,18 @@ const MiniChart = forwardRef(({
     if (isNew) {
       // Precios redondos con los decimales de la moneda, uno cada ~56 px, y rejilla muy suave
       const priceAt = y => minPrice + (marginTop + priceChartHeight - y + verticalOffset) / yScale;
-      const topPrice = priceAt(marginTop);
-      const bottomPrice = priceAt(marginTop + priceChartHeight);
-      const step = niceStep(topPrice - bottomPrice, priceChartHeight, 56, Math.pow(10, -pxDecimals));
+      // Con precio oculto los pasos redondos son del índice, no del precio real
+      const topPrice = maskPrice(priceAt(marginTop));
+      const bottomPrice = maskPrice(priceAt(marginTop + priceChartHeight));
+      const axisDecimals = pricesHidden() ? 3 : pxDecimals;
+      const step = niceStep(topPrice - bottomPrice, priceChartHeight, 56, Math.pow(10, -axisDecimals));
       const first = Math.ceil(bottomPrice / step);
       ctx.font = `${THEME.fontSize}px ${THEME.font}`;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       for (let k = first; k * step <= topPrice; k++) {
-        const price = k * step;
+        const shown = k * step;
+        const price = unmaskPrice(shown);
         const y = marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
         if (y < marginTop + 4 || y > marginTop + priceChartHeight - 4) continue;
         ctx.strokeStyle = THEME.grid;
@@ -1185,7 +1188,7 @@ const MiniChart = forwardRef(({
         ctx.lineTo(width - marginRight, alignY(y));
         ctx.stroke();
         ctx.fillStyle = THEME.textMuted;
-        ctx.fillText(price.toFixed(pxDecimals), width - marginRight + 8, Math.round(y));
+        ctx.fillText(shown.toFixed(axisDecimals), width - marginRight + 8, Math.round(y));
       }
       ctx.textBaseline = 'alphabetic';
     } else for (let i = 0; i <= 4; i++) {
@@ -1198,7 +1201,7 @@ const MiniChart = forwardRef(({
       ctx.lineTo(width - marginRight, lineY);
       ctx.stroke();
 
-      ctx.fillText(price.toFixed(2), width - marginRight + 5, y + 4);
+      ctx.fillText(priceText(price, 2), width - marginRight + 5, y + 4);
     }
 
     // 🎯 DIBUJAR VELAS PRIMERO (para que los overlays se vean encima)
@@ -1552,11 +1555,12 @@ const MiniChart = forwardRef(({
       const small = `${THEME.fontSize}px ${THEME.font}`;
       for (const [label, value] of [['O', legendCandle.open], ['H', legendCandle.high], ['L', legendCandle.low], ['C', legendCandle.close]]) {
         put(label, THEME.textMuted, small, 3);
-        put(value.toFixed(pxDecimals), valueColor, small, 10);
+        put(priceText(value, pxDecimals), valueColor, small, 10);
       }
       const change = legendCandle.open ? ((legendCandle.close - legendCandle.open) / legendCandle.open) * 100 : 0;
       put(`${change >= 0 ? '+' : ''}${change.toFixed(2)}%`, valueColor, small, 14);
-      const volume = legendCandle.volume || 0;
+      const rawVolume = legendCandle.volume || 0;
+      const volume = maskVolume(rawVolume);
       const volumeText = volume >= 1e6 ? `${(volume / 1e6).toFixed(2)}M` : volume >= 1e4 ? `${(volume / 1e3).toFixed(1)}K` : volume.toFixed(volume >= 100 ? 0 : 1);
       put('V', THEME.textMuted, small, 3);
       put(volumeText, THEME.text, small, 0);
@@ -1736,7 +1740,7 @@ const MiniChart = forwardRef(({
         ctx.font = `600 ${THEME.fontSize}px ${THEME.font}`;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(lastCandle.close.toFixed(pxDecimals), tagX + 8, lastY);
+        ctx.fillText(priceText(lastCandle.close, pxDecimals), tagX + 8, lastY);
         ctx.textBaseline = 'alphabetic';
       }
     }
@@ -1782,7 +1786,7 @@ const MiniChart = forwardRef(({
         ctx.fillStyle = THEME.tagBg;
         ctx.fillRect(width - marginRight + 1, boxY, marginRight - 2, 18);
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(price.toFixed(pxDecimals), width - marginRight + 8, boxY + 9);
+        ctx.fillText(priceText(price, pxDecimals), width - marginRight + 8, boxY + 9);
       }
       ctx.textBaseline = 'alphabetic';
     } else if (mouseX !== null && mouseY !== null) {
@@ -1862,7 +1866,7 @@ const MiniChart = forwardRef(({
         ctx.fillRect(width - marginRight + 2, mouseY - 10, 58, 20);
         ctx.fillStyle = "#fff";
         ctx.font = "bold 11px Inter, sans-serif";
-        ctx.fillText(price.toFixed(2), width - marginRight + 6, mouseY + 4);
+        ctx.fillText(priceText(price, 2), width - marginRight + 6, mouseY + 4);
       }
     }
   };
@@ -3634,7 +3638,7 @@ const MiniChart = forwardRef(({
                     />
                     <strong>{level.kind}</strong>
                     <span>{level.source}</span>
-                    <em>{level.mark || !Number.isFinite(level.price) ? '' : level.price.toFixed(1)}</em>
+                    <em>{level.mark || !Number.isFinite(level.price) ? '' : priceText(level.price, 1)}</em>
                   </label>
                   {chosen && !own && (
                     <div className="level-menu-detail">

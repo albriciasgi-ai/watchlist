@@ -3,6 +3,7 @@
 
 import { alignY, crispWidth } from '../../chartPixels.js';
 
+import { priceText } from '../../backtesting/blindClock.js';
 class HorizontalLine {
   constructor(price, time) {
     this.type = 'horizontal';
@@ -74,7 +75,7 @@ class HorizontalLine {
     // Label con el precio
     ctx.fillStyle = this.style.color;
     ctx.font = 'bold 11px Arial';
-    ctx.fillText(this.price.toFixed(2), endX + 5, y + 4);
+    ctx.fillText(priceText(this.price, 2), endX + 5, y + 4);
 
     // Efecto hover
     if (isHovered && !isSelected && !isPreview) {

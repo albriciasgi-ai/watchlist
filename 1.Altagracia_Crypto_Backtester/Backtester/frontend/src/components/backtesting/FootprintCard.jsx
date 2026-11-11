@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import './FootprintCard.css';
 
+import { priceText } from './blindClock.js';
 /**
  * FootprintCard - Visualiza una vela japonesa + footprint + volume profile
  *
@@ -243,7 +244,7 @@ function drawFootprint(ctx, x, y, width, height, footprint) {
     ctx.fillStyle = '#999999';
     ctx.textAlign = 'center';
     ctx.font = '8px "SF Mono", Monaco, monospace';
-    ctx.fillText(level.price.toFixed(2), x + width / 2, cellY + cellHeight / 2 + 3);
+    ctx.fillText(priceText(level.price, 2), x + width / 2, cellY + cellHeight / 2 + 3);
 
     ctx.textAlign = 'left';
   });

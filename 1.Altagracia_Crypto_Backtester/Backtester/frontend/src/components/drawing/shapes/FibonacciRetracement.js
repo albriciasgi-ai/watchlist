@@ -3,6 +3,7 @@
 
 import { alignY, crispWidth } from '../../chartPixels.js';
 
+import { priceText } from '../../backtesting/blindClock.js';
 class FibonacciRetracement {
   constructor(price1, time1, price2, time2) {
     this.type = 'fibonacci';
@@ -196,7 +197,7 @@ class FibonacciRetracement {
       ctx.fillStyle = level.color;
       ctx.font = 'bold 11px Arial';
       // Si level.label está vacío (nivel 1.0 = click 1), solo mostrar precio
-      const labelText = level.label ? `${level.label} (${price.toFixed(2)})` : `${price.toFixed(2)}`;
+      const labelText = level.label ? `${level.label} (${priceText(price, 2)})` : `${priceText(price, 2)}`;
       ctx.fillText(labelText, xEnd + 5, y + 4);
 
       // Zona sombreada entre niveles
@@ -217,7 +218,7 @@ class FibonacciRetracement {
     if (!isPreview) {
       ctx.fillStyle = '#888888';
       ctx.font = 'bold 12px Arial';
-      ctx.fillText(`${this.price1.toFixed(2)}`, x1 + 5, y1 - 5);
+      ctx.fillText(`${priceText(this.price1, 2)}`, x1 + 5, y1 - 5);
     }
 
     // Handles

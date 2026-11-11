@@ -217,19 +217,55 @@ def _trade(bars, atr, k, d, stop_atr, target_r, horizon):
     return gross - TAKER_FEE * (entry + exit_price) / risk
 
 
+CHUNK_DAYS = 60  # detect() no pasa de oe.MAX_RANGE_DAYS por pedido
+
+
+def _detect_span(symbol, tf, start, end, target, vol_filter):
+    """detect() en tramos seguidos, para rangos más largos que los que acepta de una vez."""
+    bars, events, warming = [], [], False
+    chunk_start = start
+    while chunk_start < end:
+        chunk_end = min(end, chunk_start + CHUNK_DAYS * oe.DAY_MS)
+        # Cada tramo termina 1 ms antes del siguiente: una vela nunca sale dos veces
+        part = oe.detect(symbol, tf, chunk_start, chunk_end - 1 if chunk_end < end else end, end, target, 0, vol_filter)
+        last = bars[-1]["t"] if bars else None
+        bars.extend(b for b in part["bars"] if last is None or b["t"] > last)
+        events.extend(e for e in part["events"] if last is None or e["t"] > last)
+        warming = warming or part["warming"]
+        chunk_start = chunk_end
+    return {"bars": bars, "events": events, "warming": warming}
+
+
 def evaluate(symbol, interval_minutes, recipe_raw, known_until_ms, days=180, stop_atr=1.5, target_r=2.0, horizon=96,
-             target=oe.DEFAULT_TARGET, vol_filter=oe.DEFAULT_VOL_FILTER):
+             target=oe.DEFAULT_TARGET, vol_filter=oe.DEFAULT_VOL_FILTER, reserve_ms=None, validation=False):
     """
     La receta sobre los `days` días anteriores a known_until_ms, con salida por stop (ATR), objetivo (R) u
     horizonte, y comisión taker de entrada y salida. La base son las velas del mismo color, con las mismas reglas.
+
+    reserve_ms separa las fechas de ajuste de las de comprobación. Sin `validation`, la ventana nunca pasa de
+    reserve_ms: lo reservado no se mira mientras se ajusta la receta. Con `validation`, se evalúa todo lo
+    reservado, desde reserve_ms hasta el último día del almacén, y lo pide un botón aparte que deja registro.
     """
     recipe = clean_recipe(recipe_raw)
     if recipe is None:
         return {"success": False, "message": "La receta no tiene elementos conocidos"}
     tf = int(interval_minutes)
-    days = max(7, min(int(days), 730))
-    start = known_until_ms - days * oe.DAY_MS
-    result = oe.detect(symbol, tf, start, known_until_ms, known_until_ms, target, 0, vol_filter)
+    days = max(7, min(int(days), 730 if not validation else 2500))
+    if validation:
+        if reserve_ms is None:
+            return {"success": False, "message": "Falta la fecha de corte de la comprobación"}
+        last = oe.fs.coverage(symbol).get("last")
+        if not last:
+            return {"success": False, "message": "Sin días en el almacén"}
+        known_until_ms = int(dt.datetime.fromisoformat(last).replace(tzinfo=dt.timezone.utc).timestamp() * 1000) + oe.DAY_MS
+        start = max(int(reserve_ms), known_until_ms - 2500 * oe.DAY_MS)  # Todo lo reservado, no solo `days`
+    else:
+        if reserve_ms is not None:
+            known_until_ms = min(known_until_ms, reserve_ms)
+        start = known_until_ms - days * oe.DAY_MS
+    if known_until_ms - start < 7 * oe.DAY_MS:
+        return {"success": False, "message": "La ventana queda en menos de 7 días: la hora simulada está muy cerca de la fecha de corte"}
+    result = _detect_span(symbol, tf, start, known_until_ms, target, vol_filter)
     bars = result["bars"]
     if len(bars) < 50:
         return {"success": False, "message": "Sin velas suficientes en el almacén para ese rango"}
@@ -274,6 +310,7 @@ def evaluate(symbol, interval_minutes, recipe_raw, known_until_ms, days=180, sto
     setup = summary([r for r, _ in trades], trades)
     baseline = summary([r for r, _ in base], base)
     return {"success": True, "recipe": recipe["id"], "days": days, "bars": len(bars), "pending": pending,
+            "from": bars[0]["t"], "to": bars[-1]["t"], "validation": bool(validation),
             "rules": {"stopAtr": stop_atr, "targetR": target_r, "horizon": horizon, "fee": TAKER_FEE},
             "setup": setup, "baseline": baseline,
             "edgeR": round(setup["avgR"] - baseline["avgR"], 3) if setup["avgR"] is not None and baseline["avgR"] is not None else None,

@@ -4,6 +4,7 @@
 
 import IndicatorBase from "./IndicatorBase";
 import { alignX, alignY, crispWidth } from '../chartPixels.js';
+import { maskVolume } from '../backtesting/blindClock.js';
 import { THEME, isNewTheme } from '../uiTheme.js'; // Estilos nuevos: fondo del gráfico; con Oscuro, líneas y títulos
 
 class CVDIndicator extends IndicatorBase {
@@ -194,15 +195,15 @@ class CVDIndicator extends IndicatorBase {
     // Labels de escala
     ctx.fillStyle = "#999";
     ctx.font = "9px Inter, sans-serif";
-    ctx.fillText(`${maxCVD.toFixed(0)}`, x + width - 50, chartY + 10);
-    ctx.fillText(`${minCVD.toFixed(0)}`, x + width - 50, chartY + chartHeight - 5);
+    ctx.fillText(`${maskVolume(maxCVD).toFixed(0)}`, x + width - 50, chartY + 10);
+    ctx.fillText(`${maskVolume(minCVD).toFixed(0)}`, x + width - 50, chartY + chartHeight - 5);
     
     // Valor actual de CVD
     if (cvdData.length > 0) {
       const lastCVD = cvdData[cvdData.length - 1].closeCVD;
       ctx.fillStyle = lastCVD >= 0 ? bullColor : bearColor;
       ctx.font = "bold 10px Inter, sans-serif";
-      ctx.fillText(`CVD: ${lastCVD >= 0 ? '+' : ''}${lastCVD.toFixed(0)}`, x + 5, chartY + chartHeight - 5);
+      ctx.fillText(`CVD: ${lastCVD >= 0 ? '+' : ''}${maskVolume(lastCVD).toFixed(0)}`, x + 5, chartY + chartHeight - 5);
     }
   }
 }

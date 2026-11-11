@@ -11,6 +11,7 @@ import { TF_MS } from "../backtesting/replayClock.js";
 import { THEME, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 import { alignY, crispWidth } from '../chartPixels.js';
 
+import { maskVolume } from '../backtesting/blindClock.js';
 const OI_STEP_MS = 300000; // Resolución de la serie local
 const OI_PAD_POINTS = 2000; // Puntos de margen a cada lado de las velas visibles
 const OI_RETRY_WAIT_MS = 5000;
@@ -703,9 +704,10 @@ class OpenInterestIndicator extends IndicatorBase {
       if (lastOI) {
         ctx.fillStyle = "#999";
         ctx.font = "11px Inter, sans-serif";
-        const formattedOI = lastOI >= 1e9 ? `${(lastOI / 1e9).toFixed(2)}B` :
-                           lastOI >= 1e6 ? `${(lastOI / 1e6).toFixed(2)}M` :
-                           lastOI >= 1e3 ? `${(lastOI / 1e3).toFixed(1)}K` : lastOI.toFixed(0);
+        const shownOI = maskVolume(lastOI);
+        const formattedOI = shownOI >= 1e9 ? `${(shownOI / 1e9).toFixed(2)}B` :
+                           shownOI >= 1e6 ? `${(shownOI / 1e6).toFixed(2)}M` :
+                           shownOI >= 1e3 ? `${(shownOI / 1e3).toFixed(1)}K` : shownOI.toFixed(0);
         ctx.fillText(`OI: ${formattedOI} (sin cambios en rango visible)`, x + 5, y + 30);
       }
       return;
@@ -755,8 +757,8 @@ class OpenInterestIndicator extends IndicatorBase {
     // Labels
     ctx.fillStyle = nuevo ? THEME.textFaint : "#999";
     ctx.font = "9px Inter, sans-serif";
-    ctx.fillText(`+${maxDelta.toFixed(0)}`, x + width - 50, histogramY + 10);
-    ctx.fillText(`-${maxDelta.toFixed(0)}`, x + width - 50, histogramY + histogramHeight - 5);
+    ctx.fillText(`+${maskVolume(maxDelta).toFixed(0)}`, x + width - 50, histogramY + 10);
+    ctx.fillText(`-${maskVolume(maxDelta).toFixed(0)}`, x + width - 50, histogramY + histogramHeight - 5);
 
     // Valor actual
     if (data.length > 0) {
@@ -764,7 +766,7 @@ class OpenInterestIndicator extends IndicatorBase {
       const lastOI = data[data.length - 1].oiValue;
       ctx.fillStyle = lastDelta >= 0 ? bullColor : bearColor;
       ctx.font = "bold 10px Inter, sans-serif";
-      ctx.fillText(nuevo ? `Δ ${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)} · OI ${lastOI.toFixed(0)}` : `Δ: ${lastDelta >= 0 ? '+' : ''}${lastDelta.toFixed(0)} | OI: ${lastOI.toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
+      ctx.fillText(nuevo ? `Δ ${lastDelta >= 0 ? '+' : ''}${maskVolume(lastDelta).toFixed(0)} · OI ${maskVolume(lastOI).toFixed(0)}` : `Δ: ${lastDelta >= 0 ? '+' : ''}${maskVolume(lastDelta).toFixed(0)} | OI: ${maskVolume(lastOI).toFixed(0)}`, x + 5, histogramY + histogramHeight - 5);
     }
   }
 
@@ -865,8 +867,8 @@ class OpenInterestIndicator extends IndicatorBase {
     // Labels
     ctx.fillStyle = "#999";
     ctx.font = "9px Inter, sans-serif";
-    ctx.fillText(`${maxCumulative.toFixed(0)}`, x + width - 50, chartY + 10);
-    ctx.fillText(`${minCumulative.toFixed(0)}`, x + width - 50, chartY + chartHeight - 5);
+    ctx.fillText(`${maskVolume(maxCumulative).toFixed(0)}`, x + width - 50, chartY + 10);
+    ctx.fillText(`${maskVolume(minCumulative).toFixed(0)}`, x + width - 50, chartY + chartHeight - 5);
 
     // Valor actual
     if (data.length > 0) {
@@ -874,7 +876,7 @@ class OpenInterestIndicator extends IndicatorBase {
       const lastOI = data[data.length - 1].oiValue;
       ctx.fillStyle = lastCumulative >= 0 ? bullColor : bearColor;
       ctx.font = "bold 10px Inter, sans-serif";
-      ctx.fillText(`Cumulative: ${lastCumulative >= 0 ? '+' : ''}${lastCumulative.toFixed(0)} | OI: ${lastOI.toFixed(0)}`, x + 5, chartY + chartHeight - 5);
+      ctx.fillText(`Cumulative: ${lastCumulative >= 0 ? '+' : ''}${maskVolume(lastCumulative).toFixed(0)} | OI: ${maskVolume(lastOI).toFixed(0)}`, x + 5, chartY + chartHeight - 5);
     }
   }
 
@@ -1013,8 +1015,8 @@ class OpenInterestIndicator extends IndicatorBase {
     // Labels
     ctx.fillStyle = "#999";
     ctx.font = "9px Inter, sans-serif";
-    ctx.fillText(`+${maxOIFlow.toFixed(0)}`, x + width - 60, chartY + 10);
-    ctx.fillText(`${minOIFlow.toFixed(0)}`, x + width - 60, chartY + chartHeight - 5);
+    ctx.fillText(`+${maskVolume(maxOIFlow).toFixed(0)}`, x + width - 60, chartY + 10);
+    ctx.fillText(`${maskVolume(minOIFlow).toFixed(0)}`, x + width - 60, chartY + chartHeight - 5);
 
     // Valor actual
     if (oiFlowData.length > 0) {
@@ -1023,7 +1025,7 @@ class OpenInterestIndicator extends IndicatorBase {
 
       ctx.fillStyle = lastOIFlow >= 0 ? bullColor : bearColor;
       ctx.font = "bold 10px Inter, sans-serif";
-      ctx.fillText(`OI Flow: ${lastOIFlow >= 0 ? '+' : ''}${lastOIFlow.toFixed(2)} | OI: ${lastOI.toFixed(0)}`, x + 5, chartY + chartHeight - 5);
+      ctx.fillText(`OI Flow: ${lastOIFlow >= 0 ? '+' : ''}${maskVolume(lastOIFlow).toFixed(2)} | OI: ${maskVolume(lastOI).toFixed(0)}`, x + 5, chartY + chartHeight - 5);
     }
   }
 

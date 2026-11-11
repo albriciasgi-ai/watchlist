@@ -9,6 +9,7 @@ import {
 } from './ofElements.js';
 import { activeRecipes, allRecipes, loadSetupsConfig, recipeLabel } from './ofSetups.js';
 
+import { maskVolume } from '../backtesting/blindClock.js';
 const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 const DAY_MS = 86400000;
 const MAX_VIEW_DAYS = 60; // Con más días a la vista no se piden elementos
@@ -26,6 +27,7 @@ const MIN_TABLE_TEXT_PX = 30;
 const SLOPE_ATR = 0.25; // Pendiente de la EMA, en ATR por 3 velas, para contar como impulso
 
 function shortNumber(value, decimals = 1) {
+  value = maskVolume(value);
   const abs = Math.abs(value);
   if (abs >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
   if (abs >= 1e3) return `${(value / 1e3).toFixed(1)}K`;

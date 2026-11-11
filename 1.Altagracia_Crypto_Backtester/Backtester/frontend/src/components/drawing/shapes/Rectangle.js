@@ -3,6 +3,7 @@
 
 import { crispWidth, rectEdge } from '../../chartPixels.js';
 
+import { priceText } from '../../backtesting/blindClock.js';
 class Rectangle {
   constructor(price1, time1, price2, time2, label = null) {
     this.type = 'rectangle';
@@ -252,7 +253,7 @@ class Rectangle {
   }
 
   renderLabel(ctx, x1, y1, x2, y2, width, scaleConverter) {
-    const labelText = `${this.label}: ${this.priceHigh.toFixed(2)}`;
+    const labelText = `${this.label}: ${priceText(this.priceHigh, 2)}`;
     ctx.font = 'bold 12px Arial';
     const textWidth = ctx.measureText(labelText).width;
 
@@ -270,7 +271,7 @@ class Rectangle {
     // Precio inferior (label en el borde derecho)
     ctx.fillStyle = this.style.stroke;
     ctx.font = '11px Arial';
-    ctx.fillText(this.priceLow.toFixed(2), x2 + 5, y2 + 4);
+    ctx.fillText(priceText(this.priceLow, 2), x2 + 5, y2 + 4);
   }
 
   renderHandles(ctx, x1, y1, x2, y2) {

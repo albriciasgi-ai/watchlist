@@ -2,6 +2,7 @@ import { candleItemId } from './analysisLevels.js';
 import { alignX, alignY, candleColumns, crispWidth, pixelRatio, snapEdge, snapSpanY } from '../chartPixels.js';
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
+import { maskVolume } from '../backtesting/blindClock.js';
 import { THEME, isCustom, isNewTheme } from '../uiTheme.js'; // Estilo Nítido
 
 /** Valores de fábrica de lo visual que el estilo Nítido reemplaza. Lo que el usuario elige en el modal gana */
@@ -691,6 +692,7 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   formatVolumeShort(volume) {
+    volume = maskVolume(volume);
     const abs = Math.abs(volume);
     if (abs >= 1000000) return (volume / 1000000).toFixed(1) + 'M';
     if (abs >= 1000) return (volume / 1000).toFixed(1) + 'K';
@@ -832,6 +834,7 @@ class OrderFlowIndicator extends IndicatorBase {
 
   formatVolume(volume) {
     if (volume === undefined || volume === null) return '0';
+    volume = maskVolume(volume);
     const absVolume = Math.abs(volume);
     if (absVolume >= 1000000) return (volume / 1000000).toFixed(1) + 'M';
     if (absVolume >= 1000) return (volume / 1000).toFixed(1) + 'K';

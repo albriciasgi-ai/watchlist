@@ -25,6 +25,7 @@ export const vpFixedThemeValue = key => ({
 import { API_BASE_URL } from "../../config";
 import { TF_MS, candlesBetween } from "../backtesting/replayClock";
 
+import { priceText } from '../backtesting/blindClock.js';
 const MIN_REAL_COVERAGE = 0.99; // Con menos minutos en el almacén se usa el perfil estimado
 // Los perfiles guardan porcentajes (70, 25); el modal anterior a veces guardaba fracciones (0.70, 0.25)
 const asFraction = value => (value > 1 ? value / 100 : value);
@@ -566,7 +567,7 @@ class VolumeProfileFixedRangeIndicator extends IndicatorBase {
     }
 
     ctx.fillStyle = styled('pocColor') ? THEME.text : this.pocColor;
-    ctx.fillText(`POC: ${this.profile.poc.price.toFixed(2)}${this.profile.isReal ? ' · real' : ''}`, labelX, labelY);
+    ctx.fillText(`POC: ${priceText(this.profile.poc.price, 2)}${this.profile.isReal ? ' · real' : ''}`, labelX, labelY);
   }
 
   hexToRgba(hex, alpha) {

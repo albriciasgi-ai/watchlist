@@ -53,6 +53,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 10 Noviembre 2026: Prueba Manual de los Setups y Precio como Índice (fase 4)
+
+**Pedido:** decidir a mano las reglas de cada setup sin gastar las fechas con que se comprueban. Además, con "Fecha al azar y oculta", que el precio tampoco delate la época: lo que importa son los porcentajes.
+
+**Cambios:**
+1. **Fecha de corte** en el modal de Setups (2025-07-01 por defecto): "Evaluar" nunca mira desde esa fecha, aunque la hora simulada sea posterior
+2. **Comprobación final:** botón por receta que la corre solo en lo reservado, pide confirmar y queda registrada con su versión en `OrderFlowData/observer/setup_validations.jsonl`. El modal muestra cuántas veces se comprobó y el último resultado
+3. **Versiones:** cada receta guardada suma una versión con fecha (`v1`, `v2`...)
+4. **Tus trades por setup:** el informe del Observador da acierto y R de tus órdenes con cada setup elegido para el análisis, contra las que no lo tenían
+5. **Precio como índice:** con fecha oculta el precio del inicio vale un número al azar entre 80 y 120 y el resto se mueve en el mismo porcentaje, con 3 decimales. Volumen, delta, CVD, OI y cantidades van en una escala donde la vela típica del inicio vale 1,000. Cubre gráfico, indicadores, dibujos, panel de trading, historial, dashboard, Excel y Observador. Las órdenes y el registro siguen en precios reales; "Revelar fecha" vuelve a mostrarlos
+6. **Fallo de la fase 3:** "Evaluar" medía solo los últimos 70 días aunque pidiera 180. Ahora pide en tramos
+
+**IMPORTANTE:** reiniciar el backend de App 1. Las evaluaciones anteriores a este cambio cubrieron 70 días como mucho. La comprobación final gasta lo reservado para esa receta: conviene usarla una vez, con las reglas ya decididas.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "ELEMENTOS DE ORDER FLOW" ("Prueba manual") y "OBSERVADOR" ("Retrocesos y fecha oculta")
+
+---
+
 ### APP 1 (Backtester) - 10 Noviembre 2026: Setups de Order Flow como Recetas (fase 3)
 
 **Problema:** los 91 setups de Orderflows Unlocked son combinaciones de elementos sin entrada, stop ni resultados. Strategic Flows, el producto del mismo autor, los combina con un "Consenso", pero no los mide.

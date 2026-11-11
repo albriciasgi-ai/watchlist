@@ -3,7 +3,8 @@
 import assert from 'node:assert/strict';
 import { OF_ELEMENTS } from '../src/components/indicators/ofElements.js';
 import {
-  SETUP_LIBRARY, activeRecipes, allRecipes, cleanRecipe, defaultSetupsConfig, parseSpec, recipeLabel, recipeText
+  DEFAULT_RESERVE, SETUP_LIBRARY, activeRecipes, allRecipes, cleanRecipe, defaultSetupsConfig, parseSpec, recipeLabel, recipeText,
+  recipeVersion, recipeVersions, reserveDate, reserveMs, withVersion
 } from '../src/components/indicators/ofSetups.js';
 
 const tests = [];
@@ -52,6 +53,29 @@ test('lo editado en un setup del libro se aplica y las propias se suman', () => 
 test('el texto de la receta se lee como la notación', () => {
   assert.equal(recipeText(SETUP_LIBRARY[1]), 'AD>ST @2');
   assert.equal(recipeText(SETUP_LIBRARY[13]), 'ST m');
+});
+
+test('fecha de corte: la de fábrica salvo una fecha válida', () => {
+  assert.equal(reserveDate({}), DEFAULT_RESERVE);
+  assert.equal(reserveDate({ reserve: 'ayer' }), DEFAULT_RESERVE);
+  assert.equal(reserveDate({ reserve: '2024-01-15' }), '2024-01-15');
+  assert.equal(reserveMs({ reserve: '2025-07-01' }), Date.UTC(2025, 6, 1));
+});
+
+test('versiones: cada cambio guardado suma una, con fecha, y lo igual no se repite', () => {
+  const recipe = cleanRecipe(SETUP_LIBRARY[1]);
+  let config = defaultSetupsConfig();
+  assert.equal(recipeVersion(config, recipe.id), 0);
+  config = withVersion(config, { ...recipe, window: 2 });
+  assert.equal(recipeVersion(config, recipe.id), 1);
+  assert.ok(recipeVersions(config, recipe.id)[0].at > 0);
+  assert.equal(withVersion(config, { ...recipe, window: 2 }), config, 'igual a la vigente: sin versión nueva');
+  config = withVersion(config, { ...recipe, window: 3 }, 'del libro');
+  const list = recipeVersions(config, recipe.id);
+  assert.deepEqual(list.map(item => item.v), [1, 2]);
+  assert.equal(list[1].recipe.window, 3);
+  assert.equal(list[1].note, 'del libro');
+  assert.equal(list[0].recipe.window, 2, 'la versión anterior no cambia');
 });
 
 let failed = 0;

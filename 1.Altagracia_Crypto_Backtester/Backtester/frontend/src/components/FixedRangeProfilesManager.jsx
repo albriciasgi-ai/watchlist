@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { isBlind, maskDate } from "./backtesting/blindClock.js";
+import { isBlind, maskDate, priceText, pricesHidden } from "./backtesting/blindClock.js";
 
 const FixedRangeProfilesManager = ({
   symbol,
@@ -84,6 +84,7 @@ const FixedRangeProfilesManager = ({
   };
 
   const formatPrice = (price) => {
+    if (pricesHidden()) return priceText(price);
     if (price >= 1000) return price.toFixed(1);
     if (price >= 1) return price.toFixed(2);
     return price.toFixed(4);

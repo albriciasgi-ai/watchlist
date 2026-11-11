@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { isBlind, maskDate } from './blindClock.js';
+import { isBlind, maskDate, priceLabel, quantityText } from './blindClock.js';
 
 const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
   const [balance, setBalance] = useState({});
@@ -261,22 +261,22 @@ const PerformancePanel = ({ orderManager, currentPrice, currentTime }) => {
                     </div>
                     <div className="order-detail-row">
                       <span>Entrada:</span>
-                      <span>${order.entryPrice.toFixed(2)}</span>
+                      <span>{priceLabel(order.entryPrice)}</span>
                     </div>
                     <div className="order-detail-row">
                       <span>Cantidad:</span>
-                      <span>{order.quantity}</span>
+                      <span>{quantityText(order.quantity)}</span>
                     </div>
                     {order.stopLoss && (
                       <div className="order-detail-row">
                         <span>SL:</span>
-                        <span>${order.stopLoss.toFixed(2)}</span>
+                        <span>{priceLabel(order.stopLoss)}</span>
                       </div>
                     )}
                     {order.takeProfit && (
                       <div className="order-detail-row">
                         <span>TP:</span>
-                        <span>${order.takeProfit.toFixed(2)}</span>
+                        <span>{priceLabel(order.takeProfit)}</span>
                       </div>
                     )}
                     <div className="order-detail-row order-pnl">

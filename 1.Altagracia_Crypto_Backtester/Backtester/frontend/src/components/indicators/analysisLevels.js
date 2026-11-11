@@ -7,6 +7,7 @@
 import { countBefore } from '../backtesting/replayClock.js';
 import { alignY, crispWidth } from '../chartPixels.js';
 
+import { priceText } from '../backtesting/blindClock.js';
 // v2: una lista por trade. La de antes juntaba lo elegido para todos los trades y no se carga
 const STORAGE_KEY = 'analysis_levels_v2_';
 const CLICK_TOLERANCE_PX = 6;
@@ -212,7 +213,7 @@ export function levelsNear(targets, x, y, tolerance = CLICK_TOLERANCE_PX) {
     .map(({ target }) => target);
 }
 
-const priceText = (price) => (Number.isFinite(price) ? price.toFixed(1) : '');
+const levelPrice = (price) => (Number.isFinite(price) ? priceText(price, 1) : '');
 
 /** Línea y etiqueta de cada nivel elegido. Uno que nace en una vela empieza en ella */
 export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left, right, top, bottom }) {
@@ -237,7 +238,7 @@ export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left
     ctx.setLineDash([]);
 
     const role = level.role === null || level.role === undefined ? '' : `${roleLabel(level.role)} · `;
-    const label = `${role}${level.kind} ${priceText(level.price)}`;
+    const label = `${role}${level.kind} ${levelPrice(level.price)}`;
     const width = ctx.measureText(label).width + 8;
     ctx.fillStyle = LEVEL_COLOR;
     ctx.fillRect(right - width, y - 7, width, 14);

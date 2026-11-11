@@ -7,6 +7,7 @@ import { THEME, chartInk } from '../uiTheme.js'; // Con Oscuro: etiquetas con el
 import IndicatorBase from "./IndicatorBase";
 import { API_BASE_URL } from "../../config";
 
+import { priceLabel } from '../backtesting/blindClock.js';
 const RAW_REFRESH_BARS = 20; // Cada cuántas velas nuevas se buscan pivots otra vez
 
 class SupportResistanceIndicator extends IndicatorBase {
@@ -545,7 +546,7 @@ class SupportResistanceIndicator extends IndicatorBase {
       const isBroken = level.status === 'broken';
       const prefix = type === 'resistance' ? 'R' : 'S';
       const suffix = isBroken ? ' (roto)' : '';
-      const labelText = `${prefix} $${level.price.toFixed(2)}${isBroken ? suffix : ` • ${level.touches}x`}`;
+      const labelText = `${prefix} ${priceLabel(level.price)}${isBroken ? suffix : ` • ${level.touches}x`}`;
 
       // Estilo diferente para rotos vs activos
       ctx.font = isBroken ? "9px Inter, sans-serif" : "bold 10px Inter, sans-serif";

@@ -1,13 +1,16 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './RejectionPatternSettings.css';
 import { API_BASE_URL } from '../config.js';
 import { OF_ELEMENTS } from './indicators/ofElements.js';
 import {
-  SETUP_LIBRARY, SETUP_MODES, allRecipes, cleanRecipe, recipeLabel, recipeText, saveSetupsConfig
+  SETUP_LIBRARY, SETUP_MODES, allRecipes, cleanRecipe, recipeCore, recipeLabel, recipeText, recipeVersion, recipeVersions,
+  reserveDate, reserveMs, saveSetupsConfig, withVersion
 } from './indicators/ofSetups.js';
 
 const FILTERS = [['all', 'Todos'], ['active', 'Activos'], ['giro', 'Giro'], ['continuación', 'Continuación'], ['custom', 'Propios']];
 const CODES_HINT = Object.entries(OF_ELEMENTS).map(([code, info]) => `${code} ${info.name}`).join(' · ');
+
+const realDate = (ms) => new Date(ms).toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: '2-digit' });
 
 const fmt = (value, digits = 2) => (value === null || value === undefined ? '–' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}`);
 
@@ -20,14 +23,28 @@ function EvalLine({ result }) {
   const range = setup.wilson?.[0] !== null && setup.wilson?.[0] !== undefined ? ` (${setup.wilson[0]}–${setup.wilson[1]})` : '';
   return (
     <span className="hint" style={{ color: edgeR > 0 ? '#2E7D32' : '#555' }}>
-      {setup.n} casos · acierto {setup.winRate ?? '–'}%{range} · R neto {fmt(setup.avgR)} · base {fmt(baseline.avgR)} · ventaja {fmt(edgeR)}
+      {result.validation ? 'Comprobación final: ' : ''}{setup.n} casos · acierto {setup.winRate ?? '–'}%{range} · R neto {fmt(setup.avgR)} · base {fmt(baseline.avgR)} · ventaja {fmt(edgeR)}
       {smallSample ? ' · muestra pequeña' : ''}
     </span>
   );
 }
 
+/** Comprobaciones finales ya hechas de una receta, la más nueva primero */
+function CheckLine({ checks }) {
+  if (!checks.length) return null;
+  const last = checks[0];
+  return (
+    <div style={{ marginLeft: 54 }}>
+      <span className="hint">
+        Comprobada {checks.length} {checks.length === 1 ? 'vez' : 'veces'}. Última: v{last.version ?? 0} el {realDate(last.at)},
+        {' '}{last.setup?.n} casos, R neto {fmt(last.setup?.avgR)}, ventaja {fmt(last.edgeR)}
+      </span>
+    </div>
+  );
+}
+
 /** Editor de una receta: casillas, modo, ventana y filtros */
-function RecipeEditor({ recipe, onSave, onSaveAsNew, onCancel }) {
+function RecipeEditor({ recipe, versions, onSave, onSaveAsNew, onCancel }) {
   const [draft, setDraft] = useState(() => ({
     ...recipe,
     slots: recipe.slots.map(slot => ({ text: slot.codes.join('|'), group: slot.group }))
@@ -105,6 +122,12 @@ function RecipeEditor({ recipe, onSave, onSaveAsNew, onCancel }) {
         <input type="number" min="1" max="5" value={draft.entry?.bars ?? 2} onChange={(e) => setNested('entry', 'bars', e.target.value)} style={{ width: 50 }} />
         <span className="hint">velas</span>
       </div>
+      {versions?.length > 0 && (
+        <p className="hint" style={{ margin: '6px 0' }}>
+          Versiones: {versions.map(item => `v${item.v} ${realDate(item.at)}${item.note ? ` (${item.note})` : ''}`).join(' · ')}.
+          Guardar crea la siguiente.
+        </p>
+      )}
       {error && <p className="hint" style={{ color: '#C62828' }}>{error}</p>}
       <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
         <button className="btn-primary" onClick={() => { const out = build(); if (out) onSave(out); }}>Guardar</button>
@@ -124,6 +147,14 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
   const [rules, setRules] = useState({ days: 180, stop_atr: 1.5, target_r: 2, horizon: 96 });
   const [batch, setBatch] = useState(null);
   const stopBatch = useRef(false);
+  const [validations, setValidations] = useState([]);
+
+  const loadValidations = () => fetch(`${API_BASE_URL}/api/orderflow/setups/${symbol}/validations`)
+    .then(response => response.json())
+    .then(data => setValidations(data.validations || []))
+    .catch(() => {});
+  useEffect(() => { loadValidations(); }, [symbol]); // eslint-disable-line react-hooks/exhaustive-deps
+  const checksOf = (id) => validations.filter(item => item.recipe?.id === id);
 
   const recipes = useMemo(() => allRecipes(config), [config]);
   const active = new Set(config.active || []);
@@ -140,7 +171,7 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
     return { ...previous, active: [...set] };
   });
 
-  const evaluate = async (recipe) => {
+  const evaluate = async (recipe, final = false) => {
     setResults(previous => ({ ...previous, [recipe.id]: { loading: true } }));
     try {
       const response = await fetch(`${API_BASE_URL}/api/orderflow/setups/${symbol}/evaluate`, {
@@ -148,16 +179,32 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           interval: String(indicator.tfMinutes), recipe, known_until: Math.round(indicator.clock || Date.now()),
-          target: indicator.config.target / 100, vol_filter: indicator.config.volFilter, ...rules
+          target: indicator.config.target / 100, vol_filter: indicator.config.volFilter, ...rules,
+          reserve_ms: reserveMs(config), validation: final, version: recipeVersion(config, recipe.id)
         })
       });
       const data = await response.json();
+      if (final && data.success) loadValidations();
       setResults(previous => ({ ...previous, [recipe.id]: data.success ? data : { error: data.message || 'No se pudo evaluar' } }));
       return data;
     } catch (error) {
       setResults(previous => ({ ...previous, [recipe.id]: { error: error.message } }));
       return null;
     }
+  };
+
+  /** Comprobación final en lo reservado: una vez por versión, cuando la receta ya está decidida */
+  const finalCheck = (recipe) => {
+    const version = recipeVersion(config, recipe.id);
+    const before = checksOf(recipe.id);
+    const same = before.filter(item => item.version === version);
+    const lines = [
+      `Comprobación final de ${recipeLabel(recipe)} v${version} en los datos desde el ${reserveDate(config)}.`,
+      'Esos datos dejan de estar reservados para esta receta: si después la ajustas mirando este resultado, la próxima comprobación ya no es limpia.',
+      before.length ? `Ya se comprobó ${before.length} ${before.length === 1 ? 'vez' : 'veces'}${same.length ? `, ${same.length} con esta versión` : ''}.` : '',
+      '¿Seguir?'
+    ];
+    if (window.confirm(lines.filter(Boolean).join('\n\n'))) evaluate(recipe, true);
   };
 
   const evaluateShown = async () => {
@@ -182,11 +229,12 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
     setConfig(previous => {
       if (recipe.builtin) {
         const base = SETUP_LIBRARY.find(item => item.id === recipe.id);
-        const { name, side, mode, min, groupMins, window, slots, momentum, swing, entry } = recipe;
-        return { ...previous, overrides: { ...previous.overrides, [recipe.id]: { name: name || base.name, side, mode, min, groupMins, window, slots, momentum, swing, entry } } };
+        const core = recipeCore(recipe);
+        const next = { ...previous, overrides: { ...previous.overrides, [recipe.id]: { ...core, name: core.name || base.name } } };
+        return withVersion(next, { ...recipe, name: core.name || base.name });
       }
       const custom = (previous.custom || []).filter(item => item.id !== recipe.id);
-      return { ...previous, custom: [...custom, recipe] };
+      return withVersion({ ...previous, custom: [...custom, recipe] }, recipe);
     });
     setEditing(null);
   };
@@ -194,7 +242,7 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
   const saveAsNew = (recipe) => {
     const id = `R${Date.now()}`;
     const copy = { ...recipe, id, builtin: false, num: undefined, name: `${recipe.name} (propia)`, kind: recipe.kind };
-    setConfig(previous => ({ ...previous, custom: [...(previous.custom || []), copy], active: [...(previous.active || []), id] }));
+    setConfig(previous => withVersion({ ...previous, custom: [...(previous.custom || []), copy], active: [...(previous.active || []), id] }, copy));
     setEditing(null);
   };
 
@@ -205,7 +253,10 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
   const restore = (id) => setConfig(previous => {
     const overrides = { ...previous.overrides };
     delete overrides[id];
-    return { ...previous, overrides };
+    const base = SETUP_LIBRARY.find(item => item.id === id);
+    const next = { ...previous, overrides };
+    // Volver al libro también es una versión, si antes hubo otras
+    return recipeVersions(previous, id).length && base ? withVersion(next, cleanRecipe(base), 'del libro') : next;
   });
 
   const handleApply = () => {
@@ -230,6 +281,8 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
               Leídas de las láminas de Orderflows Unlocked, que no traen entrada, stop ni resultados: son hipótesis.
               "Evaluar" corre la receta en los días anteriores a la hora simulada, entrando al cierre de la vela que la completa,
               con comisión taker de entrada y salida, contra la base de las velas del mismo color con las mismas reglas.
+              Desde la fecha de corte los datos quedan reservados: "Evaluar" nunca los mira, aunque la hora simulada sea posterior.
+              "Comprobación final" corre la receta solo en lo reservado y queda registrada con su versión: úsala una vez, cuando ya decidiste las reglas.
             </p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 8, alignItems: 'center' }}>
               <span className="hint">Días</span>
@@ -240,6 +293,8 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
               <input type="number" min="0.5" max="10" step="0.5" value={rules.target_r} onChange={(e) => setRules({ ...rules, target_r: Number(e.target.value) })} style={{ width: 60 }} />
               <span className="hint">Horizonte (velas)</span>
               <input type="number" min="4" max="500" value={rules.horizon} onChange={(e) => setRules({ ...rules, horizon: Number(e.target.value) })} style={{ width: 70 }} />
+              <span className="hint">Fecha de corte (UTC)</span>
+              <input type="date" value={reserveDate(config)} onChange={(e) => e.target.value && setConfig(previous => ({ ...previous, reserve: e.target.value }))} />
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
               {FILTERS.map(([key, label]) => (
@@ -252,7 +307,7 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
             </div>
           </div>
 
-          {editing && <RecipeEditor recipe={editing} onSave={saveRecipe} onSaveAsNew={saveAsNew} onCancel={() => setEditing(null)} />}
+          {editing && <RecipeEditor recipe={editing} versions={recipeVersions(config, editing.id)} onSave={saveRecipe} onSaveAsNew={saveAsNew} onCancel={() => setEditing(null)} />}
 
           <div className="settings-section">
             {ordered.map(recipe => (
@@ -265,13 +320,16 @@ const OrderFlowSetupsSettings = ({ symbol, indicator, onApply, onClose }) => {
                     <span className="hint" style={{ marginLeft: 6 }}>{recipeText(recipe)} · {recipe.kind || 'propia'}</span>
                     {recipe.missing?.length ? <span className="hint" style={{ marginLeft: 6, color: '#B26A00' }}>sin {recipe.missing.join(', ')}</span> : null}
                     {config.overrides?.[recipe.id] ? <span className="hint" style={{ marginLeft: 6, color: '#1565C0' }}>editado</span> : null}
+                    {recipeVersion(config, recipe.id) > 0 ? <span className="hint" style={{ marginLeft: 6 }}>v{recipeVersion(config, recipe.id)}</span> : null}
                   </span>
                   <button className="btn-secondary" onClick={() => evaluate(recipe)}>Evaluar</button>
+                  <button className="btn-secondary" onClick={() => finalCheck(recipe)} title="Corre la receta solo en las fechas reservadas y lo deja registrado">Comprobación final</button>
                   <button className="btn-secondary" onClick={() => setEditing(recipe)}>Editar</button>
                   {recipe.builtin && config.overrides?.[recipe.id] && <button className="btn-secondary" onClick={() => restore(recipe.id)}>Del libro</button>}
                   {!recipe.builtin && <button className="btn-secondary" onClick={() => removeCustom(recipe.id)}>Quitar</button>}
                 </div>
                 <div style={{ marginLeft: 54 }}><EvalLine result={results[recipe.id]} /></div>
+                <CheckLine checks={checksOf(recipe.id)} />
               </div>
             ))}
           </div>

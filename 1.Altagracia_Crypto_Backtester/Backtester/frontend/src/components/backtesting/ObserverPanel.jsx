@@ -6,6 +6,7 @@ import ObserverReading from './ObserverReading';
 import ObserverReport from './ObserverReport';
 import TradeImages from './TradeImages';
 import './Observer.css';
+import { priceText } from './blindClock.js';
 
 const MEASURES_PENDING = ['building', 'missing'];
 const MEASURES_POLL_MS = 5000;
@@ -48,7 +49,7 @@ const OrderRow = ({ trade, catalog, viewer, expanded, onToggle, onGoTo }) => {
     <div className="observer-order">
       <button type="button" className="observer-order-head" onClick={onToggle}>
         <span className={`observer-side ${trade.side}`}>{trade.side === 'long' ? 'LONG' : 'SHORT'}</span>
-        <span className="observer-entry">{trade.type} {Number(trade.entry).toFixed(1)}</span>
+        <span className="observer-entry">{trade.type} {priceText(Number(trade.entry), 1)}</span>
         <span className="observer-status">{statusName(trade.status)}</span>
         {trade.status === 'closed' && !hidden && (
           <span className={`observer-result ${trade.pnl > 0 ? 'win' : 'loss'}`}>

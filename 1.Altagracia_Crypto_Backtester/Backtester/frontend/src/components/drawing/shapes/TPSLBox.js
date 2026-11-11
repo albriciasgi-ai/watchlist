@@ -1,3 +1,4 @@
+import { priceText } from '../../backtesting/blindClock.js';
 // src/components/drawing/shapes/TPSLBox.js
 // Caja combinada de Take Profit y Stop Loss con punto de entrada
 
@@ -253,21 +254,21 @@ class TPSLBox {
     ctx.font = 'bold 12px Arial';
     ctx.fillText('TP', xCenter, yTp - 15);
     ctx.font = '11px Arial';
-    ctx.fillText(this.tpPrice.toFixed(2), xCenter, yTp - 2);
+    ctx.fillText(priceText(this.tpPrice, 2), xCenter, yTp - 2);
 
     // Entry Label
     ctx.fillStyle = this.style.entryColor;
     ctx.font = 'bold 12px Arial';
     ctx.fillText('ENTRY', xCenter, yEntry);
     ctx.font = '11px Arial';
-    ctx.fillText(this.entryPrice.toFixed(2), xCenter + 45, yEntry);
+    ctx.fillText(priceText(this.entryPrice, 2), xCenter + 45, yEntry);
 
     // SL Label
     ctx.fillStyle = this.style.slColor;
     ctx.font = 'bold 12px Arial';
     ctx.fillText('SL', xCenter, ySl + 15);
     ctx.font = '11px Arial';
-    ctx.fillText(this.slPrice.toFixed(2), xCenter, ySl + 2);
+    ctx.fillText(priceText(this.slPrice, 2), xCenter, ySl + 2);
 
     // Risk/Reward Ratio
     ctx.fillStyle = '#64748B';

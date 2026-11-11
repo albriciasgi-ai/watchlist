@@ -4125,13 +4125,38 @@ async def post_orderflow_setups_evaluate(request: Request, symbol: str):
     body = await request.json()
     if str(body.get("interval")) not in ("1", "5", "15", "60", "240"):
         return {"success": False, "message": "Marco no válido"}
+    reserve = int(body["reserve_ms"]) if body.get("reserve_ms") else None
+    validation = bool(body.get("validation"))
     result = await run_in_threadpool(
         of_setups.evaluate, sanitize_filename(symbol), int(body["interval"]), body.get("recipe") or {},
         int(body["known_until"]), int(body.get("days", 180)), float(body.get("stop_atr", 1.5)),
         float(body.get("target_r", 2.0)), int(body.get("horizon", 96)), float(body.get("target", 0.05)),
-        float(body.get("vol_filter", 2.0)))
+        float(body.get("vol_filter", 2.0)), reserve, validation)
+    if validation and result.get("success"):
+        # La comprobación queda en disco con la receta exacta: así se sabe qué versión se probó y cuándo
+        record = {"at": int(time.time() * 1000), "symbol": sanitize_filename(symbol), "interval": str(body["interval"]),
+                  "recipe": body.get("recipe"), "version": body.get("version"), "reserve_ms": reserve,
+                  "rules": result.get("rules"), "setup": result.get("setup"), "baseline": result.get("baseline"),
+                  "edgeR": result.get("edgeR"), "from": result.get("from"), "to": result.get("to")}
+        path = observer.OBSERVER_DIR / "setup_validations.jsonl"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
     return Response(content=json.dumps(result, allow_nan=False, separators=(",", ":")).encode("utf-8"),
                     media_type="application/json")
+
+
+@app.get("/api/orderflow/setups/{symbol}/validations")
+@limiter.limit("60/minute")
+async def get_setup_validations(request: Request, symbol: str):
+    """Comprobaciones finales ya hechas de este símbolo, de la más nueva a la más vieja."""
+    path = observer.OBSERVER_DIR / "setup_validations.jsonl"
+    rows = []
+    if path.exists():
+        with open(path, encoding="utf-8") as fh:
+            rows = [json.loads(line) for line in fh if line.strip()]
+    rows = [r for r in rows if r.get("symbol") == sanitize_filename(symbol)]
+    return {"success": True, "validations": rows[::-1]}
 
 
 @app.get("/api/orderflow/coverage/{symbol}")

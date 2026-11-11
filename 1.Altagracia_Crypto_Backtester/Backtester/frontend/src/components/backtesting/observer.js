@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../../config.js';
-import { isBlind, maskDate } from './blindClock.js';
+import { isBlind, maskDate, priceText, pricesHidden } from './blindClock.js';
 import { TF_MS } from './replayClock.js';
 import { EXIT_CAPTURE_CANDLES, exitCaptureTime } from './tradeJournal.js';
 
@@ -269,7 +269,7 @@ const OI_STATES = { up: 'Creciendo', down: 'Cayendo', mixed: 'Mixto' };
 const FRAME_NAMES = { 240: '4h', 60: '1h', 15: '15m' };
 const STATUS_NAMES = { pending: 'Pendiente', open: 'Abierta', closed: 'Cerrada', cancelled: 'Cancelada' };
 
-const price = (value) => Math.round(value).toLocaleString('en-US');
+const price = (value) => (pricesHidden() ? priceText(value) : Math.round(value).toLocaleString('en-US'));
 const percent = (value, digits = 0) => `${(value * 100).toFixed(digits)}%`;
 const signedPercent = (value) => `${value >= 0 ? '+' : ''}${(value * 100).toFixed(2)}%`;
 

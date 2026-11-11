@@ -3,6 +3,7 @@ import { alignX, alignY, crispWidth } from '../chartPixels.js';
 import IndicatorBase from './IndicatorBase.js';
 import { candlesBetween, sessionLength, sessionStart } from './sessionProfile.js';
 
+import { priceText } from '../backtesting/blindClock.js';
 const SETTINGS_KEY = 'vp_periodic_settings_';
 
 /** Parámetros guardados de un símbolo; sin almacenamiento disponible quedan los de fábrica */
@@ -161,7 +162,7 @@ class VolumeProfilePeriodicIndicator extends IndicatorBase {
       ctx.font = '9px Inter, sans-serif';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
-      ctx.fillText(`POC ${profile.poc.price.toFixed(2)}${profile.isReal ? ' · real' : ''}`, left + 3, top + 12);
+      ctx.fillText(`POC ${priceText(profile.poc.price, 2)}${profile.isReal ? ' · real' : ''}`, left + 3, top + 12);
     }
   }
 

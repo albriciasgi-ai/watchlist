@@ -15,6 +15,7 @@ import json
 import math
 import os
 import random
+import re
 import threading
 from pathlib import Path
 
@@ -673,6 +674,33 @@ def _agreement(group):
     return list(counts.values())
 
 
+SETUP_KIND = re.compile(r"^Setup (\S+)(?: \((.*)\))? (alcista|bajista)")
+
+
+def _setups_of(trade):
+    """Setups de Elementos OF elegidos para la orden, cada uno una vez: {etiqueta: nombre}"""
+    found = {}
+    for level in trade.get("levels") or []:
+        match = SETUP_KIND.match(str(level.get("kind") or ""))
+        if match and level.get("source", "Elementos OF") == "Elementos OF":
+            found.setdefault(match.group(1), match.group(2) or match.group(1))
+    return found
+
+
+def _by_setup(closed):
+    """Cuantas veces operaste cada setup, tu acierto y tu R, contra tus ordenes sin ese setup."""
+    names = {}
+    for trade in closed:
+        for label, name in _setups_of(trade).items():
+            names.setdefault(label, name)
+    rows = []
+    for label, name in names.items():
+        present, absent = _split(closed, lambda trade, label=label: label in _setups_of(trade))
+        rows.append({"id": label, "label": label, "name": name, "with": _stats(present), "without": _stats(absent)})
+    rows.sort(key=lambda row: -row["with"]["n"])
+    return rows
+
+
 def report(symbol=None, blind="all", include_rewound=False):
     """Informe de lo registrado: que condiciones se repiten y cuales acompañan los mejores resultados."""
     every = [trade for trade in trades().values() if not symbol or trade.get("symbol") == symbol]
@@ -709,6 +737,7 @@ def report(symbol=None, blind="all", include_rewound=False):
             "chance": sum(entry["chance"] for entry in entries) / len(entries) if entries else None,
         },
         "best_worst": _best_and_worst(closed),
+        "setups": _by_setup(closed),
     }
 
 

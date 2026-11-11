@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './RejectionPatternSettings.css';
-import { isBlind, maskDate } from './backtesting/blindClock.js';
+import { isBlind, maskDate, priceLabel } from './backtesting/blindClock.js';
 
 /**
  * Rejection Pattern Settings Component
@@ -781,9 +781,9 @@ const AddContextModal = ({ symbol, availableContexts, onAdd, onClose }) => {
                       </small>
                       {context.metadata && context.metadata.hasCalculatedValues ? (
                         <div style={{ marginLeft: '24px', marginTop: '4px', fontSize: '12px', color: '#1565C0' }}>
-                          POC: ${context.metadata.poc.toFixed(2)} |
-                          VAH: ${context.metadata.vah.toFixed(2)} |
-                          VAL: ${context.metadata.val.toFixed(2)}
+                          POC: {priceLabel(context.metadata.poc)} |
+                          VAH: {priceLabel(context.metadata.vah)} |
+                          VAL: {priceLabel(context.metadata.val)}
                         </div>
                       ) : (
                         <div style={{ marginLeft: '24px', marginTop: '4px', fontSize: '11px', color: '#b25600' }}>

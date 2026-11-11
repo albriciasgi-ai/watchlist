@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import ScreenshotModal from './ScreenshotModal';
-import { isBlind, maskDate } from './blindClock.js';
+import { isBlind, maskDate, priceLabel, quantityText } from './blindClock.js';
 
 const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
   const [closedOrders, setClosedOrders] = useState([]);
@@ -250,9 +250,9 @@ const TradeHistory = ({ orderManager, onNavigateToTrade }) => {
                   </td>
                   <td>{formatDate(order.executedAt || order.entryTime)}</td>
                   <td>{formatDate(order.exitTime)}</td>
-                  <td>${order.entryPrice.toFixed(2)}</td>
-                  <td>${order.exitPrice.toFixed(2)}</td>
-                  <td>{order.quantity}</td>
+                  <td>{priceLabel(order.entryPrice)}</td>
+                  <td>{priceLabel(order.exitPrice)}</td>
+                  <td>{quantityText(order.quantity)}</td>
                   <td>{formatPnL(order.pnl)}</td>
                   <td>{formatPnL(order.pnlPercent)}%</td>
                   <td>{formatDuration(order.executedAt || order.entryTime, order.exitTime)}</td>

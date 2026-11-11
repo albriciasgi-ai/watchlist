@@ -212,6 +212,47 @@ export function saveSetupsConfig(symbol, config) {
   }
 }
 
+// ==================== PERIODO RESERVADO Y VERSIONES ====================
+
+/** Desde esta fecha (UTC) los datos quedan para la comprobación final: el ajuste no los mira */
+export const DEFAULT_RESERVE = '2025-07-01';
+const MAX_VERSIONS = 30;
+
+export function reserveDate(config) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(config?.reserve || '') ? config.reserve : DEFAULT_RESERVE;
+}
+
+export function reserveMs(config) {
+  return Date.parse(`${reserveDate(config)}T00:00:00Z`);
+}
+
+/** Lo que define una receta, sin lo que solo sirve para mostrarla */
+export function recipeCore(recipe) {
+  const { name, side, mode, min, groupMins, window, slots, momentum, swing, entry } = recipe;
+  return JSON.parse(JSON.stringify({ name, side, mode, min, groupMins, window, slots, momentum, swing, entry }));
+}
+
+/** Versiones guardadas de una receta, de la más vieja a la más nueva. v0 es la del libro o la primera */
+export function recipeVersions(config, id) {
+  return config?.history?.[id] || [];
+}
+
+/** Número de la versión vigente: 0 mientras no se edita */
+export function recipeVersion(config, id) {
+  const list = recipeVersions(config, id);
+  return list.length ? list[list.length - 1].v : 0;
+}
+
+/** Config con una versión nueva de la receta, con la fecha real en que se guardó. No repite una igual a la vigente */
+export function withVersion(config, recipe, note = '') {
+  const list = recipeVersions(config, recipe.id);
+  const core = recipeCore(recipe);
+  const last = list[list.length - 1];
+  if (last && JSON.stringify(last.recipe) === JSON.stringify(core)) return config;
+  const entry = { v: (last?.v ?? 0) + 1, at: Date.now(), recipe: core, ...(note ? { note } : {}) };
+  return { ...config, history: { ...(config.history || {}), [recipe.id]: [...list, entry].slice(-MAX_VERSIONS) } };
+}
+
 /** Todas las recetas: la biblioteca, con lo que el usuario cambió en cada una, y las propias */
 export function allRecipes(config) {
   const library = SETUP_LIBRARY.map(recipe => cleanRecipe({ ...recipe, ...(config.overrides?.[recipe.id] || {}) }));

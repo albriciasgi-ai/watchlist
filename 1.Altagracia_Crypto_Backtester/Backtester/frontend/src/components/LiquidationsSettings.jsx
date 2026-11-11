@@ -5,14 +5,14 @@ import {
 } from './indicators/LiquidationsIndicator.js';
 import { coverageText } from './indicators/liquidationZones.js';
 import { clearPins, pinsAt, removePin, subscribePins } from './indicators/liquidationPins.js';
-import { isBlind } from './backtesting/blindClock.js';
+import { isBlind, priceText } from './backtesting/blindClock.js';
 
 const pick = (config) => Object.fromEntries(Object.keys(defaultLiquidationsConfig()).map(key => [key, config[key]]));
 
 /** Una vela fijada en la lista: marco, lado, precio y, sin fecha oculta, su fecha */
 const pinText = (pin) => {
   const when = isBlind() ? '' : ` del ${new Date(pin.time).toLocaleString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
-  return `Vela ${pin.timeframe}${when} · ${pin.edge === 'high' ? 'máximo' : 'mínimo'} ${pin.price.toFixed(1)}`;
+  return `Vela ${pin.timeframe}${when} · ${pin.edge === 'high' ? 'máximo' : 'mínimo'} ${priceText(pin.price, 1)}`;
 };
 
 /** Zonas de liquidaciones. Aplica a todos los marcos del símbolo. */

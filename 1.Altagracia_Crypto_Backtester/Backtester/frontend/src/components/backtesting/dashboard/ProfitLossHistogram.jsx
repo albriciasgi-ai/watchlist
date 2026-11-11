@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
+import { priceLabel } from '../blindClock.js';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -64,8 +65,8 @@ const ProfitLossHistogram = ({ trades, mode, onModeChange }) => {
               label += '$' + context.parsed.y.toFixed(2);
             }
             label += `\nSide: ${trade.side.toUpperCase()}`;
-            label += `\nEntry: $${trade.entryPrice.toFixed(2)}`;
-            label += `\nExit: $${trade.exitPrice.toFixed(2)}`;
+            label += `\nEntry: ${priceLabel(trade.entryPrice)}`;
+            label += `\nExit: ${priceLabel(trade.exitPrice)}`;
             return label.split('\n');
           }
         }

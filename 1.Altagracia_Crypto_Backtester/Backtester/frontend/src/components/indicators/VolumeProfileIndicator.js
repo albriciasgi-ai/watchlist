@@ -5,6 +5,7 @@ import { alignX, alignY, crispWidth } from '../chartPixels.js';
 import { THEME, isCustom, isNewTheme, rgbOf } from '../uiTheme.js'; // Estilo Nítido
 import IndicatorBase from "./IndicatorBase";
 
+import { maskVolume, priceText } from '../backtesting/blindClock.js';
 /** Valores de fábrica de lo visual: lo que difiere (o está en customVisual) lo eligió el usuario */
 export const VP_FACTORY = {
   baseColor: '#2196F3',
@@ -635,9 +636,9 @@ class VolumeProfileIndicator extends IndicatorBase {
       const digits = this.profile.poc.price >= 1000 ? 1 : 2;
       const rows = [
         [this.mode === "fixed" ? "Perfil fijo" : "Perfil dinámico", ""],
-        ["POC", this.profile.poc.price.toFixed(digits)],
-        ["VAH", this.profile.valueArea.vahPrice.toFixed(digits)],
-        ["VAL", this.profile.valueArea.valPrice.toFixed(digits)]
+        ["POC", priceText(this.profile.poc.price, digits)],
+        ["VAH", priceText(this.profile.valueArea.vahPrice, digits)],
+        ["VAL", priceText(this.profile.valueArea.valPrice, digits)]
       ];
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
@@ -670,16 +671,16 @@ class VolumeProfileIndicator extends IndicatorBase {
       
       // POC
       ctx.fillStyle = this.pocColor;
-      ctx.fillText(`POC: ${this.profile.poc.price.toFixed(2)}`, labelX, labelY);
+      ctx.fillText(`POC: ${priceText(this.profile.poc.price, 2)}`, labelX, labelY);
       labelY += 12;
       
       // VAH
       ctx.fillStyle = this.vahValColor;
-      ctx.fillText(`VAH: ${this.profile.valueArea.vahPrice.toFixed(2)}`, labelX, labelY);
+      ctx.fillText(`VAH: ${priceText(this.profile.valueArea.vahPrice, 2)}`, labelX, labelY);
       labelY += 12;
       
       // VAL
-      ctx.fillText(`VAL: ${this.profile.valueArea.valPrice.toFixed(2)}`, labelX, labelY);
+      ctx.fillText(`VAL: ${priceText(this.profile.valueArea.valPrice, 2)}`, labelX, labelY);
       
       // FASE 3: Mostrar info de clusters si estÃƒÂ¡ habilitado
       if (this.enableClusterDetection) {
@@ -695,6 +696,7 @@ class VolumeProfileIndicator extends IndicatorBase {
    * Formatea el volumen para display
    */
   formatVolume(volume) {
+    volume = maskVolume(volume);
     if (volume >= 1000000) {
       return (volume / 1000000).toFixed(1) + "M";
     } else if (volume >= 1000) {

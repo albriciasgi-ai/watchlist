@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import OrderConfirmationModal from './OrderConfirmationModal';
 import AnalysisLevels from './AnalysisLevels';
 import { autoOrderType, orderEntry, orderPreview, orderQuantity, priceAtPercent } from './orderPlan.js';
+import { blindScale, maskPrice, priceLabel, pricesHidden } from './blindClock.js';
 
 const SIZE_MODE_KEY = 'backtesting_order_size_mode';
 
@@ -21,6 +22,12 @@ const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, char
   const [riskUSDT, setRiskUSDT] = useState('10');
   const [quantityUSDT, setQuantityUSDT] = useState('100'); // 🎯 NUEVO: Cantidad en USDT en lugar de monedas
   const [entryPrice, setEntryPrice] = useState('');
+  // Con precio oculto el campo se escribe en el índice: se guarda la escala con que se escribió
+  const entryScaleRef = useRef(null);
+  const writeEntry = (text) => {
+    entryScaleRef.current = pricesHidden() ? blindScale() : null;
+    setEntryPrice(text);
+  };
   const [stopLossPercent, setStopLossPercent] = useState('');
   const [takeProfitPercent, setTakeProfitPercent] = useState('');
   const [notes, setNotes] = useState('');
@@ -45,8 +52,8 @@ const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, char
   // 🎯 FIX: NO actualizar automáticamente si el tipo de orden es 'limit'
   useEffect(() => {
     if (useCurrentPrice && currentPrice && orderType !== 'limit') {
-      const newPrice = currentPrice.toFixed(2);
-      setEntryPrice(newPrice);
+      const newPrice = pricesHidden() ? maskPrice(currentPrice).toFixed(3) : currentPrice.toFixed(2);
+      writeEntry(newPrice);
     }
   }, [currentPrice, useCurrentPrice, orderType]);
 
@@ -61,7 +68,11 @@ const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, char
   // La orden sale de la caja del gráfico o, sin caja, de los campos del panel
   const box = useChartBox ? chartBox : null;
   const side = box ? box.side : orderSide;
-  const entry = orderEntry({ box, useCurrentPrice, currentPrice, typedEntry: entryPrice, orderType });
+  const typedScale = entryScaleRef.current;
+  const typedEntry = typedScale && Number.isFinite(parseFloat(entryPrice))
+    ? String((parseFloat(entryPrice) / typedScale.base) * typedScale.ref)
+    : entryPrice;
+  const entry = orderEntry({ box, useCurrentPrice, currentPrice, typedEntry, orderType });
   const stopLoss = box ? box.slPrice : priceAtPercent(entry, side, stopLossPercent, false);
   const takeProfit = box ? box.tpPrice : priceAtPercent(entry, side, takeProfitPercent, true);
   const finalType = orderType === 'auto' && currentPrice && entry > 0 ? autoOrderType(entry, currentPrice, side) : orderType;
@@ -248,7 +259,7 @@ const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, char
           </label>
           {box && (
             <div className="price-hint">
-              {side.toUpperCase()} · Entrada ${box.entryPrice.toFixed(2)} · SL ${box.slPrice.toFixed(2)} · TP ${box.tpPrice.toFixed(2)}
+              {side.toUpperCase()} · Entrada {priceLabel(box.entryPrice)} · SL {priceLabel(box.slPrice)} · TP {priceLabel(box.tpPrice)}
             </div>
           )}
         </div>
@@ -330,14 +341,14 @@ const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, char
         </label>
         <input
           type="number"
-          step="0.01"
+          step={pricesHidden() ? '0.001' : '0.01'}
           value={entryPrice}
-          onChange={(e) => setEntryPrice(e.target.value)}
+          onChange={(e) => writeEntry(e.target.value)}
           placeholder="Precio"
           disabled={useCurrentPrice}
         />
         {currentPrice && (
-          <div className="price-hint">Actual: ${currentPrice.toFixed(2)}</div>
+          <div className="price-hint">Actual: {priceLabel(currentPrice)}</div>
         )}
       </div>
 
@@ -353,7 +364,7 @@ const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, char
         />
         {stopLossPercent && entryPrice && (
           <div className="price-hint">
-            ${(stopLoss || 0).toFixed(2)}
+            {priceLabel((stopLoss || 0))}
           </div>
         )}
       </div>
@@ -370,7 +381,7 @@ const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, char
         />
         {takeProfitPercent && entryPrice && (
           <div className="price-hint">
-            ${(takeProfit || 0).toFixed(2)}
+            {priceLabel((takeProfit || 0))}
           </div>
         )}
       </div>

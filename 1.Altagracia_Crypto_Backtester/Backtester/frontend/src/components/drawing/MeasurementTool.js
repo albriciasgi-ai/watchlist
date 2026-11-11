@@ -3,6 +3,7 @@
 
 import { pixelRatio } from '../chartPixels.js';
 
+import { priceText, pricesHidden } from '../backtesting/blindClock.js';
 class MeasurementTool {
   constructor() {
     this.startPoint = null;
@@ -80,9 +81,9 @@ class MeasurementTool {
     const candleCount = Math.abs(Math.round(timeDiff / intervalMs));
 
     return {
-      price1: price1.toFixed(2),
-      price2: price2.toFixed(2),
-      priceDiff: Math.abs(priceDiff).toFixed(2),
+      price1: priceText(price1, 2),
+      price2: priceText(price2, 2),
+      priceDiff: priceText(Math.abs(priceDiff), 2),
       pricePercent: pricePercent.toFixed(2),
       pricePercentAbs: Math.abs(pricePercent).toFixed(2),
       timeDiff: this.formatTimeDiff(Math.abs(timeDiff)),
@@ -234,7 +235,7 @@ class MeasurementTool {
     ctx.font = 'bold 13px Arial';
     const sign = m.isPositive ? '+' : '-';
     const percentColor = m.isPositive ? '#4ADE80' : '#F87171';
-    ctx.fillText(`${sign}$${m.priceDiff} (${sign}${m.pricePercentAbs}%)`, boxX + padding, lineY);
+    ctx.fillText(`${sign}${pricesHidden() ? "" : "$"}${m.priceDiff} (${sign}${m.pricePercentAbs}%)`, boxX + padding, lineY);
 
     // Línea 2: Rango de precios
     lineY += 18;

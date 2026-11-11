@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ROLES, clearLevels, knownLevels, removeLevel, subscribeLevels, updateLevel } from '../indicators/analysisLevels.js';
-import { isBlind, maskDate } from './blindClock.js';
+import { isBlind, maskDate, priceText } from './blindClock.js';
 import './Observer.css';
 
 const candleTime = (time) => (isBlind() ? maskDate(time) : new Date(time).toLocaleString('es-CO', {
@@ -38,7 +38,7 @@ const AnalysisLevels = ({ symbol, time }) => {
             <span className="analysis-level-name">{level.kind}</span>
             <span className="analysis-level-source">{level.source}</span>
             <span className="analysis-level-price">
-              {level.mark && level.time !== undefined ? candleTime(level.time) : Number.isFinite(level.price) ? level.price.toFixed(1) : ''}
+              {level.mark && level.time !== undefined ? candleTime(level.time) : Number.isFinite(level.price) ? priceText(level.price, 1) : ''}
             </span>
             <button type="button" title="Quitar del análisis" onClick={() => removeLevel(symbol, level.id)}>×</button>
           </div>

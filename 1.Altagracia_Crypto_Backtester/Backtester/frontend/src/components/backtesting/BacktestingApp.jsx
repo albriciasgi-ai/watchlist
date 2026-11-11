@@ -38,7 +38,7 @@ import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
 import ObserverPanel from './ObserverPanel';
 import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordImage, recordOrder } from './observer.js';
-import { blindAnchor, isBlind, maskDate, setBlindAnchor } from './blindClock.js';
+import { blindAnchor, blindScale, isBlind, maskDate, priceText, pricesHidden, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
 import { boxesFollowOrders, latestFreeBox } from './orderPlan.js';
 import { drawingsForOrder } from './tradeContext.js';
@@ -1096,6 +1096,8 @@ const BacktestingApp = () => {
       }
 
       setBlindAnchor(blindStart !== null ? simulationStartTime : null);
+      // Precio como índice y volumen relativo: el nivel del precio también ubicaría la época
+      setBlindScale(blindStart !== null ? scaleFromCandles(timeframeData.main, simulationStartTime) : null);
       setBlindActive(blindStart !== null);
       maxSimTimeRef.current = 0;
 
@@ -1443,6 +1445,7 @@ const BacktestingApp = () => {
 
   const revealDate = useCallback(() => {
     setBlindAnchor(null);
+    setBlindScale(null);
     setBlindActive(false);
     latestRef.current.applyToAllTimeframes(() => {});
   }, []);
@@ -1954,6 +1957,7 @@ const BacktestingApp = () => {
 
       // Observador
       blindAnchor: blindAnchor(),
+      blindScale: blindScale(),
       maxSimTime: maxSimTimeRef.current,
 
       // Estado de cada tab (3 timeframes)
@@ -2006,6 +2010,9 @@ const BacktestingApp = () => {
       }
 
       setBlindAnchor(session.blindAnchor);
+      // Una sesión oculta guardada antes del índice no trae escala: se arma con sus velas
+      setBlindScale(session.blindAnchor == null ? null
+        : session.blindScale || scaleFromCandles(marketDataRef.current?.timeframes?.[session.activeTimeframe || activeTimeframe]?.main, session.blindAnchor));
       setBlindActive(isBlind());
       maxSimTimeRef.current = session.maxSimTime ?? 0;
 
@@ -2267,9 +2274,11 @@ const BacktestingApp = () => {
           )}
           {currentPrice && (
             <span className="current-price-compact">
-              {isNewTheme()
-                ? currentPrice.toFixed(currentPrice >= 1000 ? 1 : currentPrice >= 1 ? 2 : 4)
-                : `$${currentPrice.toFixed(2)}`}
+              {blindActive && pricesHidden()
+                ? priceText(currentPrice)
+                : isNewTheme()
+                  ? currentPrice.toFixed(currentPrice >= 1000 ? 1 : currentPrice >= 1 ? 2 : 4)
+                  : `$${currentPrice.toFixed(2)}`}
             </span>
           )}
         </div>

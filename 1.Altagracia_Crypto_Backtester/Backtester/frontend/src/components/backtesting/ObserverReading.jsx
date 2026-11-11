@@ -3,6 +3,7 @@ import { roleLabel } from '../indicators/analysisLevels.js';
 import ObserverMarks from './ObserverMarks';
 import { emptyMarks, formatMeasure, formatR, recordMarks, simulatedDate } from './observer.js';
 import './Observer.css';
+import { priceText } from './blindClock.js';
 
 const WAITING = {
   building: 'Preparando las medidas de este símbolo. Tarda cerca de un minuto.',
@@ -28,7 +29,7 @@ const References = ({ references }) => {
           <tr key={`${item.label}-${i}`}>
             <td>{item.label}</td>
             <td>{item.role || (item.origin === 'drawing' ? 'Dibujo' : 'Nivel')}</td>
-            <td>{item.price.toFixed(1)}</td>
+            <td>{priceText(item.price, 1)}</td>
             <td>{item.distance_atr === undefined ? '—' : `${Math.abs(item.distance_atr).toFixed(2)} ATR ${item.distance_atr >= 0 ? 'detrás' : 'delante'}`}</td>
           </tr>
         ))}

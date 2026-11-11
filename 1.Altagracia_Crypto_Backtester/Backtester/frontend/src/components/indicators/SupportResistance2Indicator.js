@@ -7,6 +7,7 @@ import { chartInk } from '../uiTheme.js'; // Con Oscuro, el texto de las etiquet
 import IndicatorBase from "./IndicatorBase";
 import { DEFAULT_LEVEL_CONFIG, LevelBook, cleanLevelConfig } from './swingLevels.js';
 
+import { priceLabel } from '../backtesting/blindClock.js';
 const SHOW_KEYS = ['showResistances', 'showSupports', 'showLabels'];
 
 /** Lo que quien opera guardó en el modal. Vale para todos los marcos del símbolo */
@@ -136,7 +137,7 @@ class SupportResistance2Indicator extends IndicatorBase {
 
     // Dibujar etiqueta (lado izquierdo, sin fondo)
     if (this.showLabels) {
-      const labelText = `${isResistance ? 'R' : 'S'}${index + 1}: $${level.price.toFixed(2)} (${level.touches}t, ${level.strength.toFixed(1)}★, z ${level.avgVolumeZScore.toFixed(1)})`;
+      const labelText = `${isResistance ? 'R' : 'S'}${index + 1}: ${priceLabel(level.price)} (${level.touches}t, ${level.strength.toFixed(1)}★, z ${level.avgVolumeZScore.toFixed(1)})`;
       const labelX = startX + 5;
       const labelY = y - 3;
 

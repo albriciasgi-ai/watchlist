@@ -727,11 +727,22 @@ backend/of_setups.py: match_recipes() sobre los eventos de of_elements.detect()
 - **Sin futuro:** un voto cuenta en la vela con la que se conoce su elemento (la VA abandonada, en la siguiente). Con confirmación de entrada, el setup se conoce al cerrar la vela que avanzó a favor
 - **Filtros:** swing (mínimo o máximo de N velas, hasta `flex` velas antes, opcionalmente con un voto en esa vela), momentum (EMA 14 con pendiente ≥ 0.25 ATR en 3 velas y el precio de su lado) y confirmación de entrada (`atr` ATR a favor dentro de `bars` velas)
 - **Biblioteca:** los 91 setups en notación corta (`ofSetups.js`): `A+B` misma vela, `@3` ventana, `A>B` secuencia, ` m` momentum, ` s` swing. El orden y la ventana salen de las lecturas de las láminas. Los 15, 43, 53 y 70 llevan "sin Market Weakness". Vienen apagados
-- **Evaluación:** entra al cierre de la vela con la que se conoce el setup, con stop de `stop_atr` ATR, objetivo de `target_r` R u horizonte de velas, y comisión taker de entrada y salida. Si stop y objetivo caen en la misma vela, cuenta el stop. La base son las velas del mismo color con las mismas reglas. Da casos, acierto con intervalo de Wilson, R neto, base y ventaja, y avisa con menos de 30 casos. 180 días de 15m tardan de 4 a 8 s
+- **Evaluación:** entra al cierre de la vela con la que se conoce el setup, con stop de `stop_atr` ATR, objetivo de `target_r` R u horizonte de velas, y comisión taker de entrada y salida. Si stop y objetivo caen en la misma vela, cuenta el stop. La base son las velas del mismo color con las mismas reglas. Da casos, acierto con intervalo de Wilson, R neto, base y ventaja, y avisa con menos de 30 casos. Pide los elementos en tramos de 60 días (`_detect_span`): `detect()` no acepta más de 70 de una vez. 180 días de 15m tardan unos 22 s la primera vez
 - **Gráfico:** un corchete bajo (alcista) o sobre (bajista) las velas que votaron, con la etiqueta `S2` o las iniciales de una receta propia. Se ofrece al menú "Incluir en el análisis" con los códigos que votaron
 - **Modal "Setups de Order Flow":** se abre desde el modal de Elementos OF ("Setups (recetas)…"). Lista con filtro (todos, activos, giro, continuación, propios), "Evaluar" por receta o para toda la lista, orden por ventaja, editor de casillas y filtros, "Guardar como propia" y "Del libro" para deshacer lo editado
 
-Medido el 10/11 en BTC 15m con la hora simulada en el 25/10/2026: S2 dio 23 casos, 34.8% de acierto, -0.24 R contra -0.41 de la base. Con tan pocos casos nada se distingue del azar. Estos dos últimos necesitan el Max/Min Delta exacto: con 1 minuto, Small Min/Max acierta menos de la mitad (`delta_exacto.py`).
+Medido el 10/11 en BTC 15m con la hora simulada en el 25/10/2026: S2 dio 23 casos, 34.8% de acierto, -0.24 R contra -0.41 de la base. Con tan pocos casos nada se distingue del azar. Esa medida cubrió solo 70 días: hasta la fase 4, `detect()` recortaba en silencio todo pedido más largo, así que "Días" pasaba de 70 sin efecto. Estos dos últimos necesitan el Max/Min Delta exacto: con 1 minuto, Small Min/Max acierta menos de la mitad (`delta_exacto.py`).
+
+### Prueba manual (fase 4, 10/11)
+
+Pedido del usuario: decidir las reglas de cada setup probando a mano, sin gastar las fechas con que se comprueba.
+
+- **Periodo reservado:** "Fecha de corte (UTC)" en el modal, 2025-07-01 por defecto (`reserve` en `of_setups_{symbol}`). "Evaluar" envía `reserve_ms` y el backend nunca mira desde esa fecha, aunque la hora simulada sea posterior. Con la hora simulada a menos de 7 días después del corte no evalúa
+- **Comprobación final:** botón por receta. Pide confirmar, dice cuántas veces ya se comprobó y con qué versión, y corre la receta solo en lo reservado: desde la fecha de corte hasta el último día del almacén (`validation: true`). Cada comprobación queda en `OrderFlowData/observer/setup_validations.jsonl` con la receta exacta, su versión, reglas y resultado; `GET /api/orderflow/setups/{symbol}/validations` las lista y el modal muestra la última bajo cada receta. De 2025-07-01 a noviembre de 2026 en 15m tarda alrededor de un minuto la primera vez
+- **Versiones:** cada "Guardar" del editor, "Guardar como propia" y "Del libro" (si hubo versiones) suma una a `history[id]` con la fecha real y la receta (`withVersion()` en `ofSetups.js`, hasta 30 por receta, sin repetir una igual a la vigente). La fila muestra `v2` y el editor la lista. v0 es la del libro o la de antes de esta fase
+- **Tus trades por setup:** `observer.report()` trae `setups`: por cada setup de Elementos OF elegido para el análisis de una orden cerrada (`levels` con `kind` "Setup S14 (...) alcista: ..."), acierto y R con y sin él. Una orden cuenta una vez cada setup. El informe del Observador lo muestra en "Tus trades por setup"; lo que hizo la receta sola sigue siendo "Evaluar"
+- **Pruebas:** `test_el_ajuste_nunca_mira_las_fechas_reservadas`, `test_la_comprobacion_usa_todo_lo_reservado`, `test_rangos_largos_se_piden_por_tramos_sin_repetir_velas`, `test_informe_por_setup_cuenta_los_setups_elegidos` y dos en `ofsetups.test.mjs`. Probado en la copia aislada: 180 días de ajuste con corte el 01/07/2026 terminan el 30/06 y la comprobación cubre del 01/07 al 04/11
+- **Falta:** la fecha al azar del modo oculto puede caer en lo reservado. Practicar a mano ahí no ajusta la receta, pero sí muestra esas velas
 
 ### Dibujo (frontend)
 
@@ -749,6 +760,7 @@ Medido el 10/11 en BTC 15m con la hora simulada en el 25/10/2026: S2 dio 23 caso
 ```bash
 node tests/ofelements.test.mjs
 node tests/ofsetups.test.mjs
+node tests/blind.test.mjs
 .venv\Scripts\python.exe -m pytest tests/test_of_elements.py tests/test_of_setups.py
 ```
 
@@ -833,7 +845,12 @@ GET /api/observer/report                                Informe de todo lo regis
 - `maxSimTimeRef` guarda hasta dónde llegó la simulación. Una orden anterior a ese punto queda con `rewound: true` y el informe la excluye salvo que se pida
 - `blindClock.js` guarda el inicio oculto. `maskDate()` muestra `Día 3 14:30` en el encabezado, eje, cruz, historial, rendimiento, dashboard y perfiles fijos
 - `blind_start()` elige un día del tramo sin huecos del almacén, 45 días después de su inicio y 14 antes de su final, separado 14 días de las fechas ya usadas
-- El nivel de precio sigue a la vista y puede dar una pista de la época
+- **Precio como índice** (fase 4, 10/11, pedido del usuario: lo que importa son los porcentajes). Al iniciar con fecha oculta, `scaleFromCandles()` fija la escala: el cierre de la última vela antes del inicio vale `base`, al azar entre 80 y 120 con 3 decimales, y todo precio se muestra como `precio × base / ref`. Los porcentajes no cambian. El volumen, el delta, el CVD, el OI y las cantidades en monedas se multiplican por `1000 / volRef`, la mediana de las 96 velas previas: así la vela típica del inicio vale 1,000
+  - Solo cambia lo que se lee. Órdenes, registro, sesión e informe del backend siguen en precios reales. La escala viaja en la sesión (`blindScale`); una sesión oculta guardada antes la arma con sus velas. "Revelar fecha" la quita
+  - `blindClock.js`: `maskPrice`, `unmaskPrice`, `priceText` (índice con 3 decimales), `priceLabel` (sin `$` en el índice), `maskVolume` y `quantityText`. Sin fecha oculta devuelven lo de siempre
+  - Cubre: eje (pasos redondos del índice), leyenda, cruz, último precio, encabezado, menú de niveles, niveles elegidos, perfiles (POC, VAH, VAL y volumen), S&R, S&R v2, VP fijo y periódico, footprint y su delta, tabla de Elementos OF, paneles de volumen, CVD y OI, dibujos (línea, Fibonacci, caja TP/SL, rectángulo y medición), panel de trading, confirmación, pendientes, rendimiento, historial, dashboard, Excel, Observador, rangos fijos, velas fijadas y contextos de Rechazos
+  - El campo "Precio de entrada" se escribe en el índice y se convierte con la escala con que se escribió, aunque luego se revele la fecha. Probado: 81.000 en el índice quedó como 59,077.37 en el registro, con el mercado en 81.696 = 59,585
+  - Quedan con números reales: el JSON de exportar sesión, las notificaciones de Double Top/Bottom y la tarjeta de footprint del panel lateral, que no está conectada. El aviso "Bybit no tiene datos tan antiguos" del OI dice que la fecha es vieja
 
 ### Informe
 

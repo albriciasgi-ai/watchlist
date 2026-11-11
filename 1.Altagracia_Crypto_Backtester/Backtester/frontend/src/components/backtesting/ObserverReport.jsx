@@ -197,6 +197,23 @@ const ObserverReport = ({ symbol, reached, onClose }) => {
                 </div>
               )}
 
+              {data.setups?.length > 0 && (
+                <div className="settings-section">
+                  <h4>Tus trades por setup</h4>
+                  <OutcomeTable
+                    rows={data.setups.map(row => ({
+                      ...row,
+                      label: row.name && row.name !== row.label ? `${row.label} · ${row.name}` : row.label,
+                      share: data.overall.n ? row.with.n / data.overall.n : null
+                    }))}
+                    label="Setup"
+                  />
+                  <p className="observer-report-note">
+                    Cuenta los setups de Elementos OF que elegiste para el análisis de cada orden. Lo que hizo la receta sola, con sus reglas, se mide con "Evaluar" en el modal de Setups de Order Flow.
+                  </p>
+                </div>
+              )}
+
               {data.overall.n > 0 && (
                 <div className="settings-section">
                   <h4>Lo que leía la regla</h4>

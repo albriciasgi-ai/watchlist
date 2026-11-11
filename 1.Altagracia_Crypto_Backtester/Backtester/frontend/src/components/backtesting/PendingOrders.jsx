@@ -1,5 +1,6 @@
 import React from 'react';
 import './PendingOrders.css';
+import { priceLabel, quantityText } from './blindClock.js';
 
 /**
  * Componente para mostrar órdenes pendientes (limit/stop)
@@ -28,7 +29,7 @@ const PendingOrders = ({ orderManager, currentPrice }) => {
     const direction = distance > 0 ? 'arriba' : 'abajo';
 
     return {
-      distance: Math.abs(distance).toFixed(2),
+      distance: priceLabel(Math.abs(distance)), // Una distancia: el índice es proporcional, sin desplazamiento
       percent: percent.toFixed(2),
       direction
     };
@@ -69,7 +70,7 @@ const PendingOrders = ({ orderManager, currentPrice }) => {
                 <div className="pending-detail">
                   <span className="pending-label">Precio Objetivo:</span>
                   <span className="pending-value pending-price">
-                    ${order.entryPrice.toFixed(2)}
+                    {priceLabel(order.entryPrice)}
                   </span>
                 </div>
 
@@ -77,21 +78,21 @@ const PendingOrders = ({ orderManager, currentPrice }) => {
                   <div className="pending-detail">
                     <span className="pending-label">Distancia:</span>
                     <span className="pending-value">
-                      ${priceInfo.distance} ({priceInfo.percent}% {priceInfo.direction})
+                      {priceInfo.distance} ({priceInfo.percent}% {priceInfo.direction})
                     </span>
                   </div>
                 )}
 
                 <div className="pending-detail">
                   <span className="pending-label">Cantidad:</span>
-                  <span className="pending-value">{order.quantity}</span>
+                  <span className="pending-value">{quantityText(order.quantity)}</span>
                 </div>
 
                 {order.stopLoss && (
                   <div className="pending-detail">
                     <span className="pending-label">SL:</span>
                     <span className="pending-value pending-sl">
-                      ${order.stopLoss.toFixed(2)}
+                      {priceLabel(order.stopLoss)}
                     </span>
                   </div>
                 )}
@@ -100,7 +101,7 @@ const PendingOrders = ({ orderManager, currentPrice }) => {
                   <div className="pending-detail">
                     <span className="pending-label">TP:</span>
                     <span className="pending-value pending-tp">
-                      ${order.takeProfit.toFixed(2)}
+                      {priceLabel(order.takeProfit)}
                     </span>
                   </div>
                 )}
