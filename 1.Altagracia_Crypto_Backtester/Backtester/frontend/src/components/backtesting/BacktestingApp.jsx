@@ -23,6 +23,7 @@ import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
 import LiquidationsSettings from '../LiquidationsSettings';
 import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
+import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
 import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
 import DrawingToolbar from '../drawing/DrawingToolbar';
@@ -183,6 +184,7 @@ const BacktestingApp = () => {
   const [showResponseVolumeSettings, setShowResponseVolumeSettings] = useState(false);
   const [showLiquidationsSettings, setShowLiquidationsSettings] = useState(false);
   const [showOFElementsSettings, setShowOFElementsSettings] = useState(false);
+  const [showOFSetupsSettings, setShowOFSetupsSettings] = useState(false);
   const [chartShapes, setChartShapes] = useState([]); // Dibujos del gráfico, para ofrecer la caja TP/SL
 
   // 🎯 Configuraciones de indicadores
@@ -1777,6 +1779,7 @@ const BacktestingApp = () => {
     setShowResponseVolumeSettings(false);
     setShowLiquidationsSettings(false);
     setShowOFElementsSettings(false);
+    setShowOFSetupsSettings(false);
   }, [activeTimeframe]);
 
   // 🔧 FIX: Forzar redibujado del canvas cuando se entra/sale de fullscreen
@@ -3206,6 +3209,16 @@ const BacktestingApp = () => {
           indicator={indicatorManagerRef.current.getOFElementsIndicator()}
           onApply={(settings) => applyToAllTimeframes(manager => manager.getOFElementsIndicator().updateConfig(settings))}
           onClose={() => setShowOFElementsSettings(false)}
+          onOpenSetups={() => { setShowOFElementsSettings(false); setShowOFSetupsSettings(true); }}
+        />
+      )}
+
+      {showOFSetupsSettings && indicatorManagerRef.current && (
+        <OrderFlowSetupsSettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getOFElementsIndicator()}
+          onApply={(config) => applyToAllTimeframes(manager => manager.getOFElementsIndicator().setSetupsConfig(config))}
+          onClose={() => setShowOFSetupsSettings(false)}
         />
       )}
 

@@ -708,7 +708,30 @@ El filtro elige velas de mucho volumen más que elementos: Volume Imbalance, Vol
 
 Tasas de BTC del 02/10 al 01/11/2026. Los umbrales de XD y SM usan solo velas con flujo, y los de BR y GR solo velas de días con órdenes. La tabla de la vela suma las filas Máx Δ y Mín Δ (`maxd`, `mind` en `bars`; `null` sin flujo).
 
-Queda fuera Market Weakness, sin regla en las láminas. Estos dos últimos necesitan el Max/Min Delta exacto: con 1 minuto, Small Min/Max acierta menos de la mitad (`delta_exacto.py`).
+Queda fuera Market Weakness, sin regla en las láminas.
+
+### Setups como recetas (fase 3, 10/11)
+
+Inspirado en el "Consenso" de Strategic Flows (strategicflows.com, el producto de Mike Valtos para NinjaTrader), que combina señales pero no trae backtest ni estadísticas. Aquí cada receta se evalúa en el histórico con costos.
+
+```
+ofSetups.js (biblioteca de 91, recetas propias, of_setups_{symbol})
+        │  POST /api/orderflow/setups/{symbol}            coincidencias de las recetas activas
+        │  POST /api/orderflow/setups/{symbol}/evaluate   una receta en los días anteriores a la hora simulada
+        ▼
+backend/of_setups.py: match_recipes() sobre los eventos de of_elements.detect()
+```
+
+- **Receta:** casillas (cada una con uno o más códigos: `SW|BR` acepta cualquiera), modo, ventana de 1 a 5 velas, lado y filtros
+- **Modos:** `strict` (todas las casillas), `threshold` (al menos `min`), `groups` (mínimo por grupo) y `sequence` (grupos en orden: el último en la vela que dispara y los anteriores en velas previas). En todos, la vela que dispara aporta un voto
+- **Sin futuro:** un voto cuenta en la vela con la que se conoce su elemento (la VA abandonada, en la siguiente). Con confirmación de entrada, el setup se conoce al cerrar la vela que avanzó a favor
+- **Filtros:** swing (mínimo o máximo de N velas, hasta `flex` velas antes, opcionalmente con un voto en esa vela), momentum (EMA 14 con pendiente ≥ 0.25 ATR en 3 velas y el precio de su lado) y confirmación de entrada (`atr` ATR a favor dentro de `bars` velas)
+- **Biblioteca:** los 91 setups en notación corta (`ofSetups.js`): `A+B` misma vela, `@3` ventana, `A>B` secuencia, ` m` momentum, ` s` swing. El orden y la ventana salen de las lecturas de las láminas. Los 15, 43, 53 y 70 llevan "sin Market Weakness". Vienen apagados
+- **Evaluación:** entra al cierre de la vela con la que se conoce el setup, con stop de `stop_atr` ATR, objetivo de `target_r` R u horizonte de velas, y comisión taker de entrada y salida. Si stop y objetivo caen en la misma vela, cuenta el stop. La base son las velas del mismo color con las mismas reglas. Da casos, acierto con intervalo de Wilson, R neto, base y ventaja, y avisa con menos de 30 casos. 180 días de 15m tardan de 4 a 8 s
+- **Gráfico:** un corchete bajo (alcista) o sobre (bajista) las velas que votaron, con la etiqueta `S2` o las iniciales de una receta propia. Se ofrece al menú "Incluir en el análisis" con los códigos que votaron
+- **Modal "Setups de Order Flow":** se abre desde el modal de Elementos OF ("Setups (recetas)…"). Lista con filtro (todos, activos, giro, continuación, propios), "Evaluar" por receta o para toda la lista, orden por ventaja, editor de casillas y filtros, "Guardar como propia" y "Del libro" para deshacer lo editado
+
+Medido el 10/11 en BTC 15m con la hora simulada en el 25/10/2026: S2 dio 23 casos, 34.8% de acierto, -0.24 R contra -0.41 de la base. Con tan pocos casos nada se distingue del azar. Estos dos últimos necesitan el Max/Min Delta exacto: con 1 minuto, Small Min/Max acierta menos de la mitad (`delta_exacto.py`).
 
 ### Dibujo (frontend)
 
@@ -725,7 +748,8 @@ Queda fuera Market Weakness, sin regla en las láminas. Estos dos últimos neces
 
 ```bash
 node tests/ofelements.test.mjs
-.venv\Scripts\python.exe -m pytest tests/test_of_elements.py
+node tests/ofsetups.test.mjs
+.venv\Scripts\python.exe -m pytest tests/test_of_elements.py tests/test_of_setups.py
 ```
 
 La prueba del backend arma un almacén sintético de 34 días: reglas por vela, que lo conocido no cambie al avanzar la hora y que sin historia no haya umbrales relativos. Probado además en una copia aislada (backend 9300, Vite 9301) con BTC 15m: franjas que terminan al tocarse, códigos, modal, EMA, reproducción a 5000x (17 pedidos sin error) y el menú de análisis.

@@ -7,6 +7,7 @@ import {
   OF_ELEMENTS, bandEnd, cleanOFElementsConfig, defaultOFElementsConfig, emaSeries, eventKey, firstFrom,
   knownEvents, loadOFElementsSettings
 } from './ofElements.js';
+import { activeRecipes, allRecipes, loadSetupsConfig, recipeLabel } from './ofSetups.js';
 
 const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 const DAY_MS = 86400000;
@@ -63,6 +64,23 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     this.warming = false;
     this.tooWide = false;
     this.targets = [];
+
+    // Setups: recetas activas y sus coincidencias, pedidas aparte al backend
+    this.setupsConfig = loadSetupsConfig(symbol);
+    this.matches = new Map(); // receta|lado|vela → coincidencia
+    this.setupsLoaded = null;
+    this.setupsGeneration = 0;
+    this.setupsLoading = false;
+    this.setupsNextAt = 0;
+    this.setupsError = null;
+  }
+
+  /** Recetas activas o su configuración cambiaron: lo cargado ya no sirve */
+  setSetupsConfig(config) {
+    this.setupsConfig = config;
+    this.matches.clear();
+    this.setupsLoaded = null;
+    this.setupsGeneration += 1;
   }
 
   async fetchData() {
@@ -76,7 +94,10 @@ class OrderFlowElementsIndicator extends IndicatorBase {
   updateConfig(config) {
     const before = [this.config.target, this.config.volFilter].join();
     this.config = cleanOFElementsConfig({ ...this.config, ...config, codes: { ...this.config.codes, ...(config.codes || {}) } });
-    if ([this.config.target, this.config.volFilter].join() !== before) this._reset();
+    if ([this.config.target, this.config.volFilter].join() !== before) {
+      this._reset();
+      this.setSetupsConfig(this.setupsConfig); // Los setups usan los mismos umbrales
+    }
   }
 
   selectableLevels() {
@@ -169,6 +190,120 @@ class OrderFlowElementsIndicator extends IndicatorBase {
         this.isLoading = false;
         this.nextRequestAt = performance.now() + ERROR_WAIT_MS;
       });
+  }
+
+  _loadSetups(visibleCandles, priceContext) {
+    const recipes = activeRecipes(this.setupsConfig);
+    const { knownUntil, requestRedraw } = priceContext;
+    if (!recipes.length || !knownUntil || this.tooWide) return;
+    const first = visibleCandles[0].timestamp;
+    const last = visibleCandles[visibleCandles.length - 1].timestamp + this.tfMs;
+    const closedEnd = Math.floor(knownUntil / this.tfMs) * this.tfMs;
+    const pad = Math.min(MAX_PAD_MS, Math.ceil(visibleCandles.length / 2) * this.tfMs);
+    const loaded = this.setupsLoaded;
+    if (!loaded || first < loaded.start || first > loaded.end) {
+      this._requestSetups(first - pad, last + pad, knownUntil, recipes, true, requestRedraw);
+    } else if (loaded.end < Math.min(last, closedEnd)) {
+      // Ventana y confirmación de entrada pueden terminar varias velas después del primer voto
+      this._requestSetups(loaded.end - 12 * this.tfMs, last + pad, knownUntil, recipes, false, requestRedraw);
+    }
+  }
+
+  _requestSetups(start, end, knownUntil, recipes, replace, redraw) {
+    if (this.setupsLoading || performance.now() < this.setupsNextAt) {
+      if (!this.setupsLoading && !this.retryTimer) {
+        this.retryTimer = setTimeout(() => {
+          this.retryTimer = null;
+          redraw?.();
+        }, Math.max(50, this.setupsNextAt - performance.now()));
+      }
+      return;
+    }
+    this.setupsLoading = true;
+    this.setupsNextAt = performance.now() + REQUEST_GAP_MS;
+    const generation = this.setupsGeneration;
+    fetch(`${API_BASE_URL}/api/orderflow/setups/${this.symbol}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        interval: String(this.tfMinutes), start_timestamp: Math.round(start), end_timestamp: Math.round(end),
+        known_until: Math.round(knownUntil), recipes, target: this.config.target / 100, vol_filter: this.config.volFilter
+      })
+    })
+      .then(response => {
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        if (!data.success) throw new Error(data.message || 'Sin respuesta del almacén');
+        if (generation === this.setupsGeneration) {
+          if (replace) this.matches.clear();
+          for (const match of data.matches) this.matches.set(`${match.id}|${match.dir}|${match.t}`, match);
+          const until = Math.min(end, data.known_until);
+          this.setupsLoaded = replace || !this.setupsLoaded ? { start, end: until }
+            : { start: this.setupsLoaded.start, end: Math.max(this.setupsLoaded.end, until) };
+        }
+        this.setupsError = null;
+        this.setupsLoading = false;
+        redraw?.();
+      })
+      .catch(error => {
+        if (this.setupsError !== error.message) console.error(`[${this.symbol}] Error cargando setups:`, error);
+        this.setupsError = error.message;
+        this.setupsLoading = false;
+        this.setupsNextAt = performance.now() + ERROR_WAIT_MS;
+      });
+  }
+
+  /** Un corchete bajo (alcista) o sobre (bajista) las velas que votaron, con la etiqueta del setup */
+  _renderSetups(ctx, visibleCandles, priceToY, timeToX, width, knownUntil, bounds) {
+    if (!this.matches.size) return;
+    const recipes = new Map(allRecipes(this.setupsConfig).map(recipe => [recipe.id, recipe]));
+    const active = new Set(this.setupsConfig.active || []);
+    const firstT = visibleCandles[0].timestamp;
+    const lastT = visibleCandles[visibleCandles.length - 1].timestamp;
+    const stack = new Map(); // Varias coincidencias en la misma vela se apilan
+    ctx.font = this._font(10, isNewTheme() ? '600' : 'bold');
+    ctx.textAlign = 'center';
+    for (const match of this.matches.values()) {
+      if (match.known > knownUntil || !active.has(match.id) || match.t < firstT || match.t > lastT) continue;
+      const recipe = recipes.get(match.id);
+      const span = visibleCandles.filter(candle => candle.timestamp >= match.t0 && candle.timestamp <= match.t);
+      if (!span.length) continue;
+      const x0 = timeToX(Math.max(match.t0, firstT));
+      const x1 = timeToX(match.t);
+      if (x0 === null || x1 === null) continue;
+      const slot = `${match.t}|${match.dir}`;
+      const level = stack.get(slot) || 0;
+      stack.set(slot, level + 1);
+      const extreme = match.dir > 0 ? Math.min(...span.map(c => c.low)) : Math.max(...span.map(c => c.high));
+      const offset = 44 + level * 16; // Debajo de los glifos de los elementos
+      const y = match.dir > 0 ? Math.min(bounds.y + bounds.height - 10, priceToY(extreme) + offset)
+        : Math.max(bounds.y + 10, priceToY(extreme) - offset);
+      const rgb = this._rgb(match.dir);
+      ctx.strokeStyle = `rgb(${rgb})`;
+      ctx.lineWidth = crispWidth(1.5);
+      const tick = match.dir > 0 ? -4 : 4;
+      ctx.beginPath();
+      ctx.moveTo(x0 - width * 0.35, y + tick);
+      ctx.lineTo(x0 - width * 0.35, y);
+      ctx.lineTo(x1 + width * 0.35, y);
+      ctx.lineTo(x1 + width * 0.35, y + tick);
+      ctx.stroke();
+      const label = recipeLabel(recipe);
+      const labelWidth = ctx.measureText(label).width + 8;
+      ctx.fillStyle = `rgb(${rgb})`;
+      ctx.fillRect(x1 - labelWidth / 2, y - 7, labelWidth, 14);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x1, y);
+      const votes = (match.votes || []).map(([code]) => code).filter((code, k, all) => all.indexOf(code) === k).join(', ');
+      const id = candleItemId('Elementos OF', `Setup ${label}`, match.t, null, this.interval);
+      this.targets.push({
+        id, source: 'Elementos OF', mark: true, time: match.t, price: extreme, x: x1, y, r: 9,
+        kind: `Setup ${label}${recipe ? ` (${recipe.name})` : ''} ${match.dir > 0 ? 'alcista' : 'bajista'}: ${votes}`
+      });
+    }
   }
 
   _store(data, start, end, replace) {
@@ -293,6 +428,8 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     }
 
     if (this.config.showGlyphs && width >= MIN_GLYPH_PX) this._renderGlyphs(ctx, inView, visibleCandles, priceToY, timeToX, width);
+    this._loadSetups(visibleCandles, priceContext);
+    this._renderSetups(ctx, visibleCandles, priceToY, timeToX, width, knownUntil, bounds);
     this._renderNotice(ctx, bounds);
     ctx.restore();
   }

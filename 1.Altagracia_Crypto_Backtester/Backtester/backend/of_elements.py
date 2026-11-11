@@ -494,7 +494,8 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
             if d != cum_day:
                 cum_day, cum = d, sum(bars[j]["delta"] for j in day_index[d] if bars[j]["t"] < f["t"])
             cum += f["delta"]
-            result["bars"].append({"t": f["t"], "delta": round(f["delta"], 6), "vol": round(f["vol"], 6),
+            result["bars"].append({"t": f["t"], "o": f["o"], "h": f["h"], "l": f["l"], "c": f["c"],
+                                   "delta": round(f["delta"], 6), "vol": round(f["vol"], 6),
                                    "dv": round(f["delta"] / f["vol"], 6) if f["vol"] > 0 else 0.0,
                                    "cum": round(cum, 6), "step": f["step"],
                                    "maxd": round(f["xmaxd"], 6) if "xmaxd" in f else None,

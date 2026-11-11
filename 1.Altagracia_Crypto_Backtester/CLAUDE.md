@@ -6,6 +6,12 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Setups de Order Flow como Recetas
+
+Los 91 setups de Orderflows Unlocked como recetas de los elementos: misma vela, ventana o secuencia, con filtros de swing, momentum y confirmación de entrada. Se dibujan con su etiqueta y se evalúan en el histórico anterior a la hora simulada, con costos y contra la base. Hay un editor para recetas propias. Detalle en `Backtester/CLAUDE.md`, sección "ELEMENTOS DE ORDER FLOW", "Setups como recetas".
+
+---
+
 ### Noviembre 2026: Delta Exacto y Órdenes Reales en Elementos OF
 
 Almacén de flujo nuevo (`OrderFlowData/flow`): el delta dentro de cada minuto y las órdenes agresivas reales. Con él, "Elementos OF" suma Extreme Delta, Small Min/Max Delta, barridos reales y órdenes grandes, y la tabla de la vela muestra Máx Δ y Mín Δ exactos. Detalle en `Backtester/CLAUDE.md`, sección "ELEMENTOS DE ORDER FLOW".

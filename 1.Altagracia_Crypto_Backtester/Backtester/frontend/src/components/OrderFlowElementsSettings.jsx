@@ -7,7 +7,7 @@ import {
 const SHAPE_TEXT = { band: 'franja', mark: 'celdas', box: 'contorno', table: 'tabla' };
 
 /** Elementos de Orderflows Unlocked: cuáles se ven y cómo. Aplica a todos los marcos del símbolo. */
-const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose }) => {
+const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose, onOpenSetups }) => {
   const [values, setValues] = useState(() => cleanOFElementsConfig(indicator.config));
   const set = (key, value) => setValues(previous => ({ ...previous, [key]: value }));
   const setCode = (code, on) => setValues(previous => ({ ...previous, codes: { ...previous.codes, [code]: on } }));
@@ -104,6 +104,7 @@ const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose }) => {
         </div>
 
         <div className="settings-footer">
+          {onOpenSetups && <button className="btn-secondary" onClick={onOpenSetups}>Setups (recetas)…</button>}
           <button className="btn-secondary" onClick={() => setValues(defaultOFElementsConfig())}>Restablecer</button>
           <button className="btn-primary" onClick={handleApply}>Aplicar y cerrar</button>
         </div>

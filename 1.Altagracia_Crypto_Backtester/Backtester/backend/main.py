@@ -15,6 +15,7 @@ import numpy as np
 import footprint_store
 import liq_store
 import of_elements
+import of_setups
 import oi_store
 import observer
 import measures
@@ -4093,6 +4094,44 @@ async def get_orderflow_elements(
     body = await run_in_threadpool(_elements_body, sanitize_filename(symbol), int(interval), start_timestamp,
                                    end_timestamp, known_until, target, max(0, min(band_days, 14)), vol_filter)
     return Response(content=body, media_type="application/json")
+
+
+def _setups_body(symbol, body):
+    result = of_setups.setups(
+        symbol, int(body["interval"]), int(body["start_timestamp"]), int(body["end_timestamp"]),
+        int(body["known_until"]), body.get("recipes") or [], float(body.get("target", 0.05)),
+        float(body.get("vol_filter", 2.0)))
+    return json.dumps({"success": True, **result}, allow_nan=False, separators=(",", ":")).encode("utf-8")
+
+
+@app.post("/api/orderflow/setups/{symbol}")
+@limiter.limit("600/minute")
+async def post_orderflow_setups(request: Request, symbol: str):
+    """
+    Coincidencias de las recetas de setups (body: interval, start_timestamp, end_timestamp, known_until,
+    recipes, target, vol_filter). Cada coincidencia trae la hora en que se conoce.
+    """
+    body = await request.json()
+    if str(body.get("interval")) not in ("1", "5", "15", "60", "240") or len(body.get("recipes") or []) > 200:
+        return {"success": False, "message": "Marco o recetas no válidos", "matches": []}
+    content = await run_in_threadpool(_setups_body, sanitize_filename(symbol), body)
+    return Response(content=content, media_type="application/json")
+
+
+@app.post("/api/orderflow/setups/{symbol}/evaluate")
+@limiter.limit("60/minute")
+async def post_orderflow_setups_evaluate(request: Request, symbol: str):
+    """Una receta en los días anteriores a known_until: acierto y R neto contra las velas del mismo color."""
+    body = await request.json()
+    if str(body.get("interval")) not in ("1", "5", "15", "60", "240"):
+        return {"success": False, "message": "Marco no válido"}
+    result = await run_in_threadpool(
+        of_setups.evaluate, sanitize_filename(symbol), int(body["interval"]), body.get("recipe") or {},
+        int(body["known_until"]), int(body.get("days", 180)), float(body.get("stop_atr", 1.5)),
+        float(body.get("target_r", 2.0)), int(body.get("horizon", 96)), float(body.get("target", 0.05)),
+        float(body.get("vol_filter", 2.0)))
+    return Response(content=json.dumps(result, allow_nan=False, separators=(",", ":")).encode("utf-8"),
+                    media_type="application/json")
 
 
 @app.get("/api/orderflow/coverage/{symbol}")

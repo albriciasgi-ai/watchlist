@@ -53,6 +53,27 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 10 Noviembre 2026: Setups de Order Flow como Recetas (fase 3)
+
+**Problema:** los 91 setups de Orderflows Unlocked son combinaciones de elementos sin entrada, stop ni resultados. Strategic Flows, el producto del mismo autor, los combina con un "Consenso", pero no los mide.
+
+**Cambios:**
+1. **Recetas:** `backend/of_setups.py` combina los elementos de "Elementos OF":
+   - modos: misma vela, al menos N, grupos con mínimo y secuencia en orden;
+   - ventana de 1 a 5 velas;
+   - filtros: swing, momentum (EMA 14) y confirmación de entrada.
+   
+   Cada voto cuenta en la vela con la que se conoce su elemento
+2. **Biblioteca:** los 91 setups con el orden y la ventana leídos de las láminas, apagados de fábrica. Los cuatro que usan Market Weakness quedan marcados
+3. **Gráfico:** corchete bajo o sobre las velas que votaron, con la etiqueta del setup, elegible para el análisis del trade
+4. **Modal "Setups de Order Flow"** (desde el modal de Elementos OF): activar, evaluar una receta o toda la lista en los días anteriores a la hora simulada con costos y contra la base, ordenar por ventaja, editar y crear recetas propias
+
+**IMPORTANTE:** reiniciar el backend de App 1. La evaluación usa solo lo ocurrido antes de la hora simulada; con menos de 30 casos avisa "muestra pequeña".
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ELEMENTOS DE ORDER FLOW", "Setups como recetas"
+
+---
+
 ### APP 1 (Backtester) - 10 Noviembre 2026: Elementos de Order Flow con Delta Exacto y Órdenes Reales (fase 2)
 
 **Problema:** el almacén guarda compra y venta por minuto, así que el Max/Min Delta de una vela salía con resolución de 1 minuto. En BTC 15m eso marcaba Small Min/Max en 30% de las velas contra 12% exacto. Tampoco había forma de ver una orden que cruza varios precios ni las órdenes grandes.
