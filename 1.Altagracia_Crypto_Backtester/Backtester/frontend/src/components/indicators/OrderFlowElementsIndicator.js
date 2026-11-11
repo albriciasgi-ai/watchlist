@@ -426,8 +426,10 @@ class OrderFlowElementsIndicator extends IndicatorBase {
       const sm = this.config.codes.SM ? this.smMarks.get(candle.timestamp) : undefined;
       const smRow = sm === undefined ? -1 : rowOf(sm > 0 ? 'mind' : 'maxd'); // El lado que no tuvo el control
       cell(rowOf('delta'), xd !== undefined ? `rgba(${this._rgb(xd)}, 0.75)` : `rgba(${this._rgb(bar.delta >= 0 ? 1 : -1)}, ${0.08 + 0.3 * strength})`);
-      if (bar.maxd != null) cell(rowOf('maxd'), `rgba(${this._rgb(1)}, 0.08)`);
-      if (bar.mind != null) cell(rowOf('mind'), `rgba(${this._rgb(-1)}, 0.08)`);
+      // Máx y Mín Δ: más intensos cuanto más se alejó el delta, como parte del volumen de la vela
+      const reach = (value) => (bar.vol > 0 ? Math.min(1, Math.abs(value) / bar.vol / 0.5) : 0);
+      if (bar.maxd != null) cell(rowOf('maxd'), `rgba(${this._rgb(1)}, ${0.06 + 0.5 * reach(bar.maxd)})`);
+      if (bar.mind != null) cell(rowOf('mind'), `rgba(${this._rgb(-1)}, ${0.06 + 0.5 * reach(bar.mind)})`);
       if (smRow >= 0) cell(smRow, `rgba(${SMALL_RGB}, 0.75)`);
       if (dv !== undefined) cell(rowOf('dv'), `rgba(${this._rgb(dv)}, 0.75)`);
       cell(rowOf('cum'), `rgba(${this._rgb(bar.cum >= 0 ? 1 : -1)}, 0.12)`);
@@ -451,7 +453,13 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     ctx.textBaseline = 'top';
     ctx.fillStyle = muted;
     ctx.font = this._font(10);
-    ctx.fillText('Tabla de la vela', bounds.x + 6, bounds.y + 2);
+    // Sin almacén de flujo no hay Máx ni Mín Δ exactos: se dice, en vez de dejar solo puntos
+    const missingFlow = visibleCandles.some(candle => {
+      const bar = this.bars.get(candle.timestamp);
+      return bar && bar.maxd == null && candle.timestamp + this.tfMs <= knownUntil;
+    });
+    ctx.fillText(missingFlow ? `Tabla de la vela · Máx y Mín Δ: falta el almacén de flujo de ${this.symbol} para estas fechas`
+      : 'Tabla de la vela', bounds.x + 6, bounds.y + 2);
     ctx.textBaseline = 'middle';
     TABLE_ROWS.forEach(([, label], row) => {
       ctx.fillText(label, bounds.x + 4, bounds.y + titleH + row * rowH + rowH / 2);

@@ -191,19 +191,24 @@ def _load_bars(symbol, tf, day, known_min):
     day_start = int(dt.datetime(day.year, day.month, day.day, tzinfo=dt.timezone.utc).timestamp()) // 60
     complete = day_start + 1440 <= known_min
     key = (symbol, tf, day.isoformat())
+    flow_path = FLOW_DIR / symbol / day.isoformat()[:4] / f"{symbol}_{day.isoformat()}.npz"
     if complete:
         with _lock:
-            if key in _cache:
+            cached = _cache.get(key)
+        # Un día calculado antes de armar su flujo se recalcula cuando el flujo aparece
+        if cached is not None and (cached[1] or not flow_path.exists()):
+            with _lock:
                 _cache.move_to_end(key)
-                return _cache[key]
+            return cached[0]
     data = fs._load_day(symbol, day.isoformat())
+    flow = _load_flow(symbol, day)
     if data is None:
         result = []
     else:
-        result = _compute_day(data, tf, min(known_min, day_start + 1440), _load_flow(symbol, day))
+        result = _compute_day(data, tf, min(known_min, day_start + 1440), flow)
     if complete:
         with _lock:
-            _cache[key] = result
+            _cache[key] = (result, flow is not None)
             while len(_cache) > MAX_CACHED_DAYS:
                 _cache.popitem(last=False)
     return result

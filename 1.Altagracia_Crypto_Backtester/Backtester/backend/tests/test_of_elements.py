@@ -213,6 +213,27 @@ def test_filtro_de_volumen_solo_deja_velas_de_mucho_volumen(store):
     assert all(e["value"] >= 1.2 for e in strict["events"] if e["code"] in oe.VOLUME_FILTERED and e["code"] != "VI")
 
 
+def test_un_dia_sin_flujo_se_recalcula_cuando_el_flujo_aparece(store, tmp_path, monkeypatch):
+    flow_root = tmp_path / "flow"
+    monkeypatch.setattr(oe, "FLOW_DIR", flow_root)
+    day = DAY0 + dt.timedelta(days=2)
+    oe._cache.clear()
+    first = oe._load_bars(SYMBOL, 15, day, 10 ** 12)
+    assert first and all("xmaxd" not in f for f in first)
+    # Aparece el flujo del día: mismos minutos, delta dentro del minuto en cero
+    with np.load(store / SYMBOL / str(day.year) / f"{SYMBOL}_{day.isoformat()}.npz") as z:
+        minutes = z["m"]
+    path = flow_root / SYMBOL / str(day.year) / f"{SYMBOL}_{day.isoformat()}.npz"
+    path.parent.mkdir(parents=True)
+    zeros = np.zeros(len(minutes), np.int64)
+    np.savez(path, m=minutes, dmx=zeros, dmn=zeros, ot=np.zeros(0, np.int64), os=np.zeros(0, np.int8),
+             oq=np.zeros(0, np.int64), op0=np.zeros(0, np.int64), op1=np.zeros(0, np.int64), on=np.zeros(0, np.int32),
+             info=np.array([10, 1000, 1, 4]))
+    again = oe._load_bars(SYMBOL, 15, day, 10 ** 12)
+    assert all("xmaxd" in f for f in again)
+    oe._cache.clear()
+
+
 def test_sin_historia_avisa_y_no_marca_relativos(store):
     r = oe.detect(SYMBOL, 15, _ms(DAY0 + dt.timedelta(days=1)), _ms(DAY0 + dt.timedelta(days=2)), _ms(DAY0 + dt.timedelta(days=2)), band_days=0)
     assert r["warming"]
