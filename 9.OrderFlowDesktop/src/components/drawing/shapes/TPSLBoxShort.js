@@ -1,6 +1,8 @@
 // src/components/drawing/shapes/TPSLBoxShort.js
 // Caja combinada de Take Profit y Stop Loss con punto de entrada para posiciones SHORT
 
+import { formatPrice } from '../../../utils/priceFormat.js';
+
 class TPSLBoxShort {
   constructor(entryPrice, time) {
     this.type = 'tpsl-short';
@@ -8,6 +10,7 @@ class TPSLBoxShort {
 
     this.entryPrice = entryPrice; // Precio de entrada
     this.time = time; // Tiempo de creación
+    this.updatedAt = Date.now(); // ultima creacion o movimiento: el panel de trading usa la caja tocada mas reciente
 
     // Por defecto: risk/reward 1:2 (TP es el doble que SL)
     // Para SHORT: TP abajo (ganancia), SL arriba (pérdida)
@@ -236,21 +239,21 @@ class TPSLBoxShort {
     ctx.font = 'bold 12px Arial';
     ctx.fillText('SL', xCenter, ySl - 15);
     ctx.font = '11px Arial';
-    ctx.fillText(this.slPrice.toFixed(2), xCenter, ySl - 2);
+    ctx.fillText(formatPrice(this.slPrice), xCenter, ySl - 2);
 
     // Entry Label (con indicador SHORT)
     ctx.fillStyle = this.style.entryColor;
     ctx.font = 'bold 12px Arial';
     ctx.fillText('SHORT', xCenter - 30, yEntry);
     ctx.font = '11px Arial';
-    ctx.fillText(this.entryPrice.toFixed(2), xCenter + 40, yEntry);
+    ctx.fillText(formatPrice(this.entryPrice), xCenter + 40, yEntry);
 
     // TP Label (abajo en SHORT)
     ctx.fillStyle = this.style.tpColor;
     ctx.font = 'bold 12px Arial';
     ctx.fillText('TP', xCenter, yTp + 15);
     ctx.font = '11px Arial';
-    ctx.fillText(this.tpPrice.toFixed(2), xCenter, yTp + 2);
+    ctx.fillText(formatPrice(this.tpPrice), xCenter, yTp + 2);
 
     // Risk/Reward Ratio
     ctx.fillStyle = '#64748B';
@@ -338,13 +341,15 @@ class TPSLBoxShort {
       tpPrice: this.tpPrice,
       slPrice: this.slPrice,
       time: this.time,
-      widthTime: this.widthTime
+      widthTime: this.widthTime,
+      updatedAt: this.updatedAt
     };
   }
 
   static deserialize(data) {
     const box = new TPSLBoxShort(data.entryPrice, data.time);
     box.id = data.id;
+    box.updatedAt = Number.isFinite(data.updatedAt) ? data.updatedAt : null;
     box.tpPrice = data.tpPrice;
     box.slPrice = data.slPrice;
 

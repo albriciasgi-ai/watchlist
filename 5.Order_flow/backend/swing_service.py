@@ -8,6 +8,7 @@ Date: 2026-01-17
 """
 
 import asyncio
+import os
 import time
 import logging
 import json
@@ -18,7 +19,7 @@ from pathlib import Path
 
 from swing_detector import SwingDetector, SwingSignal, get_swing_detector
 from websocket_manager import WebSocketManager, get_websocket_manager
-from vwap_service import get_vwap_service
+from vwap_service import get_vwap_service, VWAP_FILTER_MIN_DAYS
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +68,35 @@ def validate_days_for_interval(days: int, interval: str) -> int:
 CONFIG_DIR = Path(__file__).parent / "config"
 CONFIG_FILE = CONFIG_DIR / "swing_config.json"
 SIGNALS_FILE = CONFIG_DIR / "swing_signals.json"
+# Cooldowns guardados: sin esto, al reiniciar el backend (o con --reload) se perdian y salia
+# otra alerta igual antes de tiempo
+COOLDOWNS_FILE = CONFIG_DIR / "swing_cooldowns.json"
+COOLDOWN_KEEP_SECONDS = 24 * 3600
+
+VALID_INTERVALS = ["1", "3", "5", "15", "30", "60", "120", "240", "360", "720", "D", "W"]
+
+
+def _write_json_atomic(path: Path, data) -> None:
+    """Escribe a un temporal y luego reemplaza: un corte a mitad no deja el archivo truncado."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+
+
+def interval_to_ms(interval: str) -> int:
+    """Milisegundos por vela de un intervalo de Bybit ("1".."720", "D", "W")."""
+    if interval == "D":
+        return 24 * 60 * 60 * 1000
+    if interval == "W":
+        return 7 * 24 * 60 * 60 * 1000
+    try:
+        return int(interval) * 60 * 1000
+    except (TypeError, ValueError):
+        return 0
 
 # Dedicated alert log file
 ALERT_LOG_FILE = Path(__file__).parent / "logs" / "swing_alerts.log"
@@ -195,6 +225,9 @@ class SwingServiceConfig:
             if 'priceZones' in symbol_cfg:
                 # Symbol-specific zones override (but also include global zones for this symbol)
                 config['priceZones'] = symbol_cfg['priceZones']
+            if 'cooldownMinutes' in symbol_cfg:
+                # Antes se ignoraba: BTC tenia 20 min guardados y se aplicaban los 5 globales
+                config['cooldownMinutes'] = symbol_cfg['cooldownMinutes']
 
         # CRITICAL: Validate days against MAX_DAYS_BY_INTERVAL
         config['days'] = validate_days_for_interval(config['days'], effective_interval)
@@ -276,10 +309,38 @@ class SwingService:
         self._grace_period_seconds: int = 60  # Ignore signals older than this after service start
         self._warmup_period_seconds: int = 120  # Block ALL alerts for this many seconds after start
 
+        # Re-analisis: uno a la vez; si llegan pedidos mientras corre, se repite una vez al final
+        self._reanalyzing = False
+        self._reanalyze_again = False
+
+        # Senales solo para dibujar en otro timeframe: {(symbol, interval, days): (expira, senales)}
+        self._display_cache: Dict[tuple, tuple] = {}
+
         # Load saved config
         self._load_config()
+        self._load_cooldowns()
 
         logger.info("[SWING_SERVICE] Initialized")
+
+    def _load_cooldowns(self):
+        """Recupera los cooldowns guardados (descarta los de mas de un dia)."""
+        try:
+            if COOLDOWNS_FILE.exists():
+                with open(COOLDOWNS_FILE, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                now = time.time()
+                self._cooldowns = {
+                    k: float(v) for k, v in data.items()
+                    if isinstance(v, (int, float)) and now - float(v) < COOLDOWN_KEEP_SECONDS
+                }
+        except Exception as e:
+            logger.warning(f"[SWING_SERVICE] Could not load cooldowns: {e}")
+
+    def _save_cooldowns(self):
+        try:
+            _write_json_atomic(COOLDOWNS_FILE, self._cooldowns)
+        except Exception as e:
+            logger.error(f"[SWING_SERVICE] Could not save cooldowns: {e}")
 
     def _load_config(self):
         """Load config from file if exists"""
@@ -295,9 +356,9 @@ class SwingService:
     def _save_config(self):
         """Save config to file"""
         try:
-            CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-            with open(CONFIG_FILE, 'w') as f:
-                json.dump(asdict(self.config), f, indent=2)
+            # Temporal + reemplazo: un corte a mitad dejaba el JSON truncado y al arrancar
+            # se perdian symbolConfigs y zonas
+            _write_json_atomic(CONFIG_FILE, asdict(self.config))
             logger.info("[SWING_SERVICE] Config saved")
         except Exception as e:
             logger.error(f"[SWING_SERVICE] Could not save config: {e}")
@@ -395,15 +456,19 @@ class SwingService:
 
         logger.info("[SWING_SERVICE] Analyzing historical data...")
 
+        # El intervalo se fija al empezar: si cambia mientras se descargan velas, esas velas
+        # no deben terminar en el buffer del intervalo nuevo (mezcla de timeframes)
+        interval = self.config.interval
+
         # 🚀 OPTIMIZACION: Analizar simbolos en paralelo
         async def analyze_symbol(symbol):
             try:
                 # Get symbol-specific config (includes days override AND validation)
-                symbol_config = self.config.get_symbol_config(symbol, self.config.interval)
+                symbol_config = self.config.get_symbol_config(symbol, interval)
                 symbol_days = symbol_config.get('days', self.config.days)
 
                 # Calculate how many candles based on symbol's VALIDATED days setting
-                desired_candles = calculate_candles_for_days(self.config.interval, symbol_days)
+                desired_candles = calculate_candles_for_days(interval, symbol_days)
 
                 # SAFETY: Apply absolute candle limit
                 if desired_candles > MAX_CANDLES_ABSOLUTE:
@@ -413,21 +478,25 @@ class SwingService:
                     )
                     desired_candles = MAX_CANDLES_ABSOLUTE
 
-                logger.info(f"[SWING_SERVICE] {symbol}: Days={symbol_days}, Interval={self.config.interval} -> {desired_candles} candles")
+                logger.info(f"[SWING_SERVICE] {symbol}: Days={symbol_days}, Interval={interval} -> {desired_candles} candles")
 
                 # Get candles from WebSocket buffer first
-                candles = self.ws_manager.get_candles(symbol, self.config.interval)
+                candles = self.ws_manager.get_candles(symbol, interval)
                 logger.info(f"[SWING_SERVICE] {symbol}: WebSocket buffer has {len(candles)} candles")
 
                 # If not enough candles, load more from Bybit API
                 if len(candles) < desired_candles:
                     logger.info(f"[SWING_SERVICE] {symbol}: Loading extended history from API...")
-                    candles = await self._fetch_historical_candles(symbol, desired_candles)
+                    candles = await self._fetch_historical_candles(symbol, desired_candles, interval)
+
+                    if self.config.interval != interval:
+                        logger.info(f"[SWING_SERVICE] {symbol}: interval cambio a {self.config.interval} durante la descarga, se descarta la de {interval}")
+                        return
 
                     # IMPORTANT: Preload fetched candles to WebSocket buffer
                     # This ensures real-time detection has enough data from the start
                     if candles:
-                        self.ws_manager.preload_historical(symbol, self.config.interval, candles)
+                        self.ws_manager.preload_historical(symbol, interval, candles)
                         logger.info(f"[SWING_SERVICE] {symbol}: Preloaded {len(candles)} candles to WebSocket buffer")
 
                 if len(candles) < 20:
@@ -443,18 +512,28 @@ class SwingService:
                 if symbol_config.get('vwapFilter', {}).get('enabled', False):
                     try:
                         vwap_service = get_vwap_service()
-                        vwap_data = vwap_service.get_vwap_data(symbol)
-                        logger.info(f"[SWING_SERVICE] {symbol}: Got {len(vwap_data)} VWAP points for filtering")
+                        # VWAP del MISMO intervalo del Swing; si falta lo carga (minimo 3 dias).
+                        # Antes se leia el del ultimo intervalo pedido por el grafico.
+                        vwap_data = await vwap_service.ensure_vwap_data(
+                            symbol, interval, days=VWAP_FILTER_MIN_DAYS
+                        )
+                        logger.info(f"[SWING_SERVICE] {symbol}: Got {len(vwap_data)} VWAP points @ {interval} for filtering")
                     except Exception as e:
                         logger.warning(f"[SWING_SERVICE] {symbol}: Could not get VWAP data: {e}")
 
-                signals = self.detector.detect(
+                # En un hilo: con miles de velas por moneda la deteccion bloqueaba el backend
+                # (y con el, las alertas en vivo) varios segundos. El detector no guarda estado.
+                signals = await asyncio.to_thread(
+                    self.detector.detect,
                     symbol=symbol,
-                    interval=self.config.interval,
+                    interval=interval,
                     candles=candles,
                     config=symbol_config,
                     vwap_data=vwap_data
                 )
+
+                if self.config.interval != interval:
+                    return
 
                 if signals:
                     logger.info(f"[SWING_SERVICE] {symbol}: Found {len(signals)} historical signals")
@@ -475,7 +554,7 @@ class SwingService:
 
         logger.info(f"[SWING_SERVICE] Historical analysis complete. Total signals: {self.stats['signals_detected']}")
 
-    async def _fetch_historical_candles(self, symbol: str, limit: int = 1000) -> List[Dict]:
+    async def _fetch_historical_candles(self, symbol: str, limit: int = 1000, interval: str = None) -> List[Dict]:
         """
         Fetch historical candles from Bybit API.
         Bybit max limit is 200 per request, so we make multiple parallel requests.
@@ -499,15 +578,11 @@ class SwingService:
 
         logger.info(f"[SWING_SERVICE] {symbol}: Fetching {limit} candles from API...")
 
-        # Calculate time ranges for parallel fetches
-        # Handle daily/weekly intervals differently
-        interval_str = self.config.interval
-        if interval_str == "D":
-            interval_ms = 24 * 60 * 60 * 1000  # 1 day in ms
-        elif interval_str == "W":
-            interval_ms = 7 * 24 * 60 * 60 * 1000  # 1 week in ms
-        else:
-            interval_ms = int(interval_str) * 60 * 1000  # interval in ms
+        # Calculate time ranges for parallel fetches.
+        # El intervalo llega fijo desde quien pide: leer self.config.interval en cada lote
+        # mezclaba velas de dos timeframes si el usuario lo cambiaba durante la descarga
+        interval_str = interval or self.config.interval
+        interval_ms = interval_to_ms(interval_str)
         now = int(time.time() * 1000)
 
         # Build list of time ranges to fetch (each batch of 200 candles)
@@ -524,35 +599,39 @@ class SwingService:
         all_candles = []
 
         async def fetch_batch(client, batch):
-            """Fetch a single batch of candles"""
+            """Fetch a single batch of candles (con reintentos: un lote perdido dejaba un hueco sin aviso)"""
             url = (
                 f"https://api.bybit.com/v5/market/kline?"
-                f"category=linear&symbol={symbol}&interval={self.config.interval}"
+                f"category=linear&symbol={symbol}&interval={interval_str}"
                 f"&limit={batch['limit']}&end={batch['end']}"
             )
-            try:
-                response = await client.get(url)
-                data = response.json()
+            last_error = None
+            for attempt in range(3):
+                try:
+                    response = await client.get(url)
+                    data = response.json()
 
-                if data.get("retCode") != 0:
-                    return []
-
-                raw_candles = data.get("result", {}).get("list", [])
-                return [
-                    {
-                        'timestamp': int(c[0]),
-                        'open': float(c[1]),
-                        'high': float(c[2]),
-                        'low': float(c[3]),
-                        'close': float(c[4]),
-                        'volume': float(c[5]),
-                        'turnover': float(c[6]) if len(c) > 6 else 0
-                    }
-                    for c in raw_candles
-                ]
-            except Exception as e:
-                logger.error(f"[SWING_SERVICE] Error fetching batch: {e}")
-                return []
+                    if data.get("retCode") != 0:
+                        last_error = f"retCode={data.get('retCode')} {data.get('retMsg')}"
+                    else:
+                        raw_candles = data.get("result", {}).get("list", [])
+                        return [
+                            {
+                                'timestamp': int(c[0]),
+                                'open': float(c[1]),
+                                'high': float(c[2]),
+                                'low': float(c[3]),
+                                'close': float(c[4]),
+                                'volume': float(c[5]),
+                                'turnover': float(c[6]) if len(c) > 6 else 0
+                            }
+                            for c in raw_candles
+                        ]
+                except Exception as e:
+                    last_error = f"{type(e).__name__}: {e}"
+                await asyncio.sleep(0.5 * (attempt + 1))
+            logger.error(f"[SWING_SERVICE] Error fetching batch {symbol}/{interval_str}: {last_error}")
+            return []
 
         # Fetch all batches in parallel (max 10 concurrent to balance speed vs rate limiting)
         # 10 concurrent = 2000 candles per group, so 8640 candles = 5 groups = ~1 second
@@ -579,6 +658,21 @@ class SwingService:
                 unique_candles.append(c)
 
         unique_candles.sort(key=lambda c: c['timestamp'])
+
+        # Si falto un lote, la serie tiene un hueco y un swing calculado a traves de el es falso.
+        # Se conserva solo el tramo continuo mas reciente.
+        if interval_ms and len(unique_candles) > 1:
+            start = 0
+            for i in range(len(unique_candles) - 1, 0, -1):
+                if unique_candles[i]['timestamp'] - unique_candles[i - 1]['timestamp'] != interval_ms:
+                    start = i
+                    break
+            if start > 0:
+                logger.warning(
+                    f"[SWING_SERVICE] {symbol}/{interval_str}: hueco en el historial, se usan las "
+                    f"{len(unique_candles) - start} velas continuas mas recientes de {len(unique_candles)}"
+                )
+                unique_candles = unique_candles[start:]
 
         logger.info(f"[SWING_SERVICE] {symbol}: Fetched {len(unique_candles)} candles from API (parallel)")
         return unique_candles
@@ -623,9 +717,16 @@ class SwingService:
             if symbol_config.get('vwapFilter', {}).get('enabled', False):
                 try:
                     vwap_service = get_vwap_service()
-                    vwap_data = vwap_service.get_vwap_data(symbol)
+                    vwap_data = await vwap_service.ensure_vwap_data(
+                        symbol, interval, days=VWAP_FILTER_MIN_DAYS
+                    )
                 except Exception as e:
                     logger.warning(f"[SWING_SERVICE] {symbol}: Could not get VWAP data for realtime: {e}")
+                if not vwap_data:
+                    # Sin VWAP el detector deja pasar todo como si no hubiera filtro: con el filtro
+                    # activo, mejor no mandar nada al bot que mandar senales sin filtrar
+                    alert_logger.info(f"BLOCKED_NO_VWAP | {symbol} | interval={interval}")
+                    return
 
             signals = self.detector.detect(
                 symbol=symbol,
@@ -642,16 +743,36 @@ class SwingService:
             if signals:
                 # IMPORTANT: Only process the signal from the NEWEST confirmed swing
                 # A swing at position -N needs N more candles after it to be confirmed
-                # So the most recent CONFIRMABLE swing is at position -(swingBars+1) from end
                 # We only want to alert on swings that were JUST confirmed by this candle close
 
-                # The swing that was JUST confirmed is at index -(swingBars+1)
-                # Its timestamp should match the candle at that position
-                if len(candles) > swing_bars:
-                    # Get the timestamp of the candle that could have just been confirmed as a swing
-                    just_confirmed_idx = -(swing_bars + 1)
+                # Se ubica la vela que acaba de cerrar por su timestamp: contar desde el final fallaba
+                # si la vela siguiente ya habia entrado al buffer (swing prematuro o perdido)
+                closed_idx = None
+                for i in range(len(candles) - 1, -1, -1):
+                    if candles[i].get('timestamp') == candle_timestamp:
+                        closed_idx = i
+                        break
+                if closed_idx is None:
+                    closed_idx = len(candles) - 1
+
+                if closed_idx >= swing_bars:
+                    just_confirmed_idx = closed_idx - swing_bars
                     just_confirmed_candle = candles[just_confirmed_idx]
                     just_confirmed_ts = just_confirmed_candle.timestamp if hasattr(just_confirmed_candle, 'timestamp') else just_confirmed_candle.get('timestamp', 0)
+
+                    # Las velas entre el swing y el cierre deben ser seguidas: con un hueco (corte del
+                    # WebSocket) el "swing" compara velas separadas por minutos u horas y es falso
+                    interval_ms = interval_to_ms(interval)
+                    expected_span = swing_bars * interval_ms
+                    if interval_ms and candle_timestamp - just_confirmed_ts != expected_span:
+                        logger.warning(
+                            f"[SWING_SERVICE] {symbol}: hueco en el buffer entre {just_confirmed_ts} y {candle_timestamp}, "
+                            f"no se revisa este cierre"
+                        )
+                        alert_logger.info(
+                            f"BLOCKED_GAP | {symbol} | swing_ts={just_confirmed_ts} | close_ts={candle_timestamp}"
+                        )
+                        return
 
                     # DEBUG: Log what we're checking
                     logger.info(f"[SWING_SERVICE] {symbol}: Checking for signal at ts={just_confirmed_ts} (idx={just_confirmed_idx})")
@@ -713,6 +834,22 @@ class SwingService:
             self.stats['alerts_blocked_historical'] += 1
             return
 
+        symbol_config = self.config.get_symbol_config(signal.symbol)
+
+        # Check 1b: un swing recien confirmado tiene swingBars velas detras. Si es mucho mas viejo
+        # (relleno tras un corte, buffer desordenado) no es una senal nueva y no va al bot.
+        interval_ms = interval_to_ms(signal.interval)
+        swing_bars = int(symbol_config.get('swingBars', self.config.swingBars) or 0)
+        max_age_ms = (swing_bars + 3) * interval_ms
+        age_ms = int(time.time() * 1000) - int(signal.timestamp)
+        if interval_ms and age_ms > max_age_ms:
+            alert_logger.info(
+                f"BLOCKED_STALE | {signal.symbol} | {signal.signal_type} | "
+                f"price={signal.price} | age={age_ms // 1000}s | max={max_age_ms // 1000}s"
+            )
+            self.stats['alerts_blocked_historical'] += 1
+            return
+
         # Log signal detection
         alert_logger.info(
             f"SIGNAL_DETECTED | {signal.symbol} | {signal.signal_type} | "
@@ -720,9 +857,13 @@ class SwingService:
             f"volume_zscore={signal.volume_zscore:.2f} | interval={signal.interval}"
         )
 
-        # Check 2: Cooldown
+        # Check 2: Cooldown (el de la moneda si tiene uno propio; antes siempre el global)
         last_alert = self._cooldowns.get(cooldown_key, 0)
-        cooldown_seconds = self.config.cooldownMinutes * 60
+        cooldown_minutes = symbol_config.get('cooldownMinutes', self.config.cooldownMinutes)
+        try:
+            cooldown_seconds = float(cooldown_minutes) * 60
+        except (TypeError, ValueError):
+            cooldown_seconds = float(self.config.cooldownMinutes) * 60
         # 'now' already defined at start of method
 
         if now - last_alert < cooldown_seconds:
@@ -746,6 +887,7 @@ class SwingService:
 
         if success:
             self._cooldowns[cooldown_key] = now
+            self._save_cooldowns()
             self.stats['alerts_sent'] += 1
             logger.info(
                 f"[SWING_SERVICE] ✅ Alert sent: {signal.symbol} {signal.signal_type} "
@@ -852,6 +994,19 @@ class SwingService:
             old_interval = self.config.interval
             old_days = self.config.days
 
+            # Un valor que no es un intervalo de Bybit no se guarda: con el, el servicio se
+            # suscribia a un canal que no existe y dejaba de recibir velas sin avisar
+            if 'interval' in new_config:
+                new_config = dict(new_config)
+                if str(new_config['interval']) in VALID_INTERVALS:
+                    new_config['interval'] = str(new_config['interval'])
+                else:
+                    logger.warning(
+                        f"[SWING_SERVICE] REJECTED invalid interval: {new_config['interval']!r} - "
+                        f"keeping current: {self.config.interval}"
+                    )
+                    del new_config['interval']
+
             # Update config fields
             for key, value in new_config.items():
                 if hasattr(self.config, key):
@@ -891,19 +1046,63 @@ class SwingService:
         Clear existing signals and re-analyze historical data.
         Called when config changes to refresh signals with new parameters.
         """
-        logger.info("[SWING_SERVICE] Re-analyzing historical data with new config...")
+        # Uno a la vez: varios pedidos seguidos (cambio de config y de moneda) lanzaban
+        # re-analisis superpuestos que competian por Bybit y dejaban lotes fallidos
+        if self._reanalyzing:
+            self._reanalyze_again = True
+            logger.info("[SWING_SERVICE] Re-analysis already running, se repetira al terminar")
+            return
 
-        # El intervalo pudo cambiar: sin suscripcion las velas nuevas nunca llegan.
-        # Solo se agrega para no cortar otros servicios ni dejar huecos en buffers ya cargados.
-        if self.running:
-            await self.ws_manager.add_subscriptions(self.config.symbols, [self.config.interval])
+        self._reanalyzing = True
+        try:
+            while True:
+                self._reanalyze_again = False
+                logger.info("[SWING_SERVICE] Re-analyzing historical data with new config...")
 
-        # Clear existing signals
-        self._recent_signals = {}
-        self.stats['signals_detected'] = 0
+                # El intervalo pudo cambiar: sin suscripcion las velas nuevas nunca llegan.
+                # Solo se agrega para no cortar otros servicios ni dejar huecos en buffers ya cargados.
+                if self.running:
+                    await self.ws_manager.add_subscriptions(self.config.symbols, [self.config.interval])
 
-        # Re-analyze without delay (data is already loaded)
-        await self._analyze_historical(delay_seconds=0)
+                # Clear existing signals
+                self._recent_signals = {}
+                self.stats['signals_detected'] = 0
+
+                # Re-analyze without delay (data is already loaded)
+                await self._analyze_historical(delay_seconds=0)
+
+                if not self._reanalyze_again:
+                    break
+        finally:
+            self._reanalyzing = False
+
+    def compute_display_signals(self, symbol: str, interval: str, candles: List[Dict]) -> List[Dict]:
+        """
+        Senales SOLO para dibujar el grafico en un timeframe distinto del de las alertas.
+        No guarda nada, no toca la config ni manda alertas. Se llama desde un hilo.
+        """
+        symbol_config = self.config.get_symbol_config(symbol, interval)
+        signals = self.detector.detect(
+            symbol=symbol,
+            interval=interval,
+            candles=candles,
+            config=symbol_config,
+            vwap_data=None
+        )
+        now_ms = int(time.time() * 1000)
+        return [
+            {
+                'type': s.signal_type,
+                'timestamp': s.timestamp,
+                'price': s.price,
+                'volumeZScore': s.volume_zscore,
+                'direction': s.direction,
+                'interval': s.interval,
+                'detectedAt': now_ms,
+                'displayOnly': True
+            }
+            for s in signals
+        ]
 
     def get_status(self, symbol: str = None) -> Dict:
         """
@@ -942,6 +1141,7 @@ class SwingService:
     def clear_cooldowns(self):
         """Clear all cooldowns (for testing)"""
         self._cooldowns = {}
+        self._save_cooldowns()
         logger.info("[SWING_SERVICE] Cooldowns cleared")
 
 

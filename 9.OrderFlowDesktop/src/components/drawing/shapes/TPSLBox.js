@@ -1,6 +1,8 @@
 // src/components/drawing/shapes/TPSLBox.js
 // Caja combinada de Take Profit y Stop Loss con punto de entrada
 
+import { formatPrice } from '../../../utils/priceFormat.js';
+
 class TPSLBox {
   constructor(entryPrice, time) {
     this.type = 'tpsl';
@@ -8,6 +10,7 @@ class TPSLBox {
 
     this.entryPrice = entryPrice; // Precio de entrada
     this.time = time; // Tiempo de creación
+    this.updatedAt = Date.now(); // ultima creacion o movimiento: el panel de trading usa la caja tocada mas reciente
 
     // Por defecto: risk/reward 1:2 (TP es el doble que SL)
     // Si entry es 100, SL podría ser 98 (-2%), TP sería 104 (+4%)
@@ -235,21 +238,21 @@ class TPSLBox {
     ctx.font = 'bold 12px Arial';
     ctx.fillText('TP', xCenter, yTp - 15);
     ctx.font = '11px Arial';
-    ctx.fillText(this.tpPrice.toFixed(2), xCenter, yTp - 2);
+    ctx.fillText(formatPrice(this.tpPrice), xCenter, yTp - 2);
 
     // Entry Label
     ctx.fillStyle = this.style.entryColor;
     ctx.font = 'bold 12px Arial';
     ctx.fillText('ENTRY', xCenter, yEntry);
     ctx.font = '11px Arial';
-    ctx.fillText(this.entryPrice.toFixed(2), xCenter + 45, yEntry);
+    ctx.fillText(formatPrice(this.entryPrice), xCenter + 45, yEntry);
 
     // SL Label
     ctx.fillStyle = this.style.slColor;
     ctx.font = 'bold 12px Arial';
     ctx.fillText('SL', xCenter, ySl + 15);
     ctx.font = '11px Arial';
-    ctx.fillText(this.slPrice.toFixed(2), xCenter, ySl + 2);
+    ctx.fillText(formatPrice(this.slPrice), xCenter, ySl + 2);
 
     // Risk/Reward Ratio
     ctx.fillStyle = '#64748B';
@@ -337,13 +340,15 @@ class TPSLBox {
       tpPrice: this.tpPrice,
       slPrice: this.slPrice,
       time: this.time,
-      widthTime: this.widthTime
+      widthTime: this.widthTime,
+      updatedAt: this.updatedAt
     };
   }
 
   static deserialize(data) {
     const box = new TPSLBox(data.entryPrice, data.time);
     box.id = data.id;
+    box.updatedAt = Number.isFinite(data.updatedAt) ? data.updatedAt : null;
     box.tpPrice = data.tpPrice;
     box.slPrice = data.slPrice;
 

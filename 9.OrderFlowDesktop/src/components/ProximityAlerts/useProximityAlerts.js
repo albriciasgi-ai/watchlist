@@ -1,7 +1,8 @@
 // src/components/ProximityAlerts/useProximityAlerts.js
 import { useState, useEffect, useCallback, useRef } from "react";
+// Backend propio de la app. Antes apuntaba fijo al del Analizador (puerto 10000)
+import { API_BASE_URL } from "../../config";
 
-const API_BASE_URL = "http://localhost:10000";
 const STORAGE_KEY = "proximityAlerts";
 const TIMEFRAME_STORAGE_KEY = "proximityAlertsTimeframe";
 const POLL_INTERVAL = 90000; // 90 segundos (1.5 minutos)

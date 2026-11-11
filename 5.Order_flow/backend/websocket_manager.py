@@ -98,11 +98,12 @@ class CandleBuffer:
         # Sort by timestamp and add all historical candles
         sorted_candles = sorted(historical_candles, key=lambda c: c.timestamp)
 
+        # Conjunto de timestamps: antes era any() por vela, O(n^2), y bloqueaba el loop varios segundos
+        existing_ts = {c.timestamp for c in self.candles}
         for candle in sorted_candles:
-            # Check if candle already exists
-            exists = any(c.timestamp == candle.timestamp for c in self.candles)
-            if not exists:
+            if candle.timestamp not in existing_ts:
                 self.candles.append(candle)
+                existing_ts.add(candle.timestamp)
 
         # Sort final buffer by timestamp
         self.candles.sort(key=lambda c: c.timestamp)
@@ -122,8 +123,9 @@ class CandleBuffer:
         """
         self.last_update = time.time()
 
-        # Find existing candle with same timestamp
-        for i, existing in enumerate(self.candles):
+        # Find existing candle with same timestamp (casi siempre es la ultima: se busca desde el final)
+        for i in range(len(self.candles) - 1, -1, -1):
+            existing = self.candles[i]
             if existing.timestamp == candle.timestamp:
                 # Update existing candle
                 was_open = not existing.confirm
@@ -133,16 +135,27 @@ class CandleBuffer:
                 if was_open and candle.confirm:
                     return True
                 return False
+            if existing.timestamp < candle.timestamp:
+                break
 
-        # New candle - add to buffer
-        self.candles.append(candle)
+        # New candle - add to buffer, siempre en orden de tiempo (un relleno puede traer velas viejas)
+        inserted_in_middle = False
+        if self.candles and candle.timestamp < self.candles[-1].timestamp:
+            pos = len(self.candles)
+            while pos > 0 and self.candles[pos - 1].timestamp > candle.timestamp:
+                pos -= 1
+            self.candles.insert(pos, candle)
+            inserted_in_middle = True
+        else:
+            self.candles.append(candle)
 
         # Trim buffer if too large
         if len(self.candles) > self.max_candles:
             self.candles = self.candles[-self.max_candles:]
 
-        # If new candle is already confirmed, it's a closed candle
-        return candle.confirm
+        # If new candle is already confirmed, it's a closed candle.
+        # Una vela vieja que entra en medio (relleno) no es un cierre nuevo: no dispara deteccion.
+        return candle.confirm and not inserted_in_middle
 
     def get_candles(self, limit: int = None) -> List[Dict]:
         """Get candles as list of dicts"""
@@ -494,7 +507,10 @@ class WebSocketManager:
 
             # Reconnection with exponential backoff
             self.connected = False
-            self._last_disconnect_time = time.time()  # Track disconnect time for gap filling
+            # Se guarda el PRIMER fallo del corte: si se pisa en cada reintento, el hueco medido
+            # al reconectar sale corto y no se rellena
+            if not self._last_disconnect_time:
+                self._last_disconnect_time = time.time()  # Track disconnect time for gap filling
             if self.on_connection_change:
                 self.on_connection_change(False)
 
@@ -524,12 +540,12 @@ class WebSocketManager:
         if self.on_connection_change:
             self.on_connection_change(True)
 
-        # Fill gaps if we were disconnected for a while
+        # Fill gaps if we were disconnected. Tras cualquier corte se revisa cada buffer: la vela que
+        # cerro durante el corte nunca llega por el WebSocket (antes solo se rellenaba si pasaba de 60 s)
         if self._last_disconnect_time > 0:
             gap_duration = time.time() - self._last_disconnect_time
-            if gap_duration > 60:  # Only fill if gap > 1 minute
-                logger.info(f"[GAP_FILL] Detected gap of {gap_duration:.0f}s, filling missing candles...")
-                asyncio.create_task(self._fill_gaps_after_reconnect())
+            logger.info(f"[GAP_FILL] Detected gap of {gap_duration:.0f}s, filling missing candles...")
+            asyncio.create_task(self._fill_gaps_after_reconnect())
             self._last_disconnect_time = 0
 
         # Subscribe to all channels (Bybit limits to 10 args per subscribe message)
@@ -781,8 +797,10 @@ class WebSocketManager:
                             data = response.json()
 
                             if data.get("retCode") == 0 and data.get("result", {}).get("list"):
-                                klines = data["result"]["list"]
+                                # Bybit entrega de la mas nueva a la mas vieja: se agregan en orden de tiempo
+                                klines = sorted(data["result"]["list"], key=lambda k: int(k[0]))
                                 filled_count = 0
+                                fill_now = int(time.time() * 1000)
 
                                 for kline in klines:
                                     # Bybit returns [timestamp, open, high, low, close, volume, turnover]
@@ -794,7 +812,8 @@ class WebSocketManager:
                                         close=float(kline[4]),
                                         volume=float(kline[5]),
                                         turnover=float(kline[6]) if len(kline) > 6 else 0,
-                                        confirm=True  # Historical candles are confirmed
+                                        # La vela en curso no esta cerrada: si se marca cerrada, su cierre real no se avisa
+                                        confirm=int(kline[0]) + interval_ms <= fill_now
                                     )
 
                                     # Only add if newer than last known candle
@@ -844,16 +863,21 @@ class WebSocketManager:
             candles_data: List of candle dicts with keys: timestamp, open, high, low, close, volume
         """
         historical_candles = []
+        interval_ms = self._interval_to_ms(interval)
+        now_ms = int(time.time() * 1000)
         for c in candles_data:
+            ts = int(c.get('timestamp', 0))
             candle = Candle(
-                timestamp=int(c.get('timestamp', 0)),
+                timestamp=ts,
                 open=float(c.get('open', 0)),
                 high=float(c.get('high', 0)),
                 low=float(c.get('low', 0)),
                 close=float(c.get('close', 0)),
                 volume=float(c.get('volume', 0)),
                 turnover=float(c.get('turnover', 0)),
-                confirm=True  # Historical candles are always confirmed
+                # La vela en curso que trae el REST no esta cerrada. Marcada como cerrada,
+                # su cierre real no se avisaba y esa vela no pasaba por la deteccion.
+                confirm=(ts + interval_ms <= now_ms) if interval_ms else True
             )
             historical_candles.append(candle)
 

@@ -6,6 +6,72 @@ Version de escritorio del Order Flow (App 5) empaquetada con Electron. Incluye o
 
 ---
 
+## App 9 Reemplaza a App 8 (11 Noviembre 2026)
+
+El usuario decidió dejar App 8 (Analizador Desktop) y operar desde App 9. Se trajo de App 8 (commit 2c783036, rama `claude/analizador-desktop-testing-44d09b`) lo que App 9 no tenía: las órdenes limit del panel, las correcciones del Swing, el servicio VWAP y la protección del backend. Con esto queda hecha la parte del Swing de la fase 3 del diagnóstico del 8/11.
+
+### Lo que cambió
+
+| Área | Antes | Ahora | Dónde |
+|------|-------|-------|-------|
+| Tipo de orden | El panel mandaba la orden sin tipo ni precio: siempre entraba a mercado | Auto, Market o Limit. Auto usa Market si la entrada está a 0.1% o menos del precio; si no, Limit. La Limit va con `order_type: 'Limit'` y `limit_price` de la caja | `trading/OrderForm.jsx`, `trading/TradingPanel.jsx` |
+| Bloqueos | No había | Una Limit de compra sobre el precio (o de venta bajo el precio) se llenaría al instante: el botón queda bloqueado y dice el motivo. Igual con un SL o TP del lado equivocado para el precio al que se entra | `OrderForm.jsx` (`orderPlan`) |
+| Cantidad y riesgo | Con el precio lejos de la caja, se calculaban con la entrada de la caja aunque la orden entrara a mercado | En Market salen del precio actual; en Limit, de la entrada | `OrderForm.jsx` |
+| Caja que usa el panel | La última creada | La tocada más recientemente, creada o movida (`updatedAt`; una caja vieja sin ese dato usa la hora de su id) | `SingleSymbolAnalyzer.jsx`, `drawing/shapes/TPSLBox*.js`, `MiniChart.jsx`, `utils/priceFormat.js` |
+| Doble clic | El doble clic para salir del modo dibujo dejaba dos cajas TP/SL con valores por defecto, y el panel tomaba una | El segundo clic no crea nada y la figura del primero se quita al salir | `MiniChart.jsx`, `DrawingToolManager.removeShapeAddedWithin()` |
+| Swing desde el gráfico | Con "Swing Detector" marcado, cambiar de timeframe o de días cambiaba el timeframe y los días de las alertas de todas las monedas, y abrir una moneda la sumaba a las alertas | El gráfico solo lee. En otro timeframe, o con una moneda que no manda alertas, las flechas se calculan aparte, solo para dibujar (`displayOnly`, caché de 60 s) | `SingleSymbolAnalyzer.jsx`, `indicators/SwingDetectorIndicator.js`, `main.py` (`/api/swing/signals` con `interval` y `days`) |
+| Monedas vigiladas | Cualquier guardado de la config de una moneda la agregaba a las alertas | Solo con `monitor: true` o `false`, desde el modal y con confirmación. Re-analiza solo si cambió algo que afecta la detección | `SwingDetectorSettings.jsx`, `main.py` (`/api/swing/config/{symbol}`) |
+| Cooldown | Se ignoraba el de cada moneda y se perdía al reiniciar | Cooldown propio de la moneda, guardado en `config/swing_cooldowns.json` (24 h) | `swing_service.py` |
+| Señales falsas | Contar desde el final fallaba si ya había llegado la vela siguiente; un hueco daba swings falsos | Índice por la hora de la vela cerrada. `BLOCKED_GAP` con un hueco, `BLOCKED_STALE` si la señal tiene más de swingBars+3 velas y `BLOCKED_NO_VWAP` si el filtro VWAP está activo y no hay VWAP | `swing_service.py` |
+| Velas del Swing | Un cambio de timeframe durante la descarga mezclaba velas de dos marcos; un lote fallido dejaba un hueco | Intervalo fijo en cada re-análisis, 3 reintentos, solo el tramo continuo más reciente, un re-análisis a la vez y detección histórica en un hilo | `swing_service.py` |
+| Buffer de velas | Tras un corte el relleno dejaba velas al revés y la vela en curso se precargaba como cerrada | Relleno ordenado tras cualquier reconexión; la vela en curso queda abierta | `websocket_manager.py` |
+| Config del Swing | Un corte a mitad del guardado dejaba el JSON truncado; se aceptaba cualquier intervalo | Temporal y reemplazo; un intervalo que no es de Bybit no se guarda | `swing_service.py` |
+| Servicio VWAP | Un solo estado para todas las monedas y timeframes: 1h pedido tras 15m devolvía puntos de 15m. El de sesión se calculaba en el hilo principal y dejaba el backend sin responder | El de App 8: estado por moneda y timeframe, sumas acumuladas exactas y cálculo fuera del hilo principal. El filtro VWAP del Swing pide el VWAP de su propio timeframe (mínimo 3 días) | `vwap_service.py`, `main.py` (`/api/vwap-service/data`, `/latest`), `swing_service.py` |
+| Origen de las peticiones | CORS `*`: cualquier página abierta en el navegador podía hacer que el backend mandara órdenes al bot con origen ORDERFLOW | Origin y Host como el bot (`LOCAL_ORIGIN_REGEX`, `TrustedHostMiddleware`): solo páginas de localhost, 127.0.0.1, `null` o `file://`. Los programas sin Origin pasan | `main.py` |
+| Archivos | `..\` en el símbolo leía, escribía o borraba JSON fuera de `drawings/` | Símbolo validado en dibujos y nombres de archivo validados en los cachés | `main.py` (`_validate_symbol`, `_safe_part`) |
+| Dibujos | Se escribían directo; un archivo ilegible respondía una lista vacía, que el gráfico podía guardar encima | Temporal y reemplazo; un archivo ilegible responde error 500 | `main.py` |
+| Alertas de prueba | `/api/test-alert` y `/api/test-alert-batch` mandaban alertas reales al bot. Un decorador suelto enlazaba `/api/clear-cache` a la alerta de prueba | Piden `?confirm=ENVIAR_ALERTA_REAL`, y el decorador suelto se quitó | `main.py` |
+| Puerto 10000 | La precarga de indicadores y las alertas de proximidad apuntaban fijo al backend del Analizador | Usan el backend propio de la app (`config.js`) | `utils/IndicatorPreloader.js`, `ProximityAlerts/useProximityAlerts.js` |
+
+### Lo que es propio de este backend
+- **Origen:** las alertas salen con `origin: "ORDERFLOW"`. El bot solo las opera si ese origen está permitido en "Alert Origins" de App 10.
+- **Arranque:** se conserva la espera de 120 s (`BLOCKED_WARMUP`), que el backend de App 4 no tiene.
+- **Intervalo inválido:** `SwingService.update_config()` lo rechaza. Es un agregado de esta ronda, no viene de App 8.
+
+### Datos del usuario copiados del Analizador
+Hecho el 11/11 en su carpeta (`5.Order_flow/backend`), con el backend detenido y sin borrar nada:
+- **Dibujos:** 7 monedas nuevas y 5 unidas por id; 34 dibujos sumados. Lo que ya estaba en Order Flow se conserva.
+- **Swing:** la config del Analizador reemplazó a la de Order Flow. Quedó en 15m, 90 días y 15 monedas (antes 5m, 5 días y 21). Dejó de vigilar AAVE, AVAX, INJ, KAS, LPT, SHIB1000, TON y UNI.
+- **Respaldo:** `5.Order_flow/backend/respaldo_2026-11-11_antes_de_dejar_app8/` guarda los 12 archivos de dibujos y el `swing_config.json` que había.
+
+### Cómo se probó
+- **Sin conexión:** `tests/run_checks.py` copia el backend a una carpeta temporal y corre 94 pruebas: 30 del servicio Swing, 25 de sus endpoints, 15 del servicio VWAP y 24 de la protección.
+  ```bash
+  cd 5.Order_flow/backend
+  .venv\Scripts\python.exe -B tests\run_checks.py
+  ```
+- **VWAP anterior contra el nuevo:** 374,000 valores comparados (sesión y móvil, en 1m, 15m y 1h), 0 diferencias. En 1m con 6,000 velas, de 12.7 s a 0.14 s.
+- **Copia aislada** (backend en 11400 con la nube y el bot real bloqueados, bot falso en 5997, App 9 servida por Vite en 11401 y abierta en el navegador):
+  - con "Swing Detector" marcado, cambiar de timeframe y de días no envió ningún cambio al backend;
+  - el modal quitó y agregó BTCUSDT de las alertas, y cancelar "Alertas en 15m" no cambió nada;
+  - una caja con la entrada 1% bajo el precio llegó al bot falso como `Limit` con el precio de la caja; en Market llegó sin tipo y con el precio actual;
+  - la Limit que cruza y el SL del lado equivocado dejaron el botón bloqueado;
+  - con dos cajas, el panel usó la movida más recientemente;
+  - el doble clic con la herramienta TP/SL salió del modo dibujo sin dejar cajas nuevas;
+  - el VWAP de 15m y enseguida el de 1h devolvieron cada uno su paso; con 1m y 7 días (10,081 puntos, 33 s de descarga) la consulta más lenta al backend tardó 0.07 s;
+  - con el filtro VWAP encendido para BTC, el Swing cargó el VWAP de su timeframe con 3 días y su alerta llegó al bot falso con origen `ORDERFLOW`;
+  - una página ajena recibió 403, un Host ajeno 400 y `..\` en dibujos 400; la alerta de prueba sin confirmar no llegó al bot falso.
+
+### Ten en cuenta
+- **Reiniciar** el backend (11000) y App 9.
+- **El indicador del gráfico solo dibuja:** marcarlo o desmarcarlo no enciende ni apaga las alertas. Eso se hace con el interruptor del modal del Swing.
+- **Clientes del backend:** una página tiene que venir de localhost o 127.0.0.1 (o `null` / `file://`, como App 9 empaquetada). Los programas sin Origin, como curl o el panel de descargas, siguen igual.
+- **No se probó** dentro de Electron ni contra el bot o Bybit reales. Tampoco se provocó un corte del WebSocket en vivo: el relleno se probó solo a nivel del buffer.
+- **No se trajo de App 8:** el resto de su fase 2 (decimales del eje, Open Interest ordenado, zoom y escala de precios), el servidor de capturas para el Trading Journal ni lo que el usuario decidió dejar (Zonas V2, VP Zone Scanner, Strategy Builder en tiempo real, backtest de VP Periodic y Liquidation Clusters).
+- **Alertas de proximidad:** no se tocaron más allá de la dirección del backend. Se rehacen con la app global.
+
+---
+
 ## Pendiente: Indicador de Liquidaciones en Tiempo Real (recomendación del 9 Noviembre 2026)
 
 El usuario pidió dejar anotada esta recomendación para cuando se lleve a App 9 el indicador Liquidaciones de App 1. Hoy ni App 9 ni su backend (App 5) tienen liquidaciones; solo el panel de trading muestra el precio de liquidación de la posición.

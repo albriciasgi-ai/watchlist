@@ -53,6 +53,44 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 9 (OrderFlowDesktop) - 11 Noviembre 2026: App 9 Reemplaza a App 8
+
+**Pedido:** el usuario decidió dejar App 8 (Analizador Desktop) y operar desde App 9. Pidió traer de App 8 las órdenes limit y las correcciones del Swing, y después todo lo que faltaba para dejarla.
+
+**Cambios:**
+1. **Panel de trading:** tipo de orden Auto, Market o Limit, como en App 8. Auto usa Market si la entrada está a 0.1% o menos del precio; si no, Limit. Una Limit que cruza el precio y un SL o TP del lado equivocado bloquean el botón y dicen el motivo. En Market, cantidad y riesgo salen del precio actual
+2. **Caja TP/SL:** el panel toma la caja tocada más recientemente (creada o movida, `updatedAt`), no la última creada. El doble clic para salir del modo dibujo ya no deja una caja suelta. Las etiquetas de la caja usan decimales según el precio
+3. **Swing desde el gráfico:** el gráfico solo lee. Mirar otro timeframe, cambiar los días o abrir una moneda ya no cambia la config del Swing ni suma la moneda a las alertas. En otro timeframe las flechas se calculan aparte, solo para dibujar (`displayOnly`)
+4. **Modal del Swing:** dice "Alertas al bot en Xm · el gráfico está en Ym" y trae botones para cambiar el timeframe de las alertas, usar los días del gráfico y agregar o quitar la moneda de las alertas, con confirmación
+5. **Servicio Swing (backend de App 5):**
+   - cooldown propio de cada moneda, guardado en `config/swing_cooldowns.json`;
+   - señales con hueco, viejas o sin VWAP bloqueadas (`BLOCKED_GAP`, `BLOCKED_STALE`, `BLOCKED_NO_VWAP`);
+   - un re-análisis a la vez y la detección histórica en un hilo;
+   - config guardada con temporal y reemplazo, e intervalo inválido rechazado.
+6. **Velas del backend:** tras un corte se rellenan en orden, y la vela en curso ya no se precarga como cerrada
+7. **Servicio VWAP:** el de App 8. Cada moneda y timeframe tiene su estado, y el cálculo corre fuera del hilo principal. En 1m con 6,000 velas pasó de 12.7 s a 0.14 s, con los mismos valores (374,000 comparados, 0 diferencias). El filtro VWAP del Swing usa el VWAP de su propio timeframe
+8. **Protección del backend:**
+   - solo acepta páginas de este PC (Origin y Host, como el bot);
+   - símbolos y nombres de archivo validados;
+   - dibujos guardados con temporal y reemplazo, y un archivo ilegible responde error en vez de una lista vacía;
+   - las alertas de prueba piden `?confirm=ENVIAR_ALERTA_REAL`, y `/api/clear-cache` ya no dispara una.
+9. **Sin el Analizador:** App 9 ya no llama al puerto 10000
+10. **Datos del usuario:** sus dibujos y la config del Swing del Analizador quedaron copiados en `5.Order_flow/backend` de su carpeta, con respaldo en `respaldo_2026-11-11_antes_de_dejar_app8`
+11. **Pruebas:** `5.Order_flow/backend/tests/run_checks.py` corre 94 pruebas sin conexión
+
+**IMPORTANTE:**
+- Reiniciar el backend (11000) y App 9 para aplicar los cambios.
+- El Swing de este backend envía con origen `ORDERFLOW`: el bot solo lo opera si ese origen está permitido en "Alert Origins".
+- Conserva la espera de 120 s al arrancar, propia de este backend.
+- El Swing de Order Flow quedó como el del Analizador: 15m, 90 días y 15 monedas. Dejó de vigilar AAVE, AVAX, INJ, KAS, LPT, SHIB1000, TON y UNI; se agregan desde el modal.
+- Una página que use este backend tiene que venir de localhost o 127.0.0.1 (o `null` / `file://`). Los programas sin Origin, como el panel de descargas, siguen igual.
+- De App 8 no se trajo el resto de su fase 2 (decimales del eje, Open Interest ordenado, zoom y escala de precios) ni lo que el usuario decidió dejar: Zonas V2, VP Zone Scanner, Strategy Builder en tiempo real, backtest de VP Periodic y Liquidation Clusters.
+- Probado en una copia aislada, en el navegador y con un bot falso. Nada se probó dentro de Electron ni contra el bot o Bybit reales.
+
+**Ver:** `9.OrderFlowDesktop/CLAUDE.md` sección "App 9 Reemplaza a App 8 (11 Noviembre 2026)"
+
+---
+
 ### APP 1 (Backtester) - 10 Noviembre 2026: Prueba Manual de los Setups y Precio como Índice (fase 4)
 
 **Pedido:** decidir a mano las reglas de cada setup sin gastar las fechas con que se comprueban. Además, con "Fecha al azar y oculta", que el precio tampoco delate la época: lo que importa son los porcentajes.

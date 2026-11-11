@@ -1,6 +1,27 @@
 // src/components/trading/OrderForm.jsx
 // Formulario de orden con modos de cantidad fija y por riesgo
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { priceDecimals } from '../../utils/priceFormat';
+
+// Precio con los decimales del tick de la moneda.
+// El bot entrega tick_size (snake_case): con "tickSize" siempre caia en 0.01 y GALA salia como $0.02
+const fmtPrice = (price, symbolConfig) => {
+  if (price === null || price === undefined || !Number.isFinite(Number(price))) return '--';
+  const tick = parseFloat(symbolConfig?.tick_size ?? symbolConfig?.tickSize);
+  let decimals;
+  if (tick > 0) {
+    const text = String(tick);
+    if (text.includes('e-')) {
+      const [mantissa, exponent] = text.split('e-');
+      decimals = (mantissa.split('.')[1]?.length || 0) + parseInt(exponent, 10);
+    } else {
+      decimals = text.split('.')[1]?.length || 0;
+    }
+  } else {
+    decimals = priceDecimals(price);
+  }
+  return Number(price).toFixed(decimals);
+};
 
 const OrderForm = ({
   symbol,
@@ -16,6 +37,7 @@ const OrderForm = ({
   const [quantityMode, setQuantityMode] = useState('fixed'); // 'fixed' | 'risk'
   const [fixedAmount, setFixedAmount] = useState('100'); // USDT
   const [riskAmount, setRiskAmount] = useState('10'); // USDT a arriesgar
+  const [orderTypeMode, setOrderTypeMode] = useState('auto'); // 'auto' | 'market' | 'limit'
 
   // Modal de confirmación
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -35,27 +57,73 @@ const OrderForm = ({
     setPendingOrder(null);
   }, [tpslBoxData, symbol]);
 
-  // Calcular % de SL respecto al entry
+  // Tipo de orden, precio con que se ejecuta y motivo de bloqueo.
+  // - Auto: MARKET si la entrada esta a 0.1% o menos del precio; si no, LIMIT.
+  // - Una LIMIT de compra por encima del precio (o de venta por debajo) Bybit la llena al
+  //   instante: antes salia igual y la confirmacion decia que esperaria a la entrada.
+  // - SL y TP deben quedar del lado correcto del precio de ejecucion; el bot cambiaba en
+  //   silencio un SL equivocado por su porcentaje por defecto.
+  const orderPlan = useMemo(() => {
+    if (!tpslBoxData) return { type: 'MARKET', refPrice: null, block: null };
+    const entry = tpslBoxData.entryPrice;
+    const price = currentPrice;
+    const isBuy = side === 'Buy';
+
+    let type;
+    if (orderTypeMode === 'market') type = 'MARKET';
+    else if (orderTypeMode === 'limit') type = 'LIMIT';
+    else if (!price || Math.abs(entry - price) <= price * 0.001) type = 'MARKET';
+    else type = 'LIMIT';
+
+    let block = null;
+    if (type === 'LIMIT' && price) {
+      const marketable = isBuy ? entry >= price : entry <= price;
+      if (marketable) {
+        block = isBuy
+          ? `La entrada (${fmtPrice(entry, symbolConfig)}) está por encima del precio actual (${fmtPrice(price, symbolConfig)}): una Limit de compra se llenaría al instante, no al llegar a la entrada. Elige Market para entrar ya.`
+          : `La entrada (${fmtPrice(entry, symbolConfig)}) está por debajo del precio actual (${fmtPrice(price, symbolConfig)}): una Limit de venta se llenaría al instante, no al llegar a la entrada. Elige Market para entrar ya.`;
+      }
+    }
+
+    // Precio de ejecucion: el de mercado para MARKET, la entrada para LIMIT
+    const refPrice = type === 'MARKET' ? (price || entry) : entry;
+    if (!block && refPrice) {
+      const { slPrice, tpPrice } = tpslBoxData;
+      const slOk = isBuy ? slPrice < refPrice : slPrice > refPrice;
+      const tpOk = isBuy ? tpPrice > refPrice : tpPrice < refPrice;
+      if (!slOk || !tpOk) {
+        block = `${!slOk ? 'El Stop Loss' : 'El Take Profit'} queda del lado equivocado para un ${isBuy ? 'LONG' : 'SHORT'} que entra en ${fmtPrice(refPrice, symbolConfig)}. Revisa la caja o la dirección.`;
+      }
+    }
+
+    return { type, refPrice, block };
+  }, [tpslBoxData, currentPrice, orderTypeMode, side, symbolConfig]);
+
+  // Calcular % de SL respecto al precio de ejecución
   const slPercent = useMemo(() => {
     if (!tpslBoxData) return 0;
-    const { entryPrice, slPrice } = tpslBoxData;
-    if (!entryPrice || !slPrice) return 0;
-    return Math.abs((slPrice - entryPrice) / entryPrice);
-  }, [tpslBoxData]);
+    const ref = orderPlan.refPrice;
+    const { slPrice } = tpslBoxData;
+    if (!ref || !slPrice) return 0;
+    return Math.abs((slPrice - ref) / ref);
+  }, [tpslBoxData, orderPlan.refPrice]);
 
-  // Calcular % de TP respecto al entry
+  // Calcular % de TP respecto al precio de ejecución
   const tpPercent = useMemo(() => {
     if (!tpslBoxData) return 0;
-    const { entryPrice, tpPrice } = tpslBoxData;
-    if (!entryPrice || !tpPrice) return 0;
-    return Math.abs((tpPrice - entryPrice) / entryPrice);
-  }, [tpslBoxData]);
+    const ref = orderPlan.refPrice;
+    const { tpPrice } = tpslBoxData;
+    if (!ref || !tpPrice) return 0;
+    return Math.abs((tpPrice - ref) / ref);
+  }, [tpslBoxData, orderPlan.refPrice]);
 
   // Calcular cantidad basada en el modo
   const calculatedQuantity = useMemo(() => {
     if (!tpslBoxData || !symbolConfig) return { qty: 0, investment: 0 };
 
-    const entryPrice = tpslBoxData.entryPrice || currentPrice;
+    // Con MARKET la orden se llena al precio actual, no en la entrada de la caja: la cantidad y
+    // el riesgo se calculan con ese precio (antes, con el precio lejos, el riesgo real era mayor)
+    const entryPrice = orderPlan.refPrice;
     if (!entryPrice) return { qty: 0, investment: 0 };
 
     let investment;
@@ -88,15 +156,16 @@ const OrderForm = ({
       qty,
       investment: qty * entryPrice
     };
-  }, [tpslBoxData, symbolConfig, currentPrice, quantityMode, fixedAmount, riskAmount, slPercent]);
+  }, [tpslBoxData, symbolConfig, orderPlan.refPrice, quantityMode, fixedAmount, riskAmount, slPercent]);
 
-  // Calcular ganancia potencial y pérdida potencial
+  // Calcular ganancia potencial y pérdida potencial (desde el precio de ejecución)
   const potentialPnL = useMemo(() => {
-    if (!tpslBoxData || calculatedQuantity.qty <= 0) {
+    if (!tpslBoxData || calculatedQuantity.qty <= 0 || !orderPlan.refPrice) {
       return { profit: 0, loss: 0 };
     }
 
-    const { entryPrice, slPrice, tpPrice } = tpslBoxData;
+    const { slPrice, tpPrice } = tpslBoxData;
+    const entryPrice = orderPlan.refPrice;
     const qty = calculatedQuantity.qty;
 
     // Para LONG: profit si sube a TP, loss si baja a SL
@@ -105,7 +174,7 @@ const OrderForm = ({
     const loss = Math.abs(entryPrice - slPrice) * qty;
 
     return { profit, loss };
-  }, [tpslBoxData, calculatedQuantity]);
+  }, [tpslBoxData, calculatedQuantity, orderPlan.refPrice]);
 
   // Risk/Reward ratio
   const riskRewardRatio = useMemo(() => {
@@ -114,25 +183,31 @@ const OrderForm = ({
     return `1:${ratio.toFixed(2)}`;
   }, [potentialPnL]);
 
+  // Tipo de orden calculado en orderPlan
+  const orderType = orderPlan.type;
+
   // Handler para preparar orden
   const handlePrepareOrder = useCallback(() => {
-    if (!tpslBoxData || calculatedQuantity.qty <= 0) return;
+    if (!tpslBoxData || calculatedQuantity.qty <= 0 || orderPlan.block) return;
 
     const order = {
+      // La caja es de una moneda: si no es la del panel, TradingPanel no la envia
       symbol: tpslBoxData.symbol || symbol,
       side,
       quantity: calculatedQuantity.qty,
       stopLoss: tpslBoxData.slPrice,
       takeProfit: tpslBoxData.tpPrice,
-      entryPrice: tpslBoxData.entryPrice,
+      // LIMIT: precio de la entrada. MARKET: precio actual, que es al que se llena
+      entryPrice: orderPlan.refPrice,
       investment: calculatedQuantity.investment,
       potentialProfit: potentialPnL.profit,
-      potentialLoss: potentialPnL.loss
+      potentialLoss: potentialPnL.loss,
+      orderType
     };
 
     setPendingOrder(order);
     setShowConfirmation(true);
-  }, [symbol, side, tpslBoxData, calculatedQuantity, potentialPnL]);
+  }, [symbol, side, tpslBoxData, calculatedQuantity, potentialPnL, orderType, orderPlan]);
 
   // Handler para confirmar orden
   const handleConfirmOrder = useCallback(() => {
@@ -149,21 +224,8 @@ const OrderForm = ({
     setPendingOrder(null);
   }, []);
 
-  // Formatear precio según el tick de la moneda.
-  // El bot entrega tick_size (snake_case): con "tickSize" siempre caía en 0.01 y GALA salía como $0.02
-  const formatPrice = (price) => {
-    if (!price) return '--';
-    const tickSize = parseFloat(symbolConfig?.tick_size ?? symbolConfig?.tickSize) || 0.01;
-    const text = String(tickSize);
-    let decimals;
-    if (text.includes('e-')) {
-      const [mantissa, exponent] = text.split('e-');
-      decimals = (mantissa.split('.')[1]?.length || 0) + parseInt(exponent, 10);
-    } else {
-      decimals = text.split('.')[1]?.length || 2;
-    }
-    return price.toFixed(decimals);
-  };
+  // Formatear precio según el tick de la moneda
+  const formatPrice = (price) => (price ? fmtPrice(price, symbolConfig) : '--');
 
   // Si no hay TPSLBox, mostrar mensaje
   if (!tpslBoxData) {
@@ -220,6 +282,55 @@ const OrderForm = ({
             >
               📉 SHORT (Sell)
             </button>
+          </div>
+        </div>
+
+        {/* Tipo de Orden */}
+        <div className="order-form-section">
+          <h4>Tipo de Orden</h4>
+          <div className="quantity-mode-toggle">
+            <button
+              className={`mode-btn ${orderTypeMode === 'auto' ? 'active' : ''}`}
+              onClick={() => setOrderTypeMode('auto')}
+              title="Automático: LIMIT si entry ≠ precio actual, MARKET si son similares"
+            >
+              🤖 Auto
+            </button>
+            <button
+              className={`mode-btn ${orderTypeMode === 'market' ? 'active' : ''}`}
+              onClick={() => setOrderTypeMode('market')}
+              title="Siempre ejecutar como MARKET (inmediato al precio actual)"
+            >
+              ⚡ Market
+            </button>
+            <button
+              className={`mode-btn ${orderTypeMode === 'limit' ? 'active' : ''}`}
+              onClick={() => setOrderTypeMode('limit')}
+              title="Siempre ejecutar como LIMIT (espera al entry price)"
+            >
+              🎯 Limit
+            </button>
+          </div>
+          <div style={{
+            fontSize: '11px',
+            color: '#666',
+            marginTop: '6px',
+            padding: '6px',
+            background: '#f5f5f5',
+            borderRadius: '4px'
+          }}>
+            {orderTypeMode === 'auto' && '🤖 Auto: Detecta automáticamente según diferencia de precio (>0.1%)'}
+            {orderTypeMode === 'market' && '⚡ Market: Ejecución inmediata al precio de mercado actual'}
+            {orderTypeMode === 'limit' && '🎯 Limit: Espera a que el precio alcance el entry price dibujado'}
+            {orderPlan.block ? (
+              <div style={{ marginTop: '4px', fontWeight: '600', color: '#ef4444' }}>
+                ⚠️ {orderPlan.block}
+              </div>
+            ) : (
+              <div style={{ marginTop: '4px', fontWeight: '600', color: orderType === 'LIMIT' ? '#f59e0b' : '#10b981' }}>
+                → Se ejecutará como: {orderType}
+              </div>
+            )}
           </div>
         </div>
 
@@ -297,7 +408,7 @@ const OrderForm = ({
           <button
             className={`submit-btn ${side.toLowerCase()}`}
             onClick={handlePrepareOrder}
-            disabled={disabled || calculatedQuantity.qty <= 0}
+            disabled={disabled || calculatedQuantity.qty <= 0 || !!orderPlan.block}
           >
             {orderStatus.loading ? (
               <>
@@ -345,8 +456,23 @@ const OrderForm = ({
               </div>
               <div className="confirmation-row">
                 <span className="label">Tipo:</span>
-                <span className="value">MARKET</span>
+                <span className="value" style={{
+                  color: pendingOrder.orderType === 'LIMIT' ? '#f59e0b' : '#10b981',
+                  fontWeight: '600'
+                }}>
+                  {pendingOrder.orderType}
+                </span>
               </div>
+              {pendingOrder.orderType === 'LIMIT' && (
+                <div className="confirmation-info" style={{
+                  fontSize: '11px',
+                  color: '#f59e0b',
+                  fontStyle: 'italic',
+                  marginTop: '4px'
+                }}>
+                  ℹ️ Orden límite: se ejecutará cuando el precio alcance ${formatPrice(pendingOrder.entryPrice)}
+                </div>
+              )}
               <div className="confirmation-row">
                 <span className="label">Cantidad:</span>
                 <span className="value">{pendingOrder.quantity.toFixed(6)}</span>
