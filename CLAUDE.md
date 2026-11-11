@@ -62,6 +62,8 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 2. **Cajas TP/SL en el segundo gráfico:** con entrada, stop y objetivo de cada orden no cancelada, hasta su salida o la hora simulada
 3. **Caja de texto:** con los estilos nuevos, fondo del gráfico, borde gris oscuro y texto del estilo. El Clásico sigue amarillo
 4. **Panel de trading en ventana aparte:** botón ⧉ en su encabezado. La confirmación de orden y las imágenes del historial se abren en esa ventana; "Traerlo aquí" lo devuelve
+5. **Sin saltos a velocidad alta (12/11):** al mirar el 2.º gráfico, la principal queda en segundo plano y el navegador frenaba su reloj a un paso por segundo (a 10000x, casi 3 horas por paso). Ahora el tick lo marca un Worker, que el navegador no frena
+6. **Una sola principal:** con dos pestañas principales abiertas, el 2.º gráfico saltaba entre sus horas. Ahora sigue una, y pasa a otra solo si su hora avanza
 
 **IMPORTANTE:** basta recargar la página: no hay cambios en el backend. Probado en una copia aislada; las ventanas se simularon con un marco, porque el panel de pruebas no abre ventanas emergentes.
 

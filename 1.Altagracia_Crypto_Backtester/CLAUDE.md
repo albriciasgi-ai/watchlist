@@ -8,7 +8,7 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ### Noviembre 2026: Panel de Trading Aparte, Cajas TP/SL y Velas que se Forman en el 2.º Gráfico
 
-El panel de trading se abre en una ventana aparte. El 2.º gráfico dibuja las cajas TP/SL de los trades y sus velas se forman con el paso del marco más fino a la vista. La caja de texto toma los colores del estilo. Detalle en `Backtester/CLAUDE.md`, "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11".
+El panel de trading se abre en una ventana aparte. El 2.º gráfico dibuja las cajas TP/SL de los trades y sus velas se forman con el paso del marco más fino a la vista. El reloj ya no avanza a saltos con la principal en segundo plano (lo marca un Worker), y el 2.º gráfico sigue una sola principal. La caja de texto toma los colores del estilo. Detalle en `Backtester/CLAUDE.md`, "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11".
 
 ### Noviembre 2026: Segundo Gráfico, Observador en Ventana Aparte y Mejoras
 

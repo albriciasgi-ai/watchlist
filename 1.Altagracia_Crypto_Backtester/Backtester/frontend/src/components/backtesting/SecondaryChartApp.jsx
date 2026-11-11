@@ -100,6 +100,7 @@ const SecondaryChartApp = () => {
   const timeframeRef = useRef(timeframe);
   const tradesRef = useRef([]);
   const boxesRef = useRef([]);
+  const followRef = useRef({ source: null, last: new Map() }); // Principal que se sigue y última hora de cada una
 
   useEffect(() => {
     document.title = 'App 1 · 2.º gráfico';
@@ -115,6 +116,15 @@ const SecondaryChartApp = () => {
     channel.onmessage = (event) => {
       const message = event.data;
       if (message?.type !== 'state') return;
+      // Con dos pestañas principales abiertas (una vieja, o la misma recargada) el gráfico saltaba entre
+      // sus horas. Se sigue una sola, y se cambia a otra solo cuando su hora avanza
+      const follow = followRef.current;
+      const source = message.source ?? 'sin-id';
+      const previous = follow.last.get(source);
+      follow.last.set(source, message.currentTime);
+      const moving = previous !== undefined && previous !== message.currentTime;
+      if (follow.source && source !== follow.source && !moving) return;
+      follow.source = source;
       setBlindAnchor(message.blindAnchor ?? null);
       setBlindScale(message.blindAnchor == null ? null : message.blindScale);
       tradesRef.current = message.trades || [];

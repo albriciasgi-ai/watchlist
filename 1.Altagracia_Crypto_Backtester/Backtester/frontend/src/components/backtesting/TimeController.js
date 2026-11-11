@@ -11,6 +11,40 @@
 const MIN_TICK_MS = 16;      // El navegador no da intervalos mucho menores
 const MAX_CATCH_UP_MS = 1000; // Tras un bloqueo largo no se salta más que esto de tiempo real
 
+/**
+ * Temporizador del reloj. Con la pestaña en segundo plano (por ejemplo, mientras se mira el 2.º gráfico)
+ * el navegador deja los setInterval de la página en uno por segundo, o uno por minuto pasados 5 minutos,
+ * y la reproducción avanzaba a saltos. Los temporizadores de un Worker no se frenan así: el Worker solo
+ * avisa, y el tick corre en la página como antes. Sin Worker (pruebas, navegador viejo) usa setInterval.
+ */
+const TICKER_SOURCE = 'let id=null;onmessage=e=>{clearInterval(id);id=e.data>0?setInterval(()=>postMessage(0),e.data):null;};';
+let tickerUrl = null;
+
+function startTicker(run, ms) {
+  if (typeof Worker !== 'undefined' && typeof Blob !== 'undefined' && typeof URL?.createObjectURL === 'function') {
+    try {
+      tickerUrl = tickerUrl || URL.createObjectURL(new Blob([TICKER_SOURCE], { type: 'text/javascript' }));
+      const worker = new Worker(tickerUrl); // Uno por reproducción: dos relojes no se pisan
+      worker.onmessage = run;
+      worker.postMessage(ms);
+      return { worker };
+    } catch {
+      // Sin permiso para Workers: queda el temporizador de la página
+    }
+  }
+  return { id: setInterval(run, ms) };
+}
+
+function stopTicker(ticker) {
+  if (!ticker) return;
+  if (ticker.worker) {
+    ticker.worker.onmessage = null;
+    ticker.worker.terminate();
+  } else {
+    clearInterval(ticker.id);
+  }
+}
+
 class TimeController {
   constructor(startTime, endTime, timeframe, onTimeUpdate, simulationStartTime = null) {
     this.startTime = startTime; // timestamp en ms - INICIO DEL HISTORIAL (para mostrar todo)
@@ -176,7 +210,7 @@ class TimeController {
     let lastTick = performance.now();
     let owedMs = 0; // Tiempo simulado que ya debió pasar a esta velocidad
 
-    this.interval = setInterval(() => {
+    this.interval = startTicker(() => {
       const now = performance.now();
       owedMs += Math.min(now - lastTick, maxElapsedMs) * this.playbackSpeed;
       lastTick = now;
@@ -213,7 +247,7 @@ class TimeController {
     this.isPlaying = false;
 
     if (this.interval) {
-      clearInterval(this.interval);
+      stopTicker(this.interval);
       this.interval = null;
     }
 

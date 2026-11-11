@@ -1508,6 +1508,7 @@ const BacktestingApp = () => {
 
   // Segundo gráfico en otra pestaña: sigue la hora simulada de esta
   const replayStateRef = useRef(null);
+  const replaySourceRef = useRef(Math.random().toString(36).slice(2)); // Distingue esta pestaña de otras principales
   const replayChannelRef = useRef(null);
   const [secondaryTimeframe, setSecondaryTimeframe] = useState(null); // Marco del 2.º gráfico, si está abierto
   const secondaryTimeframeRef = useRef(null);
@@ -1534,7 +1535,7 @@ const BacktestingApp = () => {
   useEffect(() => {
     if (!initialized || !symbol) return;
     const state = {
-      type: 'state', symbol, currentTime, simulationStartTime, activeTimeframe,
+      type: 'state', source: replaySourceRef.current, symbol, currentTime, simulationStartTime, activeTimeframe,
       blindAnchor: blindAnchor(), blindScale: blindScale(),
       ...tradesForSecondary(orderManagerRef.current?.orders)
     };

@@ -782,6 +782,8 @@ Pedidos del usuario el 11/11, después de la fase 4 de Elementos OF.
 - No muestra los dibujos de la principal: en backtesting viven en la sesión, no en el backend. Con fecha oculta usa el mismo índice de precios
 - **Cajas TP/SL** (12/11): la principal envía también las cajas de sus órdenes (`tradesForSecondary()`: lado, entrada, stop, objetivo, desde la ejecución o, si está pendiente, desde que se creó, hasta la salida). `MiniChart` las dibuja con `getTradeBoxes` usando `TPSLBox`, con la hora simulada como final mientras siguen vivas. Con la reproducción en pausa la principal reenvía órdenes y líneas cada segundo
 - **Velas que se forman** (12/11): el reloj avanzaba con el paso del marco con que se creó (de 1h, 15 minutos), así que un 2.º gráfico de marco menor veía velas completas de golpe. El segundo avisa su marco (`hello` y `tf`, `bye` al cerrarse) y `TimeController.setStepTimeframes()` toma el paso del marco más fino a la vista, el activo o el del 2.º gráfico. Cambia solo la cantidad de estados intermedios, no la velocidad. Medido en la copia: con la principal en 1H y el segundo en 15M la hora pasó a avanzar de a 5 minutos; con la principal en 15m, la vela de 1H del segundo cambió cada 5 minutos simulados
+- **Sin saltos con la principal atrás** (12/11): al mirar la pestaña del 2.º gráfico, la principal queda en segundo plano y el navegador frena sus `setInterval` a uno por segundo (a uno por minuto pasados 5 minutos). El reloj seguía bien la velocidad pero en saltos de un segundo: a 1000x, 16 minutos por salto; a 10000x, casi 3 horas. Ahora el tick lo marca un Worker (`startTicker()` en `TimeController.js`), cuyos temporizadores no se frenan, y el tick sigue corriendo en la página. Uno por reproducción, terminado al pausar; sin Worker queda `setInterval`. Medido en la copia a 10000x: el 2.º gráfico recibe la hora cada 120 ms, 20 minutos simulados por paso. El panel de pruebas no oculta las pestañas, así que el freno del navegador no se pudo reproducir allí
+- **Una sola principal** (12/11): con dos pestañas principales abiertas (una vieja o una recargada), las dos respondían al `hello` y el 2.º gráfico saltaba entre sus horas. Cada principal manda `source` y el segundo sigue a una sola; pasa a otra solo cuando su hora avanza
 
 ### Observador en ventana aparte
 
@@ -1099,7 +1101,8 @@ Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la 
 
 - Cuenta el tiempo simulado que debió pasar. Si un tick llega tarde, o la velocidad pide más de lo que da un intervalo de 16 ms, avanza varias subdivisiones
 - Tras un bloqueo largo no recupera más de 1 s de tiempo real
-- Las subdivisiones salen del marco con que se creó el reloj, no del marco activo
+- Las subdivisiones salen del marco con que se creó el reloj, no del marco activo, salvo que un marco más fino esté a la vista (`setStepTimeframes()`)
+- El tick lo marca un Worker: en una pestaña oculta los `setInterval` de la página quedan en uno por segundo (ver "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11")
 
 ### Tick (BacktestingApp.handleTimeUpdate)
 

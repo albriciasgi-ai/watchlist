@@ -51,6 +51,44 @@ test('paso: con un gráfico de marco menor a la vista, el reloj avanza con su pa
   assert.equal(controller.getTimeIncrement(), 15 * 60000);
 });
 
+test('segundo plano: con Worker el tick lo marca el Worker y pausar lo termina', () => {
+  // El navegador frena los setInterval de una pestaña oculta a uno por segundo; los de un Worker no
+  const workers = [];
+  class FakeWorker {
+    constructor(url) { this.url = url; this.sent = []; this.ended = false; workers.push(this); }
+    postMessage(ms) { this.sent.push(ms); }
+    terminate() { this.ended = true; }
+  }
+  const saved = { Worker: globalThis.Worker, Blob: globalThis.Blob, create: URL.createObjectURL };
+  globalThis.Worker = FakeWorker;
+  URL.createObjectURL = () => 'blob:reloj';
+  let pageTimer = false;
+  globalThis.setInterval = () => { pageTimer = true; return 1; };
+  let now = 0;
+  Object.defineProperty(globalThis.performance, 'now', { value: () => now, configurable: true });
+  try {
+    const times = [];
+    const controller = new TimeController(START, END, '15m', time => times.push(time), START);
+    controller.playbackSpeed = 1000;
+    controller.play();
+    assert.equal(pageTimer, false, 'no usa el temporizador de la página');
+    assert.equal(workers.length, 1);
+    assert.deepEqual(workers[0].sent, [300]);
+    now += 1000; // Un segundo real de una vez, como una pestaña oculta
+    workers[0].onmessage();
+    assert.deepEqual(times, [START + Math.round(1000 * 1000 / STEP) * STEP]);
+    controller.pause();
+    assert.equal(workers[0].ended, true, 'pausar termina el Worker');
+    assert.equal(workers[0].onmessage, null);
+    controller.play();
+    assert.equal(workers.length, 2, 'cada reproducción tiene el suyo');
+    controller.pause();
+  } finally {
+    globalThis.Worker = saved.Worker;
+    URL.createObjectURL = saved.create;
+  }
+});
+
 test('a tiempo: cada tick avanza una subdivisión', () => {
   const { clock, times } = playing(1000);
   assert.equal(clock.every(), 300);
