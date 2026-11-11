@@ -3,11 +3,13 @@ import { createPortal } from 'react-dom';
 import './OrderConfirmationModal.css';
 import { priceLabel, quantityText } from './blindClock.js';
 
+import { usePortalTarget } from './PopupWindow';
 /**
  * Modal de confirmación cuando se crea una orden
  * Muestra detalles completos y se cierra automáticamente después de 5 segundos
  */
 const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
+  const portalTarget = usePortalTarget(); // En la ventana aparte del panel, si está abierta
   const [countdown, setCountdown] = useState(5);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -147,7 +149,7 @@ const OrderConfirmationModal = ({ order, currentPrice, onClose }) => {
         </div>
       </div>
     </div>,
-    document.body
+    portalTarget
   );
 };
 

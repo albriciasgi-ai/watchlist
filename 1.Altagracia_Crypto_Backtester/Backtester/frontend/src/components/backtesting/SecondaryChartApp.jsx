@@ -96,7 +96,10 @@ const SecondaryChartApp = () => {
   const [showList, setShowList] = useState(false);
   const [currentTool, setCurrentTool] = useState('select');
   const loadedSymbol = useRef(null);
+  const channelRef = useRef(null);
+  const timeframeRef = useRef(timeframe);
   const tradesRef = useRef([]);
+  const boxesRef = useRef([]);
 
   useEffect(() => {
     document.title = 'App 1 · 2.º gráfico';
@@ -115,17 +118,31 @@ const SecondaryChartApp = () => {
       setBlindAnchor(message.blindAnchor ?? null);
       setBlindScale(message.blindAnchor == null ? null : message.blindScale);
       tradesRef.current = message.trades || [];
+      boxesRef.current = message.boxes || [];
       setReplay(message);
     };
-    channel.postMessage({ type: 'hello' });
-    const retry = setInterval(() => channel.postMessage({ type: 'hello' }), 3000);
+    channelRef.current = channel;
+    const hello = () => channel.postMessage({ type: 'hello', timeframe: timeframeRef.current });
+    hello();
+    const retry = setInterval(hello, 3000);
     const stop = setTimeout(() => clearInterval(retry), 30000);
+    // Al cerrar, la principal vuelve al paso de su propio marco
+    const bye = () => channel.postMessage({ type: 'bye' });
+    window.addEventListener('beforeunload', bye);
     return () => {
       clearInterval(retry);
       clearTimeout(stop);
+      window.removeEventListener('beforeunload', bye);
       channel.close();
+      channelRef.current = null;
     };
   }, []);
+
+  // La principal avanza con el paso del marco más fino a la vista: le avisa el marco de este gráfico
+  useEffect(() => {
+    timeframeRef.current = timeframe;
+    channelRef.current?.postMessage({ type: 'tf', timeframe });
+  }, [timeframe]);
 
   // Velas del símbolo de la principal: del caché del navegador, o del backend
   useEffect(() => {
@@ -158,6 +175,7 @@ const SecondaryChartApp = () => {
 
   const toggle = (name) => setIndicatorStates(previous => ({ ...previous, [name]: !previous[name] }));
   const getTradeBoundaries = useCallback(() => tradesRef.current, []);
+  const getTradeBoxes = useCallback(() => boxesRef.current, []);
   const noop = useCallback(() => {}, []);
 
   const days = replay?.simulationStartTime
@@ -239,6 +257,7 @@ const SecondaryChartApp = () => {
               currentTool={currentTool}
               onToolChange={setCurrentTool}
               getTradeBoundaries={getTradeBoundaries}
+              getTradeBoxes={getTradeBoxes}
               onRequestPause={noop}
               onRequestTimeChange={noop}
               onDrawingsChange={noop}

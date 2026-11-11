@@ -780,6 +780,8 @@ Pedidos del usuario el 11/11, después de la fase 4 de Elementos OF.
 - No tiene reloj ni órdenes. Las velas salen de la IndexedDB que guardó la principal (`backtestingCache`), o del backend si no están: carga en segundos, pero ocupa otra vez la memoria de las velas
 - Lo que se elige ahí para el análisis llega a la orden de la principal: `analysisLevels.js` escucha el evento `storage` de las otras pestañas
 - No muestra los dibujos de la principal: en backtesting viven en la sesión, no en el backend. Con fecha oculta usa el mismo índice de precios
+- **Cajas TP/SL** (12/11): la principal envía también las cajas de sus órdenes (`tradesForSecondary()`: lado, entrada, stop, objetivo, desde la ejecución o, si está pendiente, desde que se creó, hasta la salida). `MiniChart` las dibuja con `getTradeBoxes` usando `TPSLBox`, con la hora simulada como final mientras siguen vivas. Con la reproducción en pausa la principal reenvía órdenes y líneas cada segundo
+- **Velas que se forman** (12/11): el reloj avanzaba con el paso del marco con que se creó (de 1h, 15 minutos), así que un 2.º gráfico de marco menor veía velas completas de golpe. El segundo avisa su marco (`hello` y `tf`, `bye` al cerrarse) y `TimeController.setStepTimeframes()` toma el paso del marco más fino a la vista, el activo o el del 2.º gráfico. Cambia solo la cantidad de estados intermedios, no la velocidad. Medido en la copia: con la principal en 1H y el segundo en 15M la hora pasó a avanzar de a 5 minutos; con la principal en 15m, la vela de 1H del segundo cambió cada 5 minutos simulados
 
 ### Observador en ventana aparte
 
@@ -787,6 +789,12 @@ Pedidos del usuario el 11/11, después de la fase 4 de Elementos OF.
 - Copia los estilos de la página (y los que Vite agrega después) y la clase y las variables del estilo, que viven en el body. Los modales del Observador (informe, visor de imágenes) se abren en esa ventana con `usePortalTarget()`, y el visor escucha el teclado en ella (`useHostDocument()`)
 - La pestaña del Observador dice que está aparte y ofrece "Ir a la ventana" y "Traerlo aquí". Cerrarla a mano lo devuelve. "Ir al gráfico" trae al frente la principal
 - El navegador puede bloquearla: hay que permitir las ventanas emergentes para la página
+
+### Panel de trading en ventana aparte (12/11)
+
+- Botón ⧉ en el encabezado del panel: sus pestañas y su contenido (`tradingPanelBody`) se dibujan en una ventana aparte con `PopupWindow`, compartiendo el estado. La barra lateral dice que está aparte y ofrece "Ir a la ventana" y "Traerlo aquí"
+- La confirmación de orden y las imágenes del historial se abren en esa ventana (`usePortalTarget()`), y las flechas del historial escuchan su teclado (`useHostDocument()`)
+- Probado con la ventana simulada por un marco: la orden se creó desde allí, su confirmación salió dentro de la ventana y "Traerlo aquí" devolvió el panel
 
 ### Más cosas para "Incluir en el análisis"
 
@@ -798,6 +806,7 @@ Pedidos del usuario el 11/11, después de la fase 4 de Elementos OF.
 ### Caja de texto
 
 - Botón "Texto" en la barra de dibujo. Al hacer clic en el gráfico la caja se crea, se abre para escribir y la herramienta vuelve al cursor. Doble clic sobre una caja la edita. Ctrl+Enter o salir del campo guarda; Esc cancela; vacío deja el texto anterior
+- Con los estilos nuevos la caja toma el fondo del gráfico (blanco en los claros), borde gris oscuro (`THEME.textMuted`) y el texto del estilo, sin sombra; el Clásico conserva la nota amarilla. Una caja con colores propios en `style` los conserva (12/11)
 - `TextBox.hitTest()` pedía `scaleConverter.canvas`, que no existe: daba error y la caja no se podía seleccionar ni arrastrar. Ahora mide con su propio lienzo
 
 ### Número de los trades

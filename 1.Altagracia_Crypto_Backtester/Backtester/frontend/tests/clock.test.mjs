@@ -40,6 +40,17 @@ function playing(speed, end = END) {
   return { clock, controller, times };
 }
 
+test('paso: con un gráfico de marco menor a la vista, el reloj avanza con su paso', () => {
+  const controller = new TimeController(START, START + 86400000, '1h', () => {}, START);
+  assert.equal(controller.getTimeIncrement(), 15 * 60000, 'el de 1h: 15 minutos');
+  controller.setStepTimeframes(['1h', '15m']);
+  assert.equal(controller.getTimeIncrement(), 5 * 60000, 'con 15m a la vista: 5 minutos');
+  controller.setStepTimeframes(['1h', '4h']);
+  assert.equal(controller.getTimeIncrement(), 15 * 60000, 'un marco mayor no lo vuelve más grueso');
+  controller.setStepTimeframes([]);
+  assert.equal(controller.getTimeIncrement(), 15 * 60000);
+});
+
 test('a tiempo: cada tick avanza una subdivisión', () => {
   const { clock, times } = playing(1000);
   assert.equal(clock.every(), 300);

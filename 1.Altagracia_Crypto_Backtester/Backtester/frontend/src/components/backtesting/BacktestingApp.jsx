@@ -54,6 +54,22 @@ import '../drawing/DrawingSidebar.css'; // 🎯 OPTIMIZACIÓN UI
 const OBSERVER_NOTICE_MS = 8000;
 const SCREEN_UPDATE_MS = 100; // Cada cuánto llega la hora simulada a la pantalla mientras reproduce
 
+/** Líneas y cajas TP/SL de los trades para el 2.º gráfico: pendientes desde que se crean, las demás desde su ejecución */
+function tradesForSecondary(orders = []) {
+  return {
+    trades: tradeBoundaries(orders),
+    boxes: orders
+      .filter(order => order.status !== 'cancelled' && (order.stopLoss || order.takeProfit))
+      .map(order => ({
+        side: order.side,
+        entry: order.executedPrice ?? order.entryPrice,
+        stop: order.stopLoss, target: order.takeProfit,
+        start: order.executedAt ?? order.entryTime,
+        end: order.exitTime ?? null
+      }))
+  };
+}
+
 const BacktestingApp = () => {
   // Estado principal
   const [symbol, setSymbol] = useState('');
@@ -244,6 +260,7 @@ const BacktestingApp = () => {
   const [observerNotice, setObserverNotice] = useState(null);
   const [observerUnread, setObserverUnread] = useState(0);
   const [observerPopup, setObserverPopup] = useState(null); // Ventana aparte del Observador, abierta desde su pestaña
+  const [tradingPopup, setTradingPopup] = useState(null); // Ventana aparte del panel de trading
   const maxSimTimeRef = useRef(0); // Hasta dónde llegó la simulación: una orden anterior ya conoce el futuro
   const rejectionConfigRef = useRef(null); // Último ajuste aplicado: el modal avisa en cada dibujo
 
@@ -1130,6 +1147,7 @@ const BacktestingApp = () => {
       controller.initSync(sessionId);
 
       timeControllerRef.current = controller;
+      controller.setStepTimeframes([activeTimeframe, secondaryTimeframeRef.current].filter(Boolean));
 
       // Crear OrderManager
       if (!orderManagerRef.current) {
@@ -1491,27 +1509,48 @@ const BacktestingApp = () => {
   // Segundo gráfico en otra pestaña: sigue la hora simulada de esta
   const replayStateRef = useRef(null);
   const replayChannelRef = useRef(null);
+  const [secondaryTimeframe, setSecondaryTimeframe] = useState(null); // Marco del 2.º gráfico, si está abierto
+  const secondaryTimeframeRef = useRef(null);
+  secondaryTimeframeRef.current = secondaryTimeframe;
   useEffect(() => {
     const channel = openReplayChannel();
     replayChannelRef.current = channel;
     if (channel) {
       channel.onmessage = (event) => {
-        if (event.data?.type === 'hello' && replayStateRef.current) channel.postMessage(replayStateRef.current);
+        const message = event.data;
+        if (message?.type === 'hello' && replayStateRef.current) channel.postMessage(replayStateRef.current);
+        if ((message?.type === 'hello' || message?.type === 'tf') && message.timeframe) setSecondaryTimeframe(message.timeframe);
+        if (message?.type === 'bye') setSecondaryTimeframe(null);
       };
     }
     return () => channel?.close();
   }, []);
+
+  // El reloj avanza con el paso del marco más fino a la vista, para que las velas mayores se vean formar
+  useEffect(() => {
+    timeControllerRef.current?.setStepTimeframes?.([activeTimeframe, secondaryTimeframe].filter(Boolean));
+  }, [activeTimeframe, secondaryTimeframe, initialized]);
 
   useEffect(() => {
     if (!initialized || !symbol) return;
     const state = {
       type: 'state', symbol, currentTime, simulationStartTime, activeTimeframe,
       blindAnchor: blindAnchor(), blindScale: blindScale(),
-      trades: tradeBoundaries(orderManagerRef.current?.orders)
+      ...tradesForSecondary(orderManagerRef.current?.orders)
     };
     replayStateRef.current = state;
     replayChannelRef.current?.postMessage(state);
   }, [initialized, symbol, currentTime, simulationStartTime, blindActive, activeTimeframe]);
+
+  // Con la reproducción en pausa la hora no cambia: las órdenes nuevas o cerradas llegan igual cada segundo
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!replayStateRef.current) return;
+      replayStateRef.current = { ...replayStateRef.current, ...tradesForSecondary(orderManagerRef.current?.orders) };
+      replayChannelRef.current?.postMessage(replayStateRef.current);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const openSecondaryChart = useCallback(() => {
     const tab = window.open(secondaryChartUrl(), 'app1-grafico2');
@@ -1521,6 +1560,22 @@ const BacktestingApp = () => {
   const popOutObserver = useCallback(() => {
     const popup = openPopup('app1-observador', { width: 1000, height: 920 });
     if (popup) setObserverPopup(popup);
+  }, []);
+
+  const popOutTrading = useCallback(() => {
+    const popup = openPopup('app1-panel-trading', { width: 460, height: 900 });
+    if (popup) {
+      setTradingPopup(popup);
+      setShowTradingPanel(true);
+      setFullscreenPanel(null);
+    }
+  }, []);
+
+  const bringTradingBack = useCallback(() => {
+    setTradingPopup(current => {
+      if (current && !current.closed) current.close();
+      return null;
+    });
   }, []);
 
   const bringObserverBack = useCallback(() => {
@@ -2260,6 +2315,139 @@ const BacktestingApp = () => {
   /**
    * Renderizar vista principal de backtesting
    */
+  // Pestañas y contenido del panel de trading: en la barra lateral o en su ventana aparte
+  const tradingPanelBody = (
+    <>
+    {/* Panel Tabs */}
+    <div className="sidebar-tabs">
+      <button
+        className={`tab-btn ${activePanel === 'trading' ? 'active' : ''}`}
+        onClick={() => setActivePanel('trading')}
+      >
+        📊 Trading
+      </button>
+      <button
+        className={`tab-btn ${activePanel === 'performance' ? 'active' : ''}`}
+        onClick={() => setActivePanel('performance')}
+      >
+        📈 Métricas
+      </button>
+      <button
+        className={`tab-btn ${activePanel === 'history' ? 'active' : ''}`}
+        onClick={() => setActivePanel('history')}
+      >
+        📋 Historial
+      </button>
+      <button
+        className={`tab-btn ${activePanel === 'dashboard' ? 'active' : ''}`}
+        onClick={() => setActivePanel('dashboard')}
+      >
+        📊 Dashboard
+      </button>
+      <button
+        className={`tab-btn ${activePanel === 'observer' ? 'active' : ''}`}
+        onClick={() => setActivePanel('observer')}
+      >
+        🔭 Observador{observerUnread > 0 ? ` (${observerUnread})` : ''}
+      </button>
+    </div>
+
+    {/* Panel Content */}
+    <div className="sidebar-content">
+      {activePanel === 'trading' && (
+        <>
+          <PendingOrders
+            orderManager={orderManagerRef.current}
+            currentPrice={currentPrice}
+          />
+          <TradingControls
+            symbol={symbol}
+            orderManager={orderManagerRef.current}
+            currentPrice={currentPrice}
+            currentTime={currentTime}
+            chartBox={latestFreeBox(chartShapes, orderManagerRef.current?.orders)}
+            onOrderCreated={(order) => {
+              console.log('[BacktestingApp] Orden creada:', order);
+              observeOrder(order);
+              if (order.status === 'pending') {
+                captureHold.run(release => captureDecision(order, miniChartRefs.current[activeTimeframeRef.current], release));
+              }
+
+              // Una orden que usa la caja dibujada la lleva a su entrada al abrir
+              if (order.tpslBoxId) {
+                if (order.status === 'open') {
+                  miniChartRefs.current[activeTimeframe]?.anchorTPSLBox?.(order.tpslBoxId, order.executedAt, order.executedPrice);
+                }
+              } else if (order.type === 'market' && (order.stopLoss || order.takeProfit)) {
+                // 🎯 NUEVO: Crear caja TP/SL automática solo para market orders con SL y TP
+                const miniChart = miniChartRefs.current[activeTimeframe];
+                if (miniChart && miniChart.addTPSLBox) {
+                  order.tpslBoxId = miniChart.addTPSLBox(
+                    order.entryPrice,
+                    order.openTime || currentTime,
+                    order.side, // 'long' o 'short'
+                    order.stopLoss,
+                    order.takeProfit,
+                    5 // 5 velas de ancho
+                  );
+                }
+              }
+
+              saveTradeSession();
+            }}
+          />
+        </>
+      )}
+
+      {activePanel === 'performance' && (
+        <PerformancePanel
+          orderManager={orderManagerRef.current}
+          currentPrice={currentPrice}
+          currentTime={currentTime}
+        />
+      )}
+
+      {activePanel === 'history' && (
+        <TradeHistory
+          orderManager={orderManagerRef.current}
+          onNavigateToTrade={handleNavigateToTrade}
+        />
+      )}
+
+      {activePanel === 'dashboard' && (
+        <TradingDashboard
+          orderManager={orderManagerRef.current}
+          symbol={symbol}
+        />
+      )}
+
+      {activePanel === 'observer' && !observerPopup && (
+        <ObserverPanel
+          revision={observerRevision}
+          symbol={symbol}
+          sessionManager={sessionManager}
+          viewer={observerViewer}
+          blindActive={blindActive}
+          onRevealDate={revealDate}
+          onGoToItem={goToItem}
+          onPopOut={popOutObserver}
+        />
+      )}
+
+      {activePanel === 'observer' && observerPopup && (
+        <div className="observer-panel">
+          <div className="observer-note">El Observador está abierto en una ventana aparte.</div>
+          <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+            <button type="button" className="btn-quick" onClick={() => observerPopup.focus()}>Ir a la ventana</button>
+            <button type="button" className="btn-quick" onClick={bringObserverBack}>Traerlo aquí</button>
+          </div>
+        </div>
+      )}
+
+    </div>
+    </>
+  );
+
   return (
     <div className="backtesting-container">
       {/* 🎯 OPTIMIZACIÓN UI: Sidebar vertical de herramientas de dibujo (reemplaza toolbar horizontal) */}
@@ -2809,6 +2997,16 @@ const BacktestingApp = () => {
           <div className="sidebar-header">
             <span className="sidebar-title">Panel de Trading</span>
             <div style={{ display: 'flex', gap: '8px' }}>
+              {!tradingPopup && (
+                <button
+                  className="btn-collapse"
+                  onClick={popOutTrading}
+                  title="Abrir el panel de trading en una ventana aparte, por ejemplo en la otra pantalla"
+                  style={{ fontSize: '14px' }}
+                >
+                  ⧉
+                </button>
+              )}
               <button
                 className="btn-collapse"
                 onClick={() => setFullscreenPanel(prev => prev === 'trading' ? null : 'trading')}
@@ -2827,133 +3025,17 @@ const BacktestingApp = () => {
             </div>
           </div>
 
-          {/* Panel Tabs */}
-          <div className="sidebar-tabs">
-            <button
-              className={`tab-btn ${activePanel === 'trading' ? 'active' : ''}`}
-              onClick={() => setActivePanel('trading')}
-            >
-              📊 Trading
-            </button>
-            <button
-              className={`tab-btn ${activePanel === 'performance' ? 'active' : ''}`}
-              onClick={() => setActivePanel('performance')}
-            >
-              📈 Métricas
-            </button>
-            <button
-              className={`tab-btn ${activePanel === 'history' ? 'active' : ''}`}
-              onClick={() => setActivePanel('history')}
-            >
-              📋 Historial
-            </button>
-            <button
-              className={`tab-btn ${activePanel === 'dashboard' ? 'active' : ''}`}
-              onClick={() => setActivePanel('dashboard')}
-            >
-              📊 Dashboard
-            </button>
-            <button
-              className={`tab-btn ${activePanel === 'observer' ? 'active' : ''}`}
-              onClick={() => setActivePanel('observer')}
-            >
-              🔭 Observador{observerUnread > 0 ? ` (${observerUnread})` : ''}
-            </button>
-          </div>
-
-          {/* Panel Content */}
-          <div className="sidebar-content">
-            {activePanel === 'trading' && (
-              <>
-                <PendingOrders
-                  orderManager={orderManagerRef.current}
-                  currentPrice={currentPrice}
-                />
-                <TradingControls
-                  symbol={symbol}
-                  orderManager={orderManagerRef.current}
-                  currentPrice={currentPrice}
-                  currentTime={currentTime}
-                  chartBox={latestFreeBox(chartShapes, orderManagerRef.current?.orders)}
-                  onOrderCreated={(order) => {
-                    console.log('[BacktestingApp] Orden creada:', order);
-                    observeOrder(order);
-                    if (order.status === 'pending') {
-                      captureHold.run(release => captureDecision(order, miniChartRefs.current[activeTimeframeRef.current], release));
-                    }
-
-                    // Una orden que usa la caja dibujada la lleva a su entrada al abrir
-                    if (order.tpslBoxId) {
-                      if (order.status === 'open') {
-                        miniChartRefs.current[activeTimeframe]?.anchorTPSLBox?.(order.tpslBoxId, order.executedAt, order.executedPrice);
-                      }
-                    } else if (order.type === 'market' && (order.stopLoss || order.takeProfit)) {
-                      // 🎯 NUEVO: Crear caja TP/SL automática solo para market orders con SL y TP
-                      const miniChart = miniChartRefs.current[activeTimeframe];
-                      if (miniChart && miniChart.addTPSLBox) {
-                        order.tpslBoxId = miniChart.addTPSLBox(
-                          order.entryPrice,
-                          order.openTime || currentTime,
-                          order.side, // 'long' o 'short'
-                          order.stopLoss,
-                          order.takeProfit,
-                          5 // 5 velas de ancho
-                        );
-                      }
-                    }
-
-                    saveTradeSession();
-                  }}
-                />
-              </>
-            )}
-
-            {activePanel === 'performance' && (
-              <PerformancePanel
-                orderManager={orderManagerRef.current}
-                currentPrice={currentPrice}
-                currentTime={currentTime}
-              />
-            )}
-
-            {activePanel === 'history' && (
-              <TradeHistory
-                orderManager={orderManagerRef.current}
-                onNavigateToTrade={handleNavigateToTrade}
-              />
-            )}
-
-            {activePanel === 'dashboard' && (
-              <TradingDashboard
-                orderManager={orderManagerRef.current}
-                symbol={symbol}
-              />
-            )}
-
-            {activePanel === 'observer' && !observerPopup && (
-              <ObserverPanel
-                revision={observerRevision}
-                symbol={symbol}
-                sessionManager={sessionManager}
-                viewer={observerViewer}
-                blindActive={blindActive}
-                onRevealDate={revealDate}
-                onGoToItem={goToItem}
-                onPopOut={popOutObserver}
-              />
-            )}
-
-            {activePanel === 'observer' && observerPopup && (
+          {tradingPopup ? (
+            <div className="sidebar-content">
               <div className="observer-panel">
-                <div className="observer-note">El Observador está abierto en una ventana aparte.</div>
+                <div className="observer-note">El panel de trading está abierto en una ventana aparte.</div>
                 <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-                  <button type="button" className="btn-quick" onClick={() => observerPopup.focus()}>Ir a la ventana</button>
-                  <button type="button" className="btn-quick" onClick={bringObserverBack}>Traerlo aquí</button>
+                  <button type="button" className="btn-quick" onClick={() => tradingPopup.focus()}>Ir a la ventana</button>
+                  <button type="button" className="btn-quick" onClick={bringTradingBack}>Traerlo aquí</button>
                 </div>
               </div>
-            )}
-
-          </div>
+            </div>
+          ) : tradingPanelBody}
         </div>
       </div>
 
@@ -2966,6 +3048,14 @@ const BacktestingApp = () => {
         >
           📊
         </button>
+      )}
+
+      {tradingPopup && (
+        <PopupWindow popup={tradingPopup} title={`Panel de trading · ${symbol}`} onClose={() => setTradingPopup(null)}>
+          <div className="backtesting-sidebar" style={{ width: '100%', height: '100vh', maxHeight: 'none', borderLeft: 'none' }}>
+            {tradingPanelBody}
+          </div>
+        </PopupWindow>
       )}
 
       {observerPopup && (

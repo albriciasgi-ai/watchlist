@@ -201,6 +201,7 @@ const MiniChart = forwardRef(({
   vpFixedRange,
   oiMode,
   getTradeBoundaries,
+  getTradeBoxes = null, // Cajas TP/SL de los trades, para el 2.º gráfico: { side, entry, stop, target, start, end }
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -1655,6 +1656,28 @@ const MiniChart = forwardRef(({
         console.error(`[${symbol}] Error rendering drawings:`, error);
         // No propagar el error para evitar crash de la aplicación
       }
+    }
+
+    // Cajas TP/SL de los trades que llegan de afuera (el 2.º gráfico no tiene los dibujos de la principal)
+    const tradeBoxes = getTradeBoxes?.() || [];
+    if (tradeBoxes.length > 0 && scaleConverterRef.current) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(marginLeft, marginTop, chartWidth, priceChartHeight);
+      ctx.clip();
+      for (const trade of tradeBoxes) {
+        if (!Number.isFinite(trade.entry) || !Number.isFinite(trade.start)) continue;
+        const end = Number.isFinite(trade.end) ? trade.end : (simulatedNowRef.current ?? trade.start);
+        const box = new TPSLBox(trade.entry, trade.start, trade.side === 'short' ? 'short' : 'long', { timeStart: trade.start, timeEnd: Math.max(end, trade.start + TF_MS[interval]) });
+        box.slPrice = Number.isFinite(trade.stop) ? trade.stop : trade.entry;
+        box.tpPrice = Number.isFinite(trade.target) ? trade.target : trade.entry;
+        try {
+          box.render(ctx, scaleConverterRef.current);
+        } catch (error) {
+          // Una caja que no se puede ubicar en este marco no detiene el dibujo
+        }
+      }
+      ctx.restore();
     }
 
     // 🎯 Líneas verticales de todos los trades. Salen de las órdenes, que son lo que guarda la sesión
@@ -3703,7 +3726,9 @@ const MiniChart = forwardRef(({
             style={{
               position: 'absolute', left: textEditor.x, top: textEditor.y, width: textEditor.width, height: textEditor.height,
               zIndex: 1002, resize: 'both', font: '13px Arial', padding: 8, boxSizing: 'border-box',
-              background: '#FFF8DC', color: '#78350F', border: '2px solid #3B82F6', borderRadius: 2
+              // Los colores de la caja: los del estilo en los nuevos, la nota amarilla en el Clásico
+              background: isNewTheme() ? THEME.chartBg : '#FFF8DC', color: isNewTheme() ? THEME.text : '#78350F',
+              border: '2px solid #3B82F6', borderRadius: 2
             }}
             onMouseDown={(e) => e.stopPropagation()}
             onChange={(e) => {

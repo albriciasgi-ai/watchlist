@@ -2,6 +2,7 @@
 // Caja de texto para comentarios y anotaciones
 
 import { pixelRatio } from '../../chartPixels.js';
+import { THEME, isNewTheme } from '../../uiTheme.js';
 
 // Para medir el texto sin depender del lienzo del gráfico: el convertidor de escala no lo trae
 let measureContext = null;
@@ -11,6 +12,16 @@ const measurer = (scaleConverter) => {
   if (!measureContext && typeof document !== 'undefined') measureContext = document.createElement('canvas').getContext('2d');
   return measureContext;
 };
+
+// Colores de la nota amarilla de antes: una caja con ellos sigue el estilo; otros colores son propios
+const STICKY = { bgColor: '#FBBF24', textColor: '#78350F', borderColor: '#F59E0B' };
+
+/** Colores con que se dibuja: los del estilo (fondo del gráfico, borde gris oscuro) o los de la caja */
+function boxColors(style) {
+  const own = style.bgColor !== STICKY.bgColor || style.textColor !== STICKY.textColor || style.borderColor !== STICKY.borderColor;
+  if (!isNewTheme() || own) return { bg: style.bgColor, text: style.textColor, border: style.borderColor, shadow: true };
+  return { bg: THEME.chartBg, text: THEME.text, border: THEME.textMuted, shadow: false };
+}
 
 class TextBox {
   constructor(price, time, text = 'Texto...') {
@@ -131,9 +142,10 @@ class TextBox {
     ctx.save();
 
     const { width, height } = this.calculateDimensions(ctx);
+    const colors = boxColors(this.style);
 
-    // Sombra
-    if (!isPreview) {
+    // Sombra (en los estilos nuevos la caja va plana, como las etiquetas del gráfico)
+    if (!isPreview && colors.shadow) {
       ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
       ctx.shadowBlur = 8 * pixelRatio(); // La sombra no sigue la escala del lienzo
       ctx.shadowOffsetX = 2 * pixelRatio();
@@ -141,7 +153,8 @@ class TextBox {
     }
 
     // Fondo (sticky note amarillo)
-    ctx.fillStyle = isPreview ? `${this.style.bgColor}80` : this.style.bgColor;
+    ctx.fillStyle = colors.bg;
+    if (isPreview) ctx.globalAlpha = 0.5;
     ctx.fillRect(xPos, yPos, width, height);
 
     // Quitar sombra para el resto
@@ -151,12 +164,13 @@ class TextBox {
     ctx.shadowOffsetY = 0;
 
     // Borde
-    ctx.strokeStyle = isSelected ? '#3B82F6' : this.style.borderColor;
-    ctx.lineWidth = isSelected ? 3 : 2;
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = isSelected ? '#3B82F6' : colors.border;
+    ctx.lineWidth = isSelected ? 2 : colors.shadow ? 2 : 1;
     ctx.strokeRect(xPos, yPos, width, height);
 
     // Texto
-    ctx.fillStyle = this.style.textColor;
+    ctx.fillStyle = colors.text;
     ctx.font = `${this.style.fontSize}px ${this.style.fontFamily}`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
@@ -181,7 +195,7 @@ class TextBox {
 
     // Indicador de que se puede editar (cuando está seleccionado)
     if (isSelected && !isPreview) {
-      ctx.fillStyle = this.style.borderColor;
+      ctx.fillStyle = colors.border;
       ctx.font = '10px Arial';
       ctx.textAlign = 'center';
       ctx.fillText('Doble click para editar', xPos + width / 2, yPos + height + 12);

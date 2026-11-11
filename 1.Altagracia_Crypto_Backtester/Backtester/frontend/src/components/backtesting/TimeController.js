@@ -45,6 +45,10 @@ class TimeController {
     // Estado actual de la subdivisión
     this.currentSubdivision = 0; // 0, 1, 2, ... hasta count-1
 
+    // Paso más fino pedido por los gráficos a la vista (el marco activo y el del 2.º gráfico), en minutos.
+    // null usa el del marco con que se creó el reloj
+    this.stepMinutes = null;
+
     // BroadcastChannel para sincronización multi-pestaña
     this.syncChannel = null;
     this.isMaster = false; // Solo una pestaña es master
@@ -164,8 +168,8 @@ class TimeController {
 
     // En 1x cada subdivisión dura su tiempo real.
     // Ejemplo: 15min con 3 subdivisiones = 300,000ms por subdivisión; en 15x, 20 segundos
-    const subdivisions = this.subdivisionConfig[this.timeframe];
     const stepMs = this.getTimeIncrement();
+    const subdivisions = { count: Math.max(1, Math.round(this.timeframeMinutes[this.timeframe] * 60000 / stepMs)) };
     const updateIntervalMs = Math.max(MIN_TICK_MS, stepMs / this.playbackSpeed);
     const maxElapsedMs = updateIntervalMs + MAX_CATCH_UP_MS;
 
@@ -289,10 +293,27 @@ class TimeController {
    * Ejemplo: 15m con 3 subdivisiones → avanza 5 min por tick
    */
   getTimeIncrement() {
-    // Avanzar por subdivisión (estado intravela)
-    const subdivisions = this.subdivisionConfig[this.timeframe];
-    const subdivisionIncrement = subdivisions.interval * 60 * 1000; // ms
-    return subdivisionIncrement;
+    // Avanzar por subdivisión (estado intravela). Con un gráfico de marco menor a la vista, el paso de ese
+    // marco: así su vela se va formando en vez de aparecer de golpe
+    const base = this.subdivisionConfig[this.timeframe].interval;
+    const minutes = this.stepMinutes ? Math.min(base, this.stepMinutes) : base;
+    return minutes * 60 * 1000; // ms
+  }
+
+  /**
+   * Marcos que están a la vista (el activo y el del segundo gráfico). El reloj avanza con el paso del
+   * más fino. La velocidad no cambia: solo cuántos estados intermedios se ven. Si está reproduciendo,
+   * sigue con el paso nuevo
+   */
+  setStepTimeframes(timeframes) {
+    const minutes = timeframes.map(tf => this.subdivisionConfig[tf]?.interval).filter(Boolean);
+    const next = minutes.length ? Math.min(...minutes) : null;
+    if (next === this.stepMinutes) return;
+    this.stepMinutes = next;
+    if (this.isPlaying) {
+      this.pause();
+      this.play();
+    }
   }
 
   /**

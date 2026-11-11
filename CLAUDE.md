@@ -53,6 +53,22 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 11 Noviembre 2026: Panel de Trading Aparte, Cajas TP/SL y Velas que se Forman en el 2.º Gráfico
+
+**Pedido:** después de probar el segundo gráfico, que avance fluido y no por saltos, que dibuje las cajas TP/SL de los trades, que la caja de texto cuadre con el estilo y que el panel de trading se pueda abrir aparte.
+
+**Cambios:**
+1. **Velas que se forman:** el reloj avanzaba con el paso del marco con que se creó (con 1h, de a 15 minutos). Ahora el segundo gráfico avisa su marco y el reloj toma el paso del más fino a la vista (`TimeController.setStepTimeframes()`). La velocidad no cambia
+2. **Cajas TP/SL en el segundo gráfico:** con entrada, stop y objetivo de cada orden no cancelada, hasta su salida o la hora simulada
+3. **Caja de texto:** con los estilos nuevos, fondo del gráfico, borde gris oscuro y texto del estilo. El Clásico sigue amarillo
+4. **Panel de trading en ventana aparte:** botón ⧉ en su encabezado. La confirmación de orden y las imágenes del historial se abren en esa ventana; "Traerlo aquí" lo devuelve
+
+**IMPORTANTE:** basta recargar la página: no hay cambios en el backend. Probado en una copia aislada; las ventanas se simularon con un marco, porque el panel de pruebas no abre ventanas emergentes.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11"
+
+---
+
 ### APP 1 (Backtester) - 11 Noviembre 2026: Segundo Gráfico, Observador en Ventana Aparte y Mejoras
 
 **Pedido:** seis mejoras después de probar la fase 4: más indicadores en el Observador, VP fijo de unos 400 niveles, el Observador en una ventana aparte, numeración de trades sin contar los cancelados, caja de texto en los dibujos y un segundo gráfico que siga la reproducción en otra pestaña.
