@@ -497,6 +497,8 @@ function createTray() {
     { label: 'Mostrar', click: showMain },
     { label: 'Nueva ventana', click: () => openExtra() },
     { label: 'Reiniciar', click: () => restartApp('pedido desde la bandeja') },
+    // El servidor corre sin ventana (en el navegador se ve su terminal): aqui se ve lo que escribe
+    { label: 'Registro del servidor', click: () => shell.openPath(SERVER_LOG) },
     { type: 'separator' },
     { label: 'Salir', click: quitForReal },
   ]));
@@ -511,6 +513,7 @@ function createMenu() {
         { label: 'Nueva ventana', accelerator: 'CmdOrCtrl+N', click: () => openExtra() },
         { label: 'Ocultar en la bandeja', click: () => mainWindow && mainWindow.hide() },
         { label: 'Reiniciar', click: () => restartApp('pedido desde el menu') },
+        { label: 'Registro del servidor', click: () => shell.openPath(SERVER_LOG) },
         { type: 'separator' },
         { label: 'Salir', accelerator: 'CmdOrCtrl+Q', click: quitForReal },
       ],

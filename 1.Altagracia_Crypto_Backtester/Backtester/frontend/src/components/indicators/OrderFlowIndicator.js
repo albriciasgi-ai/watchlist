@@ -267,7 +267,13 @@ class OrderFlowIndicator extends IndicatorBase {
     });
     const step = this._stepOverride() || this.stepSize;
     if (step) params.append('step', String(step));
-    if (!this._stepOverride()) params.append('max_levels', String(this.config.maxLevels));
+    if (!this.backtestingMode && !this._stepOverride()) {
+      // En vivo (suite) el step automatico es parejo: el servidor lo saca del rango tipico de las velas
+      // y vale para todas; sin tope de niveles por vela, que daba a cada vela su propio step
+      params.append('step_mode', 'uniform');
+    } else if (!this._stepOverride()) {
+      params.append('max_levels', String(this.config.maxLevels));
+    }
     params.append('imbalance_ratio', String(this.config.imbalanceRatio));
     params.append('imbalance_mode', this.config.imbalanceMode);
     params.append('imbalance_min_volume', String(this.config.imbalanceMinVolume));

@@ -111,7 +111,7 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
                   <input
                     type="number"
                     min="0"
-                    step="1"
+                    step="any"
                     placeholder="Auto"
                     value={values.stepByMinutes?.[minutes] ?? ''}
                     onChange={(e) => setStep(minutes, e.target.value)}
@@ -120,12 +120,14 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
               ))}
             </div>
             <span className="hint" style={{ display: 'block', marginTop: '8px' }}>
-              USD por nivel. Vacío usa el valor automático de cada marco.
+              {indicator.backtestingMode === false
+                ? 'Precio por nivel. Vacío usa el automático: el mismo en todas las velas, con unos 10 niveles en la vela típica del marco.'
+                : 'USD por nivel. Vacío usa el valor automático de cada marco.'}
               {indicator.stepSize ? ` En ${activeTimeframe} se está usando $${indicator.stepSize}.` : ''}
               {indicator.cellSize ? ` Se ajusta a múltiplos de $${indicator.cellSize}, la celda guardada.` : ''}
               {' '}Un step fijo se respeta hasta 200 niveles por vela.
             </span>
-            <div style={{ marginTop: '12px' }}>
+            {indicator.backtestingMode !== false && <div style={{ marginTop: '12px' }}>
               <NumberRow
                 label="Máximo de niveles por vela"
                 hint="Con step automático, una vela más ancha une niveles y sube su propio step."
@@ -133,7 +135,7 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
                 value={values.maxLevels}
                 onChange={(value) => set('maxLevels', value)}
               />
-            </div>
+            </div>}
           </div>
 
           <div className="settings-section">

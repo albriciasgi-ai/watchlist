@@ -12,8 +12,10 @@
 # Uso:  C:\Python314\python.exe -B main.py      (o SUITE_PORT=13100 para otra copia)
 import asyncio
 import json
+import math
 import os
 import re
+import statistics
 import sys
 import time
 from datetime import datetime, timedelta, timezone
@@ -104,7 +106,12 @@ async def _local_only(request: Request, call_next):
     if origin and origin != "null":
         if (urlsplit(origin).hostname or "") not in allowed:
             return JSONResponse({"success": False, "error": "origen no permitido"}, status_code=403)
-    return await call_next(request)
+    response = await call_next(request)
+    # La pagina (index.html) siempre se revisa: si no, Electron podia usar una vieja de su cache tras armarla
+    # de nuevo. Los archivos de assets llevan su huella en el nombre y si se guardan
+    if request.url.path == "/" or request.url.path.endswith(".html"):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
 
 
 def _symbol(symbol: str) -> str:
@@ -153,14 +160,46 @@ async def historical(symbol: str, interval: str = "15", days: int = 30):
             "updated": int(time.time() * 1000)}
 
 
+# ---------- step parejo de los footprints ----------
+# El usuario lo pidio el 12/11: celdas iguales en todas las velas, como su App 1 (BTC 15m, 20 USD por nivel).
+# Regla: un step redondo (1, 2, 2.5, 5 x 10^k) que deja unos 10 niveles en la vela tipica del marco, con la
+# mediana del rango (alto - bajo) de las ultimas 500 velas cerradas. Se calcula una vez cada 6 horas.
+UNIFORM_LEVELS = 10
+UNIFORM_TTL = 6 * 3600
+_uniform_steps = {}
+
+
+def nice_step(raw: float) -> float:
+    power = 10 ** math.floor(math.log10(raw))
+    return round(min((k * power for k in (1, 2, 2.5, 5, 10)), key=lambda v: abs(v - raw)), 12)
+
+
+async def _uniform_step(symbol: str, interval: str) -> Optional[float]:
+    hit = _uniform_steps.get((symbol, interval))
+    if hit and time.time() - hit[0] < UNIFORM_TTL:
+        return hit[1]
+    try:
+        data = await candles.cached_klines(symbol, interval, candles.LIVE_DAYS[interval])
+    except HTTPException:
+        return None  # sin velas de Bybit: el lector usa su step automatico
+    ranges = [c["high"] - c["low"] for c in data if not c.get("in_progress")][-500:]
+    ranges = [r for r in ranges if r > 0]
+    if len(ranges) < 20:
+        return None
+    step = nice_step(statistics.median(ranges) / UNIFORM_LEVELS)
+    _uniform_steps[(symbol, interval)] = (time.time(), step)
+    return step
+
+
 @app.get("/api/orderflow/historical/{symbol}")
 async def orderflow_historical(
     symbol: str, interval: str = "1", start_timestamp: Optional[int] = None, end_timestamp: Optional[int] = None,
     known_until: Optional[int] = None, step: Optional[float] = None, imbalance_ratio: float = 3.0,
     imbalance_mode: str = "level", imbalance_min_volume: float = 0.0, imbalance_zero: bool = False,
-    stacked_levels: int = 3, max_levels: Optional[int] = None,
+    stacked_levels: int = 3, max_levels: Optional[int] = None, step_mode: Optional[str] = None,
 ):
-    """Footprints del almacen (oficial, y nube + PC donde falta el oficial), como el backend de App 1."""
+    """Footprints del almacen (oficial, y nube + PC donde falta el oficial), como el backend de App 1.
+    step_mode=uniform (el grafico en vivo): un solo step para todas las velas; sin step, el de _uniform_step."""
     symbol, interval = _symbol(symbol), _interval(interval)
     now = int(time.time() * 1000)
     if start_timestamp is None or end_timestamp is None:
@@ -172,6 +211,10 @@ async def orderflow_historical(
     rules = {"ratio": max(1.01, imbalance_ratio), "mode": imbalance_mode if imbalance_mode in ("level", "diagonal") else "level",
              "min_volume": max(0.0, imbalance_min_volume), "count_zero": imbalance_zero, "stacked_levels": max(2, stacked_levels)}
     limit = max(2, max_levels) if max_levels else None
+    if step_mode == "uniform":
+        limit = None
+        if step is None:
+            step = await _uniform_step(symbol, interval)
 
     def body():
         result = footprint_store.footprints(symbol, int(interval), start_timestamp, end_timestamp, cut, step, rules,

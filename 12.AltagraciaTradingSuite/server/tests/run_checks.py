@@ -236,6 +236,24 @@ try:
             check("footprints: known_until es el ultimo minuto armado, no ahora", 110_000 <= lag <= 130_000, str(lag))
         finally:
             main.market_routes._store_until = real_until
+        # Step parejo: mediana del rango de las velas / 10, redondeado; sin tope de niveles por vela
+        real_klines = main.candles.cached_klines
+        async def fake_uniform_klines(symbol, interval, days):
+            return [{"high": 100 + r, "low": 100, "in_progress": False} for r in [150, 180, 200, 175, 190] * 10] +                    [{"high": 999, "low": 1, "in_progress": True}]
+        main.candles.cached_klines = fake_uniform_klines
+        main._uniform_steps.clear()
+        try:
+            c.get("/api/orderflow/historical/BTCUSDT?interval=15&start_timestamp=1&end_timestamp=2&step_mode=uniform&max_levels=10", headers=H)
+            check("step parejo: mediana 180 / 10 -> 20, sin tope por vela",
+                  captured["args"][5] == 20 and captured["args"][7] is None, f"{captured['args'][5]} {captured['args'][7]}")
+            c.get("/api/orderflow/historical/BTCUSDT?interval=15&start_timestamp=1&end_timestamp=2&step_mode=uniform&step=25", headers=H)
+            check("step parejo: un step pedido se respeta", captured["args"][5] == 25 and captured["args"][7] is None)
+            c.get("/api/orderflow/historical/BTCUSDT?interval=15&start_timestamp=1&end_timestamp=2&max_levels=10", headers=H)
+            check("sin step parejo (App 1): tope de niveles por vela", captured["args"][5] is None and captured["args"][7] == 10)
+            check("redondeo del step", [main.nice_step(x) for x in (18.0, 0.639, 0.0049, 75.6, 3.3)] == [20, 0.5, 0.005, 100, 2.5],
+                  str([main.nice_step(x) for x in (18.0, 0.639, 0.0049, 75.6, 3.3)]))
+        finally:
+            main.candles.cached_klines = real_klines
         check("modo de imbalance desconocido vuelve a 'level'",
               c.get("/api/orderflow/historical/BTCUSDT?interval=15&start_timestamp=1&end_timestamp=2&imbalance_mode=x", headers=H).status_code == 200
               and captured["args"][6]["mode"] == "level")

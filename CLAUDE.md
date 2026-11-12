@@ -74,6 +74,11 @@ También pidió ver los íconos posibles para la app.
 6. **Elementos OF:** estaban vacíos por lo mismo, sin datos de esas horas. Los días oficiales del 05 al 11/11 de BTC ya se bajaron solos.
 7. **Velas de Bybit:** el servidor reintenta tres veces en vez de dar error 500.
 8. **App 1:** los botones 1D, 3D y 1W ahora muestran ese tiempo en 1m, 5m, 1h y 4h. Antes calculaban con velas de 15m.
+9. **Después (12/11 en la tarde):**
+   - **Footprints que llegan solos:** el servidor dice hasta qué minuto llega el almacén, y el gráfico vuelve a pedir lo que falta.
+   - **Step parejo:** sale del rango típico de las velas, unos 10 niveles. En BTC 15m da 20, como la App 1 del usuario.
+   - **Reabrir la app:** se reinicia sola si el código cambió. La X solo la ocultaba en la bandeja y seguía corriendo la versión vieja.
+   - **Bandeja:** "Reiniciar" y "Registro del servidor".
 
 **IMPORTANTE:**
 - Cerrar la suite desde la bandeja ("Salir") y abrirla de nuevo.
