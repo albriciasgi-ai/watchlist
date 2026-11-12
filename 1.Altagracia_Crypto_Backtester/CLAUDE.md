@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Ajustes Propios del 2.º Gráfico
+
+Cada indicador del 2.º gráfico tiene su ⚙️ con los modales de la principal; lo cambiado ahí queda solo en ese gráfico. Detalle en `Backtester/CLAUDE.md`, "Ajustes propios del 2.º gráfico".
+
 ### Noviembre 2026: 2.º Gráfico Fluido
 
 El 2.º gráfico recibía la hora 8.5 veces por segundo y a 10000x cada aviso traía 20 minutos. Ahora avanza en cada cuadro de la pantalla, minuto a minuto, sin pasar nunca de la hora de la principal: 59 dibujos por segundo con 3 minutos cada uno. Detalle en `Backtester/CLAUDE.md`, "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11", "2.º gráfico fluido".

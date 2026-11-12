@@ -72,6 +72,21 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### APP 1 (Backtester) - 12 Noviembre 2026: Ajustes Propios del 2.º Gráfico
+
+**Pedido:** el 2.º gráfico podía encender indicadores pero no cambiar sus ajustes, y usaba los de la principal.
+
+**Cambios:**
+1. **⚙️ por indicador** en la lista "Indicadores" del 2.º gráfico, con los mismos modales de la principal
+2. **Ajustes aparte:** `secondaryStorage.js` guarda en esa pestaña las claves de ajustes con el prefijo `app1_g2:`. Mientras no se cambien ahí, usa los de la principal; cambiarlos no toca la principal
+3. **Compartido a propósito:** lo elegido para el análisis, las velas fijadas, las recetas de los setups y el estilo
+
+**IMPORTANTE:** basta recargar las dos pestañas: no hay cambios en el backend.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11", "Ajustes propios del 2.º gráfico"
+
+---
+
 ### APP 7 (WatchlistDesktop) + Backend de App 2 - 11 Noviembre 2026: Pruebas y Correcciones, Fases 1 y 2
 
 **Pedido:** probar App 7 como App 8 y App 9 antes de seguir con la integración, y corregir las fases 1 y 2 del diagnóstico.

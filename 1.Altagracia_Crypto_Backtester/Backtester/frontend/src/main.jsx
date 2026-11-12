@@ -1,3 +1,5 @@
+// Primero: en la pestaña del 2.º gráfico, los ajustes de los indicadores se guardan aparte
+import "./components/backtesting/secondaryStorage.js";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import BacktestingApp from "./components/backtesting/BacktestingApp";
