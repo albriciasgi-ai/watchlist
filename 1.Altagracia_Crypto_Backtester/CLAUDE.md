@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: 2.º Gráfico Fluido
+
+El 2.º gráfico recibía la hora 8.5 veces por segundo y a 10000x cada aviso traía 20 minutos. Ahora avanza en cada cuadro de la pantalla, minuto a minuto, sin pasar nunca de la hora de la principal: 59 dibujos por segundo con 3 minutos cada uno. Detalle en `Backtester/CLAUDE.md`, "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11", "2.º gráfico fluido".
+
 ### Noviembre 2026: Panel de Trading Aparte, Cajas TP/SL y Velas que se Forman en el 2.º Gráfico
 
 El panel de trading se abre en una ventana aparte. El 2.º gráfico dibuja las cajas TP/SL de los trades y sus velas se forman con el paso del marco más fino a la vista. El reloj ya no avanza a saltos con la principal en segundo plano (lo marca un Worker), y el 2.º gráfico sigue una sola principal. La caja de texto toma los colores del estilo. Detalle en `Backtester/CLAUDE.md`, "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11".

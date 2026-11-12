@@ -131,12 +131,15 @@ export class SessionProfiles {
     const last = candles[candles.length - 1];
     const key = `${realKey}|${valueAreaShare}|${candles.length}|${last.close}|${last.volume}|${real ? 'real' : 'estimado'}`;
 
-    if (!this.profiles.has(key)) {
-      this.profiles.set(key, buildProfile(candles, rows, valueAreaShare, real));
-      if (this.profiles.size > MAX_CACHED_PROFILES) this.profiles.delete(this.profiles.keys().next().value);
-    }
+    // Sale el perfil que hace más que no se usa. La sesión en curso crea una entrada con cada cambio de su
+    // última vela (hasta 60 por segundo en el 2.º gráfico): sacando la más vieja por orden de llegada, esas
+    // entradas echaban a las sesiones cerradas que están a la vista, y había que rearmarlas una y otra vez
+    const cached = this.profiles.has(key);
+    const profile = cached ? this.profiles.get(key) : buildProfile(candles, rows, valueAreaShare, real);
+    if (cached) this.profiles.delete(key);
+    this.profiles.set(key, profile);
+    if (this.profiles.size > MAX_CACHED_PROFILES) this.profiles.delete(this.profiles.keys().next().value);
 
-    const profile = this.profiles.get(key);
     if (profile && closed && !real) this._request({ realKey, start, end, rows, profile, requestRedraw });
     return profile;
   }

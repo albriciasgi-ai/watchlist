@@ -793,7 +793,11 @@ const MiniChart = forwardRef(({
       if (candlesRef.current && candlesRef.current.length > 0) {
         drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
       }
-    }
+    },
+    // Promedio de ms de los últimos dibujos por cambio de hora. El 2.º gráfico avanza la hora en cada
+    // cuadro de la pantalla y con esto baja el ritmo cuando el dibujo es caro (miles de velas a la vista)
+    // Tras una pausa la medida ya no vale (pudo cambiar el zoom): se empieza de nuevo
+    drawCost: () => (performance.now() - drawCostRef.current.at < 1000 ? drawCostRef.current.ms : 0)
   }), [symbol, interval]);
 
   const [fixedRangeProfiles, setFixedRangeProfiles] = useState([]);
@@ -813,6 +817,7 @@ const MiniChart = forwardRef(({
   const manualPanRef = useRef(false); // 🎯 NUEVO: Detectar si el usuario hizo paneo manual
   const rafRef = useRef(null); // Para requestAnimationFrame
   const pendingDrawRef = useRef(null); // Lo último que se pidió dibujar mientras se espera el cuadro
+  const drawCostRef = useRef({ ms: 0, at: 0 }); // Costo reciente de un dibujo por cambio de hora, y cuándo se midió
   const allCandlesRef = useRef([]); // Almacena todas las velas para binary search
   const lastIndexRef = useRef(-1); // Para detectar cambios reales de vela
   const formingKeyRef = useRef(0); // Para detectar avances de la vela en formacion
@@ -1665,10 +1670,15 @@ const MiniChart = forwardRef(({
       ctx.beginPath();
       ctx.rect(marginLeft, marginTop, chartWidth, priceChartHeight);
       ctx.clip();
+      // Solo las cajas que tocan las velas a la vista: con muchos trades, armar y dibujar todas en cada cuadro pesa
+      const viewStart = visibleCandles[0]?.timestamp ?? -Infinity;
+      const viewEnd = (visibleCandles[visibleCandles.length - 1]?.timestamp ?? Infinity) + TF_MS[interval];
       for (const trade of tradeBoxes) {
         if (!Number.isFinite(trade.entry) || !Number.isFinite(trade.start)) continue;
         const end = Number.isFinite(trade.end) ? trade.end : (simulatedNowRef.current ?? trade.start);
-        const box = new TPSLBox(trade.entry, trade.start, trade.side === 'short' ? 'short' : 'long', { timeStart: trade.start, timeEnd: Math.max(end, trade.start + TF_MS[interval]) });
+        const timeEnd = Math.max(end, trade.start + TF_MS[interval]);
+        if (timeEnd < viewStart || trade.start > viewEnd) continue;
+        const box = new TPSLBox(trade.entry, trade.start, trade.side === 'short' ? 'short' : 'long', { timeStart: trade.start, timeEnd });
         box.slPrice = Number.isFinite(trade.stop) ? trade.stop : trade.entry;
         box.tpPrice = Number.isFinite(trade.target) ? trade.target : trade.entry;
         try {
@@ -2959,11 +2969,18 @@ const MiniChart = forwardRef(({
       viewStateRef.current.offset = 0;
     }
 
-    // La hora llega a lo sumo 10 veces por segundo. Un cuadro pendiente se reemplaza por este
+    // En la principal la hora llega a lo sumo 10 veces por segundo; en el 2.º gráfico, hasta una vez por
+    // cuadro. Un cuadro pendiente se reemplaza por este. El costo del dibujo queda medido para quien
+    // decide el ritmo (drawCost)
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
       rafRef.current = null;
+      const startedAt = performance.now();
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y, true);
+      // Baja de inmediato y sube de a poco: un dibujo lento suelto (un indicador que se arma) no frena el ritmo
+      const cost = performance.now() - startedAt;
+      const previous = drawCostRef.current.ms;
+      drawCostRef.current = { ms: cost < previous ? cost : previous * 0.7 + Math.min(cost, previous * 3 + 8) * 0.3, at: startedAt };
     });
   }, [backtestingMode, backtestingData, currentTime, interval, isActive]);
 

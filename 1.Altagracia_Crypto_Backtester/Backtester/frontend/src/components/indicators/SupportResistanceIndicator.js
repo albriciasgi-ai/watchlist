@@ -135,11 +135,9 @@ class SupportResistanceIndicator extends IndicatorBase {
     this._currentPlaybackTime = timestamp;
 
     // Recalcular si el playback avanzó más de 1 vela (estimado)
+    // Los avisos de consola no se rearman con cada cambio de hora: saldrían varias veces por segundo
     if (this._lastPlaybackTime && timestamp !== this._lastPlaybackTime) {
       this._calculationValid = false;
-      this._renderLoggedOnce = false;
-      this._noDataLoggedOnce = false;
-      this._fallbackLoggedOnce = false;
     }
     this._lastPlaybackTime = timestamp;
   }
@@ -325,8 +323,7 @@ class SupportResistanceIndicator extends IndicatorBase {
       return;
     }
 
-    console.log(`[${this.symbol}] 📊 S&R: Procesando ${candles.length} velas (params: leftBars=${this.leftBars}, rightBars=${this.rightBars}, minTouches=${this.minTouches})`);
-
+    // Sin registros en consola: en reproducción esto corre con cada vela nueva, varias veces por segundo
     const age = candles.length - this._rawLength;
     if (!this._cachedRawLevels || age < 0 || age >= RAW_REFRESH_BARS) {
       this._cachedRawLevels = this._calculateRawLevels(candles);
@@ -338,8 +335,6 @@ class SupportResistanceIndicator extends IndicatorBase {
 
     this._lastCalculatedLength = candles.length;
     this._calculationValid = true;
-
-    console.log(`[${this.symbol}] ✅ S&R: ${this.resistances.length} R, ${this.supports.length} S (precio actual: $${this.currentPrice.toFixed(2)})`);
   }
 
   /**
@@ -384,9 +379,7 @@ class SupportResistanceIndicator extends IndicatorBase {
                                  candlesToUse.length !== this._lastCalculatedLength;
 
       if (needsRecalculation && candlesToUse.length > 0) {
-        console.log(`[${this.symbol}] 🔄 S&R: Recalculando (valid=${this._calculationValid}, dataLen=${candlesToUse.length}/${allCandles.length}, playbackTime=${this._currentPlaybackTime ? new Date(this._currentPlaybackTime).toISOString() : 'fallback'})`);
         this.calculateFromCandles(candlesToUse);
-        this._renderLoggedOnce = false; // Reset para ver nuevos logs después de recalcular
       }
     }
 

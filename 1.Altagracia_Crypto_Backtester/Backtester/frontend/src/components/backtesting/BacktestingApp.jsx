@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react'
 import TimeController from './TimeController';
 import MiniChart from '../MiniChart';
 import OrderManager, { tradeLabel } from './OrderManager';
-import { TF_MS, candlesToSettle, lastClosedIndex, priceAt, tickAlreadySettled } from './replayClock';
+import { TF_MS, candlesToSettle, finestStep, lastClosedIndex, priceAt, tickAlreadySettled } from './replayClock';
 import { withoutSubdivisions } from './marketData';
 import TradingControls from './TradingControls';
 import PerformancePanel from './PerformancePanel';
@@ -38,7 +38,7 @@ import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
 import ObserverPanel from './ObserverPanel';
 import PopupWindow, { openPopup } from './PopupWindow';
-import { openReplayChannel, secondaryChartUrl } from './replayChannel.js';
+import { HEARTBEAT_MS, SECONDARY_GONE_MS, openReplayChannel, secondaryChartUrl, stepTimeframes } from './replayChannel.js';
 import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordImage, recordOrder } from './observer.js';
 import { blindAnchor, blindScale, isBlind, maskDate, priceText, pricesHidden, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
@@ -1123,6 +1123,7 @@ const BacktestingApp = () => {
 
       // Al volver de Configurar el reloj anterior puede seguir andando
       timeControllerRef.current?.destroy();
+      replayStateRef.current = null; // El 2.º gráfico no recibe el estado de la simulación anterior mientras arranca esta
       captureHold.cancel();
       settledTimeRef.current = null;
       setIsPlaying(false);
@@ -1147,7 +1148,7 @@ const BacktestingApp = () => {
       controller.initSync(sessionId);
 
       timeControllerRef.current = controller;
-      controller.setStepTimeframes([activeTimeframe, secondaryTimeframeRef.current].filter(Boolean));
+      controller.setStepTimeframes(stepTimeframes(activeTimeframe, secondaryTimeframeRef.current));
 
       // Crear OrderManager
       if (!orderManagerRef.current) {
@@ -1510,45 +1511,85 @@ const BacktestingApp = () => {
   const replayStateRef = useRef(null);
   const replaySourceRef = useRef(Math.random().toString(36).slice(2)); // Distingue esta pestaña de otras principales
   const replayChannelRef = useRef(null);
-  const [secondaryTimeframe, setSecondaryTimeframe] = useState(null); // Marco del 2.º gráfico, si está abierto
+  const [secondaryTimeframe, setSecondaryTimeframe] = useState(null); // Marco del 2.º gráfico, mientras alguien lo mira
   const secondaryTimeframeRef = useRef(null);
   secondaryTimeframeRef.current = secondaryTimeframe;
+  const secondarySeenAtRef = useRef(0); // Último aviso del 2.º gráfico
+  const postReplay = (message) => {
+    try {
+      replayChannelRef.current?.postMessage(message);
+    } catch {
+      // El canal ya se cerró: la pestaña se está yendo
+    }
+  };
   useEffect(() => {
     const channel = openReplayChannel();
     replayChannelRef.current = channel;
-    if (channel) {
-      channel.onmessage = (event) => {
-        const message = event.data;
-        if (message?.type === 'hello' && replayStateRef.current) channel.postMessage(replayStateRef.current);
-        if ((message?.type === 'hello' || message?.type === 'tf') && message.timeframe) setSecondaryTimeframe(message.timeframe);
-        if (message?.type === 'bye') setSecondaryTimeframe(null);
-      };
-    }
-    return () => channel?.close();
+    if (!channel) return undefined;
+    channel.onmessage = (event) => {
+      const message = event.data;
+      if (message?.type === 'hello' && replayStateRef.current) postReplay(replayStateRef.current);
+      if ((message?.type === 'hello' || message?.type === 'tf') && message.timeframe) {
+        secondarySeenAtRef.current = performance.now();
+        setSecondaryTimeframe(message.timeframe);
+      }
+      // Puede quedar otro 2.º gráfico abierto: no se apaga de inmediato, vence pronto si nadie más avisa
+      if (message?.type === 'bye') secondarySeenAtRef.current = performance.now() - SECONDARY_GONE_MS + HEARTBEAT_MS + 1000;
+    };
+    // Al cerrarse o recargarse avisa: el 2.º gráfico no se queda con la hora de una pestaña que ya no existe
+    const gone = () => postReplay({ type: 'gone', source: replaySourceRef.current });
+    window.addEventListener('pagehide', gone);
+    return () => {
+      window.removeEventListener('pagehide', gone);
+      replayChannelRef.current = null;
+      channel.close();
+    };
   }, []);
 
-  // El reloj avanza con el paso del marco más fino a la vista, para que las velas mayores se vean formar
+  // Con un 2.º gráfico a la vista el reloj avanza de a 1 minuto, para que reciba cada minuto y vaya a la par
+  // (de a 5 si esa fecha no tiene velas de 1 minuto). Sin él, con el paso del marco activo, como siempre
   useEffect(() => {
-    timeControllerRef.current?.setStepTimeframes?.([activeTimeframe, secondaryTimeframe].filter(Boolean));
+    const controller = timeControllerRef.current;
+    if (!controller?.setStepTimeframes) return;
+    const fine = finestStep(marketDataRef.current?.timeframes, controller.currentTime);
+    controller.setStepTimeframes(stepTimeframes(activeTimeframe, secondaryTimeframe, fine));
   }, [activeTimeframe, secondaryTimeframe, initialized]);
+  const clockStep = timeControllerRef.current?.getTimeIncrement?.();
 
+  // La hora que viaja es la de esta pantalla: una orden toma su hora de aquí, y el 2.º gráfico no debe
+  // mostrar más que eso. "playing" y "speed" salen del reloj (el de React no baja al llegar al final ni
+  // mientras se toma una imagen): con ellos el 2.º gráfico recorre cada tramo en vez de saltarlo
   useEffect(() => {
     if (!initialized || !symbol) return;
+    const controller = timeControllerRef.current;
     const state = {
       type: 'state', source: replaySourceRef.current, symbol, currentTime, simulationStartTime, activeTimeframe,
+      playing: !!controller?.isPlaying, speed: controller?.playbackSpeed ?? playbackSpeed,
+      step: controller?.getTimeIncrement?.(),
       blindAnchor: blindAnchor(), blindScale: blindScale(),
       ...tradesForSecondary(orderManagerRef.current?.orders)
     };
     replayStateRef.current = state;
-    replayChannelRef.current?.postMessage(state);
-  }, [initialized, symbol, currentTime, simulationStartTime, blindActive, activeTimeframe]);
+    postReplay(state);
+  }, [initialized, symbol, currentTime, simulationStartTime, blindActive, activeTimeframe, isPlaying, playbackSpeed, clockStep]);
 
-  // Con la reproducción en pausa la hora no cambia: las órdenes nuevas o cerradas llegan igual cada segundo
+  // Con la reproducción en pausa la hora no cambia: las órdenes nuevas o cerradas llegan igual cada segundo.
+  // Si el 2.º gráfico dejó de avisar (se cerró sin despedirse, o ya no está a la vista), el reloj vuelve a su paso
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!replayStateRef.current) return;
-      replayStateRef.current = { ...replayStateRef.current, ...tradesForSecondary(orderManagerRef.current?.orders) };
-      replayChannelRef.current?.postMessage(replayStateRef.current);
+      if (secondaryTimeframeRef.current && performance.now() - secondarySeenAtRef.current > SECONDARY_GONE_MS) {
+        setSecondaryTimeframe(null);
+      }
+      const last = replayStateRef.current;
+      if (!last) return;
+      const controller = timeControllerRef.current;
+      replayStateRef.current = {
+        ...last,
+        playing: !!controller?.isPlaying, speed: controller?.playbackSpeed ?? last.speed,
+        step: controller?.getTimeIncrement?.() ?? last.step,
+        ...tradesForSecondary(orderManagerRef.current?.orders)
+      };
+      postReplay(replayStateRef.current);
     }, 1000);
     return () => clearInterval(timer);
   }, []);
