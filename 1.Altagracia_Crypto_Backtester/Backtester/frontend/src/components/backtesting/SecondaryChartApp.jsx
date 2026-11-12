@@ -6,6 +6,23 @@ import { isBlind, maskDate, setBlindAnchor, setBlindScale } from './blindClock.j
 import { withoutSubdivisions } from './marketData';
 import { HEARTBEAT_MS, openReplayChannel, replayBasics, reportOf, sameBasics } from './replayChannel.js';
 import { createFollower, createSourcePicker } from './replayFollower.js';
+import { lastClosedIndex } from './replayClock';
+import VolumeProfileSettings from '../VolumeProfileSettings';
+import RangeDetectionSettings from '../RangeDetectionSettings';
+import RejectionPatternSettings from '../RejectionPatternSettings';
+import SupportResistanceSettings from '../SupportResistanceSettings';
+import SupportResistance2Settings from '../SupportResistance2Settings';
+import VWAPSettings from '../VWAPSettings';
+import DoubleTopBottomSettings from '../DoubleTopBottomSettings';
+import SwingDetectorSettings from '../SwingDetectorSettings';
+import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
+import OrderFlowSettings from '../OrderFlowSettings';
+import FVGSettings from '../FVGSettings';
+import LiquidationsSettings from '../LiquidationsSettings';
+import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
+import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
+import VPPeriodicSettings from '../VPPeriodicSettings';
+import ResponseVolumeSettings from '../ResponseVolumeSettings';
 import '../../backtesting_styles.css'; // El gráfico llena su panel, como en la principal
 
 /**
@@ -18,6 +35,9 @@ import '../../backtesting_styles.css'; // El gráfico llena su panel, como en la
  * La principal informa la hora de su pantalla unas 9 veces por segundo. Aquí la hora avanza en cada cuadro
  * de la pantalla, minuto a minuto, sin pasar nunca de la última informada (replayFollower.js): así las
  * velas se ven formar también a 10000x, donde cada informe trae 19 minutos de golpe.
+ *
+ * Cada indicador tiene su ⚙️ con los mismos modales de la principal. Lo que se cambia aquí queda solo en
+ * este gráfico (secondaryStorage.js guarda esas claves aparte); mientras no se cambie, usa lo de la principal.
  */
 
 const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
@@ -32,6 +52,36 @@ const INDICATORS = [
   'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector'
 ];
 const DEFAULT_ON = new Set(['Volume Delta']);
+
+// Indicadores con modal de ajustes (los mismos que en la principal)
+const WITH_SETTINGS = new Set([
+  'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP',
+  'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
+  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF'
+]);
+
+/** Fondo y caja de los modales que no traen la suya */
+const ModalBox = ({ onClose, width = 600, children }) => (
+  <div
+    className="modal-overlay"
+    onClick={onClose}
+    style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 3000 }}
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      style={{ backgroundColor: 'white', borderRadius: 8, maxWidth: width, maxHeight: '85vh', width: '90%', overflow: 'auto', position: 'relative', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}
+    >
+      <button
+        onClick={onClose}
+        title="Cerrar"
+        style={{ position: 'sticky', top: 8, float: 'right', marginRight: 8, background: '#f44336', color: 'white', border: 'none', borderRadius: '50%', width: 32, height: 32, fontSize: 20, cursor: 'pointer', zIndex: 1 }}
+      >
+        ×
+      </button>
+      <div style={{ padding: 20 }}>{children}</div>
+    </div>
+  </div>
+);
 
 const DEFAULT_VP_CONFIG = {
   mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true
@@ -111,6 +161,10 @@ const SecondaryChartApp = () => {
     INDICATORS.map(name => [name, saved.indicators?.[name] ?? DEFAULT_ON.has(name)])
   ));
   const [showList, setShowList] = useState(false);
+  const [settingsFor, setSettingsFor] = useState(null); // Indicador cuyo modal está abierto
+  const [vpConfig, setVpConfig] = useState(() => ({ ...DEFAULT_VP_CONFIG, ...(saved.vpConfig || {}) }));
+  const [vpFixedRange, setVpFixedRange] = useState(null);
+  const [rejectionConfig, setRejectionConfig] = useState(null);
   const [currentTool, setCurrentTool] = useState('select');
   const loadedSymbol = useRef(null);
   const channelRef = useRef(null);
@@ -267,10 +321,208 @@ const SecondaryChartApp = () => {
   }, [replay?.symbol]);
 
   useEffect(() => {
-    saveSettings({ timeframe, indicators: indicatorStates });
-  }, [timeframe, indicatorStates]);
+    saveSettings({ timeframe, indicators: indicatorStates, vpConfig });
+  }, [timeframe, indicatorStates, vpConfig]);
 
   const toggle = (name) => setIndicatorStates(previous => ({ ...previous, [name]: !previous[name] }));
+
+  // Los modales cambian los indicadores de este gráfico y lo redibujan
+  const manager = () => chartRef.current?.getIndicatorManager?.() || null;
+  const applyHere = (change) => {
+    const current = manager();
+    if (!current) return;
+    change(current);
+    chartRef.current?.forceRedraw?.();
+  };
+  const closeSettings = () => setSettingsFor(null);
+  const candlesOfChart = () => market?.data?.timeframes?.[timeframe]?.main || [];
+  const closedCandles = () => {
+    const candles = candlesOfChart();
+    return shownTime === null ? [] : candles.slice(0, lastClosedIndex(candles, timeframe, shownTime) + 1);
+  };
+
+  const renderSettings = () => {
+    const current = settingsFor ? manager() : null;
+    if (!current || !replay) return null;
+    const symbol = replay.symbol;
+    switch (settingsFor) {
+      case 'Volume Profile':
+        return (
+          <ModalBox onClose={closeSettings}>
+            <h3 style={{ marginTop: 0 }}>Volume Profile · 2.º gráfico</h3>
+            <VolumeProfileSettings
+              config={vpConfig}
+              onConfigChange={(next) => setVpConfig(previous => ({ ...previous, ...next }))}
+              onFixedRangeChange={(start, end) => setVpFixedRange({ start, end, applyToAll: false, symbol })}
+              applyToAll={false}
+              onApplyToAllChange={noop}
+              currentSymbol={symbol}
+            />
+          </ModalBox>
+        );
+      case 'Range Detection':
+        return (
+          <div className="modal-overlay" onClick={closeSettings}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <RangeDetectionSettings symbol={symbol} indicatorManager={current} candles={closedCandles()} onClose={closeSettings} />
+            </div>
+          </div>
+        );
+      case 'Rejection Patterns':
+        return (
+          <RejectionPatternSettings
+            symbol={symbol}
+            indicatorManager={current}
+            onConfigChange={(config) => { setRejectionConfig(config); applyHere(m => m.updateRejectionPatternConfig(config)); }}
+            onShowModeChange={(mode) => applyHere(m => m.getRejectionPatternIndicator()?.setShowMode(mode))}
+            onClose={closeSettings}
+            initialConfig={rejectionConfig}
+          />
+        );
+      case 'Support & Resistance':
+        return <SupportResistanceSettings symbol={symbol} indicatorManager={current} onClose={closeSettings} />;
+      case 'S&R v2':
+        return (
+          <SupportResistance2Settings
+            symbol={symbol}
+            indicatorManager={current}
+            onConfigChange={config => applyHere(m => m.supportResistance2Indicator?.updateConfig(config))}
+            onClose={closeSettings}
+          />
+        );
+      case 'VWAP':
+        return (
+          <ModalBox onClose={closeSettings}>
+            <VWAPSettings
+              config={current.getIndicatorConfig('VWAP') || {}}
+              onConfigChange={async (next) => {
+                await current.applyConfig('VWAP', next);
+                const vwap = current.indicators.find(indicator => indicator.name === 'VWAP');
+                if (vwap) {
+                  vwap._lastCalculatedLength = 0;
+                  vwap._calculationValid = false;
+                }
+                chartRef.current?.forceRedraw?.();
+              }}
+              currentSymbol={symbol}
+              interval={timeframe}
+              onClose={closeSettings}
+            />
+          </ModalBox>
+        );
+      case 'Double Top/Bottom':
+        return (
+          <ModalBox onClose={closeSettings} width={700}>
+            <DoubleTopBottomSettings
+              symbol={symbol}
+              initialConfig={current.getIndicatorConfig('Double Top/Bottom')}
+              onConfigChange={async (next) => {
+                await current.applyConfig('Double Top/Bottom', next, candlesOfChart(), replay.simulationStartTime);
+                // Como en la principal: apagar y encender para que el gráfico tome los patrones nuevos
+                setIndicatorStates(previous => ({ ...previous, 'Double Top/Bottom': false }));
+                setTimeout(() => setIndicatorStates(previous => ({ ...previous, 'Double Top/Bottom': next.enabled !== false })), 50);
+              }}
+              onClose={closeSettings}
+            />
+          </ModalBox>
+        );
+      case 'Swing Detector':
+        return (
+          <ModalBox onClose={closeSettings} width={500}>
+            <SwingDetectorSettings
+              symbol={symbol}
+              config={current.getIndicatorConfig('Swing Detector')}
+              onConfigChange={async (next) => {
+                await current.applyConfig('Swing Detector', next);
+                chartRef.current?.forceRedraw?.();
+              }}
+              onClose={closeSettings}
+            />
+          </ModalBox>
+        );
+      case 'OI-Volume Confluence':
+        return (
+          <ModalBox onClose={closeSettings} width={500}>
+            <OIVolumeConfluenceSettings
+              config={current.getIndicatorConfig('OI-Volume Confluence') || {}}
+              onConfigChange={async (next) => {
+                await current.applyConfig('OI-Volume Confluence', next);
+                chartRef.current?.forceRedraw?.();
+              }}
+              currentSymbol={symbol}
+              onClose={closeSettings}
+            />
+          </ModalBox>
+        );
+      case 'Order Flow':
+        return (
+          <OrderFlowSettings
+            symbol={symbol}
+            indicator={current.getOrderFlowIndicator()}
+            activeTimeframe={timeframe}
+            onApply={(settings) => applyHere(m => m.getOrderFlowIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'FVG':
+        return (
+          <FVGSettings
+            symbol={symbol}
+            indicator={current.getFVGIndicator()}
+            onApply={(settings) => applyHere(m => m.getFVGIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'VP Periodic':
+        return (
+          <VPPeriodicSettings
+            symbol={symbol}
+            indicator={current.getVPPeriodicIndicator()}
+            onApply={(settings) => applyHere(m => m.getVPPeriodicIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'Volumen de Respuesta':
+        return (
+          <ResponseVolumeSettings
+            symbol={symbol}
+            indicator={current.getResponseVolumeIndicator()}
+            onApply={(settings) => applyHere(m => m.getResponseVolumeIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'Liquidaciones':
+        return (
+          <LiquidationsSettings
+            symbol={symbol}
+            indicator={current.getLiquidationsIndicator()}
+            onApply={(settings) => applyHere(m => m.getLiquidationsIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'Elementos OF':
+        return (
+          <OrderFlowElementsSettings
+            symbol={symbol}
+            indicator={current.getOFElementsIndicator()}
+            onApply={(settings) => applyHere(m => m.getOFElementsIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+            onOpenSetups={() => setSettingsFor('Setups OF')}
+          />
+        );
+      case 'Setups OF':
+        return (
+          <OrderFlowSetupsSettings
+            symbol={symbol}
+            indicator={current.getOFElementsIndicator()}
+            onApply={(config) => applyHere(m => m.getOFElementsIndicator().setSetupsConfig(config))}
+            onClose={closeSettings}
+          />
+        );
+      default:
+        return null;
+    }
+  };
   const getTradeBoundaries = useCallback(() => tradesRef.current, []);
   const getTradeBoxes = useCallback(() => boxesRef.current, []);
   const noop = useCallback(() => {}, []);
@@ -333,12 +585,24 @@ const SecondaryChartApp = () => {
           {showList && (
             <div style={{ position: 'absolute', top: 30, left: 0, zIndex: 2000, background: 'var(--t-surface, #fff)', border: '1px solid var(--t-line, #ccc)', borderRadius: 4, padding: 8, width: 240, maxHeight: '70vh', overflowY: 'auto', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
               {INDICATORS.map(name => (
-                <label key={name} style={{ display: 'block', padding: '4px 0', cursor: 'pointer', fontSize: 13 }}>
-                  <input type="checkbox" checked={!!indicatorStates[name]} onChange={() => toggle(name)} style={{ marginRight: 8 }} />
-                  {name}
-                </label>
+                <div key={name} style={{ display: 'flex', alignItems: 'center', padding: '4px 0', fontSize: 13 }}>
+                  <label style={{ flex: 1, cursor: 'pointer' }}>
+                    <input type="checkbox" checked={!!indicatorStates[name]} onChange={() => toggle(name)} style={{ marginRight: 8 }} />
+                    {name}
+                  </label>
+                  {WITH_SETTINGS.has(name) && (
+                    <button
+                      type="button"
+                      title={`Ajustes de ${name} en este gráfico`}
+                      onClick={() => { setShowList(false); setSettingsFor(name); }}
+                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 14, padding: '0 4px' }}
+                    >
+                      ⚙️
+                    </button>
+                  )}
+                </div>
               ))}
-              <div style={{ fontSize: 11, opacity: 0.7, marginTop: 6 }}>Los ajustes de cada indicador son los de la pestaña principal.</div>
+              <div style={{ fontSize: 11, opacity: 0.7, marginTop: 6 }}>⚙️ cambia los ajustes solo en este gráfico. Mientras no los cambies, usa los de la pestaña principal.</div>
             </div>
           )}
         </div>
@@ -372,10 +636,10 @@ const SecondaryChartApp = () => {
               backtestingData={market.data}
               currentTime={shownTime}
               simulationStartTime={replay.simulationStartTime}
-              vpConfig={DEFAULT_VP_CONFIG}
-              vpFixedRange={null}
+              vpConfig={vpConfig}
+              vpFixedRange={vpFixedRange}
               oiMode="histogram"
-              rejectionPatternConfig={null}
+              rejectionPatternConfig={rejectionConfig}
               currentTool={currentTool}
               onToolChange={setCurrentTool}
               getTradeBoundaries={getTradeBoundaries}
@@ -388,6 +652,7 @@ const SecondaryChartApp = () => {
           </div>
         )}
       </div>
+      {settingsFor && renderSettings()}
     </div>
   );
 };

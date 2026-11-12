@@ -785,6 +785,14 @@ Pedidos del usuario el 11/11, después de la fase 4 de Elementos OF.
 - **Sin saltos con la principal atrás** (12/11): al mirar la pestaña del 2.º gráfico, la principal queda en segundo plano y el navegador frena sus `setInterval` a uno por segundo (a uno por minuto pasados 5 minutos). El reloj seguía bien la velocidad pero en saltos de un segundo: a 1000x, 16 minutos por salto; a 10000x, casi 3 horas. Ahora el tick lo marca un Worker (`startTicker()` en `TimeController.js`), cuyos temporizadores no se frenan, y el tick sigue corriendo en la página. Uno por reproducción, terminado al pausar; sin Worker queda `setInterval`. Medido en la copia a 10000x: el 2.º gráfico recibe la hora cada 120 ms, 20 minutos simulados por paso. El panel de pruebas no oculta las pestañas, así que el freno del navegador no se pudo reproducir allí
 - **Una sola principal** (12/11): con dos pestañas principales abiertas (una vieja o una recargada), las dos respondían al `hello` y el 2.º gráfico saltaba entre sus horas. Cada principal manda `source` y el segundo sigue a una sola; pasa a otra solo cuando su hora avanza
 
+### Ajustes propios del 2.º gráfico (12/11)
+
+- La lista "Indicadores" del 2.º gráfico trae un ⚙️ por indicador con los mismos modales de la principal (los 15 que tienen ajustes, más "Setups (recetas)" desde Elementos OF). Aplican solo a ese gráfico
+- `backtesting/secondaryStorage.js`: en la pestaña del 2.º gráfico, las claves de ajustes de los indicadores (`OWN_KEYS`: `orderflow_settings_`, `fvg_settings_`, `support_resistance_2_config_`, disposición de paneles, etc.) se leen y escriben con el prefijo `app1_g2:`. Mientras no se cambie nada ahí, se lee lo de la principal. "Restablecer" deja una marca y vuelve a fábrica, no a lo de la principal. Se instala desde `main.jsx`, antes que cualquier indicador, y desvía `Storage.prototype` solo para `localStorage`
+- Siguen compartidos a propósito: lo elegido para el análisis, las velas fijadas de Liquidaciones, las recetas de los setups (`of_setups_`, una sola biblioteca) y el estilo
+- El perfil de volumen guarda su configuración en `app1_grafico2`; VWAP, Swing y Confluencia OI no se guardan al recargar, igual que en la principal
+- Prueba: `tests/secondarystorage.test.mjs` (6). Probado en la copia: los 15 modales abren en el 2.º gráfico, y un cambio en FVG quedó en `app1_g2:fvg_settings_BTCUSDT` sin tocar la clave de la principal
+
 ### 2.º gráfico fluido (12/11)
 
 El 2.º gráfico seguía a saltos por encima de 1000x. Medido en la copia aislada con la principal en 1h y el segundo en 15m: recibía la hora solo cuando cambiaba la pantalla de la principal, 8.5 veces por segundo, y a 10000x cada aviso traía 20 minutos: más de una vela de 15m por dibujo. No era el navegador ni el costo del dibujo (2 a 4 ms).

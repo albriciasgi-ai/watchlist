@@ -53,6 +53,21 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 1 (Backtester) - 12 Noviembre 2026: Ajustes Propios del 2.º Gráfico
+
+**Pedido:** el 2.º gráfico podía encender indicadores pero no cambiar sus ajustes, y usaba los de la principal.
+
+**Cambios:**
+1. **⚙️ por indicador** en la lista "Indicadores" del 2.º gráfico, con los mismos modales de la principal
+2. **Ajustes aparte:** `secondaryStorage.js` guarda en esa pestaña las claves de ajustes con el prefijo `app1_g2:`. Mientras no se cambien ahí, usa los de la principal; cambiarlos no toca la principal
+3. **Compartido a propósito:** lo elegido para el análisis, las velas fijadas, las recetas de los setups y el estilo
+
+**IMPORTANTE:** basta recargar las dos pestañas: no hay cambios en el backend.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11", "Ajustes propios del 2.º gráfico"
+
+---
+
 ### APP 1 (Backtester) - 12 Noviembre 2026: 2.º Gráfico Fluido
 
 **Problema:** por encima de 1000x el 2.º gráfico avanzaba a saltos. Recibía la hora solo cuando cambiaba la pantalla de la principal, 8.5 veces por segundo, y a 10000x cada aviso traía 20 minutos: más de una vela de 15m por dibujo.
