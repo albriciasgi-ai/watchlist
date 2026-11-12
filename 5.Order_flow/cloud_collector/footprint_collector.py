@@ -6,6 +6,7 @@
 import asyncio
 import json
 import gzip
+import os
 import logging
 import time
 from pathlib import Path
@@ -97,6 +98,13 @@ class FootprintCollector:
         # Buffer de footprints completados (antes de guardar a disco)
         self.completed_buffer: Dict[str, List[dict]] = defaultdict(list)
         self.buffer_size = 10  # Guardar cada 10 footprints
+        # Guardado fuera del bucle: _complete_footprint solo marca la moneda y _flush_loop escribe en un hilo.
+        # Antes se releia y reescribia todo el dia comprimido dentro del bucle: se trababa hasta 30 s, las
+        # descargas de /api/tape se colgaban y el WebSocket de Bybit podia cortarse
+        self._flush_pending = set()
+        self._writing: Dict[str, List[dict]] = {}  # lo que se esta escribiendo: get_footprints tambien lo ve
+        self._flush_task = None
+        self._verified = set()  # archivos ya revisados desde que arranco
 
         # Stats
         self.stats = {
@@ -248,61 +256,108 @@ class FootprintCollector:
             f"levels={len(levels_list)}, vol={fp.total_volume:.2f}"
         )
 
-        # Flush si el buffer esta lleno
+        # Buffer lleno: se guarda en un hilo desde _flush_loop, nunca dentro del bucle
         if len(self.completed_buffer[symbol]) >= self.buffer_size:
-            self._flush_to_disk(symbol)
+            self._flush_pending.add(symbol)
 
-    def _flush_to_disk(self, symbol: str):
-        """Guarda los footprints del buffer a disco."""
-        if symbol not in self.completed_buffer or not self.completed_buffer[symbol]:
-            return
+    # ---------- disco: un archivo por moneda y dia, con un footprint por linea ----------
+    # Formato: JSON lines dentro de un gzip al que se le agregan miembros al final (no se relee el dia).
+    # Los archivos de antes eran un arreglo JSON: se leen igual y se pasan a lineas la primera vez que se agrega.
 
-        footprints = self.completed_buffer[symbol]
+    @staticmethod
+    def _read_day(file_path: Path, status: Optional[dict] = None) -> List[dict]:
+        """Footprints de un dia, del formato nuevo (lineas) o del viejo (arreglo). Un final cortado se ignora.
+        status (opcional) recibe old_format y truncated."""
+        out: Dict[int, dict] = {}
+        if status is not None:
+            status.update(old_format=False, truncated=False)
+        with gzip.open(file_path, 'rt', encoding='utf-8') as f:
+            first = f.read(1)
+            if first == '[':
+                if status is not None:
+                    status["old_format"] = True
+                for fp in json.loads(first + f.read()):
+                    out[fp["candle_timestamp"]] = fp
+            elif first:
+                pending = first
+                try:
+                    for line in f:
+                        line = pending + line
+                        pending = ''
+                        line = line.strip()
+                        if line:
+                            fp = json.loads(line)
+                            out[fp["candle_timestamp"]] = fp
+                except (EOFError, OSError, ValueError) as e:
+                    # Un apagado a mitad de un guardado deja el ultimo miembro incompleto: vale lo anterior
+                    if status is not None:
+                        status["truncated"] = True
+                    logger.warning(f"{file_path}: final incompleto ({e}); se usa lo leido")
+        return [out[k] for k in sorted(out)]
 
-        # Agrupar por fecha
+    def _write_footprints(self, symbol: str, footprints: List[dict]):
+        """Agrega footprints a sus dias. En un hilo: no toca el bucle."""
         by_date: Dict[str, List[dict]] = defaultdict(list)
         for fp in footprints:
             date_str = datetime.fromtimestamp(fp["candle_timestamp"] / 1000).strftime("%Y-%m-%d")
             by_date[date_str].append(fp)
 
-        # Guardar cada fecha
         for date_str, fps in by_date.items():
             file_path = self.data_dir / symbol / f"{date_str}.json.gz"
+            if file_path.exists() and file_path not in self._verified:
+                # Una vez por archivo desde que arranca: un arreglo viejo pasa a lineas, y un final cortado
+                # (apagado a mitad de un guardado) se repara antes de agregar, o lo agregado no se leeria
+                status = {}
+                existing = self._read_day(file_path, status)
+                if status["old_format"] or status["truncated"]:
+                    tmp = file_path.with_name(file_path.name + ".tmp")
+                    with gzip.open(tmp, 'wt', encoding='utf-8', compresslevel=6) as f:
+                        for fp in existing:
+                            f.write(json.dumps(fp, separators=(',', ':')) + '\n')
+                    os.replace(tmp, file_path)
+            self._verified.add(file_path)
+            with gzip.open(file_path, 'at', encoding='utf-8', compresslevel=6) as f:
+                f.write(''.join(json.dumps(fp, separators=(',', ':')) + '\n' for fp in fps))
+            self.stats["files_written"] += 1
 
-            # Leer archivo existente si existe
-            existing = []
-            if file_path.exists():
-                try:
-                    with gzip.open(file_path, 'rt', encoding='utf-8') as f:
-                        existing = json.load(f)
-                except Exception as e:
-                    logger.warning(f"Error leyendo {file_path}: {e}")
-
-            # Combinar y deduplicar por timestamp
-            existing_ts = {fp["candle_timestamp"] for fp in existing}
-            for fp in fps:
-                if fp["candle_timestamp"] not in existing_ts:
-                    existing.append(fp)
-
-            # Ordenar por timestamp
-            existing.sort(key=lambda x: x["candle_timestamp"])
-
-            # Guardar comprimido
-            try:
-                with gzip.open(file_path, 'wt', encoding='utf-8') as f:
-                    json.dump(existing, f)
-                self.stats["files_written"] += 1
-                logger.debug(f"Guardado {file_path}: {len(existing)} footprints")
-            except Exception as e:
-                logger.error(f"Error guardando {file_path}: {e}")
-
-        # Limpiar buffer
+    async def _flush_symbol(self, symbol: str):
+        fps = self.completed_buffer.get(symbol) or []
+        if not fps:
+            return
         self.completed_buffer[symbol] = []
+        self._writing[symbol] = fps
+        try:
+            await asyncio.to_thread(self._write_footprints, symbol, fps)
+        except Exception as e:
+            # Vuelven al buffer y se reintenta en la siguiente vuelta
+            self.completed_buffer[symbol] = fps + self.completed_buffer[symbol]
+            logger.error(f"Error guardando footprints de {symbol}: {e}")
+        finally:
+            self._writing.pop(symbol, None)
+
+    async def _flush_loop(self):
+        while True:
+            await asyncio.sleep(5)
+            for symbol in list(self._flush_pending):
+                self._flush_pending.discard(symbol)
+                await self._flush_symbol(symbol)
+
+    async def flush_all_async(self):
+        """Guarda todos los buffers (en un hilo)."""
+        for symbol in self.symbols:
+            await self._flush_symbol(symbol)
 
     def flush_all(self):
-        """Fuerza guardado de todos los buffers."""
+        """Guarda todos los buffers en este hilo (al apagar, cuando el bucle ya no atiende)."""
         for symbol in self.symbols:
-            self._flush_to_disk(symbol)
+            fps = self.completed_buffer.get(symbol) or []
+            if not fps:
+                continue
+            try:
+                self._write_footprints(symbol, fps)
+                self.completed_buffer[symbol] = []
+            except Exception as e:
+                logger.error(f"Error guardando footprints de {symbol}: {e}")
 
     def get_footprints(self, symbol: str, interval: str, hours: int = 12) -> List[dict]:
         """
@@ -339,27 +394,21 @@ class FootprintCollector:
                 continue
 
             try:
-                with gzip.open(file_path, 'rt', encoding='utf-8') as f:
-                    data = json.load(f)
-
-                # Filtrar por timestamp
-                for fp in data:
+                for fp in self._read_day(file_path):
                     if fp["candle_timestamp"] >= cutoff_ts:
                         footprints.append(fp)
-
             except Exception as e:
                 logger.warning(f"Error leyendo {file_path}: {e}")
 
-        # Agregar footprints del buffer (aun no guardados)
-        if symbol in self.completed_buffer:
-            for fp in self.completed_buffer[symbol]:
+        # Footprints aun no guardados: los del buffer y los que se estan escribiendo
+        for pending in (list(self._writing.get(symbol) or []), list(self.completed_buffer.get(symbol) or [])):
+            for fp in pending:
                 if fp["candle_timestamp"] >= cutoff_ts:
                     footprints.append(fp)
 
-        # Ordenar por timestamp
-        footprints.sort(key=lambda x: x["candle_timestamp"])
-
-        return footprints
+        # Ordenar por timestamp, una vez cada vela (un footprint recien guardado puede estar en los dos)
+        by_ts = {fp["candle_timestamp"]: fp for fp in footprints}
+        return [by_ts[k] for k in sorted(by_ts)]
 
     def cleanup_old_files(self) -> int:
         """Elimina archivos mas antiguos que max_days (0 = sin limite: no borra nada)."""
@@ -417,6 +466,8 @@ class FootprintCollector:
     async def start(self):
         """Inicia la recoleccion de trades via WebSocket."""
         self.running = True
+        if self._flush_task is None:
+            self._flush_task = asyncio.create_task(self._flush_loop())
 
         while self.running:
             try:
@@ -487,5 +538,8 @@ class FootprintCollector:
     async def stop(self):
         """Detiene la recoleccion."""
         self.running = False
-        # Flush final
-        self.flush_all()
+        if self._flush_task:
+            self._flush_task.cancel()
+            self._flush_task = None
+        # Flush final (en un hilo)
+        await self.flush_all_async()

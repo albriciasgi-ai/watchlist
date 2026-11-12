@@ -99,7 +99,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 - `MiniChart` con `backtestingMode={false}`: velas de `/api/historical` y el WebSocket de Bybit del navegador (`WebSocketManager.js` de App 1).
 - **Footprints:** llegan hasta el último minuto armado del almacén, cerca de 1 minuto atrás. La vela en curso no tiene footprint completo.
 - **Por qué no se veían (12/11):** el 11000 no estaba corriendo, así que no había nada grabado en vivo, y el almacén oficial de BTC llegaba al 04/11. Ahora la suite graba sola (`recorder.py`) y baja los días oficiales que faltan (`official.py`).
-- **Grabación:** un solo proceso graba en `OrderFlowData/live/local` (candado `recorder.lock` en `local_tape.py`): la suite o el 11000, el que arranque primero; el otro reintenta cada minuto. Cada minuto se une con la nube (`sync_nube.py`) y se arman `live/store` y `live/flow`. `SUITE_RECORD=0` lo apaga.
+- **Grabación:** un solo proceso graba en `OrderFlowData/live/local` (candado `recorder.lock` en `local_tape.py`): la suite o el 11000, el que arranque primero; el otro reintenta cada minuto. Cada minuto se une con lo ya bajado de la nube (`sync_nube.py --sin-nube`) y se arman `live/store` y `live/flow`. La nube se baja aparte cada 15 minutos (`--solo-nube`), así una nube lenta no frena el armado. `SUITE_RECORD=0` lo apaga.
 - **Días oficiales:** cada 6 horas (10 min después de arrancar), para las monedas que ya tienen almacén (BTC, ETH, SOL), corre `ingest.py --desde <día siguiente>` y `build_store.py`, que tienen su propio candado por moneda. `SUITE_OFFICIAL=0` lo apaga. La historia completa de una moneda nueva se baja desde el panel.
 - **Indicadores:** los 18 de App 1 con todos sus modales: Volume Delta, Volume Profile, CVD, Interés abierto, Confluencia OI, Order Flow, FVG, VP Periodic, Volumen de Respuesta, Liquidaciones, Elementos OF (y sus setups), VWAP, Range Detection, Rejection, Double Top/Bottom, S&R, S&R v2 y Swing Detector.
 - **Cambios en App 1 para el vivo (12/11), sin efecto en reproducción:** Interés abierto da por pedido solo hasta ahora y vuelve a pedir al abrir una vela nueva; `MiniChart` en vivo avisa `onDrawingsChange` al guardar dibujos. Double Top/Bottom y Rejection los vuelve a pedir la suite cada 5 minutos. Double Top/Bottom con "alertas" encendidas intenta `POST /api/pattern-alert`, que aquí no existe (queda un error en la consola, no se envía nada).
@@ -109,6 +109,16 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 - **Dos pestañas:** "2.ª pestaña" abre `/?pestana=2` (en Electron, otra ventana). Cada una guarda sus marcos e indicadores (`suite_chart_1`, `suite_chart_2`), y la 2 desvía los ajustes de los indicadores con el prefijo de App 1 (`installOwnSettings` de `secondaryStorage.js`). Los dibujos son por moneda: al guardarlos en un marco pasan a los otros cuatro y a la otra pestaña por `BroadcastChannel('suite-drawings')`, si mira la misma moneda.
 - **Monedas:** "+" agrega una moneda de Bybit (se comprueba en el servidor y se graba desde ese momento). Lista en `data/symbols.json`.
 - En desarrollo, `window.__suiteCharts` da acceso a los gráficos desde la consola.
+
+## Correcciones tras la primera prueba del usuario (12/11)
+
+- **Footprints que no aparecían:** el primer armado esperaba la descarga de la nube, tardó más de 600 s y se cortó; cada armado siguiente volvía a esperarla, así que el almacén se actualizaba cada ~15 minutos y solo con lo del PC. Ahora el armado de cada minuto nunca baja la nube (ver "Grabación").
+- **Descargas de la nube colgadas:** el collector guardaba sus footprints releyendo y reescribiendo el día comprimido dentro de su único bucle: se trababa hasta 30 s (`/health` tardaba de 1 a 30 s) y las descargas de `/api/tape` se quedaban a mitad. Corregido en el collector (ver `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md`); hay que desplegarlo en Northflank. Además `sync_nube.py` espera 90 s por archivo, no 300.
+- **Velas de otro marco y saltos:** `getBybitInterval` de `MiniChart` no reconocía "1m", "1h" ni "4h" y los cinco gráficos pedían velas de 15m; el WebSocket compartido además tenía un solo marco. Ahora `WebSocketManager.js` suscribe por moneda y marco, y cada gráfico descarta velas de otro marco o anteriores a su última vela.
+- **Dibujos que no se borraban:** los cinco gráficos escuchaban la tecla Suprimir; los ocultos guardaban su lista vieja al mismo tiempo y el dibujo volvía. Ahora solo responde el gráfico a la vista, y solo si borró algo.
+- **Footprint "más bajo" que la vela:** era una vela que la grabación no cubrió entera (la app arrancó a mitad de la vela y la nube no llegaba). El footprint de una vela con hueco lleva encima "parcial".
+- **Velas de Bybit:** `/api/historical` daba error 500 si Bybit tardaba; ahora reintenta tres veces y responde 503.
+- **Días oficiales:** `official.py` bajó solo los días del 05 al 11/11 de BTC el mismo 12/11.
 
 ## Panel de trading
 

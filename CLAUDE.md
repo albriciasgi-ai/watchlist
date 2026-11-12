@@ -54,6 +54,36 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite (carpeta 12) - 12 Noviembre 2026: Correcciones tras la Primera Prueba
+
+**Pedido:** al probar la suite, el usuario vio:
+- sin footprints en 1m;
+- un footprint de 15m más bajo que su vela;
+- dibujos que no se borraban;
+- Elementos OF vacíos;
+- velas de otro tiempo al final del gráfico.
+
+También pidió ver los íconos posibles para la app.
+
+**Causas y cambios:**
+1. **Footprints:** el armado de cada minuto esperaba la descarga de la nube, que se colgaba y pasaba de 600 s. Ahora la nube se baja aparte (`sync_nube.py --solo-nube`) y el armado de cada minuto nunca la espera.
+2. **Nube:** el collector guardaba sus footprints releyendo el día entero dentro de su bucle y se trababa hasta 30 s, así que las descargas se quedaban a mitad. Ahora guarda en un hilo y por líneas, sin releer el día (rama `deploy` baad6bc; falta desplegar en Northflank).
+3. **Velas de otro marco:** `MiniChart` no reconocía "1m", "1h" ni "4h", y los cinco gráficos pedían velas de 15m por un WebSocket de un solo marco. Ahora hay un WebSocket por moneda y marco, y se descartan las velas ajenas.
+4. **Dibujos:** los cinco gráficos respondían a Suprimir y los ocultos guardaban su lista vieja. Ahora solo responde el gráfico a la vista.
+5. **Footprint parcial:** la grabación empezó a mitad de la vela y la nube no llegaba. Esas velas llevan "parcial".
+6. **Elementos OF:** estaban vacíos por lo mismo, sin datos de esas horas. Los días oficiales del 05 al 11/11 de BTC ya se bajaron solos.
+7. **Velas de Bybit:** el servidor reintenta tres veces en vez de dar error 500.
+8. **App 1:** los botones 1D, 3D y 1W ahora muestran ese tiempo en 1m, 5m, 1h y 4h. Antes calculaban con velas de 15m.
+
+**IMPORTANTE:**
+- Cerrar la suite desde la bandeja ("Salir") y abrirla de nuevo.
+- Desplegar el collector en Northflank ("Deploy" del build baad6bc).
+- Lo anterior a la apertura de la app llega de la nube cuando el collector nuevo esté desplegado.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Correcciones tras la primera prueba del usuario"
+
+---
+
 ### Altagracia Trading Suite (carpeta 12) - 12 Noviembre 2026: Segunda Ronda tras Probarla
 
 **Pedido:** el usuario probó la suite y pidió ocho cosas:

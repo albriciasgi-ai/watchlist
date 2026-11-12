@@ -2,6 +2,7 @@
 #
 # Lo usan main.py (/api/historical) y market_routes.py (indicadores que calculan con velas).
 # El cliente HTTP lo crea main.py al arrancar y lo deja aqui con set_client().
+import asyncio
 import re
 import time
 from datetime import datetime, timedelta, timezone
@@ -61,9 +62,17 @@ async def klines(symbol: str, interval: str, days: int):
     out, cursor = [], start_ms
     http = client()
     for _ in range(40):
-        r = await http.get(f"{CONFIG['bybit_url']}/v5/market/kline", params={
-            "category": "linear", "symbol": symbol, "interval": interval, "start": cursor, "limit": 1000})
-        data = r.json()
+        params = {"category": "linear", "symbol": symbol, "interval": interval, "start": cursor, "limit": 1000}
+        # Bybit a veces tarda: tres intentos por pagina antes de responder 503 (antes era un error 500)
+        for attempt in range(3):
+            try:
+                r = await http.get(f"{CONFIG['bybit_url']}/v5/market/kline", params=params)
+                data = r.json()
+                break
+            except (httpx.HTTPError, ValueError) as e:
+                if attempt == 2:
+                    raise HTTPException(status_code=503, detail=f"Bybit no respondio las velas: {type(e).__name__}")
+                await asyncio.sleep(1 + attempt)
         if data.get("retCode") != 0:
             raise HTTPException(status_code=502, detail=f"Bybit: {data.get('retMsg')}")
         batch = list(reversed(data["result"]["list"]))

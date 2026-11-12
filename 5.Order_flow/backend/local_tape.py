@@ -4,7 +4,8 @@
 #   OrderFlowData/live/local/tape/BTCUSDT/2026/BTCUSDT_2026-11-12.tape
 # Cada LOCAL_TAPE_SECONDS (60) guarda lo nuevo y lanza en un proceso aparte
 # PanelOrderFlow/sync_nube.py --sin-nube, que une lo del PC con lo ya bajado de la nube y arma
-# OrderFlowData/live/store y live/flow. Cada LOCAL_TAPE_CLOUD_MINUTES (15) baja tambien de la nube.
+# OrderFlowData/live/store y live/flow. Cada LOCAL_TAPE_CLOUD_MINUTES (15) otro proceso baja la nube
+# (--solo-nube), aparte: una nube lenta nunca frena el armado de cada minuto.
 # El armado va en otro proceso para no frenar el Swing: un dia de BTC tarda cerca de 1.5 s.
 #
 # Variables: ORDERFLOW_DATA (carpeta de datos), ORDERFLOW_TOOLS (build_store.py y build_flow.py), LOCAL_TAPE=0 lo apaga, LOCAL_TAPE_SECONDS,
@@ -32,6 +33,7 @@ SECONDS = max(15, int(os.environ.get("LOCAL_TAPE_SECONDS", "60")))
 CLOUD_MINUTES = int(os.environ.get("LOCAL_TAPE_CLOUD_MINUTES", "15"))
 SYNC_SCRIPT = HERE.parents[1] / "PanelOrderFlow" / "sync_nube.py"
 BUILD_TIMEOUT = 600
+CLOUD_TIMEOUT = 3600
 
 _recorder = None
 _task = None
@@ -39,7 +41,8 @@ _lock_fh = None
 _waiting = None
 LOCK_RETRY_SECONDS = 60
 _stats = {"builds": 0, "build_errors": 0, "last_build": None, "last_build_seconds": None, "last_error": None,
-          "last_cloud": None}
+          "last_cloud": None, "cloud_errors": 0, "cloud_running": False, "last_cloud_error": None}
+_cloud_task = None
 
 
 def get_recorder():
@@ -117,10 +120,13 @@ async def _start(ws_manager, symbols):
 
 
 async def stop():
-    global _task, _waiting
+    global _task, _waiting, _cloud_task
     if _waiting:
         _waiting.cancel()
         _waiting = None
+    if _cloud_task:
+        _cloud_task.cancel()
+        _cloud_task = None
     if _task:
         _task.cancel()
         _task = None
@@ -131,34 +137,59 @@ async def stop():
             logger.error(f"[LOCAL_TAPE] Error al guardar al apagar: {e}")
 
 
-async def _build(cloud: bool):
+async def _run_sync(mode: str, timeout: int) -> str:
+    """mode: "--sin-nube" (unir y armar) o "--solo-nube" (bajar). Devuelve la salida o lanza RuntimeError."""
     python = os.environ.get("LOCAL_TAPE_PYTHON") or sys.executable
-    args = [python, "-B", str(SYNC_SCRIPT), "--datos", str(DATA), "--herramientas", str(TOOLS), "--dias", "3"]
-    if not cloud:
-        args.append("--sin-nube")
-    t0 = time.time()
+    args = [python, "-B", str(SYNC_SCRIPT), "--datos", str(DATA), "--herramientas", str(TOOLS), "--dias", "3", mode]
     proc = await asyncio.create_subprocess_exec(
         *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT, cwd=str(SYNC_SCRIPT.parent))
     try:
-        out, _ = await asyncio.wait_for(proc.communicate(), timeout=BUILD_TIMEOUT)
+        out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout)
     except asyncio.TimeoutError:
         proc.kill()
-        raise RuntimeError(f"el armado tardo mas de {BUILD_TIMEOUT} s")
+        raise RuntimeError(f"tardo mas de {timeout} s")
     text = out.decode("utf-8", "replace").strip()
     if proc.returncode != 0:
         raise RuntimeError(text[-500:] or f"codigo {proc.returncode}")
+    return text
+
+
+async def _build():
+    t0 = time.time()
+    text = await _run_sync("--sin-nube", BUILD_TIMEOUT)
     _stats["builds"] += 1
     _stats["last_build"] = int(time.time() * 1000)
     _stats["last_build_seconds"] = round(time.time() - t0, 1)
-    if cloud:
-        _stats["last_cloud"] = _stats["last_build"]
     for line in text.splitlines()[-25:]:
         logger.info(f"[LOCAL_TAPE] {line}")
 
 
+async def _cloud_loop():
+    """Baja la nube cada CLOUD_MINUTES, una vez a la vez. Lo bajado lo une el armado siguiente."""
+    while True:
+        try:
+            if SYNC_SCRIPT.exists() and (TOOLS / "build_store.py").exists():
+                _stats["cloud_running"] = True
+                text = await _run_sync("--solo-nube", CLOUD_TIMEOUT)
+                _stats["last_cloud"] = int(time.time() * 1000)
+                for line in text.splitlines()[-25:]:
+                    logger.info(f"[LOCAL_TAPE] nube: {line}")
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            _stats["cloud_errors"] += 1
+            _stats["last_cloud_error"] = str(e)[-300:]
+            logger.error(f"[LOCAL_TAPE] nube: {e}")
+        finally:
+            _stats["cloud_running"] = False
+        await asyncio.sleep(CLOUD_MINUTES * 60)
+
+
 async def _loop(rec):
-    last_cloud = 0.0
+    global _cloud_task
     last_cleanup = 0.0
+    if CLOUD_MINUTES > 0 and _cloud_task is None:
+        _cloud_task = asyncio.create_task(_cloud_loop())
     while True:
         await asyncio.sleep(SECONDS)
         try:
@@ -168,10 +199,7 @@ async def _loop(rec):
                 last_cleanup = time.time()
             if not SYNC_SCRIPT.exists() or not (TOOLS / "build_store.py").exists():
                 continue  # sin herramientas del almacen solo se graba
-            cloud = CLOUD_MINUTES > 0 and time.time() - last_cloud >= CLOUD_MINUTES * 60
-            await _build(cloud)
-            if cloud:
-                last_cloud = time.time()
+            await _build()
         except asyncio.CancelledError:
             raise
         except Exception as e:

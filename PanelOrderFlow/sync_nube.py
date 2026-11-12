@@ -53,7 +53,7 @@ def get_json(url: str, timeout=60):
         return json.load(r)
 
 
-def download(url: str, dst: Path, timeout=300):
+def download(url: str, dst: Path, timeout=90):
     tmp = dst.with_name(dst.name + ".descarga")
     req = urllib.request.Request(url, headers={"User-Agent": "sync-nube"})
     got = 0
@@ -194,8 +194,9 @@ def file_sig(path: Path):
         return None
 
 
-def refresh(data: Path, tools: Path, base_url=DEFAULT_URL, symbols=None, days_back=10, cloud=True, log=print):
-    """Baja de la nube lo que cambio (si cloud) y rearma los dias cuya nube o PC cambio."""
+def refresh(data: Path, tools: Path, base_url=DEFAULT_URL, symbols=None, days_back=10, cloud=True, log=print, build=True):
+    """Baja de la nube lo que cambio (si cloud) y rearma los dias cuya nube o PC cambio.
+    Con build=False solo baja: el armado de cada minuto (--sin-nube) une lo bajado sin esperar a la nube."""
     tf = load_module(TAPE_FORMAT, "tape_format")
     bs = load_module(tools / "build_store.py", "build_store")
     bf = load_module(tools / "build_flow.py", "build_flow")
@@ -237,6 +238,9 @@ def refresh(data: Path, tools: Path, base_url=DEFAULT_URL, symbols=None, days_ba
                     continue
                 os.replace(tmp, tape)
                 state.write_text(json.dumps(dict(d, synced_at=int(time.time() * 1000))), encoding="utf-8")
+
+    if not build:
+        return []
 
     # Dias con datos de la nube o del PC
     days = set()
@@ -305,12 +309,15 @@ def main():
     ap.add_argument("--monedas", default="")
     ap.add_argument("--dias", type=int, default=10)
     ap.add_argument("--sin-nube", action="store_true", help="no bajar de la nube, solo unir lo ya bajado con lo del PC")
+    ap.add_argument("--solo-nube", action="store_true", help="solo bajar de la nube, sin armar (lo une el armado siguiente)")
     a = ap.parse_args()
+    if a.sin_nube and a.solo_nube:
+        ap.error("--sin-nube y --solo-nube no van juntos")
     data = Path(a.datos)
     tools = Path(a.herramientas) if a.herramientas else data / "tools"
     symbols = {s.strip().upper() for s in a.monedas.split(",") if s.strip()} or None
-    res = refresh(data, tools, a.url.rstrip("/"), symbols, a.dias, cloud=not a.sin_nube)
-    print(f"listo: {len(res)} dia(s) actualizados")
+    res = refresh(data, tools, a.url.rstrip("/"), symbols, a.dias, cloud=not a.sin_nube, build=not a.solo_nube)
+    print("listo: nube bajada" if a.solo_nube else f"listo: {len(res)} dia(s) actualizados")
 
 
 if __name__ == "__main__":

@@ -142,7 +142,10 @@ const getIntervalMilliseconds = (interval) => {
     "120": 7200000,
     "240": 14400000,
     "D": 86400000,
-    "W": 604800000
+    "W": 604800000,
+    // Marcos con letra (App 1 y la suite)
+    "1m": 60000, "3m": 180000, "5m": 300000, "15m": 900000, "30m": 1800000,
+    "1h": 3600000, "2h": 7200000, "4h": 14400000, "1d": 86400000, "1D": 86400000, "1w": 604800000, "1W": 604800000
   };
   return map[interval] || 900000;
 };
@@ -260,6 +263,10 @@ const MiniChart = forwardRef(({
     }
   }, [oiMode]);
 
+  // isActive en un ref: los manejadores de la ventana lo leen sin volver a registrarse
+  const isActiveRef = useRef(isActive);
+  isActiveRef.current = isActive;
+
   // 🎯 NUEVO: Sincronizar herramienta de dibujo
   useEffect(() => {
     if (drawingManagerRef.current && currentTool) {
@@ -272,10 +279,15 @@ const MiniChart = forwardRef(({
   useEffect(() => {
     const handleKeyDown = (e) => {
       const typing = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+      // Hay un MiniChart por marco y todos escuchan la ventana: solo responde el que esta a la vista.
+      // Antes los ocultos guardaban su lista sin borrar a la vez, y en vivo el dibujo volvia a aparecer
+      if (!isActiveRef.current) return;
 
       // Delete: borrar shape seleccionado
       if (e.key === 'Delete' && drawingManagerRef.current && !typing) {
+        const before = drawingManagerRef.current.shapes.length;
         drawingManagerRef.current.deleteSelected();
+        if (drawingManagerRef.current.shapes.length === before) return; // nada seleccionado: no se guarda
         saveDrawings();
         drawChart(candlesRef.current, lastPriceRef.current, null, null);
         console.log(`[${symbol}] Shape deleted with Delete key`);
@@ -908,7 +920,10 @@ const MiniChart = forwardRef(({
   const getBybitInterval = (interval) => {
     const map = {
       "1": "1", "3": "3", "5": "5", "15": "15", "30": "30",
-      "60": "60", "120": "120", "240": "240", "D": "D", "W": "W"
+      "60": "60", "120": "120", "240": "240", "D": "D", "W": "W",
+      // Marcos con letra (App 1 y la suite): antes caian todos en "15" y cada grafico recibia las velas de 15m
+      "1m": "1", "3m": "3", "5m": "5", "15m": "15", "30m": "30",
+      "1h": "60", "2h": "120", "4h": "240", "1d": "D", "1D": "D", "1w": "W", "1W": "W"
     };
     return map[interval] || "15";
   };
@@ -2208,10 +2223,22 @@ const MiniChart = forwardRef(({
     }
     
     if (data.topic && data.topic.startsWith("kline.")) {
+      // Solo las velas de este marco: una de otro marco se colaba como vela nueva
+      if (data.topic !== `kline.${getBybitInterval(interval)}.${symbol}`) return;
       const klineData = data.data;
       if (klineData && klineData.length > 0) {
         const candle = klineData[0];
         const candleTimestamp = parseInt(candle.start);
+        // Una vela anterior a la ultima confirmada no se agrega al final; la misma vela solo se corrige
+        const lastConfirmed = candlesRef.current[candlesRef.current.length - 1];
+        if (lastConfirmed && candleTimestamp < lastConfirmed.timestamp) return;
+        if (lastConfirmed && candleTimestamp === lastConfirmed.timestamp) {
+          Object.assign(lastConfirmed, {
+            open: parseFloat(candle.open), high: parseFloat(candle.high), low: parseFloat(candle.low),
+            close: parseFloat(candle.close), volume: parseFloat(candle.volume),
+          });
+          return;
+        }
         const datetime_colombia = formatDateTimeColombia(candleTimestamp);
         
         const newCandle = {
@@ -3053,8 +3080,8 @@ const MiniChart = forwardRef(({
       loadHistoricalData();
 
       const bybitInterval = getBybitInterval(interval);
-      wsManager.connect(bybitInterval);
-      wsManager.subscribe(symbol, handleWebSocketMessage);
+      // Cada grafico recibe solo las velas de su marco (la suite tiene un MiniChart por marco)
+      wsManager.subscribe(symbol, handleWebSocketMessage, bybitInterval);
 
       log.ws(symbol, `Suscrito a WebSocket @ ${bybitInterval}`);
     }
@@ -3143,7 +3170,7 @@ const MiniChart = forwardRef(({
 
       // 🎯 MODIFICADO: Solo desuscribir WebSocket si NO está en modo backtesting
       if (!backtestingMode) {
-        wsManager.unsubscribe(symbol, handleWebSocketMessage);
+        wsManager.unsubscribe(symbol, handleWebSocketMessage, getBybitInterval(interval));
       }
 
       if (animationFrameRef.current) {

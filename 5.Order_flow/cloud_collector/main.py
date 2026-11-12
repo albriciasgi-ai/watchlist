@@ -157,7 +157,7 @@ async def root():
 @app.get("/health")
 async def health():
     """Health check para Northflank."""
-    stats = collector.get_stats() if collector else {}
+    stats = await asyncio.to_thread(collector.get_stats) if collector else {}
     return {
         "status": "healthy",
         "timestamp": int(time.time() * 1000),
@@ -219,7 +219,8 @@ async def get_footprints(
         raise HTTPException(status_code=503, detail="Collector no inicializado")
 
     try:
-        footprints = collector.get_footprints(symbol, interval, hours)
+        # En un hilo: leer varios dias de footprints no debe trabar el bucle (WebSocket y descargas)
+        footprints = await asyncio.to_thread(collector.get_footprints, symbol, interval, hours)
 
         return {
             "symbol": symbol,
@@ -243,7 +244,7 @@ async def get_latest_footprint(symbol: str):
     if not collector:
         raise HTTPException(status_code=503, detail="Collector no inicializado")
 
-    footprints = collector.get_footprints(symbol, INTERVAL, hours=1)
+    footprints = await asyncio.to_thread(collector.get_footprints, symbol, INTERVAL, 1)
 
     if not footprints:
         return {"symbol": symbol, "footprint": None}
@@ -260,7 +261,7 @@ async def get_stats():
     if not collector:
         raise HTTPException(status_code=503, detail="Collector no inicializado")
 
-    return collector.get_stats()
+    return await asyncio.to_thread(collector.get_stats)
 
 
 @app.get("/api/symbols")
@@ -278,7 +279,7 @@ async def flush_to_disk():
     if not collector:
         raise HTTPException(status_code=503, detail="Collector no inicializado")
 
-    collector.flush_all()
+    await collector.flush_all_async()
     return {"status": "flushed", "timestamp": int(time.time() * 1000)}
 
 

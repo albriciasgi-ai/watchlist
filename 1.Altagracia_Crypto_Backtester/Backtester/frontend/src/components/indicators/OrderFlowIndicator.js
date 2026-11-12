@@ -523,8 +523,23 @@ class OrderFlowIndicator extends IndicatorBase {
     if (this.config.showDelta && fullMode) {
       this.renderDelta(ctx, footprint, unitX, unitWidth, low, priceToY);
     }
+    // Dia en vivo (suite) con un hueco de grabacion en esta vela: sus trades estan incompletos
+    if (footprint.gap && footprintWidth >= 24) {
+      this.renderPartialMark(ctx, footprintX, footprintWidth, priceToY(high));
+    }
 
     this._unitTargets(candle, footprint, unitX, unitWidth, { left: footprintX, right: footprintX + footprintWidth }, priceToY, fullMode);
+  }
+
+  /** Aviso sobre el footprint de una vela que la grabacion no cubrio entera (App 1 no lo usa: sus dias son oficiales) */
+  renderPartialMark(ctx, x, width, topY) {
+    ctx.save();
+    ctx.font = `600 10px ${isNewTheme() ? THEME.font : 'Arial'}`;
+    ctx.fillStyle = isNewTheme() ? THEME.textMuted : '#888';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('parcial', x + width / 2, topY - 3);
+    ctx.restore();
   }
 
   renderJapaneseCandle(ctx, candle, x, width, priceToY, high, low) {

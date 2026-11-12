@@ -193,3 +193,18 @@ precio fino y el flujo, igual que de un dia oficial. Sirve para los dias que Byb
 Probado en el PC con BTC, ETH y XRP: los 18 minutos completos grabados coincidieron exactos con las
 velas de 1 minuto oficiales de Bybit en volumen y cierre, y un reinicio brusco recupero lo guardado y
 anoto el hueco. Falta comparar un dia completo grabado en la nube contra el archivo oficial de Bybit.
+
+
+## Footprints guardados fuera del bucle (12/11/2026)
+
+**Problema:** cada 10 footprints de una moneda, `_flush_to_disk` releia, ordenaba y reescribia todo el dia comprimido (JSON) dentro del bucle de asyncio. Con 20 monedas y poca CPU el bucle se trababa hasta 30 s: `/health` tardaba de 1 a 30 s y las descargas de `/api/tape/{symbol}/{day}` se quedaban a mitad (BTC: 0.36 de 1.9 MB en minutos). El grabador del PC nunca recibia la nube.
+
+**Cambios** (`footprint_collector.py`, `main.py`):
+- `_complete_footprint` solo marca la moneda; `_flush_loop` (cada 5 s) escribe en un hilo con `asyncio.to_thread`.
+- Un footprint por linea, en miembros gzip agregados al final del archivo del dia: ya no se relee el dia al guardar. Nivel de compresion 6.
+- Los archivos de antes (un arreglo JSON) se leen igual y se pasan a lineas la primera vez que se agrega. Un final cortado por un apagado se repara antes de agregar.
+- `/api/footprints`, `/api/footprints/{s}/latest`, `/api/stats` y `/health` leen en un hilo; `/api/flush` guarda en un hilo.
+- La respuesta de `/api/footprints` no cambia (App 9 sigue igual).
+- Pruebas: `tests/footprint_storage_checks.py` (12) y las 22 de `tape_checks.py`.
+
+**Desplegado:** rama `deploy` de `albriciasgi-ai/footprint-collector`, commit baad6bc. Northflank lo construye solo; el despliegue se hace con "Deploy" en Builds.
