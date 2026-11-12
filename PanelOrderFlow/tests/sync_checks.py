@@ -86,15 +86,38 @@ try:
             return b"x" * 40
         def __enter__(self): return self
         def __exit__(self, *a): return False
-    real_urlopen = sn.urllib.request.urlopen
+    real_urlopen, real_httpx = sn.urllib.request.urlopen, sn.USE_HTTPX
     sn.urllib.request.urlopen = lambda *a, **k: _Resp()
+    sn.USE_HTTPX = False
     try:
         sn.download("http://nube/x", tmp / "d.tape")
-        check("descarga incompleta rechazada", False)
+        check("descarga incompleta rechazada (urllib)", False)
     except ValueError:
-        check("descarga incompleta rechazada", True)
+        check("descarga incompleta rechazada (urllib)", True)
     finally:
-        sn.urllib.request.urlopen = real_urlopen
+        sn.urllib.request.urlopen, sn.USE_HTTPX = real_urlopen, real_httpx
+
+    # Con httpx (lo normal): completa se guarda, cortada se rechaza
+    if sn.USE_HTTPX:
+        class _Stream:
+            def __init__(self, body, length): self.body, self.headers = body, {"content-length": str(length)}
+            def raise_for_status(self): pass
+            def iter_bytes(self, n): yield from (self.body[i:i + n] for i in range(0, len(self.body), n))
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        real_stream = sn.httpx.stream
+        try:
+            sn.httpx.stream = lambda *a, **k: _Stream(b"y" * 100, 100)
+            ok = sn.download("http://nube/x", tmp / "e.tape").read_bytes() == b"y" * 100
+            check("descarga completa con httpx", ok)
+            sn.httpx.stream = lambda *a, **k: _Stream(b"y" * 40, 100)
+            try:
+                sn.download("http://nube/x", tmp / "f.tape")
+                check("descarga incompleta rechazada (httpx)", False)
+            except ValueError:
+                check("descarga incompleta rechazada (httpx)", True)
+        finally:
+            sn.httpx.stream = real_stream
     check("donde cubre la nube manda la nube", all(src[m] == 1000 for m in range(20)) and all(src[m] == 1000 for m in range(30, 59)))
     check("el corte de la nube se llena con el PC", all(src[m] == 1001 for m in range(20, 30)))
     check("despues del ultimo guardado de la nube sigue el PC", all(src[m] == 1001 for m in range(60, 70)))

@@ -79,6 +79,7 @@ También pidió ver los íconos posibles para la app.
    - **Step parejo:** sale del rango típico de las velas, unos 10 niveles. En BTC 15m da 20, como la App 1 del usuario.
    - **Reabrir la app:** se reinicia sola si el código cambió. La X solo la ocultaba en la bandeja y seguía corriendo la versión vieja.
    - **Bandeja:** "Reiniciar" y "Registro del servidor".
+   - **Nube en el PC:** `sync_nube.py` baja con httpx. Con `urllib`, el proxy de Northflank cortaba a mitad las descargas de BTC y ETH.
 
 **IMPORTANTE:**
 - Cerrar la suite desde la bandeja ("Salir") y abrirla de nuevo.

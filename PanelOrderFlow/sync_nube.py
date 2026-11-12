@@ -53,10 +53,31 @@ def get_json(url: str, timeout=60):
         return json.load(r)
 
 
+try:
+    import httpx  # el del servidor de la suite y del backend 11000
+except ImportError:  # sin httpx (otro Python) se baja con urllib
+    httpx = None
+USE_HTTPX = httpx is not None
+
+
 def download(url: str, dst: Path, timeout=300):
+    """Baja a un temporal y lo devuelve; una descarga incompleta lanza ValueError.
+    Con httpx: urllib pide "Connection: close" y el proxy de Northflank cerraba las descargas lentas a mitad
+    (BTC: 0.68 de 2.08 MB, con un error de SSL). httpx mantiene la conexion y la baja entera."""
     tmp = dst.with_name(dst.name + ".descarga")
-    req = urllib.request.Request(url, headers={"User-Agent": "sync-nube"})
     got = 0
+    if USE_HTTPX:
+        with httpx.stream("GET", url, timeout=httpx.Timeout(timeout, connect=30.0),
+                          headers={"User-Agent": "sync-nube"}) as r, open(tmp, "wb") as f:
+            r.raise_for_status()
+            expected = r.headers.get("content-length")
+            for chunk in r.iter_bytes(1 << 16):
+                f.write(chunk)
+                got += len(chunk)
+        if expected is not None and got != int(expected):
+            raise ValueError(f"descarga incompleta: {got} de {expected} bytes")
+        return tmp
+    req = urllib.request.Request(url, headers={"User-Agent": "sync-nube"})
     with urllib.request.urlopen(req, timeout=timeout) as r, open(tmp, "wb") as f:
         expected = r.headers.get("Content-Length")
         while True:
