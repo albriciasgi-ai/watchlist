@@ -58,14 +58,16 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 **Pedido:** primer paso de la integración: que el order flow en vivo sea igual al de App 1. Un solo almacén (el de App 1, desde los archivos diarios de Bybit), el collector de la nube para los días recientes que el almacén aún no tiene, y el backend local para las últimas horas.
 
 **Cambios:**
-1. **Collector:** además de los footprints de 1 minuto (App 9 los sigue usando), graba todos los trades en `.tape`, el mismo formato de `OrderFlowData/tools/ingest.py`. Un archivo por moneda y día UTC, guardado cada 5 min, con los huecos anotados (cortes y reinicios). Rutas `/api/tape/days` y `/api/tape/{symbol}/{day}`
+1. **Collector:** además de los footprints de 1 minuto (App 9 los sigue usando), graba todos los trades en `.tape`, el mismo formato de `OrderFlowData/tools/ingest.py`. Un archivo por moneda y día UTC, con los huecos anotados (cortes y reinicios). Cada 5 min los trades nuevos se suman al archivo del disco: en memoria quedan solo esos minutos, porque el servicio tiene 512 MB. Rutas `/api/tape/days` y `/api/tape/{symbol}/{day}`
 2. **`/health`:** ya no descomprime todos los archivos en cada consulta
 3. **`PanelOrderFlow/sync_nube.py`:** baja esos días a `OrderFlowData/live/` y arma su almacén y su flujo con `build_store.py` y `build_flow.py` sin cambios. El día oficial siempre manda
-4. **Pruebas:** `5.Order_flow/cloud_collector/tests/tape_checks.py` (16 sin conexión)
+4. **Pruebas:** `5.Order_flow/cloud_collector/tests/tape_checks.py` (22 sin conexión)
+5. **Desplegado el 12/11:** Northflank construye desde otro repositorio, `albriciasgi-ai/footprint-collector`, rama `deploy` (commit 89543a2), no desde este. Construye solo al subir, pero el despliegue se hace a mano con "Deploy" en Builds. `MAX_DAYS=0` sigue siendo sin límite
 
 **IMPORTANTE:**
-- Hay que desplegar el collector en Northflank para que empiece a grabar; mientras tanto la nube sigue como estaba.
-- Probado en el PC con BTC, ETH y XRP: 18 de 18 minutos iguales a las velas oficiales de Bybit en volumen y cierre; XRP pasa de celdas de 0.005 a 0.0001. Falta comparar un día completo de la nube contra el archivo oficial.
+- La nube graba trades desde el 12/11 a las 02:03 UTC (20 monedas; TONUSDT está cerrada en Bybit). Ese día queda incompleto por empezar a mitad.
+- Probado en el PC (12 de 12 minutos y 18 de 18 antes) y en la nube (12 de 12): iguales a las velas oficiales de Bybit en volumen y cierre; XRP pasa de celdas de 0.005 a 0.0001. Falta comparar un día completo de la nube contra el archivo oficial.
+- Un cambio al collector hay que copiarlo también a la rama `deploy` de `footprint-collector`.
 - Falta que el lector de App 1 (`footprint_store.py`) lea `OrderFlowData/live/` cuando el día oficial no existe: es el siguiente paso de la integración.
 
 **Ver:** `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Trades en el formato del almacen de App 1" y `PanelOrderFlow/LEEME.md`

@@ -5,10 +5,14 @@
 # build_store.py y build_flow.py sacan de el el almacen por minuto y precio y el flujo, igual
 # que de un dia oficial. Sirve para los dias que Bybit aun no publico (o que no se han bajado).
 #
-# - El dia en curso se reescribe cada SNAPSHOT_SECONDS (temporal + reemplazo).
+# - En memoria quedan solo los trades desde el ultimo guardado. Cada SNAPSHOT_SECONDS se suman al
+#   archivo del dia en disco (se lee, se une y se reescribe con temporal + reemplazo), una moneda a
+#   la vez: asi la memoria no crece con el dia (el servicio tiene 512 MB y BTC pasa de 2 millones
+#   de trades por dia).
 # - Se anotan los huecos: cortes del WebSocket y reinicios del collector. Un dia sin huecos
 #   y grabado desde su inicio queda "complete".
-# - Al reiniciar se recarga el dia en curso guardado y el hueco desde el ultimo guardado queda anotado.
+# - Al reiniciar se toma la cabecera del dia guardado y el hueco desde su ultimo guardado queda
+#   anotado; un dia anterior que quedo sin cerrar se cierra con su hueco hasta el final del dia.
 import asyncio
 import datetime as dt
 import json
@@ -28,6 +32,8 @@ logger = logging.getLogger(__name__)
 
 DAY_MS = 24 * 60 * 60 * 1000
 DAY_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+LEVEL_OPEN = 6    # compresion del dia en curso: 4 veces mas rapida que 9 y 2% mas grande
+LEVEL_FINAL = 9   # compresion del dia cerrado, como ingest.py
 
 
 def day_of(ms: int) -> str:
@@ -56,8 +62,12 @@ def to_scaled_int(text: str, dec: int) -> Tuple[int, bool]:
     return (-v if neg else v), exact
 
 
+class UnreadableDay(Exception):
+    """El archivo del dia en disco no se puede leer."""
+
+
 class DayBuffer:
-    """Trades de una moneda en un dia UTC."""
+    """Trades de una moneda en un dia UTC que aun no estan en disco, mas el estado del dia."""
 
     def __init__(self, symbol: str, day: str, price_dec: int, qty_dec: int):
         self.symbol = symbol
@@ -73,7 +83,7 @@ class DayBuffer:
         self.covered_from: Optional[int] = None  # primera hora grabada (ms)
         self.inexact = 0                     # precios o cantidades con mas decimales que la escala
         self.dirty = False
-        self.finalized = False
+        self.saved = 0                       # trades del dia ya escritos en disco
 
     def add(self, t_ms: int, price: str, size: str, side: str, rpi: bool):
         p, ok_p = to_scaled_int(price, self.price_dec)
@@ -89,24 +99,24 @@ class DayBuffer:
             self.covered_from = t_ms
         self.dirty = True
 
-    def load(self, meta, t, p, q, side, rpi):
-        self.t.extend(t.tolist()); self.p.extend(p.tolist()); self.q.extend(q.tolist())
-        self.side.extend(side.tolist()); self.rpi.extend(np.asarray(rpi, dtype=np.int8).tolist())
+    def load_meta(self, meta):
         self.gaps = [list(g) for g in meta.get("gaps", [])]
         self.covered_from = meta.get("covered_from")
         self.inexact = int(meta.get("inexact", 0))
+        self.saved = int(meta.get("n", 0))
 
-    def snapshot(self):
-        """Copia de los arreglos, ordenada por hora (estable), lista para escribir en otro hilo."""
-        t = np.frombuffer(self.t, dtype=np.int64).copy()
-        order = np.argsort(t, kind="stable")
-        return (
-            t[order],
-            np.frombuffer(self.p, dtype=np.int64).copy()[order],
-            np.frombuffer(self.q, dtype=np.int64).copy()[order],
-            np.frombuffer(self.side, dtype=np.int8).copy()[order],
-            np.frombuffer(self.rpi, dtype=np.int8).copy()[order],
-        )
+    def take(self):
+        """Saca los trades pendientes (quedan arreglos vacios para los que sigan llegando)."""
+        out = (self.t, self.p, self.q, self.side, self.rpi)
+        self.t, self.p, self.q, self.side, self.rpi = array('q'), array('q'), array('q'), array('b'), array('b')
+        return out
+
+    def give_back(self, taken):
+        """Devuelve trades sacados con take() si no se pudieron escribir (van antes que los nuevos)."""
+        cur = (self.t, self.p, self.q, self.side, self.rpi)
+        for a, b in zip(taken, cur):
+            a.extend(b)
+        self.t, self.p, self.q, self.side, self.rpi = taken
 
     def meta(self, now_ms: int, final: bool) -> dict:
         start = day_start_ms(self.day)
@@ -158,32 +168,40 @@ class TapeRecorder:
         logger.info(f"[TAPE] Escalas: {self.scales}")
 
     def resume_today(self):
-        """Recarga el dia en curso ya guardado y anota el hueco desde su ultimo guardado."""
+        """Toma la cabecera del dia en curso guardado y anota el hueco desde su ultimo guardado.
+        Un dia anterior que quedo abierto (el collector se detuvo antes de cerrarlo) se cierra
+        con su hueco hasta el final del dia en el proximo guardado."""
         today = day_of(self.started_at)
-        for s in self.symbols:
-            path = self.path(s, today)
-            if s not in self.scales or not path.exists():
-                continue
-            try:
-                meta, t, p, q, side, rpi = read_tape(path)
-                pdec, qdec = self.scales[s]
-                if meta.get("price_scale") != 10 ** pdec or meta.get("qty_scale") != 10 ** qdec:
-                    logger.warning(f"[TAPE] {s} {today}: escala distinta a la guardada; se empieza un archivo nuevo")
-                    path.rename(path.with_name(path.stem + f".escala-{self.started_at}.tape"))
+        yesterday = day_of(day_start_ms(today) - 1)
+        for day in (yesterday, today):
+            for s in self.symbols:
+                path = self.path(s, day)
+                if s not in self.scales or not path.exists():
                     continue
-                buf = DayBuffer(s, today, pdec, qdec)
-                buf.load(meta, t, p, q, side, rpi)
-                last = int(meta.get("saved_at") or (int(t[-1]) // 10 if len(t) else self.started_at))
-                buf.gaps.append([last, self.started_at])
-                buf.dirty = True
-                self.buffers[(s, today)] = buf
-                logger.info(f"[TAPE] {s} {today}: recargados {len(t)} trades; hueco desde {last}")
-            except Exception as e:
-                logger.error(f"[TAPE] {s} {today}: no se pudo recargar ({e}); se conserva el archivo aparte")
                 try:
-                    path.rename(path.with_name(path.stem + f".ilegible-{self.started_at}.tape"))
-                except Exception:
-                    pass
+                    meta = read_meta(path)
+                    if day != today and meta.get("final"):
+                        continue
+                    pdec, qdec = self.scales[s]
+                    if meta.get("price_scale") != 10 ** pdec or meta.get("qty_scale") != 10 ** qdec:
+                        logger.warning(f"[TAPE] {s} {day}: escala distinta a la guardada; se empieza un archivo nuevo")
+                        path.rename(path.with_name(path.stem + f".escala-{self.started_at}.tape"))
+                        continue
+                    buf = DayBuffer(s, day, pdec, qdec)
+                    buf.load_meta(meta)
+                    last = int(meta.get("saved_at") or self.started_at)
+                    end = min(self.started_at, day_start_ms(day) + DAY_MS)
+                    if end > last:
+                        buf.gaps.append([last, end])
+                    buf.dirty = True
+                    self.buffers[(s, day)] = buf
+                    logger.info(f"[TAPE] {s} {day}: {buf.saved} trades guardados; hueco desde {last}")
+                except Exception as e:
+                    logger.error(f"[TAPE] {s} {day}: no se pudo leer ({e}); se conserva el archivo aparte")
+                    try:
+                        path.rename(path.with_name(path.stem + f".ilegible-{self.started_at}.tape"))
+                    except Exception:
+                        pass
 
     # ---------- trades y conexion ----------
     def path(self, symbol: str, day: str) -> Path:
@@ -233,32 +251,62 @@ class TapeRecorder:
                     self.buffers[(s, day)] = buf
 
     # ---------- escritura ----------
-    async def flush(self, final_all: bool = False):
-        """Escribe los dias con cambios. Un dia terminado hace 2 min se cierra y sale de memoria."""
+    def _merge_write(self, path: Path, meta: dict, new, level: int) -> int:
+        """Une lo ya guardado del dia con los trades nuevos, ordena por hora y reescribe. En otro hilo."""
+        t, p, q, side, rpi = (np.frombuffer(a, dtype=np.int64 if a.typecode == 'q' else np.int8) for a in new)
+        if path.exists():
+            try:
+                _, t0, p0, q0, s0, r0 = read_tape(path)
+            except (OSError, MemoryError):
+                raise
+            except Exception as e:
+                raise UnreadableDay(str(e)) from e
+            t = np.concatenate([t0, t]); p = np.concatenate([p0, p]); q = np.concatenate([q0, q])
+            side = np.concatenate([s0.astype(np.int8), side]); rpi = np.concatenate([r0.astype(np.int8), rpi])
+            del t0, p0, q0, s0, r0
+        if len(t) == 0:
+            return 0
+        order = np.argsort(t, kind="stable")  # estable: lo guardado antes queda primero en la misma hora
+        write_tape(path, meta, t[order], p[order], q[order], side[order], rpi[order], level=level)
+        return len(t)
+
+    async def flush(self):
+        """Suma al disco los trades pendientes. Un dia terminado hace 2 min se cierra y sale de memoria."""
         async with self._lock:
-            now = int(time.time() * 1000)
             for key in list(self.buffers):
                 buf = self.buffers[key]
+                now = int(time.time() * 1000)
                 ended = now >= day_start_ms(buf.day) + DAY_MS + 120_000
                 if not buf.dirty and not ended:
                     continue
-                if len(buf.t):
-                    arrays = buf.snapshot()
+                path = self.path(buf.symbol, buf.day)
+                if len(buf.t) or path.exists():
+                    taken = buf.take()
                     meta = buf.meta(now, final=ended)
-                    path = self.path(buf.symbol, buf.day)
                     try:
                         path.parent.mkdir(parents=True, exist_ok=True)
-                        await asyncio.to_thread(write_tape, path, meta, *arrays)
+                        n = await asyncio.to_thread(self._merge_write, path, meta, taken,
+                                                    LEVEL_FINAL if ended else LEVEL_OPEN)
+                        buf.saved = n
                         self.stats["files_written"] += 1
                         self.stats["last_write"] = now
-                        buf.dirty = False
+                        buf.dirty = bool(len(buf.t))
                     except Exception as e:
+                        buf.give_back(taken)
                         self.stats["write_errors"] += 1
                         logger.error(f"[TAPE] {buf.symbol} {buf.day}: no se pudo escribir ({e})")
+                        if isinstance(e, UnreadableDay):
+                            # Archivo del disco ilegible: se aparta y lo que tenia queda como hueco
+                            try:
+                                path.rename(path.with_name(path.stem + f".ilegible-{now}.tape"))
+                                buf.gaps.append([buf.covered_from or day_start_ms(buf.day), now])
+                                buf.saved = 0
+                            except Exception:
+                                pass
                         continue
                 if ended:
                     del self.buffers[key]
-                    logger.info(f"[TAPE] {buf.symbol} {buf.day}: dia cerrado ({len(buf.t)} trades)")
+                    logger.info(f"[TAPE] {buf.symbol} {buf.day}: dia cerrado ({buf.saved} trades)")
 
     async def run(self):
         while True:
@@ -301,4 +349,5 @@ class TapeRecorder:
     def get_stats(self) -> dict:
         return dict(self.stats, days_in_memory=len(self.buffers),
                     trades_in_memory=sum(len(b.t) for b in self.buffers.values()),
+                    trades_saved_open_days=sum(b.saved for b in self.buffers.values()),
                     disconnected=self.disconnected_at is not None)

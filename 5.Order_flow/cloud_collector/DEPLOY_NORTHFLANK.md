@@ -167,8 +167,13 @@ en el formato compacto del almacen de App 1 (`.tape`, el mismo que `OrderFlowDat
 arma desde public.bybit.com). De ahi `build_store.py` y `build_flow.py` sacan el almacen por minuto y
 precio fino y el flujo, igual que de un dia oficial. Sirve para los dias que Bybit aun no publico.
 
-- **Archivos:** `/data/tape/BTCUSDT/2026/BTCUSDT_2026-11-12.tape`, uno por moneda y dia UTC. El dia en
-  curso se reescribe cada `TAPE_SNAPSHOT_SECONDS` (300 por defecto) con temporal y reemplazo.
+- **Archivos:** `/data/tape/BTCUSDT/2026/BTCUSDT_2026-11-12.tape`, uno por moneda y dia UTC. Cada
+  `TAPE_SNAPSHOT_SECONDS` (300 por defecto) los trades nuevos se suman al archivo del dia (temporal y
+  reemplazo, una moneda a la vez). En memoria quedan solo los ultimos minutos: el servicio tiene
+  512 MB y un dia de BTC pasa de 2 millones de trades. El dia en curso usa compresion 6 y el dia
+  cerrado 9, como `ingest.py`.
+- **Reinicios:** se anota el hueco desde el ultimo guardado; un dia anterior que quedo sin cerrar se
+  cierra con su hueco hasta medianoche. Un archivo del dia ilegible se aparta (`.ilegible-...`).
 - **Huecos:** los cortes del WebSocket y los reinicios quedan anotados en la cabecera (`gaps`). Un dia
   grabado desde su inicio y sin huecos queda `complete`.
 - **Rutas nuevas:**
@@ -177,9 +182,13 @@ precio fino y el flujo, igual que de un dia oficial. Sirve para los dias que Byb
 - **Variables nuevas:** `TAPE_KEEP_DAYS` (30) y `TAPE_SNAPSHOT_SECONDS` (300).
 - **Espacio:** un dia de BTC pesa unos 3 MB; las 21 monedas, del orden de 15 a 20 MB por dia
   (unos 0.5 GB con 30 dias), aparte de los footprints JSON.
+- **`MAX_DAYS`:** `0` = sin limite (no se borran footprints), como se puso el 2/11 en la rama `deploy`.
+- **Despliegue:** Northflank construye desde el repositorio `albriciasgi-ai/footprint-collector`,
+  rama `deploy` (no desde este repositorio): hay que copiar ahi estos archivos. Construye solo al
+  subir, pero el despliegue se hace a mano con "Deploy" en Builds.
 - **`/health`** ya no descomprime todos los archivos (tardaba mas de un minuto).
 - **En tu PC:** `PanelOrderFlow/sync_nube.py` baja esos dias a `OrderFlowData/live/` y arma su almacen.
-- **Pruebas sin conexion:** `python -B tests/tape_checks.py` (16).
+- **Pruebas sin conexion:** `python -B tests/tape_checks.py` (22).
 
 Probado en el PC con BTC, ETH y XRP: los 18 minutos completos grabados coincidieron exactos con las
 velas de 1 minuto oficiales de Bybit en volumen y cierre, y un reinicio brusco recupero lo guardado y

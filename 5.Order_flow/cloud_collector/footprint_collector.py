@@ -330,7 +330,7 @@ class FootprintCollector:
         footprints = []
 
         # Buscar archivos de las fechas relevantes
-        for days_ago in range(min(hours // 24 + 2, self.max_days)):
+        for days_ago in range(hours // 24 + 2 if self.max_days <= 0 else min(hours // 24 + 2, self.max_days)):
             date = now - timedelta(days=days_ago)
             date_str = date.strftime("%Y-%m-%d")
             file_path = symbol_dir / f"{date_str}.json.gz"
@@ -362,8 +362,10 @@ class FootprintCollector:
         return footprints
 
     def cleanup_old_files(self) -> int:
-        """Elimina archivos mas antiguos que max_days."""
+        """Elimina archivos mas antiguos que max_days (0 = sin limite: no borra nada)."""
         deleted = 0
+        if self.max_days <= 0:
+            return 0
         cutoff = datetime.now() - timedelta(days=self.max_days)
 
         for symbol in self.symbols:

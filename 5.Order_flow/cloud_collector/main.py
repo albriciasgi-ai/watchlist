@@ -39,9 +39,9 @@ SYMBOLS = os.environ.get("SYMBOLS", "BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT,ADAUSDT").s
 # Intervalo de footprint (1 minuto por defecto)
 INTERVAL = os.environ.get("INTERVAL", "1")
 
-# Dias maximos a mantener (limpieza automatica)
-# 365 dias = ~2.5 GB para 21 simbolos a 1 min (cabe en volumen de 6 GB)
-MAX_DAYS = int(os.environ.get("MAX_DAYS", "365"))
+# Dias maximos a mantener los footprints (limpieza automatica). 0 = sin limite: se guarda todo
+# el historico (lo que pidio el usuario el 2/11/2026 en la rama deploy de footprint-collector)
+MAX_DAYS = int(os.environ.get("MAX_DAYS", "0"))
 
 # Trades en el formato del almacen de App 1 (.tape): dias a conservar y cada cuanto se guardan
 TAPE_KEEP_DAYS = int(os.environ.get("TAPE_KEEP_DAYS", "30"))
@@ -197,7 +197,7 @@ async def tape_file(symbol: str, day: str):
 @app.get("/api/footprints/{symbol}")
 async def get_footprints(
     symbol: str,
-    hours: int = Query(default=12, ge=1, le=24*MAX_DAYS, description="Horas de historico"),
+    hours: int = Query(default=12, ge=1, le=24*(MAX_DAYS or 3650), description="Horas de historico"),
     interval: str = Query(default="1", description="Intervalo de vela")
 ):
     """

@@ -1,6 +1,7 @@
 # tape_format.py - Formato compacto de trades (OFT1), el mismo de OrderFlowData/tools/ingest.py
 #
-# Copia exacta de write_tape/read_tape de ingest.py, sin sus dependencias de Windows, para que
+# Copia exacta de write_tape/read_tape de ingest.py (solo se agrego el nivel de compresion, que
+# no cambia el formato), sin sus dependencias de Windows, para que
 # el collector en la nube grabe archivos que build_store.py y build_flow.py leen igual que los
 # que se bajan de public.bybit.com. Si cambia el formato en ingest.py, hay que cambiarlo aqui.
 #
@@ -42,7 +43,7 @@ def unzig(z):
     return (z >> np.uint64(1)).astype(np.int64) ^ -(z & np.uint64(1)).astype(np.int64)
 
 
-def write_tape(path, meta, t, p, q, side, rpi):
+def write_tape(path, meta, t, p, q, side, rpi, level=9):
     n = len(t)
     dt_ = np.diff(t, prepend=t[0]).astype(np.uint64)
     dp = zig(np.diff(p, prepend=p[0]).astype(np.int64))
@@ -50,9 +51,9 @@ def write_tape(path, meta, t, p, q, side, rpi):
     blobs = []
     for name, arr in (('dt', dt_), ('dp', dp), ('q', q.astype(np.uint64))):
         k, b = planes_encode(arr)
-        z = zlib.compress(b, 9); secs.append({'name': name, 'planes': k, 'zlen': len(z)}); blobs.append(z)
+        z = zlib.compress(b, level); secs.append({'name': name, 'planes': k, 'zlen': len(z)}); blobs.append(z)
     for name, arr in (('side', side > 0), ('rpi', rpi > 0)):
-        z = zlib.compress(np.packbits(arr).tobytes(), 9); secs.append({'name': name, 'planes': 0, 'zlen': len(z)}); blobs.append(z)
+        z = zlib.compress(np.packbits(arr).tobytes(), level); secs.append({'name': name, 'planes': 0, 'zlen': len(z)}); blobs.append(z)
     meta = dict(meta, n=n, t0=int(t[0]), p0=int(p[0]), sections=secs, t_unit='1e-4s')
     head = json.dumps(meta, separators=(',', ':')).encode()
     tmp = str(path) + '.tmp'
