@@ -77,6 +77,9 @@ CATALOG.update({
 })
 FLOW_CODES = {"XD", "SM", "BR", "GR"}
 FLOW_DIR = Path(os.environ.get("ORDERFLOW_FLOW", r"C:\Users\inven\OrderFlowData\flow"))
+# Flujo de los dias de la nube (live=True), como footprint_store: OrderFlowData/live/flow, junto a live/store.
+# None = al lado de fs.LIVE_DIR. ORDERFLOW_LIVE_FLOW cambia la carpeta
+LIVE_FLOW_DIR = Path(os.environ["ORDERFLOW_LIVE_FLOW"]) if os.environ.get("ORDERFLOW_LIVE_FLOW") else None
 EXTREME_SHARE = 0.95  # Delta en 95% o más de su máximo o mínimo, como la celda cian o magenta del libro
 VOLUME_FILTERED = {"ST", "VI", "IR", "RD", "VD", "TP", "OP", "RX"}
 DEFAULT_VOL_FILTER = 2.0
@@ -186,8 +189,13 @@ def _day_key(minute):
     return dt.datetime.fromtimestamp(minute * 60, dt.timezone.utc).date()
 
 
-def _load_bars(symbol, tf, day, known_min):
-    """Velas cerradas de un día, con sus hechos. Un día completo se guarda en caché."""
+def _load_bars(symbol, tf, day, known_min, live=False):
+    """Velas cerradas de un día, con sus hechos. Un día completo se guarda en caché.
+
+    live=True: si falta el día oficial, se lee el de la nube y el PC (footprint_store con live), con el flujo
+    de live/flow. Ahí no cuentan las velas que tocan un hueco de la grabación ni las que pasan del último
+    guardado. El día oficial siempre manda. Con live=False (App 1) todo queda como antes.
+    """
     day_start = int(dt.datetime(day.year, day.month, day.day, tzinfo=dt.timezone.utc).timestamp()) // 60
     complete = day_start + 1440 <= known_min
     key = (symbol, tf, day.isoformat())
@@ -196,11 +204,15 @@ def _load_bars(symbol, tf, day, known_min):
         with _lock:
             cached = _cache.get(key)
         # Un día calculado antes de armar su flujo se recalcula cuando el flujo aparece
-        if cached is not None and (cached[1] or not flow_path.exists()):
+        if cached is not None and (cached[1] or not flow_path.exists()) and                 (not live or cached[0] or fs._day_path(symbol, day.isoformat()).exists()):
             with _lock:
                 _cache.move_to_end(key)
             return cached[0]
-    data = fs._load_day(symbol, day.isoformat())
+    data = fs._load_day(symbol, day.isoformat(), live) if live else fs._load_day(symbol, day.isoformat())
+    if data is not None and data.get("_live"):
+        return _load_live_bars(symbol, tf, day, day_start, known_min, data, key)
+    if live and data is None:
+        return []  # Ni oficial ni de la nube: no se guarda, el día puede aparecer después
     flow = _load_flow(symbol, day)
     if data is None:
         result = []
@@ -211,6 +223,42 @@ def _load_bars(symbol, tf, day, known_min):
             _cache[key] = (result, flow is not None)
             while len(_cache) > MAX_CACHED_DAYS:
                 _cache.popitem(last=False)
+    return result
+
+
+def _live_flow_path(symbol, day):
+    root = LIVE_FLOW_DIR if LIVE_FLOW_DIR is not None else fs.LIVE_DIR.parent / "flow"
+    return root / symbol / day.isoformat()[:4] / f"{symbol}_{day.isoformat()}.npz"
+
+
+def _load_live_bars(symbol, tf, day, day_start, known_min, data, key):
+    """Día de la nube y el PC: cambia con cada sincronización, así que el caché se valida con sus archivos."""
+    path = _live_flow_path(symbol, day)
+    try:
+        flow_mtime = path.stat().st_mtime
+    except OSError:
+        flow_mtime = None
+    until = data.get("_until")
+    cut = min(known_min, day_start + 1440)
+    if until is not None:
+        cut = min(cut, until // 60000)  # la vela que pasa del último guardado aún no está completa
+    stamp = (data.get("_mtime"), flow_mtime, cut)
+    live_key = key + ("live",)
+    with _lock:
+        cached = _cache.get(live_key)
+        if cached is not None and cached[2] == stamp:
+            _cache.move_to_end(live_key)
+            return cached[0]
+    flow = None
+    if flow_mtime is not None:
+        with np.load(path) as z:
+            flow = {name: z[name] for name in z.files}
+    gaps = [(a // 60000, -(-b // 60000)) for a, b in data.get("_gaps") or []]
+    result = _compute_day(data, tf, cut, flow, gaps)
+    with _lock:
+        _cache[live_key] = (result, flow is not None, stamp)
+        while len(_cache) > MAX_CACHED_DAYS:
+            _cache.popitem(last=False)
     return result
 
 
@@ -248,7 +296,8 @@ def _flow_facts(flow, f, t0_min, tf, delta_minutes):
     f["big"] = (float(usd[k]), int(flow["os"][lo + k]), flow["op0"][lo + k] / ps, flow["op1"][lo + k] / ps)
 
 
-def _compute_day(data, tf, known_min, flow=None):
+def _compute_day(data, tf, known_min, flow=None, gaps=None):
+    """gaps: huecos de grabación en minutos [(inicio, fin)]; una vela que toca uno se omite (volumen incompleto)."""
     ps, qs, ticks = (int(x) for x in data["info"])
     m = data["m"]
     keep = m < known_min
@@ -265,6 +314,8 @@ def _compute_day(data, tf, known_min, flow=None):
     for a, e in zip(starts, ends):
         t0 = int(bar[a]) * tf
         if t0 + tf > known_min:
+            continue
+        if gaps and any(ga < t0 + tf and gb > t0 for ga, gb in gaps):
             continue
         ca, ce = np.searchsorted(data["cr"], [a, e])
         if ce <= ca:
@@ -424,12 +475,13 @@ def _atr(bars, period=14):
 
 
 def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DEFAULT_TARGET, band_days=3,
-           vol_filter=DEFAULT_VOL_FILTER):
+           vol_filter=DEFAULT_VOL_FILTER, live=False):
     """
     Elementos de las velas que empiezan entre start_ms y end_ms, y franjas nacidas hasta band_days
     antes. Solo velas cerradas antes de known_until_ms. Devuelve eventos y la tabla de cada vela.
     vol_filter: volumen mínimo de la vela, en veces la mediana de las 20 anteriores, para los
     elementos de VOLUME_FILTERED. 0 los muestra en todas las velas.
+    live: también los días de la nube y el PC donde falta el oficial (lo usa la app en tiempo real).
     """
     tf = int(interval_minutes)
     target = min(0.3, max(0.005, float(target)))
@@ -445,7 +497,7 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
     days, bars = [], []
     day = load_from
     while day <= last_day:
-        for f in _load_bars(symbol, tf, day, known_min):
+        for f in (_load_bars(symbol, tf, day, known_min, True) if live else _load_bars(symbol, tf, day, known_min)):
             f = dict(f)
             f["_day"] = day
             bars.append(f)

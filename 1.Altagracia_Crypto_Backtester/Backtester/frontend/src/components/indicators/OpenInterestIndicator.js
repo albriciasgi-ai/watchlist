@@ -68,6 +68,9 @@ class OpenInterestIndicator extends IndicatorBase {
     const pad = Math.max(last - first, OI_PAD_POINTS * Math.max(TF_MS[this.interval] || 0, OI_STEP_MS));
     const start = first - pad;
     const end = last + pad;
+    // Lo pedido después de ahora no existe todavía: en vivo (suite) se vuelve a pedir al abrir la vela siguiente.
+    // En reproducción las velas nunca pasan de ahora, así que no cambia nada
+    const knownTo = Math.min(end, Date.now());
 
     this._rangeLoading = true;
     this._isFetching = true;
@@ -86,7 +89,7 @@ class OpenInterestIndicator extends IndicatorBase {
       })
       .then(result => {
         this._rangeFrom = start;
-        this._rangeTo = end;
+        this._rangeTo = knownTo;
         if (result.success) this._mergeRange(result);
       })
       .catch(error => {

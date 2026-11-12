@@ -173,14 +173,16 @@ def match_recipes(bars, events, recipes, tf_minutes):
 
 
 def setups(symbol, interval_minutes, start_ms, end_ms, known_until_ms, recipes, target=oe.DEFAULT_TARGET,
-           vol_filter=oe.DEFAULT_VOL_FILTER):
-    """Coincidencias de las recetas con disparo entre start_ms y end_ms, conocidas antes de known_until_ms."""
+           vol_filter=oe.DEFAULT_VOL_FILTER, live=False):
+    """Coincidencias de las recetas con disparo entre start_ms y end_ms, conocidas antes de known_until_ms.
+    live: tambien los dias de la nube y el PC donde falta el oficial (app en tiempo real)."""
     tf = int(interval_minutes)
     clean = [r for r in (clean_recipe(x) for x in recipes) if r]
     if not clean:
         return {"matches": [], "known_until": known_until_ms}
     pad = (MAX_WINDOW + 25) * tf * 60000  # Velas previas para ventana, swing y EMA
-    result = oe.detect(symbol, tf, start_ms - pad, end_ms, known_until_ms, target, 0, vol_filter)
+    result = (oe.detect(symbol, tf, start_ms - pad, end_ms, known_until_ms, target, 0, vol_filter, live=True) if live
+              else oe.detect(symbol, tf, start_ms - pad, end_ms, known_until_ms, target, 0, vol_filter))
     matches = [m for m in match_recipes(result["bars"], result["events"], clean, tf) if m["t"] >= start_ms]
     return {"matches": matches, "known_until": result["known_until"], "warming": result["warming"]}
 

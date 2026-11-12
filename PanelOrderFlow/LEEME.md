@@ -86,3 +86,7 @@ C:\Python314\python.exe -B sync_nube.py --sin-nube
   `sync_nube.py --sin-nube` en un proceso aparte; cada 15 minutos baja también la nube. Estado en
   `GET http://127.0.0.1:11000/api/orderflow/local-tape`.
 - Pruebas: `C:\Python314\python.exe -B tests\sync_checks.py` (21).
+
+**Ajustes del 12/11 (segunda ronda de la suite):**
+- **Un solo grabador:** `local_tape.py` toma el candado `live/local/recorder.lock`. Graba el backend 11000 o el servidor de la suite (`12.AltagraciaTradingSuite`), el que arranque primero; el otro reintenta cada minuto y toma el relevo si el primero se cierra.
+- **Descargas de la nube:** una descarga que no llega al `Content-Length` se descarta, y el archivo se lee entero antes de reemplazar el anterior. Antes una conexión cortada dejaba un `.tape` incompleto y el día no se podía unir. Si un archivo de la nube resulta ilegible, el día se une solo con lo del PC y se borra su estado para volver a bajarlo.

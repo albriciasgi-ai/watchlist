@@ -37,6 +37,12 @@ os.environ.setdefault("ORDERFLOW_LIQ", str(DATA / "liquidations"))
 sys.path.insert(0, CONFIG["app1_backend"])
 import footprint_store  # noqa: E402
 import liq_store  # noqa: E402
+import candles  # noqa: E402  velas de Bybit, compartidas con market_routes
+import market_routes  # noqa: E402  indicadores en vivo (OI, VWAP, S&R, Elementos OF, patrones)
+import bot_routes  # noqa: E402  configuracion, riesgo, claves y ordenes del panel de trading
+import official  # noqa: E402  dias oficiales que faltan, con las herramientas del panel
+import recorder  # noqa: E402  grabacion propia de trades (live/local), un solo proceso a la vez
+from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
@@ -49,20 +55,42 @@ DRAWINGS_DIR = Path(CONFIG["data_dir"]) / "drawings"
 app = FastAPI(title="Altagracia Trading Suite", version="0.1.0")
 _http: Optional[httpx.AsyncClient] = None
 _candle_cache = {}
+app.include_router(market_routes.router)
 
 
 @app.on_event("startup")
 async def _startup():
     global _http
     _http = httpx.AsyncClient(timeout=httpx.Timeout(15.0, connect=5.0))
+    candles.set_client(_http)
     DRAWINGS_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        coins = SYMBOLS.load()
+    except Exception as e:
+        print(f"[SUITE] lista de monedas ilegible ({e}); se graban las de fabrica")
+        from symbols import DEFAULT_SYMBOLS
+        coins = list(DEFAULT_SYMBOLS)
+    await recorder.start(coins, DATA, SUITE_DIR.parent)
+    official.start(DATA, _official_symbols)
     print(f"[SUITE] Servidor en http://{CONFIG['host']}:{CONFIG['port']} | almacen {DATA} | bot {CONFIG['bot_url']}")
 
 
 @app.on_event("shutdown")
 async def _shutdown():
+    official.stop()
+    await recorder.stop()
     if _http:
         await _http.aclose()
+
+
+SYMBOLS = SymbolList(CONFIG["data_dir"])
+
+
+def _official_symbols():
+    try:
+        return SYMBOLS.load()
+    except Exception:
+        return []
 
 
 # ---------- proteccion: solo paginas de este PC ----------
@@ -104,36 +132,8 @@ def _json(body) -> Response:
 
 # ---------- mercado ----------
 async def _klines(symbol: str, interval: str, days: int):
-    minutes = INTERVALS[interval]
-    end_ms = int(time.time() * 1000)
-    start_ms = end_ms - days * 86_400_000
-    out, cursor = [], start_ms
-    for _ in range(40):
-        r = await _http.get(f"{CONFIG['bybit_url']}/v5/market/kline", params={
-            "category": "linear", "symbol": symbol, "interval": interval, "start": cursor, "limit": 1000})
-        data = r.json()
-        if data.get("retCode") != 0:
-            raise HTTPException(status_code=502, detail=f"Bybit: {data.get('retMsg')}")
-        batch = list(reversed(data["result"]["list"]))
-        batch = [c for c in batch if int(c[0]) >= cursor]
-        if not batch:
-            break
-        out.extend(batch)
-        cursor = int(batch[-1][0]) + minutes * 60_000
-        if cursor > end_ms or len(batch) < 1000:
-            break
-    seen, candles = set(), []
-    for c in out:
-        ts = int(c[0])
-        if ts in seen:
-            continue
-        seen.add(ts)
-        candles.append({
-            "timestamp": ts, "open": float(c[1]), "high": float(c[2]), "low": float(c[3]), "close": float(c[4]),
-            "volume": float(c[5]), "in_progress": end_ms - ts < minutes * 60_000,
-            "datetime_colombia": datetime.fromtimestamp(ts / 1000, tz=COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S"),
-        })
-    return candles
+    """Velas de Bybit (candles.klines, compartido con market_routes)."""
+    return await candles.klines(symbol, interval, days)
 
 
 @app.get("/api/historical/{symbol}")
@@ -273,6 +273,78 @@ async def bot_pause(request: Request):
     return await _bot("POST", "/api/settings/trading-paused", json={"paused": body["paused"]})
 
 
+app.include_router(bot_routes.make_router(lambda *a, **kw: _bot(*a, **kw)))  # _bot se busca al llamar (las pruebas lo cambian)
+
+
+# ---------- monedas y precio ----------
+@app.get("/api/suite/symbols")
+async def get_symbols():
+    try:
+        return {"success": True, "symbols": SYMBOLS.load()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"lista de monedas ilegible: {e}")
+
+
+async def _instrument(symbol: str) -> bool:
+    r = await _http.get(CONFIG["bybit_url"] + "/v5/market/instruments-info", params={"category": "linear", "symbol": symbol})
+    items = (r.json().get("result") or {}).get("list") or []
+    return bool(items) and items[0].get("status") == "Trading" and items[0].get("quoteCoin") == "USDT"
+
+
+@app.post("/api/suite/symbols")
+async def add_symbol(request: Request):
+    body = await request.json()
+    symbol = str(body.get("symbol") or "").strip().upper()
+    if not COIN_RE.match(symbol):
+        raise HTTPException(status_code=400, detail="escribe una moneda como LINKUSDT")
+    try:
+        current = SYMBOLS.load()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"lista de monedas ilegible: {e}")
+    if symbol not in current:
+        try:
+            ok = await _instrument(symbol)
+        except (httpx.HTTPError, ValueError) as e:
+            raise HTTPException(status_code=503, detail=f"no se pudo consultar Bybit: {type(e).__name__}")
+        if not ok:
+            raise HTTPException(status_code=404, detail=f"{symbol} no es un perpetuo USDT que cotice en Bybit")
+    try:
+        symbols = SYMBOLS.add(symbol)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    await recorder.add_symbol(symbol)
+    return {"success": True, "symbols": symbols}
+
+
+@app.delete("/api/suite/symbols/{symbol}")
+async def remove_symbol(symbol: str):
+    try:
+        return {"success": True, "symbols": SYMBOLS.remove(_symbol(symbol))}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+_tickers = {}
+
+
+@app.get("/api/ticker/{symbol}")
+async def ticker(symbol: str):
+    """Ultimo precio de Bybit (cache de 1 s), para el panel de trading."""
+    symbol = _symbol(symbol)
+    hit = _tickers.get(symbol)
+    if hit and time.time() - hit[0] < 1:
+        return hit[1]
+    try:
+        r = await _http.get(CONFIG["bybit_url"] + "/v5/market/tickers", params={"category": "linear", "symbol": symbol})
+        item = ((r.json().get("result") or {}).get("list") or [{}])[0]
+        price = float(item["lastPrice"])
+    except (httpx.HTTPError, ValueError, KeyError, TypeError) as e:
+        raise HTTPException(status_code=503, detail=f"sin precio de Bybit: {type(e).__name__}")
+    out = {"success": True, "symbol": symbol, "price": price, "at": int(time.time() * 1000)}
+    _tickers[symbol] = (time.time(), out)
+    return out
+
+
 # ---------- estado de la suite ----------
 @app.get("/api/suite/status")
 async def suite_status():
@@ -302,7 +374,8 @@ async def suite_status():
 
     store, tape, bot_state = await asyncio.gather(run_in_threadpool(store_info), local_tape(), bot())
     return {"success": True, "version": app.version, "now": int(time.time() * 1000), "store": store,
-            "local_tape": tape, "bot": bot_state}
+            "local_tape": tape, "bot": bot_state,
+            "recorder": recorder.status(), "official": official.status()}
 
 
 # Frontend ya armado (web/dist), servido desde aqui: una sola direccion para todo

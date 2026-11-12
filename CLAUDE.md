@@ -54,6 +54,59 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite (carpeta 12) - 12 Noviembre 2026: Segunda Ronda tras Probarla
+
+**Pedido:** el usuario probó la suite y pidió ocho cosas:
+1. Electron, para que no se congele ni pierda datos o alertas.
+2. Los indicadores que faltaban, sobre todo Elementos OF.
+3. Que se dibujen los footprints.
+4. Las opciones del bot original.
+5. El formato de la pestaña principal de App 1, con la herramienta de dibujo.
+6. Agregar monedas.
+7. Dos pestañas con sus propios indicadores y los mismos dibujos.
+8. El panel de trading.
+
+**Cambios:**
+1. **Electron** (`desktop/`, `INICIAR_DESKTOP.bat`):
+   - sin freno en segundo plano;
+   - bandeja del sistema y una sola instancia;
+   - lanza el servidor si no corre y lo relanza si se cae;
+   - vuelve a armar la página si cambió el código.
+2. **Footprints:** no se veían porque el 11000 no corría y el almacén oficial de BTC llegaba al 04/11.
+   - La suite graba sola los trades de sus monedas con `local_tape.py`. Un candado deja grabar a un solo proceso, ella o el 11000.
+   - Baja cada 6 horas los días oficiales que faltan, con las herramientas del panel.
+3. **Indicadores:** los 18 de App 1, con rutas nuevas en el servidor (`market_routes.py`): Interés abierto, VWAP, S&R, patrones, Elementos OF y setups en vivo. `of_elements.py` de App 1 acepta `live`.
+4. **Formato:** el de la pestaña principal: barra de dibujo, marcos en el encabezado, un gráfico por marco y el panel a la derecha. "+" agrega monedas.
+5. **Dos pestañas:**
+   - "2.ª pestaña" tiene sus propios marcos, indicadores y ajustes;
+   - los dibujos son por moneda y pasan al instante a los otros marcos y a la otra pestaña.
+6. **Panel de trading:**
+   - toma la caja TP/SL;
+   - tamaño fijo o por riesgo, y tipo Market o Limit automático;
+   - siempre con stop y objetivo, y con confirmación;
+   - va al bot por `/api/bot/trade` con `ENVIAR_ORDEN_REAL`.
+7. **Bot:** "Configuración y riesgo" como App 10:
+   - cada moneda con riesgo, SL, TP, dirección y precisión, y agregar monedas con apalancamiento;
+   - riesgo diario y método de ejecución;
+   - orígenes de alertas y claves de Bybit.
+   
+   Cada cambio pide confirmación y una palabra en el servidor.
+8. **App 1, solo para el modo en vivo:** Interés abierto vuelve a pedir al abrir una vela nueva, y `MiniChart` avisa los dibujos guardados. La reproducción no cambia.
+9. **`sync_nube.py`:** guardaba una descarga de la nube cortada a mitad, y el día ya no se podía unir. Ahora la rechaza, y si un archivo es ilegible une el día con lo del PC y lo vuelve a bajar.
+10. **Pruebas:**
+    - `server/tests/run_checks.py` (41) y `bot_checks.py` (33);
+    - `test_of_elements_live.py` (10) en App 1;
+    - `sync_checks.py`, que sube a 24.
+
+**IMPORTANTE:**
+- Se abre con `12.AltagraciaTradingSuite/INICIAR_DESKTOP.bat`. El bot debe correr para el panel y la configuración.
+- Probado en una copia aislada que grabó de verdad, con un bot falso. Nada se probó contra el bot real, con claves reales ni con el 11000 grabando a la vez.
+- El bot no tiene rutas para cerrar posiciones, mover el stop ni cambiar el apalancamiento después de agregar la moneda.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md`
+
+---
+
 ### Altagracia Trading Suite (carpeta 12) - 12 Noviembre 2026: Cáscara, Bot y Gráfico en Vivo (pasos 1 y 3)
 
 **Pedido:** crear la carpeta nueva y hacer los pasos 1 y 3 del plan local: la cáscara con los estilos de App 1, el bot como primer módulo y el gráfico de App 1 en vivo con el almacén de order flow.

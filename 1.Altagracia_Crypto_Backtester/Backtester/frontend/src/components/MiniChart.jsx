@@ -2112,6 +2112,10 @@ const MiniChart = forwardRef(({
 
       console.log(`[${symbol}] ✅ Guardados ${shapes.length} dibujos`);
       updateChartRectangles();
+      // En vivo (suite): los demás marcos y la otra pestaña reciben los mismos dibujos. App 1 no usa este modo
+      if (onDrawingsChange) {
+        onDrawingsChange(shapes, interval);
+      }
     } catch (error) {
       console.error(`[${symbol}] ❌ Error guardando dibujos:`, error);
     }

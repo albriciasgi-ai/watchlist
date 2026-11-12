@@ -9,6 +9,9 @@
 #
 # Variables: ORDERFLOW_DATA (carpeta de datos), ORDERFLOW_TOOLS (build_store.py y build_flow.py), LOCAL_TAPE=0 lo apaga, LOCAL_TAPE_SECONDS,
 # LOCAL_TAPE_CLOUD_MINUTES (0 = no bajar de la nube), LOCAL_TAPE_PYTHON (python para el armado).
+#
+# Un solo proceso graba: el backend 11000 o el servidor de la suite (12.AltagraciaTradingSuite), el que tome
+# primero el candado live/local/recorder.lock. El otro reintenta cada minuto y toma el relevo si el primero se cierra.
 import asyncio
 import logging
 import os
@@ -32,6 +35,9 @@ BUILD_TIMEOUT = 600
 
 _recorder = None
 _task = None
+_lock_fh = None
+_waiting = None
+LOCK_RETRY_SECONDS = 60
 _stats = {"builds": 0, "build_errors": 0, "last_build": None, "last_build_seconds": None, "last_error": None,
           "last_cloud": None}
 
@@ -40,11 +46,62 @@ def get_recorder():
     return _recorder
 
 
+def _take_lock() -> bool:
+    """Candado de un solo grabador. El sistema lo suelta solo si el proceso muere."""
+    global _lock_fh
+    if _lock_fh is not None:
+        return True
+    path = DATA / "live" / "local" / "recorder.lock"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fh = open(path, "a+b")
+    try:
+        fh.seek(0)
+        if os.name == "nt":
+            import msvcrt
+            msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        fh.close()
+        return False
+    _lock_fh = fh
+    return True
+
+
 async def start(ws_manager, symbols):
-    """Empieza a grabar los trades que recibe ws_manager. No lanza excepciones."""
-    global _recorder, _task
-    if not ENABLED or _recorder is not None:
+    """Empieza a grabar los trades que recibe ws_manager. No lanza excepciones.
+    Si otro proceso ya graba, espera y reintenta cada minuto."""
+    global _waiting
+    if not ENABLED or _recorder is not None or _waiting is not None:
         return
+    try:
+        if _take_lock():
+            await _start(ws_manager, symbols)
+            return
+    except Exception as e:
+        logger.error(f"[LOCAL_TAPE] No se pudo tomar el candado: {e}")
+    print("[STARTUP] Grabador local de trades: otro proceso ya graba; se reintenta cada minuto")
+    _waiting = asyncio.create_task(_wait_lock(ws_manager, symbols))
+
+
+async def _wait_lock(ws_manager, symbols):
+    global _waiting
+    while True:
+        await asyncio.sleep(LOCK_RETRY_SECONDS)
+        try:
+            if _take_lock():
+                _waiting = None
+                await _start(ws_manager, symbols)
+                return
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            logger.error(f"[LOCAL_TAPE] No se pudo tomar el candado: {e}")
+
+
+async def _start(ws_manager, symbols):
+    global _recorder, _task
     try:
         rec = TapeRecorder(symbols, DATA / "live" / "local", keep_days=3, snapshot_seconds=SECONDS)
         await asyncio.to_thread(rec.load_scales)
@@ -60,7 +117,10 @@ async def start(ws_manager, symbols):
 
 
 async def stop():
-    global _task
+    global _task, _waiting
+    if _waiting:
+        _waiting.cancel()
+        _waiting = None
     if _task:
         _task.cancel()
         _task = None
@@ -122,6 +182,6 @@ async def _loop(rec):
 
 def status() -> dict:
     if _recorder is None:
-        return {"enabled": ENABLED, "running": False}
+        return {"enabled": ENABLED, "running": False, "other_process_records": _waiting is not None}
     return dict(enabled=ENABLED, running=True, root=str(_recorder.root), symbols=sorted(_recorder.scales),
                 every_seconds=SECONDS, cloud_minutes=CLOUD_MINUTES, tape=_recorder.get_stats(), build=dict(_stats))

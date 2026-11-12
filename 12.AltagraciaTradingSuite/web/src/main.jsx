@@ -1,3 +1,4 @@
+import { installTabSettings } from './tabs.js';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import SuiteApp from './SuiteApp.jsx';
@@ -7,6 +8,9 @@ import '@app1/volume_profile_styles.css';
 import '@app1/backtesting_styles.css';
 import '@app1/theme_nitido.css';
 import './suite.css';
+
+// Antes que cualquier indicador lea sus ajustes: la pestana 2 tiene los suyos
+installTabSettings();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

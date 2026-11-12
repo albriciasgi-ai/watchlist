@@ -56,12 +56,18 @@ def get_json(url: str, timeout=60):
 def download(url: str, dst: Path, timeout=300):
     tmp = dst.with_name(dst.name + ".descarga")
     req = urllib.request.Request(url, headers={"User-Agent": "sync-nube"})
+    got = 0
     with urllib.request.urlopen(req, timeout=timeout) as r, open(tmp, "wb") as f:
+        expected = r.headers.get("Content-Length")
         while True:
             chunk = r.read(1 << 20)
             if not chunk:
                 break
             f.write(chunk)
+            got += len(chunk)
+    # Una conexion cortada a mitad deja el archivo incompleto sin error: se descarta
+    if expected is not None and got != int(expected):
+        raise ValueError(f"descarga incompleta: {got} de {expected} bytes")
     return tmp
 
 
@@ -130,7 +136,13 @@ def merge_day(tf, cloud_path: Path, local_path: Path, sym: str, day: str):
     src = {}
     for name, path in (("cloud", cloud_path), ("local", local_path)):
         if path.exists():
-            src[name] = tf.read_tape(path)
+            try:
+                src[name] = tf.read_tape(path)
+            except Exception as e:
+                # Un archivo ilegible no tumba el dia: se une con la otra fuente. Uno de la nube se vuelve a bajar
+                print(f"{sym} {day}: {name} ilegible ({e}); se usa la otra fuente")
+                if name == "cloud":
+                    path.with_suffix(".json").unlink(missing_ok=True)
     if not src:
         return None
     if "cloud" in src and "local" in src:
@@ -218,6 +230,7 @@ def refresh(data: Path, tools: Path, base_url=DEFAULT_URL, symbols=None, days_ba
                     meta = tf.read_meta(tmp)
                     if meta.get("symbol") != sym or meta.get("date") != day or not meta.get("n"):
                         raise ValueError(f"archivo inesperado: {meta.get('symbol')} {meta.get('date')} n={meta.get('n')}")
+                    tf.read_tape(tmp)  # se lee entero: un archivo cortado no reemplaza al anterior
                 except Exception as e:
                     Path(str(tape) + ".descarga").unlink(missing_ok=True)
                     log(f"{sym} {day}: descarga invalida ({e}); se conserva lo anterior")

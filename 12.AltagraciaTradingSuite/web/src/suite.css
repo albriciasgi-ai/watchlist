@@ -114,3 +114,21 @@
 }
 .pos { color: var(--t-up, #089981); }
 .neg { color: var(--t-down, #f23645); }
+
+/* Grafico con el formato de la pestana principal de App 1 */
+.symbol-select { font-weight: 600; font-size: 13px; }
+.suite-dots { display: inline-flex; gap: 10px; font-size: 11px; margin-left: 6px; opacity: 0.85; }
+.suite-dot.warn { background: #f9a825; }
+.suite-add { display: inline-flex; align-items: center; gap: 4px; }
+.suite-add input { width: 110px; font-size: 12px; padding: 2px 6px; border: 1px solid var(--t-line, #ccc); border-radius: 3px; }
+.suite-add-error { color: var(--t-down, #f23645); font-size: 11px; }
+.suite-live-warning {
+  font-size: 12px; padding: 6px 8px; margin-bottom: 8px; border-radius: 4px;
+  border: 1px solid var(--t-down, #f23645); color: var(--t-down, #f23645);
+}
+.suite-result { font-size: 12px; padding: 8px 10px; margin-top: 8px; border-radius: 4px; border: 1px solid; }
+.suite-result.ok { border-color: var(--t-up, #089981); color: var(--t-up, #089981); }
+.suite-result.bad { border-color: var(--t-down, #f23645); color: var(--t-down, #f23645); }
+.suite-confirm { background: #fff; color: #222; border-radius: 8px; padding: 18px 20px; width: 360px; max-width: 92vw; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3); }
+.suite-input { width: 70px; font-size: 12px; padding: 2px 6px; border: 1px solid var(--t-line, #ccc); border-radius: 3px; background: var(--t-control, #fff); color: inherit; }
+.suite-add-coin { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 12px; }

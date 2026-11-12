@@ -1,0 +1,14 @@
+{
+  "name": "altagracia-trading-suite-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Altagracia Trading Suite en Electron: sin freno de pestanas en segundo plano, con bandeja y servidor propio",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check main.cjs"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0"
+  }
+}

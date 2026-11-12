@@ -62,6 +62,39 @@ try:
     mins = minutes_of(t)
     src = {m: int(v) for m, v in zip(mins, p)}
     check("union: cada minuto una vez y en orden", mins == list(range(70)), str(mins))
+
+    # Archivo de la nube cortado (descarga interrumpida): el dia se une con el PC y la nube se vuelve a bajar
+    cut = tmp / "cut.tape"
+    cut.write_bytes(c.read_bytes()[: len(c.read_bytes()) // 2])
+    cut.with_suffix(".json").write_text("{}", encoding="utf-8")
+    try:
+        merged_cut = sn.merge_day(tf, cut, l, "BTCUSDT", DAY)
+        check("nube cortada: el dia sale del PC", merged_cut is not None and merged_cut[0]["from_cloud"] == 0
+              and merged_cut[0]["from_local"] == 55)
+    except Exception as e:
+        check("nube cortada: el dia sale del PC", False, str(e))
+    check("nube cortada: se borra su estado para volver a bajarla", not cut.with_suffix(".json").exists())
+
+    # Descarga que se corta antes de lo que anuncia Content-Length
+    class _Resp:
+        headers = {"Content-Length": "100"}
+        def __init__(self): self.sent = False
+        def read(self, n):
+            if self.sent:
+                return b""
+            self.sent = True
+            return b"x" * 40
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+    real_urlopen = sn.urllib.request.urlopen
+    sn.urllib.request.urlopen = lambda *a, **k: _Resp()
+    try:
+        sn.download("http://nube/x", tmp / "d.tape")
+        check("descarga incompleta rechazada", False)
+    except ValueError:
+        check("descarga incompleta rechazada", True)
+    finally:
+        sn.urllib.request.urlopen = real_urlopen
     check("donde cubre la nube manda la nube", all(src[m] == 1000 for m in range(20)) and all(src[m] == 1000 for m in range(30, 59)))
     check("el corte de la nube se llena con el PC", all(src[m] == 1001 for m in range(20, 30)))
     check("despues del ultimo guardado de la nube sigue el PC", all(src[m] == 1001 for m in range(60, 70)))
