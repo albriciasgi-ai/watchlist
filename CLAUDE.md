@@ -27,7 +27,7 @@ Agente programador Python con experiencia en desarrollo de aplicaciones.
 
 ## VISION GENERAL DEL REPOSITORIO
 
-Este repositorio contiene **11 aplicaciones relacionadas** para trading de criptomonedas:
+Este repositorio contiene **11 aplicaciones relacionadas** para trading de criptomonedas, más la suite nueva que las irá reemplazando (carpeta 12):
 
 | Carpeta | Aplicacion | Puerto Backend | Puerto Frontend |
 |---------|------------|----------------|-----------------|
@@ -42,6 +42,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 | `9.OrderFlowDesktop/` | **Order Flow Desktop - Version Electron optimizada** | 11000 | 11001 (Vite) |
 | `10.TradingBotDesktop/` | **Trading Bot Desktop - Version Electron** | 5000 | 5001 |
 | `11.TradingJournalDesktop/` | **Trading Journal Desktop - Version Electron** | 12000 | 12002 |
+| `12.AltagraciaTradingSuite/` | **App nueva en tiempo real (gráfico de App 1 en vivo + bot), en construcción** | 13000 | 13001 (Vite) |
 
 **Stack comun:**
 - Frontend: React 18 + Vite + uPlot
@@ -52,6 +53,32 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 ---
 
 ## HISTORIAL DE CAMBIOS RECIENTES
+
+### Altagracia Trading Suite (carpeta 12) - 12 Noviembre 2026: Cáscara, Bot y Gráfico en Vivo (pasos 1 y 3)
+
+**Pedido:** crear la carpeta nueva y hacer los pasos 1 y 3 del plan local: la cáscara con los estilos de App 1, el bot como primer módulo y el gráfico de App 1 en vivo con el almacén de order flow.
+
+**Cambios:**
+1. **Servidor** (`12.AltagraciaTradingSuite/server`, 127.0.0.1:13000):
+   - velas de Bybit, y footprints, perfil real y liquidaciones con los lectores de App 1 importados;
+   - footprints con `live=True`: días oficiales y, donde faltan, nube + PC;
+   - dibujos por moneda;
+   - el bot leído y pausado por su API.
+
+   Configuración en `config/suite.json` y variables `SUITE_*`. Rechaza Host u Origin ajenos
+2. **Página** (`web`): el `MiniChart`, los indicadores, los modales y el modal "Estilo" son los de App 1, importados sin copiar. Un plugin de Vite cambia su `config.js` por el de la suite. Trae módulos Gráfico y Bot, y una barra de estado con el almacén, la grabación del 11000 y el bot
+3. **Bot:** estado, pausa con confirmación (en la página y con `CAMBIAR_PAUSA` en el servidor), avisos críticos, posiciones, órdenes y alertas
+4. **App 1:** en el modo en vivo de `MiniChart`, la escala sigue las velas a la vista. Antes las aplastaba con 30 días de historia. La reproducción de App 1 no cambia
+5. **Pruebas:** `server/tests/run_checks.py` (16)
+
+**IMPORTANTE:**
+- Se abre con `12.AltagraciaTradingSuite/INICIAR.bat`. Para footprints recientes debe correr el backend 11000, reiniciado para que grabe; para el módulo del bot, el bot.
+- Indicadores en vivo: Volume Delta, Volume Profile, CVD, Order Flow, FVG, VP Periodic, Volumen de Respuesta, Liquidaciones y S&R v2. Faltan Interés abierto, VWAP, Elementos OF y los patrones.
+- Probado en una copia aislada con un bot falso. No se probó contra el bot real.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md`
+
+---
 
 ### Backend de Order Flow (11000) - 12 Noviembre 2026: Últimas Horas Grabadas en el PC (fase 4, integración)
 

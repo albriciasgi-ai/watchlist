@@ -640,6 +640,7 @@ Para la app en tiempo real, que usará este lector (requisito 8 de la integraci�
 - Las velas de la nube llevan `source: "live"` y la respuesta `live_days` (día, `complete` y hasta dónde llega). Un día de la nube se vuelve a leer si cambia su archivo
 - **Falta:** Elementos OF no lee `OrderFlowData/live/flow`, y ningún endpoint pide `live`
 - Pruebas: `tests/test_footprint_live.py` (9)
+- **Modo en vivo de `MiniChart` (12/11):** lo usa la suite (`12.AltagraciaTradingSuite`). La escala de precios sigue las velas a la vista, como en reproducción. Antes tomaba todas las velas cargadas y las aplastaba. App 1 no usa ese modo
 
 ### Mantener el almacén
 

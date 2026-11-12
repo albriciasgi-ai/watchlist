@@ -1130,10 +1130,9 @@ const MiniChart = forwardRef(({
 
     if (visibleCandles.length === 0) return;
 
-    // 🎯 MODIFICADO: En modo backtesting usar velas VISIBLES, en modo normal usar TODAS
-    // - Backtesting: Queremos ver detalle de la acción del precio visible
-    // - Normal: Evitamos auto-zoom durante paneo (mantiene contexto)
-    const candlesForPriceRange = backtestingMode ? visibleCandles : displayCandles;
+    // La escala sigue las velas a la vista, también en vivo (12/11/2026, app nueva de la suite). El modo en vivo
+    // de la Watchlist usaba todas las velas cargadas: con 30 días de BTC las velas quedaban aplastadas en una franja
+    const candlesForPriceRange = visibleCandles;
     let minPrice = Math.min(...candlesForPriceRange.map(d => d.low));
     let maxPrice = Math.max(...candlesForPriceRange.map(d => d.high));
 
