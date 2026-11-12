@@ -11,6 +11,7 @@ Date: 2025-11-11
 import asyncio
 import httpx
 import json
+import time
 from typing import Dict, List, Optional
 from datetime import datetime
 import logging
@@ -19,6 +20,13 @@ from pathlib import Path
 # Alert log file
 ALERT_LOG_FILE = Path(__file__).parent / "alerts_sent.log"
 ALERT_ORIGIN = "WATCHLIST"
+
+# Alertas de patrones (Double Top/Bottom, Rejection, /api/pattern-alert y avisos de resultado)
+# APAGADAS en este backend. Del bot solo opera el Swing. Decision del usuario el 11/11/2026:
+# las alertas de patrones vuelven con la confluencia de indicadores de la app global.
+# Hasta entonces nada de patrones llega al bot, este o no el interruptor encendido.
+# Las alertas de prueba (botones Test con confirmacion) siguen funcionando.
+PATTERN_ALERTS_ENABLED = False
 
 logging.basicConfig(
     level=logging.INFO,
@@ -63,7 +71,8 @@ class AlertSender:
         symbol: str,
         interval: str,
         pattern: Dict,
-        user_config: Optional[Dict] = None
+        user_config: Optional[Dict] = None,
+        test: bool = False
     ) -> bool:
         """
         Sends a rejection pattern alert to the notification service
@@ -73,10 +82,25 @@ class AlertSender:
             interval: Timeframe (1h, 4h, etc.)
             pattern: Detected pattern data
             user_config: Optional user configuration
+            test: True solo para las alertas de prueba pedidas con confirmacion
 
         Returns:
-            True if sent successfully, False otherwise
+            True if queued, False if refused
         """
+        pattern_type = (pattern or {}).get('patternType', 'UNKNOWN')
+
+        if not test and not PATTERN_ALERTS_ENABLED:
+            logger.warning(
+                f"[BLOCKED_PATTERNS_OFF] {symbol} {interval} {pattern_type}: las alertas de patrones "
+                f"de la Watchlist estan apagadas; no se envia al bot"
+            )
+            return False
+
+        if not self._get_trading_action(pattern_type):
+            # Antes un tipo desconocido salia como "ABRIR LONG" aunque la senal dijera SHORT
+            logger.warning(f"[BLOCKED_UNKNOWN_PATTERN] {symbol}: tipo de patron desconocido {pattern_type!r}, no se envia")
+            return False
+
         logger.debug("\n" + "="*80)
         logger.debug(f"📨 [ALERT_SENDER] Preparing to send alert")
         logger.debug("="*80)
@@ -92,6 +116,8 @@ class AlertSender:
             pattern,
             user_config
         )
+        # Hora en que se genero: si espera en la cola, el bot descarta las que llegan tarde (120 s)
+        alert_payload["sent_at"] = int(time.time() * 1000)
 
         logger.debug(f"\n[PAYLOAD] Built alert payload:")
         logger.debug(f"   Pattern String: {alert_payload.get('pattern', 'N/A')}")
@@ -201,8 +227,8 @@ class AlertSender:
         elif pattern_type in bearish_patterns:
             return "ABRIR SHORT"
         else:
-            # Fallback for unknown patterns
-            return "ABRIR LONG"  # Default to long, but this shouldn't happen
+            # Tipo desconocido: sin accion (antes "ABRIR LONG" por defecto). No se envia.
+            return ""
 
     def _get_pattern_emoji(self, pattern_type: str) -> str:
         """Returns emoji for pattern type"""
@@ -245,7 +271,8 @@ class AlertSender:
             price = alert.get('price', 0)
             confidence = alert.get('confidence', 0)
 
-            log_line = f"{timestamp} | {status} | HTTP {http_code} | {symbol} | {pattern} | ${price:.2f} | {confidence}%\n"
+            # Precio sin redondear: con 2 decimales una moneda barata quedaba como $0.00
+            log_line = f"{timestamp} | {status} | HTTP {http_code} | {symbol} | {pattern} | ${price} | {confidence}%\n"
 
             with open(ALERT_LOG_FILE, "a", encoding="utf-8") as f:
                 f.write(log_line)
@@ -462,14 +489,16 @@ async def send_pattern_alert(
     symbol: str,
     interval: str,
     pattern: Dict,
-    user_config: Optional[Dict] = None
+    user_config: Optional[Dict] = None,
+    test: bool = False
 ) -> bool:
     """Convenience function to send alert using global instance"""
     return await alert_sender.send_rejection_pattern_alert(
         symbol,
         interval,
         pattern,
-        user_config
+        user_config,
+        test=test
     )
 
 

@@ -86,6 +86,17 @@ const DAYS_OPTIONS_BY_INTERVAL = {
   "W": [90, 180, 365, 730]
 };
 
+// Días para un timeframe: el valor por defecto, o el máximo si los actuales lo exceden
+const daysForInterval = (newInterval, currentDays) => {
+  const defaultDays = DEFAULT_DAYS_BY_INTERVAL[newInterval];
+  if (defaultDays) return defaultDays.toString();
+  const maxDays = MAX_DAYS_BY_INTERVAL[newInterval] || 30;
+  return parseInt(currentDays) > maxDays ? maxDays.toString() : String(currentDays);
+};
+
+// Confirmación que piden las alertas de prueba en el backend: llegan al bot como alertas reales
+const TEST_ALERT_CONFIRM = 'ENVIAR_ALERTA_REAL';
+
 const Watchlist = () => {
   // 📋 Lista de símbolos (con persistencia)
   const [symbols, setSymbols] = useState(loadSavedSymbols);
@@ -96,7 +107,9 @@ const Watchlist = () => {
   const [dragOverSymbol, setDragOverSymbol] = useState(null);
 
   const [interval, setInterval] = useState("60");  // Cambiado a 1 hora
-  const [days, setDays] = useState("1");           // Inicia con 1 día para carga rápida
+  // Arranca con los días del timeframe: antes empezaba en 1 día y enseguida pasaba a 90,
+  // y cada gráfico cargaba dos veces
+  const [days, setDays] = useState(() => daysForInterval("60", "1"));
   const [gridColumns, setGridColumns] = useState(() => {
     // Cargar preferencia guardada o usar 2 por defecto
     const saved = localStorage.getItem('watchlist_grid_columns');
@@ -482,57 +495,20 @@ const Watchlist = () => {
     setLoadReason(`Cambio a ${interval} / ${days} días`);
   }, [interval, days]);
 
-  // OPTIMIZADO: Ajustar días automáticamente al cambiar timeframe
-  useEffect(() => {
-    const defaultDays = DEFAULT_DAYS_BY_INTERVAL[interval];
-    const maxDays = MAX_DAYS_BY_INTERVAL[interval] || 30;
-    const currentDays = parseInt(days);
-
-    // Siempre usar el valor por defecto optimizado al cambiar timeframe
-    if (defaultDays) {
-      setDays(defaultDays.toString());
-      log.debug(`[Watchlist] Días ajustados a ${defaultDays} (valor optimizado para ${interval})`);
-    } else if (currentDays > maxDays) {
-      // Fallback: Si no hay default, usar el máximo si se excede
-      setDays(maxDays.toString());
-      log.debug(`[Watchlist] Días ajustados a ${maxDays} (límite máximo para ${interval})`);
-    }
-  }, [interval]); // Solo se ejecuta cuando cambia el interval
+  // Timeframe y días cambian en un solo paso. Antes un efecto ajustaba los días después: cada
+  // gráfico cargaba dos veces y la primera pasada, con los días viejos, borraba una caché correcta.
+  const handleIntervalChange = (newInterval) => {
+    setInterval(newInterval);
+    setDays(prev => daysForInterval(newInterval, prev));
+  };
 
   useEffect(() => {
     wsManager.changeInterval(interval);
   }, [interval]);
 
-  // 🔄 SINCRONIZACIÓN: Actualizar Swing Detector cuando cambia timeframe o días
-  useEffect(() => {
-    const syncSwingDetector = async () => {
-      // Solo sincronizar si el indicador está habilitado
-      if (!indicatorStates["Swing Detector"]) return;
-
-      try {
-        log.debug(`[Watchlist] 🔄 Sincronizando Swing Detector: interval=${interval}, days=${days}`);
-
-        const response = await fetch(`${API_BASE_URL}/api/swing/config`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            interval: interval,
-            days: parseInt(days)
-          })
-        });
-
-        if (response.ok) {
-          log.debug(`[Watchlist] ✅ Swing Detector sincronizado`);
-        } else {
-          log.error(`[Watchlist] ❌ Error sincronizando Swing Detector`);
-        }
-      } catch (error) {
-        log.error(`[Watchlist] ❌ Error sincronizando Swing Detector:`, error);
-      }
-    };
-
-    syncSwingDetector();
-  }, [interval, days, indicatorStates["Swing Detector"]]);
+  // El gráfico ya NO cambia el Swing del backend. Antes, con "Swing Detector" marcado, cambiar el
+  // timeframe o los días mandaba POST /api/swing/config y cambiaba el timeframe y los días de las
+  // alertas al bot de todas las monedas. Ahora se cambian solo desde el modal del Swing, con confirmación.
 
   // 🚀 Precarga de indicadores DESHABILITADA para optimización
   useEffect(() => {
@@ -596,31 +572,8 @@ const Watchlist = () => {
     return () => clearTimeout(preloadTimeout);
   }, [interval, days]);
 
-  // Notificar al backend cuando cambia el timeframe activo
-  // Esto hace que el backend solo monitoree el timeframe que el usuario tiene seleccionado
-  useEffect(() => {
-    const notifyBackendTimeframe = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/realtime/set-interval`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ interval: interval })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            log.info(`[REALTIME] Backend now monitoring interval: ${interval}`);
-          }
-        }
-      } catch (error) {
-        // Silenciar error - el backend puede no estar disponible
-        log.debug(`[REALTIME] Could not notify backend of timeframe change: ${error.message}`);
-      }
-    };
-
-    notifyBackendTimeframe();
-  }, [interval]); // Solo cuando cambia el timeframe
+  // Ya no se avisa al backend el timeframe del gráfico (POST /api/realtime/set-interval): movía su
+  // WebSocket a ese timeframe y el Swing, que alerta en el suyo, se quedaba sin velas y sin avisar.
 
   const toggleIndicator = (indicatorName) => {
     setIndicatorStates(prev => ({
@@ -1033,6 +986,14 @@ const Watchlist = () => {
 
   // 🧪 NUEVO: Handler para enviar alerta de prueba
   const handleTestAlert = async () => {
+    // Llega al bot como una alerta REAL (BTCUSDT, Hammer = ABRIR LONG, precio fijo de prueba)
+    if (!window.confirm(
+      '¿Enviar una alerta de prueba al bot?\n\n' +
+      'Llega como una alerta REAL de la Watchlist (BTCUSDT, Hammer = ABRIR LONG). ' +
+      'Si el origen WATCHLIST está permitido en el bot, puede abrir una operación.'
+    )) {
+      return;
+    }
     log.debug('\n' + '='.repeat(80));
     log.debug('[TEST ALERT] 🧪 Initiating test alert from frontend...');
     log.debug('='.repeat(80));
@@ -1040,7 +1001,7 @@ const Watchlist = () => {
 
     try {
       log.debug('[TEST ALERT] Sending POST request...');
-      const response = await fetch('http://localhost:8000/api/test-alert', {
+      const response = await fetch(`${API_BASE_URL}/api/test-alert?confirm=${TEST_ALERT_CONFIRM}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1089,7 +1050,12 @@ const Watchlist = () => {
 
   // 🚀 NUEVO: Handler para enviar múltiples alertas de prueba
   const handleTestAlertBatch = async () => {
-    if (!confirm('¿Enviar 10 alertas de prueba al bot?\n\nEsto tomará ~20 segundos (2s delay entre cada alerta).')) {
+    if (!window.confirm(
+      '¿Enviar 10 alertas de prueba al bot?\n\n' +
+      'Llegan como alertas REALES de la Watchlist, con precios fijos de prueba. ' +
+      'Si el origen WATCHLIST está permitido en el bot, pueden abrir operaciones.\n\n' +
+      'Esto tomará ~20 segundos (2s delay entre cada alerta).'
+    )) {
       log.debug('[BATCH TEST] User cancelled batch test');
       return;
     }
@@ -1104,7 +1070,7 @@ const Watchlist = () => {
       log.debug('[BATCH TEST] Sending POST request...');
       const startTime = Date.now();
 
-      const response = await fetch('http://localhost:8000/api/test-alert-batch', {
+      const response = await fetch(`${API_BASE_URL}/api/test-alert-batch?confirm=${TEST_ALERT_CONFIRM}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -1263,7 +1229,7 @@ const Watchlist = () => {
 
           <label>
             Timeframe:
-            <select value={interval} onChange={(e) => setInterval(e.target.value)}>
+            <select value={interval} onChange={(e) => handleIntervalChange(e.target.value)}>
               <option value="1">1m</option>
               <option value="5">5m</option>
               <option value="15">15m</option>

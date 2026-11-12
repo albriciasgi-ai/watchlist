@@ -23,6 +23,11 @@ except ImportError:
     print("ERROR: websockets library not installed. Run: pip install websockets>=12.0")
     raise
 
+try:
+    import httpx
+except ImportError:
+    httpx = None
+
 logger = logging.getLogger(__name__)
 
 
@@ -72,11 +77,12 @@ class CandleBuffer:
         # Sort by timestamp and add all historical candles
         sorted_candles = sorted(historical_candles, key=lambda c: c.timestamp)
 
+        # Conjunto de timestamps: antes era any() por vela, O(n^2), y bloqueaba el loop varios segundos
+        existing_ts = {c.timestamp for c in self.candles}
         for candle in sorted_candles:
-            # Check if candle already exists
-            exists = any(c.timestamp == candle.timestamp for c in self.candles)
-            if not exists:
+            if candle.timestamp not in existing_ts:
                 self.candles.append(candle)
+                existing_ts.add(candle.timestamp)
 
         # Sort final buffer by timestamp
         self.candles.sort(key=lambda c: c.timestamp)
@@ -96,8 +102,9 @@ class CandleBuffer:
         """
         self.last_update = time.time()
 
-        # Find existing candle with same timestamp
-        for i, existing in enumerate(self.candles):
+        # Find existing candle with same timestamp (casi siempre es la ultima: se busca desde el final)
+        for i in range(len(self.candles) - 1, -1, -1):
+            existing = self.candles[i]
             if existing.timestamp == candle.timestamp:
                 # Update existing candle
                 was_open = not existing.confirm
@@ -107,16 +114,27 @@ class CandleBuffer:
                 if was_open and candle.confirm:
                     return True
                 return False
+            if existing.timestamp < candle.timestamp:
+                break
 
-        # New candle - add to buffer
-        self.candles.append(candle)
+        # New candle - add to buffer, siempre en orden de tiempo (un relleno puede traer velas viejas)
+        inserted_in_middle = False
+        if self.candles and candle.timestamp < self.candles[-1].timestamp:
+            pos = len(self.candles)
+            while pos > 0 and self.candles[pos - 1].timestamp > candle.timestamp:
+                pos -= 1
+            self.candles.insert(pos, candle)
+            inserted_in_middle = True
+        else:
+            self.candles.append(candle)
 
         # Trim buffer if too large
         if len(self.candles) > self.max_candles:
             self.candles = self.candles[-self.max_candles:]
 
-        # If new candle is already confirmed, it's a closed candle
-        return candle.confirm
+        # If new candle is already confirmed, it's a closed candle.
+        # Una vela vieja que entra en medio (relleno) no es un cierre nuevo: no dispara deteccion.
+        return candle.confirm and not inserted_in_middle
 
     def get_candles(self, limit: int = None) -> List[Dict]:
         """Get candles as list of dicts"""
@@ -155,10 +173,6 @@ class WebSocketManager:
         # Candle buffers: {symbol: {interval: CandleBuffer}}
         self.buffers: Dict[str, Dict[str, CandleBuffer]] = defaultdict(lambda: defaultdict(CandleBuffer))
 
-        # ✅ OPTIMIZACIÓN: Rastreo de último acceso para limpieza de buffers inactivos
-        self._buffer_access_times: Dict[tuple, float] = {}
-        self._buffer_cleanup_task: Optional[asyncio.Task] = None
-
         # Callbacks - support multiple listeners
         self._candle_close_callbacks: List[Callable[[str, str, Candle], None]] = []
         self._candle_update_callbacks: List[Callable[[str, str, Candle], None]] = []
@@ -170,6 +184,12 @@ class WebSocketManager:
         # Reconnection state
         self.reconnect_attempts = 0
         self.last_message_time = 0
+        self._last_disconnect_time: float = 0  # Track when we disconnected for gap filling
+
+        # Canales que un servicio necesita siempre (el Swing que alerta al bot). update_subscriptions
+        # no los quita: antes la Watchlist movia el WebSocket al timeframe del grafico y el Swing
+        # se quedaba sin velas y sin avisar.
+        self._required_channels: Dict[str, Set[str]] = {}
 
         # Tasks
         self._ws_task: Optional[asyncio.Task] = None
@@ -199,22 +219,11 @@ class WebSocketManager:
         self._legacy_on_candle_close = callback
         logger.info(f"Candle close callback registered (total: {len(self._candle_close_callbacks)})")
 
-    # ✅ OPTIMIZACIÓN: Límite máximo de callbacks para evitar acumulación
-    MAX_CALLBACKS = 5
-
     def add_candle_close_listener(self, callback: Callable[[str, str, Candle], None]):
         """Add a candle close listener (preferred method for multiple listeners)"""
-        if callback in self._candle_close_callbacks:
-            logger.debug("Callback already registered, skipping")
-            return
-
-        # ✅ OPTIMIZACIÓN: Limitar cantidad de callbacks
-        if len(self._candle_close_callbacks) >= self.MAX_CALLBACKS:
-            logger.warning(f"Max callbacks ({self.MAX_CALLBACKS}) reached, removing oldest")
-            self._candle_close_callbacks.pop(0)
-
-        self._candle_close_callbacks.append(callback)
-        logger.info(f"Candle close listener added (total: {len(self._candle_close_callbacks)})")
+        if callback not in self._candle_close_callbacks:
+            self._candle_close_callbacks.append(callback)
+            logger.info(f"Candle close listener added (total: {len(self._candle_close_callbacks)})")
 
     def remove_candle_close_listener(self, callback: Callable[[str, str, Candle], None]):
         """Remove a candle close listener"""
@@ -239,7 +248,7 @@ class WebSocketManager:
             f"kline.{interval}.{symbol}"
             for symbol in symbols
             for interval in intervals
-        }
+        } | self._all_required_channels()
 
         logger.info(f"Starting WebSocketManager with {len(self.subscriptions)} subscriptions")
         logger.info(f"Symbols: {symbols}")
@@ -248,18 +257,105 @@ class WebSocketManager:
         # Start WebSocket task
         self._ws_task = asyncio.create_task(self._run_websocket())
 
+    def require_channels(self, owner: str, symbols: List[str], intervals: List[str]):
+        """
+        Fija los canales que 'owner' necesita siempre. update_subscriptions (cambio de timeframe
+        pedido por una pagina) ya no puede quitarlos. Para suscribirlos ya, llamar add_subscriptions.
+        """
+        self._required_channels[owner] = {
+            f"kline.{interval}.{symbol}"
+            for symbol in symbols
+            for interval in intervals
+        }
+
+    def _all_required_channels(self) -> Set[str]:
+        required: Set[str] = set()
+        for channels in self._required_channels.values():
+            required |= channels
+        return required
+
+    async def _send_in_batches(self, op: str, channels: List[str]):
+        """Bybit acepta hasta 10 canales por mensaje de subscribe/unsubscribe."""
+        for i in range(0, len(channels), 10):
+            await self.ws.send(json.dumps({"op": op, "args": channels[i:i + 10]}))
+            if i + 10 < len(channels):
+                await asyncio.sleep(0.1)
+
+    async def add_subscriptions(self, symbols: List[str], intervals: List[str]):
+        """
+        Add new subscriptions to an already running WebSocket.
+        Will wait up to 10 seconds for connection if not yet connected.
+
+        Args:
+            symbols: List of symbols to add
+            intervals: List of intervals to add
+        """
+        new_subs = {
+            f"kline.{interval}.{symbol}"
+            for symbol in symbols
+            for interval in intervals
+        }
+
+        # DEBUG: Log what we're trying to subscribe to
+        logger.info(f"[WS_MANAGER] add_subscriptions called: symbols={symbols}, intervals={intervals}")
+        logger.info(f"[WS_MANAGER] Requested subscriptions: {sorted(new_subs)}")
+        logger.info(f"[WS_MANAGER] Existing subscriptions: {sorted(self.subscriptions)}")
+
+        # Filter out already existing subscriptions
+        subs_to_add = new_subs - self.subscriptions
+
+        if not subs_to_add:
+            logger.info(f"[WS_MANAGER] All {len(new_subs)} subscriptions already exist")
+            return
+
+        # Add to our tracking set FIRST (so reconnect will include them)
+        self.subscriptions.update(subs_to_add)
+
+        logger.info(f"[WS_MANAGER] Adding {len(subs_to_add)} new subscriptions: {sorted(subs_to_add)}")
+        logger.info(f"[WS_MANAGER] Total subscriptions now: {len(self.subscriptions)}")
+
+        # Wait for connection if not yet connected (up to 10 seconds)
+        if not self.connected:
+            logger.info(f"[WS_MANAGER] WebSocket not yet connected, waiting...")
+            for i in range(20):  # 20 * 0.5s = 10 seconds max
+                await asyncio.sleep(0.5)
+                if self.connected:
+                    logger.info(f"[WS_MANAGER] WebSocket connected after {(i+1)*0.5}s")
+                    break
+            else:
+                logger.warning(f"[WS_MANAGER] Timeout waiting for connection, subscriptions will be sent on reconnect")
+                return
+
+        # Send subscribe message (Bybit limits to 10 args per subscribe request)
+        if self.connected and self.ws:
+            try:
+                subs_list = list(subs_to_add)
+                batch_size = 10  # Bybit WebSocket limit per subscribe request
+                total_batches = (len(subs_list) + batch_size - 1) // batch_size
+
+                logger.info(f"[WS_MANAGER] Sending {len(subs_list)} new subscriptions in {total_batches} batch(es)")
+
+                for i in range(0, len(subs_list), batch_size):
+                    batch = subs_list[i:i + batch_size]
+                    subscribe_msg = {
+                        "op": "subscribe",
+                        "args": batch
+                    }
+                    await self.ws.send(json.dumps(subscribe_msg))
+                    logger.info(f"[WS_MANAGER] Sent add_subscriptions batch {i // batch_size + 1}/{total_batches}: {batch}")
+
+                    # Small delay between batches
+                    if i + batch_size < len(subs_list):
+                        await asyncio.sleep(0.1)
+
+                logger.info(f"[WS_MANAGER] Sent subscribe request for {len(subs_to_add)} new channels")
+            except Exception as e:
+                logger.error(f"[WS_MANAGER] Failed to send subscribe request: {e}")
+
     async def stop(self):
         """Stop WebSocket connection and cleanup"""
         logger.info("Stopping WebSocketManager...")
         self.running = False
-
-        # ✅ OPTIMIZACIÓN: Cancelar tarea de limpieza de buffers
-        if self._buffer_cleanup_task:
-            self._buffer_cleanup_task.cancel()
-            try:
-                await self._buffer_cleanup_task
-            except asyncio.CancelledError:
-                pass
 
         if self._ping_task:
             self._ping_task.cancel()
@@ -277,12 +373,6 @@ class WebSocketManager:
                 await self._ws_task
             except asyncio.CancelledError:
                 pass
-
-        # ✅ OPTIMIZACIÓN: Limpiar callbacks y buffers al detener
-        self._candle_close_callbacks.clear()
-        self._candle_update_callbacks.clear()
-        self.buffers.clear()
-        self._buffer_access_times.clear()
 
         self.connected = False
         logger.info("WebSocketManager stopped")
@@ -305,6 +395,10 @@ class WebSocketManager:
 
             # Reconnection with exponential backoff
             self.connected = False
+            # Se guarda el PRIMER fallo del corte: si se pisa en cada reintento, el hueco medido
+            # al reconectar sale corto y no se rellena
+            if not self._last_disconnect_time:
+                self._last_disconnect_time = time.time()  # Track disconnect time for gap filling
             if self.on_connection_change:
                 self.on_connection_change(False)
 
@@ -314,11 +408,6 @@ class WebSocketManager:
             await asyncio.sleep(delay)
 
         logger.info("WebSocket loop ended")
-
-    async def _send_in_batches(self, op: str, channels: List[str]):
-        """Send subscribe/unsubscribe requests (Bybit allows 10 channels per message)"""
-        for i in range(0, len(channels), 10):
-            await self.ws.send(json.dumps({"op": op, "args": channels[i:i + 10]}))
 
     async def _connect_and_subscribe(self):
         """Connect to Bybit and subscribe to channels"""
@@ -339,10 +428,36 @@ class WebSocketManager:
         if self.on_connection_change:
             self.on_connection_change(True)
 
-        # Subscribe to all channels
+        # Fill gaps if we were disconnected. Tras cualquier corte se revisa cada buffer: la vela que
+        # cerro durante el corte nunca llega por el WebSocket (antes solo se rellenaba si pasaba de 60 s)
+        if self._last_disconnect_time > 0:
+            gap_duration = time.time() - self._last_disconnect_time
+            logger.info(f"[GAP_FILL] Detected gap of {gap_duration:.0f}s, filling missing candles...")
+            asyncio.create_task(self._fill_gaps_after_reconnect())
+            self._last_disconnect_time = 0
+
+        # Subscribe to all channels (Bybit limits to 10 args per subscribe message)
         if self.subscriptions:
-            await self._send_in_batches("subscribe", list(self.subscriptions))
-            logger.info(f"Subscribed to {len(self.subscriptions)} channels")
+            subs_list = list(self.subscriptions)
+            batch_size = 10  # Bybit WebSocket limit per subscribe request
+            total_batches = (len(subs_list) + batch_size - 1) // batch_size
+
+            logger.info(f"[WS_MANAGER] Subscribing to {len(subs_list)} channels in {total_batches} batch(es)")
+
+            for i in range(0, len(subs_list), batch_size):
+                batch = subs_list[i:i + batch_size]
+                subscribe_msg = {
+                    "op": "subscribe",
+                    "args": batch
+                }
+                await self.ws.send(json.dumps(subscribe_msg))
+                logger.info(f"[WS_MANAGER] Sent subscribe batch {i // batch_size + 1}/{total_batches}: {batch}")
+
+                # Small delay between batches to avoid rate limiting
+                if i + batch_size < len(subs_list):
+                    await asyncio.sleep(0.1)
+
+            logger.info(f"[WS_MANAGER] Subscribed to {len(self.subscriptions)} channels total")
 
         # Start ping task
         if self._ping_task:
@@ -371,9 +486,11 @@ class WebSocketManager:
         # Handle subscription confirmation
         if data.get("op") == "subscribe":
             if data.get("success"):
-                logger.debug("Subscription confirmed")
+                # Log which subscriptions were confirmed
+                conn_id = data.get("conn_id", "unknown")
+                logger.info(f"[WS_SUBSCRIPTION] Confirmed: conn_id={conn_id}, data={data}")
             else:
-                logger.error(f"Subscription failed: {data.get('ret_msg')}")
+                logger.error(f"[WS_SUBSCRIPTION] FAILED: {data.get('ret_msg')} - data={data}")
             return
 
         # Handle kline data
@@ -391,6 +508,11 @@ class WebSocketManager:
 
         _, interval, symbol = parts
         kline_data = data.get("data", [])
+
+        # DEBUG: Log all kline data received (not just closes)
+        # This helps verify which symbols are actually subscribed
+        if kline_data:
+            logger.debug(f"[WS_KLINE] Received: {symbol}/{interval} confirm={kline_data[0].get('confirm', False)}")
 
         for kline in kline_data:
             candle = Candle(
@@ -446,6 +568,107 @@ class WebSocketManager:
                 logger.error(f"Ping error: {e}")
                 break
 
+    async def _fill_gaps_after_reconnect(self):
+        """
+        Fill gaps in candle buffers after WebSocket reconnection.
+        Fetches missing candles from Bybit REST API for each symbol/interval.
+        """
+        if httpx is None:
+            logger.warning("[GAP_FILL] httpx not available, cannot fill gaps")
+            return
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                for symbol, intervals in self.buffers.items():
+                    for interval, buffer in intervals.items():
+                        if len(buffer.candles) == 0:
+                            continue
+
+                        # Find the last candle timestamp
+                        last_candle = buffer.get_last_closed_candle()
+                        if not last_candle:
+                            continue
+
+                        last_ts = last_candle.timestamp
+                        now_ts = int(time.time() * 1000)
+
+                        # Calculate how many candles we might be missing
+                        interval_ms = self._interval_to_ms(interval)
+                        if interval_ms == 0:
+                            continue
+
+                        gap_candles = (now_ts - last_ts) // interval_ms
+                        if gap_candles <= 1:
+                            continue  # No significant gap
+
+                        logger.info(f"[GAP_FILL] {symbol}/{interval}: Last candle at {last_ts}, missing ~{gap_candles} candles")
+
+                        # Fetch missing candles from REST API
+                        try:
+                            url = "https://api.bybit.com/v5/market/kline"
+                            params = {
+                                "category": "linear",
+                                "symbol": symbol,
+                                "interval": interval,
+                                "start": last_ts + interval_ms,  # Start after last known candle
+                                "limit": min(gap_candles + 5, 200)  # Fetch a bit extra
+                            }
+
+                            response = await client.get(url, params=params)
+                            data = response.json()
+
+                            if data.get("retCode") == 0 and data.get("result", {}).get("list"):
+                                # Bybit entrega de la mas nueva a la mas vieja: se agregan en orden de tiempo
+                                klines = sorted(data["result"]["list"], key=lambda k: int(k[0]))
+                                filled_count = 0
+                                fill_now = int(time.time() * 1000)
+
+                                for kline in klines:
+                                    # Bybit returns [timestamp, open, high, low, close, volume, turnover]
+                                    candle = Candle(
+                                        timestamp=int(kline[0]),
+                                        open=float(kline[1]),
+                                        high=float(kline[2]),
+                                        low=float(kline[3]),
+                                        close=float(kline[4]),
+                                        volume=float(kline[5]),
+                                        turnover=float(kline[6]) if len(kline) > 6 else 0,
+                                        # La vela en curso no esta cerrada: si se marca cerrada, su cierre real no se avisa
+                                        confirm=int(kline[0]) + interval_ms <= fill_now
+                                    )
+
+                                    # Only add if newer than last known candle
+                                    if candle.timestamp > last_ts:
+                                        buffer.add_or_update(candle)
+                                        filled_count += 1
+
+                                if filled_count > 0:
+                                    logger.info(f"[GAP_FILL] {symbol}/{interval}: Filled {filled_count} missing candles")
+
+                        except Exception as e:
+                            logger.error(f"[GAP_FILL] Error fetching {symbol}/{interval}: {e}")
+
+        except Exception as e:
+            logger.error(f"[GAP_FILL] Error in gap filling: {e}")
+
+    def _interval_to_ms(self, interval: str) -> int:
+        """Convert interval string to milliseconds"""
+        interval_map = {
+            "1": 60 * 1000,
+            "3": 3 * 60 * 1000,
+            "5": 5 * 60 * 1000,
+            "15": 15 * 60 * 1000,
+            "30": 30 * 60 * 1000,
+            "60": 60 * 60 * 1000,
+            "120": 2 * 60 * 60 * 1000,
+            "240": 4 * 60 * 60 * 1000,
+            "360": 6 * 60 * 60 * 1000,
+            "720": 12 * 60 * 60 * 1000,
+            "D": 24 * 60 * 60 * 1000,
+            "W": 7 * 24 * 60 * 60 * 1000,
+        }
+        return interval_map.get(interval, 0)
+
     def get_candles(self, symbol: str, interval: str, limit: int = None) -> List[Dict]:
         """Get buffered candles for a symbol/interval"""
         return self.buffers[symbol][interval].get_candles(limit)
@@ -461,16 +684,21 @@ class WebSocketManager:
             candles_data: List of candle dicts with keys: timestamp, open, high, low, close, volume
         """
         historical_candles = []
+        interval_ms = self._interval_to_ms(interval)
+        now_ms = int(time.time() * 1000)
         for c in candles_data:
+            ts = int(c.get('timestamp', 0))
             candle = Candle(
-                timestamp=int(c.get('timestamp', 0)),
+                timestamp=ts,
                 open=float(c.get('open', 0)),
                 high=float(c.get('high', 0)),
                 low=float(c.get('low', 0)),
                 close=float(c.get('close', 0)),
                 volume=float(c.get('volume', 0)),
                 turnover=float(c.get('turnover', 0)),
-                confirm=True  # Historical candles are always confirmed
+                # La vela en curso que trae el REST no esta cerrada. Marcada como cerrada,
+                # su cierre real no se avisaba y esa vela no pasaba por la deteccion.
+                confirm=(ts + interval_ms <= now_ms) if interval_ms else True
             )
             historical_candles.append(candle)
 
@@ -503,16 +731,21 @@ class WebSocketManager:
         Args:
             symbols: New list of symbols to monitor
             intervals: New list of intervals to monitor
-        """
-        if not self.ws or not self.connected:
-            logger.warning("Cannot update subscriptions: WebSocket not connected")
-            return False
 
+        Los canales fijados con require_channels (el Swing) se conservan siempre.
+        """
         new_subscriptions = {
             f"kline.{interval}.{symbol}"
             for symbol in symbols
             for interval in intervals
-        }
+        } | self._all_required_channels()
+
+        if not self.ws or not self.connected:
+            # Sin conexion se guarda lo pedido y se suscribe al reconectar. Antes el cambio se perdia
+            # y al volver la conexion quedaba el timeframe anterior.
+            self.subscriptions = new_subscriptions
+            logger.warning("[WS] WebSocket sin conexion: las suscripciones se aplicaran al reconectar")
+            return True
 
         # Calculate channels to unsubscribe and subscribe
         to_unsubscribe = self.subscriptions - new_subscriptions
@@ -521,14 +754,14 @@ class WebSocketManager:
         logger.info(f"[WS] Updating subscriptions: -{len(to_unsubscribe)} +{len(to_subscribe)}")
 
         try:
-            # Unsubscribe from old channels
+            # Unsubscribe from old channels (de a 10: Bybit no acepta mas por mensaje)
             if to_unsubscribe:
-                await self._send_in_batches("unsubscribe", list(to_unsubscribe))
+                await self._send_in_batches("unsubscribe", sorted(to_unsubscribe))
                 logger.info(f"[WS] Unsubscribed from {len(to_unsubscribe)} channels: {to_unsubscribe}")
 
             # Subscribe to new channels
             if to_subscribe:
-                await self._send_in_batches("subscribe", list(to_subscribe))
+                await self._send_in_batches("subscribe", sorted(to_subscribe))
                 logger.info(f"[WS] Subscribed to {len(to_subscribe)} channels: {to_subscribe}")
 
             # Update internal state

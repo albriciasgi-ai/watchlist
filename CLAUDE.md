@@ -53,6 +53,31 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### APP 7 (WatchlistDesktop) + Backend de App 2 - 11 Noviembre 2026: Pruebas y Correcciones, Fases 1 y 2
+
+**Pedido:** probar App 7 como App 8 y App 9 antes de seguir con la integración, y corregir las fases 1 y 2 del diagnóstico.
+
+**Cambios:**
+1. **El gráfico solo lee:** App 7 ya no mueve el WebSocket del backend ni cambia el Swing al mirar otro timeframe o marcar "Swing Detector". En otro timeframe las flechas son `displayOnly`. El backend solo cambia timeframe, monedas o encendido del Swing con `confirm: "CAMBIAR_ALERTAS"`, y el Swing fija sus canales del WebSocket
+2. **Modal del Swing:** como en App 9, con "Alertas al bot en Xm · el gráfico está en Ym" y botones con confirmación
+3. **Backend del Swing:** servicio Swing, WebSocket con relleno tras cortes y servicio VWAP del backend de App 5, con origen `WATCHLIST`. Config ilegible: Swing sin alertas y copia del archivo
+4. **Patrones apagados:** DTB, Rejection, `/api/pattern-alert` y `/api/rejection-patterns/detect` ya no mandan nada al bot. Solo opera el Swing
+5. **Interruptor "Alertas":** estado desconocido si no lee, se refresca cada 15 s, solo maneja el Swing y exige `true` o `false`
+6. **Pruebas al bot:** "Test 1x" y "Test 10x" piden confirmación y el backend `?confirm=ENVIAR_ALERTA_REAL`
+7. **Protección:** Origin y Host como el bot, símbolos validados, dibujos con temporal y error 500 si el archivo está dañado; `START_PRODUCTION.bat` levanta la Watchlist solo en 127.0.0.1
+8. **Gráficos:** WebSocket que se reconecta y recarga el histórico, timeframe y días en un paso, VWAP pedido una vez por moneda, pantalla completa que se limpia, carga vigente, vela en curso correcta (también la semanal) y dibujos que no se pisan
+9. **Pruebas:** `2.WatchlistConIndicadores/backend/tests/run_checks.py` corre 114 pruebas sin conexión
+
+**IMPORTANTE:**
+- Reiniciar el backend (8000) y App 7.
+- El Swing de la Watchlist tiene las alertas encendidas (15m, 10 monedas); hoy no opera porque el bot no permite el origen `WATCHLIST`.
+- El `.venv` del backend 2 está roto (le falta `aiohttp`); el backend corre con el Python global.
+- Probado en una copia aislada, en el navegador y con un bot falso. Nada se probó dentro de Electron ni contra el bot o Bybit reales. Queda la fase 3.
+
+**Ver:** `7.WatchlistDesktop/CLAUDE.md` sección "Pruebas y Correcciones, Fases 1 y 2 (11 Noviembre 2026)"
+
+---
+
 ### APP 9 (OrderFlowDesktop) - 11 Noviembre 2026: App 9 Reemplaza a App 8
 
 **Pedido:** el usuario decidió dejar App 8 (Analizador Desktop) y operar desde App 9. Pidió traer de App 8 las órdenes limit y las correcciones del Swing, y después todo lo que faltaba para dejarla.
