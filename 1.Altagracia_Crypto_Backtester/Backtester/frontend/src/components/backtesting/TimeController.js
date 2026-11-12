@@ -221,7 +221,15 @@ class TimeController {
       if (steps <= 0) return;
       owedMs -= steps * stepMs;
 
-      this.currentTime += steps * stepMs;
+      // La hora cae en múltiplos del paso. Si quedó entre medio porque el paso se agrandó (se cerró el
+      // 2.º gráfico, se cambió de marco, se cargó una sesión), este avance termina en el múltiplo anterior:
+      // nunca adelanta el reloj, y las velas vuelven a cerrar en su hora. Lo que no avanzó queda debido
+      const reached = this.currentTime + steps * stepMs;
+      const aligned = Math.floor(reached / stepMs) * stepMs;
+      const next = aligned > this.currentTime ? aligned : reached;
+      owedMs += reached - next;
+
+      this.currentTime = next;
       this.currentSubdivision = (this.currentSubdivision + steps) % subdivisions.count;
 
       // Si llegamos al final, pausar
@@ -340,7 +348,8 @@ class TimeController {
    * sigue con el paso nuevo
    */
   setStepTimeframes(timeframes) {
-    const minutes = timeframes.map(tf => this.subdivisionConfig[tf]?.interval).filter(Boolean);
+    // Un marco aporta el paso de su subdivisión; un número, esos minutos tal cual
+    const minutes = timeframes.map(tf => (typeof tf === 'number' ? tf : this.subdivisionConfig[tf]?.interval)).filter(Boolean);
     const next = minutes.length ? Math.min(...minutes) : null;
     if (next === this.stepMinutes) return;
     this.stepMinutes = next;

@@ -52,6 +52,13 @@ function covers(candles, tf, from, to) {
     && candles[candles.length - 1].timestamp + TF_MS[tf] >= to;
 }
 
+// Paso mas fino con que tiene sentido avanzar el reloj en "now": 1 minuto si esa fecha tiene velas de
+// 1 minuto, 5 si no. Sin ellas la vela en formacion no cambia mas seguido, y una orden puesta entre dos
+// velas de 5 minutos no se revisa hasta la siguiente
+export function finestStep(timeframes, now) {
+  return covers(candlesOf(timeframes, '1m'), '1m', now, now) ? '1m' : '5m';
+}
+
 // Vela actual armada solo con lo que ya cerro. null si aun no hay nada que mostrar.
 export function formingCandle(timeframes, tf, now) {
   const tfMs = TF_MS[tf];

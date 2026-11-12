@@ -785,6 +785,32 @@ Pedidos del usuario el 11/11, después de la fase 4 de Elementos OF.
 - **Sin saltos con la principal atrás** (12/11): al mirar la pestaña del 2.º gráfico, la principal queda en segundo plano y el navegador frena sus `setInterval` a uno por segundo (a uno por minuto pasados 5 minutos). El reloj seguía bien la velocidad pero en saltos de un segundo: a 1000x, 16 minutos por salto; a 10000x, casi 3 horas. Ahora el tick lo marca un Worker (`startTicker()` en `TimeController.js`), cuyos temporizadores no se frenan, y el tick sigue corriendo en la página. Uno por reproducción, terminado al pausar; sin Worker queda `setInterval`. Medido en la copia a 10000x: el 2.º gráfico recibe la hora cada 120 ms, 20 minutos simulados por paso. El panel de pruebas no oculta las pestañas, así que el freno del navegador no se pudo reproducir allí
 - **Una sola principal** (12/11): con dos pestañas principales abiertas (una vieja o una recargada), las dos respondían al `hello` y el 2.º gráfico saltaba entre sus horas. Cada principal manda `source` y el segundo sigue a una sola; pasa a otra solo cuando su hora avanza
 
+### 2.º gráfico fluido (12/11)
+
+El 2.º gráfico seguía a saltos por encima de 1000x. Medido en la copia aislada con la principal en 1h y el segundo en 15m: recibía la hora solo cuando cambiaba la pantalla de la principal, 8.5 veces por segundo, y a 10000x cada aviso traía 20 minutos: más de una vela de 15m por dibujo. No era el navegador ni el costo del dibujo (2 a 4 ms).
+
+- **Seguidor** (`backtesting/replayFollower.js`, lógica pura): en cada cuadro de la pantalla decide qué hora dibujar. Nunca una posterior a la última informada. Si un informe avanza más de un paso del reloj, recorre ese tramo a la velocidad de la reproducción, en minutos enteros; va un informe detrás, cerca de 0.1 s. En pausa, al retroceder, con un salto de más de 3 s de reproducción o sin velocidad informada va directo
+- **La hora que viaja es la de la pantalla de la principal**, no la de su reloj, que va hasta 100 ms reales adelante: una orden toma su hora de la pantalla y el 2.º gráfico no debe mostrar más que eso. El `state` suma `playing`, `speed` y `step`, leídos del reloj
+- **`SecondaryChartApp`**: un bucle de `requestAnimationFrame` (`runFrames`) pasa la hora del seguidor al estado `shownTime` solo cuando cambia, y se detiene cuando no queda tramo. `replay` guarda solo símbolo, inicio y fecha oculta. Al cambiar de simulación o de principal, la hora nueva entra en el mismo render que el símbolo y la fecha oculta. Trades y cajas van por refs y piden `redraw()` cuando cambian
+- **Ritmo según el costo**: `MiniChart` mide sus dibujos por cambio de hora (`drawCost()`, baja de inmediato, sube de a poco y vence al segundo). El bucle deja entre dos avances 2.5 veces ese costo, hasta 250 ms: con miles de velas a la vista no satura el hilo
+- **Paso de 1 minuto**: mientras un 2.º gráfico está a la vista, el reloj de la principal avanza de a 1 minuto (`stepTimeframes`, en minutos), o de a 5 si esa fecha no tiene velas de 1 minuto (`finestStep`). El segundo avisa cada 5 s mientras está visible (`hello`); sin aviso por 15 s la principal vuelve a su paso
+- **Realineación**: si la hora quedó entre dos múltiplos del paso (se cerró el 2.º gráfico), el siguiente avance termina en el múltiplo y lo que faltó queda debido. Antes el reloj seguía corrido para siempre
+- **Una sola principal** (`createSourcePicker`): cambia a otra si la seguida avisa que se cierra (`gone` en `pagehide`), lleva 15 s sin mensajes, o está en pausa y la otra avanza
+- **De paso**: `days` memorizado; las velas se guardan con su símbolo; la clave del gráfico incluye el inicio de la simulación; las cajas TP/SL fuera de la vista no se arman; S&R clásico sin `console.log` por vela; la caché de `sessionProfile` saca el perfil menos usado
+- **Medición a pedido**: `?grafico=2&medir=1` muestra en el encabezado horas recibidas y dibujadas por segundo, atraso y costo del dibujo
+
+Medido con los cuadros reales del navegador, principal en 1h y segundo en 15m con 4 indicadores:
+
+| Velocidad | Antes | Ahora |
+|-----------|-------|-------|
+| 1000x | 3.6 dibujos/s, 5 min cada uno | 16.5/s, 1 min |
+| 10000x | 8.5/s, 20 min (1.3 velas) | 59/s, 3 min (0.2 velas) |
+| 50000x | 9.5/s, 90 min (5.8 velas) | 59/s, 14 min (0.9 velas) |
+
+Con 16 indicadores el dibujo cuesta 9 ms y queda en unos 32 por segundo. En ninguna corrida mostró una hora posterior a la de la principal ni retrocedió, y al pausar las dos pestañas quedaron en la misma hora.
+
+**Pendiente:** al cambiar el paso, el reloj pierde el tiempo debido de menos de un paso; `liquidationPins.js` no escucha el evento `storage`, así que una vela fijada en una pestaña no llega a la otra sin recargar. Pruebas: `follower.test.mjs` (36) y `clock.test.mjs` (28).
+
 ### Observador en ventana aparte
 
 - "Ventana aparte" en el encabezado del Observador. `PopupWindow.jsx`: la ventana se abre en el clic (`openPopup`) y el panel se dibuja en ella con un portal, así comparte estado y datos con la principal sin cargarlos otra vez

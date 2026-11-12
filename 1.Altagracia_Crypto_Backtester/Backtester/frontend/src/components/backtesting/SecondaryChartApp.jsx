@@ -4,7 +4,8 @@ import { API_BASE_URL } from '../../config.js';
 import { useUiTheme } from '../useUiTheme.js';
 import { isBlind, maskDate, setBlindAnchor, setBlindScale } from './blindClock.js';
 import { withoutSubdivisions } from './marketData';
-import { openReplayChannel } from './replayChannel.js';
+import { HEARTBEAT_MS, openReplayChannel, replayBasics, reportOf, sameBasics } from './replayChannel.js';
+import { createFollower, createSourcePicker } from './replayFollower.js';
 import '../../backtesting_styles.css'; // El gráfico llena su panel, como en la principal
 
 /**
@@ -13,6 +14,10 @@ import '../../backtesting_styles.css'; // El gráfico llena su panel, como en la
  * símbolo, la fecha oculta y las líneas de los trades llegan de la principal por BroadcastChannel.
  * Las velas salen del caché del navegador que guardó la principal (IndexedDB), o del backend.
  * Lo que se elige aquí para el análisis llega a la orden de la principal (analysisLevels usa localStorage).
+ *
+ * La principal informa la hora de su pantalla unas 9 veces por segundo. Aquí la hora avanza en cada cuadro
+ * de la pantalla, minuto a minuto, sin pasar nunca de la última informada (replayFollower.js): así las
+ * velas se ven formar también a 10000x, donde cada informe trae 19 minutos de golpe.
  */
 
 const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
@@ -79,15 +84,27 @@ function cachedMarketData(symbol) {
   });
 }
 
-const formatTime = (time) => (isBlind() ? maskDate(time) : new Date(time).toLocaleString('es-CO', {
+// La hora del encabezado cambia en cada cuadro al reproducir: el formato se arma una sola vez
+const TIME_FORMAT = new Intl.DateTimeFormat('es-CO', {
   timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-}));
+});
+const formatTime = (time) => (isBlind() ? maskDate(time) : TIME_FORMAT.format(new Date(time)));
+
+// Con miles de velas a la vista un dibujo tarda decenas de ms. La hora avanza entonces cada varios cuadros,
+// para que dibujar no ocupe más de 2/5 del tiempo y el mouse siga respondiendo
+const DRAW_HEADROOM = 2.5;
+const MAX_COMMIT_GAP_MS = 250;
+
+// ?grafico=2&medir=1 muestra en el encabezado cuántas veces por segundo llega la hora y cuántas se dibuja
+const MEASURING = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('medir') === '1';
 
 const SecondaryChartApp = () => {
   useUiTheme();
   const saved = useMemo(loadSettings, []);
-  const [replay, setReplay] = useState(null); // Último estado de la principal
-  const [marketData, setMarketData] = useState(null);
+  const [replay, setReplay] = useState(null); // Símbolo, inicio y fecha oculta de la principal: cambian poco
+  const [shownTime, setShownTime] = useState(null); // Hora que se dibuja: la fija el seguidor en cada cuadro
+  const [market, setMarket] = useState(null); // { symbol, data }: las velas, con el símbolo al que pertenecen
+  const [measure, setMeasure] = useState(null);
   const [status, setStatus] = useState('Esperando a la pestaña principal…');
   const [timeframe, setTimeframe] = useState(TIMEFRAMES.includes(saved.timeframe) ? saved.timeframe : '1h');
   const [indicatorStates, setIndicatorStates] = useState(() => Object.fromEntries(
@@ -100,7 +117,44 @@ const SecondaryChartApp = () => {
   const timeframeRef = useRef(timeframe);
   const tradesRef = useRef([]);
   const boxesRef = useRef([]);
-  const followRef = useRef({ source: null, last: new Map() }); // Principal que se sigue y última hora de cada una
+  const chartRef = useRef(null);
+  // Lo que no pasa por React: el seguidor de la hora, la principal que se sigue y el cuadro pedido
+  const followRef = useRef(null);
+  if (!followRef.current) {
+    followRef.current = {
+      follower: createFollower(), picker: createSourcePicker(),
+      basics: null, drawn: '', shown: null, frame: 0, committedAt: 0, reports: 0, commits: 0
+    };
+  }
+
+  // Un cuadro de la pantalla: pregunta al seguidor qué hora toca y, si cambió, la pasa al gráfico.
+  // Sigue pidiendo cuadros solo mientras queda tramo por recorrer
+  const runFrames = useCallback(() => {
+    const follow = followRef.current;
+    if (follow.frame) return;
+    const step = () => {
+      follow.frame = 0;
+      const now = performance.now();
+      const cost = chartRef.current?.drawCost?.() || 0;
+      const due = now - follow.committedAt >= Math.min(MAX_COMMIT_GAP_MS, cost * DRAW_HEADROOM) - 2;
+      if (due) {
+        const time = follow.follower.frame(now);
+        if (time !== null && time !== follow.shown) {
+          follow.shown = time;
+          follow.committedAt = now;
+          follow.commits++;
+          setShownTime(time);
+        }
+      }
+      if (!due || follow.follower.pending()) follow.frame = requestAnimationFrame(step);
+    };
+    follow.frame = requestAnimationFrame(step);
+  }, []);
+
+  useEffect(() => () => {
+    cancelAnimationFrame(followRef.current.frame);
+    followRef.current.frame = 0;
+  }, []);
 
   useEffect(() => {
     document.title = 'App 1 · 2.º gráfico';
@@ -113,42 +167,75 @@ const SecondaryChartApp = () => {
       setStatus('Este navegador no permite comunicar pestañas (BroadcastChannel).');
       return undefined;
     }
+    const hello = () => channel.postMessage({ type: 'hello', timeframe: timeframeRef.current });
     channel.onmessage = (event) => {
       const message = event.data;
-      if (message?.type !== 'state') return;
-      // Con dos pestañas principales abiertas (una vieja, o la misma recargada) el gráfico saltaba entre
-      // sus horas. Se sigue una sola, y se cambia a otra solo cuando su hora avanza
       const follow = followRef.current;
-      const source = message.source ?? 'sin-id';
-      const previous = follow.last.get(source);
-      follow.last.set(source, message.currentTime);
-      const moving = previous !== undefined && previous !== message.currentTime;
-      if (follow.source && source !== follow.source && !moving) return;
-      follow.source = source;
+      if (message?.type === 'gone') {
+        follow.picker.release(message.source); // La principal se cerró o se recargó: la que informe ahora toma su lugar
+        return;
+      }
+      const report = reportOf(message);
+      if (!report) return;
+      const now = performance.now();
+      // Con dos pestañas principales abiertas se sigue una sola: atendiendo a las dos saltaría entre sus horas
+      const { follow: mine, changed } = follow.picker.accept(message.source, report.time, now, report.playing);
+      if (!mine) return;
+
+      // La fecha oculta primero: nada de este estado se dibuja con la fecha o la escala anteriores
       setBlindAnchor(message.blindAnchor ?? null);
       setBlindScale(message.blindAnchor == null ? null : message.blindScale);
+      const basics = replayBasics(message);
+      const sameSimulation = sameBasics(follow.basics, basics);
+      // Otra principal u otra simulación: la hora no se recorre desde la anterior, se toma la nueva
+      if (changed || !sameSimulation) follow.follower.reset();
+      if (changed) hello(); // La principal nueva todavía no sabe que este gráfico existe
+      if (!sameSimulation) {
+        follow.basics = basics;
+        setReplay(basics);
+      }
+
       tradesRef.current = message.trades || [];
       boxesRef.current = message.boxes || [];
-      setReplay(message);
+      // El gráfico no se redibuja solo cuando cambian los trades o se revela la fecha: se le pide
+      const drawn = JSON.stringify([message.trades, message.boxes, basics.blindAnchor, basics.blindScale]);
+      if (drawn !== follow.drawn) {
+        follow.drawn = drawn;
+        chartRef.current?.redraw?.();
+      }
+
+      if (report.time !== follow.follower.state().target) follow.reports++;
+      follow.follower.report(report, now);
+      // Un retroceso tampoco espera al cuadro: con la pestaña oculta no hay cuadros y quedaría la hora posterior
+      if (changed || !sameSimulation || (follow.shown !== null && report.time < follow.shown)) {
+        // La hora nueva entra en el mismo render que el símbolo y la fecha oculta nuevos: el gráfico nunca
+        // se dibuja con la hora de la simulación anterior
+        follow.shown = report.time;
+        follow.committedAt = now;
+        setShownTime(report.time);
+      }
+      runFrames();
     };
     channelRef.current = channel;
-    const hello = () => channel.postMessage({ type: 'hello', timeframe: timeframeRef.current });
     hello();
-    const retry = setInterval(hello, 3000);
-    const stop = setTimeout(() => clearInterval(retry), 30000);
+    // Mientras este gráfico está a la vista la principal avanza con pasos finos: se le avisa cada pocos
+    // segundos. Oculto no avisa, y la principal vuelve a su paso de siempre
+    const beat = setInterval(() => { if (!document.hidden) hello(); }, HEARTBEAT_MS);
+    const onVisible = () => { if (!document.hidden) hello(); };
+    document.addEventListener('visibilitychange', onVisible);
     // Al cerrar, la principal vuelve al paso de su propio marco
     const bye = () => channel.postMessage({ type: 'bye' });
     window.addEventListener('beforeunload', bye);
     return () => {
-      clearInterval(retry);
-      clearTimeout(stop);
+      clearInterval(beat);
+      document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('beforeunload', bye);
       channel.close();
       channelRef.current = null;
     };
-  }, []);
+  }, [runFrames]);
 
-  // La principal avanza con el paso del marco más fino a la vista: le avisa el marco de este gráfico
+  // La principal sabe qué marco se mira aquí
   useEffect(() => {
     timeframeRef.current = timeframe;
     channelRef.current?.postMessage({ type: 'tf', timeframe });
@@ -173,7 +260,7 @@ const SecondaryChartApp = () => {
         }
       }
       if (!active) return;
-      setMarketData(data);
+      setMarket({ symbol, data });
       setStatus(null);
     })();
     return () => { active = false; };
@@ -188,9 +275,28 @@ const SecondaryChartApp = () => {
   const getTradeBoxes = useCallback(() => boxesRef.current, []);
   const noop = useCallback(() => {}, []);
 
-  const days = replay?.simulationStartTime
+  // Solo cambia con la simulación o el marco. Calculado en cada render cambiaría al pasar la medianoche,
+  // y el gráfico rearma sus indicadores cuando cambia
+  const days = useMemo(() => (replay?.simulationStartTime
     ? Math.min(Math.ceil((Date.now() - replay.simulationStartTime) / DAY_MS), MAX_DAYS[timeframe])
-    : MAX_DAYS[timeframe];
+    : MAX_DAYS[timeframe]), [replay?.simulationStartTime, timeframe]);
+
+  // Medición a pedido (?grafico=2&medir=1): por segundo, cuántas horas distintas llegan y cuántas se dibujan
+  useEffect(() => {
+    if (!MEASURING) return undefined;
+    const timer = setInterval(() => {
+      const follow = followRef.current;
+      const { target, shown, speed } = follow.follower.state();
+      setMeasure({
+        reports: follow.reports, commits: follow.commits,
+        lag: target !== null && speed > 0 ? Math.round((target - shown) / speed) : 0,
+        cost: chartRef.current?.drawCost?.() || 0
+      });
+      follow.reports = 0;
+      follow.commits = 0;
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -198,7 +304,7 @@ const SecondaryChartApp = () => {
       <div style={{ height: 38, display: 'flex', alignItems: 'center', gap: 8, padding: '0 10px', borderBottom: '1px solid var(--t-line, #ddd)', fontSize: 13, flexShrink: 0 }}>
         <strong>{replay?.symbol || 'App 1'}</strong>
         <span style={{ opacity: 0.7 }}>2.º gráfico</span>
-        {replay?.currentTime && <span>{formatTime(replay.currentTime)}</span>}
+        {shownTime !== null && <span>{formatTime(shownTime)}</span>}
         <div style={{ display: 'flex', gap: 2, marginLeft: 12 }}>
           {TIMEFRAMES.map(tf => (
             <button
@@ -236,7 +342,12 @@ const SecondaryChartApp = () => {
             </div>
           )}
         </div>
-        <span style={{ marginLeft: 'auto', fontSize: 11, opacity: 0.7 }}>
+        {measure && (
+          <span style={{ marginLeft: 'auto', fontSize: 11, opacity: 0.7 }}>
+            hora recibida {measure.reports}/s · dibujada {measure.commits}/s · atraso {measure.lag} ms · dibujo {measure.cost.toFixed(1)} ms
+          </span>
+        )}
+        <span style={{ marginLeft: measure ? 12 : 'auto', fontSize: 11, opacity: 0.7 }}>
           {replay ? 'Sigue la reproducción de la pestaña principal' : 'Sin conexión con la pestaña principal'}
         </span>
       </div>
@@ -247,18 +358,19 @@ const SecondaryChartApp = () => {
             {status}
           </div>
         )}
-        {!status && marketData && replay && (
+        {!status && replay && shownTime !== null && market?.symbol === replay.symbol && (
           <div className="timeframe-panel" style={{ position: 'absolute', inset: 0 }}>
             <MiniChart
-              key={`${replay.symbol}-${timeframe}`}
+              ref={chartRef}
+              key={`${replay.symbol}-${timeframe}-${replay.simulationStartTime}`}
               symbol={replay.symbol}
               interval={timeframe}
               days={days}
               isActive={true}
               indicatorStates={indicatorStates}
               backtestingMode={true}
-              backtestingData={marketData}
-              currentTime={replay.currentTime}
+              backtestingData={market.data}
+              currentTime={shownTime}
               simulationStartTime={replay.simulationStartTime}
               vpConfig={DEFAULT_VP_CONFIG}
               vpFixedRange={null}

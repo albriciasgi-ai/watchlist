@@ -1,7 +1,7 @@
 // Reloj de la reproducción: mantiene la velocidad elegida aunque un tick llegue tarde.
 // Uso: node tests/clock.test.mjs
 import assert from 'node:assert/strict';
-import { candlesBetween, tickAlreadySettled, timestampIndex } from '../src/components/backtesting/replayClock.js';
+import { candlesBetween, finestStep, tickAlreadySettled, timestampIndex } from '../src/components/backtesting/replayClock.js';
 
 const log = console.log;
 console.log = () => {};
@@ -49,6 +49,71 @@ test('paso: con un gráfico de marco menor a la vista, el reloj avanza con su pa
   assert.equal(controller.getTimeIncrement(), 15 * 60000, 'un marco mayor no lo vuelve más grueso');
   controller.setStepTimeframes([]);
   assert.equal(controller.getTimeIncrement(), 15 * 60000);
+});
+
+test('paso: con un segundo gráfico conectado avanza de a 1 minuto y el tick se acorta', () => {
+  // BacktestingApp pasa [marco activo, '1m'] (stepTimeframes en replayChannel.js)
+  const clock = fakeClock();
+  const times = [];
+  const controller = new TimeController(START, END, '1h', time => times.push(time), START);
+  controller.setStepTimeframes(['1h', '1m']);
+  assert.equal(controller.getTimeIncrement(), MINUTE);
+  controller.playbackSpeed = 1000;
+  controller.play();
+  assert.equal(clock.every(), 60, 'a 1000x, un minuto simulado cada 60 ms');
+  clock.advance(60);
+  clock.advance(60);
+  assert.deepEqual(times, [START + MINUTE, START + 2 * MINUTE]);
+  controller.pause();
+  // A 10000x el tick queda en el mínimo de 16 ms y avanza 2 o 3 minutos, siempre en minutos enteros
+  controller.playbackSpeed = 10000;
+  controller.play();
+  assert.equal(clock.every(), 16);
+  times.length = 0;
+  for (let i = 0; i < 60; i++) clock.advance(16);
+  assert.ok(times.every((time, i) => (time - (i ? times[i - 1] : START + 2 * MINUTE)) % MINUTE === 0));
+  assert.equal(times[times.length - 1], START + 2 * MINUTE + 160 * MINUTE, '960 ms a 10000x son 160 minutos');
+  controller.pause();
+});
+
+test('paso: una hora entre dos múltiplos del paso vuelve al múltiplo sin adelantar el reloj', () => {
+  // El reloj quedó en :07 con pasos de 1 minuto (había un 2.º gráfico) y vuelve a pasos de 15
+  const HOUR = 60 * MINUTE;
+  const base = Math.ceil(START / HOUR) * HOUR;
+  const clock = fakeClock();
+  const times = [];
+  const controller = new TimeController(base, base + 1000 * HOUR, '1h', time => times.push(time), base + 7 * MINUTE);
+  controller.playbackSpeed = 1000;
+  controller.play();
+  assert.equal(clock.every(), 900, 'paso de 15 minutos a 1000x');
+  for (let i = 0; i < 5; i++) clock.advance(900);
+  assert.equal(times[0], base + 15 * MINUTE, 'el primer avance termina en :15, no en :22');
+  assert.ok(times.every(time => (time - base) % (15 * MINUTE) === 0), 'desde ahí, siempre en múltiplos de 15');
+  // 4500 ms a 1000x son 75 minutos: salió de :07, va en :75 y queda debiendo los 7 que no avanzó al alinearse
+  assert.equal(times[times.length - 1], base + 75 * MINUTE);
+  assert.ok(times.every((time, i) => time > (i ? times[i - 1] : base + 7 * MINUTE)), 'nunca retrocede');
+  controller.pause();
+});
+
+test('paso: el paso fino va en minutos; como marco, 5m también avanzaría de a 1', () => {
+  const controller = new TimeController(START, END, '1h', () => {}, START);
+  controller.setStepTimeframes(['1h', 5]);
+  assert.equal(controller.getTimeIncrement(), 5 * MINUTE, 'sin velas de 1 minuto: de a 5');
+  controller.setStepTimeframes(['1h', 1]);
+  assert.equal(controller.getTimeIncrement(), MINUTE);
+  controller.setStepTimeframes(['4h', 5]);
+  assert.equal(controller.getTimeIncrement(), 5 * MINUTE);
+});
+
+test('paso: de a 1 minuto solo donde hay velas de 1 minuto', () => {
+  const minuteCandles = Array.from({ length: 600 }, (_, i) => ({ timestamp: START + i * MINUTE }));
+  const timeframes = { '1m': { main: minuteCandles }, '5m': { main: [] } };
+  assert.equal(finestStep(timeframes, START + 30 * MINUTE), '1m');
+  assert.equal(finestStep(timeframes, START + 600 * MINUTE), '1m', 'el cierre de la última vela todavía cuenta');
+  assert.equal(finestStep(timeframes, START - MINUTE), '5m', 'antes de la primera vela de 1 minuto');
+  assert.equal(finestStep(timeframes, START + 700 * MINUTE), '5m', 'después de la última');
+  assert.equal(finestStep({ '5m': { main: [] } }, START), '5m', 'sin velas de 1 minuto cargadas');
+  assert.equal(finestStep(undefined, START), '5m');
 });
 
 test('segundo plano: con Worker el tick lo marca el Worker y pausar lo termina', () => {

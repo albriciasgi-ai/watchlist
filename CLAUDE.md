@@ -78,6 +78,23 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### APP 1 (Backtester) - 12 Noviembre 2026: 2.º Gráfico Fluido
+
+**Problema:** por encima de 1000x el 2.º gráfico avanzaba a saltos. Recibía la hora solo cuando cambiaba la pantalla de la principal, 8.5 veces por segundo, y a 10000x cada aviso traía 20 minutos: más de una vela de 15m por dibujo.
+
+**Cambios:**
+1. **Seguidor de la hora** (`replayFollower.js`): el 2.º gráfico avanza en cada cuadro de la pantalla, minuto a minuto, a la velocidad de la reproducción. Nunca muestra una hora posterior a la de la pantalla de la principal; va cerca de 0.1 s detrás y al pausar queda igual
+2. **Paso de 1 minuto** en el reloj mientras el 2.º gráfico está a la vista (de a 5 si la fecha no tiene velas de 1 minuto). Al dejar de verlo, la principal vuelve a su paso y el reloj se realinea
+3. **Ritmo según el costo del dibujo:** con muchos indicadores o miles de velas a la vista avanza cada varios cuadros
+4. **Una sola principal:** con dos pestañas principales abiertas sigue una, y cambia si esa se cierra o queda en pausa mientras la otra reproduce
+5. **Medición a pedido:** `?grafico=2&medir=1` muestra horas recibidas y dibujadas por segundo
+
+**IMPORTANTE:** basta recargar las dos pestañas: no hay cambios en el backend. Medido con cuadros reales, principal en 1h y segundo en 15m: a 10000x pasó de 8.5 dibujos por segundo con 20 minutos cada uno a 59 con 3 minutos. Con 16 indicadores queda en unos 32 por segundo. Con el 2.º gráfico a la vista, la principal también forma sus velas minuto a minuto.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11", "2.º gráfico fluido"
+
+---
+
 ### APP 9 (OrderFlowDesktop) - 11 Noviembre 2026: App 9 Reemplaza a App 8
 
 **Pedido:** el usuario decidió dejar App 8 (Analizador Desktop) y operar desde App 9. Pidió traer de App 8 las órdenes limit y las correcciones del Swing, y después todo lo que faltaba para dejarla.
