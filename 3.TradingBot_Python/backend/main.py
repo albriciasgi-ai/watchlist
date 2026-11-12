@@ -38,12 +38,15 @@ from trading.direction_manager import DirectionManager
 from trading.alert_parser import AlertParser
 from trading.private_stream import PrivateStream, order_record
 from trading.safe_io import write_json_atomic
+from trading.trade_journal import TRADE_ID_RE, TradeJournal, now_ms
 
 # Rutas absolutas: el backend funciona aunque se arranque desde otra carpeta
 BACKEND_DIR = Path(__file__).resolve().parent
 # BOT_CONFIG_DIR y BOT_LOG_DIR solo para pruebas: asi nunca tocan la configuracion ni las claves reales
 CONFIG_DIR = Path(os.environ.get("BOT_CONFIG_DIR") or (BACKEND_DIR.parent / "config"))
 TRADING_CONFIG_FILE = CONFIG_DIR / "trading_config.json"
+# Journal de trades reales (paso 4): junto a config/, fuera de git. Con BOT_CONFIG_DIR de pruebas queda en su carpeta
+JOURNAL_FILE = Path(os.environ.get("BOT_JOURNAL_DIR") or (CONFIG_DIR.parent / "journal")) / "trades.jsonl"
 
 # Alert log file for received alerts
 ALERT_LOG_DIR = Path(os.environ.get("BOT_LOG_DIR") or (BACKEND_DIR / "logs"))
@@ -318,6 +321,10 @@ class AppState:
         # Posiciones sin SL: desde cuando se ven asi y a cuales ya se aviso (una vez por posicion)
         self.unprotected_since: Dict[str, float] = {}
         self.unprotected_alerted: set = set()
+        # Journal: trades reales (apertura por el WebSocket, cierres de Bybit, notas)
+        self.journal = TradeJournal(JOURNAL_FILE)
+        self.journal_active: Dict[str, Dict[str, Any]] = {}  # posicion abierta -> {trade_id, last}
+        self.stream_started_ms: int = 0
         self.order_history_file = CONFIG_DIR / "order_history.json"
         self.bot_settings_file = CONFIG_DIR / "bot_settings.json"
         self.symbol_locks: Dict[str, asyncio.Lock] = {}  # Lock per symbol to prevent race conditions
@@ -703,6 +710,10 @@ async def startup_sync():
     except Exception as e:
         state.log("warning", f"Startup sync failed: {e}")
     await review_account()
+    try:
+        await journal_sync(days=7)  # lo cerrado la ultima semana (tambien con el bot apagado o en otra cuenta)
+    except Exception as e:
+        state.log("warning", f"[JOURNAL] {e}")
 
 
 # ==========================
@@ -719,10 +730,131 @@ async def restart_stream() -> None:
     if old:
         await old.stop()
     state.unprotected_since.clear()
+    state.journal_active = {}
+    state.stream_started_ms = now_ms()
     if state.bybit_client and private_stream_enabled():
-        state.stream = PrivateStream(state.bybit_client, on_event=state.broadcast_event,
+        state.stream = PrivateStream(state.bybit_client, on_event=on_stream_event,
                                      ws_url=os.environ.get("BOT_PRIVATE_WS_URL") or None)
         state.stream.start()
+
+
+async def on_stream_event(kind: str, data: Any) -> None:
+    """Lo del WebSocket privado va a las apps conectadas y, si son posiciones, al journal."""
+    await state.broadcast_event(kind, data)
+    if kind == "position_update":
+        try:
+            await journal_positions(data)
+        except Exception as e:
+            state.log("warning", f"[JOURNAL] No se pudo anotar: {e}")
+
+
+def _position_key(p: Dict[str, Any]) -> str:
+    return f"{p.get('symbol')}:{p.get('positionIdx')}:{p.get('side')}"
+
+
+def origin_for(p: Dict[str, Any]):
+    """La orden del historial del bot que abrio la posicion: misma moneda y lado, en los 10 minutos anteriores."""
+    limit = time.time() - 600
+    for entry in reversed(state.order_history[-300:]):
+        try:
+            ts = datetime.fromisoformat(str(entry.get("timestamp"))).timestamp()
+        except ValueError:
+            continue
+        if ts < limit:
+            break
+        if entry.get("symbol") == p.get("symbol") and entry.get("side") == p.get("side") and entry.get("status") != "failed":
+            return entry.get("origin"), entry.get("source"), entry.get("pattern")
+    return None, None, None
+
+
+async def journal_positions(positions: List[Dict[str, Any]]) -> None:
+    """
+    Apertura: una posicion que el journal no seguia. Si ya habia un trade abierto anotado de esa moneda y lado
+    (el bot se reinicio), se sigue ese. Una posicion que ya existia antes de arrancar el WebSocket queda como
+    "anterior" (no se sabe cuando abrio). Cambios de SL, TP o tamano se anotan; si baja el tamano o la posicion
+    desaparece, se piden los cierres a Bybit.
+    """
+    account = state.active_account
+    account_id = (account or {}).get("id")
+    current = {}
+    for p in positions:
+        key = _position_key(p)
+        current[key] = p
+        known = state.journal_active.get(key)
+        if known is None:
+            # Solo si es la misma posicion: con otra entrada, la anotada se cerro con el bot apagado y esta es nueva
+            entry = _num(p.get("entryPrice")) or 0
+            reuse = [t for t in state.journal.open_trades(p.get("symbol"), p.get("side"), account_id)
+                     if t.get("entry") and entry and abs(t["entry"] - entry) / t["entry"] < 0.005]
+            if reuse:
+                trade = reuse[0]
+                state.journal_active[key] = {"trade_id": trade["trade_id"],
+                                             "last": {k: trade.get(k) for k in ("size", "entry", "stop_loss", "take_profit")}}
+                known = state.journal_active[key]
+            else:
+                updated = int(_num(p.get("updatedTime")) or 0)
+                pre_existing = bool(updated) and updated < state.stream_started_ms - 60000
+                origin, source, pattern = (None, None, None) if pre_existing else origin_for(p)
+                trade_id = state.journal.record_open(p, origin=origin, source=source, pattern=pattern, account=account,
+                                                     pre_existing=pre_existing)
+                state.journal_active[key] = {"trade_id": trade_id, "last": TradeJournal.snapshot(p)}
+                state.log("info", f"[JOURNAL] Apertura anotada: {p.get('symbol')} {p.get('side')} {p.get('size')} @ {p.get('entryPrice')}"
+                          f" ({'anterior al bot' if pre_existing else origin or 'externa'})")
+                continue
+        now = state.journal.record_update(known["trade_id"], p, known["last"])
+        if now:
+            if (now.get("size") or 0) < (known["last"].get("size") or 0):
+                asyncio.create_task(journal_sync(symbol=p.get("symbol"), days=1, delay=3))  # cierre parcial
+            known["last"] = now
+    for key in list(state.journal_active):
+        if key not in current:
+            state.journal_active.pop(key)
+            asyncio.create_task(journal_sync(symbol=key.split(":")[0], days=1, delay=3))
+
+
+async def journal_sync(symbol: Optional[str] = None, days: int = 1, delay: float = 0.0) -> int:
+    """Cierres de Bybit (/v5/position/closed-pnl, neto de comisiones) de la cuenta activa. Devuelve cuantos nuevos."""
+    if delay:
+        await asyncio.sleep(delay)
+    client = state.bybit_client
+    if not client:
+        return 0
+    account = state.active_account
+    params = {"category": "linear", "limit": 100, "startTime": now_ms() - min(max(days, 1), 7) * 86400000}
+    if symbol:
+        params["symbol"] = symbol
+    rows, cursor = [], None
+    for _ in range(10):
+        query = dict(params)
+        if cursor:
+            query["cursor"] = cursor
+        result = await client._make_request("GET", "/v5/position/closed-pnl", query)
+        if result.get("retCode") != 0:
+            state.log("warning", f"[JOURNAL] Bybit no dio los cierres: {result.get('retMsg')} (retCode={result.get('retCode')})")
+            break
+        body = result.get("result") or {}
+        rows.extend(body.get("list") or [])
+        cursor = body.get("nextPageCursor")
+        if not cursor:
+            break
+    if client is not state.bybit_client:
+        return 0  # la cuenta cambio mientras se pedian
+    added = sum(1 for row in sorted(rows, key=lambda x: int(_num(x.get("updatedTime")) or 0))
+                if state.journal.record_close(row, account))
+    if added:
+        state.log("info", f"[JOURNAL] {added} cierre(s) de Bybit anotado(s)")
+        await state.broadcast_event("journal_update", {"added": added})
+    return added
+
+
+async def journal_loop() -> None:
+    """Cada minuto, los cierres del ultimo dia (los de TP o SL que no pasaron por el bot tambien)."""
+    while True:
+        await asyncio.sleep(60)
+        try:
+            await journal_sync(days=1)
+        except Exception as e:
+            state.log("warning", f"[JOURNAL] {e}")
 
 
 async def live_book():
@@ -809,6 +941,7 @@ async def startup():
     state.load_bot_settings()
     await restart_stream()
     asyncio.create_task(unprotected_watch())
+    asyncio.create_task(journal_loop())
     if state.bybit_client:
         asyncio.create_task(startup_sync())
     state.log("success", "Backend ready")
@@ -2600,6 +2733,39 @@ async def cancel_order_route(req: CancelOrderRequest):
     if state.stream:
         asyncio.create_task(state.stream.snapshot())
     return {"success": True, "symbol": symbol, "orderId": req.order_id}
+
+
+# ==========================
+# Journal de trades reales (paso 4 de la integracion, 12/11/2026)
+# ==========================
+
+class JournalNoteRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=4000)
+
+
+@app.get("/api/journal/trades")
+async def journal_trades(days: int = 30, symbol: Optional[str] = None, account: Optional[str] = None):
+    """Trades reales: abiertos primero, despues cerrados de los ultimos `days` dias. Neto de comisiones (Bybit)."""
+    sym = _symbol_or_400(symbol) if symbol else None
+    trades = state.journal.trades(days=max(1, min(days, 3650)), symbol=sym, account=account)
+    return {"success": True, "trades": trades, "count": len(trades), "account": state.active_account}
+
+
+@app.post("/api/journal/trades/{trade_id}/note")
+async def journal_note(trade_id: str, req: JournalNoteRequest):
+    if not TRADE_ID_RE.match(trade_id) or not state.journal.exists(trade_id):
+        raise HTTPException(status_code=404, detail="trade no encontrado")
+    state.journal.add_note(trade_id, req.text.strip())
+    return {"success": True}
+
+
+@app.post("/api/journal/sync")
+async def journal_sync_route(days: int = 7):
+    """Pide ya los cierres a Bybit (hasta 7 dias), sin esperar el minuto."""
+    if not state.bybit_client:
+        raise HTTPException(status_code=400, detail="Credentials not configured")
+    added = await journal_sync(days=max(1, min(days, 7)))
+    return {"success": True, "added": added}
 
 
 @app.get("/api/alerts/recent")

@@ -131,6 +131,16 @@ try:
     check("ordenes abiertas de una moneda", calls == [("GET", "/api/orders/open", None, {"symbol": "ETHUSDT"})], str(calls))
     calls.clear()
 
+    # Journal
+    c.get("/api/bot/journal?days=99999&symbol=btcusdt")
+    check("journal: dias acotados y moneda limpia", calls == [("GET", "/api/journal/trades", None, {"days": 3650, "symbol": "BTCUSDT"})], str(calls))
+    calls.clear()
+    check("nota vacia: no llega", c.post("/api/bot/journal/BTCUSDT-Sell-1/note", json={"text": "  "}).status_code == 400 and not calls)
+    check("nota a un id raro: no llega", c.post("/api/bot/journal/x y/note", json={"text": "hola"}).status_code in (400, 404) and not calls)
+    r = c.post("/api/bot/journal/close:abc-1:1794/note", json={"text": " Entre tarde "})
+    check("nota: llega limpia al bot", r.status_code == 200 and calls == [("POST", "/api/journal/trades/close:abc-1:1794/note", {"text": "Entre tarde"}, None)], str(calls))
+    calls.clear()
+
     # Lista de monedas
     sl = SymbolList(TMP / "data")
     check("monedas de fabrica sin archivo", sl.load() == DEFAULT_SYMBOLS)

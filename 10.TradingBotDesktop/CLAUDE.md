@@ -203,5 +203,27 @@ Paso 4 de la integración: el bot endurecido, para que la suite muestre cada pos
 
 **IMPORTANTE:** reiniciar el bot para tenerlo. Nada se probó contra Bybit real: el WebSocket privado y las tres acciones conviene probarlos primero con una cuenta Demo. App 10 no tiene botones para estas acciones; las usa la suite.
 
+## Journal de trades reales (12 Noviembre 2026)
+
+Paso 4 de la integración: el journal de la suite será el Observador de App 1 con trades reales. Esta es su base, en el bot: los hechos de cada trade (`trading/trade_journal.py`).
+
+- **Archivo:** `3.TradingBot_Python/journal/trades.jsonl`, fuera de git (`BOT_JOURNAL_DIR` lo cambia; con `BOT_CONFIG_DIR` de pruebas queda en esa carpeta). Eventos que solo se agregan: `open`, `update`, `close` y `note`. Una línea cortada por un apagón se salta al leer. Los trades se arman al pedirlos.
+- **Apertura:** la ve el WebSocket privado (posición nueva). Anota tamaño, entrada, SL, TP, apalancamiento y cuenta.
+  - **Origen:** la orden del historial del bot de esa moneda y lado en los 10 minutos anteriores (`origin`, `source`, `pattern`, por ejemplo WATCHLIST · SWING_DETECTOR · SWING_HIGH).
+  - **"externa":** el bot no la abrió.
+  - **"anterior":** ya estaba abierta antes de arrancar el WebSocket. De esta no se sabe cuándo abrió, así que no tiene duración.
+  - Si el bot se reinicia, sigue el trade anotado de la misma posición (misma moneda, lado, cuenta y entrada a menos de 0.5%).
+- **Cambios:** SL, TP, tamaño o entrada distintos se anotan. El SL inicial es el primero que tuvo: el método secuencial lo pone uno o dos segundos después de llenar.
+- **Cierres:** de Bybit (`/v5/position/closed-pnl`), con cantidad, entrada y salida promedio y resultado neto de comisiones:
+  - se piden al arrancar y al cambiar de cuenta (7 días), cada minuto (1 día), y 3 s después de que una posición baja o desaparece;
+  - cada registro se anota una vez y se une al trade abierto de esa moneda, lado y cuenta;
+  - el `side` de Bybit es el de la orden que cerró: la posición es la contraria;
+  - un cierre sin apertura anotada (abierto antes del journal o con el bot apagado) queda como trade "sin apertura".
+- **R:** el resultado neto sobre lo que arriesgaba el SL inicial por la cantidad cerrada.
+- **Rutas:** `GET /api/journal/trades?days&symbol&account` (abiertos primero), `POST /api/journal/trades/{id}/note` y `POST /api/journal/sync` (pide ya los cierres, hasta 7 días).
+- **Pruebas:** `backend/tests/journal_checks.py` (21), con un Bybit simulado.
+
+**IMPORTANTE:** reiniciar el bot. Al arrancar trae los cierres de la última semana: los trades de antes quedan como "sin apertura" y las posiciones abiertas como "anterior".
+
 ---
 

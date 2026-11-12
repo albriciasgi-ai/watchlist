@@ -62,6 +62,8 @@ config/accounts.json
 config/accounts.json.tmp
 # Temporales del guardado seguro (trading.safe_io): solo existen un instante al escribir
 config/*.tmp
+# Journal de trades reales (datos del usuario)
+journal/
 *.pem
 *.key
 

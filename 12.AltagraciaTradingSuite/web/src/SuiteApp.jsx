@@ -4,6 +4,7 @@ import ThemeSettings from '@app1/components/ThemeSettings.jsx';
 import ChartView from './ChartView.jsx';
 import BotView from './BotView.jsx';
 import BotConfig from './BotConfig.jsx';
+import JournalView from './JournalView.jsx';
 import { TAB } from './tabs.js';
 import { useBotNotifications } from './botNotifications.js';
 
@@ -39,14 +40,16 @@ export default function SuiteApp() {
           <div className="suite-bar">
             <button type="button" className="suite-btn" onClick={() => choose('chart')}>← Gráfico</button>
             <span className="suite-title">Bot</span>
-            {[['status', 'Estado'], ['config', 'Configuración y riesgo']].map(([id, label]) => (
+            {[['status', 'Estado'], ['journal', 'Journal'], ['config', 'Configuración y riesgo']].map(([id, label]) => (
               <button key={id} type="button" className={`suite-btn ${botSection === id ? 'active' : ''}`} onClick={() => setBotSection(id)}>{label}</button>
             ))}
             <div className="suite-spacer" />
             <button type="button" className="suite-btn" onClick={() => setShowTheme(true)}>Estilo</button>
           </div>
           <div className="suite-main">
-            {botSection === 'status' ? <BotView active /> : <div className="bot-view"><BotConfig active /></div>}
+            {botSection === 'status' && <BotView active />}
+            {botSection === 'journal' && <div className="bot-view"><JournalView active /></div>}
+            {botSection === 'config' && <div className="bot-view"><BotConfig active /></div>}
           </div>
         </div>
       )}

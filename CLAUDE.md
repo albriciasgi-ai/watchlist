@@ -54,6 +54,30 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + TradingBot - 12 Noviembre 2026: Journal de Trades Reales (paso 4, primera parte)
+
+**Pedido:** seguir con el journal del paso 4: el Observador de App 1 con trades reales.
+
+**Cambios:**
+1. **Bot** (`trading/trade_journal.py`, `journal/trades.jsonl` fuera de git):
+   - **apertura:** la ve el WebSocket privado, con SL y TP iniciales y su origen (la orden del bot de esa moneda y lado en los 10 minutos anteriores: Swing, panel, etc.; "externa" si no la abrió el bot);
+   - **cierres:** de Bybit (`closed-pnl`), con el resultado neto de comisiones: al arrancar los últimos 7 días, cada minuto, y al bajar o cerrarse una posición;
+   - **R** sobre el riesgo del SL inicial;
+   - **notas.**
+2. **Suite**, Bot > "Journal":
+   - resumen: acierto, P&L neto, R promedio y por origen;
+   - trades abiertos con el P&L de Bybit y cerrados con salida, R y duración;
+   - detalle con cierres parciales, cambios de SL/TP y notas.
+3. **Pruebas:** `journal_checks.py` del bot (21) y `bot_checks.py` de la suite (56).
+
+**IMPORTANTE:**
+- Reiniciar el bot. Al arrancar trae los cierres de la última semana: los de antes quedan "sin apertura", y las posiciones ya abiertas, "anterior".
+- Falta lo del Observador: medidas, imágenes de decisión, apertura y cierre, niveles elegidos, informe e ir al gráfico desde un trade.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal" y `10.TradingBotDesktop/CLAUDE.md` sección "Journal de trades reales"
+
+---
+
 ### Altagracia Trading Suite + TradingBot - 12 Noviembre 2026: Posiciones en el Gráfico y Bot en Tiempo Real (paso 4)
 
 **Pedido:** empezar el paso 4 de la integración (el journal con el bot endurecido). Se agregó al plan ver en el gráfico de cada moneda el estado y el P&L de las posiciones, como en TradingView, como parte del servicio del bot.

@@ -18,6 +18,7 @@ from fastapi import APIRouter, HTTPException, Request
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
 ACCOUNT_RE = re.compile(r"^[a-f0-9]{12}$")
 ORDER_ID_RE = re.compile(r"^[A-Za-z0-9-]{1,64}$")
+TRADE_ID_RE = re.compile(r"^[A-Za-z0-9:._-]{1,160}$")
 ORIGINS = {"ANALIZADOR", "WATCHLIST", "ORDERFLOW"}
 DIRECTIONS = {"LONG", "SHORT", "BOTH", "DISABLED"}
 
@@ -259,6 +260,32 @@ def make_router(bot) -> APIRouter:
         if not ORDER_ID_RE.match(order_id):
             raise HTTPException(status_code=400, detail="order_id invalido")
         return await bot("POST", "/api/orders/cancel", json={"symbol": _symbol(b.get("symbol")), "order_id": order_id})
+
+    # ---------- journal de trades reales (paso 4) ----------
+    @r.get("/journal")
+    async def journal(days: int = 30, symbol: str = None):
+        params = {"days": max(1, min(days, 3650))}
+        if symbol:
+            params["symbol"] = _symbol(symbol)
+        return await bot("GET", "/api/journal/trades", params=params)
+
+    @r.post("/journal/sync")
+    async def journal_sync():
+        return await bot("POST", "/api/journal/sync", params={"days": 7})
+
+    @r.post("/journal/{trade_id}/note")
+    async def journal_note(trade_id: str, request: Request):
+        # Una nota no mueve dinero: no pide palabra (la protegen el Host y el Origin del servidor)
+        if not TRADE_ID_RE.match(trade_id):
+            raise HTTPException(status_code=400, detail="trade invalido")
+        try:
+            b = await request.json()
+        except Exception:
+            raise HTTPException(status_code=400, detail="cuerpo JSON invalido")
+        text = b.get("text") if isinstance(b, dict) else None
+        if not isinstance(text, str) or not text.strip() or len(text) > 4000:
+            raise HTTPException(status_code=400, detail="nota de 1 a 4000 caracteres")
+        return await bot("POST", f"/api/journal/trades/{trade_id}/note", json={"text": text.strip()})
 
     # ---------- orden manual (panel de trading) ----------
     @r.post("/trade")

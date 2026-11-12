@@ -11,8 +11,14 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **Paso 2:** almacén de order flow en vivo con la finura de App 1: oficial + nube + PC.
 - **Paso 3:** el gráfico en vivo con ese almacén.
 - **Segunda ronda (12/11, pedidos del usuario):** Electron sin freno, todos los indicadores de App 1 (también Elementos OF), grabación propia de trades, el formato de la pestaña principal de App 1 (barra de dibujo, marcos y panel de trading), monedas nuevas, dos pestañas, panel de trading al bot real y la configuración del bot de App 10.
-- **Paso 4, empezado el 12/11:** el bot endurecido (cuenta en tiempo real por su WebSocket privado, cerrar, mover SL/TP y cancelar, aviso de posiciones sin stop, guardado seguro) y, a pedido del usuario, las posiciones sobre el gráfico con su P&L, como en TradingView. Falta el journal (el Observador con trades reales).
-- **Falta:** el journal del paso 4, el paso 5 (watchlist, con las alertas automáticas del Swing) y al final la mudanza a un servidor 24/7 con acceso protegido y celular.
+- **Paso 4, empezado el 12/11:**
+  - el bot endurecido: cuenta en tiempo real por su WebSocket privado; cerrar, mover SL/TP y cancelar; aviso de posiciones sin stop; guardado seguro;
+  - a pedido del usuario, las posiciones sobre el gráfico con su P&L, como en TradingView;
+  - la primera parte del journal: los hechos de cada trade real (ver "Journal").
+- **Falta:**
+  - del journal: lo del Observador (medidas, imágenes de decisión, apertura y cierre, niveles elegidos e informe) e ir al gráfico desde un trade;
+  - el paso 5 (watchlist, con las alertas automáticas del Swing);
+  - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
 
 ## Reglas de diseño (fijadas con el usuario)
 
@@ -38,7 +44,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46) y bot_checks.py (52), sin conexión
+│   └── tests/             run_checks.py (46) y bot_checks.py (56), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -50,6 +56,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── BotConfig.jsx  Configuración del bot como en App 10
         ├── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
         ├── botBook.js     Posiciones y órdenes de la cuenta activa (cada 2 s), líneas para el gráfico y acciones con confirmación
+        ├── JournalView.jsx    Journal de trades reales (Bot > Journal)
         └── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
 ```
 
@@ -79,6 +86,8 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `POST /api/bot/position/close` | Cierra a mercado una posición. Exige `"confirm": "CERRAR_POSICION"` y `side` Buy o Sell |
 | `POST /api/bot/position/trading-stop` | Mueve el SL (positivo: no se quita) o el TP (0 lo quita). Exige `"confirm": "MOVER_STOP"` |
 | `POST /api/bot/orders/cancel` | Cancela una orden de entrada pendiente. Exige `"confirm": "CANCELAR_ORDEN"` |
+| `GET /api/bot/journal?days&symbol`, `POST /api/bot/journal/sync` | Trades reales del journal del bot; pedir ya los cierres a Bybit |
+| `POST /api/bot/journal/{id}/note` | Nota de 1 a 4000 caracteres en un trade (no mueve dinero: sin palabra de confirmación) |
 | `GET /api/bot/alerts?minutes` | Alertas recibidas por el bot |
 | `POST /api/bot/pause` | Pausa o reanuda todo el trading. Exige `{"paused": bool, "confirm": "CAMBIAR_PAUSA"}` |
 | `GET /api/suite/status` | Último día oficial, días en vivo, grabación (de la suite o del 11000), días oficiales y estado del bot |
@@ -205,6 +214,23 @@ Probado el 12/11 en la copia aislada con un bot falso:
 - renombrar, agregar y borrar llegaron al bot con su palabra.
 
 El bot se probó con un Bybit simulado (`accounts_checks.py`). Nada se probó contra Bybit real.
+
+## Journal
+
+Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requisito 5 del usuario). Primera parte, en Bot > "Journal" (`JournalView.jsx`), con los hechos que anota el bot (`10.TradingBotDesktop/CLAUDE.md`, sección "Journal de trades reales"):
+- **Resumen:** trades cerrados, acierto, P&L neto de comisiones (de Bybit), R promedio (cuántos tenían SL) y abiertos. Con más de un origen, una tabla por origen (por ejemplo WATCHLIST · SWING_DETECTOR o MANUAL · MANUAL_TRADE).
+- **Trades:** abiertos primero, con el P&L sin realizar de Bybit (precio marca). Cada fila trae apertura, moneda, lado, origen, tamaño, entrada, salida promedio, SL inicial, P&L, R, duración y estado:
+  - "sin posición": el journal lo tiene abierto pero Bybit ya no;
+  - "antes": ya estaba abierta cuando empezó el journal.
+  
+  Se puede ver 7, 30, 90 o 365 días, y "Pedir cierres a Bybit" no espera el minuto.
+- **Detalle** (clic en una fila): cuenta, apalancamiento, SL y TP iniciales y actuales, riesgo, cada cierre parcial, los cambios de SL/TP y las notas, con un campo para agregar otra.
+- **Falta, del Observador:** medidas de 15m, 1h y 4h al decidir, imágenes de decisión, apertura y cierre, niveles y marcas elegidos en el gráfico, informe (qué distingue a las ganadoras) e ir al gráfico desde un trade.
+
+Probado el 12/11 en la copia aislada con un bot falso que usa la clase real del journal:
+- números revisados a mano: SOL 11.6 / 6 = 1.93 R; DOGE −4.9 / 4.5 = −1.09 R; total +12.40;
+- la nota llegó al bot y apareció;
+- "Pedir cierres" respondió.
 
 ## Módulo del bot
 
