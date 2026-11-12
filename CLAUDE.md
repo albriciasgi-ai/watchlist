@@ -78,7 +78,7 @@ También pidió ver los íconos posibles para la app.
 **IMPORTANTE:**
 - Cerrar la suite desde la bandeja ("Salir") y abrirla de nuevo.
 - Lo anterior a la apertura de la app llega de la nube en la siguiente bajada (cada 15 minutos).
-- **Ícono:** el monograma "A" verde (`desktop/make_icon.py`), elegido por el usuario.
+- **Ícono:** el perfil de volumen azul y oro con fondo blanco (`desktop/make_icon.py`), elegido por el usuario.
 
 **Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Correcciones tras la primera prueba del usuario"
 
