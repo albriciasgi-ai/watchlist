@@ -1020,6 +1020,7 @@ GET  /api/observer/export/{symbol}                      CSV de todo el registro
 - Distancias en ATR y volumen contra la mediana de su hora en 30 días, para comparar fechas distintas
 - `column()` lee cada medida a favor de la orden. El último elemento de `MEASURES` dice cómo: `1` cambia el signo, `0` no cambia, `"mirror"` da la vuelta a una posición de 0 a 1 y un par elige la columna de cada lado
 - `table_for()` no bloquea. Si falta la tabla, o una orden queda después de su final y el caché es más nuevo, `_start_build()` la prepara en otro proceso y devuelve lo que haya. El panel lo avisa y vuelve a preguntar
+- `flow_columns()` salta los días del almacén fuera de las velas (12/11): el resultado es el mismo y una tabla de pocas semanas no lee los miles de días de BTC. Lo usa el journal de la suite (`12.AltagraciaTradingSuite/server/journal_measures.py`), que llama a `compute()` con velas de Bybit para las medidas de cada trade real
 - `_cache_path()` usa una ruta relativa: el proceso debe correr en `backend/`
 - `reading()` se calcula al pedirla: no se guarda en el registro, así que una tabla nueva relee las órdenes viejas sin hacer nada
 

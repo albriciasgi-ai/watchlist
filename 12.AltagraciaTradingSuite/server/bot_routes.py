@@ -57,8 +57,9 @@ async def _body(request: Request, word: str) -> dict:
     return body
 
 
-def make_router(bot) -> APIRouter:
-    """bot(method, path, **kw) llama al bot y devuelve su JSON (o lanza HTTPException)."""
+def make_router(bot, journal_store=None) -> APIRouter:
+    """bot(method, path, **kw) llama al bot y devuelve su JSON (o lanza HTTPException).
+    journal_store (journal_store.JournalStore) suma a los trades del journal su contexto de decision e imagenes."""
     r = APIRouter(prefix="/api/bot")
 
     # ---------- lectura ----------
@@ -267,7 +268,10 @@ def make_router(bot) -> APIRouter:
         params = {"days": max(1, min(days, 3650))}
         if symbol:
             params["symbol"] = _symbol(symbol)
-        return await bot("GET", "/api/journal/trades", params=params)
+        data = await bot("GET", "/api/journal/trades", params=params)
+        if journal_store is not None and isinstance(data, dict):
+            journal_store.merge(data.get("trades") or [])
+        return data
 
     @r.post("/journal/sync")
     async def journal_sync():

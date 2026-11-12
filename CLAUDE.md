@@ -54,6 +54,32 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 12 Noviembre 2026: Journal con lo del Observador (paso 4, segunda parte)
+
+**Pedido:** seguir con la parte del Observador del journal, con trades reales.
+
+**Cambios** (con las piezas de App 1, sin copiarlas):
+1. **Decisión:** al confirmar una orden en el panel se guardan:
+   - la imagen del gráfico;
+   - los niveles y marcas elegidos para el análisis, con su papel y nota;
+   - la orden propuesta;
+   - una nota opcional "Por qué entro".
+2. **Apertura y cierre:** imágenes automáticas cuando se abre o se cierra una posición de la moneda a la vista.
+3. **Medidas al decidir:** las 58 de App 1 (`measures.compute`) con velas de Bybit. También lo máximo a favor y en contra, en R.
+4. **Informe:** qué distingue a las ganadoras de las perdedoras (`patterns.compare_groups`), con aviso de muestra pequeña.
+5. **Ver en el gráfico:** la moneda del trade, la vista en su apertura y su caja con entrada, SL y TP.
+6. **App 1:** `flow_columns()` salta los días del almacén fuera de las velas. El resultado es el mismo; antes una tabla corta leía los miles de días de BTC.
+7. **Pruebas:** `server/tests/journal_checks.py` (28), y las de medidas y patrones de App 1 (96) siguen pasando.
+
+**IMPORTANTE:**
+- Reiniciar la suite ("Reiniciar" en la bandeja).
+- De una moneda que no está a la vista no hay imagen de apertura ni cierre.
+- Faltan la lectura de la regla del laboratorio, y el delta y el OI de los días recientes en las medidas.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal"
+
+---
+
 ### Altagracia Trading Suite + TradingBot - 12 Noviembre 2026: Journal de Trades Reales (paso 4, primera parte)
 
 **Pedido:** seguir con el journal del paso 4: el Observador de App 1 con trades reales.

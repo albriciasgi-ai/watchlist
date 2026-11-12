@@ -426,11 +426,26 @@ def oi_columns(symbol, close_minutes):
     return empty
 
 
+def _file_day(path):
+    """Dias desde 1970 del nombre SIMBOLO_AAAA-MM-DD de un dia del almacen, o None si no se entiende."""
+    try:
+        return (dt.date.fromisoformat(path.stem.rsplit("_", 1)[-1]) - dt.date(1970, 1, 1)).days
+    except ValueError:
+        return None
+
+
 def flow_columns(symbol, start_minutes):
     """Delta real de cada vela de 15 minutos, solo donde el almacen tiene sus minutos."""
     n = len(start_minutes)
     buys, sells = np.full(n, np.nan), np.full(n, np.nan)
+    # Un dia fuera de las velas no aporta ninguna fila: saltarlo da lo mismo y evita leer miles de archivos
+    # cuando la tabla cubre pocas semanas (journal de la suite, 12/11/2026)
+    first_day = int(start_minutes[0]) // 1440 if n else 0
+    last_day = int(start_minutes[-1]) // 1440 if n else -1
     for path in sorted((footprint_store.STORE_DIR / symbol).glob("*/*.npz")):
+        day_index = _file_day(path)
+        if day_index is not None and not (first_day <= day_index <= last_day):
+            continue
         with np.load(path) as day:
             scale = float(day["info"][1])
             minute = day["m"].astype(np.int64)

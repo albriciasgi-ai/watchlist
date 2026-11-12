@@ -59,7 +59,8 @@ function loadSize() {
   }
 }
 
-export default function TradingPanel({ symbol, shapes, onClose }) {
+export default function TradingPanel({ symbol, shapes, onClose, onDecision }) {
+  const [decisionNote, setDecisionNote] = useState(''); // por qué entro: va al journal con la imagen y los niveles
   const [tab, setTab] = useState('trading');
   const [status, setStatus] = useState(null);
   const [coins, setCoins] = useState(null);
@@ -188,6 +189,14 @@ export default function TradingPanel({ symbol, shapes, onClose }) {
     setSending(true);
     try {
       const { preview: _p, mode: _m, boxId: _b, ...body } = confirm;
+      // Journal (paso 4): el momento de la decisión, con la imagen del gráfico y lo elegido para este trade. No
+      // se espera: la orden sale igual aunque la imagen falle
+      onDecision?.({
+        symbol: body.symbol, side: body.side, note: decisionNote.trim(),
+        order: { type: body.order_type, qty: body.quantity, entry: body.limit_price ?? body.current_price, stop: body.stop_loss,
+                 target: body.take_profit, risk: confirm.preview?.loss },
+      });
+      setDecisionNote('');
       const r = await postJson('/api/bot/trade', { ...body, confirm: 'ENVIAR_ORDEN_REAL' });
       setResult({ ok: r.success !== false, status: r.status, message: r.message, result: r.result });
     } catch (e) {
@@ -371,6 +380,9 @@ export default function TradingPanel({ symbol, shapes, onClose }) {
                 <tr><td>Pierde / gana</td><td>${fmt(confirm.preview.loss)} / ${fmt(confirm.preview.profit)} (sin comisiones)</td></tr>
               </tbody>
             </table>
+            <textarea className="suite-input" style={{ width: '100%', minHeight: 48, marginTop: 10, boxSizing: 'border-box' }} maxLength={4000}
+              placeholder="Por qué entro (opcional, queda en el journal con la imagen y los niveles elegidos)"
+              value={decisionNote} onChange={(e) => setDecisionNote(e.target.value)} />
             <div style={{ display: 'flex', gap: 8, marginTop: 14, justifyContent: 'flex-end' }}>
               <button className="btn-quick" onClick={() => setConfirm(null)}>Cancelar</button>
               <button className={`btn-create-order ${confirm.side === 'Buy' ? 'btn-long' : 'btn-short'}`} style={{ width: 'auto', padding: '6px 14px' }} onClick={send} disabled={sending}>

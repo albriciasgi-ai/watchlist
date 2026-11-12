@@ -23,6 +23,7 @@ export default function SuiteApp() {
   const [module, setModule] = useState(loadModule);
   const [botSection, setBotSection] = useState('status');
   const [showTheme, setShowTheme] = useState(false);
+  const [focusTrade, setFocusTrade] = useState(null); // "Ver en el gráfico" desde el journal
 
   const choose = (id) => {
     setModule(id);
@@ -33,7 +34,7 @@ export default function SuiteApp() {
     <>
       {/* Los dos modulos quedan montados: volver al grafico no lo recarga */}
       <div style={{ display: module === 'chart' ? 'block' : 'none' }}>
-        <ChartView active={module === 'chart'} onOpenBot={() => choose('bot')} onOpenTheme={() => setShowTheme(true)} />
+        <ChartView active={module === 'chart'} onOpenBot={() => choose('bot')} onOpenTheme={() => setShowTheme(true)} focusTrade={focusTrade} />
       </div>
       {module === 'bot' && (
         <div className="suite-root">
@@ -48,7 +49,11 @@ export default function SuiteApp() {
           </div>
           <div className="suite-main">
             {botSection === 'status' && <BotView active />}
-            {botSection === 'journal' && <div className="bot-view"><JournalView active /></div>}
+            {botSection === 'journal' && (
+              <div className="bot-view">
+                <JournalView active onShowTrade={(t) => { setFocusTrade({ ...t, requestedAt: Date.now() }); choose('chart'); }} />
+              </div>
+            )}
             {botSection === 'config' && <div className="bot-view"><BotConfig active /></div>}
           </div>
         </div>

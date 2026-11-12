@@ -25,6 +25,7 @@ import '@app1/components/drawing/DrawingSidebar.css';
 import TradingPanel from './TradingPanel.jsx';
 import { getJson, postJson } from './api.js';
 import { linesFor, runPositionAction, subscribeBook } from './botBook.js';
+import { takeLevels } from '@app1/components/indicators/analysisLevels.js';
 import { TAB, otherTabUrl, onDrawings, sendDrawings } from './tabs.js';
 
 /**
@@ -126,7 +127,7 @@ function StatusDots({ onOpenBot }) {
   );
 }
 
-export default function ChartView({ active = true, onOpenBot, onOpenTheme }) {
+export default function ChartView({ active = true, onOpenBot, onOpenTheme, focusTrade = null }) {
   const saved = useMemo(loadSettings, []);
   const chartRefs = useRef({});
   const [symbols, setSymbols] = useState([saved.symbol || 'BTCUSDT']);
@@ -153,16 +154,85 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme }) {
   const activeTfRef = useRef(activeTimeframe);
   activeTfRef.current = activeTimeframe;
   const getPositionLines = useCallback(() => linesFor(symbolRef.current), []);
+  // Journal (paso 4): una imagen del gráfico a la vista, subida al servidor de la suite (mismo contrato que App 1)
+  const captureFor = useCallback(async (name, options = {}) => {
+    const tf = activeTfRef.current;
+    try {
+      const shot = await chartRefs.current[tf]?.captureScreenshot?.('journal', name, options);
+      return { image: shot?.screenshotPath || null, frame: tf };
+    } catch {
+      return { image: null, frame: tf }; // gráfico oculto o sin velas: el contexto va sin imagen
+    }
+  }, []);
+  const saveContext = useCallback((context) => postJson('/api/journal/context', context)
+    .catch(e => console.warn('[journal] contexto no guardado:', e.message)), []);
+
+  // Al confirmar una orden en el panel: imagen de la decisión (con contexto), lo elegido para el trade y la nota
+  const handleDecision = useCallback(async ({ symbol: sym, side, note, order }) => {
+    const at = Date.now();
+    const levels = takeLevels(sym, at); // como en App 1: lo elegido pasa a este trade y la lista queda vacía
+    const { image, frame } = sym === symbolRef.current ? await captureFor(`decision-${at}`, { context: true, items: levels }) : { image: null, frame: null };
+    saveContext({ kind: 'decision', symbol: sym, side, at, image, frame, note, levels, order });
+  }, [captureFor, saveContext]);
+
   useEffect(() => {
     let last = '';
-    return subscribeBook(() => {
+    let known = null; // posiciones de la moneda a la vista en la lectura anterior
+    return subscribeBook((book) => {
       const key = JSON.stringify(linesFor(symbolRef.current));
       if (key !== last) {
         last = key;
         chartRefs.current[activeTfRef.current]?.forceRedraw?.(); // sin esperar el próximo precio
       }
+      // Imágenes de apertura y cierre para el journal: solo de la moneda a la vista (el gráfico de otra no está dibujado)
+      if (book.error || !book.at) return;
+      const sym = symbolRef.current;
+      const now = new Map(book.positions.filter(p => p.symbol === sym && Number(p.size) > 0).map(p => [`${p.positionIdx ?? 0}:${p.side}`, p]));
+      if (known && known.sym === sym) {
+        const moment = (kind, p) => setTimeout(async () => {
+          const { image, frame } = await captureFor(`${kind}-${Date.now()}`, { context: kind === 'open' });
+          if (image) saveContext({ kind, symbol: p.symbol, side: p.side, at: Date.now(), image, frame });
+        }, 1500); // que el gráfico dibuje antes la línea nueva (o la quite)
+        for (const [k, p] of now) if (!known.map.has(k)) moment('open', p);
+        for (const [k, p] of known.map) if (!now.has(k)) moment('close', p);
+      }
+      known = { sym, map: now };
     });
+  }, [captureFor, saveContext]);
+
+  // "Ver en el gráfico" desde el journal: su moneda, la vista en su apertura y su caja con entrada, SL y TP iniciales
+  const focusBoxRef = useRef(null);
+  const [focusedTrade, setFocusedTrade] = useState(null);
+  const getTradeBoxes = useCallback(() => {
+    const f = focusBoxRef.current;
+    return f && f.symbol === symbolRef.current ? [f.box] : [];
   }, []);
+  useEffect(() => {
+    if (!focusTrade) return undefined;
+    const t = focusTrade;
+    const start = t.opened_at || t.closed_at;
+    if (!start) return undefined;
+    focusBoxRef.current = {
+      symbol: t.symbol,
+      box: { side: t.side === 'Buy' ? 'long' : 'short', entry: t.entry, stop: t.initial_stop_loss ?? t.stop_loss, target: t.initial_take_profit ?? t.take_profit,
+             start, end: t.closed_at || Date.now() },
+    };
+    setFocusedTrade(t);
+    if (t.symbol !== symbolRef.current) setSymbol(t.symbol);
+    // Los gráficos de otra moneda se montan de nuevo: se espera a que tengan velas
+    const focus = () => {
+      const chart = chartRefs.current[activeTfRef.current];
+      chart?.focusOn?.(start, t.entry);
+      chart?.forceRedraw?.();
+    };
+    const timers = t.symbol !== symbolRef.current ? [setTimeout(focus, 2500), setTimeout(focus, 6000)] : [setTimeout(focus, 300)];
+    return () => timers.forEach(clearTimeout);
+  }, [focusTrade]);
+  const clearFocusedTrade = () => {
+    focusBoxRef.current = null;
+    setFocusedTrade(null);
+    chartRefs.current[activeTfRef.current]?.forceRedraw?.();
+  };
   const handlePositionAction = useCallback(async (action) => {
     const result = await runPositionAction(action);
     chartRefs.current[activeTfRef.current]?.forceRedraw?.();
@@ -628,6 +698,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme }) {
                   currentTool={currentTool}
                   onToolChange={setCurrentTool}
                   getTradeBoundaries={noTrades}
+                  getTradeBoxes={getTradeBoxes}
                   getPositionLines={getPositionLines}
                   onPositionAction={handlePositionAction}
                   onRequestPause={noop}
@@ -637,6 +708,13 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme }) {
               </div>
             ))}
           </div>
+          {focusedTrade && focusedTrade.symbol === symbol && (
+            <div className="suite-result ok" style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', zIndex: 60, background: 'var(--t-chart, #fff)', marginTop: 0 }}>
+              Trade del journal: {focusedTrade.side === 'Buy' ? 'LONG' : 'SHORT'} {focusedTrade.symbol}
+              {focusedTrade.pnl !== null && focusedTrade.pnl !== undefined ? ` · ${focusedTrade.pnl >= 0 ? '+' : '−'}${Math.abs(focusedTrade.pnl).toFixed(2)} USD` : ''}
+              {' '}<button type="button" className="suite-btn" onClick={clearFocusedTrade}>Quitar</button>
+            </div>
+          )}
           {positionNotice && (
             <div
               className={`suite-result ${positionNotice.ok ? 'ok' : 'bad'}`}
@@ -649,7 +727,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme }) {
         </div>
 
         <div className={`backtesting-sidebar ${showTrading ? '' : 'hidden'}`} style={{ width: showTrading ? 340 : 0 }}>
-          <TradingPanel symbol={symbol} shapes={shapes} onClose={() => setShowTrading(false)} />
+          <TradingPanel symbol={symbol} shapes={shapes} onClose={() => setShowTrading(false)} onDecision={handleDecision} />
         </div>
       </div>
 

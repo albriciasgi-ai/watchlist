@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getJson, postJson } from './api.js';
 import { subscribeBook } from './botBook.js';
 
@@ -21,8 +21,44 @@ const duration = (min) => {
 };
 const originText = (t) => [t.origin, t.source].filter(Boolean).join(' · ');
 
-export default function JournalView({ active }) {
+const imageUrl = (path) => `/api/screenshots/session/${path}`;
+const IMAGE_NAMES = { decision: 'Decisión', open: 'Apertura', close: 'Cierre' };
+const value = (v) => (v === null || v === undefined ? '—' : Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2));
+
+/** Las medidas de App 1 al decidir, por grupo (marco), en columnas */
+function MeasuresTable({ data, catalog }) {
+  if (!data) return <div className="bot-empty">Calculando las medidas al decidir (pide velas a Bybit)…</div>;
+  if (!data.available) return <div className="bot-empty">Sin medidas: {data.reason || data.error || 'no disponibles'}</div>;
+  const groups = {};
+  for (const item of catalog || []) (groups[item.group] = groups[item.group] || []).push(item);
+  return (
+    <div>
+      <div className="bot-empty">
+        Medidas de App 1 al cerrar la vela de 15m de las {when(data.decision_candle)} (antes de decidir), vistas desde el lado del trade.
+        {data.best_r !== undefined && data.best_r !== null && ` Lo máximo a favor: ${data.best_r.toFixed(2)} R · en contra: ${data.worst_r.toFixed(2)} R (velas de 5 min).`}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '2px 16px', fontSize: 12 }}>
+        {Object.entries(groups).map(([group, items]) => (
+          <React.Fragment key={group}>
+            <div style={{ gridColumn: '1 / -1', fontWeight: 600, marginTop: 6 }}>{group}</div>
+            {items.map(item => (
+              <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+                <span style={{ opacity: 0.8 }}>{item.label}</span><b>{value(data.decision?.[item.key])}</b>
+              </div>
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function JournalView({ active, onShowTrade }) {
   const [days, setDays] = useState(30);
+  const [catalog, setCatalog] = useState(null);
+  const [measures, setMeasures] = useState({}); // trade_id -> medidas al decidir
+  const [report, setReport] = useState(null);
+  const [reportBusy, setReportBusy] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
@@ -80,6 +116,29 @@ export default function JournalView({ active }) {
   }, [closed]);
   const selected = trades.find(t => t.trade_id === selectedId) || null;
 
+  // Medidas del trade elegido: se piden una vez por trade (cerradas quedan guardadas en el servidor). La lista se
+  // vuelve a leer cada pocos segundos: el registro de pedidos evita pedirlas otra vez mientras llegan
+  const requested = useRef(new Set());
+  useEffect(() => {
+    if (!selectedId || requested.current.has(selectedId)) return;
+    requested.current.add(selectedId);
+    if (!catalog) getJson('/api/journal/catalog').then(d => setCatalog(d.measures || [])).catch(() => setCatalog([]));
+    getJson(`/api/journal/measures/${encodeURIComponent(selectedId)}`)
+      .then(d => setMeasures(m => ({ ...m, [selectedId]: d })))
+      .catch(e => setMeasures(m => ({ ...m, [selectedId]: { available: false, error: e.message } })));
+  }, [selectedId, catalog]);
+
+  const askReport = async () => {
+    setReportBusy(true);
+    try {
+      setReport(await getJson(`/api/journal/report?days=${days}`));
+    } catch (e) {
+      setReport({ error: e.message });
+    } finally {
+      setReportBusy(false);
+    }
+  };
+
   const sync = async () => {
     setBusy(true);
     try {
@@ -131,8 +190,42 @@ export default function JournalView({ active }) {
           </select>
         </label>
         <button type="button" className="suite-btn" disabled={busy} onClick={sync}>Pedir cierres a Bybit</button>
+        <button type="button" className="suite-btn" disabled={reportBusy} onClick={askReport}>{reportBusy ? 'Armando el informe…' : 'Informe: qué distingue a las ganadoras'}</button>
         {notice && <span className="bot-empty">{notice}</span>}
       </div>
+
+      {report && (
+        <div className="bot-section">
+          <h3>Qué distingue a las ganadoras de las perdedoras (medidas al decidir)</h3>
+          {report.error && <div className="bot-warning">{report.error}</div>}
+          {!report.error && (
+            <>
+              <div className="bot-empty">
+                {report.winners} ganadoras y {report.losers} perdedoras con medidas
+                {report.without_measures ? ` · ${report.without_measures} sin medidas (anteriores al journal)` : ''}
+                {report.pending ? ` · faltan ${report.pending}: pide el informe otra vez para calcularlas` : ''}.
+                {' '}"Separa" = en qué parte de los pares (una ganadora, una perdedora) la ganadora tiene el valor mayor; 50% es no distinguirlas.
+              </div>
+              {report.small_sample && (
+                <div className="bot-warning">Muestra pequeña (menos de 30 trades o de 5 por grupo): el informe describe, no es evidencia.</div>
+              )}
+              {report.rows?.length > 0 && (
+                <table className="bot-table">
+                  <thead><tr><th>Medida</th><th>Grupo</th><th>Ganadoras (mediana)</th><th>Perdedoras (mediana)</th><th>Separa</th><th /></tr></thead>
+                  <tbody>
+                    {report.rows.slice(0, 15).map(row => (
+                      <tr key={row.key}>
+                        <td>{row.label}</td><td>{row.group}</td><td>{value(row.first_median)}</td><td>{value(row.second_median)}</td>
+                        <td>{Math.round(row.share * 100)}%</td><td>{row.clear ? <b className="pos">más que el azar</b> : ''}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {stats.groups.length > 1 && (
         <div className="bot-section">
@@ -196,7 +289,35 @@ export default function JournalView({ active }) {
 
       {selected && (
         <div className="bot-section">
-          <h3>{selected.symbol} · {selected.side === 'Buy' ? 'LONG' : 'SHORT'} · {originText(selected)}{selected.pattern ? ` · ${selected.pattern}` : ''}</h3>
+          <h3>
+            {selected.symbol} · {selected.side === 'Buy' ? 'LONG' : 'SHORT'} · {originText(selected)}{selected.pattern ? ` · ${selected.pattern}` : ''}
+            {onShowTrade && (selected.opened_at || selected.closed_at) && (
+              <button type="button" className="suite-btn" style={{ marginLeft: 10 }} onClick={() => onShowTrade(selected)}>Ver en el gráfico</button>
+            )}
+          </h3>
+          {selected.images?.length > 0 && (
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '6px 0' }}>
+              {selected.images.map(img => (
+                <a key={img.image} href={imageUrl(img.image)} target="_blank" rel="noreferrer" title="Abrir a tamaño real" style={{ textAlign: 'center', fontSize: 12 }}>
+                  <img src={imageUrl(img.image)} alt={IMAGE_NAMES[img.kind]} style={{ width: 260, border: '1px solid var(--t-line, #ccc)', display: 'block' }} />
+                  {IMAGE_NAMES[img.kind]} · {when(img.at)}{img.frame ? ` · ${img.frame}` : ''}
+                </a>
+              ))}
+            </div>
+          )}
+          {selected.decision && (
+            <div className="bot-empty">
+              Decisión ({when(selected.decision.at)}){selected.decision.note ? `: “${selected.decision.note}”` : ''}
+              {selected.decision.order && ` · orden ${selected.decision.order.type || ''} ${selected.decision.order.qty ?? ''} a ${price(selected.decision.order.entry)}, stop ${price(selected.decision.order.stop)}, objetivo ${price(selected.decision.order.target)}`}
+              {selected.decision.levels?.length > 0 && (
+                <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                  {selected.decision.levels.map((lv, i) => (
+                    <li key={lv.id || i}>{lv.role ? `${lv.role}: ` : ''}{lv.label || lv.kind || 'nivel'}{lv.price ? ` ${price(lv.price)}` : ''}{lv.note ? ` — ${lv.note}` : ''}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
           <div className="bot-empty">
             Cuenta {selected.account || '—'}{selected.mode ? ` (${String(selected.mode).toUpperCase()})` : ''} · apalancamiento {selected.leverage ?? '—'}x
             {' '}· SL inicial {price(selected.initial_stop_loss)} · TP inicial {price(selected.initial_take_profit)}
@@ -222,6 +343,7 @@ export default function JournalView({ active }) {
                 .map(k => `${k === 'stop_loss' ? 'SL' : k === 'take_profit' ? 'TP' : 'tamaño'} ${price(ch[k])}`).join(', ')}`).join(' · ')}
             </div>
           )}
+          <MeasuresTable data={measures[selected.trade_id]} catalog={catalog} />
           <div>
             {selected.notes.map((n, i) => <div key={i} className="bot-empty">{when(n.at)} · {n.text}</div>)}
           </div>

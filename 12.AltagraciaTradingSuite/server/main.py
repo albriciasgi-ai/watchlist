@@ -42,6 +42,8 @@ import liq_store  # noqa: E402
 import candles  # noqa: E402  velas de Bybit, compartidas con market_routes
 import market_routes  # noqa: E402  indicadores en vivo (OI, VWAP, S&R, Elementos OF, patrones)
 import bot_routes  # noqa: E402  configuracion, riesgo, claves y ordenes del panel de trading
+import journal_routes  # noqa: E402  journal (paso 4): imagenes, contexto de decision, medidas e informe
+from journal_store import JournalStore  # noqa: E402
 import official  # noqa: E402  dias oficiales que faltan, con las herramientas del panel
 import recorder  # noqa: E402  grabacion propia de trades (live/local), un solo proceso a la vez
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
@@ -319,7 +321,9 @@ async def bot_pause(request: Request):
     return await _bot("POST", "/api/settings/trading-paused", json={"paused": body["paused"]})
 
 
-app.include_router(bot_routes.make_router(lambda *a, **kw: _bot(*a, **kw)))  # _bot se busca al llamar (las pruebas lo cambian)
+JOURNAL = JournalStore(Path(CONFIG["data_dir"]) / "journal")
+app.include_router(bot_routes.make_router(lambda *a, **kw: _bot(*a, **kw), journal_store=JOURNAL))  # _bot se busca al llamar (las pruebas lo cambian)
+app.include_router(journal_routes.make_router(JOURNAL, lambda *a, **kw: _bot(*a, **kw)))
 
 
 # ---------- monedas y precio ----------

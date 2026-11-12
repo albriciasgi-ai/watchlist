@@ -14,9 +14,9 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **Paso 4, empezado el 12/11:**
   - el bot endurecido: cuenta en tiempo real por su WebSocket privado; cerrar, mover SL/TP y cancelar; aviso de posiciones sin stop; guardado seguro;
   - a pedido del usuario, las posiciones sobre el gráfico con su P&L, como en TradingView;
-  - la primera parte del journal: los hechos de cada trade real (ver "Journal").
+  - el journal: los hechos de cada trade real y lo del Observador (imágenes, niveles elegidos, medidas, informe e ir al gráfico). Ver "Journal".
 - **Falta:**
-  - del journal: lo del Observador (medidas, imágenes de decisión, apertura y cierre, niveles elegidos e informe) e ir al gráfico desde un trade;
+  - del journal: imágenes de monedas que no están a la vista, delta y OI de los días recientes en las medidas, y la lectura de la regla del laboratorio;
   - el paso 5 (watchlist, con las alertas automáticas del Swing);
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
 
@@ -40,11 +40,14 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── candles.py         Velas de Bybit y validación de moneda y marco (compartido)
 │   ├── market_routes.py   Indicadores de App 1 en vivo: OI, VWAP, S&R clásico, patrones, Elementos OF y setups
 │   ├── bot_routes.py      Configuración, riesgo, cuentas y claves, orígenes, direcciones y órdenes del panel, con palabra de confirmación
+│   ├── journal_store.py   Journal: contexto de decisión, imágenes y medidas guardadas (data/journal), unidos a los trades del bot
+│   ├── journal_measures.py    Las 58 medidas de App 1 (measures.py) para un trade real, con velas de Bybit
+│   ├── journal_routes.py  Imágenes (contrato de App 1), contexto, medidas e informe del journal
 │   ├── recorder.py        Graba los trades de las monedas de la suite (usa local_tape.py del 11000)
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46) y bot_checks.py (56), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (56) y journal_checks.py (28), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -88,6 +91,10 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `POST /api/bot/orders/cancel` | Cancela una orden de entrada pendiente. Exige `"confirm": "CANCELAR_ORDEN"` |
 | `GET /api/bot/journal?days&symbol`, `POST /api/bot/journal/sync` | Trades reales del journal del bot; pedir ya los cierres a Bybit |
 | `POST /api/bot/journal/{id}/note` | Nota de 1 a 4000 caracteres en un trade (no mueve dinero: sin palabra de confirmación) |
+| `POST /api/screenshots/session/{sesión}`, `GET .../{sesión}/{archivo}` | Imágenes del gráfico (el contrato de App 1: `MiniChart.captureScreenshot` las sube aquí). Solo PNG de hasta 12 MB, en `data/journal/images` |
+| `POST /api/journal/context` | Contexto del journal: `decision` (imagen, nota, niveles elegidos, orden), `open` o `close` (imagen). Se valida y se acota todo |
+| `GET /api/journal/measures/{id}`, `/api/journal/catalog` | Las 58 medidas de App 1 al decidir y lo máximo a favor y en contra; las de un trade cerrado quedan guardadas |
+| `GET /api/journal/report?days` | Ganadoras contra perdedoras en cada medida (`patterns.compare_groups` de App 1). Calcula hasta 8 medidas que falten por pedido |
 | `GET /api/bot/alerts?minutes` | Alertas recibidas por el bot |
 | `POST /api/bot/pause` | Pausa o reanuda todo el trading. Exige `{"paused": bool, "confirm": "CAMBIAR_PAUSA"}` |
 | `GET /api/suite/status` | Último día oficial, días en vivo, grabación (de la suite o del 11000), días oficiales y estado del bot |
@@ -225,7 +232,22 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   
   Se puede ver 7, 30, 90 o 365 días, y "Pedir cierres a Bybit" no espera el minuto.
 - **Detalle** (clic en una fila): cuenta, apalancamiento, SL y TP iniciales y actuales, riesgo, cada cierre parcial, los cambios de SL/TP y las notas, con un campo para agregar otra.
-- **Falta, del Observador:** medidas de 15m, 1h y 4h al decidir, imágenes de decisión, apertura y cierre, niveles y marcas elegidos en el gráfico, informe (qué distingue a las ganadoras) e ir al gráfico desde un trade.
+- **Lo del Observador** (12/11, segunda parte), con lo de App 1 sin copiarlo:
+  - **Decisión:** al confirmar una orden en el panel se guardan la imagen del gráfico a la vista (con contexto, como la de decisión de App 1), lo elegido en el gráfico para el análisis (`takeLevels` de App 1: niveles y marcas con su papel y nota; la lista queda vacía para el trade siguiente), la orden propuesta y la nota opcional "Por qué entro" de la confirmación. No frena la orden.
+  - **Apertura y cierre:** la página toma la imagen cuando ve abrirse o cerrarse una posición de la moneda a la vista (1.5 s después, para que se dibuje la línea). De una moneda que no está a la vista no hay imagen: su gráfico no está dibujado.
+  - **Unión:** el contexto se une al trade del bot de la misma moneda y lado: la decisión hasta 15 minutos antes de abrir, la imagen de apertura hasta 5 minutos después y la de cierre hasta 15 minutos después.
+  - **Medidas al decidir:** las 58 de App 1 (`measures.compute`, `row_at`, `read_row`) con velas de Bybit, en la última vela de 15m cerrada antes de decidir, vistas desde el lado del trade. Se calculan al abrir el detalle, unos 10 s; las de un trade cerrado quedan guardadas en `data/journal/measures`. El OI y el delta salen de los almacenes locales: en días sin almacén quedan "—".
+  - **Lo máximo a favor y en contra,** en R del SL inicial, con velas de 5 minutos.
+  - **Informe:** "Informe: qué distingue a las ganadoras" compara ganadoras y perdedoras en cada medida con `patterns.compare_groups` de App 1 ("Separa": en qué parte de los pares la ganadora tiene el valor mayor; "más que el azar" si supera el umbral de las permutaciones). Con menos de 30 trades o de 5 por grupo avisa que solo describe.
+  - **Ver en el gráfico:** cambia a la moneda del trade, lleva la vista a su apertura (`focusOn`) y dibuja su caja con entrada, SL y TP iniciales (`getTradeBoxes`), hasta "Quitar".
+- **Falta:** la lectura de la regla del laboratorio (`observer.read_at`), el delta y el OI de los días recientes (almacén en vivo) y las imágenes de las monedas que no están a la vista.
+
+Probado el 12/11 (segunda parte) en la copia aislada, con un bot falso y velas reales de Bybit:
+- **Orden del panel con nota:** se guardó la decisión con la imagen (1646x1516 px), el marco 15m, la nota y la orden. Unida al trade abierto 10 s después, el detalle la mostró.
+- **Medidas:** las 58, de la vela de 15m cerrada antes de decidir, en 10 s.
+- **Informe:** respondió y avisó la muestra pequeña.
+- **Ver en el gráfico:** cambió a SOLUSDT y llevó la vista a la apertura.
+- **Imágenes automáticas:** al abrirse y cerrarse una posición de SOL a la vista se guardaron las de apertura y cierre.
 
 Probado el 12/11 en la copia aislada con un bot falso que usa la clase real del journal:
 - números revisados a mano: SOL 11.6 / 6 = 1.93 R; DOGE −4.9 / 4.5 = −1.09 R; total +12.40;
