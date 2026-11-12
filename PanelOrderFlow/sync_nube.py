@@ -53,7 +53,7 @@ def get_json(url: str, timeout=60):
         return json.load(r)
 
 
-def download(url: str, dst: Path, timeout=90):
+def download(url: str, dst: Path, timeout=300):
     tmp = dst.with_name(dst.name + ".descarga")
     req = urllib.request.Request(url, headers={"User-Agent": "sync-nube"})
     got = 0

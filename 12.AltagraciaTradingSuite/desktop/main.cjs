@@ -92,7 +92,12 @@ if (process.platform === 'win32') app.setAppUserModelId('Altagracia.TradingSuite
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
-  app.on('second-instance', () => showMain());
+  // Abrirla otra vez: si el codigo cambio desde que arranco, se reinicia con la version nueva; si no, se muestra.
+  // Cerrar con la X solo la oculta en la bandeja, asi que "cerrar y volver a abrir" mostraba la version vieja
+  app.on('second-instance', () => {
+    if (codeAtStart && newestCode() > codeAtStart) restartApp('codigo nuevo al volver a abrir');
+    else showMain();
+  });
   app.whenReady().then(start);
 }
 
@@ -196,6 +201,35 @@ function runCommand(label, args) {
 }
 
 // Hora del archivo mas nuevo del codigo de la pagina: el de la suite y el de App 1, que la pagina importa
+// Codigo que usa la app al correr: la pagina (abajo), el servidor y lo que el servidor importa
+function newestCode() {
+  const repo = path.join(SUITE_DIR, '..');
+  const roots = [path.join(__dirname, 'main.cjs'), path.join(SUITE_DIR, 'server'),
+    path.join(repo, '1.Altagracia_Crypto_Backtester', 'Backtester', 'backend'),
+    path.join(repo, '5.Order_flow', 'backend', 'local_tape.py'), path.join(repo, '5.Order_flow', 'cloud_collector'),
+    path.join(repo, 'PanelOrderFlow', 'sync_nube.py')];
+  let newest = newestSource();
+  const walk = (p, depth) => {
+    let st;
+    try { st = fs.statSync(p); } catch { return; }
+    if (st.isDirectory()) {
+      if (depth > 1) return;  // carpetas de primer nivel: los .py del servidor y del backend de App 1
+      for (const name of fs.readdirSync(p)) {
+        if (!['node_modules', '__pycache__', '.venv', 'cache', 'backtesting_cache', 'screenshots', 'drawings', 'data', 'logs'].includes(name)) walk(path.join(p, name), depth + 1);
+      }
+    } else if (/\.(py|cjs|js|jsx|css|html)$/.test(p) && st.mtimeMs > newest) newest = st.mtimeMs;
+  };
+  roots.forEach(r => walk(r, 0));
+  return newest;
+}
+let codeAtStart = 0;
+
+function restartApp(reason) {
+  dlog(`reiniciando: ${reason}`);
+  app.relaunch({ args: [path.resolve(__dirname)] });
+  quitForReal();
+}
+
 function newestSource() {
   const roots = [path.join(WEB_DIR, 'src'), path.join(WEB_DIR, 'vite.config.js'),
     path.join(WEB_DIR, 'index.html'), path.join(WEB_DIR, 'public'),
@@ -462,6 +496,7 @@ function createTray() {
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: 'Mostrar', click: showMain },
     { label: 'Nueva ventana', click: () => openExtra() },
+    { label: 'Reiniciar', click: () => restartApp('pedido desde la bandeja') },
     { type: 'separator' },
     { label: 'Salir', click: quitForReal },
   ]));
@@ -475,6 +510,7 @@ function createMenu() {
       submenu: [
         { label: 'Nueva ventana', accelerator: 'CmdOrCtrl+N', click: () => openExtra() },
         { label: 'Ocultar en la bandeja', click: () => mainWindow && mainWindow.hide() },
+        { label: 'Reiniciar', click: () => restartApp('pedido desde el menu') },
         { type: 'separator' },
         { label: 'Salir', accelerator: 'CmdOrCtrl+Q', click: quitForReal },
       ],
@@ -497,6 +533,7 @@ function createMenu() {
 
 // ---------- arranque ----------
 async function start() {
+  codeAtStart = newestCode();
   powerSaveBlocker.start('prevent-app-suspension');
   createMenu();
   createTray();
