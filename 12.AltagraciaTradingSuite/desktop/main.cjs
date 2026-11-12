@@ -85,6 +85,9 @@ let quitting = false;
 let trayHintShown = false;
 const restarts = [];
 
+// Nombre propio para Windows: la barra de tareas y los avisos muestran la app con su icono, no como "Electron"
+if (process.platform === 'win32') app.setAppUserModelId('Altagracia.TradingSuite');
+
 // ---------- una sola instancia ----------
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -195,6 +198,7 @@ function runCommand(label, args) {
 // Hora del archivo mas nuevo del codigo de la pagina: el de la suite y el de App 1, que la pagina importa
 function newestSource() {
   const roots = [path.join(WEB_DIR, 'src'), path.join(WEB_DIR, 'vite.config.js'),
+    path.join(WEB_DIR, 'index.html'), path.join(WEB_DIR, 'public'),
     path.join(SUITE_DIR, '..', '1.Altagracia_Crypto_Backtester', 'Backtester', 'frontend', 'src')];
   let newest = 0;
   const walk = (p) => {

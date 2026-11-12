@@ -67,7 +67,7 @@ También pidió ver los íconos posibles para la app.
 
 **Causas y cambios:**
 1. **Footprints:** el armado de cada minuto esperaba la descarga de la nube, que se colgaba y pasaba de 600 s. Ahora la nube se baja aparte (`sync_nube.py --solo-nube`) y el armado de cada minuto nunca la espera.
-2. **Nube:** el collector guardaba sus footprints releyendo el día entero dentro de su bucle y se trababa hasta 30 s, así que las descargas se quedaban a mitad. Ahora guarda en un hilo y por líneas, sin releer el día (rama `deploy` baad6bc; falta desplegar en Northflank).
+2. **Nube:** el collector guardaba sus footprints releyendo el día entero dentro de su bucle y se trababa hasta 30 s, así que las descargas se quedaban a mitad. Ahora guarda en un hilo y por líneas, sin releer el día (rama `deploy` baad6bc, desplegado el 12/11 como build `abrupt-horn-9829`). Las descargas llegan completas, aunque lentas: BTC tarda de 48 a 93 s.
 3. **Velas de otro marco:** `MiniChart` no reconocía "1m", "1h" ni "4h", y los cinco gráficos pedían velas de 15m por un WebSocket de un solo marco. Ahora hay un WebSocket por moneda y marco, y se descartan las velas ajenas.
 4. **Dibujos:** los cinco gráficos respondían a Suprimir y los ocultos guardaban su lista vieja. Ahora solo responde el gráfico a la vista.
 5. **Footprint parcial:** la grabación empezó a mitad de la vela y la nube no llegaba. Esas velas llevan "parcial".
@@ -77,8 +77,8 @@ También pidió ver los íconos posibles para la app.
 
 **IMPORTANTE:**
 - Cerrar la suite desde la bandeja ("Salir") y abrirla de nuevo.
-- Desplegar el collector en Northflank ("Deploy" del build baad6bc).
-- Lo anterior a la apertura de la app llega de la nube cuando el collector nuevo esté desplegado.
+- Lo anterior a la apertura de la app llega de la nube en la siguiente bajada (cada 15 minutos).
+- **Ícono:** el monograma "A" verde (`desktop/make_icon.py`), elegido por el usuario.
 
 **Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Correcciones tras la primera prueba del usuario"
 

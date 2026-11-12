@@ -207,4 +207,9 @@ anoto el hueco. Falta comparar un dia completo grabado en la nube contra el arch
 - La respuesta de `/api/footprints` no cambia (App 9 sigue igual).
 - Pruebas: `tests/footprint_storage_checks.py` (12) y las 22 de `tape_checks.py`.
 
-**Desplegado:** rama `deploy` de `albriciasgi-ai/footprint-collector`, commit baad6bc. Northflank lo construye solo; el despliegue se hace con "Deploy" en Builds.
+**Desplegado el 12/11:** rama `deploy` de `albriciasgi-ai/footprint-collector`, commit baad6bc, build `abrupt-horn-9829` (botón "Deploy" en Builds, desde el navegador integrado con la sesión del usuario).
+
+**Medido después:**
+- `/health` responde en 0.9 a 2.4 s; antes tardaba de 1 a 30 s.
+- Las descargas llegan completas: BTC (2 MB) en 48 a 93 s y SOL (0.44 MB) en 30 s.
+- Siguen lentas, de 15 a 40 KB/s, también con HTTP/1.1. Puede ser el disco del volumen o la CPU de 0.2 vCPU; no se investigó más. El PC baja la nube aparte cada 15 minutos, así que ya no frena los footprints.
