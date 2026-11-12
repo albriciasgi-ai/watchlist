@@ -126,6 +126,9 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
     }
   };
 
+  // Dibujos cargados de verdad: sin eso no se guarda
+  const drawingsLoadedRef = useRef(false);
+
   const loadDrawings = async () => {
     if (!drawingManagerRef.current) {
       console.warn('[ChartModal] ⚠️ loadDrawings called but drawingManagerRef is null');
@@ -134,12 +137,15 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
     try {
       console.log('[ChartModal] 🎨 Loading drawings for', symbol);
+      drawingsLoadedRef.current = false;
       const response = await fetch(
         `${API_BASE_URL}/api/drawings/${symbol}`
       );
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
 
-      if (data.shapes) {
+      if (Array.isArray(data.shapes)) {
+        drawingsLoadedRef.current = true;
         console.log('[ChartModal] 🎨 Found', data.shapes.length, 'drawings, loading...');
         drawingManagerRef.current.loadShapes(data.shapes);
         console.log('[ChartModal] 🎨 Shapes loaded into manager, current count:', drawingManagerRef.current.shapes.length);
@@ -154,6 +160,11 @@ const ChartModal = ({ symbol, interval, days, indicatorManagerRef, indicatorStat
 
   const saveDrawings = async () => {
     if (!drawingManagerRef.current) return;
+    // Si la carga falló, el editor está vacío: guardarlo borraría los dibujos del archivo
+    if (!drawingsLoadedRef.current) {
+      console.error(`[ChartModal] No se guardan los dibujos de ${symbol}: no se pudieron cargar del backend`);
+      return;
+    }
 
     try {
       const shapes = drawingManagerRef.current.getShapes();

@@ -146,6 +146,19 @@ class VWAPIndicator extends IndicatorBase {
    * @param {boolean} skipCache - Si true, ignora cache y fuerza fetch del backend (usado por polling)
    */
   async fetchData(skipCache = false) {
+    // Un pedido igual en curso se comparte: al abrir la app cada moneda pedía su VWAP tres veces
+    // (inicio del manager, refresh y precarga) y las tres cargas competían en el backend
+    const key = skipCache ? 'refresh' : 'load';
+    if (!this._inflight) this._inflight = {};
+    if (this._inflight[key]) return this._inflight[key];
+    const pending = this._fetchDataOnce(skipCache).finally(() => {
+      if (this._inflight && this._inflight[key] === pending) this._inflight[key] = null;
+    });
+    this._inflight[key] = pending;
+    return pending;
+  }
+
+  async _fetchDataOnce(skipCache = false) {
     // Don't fetch if indicator was destroyed (component unmounted)
     if (this._destroyed) {
       return false;

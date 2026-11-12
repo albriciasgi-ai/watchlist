@@ -38,7 +38,7 @@ REM ============================================
 REM  2. WATCHLIST (Puerto 8000 / 5173)
 REM ============================================
 echo [3/6] Iniciando Watchlist Backend (puerto 8000)...
-start "Watchlist-Backend" cmd /k "cd /d %BASE_PATH%\2.WatchlistConIndicadores\backend && .venv\Scripts\activate && python -m uvicorn main:app --host 0.0.0.0 --port 8000"
+start "Watchlist-Backend" cmd /k "cd /d %BASE_PATH%\2.WatchlistConIndicadores\backend && .venv\Scripts\activate && python -m uvicorn main:app --host 127.0.0.1 --port 8000"
 timeout /t 3 /nobreak > nul
 
 echo [4/6] Iniciando Watchlist Frontend (puerto 5173)...

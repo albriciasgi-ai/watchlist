@@ -20,6 +20,37 @@ class WebSocketManager {
     this.messageBuffer = new Map();  // symbol -> { ticker: data, kline: data }
     this.throttleTimer = null;
     this.throttleEnabled = true;
+
+    // Reconexión y latido
+    this._reconnectAttempts = 0;
+    this._heartbeatTimer = null;
+    this._lastMessageAt = 0;
+
+    // Tras un corte, los gráficos recargan su histórico: las velas que cerraron durante el corte
+    // nunca llegan por el WebSocket y la vela en curso guardada quedó vieja
+    this._reconnectListeners = new Set();
+    this._hadDrop = false;
+
+    // Al volver la red (p. ej. al despertar el portátil) reconectar sin esperar
+    if (typeof window !== 'undefined' && window.addEventListener) {
+      window.addEventListener('online', () => {
+        if (!this.isConnected && this.subscribers.size > 0) {
+          console.log('[WebSocketManager] Red disponible de nuevo: reconectando');
+          if (this.reconnectTimeout) {
+            clearTimeout(this.reconnectTimeout);
+            this.reconnectTimeout = null;
+          }
+          this._reconnectAttempts = 0;
+          this._hadDrop = true;
+          if (this.ws) {
+            const oldSocket = this.ws;
+            this.ws = null;
+            try { oldSocket.close(); } catch (_) { /* ya cerrado */ }
+          }
+          this.connect(this.currentInterval);
+        }
+      });
+    }
   }
 
   /**
@@ -50,27 +81,51 @@ class WebSocketManager {
 
     this.currentInterval = interval;
 
-    if (this.ws) {
-      this.ws.close();
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
     }
 
-    const wsUrl = 'wss://stream.bybit.com/v5/public/linear';
-    this.ws = new WebSocket(wsUrl);
+    if (this.ws) {
+      // Se suelta antes de cerrarlo: su onclose ya no reconecta (ver comprobación de identidad)
+      const oldSocket = this.ws;
+      this.ws = null;
+      try { oldSocket.close(); } catch (_) { /* ya cerrado */ }
+    }
+    this._stopHeartbeat();
 
-    this.ws.onopen = () => {
+    const wsUrl = 'wss://stream.bybit.com/v5/public/linear';
+    const socket = new WebSocket(wsUrl);
+    this.ws = socket;
+    this._lastMessageAt = Date.now();
+
+    socket.onopen = () => {
+      if (this.ws !== socket) return;
       console.log(`WebSocket Manager conectado [${interval}]`);
       this.isConnected = true;
+      this._reconnectAttempts = 0;
+      this._lastMessageAt = Date.now();
 
       // Iniciar timer de throttle
       this._startThrottleTimer();
+      // Ping cada 20 s, como pide Bybit, y vigilancia de conexión muerta
+      this._startHeartbeat(socket);
+
+      if (this._hadDrop) {
+        this._hadDrop = false;
+        this._notifyReconnect();
+      }
 
       // Esperar 100ms antes de suscribir (Bybit necesita tiempo)
       setTimeout(() => {
-        this.subscribeAll();
+        if (this.ws === socket) this.subscribeAll();
       }, 100);
     };
 
-    this.ws.onmessage = (event) => {
+    socket.onmessage = (event) => {
+      // Mensajes rezagados de un socket ya reemplazado (otro intervalo) se ignoran
+      if (this.ws !== socket) return;
+      this._lastMessageAt = Date.now();
       try {
         const data = JSON.parse(event.data);
 
@@ -100,7 +155,17 @@ class WebSocketManager {
               if (!this.messageBuffer.has(symbol)) {
                 this.messageBuffer.set(symbol, {});
               }
-              this.messageBuffer.get(symbol)[messageType] = data;
+              const bucket = this.messageBuffer.get(symbol);
+              if (messageType === 'kline' && bucket.kline) {
+                // El mensaje que cierra una vela (confirm) no se pisa con el primero de la siguiente:
+                // se entrega ya. Antes se perdía y la vela quedaba con datos a medias.
+                const prev = bucket.kline.data && bucket.kline.data[0];
+                const next = data.data && data.data[0];
+                if (prev && next && prev.confirm && String(prev.start) !== String(next.start)) {
+                  this._dispatchToSubscribers(symbol, bucket.kline);
+                }
+              }
+              bucket[messageType] = data;
             } else {
               // Sin throttle: procesar inmediatamente
               this._dispatchToSubscribers(symbol, data);
@@ -112,20 +177,75 @@ class WebSocketManager {
       }
     };
 
-    this.ws.onerror = (error) => {
+    socket.onerror = (error) => {
       console.error('WebSocket Manager error:', error);
     };
 
-    this.ws.onclose = () => {
+    socket.onclose = () => {
+      // Solo el socket vigente reconecta: uno reemplazado (cambio de intervalo) o cerrado
+      // con disconnect() no debe abrir otro
+      if (this.ws !== socket) return;
       console.log('WebSocket Manager cerrado');
-      this.isConnected = false;
-      this._stopThrottleTimer();
-
-      // Reconectar después de 3 segundos
-      this.reconnectTimeout = setTimeout(() => {
-        this.connect(this.currentInterval);
-      }, 3000);
+      this._handleDrop();
     };
+  }
+
+  /**
+   * Conexión perdida: reconecta a los 3 s (hasta 30 s si sigue fallando).
+   * Antes this.ws seguía apuntando al socket cerrado y connect() salía sin reconectar:
+   * la vela en vivo quedaba congelada hasta cambiar de timeframe.
+   */
+  _handleDrop() {
+    this.ws = null;
+    this.isConnected = false;
+    this._hadDrop = true;
+    this._stopThrottleTimer();
+    this._stopHeartbeat();
+
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+    }
+    const attempts = this._reconnectAttempts || 0;
+    const delay = Math.min(30000, 3000 * Math.pow(2, attempts));
+    this._reconnectAttempts = attempts + 1;
+    this.reconnectTimeout = setTimeout(() => {
+      this.reconnectTimeout = null;
+      if (!this.ws) {
+        this.connect(this.currentInterval);
+      }
+    }, delay);
+  }
+
+  /**
+   * Ping cada 20 s y, si no llega nada en 60 s (red caída o portátil suspendido),
+   * se da la conexión por muerta y se reconecta.
+   */
+  _startHeartbeat(socket) {
+    this._stopHeartbeat();
+    this._heartbeatTimer = setInterval(() => {
+      if (this.ws !== socket) {
+        this._stopHeartbeat();
+        return;
+      }
+      if (Date.now() - (this._lastMessageAt || 0) > 60000) {
+        console.warn('[WebSocketManager] Sin datos en 60 s: reconectando');
+        try { socket.close(); } catch (_) { /* ya cerrado */ }
+        this._handleDrop();
+        return;
+      }
+      if (socket.readyState === WebSocket.OPEN) {
+        try {
+          socket.send(JSON.stringify({ op: 'ping' }));
+        } catch (_) { /* se detecta en la próxima vuelta */ }
+      }
+    }, 20000);
+  }
+
+  _stopHeartbeat() {
+    if (this._heartbeatTimer) {
+      clearInterval(this._heartbeatTimer);
+      this._heartbeatTimer = null;
+    }
   }
 
   /**
@@ -184,6 +304,25 @@ class WebSocketManager {
         cb(data);
       } catch (err) {
         console.error(`Error in subscriber callback for ${symbol}:`, err);
+      }
+    });
+  }
+
+  /**
+   * Avisa cuando el WebSocket vuelve después de un corte. Devuelve la función para dejar de escuchar.
+   */
+  onReconnect(callback) {
+    this._reconnectListeners.add(callback);
+    return () => this._reconnectListeners.delete(callback);
+  }
+
+  _notifyReconnect() {
+    console.log(`[WebSocketManager] Reconectado: ${this._reconnectListeners.size} gráfico(s) recargan su histórico`);
+    this._reconnectListeners.forEach(cb => {
+      try {
+        cb();
+      } catch (err) {
+        console.error('Error in reconnect callback:', err);
       }
     });
   }
@@ -261,12 +400,15 @@ class WebSocketManager {
 
   disconnect() {
     this._stopThrottleTimer();
+    this._stopHeartbeat();
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
     }
     if (this.ws) {
-      this.ws.close();
+      const socket = this.ws;
       this.ws = null;
+      socket.close();
     }
     this.subscribers.clear();
     this.messageBuffer.clear();

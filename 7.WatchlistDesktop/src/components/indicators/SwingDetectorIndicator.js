@@ -28,6 +28,10 @@ class SwingDetectorIndicator extends IndicatorBase {
     this.isFetchingSignals = false; // Prevent concurrent fetches
     this.isFetchingStatus = false;
     this._pollingInterval = null; // For proper cleanup
+    this._statusPollingInterval = null;
+    // Al destruir el indicador (cambio de timeframe o de moneda) una respuesta en vuelo ya no
+    // arranca sondeos nuevos: antes quedaban temporizadores huerfanos por cada cambio
+    this._destroyed = false;
 
     // Colors
     this.colors = {
@@ -79,6 +83,7 @@ class SwingDetectorIndicator extends IndicatorBase {
       this.fetchSignals(),
       this.fetchStatus()
     ]);
+    if (this._destroyed) return;
 
     // 🚀 OPTIMIZACIÓN: Usar setInterval en lugar de verificar en cada render
     // Esto evita llamar Date.now() y hacer comparaciones en cada frame
@@ -86,9 +91,13 @@ class SwingDetectorIndicator extends IndicatorBase {
   }
 
   _startPolling() {
-    // Clear any existing interval
+    if (this._destroyed) return;
+    // Clear any existing interval (los dos: antes el de estado se pisaba sin limpiarse)
     if (this._pollingInterval) {
       clearInterval(this._pollingInterval);
+    }
+    if (this._statusPollingInterval) {
+      clearInterval(this._statusPollingInterval);
     }
 
     // Poll signals at configured interval
@@ -115,6 +124,7 @@ class SwingDetectorIndicator extends IndicatorBase {
   }
 
   destroy() {
+    this._destroyed = true;
     // Clean up polling intervals
     if (this._pollingInterval) {
       clearInterval(this._pollingInterval);
@@ -135,7 +145,8 @@ class SwingDetectorIndicator extends IndicatorBase {
     try {
       // 🔄 FASE 4: Verificar cache primero (skip si forceRefresh)
       if (!forceRefresh) {
-        const cached = await IndicatorCache.get('swing', this.symbol, this.interval);
+        // Clave nueva: antes se guardaban aqui las senales del timeframe de las ALERTAS bajo el del grafico
+        const cached = await IndicatorCache.get('swing_chart', this.symbol, this.interval);
         if (cached) {
           this.signals = cached;
           return; // Usar datos cacheados
@@ -146,7 +157,10 @@ class SwingDetectorIndicator extends IndicatorBase {
         await IndicatorCache.invalidate(this.symbol, this.interval);
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/swing/signals/${this.symbol}`);
+      // Con el timeframe y los dias del GRAFICO: si no son los de las alertas (o la moneda no manda
+      // alertas), el backend calcula flechas solo para dibujar y no toca la config del Swing
+      const params = new URLSearchParams({ interval: String(this.interval), days: String(this.days || 1) });
+      const response = await fetch(`${API_BASE_URL}/api/swing/signals/${this.symbol}?${params}`);
 
       if (!response.ok) {
         console.warn(`[${this.symbol}] SwingDetector fetch failed: ${response.status}`);
@@ -154,6 +168,11 @@ class SwingDetectorIndicator extends IndicatorBase {
       }
 
       const data = await response.json();
+      if (this._destroyed) return;
+      if (data.success === false) {
+        console.warn(`[${this.symbol}] SwingDetector: ${data.error || 'respuesta sin senales'}`);
+        return;
+      }
       this.signals = data.signals || [];
 
       // Log con diferenciación de fuente
@@ -161,7 +180,7 @@ class SwingDetectorIndicator extends IndicatorBase {
 
       // Guardar en cache
       if (this.signals.length > 0) {
-        IndicatorCache.set('swing', this.symbol, this.interval, this.signals);
+        IndicatorCache.set('swing_chart', this.symbol, this.interval, this.signals);
       }
     } catch (error) {
       console.error(`[${this.symbol}] SwingDetector fetch error:`, error);

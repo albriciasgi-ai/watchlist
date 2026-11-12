@@ -4,6 +4,60 @@ Este archivo proporciona contexto a Claude Code sobre la aplicacion Watchlist De
 
 ---
 
+## Pruebas y Correcciones, Fases 1 y 2 (11 Noviembre 2026)
+
+El usuario pidió probar App 7 "como la 8 y la 9" y, tras el diagnóstico, corregir las fases 1 y 2. App 7 usa el backend de App 2 (`2.WatchlistConIndicadores/backend`, puerto 8000), que era una versión vieja del de App 4 y 5. Se le trajo lo ya corregido en el backend de App 5 (11/11) y se arregló el frontend.
+
+### Fase 1: dinero y seguridad
+
+| Antes | Ahora | Dónde |
+|-------|-------|-------|
+| Abrir App 7 o cambiar de timeframe mandaba `POST /api/realtime/set-interval`: el WebSocket del backend pasaba a ese timeframe y el Swing (15m) se quedaba sin velas, sin avisar | App 7 ya no lo manda. Además el Swing fija sus canales (`require_channels`): ninguna página puede quitárselos | `Watchlist.jsx`, `websocket_manager.py` |
+| Con "Swing Detector" marcado, cambiar timeframe o días mandaba `POST /api/swing/config {interval, days}`: el Swing de las 10 monedas pasaba a alertar en el timeframe del gráfico | El gráfico solo lee. En otro timeframe las flechas se calculan aparte (`displayOnly`). El backend solo cambia timeframe, monedas o encendido con `confirm: "CAMBIAR_ALERTAS"`, que manda el modal | `Watchlist.jsx`, `SwingDetectorIndicator.js`, `main.py` |
+| No había forma explícita de cambiar el timeframe o las monedas de las alertas | Modal del Swing como en App 9: "Alertas al bot en Xm · el gráfico está en Ym" y botones con confirmación | `SwingDetectorSettings.jsx` |
+| El Swing avisaba una vela tarde (o una antes), sin cooldown por moneda, sin relleno tras un corte y sin `sent_at` | Servicio Swing del backend de App 5 (índice por la vela cerrada, `BLOCKED_GAP/STALE/NO_VWAP`, cooldown por moneda guardado, espera de 120 s) con origen `WATCHLIST`. WebSocket con relleno tras cortes | `swing_service.py`, `websocket_manager.py` |
+| `swing_config.json` cortado o con un campo nuevo dejaba el Swing en 1m, BTC y ETH, con alertas encendidas | Archivo ilegible: Swing sin alertas y copia `swing_config.ilegible-*.json`. Campo desconocido: se ignora ese campo | `swing_service.py` |
+| "Test 1x" mandaba una alerta real sin preguntar; `/api/pattern-alert` mandaba con todo apagado y un tipo desconocido salía como LONG; `/api/rejection-patterns/detect` mandaba una alerta por cada patrón del historial | Pruebas con confirmación en la app y `?confirm=ENVIAR_ALERTA_REAL` en el backend. Alertas de patrones apagadas (`PATTERN_ALERTS_ENABLED = False`): DTB, Rejection, `/api/pattern-alert` (409) y avisos de resultado no llegan al bot. Tipo desconocido: no se envía | `Watchlist.jsx`, `main.py`, `alert_sender.py` |
+| El interruptor "Alertas" nacía en OFF y leía una sola vez; encender activaba todas las configs de patrones; un cuerpo `{}` encendía | Estado desconocido ("Alertas ?") si no lee, se refresca cada 15 s y muestra lo que dice el backend. Solo maneja el Swing y exige `true` o `false` | `AlertToggle.jsx`, `main.py` |
+| CORS `*`, sin revisar Origin ni Host; `START_PRODUCTION.bat` abría el 8000 a la red | Origin y Host como el bot; la Watchlist escucha en 127.0.0.1 | `main.py`, `START_PRODUCTION.bat` |
+
+### Fase 2: datos y gráfico
+
+| Antes | Ahora | Dónde |
+|-------|-------|-------|
+| El WebSocket de los gráficos no se reconectaba nunca tras un corte | El de App 9 (reconexión, ping, vigilancia de 60 s, `online`) y, al volver, los gráficos visibles recargan su histórico. El cierre de una vela ya no se pierde en el búfer de 500 ms | `WebSocketManager.js`, `MiniChart.jsx` |
+| Cada cambio de timeframe cargaba dos veces (días viejos y nuevos) y borraba una caché correcta; al abrir, 1 día y luego 90 | Timeframe y días en un solo paso; arranca con los días del timeframe | `Watchlist.jsx` |
+| El VWAP recargaba de cero las 10 monedas en cada cambio de timeframe y se pedía tres veces por moneda | Servicio VWAP de App 8 (estado por moneda y timeframe) y pedidos iguales compartidos | `vwap_service.py`, `main.py`, `VWAPIndicator.js` |
+| La pantalla completa no limpiaba nada al cerrarse | Se desuscribe y limpia su recarga y su RenderManager; devuelve el redibujo al gráfico normal | `MiniChart.jsx` |
+| Una respuesta de otro timeframe podía quedar en pantalla y en su caché | Solo se aplica la carga vigente | `MiniChart.jsx` |
+| La vela en curso de un gráfico pausado pisaba la vela buena del histórico y desaparecía; la semanal salía repetida de jueves a domingo | La vela anterior entra cerrada sin pisar la del histórico; la vela en curso sale de la marca `in_progress` del backend | `MiniChart.jsx` |
+| Un archivo de dibujos ilegible respondía lista vacía y el gráfico la guardaba encima; `..\` salía de la carpeta; un sondeo fallido los borraba de la pantalla | El backend responde 500, valida el símbolo y guarda con temporal; la app no guarda si no pudo cargar (avisa) y conserva lo que se ve | `main.py`, `MiniChart.jsx`, `ChartModal.jsx` |
+
+### Cómo se probó
+- **Sin conexión:** `2.WatchlistConIndicadores/backend/tests/run_checks.py`, 114 pruebas (las 94 del backend de App 5 adaptadas y 20 propias: patrones apagados, interruptor, confirmaciones, config dañada y canales fijos). Se corren con el Python global:
+  ```bash
+  cd 2.WatchlistConIndicadores/backend
+  C:\Python314\python.exe -B tests\run_checks.py
+  ```
+- **En vivo, copia aislada** (backend en 8300 con la config real del Swing, bot falso en 5996, App 7 por Vite en 8301 en el navegador):
+  - al abrir: 0 POST, el WebSocket del backend siguió en 15m, VWAP una vez por moneda, gráficos en ~20 s (antes 51 s);
+  - "Swing Detector" marcado y paso a 1m: 0 POST, el Swing siguió en 15m y 60 días; las flechas de 1h y 1m llegaron como `displayOnly`;
+  - modal: cancelar no cambió nada; con confirmación el Swing pasó a 1m y recibió velas de 1m; quitar y agregar BTCUSDT pidió confirmación;
+  - WebSocket cerrado a mano: reconectó a los 3 s y los gráficos visibles recargaron su histórico;
+  - pantalla completa tres veces: oyentes 1 → 2 → 1 (antes 1, 2, 3...);
+  - Test 1x: cancelar no envió; aceptar envió una alerta con `sent_at`; sin `confirm`, 400; página ajena 403; Host ajeno 400; `..\` 400;
+  - dibujos dañados: la app avisó y no guardó; el archivo quedó intacto;
+  - semanal un jueves UTC: cerradas hasta el 02/11 y la del 09/11 una sola vez.
+
+### Ten en cuenta
+- **Reiniciar** el backend (8000) y App 7.
+- **El `.venv` del backend 2 está roto** (apunta a `WatchlistConIndicadores` sin el "2." y no tiene `aiohttp`): el backend corre con el Python global. No se cambió.
+- **App 2 en el navegador** no se tocó: si se abre, su `set-interval` ya no deja al Swing sin velas, su sincronización del Swing solo cambia los días (historial) y sus botones de prueba quedan rechazados.
+- **No se probó** dentro de Electron ni contra el bot o Bybit reales. Tampoco un corte real de red.
+- **Fase 3 pendiente:** sondeo de dibujos cada 3 s por gráfico, arranque lento, instancia única y recuperación del renderer en Electron, servidor de capturas 5181 con CORS `*`.
+
+---
+
 ## DESCRIPCION GENERAL
 
 **Watchlist Desktop** es una aplicacion de escritorio construida con Electron + React que muestra graficos de criptomonedas en tiempo real. Es una migracion de la version web (App 2) a desktop para **eliminar los gaps en los graficos** causados por el throttling del navegador cuando la ventana esta inactiva.

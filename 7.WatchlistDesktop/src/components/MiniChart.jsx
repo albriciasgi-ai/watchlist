@@ -116,6 +116,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   const candlesRef = useRef([]);
   const inProgressCandleRef = useRef(null);
+  // Carga vigente del efecto principal: una respuesta pedida con otro timeframe, moneda o días
+  // ya no se pinta ni se mezcla con las velas actuales
+  const activeLoadTokenRef = useRef(null);
+  // Dibujos cargados de verdad en el editor: sin eso no se guarda, para no pisar el archivo con una lista vacía
+  const drawingsLoadedRef = useRef(false);
 
   const lastPriceRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -461,6 +466,7 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const loadDrawings = async (checkTimestampOnly = false) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
 
       // 🔄 Si solo verificamos timestamp y no cambió, no recargar
@@ -482,15 +488,20 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       // ✅ FIX: Incrementar versión para forzar re-render y mostrar trendlines
       setDrawingsVersion(v => v + 1);
     } catch (error) {
+      // Se conservan los dibujos que ya estaban en pantalla. Antes se vaciaban y, como la marca de
+      // tiempo no cambiaba, no volvían al recuperarse el backend
       log.error(`Error loading drawings for ${symbol}:`, error);
-      drawingsRef.current = [];
-      setDrawingsVersion(v => v + 1); // Forzar re-render incluso en error
     }
   };
 
   // 🎨 Guardar dibujos inline al servidor
   const saveDrawingsInline = async () => {
     if (!drawingManagerRef.current) return;
+    if (!externalDrawingManager && !drawingsLoadedRef.current) {
+      // Si la carga falló, el editor está vacío o incompleto: guardarlo borraría los dibujos del archivo
+      log.error(`[MiniChart] No se guardan los dibujos de ${symbol}: no se pudieron cargar del backend`);
+      return;
+    }
 
     try {
       const shapes = drawingManagerRef.current.getShapes();
@@ -502,12 +513,17 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         .filter(shape => shape !== null);
 
       // Guardar al servidor (async, no bloquea el render)
-      await fetch(`${API_BASE_URL}/api/drawings/${symbol}`, {
+      const saveRes = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ shapes })
       });
-      log.info(`[MiniChart] 💾 Saved ${shapes.length} inline drawings for ${symbol}`);
+      const saveData = await saveRes.json().catch(() => ({}));
+      if (!saveRes.ok || saveData.success === false) {
+        log.error(`[MiniChart] El backend no guardó los dibujos de ${symbol}:`, saveData.error || saveRes.status);
+      } else {
+        log.info(`[MiniChart] 💾 Saved ${shapes.length} inline drawings for ${symbol}`);
+      }
 
       setDrawingsVersion(v => v + 1);
 
@@ -524,18 +540,26 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   const loadDrawingsIntoManager = async () => {
     if (!drawingManagerRef.current) return;
 
+    drawingsLoadedRef.current = false;
     try {
       const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
 
-      if (data.shapes && Array.isArray(data.shapes)) {
+      if (!data.shapes || !Array.isArray(data.shapes)) {
+        throw new Error('respuesta sin lista de dibujos');
+      }
+      {
         drawingManagerRef.current.loadShapes(data.shapes);
+        drawingsLoadedRef.current = true;
         log.info(`[MiniChart] 🎨 Loaded ${data.shapes.length} drawings into DrawingToolManager`);
         // Forzar redibujado
         drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
       }
     } catch (error) {
       log.error(`Error loading drawings into manager for ${symbol}:`, error);
+      window.alert(`No se pudieron cargar los dibujos de ${symbol} (${error.message}).\n\n` +
+        `Los cambios no se guardarán hasta que carguen, para no borrar los que ya están guardados.`)
     }
   };
 
@@ -1064,13 +1088,17 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
   // ==================== DATA LOADING ====================
   
-  const loadHistoricalData = async () => {
+  const loadHistoricalData = async (token = activeLoadTokenRef.current) => {
+    // Una carga de un timeframe, moneda o días anteriores no se aplica (antes podía dejar velas de 1m
+    // en el gráfico de 15m, y guardarlas en su caché)
+    const isStale = () => !token || token !== activeLoadTokenRef.current;
     try {
       const timestamp = Date.now();
 
       // 🔄 CARGA INCREMENTAL: Verificar si hay cache valido (suficiente y sin gaps)
       // getValidated() limpia automaticamente cache corrupto
       const cached = await CandleCache.getValidated(symbol, interval, parseInt(days));
+      if (isStale()) return;
       let url;
       let isIncremental = false;
 
@@ -1101,16 +1129,19 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         }
       });
       const json = await res.json();
+      if (isStale()) return;
 
       if (json.success && json.data) {
         let newCandles = json.data;
 
-        // Filtrar vela en progreso
-        const now = Date.now();
-        const intervalMs = getIntervalMilliseconds(interval);
-        const currentTimeframeStart = Math.floor(now / intervalMs) * intervalMs;
-
-        if (newCandles.length > 0) {
+        // Filtrar vela en progreso con la marca del backend. El cálculo anterior (múltiplo del
+        // intervalo desde 1970) cae en jueves para 1W: de jueves a domingo la semana salía repetida
+        if (newCandles.length > 0 && typeof newCandles[newCandles.length - 1].in_progress === 'boolean') {
+          newCandles = newCandles.filter(c => !c.in_progress);
+        } else if (newCandles.length > 0) {
+          const now = Date.now();
+          const intervalMs = getIntervalMilliseconds(interval);
+          const currentTimeframeStart = Math.floor(now / intervalMs) * intervalMs;
           const lastCandle = newCandles[newCandles.length - 1];
           if (lastCandle.timestamp >= currentTimeframeStart) {
             log.debug(`[${symbol}] ⚠️ Removiendo vela en progreso`);
@@ -1350,13 +1381,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
           // offset = 0 significa que está viendo el precio más reciente
           const wasAtLatest = viewStateRef.current.offset <= 1;
 
-          // ✅ FIX: Evitar duplicados - solo agregar si no existe una vela con ese timestamp
+          // La vela anterior ya cerró: entra como cerrada. Si el histórico ya la trae cerrada (dato exacto
+          // de Bybit), se conserva esa: la del WebSocket puede estar vieja (gráfico pausado, cierre
+          // perdido) y, marcada en curso, la caché la descartaba y la vela desaparecía.
+          const closedCandle = { ...currentInProgress, in_progress: false };
           const existingIndex = candlesRef.current.findIndex(c => c.timestamp === currentInProgress.timestamp);
           if (existingIndex === -1) {
-            candlesRef.current.push(currentInProgress);
-          } else {
-            // Actualizar la vela existente con datos más recientes
-            candlesRef.current[existingIndex] = currentInProgress;
+            const arr = candlesRef.current;
+            let pos = arr.length;
+            while (pos > 0 && arr[pos - 1].timestamp > closedCandle.timestamp) pos--;
+            arr.splice(pos, 0, closedCandle);
+          } else if (candlesRef.current[existingIndex].in_progress) {
+            candlesRef.current[existingIndex] = closedCandle;
           }
 
           if (candlesRef.current.length > 2000) {
@@ -1972,6 +2008,8 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
   
   useEffect(() => {
     mountedRef.current = true;
+    // En pantalla completa el manager es del gráfico normal: al cerrar se le devuelve su redibujo
+    const prevExternalRedraw = externalIndicatorManager ? externalIndicatorManager.requestRedraw : null;
 
     console.log(`[${symbol}] 🚀 Componente montado, iniciando...`);
 
@@ -2084,7 +2122,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
     };
     
-    loadHistoricalData();
+    const loadToken = {};
+    activeLoadTokenRef.current = loadToken;
+    loadHistoricalData(loadToken);
     // ✅ FIX: loadDrawings() movido a useEffect separado para evitar parpadeo
     // cuando cambian indicatorStates (no necesita recargar dibujos)
     initIndicators();
@@ -2099,10 +2139,18 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
 
     log.debug(`[${symbol}] 📡 Suscrito a WebSocket @ ${bybitInterval}`);
 
+    // Tras un corte del WebSocket: recargar el histórico (rellena las velas cerradas durante el corte)
+    // y descartar la vela en curso guardada, que quedó vieja
+    const offReconnect = wsManager.onReconnect(() => {
+      if (!mountedRef.current || !wsSubscribedRef.current) return;
+      inProgressCandleRef.current = null;
+      loadHistoricalData(loadToken);
+    });
+
     // ✅ REDUCIDO: Recarga cada 5 minutos (el auto-refresh de indicadores se hace cada 1 min)
     const reloadInterval = setInterval(() => {
       log.debug(`[${symbol}] 🔄 Recarga periódica histórico (5 min)`);
-      loadHistoricalData();
+      loadHistoricalData(loadToken);
     }, 300000);
 
     // ✅ DESHABILITADO: gapCheckIntervalRef - checkAndRefreshIfNeeded ya no hace nada
@@ -2143,55 +2191,52 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     }
 
     return () => {
-      // ✅ Solo limpiar si NO es manager externo
+      // Lo propio de este gráfico se limpia siempre, también en pantalla completa. Antes la pantalla
+      // completa no limpiaba nada al cerrarse: su WebSocket, su recarga de 5 min y su RenderManager
+      // seguían vivos y cada apertura sumaba otro.
+      if (activeLoadTokenRef.current === loadToken) activeLoadTokenRef.current = null;
+      offReconnect();
+      mountedRef.current = false;
+      wsManager.unsubscribe(symbol, handleWebSocketMessage);
+
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+
+      // 🚀 Cancelar RAF de mousemove pendiente
+      if (pendingMouseMoveRef.current) {
+        cancelAnimationFrame(pendingMouseMoveRef.current);
+      }
+
+      clearInterval(reloadInterval);
+
+      // Destruir RenderManager (cada montaje crea el suyo)
+      if (renderManagerRef.current) {
+        renderManagerRef.current.destroy();
+        renderManagerRef.current = null;
+      }
+
+      candlesRef.current = [];
+      inProgressCandleRef.current = null;
+
+      if (canvas) {
+        canvas.removeEventListener('wheel', preventScroll);
+        canvas.removeEventListener('dblclick', handleDoubleClick);
+      }
+
       if (!externalIndicatorManager) {
         log.debug(`[${symbol}] 🛑 Componente desmontado, limpiando...`);
 
         // 📋 Desregistrar del registro global
         IndicatorManagerRegistry.unregister(symbol);
 
-        mountedRef.current = false;
-        wsManager.unsubscribe(symbol, handleWebSocketMessage);
-
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-        }
-
-        // 🚀 Cancelar RAF de mousemove pendiente
-        if (pendingMouseMoveRef.current) {
-          cancelAnimationFrame(pendingMouseMoveRef.current);
-        }
-
-        clearInterval(reloadInterval);
-
-        // ✅ DESHABILITADO: Ya no usamos estos intervalos
-        // if (gapCheckIntervalRef.current) {
-        //   clearInterval(gapCheckIntervalRef.current);
-        // }
-        // if (patternDetectionInterval) {
-        //   clearInterval(patternDetectionInterval);
-        // }
-
-        // ✅ NUEVO: Destruir IndicatorManager correctamente (solo si no es externo)
+        // El IndicatorManager solo se destruye si es propio (el externo es del gráfico normal)
         if (indicatorManagerRef.current) {
           indicatorManagerRef.current.destroy();
         }
-
-        // Destruir RenderManager
-        if (renderManagerRef.current) {
-          renderManagerRef.current.destroy();
-          renderManagerRef.current = null;
-        }
-
-        candlesRef.current = [];
-        inProgressCandleRef.current = null;
-
-        if (canvas) {
-          canvas.removeEventListener('wheel', preventScroll);
-          canvas.removeEventListener('dblclick', handleDoubleClick);
-        }
-      } else {
-        log.debug(`[${symbol}] ⏭️ Skipping cleanup (external manager)`);
+      } else if (prevExternalRedraw) {
+        externalIndicatorManager.requestRedraw = prevExternalRedraw;
       }
     };
   }, [symbol, interval, days, indicatorStates, externalIndicatorManager]);
@@ -2229,7 +2274,9 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       wsManager.subscribe(symbol, wsHandlerRef.current);
       wsSubscribedRef.current = true;
 
-      // Recargar datos históricos para rellenar gaps acumulados mientras estaba pausado
+      // Recargar datos históricos para rellenar gaps acumulados mientras estaba pausado.
+      // La vela en curso guardada antes de pausar quedó vieja: pisaba la vela buena del histórico
+      inProgressCandleRef.current = null;
       loadHistoricalData();
 
       // Refrescar indicadores (VWAP, etc.) para que tengan datos actualizados
