@@ -53,6 +53,25 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Backend de Order Flow (11000) - 12 Noviembre 2026: Últimas Horas Grabadas en el PC (fase 4, integración)
+
+**Pedido:** que las últimas horas tengan la misma finura de App 1, grabadas en el PC.
+
+**Cambios:**
+1. **Grabador local:** `5.Order_flow/backend/local_tape.py` usa el grabador de la nube (`cloud_collector/tape_recorder.py`, sin copiarlo) con las monedas del Swing. Escribe en `OrderFlowData/live/local/tape` y guarda cada 60 s. Los huecos empiezan con el último mensaje recibido y terminan con el primer trade tras reconectar
+2. **Unión nube + PC:** `PanelOrderFlow/sync_nube.py` une cada día por tramos cubiertos: manda la nube y el PC llena lo demás. Lo que ninguna cubre queda como hueco. Arma `live/store` y `live/flow` aparte y los reemplaza
+3. **Automático:** el backend corre la unión cada minuto en un proceso aparte, para no frenar el Swing: 1.5 s por moneda. Baja la nube cada 15 minutos. Estado en `/api/orderflow/local-tape`
+4. **Pruebas:** `PanelOrderFlow/tests/sync_checks.py` (21) y las 94 del backend
+
+**IMPORTANTE:**
+- Reiniciar el backend (11000) para que empiece a grabar. `LOCAL_TAPE=0` lo apaga.
+- Probado en vivo con el WebSocket real, sin el resto del backend y con un corte simulado: las 50 velas de 1 minuto completas y sin hueco de BTC, ETH y XRP coincidieron con Bybit, y el corte de 3 s quedó como hueco.
+- El minuto en curso no está en el almacén: llega hasta el último minuto guardado.
+
+**Ver:** `PanelOrderFlow/LEEME.md` sección "Días recientes: nube y PC"
+
+---
+
 ### Collector de Northflank - 12 Noviembre 2026: Trades en el Formato del Almacén de App 1 (fase 4, integración)
 
 **Pedido:** primer paso de la integración: que el order flow en vivo sea igual al de App 1. Un solo almacén (el de App 1, desde los archivos diarios de Bybit), el collector de la nube para los días recientes que el almacén aún no tiene, y el backend local para las últimas horas.

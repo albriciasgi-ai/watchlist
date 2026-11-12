@@ -2757,6 +2757,11 @@ async def startup_event():
         await ws_manager.subscribe_trades(trade_symbols)
         print(f"[STARTUP] Subscribed to trades for {len(trade_symbols)} symbols: {trade_symbols}")
 
+        # Graba los trades con la finura del almacen de App 1 (OrderFlowData/live/local), en segundo
+        # plano: pedir las escalas a Bybit no debe demorar el arranque
+        import local_tape
+        asyncio.create_task(local_tape.start(ws_manager, trade_symbols))
+
     except Exception as e:
         print(f"[STARTUP] Warning: Could not start Trade Aggregator: {e}")
         import traceback
@@ -2827,6 +2832,12 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
+    try:
+        import local_tape
+        await local_tape.stop()
+    except Exception as e:
+        print(f"[SHUTDOWN] Warning: Error saving local trades: {e}")
+
     from alert_sender import shutdown_alert_sender
     await shutdown_alert_sender()
 
@@ -3972,6 +3983,13 @@ async def get_trade_aggregator_stats():
             "success": False,
             "error": str(e)
         }
+
+
+@app.get("/api/orderflow/local-tape")
+async def get_local_tape_status():
+    """Estado del grabador local de trades (formato del almacen de App 1) y del ultimo armado."""
+    import local_tape
+    return {"success": True, **local_tape.status()}
 
 
 @app.get("/api/orderflow/status")

@@ -1,0 +1,122 @@
+# Pruebas sin conexion de la union nube + PC de sync_nube.py.
+# Uso, desde PanelOrderFlow:  C:\Python314\python.exe -B tests\sync_checks.py
+# La ultima parte arma el almacen con OrderFlowData/tools si existe (solo lee esa carpeta).
+import json
+import shutil
+import sys
+import tempfile
+from pathlib import Path
+
+import numpy as np
+
+HERE = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(HERE))
+import sync_nube as sn  # noqa: E402
+
+tf = sn.load_module(sn.TAPE_FORMAT, "tape_format")
+results = []
+
+
+def check(name, cond, detail=""):
+    results.append((name, bool(cond)))
+    print(("PASA  " if cond else "FALLA ") + name + (f"  [{detail}]" if detail and not cond else ""))
+
+
+DAY = "2026-11-12"
+D0 = sn.day_start(DAY)
+MIN = 60_000
+
+
+def tape(path, minutes, covered_from, saved_at, gaps=(), final=False, price=1000, scales=(10, 1000)):
+    """Un trade por minuto (a los 30 s) en los minutos dados."""
+    t = np.array([(D0 + m * MIN + 30_000) * 10 for m in minutes], dtype=np.int64)
+    n = len(t)
+    meta = dict(symbol="BTCUSDT", date=DAY, price_scale=scales[0], qty_scale=scales[1], ts_decimals=3,
+                covered_from=covered_from, saved_at=saved_at, gaps=[list(g) for g in gaps], final=final,
+                complete=False, inexact=0)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tf.write_tape(path, meta, t, np.full(n, price, dtype=np.int64), np.full(n, 5, dtype=np.int64),
+                  np.ones(n, dtype=np.int8), np.zeros(n, dtype=np.int8))
+
+
+def minutes_of(t):
+    return [int(x // 10 - D0) // MIN for x in t]
+
+
+# Tramos
+check("union de tramos", sn.union([[0, 5], [10, 20]], [[4, 12], [30, 40]]) == [[0, 20], [30, 40]])
+check("resta de tramos", sn.subtract([[0, 100]], [[10, 20], [50, 60]]) == [[0, 10], [20, 50], [60, 100]])
+check("cobertura: hasta el ultimo guardado menos el margen, sin huecos",
+      sn.coverage(dict(covered_from=D0 + MIN, saved_at=D0 + 10 * MIN, gaps=[[D0 + 3 * MIN, D0 + 4 * MIN]]), DAY)
+      == [[D0 + MIN, D0 + 3 * MIN], [D0 + 4 * MIN, D0 + 10 * MIN - sn.LAG_MS]])
+check("cobertura de un dia cerrado: hasta medianoche",
+      sn.coverage(dict(covered_from=D0, saved_at=D0 + 3 * MIN, final=True), DAY) == [[D0, D0 + 86_400_000]])
+
+tmp = Path(tempfile.mkdtemp(prefix="sync_checks_"))
+try:
+    c, l = tmp / "c.tape", tmp / "l.tape"
+    # Nube: minutos 0-59 con un corte de 20 a 30. PC: desde el minuto 15 hasta el 70
+    tape(c, [m for m in range(60) if not 20 <= m < 30], D0, D0 + 60 * MIN, gaps=[[D0 + 20 * MIN, D0 + 30 * MIN]])
+    tape(l, range(15, 70), D0 + 15 * MIN, D0 + 70 * MIN + 10_000, price=1001)
+    meta, t, p, *_ = sn.merge_day(tf, c, l, "BTCUSDT", DAY)
+    mins = minutes_of(t)
+    src = {m: int(v) for m, v in zip(mins, p)}
+    check("union: cada minuto una vez y en orden", mins == list(range(70)), str(mins))
+    check("donde cubre la nube manda la nube", all(src[m] == 1000 for m in range(20)) and all(src[m] == 1000 for m in range(30, 59)))
+    check("el corte de la nube se llena con el PC", all(src[m] == 1001 for m in range(20, 30)))
+    check("despues del ultimo guardado de la nube sigue el PC", all(src[m] == 1001 for m in range(60, 70)))
+    check("sin huecos: los dos se cubren entre si", meta["gaps"] == [], str(meta["gaps"]))
+    check("llega hasta el ultimo guardado del PC", meta["saved_at"] == D0 + 70 * MIN + 10_000 - sn.LAG_MS)
+    check("cuenta de cada fuente", meta["from_cloud"] == 50 and meta["from_local"] == 20, f"{meta['from_cloud']} {meta['from_local']}")
+    check("dia en curso: ni completo ni cerrado", meta["final"] is False and meta["complete"] is False)
+
+    # Hueco que ninguna cubre
+    tape(l, range(25, 70), D0 + 25 * MIN, D0 + 70 * MIN)
+    meta2 = sn.merge_day(tf, c, l, "BTCUSDT", DAY)[0]
+    check("lo que ninguna cubre queda como hueco", meta2["gaps"] == [[D0 + 20 * MIN, D0 + 25 * MIN]], str(meta2["gaps"]))
+
+    # Solo el PC, empezado a mitad del dia
+    meta3 = sn.merge_day(tf, tmp / "no.tape", l, "BTCUSDT", DAY)[0]
+    check("solo el PC: cubre desde su primer trade", meta3["covered_from"] == D0 + 25 * MIN and meta3["from_cloud"] == 0)
+
+    # Escalas distintas: se usa solo la nube
+    tape(l, range(60, 70), D0 + 60 * MIN, D0 + 70 * MIN, scales=(100, 1000))
+    meta4, t4 = sn.merge_day(tf, c, l, "BTCUSDT", DAY)[:2]
+    check("escalas distintas: solo la nube", meta4["from_local"] == 0 and max(minutes_of(t4)) == 59)
+
+    # Dia cerrado por la nube y completo
+    tape(c, range(1440), D0, D0 + 86_400_000 + 120_000, final=True)
+    meta5 = sn.merge_day(tf, c, tmp / "no.tape", "BTCUSDT", DAY)[0]
+    check("dia cerrado sin huecos y desde su inicio: completo", meta5["final"] and meta5["complete"])
+
+    # Armado completo con las herramientas del almacen
+    tools = Path(sn.DEFAULT_DATA) / "tools"
+    if (tools / "build_store.py").exists():
+        data = tmp / "OFD"
+        tape(sn.day_path(data / "live" / "cloud" / "tape", "BTCUSDT", sn.dt.datetime.now(sn.dt.timezone.utc).strftime("%Y-%m-%d")).with_name("x"), [0], D0, D0)  # basura que no es un dia: se ignora
+        today = sn.dt.datetime.now(sn.dt.timezone.utc).strftime("%Y-%m-%d")
+        D0, DAY = sn.day_start(today), today
+        tape(sn.day_path(data / "live" / "local" / "tape", "BTCUSDT", today), range(0, 30), D0, D0 + 30 * MIN + 5_000)
+        res = sn.refresh(data, tools, symbols={"BTCUSDT"}, days_back=2, cloud=False, log=lambda *_: None)
+        store = sn.day_path(data / "live" / "store", "BTCUSDT", today, ".npz")
+        state = json.loads(sn.day_path(data / "live" / "tape", "BTCUSDT", today, ".json").read_text(encoding="utf-8"))
+        check("armado: almacen del dia y estado para el lector", store.exists() and state["n"] == 30 and state["from_local"] == 30)
+        check("sin cambios no se vuelve a armar",
+              sn.refresh(data, tools, symbols={"BTCUSDT"}, days_back=2, cloud=False, log=lambda *_: None) == [])
+        tape(sn.day_path(data / "live" / "local" / "tape", "BTCUSDT", today), range(0, 31), D0, D0 + 31 * MIN + 5_000)
+        res2 = sn.refresh(data, tools, symbols={"BTCUSDT"}, days_back=2, cloud=False, log=lambda *_: None)
+        check("con un minuto nuevo se rearma", len(res2) == 1 and res2[0][2] == 31)
+        (data / "tape" / "BTCUSDT" / today[:4]).mkdir(parents=True)
+        (data / "tape" / "BTCUSDT" / today[:4] / f"BTCUSDT_{today}.tape").write_bytes(b"x")
+        tape(sn.day_path(data / "live" / "local" / "tape", "BTCUSDT", today), range(0, 32), D0, D0 + 32 * MIN + 5_000)
+        check("con el dia oficial no se arma",
+              sn.refresh(data, tools, symbols={"BTCUSDT"}, days_back=2, cloud=False, log=lambda *_: None) == [])
+        check("no quedan carpetas temporales", not (data / "live" / "_armando").exists())
+    else:
+        print("(sin OrderFlowData/tools: se omite el armado)")
+finally:
+    shutil.rmtree(tmp, ignore_errors=True)
+
+failed = [r for r in results if not r[1]]
+print(f"\n{len(results) - len(failed)} de {len(results)} pruebas pasan")
+sys.exit(1 if failed else 0)

@@ -59,19 +59,30 @@ Escribe solo `control.json` y `queue.txt`, los mismos que antes se editaban a ma
 
 Usa el Python de `C:\Python314`, el mismo de la descarga. No hay que instalar nada.
 
-## Días recientes desde la nube (`sync_nube.py`, 12/11/2026)
+## Días recientes: nube y PC (`sync_nube.py`, 12/11/2026)
 
-Baja del collector de Northflank los trades de los días que el almacén oficial todavía no tiene y arma con
-ellos su almacén y su flujo, con `build_store.py` y `build_flow.py` sin cambios:
+Arma los días que el almacén oficial todavía no tiene con los trades grabados en la nube (collector de
+Northflank) y en este PC (backend de Order Flow, puerto 11000), con `build_store.py` y `build_flow.py`
+sin cambios:
 
 ```
 C:\Python314\python.exe -B sync_nube.py
 C:\Python314\python.exe -B sync_nube.py --monedas BTCUSDT,ETHUSDT --dias 5
+C:\Python314\python.exe -B sync_nube.py --sin-nube
 ```
 
-- Guarda en `OrderFlowData/live/tape`, `live/store` y `live/flow`, con los mismos nombres y formato que
-  `tape/`, `store/` y `flow/`. Van aparte porque `build_store.py` y el lector de App 1 no aceptan otros
-  nombres dentro de sus carpetas.
-- Un día que ya existe en `tape/` (oficial) no se baja: el oficial manda.
-- Solo baja lo que cambió en la nube desde la última vez (`.json` junto a cada `.tape`).
-- Necesita el collector nuevo desplegado (rutas `/api/tape/...`).
+- **Carpetas** en `OrderFlowData/live/`:
+  - `cloud/tape`: lo bajado de la nube (solo lo que cambió desde la última vez);
+  - `local/tape`: lo que graba el backend 11000 (`5.Order_flow/backend/local_tape.py`);
+  - `tape`, `store` y `flow`: la unión, con los mismos nombres y formato que `tape/`, `store/` y `flow/`.
+    Van aparte porque `build_store.py` y el lector de App 1 no aceptan otros nombres en sus carpetas.
+- **Unión:** cada fuente cubre desde su primer trade hasta su último guardado (menos 2 s), sin sus huecos.
+  Donde cubre la nube manda la nube; lo que solo cubre el PC sale del PC; lo que ninguna cubre queda como
+  hueco en el `.json` junto al `.tape`, que lee App 1.
+- Un día que ya existe en `tape/` (oficial) no se arma: el oficial manda.
+- Solo rearma un día si cambió alguna de sus fuentes. El almacén y el flujo se arman en una carpeta aparte
+  y se reemplazan: el lector nunca ve un día a medias.
+- **Automático:** el backend 11000 graba los trades de las monedas del Swing y cada minuto corre
+  `sync_nube.py --sin-nube` en un proceso aparte; cada 15 minutos baja también la nube. Estado en
+  `GET http://127.0.0.1:11000/api/orderflow/local-tape`.
+- Pruebas: `C:\Python314\python.exe -B tests\sync_checks.py` (21).

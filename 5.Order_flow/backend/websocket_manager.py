@@ -199,6 +199,9 @@ class WebSocketManager:
         self._candle_close_callbacks: List[Callable[[str, str, Candle], None]] = []
         self._candle_update_callbacks: List[Callable[[str, str, Candle], None]] = []
         self._trade_callbacks: List[Callable[[str, Trade], None]] = []  # Trade callbacks
+        # Grabador de trades en el formato del almacen de App 1 (local_tape.py). Recibe el trade crudo
+        # de Bybit (precio y cantidad como texto, sin pasar por float)
+        self.tape = None
         self.on_connection_change: Optional[Callable[[bool], None]] = None
 
         # Legacy single callback support (for backwards compatibility)
@@ -507,6 +510,10 @@ class WebSocketManager:
 
             # Reconnection with exponential backoff
             self.connected = False
+            if self.tape is not None:
+                # El hueco de los trades empieza con el ultimo mensaje recibido (una conexion muerta
+                # puede pasar hasta 60 s sin datos antes de cerrarse)
+                self.tape.mark_disconnected(int(self.last_message_time * 1000) if self.last_message_time else None)
             # Se guarda el PRIMER fallo del corte: si se pisa en cada reintento, el hueco medido
             # al reconectar sale corto y no se rellena
             if not self._last_disconnect_time:
@@ -694,6 +701,17 @@ class WebSocketManager:
 
         if not trades_data:
             return
+
+        tape = self.tape
+        if tape is not None:
+            try:
+                if tape.disconnected_at is not None:
+                    # Primer trade tras un corte: el hueco termina aqui
+                    tape.mark_connected(int(trades_data[0].get("T", 0)) or None)
+                for trade_data in trades_data:
+                    tape.add_trade(symbol, trade_data)
+            except Exception as e:
+                logger.error(f"[TAPE] Error al grabar trades de {symbol}: {e}")
 
         for trade_data in trades_data:
             try:
