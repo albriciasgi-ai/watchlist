@@ -132,3 +132,4 @@
 .suite-confirm { background: #fff; color: #222; border-radius: 8px; padding: 18px 20px; width: 360px; max-width: 92vw; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3); }
 .suite-input { width: 70px; font-size: 12px; padding: 2px 6px; border: 1px solid var(--t-line, #ccc); border-radius: 3px; background: var(--t-control, #fff); color: inherit; }
 .suite-add-coin { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; font-size: 12px; }
+.suite-badge-active { margin-left: 6px; font-size: 10px; padding: 1px 6px; border-radius: 8px; background: var(--t-up, #089981); color: #fff; vertical-align: middle; }

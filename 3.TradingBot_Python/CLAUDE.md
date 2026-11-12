@@ -30,7 +30,8 @@ Bot de trading automatizado que ejecuta ordenes en Bybit basado en alertas.
 │
 ├── config/
 │   ├── trading_config.json      # Config ~21 simbolos
-│   ├── credentials.json         # API keys (runtime)
+│   ├── credentials.json         # API keys (runtime): las de la cuenta activa
+│   ├── accounts.json            # Cuentas de Bybit guardadas, una activa (runtime, fuera de git)
 │   ├── trading_directions.json  # Direcciones permitidas
 │   └── bot_settings.json        # Configuracion del bot (metodo ejecucion)
 │
@@ -45,6 +46,7 @@ Bot de trading automatizado que ejecuta ordenes en Bybit basado en alertas.
 - **Cliente Bybit optimizado**: Connection pooling, rate limiting, retry automatico
 - **21 simbolos** preconfigurados
 - **Soporte Market y Limit orders** con TP/SL integrado
+- **Varias cuentas de Bybit** (12/11/2026), una activa a la vez, manejadas desde la suite: ver `10.TradingBotDesktop/CLAUDE.md` sección "Cuentas de Bybit"
 
 ## Optimizaciones (Enero 2026)
 

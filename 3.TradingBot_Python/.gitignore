@@ -58,6 +58,8 @@ frontend/cache/
 
 # Sensitive data
 config/credentials.json
+config/accounts.json
+config/accounts.json.tmp
 *.pem
 *.key
 

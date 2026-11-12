@@ -163,13 +163,16 @@ export default function TradingPanel({ symbol, shapes, onClose }) {
   };
 
   const mode = status?.mode ? String(status.mode).toUpperCase() : null;
+  const accountName = status?.account?.name || null; // cuenta activa del bot: las ordenes van a ella
   const posList = (position?.positions?.length ? position.positions : (position?.hasPosition ? [position] : []))
     .filter(p => Number(p.size) > 0);
 
   return (
     <>
       <div className="sidebar-header">
-        <span className="sidebar-title">Panel de Trading{mode ? ` · ${mode}` : ''}</span>
+        <span className="sidebar-title" title={accountName ? `Cuenta activa del bot: ${accountName}` : ''}>
+          Panel de Trading{mode ? ` · ${mode}` : ''}{accountName ? ` · ${accountName}` : ''}
+        </span>
         <button className="btn-collapse" onClick={onClose} title="Ocultar panel">✕</button>
       </div>
       <div className="sidebar-tabs">
@@ -312,7 +315,7 @@ export default function TradingPanel({ symbol, shapes, onClose }) {
       {confirm && (
         <div onClick={() => setConfirm(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div onClick={(e) => e.stopPropagation()} className="suite-confirm">
-            <h3 style={{ marginTop: 0 }}>Confirmar orden {confirm.mode === 'live' || mode === 'LIVE' ? 'REAL' : mode}</h3>
+            <h3 style={{ marginTop: 0 }}>Confirmar orden {confirm.mode === 'live' || mode === 'LIVE' ? 'REAL' : mode}{accountName ? ` en ${accountName}` : ''}</h3>
             <table className="bot-table">
               <tbody>
                 <tr><td>Moneda</td><td><b>{confirm.symbol}</b></td></tr>

@@ -32,12 +32,12 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── main.py            FastAPI, 127.0.0.1:13000
 │   ├── candles.py         Velas de Bybit y validación de moneda y marco (compartido)
 │   ├── market_routes.py   Indicadores de App 1 en vivo: OI, VWAP, S&R clásico, patrones, Elementos OF y setups
-│   ├── bot_routes.py      Configuración, riesgo, claves, orígenes, direcciones y órdenes del panel, con palabra de confirmación
+│   ├── bot_routes.py      Configuración, riesgo, cuentas y claves, orígenes, direcciones y órdenes del panel, con palabra de confirmación
 │   ├── recorder.py        Graba los trades de las monedas de la suite (usa local_tape.py del 11000)
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (41) y bot_checks.py (33), sin conexión
+│   └── tests/             run_checks.py (46) y bot_checks.py (42), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -46,7 +46,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── TradingPanel.jsx   Panel de trading en vivo: caja TP/SL, tamaño fijo o por riesgo, orden al bot
         ├── tabs.js        Pestaña 1 y 2: ajustes propios y dibujos compartidos (BroadcastChannel)
         ├── BotView.jsx    Estado, pausa, avisos críticos, posiciones, órdenes y alertas del bot
-        └── BotConfig.jsx  Configuración del bot como en App 10
+        ├── BotConfig.jsx  Configuración del bot como en App 10
+        └── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
 ```
 
 ## Puertos
@@ -79,6 +80,10 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `GET /api/bot/config`, `/settings`, `/directions`, `/credentials/check`, `/position/{symbol}`, `/logs` | Lectura del bot |
 | `POST /api/bot/config/update`, `/config/add`, `/config/sync-precision/{symbol}`, `/config/update-risk-all`, `/settings/daily-risk-limit`, `/settings/daily-risk-reset`, `/settings/execution-method`, `/settings/allowed-origins`, `/directions/update` | Cambios del bot. Exigen `"confirm": "CAMBIAR_CONFIG"` y validan cada campo (SL hasta 50%, TP hasta 500%, apalancamiento hasta 100, orígenes y direcciones conocidos) |
 | `POST /api/bot/credentials` | Claves de Bybit al bot. Exige `"confirm": "CAMBIAR_CLAVES"` y `demo` booleano. La suite no las guarda |
+| `GET /api/bot/accounts`, `/accounts/{id}/summary` | Cuentas de Bybit del bot (sin el secreto; de la clave, los últimos 4 caracteres) y el patrimonio, el disponible y las posiciones de cada una |
+| `POST /api/bot/accounts`, `/accounts/{id}/delete` | Agregar o borrar una cuenta. Exigen `"confirm": "CAMBIAR_CLAVES"`; agregar, además, nombre de 1 a 40 caracteres y `demo` booleano |
+| `POST /api/bot/accounts/{id}/activate` | El bot pasa a operar con esa cuenta. Exige `"confirm": "CAMBIAR_CUENTA"` |
+| `POST /api/bot/accounts/{id}/rename` | Renombrar. Exige `"confirm": "CAMBIAR_CONFIG"` |
 | `POST /api/bot/trade` | Orden del panel a `/api/trade/manual`. Exige `"confirm": "ENVIAR_ORDEN_REAL"`, Market o Limit (el bot no tiene stop), cantidad, stop y objetivo a cada lado de la entrada, y una Limit que no cruce el precio |
 | `GET /api/open-interest/{symbol}` | Serie local de 5 min (`oi_store`, `OrderFlowData/oi`) y, desde su final hasta ahora, Bybit REST `/v5/market/open-interest`. Con rango (`start_timestamp_ms`, `end_timestamp_ms`) o con `interval&days`. Lo de Bybit queda en memoria y su último tramo se repide pasados 60 s |
 | `GET /api/vwap/{symbol}` | `vwap_calculator` de App 1 sobre las velas de Bybit, incluida la vela en curso (el indicador lo repide cada 30 s) |
@@ -130,6 +135,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 - Tipo automático: a 0.1% o menos del precio Market; más lejos Limit si el precio debe volver. Si pediría una orden stop no se envía: el bot no las tiene.
 - Se bloquea, con el motivo, sin bot, sin credenciales, en pausa, con la moneda sin configurar en el bot, con SL o TP del lado equivocado o con una Limit que cruza el precio.
 - Confirmación con moneda, lado, tipo, cantidad, stop, objetivo y pérdida/ganancia; "Cuenta REAL" en rojo si el bot está en LIVE. El resultado dice si quedó sin stop o es desconocido, para no reintentar.
+- El título del panel y el de la confirmación dicen el modo y la cuenta activa del bot ("Panel de Trading · LIVE · Real BTC").
 - Posición: lado, tamaño, entrada, SL (en rojo si no tiene) y TP. El bot no tiene rutas para cerrar ni mover el stop: eso se hace en Bybit.
 
 ## Configuración del bot
@@ -138,12 +144,31 @@ En Bot > "Configuración y riesgo" (`BotConfig.jsx`), lo de App 10:
 - **Riesgo:** riesgo diario usado y su reinicio, límite diario, riesgo por trade para todas las monedas y método de ejecución (integrado o secuencial).
 - **Orígenes de alertas:** Analizador, Watchlist y Order Flow.
 - **Monedas:** riesgo, SL %, TP %, dirección (DISABLED, LONG, SHORT, BOTH) y precisión de Bybit por moneda; agregar una con riesgo, SL, TP y apalancamiento. El apalancamiento solo se fija al agregarla: el bot no tiene ruta para cambiarlo.
-- **Credenciales:** API key, secret y Demo, directo al bot.
+- **Cuentas de Bybit:** ver la sección siguiente.
 - Cada cambio pide confirmación en la página y la palabra en el servidor.
+
+## Cuentas de Bybit
+
+Pedido del usuario (12/11): agregar otras claves de Bybit, para trading real o de otras cuentas, y manejarlas todas desde la suite. Eligió **una activa a la vez**.
+
+- **Dónde:** Bot > "Configuración y riesgo" (`BotAccounts.jsx`). Una fila por cuenta con nombre, DEMO o REAL, los últimos 4 caracteres de la clave, patrimonio, disponible y posiciones abiertas ("sin SL" en rojo si alguna no tiene stop). Botones "Usar esta…", "Renombrar" y "Borrar…" (la activa no se borra). Abajo, el formulario para agregar una (nombre, API key, secret y Demo) y "Actualizar saldos".
+- **Una activa:** el bot opera solo con ella, en las alertas automáticas y en el panel de trading. La dicen el título del panel, la confirmación de cada orden y la tarjeta "Modo · cuenta activa" del módulo del bot.
+- **Cambiar de cuenta:** pide confirmación y avisa que las posiciones de la cuenta anterior siguen en Bybit con su stop y su objetivo, pero el bot deja de vigilarlas. El bot valida la clave antes (rechaza una mala o de solo lectura). Responde 409 si hay una orden ejecutándose, y mientras cambia no empieza ninguna.
+- **Agregar:** la cuenta no pasa a ser la activa. El bot la valida en Bybit y la guarda aunque falle, con el motivo (⚠ junto a la clave).
+- **Claves:** van directo al bot (`3.TradingBot_Python/config/accounts.json`, fuera de git, como `credentials.json`). La suite no las guarda, no las escribe en su registro y no las muestra.
+- **Compartido entre cuentas:** la configuración por moneda, las direcciones, los orígenes, la pausa y el riesgo diario son del bot y valen para la cuenta activa.
+- **Detalle del bot:** `10.TradingBotDesktop/CLAUDE.md` sección "Cuentas de Bybit".
+
+Probado el 12/11 en la copia aislada con un bot falso:
+- tabla con dos cuentas y sus saldos;
+- cambio a la real: el título del panel pasó a "Panel de Trading · LIVE · Real BTC";
+- renombrar, agregar y borrar llegaron al bot con su palabra.
+
+El bot se probó con un Bybit simulado (`accounts_checks.py`). Nada se probó contra Bybit real.
 
 ## Módulo del bot
 
-- Tarjetas: modo (LIVE, TESTNET o DEMO), pausa, credenciales, monedas, órdenes en el historial y ejecuciones desde que arrancó, con los SL y TP fallidos.
+- Tarjetas: modo (LIVE, TESTNET o DEMO) con el nombre de la cuenta activa, pausa, credenciales, monedas, órdenes en el historial y ejecuciones desde que arrancó, con los SL y TP fallidos.
 - Listas: avisos críticos, posiciones (en rojo las que no tienen SL), últimas 30 órdenes y alertas de 4 horas.
 - La pausa pide confirmación en la página y la palabra en el servidor. La configuración está en "Configuración y riesgo" y las órdenes en el panel de trading.
 

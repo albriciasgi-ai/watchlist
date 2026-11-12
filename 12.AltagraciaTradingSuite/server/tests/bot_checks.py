@@ -89,6 +89,27 @@ try:
     r = c.post("/api/bot/credentials", json={"api_key": " a ", "api_secret": "b", "demo": True, "confirm": "CAMBIAR_CLAVES"})
     check("claves validas llegan limpias", r.status_code == 200 and calls[-1][2] == {"api_key": "a", "api_secret": "b", "demo": True})
 
+    # Cuentas de Bybit
+    calls.clear()
+    AID = "0123456789ab"
+    check("agregar cuenta sin la palabra: no llega", c.post("/api/bot/accounts", json={"name": "Real", "api_key": "k", "api_secret": "s", "demo": False, "confirm": "CAMBIAR_CONFIG"}).status_code == 400 and not calls)
+    check("agregar cuenta sin nombre: no llega", c.post("/api/bot/accounts", json={"name": " ", "api_key": "k", "api_secret": "s", "demo": False, "confirm": "CAMBIAR_CLAVES"}).status_code == 400 and not calls)
+    check("agregar cuenta sin demo booleano: no llega", c.post("/api/bot/accounts", json={"name": "R", "api_key": "k", "api_secret": "s", "confirm": "CAMBIAR_CLAVES"}).status_code == 400 and not calls)
+    r = c.post("/api/bot/accounts", json={"name": " Real ", "api_key": " k ", "api_secret": "s", "demo": False, "confirm": "CAMBIAR_CLAVES"})
+    check("agregar cuenta: llega limpia", r.status_code == 200 and calls[-1][1] == "/api/accounts" and calls[-1][2] == {"name": "Real", "api_key": "k", "api_secret": "s", "demo": False})
+    calls.clear()
+    check("activar sin la palabra: no llega", c.post(f"/api/bot/accounts/{AID}/activate", json={"confirm": "CAMBIAR_CONFIG"}).status_code == 400 and not calls)
+    check("activar con id invalido: no llega", c.post("/api/bot/accounts/xyz/activate", json={"confirm": "CAMBIAR_CUENTA"}).status_code == 400 and not calls)
+    r = c.post(f"/api/bot/accounts/{AID}/activate", json={"confirm": "CAMBIAR_CUENTA"})
+    check("activar: una llamada al bot", r.status_code == 200 and calls == [("POST", f"/api/accounts/{AID}/activate", None, None)])
+    calls.clear()
+    r = c.post(f"/api/bot/accounts/{AID}/delete", json={"confirm": "CAMBIAR_CLAVES"})
+    check("borrar cuenta: DELETE al bot", r.status_code == 200 and calls == [("DELETE", f"/api/accounts/{AID}", None, None)])
+    calls.clear()
+    r = c.post(f"/api/bot/accounts/{AID}/rename", json={"name": "Real BTC", "confirm": "CAMBIAR_CONFIG"})
+    check("renombrar cuenta: PUT al bot", r.status_code == 200 and calls == [("PUT", f"/api/accounts/{AID}", {"name": "Real BTC"}, None)])
+    calls.clear()
+
     # Lista de monedas
     sl = SymbolList(TMP / "data")
     check("monedas de fabrica sin archivo", sl.load() == DEFAULT_SYMBOLS)

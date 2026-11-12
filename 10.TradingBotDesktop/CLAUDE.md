@@ -132,5 +132,36 @@ Informe original: `C:\Users\inven\AppData\Roaming\Claude\side-session-notes\loca
 
 **IMPORTANTE:** reiniciar el backend del bot (puerto 5000) y los de App 4 y App 5 para aplicar los cambios.
 
+## Cuentas de Bybit (12 Noviembre 2026)
+
+Pedido del usuario: guardar otras claves de Bybit, para trading real o de otras cuentas, y manejarlas todas desde la suite (`12.AltagraciaTradingSuite`, Bot > "Configuración y riesgo"). Eligió **una activa a la vez**: el bot opera solo con la activa.
+
+- **Archivo:** `3.TradingBot_Python/config/accounts.json`. Guarda de cada cuenta el nombre, la clave, el secreto, si es demo, la fecha y el resultado de la validación. Va en texto plano como `credentials.json` y está en `.gitignore`. Se escribe con temporal y reemplazo, una escritura a la vez. Si está ilegible, las rutas responden 500 y no lo sobrescriben.
+- **Migración:** la primera vez que arranca, el bot pasa la clave de `credentials.json` a la "Cuenta principal", activa.
+- **`credentials.json` sigue siendo la clave activa:** el bot la carga al arrancar como siempre, y activar una cuenta la escribe ahí. Las claves puestas desde App 10 (`/api/credentials`) cambian las de la cuenta activa, o crean la "Cuenta principal" si no hay ninguna.
+- **Rutas:**
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/accounts` | Las cuentas, sin el secreto; de la clave, solo los últimos 4 caracteres |
+| `POST /api/accounts` | Agrega una cuenta, que no pasa a ser la activa. La valida en Bybit (`/v5/user/query-api`) y la guarda aunque falle, con el motivo. Clave o nombre repetidos: 409 |
+| `POST /api/accounts/{id}/activate` | Valida la clave (rechaza una mala o de solo lectura) y el bot pasa a operar con ella: cliente nuevo, `credentials.json` y la sincronización de siempre |
+| `PUT /api/accounts/{id}` | Renombrar |
+| `DELETE /api/accounts/{id}` | Borrar. La activa no se puede borrar (409) |
+| `GET /api/accounts/{id}/summary` | Patrimonio, saldo y disponible, y las posiciones abiertas con su SL y TP. Las cuentas que no son la activa usan un cliente aparte, que se cierra al terminar |
+
+- **Estado:** `/api/status` trae `account` (id, nombre y modo de la activa) y el WebSocket avisa `account_changed`.
+- **Cambio seguro:**
+  - cambiar de cuenta, o las claves desde App 10, responde 409 si hay una orden ejecutándose;
+  - mientras cambia, ninguna orden empieza: la alerta queda `REJECTED_ACCOUNT_SWITCH` y la orden manual responde 409;
+  - una alerta que tomó el cliente antes del cambio y esperaba el candado de su moneda se descarta al tomarlo.
+
+  Así una orden nunca revisa la posición en una cuenta y se envía por otra.
+- **Compartido entre cuentas:** la configuración por moneda, las direcciones, los orígenes, la pausa y el riesgo diario son del bot y valen para la cuenta activa. Las posiciones de la cuenta anterior quedan en Bybit con su SL y TP, pero el bot deja de vigilarlas.
+- **App 10:** no tiene la lista de cuentas. Su panel de credenciales cambia las claves de la cuenta activa.
+- **Pruebas:** `3.TradingBot_Python/backend/tests/accounts_checks.py` corre 31 pruebas sin conexión, con carpetas temporales (`BOT_CONFIG_DIR`, `BOT_LOG_DIR`) y un Bybit simulado. Sin la revisión del cambio dentro de las órdenes, la orden manual llega a Bybit y la alerta sigue.
+
+**IMPORTANTE:** reiniciar el bot (puerto 5000) para que cargue las cuentas. Conviene que cada clave tenga permiso de órdenes y posiciones y no de retiro. Nada se probó contra Bybit real.
+
 ---
 

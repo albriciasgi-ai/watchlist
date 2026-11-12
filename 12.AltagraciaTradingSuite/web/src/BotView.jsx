@@ -84,7 +84,11 @@ export default function BotView({ active }) {
     <div className="bot-view">
       {overview.error && <div className="bot-warning">Sin respuesta del bot desde {fmtTime(overview.at)}: {overview.error}</div>}
       <div className="bot-cards">
-        <div className="bot-card"><div className="label">Modo</div><div className="value">{status?.mode ? String(status.mode).toUpperCase() : '—'}</div></div>
+        <div className="bot-card">
+          <div className="label">Modo · cuenta activa</div>
+          <div className="value">{status?.mode ? String(status.mode).toUpperCase() : '—'}</div>
+          {status?.account?.name && <div className="label">{status.account.name}</div>}
+        </div>
         <div className="bot-card">
           <div className="label">Trading</div>
           <div className={`value ${paused ? 'neg' : 'pos'}`}>{paused === undefined ? '—' : paused ? 'En pausa' : 'Activo'}</div>

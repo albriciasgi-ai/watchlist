@@ -24,7 +24,9 @@ from typing import Optional, List, Dict, Any
 from decimal import Decimal
 import json
 import asyncio
+import os
 import re
+import secrets
 import time
 from pathlib import Path
 from datetime import datetime, date
@@ -37,11 +39,12 @@ from trading.alert_parser import AlertParser
 
 # Rutas absolutas: el backend funciona aunque se arranque desde otra carpeta
 BACKEND_DIR = Path(__file__).resolve().parent
-CONFIG_DIR = BACKEND_DIR.parent / "config"
+# BOT_CONFIG_DIR y BOT_LOG_DIR solo para pruebas: asi nunca tocan la configuracion ni las claves reales
+CONFIG_DIR = Path(os.environ.get("BOT_CONFIG_DIR") or (BACKEND_DIR.parent / "config"))
 TRADING_CONFIG_FILE = CONFIG_DIR / "trading_config.json"
 
 # Alert log file for received alerts
-ALERT_LOG_DIR = BACKEND_DIR / "logs"
+ALERT_LOG_DIR = Path(os.environ.get("BOT_LOG_DIR") or (BACKEND_DIR / "logs"))
 ALERT_RECEIVED_LOG = ALERT_LOG_DIR / "alerts_received.log"
 
 # Aplicaciones autorizadas a enviar alertas automaticas. Cualquier otro origen,
@@ -171,6 +174,73 @@ class CredentialsRequest(BaseModel):
     demo: bool = False  # True = Demo Trading, False = Real Trading
 
 
+class AccountAddRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=40)
+    api_key: str = Field(min_length=1, max_length=200)
+    api_secret: str = Field(min_length=1, max_length=200)
+    demo: bool = False
+
+
+class AccountRenameRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=40)
+
+
+ACCOUNT_ID_RE = re.compile(r"^[a-f0-9]{12}$")
+
+
+class AccountStore:
+    """
+    Cuentas de Bybit guardadas (pedido del usuario el 12/11/2026): varias claves, reales o demo, con nombre.
+    El bot opera con UNA a la vez, la activa; sus claves siguen tambien en credentials.json, que es lo que
+    carga al arrancar (App 10 y lo anterior no cambian). Mismo cuidado que credentials.json: archivo local,
+    fuera de git. La primera vez, la clave de credentials.json pasa a ser la "Cuenta principal".
+    """
+
+    def __init__(self, path: Path, credentials_file: Path):
+        self.path = path
+        self.credentials_file = credentials_file
+
+    def load(self) -> Dict[str, Any]:
+        if self.path.exists():
+            data = json.loads(self.path.read_text(encoding="utf-8"))  # ilegible: error, nunca una lista vacia
+            if not isinstance(data, dict) or not isinstance(data.get("accounts"), list):
+                raise ValueError("accounts.json no tiene el formato esperado")
+            return data
+        data = {"active": None, "accounts": []}
+        if self.credentials_file.exists():
+            creds = json.loads(self.credentials_file.read_text(encoding="utf-8"))
+            if creds.get("api_key") and creds.get("api_secret"):
+                acc = self.new_account("Cuenta principal", creds["api_key"], creds["api_secret"], bool(creds.get("demo")))
+                data = {"active": acc["id"], "accounts": [acc]}
+                self.save(data)
+        return data
+
+    def save(self, data: Dict[str, Any]) -> None:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = self.path.with_name(self.path.name + ".tmp")
+        tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        os.replace(tmp, self.path)
+
+    @staticmethod
+    def new_account(name: str, api_key: str, api_secret: str, demo: bool) -> Dict[str, Any]:
+        return {"id": secrets.token_hex(6), "name": name.strip(), "api_key": api_key.strip(), "api_secret": api_secret.strip(),
+                "demo": bool(demo), "created_at": datetime.now().isoformat(timespec="seconds"),
+                "validated": None, "validation_message": None}
+
+    @staticmethod
+    def find(data: Dict[str, Any], account_id: str) -> Optional[Dict[str, Any]]:
+        return next((a for a in data["accounts"] if a.get("id") == account_id), None)
+
+    @staticmethod
+    def public(acc: Dict[str, Any], active_id: Optional[str]) -> Dict[str, Any]:
+        """Lo que sale por la API: nunca el secreto, y de la clave solo los ultimos 4 caracteres."""
+        key = acc.get("api_key") or ""
+        return {"id": acc["id"], "name": acc.get("name"), "demo": bool(acc.get("demo")),
+                "mode": "demo" if acc.get("demo") else "live", "key_hint": f"...{key[-4:]}" if key else None,
+                "active": acc["id"] == active_id, "created_at": acc.get("created_at"),
+                "validated": acc.get("validated"), "validation_message": acc.get("validation_message")}
+
+
 class WatchlistAlertRequest(BaseModel):
     """Alert from Watchlist in JSON format"""
     pattern: Optional[str] = Field(None, description="Pattern name (e.g., HAMMER (ABRIR LONG))")
@@ -238,6 +308,12 @@ class AppState:
         self.logs: List[Dict[str, Any]] = []
         self.max_logs = 1000
         self.credentials_file = CONFIG_DIR / "credentials.json"
+        self.accounts = AccountStore(CONFIG_DIR / "accounts.json", self.credentials_file)
+        self.active_account: Optional[Dict[str, Any]] = None  # id, nombre y modo de la cuenta activa
+        self.accounts_lock = asyncio.Lock()  # una sola escritura de accounts.json a la vez
+        # Mientras cambia la cuenta (o las claves) ninguna orden empieza, y una orden en curso impide el cambio:
+        # asi una orden nunca revisa la posicion en una cuenta y se envia por otra
+        self.account_switching: bool = False
         self.order_history_file = CONFIG_DIR / "order_history.json"
         self.bot_settings_file = CONFIG_DIR / "bot_settings.json"
         self.symbol_locks: Dict[str, asyncio.Lock] = {}  # Lock per symbol to prevent race conditions
@@ -639,6 +715,7 @@ async def startup():
     state.log("info", "Trading Bot Backend starting...")
     state.load_config()
     state.load_credentials()
+    refresh_active_account()  # migra credentials.json a la "Cuenta principal" la primera vez
     state.load_order_history()
     state.load_bot_settings()
     if state.bybit_client:
@@ -687,6 +764,7 @@ async def get_status():
         "timestamp": datetime.now().isoformat(),
         "credentials_configured": state.bybit_client is not None,
         "mode": state.bybit_client.mode if state.bybit_client else None,
+        "account": state.active_account,
         "trading_paused": state.trading_paused,
         "symbols_configured": len(state.trading_config),
         "active_connections": len(state.ws_connections),
@@ -708,9 +786,66 @@ async def check_credentials():
     }
 
 
+def refresh_active_account() -> None:
+    """Nombre y modo de la cuenta activa para /api/status. Nunca lanza: sin cuentas queda en None."""
+    try:
+        data = state.accounts.load()
+        acc = AccountStore.find(data, data.get("active") or "")
+        state.active_account = ({"id": acc["id"], "name": acc.get("name"), "mode": "demo" if acc.get("demo") else "live"}
+                                if acc else None)
+    except Exception as e:
+        state.active_account = None
+        state.log("error", f"[CUENTAS] No se pudo leer accounts.json: {e}")
+
+
+def sync_active_account(api_key: str, api_secret: str, demo: bool, validated: Optional[bool], message: Optional[str]) -> None:
+    """Claves puestas por /api/credentials (App 10): actualizan la cuenta activa, o crean la "Cuenta principal"."""
+    data = state.accounts.load()
+    acc = AccountStore.find(data, data.get("active") or "")
+    if acc is None:
+        acc = next((a for a in data["accounts"] if a.get("api_key") == api_key.strip()), None)
+        if acc is None:
+            acc = AccountStore.new_account("Cuenta principal", api_key, api_secret, demo)
+            data["accounts"].append(acc)
+        data["active"] = acc["id"]
+    acc.update(api_key=api_key.strip(), api_secret=api_secret.strip(), demo=bool(demo), validated=validated,
+               validation_message=message)
+    state.accounts.save(data)
+    refresh_active_account()
+
+
+def _begin_account_switch() -> None:
+    """
+    Marca el cambio de cuenta. Sin awaits entre la revision y la marca: o hay una orden en curso (409) o
+    ninguna orden empieza hasta que termine el cambio (execute_trade y manual_trade lo revisan con el candado
+    de su moneda tomado). Quien la llama la apaga en un finally.
+    """
+    if state.account_switching:
+        raise HTTPException(status_code=409, detail="ya se esta cambiando la cuenta del bot")
+    if any(lock.locked() for lock in state.symbol_locks.values()) or state.risk_lock.locked():
+        raise HTTPException(status_code=409, detail="hay una orden ejecutandose: intenta de nuevo en unos segundos")
+    state.account_switching = True
+
+
 @app.post("/api/credentials")
 async def set_credentials(req: CredentialsRequest):
-    """Set Bybit API credentials"""
+    """Set Bybit API credentials (de la cuenta activa)"""
+    async with state.accounts_lock:
+        _begin_account_switch()
+        try:
+            result = await apply_credentials(req.api_key, req.api_secret, req.demo)
+        finally:
+            state.account_switching = False
+        try:
+            sync_active_account(req.api_key, req.api_secret, req.demo, result.get("validated"), result.get("validation_message"))
+        except Exception as e:
+            state.log("error", f"[CUENTAS] Claves aplicadas pero no se pudo guardar en accounts.json: {e}")
+    return result
+
+
+async def apply_credentials(api_key: str, api_secret: str, demo: bool) -> Dict[str, Any]:
+    """Cambia el cliente de Bybit del bot, guarda credentials.json y valida (lo de siempre de /api/credentials)."""
+    req = CredentialsRequest(api_key=api_key, api_secret=api_secret, demo=demo)
     try:
         # Close existing client if any
         if state.bybit_client:
@@ -770,6 +905,174 @@ async def set_credentials(req: CredentialsRequest):
     except Exception as e:
         state.log("error", f"Failed to set credentials: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
+
+
+# ==========================
+# Cuentas de Bybit (una activa a la vez)
+# ==========================
+
+def _account_or_404(data: Dict[str, Any], account_id: str) -> Dict[str, Any]:
+    if not ACCOUNT_ID_RE.match(account_id or ""):
+        raise HTTPException(status_code=400, detail="id de cuenta invalido")
+    acc = AccountStore.find(data, account_id)
+    if acc is None:
+        raise HTTPException(status_code=404, detail="cuenta no encontrada")
+    return acc
+
+
+def _load_accounts() -> Dict[str, Any]:
+    try:
+        return state.accounts.load()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"accounts.json ilegible: {e}")
+
+
+async def _check_keys(api_key: str, api_secret: str, demo: bool) -> Dict[str, Any]:
+    """Valida unas claves con un cliente aparte (endpoint privado de solo lectura). No toca el cliente activo."""
+    client = BybitClient(api_key=api_key, api_secret=api_secret, testnet=False, demo=demo)
+    try:
+        return await client.check_api_key()
+    finally:
+        try:
+            await client.close()
+        except Exception:
+            pass
+
+
+@app.get("/api/accounts")
+async def list_accounts():
+    data = _load_accounts()
+    active = data.get("active")
+    return {"success": True, "active": active, "accounts": [AccountStore.public(a, active) for a in data["accounts"]]}
+
+
+@app.post("/api/accounts")
+async def add_account(req: AccountAddRequest):
+    """Guarda una cuenta nueva (no pasa a ser la activa). Se valida en Bybit y se guarda aunque falle, con el motivo."""
+    async with state.accounts_lock:
+        data = _load_accounts()
+        if any(a.get("api_key") == req.api_key.strip() for a in data["accounts"]):
+            raise HTTPException(status_code=409, detail="esa API key ya esta guardada")
+        if any((a.get("name") or "").lower() == req.name.strip().lower() for a in data["accounts"]):
+            raise HTTPException(status_code=409, detail="ya hay una cuenta con ese nombre")
+        acc = AccountStore.new_account(req.name, req.api_key, req.api_secret, req.demo)
+        try:
+            check = await _check_keys(acc["api_key"], acc["api_secret"], acc["demo"])
+            acc["validated"] = bool(check.get("valid"))
+            if check.get("valid") and check.get("readOnly"):
+                acc["validation_message"] = "Clave valida pero de SOLO LECTURA: el bot no podria operar con ella"
+            elif check.get("valid"):
+                acc["validation_message"] = "Clave valida"
+            else:
+                acc["validation_message"] = f"Bybit rechazo la clave: {check.get('retMsg')} (retCode={check.get('retCode')})"
+        except Exception as e:
+            acc["validated"] = None
+            acc["validation_message"] = f"No se pudo validar: {e}"
+        data["accounts"].append(acc)
+        state.accounts.save(data)
+    state.log("info", f"[CUENTAS] Cuenta agregada: {acc['name']} ({'demo' if acc['demo'] else 'REAL'}) - {acc['validation_message']}")
+    return {"success": True, "account": AccountStore.public(acc, data.get("active"))}
+
+
+@app.post("/api/accounts/{account_id}/activate")
+async def activate_account(account_id: str):
+    """El bot pasa a operar con esta cuenta (alertas y ordenes manuales). Antes se validan sus claves."""
+    async with state.accounts_lock:
+        data = _load_accounts()
+        acc = _account_or_404(data, account_id)
+        if data.get("active") == acc["id"] and state.bybit_client is not None:
+            return {"success": True, "message": "ya es la cuenta activa", "account": AccountStore.public(acc, acc["id"])}
+        _begin_account_switch()
+        try:
+            try:
+                check = await _check_keys(acc["api_key"], acc["api_secret"], acc["demo"])
+            except Exception as e:
+                raise HTTPException(status_code=503, detail=f"no se pudo validar la cuenta en Bybit: {e}")
+            if not check.get("valid"):
+                raise HTTPException(status_code=400, detail=f"Bybit rechazo las claves de {acc['name']}: {check.get('retMsg')}")
+            if check.get("readOnly"):
+                raise HTTPException(status_code=400, detail=f"Las claves de {acc['name']} son de solo lectura: el bot no podria operar")
+            result = await apply_credentials(acc["api_key"], acc["api_secret"], acc["demo"])
+            acc["validated"] = result.get("validated")
+            acc["validation_message"] = result.get("validation_message")
+            data["active"] = acc["id"]
+            state.accounts.save(data)
+            refresh_active_account()
+        finally:
+            state.account_switching = False
+    state.log("success", f"[CUENTAS] Cuenta activa: {acc['name']} ({'demo' if acc['demo'] else 'REAL'})")
+    await state.broadcast_event("account_changed", state.active_account)
+    return {"success": True, "account": AccountStore.public(acc, acc["id"]), "validated": result.get("validated"),
+            "validation_message": result.get("validation_message")}
+
+
+@app.put("/api/accounts/{account_id}")
+async def rename_account(account_id: str, req: AccountRenameRequest):
+    async with state.accounts_lock:
+        data = _load_accounts()
+        acc = _account_or_404(data, account_id)
+        if any(a["id"] != acc["id"] and (a.get("name") or "").lower() == req.name.strip().lower() for a in data["accounts"]):
+            raise HTTPException(status_code=409, detail="ya hay una cuenta con ese nombre")
+        acc["name"] = req.name.strip()
+        state.accounts.save(data)
+        refresh_active_account()
+    return {"success": True, "account": AccountStore.public(acc, data.get("active"))}
+
+
+@app.delete("/api/accounts/{account_id}")
+async def delete_account(account_id: str):
+    async with state.accounts_lock:
+        data = _load_accounts()
+        acc = _account_or_404(data, account_id)
+        if data.get("active") == acc["id"]:
+            raise HTTPException(status_code=409, detail="no se puede borrar la cuenta activa: activa otra primero")
+        data["accounts"] = [a for a in data["accounts"] if a["id"] != acc["id"]]
+        state.accounts.save(data)
+    state.log("info", f"[CUENTAS] Cuenta borrada: {acc['name']}")
+    return {"success": True}
+
+
+def _num(value) -> Optional[float]:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+@app.get("/api/accounts/{account_id}/summary")
+async def account_summary(account_id: str):
+    """Saldo y posiciones de una cuenta (solo lectura). La activa usa el cliente del bot; las demas, uno aparte."""
+    data = _load_accounts()
+    acc = _account_or_404(data, account_id)
+    active = data.get("active") == acc["id"] and state.bybit_client is not None
+    client = state.bybit_client if active else BybitClient(api_key=acc["api_key"], api_secret=acc["api_secret"],
+                                                           testnet=False, demo=acc["demo"])
+    try:
+        wallet = await client.get_wallet_balance()
+        pos = await client._make_request("GET", "/v5/position/list", {"category": "linear", "settleCoin": "USDT"})
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Bybit no respondio: {e}")
+    finally:
+        if not active:
+            try:
+                await client.close()
+            except Exception:
+                pass
+    if wallet.get("retCode") != 0:
+        return {"success": False, "error": f"Bybit: {wallet.get('retMsg')} (retCode={wallet.get('retCode')})"}
+    w = ((wallet.get("result") or {}).get("list") or [{}])[0]
+    positions = []
+    if pos.get("retCode") == 0:
+        for p in (pos.get("result") or {}).get("list") or []:
+            if (_num(p.get("size")) or 0) > 0:
+                positions.append({"symbol": p.get("symbol"), "side": p.get("side"), "size": p.get("size"),
+                                  "entryPrice": p.get("avgPrice"), "markPrice": p.get("markPrice"),
+                                  "unrealisedPnl": p.get("unrealisedPnl"), "leverage": p.get("leverage"),
+                                  "stopLoss": p.get("stopLoss"), "takeProfit": p.get("takeProfit")})
+    return {"success": True, "account": AccountStore.public(acc, data.get("active")),
+            "balance": {"equity": _num(w.get("totalEquity")), "wallet": _num(w.get("totalWalletBalance")),
+                        "available": _num(w.get("totalAvailableBalance"))},
+            "positions": positions}
 
 
 @app.get("/api/config")
@@ -1249,6 +1552,9 @@ async def execute_trade(*, symbol: str, side: str, price: Decimal, source: str, 
     client = state.bybit_client
     lock = state.get_symbol_lock(symbol)
     async with lock:
+        # La cuenta cambio (o esta cambiando) desde que llego la alerta: nunca mezclar dos cuentas en una orden
+        if state.account_switching or client is not state.bybit_client:
+            return reject("REJECTED_ACCOUNT_SWITCH", "La cuenta del bot esta cambiando: alerta descartada")
         state.log("info", f"Acquired lock for {symbol}, processing {source} alert...")
 
         # Posicion del MISMO lado (en hedge se permite LONG + SHORT)
@@ -1786,6 +2092,9 @@ async def manual_trade(req: ManualTradeRequest):
         client = state.bybit_client
         lock = state.get_symbol_lock(symbol)
         async with lock:
+            # La cuenta cambio (o esta cambiando) mientras la orden esperaba: no se envia por otra cuenta
+            if state.account_switching or client is not state.bybit_client:
+                raise HTTPException(status_code=409, detail="La cuenta del bot esta cambiando: la orden no se envio, intentala de nuevo")
             # En one-way una orden contraria reduciria o daria vuelta la posicion abierta
             pos = await client.get_position(symbol)
             if not pos.get("success"):

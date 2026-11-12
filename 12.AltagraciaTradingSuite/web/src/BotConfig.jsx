@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getJson, postJson } from './api.js';
+import BotAccounts from './BotAccounts.jsx';
 
 /**
  * Configuracion del bot, como en App 10: monedas y sus parametros (riesgo, SL, TP, apalancamiento al agregar,
@@ -73,24 +74,21 @@ export default function BotConfig({ active }) {
   const [coins, setCoins] = useState(null);
   const [settings, setSettings] = useState(null);
   const [directions, setDirections] = useState({});
-  const [creds, setCreds] = useState(null);
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState(null);
   const [add, setAdd] = useState({ symbol: '', risk_amount: '3', sl: '2.2', tp: '4.5', leverage: '10' });
   const [riskAll, setRiskAll] = useState('');
   const [dailyLimit, setDailyLimit] = useState('');
-  const [keys, setKeys] = useState({ api_key: '', api_secret: '', demo: true });
 
   const read = useCallback(async () => {
     setError(null);
     try {
-      const [c, s, d, k] = await Promise.all([
-        getJson('/api/bot/config'), getJson('/api/bot/settings'), getJson('/api/bot/directions'), getJson('/api/bot/credentials/check'),
+      const [c, s, d] = await Promise.all([
+        getJson('/api/bot/config'), getJson('/api/bot/settings'), getJson('/api/bot/directions'),
       ]);
       setCoins(c.coins || []);
       setSettings(s);
       setDirections(d.directions || {});
-      setCreds(k);
       setDailyLimit(String(s.daily_risk_limit ?? ''));
     } catch (e) {
       setError(`El bot no responde: ${e.message}`);
@@ -121,20 +119,6 @@ export default function BotConfig({ active }) {
       { symbol, risk_amount: Number(add.risk_amount), stop_loss_percent: Number(add.sl) / 100, take_profit_percent: Number(add.tp) / 100, leverage: Number(add.leverage), confirm: CONFIG_WORD },
       `${symbol} agregada`,
     ).then(ok => ok && setAdd(a => ({ ...a, symbol: '' })));
-  };
-
-  const saveKeys = async () => {
-    if (!keys.api_key.trim() || !keys.api_secret.trim()) return;
-    const ok = await run(
-      `Guardar las claves de Bybit en el bot, modo ${keys.demo ? 'DEMO' : 'REAL (dinero real)'}? Reemplazan las que tenga.`,
-      '/api/bot/credentials',
-      { api_key: keys.api_key, api_secret: keys.api_secret, demo: keys.demo, confirm: 'CAMBIAR_CLAVES' },
-      'Claves guardadas en el bot',
-    );
-    if (ok) {
-      setKeys(k => ({ ...k, api_key: '', api_secret: '' }));
-      if (ok.validated === false) setError(`El bot guardó las claves, pero Bybit las rechazó: ${ok.validation_message || ''}`);
-    }
   };
 
   if (error && !coins) return <div className="bot-warning">{error}</div>;
@@ -220,16 +204,8 @@ export default function BotConfig({ active }) {
       </div>
 
       <div className="bot-section">
-        <h3>Credenciales de Bybit</h3>
-        <div className="bot-empty">
-          Estado: {creds?.configured ? `configuradas (${String(creds.mode || '').toUpperCase()})` : 'sin configurar'}. Las claves van directo al bot; esta app no las guarda.
-        </div>
-        <div className="suite-add-coin">
-          <input className="suite-input" style={{ width: 220 }} placeholder="API key" autoComplete="off" value={keys.api_key} onChange={(e) => setKeys(k => ({ ...k, api_key: e.target.value }))} />
-          <input className="suite-input" style={{ width: 220 }} placeholder="API secret" type="password" autoComplete="new-password" value={keys.api_secret} onChange={(e) => setKeys(k => ({ ...k, api_secret: e.target.value }))} />
-          <label><input type="checkbox" checked={keys.demo} onChange={(e) => setKeys(k => ({ ...k, demo: e.target.checked }))} style={{ marginRight: 4 }} />Demo</label>
-          <button type="button" className="suite-btn" disabled={!keys.api_key.trim() || !keys.api_secret.trim()} onClick={saveKeys}>Guardar claves…</button>
-        </div>
+        <h3>Cuentas de Bybit</h3>
+        <BotAccounts active={active} onError={setError} onNotice={setNotice} />
       </div>
     </div>
   );

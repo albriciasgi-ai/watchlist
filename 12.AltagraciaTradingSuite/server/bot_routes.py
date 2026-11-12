@@ -4,7 +4,8 @@
 # El bot (3.TradingBot_Python) sigue siendo su propio proceso y no pide confirmacion en ninguna ruta.
 # Aqui cada cambio exige una palabra en el cuerpo, para que ningun clic suelto ni pagina ajena lo haga:
 #   CAMBIAR_CONFIG   configuracion de monedas, riesgo, metodo, origenes y direcciones
-#   CAMBIAR_CLAVES   credenciales de Bybit (nunca se guardan ni se escriben en el registro de la suite)
+#   CAMBIAR_CLAVES   credenciales y cuentas de Bybit (nunca se guardan ni se escriben en el registro de la suite)
+#   CAMBIAR_CUENTA   cambiar la cuenta activa del bot (alertas y ordenes pasan a operar en ella)
 #   ENVIAR_ORDEN_REAL  orden manual: siempre con stop y objetivo, del lado correcto del precio
 import re
 from decimal import Decimal, InvalidOperation
@@ -12,6 +13,7 @@ from decimal import Decimal, InvalidOperation
 from fastapi import APIRouter, HTTPException, Request
 
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
+ACCOUNT_RE = re.compile(r"^[a-f0-9]{12}$")
 ORIGINS = {"ANALIZADOR", "WATCHLIST", "ORDERFLOW"}
 DIRECTIONS = {"LONG", "SHORT", "BOTH", "DISABLED"}
 
@@ -160,6 +162,51 @@ def make_router(bot) -> APIRouter:
         if not isinstance(b.get("demo"), bool):
             raise HTTPException(status_code=400, detail="demo debe ser true o false")
         return await bot("POST", "/api/credentials", json={"api_key": key.strip(), "api_secret": secret.strip(), "demo": b["demo"]})
+
+    # ---------- cuentas de Bybit (una activa a la vez) ----------
+    def _account(account_id: str) -> str:
+        if not ACCOUNT_RE.match(account_id or ""):
+            raise HTTPException(status_code=400, detail="id de cuenta invalido")
+        return account_id
+
+    @r.get("/accounts")
+    async def accounts():
+        return await bot("GET", "/api/accounts")
+
+    @r.get("/accounts/{account_id}/summary")
+    async def account_summary(account_id: str):
+        return await bot("GET", f"/api/accounts/{_account(account_id)}/summary")
+
+    @r.post("/accounts")
+    async def add_account(request: Request):
+        b = await _body(request, "CAMBIAR_CLAVES")
+        name, key, secret = b.get("name"), b.get("api_key"), b.get("api_secret")
+        if not isinstance(name, str) or not name.strip() or len(name.strip()) > 40:
+            raise HTTPException(status_code=400, detail="nombre de 1 a 40 caracteres")
+        if not isinstance(key, str) or not isinstance(secret, str) or not key.strip() or not secret.strip():
+            raise HTTPException(status_code=400, detail="faltan api_key y api_secret")
+        if not isinstance(b.get("demo"), bool):
+            raise HTTPException(status_code=400, detail="demo debe ser true o false")
+        return await bot("POST", "/api/accounts", json={"name": name.strip(), "api_key": key.strip(),
+                                                       "api_secret": secret.strip(), "demo": b["demo"]})
+
+    @r.post("/accounts/{account_id}/activate")
+    async def activate_account(account_id: str, request: Request):
+        await _body(request, "CAMBIAR_CUENTA")
+        return await bot("POST", f"/api/accounts/{_account(account_id)}/activate")
+
+    @r.post("/accounts/{account_id}/rename")
+    async def rename_account(account_id: str, request: Request):
+        b = await _body(request, "CAMBIAR_CONFIG")
+        name = b.get("name")
+        if not isinstance(name, str) or not name.strip() or len(name.strip()) > 40:
+            raise HTTPException(status_code=400, detail="nombre de 1 a 40 caracteres")
+        return await bot("PUT", f"/api/accounts/{_account(account_id)}", json={"name": name.strip()})
+
+    @r.post("/accounts/{account_id}/delete")
+    async def delete_account(account_id: str, request: Request):
+        await _body(request, "CAMBIAR_CLAVES")
+        return await bot("DELETE", f"/api/accounts/{_account(account_id)}")
 
     # ---------- orden manual (panel de trading) ----------
     @r.post("/trade")

@@ -54,6 +54,35 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + TradingBot - 12 Noviembre 2026: Varias Cuentas de Bybit
+
+**Pedido:** agregar otras claves de Bybit, para trading real o de otras cuentas, y manejarlas todas desde la suite. El usuario eligió una cuenta activa a la vez.
+
+**Cambios:**
+1. **Bot** (`3.TradingBot_Python`):
+   - cuentas con nombre en `config/accounts.json`, fuera de git;
+   - rutas `/api/accounts` para listar, agregar, activar, renombrar, borrar y leer el saldo y las posiciones de cada cuenta;
+   - la primera vez, la clave de `credentials.json` pasa a ser la "Cuenta principal".
+   
+   `credentials.json` sigue siendo la clave activa, así App 10 funciona igual.
+2. **Cambio seguro:** con una orden ejecutándose, el cambio responde 409. Mientras cambia, ninguna orden empieza, así una orden nunca revisa en una cuenta y envía por otra. Vale también para las claves puestas desde App 10.
+3. **Suite:** "Cuentas de Bybit" en Bot > "Configuración y riesgo":
+   - patrimonio, disponible y posiciones de cada cuenta;
+   - "Usar esta…", renombrar, borrar y agregar;
+   - cada acción pide confirmación y una palabra en el servidor (`CAMBIAR_CUENTA`, `CAMBIAR_CLAVES`).
+4. **Cuenta a la vista:** el panel de trading, su confirmación y el módulo del bot dicen la cuenta activa.
+5. **Pruebas:** `3.TradingBot_Python/backend/tests/accounts_checks.py` (31) y `bot_checks.py` de la suite (42).
+
+**IMPORTANTE:**
+- Reiniciar el bot (puerto 5000) para que cargue las cuentas. La suite se reinicia sola al abrirla.
+- La configuración por moneda, el riesgo diario, la pausa y los orígenes son del bot y valen para la cuenta activa.
+- Las posiciones de la cuenta anterior quedan en Bybit con su SL y TP, pero el bot deja de vigilarlas.
+- Probado con un bot falso y un Bybit simulado. Nada se probó contra Bybit real.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Cuentas de Bybit" y `10.TradingBotDesktop/CLAUDE.md` sección "Cuentas de Bybit"
+
+---
+
 ### Altagracia Trading Suite (carpeta 12) - 12 Noviembre 2026: Correcciones tras la Primera Prueba
 
 **Pedido:** al probar la suite, el usuario vio:
