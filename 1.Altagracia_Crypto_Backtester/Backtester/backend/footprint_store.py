@@ -3,8 +3,14 @@ Lee el almacen diario de order flow creado desde los trades de Bybit.
 
 Cada dia guarda, por minuto y por precio, compra y venta reales. De ahi salen footprints de
 cualquier marco y step, siempre cortados en la hora simulada para no mostrar el futuro.
+
+Dias de la nube (live=True): si falta el dia oficial, se lee el que grabo el collector de
+Northflank y bajo PanelOrderFlow/sync_nube.py a OrderFlowData/live/store. Esta apagado por
+defecto: App 1 (Observador, medidas, setups) usa solo dias oficiales. Lo enciende la app en
+tiempo real con live=True o con ORDERFLOW_USE_LIVE=1. El dia oficial siempre manda.
 """
 import datetime as dt
+import json
 import math
 import os
 import threading
@@ -14,6 +20,8 @@ from pathlib import Path
 import numpy as np
 
 STORE_DIR = Path(os.environ.get("ORDERFLOW_STORE", r"C:\Users\inven\OrderFlowData\store"))
+LIVE_DIR = Path(os.environ.get("ORDERFLOW_LIVE_STORE", str(STORE_DIR.parent / "live" / "store")))
+USE_LIVE = os.environ.get("ORDERFLOW_USE_LIVE", "0") == "1"
 MAX_DAYS_IN_MEMORY = 96
 IMBALANCE_RATIO = 3.0
 STACKED_MIN_LEVELS = 3
@@ -33,21 +41,68 @@ def _day_path(symbol, day):
     return STORE_DIR / symbol / day[:4] / f"{symbol}_{day}.npz"
 
 
-def _load_day(symbol, day):
+def _live_path(symbol, day):
+    return LIVE_DIR / symbol / day[:4] / f"{symbol}_{day}.npz"
+
+
+def _live_gaps(symbol, day):
+    """Huecos [inicio_ms, fin_ms] de un dia de la nube, del estado que guarda sync_nube.py junto al .tape."""
+    state = LIVE_DIR.parent / "tape" / symbol / day[:4] / f"{symbol}_{day}.json"
+    try:
+        info = json.loads(state.read_text(encoding="utf-8"))
+    except Exception:
+        return [], False, None
+    gaps = [[int(a), int(b)] for a, b in info.get("gaps", [])]
+    start = int(dt.datetime.fromisoformat(day + "T00:00:00+00:00").timestamp() * 1000)
+    covered = info.get("covered_from")
+    if covered is not None and int(covered) > start:
+        gaps.append([start, int(covered)])  # el collector empezo a grabar a mitad del dia
+    # Un dia sin cerrar solo esta grabado hasta su ultimo guardado en la nube
+    until = None if info.get("final") or info.get("saved_at") is None else int(info["saved_at"])
+    return sorted(gaps), bool(info.get("complete")), until
+
+
+def _remember(key, data):
+    with _days_lock:
+        _days[key] = data
+        _days.move_to_end(key)
+        while len(_days) > MAX_DAYS_IN_MEMORY:
+            _days.popitem(last=False)
+
+
+def _load_day(symbol, day, live=False):
     key = (symbol, day)
     with _days_lock:
         if key in _days:
             _days.move_to_end(key)
             return _days[key]
     path = _day_path(symbol, day)
-    if not path.exists():
+    if path.exists():
+        with np.load(path) as z:
+            data = {name: z[name] for name in z.files}
+        _remember(key, data)
+        return data
+    if not live:
         return None
+    # Dia de la nube: cambia con cada sincronizacion, asi que se vuelve a leer si cambio el archivo
+    path = _live_path(symbol, day)
+    try:
+        mtime = path.stat().st_mtime
+    except OSError:
+        return None
+    live_key = (symbol, day, "live")
+    with _days_lock:
+        cached = _days.get(live_key)
+        if cached is not None and cached["_mtime"] == mtime:
+            _days.move_to_end(live_key)
+            return cached
     with np.load(path) as z:
         data = {name: z[name] for name in z.files}
-    with _days_lock:
-        _days[key] = data
-        while len(_days) > MAX_DAYS_IN_MEMORY:
-            _days.popitem(last=False)
+    data["_mtime"] = mtime
+    data["_live"] = True
+    data["_gaps"], data["_complete"], data["_until"] = _live_gaps(symbol, day)
+    data["_day"] = day
+    _remember(live_key, data)
     return data
 
 
@@ -136,13 +191,13 @@ def _stacked(levels, imbalances, min_levels=STACKED_MIN_LEVELS):
     return result
 
 
-def _parts(symbol, start_min, end_min):
+def _parts(symbol, start_min, end_min, live=False):
     """Dias que tocan el rango, con la posicion de sus minutos y de sus celdas."""
     day = dt.datetime.fromtimestamp(start_min * 60, dt.timezone.utc).date()
     last = dt.datetime.fromtimestamp((end_min - 1) * 60, dt.timezone.utc).date()
     parts = []
     while day <= last:
-        data = _load_day(symbol, day.isoformat())
+        data = _load_day(symbol, day.isoformat(), live)
         if data is not None:
             first, stop = np.searchsorted(data["m"], [start_min, end_min])
             if stop > first:
@@ -227,9 +282,13 @@ def _levels(cells, first, stop, step_ticks, ps, max_levels=None):
     return levels, size / ps
 
 
-def minutes(symbol, start_min, end_min):
+def _live(live):
+    return USE_LIVE if live is None else bool(live)
+
+
+def minutes(symbol, start_min, end_min, live=None):
     """Precio y volumen de cada minuto negociado entre start_min y end_min, o None sin datos."""
-    parts = _parts(symbol, start_min, end_min)
+    parts = _parts(symbol, start_min, end_min, _live(live))
     if not parts:
         return None
 
@@ -243,17 +302,17 @@ def minutes(symbol, start_min, end_min):
     }
 
 
-def cells(symbol, start_min, end_min):
+def cells(symbol, start_min, end_min, live=None):
     """Precio medio y volumen de cada celda negociada entre start_min y end_min."""
     prices, volumes = [np.empty(0)], [np.empty(0)]
-    for data, _, _, first, stop in _parts(symbol, start_min, end_min):
+    for data, _, _, first, stop in _parts(symbol, start_min, end_min, _live(live)):
         ps, qs, ticks = (int(x) for x in data["info"])
         prices.append((data["cl"][first:stop] + 0.5) * ticks / ps)
         volumes.append((data["cb"][first:stop] + data["cs"][first:stop]) / qs)
     return np.concatenate(prices), np.concatenate(volumes)
 
 
-def profile(symbol, start_ms, end_ms, known_until_ms, low, high, rows):
+def profile(symbol, start_ms, end_ms, known_until_ms, low, high, rows, live=None):
     """
     Compra y venta reales por franja de precio en un rango de tiempo.
     minutes y expected_minutes dicen cuanto del rango esta en el almacen.
@@ -265,7 +324,7 @@ def profile(symbol, start_ms, end_ms, known_until_ms, low, high, rows):
     buy, sell, minutes = np.zeros(rows), np.zeros(rows), 0
 
     if end_min > start_min and high > low:
-        for data, first, stop, cell_first, cell_stop in _parts(symbol, start_min, end_min):
+        for data, first, stop, cell_first, cell_stop in _parts(symbol, start_min, end_min, _live(live)):
             ps, qs, ticks = (int(x) for x in data["info"])
             price = (data["cl"][cell_first:cell_stop] + 0.5) * ticks / ps
             row = np.clip(((price - low) / (high - low) * rows).astype(np.int64), 0, rows - 1)
@@ -279,13 +338,17 @@ def profile(symbol, start_ms, end_ms, known_until_ms, low, high, rows):
     }
 
 
-def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, step=None, imbalance=None, max_levels=None):
+def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, step=None, imbalance=None, max_levels=None,
+               live=None):
     """
     Footprints de las velas que empiezan entre start_ms y end_ms.
     known_until_ms corta la informacion: un minuto solo cuenta si ya termino en ese instante.
     imbalance acepta ratio, mode, min_volume, count_zero y stacked_levels.
     max_levels es el tope por vela con step automatico: una vela ancha sube su propio step.
+    live: tambien dias de la nube donde falta el oficial (ver arriba). Sus velas llevan
+    source "live", y gap True si tocan un hueco de la grabacion (volumen incompleto).
     """
+    live = _live(live)
     imbalance = imbalance or {}
     tf = int(interval_minutes)
     start_min = (start_ms // 60000) // tf * tf
@@ -296,7 +359,7 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     if end_min <= start_min:
         return empty
 
-    wanted = _parts(symbol, start_min, end_min)
+    wanted = _parts(symbol, start_min, end_min, live)
     if not wanted:
         return empty
     data0 = wanted[-1][0]
@@ -307,7 +370,11 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     used_step = float(step) if step else auto_step(price_ref, tf, cell)
 
     # Las velas anteriores solo sirven para medir el volumen relativo de la primera vela pedida
-    candles = _candles(_parts(symbol, start_min - tf * ZSCORE_LOOKBACK, end_min), tf)
+    candles = _candles(_parts(symbol, start_min - tf * ZSCORE_LOOKBACK, end_min, live), tf)
+    # Dias de la nube: rango de minutos de cada uno y sus huecos, en minutos
+    live_days = [(d["_day"], int(d["m"][0]) // 1440 * 1440, [(a // 60000, -(-b // 60000)) for a, b in d["_gaps"]],
+                  d["_complete"], None if d["_until"] is None else d["_until"] // 60000)
+                 for d, *_ in wanted if d.get("_live")]
 
     # El step es multiplo de la celda guardada, para que todos los niveles midan lo mismo
     shown = candles["start"] >= start_min
@@ -345,4 +412,15 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
             "volume_zscore": round((buy + sell - mean) / std, 2) if std > 0 else 0.0,
             "complete": t + tf <= end_min, "estimated": False,
         })
-    return {"footprints": result, "step_size": step_ticks / ps, "cell_size": cell, "known_until": end_min * 60000}
+        if live_days:
+            for _, day_min, gaps, _, until in live_days:
+                if day_min <= t < day_min + 1440:
+                    result[-1]["source"] = "live"
+                    result[-1]["gap"] = any(a < t + tf and b > t for a, b in gaps)
+                    if until is not None and t + tf > until:
+                        result[-1]["complete"] = False  # la nube aun no guarda el final de esta vela
+    out = {"footprints": result, "step_size": step_ticks / ps, "cell_size": cell, "known_until": end_min * 60000}
+    if live_days:
+        out["live_days"] = [{"day": d, "complete": c, "until": None if u is None else u * 60000}
+                            for d, _, _, c, u in live_days]
+    return out

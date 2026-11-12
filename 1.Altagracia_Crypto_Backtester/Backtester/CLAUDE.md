@@ -629,6 +629,18 @@ cd ../backend
 
 `light.test.mjs` compara VWAP con `backend/vwap_calculator.py`: usa `BACKEND_PYTHON`, `backend/.venv` o un python con numpy.
 
+### Días de la nube (12/11)
+
+Para la app en tiempo real, que usará este lector (requisito 8 de la integración): `footprints`, `minutes`, `cells` y `profile` aceptan `live`. Con `live=True`, o `ORDERFLOW_USE_LIVE=1`, un día sin archivo oficial se lee de `OrderFlowData/live/store` (`ORDERFLOW_LIVE_STORE`), que arma `PanelOrderFlow/sync_nube.py` con lo que grabó el collector de Northflank.
+
+- **Apagado por defecto.** App 1 no lo usa: el Observador, las medidas y los setups siguen solo con días oficiales, que no tienen huecos de grabación
+- **El oficial manda:** si existe el día oficial, la nube no se lee
+- **Huecos:** salen del `.json` que `sync_nube.py` guarda junto al `.tape` (cortes, reinicios y el tramo antes de `covered_from`). Una vela que toca uno lleva `gap: true`: su volumen está incompleto
+- **Último guardado:** en un día sin cerrar, la nube solo tiene hasta `saved_at`. La vela que pasa de ahí queda `complete: false`
+- Las velas de la nube llevan `source: "live"` y la respuesta `live_days` (día, `complete` y hasta dónde llega). Un día de la nube se vuelve a leer si cambia su archivo
+- **Falta:** Elementos OF no lee `OrderFlowData/live/flow`, y ningún endpoint pide `live`
+- Pruebas: `tests/test_footprint_live.py` (9)
+
 ### Mantener el almacén
 
 ```bash

@@ -65,10 +65,10 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 5. **Desplegado el 12/11:** Northflank construye desde otro repositorio, `albriciasgi-ai/footprint-collector`, rama `deploy` (commit 89543a2), no desde este. Construye solo al subir, pero el despliegue se hace a mano con "Deploy" en Builds. `MAX_DAYS=0` sigue siendo sin límite
 
 **IMPORTANTE:**
-- La nube graba trades desde el 12/11 a las 02:03 UTC (20 monedas; TONUSDT está cerrada en Bybit). Ese día queda incompleto por empezar a mitad.
+- La nube graba trades desde el 12/11 a las 06:56 UTC, 01:56 en Colombia (20 monedas; TONUSDT está cerrada en Bybit). Ese día queda incompleto por empezar a mitad.
 - Probado en el PC (12 de 12 minutos y 18 de 18 antes) y en la nube (12 de 12): iguales a las velas oficiales de Bybit en volumen y cierre; XRP pasa de celdas de 0.005 a 0.0001. Falta comparar un día completo de la nube contra el archivo oficial.
 - Un cambio al collector hay que copiarlo también a la rama `deploy` de `footprint-collector`.
-- Falta que el lector de App 1 (`footprint_store.py`) lea `OrderFlowData/live/` cuando el día oficial no existe: es el siguiente paso de la integración.
+- **Lector (12/11):** `footprint_store.py` de App 1 lee `OrderFlowData/live/store` cuando falta el día oficial, solo con `live=True` o `ORDERFLOW_USE_LIVE=1`. Está apagado: App 1 sigue solo con días oficiales y lo encenderá la app en tiempo real, que usará este lector. Sus velas llevan `source: "live"`, `gap` si tocan un hueco y `complete: false` si pasan del último guardado de la nube. En el PC, las 19 velas de 1 minuto completas y sin hueco de BTC y ETH bajadas de la nube coincidieron con Bybit. Faltan los Elementos OF (`OrderFlowData/live/flow`) y un endpoint que lo pida.
 
 **Ver:** `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Trades en el formato del almacen de App 1" y `PanelOrderFlow/LEEME.md`
 
