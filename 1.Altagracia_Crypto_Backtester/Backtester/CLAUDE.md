@@ -644,6 +644,7 @@ Para la app en tiempo real, que usará este lector (requisito 8 de la integraci�
 - **Marcos con letra y WebSocket (12/11):** `getBybitInterval` y `getIntervalMilliseconds` no reconocían "1m", "5m", "1h" ni "4h" (los marcos de App 1) y caían en 15m. En vivo, cada gráfico pedía las velas de 15m. En App 1 cambia solo una cosa: los botones 1D, 3D y 1W ahora muestran ese tiempo en 1m, 5m, 1h y 4h (antes calculaban con velas de 15 minutos: 1D en 1h mostraba 4 días). `WebSocketManager.js` suscribe por moneda y marco, con ping cada 20 s
 - **Suprimir (12/11):** solo responde el `MiniChart` a la vista y solo guarda si borró algo. Con un gráfico por marco, los ocultos guardaban su lista sin borrar a la vez
 - **Footprint parcial (12/11):** con días en vivo, una vela que toca un hueco de grabación (`gap`) lleva "parcial" sobre su footprint. Los días oficiales no tienen huecos
+- **Pedidos en vivo (12/11), solo con `backtestingMode` falso:** la vela en curso se pide hasta la hora del gráfico; si la respuesta llega a menos de lo pedido (el almacén en vivo va detrás) se repide cada 10 s (`LIVE_LAG_WAIT_MS`); y cada minuto se repiden las velas sin datos o con hueco (`_liveRefresh`). En reproducción nada cambia
 
 ### Mantener el almacén
 

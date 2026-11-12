@@ -228,6 +228,14 @@ try:
         r = c.get("/api/orderflow/historical/BTCUSDT?interval=15&start_timestamp=1&end_timestamp=2&known_until=99999999999999", headers=H)
         check("footprints con live=True", r.status_code == 200 and captured["kw"].get("live") is True)
         check("known_until nunca pasa de ahora", captured["args"][4] <= int(main.time.time() * 1000))
+        real_until = main.market_routes._store_until
+        main.market_routes._store_until = lambda sym, now: now - 120_000  # almacen 2 min detras
+        try:
+            c.get("/api/orderflow/historical/BTCUSDT?interval=1&start_timestamp=1&end_timestamp=2&known_until=99999999999999", headers=H)
+            lag = int(main.time.time() * 1000) - captured["args"][4]
+            check("footprints: known_until es el ultimo minuto armado, no ahora", 110_000 <= lag <= 130_000, str(lag))
+        finally:
+            main.market_routes._store_until = real_until
         check("modo de imbalance desconocido vuelve a 'level'",
               c.get("/api/orderflow/historical/BTCUSDT?interval=15&start_timestamp=1&end_timestamp=2&imbalance_mode=x", headers=H).status_code == 200
               and captured["args"][6]["mode"] == "level")

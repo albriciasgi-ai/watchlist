@@ -118,6 +118,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 - **Dibujos que no se borraban:** los cinco gráficos escuchaban la tecla Suprimir; los ocultos guardaban su lista vieja al mismo tiempo y el dibujo volvía. Ahora solo responde el gráfico a la vista, y solo si borró algo.
 - **Footprint "más bajo" que la vela:** era una vela que la grabación no cubrió entera (la app arrancó a mitad de la vela y la nube no llegaba). El footprint de una vela con hueco lleva encima "parcial".
 - **Velas de Bybit:** `/api/historical` daba error 500 si Bybit tardaba; ahora reintenta tres veces y responde 503.
+- **Footprints que nunca llegaban (segunda vuelta):** el servidor respondía `known_until` = ahora, y la página daba por vista una vela cuyos trades aún no estaban en el almacén (va 1-2 min detrás): quedaba vacía o parcial hasta recargar. En 1m pasaba con todas. Además la página nunca pedía la vela en curso. Ahora `/api/orderflow/historical` responde hasta el último minuto armado (`market_routes._live_cut`) y el indicador, solo en vivo, repide cada 10 s mientras el almacén va detrás, pide la vela en curso y cada minuto repide las velas sin datos o con hueco (la nube puede llenarlas después). Probado: los footprints de 1m aparecieron minuto a minuto sin recargar.
 - **Días oficiales:** `official.py` bajó solo los días del 05 al 11/11 de BTC el mismo 12/11.
 
 ## Panel de trading

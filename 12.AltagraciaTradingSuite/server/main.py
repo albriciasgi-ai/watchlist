@@ -166,7 +166,9 @@ async def orderflow_historical(
     if start_timestamp is None or end_timestamp is None:
         end_timestamp = now
         start_timestamp = now - 12 * 3_600_000
-    cut = min(known_until if known_until is not None else now, now)
+    # Hasta donde llega de verdad el almacen (ultimo minuto armado), no "ahora": asi la pagina vuelve a pedir
+    # las velas recientes hasta que lleguen sus trades. Antes respondia "ahora" y las daba por vistas, vacias
+    cut = await run_in_threadpool(market_routes._live_cut, symbol, known_until)
     rules = {"ratio": max(1.01, imbalance_ratio), "mode": imbalance_mode if imbalance_mode in ("level", "diagonal") else "level",
              "min_volume": max(0.0, imbalance_min_volume), "count_zero": imbalance_zero, "stacked_levels": max(2, stacked_levels)}
     limit = max(2, max_levels) if max_levels else None

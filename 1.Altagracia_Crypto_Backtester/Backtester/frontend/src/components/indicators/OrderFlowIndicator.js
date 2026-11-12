@@ -24,6 +24,9 @@ const DAY_MS = 86400000;
 const MAX_FOOTPRINTS_IN_MEMORY = 6000;
 const MIN_REQUEST_GAP_MS = 400;
 const ERROR_WAIT_MS = 5000;
+// Solo en vivo (la suite; App 1 reproduce con dias oficiales y no usa esto):
+const LIVE_LAG_WAIT_MS = 10000; // el almacen va 1-2 min detras: si aun no llega a la hora pedida, se repide cada 10 s
+const LIVE_REFRESH_MS = 60000; // y cada minuto se repiden las velas sin datos o con hueco: la nube puede llenarlas despues
 const STEP_RESET_CHANGE = 0.3; // Si el precio se aleja 30% se elige otro step
 const SETTINGS_KEY = 'orderflow_settings_';
 
@@ -189,7 +192,9 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   _needsData(candle) {
-    const target = candle.in_progress ? candle.knownUntil : candle.timestamp + this.tfMs;
+    // En vivo la vela en curso no trae knownUntil: se pide hasta la hora del grafico (ahora)
+    const forming = candle.in_progress ? (candle.knownUntil ?? (this.backtestingMode ? undefined : this.clock)) : null;
+    const target = candle.in_progress ? forming : candle.timestamp + this.tfMs;
     const seen = this.footprintMap.get(candle.timestamp)?.knownUntil ?? this.noData.get(candle.timestamp) ?? 0;
     return seen < target;
   }
@@ -207,6 +212,7 @@ class OrderFlowIndicator extends IndicatorBase {
 
     this._syncClock(knownUntil, visibleCandles[visibleCandles.length - 1].close);
     if (!this._canLoad(visibleCandles)) return;
+    if (!this.backtestingMode) this._liveRefresh();
 
     const missing = visibleCandles.filter(candle => this._needsData(candle));
     if (missing.length === 0) return;
@@ -218,6 +224,21 @@ class OrderFlowIndicator extends IndicatorBase {
     const room = Math.floor(Math.max(0, MAX_DAYS_TO_LOAD * DAY_MS - (last - first)) / 2 / this.tfMs);
     const pad = missing.length > 4 ? Math.min(Math.ceil(visibleCandles.length / 2), MAX_PAD_CANDLES, room) * this.tfMs : 0;
     this._request(first - pad, last + pad, knownUntil, requestRedraw);
+  }
+
+  /**
+   * En vivo, cada minuto: las velas sin datos y las que tocan un hueco de grabacion se vuelven a pedir.
+   * La nube baja cada 15 minutos y puede llenar horas que antes no tenian trades; sin esto quedaban vacias
+   * hasta recargar la pagina. Lo ya dibujado se sigue viendo mientras llega lo nuevo.
+   */
+  _liveRefresh() {
+    const now = performance.now();
+    if (now - (this.lastLiveRefresh || 0) < LIVE_REFRESH_MS) return;
+    this.lastLiveRefresh = now;
+    this.noData.clear();
+    for (const footprint of this.footprintMap.values()) {
+      if (footprint.gap) footprint.knownUntil = 0;
+    }
   }
 
   _request(start, end, knownUntil, redraw) {
@@ -261,6 +282,10 @@ class OrderFlowIndicator extends IndicatorBase {
       .then(data => {
         if (!data.success) throw new Error(data.message || 'Sin respuesta del almacén');
         if (generation === this.generation) this._store(data, start, end);
+        // En vivo el almacen va detras de la hora pedida: no se repide hasta dentro de 10 s
+        if (!this.backtestingMode && data.known_until < knownUntil) {
+          this.nextRequestAt = performance.now() + LIVE_LAG_WAIT_MS;
+        }
         this.error = null;
         this.isLoading = false;
         redraw?.();
