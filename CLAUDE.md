@@ -73,10 +73,16 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    - × cierra o cancela; las etiquetas de SL y TP se arrastran para moverlos o ponerlos;
    - todo pide confirmación con el precio llevado al tick y el P&L ahí.
 6. **Panel de trading:** la pestaña Posición tiene los mismos botones. La suite da avisos de Windows de alertas críticas, pausa y posiciones abiertas o cerradas.
-7. **Pruebas:**
+7. **Tras la primera prueba del usuario (12/11):** su short de BTC tenía entrada, SL y TP lejos de las velas a la vista. Las etiquetas quedaban en el borde sin decir su precio y los botones del gráfico las tapaban. Ahora:
+   - dicen su precio real ("@ 79261.4") y van bajo los botones;
+   - ⇕ ajusta la escala para ver las líneas hasta el eje;
+   - el % es el ROI como en Bybit.
+   
+   Los valores eran correctos: +23.18 USD contra +23.07 de Bybit, que usa el precio marca.
+8. **Pruebas:**
    - `3.TradingBot_Python/backend/tests/positions_checks.py` (38), con un WebSocket falso local que comprueba la firma;
    - `bot_checks.py` de la suite (52);
-   - `tests/positions.test.mjs` de App 1 (9).
+   - `tests/positions.test.mjs` de App 1 (13).
 
 **IMPORTANTE:**
 - Reiniciar el bot (puerto 5000). La suite se reinicia sola al abrirla.

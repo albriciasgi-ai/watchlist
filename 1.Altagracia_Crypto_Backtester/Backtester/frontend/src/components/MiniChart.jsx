@@ -31,7 +31,7 @@ import { useUiTheme } from './useUiTheme.js';
 import { Icon } from './uiIcons.jsx';
 import './backtesting/Observer.css';
 import { isBlind, maskDate, maskPrice, maskVolume, priceText, pricesHidden, unmaskPrice } from './backtesting/blindClock';
-import { drawPositionLines, hitPositionTarget } from './positionLines.js';
+import { drawPositionLines, hitPositionTarget, positionPrices } from './positionLines.js';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
@@ -235,6 +235,8 @@ const MiniChart = forwardRef(({
   const positionDragRef = useRef(null);  // SL o TP que se está arrastrando: { lineId, line, field, price, startY, moved }
   const positionPressRef = useRef(null); // × presionada: la acción sale al soltar sobre la misma ×
   const positionPriceRef = useRef(null); // Último precio con que se dibujaron las posiciones (va en cada acción)
+  const positionFitRef = useRef(false);  // ⇕: la escala incluye entrada, SL y TP de las posiciones (si no, sigue las velas)
+  const overlayButtonsRef = useRef(null); // Botones sobre el gráfico: las etiquetas de posiciones no van debajo
 
   const candlesRef = useRef([]);
   const inProgressCandleRef = useRef(null);
@@ -1171,6 +1173,18 @@ const MiniChart = forwardRef(({
       }
     }
 
+    // ⇕ de una posición real: la escala abarca su entrada, SL y TP (y las entradas pendientes), con aire para las etiquetas
+    if (positionFitRef.current && getPositionLines) {
+      const levels = positionPrices(getPositionLines());
+      if (levels.length) {
+        const low = Math.min(minPrice, ...levels);
+        const high = Math.max(maxPrice, ...levels);
+        const room = (high - low) * 0.05;
+        if (low < minPrice) minPrice = low - room;
+        if (high > maxPrice) maxPrice = high + room;
+      }
+    }
+
     // La imagen de una orden muestra cada nivel elegido para ella: al alejar la vista podía quedar fuera del precio
     if (captureItemsRef.current?.length) {
       ({ low: minPrice, high: maxPrice } = priceRangeWith(captureItemsRef.current, minPrice, maxPrice, CAPTURE_LEVEL_ROOM_PX / priceChartHeight));
@@ -1720,12 +1734,22 @@ const MiniChart = forwardRef(({
       try {
         const lastClose = displayCandles[displayCandles.length - 1]?.close;
         positionPriceRef.current = Number.isFinite(lastClose) ? lastClose : livePrice;
+        // Los botones de arriba a la derecha (HTML sobre el lienzo) taparían las etiquetas: se dibujan a su izquierda
+        let avoid = null;
+        const buttons = overlayButtonsRef.current;
+        if (buttons && buttons.offsetWidth && canvasRef.current) {
+          const b = buttons.getBoundingClientRect();
+          const c = canvasRef.current.getBoundingClientRect();
+          avoid = { top: b.top - c.top - 2, bottom: b.bottom - c.top + 2, left: b.left - c.left - 6 };
+        }
         positionTargetsRef.current = drawPositionLines(ctx, positionLines, {
           priceToY: scaleConverterRef.current.priceToY,
           left: marginLeft, right: width - marginRight, top: marginTop, bottom: marginTop + priceChartHeight, axisRight: width,
           lastPrice: positionPriceRef.current,
           fmt: (price) => priceText(price, pxDecimals),
           drag: positionDragRef.current,
+          fit: positionFitRef.current,
+          avoid,
         });
       } catch (error) {
         console.error(`[${symbol}] Error dibujando posiciones:`, error);
@@ -2422,6 +2446,15 @@ const MiniChart = forwardRef(({
 
   // ==================== MOUSE HANDLERS ====================
 
+  // ⇕ de una posición real (o clic en una etiqueta fuera de la vista): la escala incluye entrada, SL y TP, o
+  // vuelve a seguir las velas. Deja el zoom y el paneo vertical en automático para que se vea lo pedido
+  const togglePositionFit = () => {
+    positionFitRef.current = !positionFitRef.current;
+    viewStateRef.current.verticalOffset = 0;
+    viewStateRef.current.verticalZoom = 1;
+    drawChart(candlesRef.current, lastPriceRef.current, null, null, true);
+  };
+
   const handleMouseMove = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -2563,7 +2596,7 @@ const MiniChart = forwardRef(({
       const hit = hitPositionTarget(positionTargetsRef.current, x, y);
       if (hit) {
         if (hit.action === 'drag' || hit.action === 'create') {
-          positionDragRef.current = { lineId: hit.line.id, line: hit.line, field: hit.field, price: hit.price, startY: y, moved: false };
+          positionDragRef.current = { lineId: hit.line.id, line: hit.line, field: hit.field, price: hit.price, startY: y, moved: false, fitOnClick: !!hit.fitOnClick };
           canvas.style.cursor = 'ns-resize';
         } else {
           positionPressRef.current = hit;
@@ -2637,7 +2670,8 @@ const MiniChart = forwardRef(({
       const rect = canvasRef.current?.getBoundingClientRect();
       const hit = rect ? hitPositionTarget(positionTargetsRef.current, e.clientX - rect.left, e.clientY - rect.top) : null;
       if (hit && hit.action === press.action && hit.line.id === press.line.id && hit.field === press.field) {
-        onPositionAction?.({ type: press.action, line: press.line, field: press.field, lastPrice: positionPriceRef.current });
+        if (press.action === 'fit') togglePositionFit(); // de la vista, no del bot
+        else onPositionAction?.({ type: press.action, line: press.line, field: press.field, lastPrice: positionPriceRef.current });
       }
       return;
     }
@@ -2649,6 +2683,8 @@ const MiniChart = forwardRef(({
       if (canvasRef.current) canvasRef.current.style.cursor = 'crosshair';
       if (drag.moved && Number.isFinite(drag.price)) {
         onPositionAction?.({ type: 'move', line: drag.line, field: drag.field, price: drag.price, lastPrice: positionPriceRef.current });
+      } else if (!drag.moved && drag.fitOnClick) {
+        togglePositionFit(); // clic sin arrastrar en un SL o TP fuera de la vista: se ajusta la escala para verlo
       }
       return;
     }
@@ -3448,7 +3484,7 @@ const MiniChart = forwardRef(({
     <>
       <div className="mini-chart">
         {/* 🎯 FIX: Contenedor de botones PRIMERO para que capturen eventos antes que el canvas */}
-        <div style={{
+        <div ref={overlayButtonsRef} style={{
           position: 'absolute',
           top: '30px',
           right: '5px',

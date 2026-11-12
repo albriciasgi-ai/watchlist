@@ -97,6 +97,7 @@ export function linesFor(symbol) {
     lines.push(withPending({
       kind: 'position', id: `pos:${p.symbol}:${p.positionIdx ?? 0}:${p.side}`, symbol: p.symbol, side: p.side,
       size: Number(p.size), entry: Number(p.entryPrice), stopLoss: num(p.stopLoss), takeProfit: num(p.takeProfit), liqPrice: num(p.liqPrice),
+      leverage: num(p.leverage), // para el % como en Bybit: ROI sobre el margen
     }));
   }
   for (const o of book.orders) {

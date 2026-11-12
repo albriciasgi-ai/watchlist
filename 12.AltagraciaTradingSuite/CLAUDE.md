@@ -154,7 +154,12 @@ Pedido del usuario (12/11): ver, como en TradingView, el estado y el P&L de cada
   - el SL y el TP con lo que se perdería o ganaría ahí;
   - el precio de liquidación;
   - las órdenes de entrada pendientes ("Limit compra 0.01 ×"), con su SL y TP adjuntos;
-  - cada línea con su precio en el eje. Fuera de la vista, la etiqueta queda en el borde con ▲ o ▼, apilada con las otras.
+  - cada línea con su precio en el eje;
+  - el % es el ROI sobre el margen, como en Bybit (cambio del precio × apalancamiento). El P&L usa el último precio del gráfico; Bybit usa el precio marca, así que difieren unos centavos.
+- **Fuera de la vista** (corregido el 12/11, al probarlo el usuario con un short de BTC a 79,261.4, SL 82,293.4 y TP 65,227.5, con el precio en 71,534):
+  - la etiqueta queda en el borde con ▲ o ▼ y su precio real ("▲ Short 0.003 @ 79261.4"), apilada con las otras y sin línea. Antes no decía el precio y parecía estar en el del borde;
+  - las de arriba van bajo los botones del gráfico (HTML), que las tapaban; una etiqueta a la altura de los botones se corre a su izquierda;
+  - **⇕** en la etiqueta de la posición, o un clic en una etiqueta fuera de la vista, ajusta la escala para ver entrada, SL y TP con sus líneas hasta el eje. Otro clic en ⇕ vuelve a seguir las velas. Es solo de la vista: no llega al bot. Con niveles lejanos las velas quedan apretadas.
 - **Qué se hace, solo con el cursor de selección:**
   - × de la posición la cierra a mercado; × de una orden la cancela; × del TP lo quita;
   - la etiqueta del SL o del TP se arrastra para moverlo. La línea sigue al mouse con lo que se perdería o ganaría, y dice "no válido" del lado equivocado del precio;

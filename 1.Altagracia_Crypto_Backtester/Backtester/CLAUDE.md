@@ -652,7 +652,7 @@ Para la app en tiempo real, que usará este lector (requisito 8 de la integraci�
   - SL y TP con lo que se perdería o ganaría;
   - liquidación y entradas pendientes.
   
-  `onPositionAction` recibe la × (cerrar, cancelar, quitar el TP) al soltar sobre ella, y el arrastre de la etiqueta del SL o del TP, solo con el cursor de selección. Quien da los datos confirma y envía; el gráfico solo dibuja y avisa. Lo usa la suite (`12.AltagraciaTradingSuite`, sección "Posiciones en el gráfico"). App 1 no pasa esas props: su reproducción no cambia. `getPositionTargets()` del ref da lo que responde al mouse, para revisar desde la consola. Prueba: `tests/positions.test.mjs` (9)
+  `onPositionAction` recibe la × (cerrar, cancelar, quitar el TP) al soltar sobre ella, y el arrastre de la etiqueta del SL o del TP, solo con el cursor de selección. Quien da los datos confirma y envía; el gráfico solo dibuja y avisa. Lo usa la suite (`12.AltagraciaTradingSuite`, sección "Posiciones en el gráfico"). App 1 no pasa esas props: su reproducción no cambia. `getPositionTargets()` del ref da lo que responde al mouse, para revisar desde la consola. Fuera de la vista, la etiqueta dice su precio real y queda en el borde, bajo los botones del gráfico (`overlayButtonsRef`). ⇕ o un clic en ella activa `positionFitRef`: la escala incluye entrada, SL y TP (`positionPrices()`). El % es el ROI sobre el margen, como en Bybit. Prueba: `tests/positions.test.mjs` (13)
 
 ### Mantener el almacén
 
