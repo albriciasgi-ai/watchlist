@@ -75,33 +75,59 @@ const SwingDetectorSettings = ({
     setLocalConfig(config);
   }, [config]);
 
-  // 🔄 AUTO-SYNC: When watchlistDays changes, update backend automatically
-  useEffect(() => {
-    const syncDaysToBackend = async () => {
-      if (watchlistDays && backendStatus) {
-        const currentBackendDays = backendStatus.symbolConfig?.days || backendStatus.days;
-        if (currentBackendDays !== watchlistDays) {
-          console.log(`[SwingDetector] Auto-syncing days: ${currentBackendDays} → ${watchlistDays}`);
-          try {
-            // Send directly to backend (bypass batch mode)
-            const response = await fetch(`${API_BASE_URL}/api/swing/config/${currentSymbol}`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ days: watchlistDays })
-            });
-            if (response.ok) {
-              console.log(`[SwingDetector] Days synced to ${watchlistDays}`);
-              // Refresh status to reflect new value
-              fetchBackendStatus();
-            }
-          } catch (error) {
-            console.error('[SwingDetector] Failed to sync days:', error);
-          }
-        }
+  // Los dias y el timeframe del grafico ya NO se copian solos al Swing del backend: cambiaban
+  // lo que opera el bot. Se aplican solo con los botones explicitos de "Timeframe de alertas".
+
+  // Cambiar el timeframe de las ALERTAS (todas las monedas vigiladas) al del grafico, con confirmacion
+  const handleUseChartInterval = async () => {
+    const current = backendStatus?.interval;
+    if (!watchlistInterval || watchlistInterval === current) return;
+    const ok = window.confirm(
+      `El Swing mandará al bot las señales de ${watchlistInterval}m para todas las monedas vigiladas ` +
+      `(hoy ${current}m). ¿Cambiar el timeframe de las alertas?`
+    );
+    if (!ok) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/swing/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ interval: watchlistInterval })
+      });
+      if (res.ok) {
+        await fetchBackendStatus();
+        if (onBackendConfigSaved) onBackendConfigSaved();
       }
-    };
-    syncDaysToBackend();
-  }, [watchlistDays, currentSymbol]);
+    } catch (error) {
+      console.error('[SwingDetector] Error cambiando el timeframe de las alertas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Agregar o quitar la moneda actual de las que mandan swings al bot (siempre explicito)
+  const handleToggleMonitored = async (monitor) => {
+    const text = monitor
+      ? `¿Agregar ${currentSymbol} a las monedas cuyos swings se mandan al bot?`
+      : `¿Quitar ${currentSymbol} de las monedas cuyos swings se mandan al bot?`;
+    if (!window.confirm(text)) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/swing/config/${currentSymbol}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ monitor })
+      });
+      if (res.ok) {
+        await fetchBackendStatus();
+        if (onBackendConfigSaved) onBackendConfigSaved();
+      }
+    } catch (error) {
+      console.error('[SwingDetector] Error cambiando las monedas vigiladas:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchBackendStatus = async () => {
     try {
@@ -231,11 +257,21 @@ const SwingDetectorSettings = ({
             success = false;
           }
         } else {
-          // Original: apply only to current symbol
+          // Original: apply only to current symbol.
+          // Guardar la config de una moneda que no esta vigilada ya no la suma sola a las alertas:
+          // se pregunta (antes cualquier guardado la agregaba sin aviso)
+          const body = { ...symbolChanges };
+          const monitored = (backendStatus?.symbols || []).includes(currentSymbol);
+          if (!monitored) {
+            body.monitor = window.confirm(
+              `${currentSymbol} no está entre las monedas que mandan swings al bot.\n\n` +
+              `Aceptar: guardar y agregarla a las alertas.\nCancelar: guardar sin agregarla.`
+            );
+          }
           const symbolResponse = await fetch(`${API_BASE_URL}/api/swing/config/${currentSymbol}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(symbolChanges)
+            body: JSON.stringify(body)
           });
 
           if (symbolResponse.ok) {
@@ -587,10 +623,10 @@ const SwingDetectorSettings = ({
       }}>
         <h5 style={{ margin: '0 0 12px 0', color: '#00838F' }}>Detection Parameters (Backend)</h5>
 
-        {/* Days of Historical Data - READ ONLY, synced from Watchlist */}
+        {/* Timeframe y dias de las ALERTAS (los del backend). El grafico ya no los cambia solo. */}
         <div style={{ marginBottom: '12px' }}>
           <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '4px', fontSize: '12px' }}>
-            Historical Days: {watchlistDays || currentDays}
+            Historical Days: {currentDays}
           </label>
           <div style={{
             padding: '8px 12px',
@@ -599,12 +635,15 @@ const SwingDetectorSettings = ({
             fontSize: '12px',
             color: '#006064'
           }}>
-            📊 Synced from Watchlist ({watchlistInterval || backendStatus?.interval}m timeframe)
+            📊 Alertas al bot en {backendStatus?.interval || '?'}m · el gráfico está en {watchlistInterval || '?'}m
+            {(backendStatus?.symbols || []).includes(currentSymbol)
+              ? ` · ${currentSymbol} manda alertas`
+              : ` · ${currentSymbol} NO manda alertas`}
           </div>
           <div style={{ fontSize: '10px', color: '#00838F', marginTop: '4px' }}>
             {(() => {
-              const interval = watchlistInterval || backendStatus?.interval || '1';
-              const days = watchlistDays || currentDays;
+              const interval = backendStatus?.interval || '1';
+              const days = currentDays;
               const intervalMinutes = {
                 '1': 1, '3': 3, '5': 5, '15': 15, '30': 30,
                 '60': 60, '120': 120, '240': 240, '360': 360, '720': 720,
@@ -614,6 +653,82 @@ const SwingDetectorSettings = ({
               const candles = Math.floor((days * 24 * 60) / minPerCandle);
               return `≈ ${candles.toLocaleString()} candles for ${interval}m interval`;
             })()}
+          </div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '6px' }}>
+            {watchlistInterval && backendStatus?.interval && watchlistInterval !== backendStatus.interval && (
+              <button
+                onClick={handleUseChartInterval}
+                disabled={loading}
+                style={{
+                  padding: '6px 10px',
+                  background: '#00838F',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: loading ? 'default' : 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '11px'
+                }}
+              >
+                Alertas en {watchlistInterval}m (como el gráfico)
+              </button>
+            )}
+            {watchlistDays && backendStatus && Number(watchlistDays) !== Number(currentDays) && (
+              <button
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    // Sin "monitor": cambia el historial de la moneda pero no la suma a las alertas
+                    const res = await fetch(`${API_BASE_URL}/api/swing/config/${currentSymbol}`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ days: Number(watchlistDays) })
+                    });
+                    if (res.ok) {
+                      await fetchBackendStatus();
+                      if (onBackendConfigSaved) onBackendConfigSaved();
+                    }
+                  } catch (error) {
+                    console.error('[SwingDetector] Error guardando los dias:', error);
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+                style={{
+                  padding: '6px 10px',
+                  background: '#00838F',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: loading ? 'default' : 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '11px'
+                }}
+              >
+                Usar {watchlistDays} días (como el gráfico)
+              </button>
+            )}
+            {backendStatus && (
+              <button
+                onClick={() => handleToggleMonitored(!(backendStatus.symbols || []).includes(currentSymbol))}
+                disabled={loading}
+                style={{
+                  padding: '6px 10px',
+                  background: '#00838F',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: loading ? 'default' : 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '11px'
+                }}
+              >
+                {(backendStatus.symbols || []).includes(currentSymbol)
+                  ? `Quitar ${currentSymbol} de las alertas`
+                  : `Agregar ${currentSymbol} a las alertas`}
+              </button>
+            )}
           </div>
         </div>
 

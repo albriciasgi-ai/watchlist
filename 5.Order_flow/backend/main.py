@@ -38,12 +38,15 @@ logging.getLogger('alert_sender').setLevel(logging.WARNING)
 # Keep orderflow_service at INFO to see footprints
 logging.getLogger('orderflow_service').setLevel(logging.INFO)
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse, Response
 import httpx
 import asyncio
 import time
 import json
+import os
 import re
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
@@ -56,7 +59,7 @@ from pattern_state_manager import get_pattern_state_manager, AlertRecord
 from realtime_pattern_service import get_realtime_pattern_service
 
 # Swing detector imports
-from swing_service import get_swing_service
+from swing_service import get_swing_service, validate_days_for_interval, VALID_INTERVALS as SWING_VALID_INTERVALS
 
 # VWAP service imports
 from vwap_service import get_vwap_service
@@ -74,13 +77,62 @@ app = FastAPI(
     version="2.5.0",
 )
 
+# Solo paginas servidas desde este PC (App 9 en localhost:11001 o file://, App 5) y Electron.
+# Mismo criterio que el bot (3.TradingBot_Python/backend/main.py). Antes era "*": cualquier pagina
+# abierta en el navegador podia hacer que este backend le mandara al bot ordenes con origen ORDERFLOW.
+LOCAL_ORIGIN_REGEX = r"^(https?://(localhost|127\.0\.0\.1)(:\d+)?|null|file://.*)$"
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[],
+    allow_origin_regex=LOCAL_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Host verificado: bloquea paginas que apunten su dominio a 127.0.0.1 (DNS rebinding)
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
+
+
+@app.middleware("http")
+async def reject_foreign_origins(request: Request, call_next):
+    """
+    CORS no impide que una peticion 'simple' (por ejemplo un POST de texto plano) de otra pagina
+    llegue y se ejecute. Toda peticion de un navegador con un Origin ajeno se rechaza.
+    Los programas locales (httpx, curl, el panel de descargas, el Trading Journal) no envian
+    Origin y pasan.
+    """
+    origin = request.headers.get("origin")
+    if origin and request.method != "OPTIONS" and not re.fullmatch(LOCAL_ORIGIN_REGEX, origin):
+        return JSONResponse(status_code=403, content={"success": False, "detail": f"Origin not allowed: {origin}"})
+    return await call_next(request)
+
+
+_SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,30}$")
+
+
+def _validate_symbol(symbol: str) -> str:
+    """
+    Simbolo de Bybit (BTCUSDT, 1000PEPEUSDT...). Se usa en rutas de archivos: sin esto,
+    '..\\' en el simbolo leia, escribia o borraba cualquier JSON del equipo.
+    """
+    sym = str(symbol or "").strip().upper()
+    if not _SYMBOL_RE.fullmatch(sym):
+        raise HTTPException(status_code=400, detail=f"Simbolo invalido: {symbol!r}")
+    return sym
+
+
+_SAFE_PART_RE = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
+
+
+def _safe_part(value) -> str:
+    """Parte de un nombre de archivo que viene de la URL (simbolo, intervalo, indicador)."""
+    s = str(value)
+    if not _SAFE_PART_RE.fullmatch(s):
+        raise ValueError(f"Nombre invalido: {value!r}")
+    return s
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
 CACHE_DIR = Path("cache")
@@ -239,7 +291,11 @@ async def get_cache_status():
 
 def load_cache(symbol: str, interval: str, indicator: str):
     """Carga datos del cache si existen y son recientes"""
-    cache_file = CACHE_DIR / f"{symbol}_{interval}_{indicator}.json"
+    try:
+        cache_file = CACHE_DIR / f"{_safe_part(symbol)}_{_safe_part(interval)}_{_safe_part(indicator)}.json"
+    except ValueError as e:
+        print(f"[CACHE] {e}")
+        return None
     if cache_file.exists():
         try:
             with open(cache_file, 'r', encoding='utf-8') as f:
@@ -257,7 +313,11 @@ def load_cache(symbol: str, interval: str, indicator: str):
 def save_cache(symbol: str, interval: str, indicator: str, data: dict):
     """Guarda datos en cache con timestamp"""
     data['timestamp'] = time.time()
-    cache_file = CACHE_DIR / f"{symbol}_{interval}_{indicator}.json"
+    try:
+        cache_file = CACHE_DIR / f"{_safe_part(symbol)}_{_safe_part(interval)}_{_safe_part(indicator)}.json"
+    except ValueError as e:
+        print(f"[CACHE] {e}")
+        return
     with open(cache_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
@@ -2390,19 +2450,33 @@ async def get_open_interest(symbol: str, interval: str = "15", days: int = 30):
             "error": str(e)
         }
 
-@app.post("/api/clear-cache")
-
-
 # ==================== ALERT TESTING ENDPOINT ====================
+# (Aqui habia un @app.post("/api/clear-cache") suelto que tambien registraba send_test_alert en
+#  /api/clear-cache: un POST a esa ruta mandaba una alerta real al bot.)
+
+# Estas "pruebas" llegan al bot como alertas reales de ORDERFLOW (origin) y el bot las opera.
+# Solo se envian si se pide de forma explicita.
+TEST_ALERT_CONFIRM = "ENVIAR_ALERTA_REAL"
+
+
+def _test_alert_refused():
+    return {
+        "success": False,
+        "error": (f"Alerta de prueba NO enviada: el bot la ejecutaria como una orden real. "
+                  f"Para enviarla igual, agrega ?confirm={TEST_ALERT_CONFIRM}"),
+    }
+
 
 @app.post("/api/test-alert")
-async def send_test_alert():
+async def send_test_alert(confirm: str = None):
     """
     Sends a test alert to verify the alert system is working
 
     Returns:
         Success/failure status and connection info
     """
+    if confirm != TEST_ALERT_CONFIRM:
+        return _test_alert_refused()
     try:
         from alert_sender import alert_sender
         import time
@@ -2479,13 +2553,15 @@ async def send_test_alert():
 
 
 @app.post("/api/test-alert-batch")
-async def send_test_alert_batch():
+async def send_test_alert_batch(confirm: str = None):
     """
     Sends multiple test alerts to simulate real trading scenario
 
     Returns:
         Success/failure status for each alert
     """
+    if confirm != TEST_ALERT_CONFIRM:
+        return _test_alert_refused()
     try:
         from alert_sender import alert_sender
         import time
@@ -3386,6 +3462,7 @@ async def get_drawings(symbol: str):
     Obtiene los dibujos guardados para un símbolo
     Los dibujos son globales para el símbolo (aparecen en todos los timeframes)
     """
+    symbol = _validate_symbol(symbol)
     try:
         drawings_file = DRAWINGS_DIR / f"{symbol}.json"
 
@@ -3403,12 +3480,14 @@ async def get_drawings(symbol: str):
             }
 
     except Exception as e:
+        # Error de lectura: NO se responde una lista vacia con 200, porque el grafico la guardaria
+        # encima del archivo y se perderian todos los dibujos
         print(f"[ERROR] Loading drawings for {symbol}: {str(e)}")
-        return {
+        return JSONResponse(status_code=500, content={
             "symbol": symbol,
-            "shapes": [],
+            "success": False,
             "error": str(e)
-        }
+        })
 
 
 @app.post("/api/drawings/{symbol}")
@@ -3423,9 +3502,12 @@ async def save_drawings(symbol: str, request: Request):
 
     Los dibujos se guardan globalmente para el símbolo (aparecen en todos los timeframes)
     """
+    symbol = _validate_symbol(symbol)
     try:
         body = await request.json()
         shapes = body.get('shapes', [])
+        if not isinstance(shapes, list):
+            raise ValueError("shapes debe ser una lista")
 
         drawings_file = DRAWINGS_DIR / f"{symbol}.json"
 
@@ -3436,8 +3518,11 @@ async def save_drawings(symbol: str, request: Request):
             "total_shapes": len(shapes)
         }
 
-        with open(drawings_file, 'w', encoding='utf-8') as f:
+        # Temporal + reemplazo: un corte a mitad ya no deja el archivo truncado (todos los dibujos perdidos)
+        tmp_file = drawings_file.with_name(drawings_file.name + ".tmp")
+        with open(tmp_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_file, drawings_file)
 
         # print(f"[DRAWINGS] [OK] Saved {len(shapes)} shapes for {symbol}")
 
@@ -3461,6 +3546,7 @@ async def save_drawings(symbol: str, request: Request):
 @app.delete("/api/drawings/{symbol}")
 async def delete_drawings(symbol: str):
     """Elimina todos los dibujos de un símbolo"""
+    symbol = _validate_symbol(symbol)
     try:
         drawings_file = DRAWINGS_DIR / f"{symbol}.json"
 
@@ -4639,6 +4725,14 @@ async def apply_swing_config_to_all_symbols(request: Request):
         }
 
 
+def _validate_swing_symbol(symbol: str) -> str:
+    """Simbolo en mayusculas y con forma de simbolo de Bybit; si no, ValueError."""
+    symbol = str(symbol or "").upper()
+    if not re.fullmatch(r"[A-Z0-9]{2,30}", symbol):
+        raise ValueError(f"Simbolo invalido: {symbol}")
+    return symbol
+
+
 @app.post("/api/swing/config/{symbol}")
 async def update_swing_symbol_config(symbol: str, request: Request):
     """
@@ -4653,8 +4747,12 @@ async def update_swing_symbol_config(symbol: str, request: Request):
             "minZScore": 2.0
         }
     }
+
+    "monitor": true o false agrega o quita la moneda de las que mandan sus swings al bot.
+    Sin "monitor", guardar la config de una moneda no la agrega a esa lista.
     """
     try:
+        symbol = _validate_swing_symbol(symbol)
         data = await request.json()
         swing_service = get_swing_service()
 
@@ -4666,26 +4764,42 @@ async def update_swing_symbol_config(symbol: str, request: Request):
         if symbol not in swing_service.config.symbolConfigs:
             swing_service.config.symbolConfigs[symbol] = {}
 
-        # ✅ FIX: Agregar símbolo a la lista principal si no existe
-        if symbol not in swing_service.config.symbols:
+        # Vigilar o no la moneda (es decir, mandar sus swings al bot) solo se decide con "monitor".
+        # Antes cualquier guardado la agregaba, y el grafico guardaba "days" en cada carga:
+        # mirar una moneda la sumaba a las que opera el bot.
+        monitor = data.pop("monitor", None)
+        monitoring_changed = False
+        if monitor is True and symbol not in swing_service.config.symbols:
             swing_service.config.symbols.append(symbol)
+            monitoring_changed = True
             print(f"[SWING] Added {symbol} to monitored symbols list")
+        elif monitor is False and symbol in swing_service.config.symbols:
+            swing_service.config.symbols.remove(symbol)
+            monitoring_changed = True
+            print(f"[SWING] Removed {symbol} from monitored symbols list")
 
-        # Merge new settings into symbol config
+        # Merge new settings into symbol config (solo cambios reales)
+        detection_keys = {"days", "swingBars", "direction", "volumeFilter", "vwapFilter", "priceZones", "enabled"}
+        detection_changed = False
         for key, value in data.items():
-            swing_service.config.symbolConfigs[symbol][key] = value
+            if swing_service.config.symbolConfigs[symbol].get(key) != value:
+                swing_service.config.symbolConfigs[symbol][key] = value
+                if key in detection_keys:
+                    detection_changed = True
 
         # Save config
         swing_service._save_config()
 
-        # Re-analyze to apply new settings
-        print(f"[SWING] Symbol config updated for {symbol} - Re-analyzing...")
-        await swing_service.reanalyze_historical()
+        # Re-analizar solo si cambio algo que afecta la deteccion de una moneda vigilada
+        if monitoring_changed or (detection_changed and symbol in swing_service.config.symbols):
+            print(f"[SWING] Symbol config updated for {symbol} - Re-analyzing...")
+            await swing_service.reanalyze_historical()
 
         return {
             "success": True,
             "message": f"Config updated for {symbol}",
-            "symbolConfig": swing_service.config.get_symbol_config(symbol)
+            "symbolConfig": swing_service.config.get_symbol_config(symbol),
+            "monitored": symbol in swing_service.config.symbols
         }
 
     except Exception as e:
@@ -4697,23 +4811,68 @@ async def update_swing_symbol_config(symbol: str, request: Request):
 
 
 @app.get("/api/swing/signals/{symbol}")
-async def get_swing_signals(symbol: str, since: int = None):
+async def get_swing_signals(symbol: str, since: int = None, interval: str = None, days: int = None):
     """
     Get recent swing signals for a symbol.
     Frontend polls this to display signals on chart.
 
     Query params:
         since: Optional timestamp (ms) - only return signals newer than this
+        interval/days: timeframe y dias del GRAFICO. Si no coinciden con los de las alertas
+                       (o la moneda no esta vigilada), se calculan senales solo para dibujar:
+                       el grafico ya no cambia la config del servicio que alerta al bot.
     """
     try:
+        symbol = _validate_swing_symbol(symbol)
         swing_service = get_swing_service()
-        signals = swing_service.get_signals(symbol, since_timestamp=since)
+        alerts_interval = swing_service.config.interval
+        monitored = symbol in swing_service.config.symbols
+
+        if not interval or (interval == alerts_interval and monitored and swing_service.running):
+            signals = swing_service.get_signals(symbol, since_timestamp=since)
+            return {
+                "success": True,
+                "symbol": symbol,
+                "signals": signals,
+                "count": len(signals),
+                "alertsInterval": alerts_interval,
+                "monitored": monitored,
+                "displayOnly": False
+            }
+
+        if interval not in SWING_VALID_INTERVALS:
+            raise ValueError(f"Intervalo invalido: {interval}")
+
+        # Solo para dibujar: no se guarda nada ni se mandan alertas.
+        # Mismo tope de dias que el servicio (1m: 5 dias).
+        days_req = validate_days_for_interval(max(1, int(days or 1)), interval)
+        cache_key = (symbol, interval, days_req)
+        cached = swing_service._display_cache.get(cache_key)
+        now_s = time.time()
+        if cached and cached[0] > now_s:
+            signals = cached[1]
+        else:
+            hist = await get_historical(symbol, interval, days_req)
+            candles = [c for c in (hist.get("data") or []) if not c.get("in_progress")]
+            if len(candles) >= 20:
+                signals = await asyncio.to_thread(swing_service.compute_display_signals, symbol, interval, candles)
+            else:
+                signals = []
+            swing_service._display_cache[cache_key] = (now_s + 60, signals)
+            if len(swing_service._display_cache) > 50:
+                for k in [k for k, v in swing_service._display_cache.items() if v[0] <= now_s]:
+                    swing_service._display_cache.pop(k, None)
+        if since:
+            signals = [s for s in signals if s.get("timestamp", 0) > since]
 
         return {
             "success": True,
             "symbol": symbol,
             "signals": signals,
-            "count": len(signals)
+            "count": len(signals),
+            "alertsInterval": alerts_interval,
+            "monitored": monitored,
+            "displayOnly": True
         }
 
     except Exception as e:
@@ -4928,86 +5087,70 @@ async def update_vwap_service_config(request: Request):
         }
 
 
+# Max days per interval (matches frontend DAYS_OPTIONS_BY_INTERVAL)
+MAX_DAYS_BY_INTERVAL_VWAP = {
+    "1": 400,
+    "3": 400,
+    "5": 400,
+    "15": 180,
+    "30": 360,
+    "60": 730,
+    "120": 730,
+    "240": 1095,
+    "D": 2000,
+    "W": 1000
+}
+
+
 @app.get("/api/vwap-service/data/{symbol}")
 async def get_vwap_service_data(
     symbol: str,
     days: int = 1,
     interval: str = "60",
     vwapType: str = None,
-    rollingPeriod: int = None
+    rollingPeriod: int = None,
+    refresh: bool = False
 ):
     """
     Get VWAP data for a symbol.
     Returns all VWAP points with bands and volatility indicators.
-    Reloads if days/interval/vwapType differs from cached config.
+    Cada (symbol, interval) tiene su propio estado en el servicio: pedir otro intervalo,
+    tipo o periodo no cambia las demas claves ni la config global. Antes habia un solo estado:
+    pedir 60m despues de 15m devolvia puntos de 15m marcados como 60m (cooldown de 30 s).
+    - Carga completa solo si la clave no existe o tiene menos dias de los pedidos.
+    - Otro vwapType/rollingPeriod: se recalcula esa clave con sus mismas velas.
+    - refresh=true: trae solo las velas nuevas de esa clave (WebSocket o REST incremental).
     """
     try:
         vwap_service = get_vwap_service()
 
-        # Max days per interval (matches frontend DAYS_OPTIONS_BY_INTERVAL)
-        MAX_DAYS_BY_INTERVAL = {
-            "1": 5,
-            "3": 10,
-            "5": 30,
-            "15": 90,
-            "30": 150,
-            "60": 360,
-            "120": 540,
-            "240": 720,
-            "D": 1440,
-            "W": 730
-        }
+        max_days = MAX_DAYS_BY_INTERVAL_VWAP.get(interval, 360)
+        days_to_load = max(1, min(days, max_days))
 
-        max_days = MAX_DAYS_BY_INTERVAL.get(interval, 360)
-        days_to_load = min(days, max_days)
-
-        # Check current state
-        current_interval = vwap_service.config.interval
-        current_vwap_type = vwap_service.config.vwapType
-        current_rolling = vwap_service.config.rollingPeriod
-        current_data = vwap_service.get_vwap_data(symbol)
-
-        interval_minutes = vwap_service._interval_to_minutes(interval)
-        candles_needed = (days_to_load * 24 * 60) // interval_minutes
-
-        # Determine if config changed
-        config_changed = (
-            current_interval != interval or
-            (vwapType and current_vwap_type != vwapType) or
-            (rollingPeriod and current_rolling != rollingPeriod)
+        data = await vwap_service.ensure_vwap_data(
+            symbol,
+            interval,
+            days=days_to_load,
+            vwap_type=vwapType,
+            rolling_period=rollingPeriod,
+            refresh=refresh
         )
+        info = vwap_service.get_key_info(symbol, interval) or {}
 
-        needs_more_data = len(current_data) < candles_needed * 0.9
-
-        if config_changed or needs_more_data:
-            # Update config if params provided
-            if vwapType:
-                vwap_service.config.vwapType = vwapType
-            if rollingPeriod:
-                vwap_service.config.rollingPeriod = rollingPeriod
-
-            print(f"[VWAP] {symbol}: Reloading - interval={interval}, days={days_to_load}, vwapType={vwap_service.config.vwapType}")
-            await vwap_service.reload_symbol_data(symbol, days_to_load, interval)
-            current_data = vwap_service.get_vwap_data(symbol)
-        else:
-            # SIEMPRE recalcular para incorporar velas nuevas del API
-            # Esto es necesario porque el polling del frontend espera datos actualizados
-            # Asegurar que el config tenga el intervalo correcto antes de recalcular
-            if vwap_service.config.interval != interval:
-                vwap_service.config.interval = interval
-
-            await vwap_service._calculate_symbol(symbol)
-            current_data = vwap_service.get_vwap_data(symbol)
-
-        return {
+        payload = {
             "success": True,
             "symbol": symbol,
-            "data": current_data,
-            "count": len(current_data),
+            "data": data,
+            "count": len(data),
             "interval": interval,
             "days_loaded": days_to_load,
-            "vwapType": vwap_service.config.vwapType
+            "vwapType": info.get("vwapType", vwapType or vwap_service.config.vwapType)
         }
+        # Serializar en un hilo: con miles de puntos el encoder de FastAPI bloqueaba el loop
+        body = await asyncio.to_thread(
+            json.dumps, payload, ensure_ascii=False, allow_nan=False, separators=(",", ":")
+        )
+        return Response(content=body, media_type="application/json")
 
     except Exception as e:
         print(f"[ERROR] Getting VWAP data for {symbol}: {str(e)}")
@@ -5019,14 +5162,15 @@ async def get_vwap_service_data(
 
 
 @app.get("/api/vwap-service/latest/{symbol}")
-async def get_vwap_service_latest(symbol: str):
+async def get_vwap_service_latest(symbol: str, interval: str = None):
     """
     Get latest VWAP point for a symbol.
     Useful for real-time display without fetching all data.
+    interval: clave a leer; sin interval, el intervalo por defecto del servicio (como antes).
     """
     try:
         vwap_service = get_vwap_service()
-        latest = vwap_service.get_latest_vwap(symbol)
+        latest = vwap_service.get_latest_vwap(symbol, interval)
 
         if latest:
             return {
@@ -5139,7 +5283,8 @@ async def get_indicators_batch(request: Request):
             async def fetch_vwap():
                 start = time.time()
                 vwap_service = get_vwap_service()
-                data = await vwap_service.get_vwap_data(symbol, days, interval)
+                # Antes: get_vwap_data(symbol, days, interval) fallaba siempre (firma y await)
+                data = await vwap_service.ensure_vwap_data(symbol, str(interval), days=int(days))
                 return ("vwap", data, (time.time() - start) * 1000)
             tasks.append(fetch_vwap())
             indicator_names.append("vwap")
@@ -5365,7 +5510,7 @@ _SB_CANDLE_CACHE_DIR.mkdir(exist_ok=True)
 
 
 def _sb_disk_cache_path(symbol: str, interval: str) -> Path:
-    return _SB_CANDLE_CACHE_DIR / f"{symbol}_{interval}.json.gz"
+    return _SB_CANDLE_CACHE_DIR / f"{_safe_part(symbol)}_{_safe_part(interval)}.json.gz"
 
 
 def _sb_load_disk_cache(symbol: str, interval: str):

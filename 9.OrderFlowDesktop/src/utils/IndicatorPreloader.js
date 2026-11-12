@@ -1,5 +1,6 @@
 // Sistema de precarga inteligente para indicadores
 import localforage from 'localforage';
+import { API_BASE_URL } from '../config';
 
 // ✅ Configurar localforage para usar IndexedDB
 localforage.config({
@@ -152,8 +153,7 @@ class IndicatorPreloader {
    * Fetchea datos del backend según el tipo de indicador
    */
   static async fetchIndicatorData(symbol, indicatorName, interval, days) {
-    const API_BASE_URL = "http://localhost:10000";
-
+    // Backend propio de la app (config.js). Antes apuntaba fijo al del Analizador (puerto 10000)
     let url;
     switch (indicatorName) {
       case 'Volume Profile':

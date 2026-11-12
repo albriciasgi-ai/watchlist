@@ -1705,6 +1705,12 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
         lastTextBoxClickedIdRef.current = clickedShape.id;
       }
 
+      // El segundo clic de un doble clic (el que sale del modo dibujo) no crea otra figura:
+      // antes cada clic con la herramienta TP/SL dejaba una caja nueva con SL/TP por defecto
+      if (e.detail >= 2 && selectedDrawingTool !== 'select') {
+        return;
+      }
+
       const consumed = drawingManagerRef.current.handleMouseDown(
         x, y, scaleConverterRef.current, selectedDrawingTool
       );
@@ -1757,11 +1763,14 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
       const wasModifying = drawingManagerRef.current.selectedShape &&
         (drawingManagerRef.current.selectedShape.isDragging ||
          drawingManagerRef.current.selectedShape.isResizing);
+      const modifiedShape = wasModifying ? drawingManagerRef.current.selectedShape : null;
 
       drawingManagerRef.current.handleMouseUp(scaleConverterRef.current);
 
       // Si se estaba modificando un shape, guardar al servidor
       if (wasModifying) {
+        // La caja TP/SL movida pasa a ser la "mas reciente" para el panel de trading
+        if (modifiedShape) modifiedShape.updatedAt = Date.now();
         saveDrawingsInline();
       }
     }
@@ -1968,6 +1977,11 @@ const MiniChart = ({ symbol, interval, days, indicatorStates, vpConfig, vpFixedR
     } else {
       // 🎯 Doble click en área de gráfico: toggle modo dibujo inline
       console.log(`[${symbol}] 🖱️ Toggle drawingMode: ${drawingMode} -> ${!drawingMode}`);
+      // Al salir del modo dibujo, el primer clic del doble clic pudo crear una figura (por ejemplo
+      // una caja TP/SL con valores por defecto). Se quita antes del guardado de salida.
+      if (drawingModeRef.current && drawingManagerRef.current?.removeShapeAddedWithin) {
+        drawingManagerRef.current.removeShapeAddedWithin(700);
+      }
       setDrawingMode(prev => !prev);
     }
   };

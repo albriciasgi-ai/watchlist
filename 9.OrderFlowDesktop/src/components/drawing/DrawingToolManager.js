@@ -220,6 +220,25 @@ class DrawingToolManager {
 
   addShape(shape) {
     this.shapes.push(shape);
+    // Ultima figura creada: si fue por el primer clic del doble clic que sale del modo dibujo,
+    // MiniChart la quita (antes quedaban cajas TP/SL sueltas que Alt+T tomaba para operar)
+    this.lastAdded = { id: shape.id, at: Date.now() };
+  }
+
+  /**
+   * Quita la figura creada hace menos de maxAgeMs (la del primer clic de un doble clic).
+   * Devuelve true si quito alguna.
+   */
+  removeShapeAddedWithin(maxAgeMs) {
+    const last = this.lastAdded;
+    if (!last || Date.now() - last.at > maxAgeMs) return false;
+    const index = this.shapes.findIndex(s => s.id === last.id);
+    if (index === -1) return false;
+    this.shapes.splice(index, 1);
+    if (this.selectedShape && this.selectedShape.id === last.id) this.selectedShape = null;
+    this.lastAdded = null;
+    this.saveToHistory();
+    return true;
   }
 
   deleteSelected() {

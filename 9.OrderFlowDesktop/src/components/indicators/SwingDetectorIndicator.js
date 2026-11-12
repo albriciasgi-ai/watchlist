@@ -77,34 +77,18 @@ class SwingDetectorIndicator extends IndicatorBase {
   }
 
   /**
-   * Sync days with backend when chart days change
+   * Los dias del grafico solo cambian lo que se DIBUJA. Antes se guardaban en la config del
+   * Swing del backend (y sumaban la moneda a las que mandan alertas al bot).
    */
   async syncDaysWithBackend(newDays) {
     if (this.days === newDays) return;
-
     this.days = newDays;
-    console.log(`[${this.symbol}] SwingDetector syncing days to backend: ${newDays}`);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/swing/config/${this.symbol}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ days: newDays })
-      });
-
-      if (response.ok) {
-        console.log(`[${this.symbol}] SwingDetector days synced to ${newDays}`);
-        // Force refresh signals after days change
-        await this.fetchSignals(true);
-      }
-    } catch (error) {
-      console.error(`[${this.symbol}] Failed to sync days:`, error);
-    }
+    await this.fetchSignals(true);
   }
 
   async fetchData() {
-    // Sync days with backend first to ensure signals cover the requested period
-    await this._syncDaysOnInit();
+    // El indicador solo LEE del backend. Ya no guarda dias por moneda al cargar:
+    // eso sumaba la moneda a las que mandan alertas al bot con solo mirar el grafico.
 
     // Initial fetch of signals and status
     await Promise.all([
@@ -124,25 +108,6 @@ class SwingDetectorIndicator extends IndicatorBase {
     // FIX: Corregido _pollingInterval -> _pollingId (variable correcta definida en linea 32)
     if (!this._pollingId && this.enabled && this.config.enabled) {
       this._startPolling();
-    }
-  }
-
-  /**
-   * Sync days with backend on init (without checking if changed)
-   */
-  async _syncDaysOnInit() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/swing/config/${this.symbol}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ days: this.days })
-      });
-
-      if (response.ok) {
-        console.log(`[${this.symbol}] SwingDetector initialized with ${this.days} days`);
-      }
-    } catch (error) {
-      console.warn(`[${this.symbol}] Failed to sync days on init:`, error);
     }
   }
 
@@ -218,7 +183,11 @@ class SwingDetectorIndicator extends IndicatorBase {
         }
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/swing/signals/${this.symbol}`);
+      // Se pide con el timeframe y los dias del GRAFICO: si no son los de las alertas, el backend
+      // calcula senales solo para dibujar, sin tocar el servicio que alerta al bot
+      const url = `${API_BASE_URL}/api/swing/signals/${this.symbol}` +
+        `?interval=${encodeURIComponent(this.interval)}&days=${encodeURIComponent(this.days || 1)}`;
+      const response = await fetch(url);
 
       if (!response.ok) {
         console.warn(`[${this.symbol}] SwingDetector fetch failed: ${response.status}`);

@@ -28,6 +28,7 @@ import { initRobustness, stopRobustness } from '../utils/robustness';
 import pollingCoordinator from '../utils/PollingCoordinator';
 import { API_BASE_URL } from "../config";
 import { TradingPanel } from "./trading";
+import { shapeTouchedAt } from "../utils/priceFormat";
 
 const log = new Logger('SingleSymbolAnalyzer', { level: 'info' });
 
@@ -77,7 +78,7 @@ const DAYS_OPTIONS_BY_INTERVAL = {
 };
 
 // Compara dos cajas TP/SL por sus valores, para no recrear el objeto en cada lectura periodica
-const sameTpslBox = (a, b) => !!a && !!b && a.symbol === b.symbol && a.entryPrice === b.entryPrice &&
+const sameTpslBox = (a, b) => !!a && !!b && a.symbol === b.symbol && a.id === b.id && a.entryPrice === b.entryPrice &&
   a.slPrice === b.slPrice && a.tpPrice === b.tpPrice && a.side === b.side;
 
 const SingleSymbolAnalyzer = () => {
@@ -273,56 +274,10 @@ const SingleSymbolAnalyzer = () => {
     wsManager.changeInterval(interval);
   }, [interval]);
 
-  // Sincronizar Swing Detector con backend
-  useEffect(() => {
-    const syncSwingDetector = async () => {
-      if (!indicatorStates["Swing Detector"]) return;
-
-      try {
-        log.debug(`Sincronizando Swing Detector: interval=${interval}, days=${days}`);
-        const response = await fetch(`${API_BASE_URL}/api/swing/config`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            interval: interval,
-            days: parseInt(days)
-          })
-        });
-
-        if (response.ok) {
-          log.debug('Swing Detector sincronizado');
-        }
-      } catch (error) {
-        log.error('Error sincronizando Swing Detector:', error);
-      }
-    };
-
-    syncSwingDetector();
-  }, [interval, days, indicatorStates["Swing Detector"]]);
-
-  // Notificar backend del timeframe activo
-  useEffect(() => {
-    const notifyBackendTimeframe = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/realtime/set-interval`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ interval: interval })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            log.info(`Backend monitoring interval: ${interval}`);
-          }
-        }
-      } catch (error) {
-        log.debug(`Could not notify backend: ${error.message}`);
-      }
-    };
-
-    notifyBackendTimeframe();
-  }, [interval]);
+  // El grafico ya NO cambia la config del Swing ni del servicio en tiempo real del backend.
+  // Antes, con "Swing Detector" marcado, mirar otro timeframe o cambiar los dias cambiaba el
+  // timeframe y los dias de las alertas que recibe el bot para todas las monedas, y lo guardaba.
+  // Ahora el timeframe de las alertas solo se cambia desde el modal del Swing, de forma explicita.
 
   // Fetch TPSLBox data from drawings API
   // Devuelve null si la moneda no tiene caja y undefined si no se pudo leer (error de red o HTTP)
@@ -334,13 +289,13 @@ const SingleSymbolAnalyzer = () => {
       const data = await response.json();
       if (!data.shapes || data.shapes.length === 0) return null;
 
-      // Buscar el primer TPSLBox (priorizar el mas reciente)
       const tpslBoxes = data.shapes.filter(s => s.type === 'tpsl' || s.type === 'tpsl-short');
 
       if (tpslBoxes.length === 0) return null;
 
-      // Tomar el mas reciente (ultimo en el array)
-      const tpslBox = tpslBoxes[tpslBoxes.length - 1];
+      // La caja tocada mas recientemente (creada o movida). Antes era la ultima del arreglo,
+      // es decir la ultima CREADA: mover una caja vieja no la elegia.
+      const tpslBox = tpslBoxes.reduce((best, s) => (shapeTouchedAt(s) >= shapeTouchedAt(best) ? s : best));
 
       // Determinar direccion basada en el tipo y la posicion de TP vs SL
       let side = 'Buy'; // LONG por defecto
@@ -353,6 +308,7 @@ const SingleSymbolAnalyzer = () => {
 
       return {
         symbol,
+        id: tpslBox.id,
         entryPrice: tpslBox.entryPrice,
         slPrice: tpslBox.slPrice,
         tpPrice: tpslBox.tpPrice,
