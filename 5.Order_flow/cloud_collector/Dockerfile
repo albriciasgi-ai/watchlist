@@ -23,6 +23,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar codigo
 COPY main.py .
 COPY footprint_collector.py .
+COPY tape_format.py .
+COPY tape_recorder.py .
 
 # Puerto (Northflank usa variable PORT)
 ENV PORT=8000

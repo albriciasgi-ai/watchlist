@@ -58,3 +58,20 @@ Un ⚠ en Step indica que el step es 1% o más del precio: cada vela queda en un
 Escribe solo `control.json` y `queue.txt`, los mismos que antes se editaban a mano según `OrderFlowData\LEEME.txt`, y lanza `ingest.py`, `build_store.py` y `queue_runner.py` sin ventana. No modifica las herramientas ni borra archivos.
 
 Usa el Python de `C:\Python314`, el mismo de la descarga. No hay que instalar nada.
+
+## Días recientes desde la nube (`sync_nube.py`, 12/11/2026)
+
+Baja del collector de Northflank los trades de los días que el almacén oficial todavía no tiene y arma con
+ellos su almacén y su flujo, con `build_store.py` y `build_flow.py` sin cambios:
+
+```
+C:\Python314\python.exe -B sync_nube.py
+C:\Python314\python.exe -B sync_nube.py --monedas BTCUSDT,ETHUSDT --dias 5
+```
+
+- Guarda en `OrderFlowData/live/tape`, `live/store` y `live/flow`, con los mismos nombres y formato que
+  `tape/`, `store/` y `flow/`. Van aparte porque `build_store.py` y el lector de App 1 no aceptan otros
+  nombres dentro de sus carpetas.
+- Un día que ya existe en `tape/` (oficial) no se baja: el oficial manda.
+- Solo baja lo que cambió en la nube desde la última vez (`.json` junto a cada `.tape`).
+- Necesita el collector nuevo desplegado (rutas `/api/tape/...`).

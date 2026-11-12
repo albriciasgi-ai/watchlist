@@ -53,6 +53,25 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Collector de Northflank - 12 Noviembre 2026: Trades en el Formato del Almacén de App 1 (fase 4, integración)
+
+**Pedido:** primer paso de la integración: que el order flow en vivo sea igual al de App 1. Un solo almacén (el de App 1, desde los archivos diarios de Bybit), el collector de la nube para los días recientes que el almacén aún no tiene, y el backend local para las últimas horas.
+
+**Cambios:**
+1. **Collector:** además de los footprints de 1 minuto (App 9 los sigue usando), graba todos los trades en `.tape`, el mismo formato de `OrderFlowData/tools/ingest.py`. Un archivo por moneda y día UTC, guardado cada 5 min, con los huecos anotados (cortes y reinicios). Rutas `/api/tape/days` y `/api/tape/{symbol}/{day}`
+2. **`/health`:** ya no descomprime todos los archivos en cada consulta
+3. **`PanelOrderFlow/sync_nube.py`:** baja esos días a `OrderFlowData/live/` y arma su almacén y su flujo con `build_store.py` y `build_flow.py` sin cambios. El día oficial siempre manda
+4. **Pruebas:** `5.Order_flow/cloud_collector/tests/tape_checks.py` (16 sin conexión)
+
+**IMPORTANTE:**
+- Hay que desplegar el collector en Northflank para que empiece a grabar; mientras tanto la nube sigue como estaba.
+- Probado en el PC con BTC, ETH y XRP: 18 de 18 minutos iguales a las velas oficiales de Bybit en volumen y cierre; XRP pasa de celdas de 0.005 a 0.0001. Falta comparar un día completo de la nube contra el archivo oficial.
+- Falta que el lector de App 1 (`footprint_store.py`) lea `OrderFlowData/live/` cuando el día oficial no existe: es el siguiente paso de la integración.
+
+**Ver:** `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Trades en el formato del almacen de App 1" y `PanelOrderFlow/LEEME.md`
+
+---
+
 ### APP 7 (WatchlistDesktop) + Backend de App 2 - 11 Noviembre 2026: Pruebas y Correcciones, Fases 1 y 2
 
 **Pedido:** probar App 7 como App 8 y App 9 antes de seguir con la integración, y corregir las fases 1 y 2 del diagnóstico.

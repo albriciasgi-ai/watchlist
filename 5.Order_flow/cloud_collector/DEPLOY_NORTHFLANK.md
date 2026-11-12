@@ -159,3 +159,28 @@ Con el tier gratuito tienes:
 ### Datos perdidos al redeploy
 - Si configuraste el volumen correctamente, los datos persisten
 - Si no hay volumen, se pierden al redeploy
+
+## Trades en el formato del almacen de App 1 (12 Noviembre 2026)
+
+Ademas de los footprints de 1 minuto (que App 9 sigue usando), el collector graba **todos los trades**
+en el formato compacto del almacen de App 1 (`.tape`, el mismo que `OrderFlowData/tools/ingest.py`
+arma desde public.bybit.com). De ahi `build_store.py` y `build_flow.py` sacan el almacen por minuto y
+precio fino y el flujo, igual que de un dia oficial. Sirve para los dias que Bybit aun no publico.
+
+- **Archivos:** `/data/tape/BTCUSDT/2026/BTCUSDT_2026-11-12.tape`, uno por moneda y dia UTC. El dia en
+  curso se reescribe cada `TAPE_SNAPSHOT_SECONDS` (300 por defecto) con temporal y reemplazo.
+- **Huecos:** los cortes del WebSocket y los reinicios quedan anotados en la cabecera (`gaps`). Un dia
+  grabado desde su inicio y sin huecos queda `complete`.
+- **Rutas nuevas:**
+  - `GET /api/tape/days?symbol=BTCUSDT`: dias grabados, tamano, trades, `complete` y huecos.
+  - `GET /api/tape/{symbol}/{day}`: el archivo `.tape` del dia.
+- **Variables nuevas:** `TAPE_KEEP_DAYS` (30) y `TAPE_SNAPSHOT_SECONDS` (300).
+- **Espacio:** un dia de BTC pesa unos 3 MB; las 21 monedas, del orden de 15 a 20 MB por dia
+  (unos 0.5 GB con 30 dias), aparte de los footprints JSON.
+- **`/health`** ya no descomprime todos los archivos (tardaba mas de un minuto).
+- **En tu PC:** `PanelOrderFlow/sync_nube.py` baja esos dias a `OrderFlowData/live/` y arma su almacen.
+- **Pruebas sin conexion:** `python -B tests/tape_checks.py` (16).
+
+Probado en el PC con BTC, ETH y XRP: los 18 minutos completos grabados coincidieron exactos con las
+velas de 1 minuto oficiales de Bybit en volumen y cierre, y un reinicio brusco recupero lo guardado y
+anoto el hueco. Falta comparar un dia completo grabado en la nube contra el archivo oficial de Bybit.
