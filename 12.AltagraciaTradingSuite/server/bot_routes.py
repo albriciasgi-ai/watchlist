@@ -7,6 +7,9 @@
 #   CAMBIAR_CLAVES   credenciales y cuentas de Bybit (nunca se guardan ni se escriben en el registro de la suite)
 #   CAMBIAR_CUENTA   cambiar la cuenta activa del bot (alertas y ordenes pasan a operar en ella)
 #   ENVIAR_ORDEN_REAL  orden manual: siempre con stop y objetivo, del lado correcto del precio
+#   CERRAR_POSICION  cerrar una posicion a mercado
+#   MOVER_STOP       mover el SL o el TP de una posicion (el SL nunca se quita)
+#   CANCELAR_ORDEN   cancelar una orden de entrada pendiente
 import re
 from decimal import Decimal, InvalidOperation
 
@@ -14,6 +17,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
 ACCOUNT_RE = re.compile(r"^[a-f0-9]{12}$")
+ORDER_ID_RE = re.compile(r"^[A-Za-z0-9-]{1,64}$")
 ORIGINS = {"ANALIZADOR", "WATCHLIST", "ORDERFLOW"}
 DIRECTIONS = {"LONG", "SHORT", "BOTH", "DISABLED"}
 
@@ -207,6 +211,54 @@ def make_router(bot) -> APIRouter:
     async def delete_account(account_id: str, request: Request):
         await _body(request, "CAMBIAR_CLAVES")
         return await bot("DELETE", f"/api/accounts/{_account(account_id)}")
+
+    # ---------- posiciones y ordenes abiertas (grafico y panel) ----------
+    def _side(value) -> str:
+        if value not in ("Buy", "Sell"):
+            raise HTTPException(status_code=400, detail="side debe ser Buy (long) o Sell (short)")
+        return value
+
+    @r.get("/orders/open")
+    async def open_orders(symbol: str = None):
+        return await bot("GET", "/api/orders/open", params={"symbol": _symbol(symbol)} if symbol else None)
+
+    @r.get("/executions")
+    async def executions(limit: int = 100, symbol: str = None):
+        params = {"limit": max(1, min(limit, 500))}
+        if symbol:
+            params["symbol"] = _symbol(symbol)
+        return await bot("GET", "/api/executions/recent", params=params)
+
+    @r.get("/stream")
+    async def stream():
+        return await bot("GET", "/api/stream/status")
+
+    @r.post("/position/close")
+    async def position_close(request: Request):
+        b = await _body(request, "CERRAR_POSICION")
+        return await bot("POST", "/api/position/close", json={"symbol": _symbol(b.get("symbol")), "side": _side(b.get("side"))})
+
+    @r.post("/position/trading-stop")
+    async def position_trading_stop(request: Request):
+        b = await _body(request, "MOVER_STOP")
+        payload = {"symbol": _symbol(b.get("symbol")), "side": _side(b.get("side"))}
+        stop = _number(b, "stop_loss", required=False)  # positivo: el SL no se quita
+        target = _number(b, "take_profit", required=False, positive=False)  # 0 quita el TP
+        if stop is None and target is None:
+            raise HTTPException(status_code=400, detail="falta stop_loss o take_profit")
+        if stop is not None:
+            payload["stop_loss"] = stop
+        if target is not None:
+            payload["take_profit"] = target
+        return await bot("POST", "/api/position/trading-stop", json=payload)
+
+    @r.post("/orders/cancel")
+    async def order_cancel(request: Request):
+        b = await _body(request, "CANCELAR_ORDEN")
+        order_id = str(b.get("order_id") or "")
+        if not ORDER_ID_RE.match(order_id):
+            raise HTTPException(status_code=400, detail="order_id invalido")
+        return await bot("POST", "/api/orders/cancel", json={"symbol": _symbol(b.get("symbol")), "order_id": order_id})
 
     # ---------- orden manual (panel de trading) ----------
     @r.post("/trade")

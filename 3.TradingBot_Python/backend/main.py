@@ -15,13 +15,13 @@ Noviembre 2026 (correcciones de la auditoria):
 - Interruptor para pausar todo el trading
 """
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Request
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
-from decimal import Decimal
+from decimal import Decimal, ROUND_CEILING, ROUND_FLOOR, ROUND_HALF_UP
 import json
 import asyncio
 import os
@@ -36,6 +36,8 @@ from trading.order_manager import OrderManager
 from trading.risk_calculator import RiskCalculator, DEFAULT_TAKER_FEE
 from trading.direction_manager import DirectionManager
 from trading.alert_parser import AlertParser
+from trading.private_stream import PrivateStream, order_record
+from trading.safe_io import write_json_atomic
 
 # Rutas absolutas: el backend funciona aunque se arranque desde otra carpeta
 BACKEND_DIR = Path(__file__).resolve().parent
@@ -216,10 +218,7 @@ class AccountStore:
         return data
 
     def save(self, data: Dict[str, Any]) -> None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_name(self.path.name + ".tmp")
-        tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
-        os.replace(tmp, self.path)
+        write_json_atomic(self.path, data)
 
     @staticmethod
     def new_account(name: str, api_key: str, api_secret: str, demo: bool) -> Dict[str, Any]:
@@ -314,6 +313,11 @@ class AppState:
         # Mientras cambia la cuenta (o las claves) ninguna orden empieza, y una orden en curso impide el cambio:
         # asi una orden nunca revisa la posicion en una cuenta y se envia por otra
         self.account_switching: bool = False
+        # Cuenta activa en tiempo real (WebSocket privado + foto por REST): posiciones, ordenes y ejecuciones
+        self.stream: Optional[PrivateStream] = None
+        # Posiciones sin SL: desde cuando se ven asi y a cuales ya se aviso (una vez por posicion)
+        self.unprotected_since: Dict[str, float] = {}
+        self.unprotected_alerted: set = set()
         self.order_history_file = CONFIG_DIR / "order_history.json"
         self.bot_settings_file = CONFIG_DIR / "bot_settings.json"
         self.symbol_locks: Dict[str, asyncio.Lock] = {}  # Lock per symbol to prevent race conditions
@@ -359,9 +363,7 @@ class AppState:
     def save_trading_config(self):
         """Guarda solo los campos de configuracion de cada moneda."""
         coins = [{k: c[k] for k in CONFIG_FIELDS if k in c} for c in self.trading_config.values()]
-        TRADING_CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
-        with open(TRADING_CONFIG_FILE, 'w') as f:
-            json.dump({"coins": coins}, f, indent=2)
+        write_json_atomic(TRADING_CONFIG_FILE, {"coins": coins})
 
     def load_credentials(self):
         """Load API credentials from JSON"""
@@ -418,8 +420,7 @@ class AppState:
                 "api_secret": api_secret,
                 "demo": demo
             }
-            with open(self.credentials_file, 'w') as f:
-                json.dump(data, f, indent=2)
+            write_json_atomic(self.credentials_file, data)
             mode_str = "Demo Trading" if demo else "Real Trading"
             self.log("info", f"Credentials saved to file ({mode_str})")
         except Exception as e:
@@ -506,17 +507,14 @@ class AppState:
                 "trading_paused": self.trading_paused,
                 "taker_fee_rate": float(self.taker_fee_rate)
             }
-            with open(self.bot_settings_file, 'w') as f:
-                json.dump(settings, f, indent=2)
+            write_json_atomic(self.bot_settings_file, settings)
         except Exception as e:
             self.log("error", f"Failed to save bot settings: {str(e)}")
 
     def save_order_history(self):
         """Save order history to JSON file"""
         try:
-            self.order_history_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.order_history_file, 'w') as f:
-                json.dump(self.order_history, f, indent=2)
+            write_json_atomic(self.order_history_file, self.order_history)
         except Exception as e:
             self.log("error", f"Failed to save order history: {str(e)}")
 
@@ -704,6 +702,97 @@ async def startup_sync():
         state.log("info", f"[PRECISION] Synced {len(summary['results'])} symbols, {len(summary['errors'])} errors")
     except Exception as e:
         state.log("warning", f"Startup sync failed: {e}")
+    await review_account()
+
+
+# ==========================
+# Cuenta en tiempo real (paso 4 de la integracion, 12/11/2026)
+# ==========================
+
+def private_stream_enabled() -> bool:
+    return os.environ.get("BOT_PRIVATE_STREAM", "1") != "0"
+
+
+async def restart_stream() -> None:
+    """El WebSocket privado sigue al cliente activo: al arrancar y al cambiar de cuenta o de claves."""
+    old, state.stream = state.stream, None
+    if old:
+        await old.stop()
+    state.unprotected_since.clear()
+    if state.bybit_client and private_stream_enabled():
+        state.stream = PrivateStream(state.bybit_client, on_event=state.broadcast_event,
+                                     ws_url=os.environ.get("BOT_PRIVATE_WS_URL") or None)
+        state.stream.start()
+
+
+async def live_book():
+    """
+    Posiciones y ordenes abiertas de la cuenta activa: del WebSocket privado si esta al dia; si no, una foto
+    por REST (dos llamadas, sin importar cuantas monedas haya). Devuelve (libro, fuente).
+    """
+    client = state.bybit_client
+    if not client:
+        raise HTTPException(status_code=400, detail="Credentials not configured")
+    stream = state.stream
+    if stream is not None and stream.client is client:
+        if not stream.fresh():
+            await stream.snapshot()
+        if stream.ready:
+            return stream, ("stream" if stream.connected else "rest")
+    book = PrivateStream(client)
+    if await book.snapshot():
+        return book, "rest"
+    raise HTTPException(status_code=502, detail=f"Bybit no respondio: {book.last_error}")
+
+
+async def review_account() -> None:
+    """Al arrancar y al cambiar de cuenta: que hay abierto en Bybit. Solo lee y avisa; no toca nada."""
+    try:
+        book, _ = await live_book()
+    except Exception as e:
+        state.log("warning", f"[REVISION] No se pudo revisar la cuenta: {getattr(e, 'detail', e)}")
+        return
+    positions = book.position_list()
+    entries = [o for o in book.order_list() if o.get("entry")]
+    state.log("info", f"[REVISION] En Bybit: {len(positions)} posiciones abiertas y {len(entries)} ordenes de entrada pendientes")
+    await check_unprotected(positions, grace=0)
+
+
+async def check_unprotected(positions: List[Dict[str, Any]], grace: float = 20.0) -> None:
+    """
+    Aviso critico, una vez por posicion, si sigue sin stop loss pasados `grace` segundos. El bot pone el SL en
+    uno o dos segundos tras llenar; una posicion abierta a mano en Bybit sin SL tambien se avisa.
+    """
+    now = time.time()
+    open_keys = set()
+    for p in positions:
+        key = f"{p.get('symbol')}:{p.get('side')}:{p.get('positionIdx')}:{p.get('createdTime')}"
+        open_keys.add(key)
+        if p.get("stopLoss"):
+            state.unprotected_since.pop(key, None)
+            continue
+        since = state.unprotected_since.setdefault(key, now)
+        if now - since >= grace and key not in state.unprotected_alerted:
+            state.unprotected_alerted.add(key)
+            await state._handle_critical_alert({
+                "type": "POSITION_WITHOUT_SL", "symbol": p.get("symbol"), "severity": "CRITICAL", "timestamp": now,
+                "message": f"Posicion {p.get('side')} de {p.get('size')} en Bybit sin stop loss (entrada {p.get('entryPrice')})",
+            })
+    for key in list(state.unprotected_since):
+        if key not in open_keys:
+            state.unprotected_since.pop(key, None)
+
+
+async def unprotected_watch() -> None:
+    """Cada 10 s revisa con lo que ya sabe el WebSocket privado (no consulta Bybit)."""
+    while True:
+        await asyncio.sleep(10)
+        try:
+            stream = state.stream
+            if stream is not None and stream.ready:
+                await check_unprotected(stream.position_list())
+        except Exception as e:
+            state.log("warning", f"[REVISION] {e}")
 
 
 # ==========================
@@ -718,6 +807,8 @@ async def startup():
     refresh_active_account()  # migra credentials.json a la "Cuenta principal" la primera vez
     state.load_order_history()
     state.load_bot_settings()
+    await restart_stream()
+    asyncio.create_task(unprotected_watch())
     if state.bybit_client:
         asyncio.create_task(startup_sync())
     state.log("success", "Backend ready")
@@ -726,6 +817,8 @@ async def startup():
 @app.on_event("shutdown")
 async def shutdown():
     state.log("info", "Trading Bot Backend shutting down...")
+    if state.stream:
+        await state.stream.stop()
 
     # Close HTTP client gracefully to release connection pool
     if state.bybit_client:
@@ -864,6 +957,7 @@ async def apply_credentials(api_key: str, api_secret: str, demo: bool) -> Dict[s
         state.order_manager = OrderManager(state.bybit_client)
         # Set callback for critical alerts (SL/TP failures)
         state.order_manager.set_critical_alert_callback(state._handle_critical_alert)
+        await restart_stream()  # el WebSocket privado pasa a la cuenta nueva
 
         # Save credentials to file
         state.save_credentials(req.api_key, req.api_secret, req.demo)
@@ -2300,58 +2394,212 @@ async def clear_order_history():
 # ==========================
 
 @app.get("/api/positions")
-async def get_all_positions():
+async def get_all_positions(all_symbols: bool = Query(False, alias="all")):
     """
-    Get all open positions - Used by Trading Journal for position monitoring.
-    Returns list of positions with details needed for journal entries.
-    Incluye ambos lados en hedge aunque el modo aun no se haya detectado.
+    Posiciones abiertas de la cuenta activa (las usan el Trading Journal y la suite). Ambos lados en hedge.
+    Del WebSocket privado si esta al dia; si no, una foto por REST: dos llamadas a Bybit, no una por moneda.
+    Por defecto solo las monedas configuradas en el bot, como antes; ?all=true trae todas las de USDT.
     """
+    if not state.bybit_client:
+        return {"success": False, "error": "Credentials not configured", "positions": []}
     try:
-        if not state.bybit_client:
-            return {
-                "success": False,
-                "error": "Credentials not configured",
-                "positions": []
-            }
-
-        positions = []
-        for symbol in state.trading_config.keys():
-            try:
-                position = await state.bybit_client.get_position(symbol)
-                if not position.get("success"):
-                    continue
-                for p in position.get("positions", []):
-                    positions.append({
-                        "symbol": symbol,
-                        "side": p.get("side"),
-                        "size": p.get("size"),
-                        "entryPrice": p.get("entryPrice"),
-                        "markPrice": p.get("markPrice"),
-                        "unrealizedPnl": p.get("unrealizedPnl"),
-                        "leverage": p.get("leverage"),
-                        "positionValue": p.get("positionValue"),
-                        "takeProfit": p.get("takeProfit"),
-                        "stopLoss": p.get("stopLoss"),
-                        "createdTime": p.get("createdTime"),
-                        "updatedTime": p.get("updatedTime")
-                    })
-            except Exception as e:
-                state.log("warning", f"Failed to get position for {symbol}: {e}")
-
-        return {
-            "success": True,
-            "positions": positions,
-            "count": len(positions),
-            "timestamp": datetime.now().isoformat()
-        }
-
+        book, source = await live_book()
+    except HTTPException as e:
+        return {"success": False, "error": e.detail, "positions": []}
     except Exception as e:
         state.log("error", f"Error getting all positions: {str(e)}")
-        return {
-            "success": False,
-            "error": str(e),
-            "positions": []
-        }
+        return {"success": False, "error": str(e), "positions": []}
+    positions = [p for p in book.position_list() if all_symbols or p["symbol"] in state.trading_config]
+    return {"success": True, "positions": positions, "count": len(positions), "source": source,
+            "account": state.active_account, "timestamp": datetime.now().isoformat()}
+
+
+# ==========================
+# Posiciones y ordenes desde la suite (paso 4 de la integracion, 12/11/2026)
+# ==========================
+
+_SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
+
+
+class PositionCloseRequest(BaseModel):
+    symbol: str = Field(min_length=2, max_length=20)
+    side: str = Field(description="Lado de la POSICION: Buy (long) o Sell (short)")
+
+
+class TradingStopRequest(BaseModel):
+    symbol: str = Field(min_length=2, max_length=20)
+    side: str
+    stop_loss: Optional[Decimal] = None
+    take_profit: Optional[Decimal] = None  # 0 = quitar el TP
+
+
+class CancelOrderRequest(BaseModel):
+    symbol: str = Field(min_length=2, max_length=20)
+    order_id: str = Field(min_length=1, max_length=64)
+
+
+def _symbol_or_400(value: Optional[str]) -> str:
+    symbol = (value or "").upper()
+    if not _SYMBOL_RE.match(symbol):
+        raise HTTPException(status_code=400, detail="simbolo invalido")
+    return symbol
+
+
+def _position_side(value: str) -> str:
+    side = {"buy": "Buy", "long": "Buy", "sell": "Sell", "short": "Sell"}.get(str(value or "").strip().lower())
+    if not side:
+        raise HTTPException(status_code=400, detail="side debe ser Buy (long) o Sell (short)")
+    return side
+
+
+def _same_account(client) -> None:
+    """Con el candado de la moneda tomado: si la cuenta cambio o esta cambiando, nada sale a Bybit."""
+    if state.account_switching or client is not state.bybit_client:
+        raise HTTPException(status_code=409, detail="La cuenta del bot esta cambiando: intentalo de nuevo")
+
+
+@app.get("/api/orders/open")
+async def get_open_orders_route(symbol: Optional[str] = None):
+    """Ordenes abiertas de la cuenta activa. `entry` dice si abre o aumenta posicion (no es TP/SL ni reduce-only)."""
+    if not state.bybit_client:
+        return {"success": False, "error": "Credentials not configured", "orders": []}
+    sym = _symbol_or_400(symbol) if symbol else None
+    book, source = await live_book()
+    orders = book.order_list(sym)
+    return {"success": True, "orders": orders, "count": len(orders), "source": source}
+
+
+@app.get("/api/executions/recent")
+async def recent_executions(limit: int = 100, symbol: Optional[str] = None):
+    """Ejecuciones recibidas por el WebSocket privado desde que arranco (las ultimas 500), mas viejas primero."""
+    stream = state.stream
+    rows = list(stream.executions) if stream else []
+    if symbol:
+        sym = _symbol_or_400(symbol)
+        rows = [r for r in rows if r.get("symbol") == sym]
+    return {"success": True, "executions": rows[-max(1, min(limit, 500)):], "streaming": bool(stream and stream.connected)}
+
+
+@app.get("/api/stream/status")
+async def stream_status():
+    """Estado del WebSocket privado de la cuenta activa (sin claves)."""
+    if not state.stream:
+        return {"success": True, "enabled": private_stream_enabled(), "running": False}
+    return {"success": True, "enabled": True, "running": True, **state.stream.status()}
+
+
+@app.post("/api/position/close")
+async def close_position_route(req: PositionCloseRequest):
+    """Cierra a mercado (reduce-only) la posicion de ese lado. Funciona tambien con el bot en pausa: reduce riesgo."""
+    symbol, side = _symbol_or_400(req.symbol), _position_side(req.side)
+    client = state.bybit_client
+    if not client or not state.order_manager:
+        raise HTTPException(status_code=400, detail="Credentials not configured")
+    async with state.get_symbol_lock(symbol):
+        _same_account(client)
+        result = await state.order_manager.close_position(symbol, side)
+    if result.get("closed") and result.get("note"):
+        raise HTTPException(status_code=404, detail=f"No hay posicion {side} abierta en {symbol}")
+    if not result.get("closed"):
+        state.log("error", f"[POSICION] No se pudo cerrar {symbol} {side}: {result.get('error')}")
+        raise HTTPException(status_code=502, detail=(
+            f"Bybit no confirmo el cierre: {result.get('error')}. Revisa la posicion en Bybit antes de reintentar"))
+    order_id = ((result.get("order") or {}).get("result") or {}).get("orderId")
+    state.log("success", f"[POSICION] {symbol} {side} cerrada a mercado a pedido (orden {order_id})")
+    await state.broadcast_event("position_closed", {"symbol": symbol, "side": side, "orderId": order_id, "source": "manual"})
+    if state.stream:
+        asyncio.create_task(state.stream.snapshot())
+    return {"success": True, "symbol": symbol, "side": side, "orderId": order_id}
+
+
+@app.post("/api/position/trading-stop")
+async def position_trading_stop(req: TradingStopRequest):
+    """
+    Mueve el SL o el TP de toda la posicion. El SL nunca se quita, solo se mueve; el TP se quita con 0.
+    El SL de un long va bajo el precio actual y el TP encima (al reves en un short). El SL se lleva al tick hacia
+    el precio, para no aumentar el riesgo.
+    """
+    symbol, side = _symbol_or_400(req.symbol), _position_side(req.side)
+    if req.stop_loss is None and req.take_profit is None:
+        raise HTTPException(status_code=400, detail="falta stop_loss o take_profit")
+    if req.stop_loss is not None and req.stop_loss <= 0:
+        raise HTTPException(status_code=400, detail="El stop loss no se quita: solo se mueve")
+    if req.take_profit is not None and req.take_profit < 0:
+        raise HTTPException(status_code=400, detail="take_profit invalido")
+    client = state.bybit_client
+    if not client:
+        raise HTTPException(status_code=400, detail="Credentials not configured")
+    long = side == "Buy"
+    async with state.get_symbol_lock(symbol):
+        _same_account(client)
+        pos = await client.get_position(symbol)  # tambien aprende el modo (one-way o hedge) para el positionIdx
+        if not pos.get("success"):
+            raise HTTPException(status_code=502, detail=f"No se pudo leer la posicion: {pos.get('error')}")
+        if not any(p.get("side") == side for p in pos.get("positions", [])):
+            raise HTTPException(status_code=404, detail=f"No hay posicion {side} abierta en {symbol}")
+        last = await client.get_last_price(symbol)
+        if last is None:
+            raise HTTPException(status_code=503, detail="Bybit no dio el precio actual: intentalo de nuevo")
+        prec = await client.get_precision(symbol)
+        tick = prec["tick_size"] if prec else Decimal("0")
+
+        def fmt(value: Decimal) -> str:
+            return OrderManager._fmt(value, tick) if tick > 0 else format(value.normalize(), "f")
+
+        sl_txt = tp_txt = None
+        if req.stop_loss is not None:
+            sl = OrderManager._round_to_tick(Decimal(str(req.stop_loss)), tick, ROUND_CEILING if long else ROUND_FLOOR)
+            if (long and sl >= last) or (not long and sl <= last):
+                raise HTTPException(status_code=400, detail=(
+                    f"El stop de un {'long' if long else 'short'} va {'por debajo' if long else 'por encima'} del precio actual ({last})"))
+            sl_txt = fmt(sl)
+        if req.take_profit is not None:
+            tp = Decimal(str(req.take_profit))
+            if tp == 0:
+                tp_txt = "0"
+            else:
+                tp = OrderManager._round_to_tick(tp, tick, ROUND_HALF_UP)
+                if (long and tp <= last) or (not long and tp >= last):
+                    raise HTTPException(status_code=400, detail=(
+                        f"El objetivo de un {'long' if long else 'short'} va {'por encima' if long else 'por debajo'} del precio actual ({last})"))
+                tp_txt = fmt(tp)
+        result = await client.set_trading_stop(symbol, side, take_profit=tp_txt, stop_loss=sl_txt)
+    if result.get("retCode") != 0:
+        raise HTTPException(status_code=502, detail=f"Bybit rechazo el cambio: {result.get('retMsg')} (retCode={result.get('retCode')})")
+    changes = [f"SL {sl_txt}" if sl_txt else "", ("TP quitado" if tp_txt == "0" else f"TP {tp_txt}") if tp_txt else ""]
+    state.log("success", f"[POSICION] {symbol} {side}: {', '.join(c for c in changes if c)}")
+    if state.stream:
+        asyncio.create_task(state.stream.snapshot())
+    return {"success": True, "symbol": symbol, "side": side, "stop_loss": sl_txt, "take_profit": tp_txt}
+
+
+@app.post("/api/orders/cancel")
+async def cancel_order_route(req: CancelOrderRequest):
+    """Cancela una orden de ENTRADA pendiente. Las de TP o SL de una posicion no: esas se mueven desde la posicion."""
+    symbol = _symbol_or_400(req.symbol)
+    client = state.bybit_client
+    if not client:
+        raise HTTPException(status_code=400, detail="Credentials not configured")
+    async with state.get_symbol_lock(symbol):
+        _same_account(client)
+        orders = await client.get_open_orders(symbol)
+        if orders is None:
+            raise HTTPException(status_code=502, detail="Bybit no respondio: no se pudo revisar la orden")
+        order = next((o for o in orders if o.get("orderId") == req.order_id), None)
+        if order is None:
+            raise HTTPException(status_code=404, detail="Esa orden ya no esta abierta")
+        if not order_record(order)["entry"]:
+            raise HTTPException(status_code=400, detail="Esa orden es el TP o el SL de una posicion: muevelo desde la posicion")
+        result = await client.cancel_order(symbol, req.order_id)
+        if result.get("retCode") != 0:
+            # Un reintento tras un corte pudo cancelarla y Bybit responde que ya no existe: se mira de nuevo
+            again = await client.get_open_orders(symbol)
+            if again is None or any(o.get("orderId") == req.order_id for o in again):
+                raise HTTPException(status_code=502, detail=f"Bybit no cancelo la orden: {result.get('retMsg')} (retCode={result.get('retCode')})")
+    state.log("success", f"[ORDEN] {symbol}: orden {req.order_id} cancelada a pedido")
+    if state.stream:
+        asyncio.create_task(state.stream.snapshot())
+    return {"success": True, "symbol": symbol, "orderId": req.order_id}
 
 
 @app.get("/api/alerts/recent")

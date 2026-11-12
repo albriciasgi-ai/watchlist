@@ -60,6 +60,8 @@ frontend/cache/
 config/credentials.json
 config/accounts.json
 config/accounts.json.tmp
+# Temporales del guardado seguro (trading.safe_io): solo existen un instante al escribir
+config/*.tmp
 *.pem
 *.key
 

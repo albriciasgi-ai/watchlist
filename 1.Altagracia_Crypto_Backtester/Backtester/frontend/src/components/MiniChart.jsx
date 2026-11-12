@@ -31,6 +31,7 @@ import { useUiTheme } from './useUiTheme.js';
 import { Icon } from './uiIcons.jsx';
 import './backtesting/Observer.css';
 import { isBlind, maskDate, maskPrice, maskVolume, priceText, pricesHidden, unmaskPrice } from './backtesting/blindClock';
+import { drawPositionLines, hitPositionTarget } from './positionLines.js';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
@@ -205,6 +206,8 @@ const MiniChart = forwardRef(({
   oiMode,
   getTradeBoundaries,
   getTradeBoxes = null, // Cajas TP/SL de los trades, para el 2.º gráfico: { side, entry, stop, target, start, end }
+  getPositionLines = null, // Posiciones y órdenes reales (suite en vivo), ver positionLines.js. App 1 no lo pasa
+  onPositionAction = null, // { type: 'close' | 'cancel' | 'move' | 'remove', line, field, price }: lo decide quien da los datos
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -228,6 +231,10 @@ const MiniChart = forwardRef(({
   onDrawingsChange = null  // 🔧 FIX: Callback para sincronizar dibujos entre tabs
 }, ref) => {
   const canvasRef = useRef(null);
+  const positionTargetsRef = useRef([]); // Etiquetas de posiciones que responden al mouse (último dibujo)
+  const positionDragRef = useRef(null);  // SL o TP que se está arrastrando: { lineId, line, field, price, startY, moved }
+  const positionPressRef = useRef(null); // × presionada: la acción sale al soltar sobre la misma ×
+  const positionPriceRef = useRef(null); // Último precio con que se dibujaron las posiciones (va en cada acción)
 
   const candlesRef = useRef([]);
   const inProgressCandleRef = useRef(null);
@@ -358,6 +365,8 @@ const MiniChart = forwardRef(({
         console.log(`[MiniChart ${symbol} ${interval}] Canvas forzado a redibujar`);
       }
     },
+    // Lo que responde al mouse en las posiciones reales (último dibujo), para revisar desde la consola
+    getPositionTargets: () => positionTargetsRef.current,
     // 🎯 NUEVO: Obtener el IndicatorManager (para acceso directo desde BacktestingApp)
     getIndicatorManager: () => {
       return indicatorManagerRef.current;
@@ -1704,6 +1713,25 @@ const MiniChart = forwardRef(({
       ctx.restore();
     }
 
+    // Posiciones y órdenes reales (suite en vivo): entrada con P&L al último precio, SL, TP, liquidación y entradas pendientes
+    positionTargetsRef.current = [];
+    const positionLines = getPositionLines?.() || [];
+    if (positionLines.length > 0 && scaleConverterRef.current) {
+      try {
+        const lastClose = displayCandles[displayCandles.length - 1]?.close;
+        positionPriceRef.current = Number.isFinite(lastClose) ? lastClose : livePrice;
+        positionTargetsRef.current = drawPositionLines(ctx, positionLines, {
+          priceToY: scaleConverterRef.current.priceToY,
+          left: marginLeft, right: width - marginRight, top: marginTop, bottom: marginTop + priceChartHeight, axisRight: width,
+          lastPrice: positionPriceRef.current,
+          fmt: (price) => priceText(price, pxDecimals),
+          drag: positionDragRef.current,
+        });
+      } catch (error) {
+        console.error(`[${symbol}] Error dibujando posiciones:`, error);
+      }
+    }
+
     // 🎯 Líneas verticales de todos los trades. Salen de las órdenes, que son lo que guarda la sesión
     const tradeLines = getTradeBoundaries?.() || [];
     if (tradeLines.length > 0 && scaleConverterRef.current) {
@@ -2402,6 +2430,15 @@ const MiniChart = forwardRef(({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    // SL o TP de una posición real que se arrastra: la línea sigue al mouse hasta soltar
+    if (positionDragRef.current) {
+      const drag = positionDragRef.current;
+      if (scaleConverterRef.current) drag.price = scaleConverterRef.current.yToPrice(y);
+      if (Math.abs(y - drag.startY) > 3) drag.moved = true;
+      drawChart(candlesRef.current, lastPriceRef.current, null, null);
+      return;
+    }
+
     // 🎯 NUEVO: Measurement tool en progreso
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring()) {
       measurementToolRef.current.handleMouseMove(x, y);
@@ -2488,7 +2525,8 @@ const MiniChart = forwardRef(({
     } else {
       setMousePos({ x, y });
       drawChart(candlesRef.current, lastPriceRef.current, x, y);
-      canvas.style.cursor = levelsNear(levelTargetsRef.current, x, y).length ? 'pointer' : 'crosshair';
+      const positionHit = onPositionAction ? hitPositionTarget(positionTargetsRef.current, x, y) : null;
+      canvas.style.cursor = positionHit ? positionHit.cursor : (levelsNear(levelTargetsRef.current, x, y).length ? 'pointer' : 'crosshair');
     }
   };
 
@@ -2519,6 +2557,21 @@ const MiniChart = forwardRef(({
 
     // 🎯 NUEVO: Usar el scaleConverter guardado del último render
     const scaleConverter = scaleConverterRef.current;
+
+    // Posiciones reales (suite), solo con el cursor: × cierra o cancela al soltar; la etiqueta de SL o TP se arrastra
+    if (e.button === 0 && onPositionAction && (!drawingManagerRef.current || drawingManagerRef.current.currentTool === 'select')) {
+      const hit = hitPositionTarget(positionTargetsRef.current, x, y);
+      if (hit) {
+        if (hit.action === 'drag' || hit.action === 'create') {
+          positionDragRef.current = { lineId: hit.line.id, line: hit.line, field: hit.field, price: hit.price, startY: y, moved: false };
+          canvas.style.cursor = 'ns-resize';
+        } else {
+          positionPressRef.current = hit;
+        }
+        dragStateRef.current = { isDragging: false, potentialDrag: false };
+        return;
+      }
+    }
 
     // 🎯 NUEVO: Middle click para measurement tool
     if (e.button === 1 && measurementToolRef.current && scaleConverter) {
@@ -2577,6 +2630,29 @@ const MiniChart = forwardRef(({
   };
 
   const handleMouseUp = (e) => {
+    // × de una posición u orden real: la acción sale solo si se suelta sobre la misma ×
+    if (positionPressRef.current) {
+      const press = positionPressRef.current;
+      positionPressRef.current = null;
+      const rect = canvasRef.current?.getBoundingClientRect();
+      const hit = rect ? hitPositionTarget(positionTargetsRef.current, e.clientX - rect.left, e.clientY - rect.top) : null;
+      if (hit && hit.action === press.action && hit.line.id === press.line.id && hit.field === press.field) {
+        onPositionAction?.({ type: press.action, line: press.line, field: press.field, lastPrice: positionPriceRef.current });
+      }
+      return;
+    }
+    // SL o TP arrastrado: se propone el precio nuevo (quien da los datos confirma y lo envía)
+    if (positionDragRef.current) {
+      const drag = positionDragRef.current;
+      positionDragRef.current = null;
+      drawChart(candlesRef.current, lastPriceRef.current, null, null, true);
+      if (canvasRef.current) canvasRef.current.style.cursor = 'crosshair';
+      if (drag.moved && Number.isFinite(drag.price)) {
+        onPositionAction?.({ type: 'move', line: drag.line, field: drag.field, price: drag.price, lastPrice: positionPriceRef.current });
+      }
+      return;
+    }
+
     // 🎯 NUEVO: Finalizar measurement tool
     if (measurementToolRef.current && measurementToolRef.current.isMeasuring()) {
       measurementToolRef.current.handleMouseUp();
@@ -2611,6 +2687,8 @@ const MiniChart = forwardRef(({
   };
 
   const handleMouseLeave = () => {
+    positionDragRef.current = null; // Un arrastre de SL/TP que sale del gráfico no se envía
+    positionPressRef.current = null;
     dragStateRef.current.isDragging = false;
     dragStateRef.current.potentialDrag = false; // 🔧 FIX: Limpiar potentialDrag
     setMousePos(null);

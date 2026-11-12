@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Dict, Optional, Literal
 from datetime import datetime
 
+from .safe_io import write_json_atomic
+
 
 DirectionType = Literal["LONG", "SHORT", "BOTH", "DISABLED"]
 
@@ -48,8 +50,7 @@ class DirectionManager:
                 "last_updated": datetime.now().isoformat()
             }
 
-            with open(self.config_file, 'w') as f:
-                json.dump(data, f, indent=2)
+            write_json_atomic(self.config_file, data)  # temporal y reemplazo: nunca queda a medias
 
             print(f"[OK] Trading directions saved")
         except Exception as e:

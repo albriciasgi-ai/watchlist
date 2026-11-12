@@ -163,5 +163,45 @@ Pedido del usuario: guardar otras claves de Bybit, para trading real o de otras 
 
 **IMPORTANTE:** reiniciar el bot (puerto 5000) para que cargue las cuentas. Conviene que cada clave tenga permiso de órdenes y posiciones y no de retiro. Nada se probó contra Bybit real.
 
+## Cuenta en tiempo real y posiciones desde la suite (12 Noviembre 2026)
+
+Paso 4 de la integración: el bot endurecido, para que la suite muestre cada posición sobre el gráfico con su P&L (pedido del usuario, como en TradingView) y el journal sepa cuándo y a qué precio se cierra cada trade.
+
+- **WebSocket privado** (`trading/private_stream.py`):
+  - escucha la cuenta activa en Bybit: posiciones, órdenes y ejecuciones (`wss://stream.bybit.com/v5/private`, `stream-demo` en Demo);
+  - solo lee: nunca envía órdenes;
+  - al conectar y cada 60 s toma una foto por REST (`position/list` y `order/realtime` con `settleCoin=USDT`). Lo que el WebSocket cambió mientras se pedía la foto manda sobre ella, así una foto vieja no revive una posición cerrada;
+  - sin WebSocket, la foto sigue cada 5 s;
+  - reconecta solo (de 5 a 60 s; 5 minutos si Bybit rechaza la clave) y también tras 60 s sin mensajes;
+  - sigue a la cuenta activa: se reinicia al cambiar de cuenta o de claves.
+  
+  `BOT_PRIVATE_STREAM=0` lo apaga y `BOT_PRIVATE_WS_URL` cambia la dirección (solo para pruebas).
+- **`/api/positions`:** sale de ese WebSocket, o de una foto por REST si no está al día. Antes pedía a Bybit una posición por moneda configurada (21 llamadas). Por defecto sigue dando solo las monedas configuradas; `?all=true` da todas las de USDT. Suma `liqPrice`, `positionIdx`, `source` y `account`.
+- **Rutas nuevas:**
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/orders/open?symbol` | Órdenes abiertas. `entry` dice si abre o aumenta posición (no es TP/SL ni reduce-only) |
+| `GET /api/executions/recent?limit&symbol` | Las últimas 500 ejecuciones recibidas por el WebSocket, sin repetidas |
+| `GET /api/stream/status` | Estado del WebSocket (sin claves) |
+| `POST /api/position/close` | Cierra a mercado y reduce-only el lado pedido (`OrderManager.close_position`). Funciona con el bot en pausa, porque reduce riesgo. Sin posición, 404; si Bybit no confirma, 502 y "revisa antes de reintentar" |
+| `POST /api/position/trading-stop` | Mueve el SL o el TP de toda la posición |
+| `POST /api/orders/cancel` | Cancela una orden de entrada pendiente |
+
+- **Reglas de `/api/position/trading-stop`:**
+  - el SL nunca se quita, solo se mueve; el TP se quita con 0;
+  - en un long el SL va bajo el último precio y el TP encima; al revés en un short. El precio se lee de Bybit en ese momento;
+  - el SL se lleva al tick hacia el precio (menos riesgo) y el TP al tick más cercano. Si al redondear el SL toca el precio, se rechaza.
+- **`/api/orders/cancel`:** la orden de TP o SL de una posición no se cancela (se mueve desde la posición). Si Bybit dice que la orden ya no existe y ya no está abierta, cuenta como cancelada.
+- **Común a las tres acciones:** toman el candado de la moneda y no salen a Bybit si la cuenta cambia en medio (409).
+- **Posiciones sin stop:**
+  - al arrancar y al cambiar de cuenta, el bot dice en el registro qué hay abierto en Bybit;
+  - cada posición sin SL da un aviso crítico `POSITION_WITHOUT_SL`, una vez por posición: al arrancar de inmediato y después si sigue así 20 s (el bot pone el SL en uno o dos segundos tras llenar). También avisa de una posición abierta a mano en Bybit;
+  - solo avisa: no cierra ni toca nada.
+- **Guardado seguro** (`trading/safe_io.py`): `trading_config.json`, `credentials.json`, `bot_settings.json`, `order_history.json`, `trading_directions.json` y `accounts.json` se escriben en un temporal que reemplaza al archivo. Si otro programa lo tiene abierto en ese instante (OneDrive, otra app), reintenta. Si no puede, el anterior queda intacto.
+- **Pruebas:** `backend/tests/positions_checks.py` (38) usa un WebSocket falso en 127.0.0.1 que comprueba la firma y un Bybit simulado por REST. Probado también con el Python del bot (`.venv`, websockets 16). `accounts_checks.py` (31) apaga el WebSocket.
+
+**IMPORTANTE:** reiniciar el bot para tenerlo. Nada se probó contra Bybit real: el WebSocket privado y las tres acciones conviene probarlos primero con una cuenta Demo. App 10 no tiene botones para estas acciones; las usa la suite.
+
 ---
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { orderPreview, orderQuantity, priceAtPercent, AUTO_ENTRY_DISTANCE } from '@app1/components/backtesting/orderPlan.js';
 import { getJson, postJson } from './api.js';
+import { bookError, linesFor, runPositionAction, subscribeBook } from './botBook.js';
 
 /**
  * Panel de trading en vivo: el formulario de App 1 (caja TP/SL del grafico, monto fijo o por riesgo, tipo
@@ -19,6 +20,37 @@ const roundTo = (value, step) => (step > 0 ? Math.round(value / step) * step : v
 const fmt = (value, digits = 2) => (value === null || value === undefined || !Number.isFinite(value) ? '—' : value.toFixed(digits));
 const boxKey = (b) => `${b.entryPrice}|${b.slPrice}|${b.tpPrice}`;
 
+/** Posición real con su P&L al precio actual, y cerrar o mover SL/TP (lo mismo que arrastrar sus líneas en el gráfico). */
+function PositionCard({ line, price, digits, onAction }) {
+  const [sl, setSl] = useState('');
+  const [tp, setTp] = useState('');
+  const last = Number.isFinite(price) && price > 0 ? price : null; // sin precio, la validación queda para el bot
+  const pnl = last ? (last - line.entry) * line.size * (line.side === 'Buy' ? 1 : -1) : null;
+  const value = (text) => Number(String(text).replace(',', '.'));
+  const move = (field, text) => onAction({ type: 'move', line, field, price: value(text), lastPrice: last });
+  return (
+    <div className="control-section">
+      <div>
+        <b className={line.side === 'Buy' ? 'pos' : 'neg'}>{line.side === 'Buy' ? 'LONG' : 'SHORT'}</b> · {line.size} · entrada {fmt(line.entry, digits)}
+        {pnl !== null && <> · <b className={pnl >= 0 ? 'pos' : 'neg'}>{pnl >= 0 ? '+' : '−'}{Math.abs(pnl).toFixed(2)} USD</b></>}
+      </div>
+      <div className="price-hint">
+        SL {line.stopLoss ? fmt(line.stopLoss, digits) : <b style={{ color: '#c62828' }}>SIN STOP</b>} · TP {line.takeProfit ? fmt(line.takeProfit, digits) : '—'}
+        {line.liqPrice ? ` · Liq. ${fmt(line.liqPrice, digits)}` : ''}
+        {line.pending ? ' · enviando…' : ''}
+      </div>
+      <div className="suite-add-coin">
+        <input className="suite-input" style={{ width: 90 }} placeholder="SL nuevo" value={sl} onChange={(e) => setSl(e.target.value)} />
+        <button type="button" className="suite-btn" disabled={!(value(sl) > 0)} onClick={() => move('stopLoss', sl)}>Mover SL…</button>
+        <input className="suite-input" style={{ width: 90 }} placeholder="TP nuevo" value={tp} onChange={(e) => setTp(e.target.value)} />
+        <button type="button" className="suite-btn" disabled={!(value(tp) > 0)} onClick={() => move('takeProfit', tp)}>{line.takeProfit ? 'Mover TP…' : 'Poner TP…'}</button>
+        {line.takeProfit && <button type="button" className="suite-btn" onClick={() => onAction({ type: 'remove', line, field: 'takeProfit' })}>Quitar TP…</button>}
+        <button type="button" className="suite-btn" onClick={() => onAction({ type: 'close', line, lastPrice: last })}>Cerrar posición…</button>
+      </div>
+    </div>
+  );
+}
+
 function loadSize() {
   try {
     return { mode: 'fixed', fixed: '100', risk: '5', ...(JSON.parse(localStorage.getItem(SIZE_KEY)) || {}) };
@@ -32,7 +64,8 @@ export default function TradingPanel({ symbol, shapes, onClose }) {
   const [status, setStatus] = useState(null);
   const [coins, setCoins] = useState(null);
   const [price, setPrice] = useState(null);
-  const [position, setPosition] = useState(null);
+  const [, setBookVersion] = useState(0);
+  const [posNotice, setPosNotice] = useState(null);
   const [orderType, setOrderType] = useState('auto');
   const [manualSide, setManualSide] = useState('long');
   const [useBox, setUseBox] = useState(true);
@@ -63,16 +96,19 @@ export default function TradingPanel({ symbol, shapes, onClose }) {
   useEffect(() => {
     let alive = true;
     setPrice(null);
-    setPosition(null);
     setResult(null);
+    setPosNotice(null);
     const readPrice = () => getJson(`/api/ticker/${symbol}`).then(d => alive && setPrice(d.price)).catch(() => {});
-    const readPosition = () => getJson(`/api/bot/position/${symbol}`).then(d => alive && setPosition(d)).catch(() => alive && setPosition(null));
     readPrice();
-    readPosition();
     const t1 = setInterval(readPrice, 2000);
-    const t2 = setInterval(readPosition, 10000);
-    return () => { alive = false; clearInterval(t1); clearInterval(t2); };
+    return () => { alive = false; clearInterval(t1); };
   }, [symbol]);
+  // Posiciones y órdenes de la cuenta activa: las mismas que dibuja el gráfico (botBook.js)
+  useEffect(() => subscribeBook(() => setBookVersion(v => v + 1)), []);
+  const actOnPosition = async (action) => {
+    const outcome = await runPositionAction(action);
+    if (outcome) setPosNotice(outcome);
+  };
 
   // La caja TP/SL tocada mas recientemente (creada o movida), como en App 9
   const box = useMemo(() => {
@@ -164,8 +200,10 @@ export default function TradingPanel({ symbol, shapes, onClose }) {
 
   const mode = status?.mode ? String(status.mode).toUpperCase() : null;
   const accountName = status?.account?.name || null; // cuenta activa del bot: las ordenes van a ella
-  const posList = (position?.positions?.length ? position.positions : (position?.hasPosition ? [position] : []))
-    .filter(p => Number(p.size) > 0);
+  const bookLines = linesFor(symbol);
+  const posList = bookLines.filter(l => l.kind === 'position');
+  const orderLines = bookLines.filter(l => l.kind === 'order');
+  const bookProblem = bookError();
 
   return (
     <>
@@ -296,18 +334,24 @@ export default function TradingPanel({ symbol, shapes, onClose }) {
         {tab === 'position' && (
           <div className="trading-controls">
             <h3>Posición en {symbol}</h3>
-            {!position && <div className="price-hint">Sin respuesta del bot.</div>}
-            {position && !posList.length && <div className="price-hint">Sin posición abierta.</div>}
-            {posList.map((p, i) => (
-              <div key={i} className="control-section">
-                <div><b className={p.side === 'Buy' ? 'pos' : 'neg'}>{p.side === 'Buy' ? 'LONG' : 'SHORT'}</b> · {p.size} · entrada {p.entryPrice ?? p.avgPrice}</div>
-                <div className="price-hint">
-                  SL {Number(p.stopLoss) > 0 ? p.stopLoss : <b style={{ color: '#c62828' }}>SIN STOP</b>} · TP {Number(p.takeProfit) > 0 ? p.takeProfit : '—'}
-                  {p.unrealisedPnl !== undefined && ` · PnL ${p.unrealisedPnl}`}
-                </div>
+            {bookProblem && !posList.length && <div className="price-hint">Sin respuesta del bot: {bookProblem}</div>}
+            {!bookProblem && !posList.length && !orderLines.length && <div className="price-hint">Sin posición ni órdenes abiertas.</div>}
+            {posList.map(line => (
+              <PositionCard key={line.id} line={line} price={Number(price)} digits={priceDigits} onAction={actOnPosition} />
+            ))}
+            {orderLines.map(line => (
+              <div key={line.id} className="control-section">
+                <div>{line.orderType} {line.side === 'Buy' ? 'compra' : 'venta'} · {line.qty} · a {fmt(line.price, priceDigits)}</div>
+                <div className="price-hint">SL {line.stopLoss ? fmt(line.stopLoss, priceDigits) : '—'} · TP {line.takeProfit ? fmt(line.takeProfit, priceDigits) : '—'}</div>
+                <button type="button" className="suite-btn" disabled={!!line.pending} onClick={() => actOnPosition({ type: 'cancel', line })}>
+                  {line.pending ? 'Cancelando…' : 'Cancelar orden…'}
+                </button>
               </div>
             ))}
-            <div className="price-hint">Para cerrar o mover el stop de una posición, usa Bybit: el bot no tiene esas órdenes.</div>
+            {posNotice && <div className={`suite-result ${posNotice.ok ? 'ok' : 'bad'}`}>{posNotice.message}</div>}
+            <div className="price-hint">
+              También en el gráfico: × cierra la posición o cancela la orden, y las etiquetas SL y TP se arrastran para moverlos. Todo pide confirmación.
+            </div>
           </div>
         )}
       </div>

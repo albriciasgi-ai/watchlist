@@ -24,6 +24,7 @@ import '@app1/components/drawing/DrawingToolbar.css';
 import '@app1/components/drawing/DrawingSidebar.css';
 import TradingPanel from './TradingPanel.jsx';
 import { getJson, postJson } from './api.js';
+import { linesFor, runPositionAction, subscribeBook } from './botBook.js';
 import { TAB, otherTabUrl, onDrawings, sendDrawings } from './tabs.js';
 
 /**
@@ -143,7 +144,33 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme }) {
   const [addError, setAddError] = useState('');
   const [shapes, setShapes] = useState([]);
   const [rejectionConfig, setRejectionConfig] = useState(null);
+  const [positionNotice, setPositionNotice] = useState(null);
   const listRef = useRef(null);
+
+  // Posiciones y órdenes reales sobre el gráfico (paso 4): el getter es estable y lee la moneda a la vista
+  const symbolRef = useRef(symbol);
+  symbolRef.current = symbol;
+  const activeTfRef = useRef(activeTimeframe);
+  activeTfRef.current = activeTimeframe;
+  const getPositionLines = useCallback(() => linesFor(symbolRef.current), []);
+  useEffect(() => {
+    let last = '';
+    return subscribeBook(() => {
+      const key = JSON.stringify(linesFor(symbolRef.current));
+      if (key !== last) {
+        last = key;
+        chartRefs.current[activeTfRef.current]?.forceRedraw?.(); // sin esperar el próximo precio
+      }
+    });
+  }, []);
+  const handlePositionAction = useCallback(async (action) => {
+    const result = await runPositionAction(action);
+    chartRefs.current[activeTfRef.current]?.forceRedraw?.();
+    if (result) {
+      setPositionNotice(result);
+      setTimeout(() => setPositionNotice(n => (n === result ? null : n)), result.ok ? 5000 : 12000);
+    }
+  }, []);
 
   const readSymbols = useCallback(() => getJson('/api/suite/symbols').then(d => setSymbols(d.symbols)).catch(() => {}), []);
   useEffect(() => { readSymbols(); }, [readSymbols]);
@@ -601,6 +628,8 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme }) {
                   currentTool={currentTool}
                   onToolChange={setCurrentTool}
                   getTradeBoundaries={noTrades}
+                  getPositionLines={getPositionLines}
+                  onPositionAction={handlePositionAction}
                   onRequestPause={noop}
                   onRequestTimeChange={noop}
                   onDrawingsChange={handleDrawingsChange}
@@ -608,6 +637,15 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme }) {
               </div>
             ))}
           </div>
+          {positionNotice && (
+            <div
+              className={`suite-result ${positionNotice.ok ? 'ok' : 'bad'}`}
+              style={{ position: 'absolute', top: 6, left: '50%', transform: 'translateX(-50%)', zIndex: 60, maxWidth: 560, background: 'var(--t-chart, #fff)', marginTop: 0 }}
+              onClick={() => setPositionNotice(null)}
+            >
+              {positionNotice.message}
+            </div>
+          )}
         </div>
 
         <div className={`backtesting-sidebar ${showTrading ? '' : 'hidden'}`} style={{ width: showTrading ? 340 : 0 }}>

@@ -54,6 +54,39 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + TradingBot - 12 Noviembre 2026: Posiciones en el Gráfico y Bot en Tiempo Real (paso 4)
+
+**Pedido:** empezar el paso 4 de la integración (el journal con el bot endurecido). Se agregó al plan ver en el gráfico de cada moneda el estado y el P&L de las posiciones, como en TradingView, como parte del servicio del bot.
+
+**Cambios:**
+1. **Bot en tiempo real:** escucha la cuenta activa por el WebSocket privado de Bybit (posiciones, órdenes y ejecuciones), con una foto por REST al conectar, cada 60 s y cada 5 s si el WebSocket no conecta. `/api/positions` sale de ahí: antes pedía 21 posiciones a Bybit en cada consulta.
+2. **Acciones nuevas del bot:**
+   - cerrar una posición a mercado (también en pausa);
+   - mover el SL o el TP: el SL nunca se quita y va al tick hacia el precio;
+   - cancelar una orden de entrada pendiente.
+   
+   Cada una toma el candado de su moneda y valida contra el precio de Bybit.
+3. **Posiciones sin stop:** aviso crítico al arrancar, al cambiar de cuenta, o si una posición sigue 20 s sin SL. Solo avisa, no toca nada.
+4. **Guardado seguro:** los archivos de estado del bot se escriben con temporal y reemplazo.
+5. **Gráfico** (`positionLines.js` de App 1, usado por la suite):
+   - entrada con tamaño y P&L en vivo, SL y TP con lo que se perdería o ganaría, liquidación y órdenes pendientes;
+   - × cierra o cancela; las etiquetas de SL y TP se arrastran para moverlos o ponerlos;
+   - todo pide confirmación con el precio llevado al tick y el P&L ahí.
+6. **Panel de trading:** la pestaña Posición tiene los mismos botones. La suite da avisos de Windows de alertas críticas, pausa y posiciones abiertas o cerradas.
+7. **Pruebas:**
+   - `3.TradingBot_Python/backend/tests/positions_checks.py` (38), con un WebSocket falso local que comprueba la firma;
+   - `bot_checks.py` de la suite (52);
+   - `tests/positions.test.mjs` de App 1 (9).
+
+**IMPORTANTE:**
+- Reiniciar el bot (puerto 5000). La suite se reinicia sola al abrirla.
+- Nada se probó contra Bybit real: conviene probar primero el WebSocket y las acciones con una cuenta Demo.
+- Falta el journal del paso 4.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Posiciones en el gráfico" y `10.TradingBotDesktop/CLAUDE.md` sección "Cuenta en tiempo real y posiciones desde la suite"
+
+---
+
 ### Altagracia Trading Suite + TradingBot - 12 Noviembre 2026: Varias Cuentas de Bybit
 
 **Pedido:** agregar otras claves de Bybit, para trading real o de otras cuentas, y manejarlas todas desde la suite. El usuario eligió una cuenta activa a la vez.

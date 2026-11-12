@@ -16,6 +16,7 @@ CONFIG = TMP / "config"
 CONFIG.mkdir()
 os.environ["BOT_CONFIG_DIR"] = str(CONFIG)
 os.environ["BOT_LOG_DIR"] = str(TMP / "logs")
+os.environ["BOT_PRIVATE_STREAM"] = "0"  # el WebSocket privado nunca se conecta a Bybit en pruebas
 (CONFIG / "credentials.json").write_text(json.dumps({"api_key": "clave_vieja_1234", "api_secret": "secreto_viejo", "demo": True}))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 

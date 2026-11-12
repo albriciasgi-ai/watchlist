@@ -47,6 +47,7 @@ Bot de trading automatizado que ejecuta ordenes en Bybit basado en alertas.
 - **21 simbolos** preconfigurados
 - **Soporte Market y Limit orders** con TP/SL integrado
 - **Varias cuentas de Bybit** (12/11/2026), una activa a la vez, manejadas desde la suite: ver `10.TradingBotDesktop/CLAUDE.md` sección "Cuentas de Bybit"
+- **Cuenta en tiempo real** (12/11/2026): WebSocket privado de Bybit (`trading/private_stream.py`), cerrar posición, mover SL/TP y cancelar órdenes por API, aviso de posiciones sin stop y guardado seguro (`trading/safe_io.py`): ver `10.TradingBotDesktop/CLAUDE.md` sección "Cuenta en tiempo real y posiciones desde la suite"
 
 ## Optimizaciones (Enero 2026)
 

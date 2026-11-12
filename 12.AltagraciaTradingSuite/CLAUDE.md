@@ -11,7 +11,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **Paso 2:** almacén de order flow en vivo con la finura de App 1: oficial + nube + PC.
 - **Paso 3:** el gráfico en vivo con ese almacén.
 - **Segunda ronda (12/11, pedidos del usuario):** Electron sin freno, todos los indicadores de App 1 (también Elementos OF), grabación propia de trades, el formato de la pestaña principal de App 1 (barra de dibujo, marcos y panel de trading), monedas nuevas, dos pestañas, panel de trading al bot real y la configuración del bot de App 10.
-- **Falta:** el paso 4 (journal = Observador con trades reales, y el bot endurecido), el paso 5 (watchlist) y al final la mudanza a un servidor 24/7 con acceso protegido y celular.
+- **Paso 4, empezado el 12/11:** el bot endurecido (cuenta en tiempo real por su WebSocket privado, cerrar, mover SL/TP y cancelar, aviso de posiciones sin stop, guardado seguro) y, a pedido del usuario, las posiciones sobre el gráfico con su P&L, como en TradingView. Falta el journal (el Observador con trades reales).
+- **Falta:** el journal del paso 4, el paso 5 (watchlist, con las alertas automáticas del Swing) y al final la mudanza a un servidor 24/7 con acceso protegido y celular.
 
 ## Reglas de diseño (fijadas con el usuario)
 
@@ -37,7 +38,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46) y bot_checks.py (42), sin conexión
+│   └── tests/             run_checks.py (46) y bot_checks.py (52), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -47,7 +48,9 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── tabs.js        Pestaña 1 y 2: ajustes propios y dibujos compartidos (BroadcastChannel)
         ├── BotView.jsx    Estado, pausa, avisos críticos, posiciones, órdenes y alertas del bot
         ├── BotConfig.jsx  Configuración del bot como en App 10
-        └── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
+        ├── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
+        ├── botBook.js     Posiciones y órdenes de la cuenta activa (cada 2 s), líneas para el gráfico y acciones con confirmación
+        └── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
 ```
 
 ## Puertos
@@ -71,7 +74,11 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `GET /api/liquidations/{symbol}` | `liq_store.window` de App 1 (se actualiza con la tarea diaria "App1 Liquidaciones") |
 | `GET/POST /api/drawings/{symbol}` | Dibujos por moneda en `data/drawings`, con temporal y reemplazo; un archivo dañado responde 500 |
 | `GET /api/bot/overview` | Estado, avisos críticos y últimas 50 órdenes del bot (no consulta Bybit) |
-| `GET /api/bot/positions` | Posiciones abiertas (el bot las pide a Bybit: la página las lee cada 15 s) |
+| `GET /api/bot/positions` | Posiciones abiertas de todas las monedas (`all=true`). El bot las tiene al día por su WebSocket privado: la página las lee cada 2 s sin consultar Bybit |
+| `GET /api/bot/orders/open?symbol`, `/executions`, `/stream` | Órdenes abiertas, ejecuciones recientes y estado del WebSocket privado del bot |
+| `POST /api/bot/position/close` | Cierra a mercado una posición. Exige `"confirm": "CERRAR_POSICION"` y `side` Buy o Sell |
+| `POST /api/bot/position/trading-stop` | Mueve el SL (positivo: no se quita) o el TP (0 lo quita). Exige `"confirm": "MOVER_STOP"` |
+| `POST /api/bot/orders/cancel` | Cancela una orden de entrada pendiente. Exige `"confirm": "CANCELAR_ORDEN"` |
 | `GET /api/bot/alerts?minutes` | Alertas recibidas por el bot |
 | `POST /api/bot/pause` | Pausa o reanuda todo el trading. Exige `{"paused": bool, "confirm": "CAMBIAR_PAUSA"}` |
 | `GET /api/suite/status` | Último día oficial, días en vivo, grabación (de la suite o del 11000), días oficiales y estado del bot |
@@ -136,7 +143,35 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 - Se bloquea, con el motivo, sin bot, sin credenciales, en pausa, con la moneda sin configurar en el bot, con SL o TP del lado equivocado o con una Limit que cruza el precio.
 - Confirmación con moneda, lado, tipo, cantidad, stop, objetivo y pérdida/ganancia; "Cuenta REAL" en rojo si el bot está en LIVE. El resultado dice si quedó sin stop o es desconocido, para no reintentar.
 - El título del panel y el de la confirmación dicen el modo y la cuenta activa del bot ("Panel de Trading · LIVE · Real BTC").
-- Posición: lado, tamaño, entrada, SL (en rojo si no tiene) y TP. El bot no tiene rutas para cerrar ni mover el stop: eso se hace en Bybit.
+- Posición (desde el 12/11): cada posición de la moneda con lado, tamaño, entrada, P&L al precio actual, SL ("SIN STOP" en rojo si no tiene), TP y liquidación. Trae "Mover SL…", "Mover TP…" o "Poner TP…", "Quitar TP…" y "Cerrar posición…". Las órdenes de entrada pendientes traen "Cancelar orden…". Es lo mismo que se hace en el gráfico (ver "Posiciones en el gráfico").
+
+## Posiciones en el gráfico
+
+Pedido del usuario (12/11): ver, como en TradingView, el estado y el P&L de cada posición sobre el gráfico de su moneda, moviéndose con el precio, como parte del servicio del bot.
+
+- **Qué se ve** (`positionLines.js` de App 1, vía `getPositionLines` de `MiniChart`):
+  - la entrada con "Long 0.01 | +12.34 USD (+0.25%) ×", al último precio del gráfico y sin comisiones;
+  - el SL y el TP con lo que se perdería o ganaría ahí;
+  - el precio de liquidación;
+  - las órdenes de entrada pendientes ("Limit compra 0.01 ×"), con su SL y TP adjuntos;
+  - cada línea con su precio en el eje. Fuera de la vista, la etiqueta queda en el borde con ▲ o ▼, apilada con las otras.
+- **Qué se hace, solo con el cursor de selección:**
+  - × de la posición la cierra a mercado; × de una orden la cancela; × del TP lo quita;
+  - la etiqueta del SL o del TP se arrastra para moverlo. La línea sigue al mouse con lo que se perdería o ganaría, y dice "no válido" del lado equivocado del precio;
+  - sin SL o sin TP, las etiquetas "SL" y "TP" junto a la entrada se arrastran para ponerlos.
+- **Confirmación:** cada acción pide confirmar con la moneda, la cuenta (y si es REAL), el precio ya llevado al tick como lo dejará el bot y el P&L en ese precio. Mientras viaja, la línea queda punteada con "moviendo…". El resultado sale en un aviso sobre el gráfico.
+- **Datos:** `botBook.js` lee `/api/bot/positions` y `/api/bot/orders/open` cada 2 s para toda la página, y el gráfico a la vista se redibuja cuando cambian. Las ×, el arrastre y el panel van a las rutas `CERRAR_POSICION`, `MOVER_STOP` y `CANCELAR_ORDEN`. El bot vuelve a validar todo con el precio de Bybit.
+- **Avisos de Windows** (`botNotifications.js`, solo la pestaña 1): aviso crítico del bot (por ejemplo una posición sin stop), pausa o reanudación, y posición abierta o cerrada. En Electron la página sigue trabajando oculta en la bandeja.
+- **Con un bot de antes:** las posiciones llegan, solo de las monedas configuradas; las órdenes pendientes y las acciones no (hay que reiniciar el bot).
+
+Probado el 12/11 en la copia aislada con un bot falso y el precio real de BTC, con eventos de mouse sobre el lienzo:
+- arrastrar el TP 30 px pidió 72745.5 (llevado al tick) con +14.07 USD, y llegó al bot falso una vez;
+- un SL arrastrado sobre el precio de un long no pidió confirmación y avisó;
+- × del TP, de la orden y de la posición llegaron una vez cada uno;
+- en un short sin stop, el SL arrastrado desde la entrada pidió 72368.7 con −13.37 USD;
+- el TP escrito en el panel llegó igual.
+
+Nada se probó contra el bot real ni contra Bybit.
 
 ## Configuración del bot
 

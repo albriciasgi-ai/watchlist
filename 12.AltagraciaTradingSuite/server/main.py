@@ -300,8 +300,9 @@ async def bot_overview():
 
 @app.get("/api/bot/positions")
 async def bot_positions():
-    """Posiciones abiertas: el bot las pide a Bybit, por eso va aparte y con menos frecuencia."""
-    return await _bot("GET", "/api/positions")
+    """Posiciones abiertas de todas las monedas. El bot las tiene al dia por su WebSocket privado (un bot viejo
+    ignora `all` y da solo las configuradas)."""
+    return await _bot("GET", "/api/positions", params={"all": "true"})
 
 
 @app.get("/api/bot/alerts")

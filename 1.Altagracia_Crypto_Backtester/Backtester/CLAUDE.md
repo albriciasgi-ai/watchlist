@@ -623,6 +623,7 @@ node tests/marketdata.test.mjs
 node tests/liquidations.test.mjs
 node tests/pixels.test.mjs
 node tests/theme.test.mjs
+node tests/positions.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -646,6 +647,12 @@ Para la app en tiempo real, que usará este lector (requisito 8 de la integraci�
 - **Footprint parcial (12/11):** con días en vivo, una vela que toca un hueco de grabación (`gap`) lleva "parcial" sobre su footprint. Los días oficiales no tienen huecos
 - **Step parejo en vivo (12/11):** sin step escrito, el indicador envía `step_mode=uniform` en vez de `max_levels`, y el servidor de la suite da un solo step para todas las velas. El modal de Order Flow lo explica y oculta "Máximo de niveles por vela" en vivo. El campo del step acepta decimales (`step="any"`). En reproducción nada cambia
 - **Pedidos en vivo (12/11), solo con `backtestingMode` falso:** la vela en curso se pide hasta la hora del gráfico; si la respuesta llega a menos de lo pedido (el almacén en vivo va detrás) se repide cada 10 s (`LIVE_LAG_WAIT_MS`); y cada minuto se repiden las velas sin datos o con hueco (`_liveRefresh`). En reproducción nada cambia
+- **Posiciones reales en vivo (12/11):** `components/positionLines.js` dibuja las posiciones y órdenes de la cuenta del bot si quien monta `MiniChart` pasa `getPositionLines`, como en TradingView:
+  - entrada con tamaño y P&L al último precio;
+  - SL y TP con lo que se perdería o ganaría;
+  - liquidación y entradas pendientes.
+  
+  `onPositionAction` recibe la × (cerrar, cancelar, quitar el TP) al soltar sobre ella, y el arrastre de la etiqueta del SL o del TP, solo con el cursor de selección. Quien da los datos confirma y envía; el gráfico solo dibuja y avisa. Lo usa la suite (`12.AltagraciaTradingSuite`, sección "Posiciones en el gráfico"). App 1 no pasa esas props: su reproducción no cambia. `getPositionTargets()` del ref da lo que responde al mouse, para revisar desde la consola. Prueba: `tests/positions.test.mjs` (9)
 
 ### Mantener el almacén
 

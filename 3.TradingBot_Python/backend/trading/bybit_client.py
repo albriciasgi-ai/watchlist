@@ -794,6 +794,11 @@ class BybitClient:
             return None
         return result.get("result", {}).get("list", []) or []
 
+    async def cancel_order(self, symbol: str, order_id: str, category: str = "linear") -> Dict[str, Any]:
+        """Cancela una orden abierta. Repetirlo no hace nada nuevo: la segunda vez Bybit dice que ya no existe."""
+        logger.info(f"[BYBIT] [CANCEL] {symbol} orderId={order_id}")
+        return await self._make_request("POST", "/v5/order/cancel", {"category": category, "symbol": symbol, "orderId": order_id})
+
     @staticmethod
     def is_entry_order(order: Dict[str, Any]) -> bool:
         """True si la orden abre o aumenta posicion (no es TP/SL ni reduce-only)."""

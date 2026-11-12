@@ -5,6 +5,7 @@ import ChartView from './ChartView.jsx';
 import BotView from './BotView.jsx';
 import BotConfig from './BotConfig.jsx';
 import { TAB } from './tabs.js';
+import { useBotNotifications } from './botNotifications.js';
 
 const MODULE_KEY = `suite_module_${TAB}`;
 const loadModule = () => {
@@ -17,6 +18,7 @@ const loadModule = () => {
 
 export default function SuiteApp() {
   useUiTheme();
+  useBotNotifications();
   const [module, setModule] = useState(loadModule);
   const [botSection, setBotSection] = useState('status');
   const [showTheme, setShowTheme] = useState(false);

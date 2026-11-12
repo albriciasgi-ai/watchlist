@@ -110,6 +110,27 @@ try:
     check("renombrar cuenta: PUT al bot", r.status_code == 200 and calls == [("PUT", f"/api/accounts/{AID}", {"name": "Real BTC"}, None)])
     calls.clear()
 
+    # Posiciones desde el grafico: cerrar, mover SL/TP y cancelar, cada uno con su palabra
+    calls.clear()
+    check("cerrar posicion sin la palabra: no llega", c.post("/api/bot/position/close", json={"symbol": "BTCUSDT", "side": "Buy", "confirm": "MOVER_STOP"}).status_code == 400 and not calls)
+    check("cerrar posicion con lado invalido: no llega", c.post("/api/bot/position/close", json={"symbol": "BTCUSDT", "side": "long", "confirm": "CERRAR_POSICION"}).status_code == 400 and not calls)
+    r = c.post("/api/bot/position/close", json={"symbol": "btcusdt", "side": "Sell", "confirm": "CERRAR_POSICION"})
+    check("cerrar posicion: una llamada al bot", r.status_code == 200 and calls == [("POST", "/api/position/close", {"symbol": "BTCUSDT", "side": "Sell"}, None)])
+    calls.clear()
+    check("quitar el SL (0): no llega", c.post("/api/bot/position/trading-stop", json={"symbol": "BTCUSDT", "side": "Buy", "stop_loss": 0, "confirm": "MOVER_STOP"}).status_code == 400 and not calls)
+    check("mover sin SL ni TP: no llega", c.post("/api/bot/position/trading-stop", json={"symbol": "BTCUSDT", "side": "Buy", "confirm": "MOVER_STOP"}).status_code == 400 and not calls)
+    check("mover el stop con la palabra de cerrar: no llega", c.post("/api/bot/position/trading-stop", json={"symbol": "BTCUSDT", "side": "Buy", "stop_loss": 99000, "confirm": "CERRAR_POSICION"}).status_code == 400 and not calls)
+    r = c.post("/api/bot/position/trading-stop", json={"symbol": "BTCUSDT", "side": "Buy", "stop_loss": "99000.5", "take_profit": 0, "confirm": "MOVER_STOP"})
+    check("mover SL y quitar TP: llega con los dos", r.status_code == 200 and calls == [("POST", "/api/position/trading-stop", {"symbol": "BTCUSDT", "side": "Buy", "stop_loss": 99000.5, "take_profit": 0.0}, None)], str(calls))
+    calls.clear()
+    check("cancelar con id raro: no llega", c.post("/api/bot/orders/cancel", json={"symbol": "BTCUSDT", "order_id": "../x", "confirm": "CANCELAR_ORDEN"}).status_code == 400 and not calls)
+    r = c.post("/api/bot/orders/cancel", json={"symbol": "BTCUSDT", "order_id": "1a2b-3c", "confirm": "CANCELAR_ORDEN"})
+    check("cancelar orden: una llamada al bot", r.status_code == 200 and calls == [("POST", "/api/orders/cancel", {"symbol": "BTCUSDT", "order_id": "1a2b-3c"}, None)])
+    calls.clear()
+    c.get("/api/bot/orders/open?symbol=ethusdt")
+    check("ordenes abiertas de una moneda", calls == [("GET", "/api/orders/open", None, {"symbol": "ETHUSDT"})], str(calls))
+    calls.clear()
+
     # Lista de monedas
     sl = SymbolList(TMP / "data")
     check("monedas de fabrica sin archivo", sl.load() == DEFAULT_SYMBOLS)
