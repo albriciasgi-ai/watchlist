@@ -11,6 +11,7 @@ from pathlib import Path
 TMP = Path(tempfile.mkdtemp(prefix="suite_checks_"))
 os.environ["SUITE_DATA_DIR"] = str(TMP / "data")
 os.environ["SUITE_RECORD"] = "0"  # las pruebas nunca graban en el OrderFlowData real
+os.environ["SUITE_SWING"] = "0"  # el Swing del servidor no consulta Bybit en las pruebas
 os.environ["SUITE_OFFICIAL"] = "0"  # ni bajan dias oficiales
 os.environ["SUITE_BOT_URL"] = "http://127.0.0.1:9"  # nadie escucha: el bot real nunca recibe nada
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))

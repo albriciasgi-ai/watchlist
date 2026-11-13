@@ -233,8 +233,10 @@ class SwingDetectorIndicator extends IndicatorBase {
       if (this.direction === 'LONG' && isSwingHigh) continue;
       if (this.direction === 'SHORT' && isSwingLow) continue;
 
+      // Una vela que es swing alto y bajo a la vez queda como alto: su precio es el máximo, el mismo de su flecha.
+      // Antes tomaba el mínimo y las zonas y el filtro VWAP revisaban un swing alto con el precio de abajo
       const signalDirection = isSwingHigh ? 'SHORT' : 'LONG';
-      const price = isSwingLow ? current.low : current.high;
+      const price = isSwingHigh ? current.high : current.low;
 
       // 3. Verificar zonas de precio (con time-bounds)
       const zoneMatch = this._checkPriceZones(price, activeZones, signalDirection, timestamp);

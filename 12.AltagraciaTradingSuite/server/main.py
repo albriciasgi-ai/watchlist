@@ -6,6 +6,8 @@
 #     nube (Northflank) y el PC (backend 11000), unido por PanelOrderFlow/sync_nube.py.
 #   - Bot: lee y maneja el bot (3.TradingBot_Python) por su API. El bot sigue siendo su propio proceso.
 #   - Dibujos: guardados por moneda en data/drawings.
+#   - Swing: detecta al cierre de cada vela con las reglas de App 1 y lo anota en data/swing (swing_watch.py).
+#     No envia nada: las alertas quedan para la central de confluencia.
 # Las rutas del mercado responden igual que las del backend de App 1, para que el grafico de App 1
 # (MiniChart) se use tal cual, sin copiarlo.
 #
@@ -46,6 +48,7 @@ import journal_routes  # noqa: E402  journal (paso 4): imagenes, contexto de dec
 from journal_store import JournalStore  # noqa: E402
 import official  # noqa: E402  dias oficiales que faltan, con las herramientas del panel
 import recorder  # noqa: E402  grabacion propia de trades (live/local), un solo proceso a la vez
+import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca envia
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -60,6 +63,8 @@ app = FastAPI(title="Altagracia Trading Suite", version="0.1.0")
 _http: Optional[httpx.AsyncClient] = None
 _candle_cache = {}
 app.include_router(market_routes.router)
+SWING = swing_watch.SwingWatch(Path(CONFIG["data_dir"]) / "swing", DRAWINGS_DIR)
+app.include_router(swing_watch.make_router(SWING))
 
 
 @app.on_event("startup")
@@ -76,11 +81,13 @@ async def _startup():
         coins = list(DEFAULT_SYMBOLS)
     await recorder.start(coins, DATA, SUITE_DIR.parent)
     official.start(DATA, _official_symbols)
+    await SWING.start()
     print(f"[SUITE] Servidor en http://{CONFIG['host']}:{CONFIG['port']} | almacen {DATA} | bot {CONFIG['bot_url']}")
 
 
 @app.on_event("shutdown")
 async def _shutdown():
+    await SWING.stop()
     official.stop()
     await recorder.stop()
     if _http:
@@ -428,7 +435,7 @@ async def suite_status():
     store, tape, bot_state = await asyncio.gather(run_in_threadpool(store_info), local_tape(), bot())
     return {"success": True, "version": app.version, "now": int(time.time() * 1000), "store": store,
             "local_tape": tape, "bot": bot_state,
-            "recorder": recorder.status(), "official": official.status()}
+            "recorder": recorder.status(), "official": official.status(), "swing": SWING.brief()}
 
 
 # Frontend ya armado (web/dist), servido desde aqui: una sola direccion para todo

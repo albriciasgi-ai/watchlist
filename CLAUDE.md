@@ -54,6 +54,28 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 12 Noviembre 2026: Swing en el Servidor (paso 5, parte A)
+
+**Pedido:** del plan del paso 5, el usuario autorizó que el servidor detecte el Swing. Sus alertas no se usarán por ahora: irán a una central de alertas de confluencia. También aprobó que el gráfico muestre lo que detecta el servidor (B) y la vista Watchlist sin pausar los gráficos que no se ven (C).
+
+**Cambios:**
+1. **Reglas:** `server/swing_rules.py` es la regla del indicador Swing de App 1, la que se ve en el gráfico. Las pruebas corren el indicador de App 1 en node: en 15 casos dan las mismas señales, con el z-score idéntico.
+2. **Detección:** 4 s después del cierre de cada vela, `server/swing_watch.py` pide las últimas velas a Bybit y anota las señales confirmadas. La vela en curso no cuenta. Un corte o una pausa del PC se recuperan con su demora, y un solo proceso detecta por carpeta.
+3. **Nada se envía:** ni al bot ni a otro lado. Lo detectado queda en `data/swing/signals`, un archivo por día.
+4. **Configuración:** la primera vez se toma del Swing de la Watchlist (1m, 11 monedas). Se cambia con `/api/swing/config`, que valida cada campo.
+5. **Rutas** `/api/swing/*`: estado, configuración, señales para el gráfico, registro y rectángulos de un VP Fixed.
+6. **App 1:** una vela que es swing alto y bajo a la vez tomaba el mínimo como precio de su swing alto. Ahora toma el máximo, el de su flecha.
+7. **Pruebas:** `swing_checks.py` de la suite (84). Las otras de la suite y las 27 de App 1 siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla.
+- Con la configuración de la Watchlist salen los mismos swings que en ella. La Watchlist da el cierre como precio y la suite el máximo o el mínimo.
+- Probado en la copia aislada, en 1m con las 11 monedas de la Watchlist y velas reales de Bybit (solo lectura). En 7 minutos anotó 19 señales, las mismas que da la regla con esas velas, entre 4.0 y 5.7 s después del cierre que las confirma. Reiniciada, no repitió nada. Con las monedas pedidas a la vez, cada vuelta tarda 1 s y anota a unos 4.7 s del cierre. El filtro VWAP se probó con velas simuladas: en la configuración de la Watchlist está apagado.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Swing del servidor"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 12 Noviembre 2026: "Al TP" y "Al SL" en el Journal y Caja con el SL y TP Movidos
 
 **Pedido:**
