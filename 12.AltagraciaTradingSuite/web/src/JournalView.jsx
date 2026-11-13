@@ -24,6 +24,27 @@ const duration = (min) => {
 };
 const originText = (t) => [t.origin, t.source].filter(Boolean).join(' · ');
 
+/**
+ * Cuánto le falta a un trade abierto para tocar su TP y su SL (12/11/2026, pedido del usuario): lo que debe moverse
+ * el precio marca de Bybit, en % del precio, hacia el TP o hacia el SL vigentes. Negativo: ya lo pasó
+ */
+function distances(t, position) {
+  const mark = num(position?.markPrice);
+  if (!(mark > 0)) return { tp: null, sl: null, mark: null };
+  const level = (v) => (num(v) > 0 ? num(v) : null);
+  const tp = level(position?.takeProfit) ?? level(t.take_profit);
+  const sl = level(position?.stopLoss) ?? level(t.stop_loss);
+  const dir = t.side === 'Buy' ? 1 : -1;
+  return {
+    mark,
+    tp: tp === null ? null : (dir * (tp - mark) / mark) * 100,
+    sl: sl === null ? null : (dir * (mark - sl) / mark) * 100,
+    hasTp: tp !== null,
+    hasSl: sl !== null,
+  };
+}
+const pct = (v) => `${v.toFixed(2)}%`;
+
 const imageUrl = (path) => `/api/screenshots/session/${path}`;
 const IMAGE_NAMES = { decision: 'Decisión', open: 'Apertura', close: 'Cierre', after: '10 velas después' };
 const value = (v) => (v === null || v === undefined ? '—' : Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2));
@@ -254,13 +275,19 @@ export default function JournalView({ active, onShowTrade }) {
         {trades.length > 0 && (
           <table className="bot-table">
             <thead>
-              <tr><th>Abierto</th><th>Moneda</th><th>Lado</th><th>Origen</th><th>Tamaño</th><th>Entrada</th><th>Salida</th><th>SL inicial</th><th>P&L</th><th>R</th><th>Duración</th><th>Estado</th></tr>
+              <tr>
+                <th>Abierto</th><th>Moneda</th><th>Lado</th><th>Origen</th><th>Tamaño</th><th>Entrada</th><th>Salida</th><th>SL inicial</th><th>P&L</th>
+                <th title="Cuánto debe moverse el precio para tocar el TP vigente">Al TP</th>
+                <th title="Cuánto debe moverse el precio para tocar el SL vigente">Al SL</th>
+                <th>R</th><th>Duración</th><th>Estado</th>
+              </tr>
             </thead>
             <tbody>
               {trades.map(t => {
                 const position = live[`${t.symbol}:${t.side}`];
                 const open = t.status === 'open';
                 const pnl = open ? num(position?.unrealizedPnl) : t.pnl;
+                const gap = open && position ? distances(t, position) : null;
                 return (
                   <tr key={t.trade_id} onClick={() => setSelectedId(t.trade_id === selectedId ? null : t.trade_id)}
                     style={{ cursor: 'pointer', background: t.trade_id === selectedId ? 'var(--t-hover, #eef3ff)' : undefined }}>
@@ -275,6 +302,12 @@ export default function JournalView({ active, onShowTrade }) {
                     <td>{price(t.exit)}</td>
                     <td>{t.initial_stop_loss ? price(t.initial_stop_loss) : <span className="neg">sin SL</span>}</td>
                     <td className={(pnl || 0) >= 0 ? 'pos' : 'neg'}>{money(pnl)}{open && pnl !== null ? ' *' : ''}</td>
+                    <td title={gap?.mark ? `Precio marca ${price(gap.mark)}` : ''}>
+                      {!gap || gap.mark === null ? '—' : gap.hasTp ? pct(gap.tp) : 'sin TP'}
+                    </td>
+                    <td title={gap?.mark ? `Precio marca ${price(gap.mark)}` : ''}>
+                      {!gap || gap.mark === null ? '—' : gap.hasSl ? pct(gap.sl) : <span className="neg">sin SL</span>}
+                    </td>
                     <td>{num(t.r) === null ? '—' : t.r.toFixed(2)}</td>
                     <td>{duration(t.duration_min)}</td>
                     <td>{open ? (position ? 'abierto' : 'sin posición') : 'cerrado'}</td>
@@ -286,6 +319,7 @@ export default function JournalView({ active, onShowTrade }) {
         )}
         <div className="bot-empty">
           P&L neto de comisiones, de Bybit. * Abiertos: sin realizar, al precio marca. R = resultado sobre lo que arriesgaba el SL inicial.
+          Al TP / Al SL (abiertos): cuánto debe moverse el precio marca, en % del precio, para tocar el TP o el SL vigentes.
           "Anterior": la posición ya estaba abierta cuando el bot empezó el journal. "Externa": no la abrió el bot (Bybit a mano u otra app).
         </div>
       </div>

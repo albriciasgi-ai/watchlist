@@ -271,7 +271,7 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   - **Solo la pestaña 1** toma estas imágenes: la 2.ª las repetiría. Un cambio de cuenta no cuenta como apertura ni como cierre.
   - **Imagen de cierre como en App 1** (12/11, pedido del usuario: "me gusta más como lo hace la app 1"). `closePlan` en `ChartView.jsx` busca el trade en el journal del bot: misma moneda y lado, abierto antes y con la entrada a menos de 0.5%. Con él, la imagen:
     - encuadra desde la apertura hasta la vela más reciente (`showFrom`), con velas antes como contexto;
-    - dibuja la caja del trade (`getTradeBoxes`) con la entrada, el SL y el TP iniciales hasta el cierre;
+    - dibuja la caja del trade (`getTradeBoxes`) con la entrada y el SL y el TP vigentes al cerrar, hasta el cierre. Si se movieron, salen los nuevos. Al probarlo, el usuario movió los de ARB y salían los iniciales. Los iniciales siguen en el journal, en "SL inicial" y en el R;
     - muestra lo elegido para el trade, con sus números (los niveles de su decisión);
     - ajusta la escala a la caja completa.
     
@@ -285,7 +285,8 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   - **Medidas al decidir:** las 58 de App 1 (`measures.compute`, `row_at`, `read_row`) con velas de Bybit, en la última vela de 15m cerrada antes de decidir, vistas desde el lado del trade. Se calculan al abrir el detalle, unos 10 s; las de un trade cerrado quedan guardadas en `data/journal/measures`. El OI y el delta salen de los almacenes locales: en días sin almacén quedan "—".
   - **Lo máximo a favor y en contra,** en R del SL inicial, con velas de 5 minutos.
   - **Informe:** "Informe: qué distingue a las ganadoras" compara ganadoras y perdedoras en cada medida con `patterns.compare_groups` de App 1 ("Separa": en qué parte de los pares la ganadora tiene el valor mayor; "más que el azar" si supera el umbral de las permutaciones). Con menos de 30 trades o de 5 por grupo avisa que solo describe.
-  - **Ver en el gráfico:** cambia a la moneda del trade, lleva la vista a su apertura (`focusOn`) y dibuja su caja con entrada, SL y TP iniciales (`getTradeBoxes`), hasta "Quitar".
+  - **Ver en el gráfico:** cambia a la moneda del trade, lleva la vista a su apertura (`focusOn`) y dibuja su caja (`getTradeBoxes`) hasta "Quitar". La caja de un trade cerrado lleva el SL y el TP vigentes al cerrar, como su imagen de cierre. La de uno abierto lleva los iniciales: los vigentes ya están en las líneas de la posición.
+  - **"Al TP" y "Al SL"** (12/11, pedido del usuario): columnas de la tabla de trades. Para los abiertos, cuánto debe moverse el precio marca de Bybit, en % del precio, para tocar el TP y el SL vigentes, del libro de posiciones (cada 2 s). Negativo: ya lo pasó. "sin TP" o "sin SL" si no tiene. Los cerrados muestran "—".
 - **Falta:**
   - la lectura de la regla del laboratorio (`observer.read_at`);
   - el delta y el OI de los días recientes (almacén en vivo);

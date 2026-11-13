@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   AUTO_ENTRY_DISTANCE, autoOrderType, boxesFollowOrders, latestFreeBox, orderEntry, orderPreview, orderQuantity, priceAtPercent
 } from '../src/components/backtesting/orderPlan.js';
-import TPSLBox, { DEFAULT_REWARD_RATIO, defaultBoxSize } from '../src/components/drawing/shapes/TPSLBox.js';
+import TPSLBox, { DEFAULT_REWARD_RATIO, boxPriceDigits, defaultBoxSize } from '../src/components/drawing/shapes/TPSLBox.js';
 
 const tests = [];
 const test = (name, run) => tests.push([name, run]);
@@ -125,6 +125,15 @@ test('caja nueva: riesgo beneficio de 2 en long y en short', () => {
   close(ratio(short), 2);
   assert.ok(long.slPrice < 100 && long.tpPrice > 100);
   assert.ok(short.slPrice > 100 && short.tpPrice < 100);
+});
+
+test('caja: precios con 2 decimales desde 10 y más por debajo (0.14702 no es "0.15")', () => {
+  assert.equal(boxPriceDigits(70944.6), 2);
+  assert.equal(boxPriceDigits(81.35), 2);
+  assert.equal(boxPriceDigits(1.0346), 4);
+  assert.equal((0.14702).toFixed(boxPriceDigits(0.14702)), '0.14702');
+  assert.equal((0.067012).toFixed(boxPriceDigits(0.067012)), '0.067012');
+  assert.equal(boxPriceDigits(0.000012), 8);
 });
 
 test('caja nueva: sin escala queda pequeña, 0.5% de riesgo', () => {

@@ -312,7 +312,8 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
   }, [pumpOffscreen, chartSize]);
 
   // Imagen de cierre como en App 1 (12/11/2026, pedido del usuario): encuadrada desde la apertura del trade, con su
-  // caja de entrada, SL y TP iniciales hasta el cierre y lo elegido para él, en un marco donde el trade quepa
+  // caja de entrada, SL y TP hasta el cierre y lo elegido para él, en un marco donde el trade quepa. La caja lleva el
+  // SL y el TP vigentes al cerrar: si se movieron, los nuevos (el usuario lo vio con ARB: salían los iniciales)
   const captureBoxRef = useRef(null); // { symbol, box }: la caja del trade que se retrata, solo mientras se dibuja la imagen
   const closePlan = useCallback(async (p, closedAt) => {
     let trade = null;
@@ -332,7 +333,8 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
     const positive = (v) => (Number(v) > 0 ? Number(v) : null);
     const box = {
       side: p.side === 'Buy' ? 'long' : 'short', entry: positive(trade.entry) ?? positive(p.entryPrice),
-      stop: positive(trade.initial_stop_loss) ?? positive(p.stopLoss), target: positive(trade.initial_take_profit) ?? positive(p.takeProfit),
+      stop: positive(trade.stop_loss) ?? positive(p.stopLoss) ?? positive(trade.initial_stop_loss),
+      target: positive(trade.take_profit) ?? positive(p.takeProfit) ?? positive(trade.initial_take_profit),
       start, end: closedAt,
     };
     return { tf: closeFrame(start, closedAt, activeTfRef.current), start, box, items: trade.decision?.levels || [] };
@@ -403,9 +405,14 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
     const t = focusTrade;
     const start = t.opened_at || t.closed_at;
     if (!start) return undefined;
+    // Cerrado: con el SL y el TP vigentes al cerrar, como su imagen de cierre. Abierto: con los iniciales (el plan);
+    // los vigentes ya están en las líneas de la posición
+    const closedTrade = t.status === 'closed';
     focusBoxRef.current = {
       symbol: t.symbol,
-      box: { side: t.side === 'Buy' ? 'long' : 'short', entry: t.entry, stop: t.initial_stop_loss ?? t.stop_loss, target: t.initial_take_profit ?? t.take_profit,
+      box: { side: t.side === 'Buy' ? 'long' : 'short', entry: t.entry,
+             stop: closedTrade ? (t.stop_loss ?? t.initial_stop_loss) : (t.initial_stop_loss ?? t.stop_loss),
+             target: closedTrade ? (t.take_profit ?? t.initial_take_profit) : (t.initial_take_profit ?? t.take_profit),
              start, end: t.closed_at || Date.now() },
     };
     setFocusedTrade(t);

@@ -54,6 +54,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 12 Noviembre 2026: "Al TP" y "Al SL" en el Journal y Caja con el SL y TP Movidos
+
+**Pedido:**
+- dos columnas en el journal con el % que le falta a cada trade para llegar al TP y al SL;
+- al probar con ARB, el usuario movió el TP y el SL, y la imagen de cierre dibujó la caja con los valores iniciales.
+
+**Cambios:**
+1. **Columnas "Al TP" y "Al SL":** para los trades abiertos, cuánto debe moverse el precio marca, en % del precio, para tocar el TP o el SL vigentes. Negativo si ya lo pasó; "sin TP" o "sin SL" si no lo tiene.
+2. **Caja de cierre:** lleva el SL y el TP vigentes al cerrar. Lo mismo la imagen "10 velas después" y "Ver en el gráfico" de un trade cerrado. Los iniciales siguen en "SL inicial" y en el R.
+3. **App 1, caja TP/SL:** en monedas de menos de 10, sus precios llevan los decimales que hacen falta. Antes un SL de ARB en 0.14702 decía "0.15". Desde 10 sigue con 2.
+4. **Pruebas:** `orders.test.mjs` de App 1 (34).
+
+**IMPORTANTE:** la suite se reinicia sola al abrirla, o con "Reiniciar" en la bandeja. En App 1 basta recargar la página. Probado en la copia aislada con un bot falso, con un ARB al que se le movieron el SL y el TP.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal"
+
+---
+
 ### Altagracia Trading Suite - 12 Noviembre 2026: Imagen 10 Velas Después del Cierre
 
 **Pedido:** agregar, como en App 1, una imagen 10 velas después del cierre, para ver lo que hizo el precio después de salir.

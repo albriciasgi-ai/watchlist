@@ -4,6 +4,16 @@ import { priceText } from '../../backtesting/blindClock.js';
 
 export const DEFAULT_REWARD_RATIO = 2;
 const DEFAULT_RISK_PERCENT = 0.005;
+
+/**
+ * Decimales de los precios de la caja: 2 desde 10, como siempre. Por debajo, los que dan unas 5 cifras: con 2, un SL
+ * de ARB en 0.14702 decía "0.15" (12/11/2026, imagen de cierre de la suite)
+ */
+export function boxPriceDigits(price) {
+  const size = Math.abs(price);
+  if (!(size > 0) || size >= 10) return 2;
+  return Math.min(8, Math.max(4, 4 - Math.floor(Math.log10(size))));
+}
 const BOX_RISK_PX = 45;
 const BOX_WIDTH_PX = 130;
 
@@ -254,21 +264,21 @@ class TPSLBox {
     ctx.font = 'bold 12px Arial';
     ctx.fillText('TP', xCenter, yTp - 15);
     ctx.font = '11px Arial';
-    ctx.fillText(priceText(this.tpPrice, 2), xCenter, yTp - 2);
+    ctx.fillText(priceText(this.tpPrice, boxPriceDigits(this.tpPrice)), xCenter, yTp - 2);
 
     // Entry Label
     ctx.fillStyle = this.style.entryColor;
     ctx.font = 'bold 12px Arial';
     ctx.fillText('ENTRY', xCenter, yEntry);
     ctx.font = '11px Arial';
-    ctx.fillText(priceText(this.entryPrice, 2), xCenter + 45, yEntry);
+    ctx.fillText(priceText(this.entryPrice, boxPriceDigits(this.entryPrice)), xCenter + 45, yEntry);
 
     // SL Label
     ctx.fillStyle = this.style.slColor;
     ctx.font = 'bold 12px Arial';
     ctx.fillText('SL', xCenter, ySl + 15);
     ctx.font = '11px Arial';
-    ctx.fillText(priceText(this.slPrice, 2), xCenter, ySl + 2);
+    ctx.fillText(priceText(this.slPrice, boxPriceDigits(this.slPrice)), xCenter, ySl + 2);
 
     // Risk/Reward Ratio
     ctx.fillStyle = '#64748B';
