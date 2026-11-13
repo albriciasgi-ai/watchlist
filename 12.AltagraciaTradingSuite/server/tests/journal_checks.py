@@ -137,6 +137,22 @@ try:
             check(f"numero de orden invalido rechazado: {bad}", False)
         except ValueError:
             check(f"numero de orden invalido rechazado: {bad}", True)
+    # Imagen 10 velas despues del cierre: se une como la de cierre (por la hora del cierre) y va despues de ella
+    sa = JournalStore(TMP / "after")
+    closed_at = NOW - 3 * 3600000
+    sa.add_context({"kind": "close", "symbol": "DOTUSDT", "side": "Sell", "at": closed_at + 2000, "image": path, "frame": "15m"})
+    sa.add_context({"kind": "after", "symbol": "DOTUSDT", "side": "Sell", "at": closed_at + 2000, "until": closed_at + 2000 + 10 * 15 * MIN,
+                    "image": path, "frame": "15m"})
+    dot = sa.merge([{"trade_id": "DOT-1", "symbol": "DOTUSDT", "side": "Sell", "opened_at": closed_at - 3600000, "closed_at": closed_at,
+                     "pre_existing": False}])[0]
+    check("imagen 10 velas despues: unida al trade despues de la de cierre, con hasta donde muestra",
+          [i["kind"] for i in dot["images"]] == ["close", "after"] and dot["images"][1]["until"] == closed_at + 2000 + 150 * MIN, str(dot["images"]))
+    for bad, name in (({"until": closed_at - 5000}, "antes del cierre"), ({"until": NOW + 3600000}, "en el futuro"), ({}, "sin until")):
+        try:
+            sa.clean_context({"kind": "after", "symbol": "DOTUSDT", "side": "Sell", "at": closed_at, **bad})
+            check(f"imagen 10 velas despues rechazada: {name}", False)
+        except ValueError:
+            check(f"imagen 10 velas despues rechazada: {name}", True)
     check("resultado desconocido o raro: solo placed y unknown quedan",
           so.clean_context({"kind": "decision", "symbol": "ADAUSDT", "side": "Buy", "at": NOW, "outcome": "x"}).get("outcome") is None)
 

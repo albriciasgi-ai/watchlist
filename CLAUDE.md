@@ -54,6 +54,22 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 12 Noviembre 2026: Imagen 10 Velas Después del Cierre
+
+**Pedido:** agregar, como en App 1, una imagen 10 velas después del cierre, para ver lo que hizo el precio después de salir.
+
+**Cambios:**
+1. **La imagen:** la de cierre (trade desde su apertura, con su caja y lo elegido) en el mismo marco, pero termina 10 velas después del cierre. En 15m son 2.5 horas. `captureScreenshot` de App 1 acepta `showUntil`; App 1 no lo usa.
+2. **Programada:** al cerrar queda guardada en la página, así que se toma aunque la suite se cierre o se reinicie en ese tiempo. Las vencidas se toman fuera de la pantalla al abrir y cada 30 s. Una tomada tarde termina igual a las 10 velas.
+3. **Journal:** contexto `after`, unido al trade como la de cierre. Se ve como "10 velas después" con la hora en que termina.
+4. **Pruebas:** `journal_checks.py` de la suite (43).
+
+**IMPORTANTE:** la suite se reinicia sola al abrirla, o con "Reiniciar" en la bandeja. Se descarta si venció hace más de 3 días. Probado en la copia aislada con un bot falso.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal", "10 velas después"
+
+---
+
 ### Altagracia Trading Suite - 12 Noviembre 2026: Imagen de Cierre como en App 1
 
 **Pedido:** que la imagen de cierre de un trade sea como la de App 1: el trade encuadrado desde su apertura, con su caja.

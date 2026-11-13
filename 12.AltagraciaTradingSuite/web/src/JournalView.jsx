@@ -25,7 +25,7 @@ const duration = (min) => {
 const originText = (t) => [t.origin, t.source].filter(Boolean).join(' · ');
 
 const imageUrl = (path) => `/api/screenshots/session/${path}`;
-const IMAGE_NAMES = { decision: 'Decisión', open: 'Apertura', close: 'Cierre' };
+const IMAGE_NAMES = { decision: 'Decisión', open: 'Apertura', close: 'Cierre', after: '10 velas después' };
 const value = (v) => (v === null || v === undefined ? '—' : Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2));
 
 /** Las medidas de App 1 al decidir, por grupo (marco), en columnas */
@@ -303,7 +303,7 @@ export default function JournalView({ active, onShowTrade }) {
               {selected.images.map(img => (
                 <a key={img.image} href={imageUrl(img.image)} target="_blank" rel="noreferrer" title="Abrir a tamaño real" style={{ textAlign: 'center', fontSize: 12 }}>
                   <img src={imageUrl(img.image)} alt={IMAGE_NAMES[img.kind]} style={{ width: 260, border: '1px solid var(--t-line, #ccc)', display: 'block' }} />
-                  {IMAGE_NAMES[img.kind]} · {when(img.at)}{img.frame ? ` · ${img.frame}` : ''}
+                  {IMAGE_NAMES[img.kind] || img.kind} · {when(img.until || img.at)}{img.frame ? ` · ${img.frame}` : ''}
                 </a>
               ))}
             </div>

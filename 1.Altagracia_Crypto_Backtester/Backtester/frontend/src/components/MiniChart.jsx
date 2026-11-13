@@ -711,8 +711,9 @@ const MiniChart = forwardRef(({
     // del usuario. keepInView hace lo mismo solo si quien opera se alejó de la vela más reciente.
     // Con context muestra unas 5 veces las velas a la vista, también sin cambiar la vista.
     // Con items dibuja lo elegido para esa orden, no la lista del panel, que ya es la del trade siguiente,
-    // y lo deja todo en la imagen: el precio abarca cada nivel y la vista alcanza la vela de cada marca
-    captureScreenshot: async (sessionId, orderId, { showFrom = null, keepInView = null, context = false, onCopied = null, items = null } = {}) => {
+    // y lo deja todo en la imagen: el precio abarca cada nivel y la vista alcanza la vela de cada marca.
+    // Con showUntil, además de showFrom, la imagen termina en esa hora (no en la vela más reciente)
+    captureScreenshot: async (sessionId, orderId, { showFrom = null, showUntil = null, keepInView = null, context = false, onCopied = null, items = null } = {}) => {
       return new Promise((resolve, reject) => {
         const canvas = canvasRef.current;
         if (!canvas) {
@@ -731,7 +732,7 @@ const MiniChart = forwardRef(({
         const userView = { ...viewStateRef.current };
         const ownItems = Array.isArray(items);
         const frameFrom = showFrom ?? (viewStateRef.current.offset > 0 ? keepInView : null);
-        if (frameFrom) frameChartFrom(frameFrom);
+        if (frameFrom) frameChartFrom(frameFrom, showFrom ? showUntil : null);
         if (context) widenChart();
         const itemsFramed = ownItems && frameItems(items);
         const viewChanged = Boolean(frameFrom || context || itemsFramed);
@@ -2045,17 +2046,29 @@ const MiniChart = forwardRef(({
   };
 
   // Encuadra desde una hora hasta la vela más reciente, con velas anteriores como contexto
-  const frameChartFrom = (time) => {
+  // Con until (suite, 12/11/2026: la imagen 10 velas después del cierre) la imagen termina en esa hora: las velas de
+  // después, incluida la que está en curso en vivo, quedan fuera a la derecha
+  const frameChartFrom = (time, until = null) => {
     const candles = candlesRef.current;
     const chartWidth = priceScaleRef.current?.chartWidth;
     if (!candles?.length || !chartWidth) return;
 
     const first = candles.findIndex(candle => candle.timestamp >= time);
-    const needed = candlesToFrame(first < 0 ? 1 : candles.length - first);
+    let last = candles.length - 1;
+    let after = 0;
+    if (Number.isFinite(until)) {
+      const lastShown = countBefore(candles, until + 1) - 1;
+      if (lastShown >= 0 && lastShown < last) {
+        const forming = inProgressCandleRef.current;
+        after = last - lastShown + (forming && forming.timestamp > candles[last].timestamp ? 1 : 0);
+        last = lastShown;
+      }
+    }
+    const needed = candlesToFrame(first < 0 ? 1 : last - first + 1);
     const view = viewStateRef.current;
     const barWidth = Math.max(0.1, Math.min(MAX_BAR_WIDTH, 8 * view.zoom));
 
-    view.offset = 0;
+    view.offset = after;
     view.verticalZoom = 1;
     view.verticalOffset = 0;
     if (needed > Math.floor(chartWidth / barWidth)) view.zoom = chartWidth / (needed * 8);

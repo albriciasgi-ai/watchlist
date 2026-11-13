@@ -92,7 +92,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `GET /api/bot/journal?days&symbol`, `POST /api/bot/journal/sync` | Trades reales del journal del bot; pedir ya los cierres a Bybit |
 | `POST /api/bot/journal/{id}/note` | Nota de 1 a 4000 caracteres en un trade (no mueve dinero: sin palabra de confirmación) |
 | `POST /api/screenshots/session/{sesión}`, `GET .../{sesión}/{archivo}` | Imágenes del gráfico (el contrato de App 1: `MiniChart.captureScreenshot` las sube aquí). Solo PNG de hasta 12 MB, en `data/journal/images` |
-| `POST /api/journal/context` | Contexto del journal: `decision` (imagen, nota, niveles elegidos, orden, y desde el 12/11 `order_id`, `order_link_id` y `outcome` placed/unknown), `open` o `close` (imagen). Se valida y se acota todo |
+| `POST /api/journal/context` | Contexto del journal: `decision` (imagen, nota, niveles elegidos, orden, y desde el 12/11 `order_id`, `order_link_id` y `outcome` placed/unknown), `open`, `close` o `after` (imagen; `after` con `until`, entre el cierre y ahora). Se valida y se acota todo |
 | `GET /api/journal/decision?order_id\|order_link_id` | La decisión guardada de una orden de Bybit: al cancelar una Limit del panel, lo elegido para ella vuelve a la lista |
 | `GET /api/journal/measures/{id}`, `/api/journal/catalog` | Las 58 medidas de App 1 al decidir y lo máximo a favor y en contra; las de un trade cerrado quedan guardadas |
 | `GET /api/journal/report?days` | Ganadoras contra perdedoras en cada medida (`patterns.compare_groups` de App 1). Calcula hasta 8 medidas que falten por pedido |
@@ -276,6 +276,11 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
     - ajusta la escala a la caja completa.
     
     Usa el marco a la vista si el trade cabe en 200 velas (`closeFrame`); si no, el primer marco mayor donde quepa, fuera de la pantalla. Nunca uno menor. En el gráfico a la vista la caja solo existe mientras se dibuja la imagen: tu vista no la muestra. Sin el trade en el journal, la imagen sale como antes. De una posición "anterior" la caja empieza cuando el bot la vio.
+  - **"10 velas después"** (12/11, pedido del usuario, como la de cierre de App 1): la misma imagen, en el mismo marco, termina 10 velas después del cierre (`showUntil` de `captureScreenshot`). Así se ve lo que hizo el precio tras salir. En 15m son 2.5 horas.
+    - Al cerrar queda en `localStorage` (`suite_after_shots`, de la pestaña 1), así sobrevive a cerrar o reiniciar la suite.
+    - Las vencidas se toman fuera de la pantalla al abrir la página y cada 30 s. Una tomada tarde termina igual a las 10 velas.
+    - Se descarta si venció hace más de 3 días o si la apertura ya no está en los días que carga el marco. Tres intentos sin imagen, también.
+    - Se guarda como contexto `after`, con `at` = hora del cierre y `until` = final de la imagen. Se une al trade como la de cierre, y el journal la muestra como "10 velas después" con la hora en que termina.
   - **Unión:** el contexto se une al trade del bot de la misma moneda y lado. La decisión, por la orden que abrió el trade (`open_order_id` del bot) a cualquier hora; sin ella, la más reciente hasta 15 minutos antes de abrir que no sea de otra orden conocida. La imagen de apertura, hasta 5 minutos después, y la de cierre, hasta 15 minutos después.
   - **Medidas al decidir:** las 58 de App 1 (`measures.compute`, `row_at`, `read_row`) con velas de Bybit, en la última vela de 15m cerrada antes de decidir, vistas desde el lado del trade. Se calculan al abrir el detalle, unos 10 s; las de un trade cerrado quedan guardadas en `data/journal/measures`. El OI y el delta salen de los almacenes locales: en días sin almacén quedan "—".
   - **Lo máximo a favor y en contra,** en R del SL inicial, con velas de 5 minutos.
@@ -284,8 +289,12 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
 - **Falta:**
   - la lectura de la regla del laboratorio (`observer.read_at`);
   - el delta y el OI de los días recientes (almacén en vivo);
-  - lo elegido en la imagen de apertura, como App 1: hoy lleva la lista del panel, que ya quedó vacía para el trade siguiente;
-  - una imagen 10 velas después del cierre, como la de cierre de App 1, para ver lo que pasó después.
+  - lo elegido en la imagen de apertura, como App 1: hoy lleva la lista del panel, que ya quedó vacía para el trade siguiente.
+
+Probado el 12/11 ("10 velas después") en la copia aislada con un bot falso:
+- al cerrar un trade de BTC de 2 horas quedó programada en 15m, 150 minutos después del cierre y con su caja;
+- una de SOL vencida hace 91 minutos se tomó al abrir la página. Terminó a las 19:07, 10 velas después del cierre, aunque ya eran las 20:35;
+- salió de la lista de pendientes y el journal la mostró en el trade.
 
 Probado el 12/11 (imagen de cierre) en la copia aislada con un bot falso:
 - un trade de SOL de 3 horas, sin estar a la vista, se retrató en 15m. Salieron su caja con la entrada 81.35, el TP 85.42, el SL 78.91 y R/R, y el nivel elegido con su número;

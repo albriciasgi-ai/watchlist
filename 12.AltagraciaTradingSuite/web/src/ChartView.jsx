@@ -41,6 +41,29 @@ const DAYS = { '1m': 3, '5m': 10, '15m': 30, '1h': 120, '4h': 365 };
 const TF_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000 };
 const CLOSE_MAX_CANDLES = 200; // un trade más largo que esto en el marco a la vista se retrata en un marco mayor
 
+// Imagen 10 velas después del cierre, como la de cierre de App 1 (12/11/2026): queda en localStorage hasta tomarla, así
+// sobrevive a cerrar o reiniciar la suite. Una vencida hace más de 3 días, o con la apertura fuera de lo que carga el
+// marco, se descarta; tres intentos sin imagen también
+const AFTER_KEY = 'suite_after_shots';
+const AFTER_CANDLES = 10;
+const AFTER_MAX_LATE_MS = 3 * 86400000;
+const AFTER_MAX_TRIES = 3;
+const loadAfterShots = () => {
+  try {
+    const list = JSON.parse(localStorage.getItem(AFTER_KEY));
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+};
+const saveAfterShots = (list) => {
+  try {
+    localStorage.setItem(AFTER_KEY, JSON.stringify(list));
+  } catch {
+    // Sin almacenamiento la imagen se toma solo si la página sigue abierta
+  }
+};
+
 /**
  * Marco de la imagen de cierre: el que está a la vista si el trade cabe (hasta 200 velas y dentro de los días que
  * carga el marco, con aire antes de la apertura); si no, el primero mayor donde quepa. Nunca uno menor
@@ -244,12 +267,49 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
     offscreenBusyRef.current = true;
     setOffscreenJob(next);
   }, []);
+  const afterQueuedRef = useRef(new Set()); // imágenes "después" ya en la cola, para no encolarlas dos veces
   const finishOffscreen = useCallback((job, image) => {
-    if (image) saveContext({ kind: job.kind, symbol: job.symbol, side: job.side, at: job.at, image, frame: job.tf });
+    if (image) {
+      saveContext({ kind: job.kind, symbol: job.symbol, side: job.side, at: job.at, image, frame: job.tf,
+                    ...(job.until ? { until: job.until } : {}) });
+    }
+    if (job.kind === 'after') {
+      // Tomada, sale de la lista; sin imagen, se reintenta en la próxima revisión hasta AFTER_MAX_TRIES
+      afterQueuedRef.current.delete(job.afterId);
+      const list = loadAfterShots()
+        .map(entry => (entry.id === job.afterId ? { ...entry, tries: (entry.tries || 0) + 1 } : entry))
+        .filter(entry => entry.id !== job.afterId || (!image && entry.tries < AFTER_MAX_TRIES));
+      saveAfterShots(list);
+    }
     offscreenBusyRef.current = false;
     setOffscreenJob(null);
     setTimeout(pumpOffscreen, 300);
   }, [saveContext, pumpOffscreen]);
+
+  // Las imágenes "después" vencidas se toman fuera de la pantalla: al abrir la página y cada 30 s. Solo la pestaña 1
+  useEffect(() => {
+    if (TAB !== 1) return undefined;
+    const review = () => {
+      const now = Date.now();
+      const list = loadAfterShots();
+      const kept = list.filter(entry => now - entry.dueAt <= AFTER_MAX_LATE_MS
+        && now - entry.start <= (DAYS[entry.tf] || 0) * 86400000 * 0.95);
+      if (kept.length !== list.length) saveAfterShots(kept);
+      for (const entry of kept) {
+        if (entry.dueAt > now || afterQueuedRef.current.has(entry.id)) continue;
+        afterQueuedRef.current.add(entry.id);
+        offscreenQueueRef.current.push({
+          id: entry.id, afterId: entry.id, kind: 'after', symbol: entry.symbol, side: entry.side, at: entry.closedAt, until: entry.dueAt,
+          tf: entry.tf, days: DAYS[entry.tf], size: chartSize(), box: entry.box,
+          options: { showFrom: entry.start, showUntil: entry.dueAt, items: entry.items || [] },
+        });
+      }
+      pumpOffscreen();
+    };
+    review();
+    const timer = setInterval(review, 30000);
+    return () => clearInterval(timer);
+  }, [pumpOffscreen, chartSize]);
 
   // Imagen de cierre como en App 1 (12/11/2026, pedido del usuario): encuadrada desde la apertura del trade, con su
   // caja de entrada, SL y TP iniciales hasta el cierre y lo elegido para él, en un marco donde el trade quepa
@@ -299,6 +359,13 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
           const plan = kind === 'close' ? await closePlan(p, at) : { tf: activeTfRef.current, start: null, box: null, items: null };
           const tf = plan.tf;
           const options = kind === 'open' ? { context: true } : { showFrom: plan.start, items: plan.items };
+          // Y 10 velas después, la misma imagen con lo que hizo el precio tras el cierre (como la de cierre de App 1)
+          if (kind === 'close' && plan.start) {
+            saveAfterShots([...loadAfterShots(), {
+              id: `after-${p.symbol}-${p.side}-${at}`, symbol: p.symbol, side: p.side, closedAt: at, dueAt: at + AFTER_CANDLES * TF_MS[tf],
+              tf, start: plan.start, box: plan.box, items: plan.items, tries: 0,
+            }]);
+          }
           if (p.symbol === symbolRef.current && tf === activeTfRef.current && chartRefs.current[tf]?.isShown?.()) {
             setTimeout(async () => {
               // La caja solo existe mientras se dibuja la imagen: la vista de quien opera no la muestra

@@ -22,7 +22,9 @@ IMAGE_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}/[A-Za-z0-9_.-]{1,96}$")
 TRADE_ID_RE = re.compile(r"^[A-Za-z0-9:._-]{1,160}$")
 ORDER_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 OUTCOMES = {"placed", "unknown"}
-KINDS = {"decision", "open", "close"}
+# "after" (12/11/2026): la imagen 10 velas despues del cierre, como la de cierre de App 1. Su `at` es la hora del cierre
+# (se une al trade como la de cierre) y `until`, el final de lo que muestra
+KINDS = {"decision", "open", "close", "after"}
 MAX_IMAGE_BYTES = 12 * 1024 * 1024
 MINUTE = 60000
 # Ventanas para unir un contexto con su trade (respecto de la apertura o el cierre que anota el bot)
@@ -85,7 +87,7 @@ class JournalStore:
             raise ValueError("cuerpo invalido")
         kind = body.get("kind")
         if kind not in KINDS:
-            raise ValueError("kind debe ser decision, open o close")
+            raise ValueError("kind debe ser decision, open, close o after")
         symbol = str(body.get("symbol") or "").upper()
         if not SYMBOL_RE.match(symbol):
             raise ValueError("simbolo invalido")
@@ -105,6 +107,11 @@ class JournalStore:
         frame = _text(body.get("frame"), 8)
         if frame:
             event["frame"] = frame
+        if kind == "after":
+            until = _num(body.get("until"))
+            if until is None or until < at or until > now + 60000:
+                raise ValueError("until invalido: el final de la imagen va despues del cierre y no en el futuro")
+            event["until"] = int(until)
         note = _text(body.get("note"), 4000)
         if note:
             event["note"] = note
@@ -211,8 +218,11 @@ class JournalStore:
                             by_time = e
                 elif e["kind"] == "open" and opened and not t.get("pre_existing") and opened - OPEN_BEFORE <= at <= opened + OPEN_AFTER:
                     images.append({"kind": "open", "image": e.get("image"), "at": at, "frame": e.get("frame")})
-                elif e["kind"] == "close" and closed and closed - CLOSE_BEFORE <= at <= closed + CLOSE_AFTER:
-                    images.append({"kind": "close", "image": e.get("image"), "at": at, "frame": e.get("frame")})
+                elif e["kind"] in ("close", "after") and closed and closed - CLOSE_BEFORE <= at <= closed + CLOSE_AFTER:
+                    shot = {"kind": e["kind"], "image": e.get("image"), "at": at, "frame": e.get("frame")}
+                    if e.get("until"):
+                        shot["until"] = e["until"]
+                    images.append(shot)
             decision = decision or by_time
             if decision and decision.get("image"):
                 images.insert(0, {"kind": "decision", "image": decision["image"], "at": decision["at"], "frame": decision.get("frame")})
