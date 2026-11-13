@@ -252,6 +252,14 @@ def test_la_lectura_no_sale_mientras_la_orden_sigue_viva(journal, monkeypatch):
     assert "reading" not in open_trade and "comparison" not in open_trade
 
 
+def test_el_llenado_guarda_la_regla_de_la_limit(journal, monkeypatch):
+    with_reading(monkeypatch)
+    observer.record_order(order())
+    assert "fill_rule" not in observer.trades()["a"], "sin el campo: llenada al tocar, la regla de antes"
+    observer.record_event("a", "fill", {"time": 2, "price": 100.0, "fill_rule": "cross"})
+    assert observer.trades()["a"]["fill_rule"] == "cross"
+
+
 def test_al_cerrar_se_revela_la_comparacion(journal, monkeypatch):
     with_reading(monkeypatch)
     observer.record_order(order(marks={"context4h": "up", "context1h": "up", "reasons": ["volume", "profile", "oi_up"]}))

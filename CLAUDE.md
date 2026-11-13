@@ -94,6 +94,64 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### Altagracia Trading Suite + Collector de Northflank - 13 Noviembre 2026: Libro Completo También en la Nube
+
+**Pedido:** la grabación del libro corre solo con la suite abierta. El usuario no puede tenerla abierta todas las semanas que necesita la medición, y pidió llevarla a Northflank.
+
+**Cambios:**
+1. **Collector** (`5.Order_flow/cloud_collector`): graba todo el día el libro completo de sus monedas con el grabador de la suite (copias exactas de `book_recorder.py` y `book_store.py`).
+   - Guarda 3 días (`BOOK_KEEP_DAYS`).
+   - Si el volumen queda con menos de 150 MB libres, borra los días más viejos del libro, nunca los trades ni los footprints.
+   - Rutas `/api/book/days` y `/api/book/{símbolo}/{día}/{tipo}`; `/health` dice el espacio libre.
+2. **Suite** (`book_cloud.py`): cada 10 minutos baja de la nube solo los minutos que el PC no tiene completos, a `OrderFlowData/live/book_cloud`. El journal y la medición de semanas leen las dos carpetas sin repetir minutos.
+3. **Monedas cerradas:** una moneda que Bybit no da como "Trading" (TONUSDT) no se graba ni se reintenta.
+4. **Pruebas:** `book_cloud_checks.py` de la suite (16) y `book_checks.py` (60). Las demás de la suite y del collector siguen igual; las 4 que fallan en `tape_checks.py` del collector ya fallaban antes (usan el 12/11 como día en curso).
+
+**IMPORTANTE:**
+- Reiniciar la suite ("Reiniciar" en la bandeja) para que empiece a bajar la nube.
+- La nube guarda 3 días: con el PC apagado más tiempo, lo más viejo se pierde. Bajar un día completo de las 20 monedas tarda de 1.5 a 4 horas: la nube entrega de 15 a 40 KB/s.
+- Un cambio al grabador se hace en la suite y se copia al collector, y de ahí a la rama `deploy` de `footprint-collector`.
+
+**Ver:** `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Libro completo de Bybit" y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Libro completo", "Nube"
+
+---
+
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Libro Completo Grabado y Limit que se Llenan al Cruzar
+
+**Pedido:** tras los informes del price ladder (`reports/` del worktree `price-ladder-orderflow`):
+- corregir el llenado de las limit en App 1, y en la suite si pasaba lo mismo;
+- empezar a grabar el libro completo;
+- preparar la medición con semanas de datos, tus zonas contra zonas al azar;
+- llevar medidas del libro al journal.
+
+**Cambios:**
+1. **App 1, llenado de las limit:** una limit se llena solo si el precio pasa más allá de su precio; antes bastaba con tocarlo, y los resultados con limit salían inflados. El stop de entrada, el SL y el TP siguen al tocar. Cada limit guarda su regla (`fillRule`) y el Observador la recibe; `localStorage.setItem('limit_fill_rule', 'touch')` vuelve a la anterior.
+2. **Suite:** no simula llenados (sus limit las llena Bybit), así que ahí no había nada que corregir.
+3. **Suite, grabación del libro** (`book_recorder.py`, `book_store.py`):
+   - el libro completo de Bybit (`orderbook.full` y la foto REST) de las monedas de la suite;
+   - cada segundo, cubos finos hasta ±0.8%; cada minuto, profundidad ponderada por tiempo y mínima hasta ±5%;
+   - en `OrderFlowData/live/book`, con la hora de Bybit;
+   - un proceso por carpeta, y `SUITE_BOOK=0` lo apaga;
+   - rutas `/api/book/status` y `/api/book/depth/{símbolo}`.
+4. **Journal:** nueve medidas del libro por trade, en el grupo "Libro" del detalle y en el informe de ganadoras contra perdedoras. Son la liquidez cerca del precio y en tu entrada, su persistencia, el retiro entre tu entrada y tu stop, y al llenarse, lo retirado y lo negociado en tu entrada.
+5. **Medición de semanas** (`book_study.py`):
+   - tus zonas: perfil del día anterior, FVG de 15m y 1h, y los niveles del journal;
+   - contra zonas al azar, con un aguante de 1/2 ATR de 15m;
+   - en cada visita, lo que había al acercarse y al llegar, y lo negociado.
+6. **Pruebas:** `book_checks.py` de la suite (57); en App 1, `replay.test.mjs` (20), `journal.test.mjs` (45), `observer.test.mjs` (43) y `test_observer.py`. Las demás de la suite y de App 1 siguen pasando.
+
+**IMPORTANTE:**
+- **Arranque:** la grabación empieza al reiniciarse la suite con este código. Ocupa unos 200 MB por día con 20 monedas, unos 6 GB por mes.
+- **Probado en vivo** 12 minutos, en una carpeta temporal, con las 20 monedas de fábrica:
+  - ningún hueco;
+  - el libro de BTC y el de ETH, idénticos a una foto nueva de Bybit (16,413 y 7,943 niveles);
+  - 4% de un núcleo.
+- **Semanas:** la medición necesita semanas de libro; antes no distingue nada del azar.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Libro completo" y `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ÓRDENES"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Dashboard del Journal con el Estilo Elegido
 
 **Pedido:** llevar al journal de la suite lo que tiene App 1 como dashboard (gráficos de trades, P&L, etc.), con los widgets en el estilo elegido por el usuario.

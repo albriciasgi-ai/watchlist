@@ -213,3 +213,34 @@ anoto el hueco. Falta comparar un dia completo grabado en la nube contra el arch
 - `/health` responde en 0.9 a 2.4 s; antes tardaba de 1 a 30 s.
 - Las descargas llegan completas: BTC (2 MB) en 48 a 93 s y SOL (0.44 MB) en 30 s.
 - Siguen lentas, de 15 a 40 KB/s, también con HTTP/1.1. Puede ser el disco del volumen o la CPU de 0.2 vCPU; no se investigó más. El PC baja la nube aparte cada 15 minutos, así que ya no frena los footprints.
+
+
+## Libro completo de Bybit (13/11/2026)
+
+**Pedido:** la suite (`12.AltagraciaTradingSuite`) graba el libro completo solo mientras está abierta, y el usuario no puede tenerla abierta todas las semanas que necesita la medición. La nube lo graba todo el día y el PC baja lo que le falta.
+
+- **Qué graba:** el mismo grabador de la suite. `book_recorder.py` y `book_store.py` son copias exactas de `12.AltagraciaTradingSuite/server`, y `tests/book_cloud_checks.py` de la suite comprueba que sigan iguales: un cambio se hace allá y se copia aquí.
+  - WebSocket público `orderbook.full` de cada moneda y la foto REST al conectar, con la hora de Bybit;
+  - cada segundo hasta ±0.8% (`.bks`) y cada minuto hasta ±5% (`.bkm`), en `/data/live/book/{SIMBOLO}/{AAAA}/`;
+  - una moneda que Bybit no da como "Trading" (TONUSDT, cerrada) no se graba.
+- **Variables nuevas** (se cambian sin rehacer la imagen: basta reiniciar el servicio):
+  - `BOOK`: 1 por omisión; 0 lo apaga;
+  - `BOOK_SYMBOLS`: las de `SYMBOLS` por omisión;
+  - `BOOK_KEEP_DAYS`: 3 días;
+  - `BOOK_MIN_FREE_MB`: 150.
+- **Espacio:** unos 200 MB por día con 20 monedas (medido en el PC el 13/11: 73% los segundos y 27% los minutos). Cada 10 minutos se borran los días del libro de más de `BOOK_KEEP_DAYS`. Si el volumen queda con menos de `BOOK_MIN_FREE_MB` libres, también los días más viejos del libro. Nunca se borran el día de hoy, los trades ni los footprints. Si aun así falta espacio, el libro deja de grabarse hasta reiniciar.
+- **Pedidos a Bybit:** a lo sumo 5 fotos REST por segundo; solo lectura.
+- **Memoria y CPU** (medido en el PC el 13/11, 4 minutos con las 21 monedas de `SYMBOLS`):
+  - con el libro, 113 MB de memoria contra 69 MB sin él, y 5.1% de un núcleo contra 0.6%;
+  - las 20 que cotizan quedaron listas en 15 s, y TONUSDT quedó fuera.
+
+  En la nube, con 0.2 vCPU, eso puede ser la cuarta parte de su CPU.
+- **Rutas nuevas:**
+  - `GET /api/book/status`: por moneda, si está lista, huecos, resincronizaciones, las cerradas y los bytes de hoy;
+  - `GET /api/book/depth/{simbolo}?band=0.005`: lo que hay ahora en cubos finos;
+  - `GET /api/book/days?symbol=`: por moneda, día y tipo, los bytes y los tramos de minutos;
+  - `GET /api/book/{simbolo}/{dia}/{bks|bkm}?from_ms&to_ms`: los bloques de esos minutos, tal cual están en el archivo.
+- **`/health`** suma `book` (el resumen) y `disk` (total y libre del volumen, en MB).
+- **En el PC:** `12.AltagraciaTradingSuite/server/book_cloud.py` baja cada 10 minutos solo los minutos que el PC no tiene completos, a `OrderFlowData/live/book_cloud`. Los lectores juntan las dos carpetas.
+- **Pruebas sin conexión:** `tests/book_cloud_checks.py` de la suite (16) corre este `main.py` en el mismo proceso, con `httpx.ASGITransport`.
+- **Despliegue:** copiar a la rama `deploy` de `albriciasgi-ai/footprint-collector` `main.py`, `Dockerfile`, `requirements.txt` (suma httpx), `book_recorder.py` y `book_store.py`.

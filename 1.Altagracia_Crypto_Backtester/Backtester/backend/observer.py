@@ -410,6 +410,8 @@ def trades():
                 trade.update(status="open", fill_time=event.get("time"), fill_price=event.get("price"))
                 if event.get("trade_number") is not None:
                     trade["trade_number"] = event["trade_number"]
+                if event.get("fill_rule"):
+                    trade["fill_rule"] = event["fill_rule"]  # limit: 'cross' desde el 13/11/2026; sin el campo, al tocar
             elif kind == "close":
                 trade.update(
                     status="closed", exit_time=event.get("time"), exit_price=event.get("price"),

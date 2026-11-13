@@ -14,6 +14,7 @@ from typing import Any, Dict, List
 import numpy as np
 from starlette.concurrency import run_in_threadpool
 
+import book_measures  # medidas del libro grabado por la suite (13/11/2026)
 import candles
 import journal_reading
 import measures  # App 1 (su backend esta en sys.path)
@@ -98,8 +99,13 @@ async def trade_measures(trade: Dict[str, Any]) -> Dict[str, Any]:
             days5 = int(min(MAX_DAYS["5m"], math.ceil((now - opened) / DAY) + 1))
             f5 = frame(await _candles(symbol, "5m", days5))
             result["best_r"], result["worst_r"] = excursion(f5, side, entry, stop, opened, trade.get("closed_at") or now)
+    # Las del libro grabado por la suite: van con las demas, en el grupo "Libro". Sin libro de esas horas, "—"
+    try:
+        result["decision"].update(await run_in_threadpool(book_measures.compute, trade))
+    except Exception as e:  # el libro nunca impide las demas medidas
+        result["book_error"] = str(e)[:200]
     return result
 
 
 def catalog() -> List[Dict[str, str]]:
-    return measures.catalog()
+    return measures.catalog() + book_measures.catalog()
