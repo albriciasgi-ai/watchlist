@@ -47,12 +47,16 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── journal_measures.py    Las 58 medidas de App 1 (measures.py) para un trade real, con velas de Bybit
 │   ├── journal_routes.py  Imágenes (contrato de App 1), contexto, medidas e informe del journal
 │   ├── recorder.py        Graba los trades de las monedas de la suite (usa local_tape.py del 11000)
+│   ├── book_recorder.py   Graba el libro completo de Bybit (orderbook.full) de las monedas de la suite (ver "Libro completo")
+│   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book)
+│   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro")
+│   ├── book_study.py      Medición de semanas: qué hace la liquidez al llegar el precio a tus zonas, contra zonas al azar
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
 │   ├── swing_rules.py     La regla del indicador Swing de App 1, en Python (sin red ni archivos)
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43) y swing_checks.py (102), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43), swing_checks.py (102) y book_checks.py (55), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -508,6 +512,60 @@ El usuario pidió seis cosas al probar la Watchlist.
 - Lo guardado antes en una pestaña no tiene esa marca y pasa a seguir a la 1.
 
 **VWAP que no se detenía** (hallado en el mismo registro): al cambiar de moneda, el VWAP de la anterior seguía pidiendo sus datos cada 30 s, en los cinco marcos, hasta cerrar la página; XRP se pidió 117 veces. `IndicatorManager.destroy()` de App 1 no detenía su temporizador, y un pedido en camino lo volvía a arrancar al llegar. Arreglado en App 1 con `dispose()` del VWAP. Medido en la copia: tras pasar de BTC a ETH, ningún pedido del VWAP de BTC en 40 s.
+
+## Libro completo (13/11)
+
+Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price ladder en nuestro trading.md` y `reports/Patrones del price ladder y cancelaciones.md`, en el worktree `price-ladder-orderflow`): grabar el libro completo, medir con semanas de datos qué hace la liquidez cuando el precio llega a sus zonas, y llevar medidas del libro al journal. Bybit publica el libro completo de sus perpetuos desde el 11/08/2026. Su historia no se recupera: los archivos gratis de Bybit traen 200 niveles, que en BTC alcanzan ±0.05%.
+
+- **Grabación** (`server/book_recorder.py`):
+  - WebSocket público `orderbook.full.{SIMBOLO}` (solo cambios, cada 200 ms), una conexión cada 7 monedas;
+  - la foto REST `/v5/market/full_orderbook` al conectar, unida a los cambios guardados mientras llega;
+  - los cambios se aplican con `u` de a 1; si `u` salta, otra foto, y ese minuto queda incompleto (`gap`). También hay otra foto si el precio se aleja 10% de la última, y una al día por moneda, escalonadas;
+  - en memoria, solo los niveles a ±20% del precio;
+  - el tick de cada moneda sale de `instruments-info` (un pedido); sin respuesta se deduce de la foto;
+  - las monedas son las de la suite, y una nueva empieza a grabarse al agregarla;
+  - un solo proceso por carpeta (`live/book/recorder.lock`). `SUITE_BOOK=0` lo apaga; sin esa variable vale `SUITE_RECORD`, que las pruebas ponen en 0. Solo lee: a Bybit no se le envía nada más que las suscripciones y las fotos.
+- **Hora de Bybit:** cada segundo y cada minuto se toman con la hora de los mensajes (`ts`), no con la del PC (el 13/11 iba unos 2 s atrasada). Las monedas sin cambios se toman con un reloj de respaldo: la hora del PC más la diferencia medida, con 1.5 s de atraso.
+- **Archivos** (`server/book_store.py`), en `OrderFlowData/live/book/{SIMBOLO}/{AAAA}/`, uno por moneda, día UTC y tipo:
+  - `{SIMBOLO}_{día}.bks`: cada segundo, lo que había en cubos finos, de ~0.01% del precio (BTC 5 USD, ETH 0.2, SOL y XRP un tick), hasta ±0.8%, con la mejor compra y venta;
+  - `{SIMBOLO}_{día}.bkm`: cada minuto, la profundidad ponderada por tiempo y la mínima del minuto, en cubos gruesos de ~0.03% (BTC 20 USD, como el step del footprint de 15m), hasta ±5%;
+  - cantidades en la moneda, no en USD;
+  - bloques de un minuto con zlib. Las filas de cada segundo van con XOR contra la anterior: sin pérdida, y lo que no cambia casi no ocupa. Un bloque cortado al final se ignora al leer.
+- **Peso medido** (13/11, 12 minutos de las 20 monedas de fábrica, a las 14 h de Colombia): las 20 monedas, unos 200 MB por día y 6 GB por mes. Las que más ocupan: BTC unos 20 MB por día, ETH 19, XRP 18.5, ARB 13, SOL 12 y DOGE 10. Las que menos, de 3 a 7 MB. En horas movidas ocupará más.
+- **Rutas:** `GET /api/book/status` (por moneda: lista, `u`, cubos, mensajes, huecos y resincronizaciones; bytes de hoy) y `GET /api/book/depth/{símbolo}?band=0.005` (lo que hay ahora en cubos finos, para un ladder). `/api/suite/status` trae `book`.
+- **Journal** (`server/book_measures.py`): las medidas del libro de cada trade real van con las 58 de App 1, en el grupo "Libro". Se ven en el detalle y entran al informe de ganadoras contra perdedoras:
+  - liquidez a ±0.5% en los 5 minutos antes de decidir, y su percentil contra las 24 horas anteriores;
+  - desequilibrio a ±0.5% a favor del trade;
+  - liquidez en espera en tu entrada (±0.05%), contra lo típico a esa distancia, y su persistencia en 15 minutos (mínimo ÷ promedio);
+  - cambio en 10 minutos de la liquidez entre tu entrada y tu stop;
+  - al llenarse: lo retirado de tu entrada en los 30 s anteriores, y lo negociado ahí en ese minuto (footprints de 1 minuto, `live=True`) ÷ lo que había.
+  
+  Un trade anterior a la grabación queda con "—" en estas medidas.
+- **Medición de semanas** (`server/book_study.py`): lo que la medición del 13/11 hizo con 15 minutos, para semanas de libro grabado:
+  - tus zonas: POC, VAH y VAL del perfil del día anterior (almacén de trades), FVG de 15m y 1h, y los niveles elegidos en el journal;
+  - zonas al azar: por cada una, tres del mismo ancho corridas entre 0.3% y 1.5%, en las mismas horas;
+  - una visita empieza cuando el precio estuvo a 1/4 de ATR de 15m o más y llega a la zona. Aguanta si vuelve a alejarse 1/2 ATR antes de pasarla por 1/4 ATR; si no, la cruza. El ATR sale de los minutos del almacén de trades, así no depende de cuánto libro hay grabado;
+  - en cada visita mide lo que había al acercarse y al llegar, lo negociado ahí contra ese lado (trades exactos) y si el precio la pasó (una limit ahí se habría llenado);
+  - da el aguante de tus zonas y del azar, la diferencia con su IC 95%, el "llena y aguanta" y las cargadas contra el resto. Con menos de 30 visitas resueltas avisa muestra pequeña.
+  
+  Uso: `C:\Python314\python.exe -B server\book_study.py BTCUSDT,ETHUSDT 2026-11-14 2026-12-14 [salida.json]`.
+- **Pruebas:** `tests/book_checks.py` (55), sin conexión:
+  - cubos y mejor precio exactos tras miles de cambios al azar;
+  - salto de `u` y foto que empalma o no;
+  - cada segundo y cada minuto (ponderado y mínimo) iguales a recalcularlos desde cero;
+  - escritura y lectura con un bloque cortado;
+  - las medidas del journal con libros armados a mano;
+  - las visitas del estudio con un camino del precio armado a mano.
+- **Probado en vivo** (13/11, 12 minutos), en una carpeta temporal, con las 20 monedas de fábrica y Bybit real (solo lectura):
+  - las 20 quedaron listas, sin huecos ni reconexiones, con 11 minutos completos cada una; tres conexiones y ningún error de escritura;
+  - al final, el libro de BTC y el de ETH coincidieron con una foto nueva de Bybit más sus cambios siguientes, en el mismo `u`: 16,413 y 7,943 niveles a ±5%, sin una diferencia;
+  - CPU: 4% de un núcleo para las 20;
+  - `book_study.py` recorrió esos minutos en 0.3 s, con las zonas del almacén y los trades reales. Dio una sola visita: hacen falta semanas.
+
+  No se probó dentro de la suite ni en Electron, ni con una caída de la conexión real (sí con las pruebas sin conexión).
+- **Falta:**
+  - el mapa de liquidez en App 1 y el ladder junto al panel de trading;
+  - las monedas que se quitan de la suite siguen grabándose hasta reiniciar.
 
 ## Escritorio (Electron)
 

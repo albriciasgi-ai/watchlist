@@ -248,6 +248,14 @@ test('llenado, cierre y cancelacion viajan con la hora simulada', async () => {
   assert.deepEqual(sent[3].body, { event: 'cancel', time: START + 180000 });
 });
 
+test('una limit llenada dice con que regla se lleno', async () => {
+  sent = [];
+  const target = order();
+  await recordOrder(target, context);
+  await recordFill({ ...target, executedAt: START + 60000, executedPrice: 81800, tradeNumber: 4, fillRule: 'cross' });
+  assert.deepEqual(sent[1].body, { event: 'fill', time: START + 60000, price: 81800, trade_number: 4, fill_rule: 'cross' });
+});
+
 test('una orden de una sesion vieja, sin registro, no envia eventos', async () => {
   sent = [];
   await recordFill(order());

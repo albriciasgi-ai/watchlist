@@ -2,7 +2,7 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
 import { TF_MS, candlesToSettle, formingCandle, lastClosedIndex, priceAt } from '../src/components/backtesting/replayClock.js';
-import OrderManager from '../src/components/backtesting/OrderManager.js';
+import OrderManager, { limitFillRule, limitFilled } from '../src/components/backtesting/OrderManager.js';
 
 console.log = (log => (...a) => (typeof a[0] === 'string' && a[0].startsWith('[OrderManager]') ? null : log(...a)))(console.log);
 let count = 0;
@@ -110,6 +110,61 @@ t('corto limit, stop arriba y objetivo abajo', () => {
   const o = m.closedOrders[0];
   assert.strictEqual(o.closeReason, 'take_profit');
   near(o.pnl, 10 - 110 * 0.0002 - 100 * 0.00055);
+});
+t('una limit de compra que solo toca su precio no se llena; al pasarlo, si', () => {
+  const m = manager();
+  m.createOrder({ type: 'limit', side: 'long', quantity: 1, entryPrice: 100, currentTime: 0, currentPrice: 105 });
+  m.updateOrders(bar(0, 105, 106, 100, 101), MIN);
+  assert.strictEqual(m.pendingOrders.length, 1, 'el toque exacto no la llena');
+  m.updateOrders(bar(1, 101, 102, 99.9, 101), 2 * MIN);
+  assert.strictEqual(m.pendingOrders.length, 0);
+  assert.strictEqual(m.openOrders[0].executedPrice, 100, 'se llena a su precio, como maker');
+  assert.strictEqual(m.openOrders[0].fillRule, 'cross');
+  assert.strictEqual(m.openOrders[0].executedAt, 2 * MIN);
+});
+t('una limit de venta que solo toca su precio no se llena; al pasarlo, si', () => {
+  const m = manager();
+  m.createOrder({ type: 'limit', side: 'short', quantity: 1, entryPrice: 110, currentTime: 0, currentPrice: 100 });
+  m.updateOrders(bar(0, 100, 110, 99, 108), MIN);
+  assert.strictEqual(m.pendingOrders.length, 1);
+  m.updateOrders(bar(1, 108, 110.1, 107, 109), 2 * MIN);
+  assert.strictEqual(m.openOrders.length, 1);
+  assert.strictEqual(m.openOrders[0].executedPrice, 110);
+});
+t('el ruido de coma flotante cuenta como toque', () => {
+  assert.strictEqual(limitFilled('long', 99.00000000000001, 99, 100), false);
+  assert.strictEqual(limitFilled('short', 0.3, 0.2, 0.1 + 0.2), false);
+  assert.strictEqual(limitFilled('long', 100, 99.99, 101), true);
+  assert.strictEqual(limitFilled('short', 100, 99, 100.01), true);
+  assert.strictEqual(limitFilled('long', NaN, 90, 110), false);
+  assert.strictEqual(limitFilled('long', 100, undefined, 110), false);
+});
+t('con limit_fill_rule en touch vuelve la regla anterior', () => {
+  assert.strictEqual(limitFillRule({ getItem: () => 'touch' }), 'touch');
+  assert.strictEqual(limitFillRule({ getItem: () => null }), 'cross');
+  assert.strictEqual(limitFillRule({ getItem: () => 'cualquiera' }), 'cross');
+  assert.strictEqual(limitFillRule({ getItem: () => { throw new Error('bloqueado'); } }), 'cross');
+  assert.strictEqual(limitFillRule(undefined), 'cross');
+  assert.strictEqual(manager().limitFillRule, 'cross', 'sin localStorage (node) vale la regla nueva');
+  const m = manager();
+  m.limitFillRule = 'touch';
+  m.createOrder({ type: 'limit', side: 'long', quantity: 1, entryPrice: 100, currentTime: 0, currentPrice: 105 });
+  m.updateOrders(bar(0, 105, 106, 100, 101), MIN);
+  assert.strictEqual(m.openOrders.length, 1);
+  assert.strictEqual(m.openOrders[0].fillRule, 'touch');
+});
+t('stop de entrada, SL y TP siguen al tocar: en Bybit son ordenes a mercado al llegar el precio', () => {
+  const m = manager();
+  m.createOrder({ type: 'stop', side: 'long', quantity: 1, entryPrice: 110, currentTime: 0, currentPrice: 100, stopLoss: 105, takeProfit: 120 });
+  m.updateOrders(bar(0, 106, 110, 106, 109), MIN);
+  assert.strictEqual(m.openOrders.length, 1, 'el stop se activa al tocar');
+  assert.strictEqual(m.openOrders[0].fillRule, undefined, 'la regla solo se anota en las limit');
+  m.updateOrders(bar(1, 109, 120, 108, 119), 2 * MIN);
+  assert.strictEqual(m.closedOrders[0].closeReason, 'take_profit', 'el TP se cierra al tocar');
+  const s = manager();
+  s.createOrder({ type: 'market', side: 'short', quantity: 1, entryPrice: 100, currentTime: 0, currentPrice: 100, stopLoss: 105 });
+  s.updateOrders(bar(0, 100, 105, 99, 104), MIN);
+  assert.strictEqual(s.closedOrders[0].closeReason, 'stop_loss', 'el SL se cierra al tocar');
 });
 
 const realPath = process.argv[2];

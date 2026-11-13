@@ -12,6 +12,33 @@
 const FEE_MAKER = 0.0002;
 const FEE_TAKER = 0.00055;
 
+/**
+ * Regla de llenado de las órdenes limit (13/11/2026).
+ * 'cross': se llena solo si el precio pasa más allá del límite. Una vela que apenas toca su precio no la
+ * llena, porque en el mercado puede haber cola delante y el precio puede rebotar sin llenarla. Cuando el
+ * precio negocia más allá, todo lo que había en ese precio ya se negoció o se retiró: la orden se llenó.
+ * 'touch': la regla anterior, se llena al tocar. Se vuelve a ella con
+ * localStorage.setItem('limit_fill_rule', 'touch') y recargando la página.
+ */
+export function limitFillRule(storage = globalThis.localStorage) {
+  try {
+    return storage?.getItem?.('limit_fill_rule') === 'touch' ? 'touch' : 'cross';
+  } catch {
+    return 'cross';
+  }
+}
+
+/** ¿La vela llena la limit? El margen de 1e-9 del precio trata como toque el ruido de coma flotante. */
+export function limitFilled(side, entryPrice, candleLow, candleHigh, rule = 'cross') {
+  if (!Number.isFinite(entryPrice)) return false;
+  if (side === 'long') {
+    if (!Number.isFinite(candleLow)) return false;
+    return rule === 'touch' ? candleLow <= entryPrice : candleLow < entryPrice - Math.abs(entryPrice) * 1e-9;
+  }
+  if (!Number.isFinite(candleHigh)) return false;
+  return rule === 'touch' ? candleHigh >= entryPrice : candleHigh > entryPrice + Math.abs(entryPrice) * 1e-9;
+}
+
 class OrderManager {
   constructor(initialBalance = 10000) {
     this.orders = []; // Todas las órdenes (abiertas, cerradas y pendientes)
@@ -24,6 +51,7 @@ class OrderManager {
     this.realizedPnL = 0;
     this.nextOrderId = 1;
     this.nextTradeNumber = 1; // Número del trade: solo lo reciben las órdenes que se ejecutan
+    this.limitFillRule = limitFillRule(); // 'cross' salvo que se pida la regla anterior
 
     // Callbacks (legacy support)
     this.onOrderCreated = null;
@@ -297,15 +325,9 @@ class OrderManager {
       let shouldExecute = false;
 
       if (order.type === 'limit') {
-        // Limit order se ejecuta cuando el precio TOCA el precio límite
-        // 🎯 FIX: Usar candleLow para long, candleHigh para short
-        if (order.side === 'long' && candleLow <= order.entryPrice) {
-          // Long limit: comprar cuando el precio baje al límite (usar low)
-          shouldExecute = true;
-        } else if (order.side === 'short' && candleHigh >= order.entryPrice) {
-          // Short limit: vender cuando el precio suba al límite (usar high)
-          shouldExecute = true;
-        }
+        // Long: el mínimo de la vela debe pasar por debajo del límite; short: el máximo, por encima.
+        // Con la regla anterior ('touch') basta con tocarlo
+        shouldExecute = limitFilled(order.side, order.entryPrice, candleLow, candleHigh, this.limitFillRule);
       } else if (order.type === 'stop') {
         // Stop order se ejecuta cuando el precio SUPERA el precio stop
         // 🎯 FIX: Usar candleHigh para long, candleLow para short
@@ -396,6 +418,7 @@ class OrderManager {
     order.executedAt = currentTime;
     order.executedPrice = executionPrice;
     order.commission = executionPrice * order.quantity * (order.type === 'limit' ? FEE_MAKER : FEE_TAKER);
+    if (order.type === 'limit') order.fillRule = this.limitFillRule; // con qué regla se llenó, para compararlas
 
     // Agregar a órdenes abiertas
     this.openOrders.push(order);

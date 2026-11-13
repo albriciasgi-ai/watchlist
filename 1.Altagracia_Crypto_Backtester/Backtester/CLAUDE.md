@@ -1089,6 +1089,17 @@ Subir `VERSION` en `measures.py`: `_load()` rechaza la tabla vieja y se reconstr
 - **Caja nueva:** `defaultBoxSize()` da 45 px de riesgo, 130 px de ancho y riesgo beneficio 2, sin salirse del gráfico. Sin escala usa 0.5%
 - **Precio del momento:** `orderEntry()` da la entrada: la de la caja o, con "Usar precio actual", el precio de ese momento. Antes salía del campo del panel, que copia el precio un dibujo después: un clic en ese intervalo dejaba la orden automática pendiente como stop o limit al precio anterior
 - **Caja de una orden viva:** `boxesFollowOrders()` corre en cada cambio de dibujos y devuelve la caja de una orden pendiente o abierta a su entrada (la ejecutada si ya abrió), su stop y su objetivo. Para cambiar una orden pendiente se cancela: su caja queda libre
+- **Llenado de las limit (13/11, pedido del usuario tras el informe del price ladder):**
+  - una limit se llena solo si el precio pasa más allá de su precio: la de compra, cuando el mínimo de la vela queda por debajo; la de venta, cuando el máximo queda por encima (`limitFilled()` en `OrderManager.js`);
+  - antes bastaba con tocarlo (`candleLow <= entryPrice`). En el mercado, si hay cola delante, el precio puede tocar tu precio y rebotar sin llenarte, y esos son los mejores trades: los resultados con limit salían inflados;
+  - cuando el precio negocia más allá, todo lo que había en ese precio ya se negoció o se retiró, así que la orden se llenó. Se llena a su precio y paga maker, como antes;
+  - el ruido de coma flotante (1e-9 del precio) cuenta como toque;
+  - el stop de entrada, el SL y el TP siguen al tocar: en Bybit son órdenes condicionales que salen a mercado al llegar el precio;
+  - cada limit llenada guarda su regla en `order.fillRule` (`'cross'`), y el Observador la recibe en el evento `fill` (`fill_rule`). Las órdenes de antes no la tienen: se llenaron al tocar;
+  - `localStorage.setItem('limit_fill_rule', 'touch')` y recargar vuelve a la regla anterior, para comparar en el Observador; `removeItem` la deshace;
+  - pruebas en `replay.test.mjs` (20), `journal.test.mjs` (45), `observer.test.mjs` (43) y `test_observer.py`.
+  
+  La suite (`12.AltagraciaTradingSuite`) no simula llenados: sus limit son reales y las llena Bybit.
 
 ---
 

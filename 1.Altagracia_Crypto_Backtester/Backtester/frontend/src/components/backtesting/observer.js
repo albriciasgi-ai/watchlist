@@ -96,7 +96,9 @@ export function recordMarks(id, marks) {
 
 export function recordFill(order) {
   if (!order.observerId) return queue;
-  return send(`orders/${order.observerId}/events`, { event: 'fill', time: order.executedAt, price: order.executedPrice, trade_number: order.tradeNumber ?? null });
+  const body = { event: 'fill', time: order.executedAt, price: order.executedPrice, trade_number: order.tradeNumber ?? null };
+  if (order.fillRule) body.fill_rule = order.fillRule; // solo las limit: con qué regla se llenaron
+  return send(`orders/${order.observerId}/events`, body);
 }
 
 export function recordClose(order) {

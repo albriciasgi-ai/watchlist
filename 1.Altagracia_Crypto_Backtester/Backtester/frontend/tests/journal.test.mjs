@@ -319,7 +319,7 @@ test('orden: una vela anterior al llenado no la cierra aunque se repita', () => 
   const before = candleAt(2, 102, 103.2);
 
   settle(manager, before);
-  settle(manager, candleAt(4, 100, 101));
+  settle(manager, candleAt(4, 99.9, 101)); // pasa por debajo del límite: una limit solo se llena al cruzarla
   assert.equal(order.status, 'open');
 
   settle(manager, before);
