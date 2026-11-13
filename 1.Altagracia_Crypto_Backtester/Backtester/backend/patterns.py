@@ -77,7 +77,8 @@ def drawing_prices(drawing, time_ms):
     return []
 
 
-ROLE_NAMES = {"support": "Soporte", "resistance": "Resistencia", "entry": "Entrada", "target": "Objetivo"}
+# "data" (12/11/2026): un nivel guardado como dato, sin papel en el trade. Sigue siendo una referencia de precio
+ROLE_NAMES = {"support": "Soporte", "resistance": "Resistencia", "entry": "Entrada", "target": "Objetivo", "data": "Solo dato"}
 MARK_ONLY = ""  # Una marca elegida sin papel de nivel, como un rombo
 
 

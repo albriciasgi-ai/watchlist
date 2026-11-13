@@ -209,7 +209,9 @@ Paso 4 de la integración: el journal de la suite será el Observador de App 1 c
 
 - **Archivo:** `3.TradingBot_Python/journal/trades.jsonl`, fuera de git (`BOT_JOURNAL_DIR` lo cambia; con `BOT_CONFIG_DIR` de pruebas queda en esa carpeta). Eventos que solo se agregan: `open`, `update`, `close` y `note`. Una línea cortada por un apagón se salta al leer. Los trades se arman al pedirlos.
 - **Apertura:** la ve el WebSocket privado (posición nueva). Anota tamaño, entrada, SL, TP, apalancamiento y cuenta.
-  - **Origen:** la orden del historial del bot de esa moneda y lado en los 10 minutos anteriores (`origin`, `source`, `pattern`, por ejemplo WATCHLIST · SWING_DETECTOR · SWING_HIGH).
+  - **Origen:** la orden que la abrió (`origin`, `source`, `pattern`, por ejemplo WATCHLIST · SWING_DETECTOR · SWING_HIGH). Desde el 12/11 se busca por su ejecución en el WebSocket (`orderId`/`orderLinkId`, de los 2 minutos anteriores y sin cerrar nada) y su orden en el historial del bot, a cualquier hora. Sin la ejecución, la orden del bot de esa moneda y lado en los 10 minutos anteriores, como antes. El trade guarda la orden en `open_order_id` y `open_order_link_id`: la suite une con ella la decisión del journal.
+  - **Búsqueda posterior** (`journal_link_later`, a los 3 y a los 10 s): la ejecución puede llegar después que la posición, y una orden del bot entra a su historial cuando termina de verificarla. Antes, una orden del panel a mercado y una Limit llenada pasados 10 minutos quedaban "externa". Lo hallado se anota como evento `link`: su origen reemplaza a "externa", y si salió de esa misma orden, también al de la regla de los 10 minutos.
+  - **Historial y respuesta:** cada orden del historial guarda `order_id` y `order_link_id`, y `/api/trade/manual` los devuelve.
   - **"externa":** el bot no la abrió.
   - **"anterior":** ya estaba abierta antes de arrancar el WebSocket. De esta no se sabe cuándo abrió, así que no tiene duración.
   - Si el bot se reinicia, sigue el trade anotado de la misma posición (misma moneda, lado, cuenta y entrada a menos de 0.5%).
@@ -221,9 +223,9 @@ Paso 4 de la integración: el journal de la suite será el Observador de App 1 c
   - un cierre sin apertura anotada (abierto antes del journal o con el bot apagado) queda como trade "sin apertura".
 - **R:** el resultado neto sobre lo que arriesgaba el SL inicial por la cantidad cerrada.
 - **Rutas:** `GET /api/journal/trades?days&symbol&account` (abiertos primero), `POST /api/journal/trades/{id}/note` y `POST /api/journal/sync` (pide ya los cierres, hasta 7 días).
-- **Pruebas:** `backend/tests/journal_checks.py` (21), con un Bybit simulado.
+- **Pruebas:** `backend/tests/journal_checks.py` (29), con un Bybit simulado y ejecuciones falsas del WebSocket.
 
-**IMPORTANTE:** reiniciar el bot. Al arrancar trae los cierres de la última semana: los trades de antes quedan como "sin apertura" y las posiciones abiertas como "anterior".
+**IMPORTANTE:** reiniciar el bot. Al arrancar trae los cierres de la última semana: los trades de antes quedan como "sin apertura" y las posiciones abiertas como "anterior". Las órdenes del historial anteriores al 12/11 no tienen número: sus trades se reconocen por la regla de los 10 minutos.
 
 ---
 

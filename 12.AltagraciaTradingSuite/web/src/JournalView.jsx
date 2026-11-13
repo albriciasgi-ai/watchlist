@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { roleLabel } from '@app1/components/indicators/analysisLevels.js';
 import { getJson, postJson } from './api.js';
 import { subscribeBook } from './botBook.js';
 
@@ -11,6 +12,8 @@ import { subscribeBook } from './botBook.js';
 
 const num = (v) => (v === null || v === undefined || !Number.isFinite(Number(v)) ? null : Number(v));
 const price = (v) => (num(v) === null ? '—' : String(Number(Number(v).toPrecision(10))));
+// Un nivel calculado (VWAP, POC...) trae decimales de más: 7 cifras, como su etiqueta en el gráfico
+const levelPrice = (v) => (num(v) === null ? '—' : String(Number(Number(v).toPrecision(7))));
 const money = (v) => (num(v) === null ? '—' : `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(2)}`);
 const when = (ms) => (ms ? new Date(ms).toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—');
 const duration = (min) => {
@@ -310,11 +313,14 @@ export default function JournalView({ active, onShowTrade }) {
               Decisión ({when(selected.decision.at)}){selected.decision.note ? `: “${selected.decision.note}”` : ''}
               {selected.decision.order && ` · orden ${selected.decision.order.type || ''} ${selected.decision.order.qty ?? ''} a ${price(selected.decision.order.entry)}, stop ${price(selected.decision.order.stop)}, objetivo ${price(selected.decision.order.target)}`}
               {selected.decision.levels?.length > 0 && (
-                <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                <ol style={{ margin: '4px 0 0 20px', padding: 0 }} title="El número es el de la imagen de la decisión">
                   {selected.decision.levels.map((lv, i) => (
-                    <li key={lv.id || i}>{lv.role ? `${lv.role}: ` : ''}{lv.label || lv.kind || 'nivel'}{lv.price ? ` ${price(lv.price)}` : ''}{lv.note ? ` — ${lv.note}` : ''}</li>
+                    <li key={lv.id || i}>
+                      {lv.role !== undefined && lv.role !== null ? `${roleLabel(lv.role)}: ` : ''}{lv.label || lv.kind || 'nivel'}
+                      {lv.source && lv.source !== lv.kind ? ` (${lv.source})` : ''}{lv.price && !lv.mark ? ` ${levelPrice(lv.price)}` : ''}{lv.note ? ` — ${lv.note}` : ''}
+                    </li>
                   ))}
-                </ul>
+                </ol>
               )}
             </div>
           )}

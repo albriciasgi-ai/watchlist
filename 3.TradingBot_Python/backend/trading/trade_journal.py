@@ -81,7 +81,9 @@ class TradeJournal:
                       key=lambda t: t["opened_at"], reverse=True)
 
     def record_open(self, p: Dict[str, Any], *, origin: Optional[str], source: Optional[str], pattern: Optional[str],
-                    account: Optional[Dict[str, Any]], pre_existing: bool, at: Optional[int] = None) -> str:
+                    account: Optional[Dict[str, Any]], pre_existing: bool, at: Optional[int] = None,
+                    order_id: Optional[str] = None, order_link_id: Optional[str] = None) -> str:
+        """order_id / order_link_id: la orden de Bybit que abrio la posicion (su ejecucion), si se sabe."""
         opened_at = at or now_ms()
         trade_id = f"{p.get('symbol')}-{p.get('side')}-{opened_at}"
         self._append({
@@ -91,8 +93,20 @@ class TradeJournal:
             "opened_at": opened_at, "pre_existing": bool(pre_existing),
             "origin": origin or ("anterior" if pre_existing else "externa"), "source": source, "pattern": pattern,
             "account_id": (account or {}).get("id"), "account": (account or {}).get("name"), "mode": (account or {}).get("mode"),
+            "open_order_id": order_id or None, "open_order_link_id": order_link_id or None,
         })
         return trade_id
+
+    def record_link(self, trade_id: str, link: Dict[str, Any]) -> bool:
+        """
+        La orden que abrio el trade, sabida despues de anotar la apertura: la ejecucion llego por el WebSocket
+        despues que la posicion. Trae el origen si la orden es del bot (una Limit del panel llenada mas tarde).
+        """
+        data = {k: link.get(k) for k in ("origin", "source", "pattern", "order_id", "order_link_id", "exact") if link.get(k)}
+        if not any(k in data for k in ("origin", "order_id", "order_link_id")):
+            return False
+        self._append({"type": "link", "trade_id": trade_id, "at": now_ms(), **data})
+        return True
 
     @staticmethod
     def snapshot(p: Dict[str, Any]) -> Dict[str, Any]:
@@ -149,13 +163,23 @@ class TradeJournal:
             if e["type"] == "open":
                 trades[e["trade_id"]] = {
                     **{k: e.get(k) for k in ("trade_id", "symbol", "side", "size", "entry", "stop_loss", "take_profit", "leverage",
-                                            "opened_at", "pre_existing", "origin", "source", "pattern", "account_id", "account", "mode")},
+                                            "opened_at", "pre_existing", "origin", "source", "pattern", "account_id", "account", "mode",
+                                            "open_order_id", "open_order_link_id")},
                     "initial_stop_loss": e.get("stop_loss"), "initial_take_profit": e.get("take_profit"),
                     "closes": [], "notes": [], "changes": [],
                 }
         for e in events:
             t = trades.get(e.get("trade_id") or "")
-            if e["type"] == "update" and t:
+            if e["type"] == "link" and t:
+                # La orden que abrio el trade. Su origen reemplaza a "externa" (no se sabia cual era) y, si salio de
+                # esa misma orden (exact), tambien al de la regla de los 10 minutos, que pudo tomar otra orden
+                if e.get("order_id"):
+                    t["open_order_id"] = e["order_id"]
+                if e.get("order_link_id"):
+                    t["open_order_link_id"] = e["order_link_id"]
+                if e.get("origin") and (e.get("exact") or t.get("origin") == "externa"):
+                    t["origin"], t["source"], t["pattern"] = e["origin"], e.get("source"), e.get("pattern")
+            elif e["type"] == "update" and t:
                 for key in ("size", "entry", "stop_loss", "take_profit"):
                     if key in e:
                         t[key] = e[key]

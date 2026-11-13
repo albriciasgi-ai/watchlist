@@ -44,7 +44,7 @@ import { blindAnchor, blindScale, isBlind, maskDate, priceText, pricesHidden, sc
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
 import { boxesFollowOrders, latestFreeBox } from './orderPlan.js';
 import { drawingsForOrder } from './tradeContext.js';
-import { takeLevels } from '../indicators/analysisLevels.js';
+import { restoreLevels, takeLevels } from '../indicators/analysisLevels.js';
 import SessionLoadModal from './SessionLoadModal';
 import { API_BASE_URL } from '../../config';
 import '../../backtesting_styles.css';
@@ -1179,6 +1179,9 @@ const BacktestingApp = () => {
           });
 
           orderManagerRef.current.on('orderCancelled', ({ order }) => {
+            // Cancelada sin llenarse: lo elegido para ella vuelve a la lista, para la orden que la reemplace (12/11/2026).
+            // Antes quedaba solo en la orden cancelada y la nueva salía sin nada elegido
+            if (order.executedAt == null && order.analysisItems?.length) restoreLevels(latestRef.current.symbol, order.analysisItems);
             recordCancel(order, timeControllerRef.current?.currentTime ?? null)
               .then(() => setObserverRevision(value => value + 1));
             saveTradeSession();

@@ -54,6 +54,49 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 + TradingBot - 12 Noviembre 2026: Vela Repetida, "Solo Dato", Números y Lo Elegido que se Borraba
+
+**Pedido:** al probar la suite con PAXGUSDT 15m, el usuario vio:
+- la última vela dibujada dos veces;
+- el VWAP sin opción de elegirse solo como dato, y pidió revisar los demás indicadores;
+- las etiquetas de lo elegido muy encima del gráfico; pidió un número, como en las imágenes de App 1;
+- lo elegido para la compra se borraba si se cambiaba algo en la orden, y no llegaba al análisis.
+
+También pidió escribir todo en español.
+
+**Cambios:**
+1. **Vela repetida:** una recarga del histórico (cada 5 min) justo tras el cierre de una vela la dejaba entre las cerradas y además como vela en curso. `liveCandles.js` de App 1 (`mergeHistory`, `applyKline`, `withForming`) nunca repite una hora.
+2. **"Solo dato":** todo nivel de cualquier indicador lo ofrece, en el menú y en las listas (`DATA_ONLY`). Queda como precio de referencia sin papel en el trade. Las marcas siguen con "Solo marca".
+3. **Números:** en la suite cada elegido lleva un círculo pequeño con su número, sin tapar las últimas velas. La etiqueta sale al pasar el mouse. Los números son los mismos en:
+   - la lista del panel;
+   - la confirmación;
+   - la imagen de la decisión;
+   - el journal.
+
+   App 1 sigue con etiquetas.
+4. **Lo elegido no se pierde:**
+   - sale de la lista solo si la orden queda en Bybit. Si el bot la rechaza, siguen lo elegido y la nota;
+   - al cancelar una Limit sin llenar, lo elegido vuelve a la lista. App 1 hace lo mismo con una orden pendiente cancelada;
+   - la decisión guarda la orden de Bybit y se une al trade que esa orden abrió, a cualquier hora.
+5. **Bot:**
+   - el journal guarda la orden que abrió cada trade, por su ejecución del WebSocket;
+   - una Limit del panel llenada horas después y una orden a mercado ya no quedan "externa";
+   - el historial y `/api/trade/manual` dan `order_id`.
+6. **Pruebas:**
+   - App 1: `liveCandles.test.mjs` (9) y `levels.test.mjs` (54); `test_patterns.py` suma una;
+   - suite: `journal_checks.py` (39);
+   - bot: `journal_checks.py` (29).
+
+**IMPORTANTE:**
+- Reiniciar el bot y la suite ("Reiniciar" en la bandeja). En App 1 basta recargar la página.
+- Las órdenes del historial anteriores a este cambio no tienen número: sus trades se unen por hora, como antes.
+- Una orden rechazada deja su imagen de decisión sin usar.
+- Probado en la copia aislada con un bot falso y velas reales de Bybit. Nada se probó contra el bot real.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Correcciones tras la prueba del journal (12/11)", `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "REGISTRO AUTOMÁTICO" y `10.TradingBotDesktop/CLAUDE.md` sección "Journal de trades reales"
+
+---
+
 ### Altagracia Trading Suite - 12 Noviembre 2026: Journal con lo del Observador (paso 4, segunda parte)
 
 **Pedido:** seguir con la parte del Observador del journal, con trades reales.

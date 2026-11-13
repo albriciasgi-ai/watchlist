@@ -277,10 +277,13 @@ async def save_drawings(symbol: str, request: Request):
 
 # ---------- bot ----------
 async def _bot(method: str, path: str, **kw):
+    # 503: no hubo conexion, el bot no recibio nada. 504: se envio y no llego respuesta: una orden pudo salir
     try:
         r = await _http.request(method, CONFIG["bot_url"] + path, **kw)
-    except httpx.HTTPError as e:
+    except httpx.ConnectError as e:
         raise HTTPException(status_code=503, detail=f"bot no disponible: {type(e).__name__}")
+    except httpx.HTTPError as e:
+        raise HTTPException(status_code=504, detail=f"sin respuesta del bot ({type(e).__name__}): revisa Bybit antes de reintentar")
     try:
         data = r.json()
     except ValueError:

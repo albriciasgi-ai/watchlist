@@ -92,7 +92,8 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `GET /api/bot/journal?days&symbol`, `POST /api/bot/journal/sync` | Trades reales del journal del bot; pedir ya los cierres a Bybit |
 | `POST /api/bot/journal/{id}/note` | Nota de 1 a 4000 caracteres en un trade (no mueve dinero: sin palabra de confirmación) |
 | `POST /api/screenshots/session/{sesión}`, `GET .../{sesión}/{archivo}` | Imágenes del gráfico (el contrato de App 1: `MiniChart.captureScreenshot` las sube aquí). Solo PNG de hasta 12 MB, en `data/journal/images` |
-| `POST /api/journal/context` | Contexto del journal: `decision` (imagen, nota, niveles elegidos, orden), `open` o `close` (imagen). Se valida y se acota todo |
+| `POST /api/journal/context` | Contexto del journal: `decision` (imagen, nota, niveles elegidos, orden, y desde el 12/11 `order_id`, `order_link_id` y `outcome` placed/unknown), `open` o `close` (imagen). Se valida y se acota todo |
+| `GET /api/journal/decision?order_id\|order_link_id` | La decisión guardada de una orden de Bybit: al cancelar una Limit del panel, lo elegido para ella vuelve a la lista |
 | `GET /api/journal/measures/{id}`, `/api/journal/catalog` | Las 58 medidas de App 1 al decidir y lo máximo a favor y en contra; las de un trade cerrado quedan guardadas |
 | `GET /api/journal/report?days` | Ganadoras contra perdedoras en cada medida (`patterns.compare_groups` de App 1). Calcula hasta 8 medidas que falten por pedido |
 | `GET /api/bot/alerts?minutes` | Alertas recibidas por el bot |
@@ -119,6 +120,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `GET /api/orderflow/setups/{symbol}/validations` | Las comprobaciones de App 1, solo lectura |
 
 - **Protección:** escucha en 127.0.0.1. Rechaza un Host o un Origin que no sean `localhost` o `127.0.0.1` (403), como el bot.
+- **Bot sin respuesta (12/11):** 503 si no hubo conexión (el bot no recibió nada) y 504 si se envió y no llegó respuesta (una orden pudo salir). Antes los dos daban 503.
 - **No existen** las rutas de alertas de App 1 (`/api/pattern-alert`, `/api/proximity-alerts/batch`): el gráfico nunca envía nada al bot desde aquí.
 - Si existe `web/dist`, el servidor sirve la página en `/`: una sola dirección.
 
@@ -150,6 +152,35 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 - **Footprints que nunca llegaban (segunda vuelta):** el servidor respondía `known_until` = ahora, y la página daba por vista una vela cuyos trades aún no estaban en el almacén (va 1-2 min detrás): quedaba vacía o parcial hasta recargar. En 1m pasaba con todas. Además la página nunca pedía la vela en curso. Ahora `/api/orderflow/historical` responde hasta el último minuto armado (`market_routes._live_cut`) y el indicador, solo en vivo, repide cada 10 s mientras el almacén va detrás, pide la vela en curso y cada minuto repide las velas sin datos o con hueco (la nube puede llenarlas después). Probado: los footprints de 1m aparecieron minuto a minuto sin recargar.
 - **Días oficiales:** `official.py` bajó solo los días del 05 al 11/11 de BTC el mismo 12/11.
 
+## Correcciones tras la prueba del journal (12/11)
+
+El usuario probó la suite con PAXGUSDT 15m y pidió, además de escribir siempre en español:
+
+- **Última vela dos veces:** el gráfico recarga el histórico cada 5 minutos. Si la recarga caía justo después del cierre de una vela y antes de que el WebSocket mandara la siguiente (en una moneda con pocos trades eso tarda), esa vela quedaba entre las cerradas y también como vela en curso. Se dibujaba dos veces y, al empezar la siguiente, se agregaba otra vez. Ahora `liveCandles.js` de App 1 (`mergeHistory`, `applyKline`, `withForming`, con `tests/liveCandles.test.mjs`) deja la vela en curso solo si es posterior a la última cerrada, conserva lo que el WebSocket cerró mientras se pedía el histórico y nunca agrega dos veces la misma hora.
+- **"Solo dato" (punto 1):** el VWAP solo ofrecía soporte, resistencia, entrada u objetivo. Ahora todo nivel de cualquier indicador ofrece "Solo dato" (`DATA_ONLY = 'data'` en `analysisLevels.js`): queda en el análisis como precio de referencia, sin papel en el trade. Las marcas siguen con "Solo marca". En App 1, `patterns.references` lo cuenta como referencia con el papel "Solo dato".
+- **Números en vez de etiquetas (punto 2):** las etiquetas moradas grandes tapaban las velas. Con `chosenStyle="numbers"` (solo la suite; App 1 sigue con etiquetas) cada elegido lleva un círculo morado pequeño con su número:
+  - en un nivel, donde nace su línea, que es más tenue; nunca en las últimas velas (48 px del borde derecho);
+  - en una marca, arriba a la derecha de su aro.
+  
+  Al pasar el mouse sobre el número sale la etiqueta: número, papel, nombre, precio, fuente y nota. El panel de trading muestra la lista numerada (`AnalysisLevels` de App 1 con `numbered`), con su papel editable, su nota y "×". La confirmación de la orden dice lo que va para el análisis. La imagen de la decisión lleva los mismos números, y el journal los lista en ese orden.
+- **Lo elegido que se borraba (punto 3):** el panel lo sacaba de la lista al enviar la orden. Si el bot la rechazaba, o se cancelaba la Limit para cambiarla, la orden que sí se abría salía sin nada, y el journal tomaba esa decisión vacía (la más reciente). Además una Limit que se llenaba más de 15 minutos después no se unía a su decisión. Ahora:
+  - la imagen sale al enviar, pero lo elegido sale de la lista solo si la orden queda en Bybit (`dropLevels`, solo lo enviado);
+  - si el bot dice que no (respuesta `failed`, 4xx, o bot sin conexión), lo elegido y la nota "Por qué entro" siguen para la orden corregida y no se guarda decisión;
+  - si no se sabe qué pasó (sin respuesta, 5xx o `unknown`), la decisión se guarda con una copia y la lista sigue;
+  - la decisión guarda la orden de Bybit (`order_id`, `order_link_id`) y se une al trade que esa orden abrió, a cualquier hora (`open_order_id` del bot). La de otra orden conocida, como una Limit cancelada, ya no pasa al trade;
+  - al cancelar desde la suite una Limit sin llenar, lo elegido para ella vuelve a la lista con su papel y su nota (`restoreLevels`), con un aviso. App 1 hace lo mismo al cancelar una orden pendiente.
+- **Limitación:** una orden rechazada deja su imagen de decisión en `data/journal/images` sin usar.
+
+Probado el 12/11 en la copia aislada (bot falso con la clase real del journal y velas reales de Bybit):
+- el VWAP real elegido con un clic: el menú ofreció "Solo dato" y lo guardó con su nota; la banda inferior 1 como soporte;
+- los números 1 y 2 en el gráfico y en el panel, y la etiqueta al pasar el mouse ("1 · Solo dato · VWAP 72329.8" con la nota);
+- un rechazo de Bybit y un 409 del bot: lo elegido y la nota siguieron;
+- una Limit aceptada: la lista quedó vacía y la decisión guardó la orden, la nota, la imagen con números y lo elegido;
+- al cancelarla, lo elegido volvió con su papel y su nota;
+- la Limit que la reemplazó lo llevó, y al abrirse el trade el journal mostró su decisión y no la de la cancelada.
+
+Nada se probó contra el bot real ni contra Bybit.
+
 ## Panel de trading
 
 - A la derecha, como en App 1, con pestañas Trading y Posición. Envía al bot real por `/api/bot/trade`.
@@ -157,7 +188,8 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 - Tamaño por monto fijo o por riesgo (`orderPlan.js` de App 1), redondeado al paso de la moneda en el bot y con su mínimo. Muestra lo que pierde y gana, sin comisiones.
 - Tipo automático: a 0.1% o menos del precio Market; más lejos Limit si el precio debe volver. Si pediría una orden stop no se envía: el bot no las tiene.
 - Se bloquea, con el motivo, sin bot, sin credenciales, en pausa, con la moneda sin configurar en el bot, con SL o TP del lado equivocado o con una Limit que cruza el precio.
-- Confirmación con moneda, lado, tipo, cantidad, stop, objetivo y pérdida/ganancia; "Cuenta REAL" en rojo si el bot está en LIVE. El resultado dice si quedó sin stop o es desconocido, para no reintentar.
+- Confirmación con moneda, lado, tipo, cantidad, stop, objetivo, pérdida/ganancia y lo elegido para el análisis (numerado); "Cuenta REAL" en rojo si el bot está en LIVE. El resultado dice si quedó sin stop o es desconocido, para no reintentar.
+- Lista numerada de lo elegido en el gráfico, sobre el botón de comprar o vender (desde el 12/11): papel ("Solo dato", soporte, resistencia, entrada u objetivo; una marca, "Solo marca"), nombre, fuente, precio, nota y "×".
 - El título del panel y el de la confirmación dicen el modo y la cuenta activa del bot ("Panel de Trading · LIVE · Real BTC").
 - Posición (desde el 12/11): cada posición de la moneda con lado, tamaño, entrada, P&L al precio actual, SL ("SIN STOP" en rojo si no tiene), TP y liquidación. Trae "Mover SL…", "Mover TP…" o "Poner TP…", "Quitar TP…" y "Cerrar posición…". Las órdenes de entrada pendientes traen "Cancelar orden…". Es lo mismo que se hace en el gráfico (ver "Posiciones en el gráfico").
 
@@ -233,9 +265,9 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   Se puede ver 7, 30, 90 o 365 días, y "Pedir cierres a Bybit" no espera el minuto.
 - **Detalle** (clic en una fila): cuenta, apalancamiento, SL y TP iniciales y actuales, riesgo, cada cierre parcial, los cambios de SL/TP y las notas, con un campo para agregar otra.
 - **Lo del Observador** (12/11, segunda parte), con lo de App 1 sin copiarlo:
-  - **Decisión:** al confirmar una orden en el panel se guardan la imagen del gráfico a la vista (con contexto, como la de decisión de App 1), lo elegido en el gráfico para el análisis (`takeLevels` de App 1: niveles y marcas con su papel y nota; la lista queda vacía para el trade siguiente), la orden propuesta y la nota opcional "Por qué entro" de la confirmación. No frena la orden.
+  - **Decisión:** al enviar una orden desde el panel se toma la imagen del gráfico a la vista (con contexto, como la de decisión de App 1, y con los números de lo elegido). Cuando el bot responde se guardan la imagen, lo elegido en el gráfico para el análisis (niveles y marcas con su papel y nota), la orden propuesta, su número en Bybit y la nota opcional "Por qué entro". Lo elegido sale de la lista solo si la orden quedó en Bybit (ver "Correcciones tras la prueba del journal"). No frena la orden.
   - **Apertura y cierre:** la página toma la imagen cuando ve abrirse o cerrarse una posición de la moneda a la vista (1.5 s después, para que se dibuje la línea). De una moneda que no está a la vista no hay imagen: su gráfico no está dibujado.
-  - **Unión:** el contexto se une al trade del bot de la misma moneda y lado: la decisión hasta 15 minutos antes de abrir, la imagen de apertura hasta 5 minutos después y la de cierre hasta 15 minutos después.
+  - **Unión:** el contexto se une al trade del bot de la misma moneda y lado. La decisión, por la orden que abrió el trade (`open_order_id` del bot) a cualquier hora; sin ella, la más reciente hasta 15 minutos antes de abrir que no sea de otra orden conocida. La imagen de apertura, hasta 5 minutos después, y la de cierre, hasta 15 minutos después.
   - **Medidas al decidir:** las 58 de App 1 (`measures.compute`, `row_at`, `read_row`) con velas de Bybit, en la última vela de 15m cerrada antes de decidir, vistas desde el lado del trade. Se calculan al abrir el detalle, unos 10 s; las de un trade cerrado quedan guardadas en `data/journal/measures`. El OI y el delta salen de los almacenes locales: en días sin almacén quedan "—".
   - **Lo máximo a favor y en contra,** en R del SL inicial, con velas de 5 minutos.
   - **Informe:** "Informe: qué distingue a las ganadoras" compara ganadoras y perdedoras en cada medida con `patterns.compare_groups` de App 1 ("Separa": en qué parte de los pares la ganadora tiene el valor mayor; "más que el azar" si supera el umbral de las permutaciones). Con menos de 30 trades o de 5 por grupo avisa que solo describe.

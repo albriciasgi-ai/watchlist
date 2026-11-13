@@ -180,6 +180,83 @@ test('trade: avisa al panel y al gráfico al vaciar la lista, y sin nada elegido
   stop();
 });
 
+test('solo dato: un nivel puede quedar sin papel de trade; una marca, como solo marca', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100, { id: 'VWAP|VWAP|100', source: 'VWAP', kind: 'VWAP' }), 1000, '15m', 99);
+  assert.equal(levels.knownLevels(name, 1000)[0].role, 'resistance', 'por su lado del precio, como antes');
+  levels.updateLevel(name, 'VWAP|VWAP|100', { role: levels.DATA_ONLY });
+  const item = levels.knownLevels(name, 1000)[0];
+  assert.equal(item.role, 'data');
+  assert.equal(levels.roleLabel(item.role), 'Solo dato');
+  assert.equal(levels.isPriceLevel(item), true, 'sigue siendo un precio de referencia');
+  assert.deepEqual(levels.roleOptions(item).map(o => o.label), ['Solo dato', 'Soporte', 'Resistencia', 'Entrada', 'Objetivo']);
+  assert.deepEqual(levels.roleOptions({ mark: true }).map(o => o.label), ['Solo marca', 'Soporte', 'Resistencia', 'Entrada', 'Objetivo']);
+  levels.updateLevel(name, 'VWAP|VWAP|100', { role: 'otra cosa' });
+  assert.equal(levels.knownLevels(name, 1000)[0].role, 'data', 'un papel que no existe no se guarda');
+});
+
+test('números: cada elegido lleva su lugar en la lista y su etiqueta', () => {
+  const items = [level(100, { role: 'support' }), { id: 'm', source: 'Volumen de Respuesta', kind: 'Rombo', mark: true, role: '', price: 97 }];
+  assert.deepEqual([...levels.chosenNumbers(items)], [['Fuente|POC|100', 1], ['m', 2]]);
+  assert.equal(levels.chosenLabel(items[0]).startsWith('Soporte · POC'), true);
+  assert.equal(levels.chosenLabel(items[1]), 'Solo marca · Rombo', 'una marca no lleva precio');
+});
+
+test('números: el nivel lleva un círculo con su número donde nace, no la etiqueta; la etiqueta sale bajo el mouse', () => {
+  const texts = [];
+  const arcs = [];
+  const ctx = {
+    save() {}, restore() {}, beginPath() {}, moveTo() {}, lineTo() {}, stroke() {}, fill() {}, setLineDash() {},
+    arc(x, y, r) { arcs.push({ x, y, r }); }, fillRect() {}, fillText(text, x, y) { texts.push({ text, x, y }); },
+    measureText(text) { return { width: String(text).length * 6 }; },
+  };
+  const area = { priceToY: (p) => 300 - (p - 100) * 10, timeToX: (t) => t / 10, left: 0, right: 800, top: 0, bottom: 600 };
+  const items = [level(100, { role: 'support' }), level(105, { id: 'Fuente|VAH|105', kind: 'VAH', role: 'data', time: 2000 })];
+  const badges = levels.drawChosenLevels(ctx, items, area, { numbers: levels.chosenNumbers(items) });
+  assert.deepEqual(texts.map(t => t.text), ['1', '2'], 'solo los números, sin etiquetas');
+  assert.deepEqual(badges.map(b => [b.n, Math.round(b.x), b.y]), [[1, 10, 300], [2, 210, 250]], 'el de la hora 2000 nace en x=200');
+  texts.length = 0;
+  const hit = levels.drawChosenTooltip(ctx, badges, 211, 251, area);
+  assert.equal(hit.n, 2);
+  assert.equal(texts[0].text.startsWith('2 · Solo dato · VAH'), true, texts[0]?.text);
+  const recent = levels.drawChosenLevels(ctx, [level(102, { time: 7990 })], area, { numbers: new Map([['Fuente|POC|102', 3]]) });
+  assert.equal(recent[0].x, 800 - 48, 'nacido en la última vela: el número queda antes, sin tapar las velas recientes');
+  texts.length = 0;
+  assert.equal(levels.drawChosenTooltip(ctx, badges, 400, 400, area), null, 'lejos de los números no hay etiqueta');
+  assert.equal(texts.length, 0);
+  // Sin números, la etiqueta de siempre (App 1)
+  texts.length = 0;
+  const none = levels.drawChosenLevels(ctx, items, area);
+  assert.deepEqual(none, []);
+  assert.equal(texts[0].text.startsWith('Soporte · POC'), true);
+});
+
+test('orden en la suite: solo sale lo enviado; lo elegido mientras se enviaba sigue', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  const sent = levels.knownLevels(name, Infinity);
+  levels.toggleLevel(name, level(200), 1500, '15m');
+  levels.dropLevels(name, sent);
+  assert.deepEqual(levels.knownLevels(name, Infinity).map(item => item.price), [200]);
+});
+
+test('orden cancelada sin llenarse: lo elegido vuelve con su papel y su nota, sin repetir', () => {
+  const name = symbol();
+  levels.toggleLevel(name, level(100), 1000, '15m');
+  levels.updateLevel(name, 'Fuente|POC|100', { role: 'entry', note: 'el POC de la sesión' });
+  const taken = levels.takeLevels(name, 1500);
+  levels.toggleLevel(name, level(300), 2000, '15m');
+  assert.equal(levels.restoreLevels(name, taken), 1);
+  assert.deepEqual(levels.knownLevels(name, 3000).map(item => [item.price, item.role, item.note]),
+    [[300, null, ''], [100, 'entry', 'el POC de la sesión']]);
+  assert.equal(levels.restoreLevels(name, taken), 0, 'lo que ya está no se repite');
+  // Una marca guardada sin papel (journal de la suite) vuelve como solo marca: no se dibuja como nivel
+  levels.restoreLevels(name, [{ id: 'rombo', source: 'Volumen de Respuesta', kind: 'Rombo', mark: true, price: 97, selectedAt: 1 }]);
+  const mark = levels.knownLevels(name, 3000).find(item => item.id === 'rombo');
+  assert.equal(mark.role, '');
+  assert.equal(levels.isPriceLevel(mark), false);
+});
+
 test('trade: al recargar, la lista sigue vacía', () => {
   const name = symbol();
   levels.toggleLevel(name, level(100), 1000, '15m');

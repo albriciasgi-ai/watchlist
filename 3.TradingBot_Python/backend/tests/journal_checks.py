@@ -7,6 +7,7 @@ import shutil
 import sys
 import tempfile
 import time
+from collections import deque
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -166,6 +167,84 @@ try:
         check("pagina ajena no escribe notas: 403", c.post(f"/api/journal/trades/{btc['trade_id']}/note",
                                                             headers={**H, "Origin": "https://evil.example"}, json={"text": "x"}).status_code == 403)
         check("filtro por moneda", [x["symbol"] for x in c.get("/api/journal/trades?symbol=ethusdt", headers=H).json()["trades"]] == ["ETHUSDT"])
+
+        # ---------- la orden que abrio cada trade (12/11/2026) ----------
+        integrated = {"integrated_order": {"retCode": 0, "result": {"orderId": "oid-L1", "orderLinkId": "bot_1_1"}, "orderLinkId": "bot_1_1"}}
+        market = {"market_order": {"retCode": 0, "result": {"orderId": "oid-M1"}, "orderLinkId": "bot_2_1"}}
+        check("numero de la orden de Bybit: integrada y a mercado",
+              main._order_ids(integrated) == ("oid-L1", "bot_1_1") and main._order_ids(market) == ("oid-M1", "bot_2_1")
+              and main._order_ids({}) == (None, None))
+        entry = main._history_entry("ADAUSDT", "Buy", {**integrated, "status": "pending", "entry_price": "0.5"},
+                                    main.Decimal("100"), main.Decimal("0.5"), "custom", "MANUAL_LIMIT", 100, "MANUAL_TRADE", "MANUAL", "Limit")
+        check("el historial del bot guarda el numero de la orden", entry["order_id"] == "oid-L1" and entry["order_link_id"] == "bot_1_1")
+
+        class FakeStream:
+            """Solo lo que lee el journal: las ejecuciones del WebSocket privado"""
+            connected = ready = False
+            client = None
+
+            def __init__(self):
+                self.executions = deque()
+
+            def fresh(self):
+                return False
+
+            def position_list(self):
+                return []
+
+            def status(self):
+                return {}
+
+        def execution(symbol, side, order_id, link_id, at_ms, closed="0"):
+            return {"execId": f"e-{order_id}", "orderId": order_id, "orderLinkId": link_id, "symbol": symbol, "side": side,
+                    "execType": "Trade", "execPrice": 1.0, "execQty": 1.0, "closedSize": float(closed), "execTime": str(at_ms)}
+
+        real_stream = st.stream
+        st.stream = FakeStream()
+        try:
+            now = int(time.time() * 1000)
+            # Una Limit del panel puesta hace 2 horas se llena ahora: antes quedaba "externa" (regla de 10 minutos)
+            st.order_history.append({**entry, "timestamp": (datetime.now() - timedelta(hours=2)).isoformat()})
+            st.stream.executions.append(execution("ADAUSDT", "Buy", "oid-L1", "bot_1_1", now - 500))
+            c.portal.call(main.journal_positions, [pos(symbol="ADAUSDT", side="Buy", size="100", entry="0.5", sl="0.49", tp="0.52")])
+            ada = next(x for x in c.get("/api/journal/trades?symbol=ADAUSDT", headers=H).json()["trades"])
+            check("Limit llenada 2 horas despues: origen del panel y la orden que la abrio",
+                  ada["origin"] == "MANUAL" and ada["open_order_id"] == "oid-L1" and ada["open_order_link_id"] == "bot_1_1", str(ada))
+
+            # Orden a mercado: la posicion llega por el WebSocket antes de que la orden entre al historial del bot
+            st.stream.executions.append(execution("DOTUSDT", "Sell", "oid-M2", "bot_3_1", now - 300))
+            dot_pos = pos(symbol="DOTUSDT", side="Sell", size="10", entry="5", sl="5.2", tp="4.6")
+            opened = int(time.time() * 1000)
+            c.portal.call(main.journal_positions, [dot_pos])
+            dot = next(x for x in c.get("/api/journal/trades?symbol=DOTUSDT", headers=H).json()["trades"])
+            check("a mercado, recien vista: todavia 'externa' pero con su orden", dot["origin"] == "externa"
+                  and dot["open_order_id"] == "oid-M2", str(dot))
+            st.order_history.append({**main._history_entry("DOTUSDT", "Sell", {"market_order": {"retCode": 0, "result": {"orderId": "oid-M2"},
+                                                                                                "orderLinkId": "bot_3_1"}, "status": "success"},
+                                                           main.Decimal("10"), main.Decimal("5"), "custom", "MANUAL_MARKET", 100,
+                                                           "MANUAL_TRADE", "MANUAL", "Market"),
+                                     "timestamp": datetime.now().isoformat()})
+            c.portal.call(main.journal_link_later, dot["trade_id"], dot_pos, opened, (0, 0))
+            dot = next(x for x in c.get("/api/journal/trades?symbol=DOTUSDT", headers=H).json()["trades"])
+            check("busqueda posterior: el origen pasa a la orden del panel", dot["origin"] == "MANUAL" and dot["source"] == "MANUAL_TRADE", str(dot))
+
+            # Una ejecucion que cierra o una vieja no es la apertura
+            st.stream.executions.append(execution("LINKUSDT", "Buy", "oid-old", "bot_9_1", now - 10 * 60000))
+            st.stream.executions.append(execution("LINKUSDT", "Buy", "oid-close", "bot_9_2", now - 100, closed="5"))
+            link = main.origin_for(pos(symbol="LINKUSDT", side="Buy"), now)
+            check("ni una ejecucion que cierra ni una de hace 10 minutos abren la posicion", not link.get("order_id"), str(link))
+
+            # La regla de 10 minutos tomo otra orden: la de la ejecucion manda al saberse
+            j3 = TradeJournal(TMP / "unit3" / "trades.jsonl")
+            tid3 = j3.record_open(pos(symbol="XRPUSDT"), origin="WATCHLIST", source="SWING_DETECTOR", pattern="SWING_HIGH",
+                                  account=ACC, pre_existing=False)
+            j3.record_link(tid3, {"origin": "MANUAL", "source": "MANUAL_TRADE", "pattern": "MANUAL_LIMIT", "order_id": "o9", "exact": True})
+            x3 = j3.trades()[0]
+            check("orden exacta reemplaza el origen de la regla de 10 minutos", x3["origin"] == "MANUAL" and x3["open_order_id"] == "o9")
+            j3.record_link(tid3, {"origin": "WATCHLIST", "order_id": "o9"})
+            check("un enlace sin la orden exacta no cambia un origen ya sabido", TradeJournal(TMP / "unit3" / "trades.jsonl").trades()[0]["origin"] == "MANUAL")
+        finally:
+            st.stream = real_stream
 finally:
     shutil.rmtree(TMP, ignore_errors=True)
 

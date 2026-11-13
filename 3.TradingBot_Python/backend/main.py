@@ -752,8 +752,11 @@ def _position_key(p: Dict[str, Any]) -> str:
     return f"{p.get('symbol')}:{p.get('positionIdx')}:{p.get('side')}"
 
 
-def origin_for(p: Dict[str, Any]):
-    """La orden del historial del bot que abrio la posicion: misma moneda y lado, en los 10 minutos anteriores."""
+OPENING_EXEC_WINDOW_MS = 120_000  # la ejecucion que abrio una posicion es de los 2 minutos anteriores a verla
+
+
+def _recent_entry(p: Dict[str, Any]) -> Dict[str, Any]:
+    """La orden del historial del bot de esa moneda y lado en los 10 minutos anteriores (la regla de antes)."""
     limit = time.time() - 600
     for entry in reversed(state.order_history[-300:]):
         try:
@@ -763,8 +766,65 @@ def origin_for(p: Dict[str, Any]):
         if ts < limit:
             break
         if entry.get("symbol") == p.get("symbol") and entry.get("side") == p.get("side") and entry.get("status") != "failed":
-            return entry.get("origin"), entry.get("source"), entry.get("pattern")
-    return None, None, None
+            return {"origin": entry.get("origin"), "source": entry.get("source"), "pattern": entry.get("pattern")}
+    return {}
+
+
+def _opening_execution(p: Dict[str, Any], opened_ms: int) -> Optional[Dict[str, Any]]:
+    """La ejecucion (WebSocket privado) que abrio la posicion: misma moneda y lado, sin cerrar nada, reciente."""
+    stream = state.stream
+    if not stream:
+        return None
+    for e in reversed(list(stream.executions)):
+        if e.get("symbol") != p.get("symbol") or e.get("side") != p.get("side"):
+            continue
+        if (e.get("execType") or "Trade") != "Trade" or (e.get("closedSize") or 0) > 0:
+            continue
+        at = int(_num(e.get("execTime")) or 0)
+        if at and at < opened_ms - OPENING_EXEC_WINDOW_MS:
+            break  # las ejecuciones llegan en orden: de aqui hacia atras son de antes
+        if e.get("orderId") or e.get("orderLinkId"):
+            return e
+    return None
+
+
+def origin_for(p: Dict[str, Any], opened_ms: Optional[int] = None) -> Dict[str, Any]:
+    """
+    La orden que abrio la posicion: {"origin", "source", "pattern", "order_id", "order_link_id"} (lo que se sepa).
+    Primero por su ejecucion: su orden en el historial del bot, aunque sea una Limit puesta hace horas (antes una
+    Limit del panel llenada despues de 10 minutos quedaba "externa"). Sin la ejecucion, la orden del bot de esa
+    moneda y lado en los 10 minutos anteriores.
+    """
+    execution = _opening_execution(p, opened_ms or now_ms())
+    if not execution:
+        return _recent_entry(p)
+    order_id, link_id = execution.get("orderId") or None, execution.get("orderLinkId") or None
+    ids = {"order_id": order_id, "order_link_id": link_id}
+    for entry in reversed(state.order_history[-1000:]):
+        if entry.get("symbol") != p.get("symbol"):
+            continue
+        if (order_id and entry.get("order_id") == order_id) or (link_id and entry.get("order_link_id") == link_id):
+            return {"origin": entry.get("origin"), "source": entry.get("source"), "pattern": entry.get("pattern"),
+                    "exact": True, **ids}
+    # Una orden del historial sin numero (anterior a este cambio) se reconoce por la regla de los 10 minutos
+    return {**_recent_entry(p), **ids}
+
+
+async def journal_link_later(trade_id: str, p: Dict[str, Any], opened_ms: int, waits=(3, 7)) -> None:
+    """
+    La orden que abrio la posicion, buscada otra vez a los 3 y a los 10 s: su ejecucion puede llegar por el
+    WebSocket despues que la posicion, y la orden del bot entra a su historial cuando termina de verificarla
+    (una orden del panel a mercado quedaba "externa" por eso).
+    """
+    link = {}
+    for wait in waits:
+        await asyncio.sleep(wait)
+        link = origin_for(p, opened_ms)
+        if link.get("origin"):
+            break
+    if (link.get("origin") or link.get("order_id") or link.get("order_link_id")) and state.journal.record_link(trade_id, link):
+        state.log("info", f"[JOURNAL] {p.get('symbol')} {p.get('side')}: abierta por la orden {link.get('order_id') or '?'}"
+                  f" ({link.get('origin') or 'externa'})")
 
 
 async def journal_positions(positions: List[Dict[str, Any]]) -> None:
@@ -794,12 +854,17 @@ async def journal_positions(positions: List[Dict[str, Any]]) -> None:
             else:
                 updated = int(_num(p.get("updatedTime")) or 0)
                 pre_existing = bool(updated) and updated < state.stream_started_ms - 60000
-                origin, source, pattern = (None, None, None) if pre_existing else origin_for(p)
-                trade_id = state.journal.record_open(p, origin=origin, source=source, pattern=pattern, account=account,
-                                                     pre_existing=pre_existing)
+                opened_ms = now_ms()
+                link = {} if pre_existing else origin_for(p, opened_ms)
+                trade_id = state.journal.record_open(p, origin=link.get("origin"), source=link.get("source"),
+                                                     pattern=link.get("pattern"), account=account, pre_existing=pre_existing,
+                                                     at=opened_ms, order_id=link.get("order_id"),
+                                                     order_link_id=link.get("order_link_id"))
                 state.journal_active[key] = {"trade_id": trade_id, "last": TradeJournal.snapshot(p)}
                 state.log("info", f"[JOURNAL] Apertura anotada: {p.get('symbol')} {p.get('side')} {p.get('size')} @ {p.get('entryPrice')}"
-                          f" ({'anterior al bot' if pre_existing else origin or 'externa'})")
+                          f" ({'anterior al bot' if pre_existing else link.get('origin') or 'externa'})")
+                if not pre_existing and not (link.get("origin") and (link.get("order_id") or link.get("order_link_id"))):
+                    asyncio.create_task(journal_link_later(trade_id, p, opened_ms))
                 continue
         now = state.journal.record_update(known["trade_id"], p, known["last"])
         if now:
@@ -1724,12 +1789,24 @@ def _seen_recently(key: str, ttl: float) -> bool:
     return False
 
 
+def _order_ids(result: Dict[str, Any]):
+    """orderId y orderLinkId de la orden de entrada en Bybit (integrada o a mercado), si se enviaron."""
+    order = result.get("integrated_order") or result.get("market_order") or {}
+    body = order.get("result") if isinstance(order.get("result"), dict) else {}
+    return (body.get("orderId") or order.get("orderId") or None,
+            body.get("orderLinkId") or order.get("orderLinkId") or None)
+
+
 def _history_entry(symbol: str, side: str, result: Dict[str, Any], quantity: Decimal, ref_price: Decimal,
                    sl_mode: str, pattern: str, confidence, source: str, origin: str, order_type: str) -> Dict[str, Any]:
-    """Lo que de verdad quedo en Bybit: precio de llenado (o limite), SL y TP como precios, estado real."""
+    """Lo que de verdad quedo en Bybit: precio de llenado (o limite), SL y TP como precios, estado real.
+    Con la orden de Bybit (order_id): el journal reconoce la apertura aunque una Limit se llene horas despues."""
     entry = _to_float(result.get("entry_price")) or float(ref_price)
     qty = _to_float(result.get("qty")) or float(quantity)
+    order_id, order_link_id = _order_ids(result)
     return {
+        "order_id": order_id,
+        "order_link_id": order_link_id,
         "symbol": symbol,
         "side": side,
         "entry_price": entry,
@@ -2441,10 +2518,14 @@ async def manual_trade(req: ManualTradeRequest):
         else:
             state.log("error", f"[MANUAL TRADE] {symbol} {side}: {status} - {result.get('error')}")
 
+        order_id, order_link_id = _order_ids(result)
         return {
             "success": result.get("success", False),
             "status": status,
             "result": result,
+            # La orden de Bybit: la suite une con ella la decision del journal y el trade que abra (12/11/2026)
+            "order_id": order_id,
+            "order_link_id": order_link_id,
             "message": f"{status}: {side} {symbol} qty={result.get('qty')}" if result.get("success") else result.get("error")
         }
 

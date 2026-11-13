@@ -1,10 +1,12 @@
 # journal_routes.py - Rutas del journal de la suite (paso 4): imagenes, contexto de decision, medidas e informe.
 # Los hechos de cada trade los da el bot (/api/bot/journal); aqui se suma lo del Observador de App 1.
+from typing import Optional
+
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse
 
 import journal_measures
-from journal_store import TRADE_ID_RE, JournalStore
+from journal_store import ORDER_ID_RE, TRADE_ID_RE, JournalStore
 
 REPORT_BATCH = 8  # medidas que el informe calcula por pedido (cada una pide velas a Bybit); el resto en la siguiente
 
@@ -42,6 +44,16 @@ def make_router(store: JournalStore, bot) -> APIRouter:
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
         return {"success": True, "context": event}
+
+    @r.get("/api/journal/decision")
+    async def decision(order_id: Optional[str] = None, order_link_id: Optional[str] = None):
+        """La decision de una orden de Bybit: al cancelar una Limit del panel, lo elegido para ella vuelve a la lista."""
+        for value in (order_id, order_link_id):
+            if value is not None and not ORDER_ID_RE.match(value):
+                raise HTTPException(status_code=400, detail="orden invalida")
+        if not order_id and not order_link_id:
+            raise HTTPException(status_code=400, detail="falta order_id u order_link_id")
+        return {"success": True, "decision": store.decision_for(order_id, order_link_id)}
 
     async def trades(days: int):
         data = await bot("GET", "/api/journal/trades", params={"days": days})

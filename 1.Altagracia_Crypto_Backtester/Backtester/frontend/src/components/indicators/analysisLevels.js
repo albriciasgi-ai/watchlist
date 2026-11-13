@@ -20,14 +20,23 @@ export const ROLES = [
   { value: 'entry', label: 'Entrada' },
   { value: 'target', label: 'Objetivo' }
 ];
-const ROLE_LABELS = Object.fromEntries(ROLES.map(({ value, label }) => [value, label]));
 export const MARK_ONLY = ''; // Una marca sin papel de nivel
+// Un nivel que se guarda como dato, sin papel en el trade: el VWAP o un POC que se miró sin usarlo de soporte,
+// resistencia, entrada ni objetivo (12/11/2026). Sigue siendo un precio de referencia para el análisis
+export const DATA_ONLY = 'data';
+const ROLE_LABELS = { ...Object.fromEntries(ROLES.map(({ value, label }) => [value, label])), [DATA_ONLY]: 'Solo dato' };
 
 /** Nombre del papel. Un nivel elegido antes de existir los papeles queda como "Nivel" */
 export function roleLabel(role) {
   if (role === MARK_ONLY) return 'Solo marca';
   return ROLE_LABELS[role] ?? 'Nivel';
 }
+
+/** Papeles que se pueden elegir: un nivel puede quedar como solo dato; una marca, como solo marca */
+export const roleOptions = (item) => [
+  item?.mark ? { value: MARK_ONLY, label: 'Solo marca' } : { value: DATA_ONLY, label: 'Solo dato' },
+  ...ROLES
+];
 
 /** Papel inicial: una marca no es nivel hasta que se le da uno; un nivel se lee por su lado del precio */
 export function defaultRole(level, price) {
@@ -139,6 +148,37 @@ export function takeLevels(symbol, time) {
   return taken;
 }
 
+/**
+ * Saca de la lista solo esos elegidos (por id): lo que se eligió después, mientras la orden se enviaba, sigue.
+ * La suite lo usa cuando la orden ya quedó en Bybit (12/11/2026): antes la lista se vaciaba al enviar, y si el
+ * bot rechazaba la orden, la orden corregida salía sin nada elegido
+ */
+export function dropLevels(symbol, items) {
+  const ids = new Set((items || []).map(item => item.id));
+  const current = store(symbol);
+  const kept = current.items.filter(item => !ids.has(item.id));
+  if (kept.length === current.items.length) return;
+  current.items = kept;
+  changed(symbol);
+}
+
+/**
+ * Lo elegido para una orden que se canceló sin llenarse vuelve a la lista, con su papel y su nota: la orden que la
+ * reemplace lo lleva. Lo que ya está en la lista no se repite
+ */
+export function restoreLevels(symbol, items) {
+  const current = store(symbol);
+  const present = new Set(current.items.map(item => item.id));
+  const back = (items || [])
+    .filter(item => item && item.id && !present.has(item.id))
+    // Una marca guardada sin papel es "solo marca": no se dibuja como nivel
+    .map(item => (item.mark && (item.role === undefined || item.role === null) ? { ...item, role: MARK_ONLY } : item));
+  if (!back.length) return 0;
+  current.items = [...current.items, ...back];
+  changed(symbol);
+  return back.length;
+}
+
 export function subscribeLevels(symbol, listener) {
   const { listeners } = store(symbol);
   listeners.add(listener);
@@ -230,9 +270,42 @@ export function levelsNear(targets, x, y, tolerance = CLICK_TOLERANCE_PX) {
 
 const levelPrice = (price) => (Number.isFinite(price) ? priceText(price, 1) : '');
 
-/** Línea y etiqueta de cada nivel elegido. Uno que nace en una vela empieza en ella */
-export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left, right, top, bottom }) {
+// Con números (la suite en vivo, 12/11/2026): cada elegido lleva un círculo pequeño con su número en lugar de
+// la etiqueta, que tapaba las velas. La etiqueta sale al pasar el mouse sobre el número y en la lista del panel
+const BADGE_R = 7;
+const BADGE_ALPHA = 0.6; // La línea de un nivel con número es más tenue
+const BADGE_CLEAR_RIGHT_PX = 48; // El número no tapa las velas más recientes: un nivel nacido ahí lo lleva un poco antes
+
+/** Número de cada elegido: su lugar en la lista. Es el mismo en el gráfico, el panel, la orden y sus imágenes */
+export const chosenNumbers = (items) => new Map(items.map((item, i) => [item.id, i + 1]));
+
+/** Lo que dice la etiqueta de un elegido: papel, nombre y precio */
+export function chosenLabel(item) {
+  const role = item.role === null || item.role === undefined ? '' : `${roleLabel(item.role)} · `;
+  const price = item.mark ? '' : ` ${levelPrice(item.price)}`;
+  return `${role}${item.kind}${price}`;
+}
+
+function drawBadge(ctx, x, y, n) {
+  ctx.beginPath();
+  ctx.arc(x, y, BADGE_R, 0, Math.PI * 2);
+  ctx.fillStyle = LEVEL_COLOR;
+  ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = `bold ${n > 9 ? 8 : 9}px Inter, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(String(n), x, y + 0.5);
+}
+
+/**
+ * Línea y etiqueta de cada nivel elegido. Uno que nace en una vela empieza en ella.
+ * Con numbers (id -> número) cada nivel lleva su número donde nace la línea, o en el borde izquierdo si nace
+ * antes de la vista, en vez de la etiqueta. Devuelve dónde quedó cada número, para mostrar su etiqueta
+ */
+export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left, right, top, bottom }, { numbers = null } = {}) {
   const at = candleX ?? timeToX;
+  const badges = [];
   ctx.save();
   ctx.font = '10px Inter, sans-serif';
   ctx.textBaseline = 'middle';
@@ -244,16 +317,27 @@ export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left
     if (y < top || y > bottom) continue;
 
     const from = level.time === undefined ? left : Math.max(left, at?.(level.time) ?? left);
+    const n = numbers?.get(level.id);
+    // El número va donde nace la línea, sin tapar las velas más recientes; la línea llega hasta él
+    const badgeX = n ? Math.max(left + BADGE_R + 2, Math.min(right - BADGE_CLEAR_RIGHT_PX, from + BADGE_R + 3)) : null;
     ctx.strokeStyle = LEVEL_COLOR;
     ctx.setLineDash([2, 3]);
+    if (numbers) ctx.globalAlpha = BADGE_ALPHA;
     ctx.beginPath();
-    ctx.moveTo(from, alignY(y));
+    ctx.moveTo(badgeX === null ? from : Math.min(from, badgeX), alignY(y));
     ctx.lineTo(right, alignY(y));
     ctx.stroke();
+    ctx.globalAlpha = 1;
     ctx.setLineDash([]);
 
-    const role = level.role === null || level.role === undefined ? '' : `${roleLabel(level.role)} · `;
-    const label = `${role}${level.kind} ${levelPrice(level.price)}`;
+    if (numbers) {
+      if (!n) continue;
+      drawBadge(ctx, badgeX, y, n);
+      badges.push({ x: badgeX, y, r: BADGE_R + 2, n, item: level });
+      continue;
+    }
+
+    const label = chosenLabel(level);
     const width = ctx.measureText(label).width + 8;
     ctx.fillStyle = LEVEL_COLOR;
     ctx.fillRect(right - width, y - 7, width, 14);
@@ -261,6 +345,44 @@ export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left
     ctx.fillText(label, right - 4, y);
   }
   ctx.restore();
+  return badges;
+}
+
+/**
+ * Etiqueta del número bajo el puntero: número, papel, nombre y precio, y debajo la fuente y la nota.
+ * Va a la derecha del número, o a la izquierda si no cabe, dentro del área de precio
+ */
+export function drawChosenTooltip(ctx, badges, mouseX, mouseY, { left, right, top, bottom }) {
+  if (!badges?.length || !Number.isFinite(mouseX) || !Number.isFinite(mouseY)) return null;
+  let hit = null;
+  let best = Infinity;
+  for (const badge of badges) {
+    const d = Math.hypot(badge.x - mouseX, badge.y - mouseY);
+    if (d <= badge.r && d < best) {
+      hit = badge;
+      best = d;
+    }
+  }
+  if (!hit) return null;
+
+  const lines = [`${hit.n} · ${chosenLabel(hit.item)}`];
+  const detail = [hit.item.source, hit.item.note].filter(Boolean).join(' — ');
+  if (detail) lines.push(detail.length > 90 ? `${detail.slice(0, 87)}…` : detail);
+  ctx.save();
+  ctx.font = '10px Inter, sans-serif';
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  const width = Math.max(...lines.map(line => ctx.measureText(line).width)) + 10;
+  const height = lines.length * 13 + 4;
+  let x = hit.x + hit.r + 3;
+  if (x + width > right) x = Math.max(left, hit.x - hit.r - 3 - width);
+  const y = Math.max(top, Math.min(bottom - height, hit.y - height / 2));
+  ctx.fillStyle = LEVEL_COLOR;
+  ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = '#FFFFFF';
+  lines.forEach((line, i) => ctx.fillText(line, x + 5, y + 8.5 + i * 13));
+  ctx.restore();
+  return hit;
 }
 
 /**
@@ -297,8 +419,12 @@ export function itemPositions(items, targets, { priceToY, timeToX, candleX, left
   });
 }
 
-/** Aro sobre cada marca elegida, para saber cuáles están en el análisis */
-export function drawChosenMarks(ctx, positions) {
+/**
+ * Aro sobre cada marca elegida, para saber cuáles están en el análisis. Con numbers, el número de la marca va
+ * arriba a la derecha del aro. Devuelve dónde quedó cada número
+ */
+export function drawChosenMarks(ctx, positions, { numbers = null } = {}) {
+  const badges = [];
   ctx.save();
   ctx.strokeStyle = LEVEL_COLOR;
   ctx.lineWidth = 2;
@@ -307,8 +433,14 @@ export function drawChosenMarks(ctx, positions) {
     ctx.beginPath();
     ctx.arc(x, y, 9, 0, Math.PI * 2);
     ctx.stroke();
+    const n = numbers?.get(item.id);
+    if (n) {
+      drawBadge(ctx, x + 9, y - 9, n);
+      badges.push({ x: x + 9, y: y - 9, r: BADGE_R + 2, n, item });
+    }
   }
   ctx.restore();
+  return badges;
 }
 
 /**

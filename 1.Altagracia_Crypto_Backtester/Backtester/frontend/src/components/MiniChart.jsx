@@ -16,8 +16,8 @@ import TPSLBox from "./drawing/shapes/TPSLBox"; // 🎯 Para crear cajas TP/SL p
 import { TF_MS, countBefore, formingCandle, lastClosedIndex, syncKnownCandles, timestampIndex } from './backtesting/replayClock';
 import { DEFAULT_PRICE_RATIO, resizePanel } from './indicators/panelLayout.js';
 import {
-  ROLES, candleCenterX, candleItemId, chosenLevel, drawChosenLevels, drawChosenMarks, framedTimes, imageMarkers, itemPositions, knownLevels, levelTargets,
-  levelsNear, priceRangeWith, subscribeLevels, toggleLevel, updateLevel, withinArea
+  candleCenterX, candleItemId, chosenLevel, chosenNumbers, drawChosenLevels, drawChosenMarks, drawChosenTooltip, framedTimes, imageMarkers,
+  itemPositions, knownLevels, levelTargets, levelsNear, priceRangeWith, roleOptions, subscribeLevels, toggleLevel, updateLevel, withinArea
 } from './indicators/analysisLevels.js';
 import { subscribePins } from './indicators/liquidationPins.js';
 import {
@@ -32,6 +32,7 @@ import { Icon } from './uiIcons.jsx';
 import './backtesting/Observer.css';
 import { isBlind, maskDate, maskPrice, maskVolume, priceText, pricesHidden, unmaskPrice } from './backtesting/blindClock';
 import { drawPositionLines, hitPositionTarget, positionPrices } from './positionLines.js';
+import { applyKline, mergeHistory, withForming } from './liveCandles.js';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
@@ -208,6 +209,7 @@ const MiniChart = forwardRef(({
   getTradeBoxes = null, // Cajas TP/SL de los trades, para el 2.º gráfico: { side, entry, stop, target, start, end }
   getPositionLines = null, // Posiciones y órdenes reales (suite en vivo), ver positionLines.js. App 1 no lo pasa
   onPositionAction = null, // { type: 'close' | 'cancel' | 'move' | 'remove', line, field, price }: lo decide quien da los datos
+  chosenStyle = 'labels', // Lo elegido para el análisis: 'labels' (App 1) o 'numbers', un número pequeño con su etiqueta al pasar el mouse (suite)
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -237,6 +239,7 @@ const MiniChart = forwardRef(({
   const positionPriceRef = useRef(null); // Último precio con que se dibujaron las posiciones (va en cada acción)
   const positionFitRef = useRef(false);  // ⇕: la escala incluye entrada, SL y TP de las posiciones (si no, sigue las velas)
   const overlayButtonsRef = useRef(null); // Botones sobre el gráfico: las etiquetas de posiciones no van debajo
+  const chosenBadgesRef = useRef([]); // Números de lo elegido (chosenStyle 'numbers') del último dibujo: su etiqueta sale al pasar el mouse
 
   const candlesRef = useRef([]);
   const inProgressCandleRef = useRef(null);
@@ -1131,9 +1134,8 @@ const MiniChart = forwardRef(({
     // En reproducción las velas se validan una vez al cargarlas, no en cada dibujo
     let displayCandles = candles;
     if (!backtestingMode || inProgressCandleRef.current) {
-      displayCandles = [...candles];
-      if (inProgressCandleRef.current) displayCandles.push(inProgressCandleRef.current);
-      displayCandles = displayCandles.filter(isValidCandle);
+      // La vela en curso va al final solo si es posterior a la última cerrada (liveCandles.js)
+      displayCandles = withForming(candles, inProgressCandleRef.current).filter(isValidCandle);
     }
 
     const chartWidth = width - marginLeft - marginRight;
@@ -1359,9 +1361,10 @@ const MiniChart = forwardRef(({
       // Lo elegido en otro marco va en la vela de este marco que contiene su hora
       const candleX = (timestamp) => candleCenterX(visibleCandles, TF_MS[interval], marginLeft, barWidth, timestamp) ?? timeToX(timestamp);
       const area = { priceToY, timeToX, candleX, left: marginLeft, right: marginLeft + chartWidth, top: marginTop, bottom: marginTop + priceChartHeight };
-      // Al tomar la imagen de una orden, lo elegido para ella
+      // Al tomar la imagen de una orden, lo elegido para ella. Con números, cada uno lleva el suyo (su lugar en la lista)
       const chosen = captureItemsRef.current ?? knownLevels(symbol, simulatedNowRef.current ?? priceContext.knownUntil);
-      drawChosenLevels(ctx, chosen, area);
+      const chosenNumberMap = chosenStyle === 'numbers' ? chosenNumbers(chosen) : null;
+      const levelBadges = drawChosenLevels(ctx, chosen, area, { numbers: chosenNumberMap });
       ctx.restore();
 
       // Los footprints van encima de los perfiles y demás indicadores, para leer sus cifras
@@ -1375,7 +1378,8 @@ const MiniChart = forwardRef(({
       ctx.beginPath();
       ctx.rect(0, snapEdge(marginTop), width, snapEdge(marginTop + priceChartHeight) - snapEdge(marginTop));
       ctx.clip();
-      drawChosenMarks(ctx, positions);
+      const markBadges = drawChosenMarks(ctx, positions, { numbers: chosenNumberMap });
+      chosenBadgesRef.current = chosenNumberMap ? [...levelBadges, ...markBadges] : [];
       drawFocusMark(ctx, area);
       ctx.restore();
 
@@ -1995,6 +1999,12 @@ const MiniChart = forwardRef(({
         ctx.fillText(priceText(price, 2), width - marginRight + 6, mouseY + 4);
       }
     }
+
+    // Con números, la etiqueta de lo elegido sale al pasar el mouse sobre su número, encima de todo
+    if (chosenBadgesRef.current.length && mouseX !== null && mouseY !== null) {
+      drawChosenTooltip(ctx, chosenBadgesRef.current, mouseX, mouseY,
+        { left: marginLeft, right: width - marginRight, top: marginTop, bottom: marginTop + priceChartHeight });
+    }
   };
 
   // ==================== DRAWING PERSISTENCE ====================
@@ -2207,22 +2217,14 @@ const MiniChart = forwardRef(({
       const json = await res.json();
       
       if (json.success && json.data && json.data.length > 0) {
-        let historicalCandles = json.data;
-        
-        const now = Date.now();
-        const lastCandle = historicalCandles[historicalCandles.length - 1];
-        const intervalMs = getIntervalMilliseconds(interval);
-        const currentTimeframeStart = Math.floor(now / intervalMs) * intervalMs;
-        
-        if (lastCandle.timestamp >= currentTimeframeStart) {
-          log.candle(symbol, '⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo', {
-            timestamp: lastCandle.timestamp,
-            datetime: lastCandle.datetime_colombia
-          });
-          
-          historicalCandles = historicalCandles.slice(0, -1);
-        }
-        
+        // La última vela del histórico se quita si está en curso (la trae el WebSocket), se conserva lo que el
+        // WebSocket cerró mientras se pedía y la vela en curso deja de serlo si ya está entre las cerradas.
+        // Antes una recarga justo tras el cierre de una vela la dejaba dos veces al final (liveCandles.js)
+        const merged = mergeHistory(json.data, candlesRef.current, inProgressCandleRef.current, getIntervalMilliseconds(interval));
+        if (merged.droppedLast) log.candle(symbol, '⚠️ ÚLTIMA VELA DEL HISTÓRICO ESTÁ EN PROGRESO - Removiendo');
+        const historicalCandles = merged.closed;
+        inProgressCandleRef.current = merged.forming;
+
         candlesRef.current = historicalCandles;
         log.candle(symbol, `✅ Histórico cargado: ${historicalCandles.length} velas confirmadas`);
         log.state(symbol, candlesRef.current.length, inProgressCandleRef.current !== null);
@@ -2281,18 +2283,6 @@ const MiniChart = forwardRef(({
       if (klineData && klineData.length > 0) {
         const candle = klineData[0];
         const candleTimestamp = parseInt(candle.start);
-        // Una vela anterior a la ultima confirmada no se agrega al final; la misma vela solo se corrige
-        const lastConfirmed = candlesRef.current[candlesRef.current.length - 1];
-        if (lastConfirmed && candleTimestamp < lastConfirmed.timestamp) return;
-        if (lastConfirmed && candleTimestamp === lastConfirmed.timestamp) {
-          Object.assign(lastConfirmed, {
-            open: parseFloat(candle.open), high: parseFloat(candle.high), low: parseFloat(candle.low),
-            close: parseFloat(candle.close), volume: parseFloat(candle.volume),
-          });
-          return;
-        }
-        const datetime_colombia = formatDateTimeColombia(candleTimestamp);
-        
         const newCandle = {
           timestamp: candleTimestamp,
           open: parseFloat(candle.open),
@@ -2300,36 +2290,18 @@ const MiniChart = forwardRef(({
           low: parseFloat(candle.low),
           close: parseFloat(candle.close),
           volume: parseFloat(candle.volume),
-          datetime_colombia: datetime_colombia,
+          datetime_colombia: formatDateTimeColombia(candleTimestamp),
           in_progress: !candle.confirm
         };
 
-        const currentInProgress = inProgressCandleRef.current;
+        // Una vela anterior a la última cerrada no va al final, la misma solo la corrige y la vela en curso
+        // pasa a las cerradas una sola vez (liveCandles.js)
+        const step = applyKline(candlesRef.current, inProgressCandleRef.current, newCandle);
+        if (!step.changed) return;
+        inProgressCandleRef.current = step.forming;
 
-        if (!currentInProgress) {
-          inProgressCandleRef.current = newCandle;
-          log.candle(symbol, '🆕 Primera vela en progreso', {
-            timestamp: candleTimestamp,
-            datetime: datetime_colombia
-          });
-          
-        } else if (candleTimestamp > currentInProgress.timestamp) {
-          log.candle(symbol, '🔄 CAMBIO DE TIMESTAMP - Confirmando vela anterior', {
-            anterior: currentInProgress.timestamp,
-            nuevo: candleTimestamp
-          });
-          
-          candlesRef.current.push(currentInProgress);
-          
-          if (candlesRef.current.length > 2000) {
-            candlesRef.current.shift();
-          }
-          
-          log.candle(symbol, '✅ Vela confirmada y agregada', {
-            total_confirmadas: candlesRef.current.length
-          });
-          
-          inProgressCandleRef.current = newCandle;
+        if (step.rolled) {
+          log.candle(symbol, '✅ Vela confirmada', { total_confirmadas: candlesRef.current.length });
           log.state(symbol, candlesRef.current.length, true);
 
           // ✅ Verificar gap cuando se confirma una vela
@@ -2342,11 +2314,8 @@ const MiniChart = forwardRef(({
             log.candle(symbol, `🔄 Nueva vela confirmada - analizando rangos`);
             indicatorManagerRef.current.analyzeRanges(candlesRef.current);
           }
-          
-        } else if (candleTimestamp === currentInProgress.timestamp) {
-          inProgressCandleRef.current = newCandle;
         }
-        
+
         if (!animationFrameRef.current) {
           animationFrameRef.current = requestAnimationFrame(() => {
             drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
@@ -3937,8 +3906,8 @@ const MiniChart = forwardRef(({
                         title="Papel en el trade"
                         onChange={(e) => updateLevel(symbol, level.id, { role: e.target.value })}
                       >
-                        {level.mark ? <option value="">Solo marca</option> : (chosen.role ?? null) === null && <option value="" disabled>Elige su papel</option>}
-                        {ROLES.map(role => <option key={role.value} value={role.value}>{role.label}</option>)}
+                        {!level.mark && (chosen.role ?? null) === null && <option value="" disabled>Elige su papel</option>}
+                        {roleOptions(level).map(role => <option key={role.value} value={role.value}>{role.label}</option>)}
                       </select>
                       <textarea
                         rows={2}

@@ -102,6 +102,44 @@ try:
         f.write('{"kind": "decision", "symb')  # linea cortada
     check("una linea cortada se salta", len(JournalStore(TMP / "unit").contexts()) == 4)
 
+    # ---------- decision unida por su orden de Bybit (12/11/2026) ----------
+    so = JournalStore(TMP / "orders")
+    lv = [{"id": "VWAP|VWAP|100.00", "kind": "VWAP", "source": "VWAP", "price": 100.0, "role": "data"}]
+    placed = NOW - 3 * 3600000
+    # Limit A (con lo elegido) cancelada; Limit B la reemplaza con lo mismo; B se llena 2 horas despues
+    so.add_context({"kind": "decision", "symbol": "ADAUSDT", "side": "Buy", "at": placed, "levels": lv, "order_id": "oid-A",
+                    "order_link_id": "bot_A", "outcome": "placed"})
+    so.add_context({"kind": "decision", "symbol": "ADAUSDT", "side": "Buy", "at": placed + 5 * MIN, "levels": lv, "note": "la buena",
+                    "order_id": "oid-B", "outcome": "placed"})
+    filled = placed + 2 * 3600000
+    merged = so.merge([{"trade_id": "ADA-1", "symbol": "ADAUSDT", "side": "Buy", "opened_at": filled, "pre_existing": False,
+                        "open_order_id": "oid-B"}])[0]
+    check("Limit llenada 2 horas despues: su decision por la orden, con lo elegido",
+          merged["decision"] and merged["decision"]["order_id"] == "oid-B" and merged["decision"]["levels"][0]["role"] == "data", str(merged))
+    # Otra Limit (C) se llena 3 minutos despues de poner una orden D que no es la suya: la decision de D no pasa a C
+    so.add_context({"kind": "decision", "symbol": "ADAUSDT", "side": "Buy", "at": filled + 60 * MIN, "order_id": "oid-D", "outcome": "placed"})
+    other = so.merge([{"trade_id": "ADA-2", "symbol": "ADAUSDT", "side": "Buy", "opened_at": filled + 63 * MIN, "pre_existing": False,
+                       "open_order_id": "oid-C"}])[0]
+    check("la decision de otra orden conocida no pasa al trade", other["decision"] is None, str(other.get("decision")))
+    # Sin numero de orden en el trade (externa o bot viejo): por hora como antes
+    old = so.merge([{"trade_id": "ADA-3", "symbol": "ADAUSDT", "side": "Buy", "opened_at": filled + 62 * MIN, "pre_existing": False}])[0]
+    check("trade sin orden conocida: decision por hora", old["decision"] and old["decision"]["order_id"] == "oid-D")
+    # Una decision de resultado desconocido (sin numero) se une por hora aunque el trade traiga su orden
+    so.add_context({"kind": "decision", "symbol": "SOLUSDT", "side": "Sell", "at": NOW - 30 * MIN, "outcome": "unknown", "note": "sin respuesta"})
+    unk = so.merge([{"trade_id": "SOL-1", "symbol": "SOLUSDT", "side": "Sell", "opened_at": NOW - 29 * MIN, "pre_existing": False,
+                     "open_order_id": "oid-S"}])[0]
+    check("decision sin numero (resultado desconocido): por hora", unk["decision"] and unk["decision"]["note"] == "sin respuesta")
+    check("la decision de una orden se encuentra por su numero", so.decision_for("oid-A")["order_link_id"] == "bot_A"
+          and so.decision_for(order_link_id="bot_A")["order_id"] == "oid-A" and so.decision_for("nada") is None)
+    for bad in ({"order_id": "../x"}, {"order_link_id": "a" * 80}, {"order_id": 5}):
+        try:
+            so.clean_context({"kind": "decision", "symbol": "ADAUSDT", "side": "Buy", "at": NOW, **bad})
+            check(f"numero de orden invalido rechazado: {bad}", False)
+        except ValueError:
+            check(f"numero de orden invalido rechazado: {bad}", True)
+    check("resultado desconocido o raro: solo placed y unknown quedan",
+          so.clean_context({"kind": "decision", "symbol": "ADAUSDT", "side": "Buy", "at": NOW, "outcome": "x"}).get("outcome") is None)
+
     # ---------- medidas de App 1 con velas simuladas ----------
     journal_measures.candles.klines = fake_klines_factory()
     import asyncio
@@ -142,6 +180,14 @@ try:
                                                             "image": shot, "note": "Swing en VAL"})
         check("contexto guardado", r.status_code == 200 and r.json()["context"]["symbol"] == "ETHUSDT", r.text)
         check("contexto invalido: 400", c.post("/api/journal/context", headers=H, json={"kind": "x"}).status_code == 400)
+        c.post("/api/journal/context", headers=H, json={"kind": "decision", "symbol": "LINKUSDT", "side": "Buy", "at": NOW - MIN,
+                                                        "order_id": "oid-LINK", "levels": [{"id": "x", "kind": "POC", "price": 10.0}]})
+        r = c.get("/api/journal/decision?order_id=oid-LINK", headers=H)
+        check("la decision de una orden por la ruta (para devolver lo elegido al cancelarla)",
+              r.status_code == 200 and r.json()["decision"]["levels"][0]["kind"] == "POC", r.text[:200])
+        check("ruta de la decision: numero invalido o ausente, 400",
+              c.get("/api/journal/decision?order_id=../x", headers=H).status_code == 400
+              and c.get("/api/journal/decision", headers=H).status_code == 400)
         BOT_TRADES.append({"trade_id": "ETHUSDT-Buy-1", "symbol": "ETHUSDT", "side": "Buy", "opened_at": t_open, "closed_at": NOW - 3600000,
                            "entry": 80000.0, "initial_stop_loss": 79800.0, "status": "closed", "pnl": 5.0, "pre_existing": False})
         j = c.get("/api/bot/journal", headers=H).json()

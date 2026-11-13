@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { orderPreview, orderQuantity, priceAtPercent, AUTO_ENTRY_DISTANCE } from '@app1/components/backtesting/orderPlan.js';
+import AnalysisLevels from '@app1/components/backtesting/AnalysisLevels.jsx';
+import { chosenLabel, knownLevels } from '@app1/components/indicators/analysisLevels.js';
 import { getJson, postJson } from './api.js';
 import { bookError, linesFor, runPositionAction, subscribeBook } from './botBook.js';
 
@@ -187,24 +189,32 @@ export default function TradingPanel({ symbol, shapes, onClose, onDecision }) {
       return;
     }
     setSending(true);
+    const { preview: _p, mode: _m, boxId: _b, ...body } = confirm;
+    // Journal (paso 4): la imagen de la decisión sale ya, con lo elegido para este trade. No se espera: la orden sale
+    // igual aunque la imagen falle. Lo elegido sale de la lista solo si la orden queda en Bybit (settle, 12/11/2026)
+    const decision = onDecision?.({
+      symbol: body.symbol, side: body.side, note: decisionNote.trim(),
+      order: { type: body.order_type, qty: body.quantity, entry: body.limit_price ?? body.current_price, stop: body.stop_loss,
+               target: body.take_profit, risk: confirm.preview?.loss },
+    });
+    let outcome = 'unknown';
+    let ids = {};
     try {
-      const { preview: _p, mode: _m, boxId: _b, ...body } = confirm;
-      // Journal (paso 4): el momento de la decisión, con la imagen del gráfico y lo elegido para este trade. No
-      // se espera: la orden sale igual aunque la imagen falle
-      onDecision?.({
-        symbol: body.symbol, side: body.side, note: decisionNote.trim(),
-        order: { type: body.order_type, qty: body.quantity, entry: body.limit_price ?? body.current_price, stop: body.stop_loss,
-                 target: body.take_profit, risk: confirm.preview?.loss },
-      });
-      setDecisionNote('');
       const r = await postJson('/api/bot/trade', { ...body, confirm: 'ENVIAR_ORDEN_REAL' });
       setResult({ ok: r.success !== false, status: r.status, message: r.message, result: r.result });
+      outcome = r.status === 'failed' ? 'rejected' : r.status === 'unknown' ? 'unknown' : 'placed';
+      ids = { order_id: r.order_id || null, order_link_id: r.order_link_id || null };
     } catch (e) {
-      setResult({ ok: false, status: 'error', message: e.message });
+      // Un "no" del servidor o del bot (4xx), o el bot sin conexión (503): la orden no salió. Sin respuesta: no se sabe
+      const refused = (e.status >= 400 && e.status < 500) || e.status === 503;
+      outcome = refused ? 'rejected' : 'unknown';
+      setResult({ ok: false, status: refused ? 'error' : 'unknown', message: e.message });
     } finally {
       setSending(false);
       setConfirm(null);
     }
+    if (outcome !== 'rejected') setDecisionNote(''); // rechazada: la nota sigue para la orden corregida
+    Promise.resolve(decision).then(d => d?.settle?.(outcome, ids)).catch(() => {});
   };
 
   const mode = status?.mode ? String(status.mode).toUpperCase() : null;
@@ -213,6 +223,7 @@ export default function TradingPanel({ symbol, shapes, onClose, onDecision }) {
   const posList = bookLines.filter(l => l.kind === 'position');
   const orderLines = bookLines.filter(l => l.kind === 'order');
   const bookProblem = bookError();
+  const chosenNow = confirm ? knownLevels(confirm.symbol, Infinity) : []; // lo que va con la orden que se confirma
 
   return (
     <>
@@ -319,6 +330,8 @@ export default function TradingPanel({ symbol, shapes, onClose, onDecision }) {
               </>
             )}
 
+            <AnalysisLevels symbol={symbol} time={Infinity} numbered />
+
             <div className="control-actions">
               <button className={`btn-create-order ${side === 'long' ? 'btn-long' : 'btn-short'}`} onClick={prepare} disabled={!!blocked} title={blocked || ''}>
                 {side === 'long' ? '🟢 COMPRAR (LONG)' : '🔴 VENDER (SHORT)'}
@@ -378,6 +391,14 @@ export default function TradingPanel({ symbol, shapes, onClose, onDecision }) {
                 <tr><td>Stop</td><td>{confirm.stop_loss}</td></tr>
                 <tr><td>Objetivo</td><td>{confirm.take_profit}</td></tr>
                 <tr><td>Pierde / gana</td><td>${fmt(confirm.preview.loss)} / ${fmt(confirm.preview.profit)} (sin comisiones)</td></tr>
+                <tr>
+                  <td>Para el análisis</td>
+                  <td>
+                    {chosenNow.length === 0 ? 'nada elegido en el gráfico' : chosenNow.map((item, i) => (
+                      <div key={item.id}>{i + 1}. {chosenLabel(item)}</div>
+                    ))}
+                  </td>
+                </tr>
               </tbody>
             </table>
             <textarea className="suite-input" style={{ width: '100%', minHeight: 48, marginTop: 10, boxSizing: 'border-box' }} maxLength={4000}

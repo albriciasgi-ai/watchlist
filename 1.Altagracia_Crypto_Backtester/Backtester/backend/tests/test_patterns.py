@@ -136,6 +136,17 @@ def test_referencias_con_su_papel():
     assert result["ref_target_atr"] == 0.3, "el objetivo en 104 quedó a 0.6 de su nivel objetivo"
 
 
+def test_un_nivel_solo_dato_es_referencia_sin_papel_de_trade():
+    # 12/11/2026: el VWAP elegido como dato, sin ser soporte, resistencia, entrada ni objetivo
+    levels = [{"source": "VWAP", "kind": "VWAP", "price": 100.2, "role": "data"},
+              {"source": "VP", "kind": "POC", "price": 99.0, "role": "entry"}]
+    result = patterns.references(trade(levels=levels), 2.0)
+    assert [item.get("role") for item in result["items"]] == ["Solo dato", "Entrada"]
+    assert result["ref_levels"] == 2
+    assert result["ref_nearest_label"] == "VWAP · VWAP"
+    assert result["ref_entry_atr"] == 0.5, "la distancia a la entrada sale solo del nivel de entrada"
+
+
 def test_sin_nivel_con_ese_papel_no_hay_distancia():
     result = patterns.references(trade(levels=[{"source": "VP", "kind": "POC", "price": 99.0, "role": "support"}]), 2.0)
     assert result["ref_entry_atr"] is None and result["ref_target_atr"] is None

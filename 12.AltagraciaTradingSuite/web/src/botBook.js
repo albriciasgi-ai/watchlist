@@ -105,7 +105,7 @@ export function linesFor(symbol) {
     const price = num(o.price) ?? num(o.triggerPrice);
     if (!price) continue;
     lines.push(withPending({
-      kind: 'order', id: `ord:${o.orderId}`, orderId: o.orderId, symbol: o.symbol, side: o.side, qty: Number(o.leavesQty || o.qty),
+      kind: 'order', id: `ord:${o.orderId}`, orderId: o.orderId, orderLinkId: o.orderLinkId || null, symbol: o.symbol, side: o.side, qty: Number(o.leavesQty || o.qty),
       price, orderType: o.orderType, stopLoss: num(o.stopLoss), takeProfit: num(o.takeProfit),
     }));
   }
@@ -150,6 +150,14 @@ async function send(line, pend, path, body, okText) {
   }
 }
 
+// Órdenes de entrada canceladas desde la suite (gráfico o panel): lo elegido para ellas vuelve a la lista (ChartView)
+const cancelListeners = new Set();
+
+export function subscribeCancels(listener) {
+  cancelListeners.add(listener);
+  return () => cancelListeners.delete(listener);
+}
+
 /**
  * Acción pedida desde el gráfico (onPositionAction de MiniChart) o desde el panel: { type, line, field, price, lastPrice }.
  * Pide confirmación y la envía. Devuelve { ok, message } para mostrar, o null si se canceló.
@@ -170,8 +178,14 @@ export async function runPositionAction(action) {
   if (type === 'cancel') {
     const what = `${line.orderType || 'orden'} de ${line.side === 'Buy' ? 'compra' : 'venta'} de ${line.qty} ${line.symbol} a ${line.price}`;
     if (!window.confirm(`¿Cancelar la orden ${what}${account}?`)) return null;
-    return send(line, { until: Date.now() + PENDING_MS }, '/api/bot/orders/cancel',
+    const outcome = await send(line, { until: Date.now() + PENDING_MS }, '/api/bot/orders/cancel',
       { symbol: line.symbol, order_id: line.orderId, confirm: 'CANCELAR_ORDEN' }, `Orden de ${line.symbol} cancelada`);
+    if (outcome?.ok) {
+      cancelListeners.forEach(listener => {
+        try { listener(line); } catch { /* un suscriptor que falla no frena a los demás */ }
+      });
+    }
+    return outcome;
   }
 
   if (type === 'remove' && action.field === 'takeProfit') {

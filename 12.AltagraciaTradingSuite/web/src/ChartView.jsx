@@ -24,8 +24,8 @@ import '@app1/components/drawing/DrawingToolbar.css';
 import '@app1/components/drawing/DrawingSidebar.css';
 import TradingPanel from './TradingPanel.jsx';
 import { getJson, postJson } from './api.js';
-import { linesFor, runPositionAction, subscribeBook } from './botBook.js';
-import { takeLevels } from '@app1/components/indicators/analysisLevels.js';
+import { linesFor, runPositionAction, subscribeBook, subscribeCancels } from './botBook.js';
+import { dropLevels, knownLevels, restoreLevels } from '@app1/components/indicators/analysisLevels.js';
 import { TAB, otherTabUrl, onDrawings, sendDrawings } from './tabs.js';
 
 /**
@@ -167,13 +167,47 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
   const saveContext = useCallback((context) => postJson('/api/journal/context', context)
     .catch(e => console.warn('[journal] contexto no guardado:', e.message)), []);
 
-  // Al confirmar una orden en el panel: imagen de la decisión (con contexto), lo elegido para el trade y la nota
-  const handleDecision = useCallback(async ({ symbol: sym, side, note, order }) => {
+  // Al enviar una orden desde el panel: la imagen de la decisión (con contexto) sale ya, con lo elegido; lo elegido
+  // sale de la lista y queda en el journal solo cuando se sabe qué pasó con la orden (settle). Antes salía al enviar:
+  // si el bot rechazaba la orden, o se cancelaba la Limit para cambiarla, la orden que sí abría no llevaba nada (12/11/2026)
+  const handleDecision = useCallback(({ symbol: sym, side, note, order }) => {
     const at = Date.now();
-    const levels = takeLevels(sym, at); // como en App 1: lo elegido pasa a este trade y la lista queda vacía
-    const { image, frame } = sym === symbolRef.current ? await captureFor(`decision-${at}`, { context: true, items: levels }) : { image: null, frame: null };
-    saveContext({ kind: 'decision', symbol: sym, side, at, image, frame, note, levels, order });
+    const levels = knownLevels(sym, Infinity);
+    const shot = sym === symbolRef.current
+      ? captureFor(`decision-${at}`, { context: true, items: levels })
+      : Promise.resolve({ image: null, frame: null });
+    return shot.then(({ image, frame }) => ({
+      // outcome: 'placed' (quedó en Bybit), 'unknown' (sin respuesta) o 'rejected' (no salió). ids: la orden de Bybit
+      settle: (outcome, ids = {}) => {
+        if (outcome === 'rejected') return; // lo elegido sigue en la lista para la orden corregida
+        // En Bybit: como en App 1, lo elegido pasa a este trade y la lista queda para el siguiente. Sin respuesta, la
+        // decisión se guarda con una copia y la lista sigue: el reintento lo lleva
+        if (outcome === 'placed') dropLevels(sym, levels);
+        saveContext({
+          kind: 'decision', symbol: sym, side, at, image, frame, note, levels, order, outcome,
+          ...(ids.order_id ? { order_id: String(ids.order_id) } : {}),
+          ...(ids.order_link_id ? { order_link_id: String(ids.order_link_id) } : {}),
+        });
+      },
+    }));
   }, [captureFor, saveContext]);
+
+  // Una Limit del panel cancelada sin llenarse: lo elegido para ella vuelve a la lista, para la orden que la reemplace
+  useEffect(() => subscribeCancels(async (line) => {
+    if (!line?.orderId && !line?.orderLinkId) return;
+    const query = line.orderId ? `order_id=${encodeURIComponent(line.orderId)}` : `order_link_id=${encodeURIComponent(line.orderLinkId)}`;
+    try {
+      const { decision } = await getJson(`/api/journal/decision?${query}`);
+      const back = restoreLevels(line.symbol, decision?.levels || []);
+      if (back) {
+        const notice = { ok: true, message: `Lo elegido para esa orden volvió a la lista (${back}): lo lleva la orden que la reemplace` };
+        setPositionNotice(notice);
+        setTimeout(() => setPositionNotice(n => (n === notice ? null : n)), 8000);
+      }
+    } catch {
+      // Sin decisión guardada de esa orden (de una alerta o de otra app): no hay nada que devolver
+    }
+  }), []);
 
   useEffect(() => {
     let last = '';
@@ -701,6 +735,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
                   getTradeBoxes={getTradeBoxes}
                   getPositionLines={getPositionLines}
                   onPositionAction={handlePositionAction}
+                  chosenStyle="numbers"
                   onRequestPause={noop}
                   onRequestTimeChange={noop}
                   onDrawingsChange={handleDrawingsChange}

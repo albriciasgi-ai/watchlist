@@ -7,7 +7,7 @@
 # - Medidas al decidir (cache de journal_measures.py).
 #
 # Todo en data/journal (SUITE_DATA_DIR), en archivos que solo se agregan. Se une a los trades del bot al leerlos:
-# misma moneda y lado, por hora (merge).
+# misma moneda y lado; la decision por su orden de Bybit si se sabe, si no por hora (merge).
 import json
 import re
 import secrets
@@ -20,6 +20,8 @@ SESSION_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 FILE_RE = re.compile(r"^[A-Za-z0-9_.-]{1,96}$")
 IMAGE_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}/[A-Za-z0-9_.-]{1,96}$")
 TRADE_ID_RE = re.compile(r"^[A-Za-z0-9:._-]{1,160}$")
+ORDER_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+OUTCOMES = {"placed", "unknown"}
 KINDS = {"decision", "open", "close"}
 MAX_IMAGE_BYTES = 12 * 1024 * 1024
 MINUTE = 60000
@@ -112,7 +114,10 @@ class JournalStore:
             for item in levels[:60]:
                 if not isinstance(item, dict):
                     continue
-                level = {k: _text(item.get(k), 300) for k in ("id", "kind", "label", "source", "role", "note")}
+                level = {k: _text(item.get(k), 300) for k in ("id", "kind", "label", "source", "note")}
+                role = item.get("role")
+                if isinstance(role, str):
+                    level["role"] = role.strip()[:40]  # "" es "solo marca": se guarda tal cual
                 for k in ("price", "time", "low", "high", "selectedAt"):
                     v = _num(item.get(k))
                     if v is not None:
@@ -126,7 +131,31 @@ class JournalStore:
                 "type": _text(order.get("type"), 16), "qty": _num(order.get("qty")), "entry": _num(order.get("entry")),
                 "stop": _num(order.get("stop")), "target": _num(order.get("target")), "risk": _num(order.get("risk")),
             }.items() if v is not None}
+        # La orden de Bybit de esta decision (12/11/2026): une la decision con el trade que abra, aunque una Limit se
+        # llene horas despues. outcome: "placed" (la orden quedo en Bybit) o "unknown" (no se supo la respuesta)
+        if kind == "decision":
+            for key in ("order_id", "order_link_id"):
+                value = body.get(key)
+                if value is not None:
+                    if not isinstance(value, str) or not ORDER_ID_RE.match(value):
+                        raise ValueError(f"{key} invalido")
+                    event[key] = value
+            if body.get("outcome") in OUTCOMES:
+                event["outcome"] = body["outcome"]
         return event
+
+    def decision_for(self, order_id: Optional[str] = None, order_link_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """La decision guardada de esa orden de Bybit (la mas reciente), o None."""
+        if not order_id and not order_link_id:
+            return None
+        found = None
+        for e in self.contexts():
+            if e["kind"] != "decision":
+                continue
+            if (order_id and e.get("order_id") == order_id) or (order_link_id and e.get("order_link_id") == order_link_id):
+                if found is None or e["at"] >= found["at"]:
+                    found = e
+        return found
 
     def add_context(self, body: Dict[str, Any]) -> Dict[str, Any]:
         event = self.clean_context(body)
@@ -154,23 +183,37 @@ class JournalStore:
 
     # ---------- union con los trades del bot ----------
     def merge(self, trades: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Suma a cada trade su contexto de decision y sus imagenes (misma moneda y lado, por hora)."""
+        """
+        Suma a cada trade su contexto de decision y sus imagenes (misma moneda y lado).
+        La decision es la de la orden que abrio el trade (open_order_id del bot), a cualquier hora: una Limit puede
+        llenarse horas despues. Sin esa, por hora como antes (la mas reciente de 15 minutos antes a 2 despues de la
+        apertura), nunca la de otra orden conocida: la de una Limit cancelada no pasa al trade que la reemplazo.
+        """
         by_key: Dict[tuple, List[Dict[str, Any]]] = {}
         for event in self.contexts():
             by_key.setdefault((event["symbol"], event["side"]), []).append(event)
         for t in trades:
             events = by_key.get((t.get("symbol"), t.get("side")), [])
             opened, closed = t.get("opened_at"), t.get("closed_at")
-            decision, images = None, []
+            order_id, link_id = t.get("open_order_id"), t.get("open_order_link_id")
+            decision, by_time, images = None, None, []
             for e in events:
                 at = e["at"]
-                if e["kind"] == "decision" and opened and not t.get("pre_existing") and opened - DECISION_BEFORE <= at <= opened + DECISION_AFTER:
-                    if decision is None or at > decision["at"]:
-                        decision = e
+                if e["kind"] == "decision":
+                    if (order_id and e.get("order_id") == order_id) or (link_id and e.get("order_link_id") == link_id):
+                        if decision is None or at > decision["at"]:
+                            decision = e
+                        continue
+                    other_order = (order_id or link_id) and (e.get("order_id") or e.get("order_link_id"))
+                    if (not other_order and opened and not t.get("pre_existing")
+                            and opened - DECISION_BEFORE <= at <= opened + DECISION_AFTER):
+                        if by_time is None or at > by_time["at"]:
+                            by_time = e
                 elif e["kind"] == "open" and opened and not t.get("pre_existing") and opened - OPEN_BEFORE <= at <= opened + OPEN_AFTER:
                     images.append({"kind": "open", "image": e.get("image"), "at": at, "frame": e.get("frame")})
                 elif e["kind"] == "close" and closed and closed - CLOSE_BEFORE <= at <= closed + CLOSE_AFTER:
                     images.append({"kind": "close", "image": e.get("image"), "at": at, "frame": e.get("frame")})
+            decision = decision or by_time
             if decision and decision.get("image"):
                 images.insert(0, {"kind": "decision", "image": decision["image"], "at": decision["at"], "frame": decision.get("frame")})
             t["decision"] = decision
