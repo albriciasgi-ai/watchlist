@@ -262,3 +262,17 @@ anoto el hueco. Falta comparar un dia completo grabado en la nube contra el arch
   - el día real de BTC, si está en el PC.
 
   `tape_checks.py` sigue con 18 de 22. Las 4 que fallan ya fallaban antes: usan el 12/11 como día en curso.
+
+**Desplegado el 13/11:** build `composed-eggnog-3952` (commit fe7d3bf de la rama `deploy`, con el libro completo), con el botón "Deploy" desde el navegador integrado y la sesión del usuario.
+
+**Medido después**, en los primeros 10 minutos:
+- **Servicio:** 0 reinicios. Memoria 167 MB y CPU 0.027 vCPU (14% del plan), contra 226 MB y 0.044 vCPU (22%) de la versión anterior, que no tenía el libro.
+- **Libro:** las 20 monedas listas, cada foto en 3.4 a 8.1 s; TONUSDT fuera, sin huecos ni errores.
+- **Primer guardado de trades con `append_tape`:** las 20 monedas, sin errores. Los archivos de LPT, PAXG y BTC bajados de la nube se leen bien, están ordenados y empiezan con los mismos trades que el PC tenía de las 15:14.
+- **Descargas:** BTC (4.3 MB) en 6.7 s, unos 620 KB/s; antes, de 15 a 40 KB/s. `/health` responde en 0.7 s.
+- **Desde la suite:** `book_cloud.py` bajó de la nube real 5 minutos completos de BTC en 1 s, a una carpeta temporal. La segunda vuelta no bajó nada.
+- **Huecos de los reinicios de hoy**, que siguen anotados en los archivos de la nube:
+  - 10:13, 12:46, 13:28 y 14:53 de Colombia, de unos 5 minutos cada uno: lo que iba desde el último guardado;
+  - el despliegue dejó uno de 1 minuto.
+
+  El PC los tapa con lo que grabó la suite.

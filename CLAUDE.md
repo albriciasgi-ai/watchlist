@@ -115,8 +115,13 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    Las demás siguen igual. Las 4 que fallan en `tape_checks.py` ya fallaban antes: usan el 12/11 como día en curso.
 
 **IMPORTANTE:**
+- **Desplegado el 13/11** en Northflank (build `composed-eggnog-3952`), con la sesión del usuario en el navegador integrado. En los primeros 10 minutos:
+  - 0 reinicios; 167 MB de memoria y 14% de la CPU del plan, menos que antes sin el libro (226 MB y 22%);
+  - las 20 monedas del libro listas;
+  - los trades guardados con el método nuevo se leen bien y empiezan igual que la copia del PC;
+  - las descargas pasaron de 15-40 KB/s a unos 620 KB/s.
 - Reiniciar la suite ("Reiniciar" en la bandeja) para que empiece a bajar la nube.
-- La nube guarda 7 días: con el PC apagado más tiempo, lo más viejo se pierde. Bajar un día completo de las 20 monedas tarda de 1.5 a 4 horas: la nube entrega de 15 a 40 KB/s.
+- La nube guarda 7 días: con el PC apagado más tiempo, lo más viejo se pierde. Con lo medido, bajar un día completo de las 20 monedas tarda unos 6 minutos.
 - Un cambio al grabador se hace en la suite y se copia al collector, y de ahí a la rama `deploy` de `footprint-collector`.
 
 **Ver:** `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Libro completo de Bybit" y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Libro completo", "Nube"
