@@ -561,7 +561,8 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - la nube guarda 7 días (`BOOK_KEEP_DAYS`), unos 1.4 GB de su volumen de 6 GB: con el PC apagado más tiempo, lo más viejo se pierde;
   - `SUITE_CLOUD_URL` cambia la dirección (la de `sync_nube.py` por omisión). `SUITE_BOOK_CLOUD=0` lo apaga; sin esa variable sigue a `SUITE_BOOK` y luego a `SUITE_RECORD`;
   - `GET /api/book/cloud`: última vuelta, minutos y bytes bajados, lo pendiente y el último error. `/api/suite/status` trae `book_cloud`.
-  - **desplegado el 13/11** (build `composed-eggnog-3952`). Desde el PC, a una carpeta temporal, bajó 5 minutos completos de BTC de la nube real en 1 s, y la segunda vuelta nada. En la suite del usuario empieza al reiniciarla.
+  - **desplegado el 13/11** (build `composed-eggnog-3952`). Desde el PC, a una carpeta temporal, bajó 5 minutos completos de BTC de la nube real en 1 s, y la segunda vuelta nada;
+  - **en la suite del usuario** (13/11): había estado cerrada de las 15:15 a las 18:39 de Colombia. Al abrirla, la primera vuelta bajó 3,540 minutos de las 20 monedas (15:43 a 18:40), 29.5 MB en 82 s. En BTC, ETH, SOL, XRP y PAXG los 177 minutos quedaron completos, sin repetidos ni huecos: hasta las 18:39 salen de la nube y desde las 18:40, del PC.
 - **Journal** (`server/book_measures.py`): las medidas del libro de cada trade real van con las 58 de App 1, en el grupo "Libro". Se ven en el detalle y entran al informe de ganadoras contra perdedoras:
   - liquidez a ±0.5% en los 5 minutos antes de decidir, y su percentil contra las 24 horas anteriores;
   - desequilibrio a ±0.5% a favor del trade;

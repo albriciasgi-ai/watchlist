@@ -120,7 +120,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
   - las 20 monedas del libro listas;
   - los trades guardados con el método nuevo se leen bien y empiezan igual que la copia del PC;
   - las descargas pasaron de 15-40 KB/s a unos 620 KB/s.
-- Reiniciar la suite ("Reiniciar" en la bandeja) para que empiece a bajar la nube.
+- La suite baja la nube desde que se abre con este código. En la del usuario, al abrirla tras 3.5 horas cerrada, bajó 3,540 minutos en 82 s. El libro quedó seguido, de la nube hasta las 18:39 y del PC desde las 18:40. Entre las 15:15 y las 15:42 del 13/11 no se grabó en ningún lado.
 - La nube guarda 7 días: con el PC apagado más tiempo, lo más viejo se pierde. Con lo medido, bajar un día completo de las 20 monedas tarda unos 6 minutos.
 - Un cambio al grabador se hace en la suite y se copia al collector, y de ahí a la rama `deploy` de `footprint-collector`.
 
