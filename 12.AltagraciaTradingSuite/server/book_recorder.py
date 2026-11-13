@@ -39,6 +39,10 @@ KEEP_BAND = 0.20              # niveles que se guardan en memoria; mas lejos no 
 RESYNC_MOVE = 0.10            # nueva foto si el precio se aleja 10% de la ultima
 RESYNC_HOURS = 24             # y una vez al dia, escalonado por moneda
 MAX_BUFFER = 3000             # cambios guardados mientras llega la foto (unos 10 minutos)
+# La foto REST sale con 1.5 a 3 s de atraso frente al WebSocket (medido el 13/11). Pedida antes, puede ser anterior al
+# primer cambio guardado y no empalma: se pide desde 3 s despues de suscribirse y con algun cambio ya guardado
+SNAPSHOT_WAIT = 3.0
+SNAPSHOT_WAIT_MAX = 15.0      # una moneda sin cambios no espera mas que esto
 SAMPLE_LAG_MS = 1500          # el reloj de respaldo toma cada segundo con este atraso
 LOCK_RETRY_SECONDS = 60
 MINUTE = 60000
@@ -89,6 +93,7 @@ class Book:
         self.u = None
         self.ready = False
         self.syncing = False
+        self.sync_since = 0.0         # hora del PC en que empezo a esperar la foto
         self.buffer: List[tuple] = []
         self.keep_lo = self.keep_hi = None
         self.snap_mid = None
@@ -109,7 +114,12 @@ class Book:
         self.acc_a: Dict[int, list] = {}
         self.out: List[tuple] = []  # (ruta relativa, bytes) listos para escribir
         self.stats = {"messages": 0, "resyncs": 0, "gaps": 0, "minutes": 0, "stale": 0, "outside": 0,
-                      "last_gap": None, "last_resync_reason": None}
+                      "last_gap": None, "last_resync_reason": None, "sync_attempts": 0, "last_sync_note": None,
+                      "last_sync_seconds": None}
+
+    def begin_sync(self):
+        """Empieza a esperar una foto: los cambios que lleguen se guardan para empalmarlos con ella."""
+        self.syncing, self.buffer, self.sync_since = True, [], time.time()
 
     # ---------- foto y cambios ----------
     def load_snapshot(self, result: dict, ts: int):
@@ -355,7 +365,7 @@ class Book:
             return None
         if u != self.u + 1:
             self.lose(ts, f"u salto de {self.u} a {u}")
-            self.syncing = True
+            self.begin_sync()
             self.buffer = [(ts, data)]
             return "resync"
         self.advance(ts)
@@ -365,13 +375,18 @@ class Book:
     def finish_sync(self, result: dict, snap_ts: int) -> bool:
         """Aplica la foto y los cambios guardados mientras llegaba. False si faltan cambios (pedir otra foto)."""
         snap_u = int(result["u"])
+        self.stats["sync_attempts"] += 1
         pending = sorted(self.buffer, key=lambda item: int(item[1]["u"]))
         newer = [item for item in pending if int(item[1]["u"]) > snap_u]
         if newer and int(newer[0][1]["u"]) != snap_u + 1:
-            return False  # la foto es anterior a lo que se guardo y faltan cambios entre medio
+            # la foto es anterior a lo que se guardo y faltan cambios entre medio
+            self.stats["last_sync_note"] = f"foto u={snap_u} anterior al primer cambio guardado u={newer[0][1]['u']}"
+            return False
         self.load_snapshot(result, snap_ts)
         for ts, data in newer:
             if int(data["u"]) != self.u + 1:
+                self.stats["last_sync_note"] = f"cambios guardados con un salto de u: {self.u} a {data['u']}"
+                self.ready = False
                 return False
             self.apply(data, ts)
         self.buffer = []
@@ -379,6 +394,9 @@ class Book:
         self.ready = True
         self.start_timing(self.last_ts or snap_ts)
         self.stats["resyncs"] += 1
+        self.stats["last_sync_note"] = None
+        if self.sync_since:
+            self.stats["last_sync_seconds"] = round(time.time() - self.sync_since, 1)
         return True
 
     def take_output(self) -> List[tuple]:
@@ -455,7 +473,7 @@ class BookRecorder:
         ws = self._sockets.get(group)
         if ws is not None:
             try:
-                self.books[symbol].syncing = True
+                self.books[symbol].begin_sync()
                 await ws.send(json.dumps({"op": "subscribe", "args": [f"orderbook.full.{symbol}"]}))
                 self._schedule_sync(symbol, delay=0.5)
             except Exception:
@@ -501,8 +519,7 @@ class BookRecorder:
                 async with websockets.connect(WS_URL, ping_interval=None, max_size=2 ** 24, max_queue=4096) as ws:
                     self._sockets[gi] = ws
                     for sym in group:
-                        book = self.books[sym]
-                        book.syncing, book.buffer = True, []
+                        self.books[sym].begin_sync()
                     for i in range(0, len(group), 10):
                         await ws.send(json.dumps({"op": "subscribe", "args": [f"orderbook.full.{s}" for s in group[i:i + 10]]}))
                     info["connected"], info["error"] = True, None
@@ -563,7 +580,7 @@ class BookRecorder:
             if book.ready:
                 book.lose(ts, "Bybit envio una foto")
             try:
-                book.syncing, book.buffer = True, []
+                book.begin_sync()
                 book.finish_sync(data, ts)
             except Exception as e:
                 logger.warning(f"[BOOK] foto del WebSocket de {book.symbol} ilegible: {e}")
@@ -583,6 +600,10 @@ class BookRecorder:
         await asyncio.sleep(delay)
         for attempt in range(8):
             try:
+                # la foto debe ser posterior al primer cambio guardado: se espera un cambio y SNAPSHOT_WAIT segundos
+                while book.syncing and time.time() - book.sync_since < SNAPSHOT_WAIT_MAX and (
+                        not book.buffer or time.time() - book.sync_since < SNAPSHOT_WAIT):
+                    await asyncio.sleep(0.2)
                 if self.turn:
                     await self.turn()
                 r = await self.http.get(f"{self.bybit_url}/v5/market/full_orderbook",
@@ -596,6 +617,7 @@ class BookRecorder:
                 if book.finish_sync(result, int(result.get("ts") or self.bybit_now())):
                     self._syncs.pop(symbol, None)
                     return
+                logger.warning(f"[BOOK] {symbol} (intento {attempt + 1}): {book.stats['last_sync_note']}; se pide otra foto")
             except asyncio.CancelledError:
                 raise
             except Exception as e:
@@ -625,7 +647,7 @@ class BookRecorder:
                     old = now - book.snap_at > RESYNC_HOURS * 3600000 + stagger
                     if moved or old:
                         book.lose(now, "precio lejos de la foto" if moved else "foto de cada dia")
-                        book.syncing, book.buffer = True, []
+                        book.begin_sync()
                         self._schedule_sync(book.symbol)
                 if any(b.out for b in self.books.values()):
                     await asyncio.to_thread(self._write_all)

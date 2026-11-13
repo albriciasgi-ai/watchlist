@@ -76,7 +76,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    - tus zonas: perfil del día anterior, FVG de 15m y 1h, y los niveles del journal;
    - contra zonas al azar, con un aguante de 1/2 ATR de 15m;
    - en cada visita, lo que había al acercarse y al llegar, y lo negociado.
-6. **Pruebas:** `book_checks.py` de la suite (55); en App 1, `replay.test.mjs` (20), `journal.test.mjs` (45), `observer.test.mjs` (43) y `test_observer.py`. Las demás de la suite y de App 1 siguen pasando.
+6. **Pruebas:** `book_checks.py` de la suite (57); en App 1, `replay.test.mjs` (20), `journal.test.mjs` (45), `observer.test.mjs` (43) y `test_observer.py`. Las demás de la suite y de App 1 siguen pasando.
 
 **IMPORTANTE:**
 - **Arranque:** la grabación empieza al reiniciarse la suite con este código. Ocupa unos 200 MB por día con 20 monedas, unos 6 GB por mes.

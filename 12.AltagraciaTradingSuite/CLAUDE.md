@@ -56,7 +56,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43), swing_checks.py (102) y book_checks.py (55), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43), swing_checks.py (102) y book_checks.py (57), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -519,7 +519,7 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
 
 - **Grabación** (`server/book_recorder.py`):
   - WebSocket público `orderbook.full.{SIMBOLO}` (solo cambios, cada 200 ms), una conexión cada 7 monedas;
-  - la foto REST `/v5/market/full_orderbook` al conectar, unida a los cambios guardados mientras llega;
+  - la foto REST `/v5/market/full_orderbook` al conectar, unida a los cambios guardados mientras llega. Se pide 3 s después de suscribirse y con algún cambio ya guardado: sale de 1.5 a 3 s atrasada, y pedida antes podía ser anterior a los cambios. El 13/11, al abrir la suite, BTC tardó así 2.5 minutos en quedar lista; con la espera, las 20 monedas quedaron listas al primer intento, en 4 a 21 s. Un rechazo queda en el registro (`[BOOK]`) y en `/api/book/status` (`last_sync_note`, `sync_attempts`, `last_sync_seconds`);
   - los cambios se aplican con `u` de a 1; si `u` salta, otra foto, y ese minuto queda incompleto (`gap`). También hay otra foto si el precio se aleja 10% de la última, y una al día por moneda, escalonadas;
   - en memoria, solo los niveles a ±20% del precio;
   - el tick de cada moneda sale de `instruments-info` (un pedido); sin respuesta se deduce de la foto;
@@ -549,7 +549,7 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - da el aguante de tus zonas y del azar, la diferencia con su IC 95%, el "llena y aguanta" y las cargadas contra el resto. Con menos de 30 visitas resueltas avisa muestra pequeña.
   
   Uso: `C:\Python314\python.exe -B server\book_study.py BTCUSDT,ETHUSDT 2026-11-14 2026-12-14 [salida.json]`.
-- **Pruebas:** `tests/book_checks.py` (55), sin conexión:
+- **Pruebas:** `tests/book_checks.py` (57), sin conexión:
   - cubos y mejor precio exactos tras miles de cambios al azar;
   - salto de `u` y foto que empalma o no;
   - cada segundo y cada minuto (ponderado y mínimo) iguales a recalcularlos desde cero;

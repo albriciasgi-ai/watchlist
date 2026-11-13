@@ -287,6 +287,61 @@ try:
     h0, b0, a0 = secs[0]
     check("las filas leidas son iguales a las escritas (XOR sin perdida)", np.array_equal(b0, secs2[0][1]) and np.array_equal(a0, secs2[0][2]))
 
+    # ---------- la foto espera un cambio y unos segundos; una foto vieja se anota y se pide otra ----------
+    async def snapshot_timing():
+        class FakeResponse:
+            def __init__(self, body):
+                self.content = json.dumps(body).encode()
+
+            def json(self):
+                return json.loads(self.content)
+
+        class SlowHttp:
+            def __init__(self, answers):
+                self.answers, self.times = answers, []
+
+            async def get(self, url, params=None, timeout=None):
+                self.times.append(__import__("time").time())
+                return FakeResponse({"retCode": 0, "result": self.answers.pop(0)})
+
+        old_wait = book_recorder.SNAPSHOT_WAIT
+        book_recorder.SNAPSHOT_WAIT = 0.4
+        try:
+            # 1) espera el primer cambio y SNAPSHOT_WAIT antes de pedir la foto
+            http = SlowHttp([snapshot(u=900, seed=8)])
+            rec = BookRecorder(["BTCUSDT"], TMP / "espera", "https://bybit.invalid", http)
+            bk = rec.books["BTCUSDT"]
+            bk.tick = 0.1
+            bk.begin_sync()
+            started = bk.sync_since
+
+            async def feed():
+                await asyncio.sleep(0.15)
+                rec._on_message(json.dumps({"topic": "orderbook.full.BTCUSDT", "type": "delta", "ts": T0,
+                                            "data": {"s": "BTCUSDT", "b": [], "a": [], "u": 899}}), T0)
+
+            await asyncio.gather(rec._sync("BTCUSDT", 0), feed())
+            waited = http.times[0] - started
+            first = bk.ready and waited >= 0.39 and bk.stats["sync_attempts"] == 1 and bk.stats["last_sync_seconds"] is not None
+            # 2) una foto anterior al primer cambio guardado se rechaza con su nota y se pide otra
+            http2 = SlowHttp([snapshot(u=950, seed=9), snapshot(u=1000, seed=9)])
+            rec2 = BookRecorder(["BTCUSDT"], TMP / "espera2", "https://bybit.invalid", http2)
+            b2 = rec2.books["BTCUSDT"]
+            b2.tick = 0.1
+            b2.begin_sync()
+            for u in (990, 991, 992):
+                rec2._on_message(json.dumps({"topic": "orderbook.full.BTCUSDT", "type": "delta", "ts": T0 + u,
+                                             "data": {"s": "BTCUSDT", "b": [], "a": [], "u": u}}), T0)
+            await rec2._sync("BTCUSDT", 0)
+            second = b2.ready and len(http2.times) == 2 and b2.stats["sync_attempts"] == 2 and b2.u == 1000
+            return first, waited, second, b2.stats
+        finally:
+            book_recorder.SNAPSHOT_WAIT = old_wait
+
+    first, waited, second, st2 = asyncio.run(snapshot_timing())
+    check("la foto se pide tras el primer cambio y unos segundos (nunca antes)", first, f"espero {waited:.2f} s")
+    check("una foto anterior a lo guardado se rechaza y la siguiente empalma", second, str(st2))
+
     # ---------- zonas ----------
     head = {"kmid": 1000, "n": 10, "step": 50, "tick": 0.1}
     row = np.arange(10, dtype=np.float32)
