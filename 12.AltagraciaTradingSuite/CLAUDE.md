@@ -15,10 +15,10 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - el bot endurecido: cuenta en tiempo real por su WebSocket privado; cerrar, mover SL/TP y cancelar; aviso de posiciones sin stop; guardado seguro;
   - a pedido del usuario, las posiciones sobre el gráfico con su P&L, como en TradingView;
   - el journal: los hechos de cada trade real y lo del Observador (imágenes, niveles elegidos, medidas, informe e ir al gráfico). Ver "Journal".
-- **Paso 5, empezado el 12/11:** el servidor detecta el Swing con las reglas de App 1 y lo anota, sin enviar alertas (parte A). Desde el 13/11 el indicador del gráfico dibuja lo que calcula el servidor (parte B). Ver "Swing del servidor".
+- **Paso 5, 12 y 13/11:** el servidor detecta el Swing con las reglas de App 1 y lo anota, sin enviar alertas (parte A); el indicador del gráfico dibuja lo que calcula el servidor (parte B), y la vista Watchlist muestra todas las monedas (parte C). Ver "Swing del servidor" y "Watchlist".
 - **Falta:**
   - del journal: delta y OI de los días recientes en las medidas, y la lectura de la regla del laboratorio;
-  - del paso 5: la vista Watchlist (parte C). Las alertas quedan para la central de alertas de confluencia;
+  - las alertas del Swing quedan para la central de alertas de confluencia;
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
 
 ## Reglas de diseño (fijadas con el usuario)
@@ -50,7 +50,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43) y swing_checks.py (97), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43) y swing_checks.py (102), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -64,7 +64,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── botBook.js     Posiciones y órdenes de la cuenta activa (cada 2 s), líneas para el gráfico y acciones con confirmación
         ├── JournalView.jsx    Journal de trades reales (Bot > Journal)
         ├── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
-        └── swingServer.js El Swing del gráfico con las señales y las reglas del servidor
+        ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
+        └── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
 ```
 
 ## Puertos
@@ -125,6 +126,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `GET /api/orderflow/setups/{symbol}/validations` | Las comprobaciones de App 1, solo lectura |
 
 - **Protección:** escucha en 127.0.0.1. Rechaza un Host o un Origin que no sean `localhost` o `127.0.0.1` (403), como el bot.
+- **Pedidos a Bybit (13/11):** a lo sumo 10 por segundo desde el servidor (`candles.bybit_turn()`), y con "Too many visits" se espera y se vuelve a pedir. Ver "Watchlist".
 - **Bot sin respuesta (12/11):** 503 si no hubo conexión (el bot no recibió nada) y 504 si se envió y no llegó respuesta (una orden pudo salir). Antes los dos daban 503.
 - **No existen** las rutas de alertas de App 1 (`/api/pattern-alert`, `/api/proximity-alerts/batch`): el gráfico nunca envía nada al bot desde aquí.
 - Si existe `web/dist`, el servidor sirve la página en `/`: una sola dirección.
@@ -335,7 +337,7 @@ Probado el 12/11 en la copia aislada con un bot falso que usa la clase real del 
 Del plan del paso 5, el usuario decidió el 12/11:
 - **A:** el servidor detecta el Swing. Hecho.
 - **B:** el indicador del gráfico muestra lo que detecta el servidor. Hecho el 13/11.
-- **C:** la vista Watchlist. Los gráficos que no se ven no se pausan: se redibujan cada 30 s. Solo si la app se vuelve lenta, un máximo de 10 gráficos en vivo elegidos por el usuario.
+- **C:** la vista Watchlist. Los gráficos que no se ven no se pausan: se redibujan cada 30 s. Solo si la app se vuelve lenta, un máximo de 10 gráficos en vivo elegidos por el usuario. Hecho el 13/11, sin el límite: ver "Watchlist".
 - **D:** las alertas no se envían por ahora. Quedan para una central de alertas de confluencia, cuando varios indicadores cumplan sus parámetros.
 
 El Swing de la Watchlist (App 2) sigue siendo el que manda alertas al bot, con origen `WATCHLIST`.
@@ -374,7 +376,7 @@ El Swing de la Watchlist (App 2) sigue siendo el que manda alertas al bot, con o
 | `GET /api/swing/status` | Si detecta, marco, monedas, última vuelta, señales de hoy y, por moneda, última revisión, señales, error y pausa no recuperada. `sends: false` |
 | `GET /api/swing/config` | Configuración, reglas de cada moneda (`effective`), valores de fábrica y límites |
 | `POST /api/swing/config` | Cambia `enabled`, `interval`, `symbols`, `rules`, `symbolRules` (null quita los de una moneda) o `vwap`. Un valor inválido o un campo desconocido: 400 y nada cambia. No mueve dinero: sin palabra de confirmación |
-| `GET /api/swing/signals/{symbol}?interval` | Señales de las velas cerradas que tiene el gráfico (los mismos días por marco), con las reglas del servidor, `known_at` y `gap`. `detected_live` dice si es el marco y la moneda que se detectan en vivo. Una vela cuenta como cerrada 4 s después de su cierre. Las velas se piden completas la primera vez (con la caché de 5 s de `/api/historical`) y después solo las últimas 200, unidas a las de antes; cada 6 horas, o si faltan velas entre unas y otras, completas otra vez |
+| `GET /api/swing/signals/{symbol}?interval` | Señales de las velas cerradas que tiene el gráfico (los mismos días por marco), con las reglas del servidor, `known_at` y `gap`. `detected_live` dice si es el marco y la moneda que se detectan en vivo. Una vela cuenta como cerrada 4 s después de su cierre. Las velas se piden completas la primera vez (con la caché de 5 s de `/api/historical`) y después solo las últimas 200, unidas a las de antes; cada 6 horas, o si faltan velas entre unas y otras, completas otra vez. `days`: los del gráfico que pregunta (la Watchlist pide menos), hasta los de `/api/historical` |
 | `GET /api/swing/log?symbol&limit&day` | Señales anotadas en vivo, las más nuevas primero. Sin `day`, las de los últimos dos días en memoria |
 | `POST /api/swing/profile-rects/{symbol}` | `{"ids": [...]}`: rectángulos que definen un VP Fixed, que no cuentan para el filtro VWAP. Los manda la página cuando cambian |
 
@@ -399,6 +401,48 @@ El Swing de la Watchlist (App 2) sigue siendo el que manda alertas al bot, con o
 
   En una prueba, con la página recargada varias veces seguidas y el servidor reiniciado, Bybit rechazó algunos pedidos de velas por exceso ("Too many visits"). Por eso la primera carga del Swing usa la caché del gráfico. En una carga normal no hubo rechazos. No se probaron las imágenes del journal fuera de la pantalla con el Swing encendido.
 - **Probado (parte A):** en la copia aislada, en 1m con las 11 monedas de la Watchlist y velas reales de Bybit (solo lectura). En 7 minutos anotó 19 señales, las mismas que da la regla con esas velas, entre 4.0 y 5.7 s después del cierre que las confirma. Reiniciada, no repitió nada. Con las monedas pedidas a la vez, cada vuelta tarda 1 s y anota a unos 4.7 s del cierre. El filtro VWAP se probó con velas simuladas: en la configuración de la Watchlist está apagado.
+
+## Watchlist (paso 5, parte C)
+
+Pedido del plan del paso 5, con el cambio del usuario (12/11): los gráficos que no se ven no se pausan, se redibujan cada 30 s. Si la app se pusiera lenta, un máximo de 10 gráficos en vivo elegidos por él. Medido: no hace falta (ver "Medido").
+
+- **Módulo** (`web/src/WatchlistView.jsx`): botón "Watchlist" en el encabezado del gráfico y en la barra del bot. Se arma la primera vez que se abre y después queda armado aunque se mire otro módulo: sus gráficos siguen recibiendo velas y precios.
+- **Cuadrícula:** todas las monedas de la suite (las agregadas en el gráfico principal aparecen solas), cada una con el `MiniChart` de App 1 en vivo:
+  - marco común (1m a 4h) y días comunes, menos que el gráfico principal: 1 en 1m, 3 en 5m, 5 en 15m, 14 en 1h y 60 en 4h por omisión. Así cada moneda es un solo pedido a Bybit (dos en 1m);
+  - de 1 a 5 columnas;
+  - orden manual: se arrastra el nombre de una moneda; hacia abajo queda después de la otra y hacia arriba, antes. Reordenar no vuelve a cargar ningún gráfico;
+  - cada celda dice precio y cambio de 24 h (los precios del WebSocket que ya usa su gráfico, uno por segundo) y "Swing en vivo" si el servidor la vigila;
+  - un clic abre la moneda en el gráfico principal, en el marco de la cuadrícula. El gráfico de la celda no responde al mouse: la rueda mueve la cuadrícula. Sus botones no se muestran.
+- **Indicadores:** los mismos para todas las monedas, solo livianos: Swing (del servidor), Delta de volumen, CVD, FVG, S&R v2, Perfil de volumen y Volumen de Respuesta. Por omisión, el Swing. Los pesados (Order Flow, Elementos OF, VWAP, Interés abierto y patrones) quedan en el gráfico principal: con todas las monedas a la vez pedirían demasiado a Bybit.
+- **Ritmo de dibujo** (`liveRedrawMs` de `MiniChart`, App 1): a la vista, a lo sumo un dibujo por precio cada 0.5 s; fuera de la vista (más abajo en la cuadrícula o con el módulo oculto), cada 30 s. Lo que se ve lo decide un `IntersectionObserver`. Al volver a verse se dibuja en el acto.
+- **Carga escalonada:** un gráfico nuevo cada 0.4 s, en el orden de la cuadrícula. Cambiar el marco o los días los arma de nuevo.
+- **Swing:** cada celda pide sus señales al servidor con los días de la cuadrícula (`/api/swing/signals?...&days=`), que comparte la caché de sus velas. Las pide al cerrar cada vela, de a 4 monedas a la vez; si cambian las reglas o los dibujos de una moneda en el gráfico principal, solo esa moneda vuelve a pedir (`notifySwingChanged`). Lo que no se ve muestra las flechas nuevas en su próximo dibujo.
+- **Panel del Swing** (botón "Swing"):
+  - si detecta, y el botón para encenderla o apagarla;
+  - el marco que vigila, con "Vigilar en <marco de la cuadrícula>" cuando difieren;
+  - las monedas vigiladas, con una casilla por moneda (queda al menos una);
+  - las últimas 40 señales anotadas, con la hora de Colombia; un clic abre la moneda en el gráfico.
+
+  Se lee cada 30 s mientras se ve el módulo. No envía alertas.
+- **Ajustes:** marco, días, columnas, orden, indicadores y panel se guardan por pestaña (`suite_watchlist_<pestaña>`).
+- **Bybit:** el servidor deja pasar a lo sumo 10 pedidos por segundo (`candles.bybit_turn()`: velas, Swing, interés abierto, precio y monedas nuevas), y con "Too many visits" (retCode 10006) espera y vuelve a pedir. Bybit cuenta en una ventana de 1 s; al recargar varias veces seguidas la página había rechazado pedidos.
+- **Medido (13/11, copia aislada, 21 monedas en 15m con 4 columnas, 12 a la vista):**
+  - un dibujo de un gráfico de la cuadrícula cuesta 0.4 ms (mediana; 0.7 ms el 90%, 1.4 ms el más lento de 105). Uno del gráfico principal con Order Flow y Delta, 2.1 ms;
+  - llegaron 101 precios y 14 velas por segundo para todas las monedas, a las 2 a. m. de Colombia. Sin el ritmo, cada celda se dibujaría unas 5 veces por segundo (hasta 10 en horas movidas): unos 44 ms de cada segundo (4%), y más en horas movidas;
+  - con el ritmo: 12 a la vista × 2 dibujos × 0.4 ms y 9 fuera de la vista cada 30 s, unos 10 ms de cada segundo (1%), más el manejo de los mensajes;
+  - memoria de la página: 28 MB solo con el gráfico principal y 34 MB con las 21 monedas armadas;
+  - ningún rechazo de Bybit al armar las 21 ni al recargar.
+
+  No se pudo ver la fluidez en vivo: el panel del navegador de las pruebas corría en segundo plano. El costo por dibujo y la memoria sí se midieron. Con estos números el límite de 10 gráficos no hace falta.
+- **Probado** en la copia aislada con velas reales de Bybit:
+  - las flechas de las celdas, a la vista y fuera de ella, iguales a las del servidor con los días de la cuadrícula (en 15m y en 1m);
+  - el clic abrió ETH en el gráfico principal en 15m;
+  - el orden al arrastrar (también al último lugar), 2 y 4 columnas (6 y 12 a la vista) y un indicador encendido y apagado en las 21 a la vez;
+  - el panel: agregar y quitar LINK de las vigiladas, "Vigilar en 15m" y volver a 1m;
+  - una regla cambiada para BTC hizo volver a pedir solo a BTC.
+
+  En Electron no se probó.
+- **En desarrollo:** `window.__suiteWatchlist` tiene los gráficos, lo que se ve y el Swing de cada moneda.
 
 ## Escritorio (Electron)
 

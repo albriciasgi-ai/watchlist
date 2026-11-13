@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useUiTheme } from '@app1/components/useUiTheme.js';
 import ThemeSettings from '@app1/components/ThemeSettings.jsx';
 import ChartView from './ChartView.jsx';
+import WatchlistView from './WatchlistView.jsx';
 import BotView from './BotView.jsx';
 import BotConfig from './BotConfig.jsx';
 import JournalView from './JournalView.jsx';
@@ -24,22 +25,43 @@ export default function SuiteApp() {
   const [botSection, setBotSection] = useState('status');
   const [showTheme, setShowTheme] = useState(false);
   const [focusTrade, setFocusTrade] = useState(null); // "Ver en el gráfico" desde el journal
+  const [focusSymbol, setFocusSymbol] = useState(null); // una moneda de la Watchlist
+  // La Watchlist se arma la primera vez que se abre y después queda armada: sus gráficos no se pausan
+  const [watchlistOn, setWatchlistOn] = useState(() => loadModule() === 'watchlist');
 
   const choose = (id) => {
+    if (id === 'watchlist') setWatchlistOn(true);
     setModule(id);
     try { localStorage.setItem(MODULE_KEY, id); } catch { /* sin almacenamiento */ }
+  };
+  const openChart = (symbol, tf) => {
+    setFocusSymbol({ symbol, tf, at: Date.now() });
+    choose('chart');
   };
 
   return (
     <>
-      {/* Los dos modulos quedan montados: volver al grafico no lo recarga */}
+      {/* Los módulos quedan montados: volver al gráfico o a la Watchlist no los recarga */}
       <div style={{ display: module === 'chart' ? 'block' : 'none' }}>
-        <ChartView active={module === 'chart'} onOpenBot={() => choose('bot')} onOpenTheme={() => setShowTheme(true)} focusTrade={focusTrade} />
+        <ChartView
+          active={module === 'chart'}
+          onOpenBot={() => choose('bot')}
+          onOpenTheme={() => setShowTheme(true)}
+          onOpenWatchlist={() => choose('watchlist')}
+          focusTrade={focusTrade}
+          focusSymbol={focusSymbol}
+        />
       </div>
+      {watchlistOn && (
+        <div style={{ display: module === 'watchlist' ? 'block' : 'none' }}>
+          <WatchlistView active={module === 'watchlist'} onOpenChart={openChart} onBack={() => choose('chart')} onOpenTheme={() => setShowTheme(true)} />
+        </div>
+      )}
       {module === 'bot' && (
         <div className="suite-root">
           <div className="suite-bar">
             <button type="button" className="suite-btn" onClick={() => choose('chart')}>← Gráfico</button>
+            <button type="button" className="suite-btn" onClick={() => choose('watchlist')}>Watchlist</button>
             <span className="suite-title">Bot</span>
             {[['status', 'Estado'], ['journal', 'Journal'], ['config', 'Configuración y riesgo']].map(([id, label]) => (
               <button key={id} type="button" className={`suite-btn ${botSection === id ? 'active' : ''}`} onClick={() => setBotSection(id)}>{label}</button>

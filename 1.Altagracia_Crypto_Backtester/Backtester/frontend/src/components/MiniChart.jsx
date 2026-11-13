@@ -33,6 +33,7 @@ import './backtesting/Observer.css';
 import { isBlind, maskDate, maskPrice, maskVolume, priceText, pricesHidden, unmaskPrice } from './backtesting/blindClock';
 import { drawPositionLines, hitPositionTarget, positionPrices } from './positionLines.js';
 import { applyKline, mergeHistory, withForming } from './liveCandles.js';
+import { createRedrawPacer } from './redrawPacer.js';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
@@ -208,6 +209,7 @@ const MiniChart = forwardRef(({
   getTradeBoundaries,
   getTradeBoxes = null, // Cajas TP/SL de los trades, para el 2.º gráfico: { side, entry, stop, target, start, end }
   getPositionLines = null, // Posiciones y órdenes reales (suite en vivo), ver positionLines.js. App 1 no lo pasa
+  liveRedrawMs = null, // En vivo: a lo sumo un dibujo por precio cada tantos ms (Watchlist de la suite). Sin él, uno por cuadro
   onPositionAction = null, // { type: 'close' | 'cancel' | 'move' | 'remove', line, field, price }: lo decide quien da los datos
   chosenStyle = 'labels', // Lo elegido para el análisis: 'labels' (etiqueta morada) o 'numbers', un número pequeño con su etiqueta al pasar el mouse
   captureChosenStyle = null, // En las imágenes de las órdenes: el mismo de chosenStyle, o 'lines' (solo sus líneas y aros: App 1, cuyo visor pone los números)
@@ -247,6 +249,10 @@ const MiniChart = forwardRef(({
 
   const lastPriceRef = useRef(null);
   const animationFrameRef = useRef(null);
+  // Ritmo de los dibujos por cada precio de Bybit (liveRedrawMs): los datos siguen llegando, solo se dibuja menos
+  const liveRedrawMsRef = useRef(liveRedrawMs);
+  liveRedrawMsRef.current = liveRedrawMs;
+  const livePacerRef = useRef(null);
   const mountedRef = useRef(true);
   const indicatorManagerRef = useRef(null);
 
@@ -2283,6 +2289,27 @@ const MiniChart = forwardRef(({
 
   // ==================== WEBSOCKET HANDLER ====================
   
+  // Un dibujo por precio o vela de Bybit: en el cuadro siguiente, como siempre, o con liveRedrawMs a lo sumo uno cada
+  // tantos ms (redrawPacer.js)
+  const requestLiveDraw = () => {
+    const wait = liveRedrawMsRef.current;
+    if (!wait) {
+      if (!animationFrameRef.current) {
+        animationFrameRef.current = requestAnimationFrame(() => {
+          drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
+          animationFrameRef.current = null;
+        });
+      }
+      return;
+    }
+    if (!livePacerRef.current) {
+      livePacerRef.current = createRedrawPacer(() => {
+        if (mountedRef.current) drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+      });
+    }
+    livePacerRef.current.request(wait);
+  };
+
   const handleWebSocketMessage = (data) => {
     if (!mountedRef.current) return;
 
@@ -2292,12 +2319,7 @@ const MiniChart = forwardRef(({
         const newPrice = parseFloat(tickerData.lastPrice);
         lastPriceRef.current = newPrice;
         
-        if (!animationFrameRef.current) {
-          animationFrameRef.current = requestAnimationFrame(() => {
-            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-            animationFrameRef.current = null;
-          });
-        }
+        requestLiveDraw();
       }
     }
     
@@ -2341,15 +2363,16 @@ const MiniChart = forwardRef(({
           }
         }
 
-        if (!animationFrameRef.current) {
-          animationFrameRef.current = requestAnimationFrame(() => {
-            drawChart(candlesRef.current, lastPriceRef.current, mousePos?.x, mousePos?.y);
-            animationFrameRef.current = null;
-          });
-        }
+        requestLiveDraw();
       }
     }
   };
+
+  // Al cambiar el ritmo (un gráfico de la Watchlist que se vuelve visible) lo pendiente se dibuja ya
+  useEffect(() => {
+    livePacerRef.current?.flush();
+  }, [liveRedrawMs]);
+  useEffect(() => () => livePacerRef.current?.cancel(), []);
 
   // ==================== ZOOM PRESETS HANDLERS ====================
 

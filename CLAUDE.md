@@ -54,6 +54,35 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Vista Watchlist (paso 5, parte C)
+
+**Pedido:** la parte C del paso 5: la vista Watchlist con todas las monedas. El usuario pidió no pausar los gráficos que no se ven y redibujarlos cada 30 s, y medir si eso pone lenta la app; solo en ese caso, un límite de 10 gráficos en vivo elegidos por él.
+
+**Cambios:**
+1. **Módulo Watchlist:** todas las monedas de la suite en una cuadrícula con el gráfico de App 1 en vivo:
+   - marco y días comunes, de 1 a 5 columnas y orden al arrastrar;
+   - precio y cambio de 24 h en cada celda;
+   - un clic abre la moneda en el gráfico principal.
+2. **Indicadores livianos, para todas a la vez:** Swing del servidor (por omisión), Delta de volumen, CVD, FVG, S&R v2, Perfil de volumen y Volumen de Respuesta. Los pesados quedan en el gráfico principal.
+3. **Nada se pausa:** los gráficos a la vista se dibujan a lo sumo cada 0.5 s y los que no se ven cada 30 s, con las velas siempre al día. App 1 suma `liveRedrawMs` a `MiniChart` (`redrawPacer.js`); sin él dibuja como siempre.
+4. **Panel del Swing del servidor:** encenderlo o apagarlo, su marco, las monedas que vigila y las últimas señales. No envía alertas.
+5. **Bybit:** el servidor deja pasar a lo sumo 10 pedidos por segundo y reintenta con "Too many visits". Las monedas de la cuadrícula se arman de a una.
+6. **Pruebas:** `swing_checks.py` de la suite (102) y `redrawPacer.test.mjs` de App 1 (5). Las demás siguen pasando. En `run_checks.py`, dos comprobaciones del interés abierto comparaban con la hora del inicio de las pruebas y fallaban a veces: ahora usan la hora de la comprobación.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla.
+- Medido en la copia aislada con 21 monedas:
+  - un dibujo de la cuadrícula cuesta 0.4 ms, contra 2.1 ms del gráfico principal;
+  - con el ritmo, la cuadrícula ocupa cerca del 1% de cada segundo;
+  - la memoria pasó de 28 a 34 MB.
+
+  El límite de 10 gráficos no hizo falta. La fluidez en vivo no se pudo ver, porque el navegador de pruebas corría en segundo plano, y en Electron no se probó.
+- Probado en la copia aislada con velas reales de Bybit: las flechas de las 21 monedas iguales a las del servidor, el clic al gráfico principal, el orden, las columnas, los indicadores y el panel.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Watchlist"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: El Gráfico Muestra el Swing del Servidor (paso 5, parte B)
 
 **Pedido:** seguir con la parte B del paso 5: que el indicador del gráfico muestre lo mismo que detecta el servidor, y arreglar el rectángulo que no guardaba su nuevo tamaño.

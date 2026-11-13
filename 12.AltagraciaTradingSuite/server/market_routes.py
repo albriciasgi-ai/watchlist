@@ -102,6 +102,7 @@ async def _bybit_oi(symbol: str, oi_interval: str, start_ms: int, end_ms: int) -
     out, cursor_end = {}, end_ms
     http = candles.client()
     for _ in range(OI_MAX_REQUESTS):
+        await candles.bybit_turn()
         r = await http.get(f"{CONFIG['bybit_url']}/v5/market/open-interest", params={
             "category": "linear", "symbol": symbol, "intervalTime": oi_interval, "limit": OI_PAGE,
             "startTime": start_ms, "endTime": cursor_end})

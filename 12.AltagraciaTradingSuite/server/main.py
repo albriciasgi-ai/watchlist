@@ -346,6 +346,7 @@ async def get_symbols():
 
 
 async def _instrument(symbol: str) -> bool:
+    await candles.bybit_turn()
     r = await _http.get(CONFIG["bybit_url"] + "/v5/market/instruments-info", params={"category": "linear", "symbol": symbol})
     items = (r.json().get("result") or {}).get("list") or []
     return bool(items) and items[0].get("status") == "Trading" and items[0].get("quoteCoin") == "USDT"
@@ -395,6 +396,7 @@ async def ticker(symbol: str):
     if hit and time.time() - hit[0] < 1:
         return hit[1]
     try:
+        await candles.bybit_turn()
         r = await _http.get(CONFIG["bybit_url"] + "/v5/market/tickers", params={"category": "linear", "symbol": symbol})
         item = ((r.json().get("result") or {}).get("list") or [{}])[0]
         price = float(item["lastPrice"])

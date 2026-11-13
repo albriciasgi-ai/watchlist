@@ -626,6 +626,7 @@ node tests/theme.test.mjs
 node tests/positions.test.mjs
 node tests/swing.test.mjs
 node tests/rectangle.test.mjs
+node tests/redrawPacer.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -1187,6 +1188,7 @@ Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la 
 - `syncKnownCandles()` cambia `candlesRef` en sitio: `knownCandles` es el mismo arreglo entre ticks. Un indicador que lo guarde lo verá cambiar, y uno que quiera detectar un cambio debe mirar largo y timestamps
 - Las velas se validan al cargarlas. `drawChart` no copia ni filtra en reproducción
 - El límite de 33 ms actúa desde el segundo dibujo y siempre dibuja lo último pedido
+- En vivo, cada precio de Bybit pide un dibujo (unas 10 veces por segundo por moneda). La prop `liveRedrawMs` (13/11) los junta con `redrawPacer.js`: a lo sumo un dibujo cada tantos ms, y al cambiar el valor lo pendiente se dibuja ya. La usa la Watchlist de la suite: 500 ms a la vista y 30 s fuera de ella. Sin la prop, como siempre: uno por cuadro. App 1 no la usa
 
 ### Indicadores
 

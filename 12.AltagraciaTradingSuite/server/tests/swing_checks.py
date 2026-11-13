@@ -286,7 +286,7 @@ try:
     # ---------- 5. Deteccion al cierre ----------
     SERIES = make_candles(1200, MIN, T15 - 1200 * MIN, 81_500.0, 0.1, 21)
     clock = {"now": 0}
-    calls = {"recent": 0, "chart": 0, "fail": 0}
+    calls = {"recent": 0, "chart": 0, "fail": 0, "days": None}
 
     def visible(rows):
         """Lo que daria Bybit a esta hora: las velas abiertas hasta ahora, la ultima en curso y con otros valores."""
@@ -303,8 +303,9 @@ try:
             raise RuntimeError("Bybit no respondio")
         return visible(SERIES)[-limit:]
 
-    async def fake_chart(symbol, interval):
+    async def fake_chart(symbol, interval, days=None):
         calls["chart"] += 1
+        calls["days"] = days
         return visible(SERIES)
 
     wcfg = TMP / "watchlist_btc.json"
@@ -409,7 +410,7 @@ try:
     # Velas de la ruta del grafico: completas la primera vez, despues solo las ultimas 200 unidas a las de antes
     asked = {"chart": 0, "recent": 0}
 
-    async def counted_chart(symbol, interval):
+    async def counted_chart(symbol, interval, days=None):
         asked["chart"] += 1
         return visible(SERIES)
 
@@ -441,7 +442,7 @@ try:
     check("si faltan velas entre las de antes y las nuevas, las pide completas", asked == {"chart": 2, "recent": 3})
 
     # La primera carga puede venir de la cache de 5 s del grafico: la vela en curso cuando se pidio no cuenta
-    async def cached_rows(symbol, interval):
+    async def cached_rows(symbol, interval, days=None):
         rows = [dict(c) for c in visible(SERIES)]
         rows[-2]["in_progress"] = True   # ya cerro hace mas de 4 s, pero estaba en curso cuando se lleno la cache
         return rows
@@ -454,6 +455,15 @@ try:
           first["candles"]["last"] == (at["now"] // MIN) * MIN - 2 * MIN)
     again_rows = asyncio.run(sc.chart_signals("BTCUSDT", "1"))
     check("y la actualizacion siguiente la trae con sus valores de Bybit", again_rows["candles"]["last"] == (at["now"] // MIN) * MIN - MIN)
+
+    # Los dias del grafico que pregunta: la Watchlist pide menos y comparte la cache de sus velas
+    sd = swing_watch.SwingWatch(TMP / "dias", TMP / "dibujos", fetch_recent=fake_recent, fetch_chart=fake_chart,
+                                now=lambda: clock["now"], watchlist_config=wcfg)
+    one_day = asyncio.run(sd.chart_signals("BTCUSDT", "1", 1))
+    check("con dias del grafico pide esos dias y recorta la ventana a ellos",
+          calls["days"] == 1 and one_day["candles"]["first"] >= clock["now"] - 86_400_000 - MIN)
+    check("los dias se acotan a los de /api/historical", swing_watch.chart_days("1", 99) == 3
+          and swing_watch.chart_days("15", None) == 30 and swing_watch.chart_days("60", "x") == 120)
 
     # ---------- 6. Rutas ----------
     bot_calls = []
@@ -507,6 +517,57 @@ try:
     check("el codigo del Swing no tiene a donde enviar", not any(word in text for word in ("bot_url", "watchlist-alert", "/api/alert", "_bot(")))
     path = Path(swing_watch._vwap_module.__file__).resolve()
     check("el VWAP es el de App 1, no el del backend de Order Flow", path == (Path(CONFIG["app1_backend"]) / "vwap_calculator.py").resolve())
+
+    # ---------- 7. Pedidos a Bybit: turno por segundo y "Too many visits" ----------
+    import time as _time
+    import candles as candles_mod
+    saved_rate = candles_mod.BYBIT_PER_SECOND
+    candles_mod.BYBIT_PER_SECOND = 5
+
+    async def many_turns(n):
+        times = []
+        for _ in range(n):
+            await candles_mod.bybit_turn()
+            times.append(_time.monotonic())
+        return times
+
+    turns = asyncio.run(many_turns(11))
+    candles_mod.BYBIT_PER_SECOND = saved_rate
+    check("a lo sumo los pedidos por segundo que permite el turno",
+          all(turns[i + 5] - turns[i] >= 0.99 for i in range(len(turns) - 5)) and turns[-1] - turns[0] >= 1.98)
+
+    class FakeResponse:
+        def __init__(self, data):
+            self._data = data
+
+        def json(self):
+            return self._data
+
+    class FakeBybit:
+        def __init__(self, answers):
+            self.answers = list(answers)
+            self.asked = 0
+
+        async def get(self, url, params=None):
+            self.asked += 1
+            return FakeResponse(self.answers.pop(0))
+
+    row = ["%d" % (T15 - 2 * MIN), "1", "2", "0.5", "1.5", "10", "0"]
+    busy = {"retCode": 10006, "retMsg": "Too many visits. Exceeded the API Rate Limit."}
+    ok_page = {"retCode": 0, "result": {"list": [row]}}
+    fake = FakeBybit([busy, ok_page])
+    old_client = candles_mod._client
+    candles_mod.set_client(fake)
+    got = asyncio.run(swing_watch.bybit_recent("BTCUSDT", "1", 5))
+    check('el Swing espera y vuelve a pedir con "Too many visits"', fake.asked == 2 and len(got) == 1)
+    fake = FakeBybit([busy, busy, busy, busy])
+    candles_mod.set_client(fake)
+    try:
+        asyncio.run(swing_watch.bybit_recent("BTCUSDT", "1", 5))
+        check('si Bybit sigue con "Too many visits", el Swing lo dice', False)
+    except RuntimeError as e:
+        check('si Bybit sigue con "Too many visits", el Swing lo dice', "Too many visits" in str(e) and fake.asked == 4)
+    candles_mod.set_client(old_client)
 finally:
     shutil.rmtree(TMP, ignore_errors=True)
 

@@ -29,7 +29,7 @@ import { linesFor, runPositionAction, subscribeBook, subscribeCancels } from './
 import { dropLevels, knownLevels, restoreLevels } from '@app1/components/indicators/analysisLevels.js';
 import { TAB, otherTabUrl, onDrawings, sendDrawings } from './tabs.js';
 import {
-  SWING, SWING_RETRY_MS, RULE_KEYS, VISUAL_KEYS, applySwing, fetchSwing, frameName, lastClosed, pick, profileRectIds,
+  SWING, RULE_KEYS, VISUAL_KEYS, attachSwing, feedSwing, frameName, notifySwingChanged, pick, profileRectIds,
   saveProfileRects, saveSwingRules, swingOf,
 } from './swingServer.js';
 
@@ -170,7 +170,7 @@ function StatusDots({ onOpenBot }) {
   );
 }
 
-export default function ChartView({ active = true, onOpenBot, onOpenTheme, focusTrade = null }) {
+export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpenWatchlist = null, focusTrade = null, focusSymbol = null }) {
   const saved = useMemo(loadSettings, []);
   const chartRefs = useRef({});
   const [symbols, setSymbols] = useState([saved.symbol || 'BTCUSDT']);
@@ -455,6 +455,13 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
     }
   }, []);
 
+  // Watchlist (paso 5, parte C): un clic en una moneda la abre aquí, en el marco de la cuadrícula
+  useEffect(() => {
+    if (!focusSymbol?.symbol) return;
+    if (focusSymbol.symbol !== symbolRef.current) setSymbol(focusSymbol.symbol);
+    if (TIMEFRAMES.includes(focusSymbol.tf)) setActiveTimeframe(focusSymbol.tf);
+  }, [focusSymbol]);
+
   const readSymbols = useCallback(() => getJson('/api/suite/symbols').then(d => setSymbols(d.symbols)).catch(() => {}), []);
   useEffect(() => { readSymbols(); }, [readSymbols]);
 
@@ -514,6 +521,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
     setShapes(list);
     // Los rectángulos son las zonas del filtro VWAP del Swing: el servidor ya tiene los dibujos guardados
     swingVersionRef.current += 1;
+    notifySwingChanged(symbolRef.current);
   }, []);
   const handleDrawingsChange = useCallback((list, sourceInterval) => {
     loadEverywhere(list, sourceInterval);
@@ -555,14 +563,9 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
       busy = true;
       try {
         TIMEFRAMES.forEach(tf => {
-          const ind = swingOf(managerOf(tf));
+          // Gráfico recién armado: lo último que dio el servidor, o nada mientras llega
           const st = swingRef.current[tf] || (swingRef.current[tf] = {});
-          if (ind && st.ind !== ind) {
-            // Gráfico recién armado: lo último que dio el servidor, o nada mientras llega
-            st.ind = ind;
-            if (st.data) applySwing(ind, st.data, swingVisualRef.current);
-            else ind.setExternalSignals([]);
-          }
+          attachSwing(st, swingOf(managerOf(tf)), swingVisualRef.current);
         });
         const frames = TIMEFRAMES.filter(tf => tabStatesRef.current[tf]?.indicatorStates?.[SWING] && swingRef.current[tf]?.ind);
         if (!frames.length) return;
@@ -578,26 +581,12 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
           }
         }
         for (const tf of frames) {
-          const st = swingRef.current[tf];
-          const due = st.version !== swingVersionRef.current || !(st.last >= lastClosed(TF_MS[tf]));
-          if (!alive || !due || st.pending || Date.now() - (st.tried || 0) < SWING_RETRY_MS) continue;
-          st.pending = true;
-          st.tried = Date.now();
-          const version = swingVersionRef.current;
-          try {
-            const data = await fetchSwing(symbol, tf);
-            if (!alive) return;
-            st.data = data;
-            st.version = version;
-            st.last = data.candles?.last ?? lastClosed(TF_MS[tf]);
-            if (swingSavingRef.current) st.ind.setExternalSignals(data.signals || []);
-            else applySwing(st.ind, data, swingVisualRef.current);
-            chartRefs.current[tf]?.forceRedraw?.();
-          } catch {
-            // Sin respuesta queda lo último y se reintenta
-          } finally {
-            st.pending = false;
-          }
+          if (!alive) return;
+          const drew = await feedSwing(swingRef.current[tf], {
+            symbol, tf, tfMs: TF_MS[tf], version: swingVersionRef.current, visual: swingVisualRef.current,
+            keepRules: swingSavingRef.current, isAlive: () => alive,
+          });
+          if (drew) chartRefs.current[tf]?.forceRedraw?.();
         }
       } finally {
         busy = false;
@@ -625,6 +614,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
       try {
         await saveSwingRules(sym, rules);
         swingVersionRef.current += 1;
+        notifySwingChanged(sym);   // la Watchlist vuelve a pedir las señales de esta moneda
         setSwingSave({ savedAt: Date.now() });
       } catch (e) {
         setSwingSave({ error: e.message });
@@ -922,6 +912,11 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
           >
             {newTheme ? <><Icon name="layers" size={15} /><span>{TAB === 1 ? '2.ª pestaña' : 'Principal'}</span></> : '🗗'}
           </button>
+          {onOpenWatchlist && (
+            <button className="btn-action-compact theme-settings-btn" onClick={onOpenWatchlist} title="Watchlist: todas las monedas en una cuadrícula">
+              {newTheme ? <><Icon name="rect" size={15} /><span>Watchlist</span></> : '▦'}
+            </button>
+          )}
           <button className="btn-action-compact theme-settings-btn" onClick={onOpenBot} title="Bot: estado, configuración y riesgo">
             {newTheme ? <><Icon name="sliders" size={15} /><span>Bot</span></> : '🤖'}
           </button>

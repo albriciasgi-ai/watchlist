@@ -108,12 +108,14 @@ def market_checks(c):
     r = c.get(f"/api/open-interest/BTCUSDT?interval=15m&start_timestamp_ms={start}&end_timestamp_ms={NOW + 86_400_000}&local_only=true", headers=H)
     d = r.json()
     ts = [p["timestamp"] for p in d.get("data", [])]
+    # "Ahora" es la hora de la comprobacion: con la del inicio de las pruebas fallaba si el arranque tardaba
+    now_check = int(main.time.time() * 1000)
     check("OI: local + Bybit hasta ahora", r.status_code == 200 and d.get("success") and d.get("source") == "local+bybit"
-          and ts == sorted(set(ts)) and ts[-1] > OI_LOCAL_LAST and ts[-1] <= NOW, str(d)[:200])
+          and ts == sorted(set(ts)) and ts[-1] > OI_LOCAL_LAST and ts[-1] <= now_check, str(d)[:200])
     check("OI: la serie local manda donde existe",
           all(p["openInterest"] == 4000.0 for p in d["data"] if p["timestamp"] <= OI_LOCAL_LAST))
     check("OI: Bybit solo se pide desde el final de la serie local",
-          len(oi_calls) == 1 and oi_calls[0][2] > OI_LOCAL_LAST and oi_calls[0][3] <= NOW + 1000 and oi_calls[0][1] == "15min")
+          len(oi_calls) == 1 and oi_calls[0][2] > OI_LOCAL_LAST and oi_calls[0][3] <= now_check + 1000 and oi_calls[0][1] == "15min")
     c.get(f"/api/open-interest/BTCUSDT?interval=15m&start_timestamp_ms={start}&end_timestamp_ms={NOW}", headers=H)
     check("OI: lo de Bybit queda en memoria (no repite el pedido)", len(oi_calls) == 1)
     r = c.get("/api/open-interest/ETHUSDT?interval=1h&days=5", headers=H).json()

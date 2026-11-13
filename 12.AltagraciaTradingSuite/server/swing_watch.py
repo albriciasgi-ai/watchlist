@@ -266,15 +266,20 @@ async def bybit_recent(symbol: str, interval: str, limit: int) -> list:
     http = candles.client()
     params = {"category": "linear", "symbol": symbol, "interval": interval, "limit": max(1, min(int(limit), 1000))}
     data = None
-    for attempt in range(3):
+    for attempt in range(4):
+        await candles.bybit_turn()
         try:
             r = await http.get(f"{CONFIG['bybit_url']}/v5/market/kline", params=params)
             data = r.json()
-            break
         except (httpx.HTTPError, ValueError) as e:
-            if attempt == 2:
+            if attempt >= 2:
                 raise RuntimeError(f"Bybit no respondio las velas: {type(e).__name__}")
             await asyncio.sleep(1 + attempt)
+            continue
+        if isinstance(data, dict) and data.get("retCode") == candles.TOO_MANY_VISITS and attempt < 3:
+            await asyncio.sleep(1.2 + attempt)   # "Too many visits": pasa la ventana de 1 s de Bybit
+            continue
+        break
     if not isinstance(data, dict) or data.get("retCode") != 0:
         raise RuntimeError(f"Bybit: {(data or {}).get('retMsg') if isinstance(data, dict) else 'respuesta invalida'}")
     rows, seen = [], set()
@@ -289,10 +294,19 @@ async def bybit_recent(symbol: str, interval: str, limit: int) -> list:
     return rows
 
 
-async def chart_candles(symbol: str, interval: str) -> list:
-    """Las velas del grafico en vivo: los mismos dias por marco y la misma cache de 5 s que /api/historical. Al abrir la
-    pagina el grafico acaba de pedirlas: asi no se piden dos veces a Bybit."""
-    return await candles.cached_klines(symbol, interval, candles.LIVE_DAYS[interval])
+def chart_days(interval: str, days=None) -> int:
+    """Dias de velas de un grafico: los que pide (la Watchlist pide menos) y a lo sumo los de /api/historical."""
+    top = candles.LIVE_DAYS[interval]
+    try:
+        return max(1, min(int(days), top)) if days else top
+    except (TypeError, ValueError):
+        return top
+
+
+async def chart_candles(symbol: str, interval: str, days: int = None) -> list:
+    """Las velas del grafico en vivo: los mismos dias y la misma cache de 5 s que /api/historical. Al abrir la pagina
+    el grafico acaba de pedirlas: asi no se piden dos veces a Bybit."""
+    return await candles.cached_klines(symbol, interval, chart_days(interval, days))
 
 
 _vwap_module = None
@@ -551,7 +565,7 @@ class SwingWatch:
             st["error"] = f"{type(e).__name__}: {e}"[:200]
             logger.warning(f"[SWING] {symbol} {interval}: {st['error']}")
 
-    async def _detect(self, symbol, interval, closed, rules, since=None):
+    async def _detect(self, symbol, interval, closed, rules, since=None, days=None):
         """Senales de las velas cerradas. El VWAP se calcula solo si su filtro esta encendido y hay rectangulos en las
         horas revisadas: si no hay, el resultado es el mismo con o sin VWAP. Devuelve (senales, uso el VWAP)."""
         points, rects = None, []
@@ -562,18 +576,20 @@ class SwingWatch:
             hi = closed[-1]["timestamp"]
             zones = rects + [z for z in rules.get("priceZones", []) if z.get("sourceRectId") and z.get("enabled")]
             if any(not z.get("timeBound") or (z["timeEnd"] >= lo and z["timeStart"] <= hi) for z in zones):
-                points = await self._vwap(symbol, interval)
+                points = await self._vwap(symbol, interval, days)
         signals = await run_in_threadpool(swing_rules.detect, closed, rules, symbol, points, rects)
         return signals, points is not None
 
-    async def chart_rows(self, symbol: str, interval: str) -> list:
+    async def chart_rows(self, symbol: str, interval: str, days: int = None) -> list:
         """Las velas del grafico (los dias por marco de /api/historical). La primera vez se piden completas; despues,
         solo las ultimas 200, unidas a las de antes: cada cierre cuesta un pedido a Bybit y no cinco. Cada 6 horas, o
         si faltan velas entre unas y otras, se piden completas otra vez.
         Una vela cuenta como cerrada 4 s despues de su cierre, como en la deteccion en vivo: `in_progress` marca las
-        demas, que no se revisan. Las de antes que podian estar en curso quedan siempre dentro de las 200 nuevas."""
+        demas, que no se revisan. Las de antes que podian estar en curso quedan siempre dentro de las 200 nuevas.
+        `days`: los del grafico que pregunta (la Watchlist pide menos); por omision, los de /api/historical."""
         step = INTERVAL_MS[interval]
-        key = (symbol, interval)
+        days = chart_days(interval, days)
+        key = (symbol, interval, days)
         asked = self._now()
         hit = self._chart_rows_cache.get(key)
         rows, full_at = None, asked
@@ -585,21 +601,23 @@ class SwingWatch:
                 rows, full_at = [merged[t] for t in sorted(merged)], hit["full_at"]
         open_when_asked = set()
         if rows is None:
-            rows = [dict(c) for c in await self._fetch_chart(symbol, interval)]
+            rows = [dict(c) for c in await self._fetch_chart(symbol, interval, days)]
             # Pueden venir de la cache: la que estaba en curso cuando se pidieron sigue sin contar aunque ya cerro.
             # Lo que aun no fuera final se corrige en la actualizacion siguiente, que trae de nuevo las ultimas 200
             open_when_asked = {c["timestamp"] for c in rows if c.get("in_progress")}
-        start = asked - candles.LIVE_DAYS[interval] * 86_400_000
+        start = asked - days * 86_400_000
         rows = [c for c in rows if c["timestamp"] >= start]
         for c in rows:
             c["in_progress"] = c["timestamp"] in open_when_asked or c["timestamp"] + step > asked - CHECK_DELAY_MS
         self._chart_rows_cache[key] = {"rows": rows, "full_at": full_at}
         return rows
 
-    async def _vwap(self, symbol: str, interval: str) -> list:
+    async def _vwap(self, symbol: str, interval: str, days: int = None) -> list:
+        """El VWAP con las velas del grafico que pregunta (sus dias), como lo calcula su indicador VWAP."""
         vwap = self.config["vwap"]
-        rows = await self.chart_rows(symbol, interval)
-        key = (symbol, interval, json.dumps(vwap, sort_keys=True))
+        days = chart_days(interval, days)
+        rows = await self.chart_rows(symbol, interval, days)
+        key = (symbol, interval, days, json.dumps(vwap, sort_keys=True))
         stamp = (rows[-1]["timestamp"], len(rows)) if rows else None
         hit = self._vwap_cache.get(key)
         if hit and hit[0] == stamp:
@@ -712,14 +730,14 @@ class SwingWatch:
         return entries[:max(1, min(int(limit), 5000))]
 
     # --- para el grafico y el estado ---
-    async def chart_signals(self, symbol: str, interval: str) -> dict:
+    async def chart_signals(self, symbol: str, interval: str, days: int = None) -> dict:
         cfg = self.config
         rules = self.rules_for(symbol, cfg)
-        rows = await self.chart_rows(symbol, interval)
+        rows = await self.chart_rows(symbol, interval, days)
         # Solo las cerradas hace 4 s o mas (las demas pueden no tener sus valores finales). La pagina vuelve a pedir
         # mientras falte la ultima
         closed = [c for c in rows if not c["in_progress"]]
-        signals, used_vwap = await self._detect(symbol, interval, closed, rules) if closed else ([], False)
+        signals, used_vwap = await self._detect(symbol, interval, closed, rules, days=days) if closed else ([], False)
         n = rules["swingBars"]
         out = [{"timestamp": s["timestamp"], "type": s["type"], "price": s["price"], "direction": s["direction"],
                 "volumeZScore": s["volumeZScore"], "zoneId": s["zoneId"], "isInRectangle": s["isInRectangle"],
@@ -788,14 +806,14 @@ def make_router(watch: SwingWatch) -> APIRouter:
         return {"success": True, "config": cfg}
 
     @router.get("/api/swing/signals/{symbol}")
-    async def swing_signals(symbol: str, interval: str = None):
+    async def swing_signals(symbol: str, interval: str = None, days: int = None):
         symbol = candles.symbol_code(symbol)
         try:
             code = _interval(interval if interval is not None else watch.config["interval"])
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
         try:
-            return _json(await watch.chart_signals(symbol, code))
+            return _json(await watch.chart_signals(symbol, code, days))
         except HTTPException:
             raise
         except Exception as e:
