@@ -56,6 +56,11 @@ FVG_FRAMES = ("15m", "1h")
 OI_DELAY_MINUTES = 5  # Cada dato se usa 5 minutos despues de su marca
 OI_MAX_AGE_MINUTES = 30
 FLOW_MIN_MINUTES = 13  # Una vela de 15 minutos con menos minutos negociados no tiene delta confiable
+# Dias de la nube y el PC (solo la suite): un hueco mas corto no deja su vela sin delta. La mitad de los huecos son
+# reconexiones del WebSocket de 5.8 s (217 huecos en 22 monedas, 13/11/2026). En las 8 velas de 15m con uno de ellos,
+# el volumen quedo entre 0.1% y 0.6% bajo el de Bybit, y en una de XRP 6.4%. Sin esto, con un hueco cada pocas horas,
+# el delta de 4 horas casi nunca tendria sus 16 velas
+LIVE_GAP_TOLERANCE_MS = 10000
 DELTA_BARS = 16
 
 
@@ -391,11 +396,15 @@ def gap_columns(frame, atr_values):
     return columns
 
 
-def oi_columns(symbol, close_minutes):
-    """Cambio del OI usando cada dato cuando ya estaba publicado."""
+def oi_columns(symbol, close_minutes, series=None):
+    """
+    Cambio del OI usando cada dato cuando ya estaba publicado.
+    series: (minutos, valores) de 5 minutos en lugar de la serie local; la suite suma lo reciente de Bybit.
+    """
     n = len(close_minutes)
     empty = {key: np.full(n, np.nan) for key in ("oi_chg_1h", "oi_chg_4h", "oi_chg_24h", "oi_rises")}
-    series = oi_store.points(symbol)
+    if series is None:
+        series = oi_store.points(symbol)
     if series is None:
         return empty
     times, values = series
@@ -434,31 +443,65 @@ def _file_day(path):
         return None
 
 
-def flow_columns(symbol, start_minutes):
-    """Delta real de cada vela de 15 minutos, solo donde el almacen tiene sus minutos."""
+def _add_flow_day(minute, buy, sell, start_minutes, buys, sells, blocked=()):
+    """
+    Compra y venta de un dia en sus velas de 15 minutos, solo las que tienen sus minutos (FLOW_MIN_MINUTES).
+    blocked: tramos [a, b) de minutos con la grabacion incompleta; las velas que los tocan quedan sin delta.
+    """
+    n = len(start_minutes)
+    if not n or not len(minute):
+        return
+    bucket = minute // 15 * 15
+    first = np.r_[0, np.nonzero(np.diff(bucket))[0] + 1]
+    count = np.diff(np.r_[first, len(bucket)])
+    rows = np.searchsorted(start_minutes, bucket[first])
+    rows = np.minimum(rows, n - 1)
+    found = (start_minutes[rows] == bucket[first]) & (count >= FLOW_MIN_MINUTES)
+    for a, b in blocked:
+        found &= ~((bucket[first] < b) & (bucket[first] + 15 > a))
+    buys[rows[found]] = np.add.reduceat(buy, first)[found]
+    sells[rows[found]] = np.add.reduceat(sell, first)[found]
+
+
+def flow_columns(symbol, start_minutes, live=None):
+    """
+    Delta real de cada vela de 15 minutos, solo donde el almacen tiene sus minutos.
+    live=True (la suite, 13/11/2026): donde falta el dia oficial usa el de la nube y el PC, sin las velas que tocan
+    un hueco de 10 s o mas de la grabacion ni las posteriores al ultimo guardado. App 1 no lo pasa: solo dias oficiales.
+    """
     n = len(start_minutes)
     buys, sells = np.full(n, np.nan), np.full(n, np.nan)
     # Un dia fuera de las velas no aporta ninguna fila: saltarlo da lo mismo y evita leer miles de archivos
     # cuando la tabla cubre pocas semanas (journal de la suite, 12/11/2026)
     first_day = int(start_minutes[0]) // 1440 if n else 0
     last_day = int(start_minutes[-1]) // 1440 if n else -1
+    official = set()
     for path in sorted((footprint_store.STORE_DIR / symbol).glob("*/*.npz")):
         day_index = _file_day(path)
         if day_index is not None and not (first_day <= day_index <= last_day):
             continue
+        official.add(day_index)
         with np.load(path) as day:
             scale = float(day["info"][1])
             minute = day["m"].astype(np.int64)
             buy = day["buy"] / scale
             sell = day["sell"] / scale
-        bucket = minute // 15 * 15
-        first = np.r_[0, np.nonzero(np.diff(bucket))[0] + 1]
-        count = np.diff(np.r_[first, len(bucket)])
-        rows = np.searchsorted(start_minutes, bucket[first])
-        rows = np.minimum(rows, n - 1)
-        found = (start_minutes[rows] == bucket[first]) & (count >= FLOW_MIN_MINUTES)
-        buys[rows[found]] = np.add.reduceat(buy, first)[found]
-        sells[rows[found]] = np.add.reduceat(sell, first)[found]
+        _add_flow_day(minute, buy, sell, start_minutes, buys, sells)
+
+    for day_index in range(first_day, last_day + 1) if live else ():
+        if day_index in official:
+            continue
+        try:
+            day = footprint_store._load_day(symbol, (dt.date(1970, 1, 1) + dt.timedelta(days=day_index)).isoformat(), True)
+        except Exception:  # un dia de la nube ilegible (bajada cortada): sus velas quedan sin delta
+            continue
+        if day is None or not day.get("_live"):
+            continue
+        scale = float(day["info"][1])
+        blocked = [(a // MINUTE, -(-b // MINUTE)) for a, b in day.get("_gaps") or [] if b - a >= LIVE_GAP_TOLERANCE_MS]
+        if day.get("_until") is not None:  # dia sin cerrar: grabado hasta su ultimo guardado
+            blocked.append((int(day["_until"]) // MINUTE, (day_index + 1) * 1440))
+        _add_flow_day(day["m"].astype(np.int64), day["buy"] / scale, day["sell"] / scale, start_minutes, buys, sells, blocked)
 
     total = buys + sells
     delta = np.divide(buys - sells, total, out=np.full(n, np.nan), where=total > 0)
@@ -471,8 +514,11 @@ def flow_columns(symbol, start_minutes):
     return delta, wide
 
 
-def compute(symbol, frames):
-    """Tabla completa desde las velas de cada marco. Solo usa datos anteriores al cierre de cada fila."""
+def compute(symbol, frames, oi=None, live=None):
+    """
+    Tabla completa desde las velas de cada marco. Solo usa datos anteriores al cierre de cada fila.
+    oi y live son de la suite (trades reales): la serie de OI que usar y si el delta lee los dias de la nube y el PC.
+    """
     base = frames["15m"]
     close_time = base["ts"] + 15 * MINUTE
     close_minutes = close_time // MINUTE
@@ -508,8 +554,8 @@ def compute(symbol, frames):
     columns["value_pos"] = np.divide(close - val, width, out=np.full(n, np.nan), where=width > 0)
     columns["vwap_dist"] = (close - vwap) / atr15
 
-    columns.update(oi_columns(symbol, close_minutes))
-    columns["delta_15m"], columns["delta_4h"] = flow_columns(symbol, base["ts"] // MINUTE)
+    columns.update(oi_columns(symbol, close_minutes, oi))
+    columns["delta_15m"], columns["delta_4h"] = flow_columns(symbol, base["ts"] // MINUTE, live)
 
     hours = (close_time // 3600000) % 24
     columns["hour"] = hours.astype(float)

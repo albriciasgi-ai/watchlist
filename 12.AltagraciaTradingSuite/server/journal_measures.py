@@ -3,7 +3,9 @@
 # Usa measures.py de App 1 sin copiarlo (compute, row_at, read_row): las 58 medidas de 15m, 1h y 4h al cerrar la
 # ultima vela de 15m anterior a la decision, con las velas de Bybit. Solo usan lo cerrado antes de ese momento.
 # Suma lo maximo a favor y en contra del trade, en R del SL inicial, con velas de 5 minutos.
-# El interes abierto y el delta salen de los almacenes locales de App 1: en dias sin almacen quedan vacios.
+# Desde el 13/11/2026 (version 2) el delta lee tambien los dias de la nube y el PC donde falta el oficial, y el interes
+# abierto es la serie local de App 1 mas lo que le falta de Bybit (journal_reading.oi_series). Antes, en los dias
+# recientes ambos quedaban vacios. Las medidas guardadas de la version anterior se vuelven a calcular.
 import asyncio
 import math
 import time
@@ -13,8 +15,10 @@ import numpy as np
 from starlette.concurrency import run_in_threadpool
 
 import candles
+import journal_reading
 import measures  # App 1 (su backend esta en sys.path)
 
+MEASURES_VERSION = 2
 MINUTE = 60000
 DAY = 86400000
 INTERVALS = {"5m": "5", "15m": "15", "1h": "60", "4h": "240"}
@@ -80,12 +84,13 @@ async def trade_measures(trade: Dict[str, Any]) -> Dict[str, Any]:
             frames[tag] = frame(await _candles(symbol, tag, days))
         if any(len(frames[t]["ts"]) < 60 for t in frames):
             return {"available": False, "reason": "Bybit no dio velas suficientes para las medidas."}
-        table = await run_in_threadpool(measures.compute, symbol, frames)
+        oi = await journal_reading.oi_series(symbol, int(at) - journal_reading.OI_LOOKBACK_MS, int(at))
+        table = await run_in_threadpool(measures.compute, symbol, frames, oi, True)
         row = measures.row_at(table, int(at))
         if row is None:
             return {"available": False, "reason": "La hora de la decisión queda fuera de las velas que se pudieron pedir."}
         result = {
-            "available": True, "decision_at": int(at), "decision_candle": int(table["close_time"][row]),
+            "available": True, "version": MEASURES_VERSION, "decision_at": int(at), "decision_candle": int(table["close_time"][row]),
             "decision": measures.read_row(table, row, side), "complete": trade.get("status") == "closed",
         }
         entry, stop, opened = trade.get("entry"), trade.get("initial_stop_loss"), trade.get("opened_at")

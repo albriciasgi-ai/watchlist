@@ -1,5 +1,6 @@
 # Pruebas sin conexion del journal de la suite (paso 4): imagenes, contexto de decision, union con los trades del bot,
-# medidas de App 1 con velas simuladas e informe. El bot real y Bybit nunca reciben nada.
+# medidas de App 1 con velas simuladas, lectura de la regla del laboratorio e informe. El bot real y Bybit nunca
+# reciben nada, y el almacen de order flow es una carpeta temporal (el real no se lee).
 # Uso, desde 12.AltagraciaTradingSuite\server:  C:\Python314\python.exe -B tests\journal_checks.py
 import os
 import shutil
@@ -10,6 +11,7 @@ from pathlib import Path
 
 TMP = Path(tempfile.mkdtemp(prefix="suite_journal_"))
 os.environ["SUITE_DATA_DIR"] = str(TMP / "data")
+os.environ["SUITE_ORDERFLOW_DATA"] = str(TMP / "OrderFlowData")
 os.environ["SUITE_RECORD"] = "0"
 os.environ["SUITE_SWING"] = "0"  # el Swing del servidor no consulta Bybit en las pruebas
 os.environ["SUITE_OFFICIAL"] = "0"
@@ -19,8 +21,25 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import numpy as np  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 import main  # noqa: E402
+import footprint_store  # noqa: E402
 import journal_measures  # noqa: E402
+import journal_reading  # noqa: E402
+import market_routes  # noqa: E402
+import observer  # noqa: E402
 from journal_store import JournalStore  # noqa: E402
+
+# El OI de Bybit, falso: sube de a 1 cada 5 minutos desde 1000
+OI_CALLS = []
+
+
+async def fake_bybit_oi(symbol, interval, start_ms, end_ms):
+    OI_CALLS.append((symbol, interval, start_ms, end_ms))
+    step = 5 * 60000
+    first = -(-start_ms // step) * step
+    return {t: 1000.0 + (t - first) / step for t in range(first, end_ms + 1, step)}
+
+
+market_routes._bybit_oi = fake_bybit_oi
 
 results = []
 
@@ -174,6 +193,89 @@ try:
     check("excursion: long con riesgo 2, maximo 102 y minimo 97 = +1 R y -1.5 R", (best, worst) == (1.0, -1.5), str((best, worst)))
     pre = asyncio.run(journal_measures.trade_measures({**trade, "pre_existing": True}))
     check("posicion anterior al journal sin decision: sin medidas, con el motivo", not pre["available"] and "antes" in pre["reason"])
+    check("medidas de la version nueva, con el OI (falso) de Bybit donde falta el local",
+          m.get("version") == journal_measures.MEASURES_VERSION and m["decision"].get("oi_chg_4h") is not None
+          and m["decision"].get("oi_rises") == 3, str({k: m["decision"].get(k) for k in ("oi_chg_1h", "oi_chg_4h", "oi_rises")}))
+
+    # ---------- interes abierto: la serie local y, lo que le falta, Bybit (13/11/2026) ----------
+    HOUR = 3600000
+    t_end = NOW // (5 * MIN) * (5 * MIN)
+    local_minutes = (t_end - 26 * HOUR) // MIN + np.arange(0, 20 * 60, 5)  # 20 horas locales
+    real_points = journal_reading.oi_store.points
+    journal_reading.oi_store.points = lambda s: (local_minutes, np.full(len(local_minutes), 500.0)) if s == "LOCALUSDT" else None
+    OI_CALLS.clear()
+    series = asyncio.run(journal_reading.oi_series("LOCALUSDT", t_end - 26 * HOUR, t_end))
+    check("OI: lo local primero y Bybit solo desde donde termina",
+          series is not None and series[1][0] == 500.0 and series[1][-1] >= 1000 and len(OI_CALLS) == 1
+          and OI_CALLS[0][2] == int(local_minutes[-1]) * MIN + 1 and int(series[0][-1]) * MIN == t_end, str(OI_CALLS))
+    journal_reading.oi_store.points = lambda s: (local_minutes, np.full(len(local_minutes), 500.0))
+    OI_CALLS.clear()
+    asyncio.run(journal_reading.oi_series("LOCALUSDT", t_end - 26 * HOUR, int(local_minutes[-1]) * MIN + 10 * MIN))
+    check("OI: con la serie local al dia no se pide nada a Bybit", OI_CALLS == [])
+    journal_reading.oi_store.points = real_points
+
+    # ---------- cobertura del almacen para la regla: 46 dias seguidos ----------
+    DAY = 86400000
+    last_day = NOW // DAY
+    paths = []
+    for k in range(48):  # 2 de mas: la decision de abajo puede caer el dia anterior (cerca de las 00:00 UTC)
+        iso = journal_reading._day_iso(last_day - k)
+        path = (footprint_store._live_path if k < 3 else footprint_store._day_path)("COVUSDT", iso)  # recientes en vivo
+        path.parent.mkdir(parents=True, exist_ok=True)
+        np.savez(path, m=np.array([], dtype=np.int64), buy=np.array([], dtype=np.int64), sell=np.array([], dtype=np.int64),
+                 info=np.array([1, 1, 1]))  # dia sin trades: basta con que exista
+        paths.append(path)
+    cov = journal_reading.coverage("COVUSDT", NOW)
+    check("cobertura: 46 dias seguidos (oficiales y en vivo) dan una lectura completa", cov["days"] == 46 and cov["complete"], str(cov))
+    kept = paths[10].read_bytes()
+    paths[10].unlink()
+    cov = journal_reading.coverage("COVUSDT", NOW)
+    check("cobertura: un dia faltante corta el tramo", cov["days"] == 10 and not cov["complete"], str(cov))
+    paths[10].write_bytes(kept)
+
+    # ---------- lectura de la regla con un observer.read_at falso (el de App 1 se prueba en App 1) ----------
+    def reading_fake(state="up", near=True, oi_dir="up"):
+        move = {"tf": 240, "d": 1, "lo": 99.0, "hi": 104.0, "t0": 1, "t1": 2, "first": 1, "known": 2, "ratio": 2.0, "atrs": 3.0, "score": 6.0}
+        return {"available": True, "time": 0, "price": 103.0, "side": 1,
+                "context": {"240": {"tf": 240, "bars": 30, "net": 4.0, "efficiency": 0.5, "up_volume": 0.6, "state": state},
+                            "60": {"tf": 60, "bars": 48, "net": 1.0, "efficiency": 0.2, "up_volume": 0.55, "state": "range"}},
+                "moves": {"240": {"count": 1, "chosen": move}, "60": {"count": 0, "chosen": None}, "15": {"count": 0, "chosen": None}},
+                "zones": [{"typ": "HVN", "rank": 1, "x0": 101.0, "x1": 101.5, "tf": 240}],
+                "entry": {"zone": {"typ": "HVN", "rank": 1, "x0": 101.0, "x1": 101.5, "tf": 240}, "gap": 0.0005 if near else 0.01,
+                          "near": near, "chance": 0.2},
+                "oi": {"dir": oi_dir, "change": 0.01, "rises": 3, "falls": 0, "blocks": [1.0, 2.0, 3.0, 4.0]},
+                "volume": {"last_15m_ratio": float("nan")}}  # un valor no finito no llega a la respuesta
+
+    READ_CALLS = []
+
+    def fake_read_at(symbol, time_ms, side, entry=None, live=None, oi=None):
+        READ_CALLS.append({"symbol": symbol, "time": time_ms, "side": side, "entry": entry, "live": live, "oi": oi is not None})
+        return reading_fake() if symbol == "COVUSDT" else {"available": False, "missing": "trades", "time": int(time_ms)}
+
+    observer.read_at = fake_read_at
+    journal_reading._store_reach = lambda symbol, at: at // MIN - 1 if symbol == "COVUSDT" else None
+    rt = {"trade_id": "COV-1", "symbol": "COVUSDT", "side": "Buy", "opened_at": NOW - 2 * HOUR, "status": "closed", "entry": 102.0,
+          "initial_stop_loss": 100.0, "pnl": 4.0, "closed_qty": 1.0, "pre_existing": False,
+          "decision": {"at": NOW - 2 * HOUR - 3 * MIN, "order": {"entry": 101.9}}}
+    rd = asyncio.run(journal_reading.trade_reading(rt))
+    call = READ_CALLS[-1]
+    conditions = {c["id"]: c["value"] for c in rd.get("conditions", [])}
+    check("lectura en el minuto de la decision, con la entrada planeada, los dias en vivo y el OI",
+          call["time"] == rt["decision"]["at"] and call["entry"] == 101.9 and call["live"] is True and call["oi"] and call["side"] == 1, str(call))
+    check("lectura con su comparacion por bloques y sus condiciones (las del informe de App 1)",
+          rd["available"] and rd["complete"] and rd["final"] and [r["block"] for r in rd["rows"]] == ["context_240", "context_60", "move", "zone", "oi", "volume"]
+          and conditions.get("ctx240_favor") is True and conditions.get("zone_near") is True and conditions.get("oi_up") is True
+          and conditions.get("move60") is False, str(rd)[:300])
+    check("un valor no finito de la lectura queda en None", rd["reading"]["volume"]["last_15m_ratio"] is None)
+    pre_r = asyncio.run(journal_reading.trade_reading({**rt, "pre_existing": True, "decision": None}))
+    check("posicion anterior al journal sin decision: sin lectura y ya no cambia", not pre_r["available"] and pre_r["final"] and "antes" in pre_r["reason"])
+    late = asyncio.run(journal_reading.trade_reading({**rt, "symbol": "NUEVAUSDT"}))
+    check("sin trades grabados y el almacen todavia sin llegar: sin lectura y sin guardar", not late["available"] and not late["final"], str(late))
+    old = asyncio.run(journal_reading.trade_reading({**rt, "symbol": "NUEVAUSDT", "decision": None, "opened_at": NOW - 3 * DAY}))
+    check("pasados 2 dias se guarda lo que haya", old["final"])
+    adapter = journal_reading.as_observer_trade({**rt, "pnl": -1.0}, rd["reading"])
+    check("el R de la regla sale igual que el del bot: P&L sobre (entrada - SL inicial) x cantidad cerrada",
+          abs(observer.r_multiple(adapter) - (-0.5)) < 1e-9, str(observer.r_multiple(adapter)))
 
     # ---------- rutas de la suite ----------
     BOT_TRADES = []
@@ -225,12 +327,60 @@ try:
                                "closed_at": NOW - (i + 2) * 3600000, "status": "closed", "pnl": 3.0 if win else -2.0, "pre_existing": False})
             decision = {k["key"]: None for k in catalog}
             decision[key] = (1.0 if win else -1.0) + i * 0.01
-            main.JOURNAL.measures_put(tid, {"available": True, "complete": True, "decision": decision})
+            main.JOURNAL.measures_put(tid, {"available": True, "complete": True, "version": journal_measures.MEASURES_VERSION,
+                                            "decision": decision})
         rep = c.get("/api/journal/report?days=30", headers=H).json()
         first = rep["rows"][0] if rep.get("rows") else {}
         check("informe: ganadoras contra perdedoras, la medida que las separa primero",
               rep.get("winners") == 7 and rep.get("losers") == 6 and first.get("key") == key and first.get("share") > 0.9, str(rep)[:300])
         check("informe: avisa muestra pequena", rep.get("small_sample") is True)
+
+        # Medidas guardadas de la version anterior (sin delta ni OI de los dias recientes): se vuelven a calcular
+        main.JOURNAL.measures_put("ETHUSDT-Buy-1", {"available": True, "complete": True, "decision": {}})
+        r = c.get("/api/journal/measures/ETHUSDT-Buy-1", headers=H).json()
+        check("medidas de la version anterior: se vuelven a calcular y se guardan con la nueva",
+              r.get("cached") is False and r.get("version") == journal_measures.MEASURES_VERSION
+              and main.JOURNAL.measures_get("ETHUSDT-Buy-1").get("version") == journal_measures.MEASURES_VERSION, str(r)[:200])
+
+        # Lectura de la regla por la ruta: oculta con el trade abierto, calculada y guardada con el cerrado
+        BOT_TRADES.append({"trade_id": "COV-open", "symbol": "COVUSDT", "side": "Buy", "opened_at": NOW - HOUR, "status": "open",
+                           "pre_existing": False})
+        r = c.get("/api/journal/reading/COV-open", headers=H).json()
+        check("lectura de un trade abierto: oculta, como en App 1",
+              r.get("hidden") is True and not r.get("available") and main.JOURNAL.readings_get("COV-open") is None, str(r)[:200])
+        BOT_TRADES.append(dict(rt))
+        r = c.get("/api/journal/reading/COV-1", headers=H).json()
+        check("lectura de un trade cerrado: calculada y guardada",
+              r.get("available") and r.get("cached") is False and main.JOURNAL.readings_get("COV-1") is not None, str(r)[:200])
+        check("la segunda vez sale guardada", c.get("/api/journal/reading/COV-1", headers=H).json().get("cached") is True)
+        check("lectura: trade desconocido 404 e id invalido 400", c.get("/api/journal/reading/NADA-1", headers=H).status_code == 404
+              and c.get("/api/journal/reading/a%20b", headers=H).status_code == 400)
+
+        # Informe de la regla: 6 ganadoras con 4 horas a favor y cerca de una zona, 6 perdedoras en contra y lejos
+        for i in range(12):
+            tid = f"RULE-Buy-{i}"
+            win = i < 6
+            BOT_TRADES.append({"trade_id": tid, "symbol": "RULEUSDT", "side": "Buy", "opened_at": NOW - (i + 3) * HOUR,
+                               "closed_at": NOW - (i + 2) * HOUR, "status": "closed", "pnl": 3.0 if win else -2.0, "entry": 100.0,
+                               "initial_stop_loss": 99.0, "closed_qty": 1.0, "pre_existing": False})
+            main.JOURNAL.readings_put(tid, {"version": journal_reading.READING_VERSION, "available": True, "complete": True, "final": True,
+                                            "reading": reading_fake("up" if win else "down", near=win)})
+        BOT_TRADES.append({"trade_id": "RULE-Buy-partial", "symbol": "RULEUSDT", "side": "Buy", "opened_at": NOW - 20 * HOUR,
+                           "closed_at": NOW - 19 * HOUR, "status": "closed", "pnl": 1.0, "pre_existing": False})
+        main.JOURNAL.readings_put("RULE-Buy-partial", {"version": journal_reading.READING_VERSION, "available": True, "complete": False,
+                                                       "final": True, "reading": reading_fake()})
+        rule = c.get("/api/journal/report?days=30", headers=H).json().get("rule") or {}
+        row = next((x for x in rule.get("conditions", []) if x["id"] == "ctx240_favor"), {})
+        # Con COV-1 (ganadora, a favor y cerca): 7 con la condicion, todas ganan; 6 sin ella, ninguna
+        check("informe de la regla: con 4 horas a favor 7 de 7 ganan (R 20/7); sin ellas 0 de 6 (R -2)",
+              rule.get("complete") == 13 and rule.get("partial") == 1 and row.get("with", {}).get("n") == 7
+              and row["with"]["wins"] == 7 and abs(row["with"]["avg_r"] - 20 / 7) < 1e-9
+              and row.get("without", {}).get("n") == 6 and row["without"]["wins"] == 0 and row["without"]["avg_r"] == -2.0,
+              str({k: rule.get(k) for k in ("complete", "partial", "without", "pending")}) + " " + str(row)[:300])
+        check("informe de la regla: entradas cerca de una zona (7 de 13) y lo que daria el azar",
+              rule.get("zones", {}).get("orders") == 13 and rule["zones"]["near"] == 7 and abs(rule["zones"]["chance"] - 0.2) < 1e-9, str(rule.get("zones")))
+        check("informe de la regla: avisa muestra pequena y trae habitos y mejores contra peores",
+              rule.get("small_sample") is True and len(rule.get("habits", [])) == len(observer.RULE_PARTS) and isinstance(rule.get("best_worst"), list))
 finally:
     shutil.rmtree(TMP, ignore_errors=True)
 

@@ -54,6 +54,46 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Pendientes del Journal (Regla del Laboratorio, Delta y OI Recientes, Lo Elegido en la Apertura)
+
+**Pedido:** los tres pendientes del journal:
+- la lectura de la regla del laboratorio, como en el Observador de App 1;
+- el delta y el interés abierto de los días recientes en las medidas, que salían "—";
+- lo elegido para el trade en la imagen de apertura, como App 1.
+
+**Cambios:**
+1. **Regla del laboratorio:** al abrir un trade cerrado, el detalle muestra lo que leía la regla en el minuto de la decisión: contexto de 4 horas y de 1 hora, movimiento con volumen, zona cerca de la entrada, OI y volumen. Usa `observer.read_at` de App 1 sin copiarlo (`journal_reading.py`), con lo ocurrido antes de decidir. Con el trade abierto no se ve, como en App 1.
+2. **Lectura parcial:** la regla mira 45 días hacia atrás. Una moneda con menos días de trades grabados sale con aviso y no entra en el informe. Hoy son completas BTC, ETH, SOL y ARB; las demás tienen trades desde el 12/11.
+3. **Informe:** suma "Lo que leía la regla", con las tablas del informe del Observador:
+   - acierto y R con y sin cada condición;
+   - cuánto se sigue cada parte de la regla;
+   - entradas cerca de una zona contra el azar;
+   - mejores trades contra peores.
+4. **Delta y OI recientes** (medidas versión 2; las guardadas se recalculan):
+   - **OI:** el de App 1 más lo que le falta, de Bybit;
+   - **delta:** los días de la nube y el PC donde falta el oficial, sin las velas con un hueco de 10 s o más.
+5. **Imagen de apertura:** dibuja, con sus números, los niveles de la decisión de ese trade (`openDecision.js`). La busca en el journal hasta 4 veces, porque la decisión se guarda cuando el bot responde. Un trade de una alerta no lleva nada elegido.
+6. **App 1:** `read_at` y `compute` aceptan `live` y la serie de OI. App 1 no los pasa, así que no cambia.
+7. **Pruebas:**
+   - suite: `journal_checks.py` (63) y `openDecision.test.mjs` (5);
+   - App 1: `test_observer.py` y `test_measures.py` suman 5 (163 con patrones y footprints en vivo);
+   - las demás siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla.
+- El informe calcula hasta 8 medidas y 8 lecturas por pedido. Tras esta actualización conviene pedirlo varias veces: las medidas se recalculan.
+- Las reconexiones del WebSocket (5.8 s) no dejan sin delta su vela. Comparado con Bybit, el volumen quedó entre 0.1% y 0.6% bajo, y una vez, en XRP, 6.4%.
+- Probado en la copia aislada con el almacén real (solo lectura), un bot falso y el OI real de Bybit:
+  - la lectura de un long de BTC fue igual a una llamada directa a App 1;
+  - el OI y el delta de las medidas coincidieron con un cálculo aparte;
+  - las imágenes de apertura de BTC, ETH, SOL, ADA y DOGE salieron con sus niveles numerados, y la de XRP, sin decisión, sin ninguno.
+
+  No se probó con trades reales ni en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal" y `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "OBSERVADOR" y "REGISTRO AUTOMÁTICO"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Dashboard del Journal con el Estilo Elegido
 
 **Pedido:** llevar al journal de la suite lo que tiene App 1 como dashboard (gráficos de trades, P&L, etc.), con los widgets en el estilo elegido por el usuario.

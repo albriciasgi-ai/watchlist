@@ -61,6 +61,159 @@ const imageUrl = (path) => `/api/screenshots/session/${path}`;
 const IMAGE_NAMES = { decision: 'Decisión', open: 'Apertura', close: 'Cierre', after: '10 velas después' };
 const value = (v) => (v === null || v === undefined ? '—' : Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2));
 
+// La regla del laboratorio (13/11/2026): los mismos nombres del Observador de App 1
+const STATES = { up: 'Alcista', down: 'Bajista', range: 'Consolidación' };
+const FAVOR = { favor: 'a favor del trade', against: 'en contra del trade', range: 'sin dirección' };
+const OI_STATES = { up: 'Creciendo', down: 'Cayendo', mixed: 'Mixto' };
+const FRAME_NAMES = { 240: '4h', 60: '1h', 15: '15m' };
+const share = (v) => (v === null || v === undefined ? '—' : `${Math.round(v * 100)}%`);
+const signedPct = (v) => `${v >= 0 ? '+' : ''}${(v * 100).toFixed(2)}%`;
+const rValue = (v) => (v === null || v === undefined ? '—' : `${v >= 0 ? '+' : ''}${v.toFixed(2)}`);
+
+/** Lo que leía la regla, bloque por bloque, como lo describe el Observador de App 1 (sin "Tú": la suite no pide marcas) */
+function readingRows(rows) {
+  return (rows || []).map(row => {
+    if (row.block === 'context_240' || row.block === 'context_60') {
+      const label = row.block === 'context_240' ? 'Contexto 4 horas' : 'Contexto 1 hora';
+      if (!row.rule) return { label, text: 'Sin velas suficientes' };
+      return { label, text: `${STATES[row.rule]}, ${FAVOR[row.favor]} (eficiencia ${row.efficiency.toFixed(2)}, volumen en velas alcistas ${share(row.up_volume)})` };
+    }
+    if (row.block === 'move') {
+      const frames = row.rule ? Object.keys(row.rule).sort((a, b) => b - a) : [];
+      return {
+        label: 'Movimiento con volumen',
+        text: frames.length
+          ? frames.map(tf => {
+            const m = row.rule[tf];
+            return `${FRAME_NAMES[tf]}: ${levelPrice(m.lo)} a ${levelPrice(m.hi)}, volumen ${m.ratio.toFixed(1)}x, ${m.atrs.toFixed(1)} ATR`;
+          }).join(' · ')
+          : 'Sin movimiento vigente a favor',
+      };
+    }
+    if (row.block === 'zone') {
+      const z = row.rule;
+      return {
+        label: 'Zona',
+        text: z
+          ? `${z.typ === 'FVG' ? 'FVG' : 'Cluster de volumen'} de ${FRAME_NAMES[z.tf]} ${levelPrice(z.x0)} a ${levelPrice(z.x1)}, a ${(row.gap * 100).toFixed(2)}% de la entrada${row.near ? ': cerca (0.10% o menos)' : ''}`
+          : 'Sin zonas del lado del trade',
+        note: !z || row.chance === null || row.chance === undefined ? null : `Por azar, el ${share(row.chance)} de los precios cercanos queda igual de cerca de una zona`,
+      };
+    }
+    if (row.block === 'oi') return { label: 'Interés abierto', text: row.rule ? `${OI_STATES[row.rule]} (${signedPct(row.change)} en 4 horas)` : 'Sin dato de OI' };
+    return { label: 'Volumen', text: row.rule === null || row.rule === undefined ? 'Sin dato' : `Última vela de 15m: ${row.rule.toFixed(1)}x su promedio` };
+  });
+}
+
+/** La lectura de la regla del laboratorio en el minuto de la decisión: solo con el trade cerrado, como en App 1 */
+function ReadingTable({ data, trade }) {
+  if (trade.status !== 'closed') {
+    return <div className="bot-empty">La lectura de la regla del laboratorio se ve cuando el trade se cierra, como en el Observador de App 1.</div>;
+  }
+  if (!data) return <div className="bot-empty">Leyendo la regla del laboratorio en el minuto de la decisión…</div>;
+  if (!data.available) return <div className="bot-empty">Sin lectura de la regla: {data.reason || data.error || 'no disponible'}</div>;
+  const parts = (data.conditions || []).filter(c => c.rule);
+  const present = parts.filter(c => c.value === true).length;
+  const cover = data.coverage || {};
+  return (
+    <div style={{ margin: '8px 0' }}>
+      <div className="bot-empty">
+        Regla del laboratorio (la del Observador de App 1) a las {when(data.at)}, desde el lado del trade
+        {data.entry ? `, entrada ${price(data.entry)}` : ''}. Solo usa lo ocurrido antes de decidir.
+      </div>
+      {!data.complete && (
+        <div className="bot-warning">
+          Lectura parcial: la regla mira {(cover.needed || 46) - 1} días antes de la decisión y {trade.symbol}{' '}
+          {cover.from
+            ? `tiene trades grabados desde el ${cover.from.slice(8, 10)}/${cover.from.slice(5, 7)} (${cover.days} ${cover.days === 1 ? 'día seguido' : 'días seguidos'})`
+            : 'no tiene trades grabados de esos días'}.
+          {' '}Lo que no alcanzó a ver sale sin dato o sin movimiento, y este trade no entra en el informe de la regla.
+        </div>
+      )}
+      {!data.final && <div className="bot-empty">El almacén de trades todavía no llega a la hora de la decisión: la lectura puede cambiar.</div>}
+      <table className="bot-table">
+        <thead><tr><th>Bloque</th><th>Lo que leía la regla</th></tr></thead>
+        <tbody>
+          {readingRows(data.rows).map(row => (
+            <tr key={row.label}>
+              <td>{row.label}</td>
+              <td style={{ whiteSpace: 'normal' }}>{row.text}{row.note ? <div style={{ opacity: 0.7 }}>{row.note}</div> : null}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {parts.length > 0 && (
+        <div className="bot-empty">
+          Partes de la regla presentes: {present} de {parts.length}. {parts.map(c => `${c.label}: ${c.value === true ? 'sí' : c.value === false ? 'no' : 'sin dato'}`).join(' · ')}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Acierto y R de un grupo, como en el informe del Observador de App 1 */
+function Outcome({ stats }) {
+  if (!stats || !stats.n) return <td colSpan={2} style={{ opacity: 0.6 }}>sin trades</td>;
+  return (<><td>{share(stats.win_rate)} ({stats.wins}/{stats.n})</td><td>{rValue(stats.avg_r)}</td></>);
+}
+
+/** Lo que leía la regla en los trades cerrados: las tablas del informe del Observador de App 1, con lecturas completas */
+function RuleReport({ rule }) {
+  return (
+    <div style={{ marginTop: 14 }}>
+      <h3>Lo que leía la regla del laboratorio (lectura al decidir, como el Observador de App 1)</h3>
+      <div className="bot-empty">
+        {rule.complete} trades con lectura completa
+        {rule.partial ? ` · ${rule.partial} con lectura parcial, fuera de estas tablas (su moneda tiene menos de 45 días de trades grabados antes de la decisión)` : ''}
+        {rule.without ? ` · ${rule.without} sin lectura` : ''}
+        {rule.pending ? ` · faltan ${rule.pending}: pide el informe otra vez para leerlas` : ''}.
+      </div>
+      {rule.small_sample && rule.complete > 0 && (
+        <div className="bot-warning">Muestra pequeña: con menos de 30 trades estas diferencias pueden ser azar. Sirven para ver hábitos, no para concluir.</div>
+      )}
+      {rule.complete > 0 && (
+        <>
+          <table className="bot-table">
+            <thead>
+              <tr><th rowSpan={2}>Condición</th><th rowSpan={2}>Presente</th><th colSpan={2}>Con</th><th colSpan={2}>Sin</th></tr>
+              <tr><th>Acierto</th><th>R</th><th>Acierto</th><th>R</th></tr>
+            </thead>
+            <tbody>
+              {rule.conditions.map(row => (
+                <tr key={row.id}><td>{row.label}</td><td>{share(row.share)}</td><Outcome stats={row.with} /><Outcome stats={row.without} /></tr>
+              ))}
+            </tbody>
+          </table>
+          {rule.habits?.length > 0 && (
+            <>
+              <h3 style={{ marginTop: 10 }}>Cuánto sigues cada parte de la regla</h3>
+              <table className="bot-table">
+                <thead><tr><th>Parte de la regla</th><th>Presente en tus trades</th></tr></thead>
+                <tbody>{rule.habits.map(row => <tr key={row.id}><td>{row.label}</td><td>{share(row.share)}</td></tr>)}</tbody>
+              </table>
+            </>
+          )}
+          {rule.zones?.orders > 0 && (
+            <div className="bot-empty">
+              Entradas cerca de una zona: {rule.zones.near} de {rule.zones.orders} ({share(rule.zones.near / rule.zones.orders)}).
+              Por azar se esperaría {share(rule.zones.chance)}: si estás cerca de eso, la regla todavía no distingue tus entradas.
+            </div>
+          )}
+          {rule.best_worst?.length > 0 && (
+            <>
+              <h3 style={{ marginTop: 10 }}>Tus mejores trades contra los peores (por R)</h3>
+              <table className="bot-table">
+                <thead><tr><th>Condición</th><th>Mejor tercio</th><th>Peor tercio</th></tr></thead>
+                <tbody>{rule.best_worst.map(row => <tr key={row.id}><td>{row.label}</td><td>{share(row.best)}</td><td>{share(row.worst)}</td></tr>)}</tbody>
+              </table>
+            </>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 /** Las medidas de App 1 al decidir, por grupo (marco), en columnas */
 function MeasuresTable({ data, catalog }) {
   if (!data) return <div className="bot-empty">Calculando las medidas al decidir (pide velas a Bybit)…</div>;
@@ -93,6 +246,7 @@ export default function JournalView({ active, onShowTrade }) {
   const [days, setDays] = useState(30);
   const [catalog, setCatalog] = useState(null);
   const [measures, setMeasures] = useState({}); // trade_id -> medidas al decidir
+  const [readings, setReadings] = useState({}); // trade_id -> lectura de la regla del laboratorio (trades cerrados)
   const [report, setReport] = useState(null);
   const [reportBusy, setReportBusy] = useState(false);
   const [data, setData] = useState(null);
@@ -168,6 +322,23 @@ export default function JournalView({ active, onShowTrade }) {
       .then(d => setMeasures(m => ({ ...m, [selectedId]: d })))
       .catch(e => setMeasures(m => ({ ...m, [selectedId]: { available: false, error: e.message } })));
   }, [selectedId, catalog]);
+
+  // Lectura de la regla: solo de un trade cerrado (el servidor tampoco la da antes). Guardada en el servidor una vez
+  // que el almacén llegó a la hora de la decisión; mientras tanto se vuelve a pedir, a lo sumo cada minuto
+  const readingAsked = useRef(new Map());
+  const selectedStatus = selected?.status;
+  useEffect(() => {
+    if (!selectedId || selectedStatus !== 'closed') return;
+    const have = readings[selectedId];
+    if (have && (have.final || have.cached)) return;
+    const last = readingAsked.current.get(selectedId);
+    if (last && Date.now() - last < 60000) return;
+    readingAsked.current.set(selectedId, Date.now());
+    const id = selectedId;
+    getJson(`/api/journal/reading/${encodeURIComponent(id)}`)
+      .then(d => setReadings(r => ({ ...r, [id]: d })))
+      .catch(e => setReadings(r => ({ ...r, [id]: { available: false, error: e.message } })));
+  }, [selectedId, selectedStatus, readings, data]);
 
   const askReport = async () => {
     setReportBusy(true);
@@ -273,6 +444,7 @@ export default function JournalView({ active, onShowTrade }) {
                   </tbody>
                 </table>
               )}
+              {report.rule && <RuleReport rule={report.rule} />}
             </>
           )}
         </div>
@@ -410,6 +582,7 @@ export default function JournalView({ active, onShowTrade }) {
                 .map(k => `${k === 'stop_loss' ? 'SL' : k === 'take_profit' ? 'TP' : 'tamaño'} ${price(ch[k])}`).join(', ')}`).join(' · ')}
             </div>
           )}
+          <ReadingTable data={readings[selected.trade_id]} trade={selected} />
           <MeasuresTable data={measures[selected.trade_id]} catalog={catalog} />
           <div>
             {selected.notes.map((n, i) => <div key={i} className="bot-empty">{when(n.at)} · {n.text}</div>)}

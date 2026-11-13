@@ -957,6 +957,7 @@ GET /api/observer/report                                Informe de todo lo regis
 - Usa minutos anteriores a la hora de la orden, velas cerradas y cada dato de OI 5 minutos después de su marca
 - Lee 45 días hacia atrás (`LOOKBACK_DAYS`). Sin trades en el almacén para esa fecha guarda `available: false`
 - Con las celdas del laboratorio no tiene diferencias. Con el almacén, que tiene celdas más finas, contexto, movimientos y OI son iguales y algunos bordes de cluster cambian un poco
+- `read_at(..., live=None, oi=None)` (13/11): el journal de la suite (`12.AltagraciaTradingSuite/server/journal_reading.py`) lee trades reales con `live=True` (días oficiales y, donde faltan, los de la nube y el PC) y `oi`, la serie de 5 minutos local más lo reciente de Bybit (`_oi_window(symbol, t, series)`). App 1 no los pasa: llama al almacén como siempre, sin `live`, y las pruebas que reemplazan `footprint_store.minutes` con tres argumentos siguen sirviendo
 
 ### Oculto hasta terminar
 
@@ -1025,6 +1026,7 @@ GET  /api/observer/export/{symbol}                      CSV de todo el registro
 - `column()` lee cada medida a favor de la orden. El último elemento de `MEASURES` dice cómo: `1` cambia el signo, `0` no cambia, `"mirror"` da la vuelta a una posición de 0 a 1 y un par elige la columna de cada lado
 - `table_for()` no bloquea. Si falta la tabla, o una orden queda después de su final y el caché es más nuevo, `_start_build()` la prepara en otro proceso y devuelve lo que haya. El panel lo avisa y vuelve a preguntar
 - `flow_columns()` salta los días del almacén fuera de las velas (12/11): el resultado es el mismo y una tabla de pocas semanas no lee los miles de días de BTC. Lo usa el journal de la suite (`12.AltagraciaTradingSuite/server/journal_measures.py`), que llama a `compute()` con velas de Bybit para las medidas de cada trade real
+- `compute(symbol, frames, oi=None, live=None)` (13/11, para la suite): `oi` es la serie de OI que usar en lugar de la local (`oi_columns(..., series)`), y con `live=True` el delta lee también los días de la nube y el PC donde falta el oficial (`flow_columns(..., live)`). De esos días no cuentan las velas que tocan un hueco de 10 s o más (`LIVE_GAP_TOLERANCE_MS`) ni las posteriores al último guardado. Las reconexiones de 5.8 s no dejan su vela sin delta: medidas contra Bybit, dejaron el volumen de 0.1% a 0.6% bajo, y una vez 6.4%. Un día de la nube ilegible se salta. App 1 no los pasa: su tabla sigue igual y `VERSION` no cambió
 - `_cache_path()` usa una ruta relativa: el proceso debe correr en `backend/`
 - `reading()` se calcula al pedirla: no se guarda en el registro, así que una tabla nueva relee las órdenes viejas sin hacer nada
 

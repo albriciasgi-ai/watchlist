@@ -259,6 +259,14 @@ def test_sin_oi_todo_queda_vacio():
     assert np.isnan(measures.oi_columns("X", np.array([1, 2]))["oi_chg_4h"]).all()
 
 
+def test_oi_de_una_serie_pasada_sin_la_local():
+    # La suite (13/11/2026) pasa la serie local mas lo reciente de Bybit; la local no existe aqui
+    values = [100.0] * 100 + [200.0]
+    last = 1000 + 100 * 5
+    columns = measures.oi_columns("X", np.array([last + 4, last + 5]), oi_series(values))
+    assert columns["oi_chg_1h"][0] == 0 and columns["oi_chg_1h"][1] == 100
+
+
 def write_day(folder, minutes, buy, sell, scale=10):
     folder.mkdir(parents=True, exist_ok=True)
     np.savez(folder / "X_2026-06-03.npz", m=np.array(minutes), buy=(np.array(buy) * scale).astype(np.int64),
@@ -282,6 +290,43 @@ def test_delta_de_cuatro_horas(tmp_path):
     rows = start + np.arange(16) * 15
     _, wide = measures.flow_columns("X", rows)
     assert wide[15] == pytest.approx(0.5)
+
+
+def live_day(tmp_path, monkeypatch, gaps, saved_at):
+    """Un dia de la nube y el PC (como los baja sync_nube.py): 6 velas de 15m completas, con sus huecos y su guardado."""
+    import collections
+    import json as json_lib
+    live = tmp_path / "live" / "store"
+    monkeypatch.setattr(footprint_store, "LIVE_DIR", live)
+    monkeypatch.setattr(footprint_store, "_days", collections.OrderedDict())
+    start = T0 // MINUTE
+    write_day(live / "X" / "2026", list(range(start, start + 90)), [3.0] * 90, [1.0] * 90)
+    state = live.parent / "tape" / "X" / "2026"
+    state.mkdir(parents=True, exist_ok=True)
+    (state / "X_2026-06-03.json").write_text(json_lib.dumps({"gaps": gaps, "saved_at": saved_at, "final": False}), encoding="utf-8")
+    return start + np.arange(6) * 15
+
+
+def test_delta_de_un_dia_en_vivo_sin_las_velas_con_hueco(tmp_path, monkeypatch):
+    bar = 15 * MINUTE
+    rows = live_day(tmp_path, monkeypatch, gaps=[[T0 + bar + 60000, T0 + bar + 120000],  # 60 s en la vela 1
+                                                 [T0 + 2 * bar + 60000, T0 + 2 * bar + 65000]],  # 5 s en la vela 2
+                    saved_at=T0 + 4 * bar + 7 * MINUTE)  # guardado a mitad de la vela 4
+    delta, _ = measures.flow_columns("X", rows, live=True)
+    assert delta[0] == pytest.approx(0.5)
+    assert np.isnan(delta[1]), "un hueco de 60 s deja la vela sin delta"
+    assert delta[2] == pytest.approx(0.5), "una reconexion de 5 s no"
+    assert delta[3] == pytest.approx(0.5)
+    assert np.isnan(delta[4]) and np.isnan(delta[5]), "despues del ultimo guardado no se sabe si llego todo"
+    assert np.isnan(measures.flow_columns("X", rows)[0]).all(), "App 1 no lee los dias en vivo"
+
+
+def test_el_dia_oficial_manda_sobre_el_en_vivo(tmp_path, monkeypatch):
+    rows = live_day(tmp_path, monkeypatch, gaps=[], saved_at=None)
+    start = T0 // MINUTE
+    write_day(tmp_path / "store" / "X" / "2026", list(range(start, start + 90)), [1.0] * 90, [3.0] * 90)
+    delta, _ = measures.flow_columns("X", rows, live=True)
+    assert delta[0] == pytest.approx(-0.5), "el oficial, no el de la nube"
 
 
 def test_las_filas_no_cambian_con_velas_posteriores():

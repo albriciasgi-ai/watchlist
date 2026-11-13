@@ -170,6 +170,32 @@ def test_oi_sin_serie_o_vencido(monkeypatch):
     assert observer._oi_window("BTCUSDT", T0 + 31 + 5) is None, "serie terminada antes de la orden"
 
 
+def test_oi_de_una_serie_pasada_sin_la_local(monkeypatch):
+    # La suite (13/11/2026) pasa la serie local mas lo reciente de Bybit
+    monkeypatch.setattr(oi_store, "points", lambda symbol: None)
+    values = np.arange(1000.0, 1100.0)
+    series = (T0 - 5 * np.arange(len(values))[::-1], values)
+    oi = observer._oi_window("BTCUSDT", T0 + 5, series)
+    assert oi["dir"] == "up" and oi["rises"] == 3
+
+
+def test_la_suite_pide_los_dias_en_vivo_y_app_1_no(monkeypatch):
+    asked = []
+
+    def minutes(symbol, start, end, **kw):
+        asked.append(kw)
+        return minutes_of(np.arange(100.0, 160.0), start=end - 60)
+
+    monkeypatch.setattr(footprint_store, "minutes", minutes)
+    monkeypatch.setattr(oi_store, "points", lambda symbol: None)
+    time = (T0 + 60) * MINUTE
+    plain = observer.read_at("BTCUSDT", time, 1)
+    values = np.arange(1000.0, 1100.0)
+    suite = observer.read_at("BTCUSDT", time, 1, live=True, oi=(T0 + 55 - 5 * np.arange(len(values))[::-1], values))
+    assert asked == [{}, {"live": True}], "App 1 llama al almacen como siempre"
+    assert plain["oi"] is None and suite["oi"]["dir"] == "up"
+
+
 # ==================== REGISTRO ====================
 
 @pytest.fixture

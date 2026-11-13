@@ -198,22 +198,31 @@ def _move_gaps(bars15, first, last, confirmed, direction):
     return gaps
 
 
-def _move_zones(symbol, move, bars15):
+def _store(live):
+    """Como se pide al almacen: sin nada, como siempre en App 1; live=True suma los dias de la nube y el PC (la suite)."""
+    return {} if live is None else {"live": live}
+
+
+def _move_zones(symbol, move, bars15, live=None):
     """Perfil real y FVG del movimiento, con la misma logica de los tramos del laboratorio."""
     starts = bars15["t"]
     first = int(np.searchsorted(starts, move["t0"]))
     last = max(first, int(np.searchsorted(starts, move["t1"])) - 1)
     confirmed = max(last, int(np.searchsorted(starts, move["known"])) - 1)
-    prices, volumes = footprint_store.cells(symbol, int(starts[first]), int(starts[last]) + 15)
+    prices, volumes = footprint_store.cells(symbol, int(starts[first]), int(starts[last]) + 15, **_store(live))
     return (
         _volume_clusters(prices, volumes, move["lo"], move["hi"], move["d"]),
         _move_gaps(bars15, first, last, confirmed, move["d"]),
     )
 
 
-def _oi_window(symbol, t):
-    """OI de las ultimas horas en cuatro bloques, con cada dato usado cuando ya estaba publicado."""
-    series = oi_store.points(symbol)
+def _oi_window(symbol, t, series=None):
+    """
+    OI de las ultimas horas en cuatro bloques, con cada dato usado cuando ya estaba publicado.
+    series: (minutos, valores) de 5 minutos en lugar de la serie local; la suite suma lo reciente de Bybit.
+    """
+    if series is None:
+        series = oi_store.points(symbol)
     if series is None:
         return None
     times, values = series
@@ -262,13 +271,15 @@ def _zone_chance(zones, market, side, near):
     return hits / 100
 
 
-def read_at(symbol, time_ms, side, entry=None):
+def read_at(symbol, time_ms, side, entry=None, live=None, oi=None):
     """
     Lectura de un minuto para una orden: side es 1 para compra y -1 para venta.
     Solo usa minutos terminados antes de time_ms y velas cerradas.
+    live y oi son de la suite (trades reales, 13/11/2026): live=True lee tambien los dias de la nube y el PC donde
+    falta el oficial, y oi es la serie de 5 minutos que usar en lugar de la local. App 1 no los pasa.
     """
     t = int(time_ms) // 60000
-    data = footprint_store.minutes(symbol, t - LOOKBACK_DAYS * 1440, t)
+    data = footprint_store.minutes(symbol, t - LOOKBACK_DAYS * 1440, t, **_store(live))
     if data is None or int(data["m"][-1]) < t - MAX_MINUTES_WITHOUT_TRADES:
         return {"available": False, "missing": "trades", "time": int(time_ms)}
 
@@ -296,7 +307,7 @@ def read_at(symbol, time_ms, side, entry=None):
                 continue
             alive.append(move)
 
-            clusters, gaps = _move_zones(symbol, move, bars15)
+            clusters, gaps = _move_zones(symbol, move, bars15, live)
             lowest = float(data["l"][since:].min()) if since < len(minute) else math.inf
             highest = float(data["h"][since:].max()) if since < len(minute) else -math.inf
             zones += [{**zone, "tf": tf} for zone in clusters]
@@ -331,7 +342,7 @@ def read_at(symbol, time_ms, side, entry=None):
     return {
         "available": True, "time": int(time_ms), "price": price, "side": side,
         "context": {str(tf): _context(bars[tf], tf, t, count) for tf, count in RULE["ctx_bars"].items()},
-        "moves": moves, "zones": zones, "entry": entry_read, "oi": _oi_window(symbol, t),
+        "moves": moves, "zones": zones, "entry": entry_read, "oi": _oi_window(symbol, t, oi),
         "volume": {"last_15m_ratio": last_ratio},
     }
 

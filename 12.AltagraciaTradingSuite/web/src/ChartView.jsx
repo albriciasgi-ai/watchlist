@@ -24,6 +24,7 @@ import '@app1/components/drawing/DrawingToolbar.css';
 import '@app1/components/drawing/DrawingSidebar.css';
 import TradingPanel from './TradingPanel.jsx';
 import OffscreenCapture from './OffscreenCapture.jsx';
+import { openDecisionLevels } from './openDecision.js';
 import { getJson, postJson } from './api.js';
 import { linesFor, runPositionAction, subscribeBook, subscribeCancels } from './botBook.js';
 import { dropLevels, knownLevels, restoreLevels } from '@app1/components/indicators/analysisLevels.js';
@@ -413,6 +414,15 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     return { tf: closeFrame(start, closedAt, activeTfRef.current), start, box, items: trade.decision?.levels || [] };
   }, []);
 
+  // Imagen de apertura con lo elegido para ese trade, como en App 1 (13/11/2026): los niveles de su decisión
+  // (openDecision.js). Un trade sin decisión (de una alerta) no dibuja nada elegido
+  const openPlan = useCallback(async (p, openedAt) => {
+    const items = await openDecisionLevels(p, openedAt, {
+      fetchTrades: async (sym) => (await getJson(`/api/bot/journal?days=1&symbol=${encodeURIComponent(sym)}`)).trades,
+    });
+    return { tf: activeTfRef.current, start: null, box: null, items };
+  }, []);
+
   useEffect(() => {
     let last = '';
     let known = null; // { account, map } con las posiciones de todas las monedas en la lectura anterior
@@ -430,10 +440,11 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
       if (TAB === 1 && known && known.account === account) {
         const moment = async (kind, p) => {
           const at = Date.now();
-          // Apertura: la vista a esa hora con contexto. Cierre: el trade completo con su caja (closePlan)
-          const plan = kind === 'close' ? await closePlan(p, at) : { tf: activeTfRef.current, start: null, box: null, items: null };
+          // Apertura: la vista a esa hora con contexto y lo elegido para el trade (openPlan). Cierre: el trade completo
+          // con su caja (closePlan)
+          const plan = kind === 'close' ? await closePlan(p, at) : await openPlan(p, at);
           const tf = plan.tf;
-          const options = kind === 'open' ? { context: true } : { showFrom: plan.start, items: plan.items };
+          const options = kind === 'open' ? { context: true, items: plan.items } : { showFrom: plan.start, items: plan.items };
           // Y 10 velas después, la misma imagen con lo que hizo el precio tras el cierre (como la de cierre de App 1)
           if (kind === 'close' && plan.start) {
             saveAfterShots([...loadAfterShots(), {
@@ -461,7 +472,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
       }
       known = { account, map: now };
     });
-  }, [captureFor, saveContext, pumpOffscreen, chartSize, closePlan]);
+  }, [captureFor, saveContext, pumpOffscreen, chartSize, closePlan, openPlan]);
 
   // "Ver en el gráfico" desde el journal: su moneda, la vista en su apertura y su caja con entrada, SL y TP iniciales
   const focusBoxRef = useRef(null);

@@ -4,7 +4,7 @@
 # - Contexto de decision (panel de trading, al confirmar la orden): imagen del grafico, niveles y marcas elegidos con su
 #   papel y nota, la nota del usuario y la orden propuesta.
 # - Imagenes de apertura y de cierre: las toma la pagina al ver abrirse o cerrarse una posicion de la moneda a la vista.
-# - Medidas al decidir (cache de journal_measures.py).
+# - Medidas al decidir (cache de journal_measures.py) y lectura de la regla del laboratorio (de journal_reading.py).
 #
 # Todo en data/journal (SUITE_DATA_DIR), en archivos que solo se agregan. Se une a los trades del bot al leerlos:
 # misma moneda y lado; la decision por su orden de Bybit si se sabe, si no por hora (merge).
@@ -56,6 +56,7 @@ class JournalStore:
         self.images = self.base / "images"
         self.contexts_file = self.base / "contexts.jsonl"
         self.measures_dir = self.base / "measures"
+        self.readings_dir = self.base / "readings"
         self._cache: Optional[List[Dict[str, Any]]] = None
         self._cache_key = None
 
@@ -230,14 +231,14 @@ class JournalStore:
             t["images"] = [i for i in images if i.get("image")]
         return trades
 
-    # ---------- medidas (cache) ----------
-    def _measures_file(self, trade_id: str) -> Optional[Path]:
+    # ---------- medidas y lecturas de la regla (cache por trade, un archivo cada uno) ----------
+    def _cache_file(self, folder: Path, trade_id: str) -> Optional[Path]:
         if not TRADE_ID_RE.match(trade_id or ""):
             return None
-        return self.measures_dir / (re.sub(r"[^A-Za-z0-9_.-]", "_", trade_id) + ".json")
+        return folder / (re.sub(r"[^A-Za-z0-9_.-]", "_", trade_id) + ".json")
 
-    def measures_get(self, trade_id: str) -> Optional[Dict[str, Any]]:
-        path = self._measures_file(trade_id)
+    def _cache_get(self, folder: Path, trade_id: str) -> Optional[Dict[str, Any]]:
+        path = self._cache_file(folder, trade_id)
         if not path or not path.exists():
             return None
         try:
@@ -245,11 +246,24 @@ class JournalStore:
         except ValueError:
             return None
 
-    def measures_put(self, trade_id: str, data: Dict[str, Any]) -> None:
-        path = self._measures_file(trade_id)
+    def _cache_put(self, folder: Path, trade_id: str, data: Dict[str, Any]) -> None:
+        path = self._cache_file(folder, trade_id)
         if not path:
             return
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_name(path.name + ".tmp")
         tmp.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         tmp.replace(path)
+
+    def measures_get(self, trade_id: str) -> Optional[Dict[str, Any]]:
+        return self._cache_get(self.measures_dir, trade_id)
+
+    def measures_put(self, trade_id: str, data: Dict[str, Any]) -> None:
+        self._cache_put(self.measures_dir, trade_id, data)
+
+    # La lectura de la regla del laboratorio (journal_reading.py, 13/11/2026)
+    def readings_get(self, trade_id: str) -> Optional[Dict[str, Any]]:
+        return self._cache_get(self.readings_dir, trade_id)
+
+    def readings_put(self, trade_id: str, data: Dict[str, Any]) -> None:
+        self._cache_put(self.readings_dir, trade_id, data)
