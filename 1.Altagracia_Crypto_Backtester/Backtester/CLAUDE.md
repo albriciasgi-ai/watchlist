@@ -1283,6 +1283,17 @@ Observador: TradeImages muestra las miniaturas y abre ScreenshotModal con las me
 
 ---
 
+## DASHBOARD DE TRADING, COMPARTIDO CON LA SUITE (13/11/2026)
+
+Los widgets de `components/backtesting/dashboard/` también los usa el journal de la suite (`12.AltagraciaTradingSuite/web/src/JournalDashboard.jsx`), con trades reales. Para eso tienen opciones nuevas; App 1 no las pasa y se ve como siempre:
+
+- `themed` (curva, P&L por trade y los dos medidores): colores y letra del estilo elegido, de `dashboardPalette.js`. Sin `themed`, o con el Clásico, `CLASSIC_PALETTE`: los colores escritos a mano hasta el 13/11. Cada widget llama `useUiTheme()` y se vuelve a pintar al cambiar el estilo
+- `modes` (curva y P&L por trade): los botones de modo. El modo `r` usa el R de cada trade (`trade.r`): la curva lo acumula
+- `summary` (curva): el pie en lugar de saldo inicial y final, que la suite no tiene (es dinero real)
+- `formatPrice` y `tooltipExtra` (P&L por trade), `formatPrice`, `formatQuantity`, `extraColumns` e `idSortKey` (tabla), y `mainText` y `subText` (tarjetas de riesgo y recompensa)
+- `uiTheme.js` suma `readableOn(color, fondo, ratio)`: un color legible como texto sobre un fondo, en cualquier estilo
+- Las tarjetas, textos y tablas siguen con las variables `--dash-*` de `dashboard_styles.css`: la suite las cambia en su contenedor
+
 ## NITIDEZ DEL GRÁFICO (Noviembre 2026)
 
 Pedido del usuario el 8/11: el gráfico se veía borroso y en monitores más grandes no mejoraba. Su portátil es de 15.3" a 1366x768 y escala 100%. Colores, letras y disposición no cambian.

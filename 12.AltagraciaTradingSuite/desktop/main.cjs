@@ -231,7 +231,7 @@ function restartApp(reason) {
 }
 
 function newestSource() {
-  const roots = [path.join(WEB_DIR, 'src'), path.join(WEB_DIR, 'vite.config.js'),
+  const roots = [path.join(WEB_DIR, 'src'), path.join(WEB_DIR, 'vite.config.js'), path.join(WEB_DIR, 'package.json'),
     path.join(WEB_DIR, 'index.html'), path.join(WEB_DIR, 'public'),
     path.join(SUITE_DIR, '..', '1.Altagracia_Crypto_Backtester', 'Backtester', 'frontend', 'src')];
   let newest = 0;
@@ -246,11 +246,28 @@ function newestSource() {
   return newest;
 }
 
+// Paquetes de la pagina que cambiaron (13/11: los graficos del dashboard del journal): web/package.json es mas nuevo
+// que lo que instalo npm la ultima vez (node_modules/.package-lock.json). Sin instalarlos, el armado fallaria
+function packagesChanged() {
+  try {
+    const wanted = fs.statSync(path.join(WEB_DIR, 'package.json')).mtimeMs;
+    const lock = path.join(WEB_DIR, 'node_modules', '.package-lock.json');
+    const installed = fs.statSync(fs.existsSync(lock) ? lock : path.join(WEB_DIR, 'node_modules')).mtimeMs;
+    return wanted > installed;
+  } catch {
+    return false; // sin node_modules lo instala el primer armado
+  }
+}
+
 async function ensureDist() {
   const built = fs.existsSync(DIST_INDEX);
   const stale = built && newestSource() > fs.statSync(DIST_INDEX).mtimeMs;
   if (built && !stale) return true;
   if (stale) {
+    if (packagesChanged()) {
+      setMsg('Instalando los paquetes nuevos de la pagina (npm install en web/)...');
+      if (!(await runCommand('npm install', ['install', '--no-audit', '--no-fund']))) addLog('No se pudieron instalar los paquetes nuevos.\n');
+    }
     // Codigo nuevo: se vuelve a armar. Si falla, sigue la pagina anterior
     setMsg('Armando la pagina con los cambios nuevos (npm run build en web/)...');
     if (await runCommand('npm run build', ['run', 'build'])) return true;

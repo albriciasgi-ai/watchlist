@@ -173,3 +173,26 @@
 .tabs-menu-row { display: flex; align-items: center; gap: 4px; padding: 3px 0; font-size: 12px; }
 .tabs-menu-name { width: 110px; flex-shrink: 0; }
 .tabs-menu-note { margin-top: 6px; line-height: 1.35; }
+
+/*
+ * Dashboard del journal (13/11): los widgets del dashboard de App 1 (dashboard_styles.css) con el estilo elegido.
+ * Sus colores salen de las variables --dash-* que pone JournalDashboard.jsx; aquí van los que App 1 escribió a mano.
+ * body.theme-nitido está en todos los estilos menos el Clásico, que se ve como en App 1
+ */
+.suite-dashboard { padding: 14px 0 0; min-height: 0; }
+/* Los medidores toman el ancho de su tarjeta: en el panel de App 1 son angostos, aquí la tarjeta es media pantalla */
+.suite-dashboard .gauge-container > [id$="-gauge-chart"] { width: 100%; max-width: 380px; }
+.suite-dashboard .dashboard-header { margin-bottom: 18px; padding-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+body.theme-nitido .suite-dashboard .dashboard-title h2 {
+  background: none; -webkit-text-fill-color: currentColor; color: var(--dash-text); font-size: 20px;
+}
+body.theme-nitido .suite-dashboard .mode-toggle-btn:hover:not(.active),
+body.theme-nitido .suite-dashboard .trades-grid thead th.sortable:hover,
+body.theme-nitido .suite-dashboard .trades-grid tbody tr:hover { background: var(--t-hover); }
+body.theme-nitido .suite-dashboard .trades-grid tbody tr.selected,
+body.theme-nitido .suite-dashboard .interpretation { background: var(--t-accent-soft); }
+body.theme-nitido .suite-dashboard .reason-badge { background: var(--t-hover); }
+body.theme-nitido .suite-dashboard .btn-select-all:hover { background: var(--dash-primary-blue); filter: brightness(0.92); }
+body.theme-nitido .suite-dashboard .badge-side.long { background: color-mix(in srgb, var(--dash-primary-green) 15%, transparent); }
+body.theme-nitido .suite-dashboard .badge-side.short { background: color-mix(in srgb, var(--dash-primary-red) 15%, transparent); }
+body.theme-nitido .suite-dashboard .chart-card:hover { box-shadow: 0 4px 14px var(--dash-shadow); }

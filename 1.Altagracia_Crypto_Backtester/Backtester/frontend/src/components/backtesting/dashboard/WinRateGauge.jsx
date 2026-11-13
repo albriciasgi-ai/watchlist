@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import GaugeChart from 'react-gauge-chart';
+import useUiTheme from '../../useUiTheme.js';
+import { dashboardPalette } from './dashboardPalette.js';
 
-const WinRateGauge = ({ trades }) => {
+// themed (13/11/2026, el journal de la suite): zonas, aguja y textos con los colores del estilo elegido.
+// App 1 no lo pasa y lo ve como siempre
+const WinRateGauge = ({ trades, themed = false }) => {
+  useUiTheme(); // Con themed, vuelve a pintar al cambiar el estilo
+  const palette = dashboardPalette(themed);
+
   // 🎯 FIX: Control de animación - solo animar en primer render
   const [hasAnimated, setHasAnimated] = useState(false);
 
@@ -26,17 +33,17 @@ const WinRateGauge = ({ trades }) => {
 
   // Determinar zona de color
   let zoneLabel = 'Malo';
-  let zoneColor = '#EF5350';
+  let zoneColor = palette.zoneText.bad;
 
   if (winRate >= 60) {
     zoneLabel = 'Excelente';
-    zoneColor = '#4CAF50';
+    zoneColor = palette.zoneText.great;
   } else if (winRate >= 50) {
     zoneLabel = 'Bueno';
-    zoneColor = '#8BC34A';
+    zoneColor = palette.zoneText.good;
   } else if (winRate >= 40) {
     zoneLabel = 'Regular';
-    zoneColor = '#FFC107';
+    zoneColor = palette.zoneText.fair;
   }
 
   return (
@@ -50,12 +57,12 @@ const WinRateGauge = ({ trades }) => {
             <GaugeChart
               id="win-rate-gauge-chart"
               nrOfLevels={3}
-              colors={['#EF5350', '#FFC107', '#4CAF50']}
+              colors={[palette.zone.bad, palette.zone.fair, palette.zone.great]}
               arcWidth={0.3}
               percent={normalizedWinRate}
-              textColor="#333"
-              needleColor="#666"
-              needleBaseColor="#666"
+              textColor={palette.gaugeText}
+              needleColor={palette.needle}
+              needleBaseColor={palette.needle}
               hideText={true}
               animate={shouldAnimate}  // 🎯 FIX: Solo animar en primer render
               animDelay={0}

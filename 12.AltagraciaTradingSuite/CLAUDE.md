@@ -17,6 +17,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - el journal: los hechos de cada trade real y lo del Observador (imágenes, niveles elegidos, medidas, informe e ir al gráfico). Ver "Journal".
 - **Paso 5, 12 y 13/11:** el servidor detecta el Swing con las reglas de App 1 y lo anota, sin enviar alertas (parte A); el indicador del gráfico dibuja lo que calcula el servidor (parte B), y la vista Watchlist muestra todas las monedas (parte C). Ver "Swing del servidor" y "Watchlist".
 - **Tras probar la Watchlist (13/11):** sus gráficos se mueven y se acercan, las monedas se agregan desde ella, las pestañas 2 a 5 abren cualquier módulo y los indicadores son los mismos en los cinco marcos. Ver "Pedidos tras probar la Watchlist".
+- **Dashboard del journal (13/11):** los widgets del dashboard de App 1 con los trades reales del bot y el estilo elegido. Ver "Journal".
 - **Falta:**
   - del journal: delta y OI de los días recientes en las medidas, y la lectura de la regla del laboratorio;
   - las alertas del Swing quedan para la central de alertas de confluencia;
@@ -64,10 +65,13 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── BotConfig.jsx  Configuración del bot como en App 10
         ├── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
         ├── botBook.js     Posiciones y órdenes de la cuenta activa (cada 2 s), líneas para el gráfico y acciones con confirmación
-        ├── JournalView.jsx    Journal de trades reales (Bot > Journal)
+        ├── JournalView.jsx    Journal de trades reales (Bot > Journal): "Trades" o "Dashboard"
+        ├── JournalDashboard.jsx   Dashboard del journal: los widgets del dashboard de App 1 con los trades reales y el estilo elegido
+        ├── journalStats.js    Cálculos del dashboard (sin React): trades del bot para los widgets, cómo cerró cada uno, riesgo y recompensa
         ├── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         └── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
+    └── tests/journalStats.test.mjs   Pruebas de los cálculos del dashboard (node)
 ```
 
 ## Puertos
@@ -296,6 +300,17 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   - **Informe:** "Informe: qué distingue a las ganadoras" compara ganadoras y perdedoras en cada medida con `patterns.compare_groups` de App 1 ("Separa": en qué parte de los pares la ganadora tiene el valor mayor; "más que el azar" si supera el umbral de las permutaciones). Con menos de 30 trades o de 5 por grupo avisa que solo describe.
   - **Ver en el gráfico:** cambia a la moneda del trade, lleva la vista a su apertura (`focusOn`) y dibuja su caja (`getTradeBoxes`) hasta "Quitar". La caja de un trade cerrado lleva el SL y el TP vigentes al cerrar, como su imagen de cierre. La de uno abierto lleva los iniciales: los vigentes ya están en las líneas de la posición.
   - **"Al TP" y "Al SL"** (12/11, pedido del usuario): columnas de la tabla de trades. Para los abiertos, cuánto debe moverse el precio marca de Bybit, en % del precio, para tocar el TP y el SL vigentes, del libro de posiciones (cada 2 s). Negativo: ya lo pasó. "sin TP" o "sin SL" si no tiene. Los cerrados muestran "—".
+- **Dashboard** (13/11, pedido del usuario: "lo que tiene la app 1 como dashboard ... con los estilos escogidos por el usuario"). Botón "Dashboard" junto a "Trades"; la vista elegida se guarda por pestaña, y los días y "Pedir cierres a Bybit" valen para las dos. Son los widgets del dashboard de App 1, importados sin copiarlos (`JournalDashboard.jsx`; las opciones nuevas de los widgets, en `Backtester/CLAUDE.md`, "DASHBOARD DE TRADING, COMPARTIDO CON LA SUITE"):
+  - **Equity Curve:** el P&L neto acumulado, o el R acumulado. Es dinero real, con depósitos y retiros: no hay saldo inicial ni %. El pie dice P&L neto, R acumulado y cuántos trades no tienen R (sin SL);
+  - **Profit/Loss por Trade:** en dólares, en % (lo que se movió el precio a favor) o en R. El tooltip suma moneda, origen y R;
+  - **Win Rate** y **Profit Factor** (ganancia promedio sobre pérdida promedio), como en App 1;
+  - **Riesgo y Recompensa:** la mayor caída del P&L acumulado desde su pico y la mayor racha de ganadores seguidos, en dólares y en el R de esa misma caída o racha;
+  - **Trades Detallados:** la tabla de App 1 con la moneda, el origen y el R. Ordena por número de trade y filtra por lado y resultado. Quitar un trade de la selección lo saca de los gráficos; uno que cierra después entra seleccionado. "Reason": TP o SL si la salida quedó cerca de ellos (a una décima de la distancia del SL inicial), liquidación si Bybit la marca, y si no "Manual": Bybit no dice qué orden cerró la posición;
+  - **Filtros:** moneda, origen y cuenta (si hay más de una). Se guardan por pestaña con los modos;
+  - **Estilo:** los gráficos, los medidores, las tarjetas y la tabla toman los colores y la letra del estilo elegido, y cambian al instante si se elige otro. Con el Clásico se ve como el de App 1;
+  - solo trades cerrados. El journal se lee cada 15 s, y los gráficos cambian solo si cambiaron los trades (`signature`);
+  - no trae "Exportar a Excel": el de App 1 depende de su simulación (saldo y métricas del OrderManager).
+- **Paquetes de la página** (13/11): `chart.js`, `react-chartjs-2` y `react-gauge-chart`, los del dashboard de App 1. `react-gauge-chart` usa `prop-types` y `lodash` sin declararlos: van en `web/package.json` (sin ellos, el armado los deja afuera y la página no arranca). La app de escritorio instala los paquetes cuando `web/package.json` es más nuevo que lo instalado (ver "Escritorio").
 - **Falta:**
   - la lectura de la regla del laboratorio (`observer.read_at`);
   - el delta y el OI de los días recientes (almacén en vivo);
@@ -502,7 +517,7 @@ Pedido del usuario (12/11): que la app no se congele por inactividad (el navegad
 - **Archivos:** `desktop/package.json` (Electron 33, como Apps 9 y 10), `desktop/main.cjs` y `desktop/icon.ico`. `desktop/node_modules/` no va a git.
 - **Ícono (12/11):** el usuario eligió el perfil de volumen azul y oro con fondo blanco ("P1": barras azules fuera del área de valor, doradas dentro y la línea del POC). Antes, ese mismo día, había elegido el monograma "A" verde, que queda como diseño `a`. `desktop/make_icon.py` lo dibuja con Pillow y escribe `desktop/icon.ico` (16 a 256 px), `desktop/icon.png` y `web/public/icon.svg` (ícono de la página). En 16 a 24 px usa barras más gruesas y el borde más marcado. `python -B make_icon.py a` vuelve al monograma. `app.setAppUserModelId('Altagracia.TradingSuite')` hace que la barra de tareas y los avisos muestren la app con su ícono y no como Electron. Si cambian `web/index.html` o `web/public`, la app también vuelve a armar la página.
 - **Al abrir:**
-  1. Si el código de la página (de la suite o de App 1) es más nuevo que `web/dist/index.html`, la vuelve a armar (si falla, sigue la anterior). Si falta, corre `npm install` (si falta `web/node_modules`) y `npm run build` en `web/`, con la salida en la ventana de carga.
+  1. Si el código de la página (de la suite o de App 1, o `web/package.json`) es más nuevo que `web/dist/index.html`, la vuelve a armar (si falla, sigue la anterior). Antes, si `web/package.json` es más nuevo que lo que instaló npm (`node_modules/.package-lock.json`), corre `npm install` (13/11: los paquetes del dashboard). Si falta la página, corre `npm install` (si falta `web/node_modules`) y `npm run build` en `web/`, con la salida en la ventana de carga.
   2. Pide `/api/suite/status`. Si responde, usa ese servidor y no lo toca. Si no, lo lanza sin ventana (`python -B server\main.py`, cwd en la suite) y espera hasta 120 s. Si se cierra al arrancar o no responde, la ventana de carga lo dice.
   3. Abre la ventana principal en `http://127.0.0.1:<puerto>/`. Si el servidor que ya corría no sirve la página (arrancó antes de armarla), avisa que hay que cerrarlo.
 - **Configuración:** puerto `SUITE_PORT` > `port` de `config/suite.json` (o `SUITE_CONFIG`) > 13000. Python `SUITE_PYTHON` > `python` de `config/suite.json` > `C:\Python314\python.exe`. Las variables `SUITE_*` pasan tal cual al servidor que lanza.
@@ -535,6 +550,10 @@ C:\Python314\python.exe -B tests\swing_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
+
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9).
+
+Para probar la página en el navegador con una copia del servidor, mejor el armado (`npx vite build` en `web/` y abrir el servidor de prueba): el Vite 8 que toma `npx vite` desde la raíz del repositorio no carga `react-gauge-chart` en desarrollo ("Calling require for prop-types"). El de la suite (`web/node_modules`, 5.4) arma bien.
 
 Las pruebas ponen `SUITE_RECORD=0`, `SUITE_OFFICIAL=0` y `SUITE_SWING=0`: nunca escriben en el `OrderFlowData` real ni consultan Bybit desde el Swing.
 

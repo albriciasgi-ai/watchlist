@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import GaugeChart from 'react-gauge-chart';
+import useUiTheme from '../../useUiTheme.js';
+import { dashboardPalette } from './dashboardPalette.js';
 
-const AvgProfitLossGauge = ({ trades }) => {
+// themed (13/11/2026, el journal de la suite): zonas, aguja y textos con los colores del estilo elegido.
+// App 1 no lo pasa y lo ve como siempre
+const AvgProfitLossGauge = ({ trades, themed = false }) => {
+  useUiTheme(); // Con themed, vuelve a pintar al cambiar el estilo
+  const palette = dashboardPalette(themed);
+
   // 🎯 FIX: Control de animación - solo animar en primer render
   const [hasAnimated, setHasAnimated] = useState(false);
 
@@ -36,20 +43,20 @@ const AvgProfitLossGauge = ({ trades }) => {
 
   // Determinar evaluación
   let evaluation = 'Malo';
-  let evaluationColor = '#EF5350';
+  let evaluationColor = palette.zoneText.bad;
 
   if (profitFactor >= 2.0) {
     evaluation = 'Excelente';
-    evaluationColor = '#4CAF50';
+    evaluationColor = palette.zoneText.great;
   } else if (profitFactor >= 1.5) {
     evaluation = 'Muy Bueno';
-    evaluationColor = '#8BC34A';
+    evaluationColor = palette.zoneText.good;
   } else if (profitFactor >= 1.0) {
     evaluation = 'Bueno';
-    evaluationColor = '#FFC107';
+    evaluationColor = palette.zoneText.fair;
   } else if (profitFactor >= 0.5) {
     evaluation = 'Regular';
-    evaluationColor = '#FF9800';
+    evaluationColor = palette.zoneText.poor;
   }
 
   return (
@@ -63,12 +70,12 @@ const AvgProfitLossGauge = ({ trades }) => {
             <GaugeChart
               id="profit-factor-gauge-chart"
               nrOfLevels={4}
-              colors={['#EF5350', '#FF9800', '#FFC107', '#4CAF50']}
+              colors={[palette.zone.bad, palette.zone.poor, palette.zone.fair, palette.zone.great]}
               arcWidth={0.3}
               percent={normalizedProfitFactor}
-              textColor="#333"
-              needleColor="#666"
-              needleBaseColor="#666"
+              textColor={palette.gaugeText}
+              needleColor={palette.needle}
+              needleBaseColor={palette.needle}
               hideText={true}
               animate={shouldAnimate}  // 🎯 FIX: Solo animar en primer render
               animDelay={0}

@@ -2,10 +2,18 @@ import React, { useState } from 'react';
 import { isBlind, maskDate, priceLabel, quantityText } from '../blindClock.js';
 
 import { tradeLabel } from '../OrderManager.js';
-const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
+
+/**
+ * Opcionales (13/11/2026, para el journal de la suite; App 1 no los pasa y la tabla queda como siempre):
+ * - extraColumns: [{ key, label, render(trade), className?(trade), sortKey? }] después de "Side", como la moneda,
+ *   el origen y el R de cada trade real;
+ * - formatPrice y formatQuantity: cómo se escriben precios y cantidades (la suite opera monedas de 0.0001 a 100,000);
+ * - idSortKey: el campo con que ordena la columna "#" (la suite: 'tradeNumber'; su id es un texto sin orden).
+ */
+const TradesDataGrid = ({ trades, selectedIds, onSelectionChange, extraColumns = [], formatPrice = priceLabel, formatQuantity = quantityText, idSortKey = 'id' }) => {
   const [filterSide, setFilterSide] = useState('all'); // 'all', 'long', 'short'
   const [filterResult, setFilterResult] = useState('all'); // 'all', 'win', 'loss'
-  const [sortBy, setSortBy] = useState('id'); // 'id', 'pnl', 'pnlPercent', 'entryTime', 'exitTime'
+  const [sortBy, setSortBy] = useState(idSortKey); // 'id', 'pnl', 'pnlPercent', 'entryTime', 'exitTime'
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
 
   /**
@@ -176,10 +184,19 @@ const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
                     onChange={handleSelectAll}
                   />
                 </th>
-                <th onClick={() => handleSort('id')} className="sortable">
-                  # {sortBy === 'id' && (sortOrder === 'asc' ? '↑' : '↓')}
+                <th onClick={() => handleSort(idSortKey)} className="sortable">
+                  # {sortBy === idSortKey && (sortOrder === 'asc' ? '↑' : '↓')}
                 </th>
                 <th>Side</th>
+                {extraColumns.map(col => (
+                  <th
+                    key={col.key}
+                    onClick={col.sortKey ? () => handleSort(col.sortKey) : undefined}
+                    className={col.sortKey ? 'sortable' : undefined}
+                  >
+                    {col.label} {col.sortKey && sortBy === col.sortKey && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
+                ))}
                 <th onClick={() => handleSort('entryPrice')} className="sortable">
                   Entry {sortBy === 'entryPrice' && (sortOrder === 'asc' ? '↑' : '↓')}
                 </th>
@@ -228,9 +245,12 @@ const TradesDataGrid = ({ trades, selectedIds, onSelectionChange }) => {
                         {trade.side === 'long' ? '📈' : '📉'} {trade.side.toUpperCase()}
                       </span>
                     </td>
-                    <td className="td-number">{priceLabel(trade.entryPrice)}</td>
-                    <td className="td-number">{priceLabel(trade.exitPrice)}</td>
-                    <td className="td-number">{quantityText(trade.quantity)}</td>
+                    {extraColumns.map(col => (
+                      <td key={col.key} className={col.className ? col.className(trade) : undefined}>{col.render(trade)}</td>
+                    ))}
+                    <td className="td-number">{formatPrice(trade.entryPrice)}</td>
+                    <td className="td-number">{formatPrice(trade.exitPrice)}</td>
+                    <td className="td-number">{formatQuantity(trade.quantity)}</td>
                     <td className={`td-number ${isWin ? 'positive' : 'negative'}`}>
                       {isWin ? '+' : ''}${trade.pnl.toFixed(2)}
                     </td>

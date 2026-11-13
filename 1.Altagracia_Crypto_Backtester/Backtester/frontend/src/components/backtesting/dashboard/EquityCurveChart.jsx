@@ -11,6 +11,8 @@ import {
   Legend,
   Filler
 } from 'chart.js';
+import useUiTheme from '../../useUiTheme.js';
+import { chartFont, dashboardPalette, tooltipFonts } from './dashboardPalette.js';
 
 // Registrar componentes de Chart.js
 ChartJS.register(
@@ -24,38 +26,60 @@ ChartJS.register(
   Filler
 );
 
-const EquityCurveChart = ({ trades, initialBalance = 10000, mode, onModeChange }) => {
+/** Botones de modo: [modo, texto, ayuda]. App 1 usa estos; el journal de la suite pasa '$' y 'R' */
+const DEFAULT_MODES = [
+  ['percent', '%', 'Mostrar en porcentaje'],
+  ['absolute', '$', 'Mostrar en dólares'],
+];
+
+/**
+ * Opcionales (13/11/2026, para el journal de la suite; App 1 no los pasa y dibuja como siempre):
+ * - themed: colores y letra del estilo elegido (dashboardPalette.js);
+ * - modes: los botones de modo. El modo 'r' acumula el R de cada trade (trade.r);
+ * - summary: [{ label, value, tone: 'positive' | 'negative' }] en lugar del pie de saldo inicial y final.
+ */
+const EquityCurveChart = ({ trades, initialBalance = 10000, mode, onModeChange, themed = false, modes = DEFAULT_MODES, summary = null }) => {
+  useUiTheme(); // Con themed, vuelve a pintar al cambiar el estilo
+  const palette = dashboardPalette(themed);
+
   // Calcular puntos de la equity curve
   const equityCurve = [];
   let balance = initialBalance;
+  let r = 0;
 
   trades.forEach((trade, idx) => {
     balance += trade.pnl;
-    const balancePercent = ((balance - initialBalance) / initialBalance) * 100;
+    r += Number.isFinite(trade.r) ? trade.r : 0;
+    const balancePercent = initialBalance ? ((balance - initialBalance) / initialBalance) * 100 : 0;
 
     equityCurve.push({
       tradeNum: idx + 1,
       balance: balance,
-      balancePercent: balancePercent
+      balancePercent: balancePercent,
+      r
     });
   });
 
+  const valueOf = (point) => (mode === 'percent' ? point.balancePercent : mode === 'r' ? point.r : point.balance);
+  const unit = mode === 'percent' ? '%' : mode === 'r' ? 'R' : '$';
+
   // Determinar si la tendencia es positiva o negativa
-  const finalBalance = equityCurve.length > 0 ? equityCurve[equityCurve.length - 1].balance : initialBalance;
-  const isPositive = finalBalance >= initialBalance;
+  const last = equityCurve.length > 0 ? equityCurve[equityCurve.length - 1] : null;
+  const finalBalance = last ? last.balance : initialBalance;
+  const isPositive = mode === 'r' ? (last ? last.r >= 0 : true) : finalBalance >= initialBalance;
 
   const data = {
     labels: equityCurve.map(p => `T${p.tradeNum}`),
     datasets: [{
-      label: mode === 'percent' ? 'Balance (%)' : 'Balance ($)',
-      data: equityCurve.map(p => mode === 'percent' ? p.balancePercent : p.balance),
-      borderColor: isPositive ? '#4CAF50' : '#EF5350',
-      backgroundColor: isPositive ? 'rgba(76, 175, 80, 0.1)' : 'rgba(239, 83, 80, 0.1)',
+      label: `Balance (${unit})`,
+      data: equityCurve.map(valueOf),
+      borderColor: isPositive ? palette.win : palette.loss,
+      backgroundColor: isPositive ? palette.winFill : palette.lossFill,
       fill: true,
       tension: 0.4,
       pointRadius: 3,
       pointHoverRadius: 5,
-      pointBackgroundColor: isPositive ? '#4CAF50' : '#EF5350',
+      pointBackgroundColor: isPositive ? palette.win : palette.loss,
       borderWidth: 2
     }]
   };
@@ -73,12 +97,13 @@ const EquityCurveChart = ({ trades, initialBalance = 10000, mode, onModeChange }
       tooltip: {
         mode: 'index',
         intersect: false,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        titleColor: '#333',
-        bodyColor: '#666',
-        borderColor: '#E0E0E0',
+        backgroundColor: palette.tooltipBg,
+        titleColor: palette.tooltipTitle,
+        bodyColor: palette.tooltipBody,
+        borderColor: palette.tooltipBorder,
         borderWidth: 1,
         padding: 12,
+        ...tooltipFonts(palette),
         callbacks: {
           label: function(context) {
             let label = context.dataset.label || '';
@@ -87,6 +112,8 @@ const EquityCurveChart = ({ trades, initialBalance = 10000, mode, onModeChange }
             }
             if (mode === 'percent') {
               label += context.parsed.y.toFixed(2) + '%';
+            } else if (mode === 'r') {
+              label += context.parsed.y.toFixed(2) + ' R';
             } else {
               label += '$' + context.parsed.y.toFixed(2);
             }
@@ -102,18 +129,22 @@ const EquityCurveChart = ({ trades, initialBalance = 10000, mode, onModeChange }
         },
         ticks: {
           maxTicksLimit: 10,
-          color: '#666'
+          color: palette.muted,
+          ...chartFont(palette)
         }
       },
       y: {
         grid: {
-          color: '#F0F0F0'
+          color: palette.grid
         },
         ticks: {
-          color: '#666',
+          color: palette.muted,
+          ...chartFont(palette),
           callback: function(value) {
             if (mode === 'percent') {
               return value.toFixed(1) + '%';
+            } else if (mode === 'r') {
+              return value.toFixed(1) + ' R';
             } else {
               return '$' + value.toFixed(0);
             }
@@ -133,20 +164,16 @@ const EquityCurveChart = ({ trades, initialBalance = 10000, mode, onModeChange }
       <div className="chart-header">
         <h3>Equity Curve</h3>
         <div className="chart-controls">
-          <button
-            className={`mode-toggle-btn ${mode === 'percent' ? 'active' : ''}`}
-            onClick={() => onModeChange('percent')}
-            title="Mostrar en porcentaje"
-          >
-            %
-          </button>
-          <button
-            className={`mode-toggle-btn ${mode === 'absolute' ? 'active' : ''}`}
-            onClick={() => onModeChange('absolute')}
-            title="Mostrar en dólares"
-          >
-            $
-          </button>
+          {modes.map(([id, text, title]) => (
+            <button
+              key={id}
+              className={`mode-toggle-btn ${mode === id ? 'active' : ''}`}
+              onClick={() => onModeChange(id)}
+              title={title}
+            >
+              {text}
+            </button>
+          ))}
         </div>
       </div>
       <div className="chart-content" style={{ height: '280px' }}>
@@ -158,7 +185,17 @@ const EquityCurveChart = ({ trades, initialBalance = 10000, mode, onModeChange }
           </div>
         )}
       </div>
-      {equityCurve.length > 0 && (
+      {equityCurve.length > 0 && summary && (
+        <div className="chart-footer">
+          {summary.map(item => (
+            <div className="stat-item" key={item.label}>
+              <span className="stat-label">{item.label}:</span>
+              <span className={`stat-value ${item.tone || ''}`}>{item.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {equityCurve.length > 0 && !summary && (
         <div className="chart-footer">
           <div className="stat-item">
             <span className="stat-label">Balance Inicial:</span>

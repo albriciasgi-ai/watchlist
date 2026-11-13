@@ -1,6 +1,11 @@
 import React from 'react';
 
-const DrawdownGrowthCards = ({ metrics }) => {
+// mainText y subText (13/11/2026, el journal de la suite): cómo se escriben el valor grande y el pequeño de cada
+// tarjeta. App 1 no los pasa: porcentaje del saldo y dólares, como siempre. La suite pasa dólares y R
+const percentText = (value) => `${value.toFixed(2)}%`;
+const dollarText = (value) => `$${value.toFixed(2)}`;
+
+const DrawdownGrowthCards = ({ metrics, mainText = percentText, subText = dollarText }) => {
   const {
     maxDrawdown = 0,
     maxDrawdownUSD = 0,
@@ -22,10 +27,10 @@ const DrawdownGrowthCards = ({ metrics }) => {
           <div className="metric-content">
             <div className="metric-title">Max Drawdown</div>
             <div className="metric-main-value negative">
-              {maxDrawdown.toFixed(2)}%
+              {mainText(maxDrawdown)}
             </div>
             <div className="metric-sub-value negative">
-              ${maxDrawdownUSD.toFixed(2)}
+              {subText(maxDrawdownUSD)}
             </div>
             <div className="metric-description">
               Máxima pérdida consecutiva desde un pico
@@ -41,10 +46,10 @@ const DrawdownGrowthCards = ({ metrics }) => {
           <div className="metric-content">
             <div className="metric-title">Max Growth</div>
             <div className="metric-main-value positive">
-              {maxGrowth.toFixed(2)}%
+              {mainText(maxGrowth)}
             </div>
             <div className="metric-sub-value positive">
-              ${maxGrowthUSD.toFixed(2)}
+              {subText(maxGrowthUSD)}
             </div>
             <div className="metric-description">
               Máxima ganancia consecutiva

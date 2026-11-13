@@ -2,6 +2,18 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { roleLabel } from '@app1/components/indicators/analysisLevels.js';
 import { getJson, postJson } from './api.js';
 import { subscribeBook } from './botBook.js';
+import JournalDashboard from './JournalDashboard.jsx';
+import { TAB } from './tabs.js';
+
+// Lo que muestra el journal: la lista de trades o el dashboard (13/11/2026), por pestaña
+const VIEW_KEY = `suite_journal_view_${TAB}`;
+const loadView = () => {
+  try {
+    return localStorage.getItem(VIEW_KEY) === 'dashboard' ? 'dashboard' : 'trades';
+  } catch {
+    return 'trades';
+  }
+};
 
 /**
  * Journal de trades reales (paso 4 de la integración, 12/11/2026): el Observador de App 1 con trades de verdad.
@@ -90,6 +102,11 @@ export default function JournalView({ active, onShowTrade }) {
   const [notice, setNotice] = useState(null);
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState({});
+  const [view, setView] = useState(loadView);
+  const chooseView = (next) => {
+    setView(next);
+    try { localStorage.setItem(VIEW_KEY, next); } catch { /* sin almacenamiento */ }
+  };
 
   const read = useCallback(async () => {
     try {
@@ -208,16 +225,26 @@ export default function JournalView({ active, onShowTrade }) {
       </div>
 
       <div className="suite-add-coin">
+        <button type="button" className={`suite-btn ${view === 'trades' ? 'active' : ''}`} onClick={() => chooseView('trades')}>Trades</button>
+        <button type="button" className={`suite-btn ${view === 'dashboard' ? 'active' : ''}`} onClick={() => chooseView('dashboard')}
+          title="Curva de capital, P&L por trade, Win Rate, Profit Factor, riesgo y recompensa: el dashboard de App 1 con los trades reales">
+          Dashboard
+        </button>
         <label>Últimos
           <select className="suite-input" style={{ width: 80, marginLeft: 6 }} value={days} onChange={(e) => setDays(Number(e.target.value))}>
             {[7, 30, 90, 365].map(d => <option key={d} value={d}>{d} días</option>)}
           </select>
         </label>
         <button type="button" className="suite-btn" disabled={busy} onClick={sync}>Pedir cierres a Bybit</button>
-        <button type="button" className="suite-btn" disabled={reportBusy} onClick={askReport}>{reportBusy ? 'Armando el informe…' : 'Informe: qué distingue a las ganadoras'}</button>
+        {view === 'trades' && (
+          <button type="button" className="suite-btn" disabled={reportBusy} onClick={askReport}>{reportBusy ? 'Armando el informe…' : 'Informe: qué distingue a las ganadoras'}</button>
+        )}
         {notice && <span className="bot-empty">{notice}</span>}
       </div>
 
+      {view === 'dashboard' && <JournalDashboard trades={trades} days={days} />}
+
+      {view === 'trades' && (<>
       {report && (
         <div className="bot-section">
           <h3>Qué distingue a las ganadoras de las perdedoras (medidas al decidir)</h3>
@@ -394,6 +421,7 @@ export default function JournalView({ active, onShowTrade }) {
           </div>
         </div>
       )}
+      </>)}
     </div>
   );
 }

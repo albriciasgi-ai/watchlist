@@ -54,6 +54,41 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Dashboard del Journal con el Estilo Elegido
+
+**Pedido:** llevar al journal de la suite lo que tiene App 1 como dashboard (gráficos de trades, P&L, etc.), con los widgets en el estilo elegido por el usuario.
+
+**Cambios:**
+1. **Bot > Journal > "Dashboard"**, junto a "Trades". Son los widgets del dashboard de App 1, importados sin copiarlos, con los trades reales del bot:
+   - **Equity Curve:** P&L neto acumulado o R acumulado. Es dinero real, sin saldo inicial: no hay %;
+   - **Profit/Loss por Trade:** en dólares, en % a favor o en R;
+   - **Win Rate** y **Profit Factor**;
+   - **Riesgo y Recompensa:** mayor caída y mejor racha, en dólares y en R;
+   - **Trades Detallados:** con moneda, origen y R, y selección que cambia los gráficos.
+
+   Suma filtros por moneda, origen y cuenta. Los días y "Pedir cierres a Bybit" valen para las dos vistas.
+2. **Estilo:** gráficos, medidores, tarjetas y tabla toman los colores y la letra del estilo elegido (Nítido, Oscuro, Personalizado o Muhammad), y cambian al instante al elegir otro. Con el Clásico se ve como el de App 1.
+3. **App 1:** sus widgets suman opciones que App 1 no pasa (`themed`, modo R, pie, columnas y formatos), así que su dashboard no cambia. Lo nuevo:
+   - `dashboardPalette.js`, con los colores de los widgets;
+   - `readableOn()` en `uiTheme.js`, para un color legible como texto sobre un fondo.
+4. **Paquetes:** la página de la suite suma `chart.js`, `react-chartjs-2` y `react-gauge-chart`, y además `prop-types` y `lodash`, que `react-gauge-chart` usa sin declararlos. La app de escritorio instala los paquetes cuando cambia `web/package.json`.
+5. **Pruebas:** `12.AltagraciaTradingSuite/web/tests/journalStats.test.mjs` (9). Las de App 1 siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva. Los paquetes ya quedaron instalados en la copia principal.
+- No trae "Exportar a Excel": el de App 1 depende de su simulación.
+- "Reason" (TP, SL o Manual) se deduce de los precios: Bybit no dice qué orden cerró la posición.
+- Probado en la copia aislada con 33 trades de prueba en el journal real del bot (bot falso). Los números coincidieron con un cálculo aparte:
+  - P&L +40.99 y 21.24 R;
+  - acierto 63.6% y Profit Factor 1.33;
+  - mayor caída $5.66 y mejor racha $12.59.
+
+  Se probaron los filtros, la selección, los modos y los estilos Nítido, Oscuro, Muhammad y Clásico, también cambiando en vivo. No se probó con trades reales ni en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal", "Dashboard"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Pestañas con los Indicadores del Gráfico Principal y VWAP que no se Detenía
 
 **Pedido:** al abrir una moneda desde la Watchlist, el gráfico salía con indicadores livianos y no con los del gráfico principal.

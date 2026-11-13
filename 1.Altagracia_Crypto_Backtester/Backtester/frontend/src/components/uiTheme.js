@@ -339,6 +339,14 @@ export function markCustom(config, key, factoryValues) {
  */
 export const chartInk = (hex, ratio = 4.5) => (current !== 'clasico' && THEME.dark && HEX_RE.test(hex) ? readable(hex, THEME.chartBg, ratio) : hex);
 
+/**
+ * Un color legible como texto sobre un fondo (por omisión el del gráfico), en cualquier estilo: se oscurece sobre un
+ * fondo claro y se aclara sobre uno oscuro, lo justo para el contraste pedido. Lo usan los widgets del dashboard
+ */
+export const readableOn = (hex, background = THEME.chartBg, ratio = 4.5) => (
+  HEX_RE.test(hex) && HEX_RE.test(background || '') ? readable(hex, background, ratio) : hex
+);
+
 /** "#RRGGBB" → "r, g, b" para usar con transparencia; null si no es un color así */
 export const rgbOf = hex => (typeof hex === 'string' && HEX_RE.test(hex) ? rgbText(hex) : null);
 
