@@ -7,6 +7,8 @@ FROM python:3.11-slim
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV DATA_DIR=/data
+# Menos memoria retenida por glibc entre hilos (13/11/2026): el servicio tiene 512 MB y escribe en hilos
+ENV MALLOC_ARENA_MAX=2
 
 # Crear directorio de datos
 RUN mkdir -p /data

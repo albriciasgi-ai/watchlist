@@ -558,7 +558,7 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - `server/book_cloud.py`, 90 s después de arrancar y luego cada 10 minutos, lista `/api/book/days` de la nube. De cada moneda de la suite y cada día baja solo los minutos que el PC no tiene completos, a `OrderFlowData/live/book_cloud`;
   - cada pedido trae 60 minutos, primero los segundos y después los minutos, hasta 40 MB por vuelta. Lo que no alcanza queda para la siguiente, que sigue a los 5 s. La nube entrega de 15 a 40 KB/s: un día completo de las 20 monedas tarda de 1.5 a 4 horas;
   - nunca toca lo grabado en el PC. Los lectores (`book_store.sources`) juntan las dos carpetas: de cada minuto, el bloque con más cobertura. Las medidas del journal y `book_study.py` leen las dos;
-  - la nube guarda 3 días (`BOOK_KEEP_DAYS`): con el PC apagado más tiempo, lo más viejo se pierde;
+  - la nube guarda 7 días (`BOOK_KEEP_DAYS`), unos 1.4 GB de su volumen de 6 GB: con el PC apagado más tiempo, lo más viejo se pierde;
   - `SUITE_CLOUD_URL` cambia la dirección (la de `sync_nube.py` por omisión). `SUITE_BOOK_CLOUD=0` lo apaga; sin esa variable sigue a `SUITE_BOOK` y luego a `SUITE_RECORD`;
   - `GET /api/book/cloud`: última vuelta, minutos y bytes bajados, lo pendiente y el último error. `/api/suite/status` trae `book_cloud`.
 - **Journal** (`server/book_measures.py`): las medidas del libro de cada trade real van con las 58 de App 1, en el grupo "Libro". Se ven en el detalle y entran al informe de ganadoras contra perdedoras:
