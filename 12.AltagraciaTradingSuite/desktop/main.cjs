@@ -423,10 +423,57 @@ function newWindow(url = BASE_URL) {
   return win;
 }
 
-// Antes de que el servidor este listo, "Nueva ventana" solo muestra la carga
+// Pestanas 2 a 5 (menu "Pestanas" de la pagina): una ventana propia por numero, creada aqui. Abierta por la pagina
+// con window.open compartiria el hilo de la que la abrio: medido el 13/11, 1.5 s ocupados en la 2 detuvieron 1.5 s
+// la principal. Pedirla otra vez la trae al frente con el modulo pedido
+const MAX_TABS = 5;
+const tabWindows = new Map();
+
+function tabOf(url) {
+  try {
+    const u = new URL(url, BASE_URL);
+    const n = parseInt(u.searchParams.get('pestana'), 10);
+    return u.origin === BASE_ORIGIN && n >= 2 && n <= MAX_TABS ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+function openTabWindow(n, url) {
+  const open = tabWindows.get(n);
+  if (open && !open.isDestroyed()) {
+    open.loadURL(url);
+    if (open.isMinimized()) open.restore();
+    open.show();
+    open.focus();
+    return open;
+  }
+  const win = newWindow(url);
+  tabWindows.set(n, win);
+  win.on('closed', () => { if (tabWindows.get(n) === win) tabWindows.delete(n); });
+  dlog(`pestana ${n} abierta`);
+  return win;
+}
+
+// "Nueva ventana" abre la primera pestana libre (de la 2 a la 5) con su ultimo modulo: una segunda pestana 1
+// tomaria otra vez las imagenes del journal y daria los avisos dos veces. Con todas abiertas, trae la ultima.
+// Antes de que el servidor este listo solo muestra la carga
 function openExtra() {
-  if (serverReady && mainWindow) newWindow();
-  else showMain();
+  if (!serverReady || !mainWindow) {
+    showMain();
+    return;
+  }
+  for (let n = 2; n <= MAX_TABS; n += 1) {
+    const open = tabWindows.get(n);
+    if (!open || open.isDestroyed()) {
+      openTabWindow(n, `${BASE_URL}?pestana=${n}`);
+      return;
+    }
+  }
+  const last = tabWindows.get(MAX_TABS);
+  if (last.isMinimized()) last.restore();
+  last.show();
+  last.focus();
 }
 
 function showMain() {
@@ -446,10 +493,16 @@ function reloadAll() {
   }
 }
 
-// Ventanas extra: mismo origen (o en blanco, para las que la pagina llena con un portal) = ventana
-// Electron con las mismas preferencias; lo externo, al navegador del sistema
+// Ventanas extra: una pestana de la 2 a la 5 = su ventana propia (openTabWindow); otra del mismo origen (o en
+// blanco, para las que la pagina llena con un portal) = ventana Electron con las mismas preferencias, que comparte
+// la pagina que la abrio; lo externo, al navegador del sistema
 app.on('web-contents-created', (_e, contents) => {
   contents.setWindowOpenHandler(({ url }) => {
+    const tab = url && isSameOrigin(url) ? tabOf(url) : null;
+    if (tab) {
+      openTabWindow(tab, url);
+      return { action: 'deny' };
+    }
     if (!url || url === 'about:blank' || isSameOrigin(url)) {
       return {
         action: 'allow',

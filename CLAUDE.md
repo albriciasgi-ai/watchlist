@@ -75,6 +75,8 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    - Cada una tiene su moneda, sus marcos y sus indicadores; los dibujos son los mismos.
    - Varias con el gráfico dan varias monedas con su gráfico completo a la vez.
    - Solo la 1 toma las imágenes del journal y da los avisos de Windows.
+   - En Electron cada una es una ventana con su propio hilo. Abierta por la página, compartía el de la principal: 1.5 s ocupados en la 2 la detuvieron 1505 ms. Ahora la crea `desktop/main.cjs`.
+   - "Nueva ventana" de la bandeja abre la primera libre: antes abría otra pestaña 1, que repetía las imágenes y los avisos.
 4. **Indicadores:** un solo conjunto para los cinco marcos. La lista elige "Los mismos en todas las monedas" o "Propios de cada moneda"; una moneda sin los suyos usa los comunes. Lo guardado antes toma los del marco que estaba a la vista. Una moneda abierta desde la Watchlist llega con ese conjunto completo.
 5. **Panel del Swing:** "Ocultar ›" en su encabezado, y el botón "Panel del Swing" lo vuelve a abrir.
 6. **App 1:** `installOwnSettings` acepta otro prefijo: las pestañas 3 a 5 usan `suite_p<n>:`. `secondarystorage.test.mjs` suma una prueba (7).
@@ -89,7 +91,10 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
   - CVD encendido en 15m quedó en los cinco marcos, y con "Propios de cada moneda" ETH tuvo FVG mientras BTC seguía con los comunes;
   - las pestañas 2, 3 y 4 abiertas con la Watchlist, el gráfico y el journal, cada una con sus ajustes;
   - SOL abierta desde la Watchlist llegó en 15m con Delta de volumen y Order Flow.
-- El navegador de pruebas no abre ventanas: las pestañas se abrieron con su dirección. En Electron no se probó.
+- En Electron, con la app real cerrada, se probó una copia con perfil propio:
+  - cinco monedas a la vez, cada una en su ventana con 8 indicadores, se dibujaron en vivo;
+  - la principal se retrasó a lo sumo 22 ms;
+  - la app entera ocupó 1.1 GB, unos 140-150 MB por cada ventana de gráfico.
 
 **Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Pedidos tras probar la Watchlist (13/11)"
 

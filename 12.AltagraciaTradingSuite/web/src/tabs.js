@@ -21,6 +21,9 @@ export const TAB = (() => {
   return n >= 2 && n <= MAX_TABS ? n : 1;
 })();
 
+// En la barra de tareas (y en las pestañas del navegador) cada ventana dice cuál es
+if (TAB > 1 && typeof document !== 'undefined') document.title = `Pestaña ${TAB} · ${document.title}`;
+
 /** El módulo con que se abrió esta pestaña desde el menú (?modulo=...), o null */
 export const MODULE_PARAM = MODULES.includes(params.get('modulo')) ? params.get('modulo') : null;
 
@@ -33,7 +36,10 @@ export function tabUrl(n, module = null) {
   return text ? `/?${text}` : '/';
 }
 
-/** Abre la pestaña n (o la trae al frente si ya está abierta: cada una tiene su nombre de ventana) */
+/**
+ * Abre la pestaña n (o la trae al frente si ya está abierta: cada una tiene su nombre de ventana). En Electron la
+ * crea la app como ventana propia, con su propio hilo (desktop/main.cjs); en el navegador comparte el de esta
+ */
 export function openTab(n, module = null) {
   return window.open(tabUrl(n, module), `suite_pestana_${n}`);
 }

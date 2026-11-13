@@ -461,8 +461,9 @@ El usuario pidió seis cosas al probar la Watchlist.
    - la pestaña nueva toma el módulo de la dirección, lo guarda y lo quita de ella: al recargar queda en el último módulo que se usó;
    - desde otra pestaña, la 1 no se vuelve a abrir: es la ventana principal, y solo ella toma las imágenes del journal y da los avisos de Windows;
    - cada una tiene su moneda, sus marcos, sus indicadores y su Watchlist (`suite_chart_<n>`, `suite_watchlist_<n>`, `suite_module_<n>`). Los ajustes de los indicadores llevan su prefijo: la 2 el de App 1 (`app1_g2:`) y de la 3 a la 5 `suite_p<n>:`. Mientras no se cambien, leen los de la 1;
-   - el encabezado dice "Pestaña n", y la Watchlist y el bot "· pestaña n";
-   - varias pestañas con el gráfico dan hasta 5 monedas con su gráfico completo a la vez. Cada una pide sus velas a Bybit, como el gráfico principal.
+   - el encabezado dice "Pestaña n", y la Watchlist y el bot "· pestaña n". El título de la ventana empieza con "Pestaña n" (barra de tareas);
+   - varias pestañas con el gráfico dan hasta 5 monedas con su gráfico completo a la vez. Cada una pide sus velas a Bybit, como el gráfico principal;
+   - **en Electron cada pestaña es una ventana con su propio hilo:** abierta por la página con `window.open`, compartía el hilo de la que la abrió (medido: 1.5 s ocupados en la 2 detuvieron 1505 ms la principal). Ahora `desktop/main.cjs` la crea él (`openTabWindow`), una por número: con lo mismo, la principal se detuvo 21 ms. En el navegador (`INICIAR.bat`) siguen compartiendo el hilo.
 4. **Una moneda abierta desde la Watchlist** llega al gráfico principal en el marco de la cuadrícula, con todos los indicadores del gráfico, también los pesados (Order Flow, Elementos OF, VWAP, etc.): ya no dependen del marco (punto 5).
 5. **Indicadores:**
    - un solo conjunto para los cinco marcos: encender uno lo enciende en todos. `vpConfig` y el modo del interés abierto siguen por marco;
@@ -480,7 +481,11 @@ El usuario pidió seis cosas al probar la Watchlist.
 - el menú pidió las pestañas 2 a 5 con su módulo (`window.open` simulado). Abiertas con su dirección: la 3 con el gráfico, "Pestaña 3" y sus propios ajustes (`suite_p3:`); la 2 con la Watchlist; la 4 con el journal;
 - SOL abierta desde la Watchlist llegó en 15m con Delta de volumen y Order Flow.
 
-No se probó en Electron: el navegador de las pruebas no abre ventanas emergentes.
+**En Electron** (13/11, con la app del usuario cerrada): la app del worktree con un perfil propio (así su candado de una sola instancia no toca el de la app real), el servidor de prueba y el bot falso, con las ventanas fuera de la pantalla y manejadas por CDP:
+- el menú abrió la pestaña 2 como ventana propia, y pedirla otra vez con la Watchlist reutilizó la misma ventana; la 3 abrió en el journal;
+- cinco monedas a la vez (BTC, ETH, SOL, XRP y DOGE), cada una en su ventana con 8 indicadores (Order Flow, Delta, perfil, interés abierto, VWAP, S&R v2, FVG y Swing): las cinco se dibujaban en vivo y los temporizadores de la principal se retrasaron a lo sumo 22 ms;
+- memoria: 15 a 22 MB de JavaScript por ventana y 1.1 GB de la app entera (cada ventana de gráfico, unos 140-150 MB);
+- "Nueva ventana" del menú abrió la 2, la 3, la 2 de nuevo tras cerrarla, la 4 y la 5, y con todas abiertas ninguna más.
 
 ## Escritorio (Electron)
 
@@ -495,8 +500,8 @@ Pedido del usuario (12/11): que la app no se congele por inactividad (el navegad
   3. Abre la ventana principal en `http://127.0.0.1:<puerto>/`. Si el servidor que ya corría no sirve la página (arrancó antes de armarla), avisa que hay que cerrarlo.
 - **Configuración:** puerto `SUITE_PORT` > `port` de `config/suite.json` (o `SUITE_CONFIG`) > 13000. Python `SUITE_PYTHON` > `python` de `config/suite.json` > `C:\Python314\python.exe`. Las variables `SUITE_*` pasan tal cual al servidor que lanza.
 - **Sin freno:** `backgroundThrottling: false` en todas las ventanas, los switches `disable-renderer-backgrounding`, `disable-background-timer-throttling` y `disable-backgrounding-occluded-windows`, y `powerSaveBlocker.start('prevent-app-suspension')`.
-- **Ventanas extra:** un `window.open` del mismo origen, o en blanco (las ventanas que App 1 llena con un portal), abre otra ventana Electron con las mismas preferencias. Una URL externa va al navegador del sistema y no abre ventana; tampoco se navega fuera del origen.
-- **Bandeja:** "Mostrar", "Nueva ventana" y "Salir". Cerrar la ventana principal la oculta en la bandeja y la página sigue trabajando; si la página la cierra con `window.close()`, se vuelve a abrir oculta. Solo "Salir" cierra de verdad.
+- **Ventanas extra:** un `window.open` del mismo origen, o en blanco (las ventanas que App 1 llena con un portal), abre otra ventana Electron con las mismas preferencias, que comparte el hilo de la página que la abrió. Las pestañas 2 a 5 (`?pestana=n`, menú "Pestañas") no: desde el 13/11 la app crea su ventana propia, una por número y con su propio hilo (`openTabWindow`), y pedirla otra vez la trae al frente con el módulo pedido. Una URL externa va al navegador del sistema y no abre ventana; tampoco se navega fuera del origen.
+- **Bandeja:** "Mostrar", "Nueva ventana" y "Salir". "Nueva ventana" abre la primera pestaña libre, de la 2 a la 5 (desde el 13/11; antes abría otra pestaña 1, que repetía las imágenes del journal y los avisos). Cerrar la ventana principal la oculta en la bandeja y la página sigue trabajando; si la página la cierra con `window.close()`, se vuelve a abrir oculta. Solo "Salir" cierra de verdad.
 - **Al salir:** cierra el servidor solo si lo lanzó la app. Si ese servidor se cae mientras la app corre, lo vuelve a lanzar (hasta 5 veces en 10 minutos) y recarga las ventanas. Una página caída se recarga sola.
 - **Una sola instancia:** abrirla otra vez muestra la ventana existente. Si el código cambió desde que arrancó (la página, el servidor, el backend de App 1, `local_tape.py`, `sync_nube.py` o `main.cjs`), se reinicia sola con la versión nueva (`newestCode()`, 51 ms). Antes, cerrar con la X y volver a abrir mostraba la versión vieja: el 12/11 el usuario probó así y ningún arreglo estaba corriendo. "Reiniciar" en la bandeja y en el menú Suite hace lo mismo a pedido. "Registro del servidor" abre `data/servidor_desktop.log`: en Electron el servidor corre sin ventana, mientras que `INICIAR.bat` sí abre su terminal. El servidor responde la página (`/` y `.html`) con `Cache-Control: no-cache`, para que Electron no muestre una página vieja de su caché.
 - **Menú:** Suite (nueva ventana, ocultar, salir) y Ver (recargar, recargar sin caché, herramientas de desarrollo, zoom y pantalla completa).
