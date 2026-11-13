@@ -54,6 +54,26 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 12 Noviembre 2026: Números en App 1 e Imágenes de Monedas que no se Ven
+
+**Pedido:**
+- llevar a App 1 los números en lugar de las etiquetas de lo elegido;
+- tomar las imágenes de apertura y cierre aunque la moneda no esté a la vista, sin invadir lo que se está mirando.
+
+**Cambios:**
+1. **App 1:** la principal y el 2.º gráfico muestran lo elegido con su número y su etiqueta al pasar el mouse. La lista del panel de trading lleva los mismos números. Las imágenes de las órdenes llevan solo las líneas: el visor del Observador les pone los números encima, los mismos.
+2. **Suite:** cuando se abre o se cierra una posición de una moneda que no está a la vista, o con el gráfico oculto en el módulo del bot, se arma su gráfico fuera de la pantalla (`OffscreenCapture.jsx`) y se toma la imagen:
+   - usa el marco a la vista, sus indicadores y las líneas de la posición;
+   - tarda unos 10 s y toma una imagen a la vez;
+   - no se abre ninguna ventana ni cambia la vista;
+   - solo la pestaña 1 las toma, y un cambio de cuenta no cuenta.
+
+**IMPORTANTE:** en App 1 basta recargar la página. La suite se reinicia sola al abrirla, o con "Reiniciar" en la bandeja. Lo de App 1 no se probó en su pantalla: usa el mismo dibujo probado en la suite, y sus pruebas pasan (`levels.test.mjs`, 54). Lo de la suite se probó en la copia aislada con un bot falso.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal" y `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "REGISTRO AUTOMÁTICO"
+
+---
+
 ### Altagracia Trading Suite + App 1 + TradingBot - 12 Noviembre 2026: Vela Repetida, "Solo Dato", Números y Lo Elegido que se Borraba
 
 **Pedido:** al probar la suite con PAXGUSDT 15m, el usuario vio:
@@ -73,7 +93,7 @@ También pidió escribir todo en español.
    - la imagen de la decisión;
    - el journal.
 
-   App 1 sigue con etiquetas.
+   App 1 siguió con etiquetas hasta la entrada siguiente, de la misma noche.
 4. **Lo elegido no se pierde:**
    - sale de la lista solo si la orden queda en Bybit. Si el bot la rechaza, siguen lo elegido y la nota;
    - al cancelar una Limit sin llenar, lo elegido vuelve a la lista. App 1 hace lo mismo con una orden pendiente cancelada;

@@ -3023,6 +3023,10 @@ const BacktestingApp = () => {
                     // 🎯 Order Flow: Anclar footprint al hacer click en vela
                     handleToggleFootprintPin(timestamp);
                   }}
+                  // Lo elegido con un número y su etiqueta al pasar el mouse (12/11/2026, como la suite). Las imágenes
+                  // de las órdenes llevan solo sus líneas: el visor del Observador les pone los números encima
+                  chosenStyle="numbers"
+                  captureChosenStyle="lines"
                 />
               </div>
             );

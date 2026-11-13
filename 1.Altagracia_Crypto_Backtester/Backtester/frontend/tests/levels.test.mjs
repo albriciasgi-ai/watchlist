@@ -224,11 +224,16 @@ test('números: el nivel lleva un círculo con su número donde nace, no la etiq
   texts.length = 0;
   assert.equal(levels.drawChosenTooltip(ctx, badges, 400, 400, area), null, 'lejos de los números no hay etiqueta');
   assert.equal(texts.length, 0);
-  // Sin números, la etiqueta de siempre (App 1)
+  // Sin números, la etiqueta de siempre
   texts.length = 0;
   const none = levels.drawChosenLevels(ctx, items, area);
   assert.deepEqual(none, []);
   assert.equal(texts[0].text.startsWith('Soporte · POC'), true);
+  // Solo líneas (imágenes de App 1: el visor del Observador pone los números)
+  texts.length = 0;
+  arcs.length = 0;
+  assert.deepEqual(levels.drawChosenLevels(ctx, items, area, { bare: true }), []);
+  assert.equal(texts.length + arcs.length, 0, 'ni etiquetas ni números');
 });
 
 test('orden en la suite: solo sale lo enviado; lo elegido mientras se enviaba sigue', () => {

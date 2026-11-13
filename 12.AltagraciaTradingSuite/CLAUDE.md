@@ -158,7 +158,7 @@ El usuario probó la suite con PAXGUSDT 15m y pidió, además de escribir siempr
 
 - **Última vela dos veces:** el gráfico recarga el histórico cada 5 minutos. Si la recarga caía justo después del cierre de una vela y antes de que el WebSocket mandara la siguiente (en una moneda con pocos trades eso tarda), esa vela quedaba entre las cerradas y también como vela en curso. Se dibujaba dos veces y, al empezar la siguiente, se agregaba otra vez. Ahora `liveCandles.js` de App 1 (`mergeHistory`, `applyKline`, `withForming`, con `tests/liveCandles.test.mjs`) deja la vela en curso solo si es posterior a la última cerrada, conserva lo que el WebSocket cerró mientras se pedía el histórico y nunca agrega dos veces la misma hora.
 - **"Solo dato" (punto 1):** el VWAP solo ofrecía soporte, resistencia, entrada u objetivo. Ahora todo nivel de cualquier indicador ofrece "Solo dato" (`DATA_ONLY = 'data'` en `analysisLevels.js`): queda en el análisis como precio de referencia, sin papel en el trade. Las marcas siguen con "Solo marca". En App 1, `patterns.references` lo cuenta como referencia con el papel "Solo dato".
-- **Números en vez de etiquetas (punto 2):** las etiquetas moradas grandes tapaban las velas. Con `chosenStyle="numbers"` (solo la suite; App 1 sigue con etiquetas) cada elegido lleva un círculo morado pequeño con su número:
+- **Números en vez de etiquetas (punto 2):** las etiquetas moradas grandes tapaban las velas. Con `chosenStyle="numbers"` (la suite y, desde la misma noche, también App 1) cada elegido lleva un círculo morado pequeño con su número:
   - en un nivel, donde nace su línea, que es más tenue; nunca en las últimas velas (48 px del borde derecho);
   - en una marca, arriba a la derecha de su aro.
   
@@ -266,13 +266,23 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
 - **Detalle** (clic en una fila): cuenta, apalancamiento, SL y TP iniciales y actuales, riesgo, cada cierre parcial, los cambios de SL/TP y las notas, con un campo para agregar otra.
 - **Lo del Observador** (12/11, segunda parte), con lo de App 1 sin copiarlo:
   - **Decisión:** al enviar una orden desde el panel se toma la imagen del gráfico a la vista (con contexto, como la de decisión de App 1, y con los números de lo elegido). Cuando el bot responde se guardan la imagen, lo elegido en el gráfico para el análisis (niveles y marcas con su papel y nota), la orden propuesta, su número en Bybit y la nota opcional "Por qué entro". Lo elegido sale de la lista solo si la orden quedó en Bybit (ver "Correcciones tras la prueba del journal"). No frena la orden.
-  - **Apertura y cierre:** la página toma la imagen cuando ve abrirse o cerrarse una posición de la moneda a la vista (1.5 s después, para que se dibuje la línea). De una moneda que no está a la vista no hay imagen: su gráfico no está dibujado.
+  - **Apertura y cierre:** la página toma la imagen cuando ve abrirse o cerrarse una posición en cualquier moneda. Si es la moneda a la vista, la toma de ese gráfico 1.5 s después, para que se dibuje la línea.
+  - **Moneda que no está a la vista** (12/11, pedido del usuario), o el gráfico oculto en el módulo del bot: `OffscreenCapture.jsx` arma su gráfico fuera de la pantalla, en `document.body`, y toma la imagen. Usa el marco a la vista, sus indicadores y el tamaño del gráfico, con las líneas de la posición. Espera las velas (hasta 25 s) y luego 6 s para indicadores y footprints. Tarda unos 10 s, una imagen a la vez, y después se quita. Quien opera no ve nada, no se abre ninguna ventana y su vista no cambia.
+  - **Solo la pestaña 1** toma estas imágenes: la 2.ª las repetiría. Un cambio de cuenta no cuenta como apertura ni como cierre.
   - **Unión:** el contexto se une al trade del bot de la misma moneda y lado. La decisión, por la orden que abrió el trade (`open_order_id` del bot) a cualquier hora; sin ella, la más reciente hasta 15 minutos antes de abrir que no sea de otra orden conocida. La imagen de apertura, hasta 5 minutos después, y la de cierre, hasta 15 minutos después.
   - **Medidas al decidir:** las 58 de App 1 (`measures.compute`, `row_at`, `read_row`) con velas de Bybit, en la última vela de 15m cerrada antes de decidir, vistas desde el lado del trade. Se calculan al abrir el detalle, unos 10 s; las de un trade cerrado quedan guardadas en `data/journal/measures`. El OI y el delta salen de los almacenes locales: en días sin almacén quedan "—".
   - **Lo máximo a favor y en contra,** en R del SL inicial, con velas de 5 minutos.
   - **Informe:** "Informe: qué distingue a las ganadoras" compara ganadoras y perdedoras en cada medida con `patterns.compare_groups` de App 1 ("Separa": en qué parte de los pares la ganadora tiene el valor mayor; "más que el azar" si supera el umbral de las permutaciones). Con menos de 30 trades o de 5 por grupo avisa que solo describe.
   - **Ver en el gráfico:** cambia a la moneda del trade, lleva la vista a su apertura (`focusOn`) y dibuja su caja con entrada, SL y TP iniciales (`getTradeBoxes`), hasta "Quitar".
-- **Falta:** la lectura de la regla del laboratorio (`observer.read_at`), el delta y el OI de los días recientes (almacén en vivo) y las imágenes de las monedas que no están a la vista.
+- **Falta:**
+  - la lectura de la regla del laboratorio (`observer.read_at`);
+  - el delta y el OI de los días recientes (almacén en vivo);
+  - en la imagen de cierre, encuadrar el trade desde su apertura con su caja, como App 1. Hoy muestra la vista a esa hora, ya sin la línea de la posición.
+
+Probado el 12/11 (imágenes fuera de la pantalla) en la copia aislada, con BTC a la vista:
+- abrir y cerrar una posición falsa de ETH guardó sus imágenes de apertura y cierre en unos 10 s, con la línea, el SL y el TP en la de apertura. La vista siguió en BTC;
+- con el módulo del bot a la vista, la apertura de BTC también se tomó fuera de la pantalla;
+- dos aperturas a la vez (SOL y XRP) salieron una detrás de otra, cada una con su moneda.
 
 Probado el 12/11 (segunda parte) en la copia aislada, con un bot falso y velas reales de Bybit:
 - **Orden del panel con nota:** se guardó la decisión con la imagen (1646x1516 px), el marco 15m, la nota y la orden. Unida al trade abierto 10 s después, el detalle la mostró.

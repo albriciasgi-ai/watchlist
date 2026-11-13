@@ -209,7 +209,8 @@ const MiniChart = forwardRef(({
   getTradeBoxes = null, // Cajas TP/SL de los trades, para el 2.º gráfico: { side, entry, stop, target, start, end }
   getPositionLines = null, // Posiciones y órdenes reales (suite en vivo), ver positionLines.js. App 1 no lo pasa
   onPositionAction = null, // { type: 'close' | 'cancel' | 'move' | 'remove', line, field, price }: lo decide quien da los datos
-  chosenStyle = 'labels', // Lo elegido para el análisis: 'labels' (App 1) o 'numbers', un número pequeño con su etiqueta al pasar el mouse (suite)
+  chosenStyle = 'labels', // Lo elegido para el análisis: 'labels' (etiqueta morada) o 'numbers', un número pequeño con su etiqueta al pasar el mouse
+  captureChosenStyle = null, // En las imágenes de las órdenes: el mismo de chosenStyle, o 'lines' (solo sus líneas y aros: App 1, cuyo visor pone los números)
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -372,6 +373,8 @@ const MiniChart = forwardRef(({
     },
     // Lo que responde al mouse en las posiciones reales (último dibujo), para revisar desde la consola
     getPositionTargets: () => positionTargetsRef.current,
+    // Velas cargadas: la suite espera a tenerlas antes de tomar una imagen con un gráfico armado fuera de la pantalla
+    candleCount: () => candlesRef.current?.length ?? 0,
     // 🎯 NUEVO: Obtener el IndicatorManager (para acceso directo desde BacktestingApp)
     getIndicatorManager: () => {
       return indicatorManagerRef.current;
@@ -1363,8 +1366,9 @@ const MiniChart = forwardRef(({
       const area = { priceToY, timeToX, candleX, left: marginLeft, right: marginLeft + chartWidth, top: marginTop, bottom: marginTop + priceChartHeight };
       // Al tomar la imagen de una orden, lo elegido para ella. Con números, cada uno lleva el suyo (su lugar en la lista)
       const chosen = captureItemsRef.current ?? knownLevels(symbol, simulatedNowRef.current ?? priceContext.knownUntil);
-      const chosenNumberMap = chosenStyle === 'numbers' ? chosenNumbers(chosen) : null;
-      const levelBadges = drawChosenLevels(ctx, chosen, area, { numbers: chosenNumberMap });
+      const shownStyle = captureItemsRef.current ? (captureChosenStyle ?? chosenStyle) : chosenStyle;
+      const chosenNumberMap = shownStyle === 'numbers' ? chosenNumbers(chosen) : null;
+      const levelBadges = drawChosenLevels(ctx, chosen, area, { numbers: chosenNumberMap, bare: shownStyle === 'lines' });
       ctx.restore();
 
       // Los footprints van encima de los perfiles y demás indicadores, para leer sus cifras

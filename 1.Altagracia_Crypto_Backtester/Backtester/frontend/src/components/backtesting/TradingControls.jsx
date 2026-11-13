@@ -413,7 +413,7 @@ const TradingControls = ({ symbol, orderManager, currentPrice, currentTime, char
         />
       </div>
 
-      <AnalysisLevels symbol={symbol} time={currentTime} />
+      <AnalysisLevels symbol={symbol} time={currentTime} numbered />
 
       <div className="control-actions">
         <button

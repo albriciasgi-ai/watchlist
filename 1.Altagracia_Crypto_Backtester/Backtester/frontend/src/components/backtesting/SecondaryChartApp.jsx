@@ -648,6 +648,7 @@ const SecondaryChartApp = () => {
               onRequestTimeChange={noop}
               onDrawingsChange={noop}
               onCandleClick={noop}
+              chosenStyle="numbers"
             />
           </div>
         )}

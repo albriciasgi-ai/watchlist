@@ -301,9 +301,10 @@ function drawBadge(ctx, x, y, n) {
 /**
  * Línea y etiqueta de cada nivel elegido. Uno que nace en una vela empieza en ella.
  * Con numbers (id -> número) cada nivel lleva su número donde nace la línea, o en el borde izquierdo si nace
- * antes de la vista, en vez de la etiqueta. Devuelve dónde quedó cada número, para mostrar su etiqueta
+ * antes de la vista, en vez de la etiqueta. Devuelve dónde quedó cada número, para mostrar su etiqueta.
+ * Con bare, solo la línea tenue: las imágenes de App 1, a las que el visor del Observador les pone los números
  */
-export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left, right, top, bottom }, { numbers = null } = {}) {
+export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left, right, top, bottom }, { numbers = null, bare = false } = {}) {
   const at = candleX ?? timeToX;
   const badges = [];
   ctx.save();
@@ -322,7 +323,7 @@ export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left
     const badgeX = n ? Math.max(left + BADGE_R + 2, Math.min(right - BADGE_CLEAR_RIGHT_PX, from + BADGE_R + 3)) : null;
     ctx.strokeStyle = LEVEL_COLOR;
     ctx.setLineDash([2, 3]);
-    if (numbers) ctx.globalAlpha = BADGE_ALPHA;
+    if (numbers || bare) ctx.globalAlpha = BADGE_ALPHA;
     ctx.beginPath();
     ctx.moveTo(badgeX === null ? from : Math.min(from, badgeX), alignY(y));
     ctx.lineTo(right, alignY(y));
@@ -330,6 +331,7 @@ export function drawChosenLevels(ctx, levels, { priceToY, timeToX, candleX, left
     ctx.globalAlpha = 1;
     ctx.setLineDash([]);
 
+    if (bare) continue;
     if (numbers) {
       if (!n) continue;
       drawBadge(ctx, badgeX, y, n);

@@ -23,6 +23,7 @@ import { Icon } from '@app1/components/uiIcons.jsx';
 import '@app1/components/drawing/DrawingToolbar.css';
 import '@app1/components/drawing/DrawingSidebar.css';
 import TradingPanel from './TradingPanel.jsx';
+import OffscreenCapture from './OffscreenCapture.jsx';
 import { getJson, postJson } from './api.js';
 import { linesFor, runPositionAction, subscribeBook, subscribeCancels } from './botBook.js';
 import { dropLevels, knownLevels, restoreLevels } from '@app1/components/indicators/analysisLevels.js';
@@ -209,30 +210,67 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
     }
   }), []);
 
+  // Imágenes de apertura y cierre de una moneda que no está a la vista, o con el gráfico oculto (módulo del bot):
+  // su gráfico se arma fuera de la pantalla (OffscreenCapture), una imagen a la vez (12/11/2026, pedido del usuario)
+  const [offscreenJob, setOffscreenJob] = useState(null);
+  const offscreenQueueRef = useRef([]);
+  const offscreenBusyRef = useRef(false);
+  const chartsBoxRef = useRef(null);
+  const chartSizeRef = useRef({ width: 1200, height: 720 }); // el último tamaño del gráfico a la vista
+  const chartSize = useCallback(() => {
+    const r = chartsBoxRef.current?.getBoundingClientRect();
+    if (r && r.width > 300 && r.height > 200) chartSizeRef.current = { width: Math.round(r.width), height: Math.round(r.height) };
+    return chartSizeRef.current;
+  }, []);
+  const pumpOffscreen = useCallback(() => {
+    if (offscreenBusyRef.current) return;
+    const next = offscreenQueueRef.current.shift();
+    if (!next) return;
+    offscreenBusyRef.current = true;
+    setOffscreenJob(next);
+  }, []);
+  const finishOffscreen = useCallback((job, image) => {
+    if (image) saveContext({ kind: job.kind, symbol: job.symbol, side: job.side, at: job.at, image, frame: job.tf });
+    offscreenBusyRef.current = false;
+    setOffscreenJob(null);
+    setTimeout(pumpOffscreen, 300);
+  }, [saveContext, pumpOffscreen]);
+
   useEffect(() => {
     let last = '';
-    let known = null; // posiciones de la moneda a la vista en la lectura anterior
+    let known = null; // { account, map } con las posiciones de todas las monedas en la lectura anterior
     return subscribeBook((book) => {
       const key = JSON.stringify(linesFor(symbolRef.current));
       if (key !== last) {
         last = key;
         chartRefs.current[activeTfRef.current]?.forceRedraw?.(); // sin esperar el próximo precio
       }
-      // Imágenes de apertura y cierre para el journal: solo de la moneda a la vista (el gráfico de otra no está dibujado)
+      // Imágenes de apertura y cierre para el journal, de todas las monedas. Solo la pestaña 1: la 2.ª las repetiría
       if (book.error || !book.at) return;
-      const sym = symbolRef.current;
-      const now = new Map(book.positions.filter(p => p.symbol === sym && Number(p.size) > 0).map(p => [`${p.positionIdx ?? 0}:${p.side}`, p]));
-      if (known && known.sym === sym) {
-        const moment = (kind, p) => setTimeout(async () => {
-          const { image, frame } = await captureFor(`${kind}-${Date.now()}`, { context: kind === 'open' });
-          if (image) saveContext({ kind, symbol: p.symbol, side: p.side, at: Date.now(), image, frame });
-        }, 1500); // que el gráfico dibuje antes la línea nueva (o la quite)
+      const account = book.account?.id ?? null;
+      const now = new Map(book.positions.filter(p => Number(p.size) > 0).map(p => [`${p.symbol}:${p.positionIdx ?? 0}:${p.side}`, p]));
+      // Con otra cuenta las posiciones son otras: no se abrió ni se cerró nada
+      if (TAB === 1 && known && known.account === account) {
+        const moment = (kind, p) => {
+          const at = Date.now();
+          const tf = activeTfRef.current;
+          if (p.symbol === symbolRef.current && chartRefs.current[tf]?.isShown?.()) {
+            setTimeout(async () => {
+              const { image, frame } = await captureFor(`${kind}-${at}`, { context: kind === 'open' });
+              if (image) saveContext({ kind, symbol: p.symbol, side: p.side, at, image, frame });
+            }, 1500); // que el gráfico dibuje antes la línea nueva (o la quite)
+          } else {
+            offscreenQueueRef.current.push({ id: `${kind}-${p.symbol}-${p.side}-${at}`, kind, symbol: p.symbol, side: p.side, at, tf,
+                                             days: DAYS[tf], size: chartSize() });
+            pumpOffscreen();
+          }
+        };
         for (const [k, p] of now) if (!known.map.has(k)) moment('open', p);
         for (const [k, p] of known.map) if (!now.has(k)) moment('close', p);
       }
-      known = { sym, map: now };
+      known = { account, map: now };
     });
-  }, [captureFor, saveContext]);
+  }, [captureFor, saveContext, pumpOffscreen, chartSize]);
 
   // "Ver en el gráfico" desde el journal: su moneda, la vista en su apertura y su caja con entrada, SL y TP iniciales
   const focusBoxRef = useRef(null);
@@ -705,7 +743,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
           className={`backtesting-main chart-with-sidebar ${sidebarCollapsed ? 'sidebar-collapsed' : ''} ${sidebarHidden ? 'sidebar-hidden' : ''}`}
           style={{ flex: 1, display: 'flex' }}
         >
-          <div className="timeframes-container">
+          <div className="timeframes-container" ref={chartsBoxRef}>
             {TIMEFRAMES.map(tf => (
               <div key={tf} className="timeframe-panel" style={{ display: activeTimeframe === tf ? 'block' : 'none' }}>
                 <MiniChart
@@ -767,6 +805,16 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
       </div>
 
       {settingsFor && renderSettings()}
+      {offscreenJob && (
+        <OffscreenCapture
+          key={offscreenJob.id}
+          job={offscreenJob}
+          size={offscreenJob.size}
+          tabState={tabStates[offscreenJob.tf]}
+          rejectionConfig={rejectionConfig}
+          onDone={finishOffscreen}
+        />
+      )}
     </div>
   );
 }
