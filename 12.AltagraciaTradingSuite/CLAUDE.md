@@ -48,7 +48,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── journal_routes.py  Imágenes (contrato de App 1), contexto, medidas e informe del journal
 │   ├── recorder.py        Graba los trades de las monedas de la suite (usa local_tape.py del 11000)
 │   ├── book_recorder.py   Graba el libro completo de Bybit (orderbook.full) de las monedas de la suite (ver "Libro completo")
-│   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book)
+│   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book, y live/book_cloud de la nube)
+│   ├── book_cloud.py      Baja de la nube (Northflank) los minutos del libro que el PC no tiene completos
 │   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro")
 │   ├── book_study.py      Medición de semanas: qué hace la liquidez al llegar el precio a tus zonas, contra zonas al azar
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
@@ -56,7 +57,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43), swing_checks.py (102) y book_checks.py (57), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43), swing_checks.py (102), book_checks.py (60) y book_cloud_checks.py (16), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -524,7 +525,8 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - en memoria, solo los niveles a ±20% del precio;
   - el tick de cada moneda sale de `instruments-info` (un pedido); sin respuesta se deduce de la foto;
   - las monedas son las de la suite, y una nueva empieza a grabarse al agregarla;
-  - un solo proceso por carpeta (`live/book/recorder.lock`). `SUITE_BOOK=0` lo apaga; sin esa variable vale `SUITE_RECORD`, que las pruebas ponen en 0. Solo lee: a Bybit no se le envía nada más que las suscripciones y las fotos.
+  - un solo proceso por carpeta (`live/book/recorder.lock`). `SUITE_BOOK=0` lo apaga; sin esa variable vale `SUITE_RECORD`, que las pruebas ponen en 0. Solo lee: a Bybit no se le envía nada más que las suscripciones y las fotos;
+  - una moneda que Bybit no da como "Trading" en `instruments-info` (TONUSDT, cerrada) no se graba ni se reintenta: su foto llega vacía. `/api/book/status` la muestra con `closed`.
 - **Hora de Bybit:** cada segundo y cada minuto se toman con la hora de los mensajes (`ts`), no con la del PC (el 13/11 iba unos 2 s atrasada). Las monedas sin cambios se toman con un reloj de respaldo: la hora del PC más la diferencia medida, con 1.5 s de atraso.
 - **Archivos** (`server/book_store.py`), en `OrderFlowData/live/book/{SIMBOLO}/{AAAA}/`, uno por moneda, día UTC y tipo:
   - `{SIMBOLO}_{día}.bks`: cada segundo, lo que había en cubos finos, de ~0.01% del precio (BTC 5 USD, ETH 0.2, SOL y XRP un tick), hasta ±0.8%, con la mejor compra y venta;
@@ -533,6 +535,14 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - bloques de un minuto con zlib. Las filas de cada segundo van con XOR contra la anterior: sin pérdida, y lo que no cambia casi no ocupa. Un bloque cortado al final se ignora al leer.
 - **Peso medido** (13/11, 12 minutos de las 20 monedas de fábrica, a las 14 h de Colombia): las 20 monedas, unos 200 MB por día y 6 GB por mes. Las que más ocupan: BTC unos 20 MB por día, ETH 19, XRP 18.5, ARB 13, SOL 12 y DOGE 10. Las que menos, de 3 a 7 MB. En horas movidas ocupará más.
 - **Rutas:** `GET /api/book/status` (por moneda: lista, `u`, cubos, mensajes, huecos y resincronizaciones; bytes de hoy) y `GET /api/book/depth/{símbolo}?band=0.005` (lo que hay ahora en cubos finos, para un ladder). `/api/suite/status` trae `book`.
+- **Nube** (13/11, pedido del usuario: la grabación corre solo con la suite abierta, y no la puede tener abierta todas esas semanas):
+  - el collector de Northflank graba el libro completo todo el día, con copias exactas de `book_recorder.py` y `book_store.py`. Ver `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md`, "Libro completo de Bybit";
+  - `server/book_cloud.py`, 90 s después de arrancar y luego cada 10 minutos, lista `/api/book/days` de la nube. De cada moneda de la suite y cada día baja solo los minutos que el PC no tiene completos, a `OrderFlowData/live/book_cloud`;
+  - cada pedido trae 60 minutos, primero los segundos y después los minutos, hasta 40 MB por vuelta. Lo que no alcanza queda para la siguiente, que sigue a los 5 s. La nube entrega de 15 a 40 KB/s: un día completo de las 20 monedas tarda de 1.5 a 4 horas;
+  - nunca toca lo grabado en el PC. Los lectores (`book_store.sources`) juntan las dos carpetas: de cada minuto, el bloque con más cobertura. Las medidas del journal y `book_study.py` leen las dos;
+  - la nube guarda 3 días (`BOOK_KEEP_DAYS`): con el PC apagado más tiempo, lo más viejo se pierde;
+  - `SUITE_CLOUD_URL` cambia la dirección (la de `sync_nube.py` por omisión). `SUITE_BOOK_CLOUD=0` lo apaga; sin esa variable sigue a `SUITE_BOOK` y luego a `SUITE_RECORD`;
+  - `GET /api/book/cloud`: última vuelta, minutos y bytes bajados, lo pendiente y el último error. `/api/suite/status` trae `book_cloud`.
 - **Journal** (`server/book_measures.py`): las medidas del libro de cada trade real van con las 58 de App 1, en el grupo "Libro". Se ven en el detalle y entran al informe de ganadoras contra perdedoras:
   - liquidez a ±0.5% en los 5 minutos antes de decidir, y su percentil contra las 24 horas anteriores;
   - desequilibrio a ±0.5% a favor del trade;
@@ -549,8 +559,11 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - da el aguante de tus zonas y del azar, la diferencia con su IC 95%, el "llena y aguanta" y las cargadas contra el resto. Con menos de 30 visitas resueltas avisa muestra pequeña.
   
   Uso: `C:\Python314\python.exe -B server\book_study.py BTCUSDT,ETHUSDT 2026-11-14 2026-12-14 [salida.json]`.
-- **Pruebas:** `tests/book_checks.py` (57), sin conexión:
+- **Pruebas:** `tests/book_checks.py` (60) y `tests/book_cloud_checks.py` (16), sin conexión:
   - cubos y mejor precio exactos tras miles de cambios al azar;
+  - una moneda cerrada en Bybit queda fuera;
+  - la nube (el `main.py` del collector, corrido en el mismo proceso) lista sus días y entrega solo los minutos pedidos. La suite baja solo lo que le falta, no repite al volver a pasar y respeta el tope por vuelta;
+  - PC y nube juntos dan un bloque por minuto, el de más cobertura, y las copias de la nube son iguales a las de la suite;
   - salto de `u` y foto que empalma o no;
   - cada segundo y cada minuto (ponderado y mínimo) iguales a recalcularlos desde cero;
   - escritura y lectura con un bloque cortado;
@@ -605,6 +618,8 @@ C:\Python314\python.exe -B tests\run_checks.py
 C:\Python314\python.exe -B tests\bot_checks.py
 C:\Python314\python.exe -B tests\journal_checks.py
 C:\Python314\python.exe -B tests\swing_checks.py
+C:\Python314\python.exe -B tests\book_checks.py
+C:\Python314\python.exe -B tests\book_cloud_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.

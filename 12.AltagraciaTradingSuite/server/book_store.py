@@ -30,8 +30,19 @@ KINDS = ("bks", "bkm")
 
 
 # ---------- rutas ----------
+# Dos fuentes en el PC: lo que graba la suite (live/book) y lo que se baja de la nube para tapar sus huecos
+# (live/book_cloud, ver book_cloud.py). Los lectores aceptan una carpeta o una lista y, si un minuto esta en las dos,
+# toman el bloque con mas cobertura. El collector de la nube usa una copia exacta de este archivo.
 def root(data_dir) -> Path:
     return Path(data_dir) / "live" / "book"
+
+
+def cloud_root(data_dir) -> Path:
+    return Path(data_dir) / "live" / "book_cloud"
+
+
+def sources(data_dir) -> List[Path]:
+    return [root(data_dir), cloud_root(data_dir)]
 
 
 def day_of(ms: int) -> str:
@@ -142,25 +153,31 @@ def index(path: Path) -> List[Tuple[int, int, int]]:
     return entry["items"]
 
 
-def blocks(base: Path, symbol: str, kind: str, start_ms: int, end_ms: int) -> Iterator[Tuple[dict, np.ndarray]]:
-    """Bloques de minutos que empiezan en [start_ms - 59.999 s, end_ms), en orden. kind: 'bks' o 'bkm'."""
+def _bases(base) -> List[Path]:
+    return [Path(b) for b in base] if isinstance(base, (list, tuple)) else [Path(base)]
+
+
+def blocks(base, symbol: str, kind: str, start_ms: int, end_ms: int) -> Iterator[Tuple[dict, np.ndarray]]:
+    """Bloques de minutos que empiezan en [start_ms - 59.999 s, end_ms), en orden dentro de cada carpeta.
+    kind: 'bks' o 'bkm'. base: una carpeta o una lista (pueden repetirse minutos entre ellas)."""
     first = start_ms - start_ms % MINUTE
-    for day in days_between(first, end_ms):
-        path = day_path(base, symbol, day, kind)
-        items = [it for it in index(path) if first <= it[0] < end_ms]
-        if not items:
-            continue
-        with open(path, "rb") as fh:
-            for minute, start, length in sorted(items):
-                fh.seek(start)
-                try:
-                    yield decode_payload(fh.read(length))
-                except (zlib.error, ValueError, struct.error):
-                    continue  # un bloque ilegible no tapa los demas
+    for b in _bases(base):
+        for day in days_between(first, end_ms):
+            path = day_path(b, symbol, day, kind)
+            items = [it for it in index(path) if first <= it[0] < end_ms]
+            if not items:
+                continue
+            with open(path, "rb") as fh:
+                for minute, start, length in sorted(items):
+                    fh.seek(start)
+                    try:
+                        yield decode_payload(fh.read(length))
+                    except (zlib.error, ValueError, struct.error):
+                        continue  # un bloque ilegible no tapa los demas
 
 
-def minute_columns(base: Path, symbol: str, start_ms: int, end_ms: int) -> List[Tuple[dict, Dict[str, np.ndarray]]]:
-    """Columnas de cada minuto. Si un minuto tiene dos bloques (corte y vuelta), queda el de mas cobertura."""
+def minute_columns(base, symbol: str, start_ms: int, end_ms: int) -> List[Tuple[dict, Dict[str, np.ndarray]]]:
+    """Columnas de cada minuto. Si un minuto tiene dos bloques (corte y vuelta, o PC y nube), queda el de mas cobertura."""
     best: Dict[int, Tuple[dict, Dict[str, np.ndarray]]] = {}
     for header, arr in blocks(base, symbol, "bkm", start_ms, end_ms):
         t = int(header["t"])
@@ -169,13 +186,128 @@ def minute_columns(base: Path, symbol: str, start_ms: int, end_ms: int) -> List[
     return [best[t] for t in sorted(best)]
 
 
-def second_rows(base: Path, symbol: str, start_ms: int, end_ms: int) -> List[Tuple[dict, np.ndarray, np.ndarray]]:
-    """Bloques de segundos con sus filas de compras y ventas ya armadas."""
-    out = []
+def second_rows(base, symbol: str, start_ms: int, end_ms: int) -> List[Tuple[dict, np.ndarray, np.ndarray]]:
+    """Bloques de segundos con sus filas de compras y ventas ya armadas, uno por minuto (el de mas tomas)."""
+    best: Dict[int, Tuple[dict, np.ndarray]] = {}
     for header, arr in blocks(base, symbol, "bks", start_ms, end_ms):
+        t = int(header["t"])
+        if t not in best or len(header.get("ts") or []) > len(best[t][0].get("ts") or []):
+            best[t] = (header, arr)
+    out = []
+    for t in sorted(best):
+        header, arr = best[t]
         bids, asks = split_seconds(header, arr)
         out.append((header, bids, asks))
     return out
+
+
+# ---------- copiar bloques entre la nube y el PC ----------
+def minutes_in(path: Path) -> List[int]:
+    """Minutos con bloque completo en un archivo."""
+    return sorted({minute for minute, _, _ in index(path)})
+
+
+def ranges(minutes: List[int]) -> List[List[int]]:
+    """Minutos seguidos como tramos [inicio, fin) en ms."""
+    out: List[List[int]] = []
+    for m in sorted(set(minutes)):
+        if out and out[-1][1] == m:
+            out[-1][1] = m + MINUTE
+        else:
+            out.append([m, m + MINUTE])
+    return out
+
+
+def raw_blocks(path: Path, start_ms: int, end_ms: int, limit_bytes: int = 8 << 20) -> bytes:
+    """Los bloques tal cual (prefijo y contenido) de los minutos en [start_ms, end_ms), hasta limit_bytes."""
+    items = sorted(it for it in index(path) if start_ms <= it[0] < end_ms)
+    out, size = [], 0
+    if not items:
+        return b""
+    with open(path, "rb") as fh:
+        for minute, start, length in items:
+            if size and size + PREFIX.size + length > limit_bytes:
+                break
+            fh.seek(start - PREFIX.size)
+            data = fh.read(PREFIX.size + length)
+            out.append(data)
+            size += len(data)
+    return b"".join(out)
+
+
+def split_raw(data: bytes) -> List[Tuple[int, bytes]]:
+    """[(minuto, bloque)] de bloques completos y legibles; lo demas se descarta."""
+    out, pos = [], 0
+    while pos + PREFIX.size <= len(data):
+        magic, version, minute, length = PREFIX.unpack_from(data, pos)
+        end = pos + PREFIX.size + length
+        if magic != MAGIC or version != VERSION or end > len(data):
+            break
+        try:
+            zlib.decompress(data[pos + PREFIX.size:end])
+        except zlib.error:
+            break
+        out.append((minute, data[pos:end]))
+        pos = end
+    return out
+
+
+def append_blocks(path: Path, items: List[Tuple[int, bytes]]) -> int:
+    """Suma bloques al final del archivo, sin repetir minutos que ya tiene. Devuelve cuantos sumo."""
+    have = set(minutes_in(path)) if Path(path).exists() else set()
+    new = [data for minute, data in items if minute not in have]
+    if not new:
+        return 0
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "ab") as fh:
+        fh.write(b"".join(new))
+    return len(new)
+
+
+def minute_cov(path: Path) -> Dict[int, int]:
+    """Cobertura (ms) de cada minuto de un archivo .bkm."""
+    out: Dict[int, int] = {}
+    items = index(path)
+    if not items:
+        return out
+    with open(path, "rb") as fh:
+        for minute, start, length in items:
+            fh.seek(start)
+            try:
+                header, _ = decode_payload(fh.read(length))
+            except (zlib.error, ValueError, struct.error):
+                continue
+            out[minute] = max(out.get(minute, 0), int(header.get("cov") or 0))
+    return out
+
+
+def cleanup_days(base: Path, keep_days: int, now_ms: int) -> int:
+    """Borra los dias de mas de keep_days (por la fecha del nombre). Devuelve cuantos archivos borro."""
+    cutoff = day_of(now_ms - keep_days * 86400000)
+    deleted = 0
+    base = Path(base)
+    if not base.exists():
+        return 0
+    for f in base.rglob("*.bk[sm]"):
+        day = f.stem.rsplit("_", 1)[-1]
+        if len(day) == 10 and day < cutoff:
+            try:
+                f.unlink()
+                _index.pop(str(f), None)
+                deleted += 1
+            except OSError:
+                pass
+    return deleted
+
+
+def oldest_days(base: Path) -> List[Tuple[str, List[Path]]]:
+    """Dias grabados, del mas viejo al mas nuevo, con sus archivos (para liberar espacio)."""
+    days: Dict[str, List[Path]] = {}
+    base = Path(base)
+    if base.exists():
+        for f in base.rglob("*.bk[sm]"):
+            days.setdefault(f.stem.rsplit("_", 1)[-1], []).append(f)
+    return sorted(days.items())
 
 
 # ---------- lectura de un cubo o una zona ----------

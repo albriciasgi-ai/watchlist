@@ -38,7 +38,7 @@ def catalog() -> List[Dict[str, str]]:
 
 
 def _base():
-    return book_store.root(CONFIG["orderflow_data"])
+    return book_store.sources(CONFIG["orderflow_data"])  # lo grabado en el PC y lo bajado de la nube
 
 
 def _columns(base, symbol: str, start: int, end: int):

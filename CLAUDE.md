@@ -54,6 +54,28 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + Collector de Northflank - 13 Noviembre 2026: Libro Completo También en la Nube
+
+**Pedido:** la grabación del libro corre solo con la suite abierta. El usuario no puede tenerla abierta todas las semanas que necesita la medición, y pidió llevarla a Northflank.
+
+**Cambios:**
+1. **Collector** (`5.Order_flow/cloud_collector`): graba todo el día el libro completo de sus monedas con el grabador de la suite (copias exactas de `book_recorder.py` y `book_store.py`).
+   - Guarda 3 días (`BOOK_KEEP_DAYS`).
+   - Si el volumen queda con menos de 150 MB libres, borra los días más viejos del libro, nunca los trades ni los footprints.
+   - Rutas `/api/book/days` y `/api/book/{símbolo}/{día}/{tipo}`; `/health` dice el espacio libre.
+2. **Suite** (`book_cloud.py`): cada 10 minutos baja de la nube solo los minutos que el PC no tiene completos, a `OrderFlowData/live/book_cloud`. El journal y la medición de semanas leen las dos carpetas sin repetir minutos.
+3. **Monedas cerradas:** una moneda que Bybit no da como "Trading" (TONUSDT) no se graba ni se reintenta.
+4. **Pruebas:** `book_cloud_checks.py` de la suite (16) y `book_checks.py` (60). Las demás de la suite y del collector siguen igual; las 4 que fallan en `tape_checks.py` del collector ya fallaban antes (usan el 12/11 como día en curso).
+
+**IMPORTANTE:**
+- Reiniciar la suite ("Reiniciar" en la bandeja) para que empiece a bajar la nube.
+- La nube guarda 3 días: con el PC apagado más tiempo, lo más viejo se pierde. Bajar un día completo de las 20 monedas tarda de 1.5 a 4 horas: la nube entrega de 15 a 40 KB/s.
+- Un cambio al grabador se hace en la suite y se copia al collector, y de ahí a la rama `deploy` de `footprint-collector`.
+
+**Ver:** `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Libro completo de Bybit" y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Libro completo", "Nube"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Libro Completo Grabado y Limit que se Llenan al Cruzar
 
 **Pedido:** tras los informes del price ladder (`reports/` del worktree `price-ladder-orderflow`):

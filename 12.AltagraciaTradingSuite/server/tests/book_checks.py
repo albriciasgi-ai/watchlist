@@ -263,6 +263,33 @@ try:
         rec._write_all()
         return rec, ready, http
 
+    async def closed_coin(listing, cursor="", fail=False):
+        class FakeResponse:
+            def json(self):
+                return {"retCode": 0, "result": {"list": listing, "nextPageCursor": cursor}}
+
+        class FakeHttp:
+            async def get(self, url, params=None, timeout=None):
+                if fail:
+                    raise OSError("sin red")
+                return FakeResponse()
+
+        r = BookRecorder(["BTCUSDT", "TONUSDT", "ETHUSDT"], TMP / "cerrada", "https://bybit.invalid", FakeHttp())
+        await r._load_ticks()
+        return r.closed, r.books["BTCUSDT"].tick, r.status()["books"].get("TONUSDT")
+
+    btc = {"symbol": "BTCUSDT", "status": "Trading", "priceFilter": {"tickSize": "0.1"}}
+    eth = {"symbol": "ETHUSDT", "status": "Trading", "priceFilter": {"tickSize": "0.01"}}
+    # como responde Bybit (13/11): la lista trae solo las que cotizan, y TONUSDT (cerrada) no sale
+    closed, btc_tick, ton = asyncio.run(closed_coin([btc, eth]))
+    check("una moneda que falta en la lista completa de Bybit (cerrada) no se graba ni se reintenta",
+          closed == ["TONUSDT"] and btc_tick == 0.1 and ton == {"ready": False, "closed": True}, str(closed))
+    closed, _, _ = asyncio.run(closed_coin([btc, {"symbol": "TONUSDT", "status": "Closed", "priceFilter": {"tickSize": "0.0001"}}],
+                                           cursor="pagina2"))
+    check("con la lista a medias, solo cuenta un estado distinto de Trading (la que falta se intenta)", closed == ["TONUSDT"], str(closed))
+    closed, _, _ = asyncio.run(closed_coin([], fail=True))
+    check("sin respuesta de Bybit se intentan todas", closed == [], str(closed))
+
     rec, ready, http = asyncio.run(recorder_roundtrip())
     check("el grabador toma el tick de Bybit y empalma la foto con los cambios", ready)
     check("la foto se pide a full_orderbook de la moneda",

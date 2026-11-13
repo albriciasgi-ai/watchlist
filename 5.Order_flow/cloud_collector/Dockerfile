@@ -25,6 +25,8 @@ COPY main.py .
 COPY footprint_collector.py .
 COPY tape_format.py .
 COPY tape_recorder.py .
+COPY book_recorder.py .
+COPY book_store.py .
 
 # Puerto (Northflank usa variable PORT)
 ENV PORT=8000

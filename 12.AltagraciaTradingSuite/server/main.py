@@ -49,6 +49,7 @@ from journal_store import JournalStore  # noqa: E402
 import official  # noqa: E402  dias oficiales que faltan, con las herramientas del panel
 import recorder  # noqa: E402  grabacion propia de trades (live/local), un solo proceso a la vez
 import book_recorder  # noqa: E402  libro completo de Bybit (live/book), un solo proceso a la vez
+import book_cloud  # noqa: E402  tapa los huecos del libro con lo que graba la nube (live/book_cloud)
 import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca envia
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
@@ -65,6 +66,7 @@ _http: Optional[httpx.AsyncClient] = None
 _candle_cache = {}
 app.include_router(market_routes.router)
 app.include_router(book_recorder.make_router())
+app.include_router(book_cloud.make_router())
 SWING = swing_watch.SwingWatch(Path(CONFIG["data_dir"]) / "swing", DRAWINGS_DIR)
 app.include_router(swing_watch.make_router(SWING))
 
@@ -83,6 +85,7 @@ async def _startup():
         coins = list(DEFAULT_SYMBOLS)
     await recorder.start(coins, DATA, SUITE_DIR.parent)
     await book_recorder.start(coins, DATA, CONFIG["bybit_url"], _http, candles.bybit_turn)
+    book_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _official_symbols, _http)
     official.start(DATA, _official_symbols)
     await SWING.start()
     print(f"[SUITE] Servidor en http://{CONFIG['host']}:{CONFIG['port']} | almacen {DATA} | bot {CONFIG['bot_url']}")
@@ -92,6 +95,7 @@ async def _startup():
 async def _shutdown():
     await SWING.stop()
     official.stop()
+    await book_cloud.stop()
     await book_recorder.stop()
     await recorder.stop()
     if _http:
@@ -442,7 +446,8 @@ async def suite_status():
     store, tape, bot_state = await asyncio.gather(run_in_threadpool(store_info), local_tape(), bot())
     return {"success": True, "version": app.version, "now": int(time.time() * 1000), "store": store,
             "local_tape": tape, "bot": bot_state,
-            "recorder": recorder.status(), "book": book_recorder.brief(), "official": official.status(), "swing": SWING.brief()}
+            "recorder": recorder.status(), "book": book_recorder.brief(), "book_cloud": book_cloud.brief(),
+            "official": official.status(), "swing": SWING.brief()}
 
 
 # Frontend ya armado (web/dist), servido desde aqui: una sola direccion para todo

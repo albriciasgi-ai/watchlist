@@ -14,12 +14,17 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 from contextlib import asynccontextmanager
 
+import shutil
+
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, Response
 
 from footprint_collector import FootprintCollector
 from tape_recorder import TapeRecorder, DAY_RE
+# Libro completo (13/11/2026): copias exactas de 12.AltagraciaTradingSuite/server/book_recorder.py y book_store.py
+import book_recorder
+import book_store
 
 # Configuracion de logging
 logging.basicConfig(
@@ -47,9 +52,68 @@ MAX_DAYS = int(os.environ.get("MAX_DAYS", "0"))
 TAPE_KEEP_DAYS = int(os.environ.get("TAPE_KEEP_DAYS", "30"))
 TAPE_SNAPSHOT_SECONDS = int(os.environ.get("TAPE_SNAPSHOT_SECONDS", "300"))
 
+# Libro completo de Bybit (orderbook.full): el mismo grabador de la suite, para tapar los huecos del PC.
+# BOOK=0 lo apaga. BOOK_SYMBOLS cambia las monedas (sin rehacer la imagen: basta reiniciar el servicio).
+# Ocupa unos 10 MB por moneda y dia: se guardan BOOK_KEEP_DAYS dias, y si el volumen queda con menos de
+# BOOK_MIN_FREE_MB libres se borran los dias mas viejos del libro (nunca los trades ni los footprints).
+BOOK_ON = os.environ.get("BOOK", "1") != "0"
+BOOK_SYMBOLS = [s.strip().upper() for s in os.environ.get("BOOK_SYMBOLS", ",".join(SYMBOLS)).split(",") if s.strip()]
+BOOK_KEEP_DAYS = int(os.environ.get("BOOK_KEEP_DAYS", "3"))
+BOOK_MIN_FREE_MB = int(os.environ.get("BOOK_MIN_FREE_MB", "150"))
+BOOK_ROOT = book_store.root(DATA_DIR)
+
 # Instancia del collector
 collector: Optional[FootprintCollector] = None
 tape: Optional[TapeRecorder] = None
+book_http = None
+_book_slots: List[float] = []
+
+
+async def book_turn():
+    """A lo sumo 5 pedidos REST por segundo para las fotos del libro."""
+    while True:
+        now = time.monotonic()
+        while _book_slots and now - _book_slots[0] >= 1.0:
+            _book_slots.pop(0)
+        if len(_book_slots) < 5:
+            _book_slots.append(now)
+            return
+        await asyncio.sleep(0.2)
+
+
+def book_free_space() -> int:
+    """Si el volumen queda con poco espacio, borra los dias mas viejos del libro (nunca el de hoy). Devuelve cuantos."""
+    deleted = 0
+    today = book_store.day_of(int(time.time() * 1000))
+    for day, files in book_store.oldest_days(BOOK_ROOT):
+        if shutil.disk_usage(DATA_DIR).free >= BOOK_MIN_FREE_MB * 1024 * 1024 or day >= today:
+            break
+        for f in files:
+            try:
+                f.unlink()
+                deleted += 1
+            except OSError:
+                pass
+    return deleted
+
+
+async def book_guard():
+    """Cada 10 minutos: dias viejos del libro y espacio libre."""
+    while True:
+        try:
+            await asyncio.sleep(600)
+            gone = await asyncio.to_thread(book_store.cleanup_days, BOOK_ROOT, BOOK_KEEP_DAYS, int(time.time() * 1000))
+            gone += await asyncio.to_thread(book_free_space)
+            if gone:
+                logger.info(f"Libro: {gone} archivos viejos borrados")
+            free_mb = shutil.disk_usage(DATA_DIR).free // (1024 * 1024)
+            if free_mb < BOOK_MIN_FREE_MB and book_recorder.get_recorder() is not None:
+                logger.error(f"Libro detenido: el volumen tiene {free_mb} MB libres y no hay dias viejos que borrar")
+                await book_recorder.stop()
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.error(f"Libro, limpieza: {e}")
 
 
 @asynccontextmanager
@@ -92,10 +156,30 @@ async def lifespan(app: FastAPI):
     # Iniciar limpieza periodica (cada 6 horas)
     cleanup_task = asyncio.create_task(periodic_cleanup())
 
+    # Libro completo: si falla, el collector sigue con trades y footprints
+    global book_http
+    guard_task = None
+    if BOOK_ON:
+        try:
+            import httpx
+            book_http = httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0),
+                                          headers={"User-Agent": "footprint-collector-book/1.0"})
+            await asyncio.to_thread(book_free_space)
+            await book_recorder.start(BOOK_SYMBOLS, DATA_DIR, "https://api.bybit.com", book_http, book_turn)
+            guard_task = asyncio.create_task(book_guard())
+            logger.info(f"Libro completo: {len(BOOK_SYMBOLS)} monedas en {BOOK_ROOT} ({BOOK_KEEP_DAYS} dias)")
+        except Exception as e:
+            logger.error(f"No se pudo iniciar el libro: {e}")
+
     yield
 
     # Shutdown
     logger.info("Deteniendo collector...")
+    if guard_task:
+        guard_task.cancel()
+    await book_recorder.stop()
+    if book_http:
+        await book_http.aclose()
     await collector.stop()
     if tape:
         if tape_task:
@@ -158,13 +242,51 @@ async def root():
 async def health():
     """Health check para Northflank."""
     stats = await asyncio.to_thread(collector.get_stats) if collector else {}
+    usage = shutil.disk_usage(DATA_DIR)
     return {
         "status": "healthy",
         "timestamp": int(time.time() * 1000),
         "collector_running": collector is not None and collector.running,
         "stats": stats,
-        "tape": tape.get_stats() if tape else None
+        "tape": tape.get_stats() if tape else None,
+        "book": book_recorder.brief(),
+        "disk": {"total_mb": usage.total // (1024 * 1024), "free_mb": usage.free // (1024 * 1024)},
     }
+
+
+# ---------- libro completo: estado, dias y bloques de minutos (los pide book_cloud.py de la suite) ----------
+app.include_router(book_recorder.make_router())
+
+
+@app.get("/api/book/days")
+async def book_days(symbol: Optional[str] = None):
+    """Dias del libro por moneda, con los minutos que tiene cada archivo (tramos [inicio, fin) en ms)."""
+    def scan():
+        out: Dict[str, dict] = {}
+        if not BOOK_ROOT.exists():
+            return out
+        for sym_dir in sorted(p for p in BOOK_ROOT.iterdir() if p.is_dir()):
+            if symbol and sym_dir.name != symbol.upper():
+                continue
+            for f in sorted(sym_dir.rglob("*.bk[sm]")):
+                day, kind = f.stem.rsplit("_", 1)[-1], f.suffix[1:]
+                out.setdefault(sym_dir.name, {}).setdefault(day, {})[kind] = {
+                    "bytes": f.stat().st_size, "minutes": book_store.ranges(book_store.minutes_in(f))}
+        return out
+    return {"now": int(time.time() * 1000), "keep_days": BOOK_KEEP_DAYS, "symbols": await asyncio.to_thread(scan)}
+
+
+@app.get("/api/book/{symbol}/{day}/{kind}")
+async def book_blocks(symbol: str, day: str, kind: str, from_ms: int = 0, to_ms: int = 2 ** 62):
+    """Bloques de un archivo del libro, tal cual, de los minutos en [from_ms, to_ms) (hasta 8 MB por pedido)."""
+    symbol = symbol.upper()
+    if not symbol.isalnum() or not DAY_RE.fullmatch(day) or kind not in ("bks", "bkm"):
+        raise HTTPException(status_code=404, detail="Simbolo, dia o tipo invalido")
+    path = book_store.day_path(BOOK_ROOT, symbol, day, kind)
+    if not path.exists():
+        raise HTTPException(status_code=404, detail=f"No hay libro de {symbol} el {day}")
+    data = await asyncio.to_thread(book_store.raw_blocks, path, from_ms, to_ms)
+    return Response(content=data, media_type="application/octet-stream")
 
 
 @app.get("/api/tape/days")

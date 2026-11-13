@@ -427,6 +427,7 @@ class BookRecorder:
         self.turn = turn
         self.books: Dict[str, Book] = {s: Book(s) for s in self.symbols}
         self.ticks: Dict[str, float] = {}
+        self.closed: List[str] = []   # monedas que Bybit no da como "Trading": no se graban
         self.offset = None          # hora de Bybit menos hora del PC (ms), con la menor demora vista
         self._offsets: List[float] = []
         self.connections: Dict[int, dict] = {}
@@ -443,7 +444,10 @@ class BookRecorder:
     async def start(self):
         self.started_at = int(time.time() * 1000)
         await self._load_ticks()
-        self._groups = [self.symbols[i:i + GROUP_SIZE] for i in range(0, len(self.symbols), GROUP_SIZE)]
+        live = [s for s in self.symbols if s not in self.closed]
+        if self.closed:
+            logger.warning(f"[BOOK] sin grabar, Bybit no las da como Trading: {', '.join(self.closed)}")
+        self._groups = [live[i:i + GROUP_SIZE] for i in range(0, len(live), GROUP_SIZE)]
         for gi, group in enumerate(self._groups):
             self._tasks.append(asyncio.create_task(self._run_group(gi)))
         self._tasks.append(asyncio.create_task(self._clock_loop()))
@@ -488,11 +492,22 @@ class BookRecorder:
                 await self.turn()
             r = await self.http.get(f"{self.bybit_url}/v5/market/instruments-info",
                                     params={"category": "linear", "limit": 1000}, timeout=20)
-            items = (r.json().get("result") or {}).get("list") or []
+            result = r.json().get("result") or {}
+            items = result.get("list") or []
+            status = {}
             for it in items:
                 sym, tick = it.get("symbol"), (it.get("priceFilter") or {}).get("tickSize")
                 if sym and tick:
                     self.ticks[sym] = float(tick)
+                if sym:
+                    status[sym] = it.get("status")
+            # una moneda cerrada da una foto vacia: se reintentaria sin fin. Bybit lista solo las que cotizan
+            # ("Trading"; TONUSDT, cerrada, no sale), asi que en la lista completa (sin mas paginas) la que falta
+            # esta cerrada. Con la lista a medias cuenta solo un estado distinto; sin lista se intentan todas
+            if status and not result.get("nextPageCursor"):
+                self.closed = [s for s in self.symbols if status.get(s) != "Trading"]
+            elif status:
+                self.closed = [s for s in self.symbols if status.get(s) not in ("Trading", None)]
         except Exception as e:
             logger.warning(f"[BOOK] sin ticks de Bybit ({e}); se deducen de cada foto")
         for sym, book in self.books.items():
@@ -677,6 +692,8 @@ class BookRecorder:
                           "fine_step": round(b.fine * b.tick, 10) if b.fine and b.tick else None,
                           "coarse_step": round(b.coarse * b.tick, 10) if b.coarse and b.tick else None,
                           "levels": len(b.bids) + len(b.asks), **b.stats}
+        for sym in self.closed:
+            books[sym] = {"ready": False, "closed": True}
         return {"connections": {str(k): v for k, v in self.connections.items()}, "offset_ms": self.offset,
                 "bytes_written": self.bytes_written, "write_errors": self.write_errors,
                 "last_write_error": self.last_write_error, "started_at": self.started_at, "books": books}
@@ -776,8 +793,8 @@ def brief() -> dict:
     """Resumen para /api/suite/status."""
     if _recorder is None:
         return {"enabled": enabled(), "running": False, "other_process_records": _waiting is not None}
-    books = _recorder.books.values()
-    return {"enabled": True, "running": True, "symbols": len(_recorder.symbols),
+    books = [b for s, b in _recorder.books.items() if s not in _recorder.closed]
+    return {"enabled": True, "running": True, "symbols": len(books), "closed": list(_recorder.closed),
             "ready": sum(1 for b in books if b.ready), "connected": sum(1 for c in _recorder.connections.values() if c["connected"]),
             "bytes_written": _recorder.bytes_written, "write_errors": _recorder.write_errors,
             "gaps": sum(b.stats["gaps"] for b in books), "resyncs": sum(b.stats["resyncs"] for b in books)}

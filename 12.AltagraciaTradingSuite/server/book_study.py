@@ -379,7 +379,7 @@ def summarize(items: List[dict]) -> dict:
 def run(symbols: List[str], start: int, end: int, base: Optional[Path] = None, with_trades: bool = True,
         zones_for=None) -> dict:
     """Recorre los dias de [start, end) de cada moneda. zones_for(symbol, day_start, sec) reemplaza las zonas (pruebas)."""
-    base = base or book_store.root(CONFIG["orderflow_data"])
+    base = base or book_store.sources(CONFIG["orderflow_data"])  # lo grabado en el PC y lo bajado de la nube
     fs = None if zones_for else _app1()
     all_visits: List[dict] = []
     days_done = {}
