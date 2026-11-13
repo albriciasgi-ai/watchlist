@@ -100,7 +100,8 @@ def clean_rules(rules: dict, base: dict = None) -> dict:
             out["vwapFilter"]["enabled"] = bool(vwap["enabled"])
         if "deviations" in vwap:
             devs = vwap["deviations"]
-            if (not isinstance(devs, list) or not devs or len(devs) > 6
+            # Puede quedar vacia, como en el modal de App 1: el filtro descarta entonces lo que cae en un rectangulo
+            if (not isinstance(devs, list) or len(devs) > 6
                     or not all(_number(d) and float(d) == int(d) and 1 <= d <= 6 for d in devs)):
                 raise ValueError("deviations es una lista de bandas entre 1 y 6")
             out["vwapFilter"]["deviations"] = sorted({int(d) for d in devs})

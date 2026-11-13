@@ -28,6 +28,10 @@ import { getJson, postJson } from './api.js';
 import { linesFor, runPositionAction, subscribeBook, subscribeCancels } from './botBook.js';
 import { dropLevels, knownLevels, restoreLevels } from '@app1/components/indicators/analysisLevels.js';
 import { TAB, otherTabUrl, onDrawings, sendDrawings } from './tabs.js';
+import {
+  SWING, SWING_RETRY_MS, RULE_KEYS, VISUAL_KEYS, applySwing, fetchSwing, frameName, lastClosed, pick, profileRectIds,
+  saveProfileRects, saveSwingRules, swingOf,
+} from './swingServer.js';
 
 /**
  * Grafico en vivo con el formato de la pestana principal de App 1: barra de dibujo, encabezado con los
@@ -186,6 +190,17 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
   const [rejectionConfig, setRejectionConfig] = useState(null);
   const [positionNotice, setPositionNotice] = useState(null);
   const listRef = useRef(null);
+  // Swing del servidor (paso 5, parte B): el indicador dibuja lo que calcula el servidor (swingServer.js)
+  const [swingVisual, setSwingVisual] = useState(() => saved.swingVisual || {});
+  const [swingSave, setSwingSave] = useState(null);   // { saving } | { savedAt } | { error }
+  const swingRef = useRef({});             // marco -> { ind, data, version, last, pending, tried }
+  const swingVersionRef = useRef(0);       // sube con un cambio de reglas, dibujos o VP Fixed: los marcos vuelven a pedir
+  const swingSaveTimer = useRef(null);
+  const swingSavingRef = useRef(false);    // mientras se guarda, lo que llega del servidor no pisa el modal
+  const swingVisualRef = useRef(swingVisual);
+  swingVisualRef.current = swingVisual;
+  const tabStatesRef = useRef(tabStates);
+  tabStatesRef.current = tabStates;
 
   // Posiciones y órdenes reales sobre el gráfico (paso 4): el getter es estable y lee la moneda a la vista
   const symbolRef = useRef(symbol);
@@ -448,15 +463,18 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
       const tabs = Object.fromEntries(TIMEFRAMES.map(tf => [tf, {
         indicatorStates: tabStates[tf].indicatorStates, vpConfig: tabStates[tf].vpConfig, oiMode: tabStates[tf].oiMode,
       }]));
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: activeTimeframe, tabs, showTrading }));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: activeTimeframe, tabs, showTrading, swingVisual }));
     } catch {
       // Sin almacenamiento la eleccion dura hasta cerrar la pagina
     }
-  }, [symbol, activeTimeframe, tabStates, showTrading]);
+  }, [symbol, activeTimeframe, tabStates, showTrading, swingVisual]);
 
   // Solo en desarrollo: acceso a los graficos desde la consola para revisarlos
   useEffect(() => {
-    if (import.meta.env.DEV) window.__suiteCharts = chartRefs;
+    if (import.meta.env.DEV) {
+      window.__suiteCharts = chartRefs;
+      window.__suiteSwing = swingRef; // lo último que dio el servidor por marco
+    }
   }, []);
 
   // Al volver al modulo o cambiar de marco el grafico se redibuja con su tamano real
@@ -494,6 +512,8 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
       if (tf !== except) chartRefs.current[tf]?.loadDrawings?.(list, true);
     });
     setShapes(list);
+    // Los rectángulos son las zonas del filtro VWAP del Swing: el servidor ya tiene los dibujos guardados
+    swingVersionRef.current += 1;
   }, []);
   const handleDrawingsChange = useCallback((list, sourceInterval) => {
     loadEverywhere(list, sourceInterval);
@@ -522,12 +542,105 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
   const noop = useCallback(() => {}, []);
   const noTrades = useCallback(() => [], []);
 
+  // Swing del servidor (paso 5, parte B): cada marco con el Swing encendido pide sus señales al servidor al cerrar su
+  // vela, y otra vez si cambian las reglas, los dibujos o los VP Fixed. Mientras no llegan, el indicador no calcula
+  // por su cuenta: lo haría con la vela en curso
+  useEffect(() => {
+    let alive = true;
+    let busy = false;
+    let sentRects = null;
+    swingRef.current = {};
+    const round = async () => {
+      if (busy) return;
+      busy = true;
+      try {
+        TIMEFRAMES.forEach(tf => {
+          const ind = swingOf(managerOf(tf));
+          const st = swingRef.current[tf] || (swingRef.current[tf] = {});
+          if (ind && st.ind !== ind) {
+            // Gráfico recién armado: lo último que dio el servidor, o nada mientras llega
+            st.ind = ind;
+            if (st.data) applySwing(ind, st.data, swingVisualRef.current);
+            else ind.setExternalSignals([]);
+          }
+        });
+        const frames = TIMEFRAMES.filter(tf => tabStatesRef.current[tf]?.indicatorStates?.[SWING] && swingRef.current[tf]?.ind);
+        if (!frames.length) return;
+        // Los rectángulos de un VP Fixed no cuentan para el filtro VWAP: el servidor los sabe por la página
+        const ids = profileRectIds(managerOf(frames[0]));
+        if (ids.join('|') !== sentRects) {
+          try {
+            await saveProfileRects(symbol, ids);
+            sentRects = ids.join('|');
+            swingVersionRef.current += 1;
+          } catch {
+            // Se reintenta en la vuelta siguiente; mientras, el servidor usa la lista anterior
+          }
+        }
+        for (const tf of frames) {
+          const st = swingRef.current[tf];
+          const due = st.version !== swingVersionRef.current || !(st.last >= lastClosed(TF_MS[tf]));
+          if (!alive || !due || st.pending || Date.now() - (st.tried || 0) < SWING_RETRY_MS) continue;
+          st.pending = true;
+          st.tried = Date.now();
+          const version = swingVersionRef.current;
+          try {
+            const data = await fetchSwing(symbol, tf);
+            if (!alive) return;
+            st.data = data;
+            st.version = version;
+            st.last = data.candles?.last ?? lastClosed(TF_MS[tf]);
+            if (swingSavingRef.current) st.ind.setExternalSignals(data.signals || []);
+            else applySwing(st.ind, data, swingVisualRef.current);
+            chartRefs.current[tf]?.forceRedraw?.();
+          } catch {
+            // Sin respuesta queda lo último y se reintenta
+          } finally {
+            st.pending = false;
+          }
+        }
+      } finally {
+        busy = false;
+      }
+    };
+    round();
+    const timer = setInterval(round, 2000);
+    return () => { alive = false; clearInterval(timer); };
+  }, [symbol]);
+
+  // Modal del Swing: las flechas quedan en la pestaña y las reglas en el servidor, para la moneda. Se guardan medio
+  // segundo después del último cambio, así un deslizador no manda un pedido por paso
+  const changeSwing = (next) => {
+    const rules = pick(next, RULE_KEYS);
+    const before = pick(swingOf(manager())?.getConfig?.(), RULE_KEYS);
+    setSwingVisual(prev => ({ ...prev, ...pick(next, VISUAL_KEYS) }));
+    applyToAll(m => swingOf(m)?.updateConfig(next));
+    // Solo las flechas: nada que guardar en el servidor
+    if (JSON.stringify(rules) === JSON.stringify(before) && !swingSavingRef.current) return;
+    clearTimeout(swingSaveTimer.current);
+    const sym = symbol;
+    swingSavingRef.current = true;
+    setSwingSave({ saving: true });
+    swingSaveTimer.current = setTimeout(async () => {
+      try {
+        await saveSwingRules(sym, rules);
+        swingVersionRef.current += 1;
+        setSwingSave({ savedAt: Date.now() });
+      } catch (e) {
+        setSwingSave({ error: e.message });
+      } finally {
+        swingSavingRef.current = false;
+      }
+    }, 500);
+  };
+
   const openSettings = (name) => {
     if (!manager()) {
       alert('El gráfico todavía está cargando. Espera unos segundos e inténtalo de nuevo.');
       return;
     }
     setShowList(false);
+    if (name === SWING) setSwingSave(null);
     setSettingsFor(name);
   };
 
@@ -620,17 +733,36 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
             />
           </ModalBox>
         );
-      case 'Swing Detector':
+      case 'Swing Detector': {
+        const info = swingRef.current[activeTimeframe]?.data;
         return (
           <ModalBox onClose={closeSettings} width={700}>
+            <div className="suite-result" style={{ marginTop: 0, marginBottom: 10 }}>
+              Las señales las calcula el servidor de la suite con las velas cerradas: lo que ves es lo que detecta. Los
+              cambios se guardan en el servidor para {symbol}. No envía alertas.
+              {info && (
+                <div style={{ marginTop: 4 }}>
+                  {info.detected_live
+                    ? `El servidor vigila ${symbol} en vivo en ${frameName(info.detection_interval)} y anota cada señal.`
+                    : `El servidor vigila en vivo en ${frameName(info.detection_interval)}: en este marco (${activeTimeframe}) las señales son solo para ver.`}
+                </div>
+              )}
+              <div style={{ marginTop: 4 }}>
+                Su filtro VWAP usa el VWAP de sesión con las bandas de fábrica y actúa aunque el indicador VWAP esté apagado.
+              </div>
+            </div>
+            {swingSave?.saving && <div className="suite-result" style={{ marginTop: 0, marginBottom: 10 }}>Guardando…</div>}
+            {swingSave?.savedAt && <div className="suite-result ok" style={{ marginTop: 0, marginBottom: 10 }}>Guardado en el servidor.</div>}
+            {swingSave?.error && <div className="suite-result bad" style={{ marginTop: 0, marginBottom: 10 }}>No se guardó: {swingSave.error}</div>}
             <SwingDetectorSettings
               symbol={symbol}
               config={current.getIndicatorConfig('Swing Detector')}
-              onConfigChange={async (newConfig) => { await current.applyConfig('Swing Detector', newConfig); redraw(); }}
+              onConfigChange={changeSwing}
               onClose={closeSettings}
             />
           </ModalBox>
         );
+      }
       case 'OI-Volume Confluence':
         return (
           <ModalBox onClose={closeSettings} width={700}>
@@ -937,6 +1069,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
           job={offscreenJob}
           size={offscreenJob.size}
           tabState={tabStates[offscreenJob.tf]}
+          swingVisual={swingVisual}
           rejectionConfig={rejectionConfig}
           onDone={finishOffscreen}
         />

@@ -41,6 +41,8 @@ CHECK_DELAY_MS = 4000        # tras el cierre de la vela, para que Bybit ya la t
 RECOVER_CANDLES = 120        # velas de mas en cada consulta: cubren una pausa de hasta 120 velas del marco
 LOG_MEMORY = 5000            # senales recientes en memoria para /api/swing/log
 MAX_PARALLEL = 12            # monedas pedidas a Bybit a la vez en cada vuelta
+CHART_RECENT = 200           # velas que la ruta del grafico vuelve a pedir en cada actualizacion
+CHART_FULL_MS = 6 * 3_600_000    # cada tanto, las velas del grafico se piden completas otra vez
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}USDT$")
 MAX_SYMBOLS = 60
 RULE_KEYS = ("swingBars", "direction", "volumeFilter", "vwapFilter", "priceZones")
@@ -159,6 +161,23 @@ def _clean_part(part: dict, base: dict) -> dict:
     return out
 
 
+def _minimal_part(part: dict, base: dict, current: dict = None) -> dict:
+    """Los ajustes de una moneda que llegan del grafico, sobre los que ya tenia (`current`): lo que no se manda queda
+    como estaba. Se guarda solo lo que difiere de las reglas generales, asi un cambio de las generales sigue valiendo
+    para lo que la moneda no cambio."""
+    _clean_part(part, base)   # campos conocidos y valores validos
+    full = swing_rules.clean_rules(part, base=swing_rules.clean_rules(current or {}, base=base))
+    out = {}
+    for key in RULE_KEYS:
+        if key in ("volumeFilter", "vwapFilter"):
+            diff = {k: v for k, v in full[key].items() if base[key].get(k) != v}
+            if diff:
+                out[key] = diff
+        elif full[key] != base[key]:
+            out[key] = full[key]
+    return out
+
+
 def clean_config(body: dict, current: dict) -> dict:
     """La configuracion nueva: `body` sobre `current`, campo por campo. Un valor invalido: ValueError."""
     if not isinstance(body, dict):
@@ -184,10 +203,11 @@ def clean_config(body: dict, current: dict) -> dict:
         for symbol, part in parts.items():
             if not SYMBOL_RE.match(str(symbol)):
                 raise ValueError(f"moneda invalida en symbolRules: {symbol}")
-            if part is None or part == {}:
-                out["symbolRules"].pop(symbol, None)
+            part = _minimal_part(part, out["rules"], out["symbolRules"].get(symbol)) if part else None
+            if part:
+                out["symbolRules"][symbol] = part
             else:
-                out["symbolRules"][symbol] = _clean_part(part, out["rules"])
+                out["symbolRules"].pop(symbol, None)   # null, {} o igual a las generales: sin ajustes propios
     # Las de cada moneda se validan otra vez sobre las reglas generales nuevas
     out["symbolRules"] = {s: _clean_part(p, out["rules"]) for s, p in out["symbolRules"].items()}
     if "vwap" in body:
@@ -270,7 +290,8 @@ async def bybit_recent(symbol: str, interval: str, limit: int) -> list:
 
 
 async def chart_candles(symbol: str, interval: str) -> list:
-    """Las velas que tiene el grafico en vivo: los mismos dias por marco y la misma cache que /api/historical."""
+    """Las velas del grafico en vivo: los mismos dias por marco y la misma cache de 5 s que /api/historical. Al abrir la
+    pagina el grafico acaba de pedirlas: asi no se piden dos veces a Bybit."""
     return await candles.cached_klines(symbol, interval, candles.LIVE_DAYS[interval])
 
 
@@ -320,6 +341,7 @@ class SwingWatch:
         self._day_counts = {}            # dia UTC -> senales anotadas (las del archivo y las nuevas)
         self._drawings = {}
         self._vwap_cache = {}
+        self._chart_rows_cache = {}      # (moneda, marco) -> velas del grafico ya pedidas
         self._lock_fh = None
         self._task = None
         self._wake = None
@@ -544,9 +566,39 @@ class SwingWatch:
         signals = await run_in_threadpool(swing_rules.detect, closed, rules, symbol, points, rects)
         return signals, points is not None
 
+    async def chart_rows(self, symbol: str, interval: str) -> list:
+        """Las velas del grafico (los dias por marco de /api/historical). La primera vez se piden completas; despues,
+        solo las ultimas 200, unidas a las de antes: cada cierre cuesta un pedido a Bybit y no cinco. Cada 6 horas, o
+        si faltan velas entre unas y otras, se piden completas otra vez.
+        Una vela cuenta como cerrada 4 s despues de su cierre, como en la deteccion en vivo: `in_progress` marca las
+        demas, que no se revisan. Las de antes que podian estar en curso quedan siempre dentro de las 200 nuevas."""
+        step = INTERVAL_MS[interval]
+        key = (symbol, interval)
+        asked = self._now()
+        hit = self._chart_rows_cache.get(key)
+        rows, full_at = None, asked
+        if hit and hit["rows"] and asked - hit["full_at"] < CHART_FULL_MS:
+            recent = await self._fetch_recent(symbol, interval, CHART_RECENT)
+            if recent and recent[0]["timestamp"] <= hit["rows"][-1]["timestamp"] + step:
+                merged = {c["timestamp"]: c for c in hit["rows"]}
+                merged.update((c["timestamp"], dict(c)) for c in recent)
+                rows, full_at = [merged[t] for t in sorted(merged)], hit["full_at"]
+        open_when_asked = set()
+        if rows is None:
+            rows = [dict(c) for c in await self._fetch_chart(symbol, interval)]
+            # Pueden venir de la cache: la que estaba en curso cuando se pidieron sigue sin contar aunque ya cerro.
+            # Lo que aun no fuera final se corrige en la actualizacion siguiente, que trae de nuevo las ultimas 200
+            open_when_asked = {c["timestamp"] for c in rows if c.get("in_progress")}
+        start = asked - candles.LIVE_DAYS[interval] * 86_400_000
+        rows = [c for c in rows if c["timestamp"] >= start]
+        for c in rows:
+            c["in_progress"] = c["timestamp"] in open_when_asked or c["timestamp"] + step > asked - CHECK_DELAY_MS
+        self._chart_rows_cache[key] = {"rows": rows, "full_at": full_at}
+        return rows
+
     async def _vwap(self, symbol: str, interval: str) -> list:
         vwap = self.config["vwap"]
-        rows = await self._fetch_chart(symbol, interval)
+        rows = await self.chart_rows(symbol, interval)
         key = (symbol, interval, json.dumps(vwap, sort_keys=True))
         stamp = (rows[-1]["timestamp"], len(rows)) if rows else None
         hit = self._vwap_cache.get(key)
@@ -663,10 +715,10 @@ class SwingWatch:
     async def chart_signals(self, symbol: str, interval: str) -> dict:
         cfg = self.config
         rules = self.rules_for(symbol, cfg)
-        step = INTERVAL_MS[interval]
-        rows = await self._fetch_chart(symbol, interval)
-        now = self._now()
-        closed = [c for c in rows if c["timestamp"] + step <= now]
+        rows = await self.chart_rows(symbol, interval)
+        # Solo las cerradas hace 4 s o mas (las demas pueden no tener sus valores finales). La pagina vuelve a pedir
+        # mientras falte la ultima
+        closed = [c for c in rows if not c["in_progress"]]
         signals, used_vwap = await self._detect(symbol, interval, closed, rules) if closed else ([], False)
         n = rules["swingBars"]
         out = [{"timestamp": s["timestamp"], "type": s["type"], "price": s["price"], "direction": s["direction"],

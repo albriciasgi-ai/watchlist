@@ -15,10 +15,10 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - el bot endurecido: cuenta en tiempo real por su WebSocket privado; cerrar, mover SL/TP y cancelar; aviso de posiciones sin stop; guardado seguro;
   - a pedido del usuario, las posiciones sobre el gráfico con su P&L, como en TradingView;
   - el journal: los hechos de cada trade real y lo del Observador (imágenes, niveles elegidos, medidas, informe e ir al gráfico). Ver "Journal".
-- **Paso 5, empezado el 12/11:** el servidor detecta el Swing con las reglas de App 1 y lo anota, sin enviar alertas (parte A). Ver "Swing del servidor".
+- **Paso 5, empezado el 12/11:** el servidor detecta el Swing con las reglas de App 1 y lo anota, sin enviar alertas (parte A). Desde el 13/11 el indicador del gráfico dibuja lo que calcula el servidor (parte B). Ver "Swing del servidor".
 - **Falta:**
   - del journal: delta y OI de los días recientes en las medidas, y la lectura de la regla del laboratorio;
-  - del paso 5: que el indicador del gráfico muestre lo que detecta el servidor (parte B) y la vista Watchlist (parte C). Las alertas quedan para la central de alertas de confluencia;
+  - del paso 5: la vista Watchlist (parte C). Las alertas quedan para la central de alertas de confluencia;
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
 
 ## Reglas de diseño (fijadas con el usuario)
@@ -50,7 +50,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43) y swing_checks.py (84), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (43) y swing_checks.py (97), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -63,7 +63,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
         ├── botBook.js     Posiciones y órdenes de la cuenta activa (cada 2 s), líneas para el gráfico y acciones con confirmación
         ├── JournalView.jsx    Journal de trades reales (Bot > Journal)
-        └── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
+        ├── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
+        └── swingServer.js El Swing del gráfico con las señales y las reglas del servidor
 ```
 
 ## Puertos
@@ -333,7 +334,7 @@ Probado el 12/11 en la copia aislada con un bot falso que usa la clase real del 
 
 Del plan del paso 5, el usuario decidió el 12/11:
 - **A:** el servidor detecta el Swing. Hecho.
-- **B:** el indicador del gráfico muestra lo que detecta el servidor.
+- **B:** el indicador del gráfico muestra lo que detecta el servidor. Hecho el 13/11.
 - **C:** la vista Watchlist. Los gráficos que no se ven no se pausan: se redibujan cada 30 s. Solo si la app se vuelve lenta, un máximo de 10 gráficos en vivo elegidos por el usuario.
 - **D:** las alertas no se envían por ahora. Quedan para una central de alertas de confluencia, cuando varios indicadores cumplan sus parámetros.
 
@@ -364,6 +365,8 @@ El Swing de la Watchlist (App 2) sigue siendo el que manda alertas al bot, con o
   - La primera vez se toma del Swing de la Watchlist (`2.WatchlistConIndicadores/backend/config/swing_config.json`, solo lectura): monedas, marco y reglas, sin alertas, cooldown ni días. Sin ese archivo usa sus valores del 12/11: 1m, 11 monedas, `swingBars` 3 y 2 en diez de ellas.
   - Cada campo se valida. `swingBars` va de 1 a 20, `lookbackBars` de 2 a 200, `minZScore` de 0 a 5 y las bandas de 1 a 6. El modal de App 1 es más estrecho.
   - Un archivo dañado no se pisa: no detecta hasta que se guarde otra configuración, y entonces el dañado queda copiado en `config.danado-<fecha>.json`.
+  - Los ajustes de una moneda que llegan con `symbolRules` se suman a los que ya tenía: lo que no se manda queda igual. Se guarda solo lo que difiere de las reglas generales, y una moneda sin diferencias queda sin ajustes propios.
+  - El filtro VWAP acepta cero bandas, como el modal de App 1: entonces descarta lo que cae dentro de un rectángulo.
 - **Rutas:**
 
 | Ruta | Qué hace |
@@ -371,13 +374,31 @@ El Swing de la Watchlist (App 2) sigue siendo el que manda alertas al bot, con o
 | `GET /api/swing/status` | Si detecta, marco, monedas, última vuelta, señales de hoy y, por moneda, última revisión, señales, error y pausa no recuperada. `sends: false` |
 | `GET /api/swing/config` | Configuración, reglas de cada moneda (`effective`), valores de fábrica y límites |
 | `POST /api/swing/config` | Cambia `enabled`, `interval`, `symbols`, `rules`, `symbolRules` (null quita los de una moneda) o `vwap`. Un valor inválido o un campo desconocido: 400 y nada cambia. No mueve dinero: sin palabra de confirmación |
-| `GET /api/swing/signals/{symbol}?interval` | Señales de las velas cerradas que tiene el gráfico (los mismos días por marco), con las reglas del servidor, `known_at` y `gap`. `detected_live` dice si es el marco y la moneda que se detectan en vivo |
+| `GET /api/swing/signals/{symbol}?interval` | Señales de las velas cerradas que tiene el gráfico (los mismos días por marco), con las reglas del servidor, `known_at` y `gap`. `detected_live` dice si es el marco y la moneda que se detectan en vivo. Una vela cuenta como cerrada 4 s después de su cierre. Las velas se piden completas la primera vez (con la caché de 5 s de `/api/historical`) y después solo las últimas 200, unidas a las de antes; cada 6 horas, o si faltan velas entre unas y otras, completas otra vez |
 | `GET /api/swing/log?symbol&limit&day` | Señales anotadas en vivo, las más nuevas primero. Sin `day`, las de los últimos dos días en memoria |
-| `POST /api/swing/profile-rects/{symbol}` | `{"ids": [...]}`: rectángulos que definen un VP Fixed, que no cuentan para el filtro VWAP. Lo usará el gráfico en la parte B |
+| `POST /api/swing/profile-rects/{symbol}` | `{"ids": [...]}`: rectángulos que definen un VP Fixed, que no cuentan para el filtro VWAP. Los manda la página cuando cambian |
 
 - **Con la Watchlist:** con su configuración actual (sin filtro de volumen, VWAP ni zonas) salen los mismos swings, en las mismas velas. Cambia el precio: la Watchlist usa el cierre de la vela y el servidor el máximo o el mínimo, como App 1. Además, la Watchlist avisa solo el swing recién confirmado y aplica su cooldown de 5 minutos; el servidor anota todos.
 - **Arreglado en App 1 (12/11):** una vela que es swing alto y bajo a la vez queda como swing alto. Su precio era el mínimo y ahora es el máximo, el de su flecha. Las zonas y el filtro VWAP revisaban ese swing alto con el precio de abajo.
-- **Probado:** en la copia aislada, en 1m con las 11 monedas de la Watchlist y velas reales de Bybit (solo lectura). En 7 minutos anotó 19 señales, las mismas que da la regla con esas velas, entre 4.0 y 5.7 s después del cierre que las confirma. Reiniciada, no repitió nada. Con las monedas pedidas a la vez, cada vuelta tarda 1 s y anota a unos 4.7 s del cierre. El filtro VWAP se probó con velas simuladas: en la configuración de la Watchlist está apagado.
+- **El gráfico (parte B, 13/11, `web/src/swingServer.js`):**
+  - **Señales:** el indicador Swing de cada marco dibuja las que calcula el servidor, en cualquier marco, con las reglas de la moneda y solo velas cerradas. En el marco y las monedas que el servidor vigila son las mismas que anota en vivo; en los demás, solo para ver. App 1 recibe las señales con `setExternalSignals()`.
+  - **Cuándo pide:** al armarse el gráfico, al cerrar cada vela de su marco (4 s después, cuando el servidor ya la da por cerrada) y al cambiar las reglas, los dibujos o los VP Fixed. Si el servidor todavía no trae la vela recién cerrada, vuelve a pedir a los 3 s. Mientras no llega nada, el indicador no dibuja: no calcula por su cuenta, porque lo haría con la vela en curso.
+  - **La flecha nueva** aparece de 5 a 10 s después del cierre, según tarde Bybit en ese momento.
+  - **Modal:** el ⚙️ del Swing abre el de App 1. Arriba dice que las señales vienen del servidor y si este marco es el que se vigila en vivo. Las reglas se guardan en el servidor para la moneda, medio segundo después del último cambio, y todos los marcos vuelven a pedir sus señales. Cambiar solo las flechas no escribe en el servidor.
+  - **Opciones de las flechas** (tamaño, z-score y zonas): son de cada pestaña y se guardan con sus ajustes (`swingVisual` en `suite_chart_<pestaña>`).
+  - **VP Fixed:** la página manda al servidor los rectángulos que definen uno (`profile-rects`) cuando cambian.
+  - **Imágenes del journal fuera de la pantalla:** llevan las mismas señales; si el servidor no responde, sin flechas.
+  - **En desarrollo:** `window.__suiteSwing` tiene lo último que dio el servidor por marco.
+- **Arreglado en App 1 (13/11):** un rectángulo cambiado de tamaño (por un borde o una esquina) se veía bien pero se guardaba con el tamaño anterior: al recargar, al pasar a otro marco o a la otra pestaña volvía al de antes. Ahora se guarda el nuevo. Como los rectángulos son las zonas del filtro VWAP, la página y el servidor veían rectángulos distintos.
+- **Probado (parte B, 13/11):** en la copia aislada con velas reales de Bybit, BTC en 1m y 15m:
+  - el indicador tuvo las mismas señales que el servidor, una por una (1,034 en 1m y 541 en 15m). En 15m el indicador de App 1, calculado en el navegador con las mismas velas cerradas, también dio 541;
+  - el modal guardó `swingBars` 3 para BTC: en el servidor quedó solo lo distinto a las generales y las flechas se actualizaron solas (731);
+  - con el filtro VWAP encendido y un rectángulo sobre las últimas 3 horas, las señales cambiaron igual en el gráfico y en el servidor (727, 4 descartadas). Al apagarlo, BTC quedó sin ajustes propios;
+  - el tamaño de las flechas siguió después de recargar;
+  - la flecha nueva llegó 9 s después del cierre. Antes del arreglo de las velas, más de 12 s.
+
+  En una prueba, con la página recargada varias veces seguidas y el servidor reiniciado, Bybit rechazó algunos pedidos de velas por exceso ("Too many visits"). Por eso la primera carga del Swing usa la caché del gráfico. En una carga normal no hubo rechazos. No se probaron las imágenes del journal fuera de la pantalla con el Swing encendido.
+- **Probado (parte A):** en la copia aislada, en 1m con las 11 monedas de la Watchlist y velas reales de Bybit (solo lectura). En 7 minutos anotó 19 señales, las mismas que da la regla con esas velas, entre 4.0 y 5.7 s después del cierre que las confirma. Reiniciada, no repitió nada. Con las monedas pedidas a la vez, cada vuelta tarda 1 s y anota a unos 4.7 s del cierre. El filtro VWAP se probó con velas simuladas: en la configuración de la Watchlist está apagado.
 
 ## Escritorio (Electron)
 
@@ -421,7 +442,9 @@ C:\Python314\python.exe -B tests\swing_checks.py
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Las pruebas ponen `SUITE_RECORD=0`, `SUITE_OFFICIAL=0` y `SUITE_SWING=0`: nunca escriben en el `OrderFlowData` real ni consultan Bybit desde el Swing. Una copia de prueba del servidor debe usar `SUITE_ORDERFLOW_DATA` y `SUITE_DATA_DIR` temporales.
+Las pruebas ponen `SUITE_RECORD=0`, `SUITE_OFFICIAL=0` y `SUITE_SWING=0`: nunca escriben en el `OrderFlowData` real ni consultan Bybit desde el Swing.
+
+En App 1, `node tests/swing.test.mjs` prueba las señales que llegan de afuera y `node tests/rectangle.test.mjs` que un rectángulo cambiado de tamaño se guarde. Una copia de prueba del servidor debe usar `SUITE_ORDERFLOW_DATA` y `SUITE_DATA_DIR` temporales.
 
 Probado el 12/11 (segunda ronda) en una copia aislada: servidor en 13100 con un `OrderFlowData` vacío en una carpeta temporal y grabando de verdad, frontend en 13101 y un bot falso en 59998:
 - formato de la pestaña principal, cinco marcos montados y panel de trading;

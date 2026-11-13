@@ -54,6 +54,30 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: El Gráfico Muestra el Swing del Servidor (paso 5, parte B)
+
+**Pedido:** seguir con la parte B del paso 5: que el indicador del gráfico muestre lo mismo que detecta el servidor, y arreglar el rectángulo que no guardaba su nuevo tamaño.
+
+**Cambios:**
+1. **Señales del servidor:** el indicador Swing de cada marco dibuja las que calcula el servidor, solo con velas cerradas. En el marco que el servidor vigila (1m) son las mismas que anota en vivo; en los otros, solo para ver. Las pide al cerrar cada vela y al cambiar las reglas, los dibujos o los VP Fixed.
+2. **Configuración:** el modal del Swing guarda las reglas en el servidor para la moneda. El tamaño de las flechas se guarda en la pestaña.
+3. **Servidor:**
+   - cada actualización pide a Bybit solo las últimas 200 velas;
+   - una vela cuenta como cerrada 4 s después de su cierre;
+   - los ajustes de una moneda se suman a los que tenía.
+4. **App 1:** el indicador Swing acepta señales de afuera (`setExternalSignals`); en reproducción no cambia nada. Un rectángulo cambiado de tamaño ahora se guarda con su tamaño nuevo: antes volvía al anterior al recargar o pasar a otro marco.
+5. **Pruebas:** `swing_checks.py` de la suite (97), y `swing.test.mjs` (6) y `rectangle.test.mjs` (4) de App 1. Las demás de la suite y de App 1 siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla.
+- La flecha nueva aparece de 5 a 10 s después del cierre de la vela.
+- Probado en la copia aislada con velas reales de Bybit: en 1m y 15m el gráfico y el servidor dieron las mismas señales, también al cambiar las reglas, encender el filtro VWAP y dibujar un rectángulo.
+- Con recargas seguidas, Bybit llegó a rechazar pedidos de velas por exceso; la primera carga del Swing usa la caché del gráfico para no sumar pedidos.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Swing del servidor"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 12 Noviembre 2026: Swing en el Servidor (paso 5, parte A)
 
 **Pedido:** del plan del paso 5, el usuario autorizó que el servidor detecte el Swing. Sus alertas no se usarán por ahora: irán a una central de alertas de confluencia. También aprobó que el gráfico muestre lo que detecta el servidor (B) y la vista Watchlist sin pausar los gráficos que no se ven (C).

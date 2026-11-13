@@ -74,6 +74,7 @@ class SwingDetectorIndicator extends IndicatorBase {
     this._lastConfig = null;
     this._allDetectedSignals = []; // Todas las señales detectadas (sin filtro de tiempo)
     this._rectangleAreas = []; // Rectángulos del gráfico en el último cálculo
+    this._externalSignals = null; // Señales del servidor de la suite (setExternalSignals); null = calcula aquí
 
     console.log(`[${this.symbol}] SwingDetectorIndicator initialized (full backtesting mode)`);
   }
@@ -85,6 +86,19 @@ class SwingDetectorIndicator extends IndicatorBase {
   /** El administrador de dibujos del gráfico, o una función que lo entrega al dibujar */
   setDrawingManager(drawingManager) {
     this.drawingManager = drawingManager;
+  }
+
+  /**
+   * Señales calculadas afuera, en lugar de las de detectSwings(): la suite le pasa las del servidor, que detecta con
+   * esta misma regla y solo con velas cerradas (12.AltagraciaTradingSuite/server/swing_rules.py). Cada una como las
+   * de detectSwings: timestamp, type, price, direction, volumeZScore, zoneId e isInRectangle. null vuelve al cálculo
+   * propio. App 1 no lo usa: en reproducción el indicador calcula como siempre
+   */
+  setExternalSignals(signals) {
+    this._externalSignals = Array.isArray(signals)
+      ? signals.filter(s => Number.isFinite(s?.timestamp)).sort((a, b) => a.timestamp - b.timestamp)
+      : null;
+    this._invalidateCache();
   }
 
   /**
@@ -176,6 +190,10 @@ class SwingDetectorIndicator extends IndicatorBase {
    * Detecta todos los swings y aplica filtros
    */
   detectSwings(candles) {
+    if (this._externalSignals) {
+      this.signals = this._filterByPlaybackTime(this._externalSignals);
+      return this.signals;
+    }
     if (!candles || candles.length < this.swingBars * 2 + 1) {
       return [];
     }

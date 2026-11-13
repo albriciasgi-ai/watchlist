@@ -624,6 +624,8 @@ node tests/liquidations.test.mjs
 node tests/pixels.test.mjs
 node tests/theme.test.mjs
 node tests/positions.test.mjs
+node tests/swing.test.mjs
+node tests/rectangle.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -1197,6 +1199,7 @@ Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la 
 - El caché del Swing se rehace con la geometría de los rectángulos y con `VWAPIndicator.calculations`, que sube con cada cálculo del VWAP. Mientras un rectángulo se arrastra o cambia de tamaño siguen los de antes: se recalcula una vez al soltarlo. Un cálculo sin señales también queda guardado
 - Una vela que es swing alto y bajo a la vez (barre los dos lados) queda como swing alto, con su máximo como precio: el de su flecha (12/11). Antes tomaba el mínimo, y las zonas y el filtro VWAP revisaban ese swing alto con el precio de abajo. En velas de prueba de 1m con `swingBars` 2 pasaba en 10 de 226 señales
 - La misma regla corre en el servidor de la suite (`12.AltagraciaTradingSuite/server/swing_rules.py`), que detecta el Swing en vivo. Un cambio de `detectSwings()` se hace en los dos archivos y se corre `12.AltagraciaTradingSuite/server/tests/swing_checks.py`, que ejecuta este indicador en node y compara los dos
+- `setExternalSignals(lista)` hace que el indicador dibuje señales calculadas afuera en lugar de las suyas (13/11): la suite le pasa las de su servidor, solo con velas cerradas. `null` vuelve al cálculo propio. En reproducción App 1 no lo usa y el indicador calcula como siempre; si se usara, las de afuera también esperan su confirmación (`_filterByPlaybackTime`)
 - Un preset de VWAP guarda su marco. Cargado en otro marco, sin marco o anterior a esta ronda, conserva los umbrales, el Keltner y `minSessionCandles` del marco actual (`withTimeframeValues`)
 - Un indicador apagado cuesta 0.03 ms por tick en total. Quitar indicadores no acelera nada
 - `Double Top/Bottom` costaba 69 a 280 ms por dibujo; S&R v2 con filtro, 233 a 938 ms por tick

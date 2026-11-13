@@ -121,6 +121,8 @@ try:
          "config": {"swingBars": 2, "vwapFilter": {"enabled": True, "deviations": [2, 3], "marginPercent": 10}}},
         {"name": "vwap_huecos", "candles": "c15", "vwap": vwap_holes, "shapes": shapes,
          "config": {"swingBars": 2, "vwapFilter": {"enabled": True, "deviations": [1, 2], "marginPercent": 20}}},
+        {"name": "vwap_sin_bandas", "candles": "c15", "vwap": vwap, "shapes": shapes,
+         "config": {"swingBars": 2, "vwapFilter": {"enabled": True, "deviations": [], "marginPercent": 20}}},
         {"name": "vwap_indicador_apagado", "candles": "c15", "shapes": shapes,
          "config": {"swingBars": 2, "vwapFilter": {"enabled": True, "deviations": [1], "marginPercent": 20}}},
         {"name": "vwap_zonas", "candles": "c15", "vwap": vwap, "shapes": shapes,
@@ -251,6 +253,23 @@ try:
     check("ajustes por moneda: null los quita y un campo suelto se suma a las reglas generales",
           "BTCUSDT" not in w.config["symbolRules"] and w.rules_for("ETHUSDT")["volumeFilter"] == {"enabled": False, "minZScore": 2.0, "lookbackBars": 10}
           and w.config["interval"] == "15")
+    general = w.config["rules"]
+    w.set_config({"symbolRules": {"ETHUSDT": {"swingBars": general["swingBars"], "direction": "BOTH",
+                                              "volumeFilter": {"enabled": False, "minZScore": 2, "lookbackBars": general["volumeFilter"]["lookbackBars"]},
+                                              "vwapFilter": dict(general["vwapFilter"])}}})
+    check("los ajustes de una moneda guardan solo lo que difiere de las generales",
+          w.config["symbolRules"]["ETHUSDT"] == {"volumeFilter": {"minZScore": 2.0}})
+    w.set_config({"symbolRules": {"ETHUSDT": {"swingBars": 4}}})
+    check("mandar un campo de una moneda conserva sus otros ajustes",
+          w.config["symbolRules"]["ETHUSDT"] == {"swingBars": 4, "volumeFilter": {"minZScore": 2.0}})
+    w.set_config({"symbolRules": {"ETHUSDT": {"swingBars": general["swingBars"]}}})
+    check("volver un campo al valor general lo quita de los ajustes de la moneda",
+          w.config["symbolRules"]["ETHUSDT"] == {"volumeFilter": {"minZScore": 2.0}})
+    w.set_config({"symbolRules": {"ARBUSDT": {"swingBars": general["swingBars"], "direction": "BOTH"}}})
+    check("unos ajustes iguales a las generales no quedan como propios", "ARBUSDT" not in w.config["symbolRules"])
+    w.set_config({"rules": {"vwapFilter": {"deviations": []}}})
+    check("el filtro VWAP acepta cero bandas, como el modal de App 1", w.config["rules"]["vwapFilter"]["deviations"] == [])
+    w.set_config({"rules": {"vwapFilter": {"deviations": [1, 2, 3]}}})
     reread = swing_watch.SwingWatch(TMP / "cfg1", TMP / "dibujos", watchlist_config=wl)
     check("el cambio queda guardado", reread.config["interval"] == "15" and reread.rules_for("ETHUSDT")["volumeFilter"]["minZScore"] == 2.0)
     broken = TMP / "cfg3"
@@ -364,21 +383,18 @@ try:
     vw = swing_watch.SwingWatch(TMP / "vwap", drawings, fetch_recent=fake_recent, fetch_chart=fake_chart,
                                 now=lambda: clock["now"], watchlist_config=wcfg)
     vw.set_config({"rules": {"vwapFilter": {"enabled": True, "deviations": [1]}}, "symbolRules": {"BTCUSDT": None}})
-    calls["chart"] = 0
-    asyncio.run(vw.chart_signals("BTCUSDT", "1"))
-    check("sin rectangulos no calcula el VWAP", calls["chart"] == 1)
+    check("sin rectangulos no calcula el VWAP", asyncio.run(vw.chart_signals("BTCUSDT", "1"))["vwap_used"] is False)
     rows_now = [c for c in visible(SERIES) if c["timestamp"] + MIN <= clock["now"]]
     plain = swing_rules.detect(rows_now, vw.rules_for("BTCUSDT"), "BTCUSDT")
     picks = plain[-30::6]
     rects = [{"type": "rectangle", "id": f"r{k}", "price1": s["price"] * 1.002, "time1": s["timestamp"] - 5 * MIN,
               "price2": s["price"] * 0.998, "time2": s["timestamp"] + 5 * MIN} for k, s in enumerate(picks)]
     (drawings / "BTCUSDT.json").write_text(json.dumps({"symbol": "BTCUSDT", "shapes": rects}), encoding="utf-8")
-    calls["chart"] = 0
     body = asyncio.run(vw.chart_signals("BTCUSDT", "1"))
     points = swing_watch.vwap_points(visible(SERIES), vw.config["vwap"])
     expected_vwap = swing_rules.detect(rows_now, vw.rules_for("BTCUSDT"), "BTCUSDT", points, swing_rules.rectangle_zones(rects))
     check("con rectangulos usa el VWAP de las velas del grafico y da lo mismo que la regla",
-          body["vwap_used"] and calls["chart"] == 2 and [s["timestamp"] for s in body["signals"]] == [s["timestamp"] for s in expected_vwap])
+          body["vwap_used"] and [s["timestamp"] for s in body["signals"]] == [s["timestamp"] for s in expected_vwap])
     vw.set_profile_rects("BTCUSDT", ["r0", "r1", "r2", "r3", "r4"])
     body2 = asyncio.run(vw.chart_signals("BTCUSDT", "1"))
     check("los rectangulos de un VP Fixed no cuentan", len(body2["signals"]) >= len(body["signals"])
@@ -389,6 +405,55 @@ try:
         check("dibujos ilegibles: error, no senales sin filtro", False)
     except ValueError:
         check("dibujos ilegibles: error, no senales sin filtro", True)
+
+    # Velas de la ruta del grafico: completas la primera vez, despues solo las ultimas 200 unidas a las de antes
+    asked = {"chart": 0, "recent": 0}
+
+    async def counted_chart(symbol, interval):
+        asked["chart"] += 1
+        return visible(SERIES)
+
+    async def counted_recent(symbol, interval, limit):
+        asked["recent"] += 1
+        return visible(SERIES)[-limit:]
+
+    base_now = (clock["now"] // MIN) * MIN   # justo al cierre de una vela
+    at = {"now": base_now + 3900}
+    sw = swing_watch.SwingWatch(TMP / "filas", TMP / "dibujos", fetch_recent=counted_recent, fetch_chart=counted_chart,
+                                now=lambda: at["now"], watchlist_config=wcfg)
+    clock["now"] = at["now"]
+    early = asyncio.run(sw.chart_signals("BTCUSDT", "1"))
+    at["now"] = clock["now"] = base_now + 4000
+    late = asyncio.run(sw.chart_signals("BTCUSDT", "1"))
+    check("la vela recien cerrada cuenta 4 s despues de su cierre, como en la deteccion en vivo",
+          early["candles"]["last"] == base_now - 2 * MIN and late["candles"]["last"] == base_now - MIN)
+    check("la segunda vez pide a Bybit solo las ultimas velas", asked == {"chart": 1, "recent": 1})
+    rows_all = [c for c in visible(SERIES) if c["timestamp"] + MIN <= at["now"] - 4000
+                and c["timestamp"] >= at["now"] - 3 * 86_400_000]
+    expected_rows = swing_rules.detect(rows_all, sw.rules_for("BTCUSDT"), "BTCUSDT")
+    check("las velas unidas dan las mismas senales que pedirlas completas",
+          [s_["timestamp"] for s_ in late["signals"]] == [s_["timestamp"] for s_ in expected_rows] and len(expected_rows) > 20)
+    at["now"] = clock["now"] = clock["now"] + 30 * MIN
+    asyncio.run(sw.chart_signals("BTCUSDT", "1"))
+    check("con pocas velas nuevas sigue pidiendo solo las ultimas", asked == {"chart": 1, "recent": 2})
+    at["now"] = clock["now"] = clock["now"] + 250 * MIN
+    asyncio.run(sw.chart_signals("BTCUSDT", "1"))
+    check("si faltan velas entre las de antes y las nuevas, las pide completas", asked == {"chart": 2, "recent": 3})
+
+    # La primera carga puede venir de la cache de 5 s del grafico: la vela en curso cuando se pidio no cuenta
+    async def cached_rows(symbol, interval):
+        rows = [dict(c) for c in visible(SERIES)]
+        rows[-2]["in_progress"] = True   # ya cerro hace mas de 4 s, pero estaba en curso cuando se lleno la cache
+        return rows
+
+    at["now"] = clock["now"] = (clock["now"] // MIN) * MIN + 10_000
+    sc = swing_watch.SwingWatch(TMP / "cache_grafico", TMP / "dibujos", fetch_recent=counted_recent, fetch_chart=cached_rows,
+                                now=lambda: at["now"], watchlist_config=wcfg)
+    first = asyncio.run(sc.chart_signals("BTCUSDT", "1"))
+    check("de la cache del grafico, la vela que estaba en curso no cuenta aunque ya haya cerrado",
+          first["candles"]["last"] == (at["now"] // MIN) * MIN - 2 * MIN)
+    again_rows = asyncio.run(sc.chart_signals("BTCUSDT", "1"))
+    check("y la actualizacion siguiente la trae con sus valores de Bybit", again_rows["candles"]["last"] == (at["now"] // MIN) * MIN - MIN)
 
     # ---------- 6. Rutas ----------
     bot_calls = []
@@ -415,9 +480,10 @@ try:
                                                "symbolRules": {"BTCUSDT": {"swingBars": 2}}})
     saved = json.loads((Path(os.environ["SUITE_DATA_DIR"]) / "swing" / "config.json").read_text(encoding="utf-8"))
     check("POST /api/swing/config guarda", r.status_code == 200 and saved["symbols"] == ["BTCUSDT", "ETHUSDT"]
-          and saved["symbolRules"]["BTCUSDT"] == {"swingBars": 2})
+          and saved["symbolRules"]["BTCUSDT"]["swingBars"] == 2 and main.SWING.rules_for("BTCUSDT")["swingBars"] == 2)
     r = client.get("/api/swing/signals/BTCUSDT", params={"interval": "1m"})
-    expected_route = swing_rules.detect(rows_now, main.SWING.rules_for("BTCUSDT"), "BTCUSDT")
+    rows_route = [c for c in visible(SERIES) if c["timestamp"] + MIN <= clock["now"] - 4000]   # cerradas hace 4 s o mas
+    expected_route = swing_rules.detect(rows_route, main.SWING.rules_for("BTCUSDT"), "BTCUSDT")
     check("GET /api/swing/signals da las senales de la regla con su hora de confirmacion", r.status_code == 200
           and [s["timestamp"] for s in r.json()["signals"]] == [s["timestamp"] for s in expected_route]
           and all(s["known_at"] == s["timestamp"] + 3 * MIN for s in r.json()["signals"]) and r.json()["detected_live"] is True)

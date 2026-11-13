@@ -190,6 +190,13 @@ class Rectangle {
       if (this.timeStart > this.timeEnd) {
         [this.timeStart, this.timeEnd] = [this.timeEnd, this.timeStart];
       }
+
+      // Lo que se guarda (serialize) son price1/time1 y price2/time2: sin esto el tamaño nuevo se perdía al
+      // guardar, y al recargar o pasar a otro marco el rectángulo volvía al de antes (12/11/2026)
+      this.price1 = this.priceHigh;
+      this.time1 = this.timeStart;
+      this.price2 = this.priceLow;
+      this.time2 = this.timeEnd;
     }
   }
 

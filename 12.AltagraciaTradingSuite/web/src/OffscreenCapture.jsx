@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import MiniChart from '@app1/components/MiniChart';
 import { linesFor } from './botBook.js';
+import { SWING, applySwing, fetchSwing, swingOf } from './swingServer.js';
 
 /**
  * Imagen de apertura o cierre de una moneda que no está a la vista (pedido del usuario, 12/11/2026): su gráfico se
@@ -19,7 +20,7 @@ const noop = () => {};
 const none = () => [];
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-export default function OffscreenCapture({ job, size, tabState, rejectionConfig, onDone }) {
+export default function OffscreenCapture({ job, size, tabState, swingVisual, rejectionConfig, onDone }) {
   const chartRef = useRef(null);
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
@@ -41,6 +42,17 @@ export default function OffscreenCapture({ job, size, tabState, rejectionConfig,
       }
       await sleep(SETTLE_MS);
       if (!alive) return;
+      // El Swing lleva las señales del servidor, como el gráfico (paso 5, parte B). Sin el servidor, sin flechas: nunca
+      // las que el indicador calcularía con la vela en curso
+      const swing = tabState.indicatorStates?.[SWING] ? swingOf(chartRef.current?.getIndicatorManager?.()) : null;
+      if (swing) {
+        try {
+          applySwing(swing, await fetchSwing(job.symbol, job.tf), swingVisual);
+        } catch {
+          swing.setExternalSignals([]);
+        }
+        if (!alive) return;
+      }
       chartRef.current?.forceRedraw?.();
       try {
         const shot = await chartRef.current.captureScreenshot('journal', `${job.kind}-${job.at}-${job.symbol}`,
