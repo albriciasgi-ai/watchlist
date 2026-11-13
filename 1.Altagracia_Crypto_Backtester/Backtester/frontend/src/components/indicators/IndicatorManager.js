@@ -1237,6 +1237,17 @@ class IndicatorManager {
 
   destroy() {
     console.log(`[${this.symbol}] 🧹 IndicatorManager destruido`);
+    // Un indicador con temporizador propio lo detiene (13/11/2026): en vivo, el VWAP repide cada 30 s y seguía pidiendo
+    // la moneda anterior después de cambiar de moneda, en los cinco marcos, hasta cerrar la página. En reproducción
+    // ese temporizador no existe
+    (this.indicators || []).forEach(indicator => {
+      try {
+        if (indicator.dispose) indicator.dispose();
+        else indicator.stopAutoRefresh?.();
+      } catch {
+        // sigue con los demás
+      }
+    });
     // Limpiar instancias
     this.fixedRangeIndicators = [];
     this.rangeDetector = null;

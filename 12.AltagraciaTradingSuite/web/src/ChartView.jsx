@@ -125,6 +125,26 @@ function initialIndicators(saved) {
   return { ...DEFAULT_STATES, ...(saved.indicators || before) };
 }
 
+/**
+ * Los indicadores de la pestaña 1, la del gráfico principal. Las pestañas 2 a 5 los usan, al día, hasta que se cambie
+ * uno en ellas (13/11/2026, pedido del usuario: una moneda abierta desde la Watchlist de cualquier pestaña llega con
+ * todos los indicadores del gráfico principal; antes una pestaña nueva empezaba con los de fábrica)
+ */
+const MAIN_SETTINGS_KEY = 'suite_chart_1';
+function mainIndicators() {
+  let main = {};
+  try {
+    main = JSON.parse(localStorage.getItem(MAIN_SETTINGS_KEY)) || {};
+  } catch {
+    main = {};
+  }
+  return {
+    mode: main.indicatorMode === 'coin' ? 'coin' : 'shared',
+    shared: initialIndicators(main),
+    coin: main.coinIndicators && typeof main.coinIndicators === 'object' ? main.coinIndicators : {},
+  };
+}
+
 const ModalBox = ({ onClose, width = 600, children }) => (
   <div
     onClick={onClose}
@@ -190,9 +210,27 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   const [indicatorMode, setIndicatorMode] = useState(saved.indicatorMode === 'coin' ? 'coin' : 'shared');
   const [sharedStates, setSharedStates] = useState(() => initialIndicators(saved));
   const [coinStates, setCoinStates] = useState(() => (saved.coinIndicators && typeof saved.coinIndicators === 'object' ? saved.coinIndicators : {}));
+  // Pestañas 2 a 5: los de la pestaña 1, al día, hasta que se cambie uno aquí (entonces son propios: ownIndicators)
+  const [ownIndicators, setOwnIndicators] = useState(TAB === 1 || saved.indicatorsCustom === true);
+  const [inherited, setInherited] = useState(() => (TAB === 1 ? null : mainIndicators()));
+  useEffect(() => {
+    if (ownIndicators) return undefined;
+    const onStorage = (e) => {
+      if (e.key !== MAIN_SETTINGS_KEY) return;
+      const next = mainIndicators();
+      // La pestaña 1 guarda también al cambiar de moneda o de marco: si los indicadores no cambiaron, nada se toca
+      setInherited(prev => (prev && JSON.stringify(prev) === JSON.stringify(next) ? prev : next));
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [ownIndicators]);
+  const view = useMemo(
+    () => (ownIndicators ? { mode: indicatorMode, shared: sharedStates, coin: coinStates } : inherited),
+    [ownIndicators, indicatorMode, sharedStates, coinStates, inherited],
+  );
   const statesFor = useCallback(
-    (sym) => (indicatorMode === 'coin' && coinStates[sym] ? { ...DEFAULT_STATES, ...coinStates[sym] } : sharedStates),
-    [indicatorMode, coinStates, sharedStates],
+    (sym) => (view.mode === 'coin' && view.coin[sym] ? { ...DEFAULT_STATES, ...view.coin[sym] } : view.shared),
+    [view],
   );
   const currentStates = useMemo(() => statesFor(symbol), [statesFor, symbol]);
   const currentStatesRef = useRef(currentStates);
@@ -492,11 +530,12 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
       localStorage.setItem(SETTINGS_KEY, JSON.stringify({
         symbol, timeframe: activeTimeframe, tabs, showTrading, swingVisual,
         indicators: sharedStates, indicatorMode, coinIndicators: coinStates,
+        ...(TAB > 1 ? { indicatorsCustom: ownIndicators } : {}),
       }));
     } catch {
       // Sin almacenamiento la eleccion dura hasta cerrar la pagina
     }
-  }, [symbol, activeTimeframe, tabStates, showTrading, swingVisual, sharedStates, indicatorMode, coinStates]);
+  }, [symbol, activeTimeframe, tabStates, showTrading, swingVisual, sharedStates, indicatorMode, coinStates, ownIndicators]);
 
   // Solo en desarrollo: acceso a los graficos desde la consola para revisarlos
   useEffect(() => {
@@ -567,10 +606,28 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   };
   const redraw = () => chartRefs.current[activeTimeframe]?.forceRedraw?.();
   const setTab = (tf, change) => setTabStates(prev => ({ ...prev, [tf]: { ...prev[tf], ...change(prev[tf]) } }));
-  // Un indicador vale para los cinco marcos: de todas las monedas, o solo de esta si cada una tiene los suyos
+  // Un indicador vale para los cinco marcos: de todas las monedas, o solo de esta si cada una tiene los suyos. En las
+  // pestañas 2 a 5, el primer cambio les da sus propios indicadores, a partir de los de la pestaña 1
+  const takeOwnIndicators = () => {
+    if (ownIndicators) return view;
+    setOwnIndicators(true);
+    setIndicatorMode(inherited.mode);
+    setSharedStates(inherited.shared);
+    setCoinStates(inherited.coin);
+    return inherited;
+  };
   const toggle = (name, value) => {
-    if (indicatorMode === 'coin') setCoinStates(prev => ({ ...prev, [symbol]: { ...(prev[symbol] || sharedStates), [name]: value } }));
+    const base = takeOwnIndicators();
+    if (base.mode === 'coin') setCoinStates(prev => ({ ...prev, [symbol]: { ...(prev[symbol] || base.shared), [name]: value } }));
     else setSharedStates(prev => ({ ...prev, [name]: value }));
+  };
+  const changeIndicatorMode = (mode) => {
+    takeOwnIndicators();
+    setIndicatorMode(mode);
+  };
+  const followMainIndicators = () => {
+    setInherited(mainIndicators());
+    setOwnIndicators(false);
   };
   const closeSettings = () => setSettingsFor(null);
   const noop = useCallback(() => {}, []);
@@ -963,10 +1020,22 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                   borderRadius: 4, padding: 10, minWidth: 250, maxHeight: '80vh', overflowY: 'auto', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000,
                 }}
               >
-                <h4 style={{ margin: '0 0 6px 0', fontSize: 14, color: '#333' }}>Indicadores ({indicatorMode === 'coin' ? symbol : 'todas las monedas'})</h4>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: 14, color: '#333' }}>Indicadores ({view.mode === 'coin' ? symbol : 'todas las monedas'})</h4>
+                {TAB > 1 && (
+                  <div style={{ fontSize: 11, color: '#666', marginBottom: 6 }}>
+                    {ownIndicators ? (
+                      <>
+                        Propios de esta pestaña.{' '}
+                        <button type="button" onClick={followMainIndicators} style={{ fontSize: 11, padding: '1px 6px', cursor: 'pointer' }}>
+                          Usar los de la pestaña 1
+                        </button>
+                      </>
+                    ) : 'Los de la pestaña 1, al día. Si cambias uno, esta pestaña tendrá los suyos.'}
+                  </div>
+                )}
                 <select
-                  value={indicatorMode}
-                  onChange={(e) => setIndicatorMode(e.target.value)}
+                  value={view.mode}
+                  onChange={(e) => changeIndicatorMode(e.target.value)}
                   aria-label="Indicadores por moneda"
                   style={{ width: '100%', padding: '3px 4px', fontSize: 12, marginBottom: 4, border: '1px solid #ccc', borderRadius: 3, background: '#fff', color: '#333' }}
                 >
@@ -974,7 +1043,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                   <option value="coin">Propios de cada moneda</option>
                 </select>
                 <div style={{ fontSize: 11, color: '#666', marginBottom: 6 }}>
-                  Valen para los cinco marcos.{indicatorMode === 'coin' && !coinStates[symbol] ? ' Esta moneda usa los comunes hasta que cambies uno.' : ''}
+                  Valen para los cinco marcos.{view.mode === 'coin' && !view.coin[symbol] ? ' Esta moneda usa los comunes hasta que cambies uno.' : ''}
                 </div>
                 {Object.entries(states).map(([name, enabled]) => (
                   <label key={name} style={{ display: 'block', padding: '6px 0', cursor: 'pointer', fontSize: 13, color: '#333' }}>

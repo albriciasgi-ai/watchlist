@@ -1206,6 +1206,7 @@ Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la 
 - `setExternalSignals(lista)` hace que el indicador dibuje señales calculadas afuera en lugar de las suyas (13/11): la suite le pasa las de su servidor, solo con velas cerradas. `null` vuelve al cálculo propio. En reproducción App 1 no lo usa y el indicador calcula como siempre; si se usara, las de afuera también esperan su confirmación (`_filterByPlaybackTime`)
 - Un preset de VWAP guarda su marco. Cargado en otro marco, sin marco o anterior a esta ronda, conserva los umbrales, el Keltner y `minSessionCandles` del marco actual (`withTimeframeValues`)
 - Un indicador apagado cuesta 0.03 ms por tick en total. Quitar indicadores no acelera nada
+- En vivo, el VWAP repide cada 30 s (`startAutoRefresh`). `IndicatorManager.destroy()` llama `dispose()` de cada indicador que lo tiene (13/11): el VWAP detiene la repetición, y un pedido que llega después no la vuelve a arrancar. Antes, al cambiar de moneda en la suite, la moneda anterior seguía pidiendo en los cinco marcos hasta cerrar la página. En reproducción no hay repetición. Prueba en `leaks.test.mjs`
 - `Double Top/Bottom` costaba 69 a 280 ms por dibujo; S&R v2 con filtro, 233 a 938 ms por tick
 
 ### Backend

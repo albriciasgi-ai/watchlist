@@ -54,6 +54,29 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Pestañas con los Indicadores del Gráfico Principal y VWAP que no se Detenía
+
+**Pedido:** al abrir una moneda desde la Watchlist, el gráfico salía con indicadores livianos y no con los del gráfico principal.
+
+**Causa:** según el registro del servidor de esa sesión, el gráfico de la ventana principal sí cargaba todo: VWAP, Elementos OF, Order Flow y Liquidaciones. ETH se abrió en una pestaña de la 2 a la 5 con solo Order Flow y Liquidaciones. Cada pestaña tenía sus propios indicadores, y una nueva empezaba con los de fábrica.
+
+**Cambios:**
+1. **Pestañas 2 a 5:** usan los indicadores de la pestaña 1 y los siguen al instante, hasta que se cambie uno en ellas. Desde ahí tienen los suyos; "Usar los de la pestaña 1", en la lista, las vuelve a sincronizar. Lo guardado antes en una pestaña pasa a seguir a la 1.
+2. **VWAP (App 1):** al cambiar de moneda, el VWAP de la anterior seguía pidiendo sus datos cada 30 s, en los cinco marcos, hasta cerrar la página. En la sesión del usuario, XRP se pidió 117 veces. Ahora `IndicatorManager.destroy()` lo detiene con `dispose()`, y un pedido que llega después ya no lo vuelve a arrancar. En reproducción no cambia nada.
+3. **Pruebas:** `leaks.test.mjs` de App 1 suma una (43); detecta los dos fallos del VWAP.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla.
+- Una pestaña configurada a propósito con otros indicadores ahora sigue a la 1: cambiar uno en ella le devuelve los suyos.
+- Probado en la copia aislada:
+  - una pestaña 4 guardada con Order Flow y Liquidaciones abrió ETH desde su Watchlist con los de la 1 (VWAP, Elementos OF, Order Flow y Delta) en los cinco marcos;
+  - CVD encendido en la 1 llegó a la 4; al encender FVG en la 4, esta conservó sus indicadores aunque la 1 cambiara, y "Usar los de la pestaña 1" la volvió a sincronizar;
+  - tras pasar de BTC a ETH, ningún pedido del VWAP de BTC en 40 s.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Pedidos tras probar la Watchlist (13/11)", "Indicadores de las pestañas"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Watchlist que se Mueve, Pestañas y los Mismos Indicadores en Todos los Marcos
 
 **Pedido:** tras probar la Watchlist, el usuario pidió seis cosas:

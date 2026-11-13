@@ -46,8 +46,8 @@ export default function TabsMenu({ onModule, buttonClass = 'suite-btn', children
             </div>
           ))}
           <div className="wl-muted tabs-menu-note">
-            Cada pestaña tiene su moneda, sus marcos y sus indicadores; los dibujos son los mismos en todas. Solo la 1 toma
-            las imágenes del journal y da los avisos de Windows.
+            Cada pestaña tiene su moneda y sus marcos. Usa los indicadores de la 1 hasta que cambies uno en ella, y los
+            dibujos son los mismos en todas. Solo la 1 toma las imágenes del journal y da los avisos de Windows.
           </div>
         </div>
       )}

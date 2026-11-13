@@ -443,6 +443,33 @@ async function newManager() {
   return { manager, dtb };
 }
 
+test('vwap en vivo: al destruir el administrador deja de repetir el pedido de la moneda anterior', async () => {
+  detectorServer(() => ({ success: false }));
+  const manager = new IndicatorManager('BTCUSDT', '1h', 30);
+  await manager.initialize(false, null);
+  const vwap = manager.indicators.find(indicator => indicator.name === 'VWAP');
+  // Un pedido del VWAP que todavía no responde cuando se cambia de moneda
+  let release;
+  const gate = new Promise(resolve => { release = resolve; });
+  globalThis.fetch = async () => {
+    await gate;
+    return { ok: true, json: async () => ({ success: true, data: [{ timestamp: START, vwap: 100 }] }) };
+  };
+  try {
+    vwap.enabled = true;
+    vwap.startAutoRefresh();
+    assert.ok(vwap.refreshInterval, 'en vivo repide cada 30 s');
+    const inFlight = vwap.fetchData();
+    manager.destroy();
+    assert.equal(vwap.refreshInterval, null, 'destruido (cambio de moneda o gráfico cerrado), no sigue pidiendo');
+    release();
+    await inFlight;
+    assert.equal(vwap.refreshInterval, null, 'el pedido que llega después no vuelve a arrancar la repetición');
+  } finally {
+    vwap.stopAutoRefresh();
+  }
+});
+
 test('doble techo: calcula al marcar su casilla, con las velas del gráfico', async () => {
   const { manager, dtb } = await newManager();
   const candles = swingCandles(HOUR);

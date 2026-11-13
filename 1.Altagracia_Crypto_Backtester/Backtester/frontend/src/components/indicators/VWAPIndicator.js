@@ -185,6 +185,8 @@ class VWAPIndicator extends IndicatorBase {
       console.log(`[${this.symbol}] ⏸️ VWAP auto-refresh DESHABILITADO en modo backtesting`);
       return;
     }
+    // Un pedido que llega después de destruir el gráfico no la vuelve a arrancar (dispose)
+    if (this._disposed) return;
 
     // Detener timer anterior si existe
     this.stopAutoRefresh();
@@ -206,6 +208,13 @@ class VWAPIndicator extends IndicatorBase {
       this.refreshInterval = null;
       console.log(`[${this.symbol}] ⏹️ VWAP auto-refresh stopped`);
     }
+  }
+
+  // El gráfico que lo usaba se destruyó (cambio de moneda o gráfico cerrado, 13/11/2026): la repetición cada 30 s se
+  // detiene, y un pedido que todavía estaba en camino no la vuelve a arrancar. Antes seguía pidiendo la moneda anterior
+  dispose() {
+    this._disposed = true;
+    this.stopAutoRefresh();
   }
 
   setEnabled(enabled) {
