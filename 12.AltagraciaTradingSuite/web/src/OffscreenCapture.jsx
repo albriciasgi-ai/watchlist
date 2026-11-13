@@ -9,7 +9,9 @@ import { linesFor } from './botBook.js';
  * nada, no se abre ninguna ventana y su vista no cambia. Va en document.body: dentro de la vista del gráfico, oculta
  * cuando se mira el módulo del bot, el lienzo no tendría tamaño.
  *
- * job: { id, kind: 'open' | 'close', symbol, side, at, tf, days }. onDone(job, imagen o null) se llama una vez.
+ * job: { id, kind: 'open' | 'close', symbol, side, at, tf, days, size, options, box }. options van a captureScreenshot
+ * (la de cierre encuadra desde la apertura con lo elegido para el trade) y box es la caja del trade (getTradeBoxes).
+ * onDone(job, imagen o null) se llama una vez.
  */
 const WAIT_CANDLES_MS = 25000; // sin velas en ese tiempo, la imagen se da por perdida
 const SETTLE_MS = 6000;        // indicadores y footprints piden lo suyo después de las velas
@@ -41,7 +43,8 @@ export default function OffscreenCapture({ job, size, tabState, rejectionConfig,
       if (!alive) return;
       chartRef.current?.forceRedraw?.();
       try {
-        const shot = await chartRef.current.captureScreenshot('journal', `${job.kind}-${job.at}-${job.symbol}`, { context: job.kind === 'open' });
+        const shot = await chartRef.current.captureScreenshot('journal', `${job.kind}-${job.at}-${job.symbol}`,
+          job.options || { context: job.kind === 'open' });
         finish(shot?.screenshotPath || null);
       } catch (e) {
         console.warn(`[journal] ${job.symbol}: imagen fuera de la pantalla no tomada:`, e?.message);
@@ -75,7 +78,7 @@ export default function OffscreenCapture({ job, size, tabState, rejectionConfig,
             currentTool="select"
             onToolChange={noop}
             getTradeBoundaries={none}
-            getTradeBoxes={none}
+            getTradeBoxes={() => (job.box ? [job.box] : [])}
             getPositionLines={() => linesFor(job.symbol)}
             chosenStyle="numbers"
             onRequestPause={noop}

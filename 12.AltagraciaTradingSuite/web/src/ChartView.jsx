@@ -38,6 +38,21 @@ import { TAB, otherTabUrl, onDrawings, sendDrawings } from './tabs.js';
 const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
 // Dias de velas por marco (el servidor tiene el mismo tope)
 const DAYS = { '1m': 3, '5m': 10, '15m': 30, '1h': 120, '4h': 365 };
+const TF_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000 };
+const CLOSE_MAX_CANDLES = 200; // un trade más largo que esto en el marco a la vista se retrata en un marco mayor
+
+/**
+ * Marco de la imagen de cierre: el que está a la vista si el trade cabe (hasta 200 velas y dentro de los días que
+ * carga el marco, con aire antes de la apertura); si no, el primero mayor donde quepa. Nunca uno menor
+ */
+function closeFrame(start, end, preferred) {
+  const from = Math.max(0, TIMEFRAMES.indexOf(preferred));
+  for (let i = from; i < TIMEFRAMES.length; i++) {
+    const tf = TIMEFRAMES[i];
+    if ((end - start) / TF_MS[tf] <= CLOSE_MAX_CANDLES && end - start <= DAYS[tf] * 86400000 * 0.8) return tf;
+  }
+  return TIMEFRAMES[TIMEFRAMES.length - 1];
+}
 
 const DEFAULT_STATES = {
   'Volume Delta': true, 'Volume Profile': false, 'CVD': false, 'Open Interest': false, 'OI-Volume Confluence': false,
@@ -236,6 +251,33 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
     setTimeout(pumpOffscreen, 300);
   }, [saveContext, pumpOffscreen]);
 
+  // Imagen de cierre como en App 1 (12/11/2026, pedido del usuario): encuadrada desde la apertura del trade, con su
+  // caja de entrada, SL y TP iniciales hasta el cierre y lo elegido para él, en un marco donde el trade quepa
+  const captureBoxRef = useRef(null); // { symbol, box }: la caja del trade que se retrata, solo mientras se dibuja la imagen
+  const closePlan = useCallback(async (p, closedAt) => {
+    let trade = null;
+    try {
+      const { trades } = await getJson(`/api/bot/journal?days=30&symbol=${encodeURIComponent(p.symbol)}`);
+      const entry = Number(p.entryPrice);
+      // El trade del journal del bot de esa posición: misma moneda y lado, abierto antes y con la misma entrada
+      trade = (trades || [])
+        .filter(t => t.symbol === p.symbol && t.side === p.side && t.opened_at && t.opened_at <= closedAt
+          && (!(entry > 0) || !(t.entry > 0) || Math.abs(t.entry - entry) / entry < 0.005))
+        .sort((a, b) => b.opened_at - a.opened_at)[0] || null;
+    } catch {
+      // Sin el journal del bot la imagen sale como antes: la vista a esa hora
+    }
+    if (!trade) return { tf: activeTfRef.current, start: null, box: null, items: [] };
+    const start = trade.opened_at;
+    const positive = (v) => (Number(v) > 0 ? Number(v) : null);
+    const box = {
+      side: p.side === 'Buy' ? 'long' : 'short', entry: positive(trade.entry) ?? positive(p.entryPrice),
+      stop: positive(trade.initial_stop_loss) ?? positive(p.stopLoss), target: positive(trade.initial_take_profit) ?? positive(p.takeProfit),
+      start, end: closedAt,
+    };
+    return { tf: closeFrame(start, closedAt, activeTfRef.current), start, box, items: trade.decision?.levels || [] };
+  }, []);
+
   useEffect(() => {
     let last = '';
     let known = null; // { account, map } con las posiciones de todas las monedas en la lectura anterior
@@ -251,17 +293,24 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
       const now = new Map(book.positions.filter(p => Number(p.size) > 0).map(p => [`${p.symbol}:${p.positionIdx ?? 0}:${p.side}`, p]));
       // Con otra cuenta las posiciones son otras: no se abrió ni se cerró nada
       if (TAB === 1 && known && known.account === account) {
-        const moment = (kind, p) => {
+        const moment = async (kind, p) => {
           const at = Date.now();
-          const tf = activeTfRef.current;
-          if (p.symbol === symbolRef.current && chartRefs.current[tf]?.isShown?.()) {
+          // Apertura: la vista a esa hora con contexto. Cierre: el trade completo con su caja (closePlan)
+          const plan = kind === 'close' ? await closePlan(p, at) : { tf: activeTfRef.current, start: null, box: null, items: null };
+          const tf = plan.tf;
+          const options = kind === 'open' ? { context: true } : { showFrom: plan.start, items: plan.items };
+          if (p.symbol === symbolRef.current && tf === activeTfRef.current && chartRefs.current[tf]?.isShown?.()) {
             setTimeout(async () => {
-              const { image, frame } = await captureFor(`${kind}-${at}`, { context: kind === 'open' });
+              // La caja solo existe mientras se dibuja la imagen: la vista de quien opera no la muestra
+              captureBoxRef.current = plan.box ? { symbol: p.symbol, box: plan.box } : null;
+              const pending = captureFor(`${kind}-${at}`, options);
+              captureBoxRef.current = null;
+              const { image, frame } = await pending;
               if (image) saveContext({ kind, symbol: p.symbol, side: p.side, at, image, frame });
-            }, 1500); // que el gráfico dibuje antes la línea nueva (o la quite)
+            }, Math.max(0, 1500 - (Date.now() - at))); // que el gráfico dibuje antes la línea nueva (o la quite)
           } else {
             offscreenQueueRef.current.push({ id: `${kind}-${p.symbol}-${p.side}-${at}`, kind, symbol: p.symbol, side: p.side, at, tf,
-                                             days: DAYS[tf], size: chartSize() });
+                                             days: DAYS[tf], size: chartSize(), options, box: plan.box });
             pumpOffscreen();
           }
         };
@@ -270,14 +319,17 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, focus
       }
       known = { account, map: now };
     });
-  }, [captureFor, saveContext, pumpOffscreen, chartSize]);
+  }, [captureFor, saveContext, pumpOffscreen, chartSize, closePlan]);
 
   // "Ver en el gráfico" desde el journal: su moneda, la vista en su apertura y su caja con entrada, SL y TP iniciales
   const focusBoxRef = useRef(null);
   const [focusedTrade, setFocusedTrade] = useState(null);
   const getTradeBoxes = useCallback(() => {
-    const f = focusBoxRef.current;
-    return f && f.symbol === symbolRef.current ? [f.box] : [];
+    const boxes = [];
+    for (const shown of [focusBoxRef.current, captureBoxRef.current]) {
+      if (shown && shown.symbol === symbolRef.current) boxes.push(shown.box);
+    }
+    return boxes;
   }, []);
   useEffect(() => {
     if (!focusTrade) return undefined;

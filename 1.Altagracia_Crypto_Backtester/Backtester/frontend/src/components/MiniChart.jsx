@@ -1190,9 +1190,17 @@ const MiniChart = forwardRef(({
       }
     }
 
-    // La imagen de una orden muestra cada nivel elegido para ella: al alejar la vista podía quedar fuera del precio
-    if (captureItemsRef.current?.length) {
-      ({ low: minPrice, high: maxPrice } = priceRangeWith(captureItemsRef.current, minPrice, maxPrice, CAPTURE_LEVEL_ROOM_PX / priceChartHeight));
+    // La imagen de una orden muestra cada nivel elegido para ella: al alejar la vista podía quedar fuera del precio.
+    // También la caja de su trade, entera (imagen de cierre de la suite, 12/11/2026). App 1 no pasa cajas a la principal
+    if (captureItemsRef.current) {
+      const boxPrices = (getTradeBoxes?.() || [])
+        .flatMap(box => [box.entry, box.stop, box.target])
+        .filter(price => Number.isFinite(price) && price > 0)
+        .map(price => ({ price }));
+      const framed = [...captureItemsRef.current, ...boxPrices];
+      if (framed.length) {
+        ({ low: minPrice, high: maxPrice } = priceRangeWith(framed, minPrice, maxPrice, CAPTURE_LEVEL_ROOM_PX / priceChartHeight));
+      }
     }
 
     const priceRange = maxPrice - minPrice;

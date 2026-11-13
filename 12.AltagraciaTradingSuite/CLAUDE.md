@@ -269,6 +269,13 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   - **Apertura y cierre:** la página toma la imagen cuando ve abrirse o cerrarse una posición en cualquier moneda. Si es la moneda a la vista, la toma de ese gráfico 1.5 s después, para que se dibuje la línea.
   - **Moneda que no está a la vista** (12/11, pedido del usuario), o el gráfico oculto en el módulo del bot: `OffscreenCapture.jsx` arma su gráfico fuera de la pantalla, en `document.body`, y toma la imagen. Usa el marco a la vista, sus indicadores y el tamaño del gráfico, con las líneas de la posición. Espera las velas (hasta 25 s) y luego 6 s para indicadores y footprints. Tarda unos 10 s, una imagen a la vez, y después se quita. Quien opera no ve nada, no se abre ninguna ventana y su vista no cambia.
   - **Solo la pestaña 1** toma estas imágenes: la 2.ª las repetiría. Un cambio de cuenta no cuenta como apertura ni como cierre.
+  - **Imagen de cierre como en App 1** (12/11, pedido del usuario: "me gusta más como lo hace la app 1"). `closePlan` en `ChartView.jsx` busca el trade en el journal del bot: misma moneda y lado, abierto antes y con la entrada a menos de 0.5%. Con él, la imagen:
+    - encuadra desde la apertura hasta la vela más reciente (`showFrom`), con velas antes como contexto;
+    - dibuja la caja del trade (`getTradeBoxes`) con la entrada, el SL y el TP iniciales hasta el cierre;
+    - muestra lo elegido para el trade, con sus números (los niveles de su decisión);
+    - ajusta la escala a la caja completa.
+    
+    Usa el marco a la vista si el trade cabe en 200 velas (`closeFrame`); si no, el primer marco mayor donde quepa, fuera de la pantalla. Nunca uno menor. En el gráfico a la vista la caja solo existe mientras se dibuja la imagen: tu vista no la muestra. Sin el trade en el journal, la imagen sale como antes. De una posición "anterior" la caja empieza cuando el bot la vio.
   - **Unión:** el contexto se une al trade del bot de la misma moneda y lado. La decisión, por la orden que abrió el trade (`open_order_id` del bot) a cualquier hora; sin ella, la más reciente hasta 15 minutos antes de abrir que no sea de otra orden conocida. La imagen de apertura, hasta 5 minutos después, y la de cierre, hasta 15 minutos después.
   - **Medidas al decidir:** las 58 de App 1 (`measures.compute`, `row_at`, `read_row`) con velas de Bybit, en la última vela de 15m cerrada antes de decidir, vistas desde el lado del trade. Se calculan al abrir el detalle, unos 10 s; las de un trade cerrado quedan guardadas en `data/journal/measures`. El OI y el delta salen de los almacenes locales: en días sin almacén quedan "—".
   - **Lo máximo a favor y en contra,** en R del SL inicial, con velas de 5 minutos.
@@ -277,7 +284,13 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
 - **Falta:**
   - la lectura de la regla del laboratorio (`observer.read_at`);
   - el delta y el OI de los días recientes (almacén en vivo);
-  - en la imagen de cierre, encuadrar el trade desde su apertura con su caja, como App 1. Hoy muestra la vista a esa hora, ya sin la línea de la posición.
+  - lo elegido en la imagen de apertura, como App 1: hoy lleva la lista del panel, que ya quedó vacía para el trade siguiente;
+  - una imagen 10 velas después del cierre, como la de cierre de App 1, para ver lo que pasó después.
+
+Probado el 12/11 (imagen de cierre) en la copia aislada con un bot falso:
+- un trade de SOL de 3 horas, sin estar a la vista, se retrató en 15m. Salieron su caja con la entrada 81.35, el TP 85.42, el SL 78.91 y R/R, y el nivel elegido con su número;
+- un short de BTC de 2 horas, a la vista, tuvo su caja en la imagen, y el gráfico quedó sin ella;
+- un long de BTC de 3 días, con la vista en 15m, se retrató en 1h fuera de la pantalla.
 
 Probado el 12/11 (imágenes fuera de la pantalla) en la copia aislada, con BTC a la vista:
 - abrir y cerrar una posición falsa de ETH guardó sus imágenes de apertura y cierre en unos 10 s, con la línea, el SL y el TP en la de apertura. La vista siguió en BTC;

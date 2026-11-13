@@ -54,6 +54,23 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 12 Noviembre 2026: Imagen de Cierre como en App 1
+
+**Pedido:** que la imagen de cierre de un trade sea como la de App 1: el trade encuadrado desde su apertura, con su caja.
+
+**Cambios:**
+1. **Encuadre:** la imagen va desde la apertura del trade (del journal del bot) hasta la vela más reciente, con velas antes como contexto.
+2. **Caja del trade:** entrada, SL y TP iniciales hasta el cierre, como la caja TP/SL de App 1. La escala la abarca completa.
+3. **Lo elegido:** los niveles de su decisión, con sus números.
+4. **Marco:** el que está a la vista si el trade cabe en 200 velas; si no, uno mayor, tomado fuera de la pantalla. Un trade de 3 días con la vista en 15m sale en 1h.
+5. **App 1:** durante una imagen, la escala también abarca las cajas de `getTradeBoxes`. La principal de App 1 no pasa cajas, así que no cambia.
+
+**IMPORTANTE:** la suite se reinicia sola al abrirla, o con "Reiniciar" en la bandeja. Sin el trade en el journal del bot, la imagen sale como antes. Probado en la copia aislada con un bot falso.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal", "Imagen de cierre como en App 1"
+
+---
+
 ### App 1 + Altagracia Trading Suite - 12 Noviembre 2026: Números en App 1 e Imágenes de Monedas que no se Ven
 
 **Pedido:**
