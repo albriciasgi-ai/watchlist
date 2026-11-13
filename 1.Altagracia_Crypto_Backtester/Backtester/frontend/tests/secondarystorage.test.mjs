@@ -81,6 +81,19 @@ test('otro almacén del mismo tipo (sessionStorage) no se desvía', () => {
   undo();
 });
 
+test('con otro prefijo (pestañas 3 a 5 de la suite), cada pestaña guarda lo suyo aparte', () => {
+  const { storage, proto } = fakeStorage();
+  storage.setItem('fvg_settings_BTCUSDT', '{"minSize":1}');
+  const undo = installOwnSettings(storage, proto, 'suite_p3:');
+  assert.equal(storage.getItem('fvg_settings_BTCUSDT'), '{"minSize":1}', 'mientras no cambie, lee lo de la 1');
+  storage.setItem('fvg_settings_BTCUSDT', '{"minSize":3}');
+  assert.equal(storage.data.get('suite_p3:fvg_settings_BTCUSDT'), '{"minSize":3}');
+  assert.equal(storage.data.get(OWN_PREFIX + 'fvg_settings_BTCUSDT'), undefined, 'la 2 no se toca');
+  assert.equal(storage.data.get('fvg_settings_BTCUSDT'), '{"minSize":1}', 'la 1 no se toca');
+  assert.equal(storage.getItem('fvg_settings_BTCUSDT'), '{"minSize":3}');
+  undo();
+});
+
 let failed = 0;
 for (const [name, run] of tests) {
   try {

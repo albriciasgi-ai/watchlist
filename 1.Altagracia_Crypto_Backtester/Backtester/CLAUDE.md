@@ -819,7 +819,8 @@ Pedidos del usuario el 11/11, después de la fase 4 de Elementos OF.
 - `backtesting/secondaryStorage.js`: en la pestaña del 2.º gráfico, las claves de ajustes de los indicadores (`OWN_KEYS`: `orderflow_settings_`, `fvg_settings_`, `support_resistance_2_config_`, disposición de paneles, etc.) se leen y escriben con el prefijo `app1_g2:`. Mientras no se cambie nada ahí, se lee lo de la principal. "Restablecer" deja una marca y vuelve a fábrica, no a lo de la principal. Se instala desde `main.jsx`, antes que cualquier indicador, y desvía `Storage.prototype` solo para `localStorage`
 - Siguen compartidos a propósito: lo elegido para el análisis, las velas fijadas de Liquidaciones, las recetas de los setups (`of_setups_`, una sola biblioteca) y el estilo
 - El perfil de volumen guarda su configuración en `app1_grafico2`; VWAP, Swing y Confluencia OI no se guardan al recargar, igual que en la principal
-- Prueba: `tests/secondarystorage.test.mjs` (6). Probado en la copia: los 15 modales abren en el 2.º gráfico, y un cambio en FVG quedó en `app1_g2:fvg_settings_BTCUSDT` sin tocar la clave de la principal
+- `installOwnSettings(storage, proto, prefix)` acepta otro prefijo (13/11): App 1 usa siempre `app1_g2:`, y la suite da `suite_p<n>:` a sus pestañas 3 a 5 (la 2 usa el de App 1)
+- Prueba: `tests/secondarystorage.test.mjs` (7). Probado en la copia: los 15 modales abren en el 2.º gráfico, y un cambio en FVG quedó en `app1_g2:fvg_settings_BTCUSDT` sin tocar la clave de la principal
 
 ### 2.º gráfico fluido (12/11)
 
@@ -1189,6 +1190,7 @@ Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la 
 - Las velas se validan al cargarlas. `drawChart` no copia ni filtra en reproducción
 - El límite de 33 ms actúa desde el segundo dibujo y siempre dibuja lo último pedido
 - En vivo, cada precio de Bybit pide un dibujo (unas 10 veces por segundo por moneda). La prop `liveRedrawMs` (13/11) los junta con `redrawPacer.js`: a lo sumo un dibujo cada tantos ms, y al cambiar el valor lo pendiente se dibuja ya. La usa la Watchlist de la suite: 500 ms a la vista y 30 s fuera de ella. Sin la prop, como siempre: uno por cuadro. App 1 no la usa
+- La prop `viewOnly` (13/11) deja el gráfico solo para mirar: el arrastre mueve las velas y la rueda acerca, pero los dibujos no se eligen, mueven, editan ni borran (el clic va directo al paneo), un clic no abre el menú de niveles y no se dibujan los divisores de altura ni los ▲▼ de los paneles. La usa la Watchlist de la suite, cuyas celdas muestran los dibujos y las alturas de la moneda que usa su gráfico principal. App 1 no la usa
 
 ### Indicadores
 

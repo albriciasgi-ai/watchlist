@@ -38,23 +38,26 @@ export const OWN_KEYS = [
 
 export const isOwnKey = (key) => typeof key === 'string' && OWN_KEYS.some(prefix => key.startsWith(prefix));
 
-/** Desvía las claves de ajustes de "storage" (localStorage). Devuelve una función que lo deshace */
-export function installOwnSettings(storage, proto = Object.getPrototypeOf(storage)) {
+/**
+ * Desvía las claves de ajustes de "storage" (localStorage). Devuelve una función que lo deshace.
+ * `prefix`: el de esta pestaña. App 1 usa siempre OWN_PREFIX; la suite da otro a cada una de sus pestañas 3 a 5
+ */
+export function installOwnSettings(storage, proto = Object.getPrototypeOf(storage), prefix = OWN_PREFIX) {
   const { getItem, setItem, removeItem } = proto;
   const mine = (target, key) => target === storage && isOwnKey(key);
 
   proto.getItem = function (key) {
     if (!mine(this, key)) return getItem.call(this, key);
-    const own = getItem.call(this, OWN_PREFIX + key);
+    const own = getItem.call(this, prefix + key);
     if (own === REMOVED) return null;
     return own !== null ? own : getItem.call(this, key);
   };
   proto.setItem = function (key, value) {
-    return setItem.call(this, mine(this, key) ? OWN_PREFIX + key : key, value);
+    return setItem.call(this, mine(this, key) ? prefix + key : key, value);
   };
   proto.removeItem = function (key) {
     if (!mine(this, key)) return removeItem.call(this, key);
-    return setItem.call(this, OWN_PREFIX + key, REMOVED);
+    return setItem.call(this, prefix + key, REMOVED);
   };
   return () => Object.assign(proto, { getItem, setItem, removeItem });
 }

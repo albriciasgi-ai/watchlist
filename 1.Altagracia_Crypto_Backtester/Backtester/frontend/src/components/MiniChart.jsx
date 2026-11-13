@@ -210,6 +210,7 @@ const MiniChart = forwardRef(({
   getTradeBoxes = null, // Cajas TP/SL de los trades, para el 2.º gráfico: { side, entry, stop, target, start, end }
   getPositionLines = null, // Posiciones y órdenes reales (suite en vivo), ver positionLines.js. App 1 no lo pasa
   liveRedrawMs = null, // En vivo: a lo sumo un dibujo por precio cada tantos ms (Watchlist de la suite). Sin él, uno por cuadro
+  viewOnly = false, // Solo para mirar (Watchlist de la suite): los dibujos se ven pero no se eligen, mueven, editan ni borran, y un clic no abre el menú de niveles. El arrastre mueve las velas y la rueda acerca
   onPositionAction = null, // { type: 'close' | 'cancel' | 'move' | 'remove', line, field, price }: lo decide quien da los datos
   chosenStyle = 'labels', // Lo elegido para el análisis: 'labels' (etiqueta morada) o 'numbers', un número pequeño con su etiqueta al pasar el mouse
   captureChosenStyle = null, // En las imágenes de las órdenes: el mismo de chosenStyle, o 'lines' (solo sus líneas y aros: App 1, cuyo visor pone los números)
@@ -252,6 +253,8 @@ const MiniChart = forwardRef(({
   // Ritmo de los dibujos por cada precio de Bybit (liveRedrawMs): los datos siguen llegando, solo se dibuja menos
   const liveRedrawMsRef = useRef(liveRedrawMs);
   liveRedrawMsRef.current = liveRedrawMs;
+  const viewOnlyRef = useRef(viewOnly);
+  viewOnlyRef.current = viewOnly;
   const livePacerRef = useRef(null);
   const mountedRef = useRef(true);
   const indicatorManagerRef = useRef(null);
@@ -303,7 +306,7 @@ const MiniChart = forwardRef(({
       if (!isActiveRef.current) return;
 
       // Delete: borrar shape seleccionado
-      if (e.key === 'Delete' && drawingManagerRef.current && !typing) {
+      if (e.key === 'Delete' && drawingManagerRef.current && !typing && !viewOnlyRef.current) {
         const before = drawingManagerRef.current.shapes.length;
         drawingManagerRef.current.deleteSelected();
         if (drawingManagerRef.current.shapes.length === before) return; // nada seleccionado: no se guarda
@@ -2576,7 +2579,7 @@ const MiniChart = forwardRef(({
       setMousePos({ x, y });
       drawChart(candlesRef.current, lastPriceRef.current, x, y);
       const positionHit = onPositionAction ? hitPositionTarget(positionTargetsRef.current, x, y) : null;
-      canvas.style.cursor = positionHit ? positionHit.cursor : (levelsNear(levelTargetsRef.current, x, y).length ? 'pointer' : 'crosshair');
+      canvas.style.cursor = positionHit ? positionHit.cursor : (!viewOnlyRef.current && levelsNear(levelTargetsRef.current, x, y).length ? 'pointer' : 'crosshair');
     }
   };
 
@@ -2584,7 +2587,7 @@ const MiniChart = forwardRef(({
   const handleChartClick = (e) => {
     const drag = dragStateRef.current;
     const canvas = canvasRef.current;
-    if (!drag.isDragging || drag.drawingHandled || e.button !== 0 || !canvas) return;
+    if (!drag.isDragging || drag.drawingHandled || e.button !== 0 || !canvas || viewOnlyRef.current) return;
     if (drawingManagerRef.current && drawingManagerRef.current.currentTool !== 'select') return;
 
     const rect = canvas.getBoundingClientRect();
@@ -2630,8 +2633,8 @@ const MiniChart = forwardRef(({
       return;
     }
 
-    // 🎯 NUEVO: Left click para drawing manager
-    if (e.button === 0 && drawingManagerRef.current && scaleConverter) {
+    // 🎯 NUEVO: Left click para drawing manager (con viewOnly, el clic va directo al paneo)
+    if (e.button === 0 && drawingManagerRef.current && scaleConverter && !viewOnlyRef.current) {
       const shapesBefore = drawingManagerRef.current.shapes.length;
       const handled = drawingManagerRef.current.handleMouseDown(x, y, scaleConverter);
 
@@ -2897,7 +2900,7 @@ const MiniChart = forwardRef(({
 
     // Doble clic sobre una caja de texto: escribir en ella
     const converter = scaleConverterRef.current;
-    const textShape = converter && drawingManagerRef.current?.shapes
+    const textShape = converter && !viewOnlyRef.current && drawingManagerRef.current?.shapes
       .filter(shape => shape.type === 'textbox')
       .reverse()
       .find(shape => shape.hitTest(x, y, converter, 2));
@@ -3786,7 +3789,8 @@ const MiniChart = forwardRef(({
         />
 
 
-        {/* 🎯 NUEVO: Divisor redimensionable entre precio e indicadores */}
+        {/* 🎯 NUEVO: Divisor redimensionable entre precio e indicadores (con viewOnly no hay divisores: su altura es de la moneda y la usa el gráfico principal) */}
+        {!viewOnly && (
         <div
           onMouseDown={handleDividerMouseDown}
           style={{
@@ -3818,9 +3822,11 @@ const MiniChart = forwardRef(({
             height: '12px',
           }} />
         </div>
+        )}
 
         {/* 🎯 NUEVO: Divisor redimensionable para altura del volumen */}
         {/* 🔧 MOVIDO: Ahora está ARRIBA del volumen (justo después del precio) para dar más espacio de ajuste */}
+        {!viewOnly && (
         <div
           onMouseDown={handleVolumeDividerMouseDown}
           style={{
@@ -3893,6 +3899,7 @@ const MiniChart = forwardRef(({
             {isNewTheme() ? <Icon name="sliders" size={12} /> : '⚙️'}
           </button>
         </div>
+        )}
 
         {textEditor && (
           <textarea
@@ -3971,7 +3978,7 @@ const MiniChart = forwardRef(({
           </div>
         )}
 
-        {panels.map((panel, i) => (
+        {!viewOnly && panels.map((panel, i) => (
           <React.Fragment key={panel.name}>
             <div
               onMouseDown={(e) => handlePanelResizeStart(e, panel)}

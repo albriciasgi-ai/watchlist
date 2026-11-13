@@ -27,7 +27,8 @@ import OffscreenCapture from './OffscreenCapture.jsx';
 import { getJson, postJson } from './api.js';
 import { linesFor, runPositionAction, subscribeBook, subscribeCancels } from './botBook.js';
 import { dropLevels, knownLevels, restoreLevels } from '@app1/components/indicators/analysisLevels.js';
-import { TAB, otherTabUrl, onDrawings, sendDrawings } from './tabs.js';
+import { TAB, onDrawings, onSymbolsChanged, sendDrawings, symbolsChanged } from './tabs.js';
+import TabsMenu from './TabsMenu.jsx';
 import {
   SWING, RULE_KEYS, VISUAL_KEYS, attachSwing, feedSwing, frameName, notifySwingChanged, pick, profileRectIds,
   saveProfileRects, saveSwingRules, swingOf,
@@ -108,12 +109,20 @@ function initialTabStates(saved) {
   return Object.fromEntries(TIMEFRAMES.map(tf => {
     const own = saved.tabs?.[tf] || {};
     return [tf, {
-      indicatorStates: { ...DEFAULT_STATES, ...(own.indicatorStates || {}) },
       vpConfig: { ...DEFAULT_VP_CONFIG, ...(own.vpConfig || {}) },
       vpFixedRange: null,
       oiMode: own.oiMode || 'histogram',
     }];
   }));
+}
+
+/**
+ * Indicadores encendidos: los mismos en los cinco marcos (13/11/2026). Antes cada marco tenía los suyos: se toman los
+ * del marco que estaba a la vista
+ */
+function initialIndicators(saved) {
+  const before = saved.tabs?.[saved.timeframe]?.indicatorStates || saved.tabs?.['15m']?.indicatorStates || {};
+  return { ...DEFAULT_STATES, ...(saved.indicators || before) };
 }
 
 const ModalBox = ({ onClose, width = 600, children }) => (
@@ -170,13 +179,24 @@ function StatusDots({ onOpenBot }) {
   );
 }
 
-export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpenWatchlist = null, focusTrade = null, focusSymbol = null }) {
+export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpenWatchlist = null, onModule = null, focusTrade = null, focusSymbol = null }) {
   const saved = useMemo(loadSettings, []);
   const chartRefs = useRef({});
   const [symbols, setSymbols] = useState([saved.symbol || 'BTCUSDT']);
   const [symbol, setSymbol] = useState(saved.symbol || 'BTCUSDT');
   const [activeTimeframe, setActiveTimeframe] = useState(TIMEFRAMES.includes(saved.timeframe) ? saved.timeframe : '15m');
   const [tabStates, setTabStates] = useState(() => initialTabStates(saved));
+  // Los mismos indicadores para todas las monedas, o los propios de cada una (los que no tienen, usan los comunes)
+  const [indicatorMode, setIndicatorMode] = useState(saved.indicatorMode === 'coin' ? 'coin' : 'shared');
+  const [sharedStates, setSharedStates] = useState(() => initialIndicators(saved));
+  const [coinStates, setCoinStates] = useState(() => (saved.coinIndicators && typeof saved.coinIndicators === 'object' ? saved.coinIndicators : {}));
+  const statesFor = useCallback(
+    (sym) => (indicatorMode === 'coin' && coinStates[sym] ? { ...DEFAULT_STATES, ...coinStates[sym] } : sharedStates),
+    [indicatorMode, coinStates, sharedStates],
+  );
+  const currentStates = useMemo(() => statesFor(symbol), [statesFor, symbol]);
+  const currentStatesRef = useRef(currentStates);
+  currentStatesRef.current = currentStates;
   const [showList, setShowList] = useState(false);
   const [settingsFor, setSettingsFor] = useState(null);
   const [currentTool, setCurrentTool] = useState('select');
@@ -199,8 +219,6 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   const swingSavingRef = useRef(false);    // mientras se guarda, lo que llega del servidor no pisa el modal
   const swingVisualRef = useRef(swingVisual);
   swingVisualRef.current = swingVisual;
-  const tabStatesRef = useRef(tabStates);
-  tabStatesRef.current = tabStates;
 
   // Posiciones y órdenes reales sobre el gráfico (paso 4): el getter es estable y lee la moneda a la vista
   const symbolRef = useRef(symbol);
@@ -266,6 +284,8 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   // Imágenes de apertura y cierre de una moneda que no está a la vista, o con el gráfico oculto (módulo del bot):
   // su gráfico se arma fuera de la pantalla (OffscreenCapture), una imagen a la vez (12/11/2026, pedido del usuario)
   const [offscreenJob, setOffscreenJob] = useState(null);
+  // Los indicadores de la moneda de la imagen: el mismo objeto mientras no cambien, así su gráfico no los vuelve a aplicar
+  const offscreenStates = useMemo(() => (offscreenJob ? statesFor(offscreenJob.symbol) : null), [offscreenJob, statesFor]);
   const offscreenQueueRef = useRef([]);
   const offscreenBusyRef = useRef(false);
   const chartsBoxRef = useRef(null);
@@ -463,18 +483,20 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   }, [focusSymbol]);
 
   const readSymbols = useCallback(() => getJson('/api/suite/symbols').then(d => setSymbols(d.symbols)).catch(() => {}), []);
+  useEffect(() => onSymbolsChanged(list => setSymbols(list)), []);
   useEffect(() => { readSymbols(); }, [readSymbols]);
 
   useEffect(() => {
     try {
-      const tabs = Object.fromEntries(TIMEFRAMES.map(tf => [tf, {
-        indicatorStates: tabStates[tf].indicatorStates, vpConfig: tabStates[tf].vpConfig, oiMode: tabStates[tf].oiMode,
-      }]));
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: activeTimeframe, tabs, showTrading, swingVisual }));
+      const tabs = Object.fromEntries(TIMEFRAMES.map(tf => [tf, { vpConfig: tabStates[tf].vpConfig, oiMode: tabStates[tf].oiMode }]));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+        symbol, timeframe: activeTimeframe, tabs, showTrading, swingVisual,
+        indicators: sharedStates, indicatorMode, coinIndicators: coinStates,
+      }));
     } catch {
       // Sin almacenamiento la eleccion dura hasta cerrar la pagina
     }
-  }, [symbol, activeTimeframe, tabStates, showTrading, swingVisual]);
+  }, [symbol, activeTimeframe, tabStates, showTrading, swingVisual, sharedStates, indicatorMode, coinStates]);
 
   // Solo en desarrollo: acceso a los graficos desde la consola para revisarlos
   useEffect(() => {
@@ -545,7 +567,11 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   };
   const redraw = () => chartRefs.current[activeTimeframe]?.forceRedraw?.();
   const setTab = (tf, change) => setTabStates(prev => ({ ...prev, [tf]: { ...prev[tf], ...change(prev[tf]) } }));
-  const toggle = (name, value) => setTab(activeTimeframe, s => ({ indicatorStates: { ...s.indicatorStates, [name]: value } }));
+  // Un indicador vale para los cinco marcos: de todas las monedas, o solo de esta si cada una tiene los suyos
+  const toggle = (name, value) => {
+    if (indicatorMode === 'coin') setCoinStates(prev => ({ ...prev, [symbol]: { ...(prev[symbol] || sharedStates), [name]: value } }));
+    else setSharedStates(prev => ({ ...prev, [name]: value }));
+  };
   const closeSettings = () => setSettingsFor(null);
   const noop = useCallback(() => {}, []);
   const noTrades = useCallback(() => [], []);
@@ -567,7 +593,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
           const st = swingRef.current[tf] || (swingRef.current[tf] = {});
           attachSwing(st, swingOf(managerOf(tf)), swingVisualRef.current);
         });
-        const frames = TIMEFRAMES.filter(tf => tabStatesRef.current[tf]?.indicatorStates?.[SWING] && swingRef.current[tf]?.ind);
+        const frames = TIMEFRAMES.filter(tf => currentStatesRef.current?.[SWING] && swingRef.current[tf]?.ind);
         if (!frames.length) return;
         // Los rectángulos de un VP Fixed no cuentan para el filtro VWAP: el servidor los sabe por la página
         const ids = profileRectIds(managerOf(frames[0]));
@@ -641,6 +667,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     try {
       const d = await postJson('/api/suite/symbols', { symbol: s });
       setSymbols(d.symbols);
+      symbolsChanged(d.symbols); // la Watchlist y las otras pestañas la muestran al instante
       setSymbol(s);
       setAdding(false);
       setNewSymbol('');
@@ -834,7 +861,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     }
   };
 
-  const states = tabStates[activeTimeframe].indicatorStates;
+  const states = currentStates;
   const enabledCount = Object.values(states).filter(Boolean).length;
   const newTheme = isNewTheme();
 
@@ -896,7 +923,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
           ) : (
             <button type="button" className="btn-action-compact" onClick={() => setAdding(true)} title="Agregar una moneda de Bybit">+</button>
           )}
-          {TAB === 2 && <span className="current-time-compact">Pestaña 2</span>}
+          {TAB > 1 && <span className="current-time-compact">Pestaña {TAB}</span>}
           <StatusDots onOpenBot={onOpenBot} />
         </div>
 
@@ -905,13 +932,9 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
         </div>
 
         <div className="header-right">
-          <button
-            className="btn-action-compact theme-settings-btn"
-            onClick={() => window.open(otherTabUrl(), TAB === 1 ? 'suite_pestana_2' : 'suite_pestana_1')}
-            title={TAB === 1 ? 'Abrir la 2.ª pestaña: sus propios marcos e indicadores, los mismos dibujos' : 'Ir a la pestaña principal'}
-          >
-            {newTheme ? <><Icon name="layers" size={15} /><span>{TAB === 1 ? '2.ª pestaña' : 'Principal'}</span></> : '🗗'}
-          </button>
+          <TabsMenu onModule={onModule} buttonClass="btn-action-compact theme-settings-btn">
+            {newTheme ? <><Icon name="layers" size={15} /><span>Pestañas</span></> : '🗗'}
+          </TabsMenu>
           {onOpenWatchlist && (
             <button className="btn-action-compact theme-settings-btn" onClick={onOpenWatchlist} title="Watchlist: todas las monedas en una cuadrícula">
               {newTheme ? <><Icon name="rect" size={15} /><span>Watchlist</span></> : '▦'}
@@ -940,7 +963,19 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                   borderRadius: 4, padding: 10, minWidth: 250, maxHeight: '80vh', overflowY: 'auto', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000,
                 }}
               >
-                <h4 style={{ margin: '0 0 10px 0', fontSize: 14, color: '#333' }}>Indicadores ({activeTimeframe})</h4>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: 14, color: '#333' }}>Indicadores ({indicatorMode === 'coin' ? symbol : 'todas las monedas'})</h4>
+                <select
+                  value={indicatorMode}
+                  onChange={(e) => setIndicatorMode(e.target.value)}
+                  aria-label="Indicadores por moneda"
+                  style={{ width: '100%', padding: '3px 4px', fontSize: 12, marginBottom: 4, border: '1px solid #ccc', borderRadius: 3, background: '#fff', color: '#333' }}
+                >
+                  <option value="shared">Los mismos en todas las monedas</option>
+                  <option value="coin">Propios de cada moneda</option>
+                </select>
+                <div style={{ fontSize: 11, color: '#666', marginBottom: 6 }}>
+                  Valen para los cinco marcos.{indicatorMode === 'coin' && !coinStates[symbol] ? ' Esta moneda usa los comunes hasta que cambies uno.' : ''}
+                </div>
                 {Object.entries(states).map(([name, enabled]) => (
                   <label key={name} style={{ display: 'block', padding: '6px 0', cursor: 'pointer', fontSize: 13, color: '#333' }}>
                     <input type="checkbox" checked={enabled} onChange={(e) => toggle(name, e.target.checked)} style={{ marginRight: 8 }} />
@@ -1006,7 +1041,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                   interval={tf}
                   days={DAYS[tf]}
                   isActive={active && activeTimeframe === tf}
-                  indicatorStates={tabStates[tf].indicatorStates}
+                  indicatorStates={currentStates}
                   backtestingMode={false}
                   vpConfig={tabStates[tf].vpConfig}
                   vpFixedRange={tabStates[tf].vpFixedRange}
@@ -1063,7 +1098,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
           key={offscreenJob.id}
           job={offscreenJob}
           size={offscreenJob.size}
-          tabState={tabStates[offscreenJob.tf]}
+          tabState={{ ...tabStates[offscreenJob.tf], indicatorStates: offscreenStates }}
           swingVisual={swingVisual}
           rejectionConfig={rejectionConfig}
           onDone={finishOffscreen}

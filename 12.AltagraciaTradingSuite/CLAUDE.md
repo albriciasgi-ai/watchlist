@@ -16,6 +16,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - a pedido del usuario, las posiciones sobre el gráfico con su P&L, como en TradingView;
   - el journal: los hechos de cada trade real y lo del Observador (imágenes, niveles elegidos, medidas, informe e ir al gráfico). Ver "Journal".
 - **Paso 5, 12 y 13/11:** el servidor detecta el Swing con las reglas de App 1 y lo anota, sin enviar alertas (parte A); el indicador del gráfico dibuja lo que calcula el servidor (parte B), y la vista Watchlist muestra todas las monedas (parte C). Ver "Swing del servidor" y "Watchlist".
+- **Tras probar la Watchlist (13/11):** sus gráficos se mueven y se acercan, las monedas se agregan desde ella, las pestañas 2 a 5 abren cualquier módulo y los indicadores son los mismos en los cinco marcos. Ver "Pedidos tras probar la Watchlist".
 - **Falta:**
   - del journal: delta y OI de los días recientes en las medidas, y la lectura de la regla del laboratorio;
   - las alertas del Swing quedan para la central de alertas de confluencia;
@@ -54,10 +55,11 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
-        ├── SuiteApp.jsx   Módulos (Gráfico, Bot) y modal "Estilo" de App 1
+        ├── SuiteApp.jsx   Módulos (Gráfico, Watchlist, Bot) y modal "Estilo" de App 1; abre el módulo que pide una pestaña nueva
         ├── ChartView.jsx  Formato de la pestaña principal de App 1: barra de dibujo, encabezado, un MiniChart por marco, indicadores y sus ⚙️
         ├── TradingPanel.jsx   Panel de trading en vivo: caja TP/SL, tamaño fijo o por riesgo, orden al bot
-        ├── tabs.js        Pestaña 1 y 2: ajustes propios y dibujos compartidos (BroadcastChannel)
+        ├── tabs.js        Pestañas 1 a 5: ajustes propios, y dibujos y monedas compartidos (BroadcastChannel)
+        ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot
         ├── BotView.jsx    Estado, pausa, avisos críticos, posiciones, órdenes y alertas del bot
         ├── BotConfig.jsx  Configuración del bot como en App 10
         ├── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
@@ -143,8 +145,8 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 - **Cambios en App 1 para el vivo (12/11), sin efecto en reproducción:** Interés abierto da por pedido solo hasta ahora y vuelve a pedir al abrir una vela nueva; `MiniChart` en vivo avisa `onDrawingsChange` al guardar dibujos. Double Top/Bottom y Rejection los vuelve a pedir la suite cada 5 minutos. Double Top/Bottom con "alertas" encendidas intenta `POST /api/pattern-alert`, que aquí no existe (queda un error en la consola, no se envía nada).
 - **Cambio en App 1 (12/11):** la escala de precios del modo en vivo seguía todas las velas cargadas, y con 30 días de BTC las velas quedaban aplastadas. Ahora sigue las velas a la vista, como en reproducción. App 1 no usa el modo en vivo, así que su reproducción no cambia.
 - **Ajustes:** cada indicador guarda sus ajustes en el `localStorage` de esta página (puerto distinto al de App 1), con las mismas claves de App 1.
-- **Formato:** el de la pestaña principal de App 1 (no el del 2.º gráfico): barra de dibujo a la izquierda (deshacer, rehacer, borrar), encabezado con moneda, "+", estado, marcos (`TimeframeTabs`), 2.ª pestaña, Bot, Estilo, Indicadores y el botón del panel. Un `MiniChart` por marco queda montado: cambiar de marco no recarga. Cada marco tiene su lista de indicadores, como en App 1.
-- **Dos pestañas:** "2.ª pestaña" abre `/?pestana=2` (en Electron, otra ventana). Cada una guarda sus marcos e indicadores (`suite_chart_1`, `suite_chart_2`), y la 2 desvía los ajustes de los indicadores con el prefijo de App 1 (`installOwnSettings` de `secondaryStorage.js`). Los dibujos son por moneda: al guardarlos en un marco pasan a los otros cuatro y a la otra pestaña por `BroadcastChannel('suite-drawings')`, si mira la misma moneda.
+- **Formato:** el de la pestaña principal de App 1 (no el del 2.º gráfico): barra de dibujo a la izquierda (deshacer, rehacer, borrar), encabezado con moneda, "+", estado, marcos (`TimeframeTabs`), Pestañas, Watchlist, Bot, Estilo, Indicadores y el botón del panel. Un `MiniChart` por marco queda montado: cambiar de marco no recarga. Hasta el 13/11 cada marco tenía su lista de indicadores, como en App 1; ahora es una sola para los cinco (ver "Pedidos tras probar la Watchlist").
+- **Pestañas** (dos hasta el 13/11, ahora de la 1 a la 5): el menú "Pestañas" abre `/?pestana=2` a `/?pestana=5` (en Electron, otra ventana). Cada una guarda su moneda, sus marcos y sus indicadores (`suite_chart_<n>`), y desvía los ajustes de los indicadores con un prefijo propio (`installOwnSettings` de `secondaryStorage.js`): la 2 el de App 1 (`app1_g2:`) y de la 3 a la 5 `suite_p<n>:`. Los dibujos son por moneda: al guardarlos en un marco pasan a los otros cuatro, a la Watchlist y a las otras pestañas que miran la misma moneda, por `BroadcastChannel('suite-drawings')`.
 - **Monedas:** "+" agrega una moneda de Bybit (se comprueba en el servidor y se graba desde ese momento). Lista en `data/symbols.json`.
 - En desarrollo, `window.__suiteCharts` da acceso a los gráficos desde la consola.
 
@@ -274,8 +276,8 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
 - **Lo del Observador** (12/11, segunda parte), con lo de App 1 sin copiarlo:
   - **Decisión:** al enviar una orden desde el panel se toma la imagen del gráfico a la vista (con contexto, como la de decisión de App 1, y con los números de lo elegido). Cuando el bot responde se guardan la imagen, lo elegido en el gráfico para el análisis (niveles y marcas con su papel y nota), la orden propuesta, su número en Bybit y la nota opcional "Por qué entro". Lo elegido sale de la lista solo si la orden quedó en Bybit (ver "Correcciones tras la prueba del journal"). No frena la orden.
   - **Apertura y cierre:** la página toma la imagen cuando ve abrirse o cerrarse una posición en cualquier moneda. Si es la moneda a la vista, la toma de ese gráfico 1.5 s después, para que se dibuje la línea.
-  - **Moneda que no está a la vista** (12/11, pedido del usuario), o el gráfico oculto en el módulo del bot: `OffscreenCapture.jsx` arma su gráfico fuera de la pantalla, en `document.body`, y toma la imagen. Usa el marco a la vista, sus indicadores y el tamaño del gráfico, con las líneas de la posición. Espera las velas (hasta 25 s) y luego 6 s para indicadores y footprints. Tarda unos 10 s, una imagen a la vez, y después se quita. Quien opera no ve nada, no se abre ninguna ventana y su vista no cambia.
-  - **Solo la pestaña 1** toma estas imágenes: la 2.ª las repetiría. Un cambio de cuenta no cuenta como apertura ni como cierre.
+  - **Moneda que no está a la vista** (12/11, pedido del usuario), o el gráfico oculto en el módulo del bot: `OffscreenCapture.jsx` arma su gráfico fuera de la pantalla, en `document.body`, y toma la imagen. Usa el marco a la vista, los indicadores de esa moneda y el tamaño del gráfico, con las líneas de la posición. Espera las velas (hasta 25 s) y luego 6 s para indicadores y footprints. Tarda unos 10 s, una imagen a la vez, y después se quita. Quien opera no ve nada, no se abre ninguna ventana y su vista no cambia.
+  - **Solo la pestaña 1** toma estas imágenes: las otras las repetirían. Un cambio de cuenta no cuenta como apertura ni como cierre.
   - **Imagen de cierre como en App 1** (12/11, pedido del usuario: "me gusta más como lo hace la app 1"). `closePlan` en `ChartView.jsx` busca el trade en el journal del bot: misma moneda y lado, abierto antes y con la entrada a menos de 0.5%. Con él, la imagen:
     - encuadra desde la apertura hasta la vela más reciente (`showFrom`), con velas antes como contexto;
     - dibuja la caja del trade (`getTradeBoxes`) con la entrada y el SL y el TP vigentes al cerrar, hasta el cierre. Si se movieron, salen los nuevos. Al probarlo, el usuario movió los de ARB y salían los iniciales. Los iniciales siguen en el journal, en "SL inicial" y en el R;
@@ -406,18 +408,18 @@ El Swing de la Watchlist (App 2) sigue siendo el que manda alertas al bot, con o
 
 Pedido del plan del paso 5, con el cambio del usuario (12/11): los gráficos que no se ven no se pausan, se redibujan cada 30 s. Si la app se pusiera lenta, un máximo de 10 gráficos en vivo elegidos por él. Medido: no hace falta (ver "Medido").
 
-- **Módulo** (`web/src/WatchlistView.jsx`): botón "Watchlist" en el encabezado del gráfico y en la barra del bot. Se arma la primera vez que se abre y después queda armado aunque se mire otro módulo: sus gráficos siguen recibiendo velas y precios.
-- **Cuadrícula:** todas las monedas de la suite (las agregadas en el gráfico principal aparecen solas), cada una con el `MiniChart` de App 1 en vivo:
+- **Módulo** (`web/src/WatchlistView.jsx`): botón "Watchlist" en el encabezado del gráfico y en la barra del bot, o en otra pestaña con el menú "Pestañas". Se arma la primera vez que se abre y después queda armado aunque se mire otro módulo: sus gráficos siguen recibiendo velas y precios.
+- **Cuadrícula:** todas las monedas de la suite (las agregadas aquí, en el gráfico principal o en otra pestaña aparecen al instante), cada una con el `MiniChart` de App 1 en vivo:
   - marco común (1m a 4h) y días comunes, menos que el gráfico principal: 1 en 1m, 3 en 5m, 5 en 15m, 14 en 1h y 60 en 4h por omisión. Así cada moneda es un solo pedido a Bybit (dos en 1m);
   - de 1 a 5 columnas;
   - orden manual: se arrastra el nombre de una moneda; hacia abajo queda después de la otra y hacia arriba, antes. Reordenar no vuelve a cargar ningún gráfico;
   - cada celda dice precio y cambio de 24 h (los precios del WebSocket que ya usa su gráfico, uno por segundo) y "Swing en vivo" si el servidor la vigila;
-  - un clic abre la moneda en el gráfico principal, en el marco de la cuadrícula. El gráfico de la celda no responde al mouse: la rueda mueve la cuadrícula. Sus botones no se muestran.
+  - un clic en el nombre abre la moneda en el gráfico principal, en el marco de la cuadrícula y con todos los indicadores de ese gráfico. El gráfico de la celda se arrastra y se acerca, solo para mirar (desde el 13/11; antes no respondía al mouse). Ver "Pedidos tras probar la Watchlist".
 - **Indicadores:** los mismos para todas las monedas, solo livianos: Swing (del servidor), Delta de volumen, CVD, FVG, S&R v2, Perfil de volumen y Volumen de Respuesta. Por omisión, el Swing. Los pesados (Order Flow, Elementos OF, VWAP, Interés abierto y patrones) quedan en el gráfico principal: con todas las monedas a la vez pedirían demasiado a Bybit.
 - **Ritmo de dibujo** (`liveRedrawMs` de `MiniChart`, App 1): a la vista, a lo sumo un dibujo por precio cada 0.5 s; fuera de la vista (más abajo en la cuadrícula o con el módulo oculto), cada 30 s. Lo que se ve lo decide un `IntersectionObserver`. Al volver a verse se dibuja en el acto.
 - **Carga escalonada:** un gráfico nuevo cada 0.4 s, en el orden de la cuadrícula. Cambiar el marco o los días los arma de nuevo.
 - **Swing:** cada celda pide sus señales al servidor con los días de la cuadrícula (`/api/swing/signals?...&days=`), que comparte la caché de sus velas. Las pide al cerrar cada vela, de a 4 monedas a la vez; si cambian las reglas o los dibujos de una moneda en el gráfico principal, solo esa moneda vuelve a pedir (`notifySwingChanged`). Lo que no se ve muestra las flechas nuevas en su próximo dibujo.
-- **Panel del Swing** (botón "Swing"):
+- **Panel del Swing** (botón "Panel del Swing"; "Ocultar ›" en su encabezado lo cierra):
   - si detecta, y el botón para encenderla o apagarla;
   - el marco que vigila, con "Vigilar en <marco de la cuadrícula>" cuando difieren;
   - las monedas vigiladas, con una casilla por moneda (queda al menos una);
@@ -443,6 +445,42 @@ Pedido del plan del paso 5, con el cambio del usuario (12/11): los gráficos que
 
   En Electron no se probó.
 - **En desarrollo:** `window.__suiteWatchlist` tiene los gráficos, lo que se ve y el Swing de cada moneda.
+
+## Pedidos tras probar la Watchlist (13/11)
+
+El usuario pidió seis cosas al probar la Watchlist.
+
+1. **Mover y acercar los gráficos de la Watchlist,** con la compresión de velas de App 1:
+   - se arrastran para ver otras velas y la rueda acerca o aleja. Ctrl + rueda cambia la escala de precios y un doble clic en el eje la devuelve. →| vuelve a la última vela; los demás botones del gráfico no se muestran;
+   - la cuadrícula se desplaza con su barra o con la rueda sobre los nombres;
+   - son solo para mirar (`viewOnly` de `MiniChart`, en App 1): los dibujos se ven pero no se eligen, mueven ni borran, y no hay divisores de altura ni menú de niveles. Sin eso, arrastrar sobre un dibujo lo movía y lo guardaba sin que el gráfico principal se enterara, y un divisor cambiaba la altura de los paneles de la moneda, que es la del gráfico principal;
+   - un dibujo que cambia en el gráfico principal o en otra pestaña llega al instante a la celda de su moneda (`onAnyDrawings` de `tabs.js`).
+2. **"+ Moneda" en la Watchlist:** como el "+" del gráfico, con la moneda comprobada en Bybit por el servidor. Una moneda agregada en cualquier lado aparece al instante en la Watchlist, en el gráfico y en las otras pestañas (`symbolsChanged` de `tabs.js`, `BroadcastChannel('suite-symbols')`).
+3. **Pestañas:** menú "Pestañas" en el gráfico, la Watchlist y el bot (`TabsMenu.jsx`):
+   - una fila por pestaña, de la 1 a la 5, con Gráfico, Watchlist, Journal y Bot. En la pestaña actual cambia el módulo. En otra la abre con ese módulo (`/?pestana=n&modulo=...`; en Electron, otra ventana), o la trae al frente si ya está abierta;
+   - la pestaña nueva toma el módulo de la dirección, lo guarda y lo quita de ella: al recargar queda en el último módulo que se usó;
+   - desde otra pestaña, la 1 no se vuelve a abrir: es la ventana principal, y solo ella toma las imágenes del journal y da los avisos de Windows;
+   - cada una tiene su moneda, sus marcos, sus indicadores y su Watchlist (`suite_chart_<n>`, `suite_watchlist_<n>`, `suite_module_<n>`). Los ajustes de los indicadores llevan su prefijo: la 2 el de App 1 (`app1_g2:`) y de la 3 a la 5 `suite_p<n>:`. Mientras no se cambien, leen los de la 1;
+   - el encabezado dice "Pestaña n", y la Watchlist y el bot "· pestaña n";
+   - varias pestañas con el gráfico dan hasta 5 monedas con su gráfico completo a la vez. Cada una pide sus velas a Bybit, como el gráfico principal.
+4. **Una moneda abierta desde la Watchlist** llega al gráfico principal en el marco de la cuadrícula, con todos los indicadores del gráfico, también los pesados (Order Flow, Elementos OF, VWAP, etc.): ya no dependen del marco (punto 5).
+5. **Indicadores:**
+   - un solo conjunto para los cinco marcos: encender uno lo enciende en todos. `vpConfig` y el modo del interés abierto siguen por marco;
+   - la lista dice para quién valen y elige "Los mismos en todas las monedas" o "Propios de cada moneda". Con los propios, el primer cambio en una moneda le copia los comunes con ese cambio, y una moneda sin los suyos usa los comunes. Volver a "Los mismos" no borra los de cada moneda;
+   - se guardan en `suite_chart_<pestaña>` (`indicators`, `indicatorMode` y `coinIndicators`). Lo guardado antes, por marco, pasa al conjunto común con los del marco que estaba a la vista;
+   - las imágenes del journal fuera de la pantalla usan los de su moneda.
+6. **Panel del Swing:** "Ocultar ›" en su encabezado y el botón "Panel del Swing" en la barra. Oculto, la cuadrícula toma su ancho: en 1366 px pasa de 1024 a 1339. Se guarda por pestaña.
+
+**Probado** el 13/11 en la copia aislada con velas reales de Bybit:
+- zoom con la rueda y arrastre en las celdas, sin abrir el gráfico principal; de los botones solo quedó →|;
+- un rectángulo dibujado en el gráfico principal de SOL llegó a su celda y a los cinco marcos. Arrastrar sobre él en la celda movió las velas: el rectángulo quedó igual y no se guardó nada. Un clic no abrió el menú de niveles;
+- LTCUSDT agregada desde la Watchlist apareció en la cuadrícula con su precio y en la lista del gráfico (después se quitó);
+- CVD encendido en 15m quedó en los cinco marcos. Con "Propios de cada moneda", FVG solo para ETH: BTC siguió con los comunes y ETH lo conservó al volver;
+- lo guardado por marco (1h a la vista, con CVD y VWAP) pasó a los cinco marcos;
+- el menú pidió las pestañas 2 a 5 con su módulo (`window.open` simulado). Abiertas con su dirección: la 3 con el gráfico, "Pestaña 3" y sus propios ajustes (`suite_p3:`); la 2 con la Watchlist; la 4 con el journal;
+- SOL abierta desde la Watchlist llegó en 15m con Delta de volumen y Order Flow.
+
+No se probó en Electron: el navegador de las pruebas no abre ventanas emergentes.
 
 ## Escritorio (Electron)
 

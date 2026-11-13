@@ -3,14 +3,19 @@ import MiniChart from '@app1/components/MiniChart';
 import wsManager from '@app1/components/WebSocketManager';
 import { getJson, postJson } from './api.js';
 import { linesFor } from './botBook.js';
-import { TAB } from './tabs.js';
+import { TAB, onAnyDrawings, onSymbolsChanged, symbolsChanged } from './tabs.js';
+import TabsMenu from './TabsMenu.jsx';
 import { INTERVAL_CODE, SWING, attachSwing, feedSwing, frameName, onSwingChanged, swingOf } from './swingServer.js';
 
 /**
  * Watchlist (paso 5, parte C, 13/11/2026): las monedas de la suite en una cuadrícula, cada una con el gráfico de App 1
  * en vivo.
  * - Marco y días comunes, de 1 a 5 columnas. El orden se cambia arrastrando el nombre de una moneda.
- * - Un clic abre la moneda en el gráfico principal, en el marco de la cuadrícula.
+ * - Cada gráfico se arrastra para ver otras velas y se acerca o aleja con la rueda (las velas se comprimen como en
+ *   App 1; Ctrl + rueda cambia la escala de precios; →| vuelve a la última vela). Es solo para mirar (viewOnly de
+ *   MiniChart): sus dibujos se ven pero no se mueven, y un clic no elige niveles. Un clic en el nombre abre la moneda
+ *   en el gráfico principal, en el marco de la cuadrícula, con todos sus indicadores.
+ * - "+" agrega una moneda de Bybit a la suite sin salir de la Watchlist.
  * - Indicadores livianos, los mismos para todas las monedas. Los pesados quedan en el gráfico principal: con todas las
  *   monedas a la vez pedirían demasiado a Bybit.
  * - Ningún gráfico se pausa: todos reciben sus velas y sus precios. Los que se ven se dibujan a lo sumo cada 0.5 s y los
@@ -67,7 +72,7 @@ function priceText(p) {
 const colombiaTime = (ms) => new Date(ms).toLocaleTimeString('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit' });
 
 /** Nombre, precio y cambio de 24 h de una moneda, con los precios del WebSocket que ya usa su gráfico (uno por segundo) */
-function CellHead({ symbol, tf, note, onDragStart, onDragEnd }) {
+function CellHead({ symbol, tf, note, onOpen, onDragStart, onDragEnd }) {
   const [tick, setTick] = useState({ price: null, pct: null });
   useEffect(() => {
     const merged = {};
@@ -94,7 +99,7 @@ function CellHead({ symbol, tf, note, onDragStart, onDragEnd }) {
   }, [symbol, tf]);
   const pct = tick.pct;
   return (
-    <div className="wl-head" draggable onDragStart={onDragStart} onDragEnd={onDragEnd} title="Arrastra para cambiar el orden; un clic la abre en el gráfico">
+    <div className="wl-head" draggable onClick={onOpen} onDragStart={onDragStart} onDragEnd={onDragEnd} title="Un clic la abre en el gráfico principal; arrástrala para cambiar el orden">
       <span className="wl-sym">{symbol.replace(/USDT$/, '')}</span>
       <span>{priceText(tick.price)}</span>
       {Number.isFinite(pct) && <span className={pct >= 0 ? 'pos' : 'neg'}>{pct >= 0 ? '+' : ''}{pct.toFixed(2)}%</span>}
@@ -128,6 +133,7 @@ const GridChart = React.memo(function GridChart({ symbol, tf, days, states, redr
             getPositionLines={getPositionLines}
             chosenStyle="numbers"
             liveRedrawMs={redrawMs}
+            viewOnly
             onRequestPause={noop}
             onRequestTimeChange={noop}
             onDrawingsChange={noop}
@@ -139,12 +145,21 @@ const GridChart = React.memo(function GridChart({ symbol, tf, days, states, redr
 });
 
 /** El Swing del servidor: si detecta, su marco, las monedas que vigila y lo último que anotó. Nada se envía al bot */
-function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart }) {
+function PanelTitle({ onHide }) {
+  return (
+    <div className="wl-panel-title">
+      <h3>Swing del servidor</h3>
+      <button type="button" className="suite-btn" onClick={onHide} title="Ocultar el panel (se vuelve a abrir con «Panel del Swing»)">Ocultar ›</button>
+    </div>
+  );
+}
+
+function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide }) {
   const status = swing.status;
   if (!status) {
     return (
       <div className="wl-panel">
-        <div className="bot-section"><h3>Swing del servidor</h3></div>
+        <div className="bot-section"><PanelTitle onHide={onHide} /></div>
         <div className="bot-empty">{swing.error ? `Sin respuesta del servidor: ${swing.error}` : 'Cargando…'}</div>
       </div>
     );
@@ -159,7 +174,7 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart }) {
   return (
     <div className="wl-panel">
       <div className="bot-section">
-        <h3>Swing del servidor</h3>
+        <PanelTitle onHide={onHide} />
         <div className="wl-row">
           <span className={`suite-dot ${status.detecting ? 'ok' : 'bad'}`} />
           <span>{state}</span>
@@ -222,7 +237,7 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart }) {
   );
 }
 
-export default function WatchlistView({ active = true, onOpenChart, onBack, onOpenTheme }) {
+export default function WatchlistView({ active = true, onOpenChart, onBack, onOpenTheme, onModule = null }) {
   const saved = useMemo(loadSettings, []);
   const [symbols, setSymbols] = useState([]);
   const [tf, setTf] = useState(TIMEFRAMES.includes(saved.tf) ? saved.tf : '15m');
@@ -235,6 +250,9 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
   });
   const [showPanel, setShowPanel] = useState(saved.showPanel !== false);
   const [showMenu, setShowMenu] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [newSymbol, setNewSymbol] = useState('');
+  const [addError, setAddError] = useState('');
   const [mountedSet, setMountedSet] = useState(() => new Set());
   const [visible, setVisible] = useState(() => new Set());
   const [dragging, setDragging] = useState(null);
@@ -256,14 +274,29 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
   const feedsRef = useRef({});              // moneda -> estado del Swing de su gráfico (swingServer.js)
   const swingVersion = useRef({ all: 0 });  // sube con un cambio que mueve señales: de todas o de una moneda
 
-  // Monedas de la suite (las agregadas en el gráfico principal aparecen solas)
+  // Monedas de la suite: las agregadas aquí, en el gráfico principal o en otra pestaña aparecen al instante
   useEffect(() => {
     let alive = true;
     const read = () => getJson('/api/suite/symbols').then(d => alive && setSymbols(d.symbols || [])).catch(() => {});
     read();
     const timer = setInterval(read, 60000);
-    return () => { alive = false; clearInterval(timer); };
+    const stop = onSymbolsChanged(list => alive && setSymbols(list));
+    return () => { alive = false; clearInterval(timer); stop(); };
   }, []);
+  const addSymbol = async () => {
+    const s = newSymbol.trim().toUpperCase();
+    if (!s) return;
+    setAddError('');
+    try {
+      const d = await postJson('/api/suite/symbols', { symbol: s });
+      setSymbols(d.symbols);
+      symbolsChanged(d.symbols);
+      setAdding(false);
+      setNewSymbol('');
+    } catch (e) {
+      setAddError(e.message);
+    }
+  };
 
   const ordered = useMemo(
     () => [...order.filter(s => symbols.includes(s)), ...symbols.filter(s => !order.includes(s))],
@@ -342,6 +375,9 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
     }, 60);
     return () => clearTimeout(timer);
   }, [active, columns]);
+
+  // Los dibujos que cambian en el gráfico principal o en otra pestaña llegan a la celda de su moneda (aquí no se editan)
+  useEffect(() => onAnyDrawings((sym, shapes) => chartRefs.current[sym]?.loadDrawings?.(shapes, true)), []);
 
   // Swing del servidor en cada gráfico: al cerrar una vela del marco y cuando cambian reglas o dibujos de la moneda
   useEffect(() => onSwingChanged((sym) => {
@@ -438,7 +474,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
     <div className="suite-root">
       <div className="suite-bar">
         <button type="button" className="suite-btn" onClick={onBack}>← Gráfico</button>
-        <span className="suite-title">Watchlist</span>
+        <span className="suite-title">Watchlist{TAB > 1 ? ` · pestaña ${TAB}` : ''}</span>
         {TIMEFRAMES.map(t => (
           <button key={t} type="button" className={`suite-btn ${t === tf ? 'active' : ''}`} onClick={() => setTf(t)}>{t}</button>
         ))}
@@ -468,8 +504,26 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
             </div>
           )}
         </div>
+        {adding ? (
+          <span className="suite-add">
+            <input
+              autoFocus
+              value={newSymbol}
+              onChange={(e) => setNewSymbol(e.target.value.toUpperCase())}
+              onKeyDown={(e) => { if (e.key === 'Enter') addSymbol(); if (e.key === 'Escape') { setAdding(false); setAddError(''); } }}
+              placeholder="Ej: LINKUSDT"
+              aria-label="Moneda nueva"
+            />
+            <button type="button" className="suite-btn" onClick={addSymbol}>Agregar</button>
+            <button type="button" className="suite-btn" onClick={() => { setAdding(false); setAddError(''); }}>×</button>
+            {addError && <span className="suite-add-error">{addError}</span>}
+          </span>
+        ) : (
+          <button type="button" className="suite-btn" onClick={() => setAdding(true)} title="Agregar una moneda de Bybit a la suite">+ Moneda</button>
+        )}
         <div className="suite-spacer" />
-        <button type="button" className={`suite-btn ${showPanel ? 'active' : ''}`} onClick={() => setShowPanel(v => !v)}>Swing</button>
+        <button type="button" className={`suite-btn ${showPanel ? 'active' : ''}`} onClick={() => setShowPanel(v => !v)} title="Mostrar u ocultar el panel del Swing">Panel del Swing</button>
+        <TabsMenu onModule={onModule} />
         <button type="button" className="suite-btn" onClick={onOpenTheme}>Estilo</button>
       </div>
       <div className="suite-main">
@@ -489,7 +543,6 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
                     ref={cellRef(sym)}
                     className={`wl-cell ${dragOver === sym ? 'drag-over' : ''} ${dragging === sym ? 'dragging' : ''}`}
                     style={{ height: CELL_HEIGHT[columns] }}
-                    onClick={() => onOpenChart(sym, tf)}
                     onDragOver={(e) => { if (dragging && dragging !== sym) { e.preventDefault(); if (dragOver !== sym) setDragOver(sym); } }}
                     onDragLeave={() => setDragOver(d => (d === sym ? null : d))}
                     onDrop={(e) => { e.preventDefault(); moveTo(dragging, sym); setDragOver(null); setDragging(null); }}
@@ -498,6 +551,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
                       symbol={sym}
                       tf={tf}
                       note={note}
+                      onOpen={() => onOpenChart(sym, tf)}
                       onDragStart={(e) => { setDragging(sym); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', sym); }}
                       onDragEnd={() => { setDragging(null); setDragOver(null); }}
                     />
@@ -523,7 +577,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
             </div>
           </div>
           {showPanel && (
-            <SwingPanel swing={swing} symbols={ordered} gridTf={tf} onChange={changeSwing} onOpenChart={onOpenChart} />
+            <SwingPanel swing={swing} symbols={ordered} gridTf={tf} onChange={changeSwing} onOpenChart={onOpenChart} onHide={() => setShowPanel(false)} />
           )}
         </div>
       </div>

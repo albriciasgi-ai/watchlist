@@ -54,6 +54,47 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Watchlist que se Mueve, Pestañas y los Mismos Indicadores en Todos los Marcos
+
+**Pedido:** tras probar la Watchlist, el usuario pidió seis cosas:
+1. mover y acercar sus gráficos, con la compresión de velas de App 1;
+2. agregar monedas sin salir de la Watchlist;
+3. abrir otras pestañas con la Watchlist, el journal o el bot y, si se podía, hasta 5 monedas con su gráfico completo;
+4. que una moneda abierta desde la Watchlist llegue con todos los indicadores, también los pesados;
+5. los mismos indicadores en todos los marcos, y elegir si todas las monedas los comparten o cada una tiene los suyos;
+6. ocultar el panel lateral de la Watchlist.
+
+**Cambios:**
+1. **Gráficos de la Watchlist:** se arrastran y se acercan o alejan con la rueda, como en App 1; →| vuelve a la última vela. Son solo para mirar:
+   - los dibujos se ven y llegan al instante si cambian en el gráfico principal, pero no se mueven;
+   - no hay divisores de altura ni menú de niveles.
+
+   Un clic en el nombre abre la moneda en el gráfico principal. App 1 suma `viewOnly` a `MiniChart`; sin él, todo sigue igual.
+2. **"+ Moneda"** en la barra de la Watchlist. La moneda aparece al instante en la Watchlist, en el gráfico y en las otras pestañas.
+3. **Menú "Pestañas":** abre de la 2 a la 5 (en Electron, ventanas) con el gráfico, la Watchlist, el journal o el bot.
+   - Cada una tiene su moneda, sus marcos y sus indicadores; los dibujos son los mismos.
+   - Varias con el gráfico dan varias monedas con su gráfico completo a la vez.
+   - Solo la 1 toma las imágenes del journal y da los avisos de Windows.
+4. **Indicadores:** un solo conjunto para los cinco marcos. La lista elige "Los mismos en todas las monedas" o "Propios de cada moneda"; una moneda sin los suyos usa los comunes. Lo guardado antes toma los del marco que estaba a la vista. Una moneda abierta desde la Watchlist llega con ese conjunto completo.
+5. **Panel del Swing:** "Ocultar ›" en su encabezado, y el botón "Panel del Swing" lo vuelve a abrir.
+6. **App 1:** `installOwnSettings` acepta otro prefijo: las pestañas 3 a 5 usan `suite_p<n>:`. `secondarystorage.test.mjs` suma una prueba (7).
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla. En App 1 nada cambia a la vista.
+- Sobre un gráfico de la Watchlist la rueda acerca y aleja: la cuadrícula se desplaza con su barra o con la rueda sobre los nombres. Ctrl + rueda cambia la escala de precios.
+- Probado en la copia aislada con velas reales de Bybit:
+  - zoom y arrastre en las celdas, sin abrir el gráfico principal;
+  - un dibujo hecho en el gráfico principal llegó a la celda, y arrastrar sobre él en la celda movió las velas sin tocarlo;
+  - LTCUSDT agregada desde la Watchlist, el panel oculto y vuelto a abrir;
+  - CVD encendido en 15m quedó en los cinco marcos, y con "Propios de cada moneda" ETH tuvo FVG mientras BTC seguía con los comunes;
+  - las pestañas 2, 3 y 4 abiertas con la Watchlist, el gráfico y el journal, cada una con sus ajustes;
+  - SOL abierta desde la Watchlist llegó en 15m con Delta de volumen y Order Flow.
+- El navegador de pruebas no abre ventanas: las pestañas se abrieron con su dirección. En Electron no se probó.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Pedidos tras probar la Watchlist (13/11)"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Vista Watchlist (paso 5, parte C)
 
 **Pedido:** la parte C del paso 5: la vista Watchlist con todas las monedas. El usuario pidió no pausar los gráficos que no se ven y redibujarlos cada 30 s, y medir si eso pone lenta la app; solo en ese caso, un límite de 10 gráficos en vivo elegidos por él.
