@@ -227,31 +227,41 @@ def read_minute(row, **kwargs):
     return fs.footprints("BTCUSDT", 1, start, start + 60000, **kwargs)
 
 
-def test_minimo_relativo_al_promedio_por_nivel_de_las_velas_anteriores(store):
-    # Cuatro velas con 1.5 por nivel (1 compra, 0.5 venta) y la quinta con el triple: 3 de compra por nivel
+def test_filtro_de_volumen_de_la_vela_contra_las_anteriores(store):
+    # Cuatro velas de 15 (1 + 0.5 por nivel, 10 niveles) y la quinta con el triple: 45, 300% de las anteriores
     make_day(store, [10] * 5, scale=[1, 1, 1, 1, 3])
-    rules = {"ratio": 2, "min_volume_bars": 4}
-    passed = read_minute(4, step=1, imbalance={**rules, "min_volume_pct": 150})["footprints"][0]
-    assert passed["imbalance_min_volume"] == pytest.approx(2.25)  # 150% de 1.5
-    assert len(passed["imbalances"]) == 10
-    blocked = read_minute(4, step=1, imbalance={**rules, "min_volume_pct": 250})["footprints"][0]
-    assert blocked["imbalance_min_volume"] == pytest.approx(3.75)
+    rules = {"ratio": 2, "candle_volume_bars": 4}
+    passed = read_minute(4, step=1, imbalance={**rules, "candle_volume_pct": 250})["footprints"][0]
+    assert passed["candle_volume_ratio"] == pytest.approx(3.0)
+    assert len(passed["imbalances"]) == 10 and passed["stacked_imbalances"]
+    blocked = read_minute(4, step=1, imbalance={**rules, "candle_volume_pct": 350})["footprints"][0]
     assert blocked["imbalances"] == [] and blocked["stacked_imbalances"] == []
-    # Sin porcentaje no hay minimo relativo
     plain = read_minute(4, step=1, imbalance=rules)["footprints"][0]
-    assert "imbalance_min_volume" not in plain and len(plain["imbalances"]) == 10
+    assert "candle_volume_ratio" not in plain and len(plain["imbalances"]) == 10
 
 
-def test_minimo_relativo_solo_mira_velas_anteriores(store):
+def test_filtro_de_vela_solo_mira_velas_anteriores(store):
     make_day(store, [10] * 3, scale=[1, 3, 9])
-    rules = {"ratio": 2, "min_volume_pct": 100, "min_volume_bars": 1}
-    fp = read_minute(1, step=1, imbalance=rules)["footprints"][0]
-    assert fp["imbalance_min_volume"] == pytest.approx(1.5), "la vela siguiente (scale 9) no cuenta"
-    # La primera vela no tiene anteriores: usa su propio promedio (1.5) y su compra de 1 no alcanza
-    first = read_minute(0, step=1, imbalance=rules)["footprints"][0]
-    assert first["imbalance_min_volume"] == pytest.approx(1.5)
-    assert first["imbalances"] == []
-    # En un rango de varias velas, cada una usa las suyas
+    rules = {"ratio": 2, "candle_volume_pct": 100, "candle_volume_bars": 1}
     start = START_MIN * 60000
     many = fs.footprints("BTCUSDT", 1, start, start + 3 * 60000, step=1, imbalance=rules)["footprints"]
-    assert [x["imbalance_min_volume"] for x in many] == pytest.approx([1.5, 1.5, 4.5])
+    # La primera no tiene anteriores: no se filtra. Las otras, contra la anterior (la siguiente no cuenta)
+    assert "candle_volume_ratio" not in many[0] and len(many[0]["imbalances"]) == 10
+    assert [x["candle_volume_ratio"] for x in many[1:]] == pytest.approx([3.0, 3.0])
+
+
+def test_celdas_contra_la_vela():
+    # Vela de 100: el nivel 0 (40) es imbalance suelto; los niveles 2 a 4 (10 cada uno), un stacked de 30
+    levels = [{"bid_volume": 4, "ask_volume": 36, "total_volume": 40}, {"bid_volume": 15, "ask_volume": 15, "total_volume": 30},
+              {"bid_volume": 1, "ask_volume": 9, "total_volume": 10}, {"bid_volume": 1, "ask_volume": 9, "total_volume": 10},
+              {"bid_volume": 1, "ask_volume": 9, "total_volume": 10}]
+    found = fs._imbalances(levels, {"ratio": 3})
+    for i, lv in enumerate(levels):
+        lv.update(price_min=100 + i, price_max=101 + i)
+    stacked = fs._stacked(levels, found)
+    assert [x["level_index"] for x in found] == [0, 2, 3, 4] and stacked[0]["levels"] == [2, 3, 4]
+    f, s = fs._share_filter(levels, found, stacked, 0.25)
+    assert [x["level_index"] for x in f] == [0, 2, 3, 4] and len(s) == 1, "el stacked suma 30%: queda con sus celdas"
+    f, s = fs._share_filter(levels, found, stacked, 0.35)
+    assert [x["level_index"] for x in f] == [0] and s == [], "solo la celda de 40% pasa"
+    assert fs._share_filter(levels, found, stacked, 0) == (found, stacked)

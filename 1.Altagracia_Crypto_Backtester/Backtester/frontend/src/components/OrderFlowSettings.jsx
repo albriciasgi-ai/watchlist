@@ -9,8 +9,9 @@ const TIMEFRAMES = [['1m', 1], ['5m', 5], ['15m', 15], ['1h', 60], ['4h', 240]];
 const NUMBER_LIMITS = {
   maxLevels: [3, 50],
   imbalanceRatio: [1.1, 50],
-  imbalanceMinVolumePct: [0, 1000],
-  imbalanceMinVolumeBars: [1, 100],
+  imbalanceCandleVolumePct: [0, 1000],
+  imbalanceCandleVolumeBars: [1, 100],
+  imbalanceCellSharePct: [0, 100],
   stackedMinLevels: [2, 20],
   stackedMinVolumeZScore: [0, 5],
   minCandleWidth: [4, 200],
@@ -50,7 +51,7 @@ export function cleanOrderFlowSettings(values, defaults) {
     clean[key] = Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : defaults[key];
   }
   clean.stackedMinLevels = Math.round(clean.stackedMinLevels);
-  clean.imbalanceMinVolumeBars = Math.round(clean.imbalanceMinVolumeBars);
+  clean.imbalanceCandleVolumeBars = Math.round(clean.imbalanceCandleVolumeBars);
   if (!['volume', 'delta', 'both'].includes(clean.profileMode)) clean.profileMode = defaults.profileMode;
 
   for (const [, minutes] of TIMEFRAMES) {
@@ -158,18 +159,25 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
               </select>
             </div>
             <NumberRow
-              label="Volumen mínimo del lado dominante (%)"
-              hint="Del volumen promedio por nivel de las velas anteriores. 100 es un nivel promedio; 0 es sin mínimo."
-              step="5" min="0" max="1000"
-              value={values.imbalanceMinVolumePct}
-              onChange={(value) => set('imbalanceMinVolumePct', value)}
+              label="Volumen mínimo de la vela (%)"
+              hint="Solo velas con al menos este % del volumen promedio de las velas anteriores tienen imbalances. 100 es una vela promedio; 0 es sin filtro."
+              step="10" min="0" max="1000"
+              value={values.imbalanceCandleVolumePct}
+              onChange={(value) => set('imbalanceCandleVolumePct', value)}
             />
             <NumberRow
               label="Velas anteriores para el promedio"
-              hint="Solo velas ya cerradas antes de cada vela. Sin velas anteriores usa la misma vela."
+              hint="Solo velas ya cerradas antes de cada vela. La vela en curso se compara con lo que lleva."
               step="1" min="1" max="100"
-              value={values.imbalanceMinVolumeBars}
-              onChange={(value) => set('imbalanceMinVolumeBars', value)}
+              value={values.imbalanceCandleVolumeBars}
+              onChange={(value) => set('imbalanceCandleVolumeBars', value)}
+            />
+            <NumberRow
+              label="Volumen de la celda del imbalance (% de su vela)"
+              hint="Compra más venta de la celda. Un stacked se mide por la suma de sus celdas. 0 es sin filtro."
+              step="1" min="0" max="100"
+              value={values.imbalanceCellSharePct}
+              onChange={(value) => set('imbalanceCellSharePct', value)}
             />
             <div className="setting-row">
               <label className="checkbox-label">

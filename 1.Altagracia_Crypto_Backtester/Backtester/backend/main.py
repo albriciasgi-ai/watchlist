@@ -3557,8 +3557,9 @@ async def get_orderflow_historical(
     imbalance_ratio: float = 3.0,
     imbalance_mode: str = "level",
     imbalance_min_volume: float = 0.0,
-    imbalance_min_pct: float = 0.0,
-    imbalance_min_bars: int = 20,
+    imbalance_candle_pct: float = 0.0,
+    imbalance_candle_bars: int = 20,
+    imbalance_cell_pct: float = 0.0,
     imbalance_zero: bool = False,
     stacked_levels: int = 3,
     max_levels: Optional[int] = None
@@ -3586,8 +3587,9 @@ async def get_orderflow_historical(
                 "ratio": max(1.01, imbalance_ratio),
                 "mode": imbalance_mode,
                 "min_volume": max(0.0, imbalance_min_volume),
-                "min_volume_pct": max(0.0, imbalance_min_pct),
-                "min_volume_bars": max(1, imbalance_min_bars),
+                "candle_volume_pct": max(0.0, imbalance_candle_pct),
+                "candle_volume_bars": max(1, imbalance_candle_bars),
+                "cell_share_pct": max(0.0, imbalance_cell_pct),
                 "count_zero": imbalance_zero,
                 "stacked_levels": max(2, stacked_levels),
             }

@@ -54,7 +54,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
-### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Franjas de Imbalances con Zoom, Mínimo Relativo y Perfil de Delta
+### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Franjas de Imbalances con Zoom, Filtros Relativos, Perfil de Delta y Cierres que Bybit no Da
 
 **Pedido:**
 - con zoom, no se veían las franjas de los imbalances en los footprints;
@@ -64,13 +64,17 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 **Cambios** (indicador Order Flow y modal de App 1, que la suite importa: valen en las dos):
 1. **Franjas con zoom:** cada stacked deja una franja desde su vela hacia la derecha ("Largo" del modal, 3 velas), con borde arriba y abajo. Con Nítido, un imbalance suelto lleva una barra de 2 px en su celda.
-2. **Mínimo relativo:** % del volumen promedio por nivel de las N velas anteriores (1 a 100, 20 de fábrica). Lo calcula el almacén (`footprint_store.py`), solo con velas anteriores. Rutas de App 1 y de la suite con `imbalance_min_pct` e `imbalance_min_bars`.
+2. **Filtros relativos** (tras la primera prueba, en lugar del % por nivel; los calcula `footprint_store.py`):
+   - volumen de la vela en % del promedio de las N velas anteriores (1 a 100, 20 de fábrica), solo con velas anteriores;
+   - volumen de la celda del imbalance en % de su vela; un stacked se mide por la suma de sus celdas.
 3. **Perfil de delta:** "Perfil junto al footprint": Volumen, Delta, o Volumen y al lado el delta.
-4. **Pruebas:** `orderflow.test.mjs` (34) y `test_footprint_rules.py` (con `test_footprint_live.py`, 34). Las de la suite siguen pasando.
+4. **Pruebas:** `orderflow.test.mjs` (34) y `test_footprint_rules.py` (con `test_footprint_live.py`, 35). Las de la suite siguen pasando.
+5. **Bot, trade que no llegaba al journal:** el TP de un short de BTC (abierto desde el 12/11) se ejecutó el 14/11 a las 10:25 en la cuenta Demo, pero Bybit nunca lo dio en `closed-pnl`, de donde el journal toma los cierres: quedó abierto. Ahora, si la posición lleva 3 minutos sin existir y `closed-pnl` no la cerró, el bot arma el cierre con las ejecuciones de la orden que cerró (`/v5/execution/list`): salida y comisión de cierre reales, apertura estimada. Queda marcado "≈" en la suite; si después llega la fila de `closed-pnl` de esa orden, la reemplaza. Los cierres se piden con 7 días cada minuto (antes 1). Pruebas: `journal_checks.py` del bot (37).
 
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página. La suite se reinicia sola al abrirla.
-- El mínimo en monedas guardado antes se ignora: empieza sin mínimo.
+- El mínimo en monedas guardado antes se ignora: empieza sin filtro.
+- **Bot:** hay que cerrar el que corre (desde el 13/11 a las 14:42; un segundo arranque falla con "10048": el puerto 5000 ya está ocupado por él) y volver a abrirlo. Unos 4 minutos después de arrancar, el short de BTC queda cerrado con P&L aproximado.
 - Probado en la copia aislada de la suite con el almacén real de BTC; App 1 usa el mismo dibujo y se probó su modo de 10 niveles en el almacén, no en su pantalla. No se probó en Electron.
 
 **Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Footprints: franjas con zoom, mínimo relativo y perfil de delta (14/11)" y `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ORDER FLOW SOBRE LAS VELAS", "Parámetros"

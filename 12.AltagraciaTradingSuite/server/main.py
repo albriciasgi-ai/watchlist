@@ -218,7 +218,7 @@ async def orderflow_historical(
     known_until: Optional[int] = None, step: Optional[float] = None, imbalance_ratio: float = 3.0,
     imbalance_mode: str = "level", imbalance_min_volume: float = 0.0, imbalance_zero: bool = False,
     stacked_levels: int = 3, max_levels: Optional[int] = None, step_mode: Optional[str] = None,
-    imbalance_min_pct: float = 0.0, imbalance_min_bars: int = 20,
+    imbalance_candle_pct: float = 0.0, imbalance_candle_bars: int = 20, imbalance_cell_pct: float = 0.0,
 ):
     """Footprints del almacen (oficial, y nube + PC donde falta el oficial), como el backend de App 1.
     step_mode=uniform (el grafico en vivo): un solo step para todas las velas; sin step, el de _uniform_step."""
@@ -231,8 +231,9 @@ async def orderflow_historical(
     # las velas recientes hasta que lleguen sus trades. Antes respondia "ahora" y las daba por vistas, vacias
     cut = await run_in_threadpool(market_routes._live_cut, symbol, known_until)
     rules = {"ratio": max(1.01, imbalance_ratio), "mode": imbalance_mode if imbalance_mode in ("level", "diagonal") else "level",
-             "min_volume": max(0.0, imbalance_min_volume), "min_volume_pct": max(0.0, imbalance_min_pct),
-             "min_volume_bars": max(1, imbalance_min_bars), "count_zero": imbalance_zero,
+             "min_volume": max(0.0, imbalance_min_volume), "candle_volume_pct": max(0.0, imbalance_candle_pct),
+             "candle_volume_bars": max(1, imbalance_candle_bars), "cell_share_pct": max(0.0, imbalance_cell_pct),
+             "count_zero": imbalance_zero,
              "stacked_levels": max(2, stacked_levels)}
     limit = max(2, max_levels) if max_levels else None
     if step_mode == "uniform":

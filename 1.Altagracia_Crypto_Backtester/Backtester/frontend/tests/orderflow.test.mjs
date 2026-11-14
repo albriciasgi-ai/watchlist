@@ -343,13 +343,14 @@ test('la marca de delta exige ir contra la vela y un minimo del volumen', () => 
 
 test('cada peticion lleva las reglas de imbalance', async () => {
   const of = newIndicator();
-  of.updateConfig({ imbalanceRatio: 4.5, imbalanceMode: 'diagonal', imbalanceMinVolumePct: 150, imbalanceMinVolumeBars: 30, imbalanceCountZero: true, stackedMinLevels: 5 });
+  of.updateConfig({ imbalanceRatio: 4.5, imbalanceMode: 'diagonal', imbalanceCandleVolumePct: 150, imbalanceCandleVolumeBars: 30, imbalanceCellSharePct: 12, imbalanceCountZero: true, stackedMinLevels: 5 });
   await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
   const { query } = requests[0];
   assert.equal(query.get('imbalance_ratio'), '4.5');
   assert.equal(query.get('imbalance_mode'), 'diagonal');
-  assert.equal(query.get('imbalance_min_pct'), '150');
-  assert.equal(query.get('imbalance_min_bars'), '30');
+  assert.equal(query.get('imbalance_candle_pct'), '150');
+  assert.equal(query.get('imbalance_candle_bars'), '30');
+  assert.equal(query.get('imbalance_cell_pct'), '12');
   assert.equal(query.get('imbalance_min_volume'), null, 'el minimo en monedas ya no se envia');
   assert.equal(query.get('imbalance_zero'), 'true');
   assert.equal(query.get('stacked_levels'), '5');
@@ -523,14 +524,14 @@ test('el modo del perfil no vuelve a pedir datos', async () => {
   assert.equal(of.footprintMap.size, loaded);
 });
 
-test('el minimo relativo es parte de las reglas: cambiarlo vuelve a pedir', async () => {
+test('los filtros relativos son parte de las reglas: cambiarlo vuelve a pedir', async () => {
   const of = newIndicator();
   await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
-  of.updateConfig({ imbalanceMinVolumeBars: 50 });
+  of.updateConfig({ imbalanceCellSharePct: 20 });
   assert.equal(of.footprintMap.size, 0);
   await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
-  assert.equal(requests.at(-1).query.get('imbalance_min_bars'), '50');
-  assert.equal(requests.at(-1).query.get('imbalance_min_pct'), '0', 'de fábrica sin mínimo');
+  assert.equal(requests.at(-1).query.get('imbalance_cell_pct'), '20');
+  assert.equal(requests.at(-1).query.get('imbalance_candle_pct'), '0', 'de fábrica sin filtro de vela');
 });
 
 let failed = 0;

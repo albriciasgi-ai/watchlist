@@ -129,9 +129,11 @@ class OrderFlowIndicator extends IndicatorBase {
       maxLevels: 10, // Con step automático, niveles que puede tener una vela
       imbalanceRatio: 3,
       imbalanceMode: 'level', // 'level': mismo nivel. 'diagonal': compra contra la venta del nivel inferior
-      // Volumen mínimo del lado dominante: % del volumen promedio por nivel de las velas anteriores (0 = sin mínimo)
-      imbalanceMinVolumePct: 0,
-      imbalanceMinVolumeBars: 20,
+      // Filtros de imbalances (0 = sin filtro): volumen de la vela en % del promedio de las N velas anteriores,
+      // y volumen de la celda (o de las celdas de un stacked) en % del volumen de su vela
+      imbalanceCandleVolumePct: 0,
+      imbalanceCandleVolumeBars: 20,
+      imbalanceCellSharePct: 0,
       imbalanceCountZero: false, // Contar el nivel aunque el otro lado no tenga volumen
       stackedMinLevels: 3
     };
@@ -139,8 +141,8 @@ class OrderFlowIndicator extends IndicatorBase {
 
   // Lo que cambia la respuesta del backend: si cambia, lo cargado ya no sirve
   _dataRules() {
-    const { imbalanceRatio, imbalanceMode, imbalanceMinVolumePct, imbalanceMinVolumeBars, imbalanceCountZero, stackedMinLevels, maxLevels } = this.config;
-    return JSON.stringify([this._stepOverride(), imbalanceRatio, imbalanceMode, imbalanceMinVolumePct, imbalanceMinVolumeBars, imbalanceCountZero, stackedMinLevels, maxLevels]);
+    const { imbalanceRatio, imbalanceMode, imbalanceCandleVolumePct, imbalanceCandleVolumeBars, imbalanceCellSharePct, imbalanceCountZero, stackedMinLevels, maxLevels } = this.config;
+    return JSON.stringify([this._stepOverride(), imbalanceRatio, imbalanceMode, imbalanceCandleVolumePct, imbalanceCandleVolumeBars, imbalanceCellSharePct, imbalanceCountZero, stackedMinLevels, maxLevels]);
   }
 
   _stepOverride() {
@@ -279,9 +281,10 @@ class OrderFlowIndicator extends IndicatorBase {
     }
     params.append('imbalance_ratio', String(this.config.imbalanceRatio));
     params.append('imbalance_mode', this.config.imbalanceMode);
-    // El mínimo en monedas de antes ya no se envía: ahora es relativo a las velas anteriores
-    params.append('imbalance_min_pct', String(this.config.imbalanceMinVolumePct || 0));
-    params.append('imbalance_min_bars', String(this.config.imbalanceMinVolumeBars || 20));
+    // El mínimo en monedas de antes ya no se envía: ahora los filtros son relativos
+    params.append('imbalance_candle_pct', String(this.config.imbalanceCandleVolumePct || 0));
+    params.append('imbalance_candle_bars', String(this.config.imbalanceCandleVolumeBars || 20));
+    params.append('imbalance_cell_pct', String(this.config.imbalanceCellSharePct || 0));
     params.append('imbalance_zero', String(this.config.imbalanceCountZero));
     params.append('stacked_levels', String(this.config.stackedMinLevels));
 

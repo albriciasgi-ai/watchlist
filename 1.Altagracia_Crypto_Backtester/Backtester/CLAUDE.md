@@ -594,8 +594,11 @@ GET /api/orderflow/coverage/{symbol}
 
 - `OrderFlowSettings.jsx` y `FVGSettings.jsx` se abren con el ⚙️ junto al indicador. Aplican a todos los marcos y se guardan por símbolo en `orderflow_settings_{symbol}` y `fvg_settings_{symbol}`
 - `stepByMinutes` guarda el step por marco, en minutos. Sin valor es automático. Un step escrito se respeta: el backend lo ajusta a múltiplos de la celda guardada y solo lo sube si una vela pasaría de 200 niveles (`MAX_LEVELS_PER_CANDLE`)
-- `/api/orderflow/historical` acepta `imbalance_ratio`, `imbalance_mode` (`level` o `diagonal`), `imbalance_min_volume`, `imbalance_min_pct`, `imbalance_min_bars`, `imbalance_zero` y `stacked_levels`
-- **Volumen mínimo relativo (14/11):** el modal lo pide en % del volumen promedio por nivel (niveles con trades) de las N velas anteriores (`imbalanceMinVolumePct`, 0 = sin mínimo; `imbalanceMinVolumeBars`, 20). Solo velas anteriores a cada vela; sin ellas, la misma vela. Cada footprint trae `imbalance_min_volume`, el mínimo usado. El mínimo en monedas (`imbalanceMinVolume`) ya no se envía
+- `/api/orderflow/historical` acepta `imbalance_ratio`, `imbalance_mode` (`level` o `diagonal`), `imbalance_min_volume`, `imbalance_candle_pct`, `imbalance_candle_bars`, `imbalance_cell_pct`, `imbalance_zero` y `stacked_levels`
+- **Filtros relativos de imbalances (14/11, reemplazan el mínimo en monedas, `imbalanceMinVolume`, que ya no se envía):**
+  - `imbalanceCandleVolumePct` y `imbalanceCandleVolumeBars` (20): una vela solo tiene imbalances si su volumen llega a ese % del promedio de las N velas anteriores. Sin velas anteriores no se filtra. Cada footprint trae `candle_volume_ratio`;
+  - `imbalanceCellSharePct`: un imbalance suelto queda si su celda (compra + venta) tiene ese % del volumen de su vela; un stacked, si la suma de sus celdas lo tiene (`_share_filter` en `footprint_store.py`);
+  - 0 es sin filtro
 - **Perfil junto al footprint (14/11):** `profileMode` `volume`, `delta` o `both` (volumen y al lado el delta). `renderDeltaProfile` dibuja el delta de cada nivel desde la izquierda, largo según el mayor |delta| de la vela, en el color del lado que ganó
 - **Franjas de stacked con zoom (14/11):** con el footprint a la vista, `renderStackedBands` dibuja, después de todas las velas, una franja por stacked desde su vela hacia la derecha (`stackedLineExtend` anchos de vela) con borde arriba y abajo. Con Nítido, un imbalance suelto lleva una barra de 2 px en su lado
 - `OrderFlowIndicator.updateConfig()` descarta lo cargado solo si cambia algo que afecta la respuesta (`_dataRules()`)
