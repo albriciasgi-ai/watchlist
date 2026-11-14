@@ -100,6 +100,28 @@ check("watch: espera en el precio exacto y lo negociado desde esa hora", w[0]["b
 check("watch: avisa si los trades guardados no llegan tan atras", w[0]["partial"] is False
       and ladder.watch(wb, "TESTUSDT", [(99.5, 400)], trades=wt)[0]["partial"] is True)
 
+# cinta: los trades del mismo instante y lado son una orden; se muestran las grandes
+od = deque()
+for T, p_, v, b in [(1000, 100.0, 1.0, True), (1000, 100.1, 2.0, True), (1000, 100.2, 1.0, True),   # una compra que cruza 3 precios
+                    (1000, 99.9, 0.5, False),                                                       # mismo instante, otro lado
+                    (2000, 100.0, 0.1, True), (3000, 99.8, 0.2, False)]:
+    ladder.add_order(od, T, p_, v, b)
+check("cinta: mismo instante y lado es una orden", len(od) == 4 and od[0][2] == 4.0 and od[0][8] == 3
+      and abs(od[0][3] - (100 + 200.2 + 100.2)) < 1e-9 and od[0][6] == 100.0 and od[0][7] == 100.2, str(list(od)))
+tp = ladder.tape("X", min_usd=40, tick=0.1, orders=od, now_ms=3000)
+check("cinta: solo las de USD sobre el minimo, la mas reciente primero", [o["usd"] for o in tp["orders"]] == [50, 400]
+      and tp["orders"][0]["side"] == "sell"
+      and tp["orders"][1]["levels"] == 3 and tp["orders"][1]["side"] == "buy", str(tp["orders"]))
+check("cinta: compra y venta de los ultimos 30 s", tp["buy_30s"] == round(400.4 + 10) and tp["sell_30s"] == round(49.95 + 19.96),
+      str((tp["buy_30s"], tp["sell_30s"])))
+big = deque()
+for k in range(200):
+    ladder.add_order(big, k, 100.0, 10.0 if k == 150 else 1.0, k % 2 == 0)
+auto = ladder.tape("X", tick=0.1, orders=big, now_ms=200)
+check("cinta automatica: el percentil 99 de lo reciente deja solo las mas grandes", auto["auto"] and auto["min_usd"] is not None
+      and [o["usd"] for o in auto["orders"]] == [1000], str(auto)[:200])
+check("cinta sin trades: vacia", ladder.tape("NADA", orders=deque())["orders"] == [])
+
 ok = sum(1 for _, passed in results if passed)
 print(f"\n{ok} de {len(results)} pruebas pasan")
 sys.exit(0 if ok == len(results) else 1)

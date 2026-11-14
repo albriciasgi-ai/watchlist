@@ -7,6 +7,7 @@ import { linesFor, subscribeBook } from './botBook.js';
 import { TAB, URL_SYMBOL, URL_TIMEFRAME, onAnyDrawings, onSymbolsChanged } from './tabs.js';
 import TabsMenu from './TabsMenu.jsx';
 import LadderPanel, { LADDER_WIDTH } from './LadderPanel.jsx';
+import TapePanel, { TAPE_WIDTH } from './TapePanel.jsx';
 
 /**
  * Pestaña "Mapa" (13/11/2026): el mapa de liquidez del libro grabado, en un gráfico aparte. Pedido del usuario: verlo
@@ -23,6 +24,7 @@ import LadderPanel, { LADDER_WIDTH } from './LadderPanel.jsx';
  *   book_study, /api/book/defense), y el estado de las zonas cerca del precio.
  * - Menú "Capas" y "Filtro" (14/11/2026): lo que no cabía en la barra va al menú; el filtro deja solo lo grande en el
  *   mapa y en Niveles.
+ * - La cinta de operaciones grandes (14/11/2026), a la derecha del ladder: "Cinta" en el menú Capas.
  * - El ladder (14/11/2026), a la derecha: el libro de ahora de la misma moneda, del grabador de la suite. Se oculta con
  *   el botón "Ladder".
  */
@@ -91,6 +93,8 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
   // Sigue al gráfico principal (pestaña 1) mientras no se elija aquí otra moneda u otro marco
   const [follow, setFollow] = useState(TAB !== 1 && (URL_SYMBOL ? true : saved.follow !== false));
   const [ladderOn, setLadderOn] = useState(saved.ladder !== false);
+  const [tapeOn, setTapeOn] = useState(saved.tape !== false);
+  const [tapeMin, setTapeMin] = useState(Number.isFinite(saved.tapeMin) ? saved.tapeMin : 0);
   const [levelsOn, setLevelsOn] = useState(saved.levels !== false);
   const [defenseOn, setDefenseOn] = useState(saved.defense !== false);
   const [levelMinutes, setLevelMinutes] = useState(SUSTAINED_LEVELS_MINUTES.includes(saved.levelMinutes) ? saved.levelMinutes : 30);
@@ -108,11 +112,11 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
 
   useEffect(() => {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder, levels: levelsOn, levelMinutes, sides, defense: defenseOn, cut }));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder, levels: levelsOn, levelMinutes, sides, defense: defenseOn, cut, tape: tapeOn, tapeMin }));
     } catch {
       // Sin almacenamiento la elección dura hasta cerrar la pestaña
     }
-  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder, levelsOn, levelMinutes, sides, defenseOn, cut]);
+  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder, levelsOn, levelMinutes, sides, defenseOn, cut, tapeOn, tapeMin]);
 
   useEffect(() => {
     getJson('/api/suite/symbols').then(d => setSymbols(d.symbols)).catch(() => {});
@@ -179,7 +183,7 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
   useEffect(() => {
     const timer = setTimeout(() => chartRef.current?.forceRedraw?.(), 60);
     return () => clearTimeout(timer);
-  }, [ladderOn]);
+  }, [ladderOn, tapeOn]);
 
   const states = useMemo(() => ({ ...(levelsOn ? STATES_WITH_LEVELS : STATES), ...(defenseOn ? { [DEFENSE_NAME]: true } : {}) }),
     [levelsOn, defenseOn]);
@@ -239,6 +243,11 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
               <input type="checkbox" checked={ladderOn} onChange={(e) => setLadderOn(e.target.checked)} /> Ladder
             </label>
           </div>
+          <div className="suite-menu-row" style={ROW}>
+            <label style={{ flex: 1 }} title="Cinta de operaciones grandes: las órdenes a mercado más grandes, en vivo, a la derecha">
+              <input type="checkbox" checked={tapeOn} onChange={(e) => setTapeOn(e.target.checked)} /> Cinta de operaciones grandes
+            </label>
+          </div>
           {TAB !== 1 && (
             <div className="suite-menu-row" style={ROW}>
               <label style={{ flex: 1 }} title="Cambia de moneda y de marco con el gráfico principal">
@@ -260,7 +269,7 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
         <button type="button" className="suite-btn" onClick={onOpenTheme}>Estilo</button>
       </div>
       <div className="suite-main">
-        <div className="wl-chart" style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: ladderOn ? LADDER_WIDTH : 0 }}>
+        <div className="wl-chart" style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: (ladderOn ? LADDER_WIDTH : 0) + (tapeOn ? TAPE_WIDTH : 0) }}>
           <div className="backtesting-main" style={{ height: '100%' }}>
             <div className="timeframes-container" style={{ height: '100%' }}>
               <div className="timeframe-panel" style={{ display: 'block', height: '100%' }}>
@@ -292,8 +301,13 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
             </div>
           </div>
         </div>
+        {tapeOn && (
+          <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: TAPE_WIDTH }}>
+            <TapePanel symbol={symbol} active={active} minUsd={tapeMin} onMinUsd={setTapeMin} />
+          </div>
+        )}
         {ladderOn && (
-          <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: LADDER_WIDTH }}>
+          <div style={{ position: 'absolute', top: 0, right: tapeOn ? TAPE_WIDTH : 0, bottom: 0, width: LADDER_WIDTH }}>
             <LadderPanel symbol={symbol} active={active} settings={ladder} onSettings={(patch) => setLadder(v => ({ ...v, ...patch }))} />
           </div>
         )}

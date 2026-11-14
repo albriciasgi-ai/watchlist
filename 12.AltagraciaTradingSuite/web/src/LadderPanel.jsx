@@ -4,6 +4,9 @@ import { linesFor, subscribeBook } from './botBook.js';
 import { LADDER_STEPS, LADDER_WINDOWS, fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf, stepLabel, stepFor,
   pickSide, startQueue, queueNow, queueText } from './ladderLogic.js';
 import { makePick, sendPick } from './ladderPick.js';
+import { PLAN_MODES, PLAN_NAMES, emptyPlan, planClick, planReady, planBox, withBox, planSummary } from './ladderPlan.js';
+import { getJson, postJson } from './api.js';
+import { sendDrawings } from './tabs.js';
 
 /**
  * Price ladder (14/11/2026), en la pestaña "Mapa", a la derecha del mapa. Pedido del usuario: el ladder en la misma
@@ -12,7 +15,9 @@ import { makePick, sendPick } from './ladderPick.js';
  * lo agregado o retirado en venta, y lo negociado en la ventana elegida (compra agresiva y venta agresiva).
  * Marca tus posiciones (entrada, SL, TP, liquidación) y tus órdenes.
  * Para ejecutar (14/11/2026): un clic en Compra pone una Limit de compra a ese precio en el panel de trading (en Venta,
- * de venta); enviarla sigue pidiendo la confirmación del panel. Tus Limit llevan la cola estimada: lo que tienes delante,
+ * de venta); enviarla sigue pidiendo la confirmación del panel. Con "Stop" y "Objetivo" se eligen también esos precios
+ * (los botones avanzan solos: entrada → stop → objetivo); con los tres, el ladder dibuja la caja TP/SL de la moneda y el
+ * panel la usa. Tus Limit llevan la cola estimada: lo que tienes delante,
  * en un rango (lo retirado no se sabe si estaba delante o detrás).
  */
 
@@ -39,6 +44,7 @@ for (const c of COLS) { c.x = x; x += c.w; }
 const rgba = (rgb, a) => `rgba(${rgb}, ${a})`;
 
 function markColor(side) {
+  if (side === 'plan') return THEME.accent || '#2962FF';
   if (side === 'buy') return THEME.up || '#089981';
   if (side === 'sell') return THEME.down || '#F23645';
   if (side === 'risk') return THEME.down || '#F23645';
@@ -171,16 +177,23 @@ function draw(canvas, data, error, hover, marks, extra = {}) {
   ctx.fillStyle = grid;
   for (const c of COLS.slice(1)) ctx.fillRect(c.x, HEAD_H, 1, h - HEAD_H - FOOT_H);
 
-  // tus posiciones y órdenes: etiqueta a la izquierda de su fila, o en el borde si quedan fuera
+  // tus posiciones y órdenes, y la entrada, el stop y el objetivo elegidos aquí: etiqueta a la izquierda de su fila, o en
+  // el borde si quedan fuera
   const visibleRows = Math.min(n, Math.floor((h - FOOT_H - HEAD_H) / ROW_H));
   const used = new Map();
-  for (const m of marks) {
+  const plan = extra.plan || {};
+  const planMarks = [
+    plan.entry > 0 && { price: plan.entry, text: `Plan entrada${plan.side ? (plan.side === 'long' ? ' compra' : ' venta') : ''}`, side: 'plan' },
+    plan.sl > 0 && { price: plan.sl, text: 'Plan stop', side: 'risk' },
+    plan.tp > 0 && { price: plan.tp, text: 'Plan objetivo', side: 'target' },
+  ].filter(Boolean);
+  for (const m of [...planMarks, ...marks]) {
     let r = rowOf(m.price, top, step, n);
     let arrow = '';
     if (r < 0) { r = 0; arrow = '↑ '; } else if (r >= visibleRows) { r = visibleRows - 1; arrow = '↓ '; }
     const slot = used.get(r) || 0;
     used.set(r, slot + 1);
-    const queue = m.orderId ? extra.queues?.get(m.orderId) : null;
+    const queue = m.orderId ? extra.queues?.get(m.orderId) : null;   // la cola de tus Limit
     const text = queue ? `${m.text} · ${queue}` : m.text;
     const label = arrow ? `${arrow}${text} ${m.price.toFixed(digits)}` : text;
     ctx.font = `600 10px ${font}`;
@@ -250,6 +263,10 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
   const tracksRef = useRef(loadTracks());
   const noticeRef = useRef(null);
   const pickRef = useRef(null);
+  const [plan, setPlan] = useState(emptyPlan);   // entrada, stop y objetivo elegidos en el ladder
+  const [planMode, setPlanMode] = useState('entry');
+  const planRef = useRef(plan);
+  planRef.current = plan;
   const [follow, setFollow] = useState(true);
   const followRef = useRef(true);
   followRef.current = follow;
@@ -260,7 +277,7 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
   const redraw = useCallback(() => {
     if (canvasRef.current) {
       draw(canvasRef.current, dataRef.current, errorRef.current, hoverRef.current, marksRef.current,
-        { queues: queuesRef.current, notice: noticeRef.current, pick: pickRef.current });
+        { queues: queuesRef.current, notice: noticeRef.current, pick: pickRef.current, plan: planRef.current });
     }
   }, []);
 
@@ -277,6 +294,9 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
     setFollow(true);
     redraw();
   }, [symbol, mult, redraw]);
+  // otra moneda: el plan empieza de cero
+  useEffect(() => { setPlan(emptyPlan()); setPlanMode('entry'); }, [symbol]);
+  useEffect(() => { redraw(); }, [plan, redraw]);
 
   // tus posiciones y órdenes
   useEffect(() => {
@@ -379,15 +399,44 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
     const price = d.rows[i][0];
     const side = pickSide(col, price, d.best_bid, d.best_ask);
     const now = Date.now();
-    if (!side) {
-      noticeRef.current = { text: 'Ese precio está entre la mejor compra y la mejor venta: elige Compra o Venta', at: now };
+    const digits = priceDigits(d.step, d.tick);
+    const r = planClick(planRef.current, planMode, price, side);
+    pickRef.current = { price, at: now };
+    if (r.error) {
+      noticeRef.current = { text: r.error, at: now };
     } else {
-      sendPick(makePick(symbol, price, side, now));
-      pickRef.current = { price, at: now };
-      noticeRef.current = { text: `Al panel: Limit ${side === 'long' ? 'compra' : 'venta'} a ${price.toFixed(priceDigits(d.step, d.tick))} · confírmala allí`, at: now };
+      setPlan(r.plan);
+      setPlanMode(r.mode);
+      planRef.current = r.plan;
+      if (planReady(r.plan)) {
+        drawBox(r.plan, digits);
+      } else if (planMode === 'entry') {
+        sendPick(makePick(symbol, price, r.plan.side, now));
+        noticeRef.current = { text: `Al panel: Limit ${r.plan.side === 'long' ? 'compra' : 'venta'} a ${price.toFixed(digits)} · ahora elige el stop`, at: now };
+      } else {
+        noticeRef.current = { text: `${PLAN_NAMES[planMode]} en ${price.toFixed(digits)} · ahora elige el ${PLAN_NAMES[r.mode].toLowerCase()}`, at: now };
+      }
     }
     redraw();
     setTimeout(redraw, 1600);
+  };
+
+  // Con entrada, stop y objetivo: la caja TP/SL de la moneda (la del ladder se reemplaza), en el servidor y en las otras
+  // pestañas; el panel de trading la toma y prepara la Limit con ese stop y ese objetivo
+  const drawBox = async (p, digits) => {
+    const box = planBox(p, symbol);
+    if (!box) return;
+    try {
+      const d = await getJson(`/api/drawings/${encodeURIComponent(symbol)}`);
+      const list = withBox(d.shapes || [], box);
+      await postJson(`/api/drawings/${encodeURIComponent(symbol)}`, { shapes: list, interval: d.interval || '' });
+      sendDrawings(symbol, list);
+      sendPick({ ...makePick(symbol, p.entry, p.side), kind: 'box' });
+      noticeRef.current = { text: `Caja TP/SL dibujada · ${planSummary(p)} · confírmala en el panel`, at: Date.now() };
+    } catch (e) {
+      noticeRef.current = { text: `No se pudo dibujar la caja: ${e.message}`, at: Date.now() };
+    }
+    redraw();
   };
 
   return (
@@ -407,6 +456,20 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
         </select>
         <button type="button" className={`suite-btn ${follow ? 'active' : ''}`} onClick={() => { centerRef.current = null; setFollow(true); }}
           title="Seguir al precio. La rueda del mouse mueve el ladder y deja de seguirlo">Centrar</button>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 6px 4px', flexWrap: 'wrap' }}>
+        <span className="wl-muted">Clic pone:</span>
+        {PLAN_MODES.map(m => (
+          <button key={m} type="button" className={`suite-btn ${planMode === m ? 'active' : ''}`} onClick={() => setPlanMode(m)}
+            title={m === 'entry' ? 'El clic pone la entrada (en Compra, una compra; en Venta, una venta)'
+              : m === 'sl' ? 'El clic pone el stop' : 'El clic pone el objetivo'}>
+            {PLAN_NAMES[m]}{plan[m] ? ' ✓' : ''}
+          </button>
+        ))}
+        {(plan.entry || plan.sl || plan.tp) && (
+          <button type="button" className="suite-btn" onClick={() => { setPlan(emptyPlan()); setPlanMode('entry'); }}
+            title="Borrar la entrada, el stop y el objetivo elegidos aquí (la caja dibujada queda)">Limpiar</button>
+        )}
       </div>
       <canvas ref={canvasRef} style={{ flex: 1, width: '100%', minHeight: 0, display: 'block' }}
         onWheel={onWheel} onMouseMove={onMove} onMouseLeave={onLeave} onClick={onClick}

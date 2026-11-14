@@ -92,13 +92,19 @@ export default function TradingPanel({ symbol, shapes, onClose, onDecision }) {
         setLadderNote(`El ladder eligió un precio de ${pick.symbol}; este panel está en ${symbol}.`);
         return;
       }
-      setUseBox(false);
       setOrderType('limit');
-      setLimitText(String(pick.price));
-      setManualSide(pick.side);
       setTab('trading');
       setResult(null);
-      setLadderNote(`Del ladder: Limit ${pick.side === 'long' ? 'de compra' : 'de venta'} a ${pick.price}. Revisa el stop, el objetivo y el tamaño, y confirma.`);
+      if (pick.kind === 'box') {
+        // entrada, stop y objetivo del ladder: la caja TP/SL que el ladder acaba de dibujar
+        setUseBox(true);
+        setLadderNote(`Del ladder: caja TP/SL con entrada ${pick.price}. Revisa el tamaño y confirma.`);
+        return;
+      }
+      setUseBox(false);
+      setLimitText(String(pick.price));
+      setManualSide(pick.side);
+      setLadderNote(`Del ladder: Limit ${pick.side === 'long' ? 'de compra' : 'de venta'} a ${pick.price}. Elige el stop y el objetivo en el ladder o aquí, y confirma.`);
     };
     apply(readPick());          // elegido justo antes de abrir el panel
     return onPick(apply);

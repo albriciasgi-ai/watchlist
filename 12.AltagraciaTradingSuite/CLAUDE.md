@@ -63,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (19), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (11), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (11), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -85,7 +85,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
         └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), con node
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12) y ladderplan.test.mjs (5), con node
 ```
 
 ## Puertos
@@ -873,6 +873,21 @@ Pedido del usuario: el ladder para ejecutar, del plan del price ladder.
 - **Probado** en la copia aislada con el libro en vivo de Bybit (sin bot): el clic en Compra a 65,410 en la pestaña del mapa llegó al panel de la pestaña del gráfico, que quedó en Limit, LONG y 65410 con su aviso. La cola se probó solo con las pruebas y con la ruta (sin órdenes reales). No se probó en Electron ni con el bot.
 - **Pruebas:** `server/tests/ladder_checks.py` (19) y `web/tests/ladder.test.mjs` (12).
 
+## Stop y objetivo desde el ladder, y cinta de operaciones grandes (14/11)
+
+Pedidos del usuario tras probar el ladder para ejecutar: sin una caja TP/SL dibujada, el clic solo ponía el precio (faltaban el stop y el objetivo); pidió elegirlos en el ladder y que la app redibuje la caja. Y la cinta de operaciones grandes.
+
+- **"Clic pone: Entrada · Stop · Objetivo"** bajo los controles del ladder (`ladderPlan.js`). Avanzan solos: entrada → stop → objetivo → entrada. El stop de una compra va debajo de la entrada y el objetivo encima (al revés en una venta); si no, el ladder lo dice y no cambia nada. Mover la entrada conserva el stop y el objetivo que siguen sirviendo; cambiar de lado los borra. "Limpiar" borra el plan (la caja dibujada queda).
+  - El ladder marca "Plan entrada", "Plan stop" y "Plan objetivo" en sus filas.
+  - Solo con la entrada, la Limit va al panel como antes (`ladderPick`).
+  - Con los tres, el ladder **dibuja la caja TP/SL** de la moneda (`tpsl_ladder_<moneda>`, una por moneda que se reemplaza; desde la hora de la entrada, 2 horas de ancho): la guarda en `/api/drawings` y la avisa a las otras pestañas (`sendDrawings`). El panel la toma (`kind: 'box'`: usa la caja y Limit) y avisa; enviarla sigue pidiendo la confirmación de siempre. El pie del ladder dice el R/R y los % del stop y del objetivo.
+- **Cinta de operaciones grandes** (`TapePanel.jsx`, a la derecha del ladder; "Cinta de operaciones grandes" en Capas, encendida de fábrica):
+  - Servidor (`ladder.py`): los trades del mismo instante y lado son una orden (`add_order`, como el Smart Tape de ATAS y `build_flow.py`), guardadas 30 minutos. `GET /api/book/tape/{símbolo}?min_usd&limit`: las más recientes con USD sobre el mínimo, o sobre el percentil 99 de esos 30 minutos (automático), y lo comprado y vendido a mercado en los últimos 30 s.
+  - Cada fila: hora, ▲ compra o ▼ venta agresiva, precio (o el rango si cruzó varios precios: un barrido), cantidad y USD. En negrita las de 3 veces el mínimo; resaltada si tocó el precio de una Limit tuya. Arriba, compra contra venta de los últimos 30 s con una barra. Mínimo: automático, 50k, 100k, 250k, 500k o 1M.
+  - En BTC, en 20 s, juntó 363 órdenes y el mínimo automático quedó en 38.8k USD.
+- **Probado** en la copia aislada con el libro y los trades en vivo de Bybit (sin bot): entrada, stop y objetivo en el ladder dibujaron la caja (65,430 / 65,370 / 65,550, R/R 1:2) en el mapa y en los dibujos guardados, y el panel de otra pestaña la tomó (LONG, Limit, con su SL y TP). La cinta mostró órdenes reales. No se probó en Electron ni con el bot.
+- **Pruebas:** `server/tests/ladder_checks.py` (24), `web/tests/ladderplan.test.mjs` (5) y `ladder.test.mjs` (12).
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -922,7 +937,7 @@ C:\Python314\python.exe -B tests\book_events_checks.py
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 

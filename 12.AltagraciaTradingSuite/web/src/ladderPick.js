@@ -8,7 +8,7 @@ export const PICK_KEY = 'suite_ladder_pick';
 export const PICK_EVENT = 'suite-ladder-pick';
 export const PICK_TTL_MS = 30000;
 
-/** Lo que se manda: { symbol, price, side: 'long' | 'short', at } */
+/** Lo que se manda: { symbol, price, side: 'long' | 'short', at }, y kind: 'box' cuando el ladder dibujó la caja TP/SL */
 export function makePick(symbol, price, side, at = Date.now()) {
   if (!symbol || !(price > 0) || (side !== 'long' && side !== 'short')) return null;
   return { symbol, price, side, at };

@@ -54,6 +54,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 14 Noviembre 2026: Stop y Objetivo desde el Ladder y Cinta de Operaciones Grandes
+
+**Pedido:** sin una caja TP/SL dibujada, el clic en el ladder solo ponía el precio. El usuario pidió elegir en el ladder también el stop y el objetivo, que la app redibuje la caja, y la cinta de operaciones grandes.
+
+**Cambios:**
+1. **"Clic pone: Entrada · Stop · Objetivo"** en el ladder (`ladderPlan.js`), que avanzan solos. Con los tres, el ladder dibuja la caja TP/SL de la moneda (una, que se reemplaza), la guarda y la avisa a las otras pestañas; el panel la toma y la orden se confirma como siempre.
+2. **Cinta de operaciones grandes** (`TapePanel.jsx`) a la derecha del ladder, con su opción en Capas. Muestra las órdenes a mercado grandes, con los trades del mismo instante y lado juntos: hora, lado, precio o rango (barrido), cantidad y USD. El mínimo puede ser automático (el 1% más grande de 30 minutos) o fijo. Arriba, compra contra venta de los últimos 30 s.
+3. **Servidor:** `/api/book/tape/{símbolo}` (`ladder.py`), de los trades que ya recibe la suite.
+4. **Pruebas:** `ladder_checks.py` (24), `ladderplan.test.mjs` (5) y `ladder.test.mjs` (12).
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- Probado en la copia aislada con el libro y los trades en vivo: la caja se dibujó y el panel de otra pestaña la tomó. No se probó en Electron ni con el bot.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Stop y objetivo desde el ladder, y cinta de operaciones grandes (14/11)"
+
+---
+
 ### Altagracia Trading Suite - 14 Noviembre 2026: Ladder para Ejecutar
 
 **Pedido:** el ladder para ejecutar.
