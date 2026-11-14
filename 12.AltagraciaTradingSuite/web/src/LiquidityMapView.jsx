@@ -57,7 +57,13 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
   // Sigue al gráfico principal (pestaña 1) mientras no se elija aquí otra moneda u otro marco
   const [follow, setFollow] = useState(TAB !== 1 && (URL_SYMBOL ? true : saved.follow !== false));
   const [ladderOn, setLadderOn] = useState(saved.ladder !== false);
-  const [ladder, setLadder] = useState(saved.ladderSettings && typeof saved.ladderSettings === 'object' ? saved.ladderSettings : {});
+  const [ladder, setLadder] = useState(() => {
+    const v = saved.ladderSettings && typeof saved.ladderSettings === 'object' ? { ...saved.ladderSettings } : {};
+    // Antes del 14/11 el step era uno para todas las monedas: queda para la moneda que se miraba
+    if (v.step && !v.steps) v.steps = { [saved.symbol || symbol]: v.step };
+    delete v.step;
+    return v;
+  });
   const [symbols, setSymbols] = useState([symbol]);
   const chartRef = useRef(null);
   const symbolRef = useRef(symbol);

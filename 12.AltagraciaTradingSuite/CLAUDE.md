@@ -85,7 +85,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
         └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (6), con node
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (8), con node
 ```
 
 ## Puertos
@@ -766,12 +766,13 @@ Pedido del usuario: el ladder en la misma pestaña del mapa.
   - Mejor compra y mejor venta más marcadas; el último precio, con recuadro.
   - Tus posiciones (entrada, SL, TP, liquidación) y órdenes, con una etiqueta en su fila, o en el borde con su precio si quedan fuera.
   - El pie dice los números exactos de la fila bajo el mouse; sin mouse, lo que espera a la vista y su desequilibrio.
-- **Controles:** step (automático ~0.01% del precio, en BTC 5 USD; o 1 a 1000 ticks), ventana de lo negociado (1 a 30 minutos) y "Centrar". Sigue al precio sin saltar con cada tick: se recentra cuando el precio queda a menos de 1/5 del borde. La rueda lo mueve y deja de seguirlo.
+- **Controles:** step (automático ~0.01% del precio, en BTC 5 USD; o 1 a 5000 ticks), ventana de lo negociado (1 a 30 minutos) y "Centrar". Sigue al precio sin saltar con cada tick: se recentra cuando el precio queda a menos de 1/5 del borde. La rueda lo mueve y deja de seguirlo.
+- **Step en precio y por moneda (14/11, tras la primera prueba):** el usuario eligió 10 ticks en ETH para ver más rango, y eran 0.1 USD, más fino que el automático (0.2). Ahora cada opción dice el precio y los ticks ("2.5 · 250 ticks", `stepLabel`) y cada moneda recuerda el suyo (`ladderSettings.steps`, `stepFor`). El step de antes, uno para todas, queda para la moneda que se miraba.
 - **Ritmo:** pide unas 4 veces por segundo, solo la moneda a la vista; cada 2 s si la pestaña no se ve. Cada pedido tardó 5 a 7 ms y pesa unos 2 KB (BTC, 40 filas).
 - **Solo para mirar:** no envía, mueve ni cancela órdenes. Falta (fases siguientes): clic que pone el precio en la Limit del panel de trading y la cola estimada de tu Limit.
 - **Probado** (14/11, copia aislada en 13300 con el libro real de BTC copiado a una carpeta temporal, grabación en esa carpeta, sin bot): BTC 5m con el mapa y el ladder juntos, ETH 1m con Oscuro, cambio de step y de ventana, rueda y pie con la fila bajo el mouse. Las marcas de las posiciones se probaron solo en `ladder.test.mjs`. No se probó en Electron.
-- **Pruebas:** `server/tests/ladder_checks.py` (16) y `web/tests/ladder.test.mjs` (6).
-- **Huecos que se ven en el mapa (revisado el 14/11):** en "Solo la sostenida", una vela queda en blanco si falta o quedó incompleto un minuto de su ventana. En BTC: del 13/11 15:15 a 15:42 (no se grabó en ningún lado) y el 13/11 22:12, un minuto incompleto en la nube (49 s) mientras la suite estaba cerrada hasta las 22:16.
+- **Pruebas:** `server/tests/ladder_checks.py` (16) y `web/tests/ladder.test.mjs` (8).
+- **Huecos que se ven en el mapa (revisado el 14/11):** en "Solo la sostenida", una vela queda en blanco si falta o quedó incompleto un minuto de su ventana. En BTC: del 13/11 15:15 a 15:42 (no se grabó en ningún lado) y el 13/11 22:12, un minuto incompleto en la nube (49 s) mientras la suite estaba cerrada hasta las 22:16. Lo de 15:15 a 15:42 no se puede llenar con la nube (no grababa el libro todavía); solo quedaría el archivo diario de Bybit, de 200 o 500 niveles, que no se baja sin permiso del usuario.
 
 ## Escritorio (Electron)
 
@@ -819,7 +820,7 @@ C:\Python314\python.exe -B tests\ladder_checks.py
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (6).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (8).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 

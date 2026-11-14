@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { THEME } from '@app1/components/uiTheme.js';
 import { linesFor, subscribeBook } from './botBook.js';
-import { LADDER_STEPS, LADDER_WINDOWS, fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf } from './ladderLogic.js';
+import { LADDER_STEPS, LADDER_WINDOWS, fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf, stepLabel, stepFor } from './ladderLogic.js';
 
 /**
  * Price ladder (14/11/2026), en la pestaña "Mapa", a la derecha del mapa. Pedido del usuario: el ladder en la misma
@@ -222,7 +222,8 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
   const [follow, setFollow] = useState(true);
   const followRef = useRef(true);
   followRef.current = follow;
-  const mult = LADDER_STEPS.includes(settings?.step) ? settings.step : 0;
+  const mult = stepFor(settings, symbol);   // cada moneda recuerda su step (14/11)
+  const [scale, setScale] = useState({ symbol: null, tick: null, auto: null });   // para decir el step en precio
   const windowS = LADDER_WINDOWS.includes(settings?.window) ? settings.window : 300;
 
   const redraw = useCallback(() => {
@@ -268,6 +269,8 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
         } else {
           errorRef.current = null;
           dataRef.current = d;
+          setScale(v => (v.symbol === symbol && v.tick === d.tick && (mult || v.auto === d.step) ? v
+            : { symbol, tick: d.tick, auto: mult ? (v.symbol === symbol ? v.auto : null) : d.step }));
           const price = d.last || d.mid;
           if (followRef.current) {
             const next = followCenter(centerRef.current, price, d.step, rows);
@@ -317,9 +320,12 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', borderLeft: '1px solid var(--t-line, #d0d4da)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 6px', flexWrap: 'wrap' }}>
         <span className="wl-muted" style={{ fontWeight: 600 }}>Ladder</span>
-        <select className="suite-select" value={mult} onChange={(e) => onSettings({ step: Number(e.target.value) })} aria-label="Step del ladder"
-          title="Cuántos ticks junta cada fila. Automático: ~0.01% del precio">
-          {LADDER_STEPS.map(s => <option key={s} value={s}>{s ? `${s} tick${s > 1 ? 's' : ''}` : 'Step auto'}</option>)}
+        <select className="suite-select" value={mult} onChange={(e) => onSettings({ steps: { ...(settings?.steps || {}), [symbol]: Number(e.target.value) } })} aria-label="Step del ladder"
+          title="Cuánto precio junta cada fila (en ticks de esta moneda). Cada moneda recuerda el suyo. Automático: ~0.01% del precio">
+          {LADDER_STEPS.map(s => {
+            const known = scale.symbol === symbol;
+            return <option key={s} value={s}>{stepLabel(s, known ? scale.tick : null, known ? scale.auto : null)}</option>;
+          })}
         </select>
         <select className="suite-select" value={windowS} onChange={(e) => onSettings({ window: Number(e.target.value) })} aria-label="Ventana de lo negociado"
           title="Lo negociado en cada precio en los últimos minutos">

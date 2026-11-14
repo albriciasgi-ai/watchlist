@@ -67,7 +67,8 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    - step automático o de 1 a 1000 ticks, y "Centrar". La rueda lo mueve.
 2. **Servidor:** `/api/book/ladder/{símbolo}` (`ladder.py`) lee el libro que el grabador ya tiene en memoria y los trades que ya recibe: no abre otra conexión a Bybit. Cada pedido tarda 5 a 7 ms.
 3. **Huecos del mapa:** en "Solo la sostenida", una vela queda en blanco si falta un minuto de su ventana. En BTC son del 13/11 15:15 a 15:42 y el 13/11 22:12, un minuto incompleto en la nube mientras la suite estaba cerrada.
-4. **Pruebas:** `ladder_checks.py` (16) y `ladder.test.mjs` (6). Las demás de la suite siguen pasando.
+4. **Step en precio y por moneda:** cada opción dice el precio y los ticks ("2.5 · 250 ticks"), y cada moneda recuerda el suyo. Antes 10 ticks eran 0.1 USD en ETH y 1 USD en BTC.
+5. **Pruebas:** `ladder_checks.py` (16) y `ladder.test.mjs` (8). Las demás de la suite siguen pasando.
 
 **IMPORTANTE:**
 - La suite se reinicia sola al abrirla y arma la página nueva.

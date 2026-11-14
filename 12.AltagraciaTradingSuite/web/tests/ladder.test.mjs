@@ -1,6 +1,6 @@
 // Pruebas de las cuentas del price ladder (src/ladderLogic.js). Uso: node tests/ladder.test.mjs
 import assert from 'node:assert/strict';
-import { fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf } from '../src/ladderLogic.js';
+import { fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf, stepLabel, stepFor } from '../src/ladderLogic.js';
 
 const tests = [];
 const test = (name, run) => tests.push([name, run]);
@@ -48,6 +48,25 @@ test('fila de un precio en la vista, y fuera de ella', () => {
   assert.equal(rowOf(99.7, 100, 0.5, 10), 1);              // cae en el cubo de 99.5
   assert.equal(rowOf(100.6, 100, 0.5, 10), -1);
   assert.equal(rowOf(90, 100, 0.5, 10), 10);
+});
+
+test('step en precio y en ticks, según el tick de la moneda', () => {
+  assert.equal(stepLabel(10, 0.01), '0.1 · 10 ticks');
+  assert.equal(stepLabel(10, 0.1), '1 · 10 ticks');
+  assert.equal(stepLabel(250, 0.01), '2.5 · 250 ticks');
+  assert.equal(stepLabel(1, 0.0001), '0.0001 · 1 tick');
+  assert.equal(stepLabel(0, 0.01, 0.2), 'Auto · 0.2');
+  assert.equal(stepLabel(0, null, null), 'Step auto');
+  assert.equal(stepLabel(50, null), '50 ticks');
+});
+
+test('cada moneda recuerda su step; lo que no está en la lista es automático', () => {
+  const settings = { steps: { ETHUSDT: 250, BTCUSDT: 50, XRPUSDT: 7 } };
+  assert.equal(stepFor(settings, 'ETHUSDT'), 250);
+  assert.equal(stepFor(settings, 'BTCUSDT'), 50);
+  assert.equal(stepFor(settings, 'XRPUSDT'), 0);
+  assert.equal(stepFor(settings, 'SOLUSDT'), 0);
+  assert.equal(stepFor({ step: 10 }, 'ETHUSDT'), 0);
 });
 
 let failed = 0;

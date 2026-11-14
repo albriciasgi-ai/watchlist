@@ -1,7 +1,7 @@
 // ladderLogic.js - Cuentas del price ladder (14/11/2026), aparte del dibujo para poder probarlas (tests/ladder.test.mjs).
 
 // Pasos que se pueden elegir, en ticks (0 = automático, ~0.01% del precio)
-export const LADDER_STEPS = [0, 1, 2, 5, 10, 20, 25, 50, 100, 250, 500, 1000];
+export const LADDER_STEPS = [0, 1, 2, 5, 10, 20, 25, 50, 100, 250, 500, 1000, 2500, 5000];
 // Ventana de lo negociado, en segundos (las mismas que acepta el servidor)
 export const LADDER_WINDOWS = [60, 300, 900, 1800];
 
@@ -80,4 +80,25 @@ export function rowOf(price, top, step, rows) {
   if (i < 0) return -1;
   if (i >= rows) return rows;
   return i;
+}
+
+/** Un step en precio sin ceros sobrantes: 2.5, 0.1, 0.00005 */
+export function fmtStep(v) {
+  return String(Number(Number(v).toPrecision(6)));
+}
+
+/**
+ * Texto de cada opción del step (14/11/2026): en precio y en ticks, porque 10 ticks en ETH (tick 0.01) son 0.1 USD y en
+ * BTC (tick 0.1) son 1 USD. Sin el tick todavía, solo ticks.
+ */
+export function stepLabel(mult, tick, autoStep) {
+  if (!mult) return autoStep > 0 ? `Auto · ${fmtStep(autoStep)}` : 'Step auto';
+  if (!(tick > 0)) return `${mult} tick${mult > 1 ? 's' : ''}`;
+  return `${fmtStep(mult * tick)} · ${mult} tick${mult > 1 ? 's' : ''}`;
+}
+
+/** El step guardado para esa moneda (cada moneda recuerda el suyo); 0 = automático */
+export function stepFor(settings, symbol) {
+  const v = settings?.steps?.[symbol];
+  return LADDER_STEPS.includes(v) ? v : 0;
 }
