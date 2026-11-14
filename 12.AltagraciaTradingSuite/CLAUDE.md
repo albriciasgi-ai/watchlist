@@ -63,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (16) y book_levels_checks.py (12), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (16), book_levels_checks.py (16) y book_defense_checks.py (13), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -805,7 +805,7 @@ Pedido del usuario, la primera de las ideas de indicadores con el mapa y el ladd
 - **Medido** con el libro real: 19 horas de BTC se calculan en 0.4 s, con 17 a 19 niveles de 30 minutos. El primer pedido tardó 5.8 s por las velas de Bybit.
 - **"Retirado" lejos no es carnada:** la mayoría de los retirados de BTC estaban a 1.7-5% del precio. Lo que importa es un retiro cerca del precio, el patrón que mide `book_study`.
 - **Probado** en la copia aislada con el libro real de BTC y ETH (sin grabar): BTC 15m con 30 minutos y 2 horas, y ETH 5m con Oscuro. Con Oscuro, sobre un mapa muy cargado, las líneas se distinguen poco. No se probó en Electron.
-- **Pruebas:** `server/tests/book_levels_checks.py` (12) y, en App 1, `tests/sustainedlevels.test.mjs` (4).
+- **Pruebas:** `server/tests/book_levels_checks.py` (16) y, en App 1, `tests/sustainedlevels.test.mjs` (5).
 - **El mapa sumaba compra y venta (visto el 14/11):** BTC tuvo compras en 65,500 de 55 a 200 BTC desde las 07:52. A las 10:19 se fueron y en el mismo precio aparecieron ventas por 74 a 113 BTC: el soporte pasó a resistencia. El mapa seguía mostrando la franja porque sumaba los dos lados en cada precio; "Niveles" los separa (el de compra termina "consumido" y el de venta empieza aparte), y desde ese día el mapa también (ver abajo).
 
 ## Mapa con compra y venta por separado (14/11)
@@ -818,6 +818,27 @@ Pedido del usuario tras ver el caso de 65,500.
 - **Qué se ve:** con "Toda la liquidez", azul debajo del precio y naranja encima, con el borde siguiendo al precio. Con "Solo la sostenida", un soporte roto desaparece al irse las compras, y la resistencia en ese precio aparece en naranja cuando las ventas cumplen los minutos elegidos.
 - **Probado** en la copia aislada con el libro real de BTC, en 5m con los dos modos y con Nítido y Oscuro. No se probó en Electron.
 - **Pruebas:** `book_heatmap_checks.py` suma 5 (22): sumadas la franja sigue al cambiar de lado; por lado, la compra solo en la primera hora y la venta sostenida 30 minutos después. `liquiditymap.test.mjs` de App 1 suma 2 (12).
+
+## Retiro cerca y defensa de zona (14/11)
+
+Pedido del usuario: primero marcar aparte el nivel que se retira con el precio cerca, y después la defensa de sus zonas.
+
+### Retiro cerca (en "Niveles")
+
+- `book_levels.py`: un nivel retirado con el precio a media ATR de 15m o menos (`NEAR_ATR`; sin ATR, a 0.3% o menos, `NEAR_PCT`) lleva `near: true` y `dist_atr`. El ATR sale de las velas de 1 minuto (`_atr15`, 14 velas de 15m cerradas).
+- Dibujo: ✕ grande con su etiqueta ("retiro cerca · 0.3 ATR · 4.5M"), y el estado de "Niveles" dice el último de la última hora ("último retiro cerca: compra 67,170 hace 3m").
+- En las 24 horas del 13 al 14/11: BTC 2 retiros cerca de 11 retirados (a 0.29 y 0.34 ATR, 06:09 y 06:12), ETH ninguno de 14. Lejos del precio, retirarse es lo normal del libro.
+- Pruebas: `book_levels_checks.py` suma 4 (16) y `sustainedlevels.test.mjs` de App 1 suma 1 (5).
+
+### Defensa de zona (botón "Defensa")
+
+- **Zonas:** tus líneas horizontales (su precio ±0.05%) y rectángulos (su rango, desde su primera hora; uno de más de 1.5% de alto no cuenta) de la moneda (`data/drawings`). Al cambiar un dibujo se vuelve a pedir.
+- **Servidor** (`server/book_defense.py`): `GET /api/book/defense/{símbolo}?from_ms&to_ms`, a lo sumo 24 horas. Usa `book_study.visits` sin copiarla: la misma regla de la medición de semanas (llega tras estar 1/4 de ATR lejos; aguanta si se aleja 1/2 ATR antes de pasarla por 1/4 ATR; lo que había al acercarse y al llegar, lo negociado contra ese lado con los trades exactos, la antigüedad y el patrón). Guarda 50 s cada respuesta. ETH 20 horas con 5 zonas: 0.6 s.
+- **Estado** de las zonas a 2 ATR o menos del precio, antes de que llegue: lo que hay de su lado en el último minuto contra 30 minutos antes (libro de minutos: el de cada segundo solo llega a ±0.8%) y su antigüedad. "Nueva de este lado" si 30 minutos antes la zona estaba del otro lado del precio; desde 2 veces, "15× lo de hace 30 min".
+- **Dibujo** (`ZoneDefenseIndicator.js` y `zoneDefense.js` de App 1, encima de las velas): un círculo en cada llegada, en el borde por donde llegó, con la letra del patrón. Verde D defensa y A absorción; ámbar B barrido y R retiro y rebote; rojo X retiro y cruce y C consumida; gris … en curso. La última visita de cada zona lleva su etiqueta (quedó %, negociado, antigüedad); el estado va en el borde derecho, a su precio, y las etiquetas se corren para no taparlo. El estado del indicador cuenta cuántas visitas aguantaron.
+- **Visto con el libro real (14/11):** la línea de 65,500 de BTC: a las 10:15 defensa (quedó 86%), a las 10:18 consumida (12.6M negociados contra la compra) y después el mismo precio defendido como resistencia (10:22 y 10:36). La línea de 1850 de ETH: sus ventas quedaron en 7% de lo de 30 minutos antes.
+- **Probado** en la copia aislada con el libro y los trades reales de BTC y ETH, y tus líneas de ETH más zonas de prueba en una carpeta aparte (`SUITE_DATA_DIR`). No se probó en Electron. No es una señal ni está validado contra el azar.
+- **Pruebas:** `server/tests/book_defense_checks.py` (13) y `tests/zonedefense.test.mjs` de App 1 (4).
 
 ## Escritorio (Electron)
 
@@ -862,6 +883,7 @@ C:\Python314\python.exe -B tests\book_cloud_checks.py
 C:\Python314\python.exe -B tests\book_heatmap_checks.py
 C:\Python314\python.exe -B tests\ladder_checks.py
 C:\Python314\python.exe -B tests\book_levels_checks.py
+C:\Python314\python.exe -B tests\book_defense_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.

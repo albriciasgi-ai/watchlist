@@ -79,6 +79,19 @@ late = book_levels.levels(make(walls), bars, T0 + 75 * MIN, T0 + 120 * MIN, 30)
 check("solo los niveles que tocan el rango pedido", sorted((lv["side"], lv["lo"]) for lv in late["levels"]) == [("a", 1005.0), ("b", 992.0)],
       str([(lv["side"], lv["lo"]) for lv in late["levels"]]))
 
+# retiro cerca: con el precio a media ATR o menos. ATR de 15m con las velas de 1 minuto: cada minuto va de 1000 a
+# 1003, ATR 3; la compra de 998-999 queda a 1.5 USD del cierre (1000.5) y se va sin que el precio llegue
+near_bars = {T0 + m * MIN: (1003.0, 1000.0, 1000.5) for m in range(300)}
+nr = book_levels.levels(make([("b", 998, 50, 220, 280)], minutes=300), near_bars, T0, T0 + 300 * MIN, 30)
+nl = [lv for lv in nr["levels"] if lv["lo"] == 998.0]
+check("retiro cerca: a media ATR o menos del precio", len(nl) == 1 and nl[0]["reason"] == "retirado" and nl[0]["near"]
+      and nl[0]["dist_atr"] == 0.5, str(nl))
+far = book_levels.levels(make([("b", 990, 50, 220, 280)], minutes=300), near_bars, T0, T0 + 300 * MIN, 30)
+fl = [lv for lv in far["levels"] if lv["lo"] == 990.0]
+check("a 9.5 USD (3 ATR) es retiro lejos", len(fl) == 1 and fl[0]["near"] is False and fl[0]["dist_atr"] > 3, str(fl))
+check("sin ATR (menos de 14 velas de 15m) decide el 0.3%: 0.95% es lejos", w1.get("near") is False and w1.get("dist_atr") is None, str(w1))
+check("sin velas nada es retiro cerca", all(not lv["near"] for lv in nb["levels"]))
+
 # libro parejo: nada es grande
 flat = book_levels.levels(make([]), bars, T0, T0 + 120 * MIN, 15)
 check("un libro parejo no da niveles", flat["levels"] == [], str(len(flat["levels"])))

@@ -54,6 +54,29 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Retiro Cerca y Defensa de Zona
+
+**Pedido:** primero marcar aparte el nivel que se retira con el precio cerca, y después la defensa de las zonas: si una zona se sostiene hasta que el precio vuelve.
+
+**Cambios:**
+1. **Retiro cerca** en "Niveles": un retirado a media ATR de 15m o menos del precio lleva ✕ grande con su etiqueta, y el estado dice el último de la última hora. En 24 horas: BTC 2 de 11 retirados, ETH 0 de 14.
+2. **Botón "Defensa"** en la pestaña "Mapa", con tus líneas horizontales y rectángulos:
+   - en cada llegada del precio, la letra del patrón: D defensa, A absorción, B barrido, R retiro y rebote, X retiro y cruce, C consumida;
+   - la última visita de cada zona dice cuánto quedó al llegar, lo negociado y la antigüedad;
+   - las zonas cerca del precio dicen lo que hay de su lado contra hace 30 minutos.
+3. **Servidor:** `/api/book/defense/{símbolo}` (`book_defense.py`) con la regla de `book_study.visits`, sin copiarla. `book_levels.py` suma `near` y `dist_atr`.
+4. **App 1:** `ZoneDefenseIndicator.js` y `zoneDefense.js`. App 1 no lo ofrece.
+5. **Pruebas:** `book_defense_checks.py` (13), `book_levels_checks.py` (16), y en App 1 `zonedefense.test.mjs` (4) y `sustainedlevels.test.mjs` (5). Las demás siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- Con el libro real, la línea de 65,500 de BTC: defensa a las 10:15, consumida a las 10:18 (12.6M negociados contra la compra) y después resistencia defendida. No es una señal ni está validado contra el azar.
+- Probado en la copia aislada con el libro y los trades reales de BTC y ETH y zonas de prueba; no se probó en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Retiro cerca y defensa de zona (14/11)"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Mapa con Compra y Venta por Separado
 
 **Pedido:** en BTC, una franja naranja en 65,500 no se borró cuando el precio la pasó. En el libro grabado, las compras de ese precio se fueron a las 10:19 y en el mismo precio aparecieron ventas: el mapa sumaba los dos lados. El usuario pidió separarlos.

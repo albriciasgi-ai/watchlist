@@ -2,7 +2,7 @@
 // Uso: node tests/sustainedlevels.test.mjs
 import assert from 'node:assert/strict';
 
-const { fmtUsd, fmtMinutes, levelLabel, needsFetch, visibleLevels } = await import('../src/components/sustainedLevels.js');
+const { fmtUsd, fmtMinutes, levelLabel, needsFetch, visibleLevels, nearLabel, lastNear } = await import('../src/components/sustainedLevels.js');
 
 let count = 0;
 const t = (name, fn) => { fn(); count++; console.log('ok', name); };
@@ -44,6 +44,20 @@ t('solo los niveles que tocan la vista, en su rango de precios, y los terminados
   ];
   assert.equal(visibleLevels(lv, 100, 200, 90, 110).length, 2);
   assert.equal(visibleLevels(lv, 100, 200, 90, 110, false).length, 1);
+});
+
+t('retiro cerca: etiqueta y aviso del último de la última hora', () => {
+  const now = 1_000_000 * MIN;
+  assert.equal(nearLabel({ dist_atr: 0.4, dist_pct: 0.12, usd: 2_100_000 }), 'retiro cerca · 0.4 ATR · 2.1M');
+  assert.equal(nearLabel({ dist_atr: null, dist_pct: 0.2, usd: 900 }), 'retiro cerca · 0.2% · 900');
+  const lv = [
+    { reason: 'retirado', near: true, end: now - 90 * MIN, side: 'b', lo: 65000, hi: 65020 },   // hace más de una hora
+    { reason: 'retirado', near: false, end: now - 2 * MIN, side: 'a', lo: 66000, hi: 66020 },   // lejos
+    { reason: 'retirado', near: true, end: now - 3 * MIN, side: 'b', lo: 65500, hi: 65520 },
+    { reason: 'consumido', near: false, end: now - 1 * MIN, side: 'b', lo: 65400, hi: 65420 },
+  ];
+  assert.equal(lastNear(lv, now), 'compra 65,510 hace 3m');
+  assert.equal(lastNear(lv.slice(0, 2), now), null);
 });
 
 console.log(`\n${count} pruebas pasan`);

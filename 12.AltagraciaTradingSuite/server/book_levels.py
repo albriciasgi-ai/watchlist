@@ -14,6 +14,8 @@
 #       consumido: el precio llego al nivel en el minuto en que se fue o en el anterior (se negocio contra el);
 #       retirado: se fue sin que el precio llegara (dice a que distancia estaba);
 #       activo: sigue en el ultimo minuto grabado.
+#   - Retiro cerca (14/11, pedido del usuario): un retirado con el precio a NEAR_ATR (media ATR de 15m) o menos, o a
+#     NEAR_PCT sin ATR. Lejos del precio, retirarse es lo normal del libro; cerca, es lo mas parecido a una "carnada".
 #   - Toques: minutos en que el precio llego al nivel y el nivel siguio (defendido).
 # Solo para mirar y medir; los umbrales no estan validados (book_study los compara con el azar).
 import asyncio
@@ -34,6 +36,8 @@ PCT = 95.0                  # percentil de los cubos de su lado para ser "grande
 BAND = 0.02                 # el percentil se toma con los cubos a +-2% del precio
 X_MEDIAN = 3.0              # y al menos 3 veces la mediana de esos cubos (un libro parejo no tiene "grandes")
 KEEP = 0.5                  # sigue mientras tenga al menos la mitad de lo que tenia al empezar
+NEAR_ATR = 0.5               # retiro cerca: a media ATR de 15m o menos del precio
+NEAR_PCT = 0.3              # sin ATR: a 0.3% o menos
 GAP_TOLERANCE = 5           # minutos seguidos sin grabar que un nivel aguanta; mas, termina "sin dato"
 LOOKBACK_MIN = 240          # se lee desde 4 h antes de lo pedido, para saber cuando empezo un nivel
 MAX_MINUTES = 3 * 1440      # a lo sumo 3 dias de minutos por pedido (las velas de 1 minuto del grafico en vivo)
@@ -41,6 +45,30 @@ MAX_LEVELS = 400
 CACHE_SECONDS = 50
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
 _cache: Dict[tuple, Tuple[float, dict]] = {}
+
+
+def _atr15(bars: Dict[int, Tuple[float, float, float]], n: int = 14):
+    """ATR de 15m (14 velas) de la ultima vela cerrada antes de cada hora, con las velas de 1 minuto. None si no hay."""
+    if not bars:
+        return lambda t: None
+    frame = 15 * MINUTE
+    groups: Dict[int, list] = {}
+    for t in sorted(bars):
+        groups.setdefault(t - t % frame, []).append(bars[t])
+    starts = sorted(groups)
+    tr, prev = [], None
+    for st in starts:
+        g = groups[st]
+        hi, lo, cl = max(b[0] for b in g), min(b[1] for b in g), g[-1][2]
+        tr.append(hi - lo if prev is None else max(hi - lo, abs(hi - prev), abs(lo - prev)))
+        prev = cl
+    atr = [sum(tr[k - n + 1:k + 1]) / n if k + 1 >= n else None for k in range(len(tr))]
+    arr = np.array(starts, np.int64)
+
+    def at(t: int):
+        k = int(np.searchsorted(arr + frame, t, side="right")) - 1   # la ultima vela cerrada en t
+        return atr[k] if k >= 0 else None
+    return at
 
 
 def _matrix(cols):
@@ -123,6 +151,7 @@ def levels(cols, bars: Dict[int, Tuple[float, float, float]], start: int, end: i
                                   "end": None if reason == "activo" else t0 + i * MINUTE, "minutes": int(dur),
                                   "usd": round(float(total[r] / dur)), "usd_max": round(float(peak[r])),
                                   "reason": reason, "touches": int(touches[r]), "from_start": s == 0, "dist_pct": None,
+                                  "dist_atr": None, "near": False,
                                   "_i": i})
                 run_start[r] = -1
                 touches[r] = 0
@@ -154,7 +183,8 @@ def levels(cols, bars: Dict[int, Tuple[float, float, float]], start: int, end: i
             peak[on] = np.maximum(peak[on], v[on])
         close(np.flatnonzero(run_start >= 0), span, "activo")
 
-    # como termino: consumido si el precio llego en ese minuto o el anterior; si no, retirado
+    # como termino: consumido si el precio llego en ese minuto o el anterior; si no, retirado (cerca o lejos)
+    atr_at = _atr15(bars)
     for lv in found:
         i = lv.pop("_i")
         if lv["reason"] != "terminado":
@@ -173,6 +203,10 @@ def levels(cols, bars: Dict[int, Tuple[float, float, float]], start: int, end: i
         lv["reason"] = "consumido" if reached else "retirado"
         if not reached:
             lv["dist_pct"] = round(100 * gap, 3)
+            atr = atr_at(t0 + i * MINUTE)
+            dist = gap * near[-1][2]
+            lv["dist_atr"] = round(dist / atr, 2) if atr else None
+            lv["near"] = bool(dist <= NEAR_ATR * atr) if atr else bool(100 * gap <= NEAR_PCT)
     sel = [lv for lv in found if lv["start"] < end and (lv["end"] is None or lv["end"] > start)]
     sel.sort(key=lambda lv: lv["usd"] * lv["minutes"], reverse=True)
     out["truncated"] = len(sel) > MAX_LEVELS

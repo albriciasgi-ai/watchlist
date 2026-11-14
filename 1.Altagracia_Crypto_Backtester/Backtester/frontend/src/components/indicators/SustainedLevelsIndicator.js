@@ -6,11 +6,13 @@
 // - Dibujo (detrás de las velas, encima del mapa): una línea por nivel en su precio, verde si es compra y roja si es
 //   venta. Tenue desde que empezó hasta que se supo que era sostenido (N minutos después), y firme desde ahí. Al final:
 //   ● consumido (el precio llegó y se negoció contra él), × retirado (se fue sin que el precio llegara), | sin dato.
+//   Retiro cerca (14/11): retirado con el precio a media ATR o menos. Lleva una ✕ más grande y su etiqueta, y el
+//   estado avisa el último de la última hora: lejos, retirarse es lo normal del libro; cerca, se parece a una carnada.
 //   Los que siguen llevan su etiqueta en el borde derecho: USD promedio, cuánto lleva y los toques en que siguió.
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import { THEME } from '../uiTheme.js';
-import { levelLabel, needsFetch, visibleLevels } from '../sustainedLevels.js';
+import { levelLabel, needsFetch, visibleLevels, nearLabel, lastNear } from '../sustainedLevels.js';
 
 const FRAME_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000 };
 const REFRESH_MS = 60000;
@@ -130,6 +132,7 @@ export default class SustainedLevelsIndicator extends IndicatorBase {
     ctx.rect(bounds.x, bounds.y, bounds.width, bounds.height);
     ctx.clip();
     const labels = [];
+    const nearTags = [];
     for (const lv of list) {
       const y = Math.round(priceToY((lv.lo + lv.hi) / 2)) + 0.5;
       if (y < bounds.y || y > bounds.y + bounds.height) continue;
@@ -182,6 +185,18 @@ export default class SustainedLevelsIndicator extends IndicatorBase {
           ctx.beginPath();
           ctx.arc(xe, y, 3.5, 0, Math.PI * 2);
           ctx.fill();
+        } else if (lv.reason === 'retirado' && lv.near) {
+          // retiro cerca: ✕ grande y su etiqueta
+          ctx.fillStyle = halo;
+          ctx.beginPath();
+          ctx.arc(xe, y, 9, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(xe - 6, y - 6); ctx.lineTo(xe + 6, y + 6);
+          ctx.moveTo(xe + 6, y - 6); ctx.lineTo(xe - 6, y + 6);
+          ctx.stroke();
+          nearTags.push({ x: xe, y, color, text: nearLabel(lv) });
         } else if (lv.reason === 'retirado') {
           ctx.beginPath();
           ctx.moveTo(xe - 3.5, y - 3.5); ctx.lineTo(xe + 3.5, y + 3.5);
@@ -198,6 +213,21 @@ export default class SustainedLevelsIndicator extends IndicatorBase {
     // etiquetas de los que siguen, en el borde derecho, sin taparse entre sí
     ctx.font = `600 10px ${font}`;
     ctx.textBaseline = 'middle';
+    // retiros cerca: su etiqueta junto a la ✕
+    for (const tg of nearTags) {
+      const w = ctx.measureText(tg.text).width + 8;
+      const x = Math.min(tg.x + 11, bounds.x + bounds.width - w - 2);
+      ctx.globalAlpha = 0.92;
+      ctx.fillStyle = halo;
+      ctx.fillRect(x, tg.y - 7, w, 14);
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = tg.color;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 0.5, tg.y - 6.5, w - 1, 13);
+      ctx.fillStyle = tg.color;
+      ctx.textAlign = 'left';
+      ctx.fillText(tg.text, x + 4, tg.y);
+    }
     labels.sort((a, b) => a.y - b.y);
     let lastY = -Infinity;
     for (const l of labels) {
@@ -219,7 +249,9 @@ export default class SustainedLevelsIndicator extends IndicatorBase {
   // Encima de todo: el estado, bajo el del mapa
   renderOverlay(ctx, bounds, visibleCandles) {
     if (!this.enabled || !visibleCandles?.length) return;
-    let text = `Niveles sostenidos ≥ ${this.config.minutes} min · ● consumido  × retirado`;
+    let text = `Niveles sostenidos ≥ ${this.config.minutes} min · ● consumido  × retirado  ✕ retiro cerca`;
+    const recent = lastNear(this.levels, Date.now());
+    if (recent) text += ` · último retiro cerca: ${recent}`;
     if (this.error) text += ` · ${this.error}`;
     else if (this.loading && !this.loaded) text += ' · cargando…';
     else if (this.loaded && !this.levels.length) text += ' · ninguno a la vista';

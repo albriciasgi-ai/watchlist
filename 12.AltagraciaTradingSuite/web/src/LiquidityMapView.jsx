@@ -19,6 +19,8 @@ import LadderPanel, { LADDER_WIDTH } from './LadderPanel.jsx';
  *   otra moneda u otro marco. También desde el menú "Pestañas".
  * - "Compra y venta" (14/11/2026, de fábrica): cada lado en su color; "Una escala" las suma como antes.
  * - "Niveles" (14/11/2026): los niveles de liquidez sostenida (book_levels.py), encima del mapa, con cómo terminó cada uno.
+ * - "Defensa" (14/11/2026): en cada llegada del precio a tus líneas y rectángulos, qué hizo la liquidez (la regla de
+ *   book_study, /api/book/defense), y el estado de las zonas cerca del precio.
  * - El ladder (14/11/2026), a la derecha: el libro de ahora de la misma moneda, del grabador de la suite. Se oculta con
  *   el botón "Ladder".
  */
@@ -29,6 +31,7 @@ const MAP_NAME = 'Mapa de liquidez';
 const LEVELS_NAME = 'Niveles sostenidos';
 const STATES = { [MAP_NAME]: true }; // nada más: los demás quedan apagados
 const STATES_WITH_LEVELS = { [MAP_NAME]: true, [LEVELS_NAME]: true };
+const DEFENSE_NAME = 'Defensa de zona';
 const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true };
 const SETTINGS_KEY = `suite_mapa_${TAB}`;
 const MAIN_SETTINGS_KEY = 'suite_chart_1';
@@ -64,6 +67,7 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
   const [follow, setFollow] = useState(TAB !== 1 && (URL_SYMBOL ? true : saved.follow !== false));
   const [ladderOn, setLadderOn] = useState(saved.ladder !== false);
   const [levelsOn, setLevelsOn] = useState(saved.levels !== false);
+  const [defenseOn, setDefenseOn] = useState(saved.defense !== false);
   const [levelMinutes, setLevelMinutes] = useState(SUSTAINED_LEVELS_MINUTES.includes(saved.levelMinutes) ? saved.levelMinutes : 30);
   const [ladder, setLadder] = useState(() => {
     const v = saved.ladderSettings && typeof saved.ladderSettings === 'object' ? { ...saved.ladderSettings } : {};
@@ -79,11 +83,11 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
 
   useEffect(() => {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder, levels: levelsOn, levelMinutes, sides }));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder, levels: levelsOn, levelMinutes, sides, defense: defenseOn }));
     } catch {
       // Sin almacenamiento la elección dura hasta cerrar la pestaña
     }
-  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder, levelsOn, levelMinutes, sides]);
+  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder, levelsOn, levelMinutes, sides, defenseOn]);
 
   useEffect(() => {
     getJson('/api/suite/symbols').then(d => setSymbols(d.symbols)).catch(() => {});
@@ -130,7 +134,11 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
   }, [levelMinutes, symbol, tf]);
 
   // Los dibujos que cambian en el gráfico principal o en otra pestaña llegan aquí (aquí no se editan)
-  useEffect(() => onAnyDrawings((sym, shapes) => { if (sym === symbolRef.current) chartRef.current?.loadDrawings?.(shapes, true); }), []);
+  useEffect(() => onAnyDrawings((sym, shapes) => {
+    if (sym !== symbolRef.current) return;
+    chartRef.current?.loadDrawings?.(shapes, true);
+    chartRef.current?.getIndicatorManager?.()?.zoneDefenseIndicator?.refresh();   // otras zonas
+  }), []);
   // Las posiciones y órdenes del bot: solo sus líneas, sin acciones
   useEffect(() => subscribeBook(() => chartRef.current?.redraw?.()), []);
   const positions = useCallback(() => linesFor(symbolRef.current), []);
@@ -147,6 +155,9 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
     const timer = setTimeout(() => chartRef.current?.forceRedraw?.(), 60);
     return () => clearTimeout(timer);
   }, [ladderOn]);
+
+  const states = useMemo(() => ({ ...(levelsOn ? STATES_WITH_LEVELS : STATES), ...(defenseOn ? { [DEFENSE_NAME]: true } : {}) }),
+    [levelsOn, defenseOn]);
 
   const pickSymbol = (s) => { setFollow(false); setSymbol(s); };
   const pickTf = (t) => { setFollow(false); setTf(t); };
@@ -190,6 +201,8 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
             {SUSTAINED_LEVELS_MINUTES.map(m => <option key={m} value={m}>{`≥ ${m < 60 ? `${m} min` : `${m / 60} h`}`}</option>)}
           </select>
         )}
+        <button type="button" className={`suite-btn ${defenseOn ? 'active' : ''}`} onClick={() => setDefenseOn(v => !v)}
+          title="Defensa de zona: qué hizo la liquidez cuando el precio llegó a tus líneas y rectángulos, y el estado de las zonas cerca del precio">Defensa</button>
         <button type="button" className={`suite-btn ${ladderOn ? 'active' : ''}`} onClick={() => setLadderOn(v => !v)}
           title="El libro de ahora de esta moneda, a la derecha del mapa">Ladder</button>
         <div className="suite-spacer" />
@@ -209,7 +222,7 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
                   interval={tf}
                   days={DAYS[tf]}
                   isActive={false}
-                  indicatorStates={levelsOn ? STATES_WITH_LEVELS : STATES}
+                  indicatorStates={states}
                   backtestingMode={false}
                   vpConfig={VP_CONFIG}
                   vpFixedRange={null}

@@ -53,3 +53,21 @@ export function visibleLevels(levels, from, to, minPrice, maxPrice, showEnded = 
   return (levels || []).filter(lv => lv.start <= to && (lv.end == null || lv.end >= from)
     && lv.hi >= minPrice && lv.lo <= maxPrice && (showEnded || lv.end == null));
 }
+
+/** Etiqueta de un retiro cerca: a cuánto del precio se fue (en ATR de 15m, o en % sin ATR) */
+export function nearLabel(lv) {
+  const d = lv.dist_atr != null ? `${lv.dist_atr} ATR` : lv.dist_pct != null ? `${lv.dist_pct}%` : '';
+  return `retiro cerca${d ? ` · ${d}` : ''} · ${fmtUsd(lv.usd)}`;
+}
+
+/** El último retiro cerca de la última hora (o maxAgeMs): "compra 65,500 hace 3 min", o null */
+export function lastNear(levels, now, maxAgeMs = 3600000) {
+  let best = null;
+  for (const lv of levels || []) {
+    if (lv.reason !== 'retirado' || !lv.near || lv.end == null || now - lv.end > maxAgeMs || lv.end > now) continue;
+    if (!best || lv.end > best.end) best = lv;
+  }
+  if (!best) return null;
+  const price = Number(((best.lo + best.hi) / 2).toPrecision(8)).toLocaleString('en-US');
+  return `${best.side === 'b' ? 'compra' : 'venta'} ${price} hace ${fmtMinutes((now - best.end) / 60000)}`;
+}
