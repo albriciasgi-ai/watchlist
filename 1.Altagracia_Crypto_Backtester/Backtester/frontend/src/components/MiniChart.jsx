@@ -17,7 +17,7 @@ import { TF_MS, countBefore, formingCandle, lastClosedIndex, syncKnownCandles, t
 import { DEFAULT_PRICE_RATIO, resizePanel } from './indicators/panelLayout.js';
 import {
   candleCenterX, candleItemId, chosenLevel, chosenNumbers, drawChosenLevels, drawChosenMarks, drawChosenTooltip, framedTimes, imageMarkers,
-  itemPositions, knownLevels, levelTargets, levelsNear, priceRangeWith, roleOptions, subscribeLevels, toggleLevel, updateLevel, withinArea
+  itemPositions, knownLevels, levelTargets, levelsNear, priceRangeWith, roleOptions, subscribeLevels, tapeDrawingLevels, toggleLevel, updateLevel, withinArea
 } from './indicators/analysisLevels.js';
 import { subscribePins } from './indicators/liquidationPins.js';
 import {
@@ -1425,7 +1425,8 @@ const MiniChart = forwardRef(({
 
       // Lo que se puede elegir con un clic, ya ubicado por los indicadores en este cuadro. No se dibuja nada más
       // Lo de los paneles queda bajo el precio: se ofrece aunque esté fuera del área de las velas
-      const offered = indicatorManagerRef.current.getSelectableLevels().filter(target => target.panel || withinArea(target, area));
+      const offered = [...indicatorManagerRef.current.getSelectableLevels(), ...tapeDrawingLevels(drawingManagerRef.current?.shapes)]
+        .filter(target => target.panel || withinArea(target, area));
       const positions = itemPositions(chosen, offered, area);
       ctx.save();
       ctx.beginPath();
@@ -2675,9 +2676,28 @@ const MiniChart = forwardRef(({
     const y = e.clientY - rect.top;
     if (Math.hypot(x - drag.startX, y - drag.startY) > 4) return;
 
+    openLevelMenu(x, y, rect);
+  };
+
+  const openLevelMenu = (x, y, rect) => {
     const levels = levelsNear(levelTargetsRef.current, x, y);
     const menuHeight = 40 + levels.length * 30 + 90; // Con un elegido abierto, su papel y su nota
     setLevelMenu(levels.length ? { x: Math.min(x + 10, rect.width - 290), y: Math.max(0, Math.min(y + 10, rect.height - menuHeight)), levels } : null);
+  };
+
+  // Una línea de la cinta en firme (suite, 14/11/2026) es un dibujo y un nivel del análisis a la vez: el clic sin
+  // arrastrar la selecciona (para borrarla con Suprimir) y además abre el menú, como cualquier nivel
+  const tapeClickRef = useRef(null);
+  const openTapeMenu = (e) => {
+    const start = tapeClickRef.current;
+    tapeClickRef.current = null;
+    const canvas = canvasRef.current;
+    if (!start || !canvas || e.button !== 0 || viewOnlyRef.current || chosenItemsRef.current) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    if (Math.hypot(x - start.x, y - start.y) > 4) return;
+    openLevelMenu(x, y, rect);
   };
 
   const handleMouseDown = (e) => {
@@ -2717,6 +2737,8 @@ const MiniChart = forwardRef(({
     if (e.button === 0 && drawingManagerRef.current && scaleConverter && !viewOnlyRef.current) {
       const shapesBefore = drawingManagerRef.current.shapes.length;
       const handled = drawingManagerRef.current.handleMouseDown(x, y, scaleConverter);
+      const picked = handled ? drawingManagerRef.current.selectedShape : null;
+      tapeClickRef.current = picked?.type === 'horizontal' && picked.tape && !picked.tape.pending ? { x, y } : null;
 
       if (handled) {
         // Un dibujo nuevo se avisa de una vez: la caja TP/SL alimenta el panel de órdenes
@@ -2802,6 +2824,7 @@ const MiniChart = forwardRef(({
 
       // Auto-guardar después de drag/resize
       saveDrawings();
+      openTapeMenu(e);
 
       drawChart(candlesRef.current, lastPriceRef.current, null, null);
 

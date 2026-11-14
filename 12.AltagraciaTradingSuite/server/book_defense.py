@@ -49,7 +49,15 @@ def zones_from_drawings(shapes: List[dict], start: int, end: int) -> List[dict]:
                 p = float(s["price"])
                 if p <= 0:
                     continue
-                out.append({"kind": "linea", "label": f"{p:.10g}", "id": s.get("id"), "lo": p * (1 - book_study.POINT_ZONE),
+                # una linea de la cinta (14/11) lleva su texto corto; las demas, su precio redondeado
+                if s.get("tape") and s.get("label"):
+                    label = s["label"]
+                elif p >= 1:
+                    label = f"{p:,.2f}".rstrip("0").rstrip(".")
+                else:
+                    label = f"{p:.6g}"
+                out.append({"kind": "cinta" if s.get("tape") else "linea", "label": str(label).replace(" (provisional)", ""), "id": s.get("id"),
+                            "lo": p * (1 - book_study.POINT_ZONE),
                             "hi": p * (1 + book_study.POINT_ZONE), "from": start, "to": end})
             elif s.get("type") == "rectangle":
                 lo, hi = sorted((float(s["price1"]), float(s["price2"])))

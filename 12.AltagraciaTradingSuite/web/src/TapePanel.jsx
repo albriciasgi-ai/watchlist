@@ -5,7 +5,8 @@ import { fmtQty } from './ladderLogic.js';
 import { fmtUsd } from '@app1/components/sustainedLevels.js';
 import { getJson, postJson } from './api.js';
 import { onAnyDrawings, sendDrawings } from './tabs.js';
-import { tapeLine, tapeLineId, withPendingLine, firmLine, removeLine, lineState } from './tapeLines.js';
+import { tapeLine, tapeLineId, withPendingLine, firmLine, removeLine, lineState, restyle, firmLines, cleanStyle, shortLabel,
+  TAPE_STYLE_KEY } from './tapeLines.js';
 
 /**
  * Cinta de operaciones grandes (14/11/2026), a la derecha del ladder en la pestaña "Mapa". Pedido del usuario, como el
@@ -18,6 +19,9 @@ import { tapeLine, tapeLineId, withPendingLine, firmLine, removeLine, lineState 
  * - Clic en una orden (14/11, pedido del usuario): una línea horizontal en el gráfico, a su precio promedio y con su
  *   información, provisional (punteada) hasta "Dejar en firme"; "Borrar" la quita. Es un dibujo de la moneda: se ve en
  *   el mapa, el gráfico principal y la Watchlist. Una provisional por moneda: otro clic la reemplaza.
+ * - "En firme (N)": todas las líneas en firme de la moneda, aunque su orden ya salió de la cinta (guarda 30 minutos);
+ *   solo se borran a mano. En el gráfico principal una línea en firme también se elige para el análisis del trade.
+ * - ⚙: estilo de las líneas de la cinta (grosor, trazo, opacidad y texto), para todas; de fábrica, discretas.
  */
 
 export const TAPE_WIDTH = 236;
@@ -36,13 +40,32 @@ export default function TapePanel({ symbol, active = true, minUsd = 0, onMinUsd 
   const [lineStates, setLineStates] = useState({});   // id de la línea -> 'pending' | 'firm'
   const [selected, setSelected] = useState(null);
   const [lineError, setLineError] = useState(null);
+  const [firm, setFirm] = useState([]);
+  const [showFirm, setShowFirm] = useState(false);
+  const [showStyle, setShowStyle] = useState(false);
+  const [style, setStyle] = useState(() => {
+    try { return cleanStyle(JSON.parse(localStorage.getItem(TAPE_STYLE_KEY)) || {}); } catch { return cleanStyle({}); }
+  });
+  const styleRef = useRef(style);
+  styleRef.current = style;
 
   // Las líneas de la cinta que ya están en los dibujos de la moneda (también si cambian en otra pestaña)
   const readStates = (shapes) => {
     const out = {};
     for (const sh of shapes || []) if (sh?.tape && typeof sh.id === 'string') out[sh.id] = lineState([sh], sh.id);
     setLineStates(out);
+    setFirm(firmLines(shapes));
   };
+  // Otro estilo: se guarda y se aplica a todas las líneas de la cinta de esta moneda
+  const changeStyle = (patch) => {
+    const next = cleanStyle({ ...styleRef.current, ...patch });
+    setStyle(next);
+    try { localStorage.setItem(TAPE_STYLE_KEY, JSON.stringify(next)); } catch { /* sin almacenamiento */ }
+    // la opacidad se arrastra: se guardan los dibujos cuando se deja de mover
+    clearTimeout(styleTimer.current);
+    styleTimer.current = setTimeout(() => changeLines(list => restyle(list, styleRef.current, fmtQty)), 300);
+  };
+  const styleTimer = useRef(null);
   useEffect(() => {
     setSelected(null);
     getJson(`/api/drawings/${encodeURIComponent(symbol)}`).then(d => readStates(d.shapes)).catch(() => {});
@@ -67,7 +90,7 @@ export default function TapePanel({ symbol, active = true, minUsd = 0, onMinUsd 
     setSelected(id);
     if (lineStates[id]) return;   // ya está en el gráfico: solo se elige
     const color = o.side === 'buy' ? (THEME.up || '#089981') : (THEME.down || '#F23645');
-    changeLines(list => withPendingLine(list, tapeLine(symbol, o, color, true, fmtQty)));
+    changeLines(list => withPendingLine(list, tapeLine(symbol, o, color, true, fmtQty, styleRef.current)));
   };
 
   // tus Limit de esta moneda: se resalta lo que se negoció en su precio
@@ -113,7 +136,54 @@ export default function TapePanel({ symbol, active = true, minUsd = 0, onMinUsd 
           title="Solo las órdenes de ese tamaño o más. Automático: el 1% más grande de los últimos 30 minutos">
           {MINIMUMS.map(m => <option key={m} value={m}>{m ? `≥ ${fmtUsd(m)}` : `Auto${thr ? ` (${fmtUsd(thr)})` : ''}`}</option>)}
         </select>
+        <button type="button" className={`suite-btn ${showStyle ? 'active' : ''}`} style={{ padding: '0 6px' }} onClick={() => setShowStyle(v => !v)}
+          title="Estilo de las líneas de la cinta en el gráfico">⚙</button>
       </div>
+      {showStyle && (
+        <div style={{ padding: '4px 6px 6px', borderTop: '1px solid var(--t-line, #d0d4da)', display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px 6px', alignItems: 'center' }}>
+          <span className="wl-muted">Grosor</span>
+          <select className="suite-select" value={style.width} onChange={(e) => changeStyle({ width: Number(e.target.value) })} aria-label="Grosor de las líneas">
+            {[1, 2, 3, 4].map(w => <option key={w} value={w}>{w} px</option>)}
+          </select>
+          <span className="wl-muted">Trazo</span>
+          <select className="suite-select" value={style.dashed ? 'dashed' : 'solid'} onChange={(e) => changeStyle({ dashed: e.target.value === 'dashed' })} aria-label="Trazo de las líneas">
+            <option value="solid">Continua</option>
+            <option value="dashed">Punteada</option>
+          </select>
+          <span className="wl-muted">Opacidad</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input type="range" min={15} max={100} step={5} value={Math.round(style.opacity * 100)} style={{ width: 90 }} aria-label="Opacidad de las líneas"
+              onChange={(e) => changeStyle({ opacity: Number(e.target.value) / 100 })} />
+            <span className="wl-muted">{Math.round(style.opacity * 100)}%</span>
+          </span>
+          <span className="wl-muted">Texto</span>
+          <span style={{ display: 'flex', gap: 4 }}>
+            <select className="suite-select" value={style.label} onChange={(e) => changeStyle({ label: e.target.value })} aria-label="Texto de las líneas">
+              <option value="short">Corto</option>
+              <option value="full">Completo</option>
+              <option value="none">Sin texto</option>
+            </select>
+            <select className="suite-select" value={style.size} disabled={style.label === 'none'} onChange={(e) => changeStyle({ size: Number(e.target.value) })} aria-label="Tamaño del texto">
+              {[8, 9, 10, 11, 12, 13, 14].map(z => <option key={z} value={z}>{z} px</option>)}
+            </select>
+          </span>
+        </div>
+      )}
+      {firm.length > 0 && (
+        <div style={{ padding: '2px 6px', borderTop: '1px solid var(--t-line, #d0d4da)' }}>
+          <button type="button" className="suite-btn" style={{ padding: '0 6px', fontSize: 11 }} onClick={() => setShowFirm(v => !v)}
+            title="Las líneas de la cinta que dejaste en firme en esta moneda: quedan hasta que las borres">
+            En firme ({firm.length}) {showFirm ? '▴' : '▾'}
+          </button>
+          {showFirm && firm.map(sh => (
+            <div key={sh.id} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '2px 0' }}>
+              <span style={{ flex: 1, color: sh.style?.color }}>{shortLabel(sh.tape)}{' · '}{Number(sh.price.toPrecision(8)).toLocaleString('en-US')}</span>
+              <button type="button" className="suite-btn" style={{ padding: '0 6px', fontSize: 11 }}
+                onClick={() => changeLines(list => removeLine(list, sh.id))} title="Quitar la línea del gráfico">Borrar</button>
+            </div>
+          ))}
+        </div>
+      )}
       <div style={{ padding: '0 6px 4px' }} title="Lo comprado y lo vendido a mercado en los últimos 30 segundos, de todos los tamaños">
         <div className="wl-muted">30 s: <span style={{ color: up }}>compra {fmtUsd(buy)}</span> · <span style={{ color: down }}>venta {fmtUsd(sell)}</span></div>
         {total > 0 && (
@@ -158,7 +228,7 @@ export default function TapePanel({ symbol, active = true, minUsd = 0, onMinUsd 
                 </span>
                 {state === 'pending' && (
                   <button type="button" className="suite-btn" style={{ padding: '0 6px', fontSize: 11, whiteSpace: 'nowrap' }}
-                    onClick={() => changeLines(list => firmLine(list, id))} title="La línea queda como referencia">Dejar en firme</button>
+                    onClick={() => changeLines(list => firmLine(list, id, styleRef.current, fmtQty))} title="La línea queda como referencia hasta que la borres">Dejar en firme</button>
                 )}
                 <button type="button" className="suite-btn" style={{ padding: '0 6px', fontSize: 11, whiteSpace: 'nowrap' }}
                   onClick={() => changeLines(list => removeLine(list, id))} title="Quitar la línea del gráfico">Borrar</button>

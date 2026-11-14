@@ -3,12 +3,31 @@
 // y poder dejarla en firme o borrarla, como referencia. La línea es un dibujo de la moneda (tipo "horizontal" de App 1,
 // con texto): se ve en el mapa, en el gráfico principal y en la Watchlist. Mientras está provisional va punteada; solo
 // hay una provisional por moneda (otro clic la reemplaza). Lógica pura, probada en tests/tapelines.test.mjs.
+// Estilo (14/11, pedido del usuario: se veían muy protagonistas): grosor, trazo, opacidad y texto (completo, corto o
+// sin texto), para todas las líneas de la cinta; de fábrica, discretas. Una en firme solo se borra a mano: la cinta
+// guarda 30 minutos, pero la lista "En firme" las muestra todas.
 
 const fmtUsd = (v) => (v >= 1e6 ? `${(v / 1e6).toFixed(v >= 1e7 ? 0 : 1)}M` : v >= 1e3 ? `${(v / 1e3).toFixed(v >= 1e4 ? 0 : 1)}k` : `${Math.round(v)}`);
 const fmtPrice = (p) => Number(Number(p).toPrecision(8)).toLocaleString('en-US');
 const fmtTime = (t) => new Date(t).toLocaleTimeString('es-CO', { hour12: false });
 
 export const tapeLineId = (symbol, order) => `tape_${symbol}_${order.t}_${order.side}`;
+
+export const TAPE_STYLE_KEY = 'suite_tape_line_style';
+export const TAPE_STYLE_DEFAULT = { width: 1, dashed: false, opacity: 0.55, label: 'short', size: 10 };
+
+/** Estilo guardado, con cada campo dentro de lo permitido */
+export function cleanStyle(v = {}) {
+  const d = TAPE_STYLE_DEFAULT;
+  const n = (x, lo, hi, def) => (Number.isFinite(Number(x)) ? Math.min(hi, Math.max(lo, Number(x))) : def);
+  return {
+    width: Math.round(n(v.width, 1, 4, d.width)),
+    dashed: typeof v.dashed === 'boolean' ? v.dashed : d.dashed,
+    opacity: n(v.opacity, 0.15, 1, d.opacity),
+    label: ['full', 'short', 'none'].includes(v.label) ? v.label : d.label,
+    size: Math.round(n(v.size, 8, 14, d.size)),
+  };
+}
 
 /** Precio de la línea: el promedio de la orden (USD / cantidad); si cruzó varios precios, ese promedio */
 export function orderPrice(order) {
@@ -21,15 +40,42 @@ export function tapeLabel(order, qtyText = (q) => String(q)) {
   return `Cinta ${order.side === 'buy' ? '▲ compra' : '▼ venta'} ${qtyText(order.qty)} · ${fmtUsd(order.usd)} · ${fmtTime(order.t)}${range}`;
 }
 
-/** La línea de una orden. pending: punteada y fina, con "(provisional)"; firme: continua */
-export function tapeLine(symbol, order, color, pending = true, qtyText) {
-  const label = tapeLabel(order, qtyText);
+/** Texto corto: "▼ 76k · 14:47" */
+export function shortLabel(order) {
+  const t = new Date(order.t).toLocaleTimeString('es-CO', { hour12: false, hour: '2-digit', minute: '2-digit' });
+  return `${order.side === 'buy' ? '▲' : '▼'} ${fmtUsd(order.usd)} · ${t}`;
+}
+
+/** Estilo y texto de una línea de la cinta según el estilo elegido; la provisional va punteada y algo más visible */
+export function lineLook(tape, color, pending, style = TAPE_STYLE_DEFAULT, qtyText) {
+  const st = cleanStyle(style);
+  const order = { ...tape };
+  let label = st.label === 'none' ? '' : st.label === 'short' ? shortLabel(order) : tapeLabel(order, qtyText);
+  if (pending) label = label ? `${label} (provisional)` : 'Cinta (provisional)';
   return {
-    type: 'horizontal', id: tapeLineId(symbol, order), price: orderPrice(order), time: order.t,
-    style: { color, lineWidth: pending ? 1 : 2, dash: pending ? [4, 3] : [] },
-    label: pending ? `${label} (provisional)` : label,
-    tape: { pending, t: order.t, side: order.side, usd: order.usd, qty: order.qty, lo: order.lo, hi: order.hi },
+    style: { color, lineWidth: st.width, dash: pending ? [4, 3] : st.dashed ? [6, 4] : [], opacity: pending ? Math.min(1, st.opacity + 0.25) : st.opacity,
+      labelSize: st.size, labelBg: false },
+    label: label || null,
   };
+}
+
+/** La línea de una orden: provisional (punteada, con "(provisional)") o en firme, con el estilo elegido */
+export function tapeLine(symbol, order, color, pending = true, qtyText, style = TAPE_STYLE_DEFAULT) {
+  const tape = { pending, t: order.t, side: order.side, usd: order.usd, qty: order.qty, lo: order.lo, hi: order.hi,
+    p0: order.p0, p1: order.p1, levels: order.levels };
+  return { type: 'horizontal', id: tapeLineId(symbol, order), price: orderPrice(order), time: order.t, ...lineLook(tape, color, pending, style, qtyText), tape };
+}
+
+/** Todas las líneas de la cinta con otro estilo (su color, su estado y su orden no cambian) */
+export function restyle(shapes, style, qtyText) {
+  return (shapes || []).map(s => (s && s.type === 'horizontal' && s.tape
+    ? { ...s, ...lineLook(s.tape, s.style?.color, !!s.tape.pending, style, qtyText) }
+    : s));
+}
+
+/** Las líneas de la cinta en firme, de la más nueva a la más vieja (para la lista "En firme") */
+export function firmLines(shapes) {
+  return (shapes || []).filter(s => s && s.tape && !s.tape.pending).sort((a, b) => (b.tape.t || 0) - (a.tape.t || 0));
 }
 
 /** Los dibujos con esta línea provisional: quita las otras provisionales de la cinta (las firmes quedan) */
@@ -37,12 +83,12 @@ export function withPendingLine(shapes, line) {
   return [...(shapes || []).filter(s => s && s.id !== line.id && !(s.tape?.pending)), line];
 }
 
-/** Deja en firme la línea: continua, más gruesa y sin "(provisional)". Si no está, los dibujos no cambian */
-export function firmLine(shapes, id) {
+/** Deja en firme la línea con el estilo elegido, sin "(provisional)". Si no está, los dibujos no cambian */
+export function firmLine(shapes, id, style = TAPE_STYLE_DEFAULT, qtyText) {
   return (shapes || []).map(s => {
     if (!s || s.id !== id) return s;
-    return { ...s, style: { ...s.style, lineWidth: 2, dash: [] }, label: String(s.label || '').replace(/ \(provisional\)$/, ''),
-      tape: { ...(s.tape || {}), pending: false } };
+    const tape = { ...(s.tape || {}), pending: false };
+    return { ...s, ...lineLook(tape, s.style?.color, false, style, qtyText), tape };
   });
 }
 

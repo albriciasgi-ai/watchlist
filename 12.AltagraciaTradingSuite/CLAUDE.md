@@ -85,7 +85,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
         └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5) y tapelines.test.mjs (4), con node
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5) y tapelines.test.mjs (6), con node
 ```
 
 ## Puertos
@@ -897,7 +897,14 @@ Pedido del usuario: al hacer clic en una orden de la cinta, verla en el gráfico
 - **Es un dibujo de la moneda** (`tapeLines.js`): tipo `horizontal` de App 1 con `label` y `tape` (la orden: hora, lado, USD, cantidad, rango). Se guarda en `/api/drawings` y se avisa a las otras pestañas (`sendDrawings`): se ve en el mapa, en el gráfico principal y en la Watchlist. La cinta guarda 30 minutos: una línea en firme de una orden que ya salió de la cinta se borra en el gráfico, como cualquier dibujo (seleccionarla y Suprimir).
 - **App 1** (`HorizontalLine.js`): la línea acepta un texto opcional (`label`), dibujado arriba a la izquierda con fondo, y conserva `tape` al guardar. Una línea sin texto se ve igual que antes.
 - **Probado** en la copia aislada con los trades en vivo: clic en una venta de 76k puso la línea provisional en el mapa; "Dejar en firme" la dejó continua y sin "(provisional)" en los dibujos guardados; "Borrar" la quitó sin tocar la caja TP/SL de la moneda. No se probó en Electron.
-- **Pruebas:** `web/tests/tapelines.test.mjs` (4). Las de App 1 siguen pasando.
+- **Pruebas:** `web/tests/tapelines.test.mjs` (6). Las de App 1 siguen pasando.
+- **Después (14/11, pedidos del usuario):**
+  - **Para el análisis del trade:** en el gráfico principal, un clic sobre una línea de la cinta en firme la selecciona y abre el menú "Incluir en el análisis" con "Orden de venta 98k (16:00) · Cinta"; marcada, entra a la lista del panel con su papel y nota, y va con la orden al journal y al Observador como cualquier nivel (`tapeDrawingLevels` de App 1). Las provisionales no se ofrecen. Probado: entró como n.º 1 de la lista.
+  - **En firme no vencen:** la cinta guarda 30 minutos, pero "En firme (N)" lista todas las líneas en firme de la moneda (de la más nueva a la más vieja), cada una con "Borrar". Solo se van a mano.
+  - **Estilo** (⚙ en la cinta, `suite_tape_line_style`): grosor (1 a 4 px), trazo (continua o punteada), opacidad (15 a 100%) y texto (corto "▼ 98k · 16:00", completo o sin texto, de 8 a 14 px). Se aplica a todas las líneas de la cinta de la moneda. De fábrica, discretas: 1 px, 55%, texto corto de 10 px sin fondo; la provisional, punteada y algo más visible.
+  - **App 1** (`HorizontalLine.js`): `style.opacity`, `style.labelSize` y `style.labelBg`, opcionales; sin ellos se ve igual.
+  - **Defensa de zona:** una línea de la cinta cuenta como zona ("cinta") con su texto corto; las demás líneas, con su precio redondeado (antes salía con 10 cifras).
+  - Pruebas: `tapelines.test.mjs` (6) y `tapelevels.test.mjs` de App 1 (1).
 
 ## Escritorio (Electron)
 
@@ -948,7 +955,7 @@ C:\Python314\python.exe -B tests\book_events_checks.py
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (4).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 

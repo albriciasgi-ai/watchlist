@@ -62,6 +62,8 @@ class HorizontalLine {
     const endX = scaleConverter.marginLeft + scaleConverter.chartWidth;
 
     ctx.save();
+    // Opacidad opcional (14/11/2026: las líneas de la cinta de la suite, para que no tapen lo demás)
+    if (this.style.opacity > 0 && this.style.opacity < 1 && !isSelected) ctx.globalAlpha = this.style.opacity;
 
     ctx.strokeStyle = isPreview ? 'rgba(139, 92, 246, 0.5)' : this.style.color;
     const lineWidth = isSelected ? this.style.lineWidth + 1 : this.style.lineWidth;
@@ -82,12 +84,16 @@ class HorizontalLine {
 
     // Texto de la línea, arriba a la izquierda, con fondo para leerse sobre las velas
     if (this.label) {
-      ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+      const size = this.style.labelSize > 0 ? this.style.labelSize : 11;
+      ctx.font = `600 ${size}px "Segoe UI", system-ui, sans-serif`;
       const w = ctx.measureText(this.label).width + 8;
-      ctx.globalAlpha = 0.9;
-      ctx.fillStyle = THEME.labelBg || 'rgba(255,255,255,0.9)';
-      ctx.fillRect(startX + 4, y - 16, w, 14);
-      ctx.globalAlpha = 1;
+      const alpha = ctx.globalAlpha;
+      if (this.style.labelBg !== false) {
+        ctx.globalAlpha = alpha * 0.9;
+        ctx.fillStyle = THEME.labelBg || 'rgba(255,255,255,0.9)';
+        ctx.fillRect(startX + 4, y - size - 5, w, size + 3);
+        ctx.globalAlpha = alpha;
+      }
       ctx.fillStyle = this.style.color;
       ctx.fillText(this.label, startX + 8, y - 5);
     }

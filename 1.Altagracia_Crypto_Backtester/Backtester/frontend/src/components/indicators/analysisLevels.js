@@ -201,6 +201,21 @@ export function profileLevels(profile, source, range = {}) {
     .map(([kind, price]) => ({ id: levelId(source, kind, price), source, kind, price, ...range }));
 }
 
+/**
+ * Las órdenes de la cinta de la suite que el usuario dejó en firme (líneas horizontales con `tape`), elegibles para el
+ * análisis del trade como cualquier nivel (14/11/2026). Las provisionales no. Se eligen en todo el ancho, como se dibuja
+ * la línea; la hora de la orden va en el nombre.
+ */
+export function tapeDrawingLevels(shapes) {
+  return (shapes || [])
+    .filter(s => s && s.type === 'horizontal' && s.tape && !s.tape.pending && s.price > 0)
+    .map(s => ({
+      id: `Cinta|${s.id}`, source: 'Cinta', price: s.price,
+      kind: `Orden ${s.tape.side === 'buy' ? 'de compra' : 'de venta'}${s.tape.usd ? ` ${Math.round(s.tape.usd / 1000)}k` : ''}${
+        Number.isFinite(s.tape.t) ? ` (${new Date(s.tape.t).toLocaleTimeString('es-CO', { hour12: false, hour: '2-digit', minute: '2-digit' })})` : ''}`
+    }));
+}
+
 export function priceLevels(levels, source, kind) {
   return (levels || []).map(({ price }) => ({ id: levelId(source, kind, price), source, kind, price }));
 }

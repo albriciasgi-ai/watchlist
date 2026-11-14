@@ -54,6 +54,26 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Líneas de la Cinta para el Análisis, sin Vencer y con Estilo
+
+**Pedido:** que las líneas de la cinta en firme se puedan incluir en el análisis del trade (Observador), que no se borren con el tiempo sino solo a mano, y poder cambiar su estilo: se veían muy protagonistas.
+
+**Cambios:**
+1. **Análisis:** un clic sobre una línea en firme en el gráfico principal abre "Incluir en el análisis" ("Orden de venta 98k (16:00) · Cinta"). Entra a la lista del panel con su papel y va con la orden al journal y al Observador.
+2. **"En firme (N)"** en la cinta: todas las líneas en firme de la moneda, aunque su orden ya salió de la cinta, con "Borrar".
+3. **Estilo** (⚙ en la cinta): grosor, trazo, opacidad y texto (corto, completo o sin texto, con su tamaño), para todas. De fábrica, discretas: 1 px, 55% y texto corto.
+4. **App 1:** `HorizontalLine.js` suma opacidad y tamaño y fondo del texto, opcionales; `tapeDrawingLevels` y el clic que abre el menú en `MiniChart`. Sin líneas de la cinta, nada cambia.
+5. **Defensa de zona:** la línea de la cinta es una zona con su texto corto, y las demás líneas salen con su precio redondeado.
+6. **Pruebas:** `tapelines.test.mjs` (6) y `tapelevels.test.mjs` de App 1 (1). Las demás siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- Probado en la copia aislada con trades en vivo: estilo discreto, "En firme (1)", y el clic en la línea abrió el menú y la orden entró a la lista del panel. No se probó en Electron ni con una orden real.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Órdenes de la cinta como líneas en el gráfico (14/11)", "Después"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Órdenes de la Cinta como Líneas en el Gráfico
 
 **Pedido:** al hacer clic en una orden de la cinta, verla en el gráfico como una línea horizontal con su información, y poder dejarla en firme o borrarla.
