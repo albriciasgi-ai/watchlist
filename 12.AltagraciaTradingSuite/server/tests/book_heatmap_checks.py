@@ -105,6 +105,45 @@ try:
           int(hs[3].max()) == 0 and int(hs[4].max()) == 0 and int(hs[5].max()) > 0, str(hs[:, WALL_K - book_heatmap.grid(srcs, "HUECOUSDT", 15, T0, T0 + 120 * MIN, "toda")["row0"]]))
     check("y baja la cobertura de su vela (14 de 15 minutos)", ht["coverage"][3] == 93 and ht["coverage"][2] == 100, str(ht["coverage"]))
 
+    # compra y venta por separado (14/11): un soporte que pasa a resistencia. La primera hora hay 10 BTC de compra en
+    # 69,800; la segunda, el precio bajo y en ese mismo precio hay 10 BTC de venta.
+    raw = {}
+    for i in range(120):
+        m = T0 + i * MIN
+        km = KMID if i < 60 else KMID - 20
+        bids = np.zeros(N, np.float32)
+        asks = np.zeros(N, np.float32)
+        if i < 60:
+            bids[km - WALL_K] = 10.0
+        else:
+            asks[WALL_K - km] = 10.0
+        h = {"v": 1, "s": "GIROUSDT", "t": m, "tick": TICK, "step": STEP, "kmid": km, "n": N, "cov": MIN, "gap": False,
+             "samples": 60, "mid": (km + 0.5) * 20.0}
+        raw.setdefault(book_store.day_path(base, "GIROUSDT", book_store.day_of(m), "bkm"), []).append(
+            book_store.minute_block(m, h, bids, asks, bids, asks))
+    for path, items in raw.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "ab") as fh:
+            fh.write(b"".join(items))
+    book_store._index.clear()
+    grid_kw = dict(low=69_000.0, high=71_000.0, step=20.0)
+    joint = book_heatmap.grid(srcs, "GIROUSDT", 15, T0, T0 + 120 * MIN, "sostenida", 30, **grid_kw)
+    split = book_heatmap.grid(srcs, "GIROUSDT", 15, T0, T0 + 120 * MIN, "sostenida", 30, sides=True, **grid_kw)
+    rw = WALL_K - joint["row0"]
+    cj = cells(joint)[:, rw]
+    sb = np.frombuffer(base64.b64decode(split["cells_b"]), np.uint8).reshape(split["cols"], split["rows"])[:, rw]
+    sa = np.frombuffer(base64.b64decode(split["cells_a"]), np.uint8).reshape(split["cols"], split["rows"])[:, rw]
+    check("sumadas, la franja sigue al cambiar de lado (lo que vio el usuario)", int(cj[1:].min()) > 0, str(cj))
+    check("por lado: la compra esta solo en la primera hora", int(sb[1:4].min()) > 0 and int(sb[4:].max()) == 0, str(sb))
+    check("por lado: la venta sostenida aparece 30 minutos despues del cambio", int(sa[:5].max()) == 0 and int(sa[6:].min()) > 0,
+          str(sa))
+    check("por lado: responde cells_b y cells_a, sin cells", split["sides"] and "cells" not in split and len(sb) == 8)
+    tb = book_heatmap.grid(srcs, "GIROUSDT", 15, T0, T0 + 120 * MIN, "toda", sides=True, **grid_kw)
+    tbb = np.frombuffer(base64.b64decode(tb["cells_b"]), np.uint8).reshape(tb["cols"], tb["rows"])[:, rw]
+    tba = np.frombuffer(base64.b64decode(tb["cells_a"]), np.uint8).reshape(tb["cols"], tb["rows"])[:, rw]
+    check("toda por lado: cada vela con su lado", int(tbb[:4].min()) > 0 and int(tbb[4:].max()) == 0
+          and int(tba[:4].max()) == 0 and int(tba[4:].min()) > 0, str((tbb, tba)))
+
     # el paso y la primera fila pedidos se respetan
     e = book_heatmap.grid(srcs, "MAPAUSDT", 15, T0 + 90 * MIN, T0 + 120 * MIN, "toda", low=69_000.0, high=71_000.0, step=40.0)
     check("con paso y precios pedidos: filas de 40 USD desde 69,000", e["step"] == 40.0 and e["row0"] == 69_000 // 40

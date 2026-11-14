@@ -6,12 +6,14 @@
 //   piden con margen (el doble del rango a la vista) y una sola grilla de precios: solo se vuelve a pedir todo si la
 //   vista sale de ella. Lo que falta se pide al desplazarse, y la ultima vela cada 30 s (TAIL_MS).
 // - Modos: "toda" (el promedio de la vela) o "sostenida" (lo que estuvo los ultimos N minutos hasta su cierre).
+// - Lados (14/11/2026): con `sides` (de fabrica) la compra y la venta van por separado, cada una en su color (los del
+//   interes abierto del estilo: azul y naranja en Nitido). Sin `sides`, una sola escala con las dos sumadas.
 // - Dibujo: una imagen con una columna por vela y una fila por precio (liquidityMap.js), estirada sin suavizar sobre el
 //   area del precio, antes de las velas (renderBackground). Lo de poco valor queda transparente.
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import { THEME } from '../uiTheme.js';
-import { LiquidityMapStore, visibleScale, buildImage } from '../liquidityMap.js';
+import { LiquidityMapStore, visibleScale, buildImage, hexRgb } from '../liquidityMap.js';
 
 const FRAME_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000 };
 const TAIL_MS = 30000;        // la ultima vela se vuelve a pedir cada 30 s
@@ -21,7 +23,7 @@ const MAX_COLS = 1500;        // lo mismo que acepta el servidor
 const REFRESH_MS = 60000;     // velas recientes incompletas: se vuelven a pedir cada minuto (la nube las puede llenar)
 const RECENT_MS = 12 * 3600000;
 
-export const LIQUIDITY_MAP_DEFAULTS = { mode: 'sostenida', minutes: 30, opacity: 0.9 };
+export const LIQUIDITY_MAP_DEFAULTS = { mode: 'sostenida', minutes: 30, opacity: 0.9, sides: true };
 export const LIQUIDITY_MAP_MINUTES = [5, 15, 30, 60, 120, 240];
 
 export default class LiquidityMapIndicator extends IndicatorBase {
@@ -49,9 +51,9 @@ export default class LiquidityMapIndicator extends IndicatorBase {
   hasData() { return this.store.columns.size > 0; }
 
   updateConfig(config = {}) {
-    const before = `${this.config.mode}|${this.config.minutes}`;
+    const before = `${this.config.mode}|${this.config.minutes}|${!!this.config.sides}`;
     this.config = { ...this.config, ...config };
-    if (`${this.config.mode}|${this.config.minutes}` !== before) {
+    if (`${this.config.mode}|${this.config.minutes}|${!!this.config.sides}` !== before) {
       this.store.reset();
       this.generation++;
       this.loading = false;
@@ -74,6 +76,7 @@ export default class LiquidityMapIndicator extends IndicatorBase {
       interval: this.interval, from_ms: String(Math.floor(from)), to_ms: String(Math.ceil(to)),
       mode: this.config.mode, minutes: String(this.config.minutes),
     });
+    if (this.config.sides) p.set('sides', '1');
     if (grid) {
       p.set('low', String(grid.low));
       p.set('high', String(grid.high));
@@ -159,10 +162,12 @@ export default class LiquidityMapIndicator extends IndicatorBase {
     if (!cols.some(Boolean)) return;
     const dark = !!THEME.dark;
     const scale = visibleScale(cols);
+    const colors = this._sideColors();
     const key = [visibleCandles[0].timestamp, visibleCandles.length, this.store.columns.size, this.store.lastMs, dark,
-      this.config.opacity, scale?.lo, scale?.hi, this.store.row0, this.store.rows].join('|');
+      this.config.opacity, scale?.lo, scale?.hi, this.store.row0, this.store.rows, this.store.sides,
+      colors.b.join(','), colors.a.join(',')].join('|');
     if (key !== this._imageKey) {
-      const img = buildImage(cols, this.store.rows, scale, dark, this.config.opacity);
+      const img = buildImage(cols, this.store.rows, scale, dark, this.config.opacity, colors);
       if (!this._canvas) this._canvas = document.createElement('canvas');
       this._canvas.width = img.width;
       this._canvas.height = img.height;
@@ -186,6 +191,11 @@ export default class LiquidityMapIndicator extends IndicatorBase {
     ctx.restore();
   }
 
+  // Colores de compra y venta: los del interés abierto del estilo (Nítido: azul y naranja), distintos de las velas
+  _sideColors() {
+    return { b: hexRgb(THEME.oiUp, [41, 98, 255]), a: hexRgb(THEME.oiDown, [245, 124, 0]) };
+  }
+
   // Encima de todo: solo el estado (modo, cargando, sin libro o error)
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
     if (!this.enabled || !visibleCandles?.length) return;
@@ -204,6 +214,23 @@ export default class LiquidityMapIndicator extends IndicatorBase {
     ctx.fillStyle = THEME.textMuted || '#555';
     ctx.textBaseline = 'middle';
     ctx.fillText(text, bounds.x + 12, bounds.y + 15);
+    if (this.store.sides) {
+      // leyenda de los colores: ■ compra ■ venta
+      const c = this._sideColors();
+      let x = bounds.x + 6 + w + 6;
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = THEME.labelBg || 'rgba(255,255,255,0.85)';
+      const lw = ctx.measureText('compra  venta').width + 34;
+      ctx.fillRect(x, bounds.y + 6, lw, 18);
+      ctx.globalAlpha = 1;
+      for (const [rgb, label] of [[c.b, 'compra'], [c.a, 'venta']]) {
+        ctx.fillStyle = `rgb(${rgb.join(',')})`;
+        ctx.fillRect(x + 6, bounds.y + 10, 10, 10);
+        ctx.fillStyle = THEME.textMuted || '#555';
+        ctx.fillText(label, x + 20, bounds.y + 15);
+        x += 20 + ctx.measureText(label).width + 8;
+      }
+    }
     ctx.restore();
   }
 }

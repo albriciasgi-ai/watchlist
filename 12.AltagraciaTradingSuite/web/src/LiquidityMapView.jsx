@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MiniChart from '@app1/components/MiniChart';
 import { LIQUIDITY_MAP_MINUTES } from '@app1/components/indicators/LiquidityMapIndicator.js';
+import { SUSTAINED_LEVELS_MINUTES } from '@app1/components/indicators/SustainedLevelsIndicator.js';
 import { getJson } from './api.js';
 import { linesFor, subscribeBook } from './botBook.js';
 import { TAB, URL_SYMBOL, URL_TIMEFRAME, onAnyDrawings, onSymbolsChanged } from './tabs.js';
@@ -16,6 +17,8 @@ import LadderPanel, { LADDER_WIDTH } from './LadderPanel.jsx';
  *   promedio de la vela. Sale de /api/book/heatmap del servidor, con lo grabado en el PC y lo bajado de la nube.
  * - Se abre con el botón "Mapa" del gráfico principal, con su moneda y su marco, y lo sigue hasta que aquí se elija
  *   otra moneda u otro marco. También desde el menú "Pestañas".
+ * - "Compra y venta" (14/11/2026, de fábrica): cada lado en su color; "Una escala" las suma como antes.
+ * - "Niveles" (14/11/2026): los niveles de liquidez sostenida (book_levels.py), encima del mapa, con cómo terminó cada uno.
  * - El ladder (14/11/2026), a la derecha: el libro de ahora de la misma moneda, del grabador de la suite. Se oculta con
  *   el botón "Ladder".
  */
@@ -23,7 +26,9 @@ import LadderPanel, { LADDER_WIDTH } from './LadderPanel.jsx';
 const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
 const DAYS = { '1m': 3, '5m': 10, '15m': 30, '1h': 120, '4h': 365 }; // los del gráfico principal
 const MAP_NAME = 'Mapa de liquidez';
+const LEVELS_NAME = 'Niveles sostenidos';
 const STATES = { [MAP_NAME]: true }; // nada más: los demás quedan apagados
+const STATES_WITH_LEVELS = { [MAP_NAME]: true, [LEVELS_NAME]: true };
 const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true };
 const SETTINGS_KEY = `suite_mapa_${TAB}`;
 const MAIN_SETTINGS_KEY = 'suite_chart_1';
@@ -54,9 +59,12 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
   const [tf, setTf] = useState(URL_TIMEFRAME || (TIMEFRAMES.includes(saved.timeframe) ? saved.timeframe : null) || start.timeframe || '15m');
   const [mode, setMode] = useState(saved.mode === 'toda' ? 'toda' : 'sostenida');
   const [minutes, setMinutes] = useState(LIQUIDITY_MAP_MINUTES.includes(saved.minutes) ? saved.minutes : 30);
+  const [sides, setSides] = useState(saved.sides !== false);
   // Sigue al gráfico principal (pestaña 1) mientras no se elija aquí otra moneda u otro marco
   const [follow, setFollow] = useState(TAB !== 1 && (URL_SYMBOL ? true : saved.follow !== false));
   const [ladderOn, setLadderOn] = useState(saved.ladder !== false);
+  const [levelsOn, setLevelsOn] = useState(saved.levels !== false);
+  const [levelMinutes, setLevelMinutes] = useState(SUSTAINED_LEVELS_MINUTES.includes(saved.levelMinutes) ? saved.levelMinutes : 30);
   const [ladder, setLadder] = useState(() => {
     const v = saved.ladderSettings && typeof saved.ladderSettings === 'object' ? { ...saved.ladderSettings } : {};
     // Antes del 14/11 el step era uno para todas las monedas: queda para la moneda que se miraba
@@ -71,11 +79,11 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
 
   useEffect(() => {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder }));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder, levels: levelsOn, levelMinutes, sides }));
     } catch {
       // Sin almacenamiento la elección dura hasta cerrar la pestaña
     }
-  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder]);
+  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder, levelsOn, levelMinutes, sides]);
 
   useEffect(() => {
     getJson('/api/suite/symbols').then(d => setSymbols(d.symbols)).catch(() => {});
@@ -100,13 +108,26 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
     const apply = () => {
       const indicator = chartRef.current?.getIndicatorManager?.()?.liquidityMapIndicator;
       if (!indicator) return false;
-      indicator.updateConfig({ mode, minutes });
+      indicator.updateConfig({ mode, minutes, sides });
       return true;
     };
     if (apply()) return undefined;
     const timer = setInterval(() => { if (apply()) clearInterval(timer); }, 300);
     return () => clearInterval(timer);
-  }, [mode, minutes, symbol, tf]);
+  }, [mode, minutes, sides, symbol, tf]);
+
+  // Los minutos de los niveles sostenidos, igual
+  useEffect(() => {
+    const apply = () => {
+      const indicator = chartRef.current?.getIndicatorManager?.()?.sustainedLevelsIndicator;
+      if (!indicator) return false;
+      indicator.updateConfig({ minutes: levelMinutes });
+      return true;
+    };
+    if (apply()) return undefined;
+    const timer = setInterval(() => { if (apply()) clearInterval(timer); }, 300);
+    return () => clearInterval(timer);
+  }, [levelMinutes, symbol, tf]);
 
   // Los dibujos que cambian en el gráfico principal o en otra pestaña llegan aquí (aquí no se editan)
   useEffect(() => onAnyDrawings((sym, shapes) => { if (sym === symbolRef.current) chartRef.current?.loadDrawings?.(shapes, true); }), []);
@@ -151,10 +172,23 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
             {LIQUIDITY_MAP_MINUTES.map(m => <option key={m} value={m}>{m < 60 ? `${m} min` : `${m / 60} h`}</option>)}
           </select>
         )}
+        <select className="suite-select" value={sides ? 'lados' : 'una'} onChange={(e) => setSides(e.target.value === 'lados')}
+          aria-label="Colores del mapa" title="Compra y venta: cada lado en su color, así se ve un soporte que pasa a resistencia. Una escala: las dos sumadas">
+          <option value="lados">Compra y venta</option>
+          <option value="una">Una escala</option>
+        </select>
         {TAB !== 1 && (
           <label className="wl-muted" title="Cambia de moneda y de marco con el gráfico principal">
             <input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} /> Seguir al gráfico principal
           </label>
+        )}
+        <button type="button" className={`suite-btn ${levelsOn ? 'active' : ''}`} onClick={() => setLevelsOn(v => !v)}
+          title="Niveles de liquidez sostenida: solo lo grande que esperó en el libro al menos los minutos elegidos, y cómo terminó (● consumido, × retirado)">Niveles</button>
+        {levelsOn && (
+          <select className="suite-select" value={levelMinutes} onChange={(e) => setLevelMinutes(Number(e.target.value))} aria-label="Minutos de los niveles sostenidos"
+            title="Cuánto debe esperar en el libro para ser un nivel sostenido">
+            {SUSTAINED_LEVELS_MINUTES.map(m => <option key={m} value={m}>{`≥ ${m < 60 ? `${m} min` : `${m / 60} h`}`}</option>)}
+          </select>
         )}
         <button type="button" className={`suite-btn ${ladderOn ? 'active' : ''}`} onClick={() => setLadderOn(v => !v)}
           title="El libro de ahora de esta moneda, a la derecha del mapa">Ladder</button>
@@ -175,7 +209,7 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
                   interval={tf}
                   days={DAYS[tf]}
                   isActive={false}
-                  indicatorStates={STATES}
+                  indicatorStates={levelsOn ? STATES_WITH_LEVELS : STATES}
                   backtestingMode={false}
                   vpConfig={VP_CONFIG}
                   vpFixedRange={null}

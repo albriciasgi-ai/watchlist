@@ -51,6 +51,7 @@ import recorder  # noqa: E402  grabacion propia de trades (live/local), un solo 
 import book_recorder  # noqa: E402  libro completo de Bybit (live/book), un solo proceso a la vez
 import book_cloud  # noqa: E402  tapa los huecos del libro con lo que graba la nube (live/book_cloud)
 import book_heatmap  # noqa: E402  mapa de liquidez por vela y precio, para la pestana "Mapa"
+import book_levels  # noqa: E402  niveles de liquidez sostenida, para la pestana "Mapa"
 import ladder  # noqa: E402  price ladder de la pestana "Mapa", del libro en memoria
 import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca envia
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
@@ -71,6 +72,7 @@ app.include_router(book_recorder.make_router())
 app.include_router(book_cloud.make_router())
 app.include_router(book_heatmap.make_router())
 app.include_router(ladder.make_router())
+app.include_router(book_levels.make_router())
 SWING = swing_watch.SwingWatch(Path(CONFIG["data_dir"]) / "swing", DRAWINGS_DIR)
 app.include_router(swing_watch.make_router(SWING))
 

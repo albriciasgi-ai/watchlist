@@ -2,6 +2,9 @@
 // detras de las velas. Los datos salen de la ruta /api/book/heatmap de la suite (book_heatmap.py); aqui se guardan
 // por vela, se elige el contraste con lo que esta a la vista y se arma la imagen. Sin React ni canvas: se prueba en
 // node (tests/liquiditymap.test.mjs). Cada celda llega en un byte = round(16 * log10(1 + USD)).
+// Compra y venta por separado (14/11/2026, pedido del usuario): con `sides`, la ruta manda cells_b y cells_a y cada
+// columna guarda las dos (filas de compra y luego filas de venta). La imagen pinta cada precio con el lado que más
+// tiene, en su color: así se ve un soporte que pasa a resistencia.
 
 export const ENC = 16;
 export const cellUsd = (q) => (q > 0 ? 10 ** (q / ENC) - 1 : 0);
@@ -26,6 +29,7 @@ export class LiquidityMapStore {
     this.row0 = null;
     this.rows = 0;
     this.frameMs = null;
+    this.sides = false;
     this.columns = new Map();   // hora de la vela -> Uint8Array(rows), fila 0 = precio mas bajo
     this.coverage = new Map();  // hora de la vela -> % de sus minutos con libro (0: pedida y sin libro)
     this.firstMs = null;
@@ -33,7 +37,8 @@ export class LiquidityMapStore {
   }
 
   sameGrid(resp) {
-    return this.step === resp.step && this.row0 === resp.row0 && this.rows === resp.rows && this.frameMs === resp.frame_ms;
+    return this.step === resp.step && this.row0 === resp.row0 && this.rows === resp.rows && this.frameMs === resp.frame_ms
+      && this.sides === !!resp.sides;
   }
 
   // Une una respuesta de la ruta. Devuelve true si cambio algo de lo guardado.
@@ -54,10 +59,14 @@ export class LiquidityMapStore {
       this.row0 = resp.row0;
       this.rows = resp.rows;
       this.frameMs = resp.frame_ms;
+      this.sides = !!resp.sides;
       if (resp.first_ms != null) this.firstMs = resp.first_ms;
       if (resp.last_ms != null) this.lastMs = resp.last_ms;
     }
-    const cells = decodeCells(resp.cells);
+    const sides = !!resp.sides;
+    const cells = sides ? null : decodeCells(resp.cells);
+    const cellsB = sides ? decodeCells(resp.cells_b) : null;
+    const cellsA = sides ? decodeCells(resp.cells_a) : null;
     let changed = false;
     for (let c = 0; c < resp.cols; c++) {
       const t = resp.t0 + c * resp.frame_ms;
@@ -66,7 +75,14 @@ export class LiquidityMapStore {
         if (!this.columns.has(t)) this.coverage.set(t, 0);  // lo que ya tenia libro no se borra
         continue;
       }
-      this.columns.set(t, cells.slice(c * resp.rows, (c + 1) * resp.rows));
+      if (sides) {
+        const col = new Uint8Array(2 * resp.rows);
+        col.set(cellsB.subarray(c * resp.rows, (c + 1) * resp.rows), 0);
+        col.set(cellsA.subarray(c * resp.rows, (c + 1) * resp.rows), resp.rows);
+        this.columns.set(t, col);
+      } else {
+        this.columns.set(t, cells.slice(c * resp.rows, (c + 1) * resp.rows));
+      }
       this.coverage.set(t, cov);
       changed = true;
     }
@@ -136,25 +152,64 @@ export function ramp(x, dark = false) {
   return stops[stops.length - 1][1].slice();
 }
 
+// Rampa de un lado (compra o venta) en su color: transparente con poco, firme con mucho. En lo más alto el color se
+// oscurece (fondo claro) o se aclara (fondo oscuro) para que los muros resalten.
+const SIDE_ALPHA = [[0, 0], [0.25, 60], [0.5, 130], [0.75, 195], [1, 240]];
+export function sideRamp(x, rgb, dark = false) {
+  const v = Math.min(1, Math.max(0, x));
+  let a = SIDE_ALPHA[SIDE_ALPHA.length - 1][1];
+  for (let i = 1; i < SIDE_ALPHA.length; i++) {
+    const [x1, a1] = SIDE_ALPHA[i];
+    const [x0, a0] = SIDE_ALPHA[i - 1];
+    if (v <= x1) { a = a0 + (a1 - a0) * (v - x0) / (x1 - x0); break; }
+  }
+  const target = dark ? 255 : 0;
+  const k = v > 0.75 ? (v - 0.75) / 0.25 * (dark ? 0.35 : 0.3) : 0;
+  return [...rgb.map(c => Math.round(c + (target - c) * k)), Math.round(a)];
+}
+
+/** '#2962FF' -> [41, 98, 255]; otra cosa -> fallback */
+export function hexRgb(hex, fallback) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || '').trim());
+  if (!m) return fallback;
+  const n = parseInt(m[1], 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
 // Imagen RGBA: una columna por vela a la vista y una fila por precio (la de arriba es el precio mas alto).
-export function buildImage(columns, rows, scale, dark = false, opacity = 1) {
+// Con columnas de compra y venta (2 x rows) y sideColors { b: [r, g, b], a: [r, g, b] }, cada precio va con el lado
+// que más tiene, en su color.
+export function buildImage(columns, rows, scale, dark = false, opacity = 1, sideColors = null) {
   const w = columns.length;
   const h = rows;
   const data = new Uint8ClampedArray(Math.max(0, w * h * 4));
   if (!scale || !w || !h) return { width: w, height: h, data };
-  const lut = new Uint8ClampedArray(256 * 4);
-  for (let q = 1; q < 256; q++) {
-    const c = ramp((q - scale.lo) / (scale.hi - scale.lo), dark);
-    lut[q * 4] = c[0]; lut[q * 4 + 1] = c[1]; lut[q * 4 + 2] = c[2]; lut[q * 4 + 3] = Math.round(c[3] * opacity);
-  }
+  const lutOf = (fn) => {
+    const lut = new Uint8ClampedArray(256 * 4);
+    for (let q = 1; q < 256; q++) {
+      const c = fn((q - scale.lo) / (scale.hi - scale.lo));
+      lut[q * 4] = c[0]; lut[q * 4 + 1] = c[1]; lut[q * 4 + 2] = c[2]; lut[q * 4 + 3] = Math.round(c[3] * opacity);
+    }
+    return lut;
+  };
+  const lut = lutOf(x => ramp(x, dark));
+  const colors = sideColors || { b: [41, 98, 255], a: [245, 124, 0] };
+  const lutB = lutOf(x => sideRamp(x, colors.b, dark));
+  const lutA = lutOf(x => sideRamp(x, colors.a, dark));
   for (let c = 0; c < w; c++) {
     const col = columns[c];
     if (!col) continue;
+    const split = col.length === 2 * h;
     for (let r = 0; r < h; r++) {
-      const q = col[r];
+      let q = col[r];
+      let L = lut;
+      if (split) {
+        const qa = col[h + r];
+        if (qa > q) { q = qa; L = lutA; } else { L = lutB; }
+      }
       if (!q) continue;
       const o = ((h - 1 - r) * w + c) * 4;
-      data[o] = lut[q * 4]; data[o + 1] = lut[q * 4 + 1]; data[o + 2] = lut[q * 4 + 2]; data[o + 3] = lut[q * 4 + 3];
+      data[o] = L[q * 4]; data[o + 1] = L[q * 4 + 1]; data[o + 2] = L[q * 4 + 2]; data[o + 3] = L[q * 4 + 3];
     }
   }
   return { width: w, height: h, data };

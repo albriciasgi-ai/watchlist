@@ -11,6 +11,9 @@
 #     Si falta uno de esos minutos, la vela queda sin dato: lo de ese minuto no se sabe.
 # Cada celda va en un byte: round(16 * log10(1 + USD)), de 0 a 255 (cada paso es 15.5% mas). El grafico elige el
 # contraste con lo que esta a la vista.
+# Con sides (14/11/2026, pedido del usuario): compra y venta por separado (cells_b y cells_a), cada una con su propio
+# promedio o minimo. Sumadas, un soporte roto que pasa a resistencia (las compras se van y en el mismo precio aparecen
+# ventas) seguia como una sola franja; asi se ve el cambio de lado, y lo sostenido de cada lado empieza de cero.
 import asyncio
 import base64
 import math
@@ -51,7 +54,7 @@ def _width(h: dict) -> float:
 
 def grid(base, symbol: str, frame_min: int, start: int, end: int, mode: str = "toda", sustain: int = 30,
          low: Optional[float] = None, high: Optional[float] = None, step: Optional[float] = None,
-         now_ms: Optional[int] = None) -> dict:
+         now_ms: Optional[int] = None, sides: bool = False) -> dict:
     """Mapa de [start, end) en velas de frame_min minutos. Columnas: una por vela desde t0; filas: precios de
     `step` USD desde row0 * step. Sin step usa el ancho de los cubos grabados, mas grueso si no caben MAX_ROWS."""
     frame = frame_min * MINUTE
@@ -73,7 +76,7 @@ def grid(base, symbol: str, frame_min: int, start: int, end: int, mode: str = "t
     out = {"symbol": symbol, "frame": frame_min, "mode": mode, "sustain": sustain if mode == "sostenida" else None,
            "t0": start, "cols": ncols, "frame_ms": frame, "enc": ENC, "truncated": truncated,
            "first_ms": int(cols[0][0]["t"]) if cols else None, "last_ms": int(cols[-1][0]["t"]) if cols else None,
-           "row0": None, "rows": 0, "step": None, "cells": "", "coverage": [0] * ncols}
+           "row0": None, "rows": 0, "step": None, "cells": "", "coverage": [0] * ncols, "sides": bool(sides)}
     if not cols:
         return out
     widths = [_width(h) for h, _ in cols]
@@ -94,23 +97,26 @@ def grid(base, symbol: str, frame_min: int, start: int, end: int, mode: str = "t
     # una fila por minuto grabado: el USD de cada precio (compras y ventas en la misma fila de precio)
     t_first = int(cols[0][0]["t"])
     span = (int(cols[-1][0]["t"]) - t_first) // MINUTE + 1
-    M = np.full((span, nrows), np.nan, np.float32)
+    names = ("b", "a") if sides else ("ba",)
+    Ms = {nm: np.full((span, nrows), np.nan, np.float32) for nm in names}
     for h, p in cols:
         if h.get("gap"):
             continue                           # minuto incompleto: no se sabe que hubo
         i = (int(h["t"]) - t_first) // MINUTE
         wm, n, kmid = _width(h), int(h["n"]), int(h["kmid"])
-        row = np.zeros(nrows, np.float64)
+        rows_by = {nm: np.zeros(nrows, np.float64) for nm in names}
         for side in ("b", "a"):
             k = kmid - np.arange(n) if side == "b" else kmid + np.arange(n)
             center = (k + 0.5) * wm
             usd = np.maximum(p[f"twa_{side}"].astype(np.float64), 0.0) * center
             r = np.floor(center / w).astype(np.int64) - row0
             sel = (r >= 0) & (r < nrows)
-            np.add.at(row, r[sel], usd[sel])
-        M[i] = row
+            np.add.at(rows_by[side if sides else "ba"], r[sel], usd[sel])
+        for nm in names:
+            Ms[nm][i] = rows_by[nm]
+    M = Ms[names[0]]
     present = ~np.isnan(M[:, 0])
-    vals = np.full((ncols, nrows), np.nan, np.float32)
+    vals_by = {nm: np.full((ncols, nrows), np.nan, np.float32) for nm in names}
     cover = np.zeros(ncols, np.int64)
     now_ms = now_ms if now_ms is not None else end
     for c in range(ncols):
@@ -125,18 +131,24 @@ def grid(base, symbol: str, frame_min: int, start: int, end: int, mode: str = "t
             continue
         cover[c] = int(round(100 * here.sum() / max(1, (min(b, now_ms) - a) // MINUTE)))
         if mode == "toda":
-            vals[c] = np.nanmean(M[ia:ib][here], axis=0)
+            for nm in names:
+                vals_by[nm][c] = np.nanmean(Ms[nm][ia:ib][here], axis=0)
         else:
             last = ia + int(np.flatnonzero(here)[-1])      # el ultimo minuto grabado de la vela (la vela en curso)
             wa = last + 1 - sustain
             if wa < 0:
                 continue
-            window = M[wa:last + 1]
-            if np.isnan(window[:, 0]).any():
+            if np.isnan(M[wa:last + 1, 0]).any():
                 continue                                   # falto un minuto: lo sostenido no se sabe
-            vals[c] = window.min(axis=0)
-    out.update(row0=row0, rows=nrows, step=w, coverage=[min(100, int(x)) for x in cover],
-               cells=base64.b64encode(encode(vals).tobytes()).decode("ascii"))
+            for nm in names:
+                vals_by[nm][c] = Ms[nm][wa:last + 1].min(axis=0)
+    b64 = lambda v: base64.b64encode(encode(v).tobytes()).decode("ascii")  # noqa: E731
+    out.update(row0=row0, rows=nrows, step=w, coverage=[min(100, int(x)) for x in cover])
+    if sides:
+        out.pop("cells", None)
+        out.update(cells_b=b64(vals_by["b"]), cells_a=b64(vals_by["a"]))
+    else:
+        out.update(cells=b64(vals_by["ba"]))
     return out
 
 
@@ -146,7 +158,7 @@ def make_router() -> APIRouter:
     @r.get("/api/book/heatmap/{symbol}")
     async def book_heatmap(symbol: str, interval: str = "15m", from_ms: int = 0, to_ms: int = 0, mode: str = "toda",
                            minutes: int = 30, low: Optional[float] = None, high: Optional[float] = None,
-                           step: Optional[float] = None):
+                           step: Optional[float] = None, sides: int = 0):
         symbol = symbol.upper()
         if not SYMBOL_RE.match(symbol):
             raise HTTPException(status_code=404, detail="moneda invalida")
@@ -164,7 +176,8 @@ def make_router() -> APIRouter:
             raise HTTPException(status_code=400, detail="paso invalido")
         base = book_store.sources(CONFIG["orderflow_data"])
         try:
-            res = await asyncio.to_thread(grid, base, symbol, FRAMES[interval], from_ms, to_ms, mode, minutes, low, high, step)
+            res = await asyncio.to_thread(grid, base, symbol, FRAMES[interval], from_ms, to_ms, mode, minutes, low, high, step,
+                                          None, bool(sides))
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
         return {"success": True, **res}
