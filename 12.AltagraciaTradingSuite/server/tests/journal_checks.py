@@ -210,6 +210,32 @@ try:
             check(f"dibujos del analisis rechazados: {name}", True)
     check("dibujos del analisis: un rechazo no toca lo guardado", san.analysis_drawings_get("BTC-AN-1") == shapes)
 
+    # Borrar una imagen del analisis (13/11/2026): sale del journal y su PNG se borra; las demas no se tocan
+    img_a = san.save_image("journal", PNG)
+    img_b = san.save_image("journal", PNG)
+    for img in (img_a, img_b):
+        san.add_context({"kind": "analysis", "symbol": "SOLUSDT", "side": "Sell", "at": NOW - 30000, "trade_id": "SOL-AN-1", "image": img})
+    san.add_context({"kind": "close", "symbol": "SOLUSDT", "side": "Sell", "at": NOW - 7200000 + 1000, "image": img_b})
+    san.remove_analysis_image("SOL-AN-1", img_a)
+    sol = san.merge([{"trade_id": "SOL-AN-1", "symbol": "SOLUSDT", "side": "Sell", "opened_at": NOW - 9000000, "closed_at": NOW - 7200000,
+                      "pre_existing": False}])[0]
+    check("imagen del analisis borrada: sale del journal y su PNG se borra",
+          [(i["kind"], i["image"]) for i in sol["images"]] == [("close", img_b), ("analysis", img_b)]
+          and san.image_path(*img_a.split("/")) is None, str(sol["images"]))
+    san.remove_analysis_image("SOL-AN-1", img_b)
+    sol = san.merge([{"trade_id": "SOL-AN-1", "symbol": "SOLUSDT", "side": "Sell", "opened_at": NOW - 9000000, "closed_at": NOW - 7200000,
+                      "pre_existing": False}])[0]
+    check("una imagen que otro contexto usa (la de cierre) queda en disco aunque se borre del analisis",
+          [i["kind"] for i in sol["images"]] == ["close"] and san.image_path(*img_b.split("/")) is not None, str(sol["images"]))
+    for args, error, name in (((("SOL-AN-1", img_a)), KeyError, "ya borrada"), (("SOL-AN-1", path), KeyError, "no es de ese analisis"),
+                              (("SOL-AN-1", "../x.png"), ValueError, "ruta con .."), (("a b", img_a), ValueError, "trade invalido")):
+        try:
+            san.remove_analysis_image(*args)
+            check(f"borrado rechazado: {name}", False)
+        except error:
+            check(f"borrado rechazado: {name}", True)
+    check("un borrado no entra como contexto por la ruta publica", "removed" not in __import__("journal_store").KINDS)
+
     # ---------- medidas de App 1 con velas simuladas ----------
     journal_measures.candles.klines = fake_klines_factory()
     import asyncio
@@ -410,6 +436,15 @@ try:
         eth = next(t for t in j["trades"] if t["trade_id"] == tid)
         check("imagen del analisis guardada y en el journal del trade, con su conclusion",
               r.status_code == 200 and eth["images"][-1]["kind"] == "analysis" and eth["images"][-1]["note"] == "Buen trade", str(eth["images"])[:300])
+        q = f"/api/journal/analysis/{tid}/image?image={shot}"
+        check("borrar la imagen del analisis desde otra pagina: 403",
+              c.delete(q, headers={**H, "Origin": "https://evil.example"}).status_code == 403)
+        r = c.delete(q, headers=H)
+        eth = next(t for t in c.get("/api/bot/journal", headers=H).json()["trades"] if t["trade_id"] == tid)
+        check("ruta de borrado: la imagen del analisis sale del journal", r.status_code == 200
+              and all(i["kind"] != "analysis" for i in eth["images"]), r.text[:200] + str(eth["images"])[:200])
+        check("ruta de borrado: otra vez 404, y una ruta invalida 400", c.delete(q, headers=H).status_code == 404
+              and c.delete(f"/api/journal/analysis/{tid}/image?image=../x.png", headers=H).status_code == 400)
 
         # Informe de la regla: 6 ganadoras con 4 horas a favor y cerca de una zona, 6 perdedoras en contra y lejos
         for i in range(12):

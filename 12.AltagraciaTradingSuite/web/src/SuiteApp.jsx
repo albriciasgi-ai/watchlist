@@ -39,6 +39,7 @@ export default function SuiteApp() {
   const [botSection, setBotSection] = useState(START.botSection);
   const [showTheme, setShowTheme] = useState(false);
   const [focusTrade, setFocusTrade] = useState(null); // "Ver en el gráfico" desde el journal
+  const [journalFocus, setJournalFocus] = useState(null); // "Volver al journal" desde el gráfico: el trade que se miraba
   const [focusSymbol, setFocusSymbol] = useState(null); // una moneda de la Watchlist
   // La Watchlist se arma la primera vez que se abre y después queda armada: sus gráficos no se pausan
   const [watchlistOn, setWatchlistOn] = useState(START.module === 'watchlist');
@@ -74,6 +75,7 @@ export default function SuiteApp() {
           onModule={openModule}
           focusTrade={focusTrade}
           focusSymbol={focusSymbol}
+          onBackToJournal={(t) => { setJournalFocus({ trade: t }); setBotSection('journal'); choose('bot'); }}
         />
       </div>
       {watchlistOn && (
@@ -104,7 +106,8 @@ export default function SuiteApp() {
             {botSection === 'status' && <BotView active />}
             {botSection === 'journal' && (
               <div className="bot-view">
-                <JournalView active onShowTrade={(t) => { setFocusTrade({ ...t, requestedAt: Date.now() }); choose('chart'); }} />
+                <JournalView active focus={journalFocus} onFocusDone={() => setJournalFocus(null)}
+                  onShowTrade={(t) => { setFocusTrade({ ...t, requestedAt: Date.now() }); choose('chart'); }} />
               </div>
             )}
             {botSection === 'config' && <div className="bot-view"><BotConfig active /></div>}

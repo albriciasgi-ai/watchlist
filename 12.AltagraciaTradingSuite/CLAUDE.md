@@ -58,7 +58,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (79), swing_checks.py (102), book_checks.py (60) y book_cloud_checks.py (16), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (89), swing_checks.py (102), book_checks.py (60) y book_cloud_checks.py (16), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -112,6 +112,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `POST /api/screenshots/session/{sesión}`, `GET .../{sesión}/{archivo}` | Imágenes del gráfico (el contrato de App 1: `MiniChart.captureScreenshot` las sube aquí). Solo PNG de hasta 12 MB, en `data/journal/images` |
 | `POST /api/journal/context` | Contexto del journal: `decision` (imagen, nota, niveles elegidos, orden, y desde el 12/11 `order_id`, `order_link_id` y `outcome` placed/unknown), `open`, `close` o `after` (imagen; `after` con `until`, entre el cierre y ahora), o `analysis` (13/11: imagen del análisis post-trade con su conclusión y el `trade_id`, que lo une al trade a cualquier hora). Se valida y se acota todo |
 | `GET/POST /api/journal/analysis/{id}/drawings` | Los dibujos del análisis post-trade de un trade (`{"shapes": [...]}`, hasta 300 y 2 MB), en `data/journal/analysis` con temporal y reemplazo |
+| `DELETE /api/journal/analysis/{id}/image?image=` | Borra una imagen del análisis post-trade de ese trade (404 si no es de un análisis suyo). La página pide confirmación |
 | `GET /api/journal/decision?order_id\|order_link_id` | La decisión guardada de una orden de Bybit: al cancelar una Limit del panel, lo elegido para ella vuelve a la lista |
 | `GET /api/journal/measures/{id}`, `/api/journal/catalog` | Las 58 medidas de App 1 al decidir y lo máximo a favor y en contra; las de un trade cerrado quedan guardadas (versión 2 desde el 13/11: las anteriores se vuelven a calcular) |
 | `GET /api/journal/reading/{id}` | La lectura de la regla del laboratorio al decidir (`observer.read_at` de App 1), con su comparación por bloques y sus condiciones. Solo de un trade cerrado: con el abierto responde `hidden`. Queda guardada cuando el almacén llegó a la hora de la decisión |
@@ -324,7 +325,10 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
     - **Dibujos aparte:** lo que se dibuja va a una capa del trade (`data/journal/analysis/{trade}.json`), no a los dibujos de la moneda. Mientras dura el análisis, los cinco marcos muestran esa capa en lugar de los de la moneda (`drawingsSource` de `MiniChart`). No pasa al panel de trading (caja TP/SL), al Swing (rectángulos) ni a las otras pestañas. Al volver a abrir el análisis del trade, otro día, sus dibujos siguen ahí y se pueden editar.
     - **Lo elegido:** los niveles de la decisión de ese trade, con sus números (`chosenItems` de `MiniChart`), en lugar de la lista del panel. Mientras tanto un clic no abre el menú de niveles: cambiaría la lista del panel, que no está a la vista.
     - **"Guardar imagen en el journal":** la imagen del marco a la vista tal como se ve (caja, lo elegido y lo dibujado, sin la selección ni el resaltado de un dibujo), con la "Conclusión (opcional)" de la barra. Se guarda como contexto `analysis` con el número del trade, y el journal la muestra entre las imágenes del trade como "Análisis post-trade", con su conclusión. Se pueden guardar varias.
-    - **Termina** con "Terminar análisis", "Quitar", otra moneda o "Ver en el gráfico" de otro trade: vuelven los dibujos de la moneda. Si se cambia de capa mientras se guarda un dibujo, ese aviso no pasa a la otra capa.
+    - **Termina** con "Terminar análisis", "Quitar", otra moneda o "Ver en el gráfico" de otro trade: vuelven los dibujos de la moneda. Si se cambia de capa mientras se guarda un dibujo, ese aviso no pasa a la otra capa. Con una conclusión escrita y sin guardar, "Terminar análisis", "Quitar" y "Volver al journal" preguntan antes de perderla.
+    - **"Volver al journal"** (13/11, pedido del usuario), en la barra con o sin análisis: quita el trade del gráfico y abre el journal en ese trade, en "Trades", con los días que lo incluyen y la vista en su detalle. Lo dibujado ya quedó guardado en su capa.
+    - **Borrar una imagen del análisis** (13/11, pedido del usuario): "Borrar" bajo cada imagen de análisis del detalle, con confirmación. Solo las de análisis: las de decisión, apertura y cierre no. El archivo de contextos solo se agrega: queda una línea `removed` que la quita del journal, y el PNG se borra si ningún otro contexto lo usa. Los dibujos del análisis no se tocan.
+    - La barra del trade y los avisos se centran sobre el área del gráfico (`position: relative` en `.backtesting-main` de la suite): antes, en una ventana angosta, el comienzo de la barra quedaba bajo la barra de dibujo.
   - **"Al TP" y "Al SL"** (12/11, pedido del usuario): columnas de la tabla de trades. Para los abiertos, cuánto debe moverse el precio marca de Bybit, en % del precio, para tocar el TP y el SL vigentes, del libro de posiciones (cada 2 s). Negativo: ya lo pasó. "sin TP" o "sin SL" si no tiene. Los cerrados muestran "—".
 - **Dashboard** (13/11, pedido del usuario: "lo que tiene la app 1 como dashboard ... con los estilos escogidos por el usuario"). Botón "Dashboard" junto a "Trades"; la vista elegida se guarda por pestaña, y los días y "Pedir cierres a Bybit" valen para las dos. Son los widgets del dashboard de App 1, importados sin copiarlos (`JournalDashboard.jsx`; las opciones nuevas de los widgets, en `Backtester/CLAUDE.md`, "DASHBOARD DE TRADING, COMPARTIDO CON LA SUITE"):
   - **Equity Curve:** el P&L neto acumulado, o el R acumulado. Es dinero real, con depósitos y retiros: no hay saldo inicial ni %. El pie dice P&L neto, R acumulado y cuántos trades no tienen R (sin SL);
@@ -337,6 +341,11 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   - solo trades cerrados. El journal se lee cada 15 s, y los gráficos cambian solo si cambiaron los trades (`signature`);
   - no trae "Exportar a Excel": el de App 1 depende de su simulación (saldo y métricas del OrderManager).
 - **Paquetes de la página** (13/11): `chart.js`, `react-chartjs-2` y `react-gauge-chart`, los del dashboard de App 1. `react-gauge-chart` usa `prop-types` y `lodash` sin declararlos: van en `web/package.json` (sin ellos, el armado los deja afuera y la página no arranca). La app de escritorio instala los paquetes cuando `web/package.json` es más nuevo que lo instalado (ver "Escritorio").
+Probado el 13/11 (borrar y "Volver al journal") en la copia aislada, con un bot falso y la ventana a 1024 px:
+- la barra cupo en el área del gráfico, en dos líneas, con "Volver al journal" al final;
+- con una conclusión escrita, "Volver al journal" preguntó; con "no" siguió el análisis con la conclusión, y con "sí" abrió el journal con el BTC elegido y la vista en su detalle;
+- "Borrar" pidió confirmación y la imagen salió del trade; quedó la línea `removed`, el PNG se borró y los dibujos del análisis siguieron.
+
 Probado el 13/11 (análisis post-trade) en la copia aislada, con un bot falso y un long de BTC con su decisión (un VAL):
 - antes, una línea horizontal normal de BTC en 70428.36;
 - en el análisis la línea se fue, apareció el ① del VAL y quedó la caja; una línea de tendencia y una caja de texto ("Entré bien; salí antes del TP") fueron a la capa del trade, y los dibujos de BTC siguieron con su línea sola;

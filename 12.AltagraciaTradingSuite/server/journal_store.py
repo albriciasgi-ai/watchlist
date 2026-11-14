@@ -29,6 +29,7 @@ OUTCOMES = {"placed", "unknown"}
 # "analysis" (13/11/2026): imagen del analisis post-trade, tomada desde "Ver en el grafico" con lo dibujado sobre el trade
 # y una conclusion opcional. Se une al trade por su `trade_id`, a cualquier hora
 KINDS = {"decision", "open", "close", "after", "analysis"}
+REMOVED = "removed"  # linea que quita una imagen de analisis (no entra por /api/journal/context: no esta en KINDS)
 MAX_IMAGE_BYTES = 12 * 1024 * 1024
 MAX_ANALYSIS_SHAPES = 300            # dibujos del analisis de un trade
 MAX_ANALYSIS_BYTES = 2 * 1024 * 1024
@@ -191,17 +192,49 @@ class JournalStore:
         key = self.contexts_file.stat().st_mtime_ns if self.contexts_file.exists() else None
         if self._cache is not None and key == self._cache_key:
             return self._cache
-        events = []
+        events, removed = [], set()
         if key is not None:
             for line in self.contexts_file.read_text(encoding="utf-8").splitlines():
                 try:
                     event = json.loads(line)
                 except ValueError:
                     continue  # linea cortada por un apagon
-                if isinstance(event, dict) and event.get("kind") in KINDS:
+                if not isinstance(event, dict):
+                    continue
+                if event.get("kind") in KINDS:
                     events.append(event)
+                elif event.get("kind") == REMOVED and event.get("of") == "analysis":
+                    removed.add((event.get("trade_id"), event.get("image")))
+        # Una imagen de analisis borrada (13/11/2026): su linea sigue en el archivo, pero ya no se une al trade
+        if removed:
+            events = [e for e in events if not (e["kind"] == "analysis" and (e.get("trade_id"), e.get("image")) in removed)]
         self._cache, self._cache_key = events, key
         return events
+
+    def remove_analysis_image(self, trade_id: str, image: str) -> None:
+        """
+        Borra una imagen del analisis post-trade de un trade (13/11/2026, pedido del usuario). El archivo de contextos solo
+        se agrega: queda una linea que la quita del journal, y el PNG se borra si ningun otro contexto lo usa. Solo
+        imagenes de analisis: las de decision, apertura y cierre no se borran desde aqui.
+        """
+        if not TRADE_ID_RE.match(trade_id or "") or not isinstance(image, str) or not IMAGE_RE.match(image) or ".." in image:
+            raise ValueError("trade o imagen invalidos")
+        if not any(e["kind"] == "analysis" and e.get("trade_id") == trade_id and e.get("image") == image for e in self.contexts()):
+            raise KeyError("esa imagen no es de un analisis de ese trade")
+        now = int(time.time() * 1000)
+        self.base.mkdir(parents=True, exist_ok=True)
+        with open(self.contexts_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"kind": REMOVED, "of": "analysis", "trade_id": trade_id, "image": image, "at": now,
+                                "saved_at": now}, ensure_ascii=False) + "\n")
+        self._cache = None
+        if any(e.get("image") == image for e in self.contexts()):
+            return  # otro contexto la usa todavia
+        path = self.image_path(*image.split("/", 1))
+        if path:
+            try:
+                path.unlink()
+            except OSError:
+                pass  # abierta en otro programa: queda en disco, pero ya no sale en el journal
 
     # ---------- union con los trades del bot ----------
     def merge(self, trades: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

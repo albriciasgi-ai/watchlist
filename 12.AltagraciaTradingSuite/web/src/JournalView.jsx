@@ -1,9 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { roleLabel } from '@app1/components/indicators/analysisLevels.js';
-import { getJson, postJson } from './api.js';
+import { deleteJson, getJson, postJson } from './api.js';
 import { subscribeBook } from './botBook.js';
 import JournalDashboard from './JournalDashboard.jsx';
 import { TAB } from './tabs.js';
+
+// Al volver del gráfico con un trade (13/11/2026): los días que lo incluyen, de las opciones de la lista
+const DAY_OPTIONS = [7, 30, 90, 365];
+const daysFor = (trade) => {
+  const last = trade?.closed_at || trade?.opened_at;
+  if (!last) return 30;
+  const need = Math.ceil((Date.now() - last) / 86400000) + 1;
+  return DAY_OPTIONS.find(d => d >= Math.max(30, need)) || 365;
+};
 
 // Lo que muestra el journal: la lista de trades o el dashboard (13/11/2026), por pestaña
 const VIEW_KEY = `suite_journal_view_${TAB}`;
@@ -242,8 +251,12 @@ function MeasuresTable({ data, catalog }) {
   );
 }
 
-export default function JournalView({ active, onShowTrade }) {
-  const [days, setDays] = useState(30);
+/**
+ * focus (13/11/2026): al volver del gráfico con "Volver al journal", el trade que se miraba ({ trade }). Queda elegido, en
+ * la lista de trades y con sus días, y la vista baja a su detalle. onFocusDone avisa que ya se usó
+ */
+export default function JournalView({ active, onShowTrade, focus = null, onFocusDone = null }) {
+  const [days, setDays] = useState(() => daysFor(focus?.trade));
   const [catalog, setCatalog] = useState(null);
   const [measures, setMeasures] = useState({}); // trade_id -> medidas al decidir
   const [readings, setReadings] = useState({}); // trade_id -> lectura de la regla del laboratorio (trades cerrados)
@@ -251,12 +264,18 @@ export default function JournalView({ active, onShowTrade }) {
   const [reportBusy, setReportBusy] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState(focus?.trade?.trade_id || null);
   const [note, setNote] = useState('');
   const [notice, setNotice] = useState(null);
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState({});
-  const [view, setView] = useState(loadView);
+  const [view, setView] = useState(() => (focus ? 'trades' : loadView()));
+  const detailRef = useRef(null);
+  const scrollToDetail = useRef(Boolean(focus));
+  useEffect(() => {
+    if (focus) onFocusDone?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const chooseView = (next) => {
     setView(next);
     try { localStorage.setItem(VIEW_KEY, next); } catch { /* sin almacenamiento */ }
@@ -310,6 +329,12 @@ export default function JournalView({ active, onShowTrade }) {
     };
   }, [closed]);
   const selected = trades.find(t => t.trade_id === selectedId) || null;
+  // De vuelta del gráfico: la vista baja una vez al detalle del trade, cuando llega del journal del bot
+  useEffect(() => {
+    if (!scrollToDetail.current || !selected) return;
+    scrollToDetail.current = false;
+    detailRef.current?.scrollIntoView({ block: 'start' });
+  }, [selected]);
 
   // Medidas del trade elegido: se piden una vez por trade (cerradas quedan guardadas en el servidor). La lista se
   // vuelve a leer cada pocos segundos: el registro de pedidos evita pedirlas otra vez mientras llegan
@@ -359,6 +384,21 @@ export default function JournalView({ active, onShowTrade }) {
       await read();
     } catch (e) {
       setNotice(`No se pudo: ${e.message}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+  // Borrar una imagen del análisis post-trade (13/11/2026, pedido del usuario): solo las de análisis, con confirmación
+  const removeAnalysisImage = async (img) => {
+    if (!selected || busy) return;
+    if (!window.confirm(`¿Borrar esta imagen del análisis post-trade (${when(img.at)})?\n\nNo se puede deshacer.`)) return;
+    setBusy(true);
+    try {
+      await deleteJson(`/api/journal/analysis/${encodeURIComponent(selected.trade_id)}/image?image=${encodeURIComponent(img.image)}`);
+      setNotice('Imagen del análisis borrada');
+      await read();
+    } catch (e) {
+      setNotice(`La imagen no se borró: ${e.message}`);
     } finally {
       setBusy(false);
     }
@@ -524,7 +564,7 @@ export default function JournalView({ active, onShowTrade }) {
       </div>
 
       {selected && (
-        <div className="bot-section">
+        <div className="bot-section" ref={detailRef}>
           <h3>
             {selected.symbol} · {selected.side === 'Buy' ? 'LONG' : 'SHORT'} · {originText(selected)}{selected.pattern ? ` · ${selected.pattern}` : ''}
             {onShowTrade && (selected.opened_at || selected.closed_at) && (
@@ -537,11 +577,19 @@ export default function JournalView({ active, onShowTrade }) {
           {selected.images?.length > 0 && (
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', margin: '6px 0' }}>
               {selected.images.map(img => (
-                <a key={img.image} href={imageUrl(img.image)} target="_blank" rel="noreferrer" title="Abrir a tamaño real" style={{ textAlign: 'center', fontSize: 12 }}>
-                  <img src={imageUrl(img.image)} alt={IMAGE_NAMES[img.kind]} style={{ width: 260, border: '1px solid var(--t-line, #ccc)', display: 'block' }} />
-                  {IMAGE_NAMES[img.kind] || img.kind} · {when(img.until || img.at)}{img.frame ? ` · ${img.frame}` : ''}
-                  {img.note && <div style={{ maxWidth: 260, whiteSpace: 'normal', opacity: 0.85 }}>“{img.note}”</div>}
-                </a>
+                <div key={`${img.kind}:${img.image}`} style={{ textAlign: 'center', fontSize: 12 }}>
+                  <a href={imageUrl(img.image)} target="_blank" rel="noreferrer" title="Abrir a tamaño real" style={{ display: 'block' }}>
+                    <img src={imageUrl(img.image)} alt={IMAGE_NAMES[img.kind]} style={{ width: 260, border: '1px solid var(--t-line, #ccc)', display: 'block' }} />
+                    {IMAGE_NAMES[img.kind] || img.kind} · {when(img.until || img.at)}{img.frame ? ` · ${img.frame}` : ''}
+                    {img.note && <div style={{ maxWidth: 260, whiteSpace: 'normal', opacity: 0.85 }}>“{img.note}”</div>}
+                  </a>
+                  {img.kind === 'analysis' && (
+                    <button type="button" className="suite-btn" style={{ marginTop: 4 }} disabled={busy} onClick={() => removeAnalysisImage(img)}
+                      title="Borrar esta imagen del análisis post-trade (no se puede deshacer)">
+                      Borrar
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
           )}

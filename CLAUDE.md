@@ -54,6 +54,26 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 13 Noviembre 2026: Borrar Imágenes del Análisis y Volver al Journal
+
+**Pedido:** tras probar el análisis post-trade: poder borrar una imagen desde la suite, y un botón en la barra del gráfico para volver al journal.
+
+**Cambios:**
+1. **"Volver al journal"** al final de la barra del trade, con o sin análisis. Quita el trade del gráfico y abre el journal en ese trade, con su detalle a la vista.
+2. **"Borrar"** bajo cada imagen de análisis del trade, con confirmación. Solo las de análisis; los dibujos del análisis no se tocan. El archivo de contextos solo se agrega: una línea la quita del journal y el PNG se borra.
+3. **Conclusión sin guardar:** "Terminar análisis", "Quitar" y "Volver al journal" preguntan antes de perderla (solo se guarda con la imagen).
+4. **Barra centrada sobre el gráfico:** en una ventana angosta su comienzo quedaba bajo la barra de dibujo.
+5. **Pruebas:** `journal_checks.py` (89). Las demás de la suite siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla.
+- Un borrado no se puede deshacer.
+- Probado en la copia aislada con un bot falso y la ventana a 1024 px; no en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal", "Análisis post-trade"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Análisis Post-Trade desde el Journal
 
 **Pedido:** desde "Ver en el gráfico" de un trade del journal, poder dibujar sobre el gráfico (por ejemplo conclusiones) y guardar una imagen en el journal: un análisis post-trade.
@@ -72,7 +92,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 **IMPORTANTE:**
 - La suite se reinicia sola al abrirla.
-- Una imagen guardada no se puede borrar desde la suite.
+- Una imagen guardada se borra desde el journal (agregado después, ver la entrada de arriba).
 - Probado en la copia aislada con un bot falso y un trade de BTC con su decisión:
   - una línea de BTC dibujada antes desapareció en el análisis y volvió al terminarlo;
   - la línea y la caja de texto del análisis quedaron solo en el trade, también en 1H, y volvieron al abrirlo otra vez;

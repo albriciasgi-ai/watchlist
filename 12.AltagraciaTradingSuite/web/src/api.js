@@ -20,3 +20,10 @@ export async function postJson(path, body) {
   if (!r.ok) throw failure(r, data);
   return data;
 }
+
+export async function deleteJson(path) {
+  const r = await fetch(path, { method: 'DELETE' });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw failure(r, data);
+  return data;
+}

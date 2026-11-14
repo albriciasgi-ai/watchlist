@@ -200,7 +200,8 @@ function StatusDots({ onOpenBot }) {
   );
 }
 
-export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpenWatchlist = null, onModule = null, focusTrade = null, focusSymbol = null }) {
+export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpenWatchlist = null, onModule = null, focusTrade = null, focusSymbol = null,
+  onBackToJournal = null }) {
   const saved = useMemo(loadSettings, []);
   const chartRefs = useRef({});
   const [symbols, setSymbols] = useState([saved.symbol || 'BTCUSDT']);
@@ -515,6 +516,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     const start = t.opened_at || t.closed_at;
     if (!start) return undefined;
     setAnalysis(null); // otro trade (o el mismo, pedido de nuevo): el análisis anterior termina
+    setAnalysisNote('');
     // Cerrado: con el SL y el TP vigentes al cerrar, como su imagen de cierre. Abierto: con los iniciales (el plan);
     // los vigentes ya están en las líneas de la posición
     const closedTrade = t.status === 'closed';
@@ -540,7 +542,27 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     focusBoxRef.current = null;
     setFocusedTrade(null);
     setAnalysis(null);
+    setAnalysisNote('');
     chartRefs.current[activeTfRef.current]?.forceRedraw?.();
+  };
+  // La conclusión escrita solo se guarda con una imagen: al salir del análisis sin guardarla, se pregunta
+  const noteCanGo = () => !analysisNote.trim()
+    || window.confirm('La conclusión escrita no se guardó: solo se guarda con "Guardar imagen en el journal".\n\n¿Salir igual?');
+  const endAnalysis = () => {
+    if (!noteCanGo()) return;
+    setAnalysis(null);
+    setAnalysisNote('');
+  };
+  const leaveFocus = () => {
+    if (noteCanGo()) clearFocusedTrade();
+  };
+  // "Volver al journal" (13/11/2026, pedido del usuario): termina el análisis y quita el trade del gráfico, y el journal
+  // abre ese trade. Lo dibujado ya quedó guardado en su capa
+  const backToJournal = () => {
+    const t = focusedTrade;
+    if (!t || !noteCanGo()) return;
+    clearFocusedTrade();
+    onBackToJournal?.(t);
   };
   // La imagen del análisis: lo que se ve en el marco a la vista (caja del trade, lo elegido y lo dibujado), con la
   // conclusión escrita. Se une al trade por su número, a cualquier hora
@@ -1171,7 +1193,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
       <div className="backtesting-main-wrapper" style={{ position: 'relative', display: 'flex' }}>
         <div
           className={`backtesting-main chart-with-sidebar ${sidebarCollapsed ? 'sidebar-collapsed' : ''} ${sidebarHidden ? 'sidebar-hidden' : ''}`}
-          style={{ flex: 1, display: 'flex' }}
+          style={{ flex: 1, display: 'flex', position: 'relative' }} // la barra del trade y los avisos se centran sobre el gráfico, no bajo la barra de dibujo
         >
           <div className="timeframes-container" ref={chartsBoxRef}>
             {TIMEFRAMES.map(tf => (
@@ -1227,16 +1249,24 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
               )}
               {analysis && (
                 <>
-                  {' '}<input type="text" className="suite-input" style={{ width: 260 }} maxLength={4000} placeholder="Conclusión (opcional)"
+                  {' '}<input type="text" className="suite-input" style={{ width: 220 }} maxLength={4000} placeholder="Conclusión (opcional)"
                     value={analysisNote} onChange={(e) => setAnalysisNote(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') saveAnalysisImage(); }} />
                   {' '}<button type="button" className="suite-btn" disabled={analysisBusy} onClick={saveAnalysisImage}>
                     {analysisBusy ? 'Guardando…' : 'Guardar imagen en el journal'}
                   </button>
-                  {' '}<button type="button" className="suite-btn" onClick={() => setAnalysis(null)}>Terminar análisis</button>
+                  {' '}<button type="button" className="suite-btn" onClick={endAnalysis}>Terminar análisis</button>
                 </>
               )}
-              {' '}<button type="button" className="suite-btn" onClick={clearFocusedTrade}>Quitar</button>
+              {' '}<button type="button" className="suite-btn" onClick={leaveFocus}>Quitar</button>
+              {onBackToJournal && (
+                <>
+                  {' '}<button type="button" className="suite-btn" onClick={backToJournal}
+                    title="Vuelve al journal con este trade abierto. Quita el trade del gráfico; lo dibujado en su análisis ya quedó guardado">
+                    Volver al journal
+                  </button>
+                </>
+              )}
               {analysis && (
                 <div style={{ fontSize: 11, opacity: 0.8, marginTop: 4 }}>
                   Lo que dibujes queda en este trade, no en el gráfico de la moneda, y vuelve al abrir su análisis otra vez. Los números son lo elegido para él.

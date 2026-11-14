@@ -117,6 +117,17 @@ def make_router(store: JournalStore, bot) -> APIRouter:
             raise HTTPException(status_code=400, detail=str(e))
         return {"success": True, "count": count}
 
+    @r.delete("/api/journal/analysis/{trade_id}/image")
+    async def delete_analysis_image(trade_id: str, image: str = ""):
+        """Borra una imagen del analisis post-trade de ese trade (solo de analisis). La pagina pide confirmacion antes"""
+        try:
+            store.remove_analysis_image(trade_id, image)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        except KeyError as e:
+            raise HTTPException(status_code=404, detail=str(e.args[0]) if e.args else "imagen no encontrada")
+        return {"success": True}
+
     # ---------- lectura de la regla del laboratorio (como el Observador de App 1: solo con el trade cerrado) ----------
     @r.get("/api/journal/reading/{trade_id}")
     async def trade_reading(trade_id: str):
