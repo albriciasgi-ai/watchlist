@@ -63,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (17) y ladder_checks.py (16), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (17), ladder_checks.py (16) y book_levels_checks.py (12), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -785,6 +785,24 @@ Pedido del usuario. Todo está en el indicador Order Flow y el modal de App 1, q
 - **Pruebas:** `orderflow.test.mjs` de App 1 suma 6 (34) y `test_footprint_rules.py` 2 (con `test_footprint_live.py`, 34). `run_checks.py` de la suite sigue en 46.
 - **Probado** en la copia aislada (13100, sin grabar ni bot) con el almacén real de BTC 15m: franjas rojas a la derecha de las velas con stacked; con "Volumen y al lado el delta" y 150%, el mínimo fue ~50 BTC por nivel y quedó un solo stacked. En el modo de App 1 (10 niveles), un día de BTC 15m dio 238 imbalances sin mínimo, 76 con 100% y 23 con 200%. No se probó en Electron ni en la pantalla de App 1 (usa el mismo dibujo).
 
+## Niveles de liquidez sostenida (14/11)
+
+Pedido del usuario, la primera de las ideas de indicadores con el mapa y el ladder: como DOM Levels de ATAS, pero solo lo grande que esperó en el libro al menos N minutos, y diciendo cómo terminó cada nivel.
+
+- **Dónde:** botón "Niveles" de la pestaña "Mapa" (encendido de fábrica) y su selector "≥ 15 min" a "≥ 4 h" (30 de fábrica), guardados con el mapa (`levels`, `levelMinutes`). El indicador es de App 1 (`SustainedLevelsIndicator.js`, cuentas en `sustainedLevels.js`), dibujado encima del mapa y debajo de las velas. App 1 no lo ofrece.
+- **Servidor** (`server/book_levels.py`): `GET /api/book/levels/{símbolo}?from_ms&to_ms&minutes=15|30|60|120|240`, del libro de minutos (el mismo del mapa, cubos de ~0.03%: BTC 20 USD), cada lado aparte.
+  - **Grande:** el USD del cubo pasa el percentil 95 de los cubos de su lado a ±2% del precio de ese minuto y es al menos 3 veces su mediana. Solo usa ese minuto.
+  - **Tramo:** empieza al ser grande y sigue mientras tenga al menos la mitad de lo que tenía al empezar. Hasta 5 minutos seguidos sin grabar no lo cortan; más, termina "sin dato".
+  - **Nivel:** el tramo que dura al menos N minutos. Se sabe desde entonces (`known`): antes se dibuja punteado y tenue.
+  - **Cómo terminó**, con las velas de 1 minuto de Bybit: **consumido** si el precio llegó al nivel en el minuto en que se fue o el anterior; **retirado** si no (con la distancia, `dist_pct`); **activo** si sigue. **Toques:** minutos en que el precio llegó y el nivel siguió.
+  - Lee desde 4 h antes de lo pedido, a lo sumo 3 días. Guarda 50 s cada respuesta y 55 s las velas de 1 minuto. A lo sumo 400 niveles, los de más USD × minutos.
+- **Dibujo:** verde la compra y rojo la venta, con un contorno del color del fondo. Al final: ● consumido, × retirado, | sin dato. Los que siguen llevan en el borde derecho su USD promedio, cuánto llevan y sus toques.
+- **Medido** con el libro real: 19 horas de BTC se calculan en 0.4 s, con 17 a 19 niveles de 30 minutos. El primer pedido tardó 5.8 s por las velas de Bybit.
+- **"Retirado" lejos no es carnada:** la mayoría de los retirados de BTC estaban a 1.7-5% del precio. Lo que importa es un retiro cerca del precio, el patrón que mide `book_study`.
+- **Probado** en la copia aislada con el libro real de BTC y ETH (sin grabar): BTC 15m con 30 minutos y 2 horas, y ETH 5m con Oscuro. Con Oscuro, sobre un mapa muy cargado, las líneas se distinguen poco. No se probó en Electron.
+- **Pruebas:** `server/tests/book_levels_checks.py` (12) y, en App 1, `tests/sustainedlevels.test.mjs` (4).
+- **El mapa suma compra y venta (visto el 14/11):** BTC tuvo compras en 65,500 de 55 a 200 BTC desde las 07:52. A las 10:19 se fueron y en el mismo precio aparecieron ventas por 74 a 113 BTC: el soporte pasó a resistencia. El mapa sigue mostrando la franja porque suma los dos lados en cada precio; "Niveles" sí los separa (el de compra termina "consumido" y el de venta empieza aparte).
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -827,6 +845,7 @@ C:\Python314\python.exe -B tests\book_checks.py
 C:\Python314\python.exe -B tests\book_cloud_checks.py
 C:\Python314\python.exe -B tests\book_heatmap_checks.py
 C:\Python314\python.exe -B tests\ladder_checks.py
+C:\Python314\python.exe -B tests\book_levels_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.

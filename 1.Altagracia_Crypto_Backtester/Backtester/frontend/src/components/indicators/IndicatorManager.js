@@ -25,6 +25,7 @@ import ResponseVolumeIndicator from "./ResponseVolumeIndicator";
 import LiquidationsIndicator from "./LiquidationsIndicator";
 import OrderFlowElementsIndicator from "./OrderFlowElementsIndicator";
 import LiquidityMapIndicator from "./LiquidityMapIndicator"; // Mapa de liquidez del libro grabado (solo la suite)
+import SustainedLevelsIndicator from "./SustainedLevelsIndicator"; // Niveles de liquidez sostenida (solo la suite)
 import { SessionProfiles } from "./sessionProfile.js";
 import { MIN_PANEL_HEIGHT, clearPanelLayout, movePanel, orderPanels, panelLayout, savePanelLayout } from "./panelLayout.js";
 
@@ -97,9 +98,12 @@ class IndicatorManager {
     // Mapa de liquidez (13/11): lo enciende la pestaña "Mapa" de la suite; se dibuja detrás de las velas
     this.liquidityMapIndicator = new LiquidityMapIndicator(this.symbol, this.interval, this.days);
     this.liquidityMapIndicator.requestRedraw = () => this.requestRedraw?.();
+    this.sustainedLevelsIndicator = new SustainedLevelsIndicator(this.symbol, this.interval, this.days);
+    this.sustainedLevelsIndicator.requestRedraw = () => this.requestRedraw?.();
 
     this.indicators = [
       this.liquidityMapIndicator, // Su dibujo es el fondo (renderBackground), antes de las velas
+      this.sustainedLevelsIndicator, // También de fondo, encima del mapa y debajo de las velas
       this.liquidationsIndicator, // Primero: sus franjas quedan debajo de los demás dibujos
       this.ofElementsIndicator, // Franjas y marcas de order flow, debajo de los perfiles y footprints
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),

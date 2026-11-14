@@ -631,6 +631,7 @@ node tests/swing.test.mjs
 node tests/rectangle.test.mjs
 node tests/redrawPacer.test.mjs
 node tests/liquiditymap.test.mjs
+node tests/sustainedlevels.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -1212,6 +1213,7 @@ Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la 
   - `chosenItems`: lo elegido que se muestra en lugar de la lista del panel (lo de un trade). Mientras está, un clic no abre el menú de niveles, que cambiaría esa lista.
 - `captureScreenshot` dibuja la imagen sin la selección ni el resaltado de un dibujo (13/11), como ya lo hacía sin la cruz del mouse. Vale también para las imágenes de las órdenes de App 1
 - **Fondo de los indicadores (13/11):** un indicador con `renderBackground(ctx, bounds, visibleCandles, allCandles, priceContext)` se dibuja antes de las velas, recortado al área del precio. `priceToY` y `timeToX` se arman antes de las velas para eso, y son los mismos que reciben los overlays. Hoy solo lo tiene "Mapa de liquidez" (`indicators/LiquidityMapIndicator.js`, con `liquidityMap.js`). Lo enciende la pestaña "Mapa" de la suite, con el libro que graba la suite: App 1 no tiene libro de sus fechas y no lo ofrece. `IndicatorManager.hasBackgrounds()` y `renderBackgrounds()` lo llaman; sin indicadores con fondo, el dibujo es el de siempre. Prueba: `tests/liquiditymap.test.mjs` (10)
+- **Niveles sostenidos (14/11):** `indicators/SustainedLevelsIndicator.js` (con `sustainedLevels.js`) también se dibuja de fondo, encima del mapa: los niveles de liquidez sostenida que calcula la suite (`/api/book/levels`), con cómo terminó cada uno. Lo enciende el botón "Niveles" de la pestaña "Mapa" de la suite; App 1 no lo ofrece. Prueba: `tests/sustainedlevels.test.mjs` (4)
 - La prop `viewOnly` (13/11) deja el gráfico solo para mirar: el arrastre mueve las velas y la rueda acerca, pero los dibujos no se eligen, mueven, editan ni borran (el clic va directo al paneo), un clic no abre el menú de niveles y no se dibujan los divisores de altura ni los ▲▼ de los paneles. La usa la Watchlist de la suite, cuyas celdas muestran los dibujos y las alturas de la moneda que usa su gráfico principal. App 1 no la usa
 
 ### Indicadores
