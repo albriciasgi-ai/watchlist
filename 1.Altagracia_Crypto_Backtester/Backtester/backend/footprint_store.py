@@ -26,6 +26,8 @@ MAX_DAYS_IN_MEMORY = 96
 IMBALANCE_RATIO = 3.0
 STACKED_MIN_LEVELS = 3
 ZSCORE_LOOKBACK = 20
+MIN_VOLUME_BARS = 20  # Velas anteriores para el volumen minimo relativo del imbalance
+MAX_MIN_VOLUME_BARS = 100
 MAX_RATIO = 99.99  # Imbalance contra un lado en cero: la division no tiene valor finito
 MAX_LEVELS_PER_CANDLE = 200  # Un step muy fino en velas anchas pesaria decenas de MB por respuesta
 LEVEL_GROUPS = (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000)  # Niveles que se unen en una vela ancha
@@ -142,6 +144,12 @@ def _ratio(big, small, rules):
         return MAX_RATIO if rules.get("count_zero") else None
     ratio = big / small
     return min(ratio, MAX_RATIO) if ratio >= rules.get("ratio", IMBALANCE_RATIO) else None
+
+
+def _level_mean(levels):
+    """Volumen promedio de los niveles con trades de una vela."""
+    traded = [lv["total_volume"] for lv in levels if lv["total_volume"] > 0]
+    return sum(traded) / len(traded) if traded else 0.0
 
 
 def _imbalances(levels, rules=None):
@@ -343,7 +351,9 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     """
     Footprints de las velas que empiezan entre start_ms y end_ms.
     known_until_ms corta la informacion: un minuto solo cuenta si ya termino en ese instante.
-    imbalance acepta ratio, mode, min_volume, count_zero y stacked_levels.
+    imbalance acepta ratio, mode, min_volume, count_zero y stacked_levels. Con min_volume_pct (> 0), el lado
+    dominante necesita ademas ese % del volumen promedio por nivel (niveles con trades) de las min_volume_bars
+    velas anteriores; sin velas anteriores, el de la misma vela. Cada vela lleva el minimo que se uso.
     max_levels es el tope por vela con step automatico: una vela ancha sube su propio step.
     live: tambien dias de la nube donde falta el oficial (ver arriba). Sus velas llevan
     source "live", y gap True si tocan un hueco de la grabacion (volumen incompleto).
@@ -362,6 +372,11 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     wanted = _parts(symbol, start_min, end_min, live)
     if not wanted:
         return empty
+    min_pct = max(0.0, float(imbalance.get("min_volume_pct") or 0))
+    min_bars = max(1, min(int(imbalance.get("min_volume_bars") or MIN_VOLUME_BARS), MAX_MIN_VOLUME_BARS))
+    look = min_bars if min_pct > 0 else 0
+    # Con minimo relativo tambien se arman los niveles de las velas anteriores al rango pedido
+    cell_parts = (_parts(symbol, start_min - tf * look, end_min, live) or wanted) if look else wanted
     data0 = wanted[-1][0]
     ps = int(data0["info"][0])
     ticks = max(int(d["info"][2]) for d, *_ in wanted)
@@ -370,7 +385,7 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     used_step = float(step) if step else auto_step(price_ref, tf, cell)
 
     # Las velas anteriores solo sirven para medir el volumen relativo de la primera vela pedida
-    candles = _candles(_parts(symbol, start_min - tf * ZSCORE_LOOKBACK, end_min, live), tf)
+    candles = _candles(_parts(symbol, start_min - tf * max(ZSCORE_LOOKBACK, look), end_min, live), tf)
     # Dias de la nube: rango de minutos de cada uno y sus huecos, en minutos
     live_days = [(d["_day"], int(d["m"][0]) // 1440 * 1440, [(a // 60000, -(-b // 60000)) for a, b in d["_gaps"]],
                   d["_complete"], None if d["_until"] is None else d["_until"] // 60000)
@@ -382,22 +397,33 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     least = 0 if max_levels else math.ceil(widest * ps / MAX_LEVELS_PER_CANDLE / ticks) * ticks
     step_ticks = max(ticks, int(round(used_step * ps / ticks)) * ticks, least)
 
-    cells = _cell_sums(wanted, tf, step_ticks)
+    cells = _cell_sums(cell_parts, tf, step_ticks)
     volumes = candles["buy"] + candles["sell"]
 
     result = []
+    level_means = []  # Volumen promedio por nivel de cada vela ya recorrida, para el minimo relativo
     for index, t in enumerate(candles["start"].tolist()):
-        if t < start_min:
+        if t < start_min and not (look and t >= start_min - tf * look):
             continue
         first, stop = np.searchsorted(cells["start"], [t, t + 1])
         if first == stop:
             continue
         levels, level_step = _levels(cells, first, stop, step_ticks, ps, max_levels)
+        rules = imbalance
+        minimum = None
+        if look:
+            recent = level_means[-min_bars:]
+            reference = sum(recent) / len(recent) if recent else _level_mean(levels)
+            level_means.append(_level_mean(levels))
+            if t < start_min:
+                continue
+            minimum = max(float(imbalance.get("min_volume") or 0), min_pct / 100 * reference)
+            rules = {**imbalance, "min_volume": minimum}
         poc = max(range(len(levels)), key=lambda i: levels[i]["total_volume"])
         past = volumes[max(0, index - ZSCORE_LOOKBACK):index]
         mean = float(past.mean()) if len(past) else 0.0
         std = float(past.std()) if len(past) else 0.0
-        found = _imbalances(levels, imbalance)
+        found = _imbalances(levels, rules)
         buy, sell = float(candles["buy"][index]), float(candles["sell"][index])
         result.append({
             "candle_timestamp": t * 60000, "symbol": symbol, "interval": str(tf),
@@ -412,6 +438,8 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
             "volume_zscore": round((buy + sell - mean) / std, 2) if std > 0 else 0.0,
             "complete": t + tf <= end_min, "estimated": False,
         })
+        if minimum is not None:
+            result[-1]["imbalance_min_volume"] = round(minimum, 6)
         if live_days:
             for _, day_min, gaps, _, until in live_days:
                 if day_min <= t < day_min + 1440:

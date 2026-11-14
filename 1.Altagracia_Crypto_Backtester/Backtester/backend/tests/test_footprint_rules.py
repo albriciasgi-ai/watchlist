@@ -79,8 +79,9 @@ def test_stacked_con_minimo_configurable():
     assert len(fs._stacked(stacked_levels(3), found, 2)) == 1
 
 
-def make_day(tmp_path, minutes, ticks=10):
-    """Dia sintetico: cada minuto negocia entre 80,000 y 80,000 + ancho, con 1 BTC por celda."""
+def make_day(tmp_path, minutes, ticks=10, scale=None):
+    """Dia sintetico: cada minuto negocia entre 80,000 y 80,000 + ancho, con 1 BTC por celda (por scale si se da)."""
+    scale = scale or [1] * len(minutes)
     folder = tmp_path / "BTCUSDT" / "2026"
     folder.mkdir(parents=True)
     m, cr, cl, cb, cs = [], [], [], [], []
@@ -89,13 +90,13 @@ def make_day(tmp_path, minutes, ticks=10):
         for k in range(width):
             cr.append(row)
             cl.append(80000 + k)
-            cb.append(1000)
-            cs.append(500)
+            cb.append(1000 * scale[row])
+            cs.append(500 * scale[row])
     width = np.array(minutes)
     price = np.full(len(minutes), 800000)
     np.savez(
         folder / f"BTCUSDT_{DAY}.npz", m=np.array(m, dtype=np.int64), o=price, h=price + width * 10, l=price, c=price + width * 10,
-        buy=width * 1000, sell=width * 500, n=width, cr=np.array(cr, dtype=np.int32), cl=np.array(cl, dtype=np.int64),
+        buy=width * 1000 * np.array(scale), sell=width * 500 * np.array(scale), n=width, cr=np.array(cr, dtype=np.int32), cl=np.array(cl, dtype=np.int64),
         cb=np.array(cb, dtype=np.int64), cs=np.array(cs, dtype=np.int64), cn=np.ones(len(cr), dtype=np.int32),
         info=np.array([10, 1000, ticks], dtype=np.int64),
     )
@@ -219,3 +220,38 @@ def test_reglas_llegan_al_footprint(store):
     relaxed = read(1, step=1, imbalance={"ratio": 2, "stacked_levels": 4})["footprints"][0]
     assert len(relaxed["imbalances"]) == 10
     assert relaxed["stacked_imbalances"][0]["levels_count"] == 10
+
+
+def read_minute(row, **kwargs):
+    start = (START_MIN + row) * 60000
+    return fs.footprints("BTCUSDT", 1, start, start + 60000, **kwargs)
+
+
+def test_minimo_relativo_al_promedio_por_nivel_de_las_velas_anteriores(store):
+    # Cuatro velas con 1.5 por nivel (1 compra, 0.5 venta) y la quinta con el triple: 3 de compra por nivel
+    make_day(store, [10] * 5, scale=[1, 1, 1, 1, 3])
+    rules = {"ratio": 2, "min_volume_bars": 4}
+    passed = read_minute(4, step=1, imbalance={**rules, "min_volume_pct": 150})["footprints"][0]
+    assert passed["imbalance_min_volume"] == pytest.approx(2.25)  # 150% de 1.5
+    assert len(passed["imbalances"]) == 10
+    blocked = read_minute(4, step=1, imbalance={**rules, "min_volume_pct": 250})["footprints"][0]
+    assert blocked["imbalance_min_volume"] == pytest.approx(3.75)
+    assert blocked["imbalances"] == [] and blocked["stacked_imbalances"] == []
+    # Sin porcentaje no hay minimo relativo
+    plain = read_minute(4, step=1, imbalance=rules)["footprints"][0]
+    assert "imbalance_min_volume" not in plain and len(plain["imbalances"]) == 10
+
+
+def test_minimo_relativo_solo_mira_velas_anteriores(store):
+    make_day(store, [10] * 3, scale=[1, 3, 9])
+    rules = {"ratio": 2, "min_volume_pct": 100, "min_volume_bars": 1}
+    fp = read_minute(1, step=1, imbalance=rules)["footprints"][0]
+    assert fp["imbalance_min_volume"] == pytest.approx(1.5), "la vela siguiente (scale 9) no cuenta"
+    # La primera vela no tiene anteriores: usa su propio promedio (1.5) y su compra de 1 no alcanza
+    first = read_minute(0, step=1, imbalance=rules)["footprints"][0]
+    assert first["imbalance_min_volume"] == pytest.approx(1.5)
+    assert first["imbalances"] == []
+    # En un rango de varias velas, cada una usa las suyas
+    start = START_MIN * 60000
+    many = fs.footprints("BTCUSDT", 1, start, start + 3 * 60000, step=1, imbalance=rules)["footprints"]
+    assert [x["imbalance_min_volume"] for x in many] == pytest.approx([1.5, 1.5, 4.5])

@@ -9,7 +9,8 @@ const TIMEFRAMES = [['1m', 1], ['5m', 5], ['15m', 15], ['1h', 60], ['4h', 240]];
 const NUMBER_LIMITS = {
   maxLevels: [3, 50],
   imbalanceRatio: [1.1, 50],
-  imbalanceMinVolume: [0, 100000],
+  imbalanceMinVolumePct: [0, 1000],
+  imbalanceMinVolumeBars: [1, 100],
   stackedMinLevels: [2, 20],
   stackedMinVolumeZScore: [0, 5],
   minCandleWidth: [4, 200],
@@ -32,7 +33,7 @@ const CHECKBOXES = [
   ['showDeltaMarks', 'Rombos de delta contrario a la vela']
 ];
 
-const TEXT_KEYS = ['imbalanceMode', 'stackedBuyColor', 'stackedSellColor'];
+const TEXT_KEYS = ['imbalanceMode', 'profileMode', 'stackedBuyColor', 'stackedSellColor'];
 const EDITABLE = [...Object.keys(NUMBER_LIMITS), ...CHECKBOXES.map(([key]) => key), ...TEXT_KEYS, 'imbalanceCountZero', 'stepByMinutes'];
 
 const rgbToHex = (rgb) => `#${rgb.split(',').map(part => Number(part).toString(16).padStart(2, '0')).join('')}`;
@@ -49,6 +50,8 @@ export function cleanOrderFlowSettings(values, defaults) {
     clean[key] = Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : defaults[key];
   }
   clean.stackedMinLevels = Math.round(clean.stackedMinLevels);
+  clean.imbalanceMinVolumeBars = Math.round(clean.imbalanceMinVolumeBars);
+  if (!['volume', 'delta', 'both'].includes(clean.profileMode)) clean.profileMode = defaults.profileMode;
 
   for (const [, minutes] of TIMEFRAMES) {
     const step = parseFloat(values.stepByMinutes?.[minutes]);
@@ -155,11 +158,18 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
               </select>
             </div>
             <NumberRow
-              label="Volumen mínimo del lado dominante"
-              hint="En unidades de la moneda. 0 es sin mínimo."
-              step="0.1" min="0"
-              value={values.imbalanceMinVolume}
-              onChange={(value) => set('imbalanceMinVolume', value)}
+              label="Volumen mínimo del lado dominante (%)"
+              hint="Del volumen promedio por nivel de las velas anteriores. 100 es un nivel promedio; 0 es sin mínimo."
+              step="5" min="0" max="1000"
+              value={values.imbalanceMinVolumePct}
+              onChange={(value) => set('imbalanceMinVolumePct', value)}
+            />
+            <NumberRow
+              label="Velas anteriores para el promedio"
+              hint="Solo velas ya cerradas antes de cada vela. Sin velas anteriores usa la misma vela."
+              step="1" min="1" max="100"
+              value={values.imbalanceMinVolumeBars}
+              onChange={(value) => set('imbalanceMinVolumeBars', value)}
             />
             <div className="setting-row">
               <label className="checkbox-label">
@@ -196,6 +206,14 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
                 </label>
               </div>
             ))}
+            <div className="setting-row">
+              <label>Perfil junto al footprint</label>
+              <select value={values.profileMode || 'volume'} onChange={(e) => set('profileMode', e.target.value)}>
+                <option value="volume">Volumen</option>
+                <option value="delta">Delta</option>
+                <option value="both">Volumen y al lado el delta</option>
+              </select>
+            </div>
             <NumberRow
               label="Parte del volumen contra la vela para el rombo (%)"
               step="1" min="1" max="100"
@@ -234,7 +252,10 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
           </div>
 
           <div className="settings-section">
-            <h4>Líneas de stacked con poco zoom</h4>
+            <h4>Franjas de stacked</h4>
+            <span className="hint" style={{ display: 'block', marginBottom: '8px' }}>
+              Con poco zoom son líneas; con el footprint a la vista, franjas desde la vela hacia la derecha.
+            </span>
             <NumberRow
               label="Grosor (px)"
               step="1" min="1" max="6"

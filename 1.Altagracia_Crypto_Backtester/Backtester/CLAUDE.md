@@ -594,7 +594,10 @@ GET /api/orderflow/coverage/{symbol}
 
 - `OrderFlowSettings.jsx` y `FVGSettings.jsx` se abren con el ⚙️ junto al indicador. Aplican a todos los marcos y se guardan por símbolo en `orderflow_settings_{symbol}` y `fvg_settings_{symbol}`
 - `stepByMinutes` guarda el step por marco, en minutos. Sin valor es automático. Un step escrito se respeta: el backend lo ajusta a múltiplos de la celda guardada y solo lo sube si una vela pasaría de 200 niveles (`MAX_LEVELS_PER_CANDLE`)
-- `/api/orderflow/historical` acepta `imbalance_ratio`, `imbalance_mode` (`level` o `diagonal`), `imbalance_min_volume`, `imbalance_zero` y `stacked_levels`
+- `/api/orderflow/historical` acepta `imbalance_ratio`, `imbalance_mode` (`level` o `diagonal`), `imbalance_min_volume`, `imbalance_min_pct`, `imbalance_min_bars`, `imbalance_zero` y `stacked_levels`
+- **Volumen mínimo relativo (14/11):** el modal lo pide en % del volumen promedio por nivel (niveles con trades) de las N velas anteriores (`imbalanceMinVolumePct`, 0 = sin mínimo; `imbalanceMinVolumeBars`, 20). Solo velas anteriores a cada vela; sin ellas, la misma vela. Cada footprint trae `imbalance_min_volume`, el mínimo usado. El mínimo en monedas (`imbalanceMinVolume`) ya no se envía
+- **Perfil junto al footprint (14/11):** `profileMode` `volume`, `delta` o `both` (volumen y al lado el delta). `renderDeltaProfile` dibuja el delta de cada nivel desde la izquierda, largo según el mayor |delta| de la vela, en el color del lado que ganó
+- **Franjas de stacked con zoom (14/11):** con el footprint a la vista, `renderStackedBands` dibuja, después de todas las velas, una franja por stacked desde su vela hacia la derecha (`stackedLineExtend` anchos de vela) con borde arriba y abajo. Con Nítido, un imbalance suelto lleva una barra de 2 px en su lado
 - `OrderFlowIndicator.updateConfig()` descarta lo cargado solo si cambia algo que afecta la respuesta (`_dataRules()`)
 - Diagonal: compra del nivel contra venta del nivel inferior, y venta contra compra del superior. Si un nivel cumple ambos, gana el ratio mayor
 - FVG `fillMode`: `trim` se recorta, `touch` termina al primer toque, `whole` conserva su tamaño hasta cruzarlo

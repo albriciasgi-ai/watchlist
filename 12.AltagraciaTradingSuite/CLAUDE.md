@@ -774,6 +774,17 @@ Pedido del usuario: el ladder en la misma pestaña del mapa.
 - **Pruebas:** `server/tests/ladder_checks.py` (16) y `web/tests/ladder.test.mjs` (8).
 - **Huecos que se ven en el mapa (revisado el 14/11):** en "Solo la sostenida", una vela queda en blanco si falta o quedó incompleto un minuto de su ventana. En BTC: del 13/11 15:15 a 15:42 (no se grabó en ningún lado) y el 13/11 22:12, un minuto incompleto en la nube (49 s) mientras la suite estaba cerrada hasta las 22:16. Lo de 15:15 a 15:42 no se puede llenar con la nube (no grababa el libro todavía); solo quedaría el archivo diario de Bybit, de 200 o 500 niveles, que no se baja sin permiso del usuario.
 
+## Footprints: franjas con zoom, mínimo relativo y perfil de delta (14/11)
+
+Pedido del usuario. Todo está en el indicador Order Flow y el modal de App 1, que la suite importa: vale igual en App 1.
+
+1. **Franjas de stacked con zoom:** con el footprint a la vista, cada stacked deja una franja desde su vela hacia la derecha, tantos anchos de vela como "Largo" del modal (3 de fábrica), con borde arriba y abajo (`renderStackedBands`, después de todas las velas). Antes, con Nítido, solo quedaba una barra de 2 px en la celda y una sombra casi invisible detrás de la vela; las líneas de stacked se veían solo con poco zoom. En Clásico la vela ya pintaba su franja: se agrega lo que sigue a la derecha. Con Nítido, un imbalance suelto lleva también su barra de 2 px, más tenue, así se ve sin cifras.
+2. **Volumen mínimo del lado dominante en %:** "% del volumen promedio por nivel" (niveles con trades) de las N velas anteriores, N de 1 a 100 (20 de fábrica). 0 es sin mínimo. Lo calcula el almacén (`footprint_store.footprints`, reglas `min_volume_pct` y `min_volume_bars`; rutas con `imbalance_min_pct` e `imbalance_min_bars`): arma también los niveles de esas velas anteriores, solo cerradas antes de cada vela. Sin velas anteriores usa la misma vela. Cada footprint trae el mínimo usado (`imbalance_min_volume`). El mínimo en monedas de antes ya no se envía: un valor guardado se ignora.
+3. **Perfil de delta:** "Perfil junto al footprint" en el modal: Volumen (de fábrica), Delta, o Volumen y al lado el delta (cada uno en la mitad del espacio). Barras desde la izquierda, largo según el mayor |delta| de la vela, verde si ganó la compra y rojo si la venta (`renderDeltaProfile`). No cambia lo que se pide al servidor.
+
+- **Pruebas:** `orderflow.test.mjs` de App 1 suma 6 (34) y `test_footprint_rules.py` 2 (con `test_footprint_live.py`, 34). `run_checks.py` de la suite sigue en 46.
+- **Probado** en la copia aislada (13100, sin grabar ni bot) con el almacén real de BTC 15m: franjas rojas a la derecha de las velas con stacked; con "Volumen y al lado el delta" y 150%, el mínimo fue ~50 BTC por nivel y quedó un solo stacked. En el modo de App 1 (10 niveles), un día de BTC 15m dio 238 imbalances sin mínimo, 76 con 100% y 23 con 200%. No se probó en Electron ni en la pantalla de App 1 (usa el mismo dibujo).
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.

@@ -343,12 +343,14 @@ test('la marca de delta exige ir contra la vela y un minimo del volumen', () => 
 
 test('cada peticion lleva las reglas de imbalance', async () => {
   const of = newIndicator();
-  of.updateConfig({ imbalanceRatio: 4.5, imbalanceMode: 'diagonal', imbalanceMinVolume: 2, imbalanceCountZero: true, stackedMinLevels: 5 });
+  of.updateConfig({ imbalanceRatio: 4.5, imbalanceMode: 'diagonal', imbalanceMinVolumePct: 150, imbalanceMinVolumeBars: 30, imbalanceCountZero: true, stackedMinLevels: 5 });
   await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
   const { query } = requests[0];
   assert.equal(query.get('imbalance_ratio'), '4.5');
   assert.equal(query.get('imbalance_mode'), 'diagonal');
-  assert.equal(query.get('imbalance_min_volume'), '2');
+  assert.equal(query.get('imbalance_min_pct'), '150');
+  assert.equal(query.get('imbalance_min_bars'), '30');
+  assert.equal(query.get('imbalance_min_volume'), null, 'el minimo en monedas ya no se envia');
   assert.equal(query.get('imbalance_zero'), 'true');
   assert.equal(query.get('stacked_levels'), '5');
 });
@@ -409,6 +411,126 @@ test('sin almacenamiento quedan los valores de fabrica', () => {
   assert.equal(of.config.imbalanceRatio, 3);
   assert.equal(of.config.imbalanceMode, 'level');
   assert.equal(of.config.stackedMinLevels, 3);
+});
+
+// ---- Dibujo con el footprint a la vista (14/11): franjas de stacked, imbalances sueltos y perfil de delta ----
+
+function recorder() {
+  const calls = { fills: [], lines: [] };
+  let path = [];
+  const ctx = {
+    fillStyle: '', strokeStyle: '', lineWidth: 1, font: '', textAlign: '', textBaseline: '',
+    save() {}, restore() {}, rect() {}, clip() {}, closePath() {}, fill() {},
+    beginPath() { path = []; },
+    moveTo(x, y) { path.push([x, y]); }, lineTo(x, y) { path.push([x, y]); },
+    stroke() { calls.lines.push({ style: this.strokeStyle, points: path }); },
+    fillRect(x, y, w, h) { calls.fills.push({ style: this.fillStyle, x, y, w, h }); },
+    strokeRect() {}, fillText() {}, strokeText() {},
+  };
+  return { ctx, calls };
+}
+
+// Vela de 80,000 a 80,050 con cinco niveles: los tres de abajo, stacked de compra; el cuarto, imbalance de venta
+function zoomedFootprint(t) {
+  const rows = [[1, 9], [1, 8], [1, 7], [6, 1], [2, 2]];
+  return {
+    candle_timestamp: t, candle_close: 80040, step_size: 10, total_delta: 9, total_volume: 40, poc_index: 0,
+    levels: rows.map(([bid, ask], i) => ({
+      price_min: 80000 + i * 10, price_max: 80010 + i * 10, price_mid: 80005 + i * 10,
+      bid_volume: bid, ask_volume: ask, total_volume: bid + ask, delta: ask - bid,
+    })),
+    imbalances: [{ level_index: 0, type: 'BUY' }, { level_index: 1, type: 'BUY' }, { level_index: 2, type: 'BUY' }, { level_index: 3, type: 'SELL' }],
+    stacked_imbalances: [{ direction: 'BUY', levels: [0, 1, 2] }],
+  };
+}
+
+function drawZoomed(config = {}) {
+  const of = newIndicator();
+  of.updateConfig(config);
+  const candles = [0, 1, 2, 3].map(i => ({ ...closed(i), open: 80000, close: 80040, high: 80050, low: 80000 }));
+  candles.forEach(c => of.footprintMap.set(c.timestamp, { ...zoomedFootprint(c.timestamp), knownUntil: Infinity }));
+  of.nextRequestAt = Infinity; // nada que pedir: todo cargado
+  const { ctx, calls } = recorder();
+  const bounds = { x: 0, y: 0, width: 400, height: 600 }; // 100 px por vela: footprint con cifras
+  const priceToY = price => 600 - (price - 79950) * 4; // 4 px por dolar: 40 px por nivel
+  of.renderOnChart(ctx, bounds, candles, { priceToY, knownUntil: T0 + 4 * TF, requestRedraw: () => {} }, true);
+  return { of, calls };
+}
+
+test('con zoom, cada stacked deja una franja desde su vela hacia la derecha', () => {
+  const { calls } = drawZoomed({ stackedLineExtend: 3 });
+  // El stacked va de 80,000 a 80,030: de y 280 a 400
+  // Sin navegador se dibuja en Clásico: la vela ya pinta su franja y la nueva sigue desde su borde derecho
+  const bands = calls.fills.filter(f => Math.abs(f.y - 280) <= 1 && Math.abs(f.h - 120) <= 1 && f.w >= 99);
+  assert.ok(bands.length >= 3, 'una franja por vela con stacked');
+  const first = bands.find(f => Math.abs(f.x - 100) <= 1);
+  assert.ok(first, 'la franja de la primera vela sigue tras ella');
+  assert.ok(Math.abs(first.x + first.w - 300) <= 1, 'y llega a tres anchos de vela');
+  assert.ok(bands.every(f => f.x + f.w <= 400 + 0.5), 'sin pasar del borde del gráfico');
+  const edges = calls.lines.filter(l => l.points.length === 4 && l.points[1][0] - l.points[0][0] >= 99);
+  assert.ok(edges.length >= 2, 'con su borde arriba y abajo');
+});
+
+test('sin "Resaltar imbalances" no hay franjas', () => {
+  const { calls } = drawZoomed({ showImbalances: false });
+  assert.equal(calls.fills.filter(f => f.w >= 99 && f.h >= 100).length, 0);
+});
+
+test('con poco zoom quedan las lineas y no las franjas', () => {
+  const of = newIndicator();
+  const candles = [0, 1, 2, 3].map(i => ({ ...closed(i), open: 80000, close: 80040, high: 80050, low: 80000 }));
+  candles.forEach(c => of.footprintMap.set(c.timestamp, { ...zoomedFootprint(c.timestamp), knownUntil: Infinity }));
+  of.nextRequestAt = Infinity;
+  const { ctx, calls } = recorder();
+  of.renderOnChart(ctx, { x: 0, y: 0, width: 40, height: 600 }, candles, { priceToY: p => 600 - (p - 79950) * 4, knownUntil: T0 + 4 * TF }, false);
+  assert.equal(calls.fills.filter(f => f.h >= 100).length, 0, 'sin franjas');
+  assert.ok(calls.lines.length >= 3, 'las líneas de stacked siguen');
+});
+
+test('perfil de delta: solo, o al lado del perfil de volumen', () => {
+  const buyRgb = '38, 166, 154';
+  const sellRgb = '239, 83, 80';
+  const isDelta = f => f.style.startsWith(`rgba(${buyRgb}, 0.8`) || f.style.startsWith(`rgba(${sellRgb}, 0.8`);
+  // Clásico (sin navegador): barras del perfil de volumen en azul
+  const isVolume = f => f.style.startsWith('rgba(100, 149, 237');
+
+  const volume = drawZoomed({ profileMode: 'volume' }).calls.fills;
+  assert.ok(volume.some(isVolume) && !volume.some(isDelta), 'de fábrica, solo volumen');
+
+  const delta = drawZoomed({ profileMode: 'delta' }).calls.fills;
+  assert.ok(delta.some(isDelta) && !delta.some(isVolume), 'solo delta');
+  // Primera vela: delta por nivel 8, 7, 6, -5, 0. El mayor llena el ancho; el de cero no se dibuja
+  const firstUnit = delta.filter(f => isDelta(f) && f.x < 100);
+  assert.equal(firstUnit.length, 4);
+  const widths = firstUnit.map(f => f.w).sort((a, b) => b - a);
+  assert.ok(Math.abs(widths[1] / widths[0] - 7 / 8) < 0.02, 'largo según su |delta|');
+  assert.equal(firstUnit.filter(f => f.style.startsWith(`rgba(${sellRgb}`)).length, 1, 'el nivel de venta en rojo');
+
+  const both = drawZoomed({ profileMode: 'both' }).calls.fills;
+  const vol = both.filter(f => isVolume(f) && f.x < 100);
+  const del = both.filter(f => isDelta(f) && f.x < 100);
+  assert.ok(vol.length && del.length, 'los dos');
+  const volRight = Math.max(...vol.map(f => f.x));
+  assert.ok(Math.min(...del.map(f => f.x)) > volRight, 'el delta va a la derecha del volumen');
+  assert.ok(Math.max(...del.map(f => f.x + f.w)) <= 100 + 0.5, 'y los dos caben en la vela');
+});
+
+test('el modo del perfil no vuelve a pedir datos', async () => {
+  const of = newIndicator();
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  const loaded = of.footprintMap.size;
+  of.updateConfig({ profileMode: 'both' });
+  assert.equal(of.footprintMap.size, loaded);
+});
+
+test('el minimo relativo es parte de las reglas: cambiarlo vuelve a pedir', async () => {
+  const of = newIndicator();
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  of.updateConfig({ imbalanceMinVolumeBars: 50 });
+  assert.equal(of.footprintMap.size, 0);
+  await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
+  assert.equal(requests.at(-1).query.get('imbalance_min_bars'), '50');
+  assert.equal(requests.at(-1).query.get('imbalance_min_pct'), '0', 'de fábrica sin mínimo');
 });
 
 let failed = 0;

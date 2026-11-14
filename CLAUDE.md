@@ -54,6 +54,29 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Franjas de Imbalances con Zoom, Mínimo Relativo y Perfil de Delta
+
+**Pedido:**
+- con zoom, no se veían las franjas de los imbalances en los footprints;
+- el volumen mínimo del lado dominante, en % respecto a las velas anteriores en lugar de monedas;
+- un perfil de delta junto al de volumen, o cualquiera de los dos;
+- luego llevarlo a App 1.
+
+**Cambios** (indicador Order Flow y modal de App 1, que la suite importa: valen en las dos):
+1. **Franjas con zoom:** cada stacked deja una franja desde su vela hacia la derecha ("Largo" del modal, 3 velas), con borde arriba y abajo. Con Nítido, un imbalance suelto lleva una barra de 2 px en su celda.
+2. **Mínimo relativo:** % del volumen promedio por nivel de las N velas anteriores (1 a 100, 20 de fábrica). Lo calcula el almacén (`footprint_store.py`), solo con velas anteriores. Rutas de App 1 y de la suite con `imbalance_min_pct` e `imbalance_min_bars`.
+3. **Perfil de delta:** "Perfil junto al footprint": Volumen, Delta, o Volumen y al lado el delta.
+4. **Pruebas:** `orderflow.test.mjs` (34) y `test_footprint_rules.py` (con `test_footprint_live.py`, 34). Las de la suite siguen pasando.
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. La suite se reinicia sola al abrirla.
+- El mínimo en monedas guardado antes se ignora: empieza sin mínimo.
+- Probado en la copia aislada de la suite con el almacén real de BTC; App 1 usa el mismo dibujo y se probó su modo de 10 niveles en el almacén, no en su pantalla. No se probó en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Footprints: franjas con zoom, mínimo relativo y perfil de delta (14/11)" y `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ORDER FLOW SOBRE LAS VELAS", "Parámetros"
+
+---
+
 ### Altagracia Trading Suite - 14 Noviembre 2026: Price Ladder en la Pestaña del Mapa
 
 **Pedido:** hacer el ladder en la misma pestaña del mapa, y revisar cómo va el mapa.

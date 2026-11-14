@@ -108,6 +108,7 @@ class OrderFlowIndicator extends IndicatorBase {
       enabled: true,
       showCandle: true,
       showProfile: true,
+      profileMode: 'volume', // Perfil junto al footprint: 'volume', 'delta' o 'both' (volumen y al lado el delta)
       showFootprint: true,
       showPOC: true,
       showImbalances: true,
@@ -128,7 +129,9 @@ class OrderFlowIndicator extends IndicatorBase {
       maxLevels: 10, // Con step automático, niveles que puede tener una vela
       imbalanceRatio: 3,
       imbalanceMode: 'level', // 'level': mismo nivel. 'diagonal': compra contra la venta del nivel inferior
-      imbalanceMinVolume: 0, // Volumen mínimo del lado dominante
+      // Volumen mínimo del lado dominante: % del volumen promedio por nivel de las velas anteriores (0 = sin mínimo)
+      imbalanceMinVolumePct: 0,
+      imbalanceMinVolumeBars: 20,
       imbalanceCountZero: false, // Contar el nivel aunque el otro lado no tenga volumen
       stackedMinLevels: 3
     };
@@ -136,8 +139,8 @@ class OrderFlowIndicator extends IndicatorBase {
 
   // Lo que cambia la respuesta del backend: si cambia, lo cargado ya no sirve
   _dataRules() {
-    const { imbalanceRatio, imbalanceMode, imbalanceMinVolume, imbalanceCountZero, stackedMinLevels, maxLevels } = this.config;
-    return JSON.stringify([this._stepOverride(), imbalanceRatio, imbalanceMode, imbalanceMinVolume, imbalanceCountZero, stackedMinLevels, maxLevels]);
+    const { imbalanceRatio, imbalanceMode, imbalanceMinVolumePct, imbalanceMinVolumeBars, imbalanceCountZero, stackedMinLevels, maxLevels } = this.config;
+    return JSON.stringify([this._stepOverride(), imbalanceRatio, imbalanceMode, imbalanceMinVolumePct, imbalanceMinVolumeBars, imbalanceCountZero, stackedMinLevels, maxLevels]);
   }
 
   _stepOverride() {
@@ -276,7 +279,9 @@ class OrderFlowIndicator extends IndicatorBase {
     }
     params.append('imbalance_ratio', String(this.config.imbalanceRatio));
     params.append('imbalance_mode', this.config.imbalanceMode);
-    params.append('imbalance_min_volume', String(this.config.imbalanceMinVolume));
+    // El mínimo en monedas de antes ya no se envía: ahora es relativo a las velas anteriores
+    params.append('imbalance_min_pct', String(this.config.imbalanceMinVolumePct || 0));
+    params.append('imbalance_min_bars', String(this.config.imbalanceMinVolumeBars || 20));
     params.append('imbalance_zero', String(this.config.imbalanceCountZero));
     params.append('stacked_levels', String(this.config.stackedMinLevels));
 
@@ -458,6 +463,7 @@ class OrderFlowIndicator extends IndicatorBase {
           this.renderSimpleCandle(ctx, candle, unitX, candleWidth, priceToY);
         }
       });
+      if (this.config.showImbalances) this.renderStackedBands(ctx, bounds, visibleCandles, candleWidth, priceToY);
     } else if (candleWidth < this.config.minCandleWidth) {
       this.renderImbalanceMarkers(ctx, bounds, visibleCandles, priceToY, candleWidth);
     }
@@ -549,7 +555,17 @@ class OrderFlowIndicator extends IndicatorBase {
       this.renderFootprint(ctx, footprint, extraLevels, footprintX, footprintWidth, priceToY, fullMode, unitX, bounds);
     }
     if (this.config.showProfile) {
-      this.renderVolumeProfile(ctx, footprint, profileX, profileWidth, priceToY, bounds);
+      const mode = this.config.profileMode || 'volume';
+      if (mode === 'both') {
+        // Volumen y al lado el delta, cada uno en la mitad del espacio del perfil
+        const half = (profileWidth - gap) / 2;
+        this.renderVolumeProfile(ctx, footprint, profileX, half, priceToY, bounds);
+        this.renderDeltaProfile(ctx, footprint, profileX + half + gap, half, priceToY, bounds);
+      } else if (mode === 'delta') {
+        this.renderDeltaProfile(ctx, footprint, profileX, profileWidth, priceToY, bounds);
+      } else {
+        this.renderVolumeProfile(ctx, footprint, profileX, profileWidth, priceToY, bounds);
+      }
     }
     if (this.config.showDelta && fullMode) {
       this.renderDelta(ctx, footprint, unitX, unitWidth, low, priceToY);
@@ -645,6 +661,71 @@ class OrderFlowIndicator extends IndicatorBase {
   }
 
   /**
+   * Delta de cada nivel (compra menos venta) como barras desde la izquierda: largo según el mayor |delta|
+   * de la vela, con el color del lado que ganó en ese nivel.
+   */
+  renderDeltaProfile(ctx, footprint, x, width, priceToY, bounds) {
+    const { levels } = footprint;
+    const deltaOf = level => level.delta ?? (level.ask_volume - level.bid_volume);
+    const maxDelta = levels.reduce((max, level) => Math.max(max, Math.abs(deltaOf(level))), 0);
+    if (!(maxDelta > 0) || width < 1) return;
+
+    const buyRgb = isNewTheme() ? THEME.fpBuyRgb : '38, 166, 154';
+    const sellRgb = isNewTheme() ? THEME.fpSellRgb : '239, 83, 80';
+    for (const level of levels) {
+      const delta = deltaOf(level);
+      if (Math.abs(delta) < 1e-9) continue;
+      const topY = priceToY(level.price_max);
+      const levelHeight = Math.abs(priceToY(level.price_min) - topY);
+      if (levelHeight < 0.5 || topY > bounds.y + bounds.height || topY + levelHeight < bounds.y) continue;
+
+      ctx.fillStyle = `rgba(${delta >= 0 ? buyRgb : sellRgb}, ${isNewTheme() ? 0.7 : 0.8})`;
+      const [barY, barHeight] = levelRow(topY, levelHeight, Math.max(1, levelHeight - 1));
+      ctx.fillRect(x, barY, Math.max(1, width * Math.abs(delta) / maxDelta), barHeight);
+    }
+  }
+
+  /**
+   * Franjas de los stacked con el footprint a la vista: desde la vela hacia la derecha, tantos anchos de vela
+   * como "Largo" en el modal, con borde arriba y abajo. Van encima de las celdas, tenues para que se lean las cifras.
+   */
+  renderStackedBands(ctx, bounds, visibleCandles, candleWidth, priceToY) {
+    const { stackedLineExtend, stackedOpacity } = this.config;
+    const opacity = stackedOpacity ?? 0.7;
+    const buyRgb = isNewTheme() ? this._stackedRgb('stackedBuyColor', THEME.fpBuyRgb) : this.config.stackedBuyColor;
+    const sellRgb = isNewTheme() ? this._stackedRgb('stackedSellColor', THEME.fpSellRgb) : this.config.stackedSellColor;
+    const right = bounds.x + bounds.width;
+
+    visibleCandles.forEach((candle, i) => {
+      const footprint = this.footprintMap.get(candle.timestamp);
+      if (!footprint?.levels?.length) return;
+      const unitX = bounds.x + i * candleWidth;
+      // En el Clásico la vela ya pinta su franja: se agrega solo lo que sigue a la derecha
+      const startX = isNewTheme() ? unitX : unitX + candleWidth;
+      const endX = Math.min(right, unitX + candleWidth * Math.max(1, stackedLineExtend || 1));
+      if (endX <= startX) return;
+
+      for (const stacked of this._stackedShown(footprint)) {
+        const span = this._span(footprint, stacked.levels || []);
+        if (!span) continue;
+        const rgb = stacked.direction === 'BUY' ? buyRgb : sellRgb;
+        const [top, height] = snapSpanY(priceToY(span.high), priceToY(span.low));
+        if (top > bounds.y + bounds.height || top + height < bounds.y) continue;
+        ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.22})`;
+        ctx.fillRect(startX, top, endX - startX, height);
+        ctx.strokeStyle = `rgba(${rgb}, ${Math.min(1, opacity * 1.2)})`;
+        ctx.lineWidth = crispWidth(1);
+        ctx.beginPath();
+        ctx.moveTo(startX, alignY(top, 1));
+        ctx.lineTo(endX, alignY(top, 1));
+        ctx.moveTo(startX, alignY(top + height, 1));
+        ctx.lineTo(endX, alignY(top + height, 1));
+        ctx.stroke();
+      }
+    });
+  }
+
+  /**
    * Estilo Nítido: el color de cada celda crece con su volumen, como en ATAS. Casi todo queda
    * pálido y lo grande resalta; cifras sin contorno, desequilibrios en negrita y un marco fino.
    */
@@ -706,11 +787,12 @@ class OrderFlowIndicator extends IndicatorBase {
         const opacity = this.config.stackedOpacity ?? 0.7;
         ctx.fillStyle = `rgba(${rgb}, ${Math.min(1, opacity / 0.7)})`;
         ctx.fillRect(buying ? x + width - 2 : x, cellY, 2, cellH);
-        const extendLeft = x - unitX;
-        if (extendLeft > 0) {
-          ctx.fillStyle = `rgba(${rgb}, ${opacity * 0.17})`;
-          ctx.fillRect(unitX, cellY, extendLeft, cellH);
-        }
+        // La franja, desde la vela hacia la derecha, la dibuja renderStackedBands después de todas las velas
+      } else if (imbalance) {
+        // Imbalance suelto: la misma barra de 2 px, más tenue, así se ve también sin cifras
+        const rgb = imbalance === 'BUY' ? THEME.fpBuyRgb : THEME.fpSellRgb;
+        ctx.fillStyle = `rgba(${rgb}, 0.6)`;
+        ctx.fillRect(imbalance === 'BUY' ? x + width - 2 : x, cellY, 2, cellH);
       }
 
       if (fullMode && width >= 30 && levelHeight >= 10) {
