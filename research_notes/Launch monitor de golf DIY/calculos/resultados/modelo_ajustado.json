@@ -1,0 +1,14 @@
+{
+  "elegido": {
+    "nombre": "Smits & Smith 1994 ajustado",
+    "k_cd": 0.9416659012102437,
+    "k_cl": 0.9251244593650529,
+    "r1": 2e-05
+  },
+  "alternativo_3p": {
+    "nombre": "Smits & Smith 1994 ajustado",
+    "k_cd": 0.9401847688211787,
+    "k_cl": 0.912911082818924,
+    "r1": 5.000000000000016e-06
+  }
+}
