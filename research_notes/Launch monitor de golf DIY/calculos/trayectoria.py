@@ -14,6 +14,10 @@ tal como lo resume la patente US 6,186,002:
 con S = r·ω/V (parámetro de giro) y Re = ρ·V·D/μ.
 Rango medido por Smits & Smith: 40 000 < Re < 250 000.
 
+El modelo publicado (bolas de 1994) no reproduce los promedios de TrackMan
+(driver ~26-29 yd corto, hierros largos): main() documenta el re-ajuste de
+4 constantes (cd2, cd3, cl1, p) con validación cruzada.
+
 Ejes: x hacia el objetivo, y hacia la IZQUIERDA, z hacia arriba.
 Convenciones de TrackMan: HLA (launch direction) positivo = a la derecha;
 eje de giro (spin axis) positivo = la bola curva a la derecha.
@@ -40,34 +44,52 @@ DIR_RES = os.path.join(DIR, "resultados")
 # Modelo aerodinámico
 # ---------------------------------------------------------------------------
 class ModeloAero:
-    """Smits & Smith (1994) con factores de ajuste explícitos.
+    """Forma funcional de Smits & Smith (1994) con sus constantes explícitas.
 
-    k_cd, k_cl: multiplican CD y CL (1.0 = modelo publicado).
-    r1: constante del decaimiento del giro (2e-5 = publicado).
+        CD = k_cd·[cd1 + cd2·S + cd3·sin(π·(Re − a1)/a2)]
+        CL = k_cl·cl1·S^p
+        dω/dt = −r1·(V/r)·ω
+
+    Valores publicados: cd1=0.24, cd2=0.18, cd3=0.06, a1=90 000,
+    a2=200 000, cl1=0.54, p=0.4, r1=2e-5 (k_cd = k_cl = 1).
     """
 
     RE_MIN, RE_MAX = 4.0e4, 2.5e5   # rango medido; fuera se satura
+    PUBLICADO = dict(cd1=0.24, cd2=0.18, cd3=0.06, a1=9.0e4, a2=2.0e5,
+                     cl1=0.54, p=0.4, r1=2.0e-5, k_cd=1.0, k_cl=1.0)
 
-    def __init__(self, k_cd=1.0, k_cl=1.0, r1=2.0e-5, nombre="Smits & Smith 1994"):
-        self.k_cd = k_cd
-        self.k_cl = k_cl
-        self.r1 = r1
+    def __init__(self, nombre="Smits & Smith 1994 (publicado)", **constantes):
         self.nombre = nombre
+        self.c = dict(self.PUBLICADO)
+        self.c.update(constantes)
 
     def cd(self, s, re):
+        c = self.c
         re_c = min(max(re, self.RE_MIN), self.RE_MAX)
-        base = 0.24 + 0.18 * s + 0.06 * math.sin(math.pi * (re_c - 9.0e4) / 2.0e5)
-        return self.k_cd * base
+        base = c["cd1"] + c["cd2"] * s + c["cd3"] * math.sin(math.pi * (re_c - c["a1"]) / c["a2"])
+        return c["k_cd"] * base
 
     def cl(self, s):
-        return self.k_cl * 0.54 * max(s, 0.0) ** 0.4
+        c = self.c
+        return c["k_cl"] * c["cl1"] * max(s, 0.0) ** c["p"]
 
     def tasa_decaimiento(self, v):
         """Fracción del giro que se pierde por segundo (1/s) a velocidad v."""
-        return self.r1 * v / R_BOLA
+        return self.c["r1"] * v / R_BOLA
+
+    def describir(self):
+        c = self.c
+        cambiados = [k for k in c if abs(c[k] - self.PUBLICADO[k]) > 1e-12]
+        if not cambiados:
+            return "constantes publicadas"
+        return ", ".join(f"{k}={c[k]:.4g} (publ. {self.PUBLICADO[k]:.4g})" for k in cambiados)
 
     def como_dict(self):
-        return {"nombre": self.nombre, "k_cd": self.k_cd, "k_cl": self.k_cl, "r1": self.r1}
+        return {"nombre": self.nombre, "constantes": self.c}
+
+    @classmethod
+    def desde_dict(cls, d):
+        return cls(d["nombre"], **d["constantes"])
 
 
 # ---------------------------------------------------------------------------
@@ -193,33 +215,38 @@ def errores(modelo, datos, atm):
     return out
 
 
-def residuos(params, datos, atm):
-    k_cd, k_cl, r1_rel = params
-    mod = ModeloAero(k_cd, k_cl, 2.0e-5 * r1_rel)
-    res = []
-    for palo, e in errores(mod, datos, atm).items():
-        for m in ("carry", "hmax", "land"):
-            if m in e:
-                res.append(e[m] / TOLERANCIAS[m])
-    return np.array(res)
+ESCALA = {"a1": 1e5, "a2": 1e5, "r1": 1e-5}
+LIMITES = {"cd1": (0.10, 0.40), "cd2": (-0.5, 1.5), "cd3": (-0.15, 0.15),
+           "a1": (-0.5e5, 2.5e5), "cl1": (0.2, 1.2), "p": (0.1, 1.2),
+           "r1": (2e-6, 8e-5), "k_cd": (0.5, 1.5), "k_cl": (0.5, 1.5)}
 
 
-def ajustar(datos, atm, libres=("k_cd", "k_cl", "r1")):
-    """Mínimos cuadrados ponderados sobre los factores indicados."""
-    x0 = np.array([1.0, 1.0, 1.0])
-    mascara = np.array([n in libres for n in ("k_cd", "k_cl", "r1")])
+def ajustar(datos, atm, libres, nombre, fijos=None):
+    """Mínimos cuadrados ponderados (TOLERANCIAS) sobre las constantes libres.
 
-    def fun(xl):
-        x = x0.copy()
-        x[mascara] = xl
-        return residuos(x, datos, atm)
+    fijos: constantes que se fijan en otro valor distinto del publicado.
+    """
+    esc = [ESCALA.get(n, 1.0) for n in libres]
+    fijos = dict(fijos or {})
 
-    lo = np.array([0.5, 0.5, 0.25])[mascara]
-    hi = np.array([1.5, 1.5, 4.0])[mascara]
-    sol = least_squares(fun, x0[mascara], bounds=(lo, hi), diff_step=1e-3)
-    x = x0.copy()
-    x[mascara] = sol.x
-    return ModeloAero(x[0], x[1], 2.0e-5 * x[2], nombre="Smits & Smith 1994 ajustado"), sol
+    def armar(x):
+        c = dict(fijos)
+        c.update({n: xi * e for n, xi, e in zip(libres, x, esc)})
+        return ModeloAero(nombre, **c)
+
+    def fun(x):
+        res = []
+        for e in errores(armar(x), datos, atm).values():
+            for m in ("carry", "hmax", "land"):
+                if m in e:
+                    res.append(e[m] / TOLERANCIAS[m])
+        return np.array(res)
+
+    x0 = [ModeloAero.PUBLICADO[n] / e for n, e in zip(libres, esc)]
+    lo = [LIMITES[n][0] / e for n, e in zip(libres, esc)]
+    hi = [LIMITES[n][1] / e for n, e in zip(libres, esc)]
+    sol = least_squares(fun, x0, bounds=(lo, hi), diff_step=1e-3)
+    return armar(sol.x), sol
 
 
 def tabla_validacion(modelo, datos, atm, titulo):
@@ -238,8 +265,8 @@ def tabla_validacion(modelo, datos, atm, titulo):
     enc = ["Palo", "Bola mph / VLA° / rpm", "Carry yd sim vs TM (err)",
            "Altura máx yd sim vs TM (err)", "Ángulo llegada ° sim vs TM (err)",
            "Vuelo s", "Giro al aterrizar rpm"]
-    return f"**{titulo}** — {modelo.nombre}: k_cd={modelo.k_cd:.3f}, k_cl={modelo.k_cl:.3f}, " \
-           f"R1={modelo.r1:.2e}; aire: {atm}\n\n" + tabla_md(enc, filas)
+    return f"**{titulo}** — {modelo.nombre}: {modelo.describir()}; aire: {atm}\n\n" + \
+        tabla_md(enc, filas)
 
 
 def rms_errores(modelo, datos, atm):
@@ -274,81 +301,126 @@ def tabla_altitud(modelo, esc):
     return tabla_md(enc, filas)
 
 
+TODOS = {**{f"{k} (clásico)": v for k, v in TRACKMAN_CLASICO.items()},
+         **{f"{k} (2024)": v for k, v in TRACKMAN_2024.items()}}
+LIBRES_FINAL = ("cd2", "cd3", "cl1", "p")
+RUTA_MODELO = os.path.join(DIR_RES, "modelo_ajustado.json")
+
+
+def modelo_final(clave="final"):
+    """Modelo ajustado que usan los demás scripts (lo calcula si no existe).
+
+    clave: "final", "variante_sin_re", "variante_re_publicado", "publicado"...
+    """
+    if os.path.exists(RUTA_MODELO):
+        with open(RUTA_MODELO, encoding="utf-8") as fh:
+            return ModeloAero.desde_dict(json.load(fh)[clave])
+    mod, _ = ajustar(TODOS, escenarios_atmosfera()["mar_isa"], LIBRES_FINAL,
+                     "Smits & Smith 1994 re-ajustado a TrackMan")
+    return mod
+
+
 def main():
     os.makedirs(DIR_RES, exist_ok=True)
     esc = escenarios_atmosfera()
     atm = esc["mar_isa"]
-    partes = ["# Resultados del simulador de trayectoria\n",
-              "Escenarios de aire:\n"]
-    for a in esc.values():
-        partes.append(f"- {a}")
+    partes = ["# Resultados del simulador de trayectoria\n", "Escenarios de aire:\n"]
+    partes += [f"- {a}" for a in esc.values()]
     partes.append("")
+
+    def bloque(mod, titulo):
+        partes.append(tabla_validacion(mod, TRACKMAN_CLASICO, atm, titulo + " — tabla clásica"))
+        partes.append("")
+        partes.append(tabla_validacion(mod, TRACKMAN_2024, atm, titulo + " — TrackMan 2024"))
+        partes.append("")
 
     base = ModeloAero()
-    partes.append(tabla_validacion(base, TRACKMAN_CLASICO, atm,
-                                   "Validación SIN ajuste — tabla clásica TrackMan"))
-    partes.append("")
-    partes.append(tabla_validacion(base, TRACKMAN_2024, atm,
-                                   "Validación SIN ajuste — promedios TrackMan 2024"))
-    partes.append("")
-    # también a 25 °C, por si los promedios corresponden a un día cálido
+    bloque(base, "1) Modelo publicado, SIN ajuste")
     partes.append(tabla_validacion(base, TRACKMAN_CLASICO, esc["mar_25c"],
-                                   "SIN ajuste, aire a 25 °C — tabla clásica"))
+                                   "1b) Publicado, aire a 25 °C — tabla clásica"))
     partes.append("")
 
-    # Ajuste de 2 parámetros (CD y CL) y de 3 (CD, CL y decaimiento)
+    escala, _ = ajustar(TODOS, atm, ("k_cd", "k_cl"), "Publicado con CD y CL escalados")
+    bloque(escala, "2) Solo escalar CD y CL (2 factores, ajuste con ambas tablas)")
+
+    cruz, _ = ajustar(TRACKMAN_CLASICO, atm, LIBRES_FINAL, "Re-ajuste solo con la tabla clásica")
+    bloque(cruz, "3) Validación cruzada: 4 constantes ajustadas SOLO con la tabla clásica")
+
+    final, sol = ajustar(TODOS, atm, LIBRES_FINAL, "Smits & Smith 1994 re-ajustado a TrackMan")
+    bloque(final, "4) MODELO FINAL: 4 constantes ajustadas con ambas tablas")
+
     resumen = []
-    modelos = {}
-    for etiqueta, libres in (("CD+CL", ("k_cd", "k_cl")), ("CD+CL+R1", ("k_cd", "k_cl", "r1"))):
-        mod, sol = ajustar(TRACKMAN_CLASICO, atm, libres)
-        modelos[etiqueta] = mod
-        rms_in = rms_errores(mod, TRACKMAN_CLASICO, atm)
-        rms_out = rms_errores(mod, TRACKMAN_2024, atm)
-        resumen.append([etiqueta, f"{mod.k_cd:.3f}", f"{mod.k_cl:.3f}", f"{mod.r1:.2e}",
-                        f"{rms_in['carry']:.1f} / {rms_in['hmax']:.1f} / {rms_in['land']:.1f}",
-                        f"{rms_out['carry']:.1f} / {rms_out['hmax']:.1f} / {rms_out['land']:.1f}"])
-        partes.append(tabla_validacion(mod, TRACKMAN_CLASICO, atm,
-                                       f"Validación CON ajuste {etiqueta} — tabla clásica (ajuste)"))
-        partes.append("")
-        partes.append(tabla_validacion(mod, TRACKMAN_2024, atm,
-                                       f"CON ajuste {etiqueta} — TrackMan 2024 (fuera del ajuste)"))
-        partes.append("")
-    rms_b_in = rms_errores(base, TRACKMAN_CLASICO, atm)
-    rms_b_out = rms_errores(base, TRACKMAN_2024, atm)
-    resumen.insert(0, ["Sin ajuste", "1.000", "1.000", "2.00e-05",
-                       f"{rms_b_in['carry']:.1f} / {rms_b_in['hmax']:.1f} / {rms_b_in['land']:.1f}",
-                       f"{rms_b_out['carry']:.1f} / {rms_b_out['hmax']:.1f} / {rms_b_out['land']:.1f}"])
-    partes.append("**Resumen del ajuste (RMS de errores: carry yd / altura yd / llegada °)**\n")
-    partes.append(tabla_md(["Modelo", "k_cd", "k_cl", "R1", "RMS tabla clásica (ajuste)",
-                            "RMS TM 2024 (validación)"], resumen))
+    for etiqueta, mod in (("1) publicado", base), ("2) escalar CD y CL", escala),
+                          ("3) 4 const., tabla clásica", cruz), ("4) final, ambas tablas", final)):
+        a = rms_errores(mod, TRACKMAN_CLASICO, atm)
+        b = rms_errores(mod, TRACKMAN_2024, atm)
+        resumen.append([etiqueta, mod.describir(),
+                        f"{a['carry']:.1f} / {a['hmax']:.1f} / {a['land']:.1f}",
+                        f"{b['carry']:.1f} / {b['hmax']:.1f} / {b['land']:.1f}"])
+    partes.append("**Resumen (RMS de errores: carry yd / altura yd / ángulo de llegada °)**\n")
+    partes.append(tabla_md(["Variante", "Constantes cambiadas", "RMS tabla clásica",
+                            "RMS TrackMan 2024"], resumen))
     partes.append("")
 
-    # Modelo elegido para el resto de los cálculos
-    elegido = modelos["CD+CL"]
-    with open(os.path.join(DIR_RES, "modelo_ajustado.json"), "w", encoding="utf-8") as fh:
-        json.dump({"elegido": elegido.como_dict(),
-                   "alternativo_3p": modelos["CD+CL+R1"].como_dict()}, fh, indent=2)
-
-    partes.append("**Carry según la altitud (modelo ajustado CD+CL)**\n")
-    partes.append(tabla_altitud(elegido, esc))
+    # Variantes con otra dependencia de Re que ajustan casi igual a nivel del mar
+    sin_re, _ = ajustar(TODOS, atm, ("cd1", "cd2", "cl1", "p"),
+                        "Variante: CD sin dependencia de Re (cd3=0)", fijos={"cd3": 0.0})
+    re_publ, _ = ajustar(TODOS, atm, ("cd1", "cd2", "cl1", "p"),
+                         "Variante: término de Re como el publicado (cd3=+0.06)")
+    variantes = (("A) final (cd3 ajustado)", final), ("B) cd3 = 0", sin_re),
+                 ("C) cd3 = +0.06 (publicado)", re_publ))
+    filas = []
+    palos = (("Driver", TRACKMAN_2024["Driver"]), ("Hierro 7", TRACKMAN_2024["Hierro 7"]),
+             ("PW", TRACKMAN_CLASICO["PW"]))
+    for etiqueta, mod in variantes:
+        a = rms_errores(mod, TRACKMAN_CLASICO, atm)
+        b = rms_errores(mod, TRACKMAN_2024, atm)
+        fila = [etiqueta, mod.describir(),
+                f"{a['carry']:.1f}/{a['hmax']:.1f}/{a['land']:.1f} · "
+                f"{b['carry']:.1f}/{b['hmax']:.1f}/{b['land']:.1f}"]
+        for _, d in palos:
+            c0 = simular(d["vb"], d["vla"], d["spin"], atm=atm, modelo=mod)["carry_yd"]
+            celdas = []
+            for c in ("med_calida", "bog_calida"):
+                c1 = simular(d["vb"], d["vla"], d["spin"], atm=esc[c], modelo=mod)["carry_yd"]
+                celdas.append(f"{c1:.0f} ({100*(c1/c0-1):+.1f}%)")
+            fila.append(f"{c0:.0f} → " + " / ".join(celdas))
+        filas.append(fila)
+    partes.append("**Banda de incertidumbre de la altitud: tres variantes que ajustan casi igual "
+                  "a nivel del mar** (carry a nivel del mar → Medellín / Bogotá, columna cálida "
+                  "con 22 °C y 14 °C)\n")
+    partes.append(tabla_md(["Variante", "Constantes", "RMS clásica · 2024 (yd/yd/°)"] +
+                           [f"{n} yd" for n, _ in palos], filas))
     partes.append("")
-    partes.append("**Carry según la altitud (modelo SIN ajuste, para comparar)**\n")
+
+    with open(RUTA_MODELO, "w", encoding="utf-8") as fh:
+        json.dump({"final": final.como_dict(), "publicado": base.como_dict(),
+                   "escalado": escala.como_dict(), "validacion_cruzada": cruz.como_dict(),
+                   "variante_sin_re": sin_re.como_dict(), "variante_re_publicado": re_publ.como_dict(),
+                   "tolerancias_ajuste": TOLERANCIAS}, fh, indent=2, ensure_ascii=False)
+
+    partes.append("**Carry según la altitud (modelo final)**\n")
+    partes.append(tabla_altitud(final, esc))
+    partes.append("")
+    partes.append("**Carry según la altitud (modelo publicado, para comparar)**\n")
     partes.append(tabla_altitud(base, esc))
     partes.append("")
 
-    # Coeficientes a lo largo del vuelo del driver (diagnóstico)
-    r = simular(171, 10.4, 2545, atm=atm, modelo=elegido, traza=True)
-    sol = r["sol"]
-    filas = []
-    for t in (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, r["t_vuelo_s"]):
-        y = sol.sol(min(t, r["t_vuelo_s"]))
-        v = float(np.linalg.norm(y[3:6]))
-        s = R_BOLA * y[6] / v
-        re = atm.rho * v * D_BOLA / atm.mu
-        filas.append([f"{t:.2f}", f"{v:.1f}", f"{y[6]/RPM:.0f}", f"{s:.3f}", f"{re/1e3:.0f}k",
-                      f"{elegido.cd(s, re):.3f}", f"{elegido.cl(s):.3f}"])
-    partes.append("**Driver TM 2024 a lo largo del vuelo (modelo ajustado)**\n")
-    partes.append(tabla_md(["t s", "V m/s", "giro rpm", "S", "Re", "CD", "CL"], filas))
+    for palo, d in (("Driver TM 2024", TRACKMAN_2024["Driver"]),
+                    ("Hierro 7 TM 2024", TRACKMAN_2024["Hierro 7"])):
+        r = simular(d["vb"], d["vla"], d["spin"], atm=atm, modelo=final, traza=True)
+        sol_t = r["sol"]
+        filas = []
+        for t in (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, r["t_vuelo_s"]):
+            y = sol_t.sol(min(t, r["t_vuelo_s"]))
+            v = float(np.linalg.norm(y[3:6]))
+            s_ = R_BOLA * y[6] / v
+            re = atm.rho * v * D_BOLA / atm.mu
+            filas.append([f"{t:.2f}", f"{v:.1f}", f"{y[6]/RPM:.0f}", f"{s_:.3f}",
+                          f"{re/1e3:.0f}k", f"{final.cd(s_, re):.3f}", f"{final.cl(s_):.3f}"])
+        partes.append(f"**{palo} a lo largo del vuelo (modelo final)**\n")
+        partes.append(tabla_md(["t s", "V m/s", "giro rpm", "S", "Re", "CD", "CL"], filas))
+        partes.append("")
     texto = "\n".join(partes)
     with open(os.path.join(DIR_RES, "trayectoria.md"), "w", encoding="utf-8") as fh:
         fh.write(texto + "\n")

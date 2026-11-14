@@ -1,14 +1,97 @@
 {
-  "elegido": {
-    "nombre": "Smits & Smith 1994 ajustado",
-    "k_cd": 0.9416659012102437,
-    "k_cl": 0.9251244593650529,
-    "r1": 2e-05
+  "final": {
+    "nombre": "Smits & Smith 1994 re-ajustado a TrackMan",
+    "constantes": {
+      "cd1": 0.24,
+      "cd2": 0.2840946284407654,
+      "cd3": -0.06698913296954978,
+      "a1": 90000.0,
+      "a2": 200000.0,
+      "cl1": 0.5002239805754224,
+      "p": 0.4989987070597282,
+      "r1": 2e-05,
+      "k_cd": 1.0,
+      "k_cl": 1.0
+    }
   },
-  "alternativo_3p": {
-    "nombre": "Smits & Smith 1994 ajustado",
-    "k_cd": 0.9401847688211787,
-    "k_cl": 0.912911082818924,
-    "r1": 5.000000000000016e-06
+  "publicado": {
+    "nombre": "Smits & Smith 1994 (publicado)",
+    "constantes": {
+      "cd1": 0.24,
+      "cd2": 0.18,
+      "cd3": 0.06,
+      "a1": 90000.0,
+      "a2": 200000.0,
+      "cl1": 0.54,
+      "p": 0.4,
+      "r1": 2e-05,
+      "k_cd": 1.0,
+      "k_cl": 1.0
+    }
+  },
+  "escalado": {
+    "nombre": "Publicado con CD y CL escalados",
+    "constantes": {
+      "cd1": 0.24,
+      "cd2": 0.18,
+      "cd3": 0.06,
+      "a1": 90000.0,
+      "a2": 200000.0,
+      "cl1": 0.54,
+      "p": 0.4,
+      "r1": 2e-05,
+      "k_cd": 0.9351282705863713,
+      "k_cl": 0.9601491670743587
+    }
+  },
+  "validacion_cruzada": {
+    "nombre": "Re-ajuste solo con la tabla clásica",
+    "constantes": {
+      "cd1": 0.24,
+      "cd2": 0.26996613350070653,
+      "cd3": -0.06873935971222099,
+      "a1": 90000.0,
+      "a2": 200000.0,
+      "cl1": 0.48777529471818026,
+      "p": 0.5044757933713154,
+      "r1": 2e-05,
+      "k_cd": 1.0,
+      "k_cl": 1.0
+    }
+  },
+  "variante_sin_re": {
+    "nombre": "Variante: CD sin dependencia de Re (cd3=0)",
+    "constantes": {
+      "cd1": 0.19163851321553468,
+      "cd2": 0.35660761169038663,
+      "cd3": 0.0,
+      "a1": 90000.0,
+      "a2": 200000.0,
+      "cl1": 0.51021783129377,
+      "p": 0.48014725295408334,
+      "r1": 2e-05,
+      "k_cd": 1.0,
+      "k_cl": 1.0
+    }
+  },
+  "variante_re_publicado": {
+    "nombre": "Variante: término de Re como el publicado (cd3=+0.06)",
+    "constantes": {
+      "cd1": 0.15126278607145915,
+      "cd2": 0.41899224218770403,
+      "cd3": 0.06,
+      "a1": 90000.0,
+      "a2": 200000.0,
+      "cl1": 0.5196946183343575,
+      "p": 0.4644003653780763,
+      "r1": 2e-05,
+      "k_cd": 1.0,
+      "k_cl": 1.0
+    }
+  },
+  "tolerancias_ajuste": {
+    "carry": 2.0,
+    "hmax": 1.0,
+    "land": 1.0
   }
 }
