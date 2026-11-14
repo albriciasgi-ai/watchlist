@@ -62,7 +62,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (60) y book_cloud_checks.py (16), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69) y book_cloud_checks.py (16), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -667,7 +667,25 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - da el aguante de tus zonas y del azar, la diferencia con su IC 95%, el "llena y aguanta" y las cargadas contra el resto. Con menos de 30 visitas resueltas avisa muestra pequeña.
   
   Uso: `C:\Python314\python.exe -B server\book_study.py BTCUSDT,ETHUSDT 2026-11-14 2026-12-14 [salida.json]`.
-- **Pruebas:** `tests/book_checks.py` (60) y `tests/book_cloud_checks.py` (16), sin conexión:
+- **Antigüedad, velocidad y patrones** (13/11, pedido del usuario: saber si en sus zonas hay órdenes que se sostienen hasta que el precio vuelve, o una "carnada"). Cada visita suma:
+  - **antigüedad:** minutos seguidos hacia atrás, hasta 4 horas, con al menos la mitad del promedio de la zona en el minuto antes de acercarse el precio (libro de minutos). También lo que hubo toda la hora anterior (el menor promedio) y su parte de esa referencia. Usa el promedio de cada minuto y no la suma de los mínimos de cada precio: cada precio baja en un segundo distinto, y la suma daba el 44% del promedio (mediana) aunque nada se retirara. Un minuto que falta corta la cuenta;
+  - **velocidad de llegada:** segundos en recorrer el último 1/4 de ATR hasta la zona;
+  - **patrón**, con la misma regla para tus zonas y el azar:
+    - barrido: la perfora y vuelve;
+    - absorción: aguanta, la liquidez se queda y se negocia al menos todo lo que se veía;
+    - defensa: aguanta con al menos la mitad de la liquidez;
+    - retiro y rebote: se retira la mitad o más y aun así aguanta;
+    - retiro y cruce: se retira y el precio pasa, lo esperable de un muro falso;
+    - consumida: la liquidez se queda, se negocia y el precio pasa.
+
+  El informe da la parte de cada patrón (también en el 20% más cargado), el aguante con liquidez de 15 minutos o más contra la de menos de 5, y con llegada rápida (30 s o menos) contra lenta (más de 5 minutos). Cada visita guarda además los bordes de su zona (`lo`, `hi`).
+- **Primera lectura** (13 y 14/11 UTC, unas 5 horas de libro, 8 monedas; muestras chicas, nada concluyente):
+  - tus zonas aguantaron el 65.5% (55 resueltas) contra 57.4% del azar (289), +8.0 puntos con IC 95% de −5.8 a 21.8;
+  - la liquidez es joven: antigüedad mediana de 8.5 minutos en tus zonas y 7 en el azar, y solo un 9-11% estuvo toda la hora anterior;
+  - en tus zonas, con liquidez de 15 minutos o más aguantaron 8 de 12 contra 5 de 14 con liquidez reciente; en el azar casi igual (46.7% contra 48.8%);
+  - en el 20% más cargado de tus zonas, 9 de cada 10 visitas fueron defensa, contra el 59% en el azar;
+  - una llegada rápida aguantó más que una lenta en los dos grupos (76% y 62% contra 25% y 27%).
+- **Pruebas:** `tests/book_checks.py` (69) y `tests/book_cloud_checks.py` (16), sin conexión:
   - cubos y mejor precio exactos tras miles de cambios al azar;
   - una moneda cerrada en Bybit queda fuera;
   - la nube (el `main.py` del collector, corrido en el mismo proceso) lista sus días y entrega solo los minutos pedidos. La suite baja solo lo que le falta, no repite al volver a pasar y respeta el tope por vuelta;
