@@ -9,6 +9,14 @@
 #     aguanta si vuelve a alejarse 1/2 ATR antes de pasarla por 1/4 ATR; si no, la cruza;
 #   - en cada visita: lo que habia en la zona al acercarse y al llegar (libro de cada segundo) y lo negociado en
 #     ella contra ese lado (trades exactos del almacen).
+# Desde el 13/11 (pedido del usuario), ademas:
+#   - antiguedad: cuantos minutos seguidos, hasta 4 horas, la zona tuvo al menos la mitad de lo que tenia en el minuto
+#     antes de acercarse el precio (promedio de cada minuto, libro de minutos), y que parte estuvo toda la hora anterior;
+#   - velocidad de llegada: segundos en recorrer el ultimo 1/4 de ATR hasta la zona;
+#   - patron de cada visita, con la misma regla para tus zonas y el azar: barrido (la perfora y vuelve), absorcion
+#     (aguanta y se negocia todo lo que se veia), defensa (aguanta con la liquidez), retiro y rebote (se retira la
+#     mitad o mas y aun asi aguanta), retiro y cruce (se retira y el precio pasa: lo esperable de un muro falso) y
+#     consumida (la liquidez se queda, se negocia y el precio pasa).
 # No es una senal: dice si tus zonas tienen liquidez distinta de un precio cualquiera y si esa liquidez las hace
 # aguantar. Con pocas visitas no se distingue nada del azar: el informe lo avisa.
 #
@@ -20,7 +28,7 @@ import random
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -39,6 +47,12 @@ RANDOM_PER_ZONE = 3
 RANDOM_SHIFT = (0.003, 0.015)
 MAX_VISIT_MS = 4 * 3600000    # una visita que no se resuelve en 4 horas queda sin resolver
 MIN_GROUP = 30
+KEEP = 0.5                    # "se quedo": al menos la mitad de lo que habia al acercarse
+AGE_MAX_MIN = 240             # la antiguedad se cuenta hasta 4 horas atras
+HOUR_MIN = 60                 # lo sostenido se mide en la hora antes de acercarse
+OLD_MIN, RECENT_MIN = 15, 5   # liquidez con antiguedad (15 minutos o mas) y reciente (menos de 5 minutos)
+FAST_S, SLOW_S = 30, 300      # llegada rapida (el ultimo 1/4 de ATR en 30 s o menos) y lenta (mas de 5 minutos)
+PATTERNS = ("barrido", "absorcion", "defensa", "retiro_y_rebote", "retiro_y_cruce", "consumida")
 
 
 # ---------- datos ----------
@@ -72,6 +86,71 @@ def load_seconds(base: Path, symbol: str, start: int, end: int) -> Optional[dict
         return None
     return {"heads": heads, "bids": bids, "asks": asks, "ts": np.array(ts, np.int64), "bb": np.array(bb),
             "ba": np.array(ba), "blk": np.array(blk), "row": np.array(row)}
+
+
+def load_minutes(base, symbol: str, start: int, end: int) -> Optional[dict]:
+    """Los minutos grabados entre start y end (promedio y minimo de cada cubo), ordenados por hora."""
+    cols = sorted(book_store.minute_columns(base, symbol, start, end), key=lambda hp: hp[0]["t"])
+    if not cols:
+        return None
+    return {"t": np.array([h["t"] for h, _ in cols], np.int64), "cols": cols}
+
+
+def zone_age(mins: Optional[dict], approach_ms: int, side: str, lo: float,
+             hi: float) -> Tuple[Optional[int], Optional[float], Optional[float]]:
+    """Antiguedad de la liquidez de la zona antes de acercarse el precio, con el libro de minutos.
+    Usa el promedio ponderado por tiempo de cada minuto. La suma de los minimos de cada precio no sirve: cada precio
+    baja en un segundo distinto, y en BTC, ETH, SOL y XRP del 13/11 daba en la mediana el 44% del promedio aunque
+    nada se retirara. El promedio, en cambio, da el 91% de la foto de un segundo al acercarse.
+    - referencia: el promedio de la zona en el ultimo minuto cerrado antes de acercarse;
+    - antiguedad: minutos seguidos hacia atras, hasta AGE_MAX_MIN, con al menos KEEP de la referencia;
+    - sostenido: lo que hubo siempre la hora entera (el menor promedio de esos 60 minutos), en USD y como parte
+      de la referencia.
+    Un minuto que falta, incompleto o que no alcanza la zona corta la cuenta: lo de antes no se sabe, asi que la
+    antiguedad es "al menos" esa, y lo sostenido queda vacio si la hora no se vio completa."""
+    if mins is None:
+        return None, None, None
+    expect = approach_ms - approach_ms % MINUTE - MINUTE      # el ultimo minuto cerrado antes de acercarse
+    i = int(np.searchsorted(mins["t"], expect, side="right")) - 1
+    ref, age, aging, low, seen = None, 0, True, None, 0
+    while i >= 0 and seen < AGE_MAX_MIN and (aging or seen < HOUR_MIN):
+        h, p = mins["cols"][i]
+        if int(h["t"]) != expect or h.get("gap") or not book_store.covers(h, side, lo, hi):
+            break
+        usd = book_store.zone_depth(h, p[f"twa_{side}"], side, lo, hi)[1]
+        if ref is None:
+            ref = usd
+            if ref <= 0:
+                return None, None, None
+        if aging:
+            if usd >= KEEP * ref:
+                age += 1
+            else:
+                aging = False
+        if seen < HOUR_MIN:
+            low = usd if low is None else min(low, usd)
+        seen += 1
+        i -= 1
+        expect -= MINUTE
+    if not seen:
+        return None, None, None
+    held = round(low) if seen >= HOUR_MIN else None
+    return age, held, (round(low / ref, 3) if held is not None else None)
+
+
+def pattern(v: dict) -> Optional[str]:
+    """Que paso en la visita, con la misma regla para tus zonas y para el azar (None si no se resolvio o no hay libro)."""
+    if v["outcome"] not in ("aguanto", "cruzo") or not v.get("approach_usd") or v.get("arrival_usd") is None:
+        return None
+    kept = v["arrival_usd"] >= KEEP * v["approach_usd"]
+    if v["outcome"] == "aguanto":
+        if v["pierced"]:
+            return "barrido"            # la perforo (una limit ahi se lleno) y volvio
+        if not kept:
+            return "retiro_y_rebote"    # se fue la mitad o mas y aun asi aguanto
+        traded = v.get("traded_usd")
+        return "absorcion" if traded is not None and traded >= v["approach_usd"] else "defensa"
+    return "consumida" if kept else "retiro_y_cruce"
 
 
 def zone_usd(sec: dict, j: int, side: str, lo: float, hi: float) -> Optional[float]:
@@ -267,7 +346,7 @@ def random_zones(zones: List[dict], seed: int = 7) -> List[dict]:
 
 
 # ---------- visitas ----------
-def visits(sec: dict, atr: np.ndarray, zone: dict, trades: Optional[Trades]) -> List[dict]:
+def visits(sec: dict, atr: np.ndarray, zone: dict, trades: Optional[Trades], mins: Optional[dict] = None) -> List[dict]:
     ts, bb, ba = sec["ts"], sec["bb"], sec["ba"]
     a, b = np.searchsorted(ts, [zone["from"], zone["to"]])
     if b - a < 120:
@@ -317,13 +396,18 @@ def visits(sec: dict, atr: np.ndarray, zone: dict, trades: Optional[Trades]) -> 
             approach = zone_usd(sec, gi[0], side, lo, hi)
             arrival = zone_usd(sec, gi[1], side, lo, hi) if j > 0 else None
             traded = trades.against(int(t[j - 1]), int(t[k]), lo, hi, side) if trades and j > 0 else None
-            out.append({
+            aged, held_1h, held_frac = zone_age(mins, int(t[last_arm]), side, lo, hi)
+            v = {
                 "kind": zone["kind"], "label": zone["label"], "side": side, "at": int(t[j]), "outcome": outcome,
                 "seconds": round((t[k] - t[j]) / 1000, 1), "gap": bool(span.max() > 5000) if len(span) else False,
                 "approach_usd": approach, "arrival_usd": arrival, "traded_usd": traded,
                 "pierced": bool(pierce[j:k + 1].any()), "atr_pct": round(float(at[j] / x[j] * 100), 4),
-                "zone_pct": round((hi - lo) / hi * 100, 4),
-            })
+                "zone_pct": round((hi - lo) / hi * 100, 4), "lo": lo, "hi": hi,
+                "approach_s": round(float(t[j] - t[last_arm]) / 1000, 1), "aged_min": aged, "sustained_1h_usd": held_1h,
+                "sustained_frac": held_frac,
+            }
+            v["pattern"] = pattern(v)
+            out.append(v)
             pos = k + 1
     return out
 
@@ -354,6 +438,11 @@ def summarize(items: List[dict]) -> dict:
     out = {"visitas": len(items), "resueltas": n, "aguanto_pct": round(100 * hold, 1) if hold is not None else None,
            "llena_y_aguanta_pct": None, "mediana_usd_al_acercarse": None, "llegaba_de_lo_que_habia": None,
            "negociado_sobre_lo_que_habia": None, "cargadas_aguanto_pct": None, "resto_aguanto_pct": None,
+           "patrones": None, "patrones_n": 0, "patrones_cargadas": None,
+           "antigua_aguanto_pct": None, "antigua_n": 0, "reciente_aguanto_pct": None, "reciente_n": 0,
+           "antiguedad_mediana_min": None, "sostenida_mediana": None,
+           "rapida_aguanto_pct": None, "rapida_n": 0, "rapida_llegaba": None,
+           "lenta_aguanto_pct": None, "lenta_n": 0, "lenta_llegaba": None,
            "muestra_pequena": n < MIN_GROUP}
     done = [v for v in items if v["outcome"] in ("aguanto", "cruzo")]
     if done:
@@ -373,6 +462,36 @@ def summarize(items: List[dict]) -> dict:
         out["llegaba_de_lo_que_habia"] = round(float(np.median(surv)), 3)
     if traded:
         out["negociado_sobre_lo_que_habia"] = round(float(np.median(traded)), 3)
+
+    def shares(sel):
+        sel = [v for v in sel if v.get("pattern")]
+        return {k: round(100 * sum(1 for v in sel if v["pattern"] == k) / len(sel), 1) for k in PATTERNS} if sel else None
+
+    pats = [v for v in with_depth if v.get("pattern")]
+    out["patrones"], out["patrones_n"] = shares(pats), len(pats)
+    if with_depth and len(with_depth) >= 5:
+        usd = sorted(v["approach_usd"] for v in with_depth)
+        out["patrones_cargadas"] = shares([v for v in with_depth if v["approach_usd"] >= usd[int(len(usd) * 0.8)]])
+
+    def rate_into(name, sel, survival=False):
+        r, k = _rate(sel)
+        out[f"{name}_aguanto_pct"] = round(100 * r, 1) if r is not None else None
+        out[f"{name}_n"] = k
+        if survival:
+            s_ = [v["arrival_usd"] / v["approach_usd"] for v in sel if v["arrival_usd"] is not None]
+            out[f"{name}_llegaba"] = round(float(np.median(s_)), 3) if s_ else None
+
+    aged = [v for v in with_depth if v.get("aged_min") is not None]
+    rate_into("antigua", [v for v in aged if v["aged_min"] >= OLD_MIN])
+    rate_into("reciente", [v for v in aged if v["aged_min"] < RECENT_MIN])
+    if aged:
+        out["antiguedad_mediana_min"] = float(np.median([v["aged_min"] for v in aged]))
+    fr = [v["sustained_frac"] for v in with_depth if v.get("sustained_frac") is not None]
+    if fr:
+        out["sostenida_mediana"] = round(float(np.median(fr)), 3)
+    timed = [v for v in with_depth if v.get("approach_s") is not None]
+    rate_into("rapida", [v for v in timed if v["approach_s"] <= FAST_S], survival=True)
+    rate_into("lenta", [v for v in timed if v["approach_s"] > SLOW_S], survival=True)
     return out
 
 
@@ -395,6 +514,7 @@ def run(symbols: List[str], start: int, end: int, base: Optional[Path] = None, w
                 continue
             mins = None if fs is None else fs.minutes(symbol, (a - DAY) // MINUTE, (b + MAX_VISIT_MS) // MINUTE, live=True)
             atr = atr_at(sec, minutes=mins)
+            book_mins = load_minutes(base, symbol, a - (AGE_MAX_MIN + 2) * MINUTE, b + MAX_VISIT_MS)  # para la antiguedad
             if zones_for:
                 zones = zones_for(symbol, day, sec)
             else:
@@ -403,7 +523,7 @@ def run(symbols: List[str], start: int, end: int, base: Optional[Path] = None, w
             zones = [dict(z, **{"from": max(z["from"], a), "to": min(z["to"], b)}) for z in zones if z["to"] > a and z["from"] < b]
             seed = (sum(map(ord, symbol)) * 1000003 + day // DAY) & 0xFFFFFFFF  # el mismo azar cada vez
             for z in zones + random_zones(zones, seed=seed):
-                for v in visits(sec, atr, z, trades):
+                for v in visits(sec, atr, z, trades, book_mins):
                     all_visits.append(dict(v, symbol=symbol))
             days_done.setdefault(symbol, []).append(book_store.day_of(day))
             day += DAY
@@ -414,7 +534,11 @@ def run(symbols: List[str], start: int, end: int, base: Optional[Path] = None, w
     rand = [v for v in all_visits if v["kind"].endswith("_azar")]
     out = {"desde": book_store.day_of(start), "hasta": book_store.day_of(end - 1), "dias": days_done,
            "reglas": {"llega_desde_atr": ARM_ATR, "aguanta_atr": HOLD_ATR, "cruza_atr": CROSS_ATR, "atr": "15m, 14 velas",
-                      "nivel_pct": POINT_ZONE * 100, "azar_por_zona": RANDOM_PER_ZONE, "azar_corrida_pct": [x * 100 for x in RANDOM_SHIFT]},
+                      "nivel_pct": POINT_ZONE * 100, "azar_por_zona": RANDOM_PER_ZONE, "azar_corrida_pct": [x * 100 for x in RANDOM_SHIFT],
+                      "se_quedo": KEEP, "antiguedad_hasta_min": AGE_MAX_MIN, "antigua_min": OLD_MIN,
+                      "reciente_min": RECENT_MIN, "sostenida_en_min": HOUR_MIN,
+                      "llegada_rapida_s": FAST_S, "llegada_lenta_s": SLOW_S,
+                      "patrones": list(PATTERNS)},
            "tus_zonas": summarize(real), "al_azar": summarize(rand),
            "por_tipo": {k: summarize(v) for k, v in sorted(groups.items())}}
     p1, n1 = _rate([v for v in real if not v["gap"]])
@@ -437,6 +561,21 @@ def _print(res: dict):
     print(f"  diferencia en el aguante: {res['diferencia_aguante_pts']} pts, IC 95% {res['ic95_diferencia_pts']}")
     for k, s in res["por_tipo"].items():
         print(line(k, s))
+
+    def pct(d, k):
+        return f"{d[k]}%" if d and d.get(k) is not None else "-"
+
+    for name, s in (("tus zonas", res["tus_zonas"]), ("al azar", res["al_azar"])):
+        pats = s.get("patrones")
+        print(f"  {name}: patrones en {s['patrones_n']} visitas: "
+              + ("  ".join(f"{k.replace('_', ' ')} {pct(pats, k)}" for k in PATTERNS) if pats else "sin libro"))
+        if s.get("patrones_cargadas"):
+            print("    las mas cargadas: " + "  ".join(f"{k.replace('_', ' ')} {pct(s['patrones_cargadas'], k)}" for k in PATTERNS))
+        print(f"    antiguedad de la liquidez: mediana {s['antiguedad_mediana_min']} min; con {OLD_MIN} min o mas aguanto"
+              f" {s['antigua_aguanto_pct']}% ({s['antigua_n']}) | reciente, menos de {RECENT_MIN} min: {s['reciente_aguanto_pct']}%"
+              f" ({s['reciente_n']}) | parte que estuvo toda la hora anterior: mediana {s['sostenida_mediana']}")
+        print(f"    llegada rapida, {FAST_S} s o menos: aguanto {s['rapida_aguanto_pct']}% ({s['rapida_n']}), quedaba {s['rapida_llegaba']}"
+              f" | lenta, mas de {SLOW_S // 60} min: {s['lenta_aguanto_pct']}% ({s['lenta_n']}), quedaba {s['lenta_llegaba']}")
 
 
 def _ms(day: str) -> int:

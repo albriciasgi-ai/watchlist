@@ -54,6 +54,27 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 13 Noviembre 2026: Medición del Libro con Antigüedad, Velocidad y Patrones
+
+**Pedido:** saber si en sus zonas hay órdenes que se sostienen hasta que el precio vuelve, o una "carnada". El usuario pidió sumar a la medición la antigüedad de la liquidez, la velocidad de llegada y el patrón de cada visita.
+
+**Cambios** (`server/book_study.py`):
+1. **Antigüedad:** minutos seguidos, hasta 4 horas, en que la zona tuvo al menos la mitad de lo que tenía en el minuto antes de acercarse el precio, y qué parte estuvo toda la hora anterior. Usa el promedio de cada minuto. La suma de los mínimos de cada precio salía en la mediana al 44% del promedio aunque nada se retirara, porque cada precio baja en un segundo distinto.
+2. **Velocidad de llegada:** segundos en recorrer el último 1/4 de ATR hasta la zona.
+3. **Patrón de cada visita**, con la misma regla para tus zonas y el azar: barrido, absorción, defensa, retiro y rebote, retiro y cruce (lo esperable de un muro falso) y consumida.
+4. **Pruebas:** `book_checks.py` suma 9 (69).
+
+**IMPORTANTE:**
+- **Primera lectura**, con unas 5 horas de libro en 8 monedas, que no permite concluir nada:
+  - tus zonas aguantaron 8 puntos más que el azar, con un margen de −5.8 a +21.8;
+  - la liquidez es joven: tiene 7 a 8.5 minutos de antigüedad mediana, y solo un 9-11% estuvo toda la hora anterior;
+  - en el 20% más cargado de tus zonas, 9 de cada 10 visitas fueron defensa, contra el 59% en el azar.
+- Se probó también una vista previa del mapa de liquidez con el BTC grabado, fuera del repositorio: toda la liquidez contra la que se sostuvo 30 minutos.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Libro completo", "Antigüedad, velocidad y patrones"
+
+---
+
 ### Altagracia Trading Suite - 13 Noviembre 2026: Borrar Imágenes del Análisis y Volver al Journal
 
 **Pedido:** tras probar el análisis post-trade: poder borrar una imagen desde la suite, y un botón en la barra del gráfico para volver al journal.

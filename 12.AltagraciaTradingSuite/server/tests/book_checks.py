@@ -525,6 +525,78 @@ try:
     check("estudio: zonas al azar del mismo ancho, corridas 0.3% a 1.5%, en las mismas horas",
           len(rz) == 3 and widths == {0.2} and all(0.003 <= s <= 0.015 for s in shifts) and all(z["from"] == S0 for z in rz))
 
+    # patron de cada visita: la misma regla para tus zonas y el azar
+    def pv(outcome, pierced, approach, arrival, traded=None):
+        return {"outcome": outcome, "pierced": pierced, "approach_usd": approach, "arrival_usd": arrival, "traded_usd": traded}
+
+    pats = [book_study.pattern(pv("aguanto", True, 100, 20)), book_study.pattern(pv("aguanto", False, 100, 80, 150)),
+            book_study.pattern(pv("aguanto", False, 100, 80, 10)), book_study.pattern(pv("aguanto", False, 100, 30)),
+            book_study.pattern(pv("cruzo", True, 100, 30)), book_study.pattern(pv("cruzo", True, 100, 70)),
+            book_study.pattern(pv("sin_resolver", False, 100, 70)), book_study.pattern(pv("aguanto", False, None, 70))]
+    check("estudio: patron (barrido, absorcion, defensa, retiro y rebote, retiro y cruce, consumida; sin resolver o sin libro, ninguno)",
+          pats == ["barrido", "absorcion", "defensa", "retiro_y_rebote", "retiro_y_cruce", "consumida", None, None], str(pats))
+
+    # antiguedad de la liquidez con minutos armados a mano: zona de compras de 99.9 a 100.1 (dos cubos de 0.1)
+    def minutes_book(first, count, qty_of):
+        cols = []
+        for i in range(count):
+            m = first + i * MIN
+            q = np.zeros(20, np.float32)
+            q[[6, 7]] = qty_of(m)
+            h = {"t": m, "kmid": 1006, "n": 20, "step": 1, "tick": 0.1, "gap": False, "cov": MIN}
+            # el minimo de cada precio, mas bajo que el promedio: la antiguedad no lo usa
+            cols.append((h, {"twa_b": q, "min_b": q * 0.3, "twa_a": np.zeros(20, np.float32), "min_a": np.zeros(20, np.float32)}))
+        return {"t": np.array([h["t"] for h, _ in cols], np.int64), "cols": cols}
+
+    A0 = T0 + 6000 * MIN + 30_000                      # se acerca a mitad de un minuto: cuentan los minutos cerrados antes
+    m_last = A0 - A0 % MIN - MIN
+    book_age = minutes_book(m_last - 299 * MIN, 300, lambda m: 6.0 if m > m_last - 45 * MIN else 2.0)
+    age, held, frac = book_study.zone_age(book_age, A0, "b", 99.9, 100.1)
+    check("estudio: antiguedad = minutos seguidos con al menos la mitad del minuto antes de acercarse (45), con el promedio",
+          age == 45, f"{age}")
+    check("estudio: lo sostenido la hora entera (el menor promedio) y su parte de la referencia (1/3)",
+          held is not None and abs(held - 400) < 1 and frac == 0.333, f"{held} {frac}")
+    holed = {"t": np.delete(book_age["t"], 300 - 21), "cols": book_age["cols"][:300 - 21] + book_age["cols"][300 - 20:]}
+    age_h, held_h, frac_h = book_study.zone_age(holed, A0, "b", 99.9, 100.1)
+    check("estudio: un minuto que falta corta la cuenta (al menos 20) y deja vacia la hora entera",
+          age_h == 20 and held_h is None and frac_h is None, f"{age_h} {held_h} {frac_h}")
+    gapped = minutes_book(m_last - 299 * MIN, 300, lambda m: 6.0)
+    gapped["cols"][300 - 11][0]["gap"] = True
+    check("estudio: un minuto incompleto tambien corta la cuenta", book_study.zone_age(gapped, A0, "b", 99.9, 100.1)[0] == 10)
+    check("estudio: la antiguedad llega a lo sumo a 4 horas, y sin libro de minutos o con la zona vacia queda vacia",
+          book_study.zone_age(minutes_book(m_last - 299 * MIN, 300, lambda m: 6.0), A0, "b", 99.9, 100.1)[0] == 240
+          and book_study.zone_age(None, A0, "b", 99.9, 100.1) == (None, None, None)
+          and book_study.zone_age(minutes_book(m_last - 299 * MIN, 300, lambda m: 0.0), A0, "b", 99.9, 100.1) == (None, None, None))
+
+    # las visitas llevan su antiguedad y la velocidad de llegada
+    book_s = minutes_book(S0 - 300 * MIN, 300 + n_s // 60 + 2, lambda m: 10.0)
+    vs_m = [v for v in book_study.visits(sec, atr, zone, FakeTrades(), book_s) if v["side"] == "b"]
+    armed_i, arrive_i = np.flatnonzero(bb_s >= 100.2), np.flatnonzero(bb_s <= 100.1)
+    j1 = int(arrive_i[0])
+    la1 = int(armed_i[armed_i < j1][-1])
+    check("estudio: velocidad de llegada = segundos del ultimo 1/4 de ATR hasta la zona",
+          vs_m[0]["approach_s"] == round((ts_s[j1] - ts_s[la1]) / 1000, 1), f"{vs_m[0]['approach_s']} contra {(ts_s[j1] - ts_s[la1]) / 1000}")
+    check("estudio: la primera visita, con 5 horas de liquidez sostenida, llega a 4 horas de antiguedad",
+          vs_m[0]["aged_min"] == 240 and vs_m[0]["sustained_1h_usd"] is not None and all(v["pattern"] for v in vs_m),
+          str([(v["aged_min"], v["pattern"]) for v in vs_m]))
+
+    # el resumen separa por patron, por antiguedad y por velocidad
+    sv = [dict(gap=False, outcome="aguanto", approach_usd=100.0, arrival_usd=90.0, traded_usd=10.0, pierced=False, aged_min=120,
+               sustained_frac=0.4, approach_s=10.0, pattern="defensa"),
+          dict(gap=False, outcome="cruzo", approach_usd=100.0, arrival_usd=20.0, traded_usd=5.0, pierced=True, aged_min=3,
+               sustained_frac=0.05, approach_s=20.0, pattern="retiro_y_cruce"),
+          dict(gap=False, outcome="aguanto", approach_usd=100.0, arrival_usd=100.0, traded_usd=150.0, pierced=False, aged_min=90,
+               sustained_frac=0.3, approach_s=400.0, pattern="absorcion"),
+          dict(gap=False, outcome="cruzo", approach_usd=100.0, arrival_usd=80.0, traded_usd=50.0, pierced=True, aged_min=2,
+               sustained_frac=0.02, approach_s=600.0, pattern="consumida")]
+    ss = book_study.summarize(sv)
+    check("estudio: el resumen da la parte de cada patron, el aguante con liquidez antigua o reciente y con llegada rapida o lenta",
+          ss["patrones_n"] == 4 and ss["patrones"]["defensa"] == 25.0 and ss["patrones"]["retiro_y_cruce"] == 25.0
+          and ss["patrones"]["barrido"] == 0.0 and ss["antigua_aguanto_pct"] == 100.0 and ss["antigua_n"] == 2
+          and ss["reciente_aguanto_pct"] == 0.0 and ss["reciente_n"] == 2 and ss["antiguedad_mediana_min"] == 46.5
+          and ss["sostenida_mediana"] == 0.175 and ss["rapida_aguanto_pct"] == 50.0
+          and ss["rapida_llegaba"] == 0.55 and ss["lenta_aguanto_pct"] == 50.0 and ss["lenta_llegaba"] == 0.9, str(ss))
+
     class FakeStore:
         def minutes(self, symbol, a, b, live=None):
             m = np.arange(a, b)
