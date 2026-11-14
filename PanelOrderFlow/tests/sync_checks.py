@@ -145,6 +145,46 @@ try:
     meta5 = sn.merge_day(tf, c, tmp / "no.tape", "BTCUSDT", DAY)[0]
     check("dia cerrado sin huecos y desde su inicio: completo", meta5["final"] and meta5["complete"])
 
+    # Una bajada a la vez (14/11): el candado no se toma dos veces; al soltarlo se vuelve a tomar
+    lk = tmp / "lk" / sn.CLOUD_LOCK
+    first = sn.take_lock(lk)
+    second = sn.take_lock(lk)
+    check("candado: otra bajada no lo toma mientras sigue la primera", first is not None and second is None)
+    sn.release_lock(first)
+    third = sn.take_lock(lk)
+    check("candado: al terminar la primera se vuelve a tomar", third is not None)
+    sn.release_lock(third)
+
+    # Reemplazo con reintentos: el destino en uso unos segundos no hace perder la descarga
+    src, dst = tmp / "r.descarga", tmp / "r.tape"
+    src.write_bytes(b"nuevo")
+    dst.write_bytes(b"viejo")
+    real_replace, calls = sn.os.replace, {"n": 0}
+
+    def busy_twice(a, b):
+        calls["n"] += 1
+        if calls["n"] <= 2:
+            raise PermissionError(32, "en uso")
+        real_replace(a, b)
+    sn.os.replace = busy_twice
+    try:
+        ok = sn.replace_retry(src, dst, tries=5, wait=0)
+    finally:
+        sn.os.replace = real_replace
+    check("reemplazo: reintenta mientras el archivo esta en uso", ok and dst.read_bytes() == b"nuevo" and calls["n"] == 3)
+    src.write_bytes(b"otro")
+
+    def always_busy(a, b):
+        raise PermissionError(32, "en uso")
+    sn.os.replace = always_busy
+    try:
+        ok2 = sn.replace_retry(src, dst, tries=3, wait=0)
+    finally:
+        sn.os.replace = real_replace
+    check("reemplazo: si sigue en uso se rinde sin romper nada", ok2 is False and dst.read_bytes() == b"nuevo" and src.exists())
+    sn.remove_quietly(tmp / "no-existe.descarga")
+    check("borrar un temporal que no esta no falla", True)
+
     # Armado completo con las herramientas del almacen
     tools = Path(sn.DEFAULT_DATA) / "tools"
     if (tools / "build_store.py").exists():

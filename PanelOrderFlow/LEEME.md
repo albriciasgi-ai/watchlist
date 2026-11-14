@@ -85,7 +85,11 @@ C:\Python314\python.exe -B sync_nube.py --sin-nube
 - **Automático:** el backend 11000 graba los trades de las monedas del Swing y cada minuto corre
   `sync_nube.py --sin-nube` en un proceso aparte; cada 15 minutos baja también la nube. Estado en
   `GET http://127.0.0.1:11000/api/orderflow/local-tape`.
-- Pruebas: `C:\Python314\python.exe -B tests\sync_checks.py` (21).
+- **Una bajada a la vez (14/11):** al reiniciarse la suite, la bajada anterior (`--solo-nube`, hasta una hora) seguía corriendo y la nueva chocaba con su temporal: "el proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso" (ETH del 14/11, 4 veces en el registro). Ahora:
+  - la bajada toma el candado `live/cloud/descarga.lock` (`take_lock`); si otra lo tiene, esa vuelta no baja nada y lo dice;
+  - reemplazar el archivo de la nube reintenta hasta 15 s (`replace_retry`): el armado de cada minuto puede estar leyéndolo;
+  - un temporal que no se puede borrar ya no corta la vuelta (`remove_quietly`).
+- Pruebas: `C:\Python314\python.exe -B tests\sync_checks.py` (31).
 
 **Ajustes del 12/11 (segunda ronda de la suite):**
 - **Un solo grabador:** `local_tape.py` toma el candado `live/local/recorder.lock`. Graba el backend 11000 o el servidor de la suite (`12.AltagraciaTradingSuite`), el que arranque primero; el otro reintenta cada minuto y toma el relevo si el primero se cierra.

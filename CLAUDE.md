@@ -54,6 +54,23 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + PanelOrderFlow - 14 Noviembre 2026: Una Bajada de la Nube a la Vez
+
+**Pedido:** el registro de la suite tenía errores al bajar los trades de la nube ("el proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso", ETH del 14/11). Tras un reinicio, la bajada anterior seguía corriendo y chocaba con la nueva.
+
+**Cambios** (`PanelOrderFlow/sync_nube.py`, que usan la suite y el 11000):
+1. **Candado** `live/cloud/descarga.lock`: una bajada a la vez; si otra sigue, esa vuelta no baja nada.
+2. **Reemplazo con reintentos:** el archivo de la nube se reemplaza reintentando hasta 15 s, porque el armado de cada minuto puede estar leyéndolo.
+3. **Temporal que no se puede borrar:** ya no corta la vuelta.
+4. **Menú "Capas":** crece con su contenido, sin barra de desplazamiento (pedido del usuario).
+5. **Pruebas:** `sync_checks.py` suma 5 (31).
+
+**IMPORTANTE:** la suite se reinicia sola al abrirla. Una bajada vieja que siga corriendo no usa el candado: desde el siguiente reinicio todas lo usan.
+
+**Ver:** `PanelOrderFlow/LEEME.md` sección "Días recientes: nube y PC", "Una bajada a la vez"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Menú Capas, Filtro, Zonas Automáticas y Absorción y Barrido del Libro
 
 **Pedido:** tras probar:

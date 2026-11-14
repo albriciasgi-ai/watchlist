@@ -17,6 +17,12 @@
 #   C:\Python314\python.exe -B sync_nube.py --monedas BTCUSDT,ETHUSDT --dias 5
 #   C:\Python314\python.exe -B sync_nube.py --sin-nube      (solo lo grabado en el PC; lo usa el backend)
 #   C:\Python314\python.exe -B sync_nube.py --datos D:\prueba\OrderFlowData   (otra carpeta de datos)
+#
+# Una bajada a la vez (14/11/2026): al reiniciarse la suite, la bajada anterior (--solo-nube, hasta una hora) seguia
+# corriendo y la nueva chocaba con su temporal ("el proceso no tiene acceso al archivo"). Ahora la bajada toma el
+# candado live/cloud/descarga.lock; si otra lo tiene, esa vuelta no baja nada. Ademas, reemplazar el archivo de la nube
+# reintenta unos segundos (el armado de cada minuto puede estar leyendolo) y un temporal que no se puede borrar no
+# corta la vuelta.
 import argparse
 import datetime as dt
 import importlib.util
@@ -38,6 +44,62 @@ TAPE_FORMAT = REPO / "5.Order_flow" / "cloud_collector" / "tape_format.py"
 DAY_MS = 86_400_000
 LAG_MS = 2_000  # un trade puede llegar hasta ~2 s despues de su hora: lo ultimo antes de guardar no se da por cubierto
 DAY_FILE = re.compile(r"^([A-Z0-9]+)_(\d{4}-\d{2}-\d{2})\.tape$")
+CLOUD_LOCK = "descarga.lock"
+REPLACE_TRIES, REPLACE_WAIT = 15, 1.0
+
+
+def take_lock(path: Path):
+    """Candado sin esperar: el archivo abierto si se tomo, None si otro proceso lo tiene. El sistema lo suelta si el
+    proceso muere."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fh = open(path, "a+b")
+    try:
+        fh.seek(0)
+        if os.name == "nt":
+            import msvcrt
+            msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(fh.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        fh.close()
+        return None
+    return fh
+
+
+def release_lock(fh):
+    if fh is None:
+        return
+    try:
+        fh.seek(0)
+        if os.name == "nt":
+            import msvcrt
+            msvcrt.locking(fh.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+    except OSError:
+        pass
+    fh.close()
+
+
+def replace_retry(src: Path, dst: Path, tries=REPLACE_TRIES, wait=REPLACE_WAIT) -> bool:
+    """os.replace con reintentos: en Windows falla mientras otro proceso tiene abierto el destino."""
+    for k in range(tries):
+        try:
+            os.replace(src, dst)
+            return True
+        except PermissionError:
+            if k + 1 < tries:
+                time.sleep(wait)
+    return False
+
+
+def remove_quietly(path: Path):
+    try:
+        path.unlink(missing_ok=True)
+    except OSError:
+        pass  # otro proceso lo tiene: queda para la proxima vuelta
 
 
 def load_module(path: Path, name: str):
@@ -228,37 +290,46 @@ def refresh(data: Path, tools: Path, base_url=DEFAULT_URL, symbols=None, days_ba
     def official(sym, day):
         return day_path(data / "tape", sym, day).exists()
 
-    if cloud:
+    lock = take_lock(live / "cloud" / CLOUD_LOCK) if cloud else None
+    if cloud and lock is None:
+        log("otra bajada de la nube sigue en curso; esta vuelta no baja nada")
+    if lock is not None:
         try:
-            listing = get_json(f"{base_url}/api/tape/days")
-        except Exception as e:
-            listing = {}
-            log(f"nube no disponible ({e}); se sigue con lo grabado en el PC")
-        for sym, days in sorted(listing.items()):
-            if symbols and sym not in symbols:
-                continue
-            for d in days:
-                day = d["day"]
-                if day < cutoff or official(sym, day):
+            try:
+                listing = get_json(f"{base_url}/api/tape/days")
+            except Exception as e:
+                listing = {}
+                log(f"nube no disponible ({e}); se sigue con lo grabado en el PC")
+            for sym, days in sorted(listing.items()):
+                if symbols and sym not in symbols:
                     continue
-                tape = day_path(cloud_root, sym, day)
-                state = tape.with_suffix(".json")
-                prev = json.loads(state.read_text(encoding="utf-8")) if state.exists() else {}
-                if tape.exists() and prev.get("saved_at") == d.get("saved_at"):
-                    continue  # sin cambios en la nube
-                tape.parent.mkdir(parents=True, exist_ok=True)
-                try:
-                    tmp = download(f"{base_url}/api/tape/{sym}/{day}", tape)
-                    meta = tf.read_meta(tmp)
-                    if meta.get("symbol") != sym or meta.get("date") != day or not meta.get("n"):
-                        raise ValueError(f"archivo inesperado: {meta.get('symbol')} {meta.get('date')} n={meta.get('n')}")
-                    tf.read_tape(tmp)  # se lee entero: un archivo cortado no reemplaza al anterior
-                except Exception as e:
-                    Path(str(tape) + ".descarga").unlink(missing_ok=True)
-                    log(f"{sym} {day}: descarga invalida ({e}); se conserva lo anterior")
-                    continue
-                os.replace(tmp, tape)
-                state.write_text(json.dumps(dict(d, synced_at=int(time.time() * 1000))), encoding="utf-8")
+                for d in days:
+                    day = d["day"]
+                    if day < cutoff or official(sym, day):
+                        continue
+                    tape = day_path(cloud_root, sym, day)
+                    state = tape.with_suffix(".json")
+                    prev = json.loads(state.read_text(encoding="utf-8")) if state.exists() else {}
+                    if tape.exists() and prev.get("saved_at") == d.get("saved_at"):
+                        continue  # sin cambios en la nube
+                    tape.parent.mkdir(parents=True, exist_ok=True)
+                    try:
+                        tmp = download(f"{base_url}/api/tape/{sym}/{day}", tape)
+                        meta = tf.read_meta(tmp)
+                        if meta.get("symbol") != sym or meta.get("date") != day or not meta.get("n"):
+                            raise ValueError(f"archivo inesperado: {meta.get('symbol')} {meta.get('date')} n={meta.get('n')}")
+                        tf.read_tape(tmp)  # se lee entero: un archivo cortado no reemplaza al anterior
+                    except Exception as e:
+                        remove_quietly(Path(str(tape) + ".descarga"))
+                        log(f"{sym} {day}: descarga invalida ({e}); se conserva lo anterior")
+                        continue
+                    if not replace_retry(tmp, tape):
+                        remove_quietly(tmp)
+                        log(f"{sym} {day}: el archivo de la nube sigue en uso; se baja en la proxima vuelta")
+                        continue
+                    state.write_text(json.dumps(dict(d, synced_at=int(time.time() * 1000))), encoding="utf-8")
+        finally:
+            release_lock(lock)
 
     if not build:
         return []
