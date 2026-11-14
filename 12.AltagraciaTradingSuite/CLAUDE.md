@@ -63,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (17), ladder_checks.py (16) y book_levels_checks.py (12), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (16) y book_levels_checks.py (12), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -801,7 +801,18 @@ Pedido del usuario, la primera de las ideas de indicadores con el mapa y el ladd
 - **"Retirado" lejos no es carnada:** la mayoría de los retirados de BTC estaban a 1.7-5% del precio. Lo que importa es un retiro cerca del precio, el patrón que mide `book_study`.
 - **Probado** en la copia aislada con el libro real de BTC y ETH (sin grabar): BTC 15m con 30 minutos y 2 horas, y ETH 5m con Oscuro. Con Oscuro, sobre un mapa muy cargado, las líneas se distinguen poco. No se probó en Electron.
 - **Pruebas:** `server/tests/book_levels_checks.py` (12) y, en App 1, `tests/sustainedlevels.test.mjs` (4).
-- **El mapa suma compra y venta (visto el 14/11):** BTC tuvo compras en 65,500 de 55 a 200 BTC desde las 07:52. A las 10:19 se fueron y en el mismo precio aparecieron ventas por 74 a 113 BTC: el soporte pasó a resistencia. El mapa sigue mostrando la franja porque suma los dos lados en cada precio; "Niveles" sí los separa (el de compra termina "consumido" y el de venta empieza aparte).
+- **El mapa sumaba compra y venta (visto el 14/11):** BTC tuvo compras en 65,500 de 55 a 200 BTC desde las 07:52. A las 10:19 se fueron y en el mismo precio aparecieron ventas por 74 a 113 BTC: el soporte pasó a resistencia. El mapa seguía mostrando la franja porque sumaba los dos lados en cada precio; "Niveles" los separa (el de compra termina "consumido" y el de venta empieza aparte), y desde ese día el mapa también (ver abajo).
+
+## Mapa con compra y venta por separado (14/11)
+
+Pedido del usuario tras ver el caso de 65,500.
+
+- **Selector** "Compra y venta" (de fábrica) o "Una escala" (las dos sumadas, como antes), en la barra de la pestaña "Mapa", guardado con el mapa (`sides`).
+- **Servidor:** `/api/book/heatmap` acepta `sides=1` y responde `cells_b` y `cells_a` en lugar de `cells`. Cada lado lleva su propio promedio ("toda") o su propio mínimo ("sostenida"): lo sostenido de un lado que aparece en un precio empieza de cero. Sin `sides`, igual que antes.
+- **Dibujo** (`liquidityMap.js` de App 1): cada columna guarda las dos (filas de compra y luego de venta) y cada precio se pinta con el lado que más tiene, en su color: los del interés abierto del estilo (Nítido azul y naranja, Oscuro `#5B8CFF` y `#FF9800`, Muhammad cobalto y minio), distintos de las velas. Transparente con poco y firme con mucho; en lo más alto se oscurece (fondo claro) o se aclara (fondo oscuro). La etiqueta del mapa suma la leyenda ■ compra ■ venta.
+- **Qué se ve:** con "Toda la liquidez", azul debajo del precio y naranja encima, con el borde siguiendo al precio. Con "Solo la sostenida", un soporte roto desaparece al irse las compras, y la resistencia en ese precio aparece en naranja cuando las ventas cumplen los minutos elegidos.
+- **Probado** en la copia aislada con el libro real de BTC, en 5m con los dos modos y con Nítido y Oscuro. No se probó en Electron.
+- **Pruebas:** `book_heatmap_checks.py` suma 5 (22): sumadas la franja sigue al cambiar de lado; por lado, la compra solo en la primera hora y la venta sostenida 30 minutos después. `liquiditymap.test.mjs` de App 1 suma 2 (12).
 
 ## Escritorio (Electron)
 

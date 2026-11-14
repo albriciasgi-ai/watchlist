@@ -54,6 +54,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Mapa con Compra y Venta por Separado
+
+**Pedido:** en BTC, una franja naranja en 65,500 no se borró cuando el precio la pasó. En el libro grabado, las compras de ese precio se fueron a las 10:19 y en el mismo precio aparecieron ventas: el mapa sumaba los dos lados. El usuario pidió separarlos.
+
+**Cambios:**
+1. **"Compra y venta"** (de fábrica) o "Una escala" en la pestaña "Mapa". Cada precio va con el lado que más tiene, en los colores del interés abierto del estilo (Nítido: azul la compra y naranja la venta), con leyenda.
+2. **Servidor:** `/api/book/heatmap` con `sides=1` da `cells_b` y `cells_a`, cada lado con su propio promedio o mínimo. Así un soporte roto desaparece y la resistencia en ese precio aparece cuando se sostiene.
+3. **App 1:** `liquidityMap.js` guarda y pinta los dos lados (`sideRamp`, `hexRgb`). App 1 no tiene el mapa.
+4. **Pruebas:** `book_heatmap_checks.py` (22) y `liquiditymap.test.mjs` de App 1 (12). Las demás siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- Probado en la copia aislada con el libro real de BTC, en los dos modos y con Nítido y Oscuro. No se probó en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Mapa con compra y venta por separado (14/11)"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Niveles de Liquidez Sostenida
 
 **Pedido:** de las ideas de indicadores con el mapa y el ladder, el usuario eligió los niveles sostenidos: como DOM Levels de ATAS, pero filtrados por tiempo y diciendo cómo terminó cada nivel.

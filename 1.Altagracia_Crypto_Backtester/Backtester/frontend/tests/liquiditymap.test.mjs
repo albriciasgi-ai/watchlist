@@ -3,7 +3,7 @@
 // Uso: node tests/liquiditymap.test.mjs
 import assert from 'node:assert/strict';
 
-const { LiquidityMapStore, decodeCells, visibleScale, ramp, buildImage, cellUsd, ENC } = await import('../src/components/liquidityMap.js');
+const { LiquidityMapStore, decodeCells, visibleScale, ramp, buildImage, cellUsd, ENC, sideRamp, hexRgb } = await import('../src/components/liquidityMap.js');
 
 let count = 0;
 const t = (name, fn) => { fn(); count++; console.log('ok', name); };
@@ -103,6 +103,36 @@ t('la imagen pone una columna por vela y el precio mas alto en la fila de arriba
   assert.ok(alpha(2, 3) > 200);   // vela 2, fila mas baja
   const faint = buildImage(cols, 4, { lo: 1, hi: 100 }, false, 0.5);
   assert.equal(faint.data[3], Math.round(img.data[3] * 0.5));
+});
+
+t('compra y venta por separado: la columna guarda las dos y la imagen pinta el lado que más tiene', () => {
+  const st = new LiquidityMapStore();
+  // 2 velas, 3 filas: vela 0 con compra en la fila 0; vela 1 con venta en la fila 0 (el soporte pasó a resistencia)
+  const r = { t0: 0, cols: 2, frame_ms: 900000, rows: 3, row0: 100, step: 20, sides: true, coverage: [100, 100],
+    cells_b: b64([80, 0, 0, 0, 0, 0]), cells_a: b64([0, 0, 0, 90, 0, 0]) };
+  assert.ok(st.merge(r));
+  assert.equal(st.column(0).length, 6);
+  assert.deepEqual([...st.column(900000)], [0, 0, 0, 90, 0, 0]);
+  const blue = [41, 98, 255];
+  const orange = [245, 124, 0];
+  const img = buildImage([st.column(0), st.column(900000)], 3, { lo: 1, hi: 100 }, false, 1, { b: blue, a: orange });
+  const px = (c, row) => [...img.data.slice(((3 - 1 - row) * 2 + c) * 4, ((3 - 1 - row) * 2 + c) * 4 + 4)];
+  assert.ok(px(0, 0)[2] > px(0, 0)[0], 'compra en azul');
+  assert.ok(px(1, 0)[0] > px(1, 0)[2], 'venta en naranja');
+  assert.equal(px(0, 1)[3], 0);
+  // otra respuesta sin lados es otra grilla: empieza de cero
+  st.merge({ t0: 0, cols: 1, frame_ms: 900000, rows: 3, row0: 100, step: 20, coverage: [100], cells: b64([5, 5, 5]) });
+  assert.equal(st.sides, false);
+  assert.equal(st.column(900000), null);
+});
+
+t('rampa de un lado: transparente con poco, firme con mucho; colores del estilo', () => {
+  assert.equal(sideRamp(0, [41, 98, 255])[3], 0);
+  assert.ok(sideRamp(1, [41, 98, 255])[3] >= 230);
+  assert.ok(sideRamp(1, [41, 98, 255])[2] < 255, 'en lo más alto se oscurece en fondo claro');
+  assert.ok(sideRamp(1, [41, 98, 255], true)[0] > 41, 'y se aclara en fondo oscuro');
+  assert.deepEqual(hexRgb('#2962FF'), [41, 98, 255]);
+  assert.deepEqual(hexRgb('rojo', [1, 2, 3]), [1, 2, 3]);
 });
 
 console.log(`\n${count} pruebas pasan`);
