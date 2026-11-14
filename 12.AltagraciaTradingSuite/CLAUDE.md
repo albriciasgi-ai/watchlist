@@ -56,14 +56,14 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book, y live/book_cloud de la nube)
 │   ├── book_cloud.py      Baja de la nube (Northflank) los minutos del libro que el PC no tiene completos
 │   ├── book_heatmap.py    Mapa de liquidez por vela y precio, para la pestaña "Mapa" (/api/book/heatmap)
-│   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro")
+│   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro"); App 1 las usa en su Observador (book_reading.py)
 │   ├── book_study.py      Medición de semanas: qué hace la liquidez al llegar el precio a tus zonas, contra zonas al azar
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
 │   ├── swing_rules.py     La regla del indicador Swing de App 1, en Python (sin red ni archivos)
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (11), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (18), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -856,6 +856,13 @@ Pedidos del usuario tras probar la defensa y los niveles.
   - App 1 (`ofElements.js`) los tiene en su catálogo con `book: true` y encendidos de fábrica; su modal dice "libro: solo en la suite". App 1 no los calcula.
 - **Probado** en la copia aislada con el libro, los trades, el almacén en vivo y las velas reales de BTC y ETH: el menú, el filtro al 80%, las zonas automáticas de BTC (estado de dos FVG de 1h y una visita que aguantó con 17M negociados) y los dos elementos en el modal y en la respuesta. No se probó en Electron. Nada está validado contra el azar.
 - **Pruebas:** `server/tests/book_events_checks.py` (11), `book_defense_checks.py` (15), y en App 1 `sustainedlevels.test.mjs` (6) y `liquiditymap.test.mjs` (14).
+- **Después (14/11): libro delgado (LD)**, el evento del libro que faltaba (`thin_book` en `book_events.py`):
+  - en la vela, lo que esperaba a 0.25% del precio (compra debajo más venta encima, promedio de sus minutos, libro de minutos) queda bajo el percentil 5 de las velas de las 24 horas anteriores (sin mirar el futuro; con menos de 20 velas no marca). Poca liquidez cerca: el precio se puede mover con poco;
+  - marca con celdas el lado más delgado: alcista (+1) si son las ventas, encima del precio; bajista si son las compras. Trae `bid` y `ask`;
+  - en App 1 (`ofElements.js`) con `book: true`, encendido de fábrica, en el grupo Continuación;
+  - en las 24 horas hasta el 14/11 a las 22 h, en 5m: BTC 31 de 288 velas, ETH 42 y SOL 46, casi todas del sábado por la tarde: el libro del sábado es más delgado que el del viernes, y el umbral sale de las 24 horas anteriores. Con percentil 10 marcaba el doble;
+  - pruebas: `book_events_checks.py` suma 7 (18).
+- **Medidas del libro en el Observador de App 1 (14/11):** las 9 del journal (`book_measures.py`) también van en la lectura de cada orden del Observador, en el grupo "Libro", y en su informe de ganadoras contra perdedoras. App 1 las importa con `book_reading.py` (ver `Backtester/CLAUDE.md`, "REGISTRO AUTOMÁTICO"). Solo órdenes desde el 13/11 a las 14:00 UTC, cuando hay libro grabado.
 
 ## Ladder para ejecutar (14/11)
 

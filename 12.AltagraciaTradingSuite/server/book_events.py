@@ -12,7 +12,11 @@
 #      MIN_HISTORY velas no marca). dir +1 si fueron compras que absorbieron venta (alcista), -1 al reves.
 # BL - Barrido del libro: un nivel sostenido (book_levels, 15 minutos o mas, el 5% mas grande de su lado) que se
 #      consumio en la vela: el precio llego y se lo comio. dir -1 si fue una compra barrida (bajista), +1 una venta.
-# Los dos se conocen al cerrar la vela. Son ayudas de lectura, sin validar contra el azar.
+# LD - Libro delgado: en la vela, lo que esperaba a THIN_BAND (0.25%) del precio, compra mas venta, promedio de sus
+#      minutos, queda bajo el percentil THIN_PCT (5) de las velas de las 24 horas anteriores (sin mirar el futuro; con
+#      menos de MIN_HISTORY velas no marca). Poca liquidez cerca: el precio se puede mover con poco. Marca el lado mas
+#      delgado: dir +1 si son las ventas (arriba, mas facil subir), -1 si son las compras.
+# Los tres se conocen al cerrar la vela. Son ayudas de lectura, sin validar contra el azar.
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
@@ -29,7 +33,10 @@ ABS_PCT = 90.0
 MIN_HISTORY = 20
 MIN_COVER = 0.8          # una vela necesita el 80% de sus minutos grabados
 BL_MINUTES = 15
-CATALOG = {"AB": ["Absorción en el libro", "band"], "BL": ["Barrido del libro (nivel sostenido)", "band"]}
+THIN_BAND = 0.0025
+THIN_PCT = 5.0
+CATALOG = {"AB": ["Absorción en el libro", "band"], "BL": ["Barrido del libro (nivel sostenido)", "band"],
+           "LD": ["Libro delgado (poca liquidez cerca del precio)", "mark"]}
 
 
 def _trade_grid(trades, t0: int, span: int, w: float, r0: int, nrows: int, start: int, end: int):
@@ -103,6 +110,51 @@ def absorption(cols, trades, frame_min: int, start: int, end: int, known_until: 
     return out
 
 
+def thin_book(cols, frame_min: int, start: int, end: int, known_until: int) -> List[dict]:
+    """Eventos LD de las velas que empiezan en [start, end). cols: minutos del libro desde 24 horas antes de start."""
+    if not cols or not any(not c[0].get("gap") for c in cols):
+        return []
+    t0, w, r0, B, A, mids = book_levels._matrix(cols)
+    span, nrows = B.shape
+    centers = (np.arange(nrows) + r0 + 0.5) * w
+    near_b = np.full(span, np.nan)
+    near_a = np.full(span, np.nan)
+    for i in range(span):
+        m = mids[i]
+        if not np.isfinite(m) or np.isnan(B[i, 0]):
+            continue
+        near_b[i] = float(B[i][(centers >= m * (1 - THIN_BAND)) & (centers <= m)].sum())
+        near_a[i] = float(A[i][(centers >= m) & (centers <= m * (1 + THIN_BAND))].sum())
+    frame = frame_min * MINUTE
+    first_c = t0 - t0 % frame
+    history = []
+    out = []
+    for c in range(first_c, t0 + span * MINUTE, frame):
+        ia, ib = max(0, (c - t0) // MINUTE), min(span, (c + frame - t0) // MINUTE)
+        if ib <= ia or c + frame > known_until:
+            continue
+        ok = np.isfinite(near_b[ia:ib])
+        if ok.sum() < MIN_COVER * frame_min:
+            continue
+        b = float(near_b[ia:ib][ok].mean())
+        a = float(near_a[ia:ib][ok].mean())
+        total = b + a
+        past = [v for (tc, v) in history if c - DAY <= tc < c]
+        history.append((c, total))
+        if c < start or c >= end or len(past) < MIN_HISTORY:
+            continue
+        thr = float(np.percentile(past, THIN_PCT))
+        if total >= thr:
+            continue
+        mid = float(mids[ia:ib][ok][-1])
+        up = a < b
+        lo, hi = (mid, mid * (1 + THIN_BAND)) if up else (mid * (1 - THIN_BAND), mid)
+        out.append({"code": "LD", "dir": 1 if up else -1, "t": int(c), "t0": int(c), "known": int(c + frame),
+                    "lo": round(lo, 10), "hi": round(hi, 10), "value": round(total), "thr": round(thr),
+                    "bid": round(b), "ask": round(a)})
+    return out
+
+
 def sweeps(cols, bars: Dict[int, Tuple[float, float, float]], frame_min: int, start: int, end: int,
            known_until: int) -> List[dict]:
     """Eventos BL: niveles sostenidos (15 minutos o mas) consumidos en la vela."""
@@ -127,7 +179,7 @@ _trades: Dict[str, book_study.Trades] = {}
 
 def detect(base, symbol: str, frame_min: int, start: int, end: int, known_until: int,
            bars: Optional[Dict[int, Tuple[float, float, float]]] = None) -> List[dict]:
-    """AB y BL de las velas que empiezan en [start, end). Sin libro grabado en esas horas, nada."""
+    """AB, BL y LD de las velas que empiezan en [start, end). Sin libro grabado en esas horas, nada."""
     end = min(end, known_until)
     if end <= start:
         return []
@@ -141,6 +193,7 @@ def detect(base, symbol: str, frame_min: int, start: int, end: int, known_until:
         trades = _trades[symbol] = book_study.Trades(symbol)
     trades.days = {d: v for d, v in trades.days.items() if d != book_store.day_of(known_until)}  # el dia en curso crece
     out = absorption(cols, trades, frame_min, start, end, known_until)
+    out += thin_book(cols, frame_min, start, end, known_until)
     if bars:
         out += sweeps([c for c in cols if c[0]["t"] >= start - book_levels.LOOKBACK_MIN * MINUTE], bars, frame_min,
                       start, end, known_until)

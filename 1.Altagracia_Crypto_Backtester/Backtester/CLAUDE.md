@@ -748,7 +748,7 @@ Tasas de BTC del 02/10 al 01/11/2026. Los umbrales de XD y SM usan solo velas co
 
 Queda fuera Market Weakness, sin regla en las láminas.
 
-**Con el libro grabado (14/11, solo en la suite):** `AB` Absorción en el libro y `BL` Barrido del libro (nivel sostenido), franjas con `book: true` en `ofElements.js`, encendidas de fábrica. Los calcula el servidor de la suite (`12.AltagraciaTradingSuite/server/book_events.py`) y los suma a su `/api/orderflow/elements`; App 1 no tiene libro de sus fechas y nunca los recibe.
+**Con el libro grabado (14/11, solo en la suite):** `AB` Absorción en el libro y `BL` Barrido del libro (nivel sostenido), franjas, y `LD` Libro delgado (poca liquidez a 0.25% del precio, bajo el percentil 5 de las 24 horas anteriores), celdas en el lado más delgado; con `book: true` en `ofElements.js`, encendidos de fábrica. Los calcula el servidor de la suite (`12.AltagraciaTradingSuite/server/book_events.py`) y los suma a su `/api/orderflow/elements`; App 1 no tiene libro de sus fechas y nunca los recibe.
 
 ### Setups como recetas (fase 3, 10/11)
 
@@ -1041,6 +1041,7 @@ GET  /api/observer/export/{symbol}                      CSV de todo el registro
 - `compute(symbol, frames, oi=None, live=None)` (13/11, para la suite): `oi` es la serie de OI que usar en lugar de la local (`oi_columns(..., series)`), y con `live=True` el delta lee también los días de la nube y el PC donde falta el oficial (`flow_columns(..., live)`). De esos días no cuentan las velas que tocan un hueco de 10 s o más (`LIVE_GAP_TOLERANCE_MS`) ni las posteriores al último guardado. Las reconexiones de 5.8 s no dejan su vela sin delta: medidas contra Bybit, dejaron el volumen de 0.1% a 0.6% bajo, y una vez 6.4%. Un día de la nube ilegible se salta. App 1 no los pasa: su tabla sigue igual y `VERSION` no cambió
 - `_cache_path()` usa una ruta relativa: el proceso debe correr en `backend/`
 - `reading()` se calcula al pedirla: no se guarda en el registro, así que una tabla nueva relee las órdenes viejas sin hacer nada
+- **Medidas del libro (14/11, pedido del usuario):** `backend/book_reading.py` importa `book_measures.py` de la suite (`12.AltagraciaTradingSuite/server`, sin copiarlo) y suma a `decision` sus 9 medidas, en el grupo "Libro": liquidez a ±0.5% y su percentil, desequilibrio, liquidez en tu entrada y su persistencia, cambio entre tu entrada y tu stop, y al llenarse lo retirado y lo negociado en tu entrada. Lee el libro que graba la suite (`OrderFlowData/live/book` y `live/book_cloud`), que existe desde el 13/11/2026 a las 14:00 UTC (`BOOK_SINCE_MS`): una orden simulada en una fecha anterior no las tiene, y sin la suite nada cambia. `/api/observer/measures` suma su catálogo, `_labels()` sus nombres, y el informe las compara solo entre ganadoras y perdedoras (los momentos sin entrada no tienen libro). Una por orden y estado queda en memoria. Prueba: `tests/test_book_reading.py` (4)
 
 ### Lectura de cada orden
 

@@ -1,4 +1,4 @@
-# Pruebas sin conexion de la absorcion (AB) y el barrido del libro (BL) como Elementos OF (book_events.py, 14/11/2026),
+# Pruebas sin conexion de la absorcion (AB), el barrido del libro (BL) y el libro delgado (LD) como Elementos OF (book_events.py, 14/11/2026),
 # con minutos del libro y trades armados a mano.
 # Uso, desde 12.AltagraciaTradingSuite/server:  python -B tests/book_events_checks.py
 import sys
@@ -92,6 +92,34 @@ sw = book_events.sweeps(cols, bars, FRAME, T0, T0 + 120 * MIN, T0 + 120 * MIN)
 check("barrido: el nivel sostenido consumido, bajista, en la vela en que se fue", len(sw) == 1 and sw[0]["code"] == "BL"
       and sw[0]["dir"] == -1 and sw[0]["t"] == T0 + 80 * MIN and sw[0]["lo"] == 995.0, str(sw))
 check("el barrido se conoce al cerrar su vela", book_events.sweeps(cols, bars, FRAME, T0, T0 + 120 * MIN, T0 + 82 * MIN) == [])
+
+# libro delgado: 30 velas con 10 a cada lado cerca del precio; en la ultima, las ventas cerca bajan a 1
+def thin_cols(ask_last=1.0, bid_last=10.0, gap_last=False):
+    cols = []
+    for m in range(CANDLES * FRAME):
+        last = m >= (CANDLES - 1) * FRAME
+        b = np.zeros(N, np.float32)
+        a = np.zeros(N, np.float32)
+        b[1] = bid_last if last else 10.0 + 0.01 * m     # compra en 1004.5, a 0.05% del precio
+        a[1] = ask_last if last else 10.0 + 0.01 * m     # venta en 1006.5
+        a[30] = 500.0                                     # en 1035.5, lejos (3%): no cuenta
+        cols.append(({"t": T0 + m * MIN, "step": 1, "tick": 1.0, "kmid": KMID, "n": N, "mid": 1005.0,
+                      "gap": gap_last and last}, {"twa_b": b, "twa_a": a}))
+    return cols
+
+
+ld = book_events.thin_book(thin_cols(), FRAME, start, end, end)
+check("libro delgado: poca liquidez cerca en la ultima vela, del lado de las ventas", len(ld) == 1 and ld[0]["code"] == "LD"
+      and ld[0]["dir"] == 1 and ld[0]["lo"] == 1005.0 and ld[0]["t"] == start and ld[0]["known"] == end, str(ld))
+check("lo lejano no cuenta: el valor es solo lo de a 0.25%", ld and ld[0]["value"] == round(10 * 1004.5 + 1 * 1006.5)
+      and ld[0]["thr"] > ld[0]["value"], str(ld))
+ld = book_events.thin_book(thin_cols(ask_last=10.0, bid_last=1.0), FRAME, start, end, end)
+check("si las compras son las delgadas, bajista y debajo del precio", len(ld) == 1 and ld[0]["dir"] == -1
+      and ld[0]["hi"] == 1005.0, str(ld))
+check("con liquidez normal no marca", book_events.thin_book(thin_cols(ask_last=10.3, bid_last=10.3), FRAME, start, end, end) == [])
+check("sin cerrar la vela no marca", book_events.thin_book(thin_cols(), FRAME, start, end, end - MIN) == [])
+check("sin velas anteriores para el umbral no marca", book_events.thin_book(thin_cols()[-10 * FRAME:], FRAME, start, end, end) == [])
+check("una vela sin grabar no marca", book_events.thin_book(thin_cols(gap_last=True), FRAME, start, end, end) == [])
 
 ok = sum(1 for _, passed in results if passed)
 print(f"\n{ok} de {len(results)} pruebas pasan")

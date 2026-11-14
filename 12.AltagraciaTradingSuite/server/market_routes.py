@@ -430,7 +430,7 @@ async def orderflow_elements(symbol: str, interval: str, start_timestamp: int, e
     symbol = candles.symbol_code(symbol)
     tf = _tf(interval)
 
-    # Absorcion (AB) y barrido del libro (BL), 14/11: del libro grabado por la suite (book_events.py). Las velas de 1
+    # Absorcion (AB), barrido del libro (BL) y libro delgado (LD), 14/11: del libro grabado por la suite (book_events.py). Las velas de 1
     # minuto (para saber si un nivel se consumio) solo si lo pedido toca los ultimos 3 dias: el libro empieza el 13/11.
     import book_events
     import book_levels

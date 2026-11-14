@@ -18,6 +18,7 @@ import zlib
 
 import numpy as np
 
+import book_reading
 import measures
 import observer
 
@@ -184,6 +185,10 @@ def reading(trade, table=None):
         "references": references(trade, atr),
         "outcome": outcome(trade, table),
     }
+    # Medidas del libro grabado por la suite (14/11/2026), como en su journal: solo desde el 13/11, cuando hay libro
+    book = book_reading.compute(trade)
+    if any(value is not None for value in book.values()):
+        result["decision"].update(book)
     fill_time = trade.get("fill_time")
     fill_row = measures.row_at(table, fill_time) if fill_time else None
     if fill_row is not None and fill_row != row:
@@ -297,6 +302,7 @@ def _labels():
         "ref_entry_atr": ("Entrada contra tu nivel de entrada (ATR)", "Referencias"),
         "ref_target_atr": ("Objetivo contra tu nivel objetivo (ATR)", "Referencias"),
     })
+    labels.update({item["key"]: (item["label"], item["group"]) for item in book_reading.catalog()})
     return labels
 
 
@@ -329,6 +335,7 @@ def report(symbol, blind="all", include_rewound=False, until=None):
     winners = [full_row(item) for item in closed if item["result"] > 0]
     losers = [full_row(item) for item in closed if item["result"] <= 0]
     with_order = keys + ["stop_atr", "reward_risk", "entry_gap_atr", "ref_nearest_atr", "ref_behind_atr", "ref_ahead_atr", "ref_count", "ref_entry_atr", "ref_target_atr"]
+    with_order += book_reading.keys()   # el libro: solo ganadoras contra perdedoras (los momentos sin entrada no lo tienen)
 
     marked = [item for item in items if item["references"].get("ref_count")]
     at_level = [item for item in closed if item["references"].get("ref_at_entry")]

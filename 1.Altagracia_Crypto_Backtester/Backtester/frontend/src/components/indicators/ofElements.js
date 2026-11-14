@@ -41,7 +41,8 @@ export const OF_ELEMENTS = {
   SM: { name: 'Small Min/Max Delta', shape: 'table', group: 'table', flow: true },
   // Con el libro grabado (14/11/2026): solo los da la suite (book_events.py); App 1 no tiene libro de sus fechas
   AB: { name: 'Absorción en el libro', shape: 'band', group: 'turn', book: true },
-  BL: { name: 'Barrido del libro (nivel sostenido)', shape: 'band', group: 'trend', book: true }
+  BL: { name: 'Barrido del libro (nivel sostenido)', shape: 'band', group: 'trend', book: true },
+  LD: { name: 'Libro delgado (poca liquidez cerca del precio)', shape: 'mark', group: 'trend', book: true }
 };
 
 export const OF_GROUPS = [
@@ -52,7 +53,7 @@ export const OF_GROUPS = [
 ];
 
 // Los de fábrica: unos pocos por grupo, para no saturar el gráfico. El resto se activa en el modal
-const DEFAULT_CODES = ['VA', 'OG', 'EX', 'DT', 'DD', 'AD', 'SW', 'VL', 'DB', 'DV', 'GR', 'BR', 'XD', 'SM', 'AB', 'BL'];
+const DEFAULT_CODES = ['VA', 'OG', 'EX', 'DT', 'DD', 'AD', 'SW', 'VL', 'DB', 'DV', 'GR', 'BR', 'XD', 'SM', 'AB', 'BL', 'LD'];
 
 export function defaultOFElementsConfig() {
   return {

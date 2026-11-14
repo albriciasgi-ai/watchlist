@@ -3487,7 +3487,9 @@ async def observer_measures(request: Request, symbol: str):
     """Medidas disponibles y estado de la tabla del símbolo. Si falta, se prepara aparte."""
     safe = sanitize_filename(symbol)
     await run_in_threadpool(measures.table_for, safe)
-    return {"status": await run_in_threadpool(measures.status, safe), "measures": measures.catalog()}
+    # más las del libro grabado por la suite (14/11/2026), si está: solo órdenes desde el 13/11
+    import book_reading
+    return {"status": await run_in_threadpool(measures.status, safe), "measures": measures.catalog() + book_reading.catalog()}
 
 
 @app.get("/api/observer/patterns/{symbol}")

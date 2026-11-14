@@ -54,6 +54,25 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Libro Delgado y Medidas del Libro en el Observador
+
+**Pedido:** lo que faltaba del plan del libro: el evento "libro delgado" (poca profundidad cerca del precio) y las medidas del libro en el Observador de App 1, que solo tenía el journal de la suite.
+
+**Cambios:**
+1. **Libro delgado (LD)** en Elementos OF: lo que espera a 0.25% del precio en la vela queda bajo el percentil 5 de las 24 horas anteriores. Marca con celdas el lado más delgado: alcista si son las ventas, bajista si son las compras. Lo calcula la suite (`book_events.py`); App 1 lo tiene en su catálogo, encendido de fábrica.
+2. **Observador de App 1:** las 9 medidas del libro del journal en la lectura de cada orden (grupo "Libro") y en el informe de ganadoras contra perdedoras. `book_reading.py` importa `book_measures.py` de la suite sin copiarlo.
+3. **Pruebas:** `book_events_checks.py` (18) y `test_book_reading.py` de App 1 (4). Las demás siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva. **Reiniciar el backend de App 1 (9000)** para las medidas del libro.
+- El libro existe desde el 13/11/2026: una orden de App 1 simulada en una fecha anterior queda sin estas medidas.
+- LD marcó en 5m, en las 24 horas hasta el 14/11 a las 22 h, 31 de 288 velas en BTC, 42 en ETH y 46 en SOL, casi todas del sábado por la tarde. El umbral sale de las 24 horas anteriores, y el libro del sábado es más delgado que el del viernes. No está validado contra el azar.
+- Probado en la copia aislada con el libro real: LD en la ruta de Elementos OF de BTC 15m y en el modal. Las medidas, con una orden de BTC de hace 3 horas (9 medidas en 0.25 s). No se probó con una orden real en la pantalla de App 1 ni en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Menú "Capas", filtro, zonas automáticas y absorción y barrido del libro (14/11)", "Después", y `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "REGISTRO AUTOMÁTICO"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Líneas de la Cinta para el Análisis, sin Vencer y con Estilo
 
 **Pedido:** que las líneas de la cinta en firme se puedan incluir en el análisis del trade (Observador), que no se borren con el tiempo sino solo a mano, y poder cambiar su estilo: se veían muy protagonistas.
