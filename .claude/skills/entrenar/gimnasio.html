@@ -1,0 +1,534 @@
+<title>Gimnasio de Order Flow</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Diseño: una mesa de práctica. Arriba la repetición de hoy (lo único que hay que hacer), debajo el mapa de etapas como una escalera de precios, y el progreso como una cinta. Compra/venta del footprint como colores de estado. */
+:root {
+  --bg: #F6F7F5; --surface: #FFFFFF; --ink: #17201C; --muted: #5C6A63; --line: #DDE3DF;
+  --buy: #0B8A73; --buy-soft: #DDF1EC; --sell: #D9473A; --sell-soft: #FBE6E3; --gold: #B7861B; --gold-soft: #F6EDD5;
+  --accent: #1F5FBF; --accent-soft: #E3ECF9;
+  --display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111613; --surface: #19201C; --ink: #E4EBE7; --muted: #94A39B; --line: #2B352F;
+  --buy: #2BC2A3; --buy-soft: #133029; --sell: #F2766A; --sell-soft: #3A1E1B; --gold: #E0B54A; --gold-soft: #33290F;
+  --accent: #6FA0F0; --accent-soft: #1A2740; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111613; --surface: #19201C; --ink: #E4EBE7; --muted: #94A39B; --line: #2B352F;
+  --buy: #2BC2A3; --buy-soft: #133029; --sell: #F2766A; --sell-soft: #3A1E1B; --gold: #E0B54A; --gold-soft: #33290F;
+  --accent: #6FA0F0; --accent-soft: #1A2740; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5 }
+.wrap { max-width: 1060px; margin: 0 auto; padding-block: 24px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.01em }
+h1 { font-size: 30px; font-weight: 800 }
+h2 { font-size: 19px; font-weight: 700 }
+h3 { font-size: 16px; font-weight: 700 }
+.eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); font-weight: 600 }
+.muted { color: var(--muted) }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px }
+header p { margin: 4px 0 0; max-width: 60ch; color: var(--muted) }
+.stats { display: flex; gap: 18px; flex-wrap: wrap }
+.stat { display: grid }
+.stat b { font-family: var(--mono); font-size: 22px; font-weight: 500 }
+.stat span { font-size: 12px; color: var(--muted) }
+
+/* Hoy */
+.today { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); overflow: hidden }
+.today > div { padding: 22px; min-width: 0 }
+.today .log { border-left: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 92%, var(--accent) 8%) }
+@media (max-width: 760px) { .today { grid-template-columns: 1fr } .today .log { border-left: 0; border-top: 1px solid var(--line) } }
+.tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent) }
+.tag.review { background: var(--gold-soft); color: var(--gold) }
+.tag.kind-reconocer { background: var(--buy-soft); color: var(--buy) }
+.tag.kind-anticipar { background: var(--sell-soft); color: var(--sell) }
+.tag.kind-proceso { background: var(--accent-soft); color: var(--accent) }
+.where { margin: 10px 0 14px; font-size: 14px; color: var(--muted) }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px }
+.steps li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; align-items: baseline }
+.steps li b { font-family: var(--mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em }
+.steps li:nth-child(1) b { color: var(--accent) }
+.steps li:nth-child(2) b { color: var(--buy) }
+.steps li:nth-child(3) b { color: var(--gold) }
+.trap { margin-top: 14px; font-size: 14px; padding: 8px 10px; border-left: 3px solid var(--sell); background: var(--sell-soft); border-radius: 0 6px 6px 0 }
+.goal { margin-top: 10px; font-size: 13px; color: var(--muted) }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center }
+form { display: grid; gap: 12px }
+label { font-size: 13px; color: var(--muted); display: grid; gap: 4px }
+input, select, textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; width: 100% }
+textarea { min-height: 60px; resize: vertical }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.conf { display: flex; gap: 6px }
+.conf label { flex: 1; display: block; cursor: pointer }
+.conf input { position: absolute; opacity: 0; width: 1px }
+.conf span { display: block; text-align: center; padding: 6px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; color: var(--ink) }
+.conf input:checked + span { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600 }
+.conf input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px }
+button { font: inherit; cursor: pointer; border-radius: 6px; padding: 8px 14px; border: 1px solid var(--line); background: var(--surface); color: var(--ink) }
+button.primary { background: var(--ink); color: var(--surface); border-color: var(--ink); font-weight: 600 }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+button:disabled { opacity: 0.5; cursor: default }
+.timer { font-family: var(--mono); font-size: 26px }
+.win { padding: 10px 12px; border-radius: 8px; background: var(--buy-soft); color: var(--buy); font-weight: 600 }
+.note { font-size: 13px; color: var(--muted) }
+
+/* Escalera de etapas */
+.ladder { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface) }
+.stage { display: grid; grid-template-columns: 210px minmax(0, 1fr); border-top: 1px solid var(--line) }
+.stage:first-child { border-top: 0 }
+@media (max-width: 680px) { .stage { grid-template-columns: 1fr } }
+.stage-head { padding: 14px 16px; border-right: 1px solid var(--line); display: grid; align-content: start; gap: 2px }
+@media (max-width: 680px) { .stage-head { border-right: 0; padding-bottom: 4px } }
+.stage-head .tool { font-size: 12px; color: var(--muted) }
+.skills { padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 8px; align-content: start }
+.chip { text-align: left; display: grid; gap: 2px; min-width: 190px; flex: 1 1 190px; max-width: 290px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface) }
+.chip .name { font-weight: 600; font-size: 14px }
+.chip .meta { font-size: 12px; color: var(--muted); font-family: var(--mono) }
+.bar { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden }
+.bar i { display: block; height: 100%; background: var(--accent) }
+.chip.done { border-color: color-mix(in srgb, var(--buy) 45%, var(--line)) }
+.chip.done .bar i { background: var(--buy) }
+.chip.due { border-color: var(--gold) }
+.chip.selected { outline: 2px solid var(--accent); outline-offset: 1px }
+
+/* Progreso */
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px }
+@media (max-width: 760px) { .grid2 { grid-template-columns: 1fr } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0 }
+.days { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; height: 70px }
+.days div { background: var(--line); border-radius: 2px; min-height: 3px }
+.days div.on { background: var(--buy) }
+.days-l { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted) }
+.log-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; max-height: 300px; overflow-y: auto }
+.log-list li { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 8px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13px; align-items: baseline }
+.log-list li:first-child { border-top: 0 }
+.log-list .x { border: 0; padding: 0 4px; color: var(--muted); background: none }
+.pct.good { color: var(--buy) } .pct.bad { color: var(--sell) }
+.coach-out { white-space: pre-wrap; font-size: 14px; background: var(--bg); border-radius: 8px; padding: 10px 12px; min-height: 40px }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px }
+summary { cursor: pointer; font-family: var(--display); font-weight: 700 }
+.method { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 14px }
+.method div { font-size: 14px }
+.method b { display: block; font-family: var(--display) }
+.src { font-size: 12px; color: var(--muted); margin-top: 12px }
+.src a { color: var(--accent) }
+.status { font-size: 12px; color: var(--muted) }
+@media (prefers-reduced-motion: no-preference) { .win { animation: pop .35s ease-out } @keyframes pop { from { transform: scale(.97); opacity: .4 } to { transform: none; opacity: 1 } } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Tu práctica diaria · 10 a 15 minutos</div>
+      <h1>Gimnasio de Order Flow</h1>
+      <p>Una habilidad pequeña a la vez, practicada en tu propia herramienta: predices, revelas y anotas. La teoría llega cuando la necesitas.</p>
+    </div>
+    <div class="stats" aria-label="Resumen">
+      <div class="stat"><b id="sStreak">0</b><span>días seguidos</span></div>
+      <div class="stat"><b id="sReps">0</b><span>repeticiones</span></div>
+      <div class="stat"><b id="sDone">0/0</b><span>habilidades dominadas</span></div>
+    </div>
+  </header>
+
+  <section class="today" aria-labelledby="tTitle">
+    <div>
+      <div class="row"><span class="eyebrow">Hoy</span><span id="tWhy" class="tag">Siguiente</span><span id="tKind" class="tag"></span></div>
+      <h2 id="tTitle" style="margin-top:8px">Cargando…</h2>
+      <div id="tWhere" class="where"></div>
+      <ol class="steps" id="tSteps"></ol>
+      <div id="tTrap" class="trap"></div>
+      <div id="tGoal" class="goal"></div>
+    </div>
+    <div class="log">
+      <div class="row" style="justify-content:space-between">
+        <h3>Anota la sesión</h3>
+        <div class="row"><span id="timer" class="timer mono" aria-live="off">10:00</span><button type="button" id="timerBtn">Empezar</button></div>
+      </div>
+      <form id="logForm">
+        <div class="pair">
+          <label>Repeticiones<input id="fReps" type="number" min="1" max="200" value="10" required></label>
+          <label><span id="fHitsLabel">Aciertos</span><input id="fHits" type="number" min="0" max="200" value="0" required></label>
+        </div>
+        <div>
+          <div class="note" style="margin-bottom:4px">¿Qué tan seguro te sentiste, en general?</div>
+          <div class="conf" role="radiogroup" aria-label="Confianza">
+            <label><input type="radio" name="conf" value="1" id="c1"><span>Adivinaba</span></label>
+            <label><input type="radio" name="conf" value="2" id="c2" checked><span>Algo</span></label>
+            <label><input type="radio" name="conf" value="3" id="c3"><span>Lo veía</span></label>
+          </div>
+        </div>
+        <label>Una cosa que notaste (opcional)<textarea id="fNote" maxlength="500" placeholder="Ej.: en las velas de mucho volumen el delta engaña menos"></textarea></label>
+        <button class="primary" type="submit" id="saveBtn">Guardar sesión</button>
+        <div id="win" class="win" hidden></div>
+        <div id="dbStatus" class="status"></div>
+      </form>
+    </div>
+  </section>
+
+  <section aria-labelledby="mapTitle" style="display:grid;gap:12px">
+    <div class="row" style="justify-content:space-between">
+      <h2 id="mapTitle">La escalera</h2>
+      <span class="note">Toca una habilidad para practicarla hoy. El orden es una recomendación, no un candado.</span>
+    </div>
+    <div class="ladder" id="ladder"></div>
+  </section>
+
+  <section class="grid2">
+    <div class="panel">
+      <h2>Últimos 14 días</h2>
+      <div class="days" id="days" aria-label="Repeticiones por día"></div>
+      <div class="days-l"><span>hace 13 días</span><span>hoy</span></div>
+      <h3 style="margin-top:6px">Sesiones</h3>
+      <ul class="log-list" id="logList"></ul>
+    </div>
+    <div class="panel">
+      <h2>Pregúntale al entrenador</h2>
+      <p class="note" style="margin:0">Cuéntale qué viste o qué no entendiste. Responde corto y te deja una tarea de 5 minutos en tu herramienta.</p>
+      <textarea id="coachQ" placeholder="Ej.: vi un AB en BTC 5m pero el precio siguió bajando. ¿Qué miro la próxima vez?"></textarea>
+      <div class="row"><button type="button" id="coachBtn">Preguntar</button><span id="coachSt" class="status"></span></div>
+      <div id="coachOut" class="coach-out" hidden></div>
+    </div>
+  </section>
+
+  <details>
+    <summary>Por qué funciona así (2 minutos)</summary>
+    <div class="method">
+      <div><b>Predice antes de mirar</b>Decir qué crees que pasa y después comprobarlo fija más que mirar la respuesta. Es la práctica de recuperación, una de las técnicas mejor respaldadas.</div>
+      <div><b>Una habilidad a la vez</b>Práctica deliberada: aislar una pieza, repetirla con respuesta inmediata y llevar la cuenta, como propone Steenbarger para traders.</div>
+      <div><b>Muchas repeticiones cortas</b>El ojo del experto se entrena viendo muchos casos con la respuesta al lado (aprendizaje perceptual), más que leyendo descripciones.</div>
+      <div><b>Volver a lo ya dominado</b>Lo dominado vuelve como repaso a 1, 3, 7, 14 y 30 días. Separar las repeticiones sostiene lo aprendido; mezclar habilidades viene después.</div>
+      <div><b>Pequeño y diario</b>Diez minutos pegados a algo que ya haces cada día, y celebrar al terminar. La motivación sube con el progreso visible, no al revés.</div>
+      <div><b>Reconocer no es predecir</b>Reconocer un elemento debe llegar al 80%. Anticipar el precio no: ahí la meta es juntar casos y comparar tu % con el 50% del azar. Saber cuándo no sabes también es avanzar.</div>
+    </div>
+    <div class="src">Fuentes:
+      <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10950551" target="_blank" rel="noopener">práctica de recuperación (meta-análisis)</a> ·
+      <a href="https://digitalpromise.org/2015/02/07/five-learning-strategies-that-work/" target="_blank" rel="noopener">estrategias de Dunlosky et al.</a> ·
+      <a href="https://kellmanlab.psych.ucla.edu/research-perceptual-learning-and-development.php" target="_blank" rel="noopener">aprendizaje perceptual (Kellman)</a> ·
+      <a href="https://nexusfi.com/a/psychology/deliberate-practice-trading-performance" target="_blank" rel="noopener">práctica deliberada en trading</a> ·
+      <a href="https://www.jigsawtrading.com/blog/6-stages-of-order-flow-mastery-part-1" target="_blank" rel="noopener">ejercicios antes de operar</a> ·
+      <a href="https://admiredleadership.com/book-summaries/tiny-habits" target="_blank" rel="noopener">Tiny Habits</a>
+    </div>
+  </details>
+</div>
+
+<script>
+// ---- Plan: etapas y habilidades -------------------------------------------------------------
+const APP1 = 'App 1 · reproducción con "Fecha al azar y oculta"';
+const STAGES = [
+  { id: 's1', name: 'Leer una vela', tool: APP1 + ', Order Flow encendido', skills: [
+    { id: 'f1', kind: 'reconocer', name: '¿Quién ganó la vela?',
+      where: 'BTC 15m, zoom medio: celdas visibles, sin el número de delta (16 a 59 px por vela).',
+      steps: ['Elige una vela cerrada y mira sus celdas. Di "ganó compra" o "ganó venta", y si fue por poco o por mucho.',
+              'Acerca el zoom hasta ver el delta bajo la vela.',
+              'Acierto si el lado coincide. Repite con la vela siguiente.'],
+      trap: 'El color de la vela no es el delta: una vela verde puede cerrar con la venta ganando.' },
+    { id: 'f2', kind: 'reconocer', name: 'Delta contra el color',
+      where: 'BTC 15m, zoom medio. Revela alejando la vista: con menos de 16 px por vela salen los rombos de delta contrario.',
+      steps: ['Recorre 20 velas y señala las que crees que tienen el delta en contra de su color.',
+              'Aleja el zoom y mira dónde salen los rombos.',
+              'Cuenta aciertos: rombos que señalaste. Un rombo que no viste es un fallo.'],
+      trap: 'Solo cuenta si el delta en contra es al menos el 20% del volumen de la vela; uno chico no saca rombo.' },
+    { id: 'f3', kind: 'anticipar', name: 'Stacked: ¿la franja aguanta?',
+      where: 'BTC 5m o 15m, Order Flow con zoom (franjas de stacked a la derecha de la vela).',
+      steps: ['Cuando el precio vuelva a una franja de stacked, pausa la reproducción y di "aguanta" o "la cruza".',
+              'Reproduce hasta que el precio se aleje de la franja o la pase con claridad.',
+              'Anota. Mira también si el stacked era a favor o en contra del movimiento.'],
+      trap: 'No estás buscando 80%: estás juntando casos para saber si a ti te sirve.' },
+  ]},
+  { id: 's2', name: 'Elementos del footprint', tool: APP1 + ', Elementos OF con un solo código encendido', skills: [
+    { id: 'e1', kind: 'reconocer', name: 'Encuentra el Exhaustion Print (EX)',
+      where: 'Elementos OF con todos los códigos apagados. BTC 15m.',
+      steps: ['En 20 velas, señala dónde crees que el lado pasivo del extremo quedó casi en cero.',
+              'Enciende solo EX en el modal y mira dónde marca.',
+              'Acierto: marca que señalaste. Después prueba con DD (Delta Divergence) y AD.'],
+      trap: 'EX mira el extremo donde la vela empieza; no la mecha más larga.' },
+    { id: 'e2', kind: 'anticipar', name: '¿Giro o sigue?',
+      where: 'Elementos OF con EX, DT, DD y AD encendidos.',
+      steps: ['Cada vez que aparezca una marca nueva, pausa y di "gira" o "sigue" para las 3 velas siguientes.',
+              'Reproduce 3 velas.',
+              'Anota qué código era. Con 20 casos por código ya ves cuál te dice algo.'],
+      trap: 'Un elemento de giro sin una zona detrás casi no dice nada. Fíjate dónde aparece.' },
+    { id: 'e3', kind: 'anticipar', name: 'Barridos y órdenes grandes',
+      where: 'Elementos OF con SW, BR y GR encendidos.',
+      steps: ['En cada franja nueva de barrido u orden grande, di si el precio vuelve a ella en las 10 velas siguientes.',
+              'Reproduce 10 velas.',
+              'Anota si volvió y si la franja aguantó.'],
+      trap: 'Una orden grande puede ser alguien cerrando una posición, no abriendo.' },
+  ]},
+  { id: 's3', name: 'El libro en vivo', tool: 'Suite · pestaña "Mapa" con Ladder y Cinta. Solo mirar, sin operar', skills: [
+    { id: 'b1', kind: 'anticipar', name: 'Mapa: ¿rebota o cruza?',
+      where: 'Capas: "Compra y venta", "Solo la sostenida" 30 min, filtro "Solo lo grande" en 60.',
+      steps: ['Elige la franja grande más cercana al precio. Di si el precio rebotará o la cruzará cuando llegue.',
+              'Espera a que llegue. Mientras, sigue con otra moneda.',
+              'Anota. Si la franja desapareció antes de llegar, anótalo aparte: fue un retiro.'],
+      trap: 'Una franja que aparece en el último minuto no es sostenida; la que lleva horas pesa más.' },
+    { id: 'b2', kind: 'anticipar', name: 'Ladder: ¿se queda o se retira?',
+      where: 'Ladder con step automático; mira las cifras en negrita y la columna de agregado/retirado.',
+      steps: ['Cuando el precio se acerque a una cifra en negrita, di si se va a quedar hasta que el precio llegue.',
+              'Mira la columna Δ: rojo es retiro, verde es agregado.',
+              'Anota. Con el tiempo verás qué monedas tienen muros de verdad.'],
+      trap: 'Casi todo lo que se ve en el libro se cancela. Retirarse lejos del precio es normal.' },
+    { id: 'b3', kind: 'anticipar', name: 'Cinta: ¿la orden grande mueve?',
+      where: 'Cinta con mínimo automático. Mira las filas en negrita (3 veces el mínimo).',
+      steps: ['Tras una orden en negrita, di hacia dónde irá el precio en el minuto siguiente.',
+              'Espera un minuto.',
+              'Anota. Si quieres, déjala en firme como línea para verla luego en el gráfico.'],
+      trap: 'Un barrido (rango de precios) dice más que una orden grande en un solo precio.' },
+    { id: 'b4', kind: 'anticipar', name: 'Defensa: ¿qué letra saldrá?',
+      where: 'Capas: Defensa de zona encendida. Usa tus líneas o las zonas automáticas.',
+      steps: ['Cuando el precio llegue a una zona, di qué pasará: D defensa, B barrido, X retiro y cruce o C consumida.',
+              'Espera a que salga la letra en el gráfico.',
+              'Acierto si coincide. Mira el "quedó %" de la etiqueta.'],
+      trap: 'Las letras se conocen tarde, cuando la visita se resuelve: es para entrenar el ojo, no para entrar.' },
+    { id: 'b5', kind: 'anticipar', name: 'Libro delgado: ¿se mueve más?',
+      where: 'Gráfico principal con Elementos OF y LD encendido. Marcos de 5m.',
+      steps: ['Cuando salga un LD, di si la vela siguiente tendrá más rango que la anterior.',
+              'Espera a que cierre.',
+              'Anota. Fíjate de qué lado marcó y hacia dónde fue el precio.'],
+      trap: 'LD dice que hay poca resistencia, no hacia dónde va el precio.' },
+  ]},
+  { id: 's4', name: 'Juntar todo', tool: APP1 + ' con órdenes y el Observador', skills: [
+    { id: 'c1', kind: 'proceso', name: 'Zona primero, flujo después', target: 20,
+      where: 'Tus zonas dibujadas (perfil, FVG, niveles). Órdenes con stop desde la caja TP/SL.',
+      steps: ['Solo en una zona tuya: lee el footprint y decide "entro" o "no entro". Si entras, elige en el análisis los 1 o 2 elementos que te convencieron.',
+              'Deja correr la orden hasta su stop u objetivo.',
+              'Acierto = seguiste el proceso (zona, lectura, stop, lo elegido). Cada 20, abre el informe del Observador.'],
+      trap: 'El footprint confirma; no da la razón para estar ahí. Sin zona, no hay trade.' },
+    { id: 'c2', kind: 'reconocer', name: 'Mezcla',
+      where: 'Una sesión con 3 habilidades que ya dominaste, alternándolas.',
+      steps: ['Haz las repeticiones alternando: una de cada habilidad, en orden distinto cada vez.',
+              'Revela como en cada habilidad.',
+              'Anota el total. Mezclar cuesta más y por eso sirve.'],
+      trap: 'Si baja mucho tu %, vuelve un día a la habilidad que falla, sola.' },
+  ]},
+  { id: 's5', name: 'Cuenta Demo', tool: 'Suite · panel de trading con la cuenta Demo y el journal', skills: [
+    { id: 'd1', kind: 'proceso', name: 'Un trade, bien hecho', target: 10,
+      where: 'Máximo 2 trades Demo por sesión, tamaño pequeño.',
+      steps: ['Antes de enviar: zona, lectura del flujo y del libro, stop, y lo elegido en el análisis.',
+              'Cuando cierre, haz el análisis post-trade con una conclusión de una línea.',
+              'Acierto = proceso completo, sin importar si ganó.'],
+      trap: 'Ganar un trade mal hecho enseña lo contrario. Cuenta el proceso, no el resultado.' },
+  ]},
+];
+const SKILLS = STAGES.flatMap(s => s.skills.map(k => ({ ...k, stage: s })));
+const BYID = Object.fromEntries(SKILLS.map(k => [k.id, k]));
+const KIND = { reconocer: 'Reconocer', anticipar: 'Anticipar', proceso: 'Proceso' };
+const REVIEW_DAYS = [1, 3, 7, 14, 30];
+const DAY = 86400000;
+
+// ---- Estado ---------------------------------------------------------------------------------
+let sessions = [];          // {id, skill, at, reps, hits, conf, note}
+let chosen = null;          // habilidad elegida a mano para hoy
+let db = null, coach = null;
+
+const pct = (h, r) => r ? Math.round(100 * h / r) : 0;
+const dayKey = t => { const d = new Date(t); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+
+function skillStats(id) {
+  const k = BYID[id];
+  const list = sessions.filter(s => s.skill === id).sort((a, b) => a.at - b.at);
+  const reps = list.reduce((a, s) => a + s.reps, 0), hits = list.reduce((a, s) => a + s.hits, 0);
+  let masteredAt = null, progress = 0;
+  if (k.kind === 'reconocer') {
+    for (let i = 2; i < list.length; i++) {
+      const last3 = list.slice(i - 2, i + 1);
+      if (last3.every(s => s.reps >= 8 && s.hits / s.reps >= 0.8)) { masteredAt = list[i].at; break; }
+    }
+    const tail = list.slice(-3).filter(s => s.reps >= 8 && s.hits / s.reps >= 0.8).length;
+    progress = masteredAt ? 1 : tail / 3;
+  } else {
+    const target = k.kind === 'anticipar' ? 60 : (k.target || 20);
+    let acc = 0;
+    for (const s of list) { acc += s.reps; if (acc >= target) { masteredAt = s.at; break; } }
+    progress = Math.min(1, reps / target);
+  }
+  let due = null;
+  if (masteredAt) {
+    const reviews = list.filter(s => s.at > masteredAt).length;
+    if (reviews < REVIEW_DAYS.length) {
+      const lastAt = reviews ? list.filter(s => s.at > masteredAt).slice(-1)[0].at : masteredAt;
+      due = lastAt + REVIEW_DAYS[reviews] * DAY;
+    }
+  }
+  return { list, reps, hits, masteredAt, progress, due };
+}
+
+function nextSkill() {
+  const now = Date.now();
+  if (chosen) return { id: chosen, why: 'Elegida por ti' };
+  const dues = SKILLS.map(k => ({ k, st: skillStats(k.id) })).filter(x => x.st.due && x.st.due <= now)
+    .sort((a, b) => a.st.due - b.st.due);
+  if (dues.length) return { id: dues[0].k.id, why: 'Repaso pendiente', review: true };
+  const open = SKILLS.find(k => !skillStats(k.id).masteredAt);
+  return { id: (open || SKILLS[0]).id, why: open ? 'Siguiente' : 'Todo dominado: repite la que quieras' };
+}
+
+function goalText(k, st) {
+  if (k.kind === 'reconocer') return `Dominada con 3 sesiones seguidas de 8 o más repeticiones al 80%. Llevas ${st.reps} repeticiones, ${pct(st.hits, st.reps)}% de acierto.`;
+  if (k.kind === 'anticipar') return `Dominada con 60 repeticiones anotadas (llevas ${st.reps}). Tu acierto: ${st.reps ? pct(st.hits, st.reps) + '%' : '—'}; el azar da 50%.`;
+  return `Dominada con ${k.target} repeticiones (llevas ${st.reps}). Proceso completo: ${st.reps ? pct(st.hits, st.reps) + '%' : '—'}.`;
+}
+
+// ---- Dibujo ---------------------------------------------------------------------------------
+const $ = id => document.getElementById(id);
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function render() {
+  const pick = nextSkill(), k = BYID[pick.id], st = skillStats(k.id);
+  $('tTitle').textContent = k.name;
+  $('tWhy').textContent = pick.why; $('tWhy').className = 'tag' + (pick.review ? ' review' : '');
+  $('tKind').textContent = KIND[k.kind]; $('tKind').className = 'tag kind-' + k.kind;
+  $('tWhere').textContent = k.stage.tool + '. ' + k.where;
+  const ol = $('tSteps'); ol.replaceChildren();
+  ['Predice', 'Revela', 'Anota'].forEach((w, i) => { const li = el('li'); li.append(el('b', '', w), el('span', '', k.steps[i])); ol.append(li); });
+  $('tTrap').textContent = k.trap;
+  $('tGoal').textContent = goalText(k, st);
+  $('fHitsLabel').textContent = k.kind === 'proceso' ? 'Con el proceso completo' : 'Aciertos';
+
+  const lad = $('ladder'); lad.replaceChildren();
+  let doneCount = 0;
+  STAGES.forEach((s, i) => {
+    const row = el('div', 'stage'), head = el('div', 'stage-head');
+    head.append(el('span', 'eyebrow', 'Etapa ' + (i + 1)), el('h3', '', s.name), el('span', 'tool', s.tool));
+    const box = el('div', 'skills');
+    s.skills.forEach(sk => {
+      const x = skillStats(sk.id);
+      if (x.masteredAt) doneCount++;
+      const due = x.due && x.due <= Date.now();
+      const b = el('button', 'chip' + (x.masteredAt ? ' done' : '') + (due ? ' due' : '') + (sk.id === k.id ? ' selected' : ''));
+      b.type = 'button';
+      const state = x.masteredAt ? (due ? 'repaso hoy' : x.due ? 'dominada · repaso ' + new Date(x.due).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : 'dominada')
+        : x.reps ? `${x.reps} rep · ${pct(x.hits, x.reps)}%` : 'sin empezar';
+      const bar = el('div', 'bar'); const fill = el('i'); fill.style.width = Math.round(x.progress * 100) + '%'; bar.append(fill);
+      b.append(el('span', 'name', sk.name), el('span', 'meta', KIND[sk.kind] + ' · ' + state), bar);
+      b.addEventListener('click', () => { chosen = sk.id; render(); $('tTitle').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      box.append(b);
+    });
+    row.append(head, box); lad.append(row);
+  });
+
+  // Resumen
+  $('sReps').textContent = sessions.reduce((a, s) => a + s.reps, 0);
+  $('sDone').textContent = doneCount + '/' + SKILLS.length;
+  const days = new Set(sessions.map(s => dayKey(s.at)));
+  let streak = 0, t = Date.now();
+  if (!days.has(dayKey(t))) t -= DAY;
+  while (days.has(dayKey(t))) { streak++; t -= DAY; }
+  $('sStreak').textContent = streak;
+
+  // 14 días
+  const d = $('days'); d.replaceChildren();
+  const per = []; for (let i = 13; i >= 0; i--) { const key = dayKey(Date.now() - i * DAY); per.push(sessions.filter(s => dayKey(s.at) === key).reduce((a, s) => a + s.reps, 0)); }
+  const max = Math.max(10, ...per);
+  per.forEach(v => { const c = el('div', v ? 'on' : ''); c.style.height = Math.max(3, Math.round(70 * v / max)) + 'px'; c.title = v + ' repeticiones'; d.append(c); });
+
+  // Lista
+  const ul = $('logList'); ul.replaceChildren();
+  const recent = [...sessions].sort((a, b) => b.at - a.at).slice(0, 40);
+  if (!recent.length) ul.append(el('li', 'note', db ? 'Todavía no hay sesiones. La primera tarda 10 minutos.' : 'Las sesiones aparecen aquí cuando se pueda guardar.'));
+  recent.forEach(s => {
+    const li = el('li'); const sk = BYID[s.skill];
+    li.append(el('span', 'mono muted', new Date(s.at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })));
+    const mid = el('span'); const p = pct(s.hits, s.reps);
+    mid.append(document.createTextNode((sk ? sk.name : s.skill) + ' · '), el('span', 'mono pct ' + (sk && sk.kind === 'reconocer' ? (p >= 80 ? 'good' : 'bad') : ''), `${s.hits}/${s.reps} (${p}%)`));
+    if (s.note) { mid.append(el('br')); mid.append(el('span', 'note', s.note)); }
+    const x = el('button', 'x', '×'); x.type = 'button'; x.title = 'Borrar esta sesión'; x.setAttribute('aria-label', 'Borrar esta sesión');
+    x.addEventListener('click', () => removeSession(s.id, x));
+    li.append(mid, x); ul.append(li);
+  });
+}
+
+// ---- Guardar --------------------------------------------------------------------------------
+$('logForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const reps = Math.round(+$('fReps').value), hits = Math.round(+$('fHits').value);
+  if (!(reps >= 1) || !(hits >= 0) || hits > reps) { $('dbStatus').textContent = 'Los aciertos no pueden pasar de las repeticiones.'; return; }
+  if (!db) { $('dbStatus').textContent = 'No se puede guardar en esta vista. Ábrela con tu cuenta de claude.ai.'; return; }
+  const k = BYID[nextSkill().id];
+  const before = skillStats(k.id);
+  const body = { skill: k.id, at: Date.now(), reps, hits, conf: +(document.querySelector('input[name=conf]:checked')?.value || 2), note: $('fNote').value.trim().slice(0, 500) };
+  $('saveBtn').disabled = true; $('dbStatus').textContent = 'Guardando…';
+  try {
+    await db.collection('sesiones').add(body);
+    $('dbStatus').textContent = '';
+    $('fNote').value = ''; $('fHits').value = 0;
+    const lastP = before.list.length ? pct(before.list.at(-1).hits, before.list.at(-1).reps) : null;
+    let msg = `+${reps} repeticiones de "${k.name}". Llevas ${before.reps + reps}.`;
+    if (lastP != null && pct(hits, reps) > lastP) msg += ` Mejor que tu última sesión (${lastP}% → ${pct(hits, reps)}%).`;
+    const w = $('win'); w.textContent = msg; w.hidden = false;
+    chosen = null; stopTimer();
+  } catch (e) {
+    $('dbStatus').textContent = e && e.code === 'quota_exceeded' ? 'El registro está lleno: borra sesiones viejas.' : 'No se guardó. Intenta otra vez en un momento.';
+  } finally { $('saveBtn').disabled = false; }
+});
+
+async function removeSession(id, btn) {
+  if (!db) return;
+  if (btn.dataset.armed !== '1') { btn.dataset.armed = '1'; btn.textContent = '¿Borrar?'; setTimeout(() => { btn.dataset.armed = ''; btn.textContent = '×'; }, 3000); return; }
+  try { await db.collection('sesiones').doc(id).delete(); } catch { $('dbStatus').textContent = 'No se pudo borrar.'; }
+}
+
+// ---- Temporizador ---------------------------------------------------------------------------
+let tEnd = null, tInt = null;
+function stopTimer() { clearInterval(tInt); tInt = null; tEnd = null; $('timer').textContent = '10:00'; $('timerBtn').textContent = 'Empezar'; }
+$('timerBtn').addEventListener('click', () => {
+  if (tInt) { stopTimer(); return; }
+  tEnd = Date.now() + 10 * 60000; $('timerBtn').textContent = 'Parar';
+  tInt = setInterval(() => {
+    const left = Math.max(0, tEnd - Date.now());
+    $('timer').textContent = String(Math.floor(left / 60000)).padStart(2, '0') + ':' + String(Math.floor(left / 1000) % 60).padStart(2, '0');
+    if (!left) { clearInterval(tInt); tInt = null; $('timerBtn').textContent = 'Empezar'; $('timer').textContent = 'Listo'; }
+  }, 500);
+});
+
+// ---- Entrenador -----------------------------------------------------------------------------
+$('coachBtn').addEventListener('click', async () => {
+  const q = $('coachQ').value.trim();
+  if (!q) { $('coachSt').textContent = 'Escribe primero qué viste o qué duda tienes.'; return; }
+  if (!coach) { $('coachSt').textContent = 'El entrenador no está disponible en esta vista.'; return; }
+  const k = BYID[nextSkill().id], st = skillStats(k.id);
+  const recent = [...sessions].sort((a, b) => b.at - a.at).slice(0, 6).map(s => `${BYID[s.skill]?.name || s.skill}: ${s.hits}/${s.reps}${s.note ? ' — ' + s.note : ''}`).join('\n');
+  const prompt = `Eres el entrenador de un trader que está aprendiendo order flow en cripto (Bybit). Aprende practicando, no le gusta leer teoría. Responde en español, en 6 líneas o menos, directo y concreto, sin listas largas ni jerga sin explicar. Si algo no se sabe o no está validado, dilo. Termina siempre con una sola tarea de 5 minutos que pueda hacer en su herramienta.
+
+Su herramienta: App 1 (reproducción histórica con fecha oculta; indicador Order Flow con footprints, imbalances y stacked; "Elementos OF" con códigos como EX Exhaustion Print, DT Delta Tail, DD Delta Divergence, AD Acumulación/Distribución, SW Market Sweep, BR barrido real, GR orden grande; Observador que registra cada orden y compara ganadoras con perdedoras). La suite en vivo: pestaña Mapa con el mapa de liquidez del libro (compra azul, venta naranja), Niveles sostenidos, Defensa de zona (letras D defensa, A absorción, B barrido, R retiro y rebote, X retiro y cruce, C consumida), Ladder con agregado/retirado en 5 s, Cinta de órdenes grandes, y en Elementos OF los eventos del libro AB absorción, BL barrido de un nivel sostenido y LD libro delgado (poca liquidez a 0.25% del precio).
+
+Habilidad que practica ahora: "${k.name}" (${KIND[k.kind]}). Lleva ${st.reps} repeticiones, ${pct(st.hits, st.reps)}% de acierto.
+Últimas sesiones:
+${recent || '(ninguna todavía)'}
+
+Lo que cuenta o pregunta:
+${q}`;
+  $('coachBtn').disabled = true; $('coachSt').textContent = 'Pensando…'; const out = $('coachOut'); out.hidden = false; out.textContent = '';
+  try {
+    const r = await coach(prompt, { onText: ({ text }) => { out.textContent = text; } });
+    out.textContent = r.text; $('coachSt').textContent = '';
+  } catch (e) {
+    if (e && e.code === 'not_granted') { $('coachSt').textContent = 'El entrenador quedó desactivado en esta vista.'; coach = null; }
+    else if (e && e.code === 'rate_limited') $('coachSt').textContent = 'Demasiadas preguntas seguidas. Espera un poco.';
+    else $('coachSt').textContent = 'No respondió. Intenta otra vez.';
+    if (!out.textContent) out.hidden = true;
+  } finally { $('coachBtn').disabled = false; }
+});
+
+// ---- Arranque -------------------------------------------------------------------------------
+render();
+(async () => {
+  try { coach = await window.claude?.use?.('sample') || null; } catch { coach = null; }
+  if (!coach) { $('coachBtn').disabled = true; $('coachSt').textContent = 'Disponible al abrir la página en claude.ai.'; }
+})();
+(async () => {
+  try { db = await window.claude?.use?.('db') || null; } catch { db = null; }
+  if (!db) { $('dbStatus').textContent = 'Para guardar tu progreso, abre la página con tu cuenta de claude.ai.'; render(); return; }
+  const timer = setTimeout(() => { $('dbStatus').textContent = 'Tu registro todavía no responde; lo que veas puede estar desactualizado.'; }, 10000);
+  db.collection('sesiones').orderBy('at', 'desc').limit(1000).onSnapshot(snap => {
+    sessions = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(s => BYID[s.skill] || true)
+      .map(s => ({ ...s, reps: +s.reps || 0, hits: +s.hits || 0, at: +s.at || 0 }));
+    if (!snap.metadata.fromCache) { clearTimeout(timer); if ($('dbStatus').textContent.startsWith('Tu registro')) $('dbStatus').textContent = ''; }
+    render();
+  }, () => { clearTimeout(timer); $('dbStatus').textContent = 'No se pudo leer tu registro.'; });
+})();
+</script>

@@ -54,6 +54,21 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Entrenamiento - 14 Noviembre 2026: Gimnasio de Order Flow y Skill /entrenar
+
+**Pedido:** un plan para aprender order flow (footprints, Elementos OF y el libro) practicando con las herramientas que ya hay, a pasos pequeños y sin mucha teoría.
+
+**Cambios:**
+1. **Gimnasio de Order Flow** (artefacto privado, https://claude.ai/artifact/H8pzTyhuPvJcHheAEcQVho): 5 etapas y 16 habilidades, cada una con su ejercicio "predice, revela y anota" en App 1 o en la suite, registro de sesiones, repasos a 1, 3, 7, 14 y 30 días y un entrenador. Fuente: `.claude/skills/entrenar/gimnasio.html`.
+2. **Skill `/entrenar`** (`.claude/skills/entrenar/SKILL.md`): sesión de práctica con Claude Code sobre las capturas del usuario. Lee y anota el registro del gimnasio, y comprueba cada lectura con `verificar.py` (solo lectura: delta, volumen, POC, imbalances, Elementos OF con AB, BL y LD, y lo que hizo el precio después).
+
+**IMPORTANTE:**
+- El skill aparece en una sesión nueva de Claude Code abierta en el repositorio.
+- Con "Fecha al azar y oculta" la captura no trae la fecha ni el precio real: ahí se corrige con lo que se ve.
+- Probado: `verificar.py` con velas reales de BTC 15m, y escribir y borrar una sesión de prueba en el registro. El entrenador de la página y una sesión completa de `/entrenar` no se probaron.
+
+---
+
 ### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Libro Delgado y Medidas del Libro en el Observador
 
 **Pedido:** lo que faltaba del plan del libro: el evento "libro delgado" (poca profundidad cerca del precio) y las medidas del libro en el Observador de App 1, que solo tenía el journal de la suite.
