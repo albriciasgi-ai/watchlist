@@ -5,6 +5,7 @@ import { getJson } from './api.js';
 import { linesFor, subscribeBook } from './botBook.js';
 import { TAB, URL_SYMBOL, URL_TIMEFRAME, onAnyDrawings, onSymbolsChanged } from './tabs.js';
 import TabsMenu from './TabsMenu.jsx';
+import LadderPanel, { LADDER_WIDTH } from './LadderPanel.jsx';
 
 /**
  * Pestaña "Mapa" (13/11/2026): el mapa de liquidez del libro grabado, en un gráfico aparte. Pedido del usuario: verlo
@@ -15,6 +16,8 @@ import TabsMenu from './TabsMenu.jsx';
  *   promedio de la vela. Sale de /api/book/heatmap del servidor, con lo grabado en el PC y lo bajado de la nube.
  * - Se abre con el botón "Mapa" del gráfico principal, con su moneda y su marco, y lo sigue hasta que aquí se elija
  *   otra moneda u otro marco. También desde el menú "Pestañas".
+ * - El ladder (14/11/2026), a la derecha: el libro de ahora de la misma moneda, del grabador de la suite. Se oculta con
+ *   el botón "Ladder".
  */
 
 const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
@@ -53,6 +56,8 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
   const [minutes, setMinutes] = useState(LIQUIDITY_MAP_MINUTES.includes(saved.minutes) ? saved.minutes : 30);
   // Sigue al gráfico principal (pestaña 1) mientras no se elija aquí otra moneda u otro marco
   const [follow, setFollow] = useState(TAB !== 1 && (URL_SYMBOL ? true : saved.follow !== false));
+  const [ladderOn, setLadderOn] = useState(saved.ladder !== false);
+  const [ladder, setLadder] = useState(saved.ladderSettings && typeof saved.ladderSettings === 'object' ? saved.ladderSettings : {});
   const [symbols, setSymbols] = useState([symbol]);
   const chartRef = useRef(null);
   const symbolRef = useRef(symbol);
@@ -60,11 +65,11 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
 
   useEffect(() => {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow }));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder }));
     } catch {
       // Sin almacenamiento la elección dura hasta cerrar la pestaña
     }
-  }, [symbol, tf, mode, minutes, follow]);
+  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder]);
 
   useEffect(() => {
     getJson('/api/suite/symbols').then(d => setSymbols(d.symbols)).catch(() => {});
@@ -110,6 +115,12 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
     return () => clearTimeout(timer);
   }, [active]);
 
+  // Al mostrar u ocultar el ladder el gráfico cambia de ancho
+  useEffect(() => {
+    const timer = setTimeout(() => chartRef.current?.forceRedraw?.(), 60);
+    return () => clearTimeout(timer);
+  }, [ladderOn]);
+
   const pickSymbol = (s) => { setFollow(false); setSymbol(s); };
   const pickTf = (t) => { setFollow(false); setTf(t); };
 
@@ -139,13 +150,15 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
             <input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} /> Seguir al gráfico principal
           </label>
         )}
+        <button type="button" className={`suite-btn ${ladderOn ? 'active' : ''}`} onClick={() => setLadderOn(v => !v)}
+          title="El libro de ahora de esta moneda, a la derecha del mapa">Ladder</button>
         <div className="suite-spacer" />
         <span className="wl-muted" title="El libro completo se graba desde el 13/11/2026: antes no hay mapa">Libro grabado desde el 13/11 · solo para mirar</span>
         <TabsMenu onModule={onModule} />
         <button type="button" className="suite-btn" onClick={onOpenTheme}>Estilo</button>
       </div>
       <div className="suite-main">
-        <div className="wl-chart" style={{ position: 'absolute', inset: 0 }}>
+        <div className="wl-chart" style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: ladderOn ? LADDER_WIDTH : 0 }}>
           <div className="backtesting-main" style={{ height: '100%' }}>
             <div className="timeframes-container" style={{ height: '100%' }}>
               <div className="timeframe-panel" style={{ display: 'block', height: '100%' }}>
@@ -177,6 +190,11 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
             </div>
           </div>
         </div>
+        {ladderOn && (
+          <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: LADDER_WIDTH }}>
+            <LadderPanel symbol={symbol} active={active} settings={ladder} onSettings={(patch) => setLadder(v => ({ ...v, ...patch }))} />
+          </div>
+        )}
       </div>
     </div>
   );

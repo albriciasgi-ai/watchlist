@@ -12,6 +12,8 @@ import sys
 import time
 from pathlib import Path
 
+import ladder
+
 logger = logging.getLogger("suite.recorder")
 WS_URL = "wss://stream.bybit.com/v5/public/linear"
 PING_SECONDS = 20
@@ -91,12 +93,15 @@ class TradeFeed:
         except ValueError:
             return
         topic = msg.get("topic") or ""
-        if not topic.startswith("publicTrade.") or self.tape is None:
+        if not topic.startswith("publicTrade."):
             return
         trades = msg.get("data") or []
         if not trades:
             return
         symbol = topic.split(".", 1)[1]
+        ladder.add_trades(symbol, trades)   # lo negociado del ladder (14/11), aunque otro proceso grabe
+        if self.tape is None:
+            return
         try:
             if self.tape.disconnected_at is not None:
                 self.tape.mark_connected(int(trades[0].get("T", 0)) or None)

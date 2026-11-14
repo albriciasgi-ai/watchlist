@@ -54,6 +54,30 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 14 Noviembre 2026: Price Ladder en la Pestaña del Mapa
+
+**Pedido:** hacer el ladder en la misma pestaña del mapa, y revisar cómo va el mapa.
+
+**Cambios:**
+1. **Ladder** a la derecha del mapa (`LadderPanel.jsx`, `ladderLogic.js`), con el botón "Ladder" para mostrarlo u ocultarlo. Por precio:
+   - lo agregado o retirado en los últimos 5 s, en compra y en venta;
+   - la compra y la venta en espera, con los muros en negrita;
+   - lo negociado en la ventana, de 1 a 30 minutos;
+   - tus posiciones y órdenes;
+   - step automático o de 1 a 1000 ticks, y "Centrar". La rueda lo mueve.
+2. **Servidor:** `/api/book/ladder/{símbolo}` (`ladder.py`) lee el libro que el grabador ya tiene en memoria y los trades que ya recibe: no abre otra conexión a Bybit. Cada pedido tarda 5 a 7 ms.
+3. **Huecos del mapa:** en "Solo la sostenida", una vela queda en blanco si falta un minuto de su ventana. En BTC son del 13/11 15:15 a 15:42 y el 13/11 22:12, un minuto incompleto en la nube mientras la suite estaba cerrada.
+4. **Pruebas:** `ladder_checks.py` (16) y `ladder.test.mjs` (6). Las demás de la suite siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- Solo para mirar: falta el clic que pone el precio en la Limit del panel y la cola estimada de tu Limit.
+- Probado en la copia aislada con el libro real de BTC, en BTC 5m y en ETH 1m con Oscuro; las marcas de tus posiciones, solo en las pruebas. No se probó en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Price ladder en la pestaña "Mapa" (14/11)"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Mapa de Liquidez en una Pestaña Aparte
 
 **Pedido:** construir el mapa de liquidez como una opción del gráfico principal que abra una pestaña aparte. Así se mantiene la visualización original y sus datos sin mezclarlos con el mapa.

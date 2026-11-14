@@ -63,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16) y book_heatmap_checks.py (17), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (17) y ladder_checks.py (16), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -85,7 +85,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
         └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12) y openDecision.test.mjs (5), con node
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (6), con node
 ```
 
 ## Puertos
@@ -752,6 +752,27 @@ Pedido del usuario: construir el mapa como una opción del gráfico principal qu
   - **grabación de trades sin red al abrir:** la suite abrió sin red y la grabación de trades falló al pedir a Bybit los decimales de cada moneda. No volvió a intentarlo, y esa misma pieza (`local_tape.py`) baja la nube cada 15 minutos: faltaron footprints y Elementos OF de más de una hora. Ahora reintenta cada 30 s sin frenar el arranque, y `/api/suite/status` lo dice en `start_error`. Prueba: `5.Order_flow/backend/tests/local_tape_checks.py` (3). Vale también para el 11000;
   - **bajada del libro de la nube:** un pedido que pasa 2 minutos sin recibir nada se da por perdido. Antes esperaba 600 s: uno hecho sin red tuvo la vuelta colgada más de 10 minutos.
 
+## Price ladder en la pestaña "Mapa" (14/11)
+
+Pedido del usuario: el ladder en la misma pestaña del mapa.
+
+- **Dónde:** a la derecha del mapa, en la pestaña "Mapa" (`web/src/LadderPanel.jsx`, cuentas en `web/src/ladderLogic.js`). El botón "Ladder" de la barra lo muestra u oculta (encendido de fábrica); lo elegido se guarda con el mapa (`suite_mapa_<n>`: `ladder` y `ladderSettings`). El ladder usa 362 px y el mapa se angosta mientras está abierto.
+- **De dónde sale:** no abre otra conexión a Bybit.
+  - el libro, del grabador de la suite (`book_recorder`), que lo tiene en memoria al día con cada mensaje de `orderbook.full`;
+  - lo negociado, de los trades que ya recibe la grabación (`recorder.TradeFeed` llama a `ladder.add_trades`, aunque otro proceso grabe los trades). Se guardan 30 minutos por moneda;
+  - **servidor** (`server/ladder.py`): `GET /api/book/ladder/{símbolo}?step=<ticks, 0 = automático>&rows&center&window=60|300|900|1800`. Responde 503 si el libro no se graba en ese proceso (un solo proceso por carpeta graba el libro) o se está sincronizando.
+- **Columnas, por precio:** lo agregado o retirado en compra en los últimos 5 s (el libro de ahora contra el de hace ~5 s), compra en espera, precio, venta en espera, lo agregado o retirado en venta, y lo negociado en la ventana (venta agresiva en rojo y compra agresiva en verde).
+  - Cantidades en la moneda, como Bybit. Barras proporcionales a lo más grande a la vista; lo que pasa el percentil 95 de lo que espera a la vista, en negrita.
+  - Mejor compra y mejor venta más marcadas; el último precio, con recuadro.
+  - Tus posiciones (entrada, SL, TP, liquidación) y órdenes, con una etiqueta en su fila, o en el borde con su precio si quedan fuera.
+  - El pie dice los números exactos de la fila bajo el mouse; sin mouse, lo que espera a la vista y su desequilibrio.
+- **Controles:** step (automático ~0.01% del precio, en BTC 5 USD; o 1 a 1000 ticks), ventana de lo negociado (1 a 30 minutos) y "Centrar". Sigue al precio sin saltar con cada tick: se recentra cuando el precio queda a menos de 1/5 del borde. La rueda lo mueve y deja de seguirlo.
+- **Ritmo:** pide unas 4 veces por segundo, solo la moneda a la vista; cada 2 s si la pestaña no se ve. Cada pedido tardó 5 a 7 ms y pesa unos 2 KB (BTC, 40 filas).
+- **Solo para mirar:** no envía, mueve ni cancela órdenes. Falta (fases siguientes): clic que pone el precio en la Limit del panel de trading y la cola estimada de tu Limit.
+- **Probado** (14/11, copia aislada en 13300 con el libro real de BTC copiado a una carpeta temporal, grabación en esa carpeta, sin bot): BTC 5m con el mapa y el ladder juntos, ETH 1m con Oscuro, cambio de step y de ventana, rueda y pie con la fila bajo el mouse. Las marcas de las posiciones se probaron solo en `ladder.test.mjs`. No se probó en Electron.
+- **Pruebas:** `server/tests/ladder_checks.py` (16) y `web/tests/ladder.test.mjs` (6).
+- **Huecos que se ven en el mapa (revisado el 14/11):** en "Solo la sostenida", una vela queda en blanco si falta o quedó incompleto un minuto de su ventana. En BTC: del 13/11 15:15 a 15:42 (no se grabó en ningún lado) y el 13/11 22:12, un minuto incompleto en la nube (49 s) mientras la suite estaba cerrada hasta las 22:16.
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -793,11 +814,12 @@ C:\Python314\python.exe -B tests\swing_checks.py
 C:\Python314\python.exe -B tests\book_checks.py
 C:\Python314\python.exe -B tests\book_cloud_checks.py
 C:\Python314\python.exe -B tests\book_heatmap_checks.py
+C:\Python314\python.exe -B tests\ladder_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (6).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 
