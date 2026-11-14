@@ -68,7 +68,8 @@ export function ladderMarks(lines) {
       if (l.takeProfit > 0) out.push({ price: l.takeProfit, text: 'TP', side: 'target' });
       if (l.liqPrice > 0) out.push({ price: l.liqPrice, text: 'Liq', side: 'risk' });
     } else if (l.kind === 'order' && l.price > 0) {
-      out.push({ price: l.price, text: `${l.orderType === 'Market' ? 'Stop' : 'Limit'} ${l.qty}`, side: l.side === 'Buy' ? 'buy' : 'sell' });
+      out.push({ price: l.price, text: `${l.orderType === 'Market' ? 'Stop' : 'Limit'} ${l.qty}`, side: l.side === 'Buy' ? 'buy' : 'sell',
+        orderId: l.orderId || null });
     }
   }
   return out;
@@ -101,4 +102,49 @@ export function stepLabel(mult, tick, autoStep) {
 export function stepFor(settings, symbol) {
   const v = settings?.steps?.[symbol];
   return LADDER_STEPS.includes(v) ? v : 0;
+}
+
+/**
+ * Lado de la Limit que pide un clic en el ladder (14/11/2026): en las columnas de compra, una compra; en las de venta,
+ * una venta; en el precio o lo negociado, según dónde está el precio (debajo de la mejor venta, compra; encima de la
+ * mejor compra, venta). Entre las dos, null.
+ */
+export function pickSide(col, price, bestBid, bestAsk) {
+  if (col === 'db' || col === 'bid') return 'long';
+  if (col === 'ask' || col === 'da') return 'short';
+  if (price < bestAsk && price <= bestBid) return 'long';
+  if (price > bestBid && price >= bestAsk) return 'short';
+  return null;
+}
+
+/**
+ * Cola de una Limit tuya, al verla por primera vez en el ladder: lo que esperaba en su precio menos tu propia cantidad
+ * (se supone que estás al final). `late` si la orden ya llevaba un rato puesta: lo de delante es solo una estimación
+ * desde ese momento.
+ */
+export function startQueue(order, w, now) {
+  const resting = order.side === 'Buy' ? w.bid : w.ask;
+  return { price: w.price, qty: order.qty, since: w.since || now, ahead0: Math.max(0, resting - order.qty),
+    late: order.createdAt > 0 && now - order.createdAt > 15000 };
+}
+
+/**
+ * Cuánto tienes delante ahora, en un rango: lo negociado contra tu lado en tu precio siempre te acerca; lo que se retira
+ * no se sabe si estaba delante o detrás. Pesimista: todo lo retirado estaba detrás. Optimista: todo estaba delante (lo
+ * de delante no puede ser más que lo que espera ahora, sin lo tuyo).
+ */
+export function queueNow(track, w, side) {
+  const traded = side === 'Buy' ? w.sell : w.buy;          // venta agresiva contra tu compra, o compra contra tu venta
+  const resting = side === 'Buy' ? w.bid : w.ask;
+  const pessimistic = Math.max(0, track.ahead0 - traded);
+  const optimistic = Math.max(0, Math.min(pessimistic, resting - track.qty));
+  return { optimistic, pessimistic, traded, resting };
+}
+
+/** Texto de la cola: "delante 1.2–3.4 · negoc. 2.1" (o "delante ~3.4" si el rango es uno) */
+export function queueText(q, late = false) {
+  const lo = fmtQty(q.optimistic) || '0';
+  const hi = fmtQty(q.pessimistic) || '0';
+  const range = lo === hi ? `~${hi}` : `${lo}–${hi}`;
+  return `delante ${range}${q.traded > 0 ? ` · negoc. ${fmtQty(q.traded)}` : ''}${late ? ' · desde que se vio' : ''}`;
 }

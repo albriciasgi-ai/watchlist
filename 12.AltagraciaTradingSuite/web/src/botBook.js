@@ -106,7 +106,7 @@ export function linesFor(symbol) {
     if (!price) continue;
     lines.push(withPending({
       kind: 'order', id: `ord:${o.orderId}`, orderId: o.orderId, orderLinkId: o.orderLinkId || null, symbol: o.symbol, side: o.side, qty: Number(o.leavesQty || o.qty),
-      price, orderType: o.orderType, stopLoss: num(o.stopLoss), takeProfit: num(o.takeProfit),
+      price, orderType: o.orderType, stopLoss: num(o.stopLoss), takeProfit: num(o.takeProfit), createdAt: num(o.createdTime),
     }));
   }
   return lines;

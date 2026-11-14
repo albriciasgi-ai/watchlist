@@ -63,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (16), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (11), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (19), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (11), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -85,7 +85,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
         └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (8), con node
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), con node
 ```
 
 ## Puertos
@@ -857,6 +857,22 @@ Pedidos del usuario tras probar la defensa y los niveles.
 - **Probado** en la copia aislada con el libro, los trades, el almacén en vivo y las velas reales de BTC y ETH: el menú, el filtro al 80%, las zonas automáticas de BTC (estado de dos FVG de 1h y una visita que aguantó con 17M negociados) y los dos elementos en el modal y en la respuesta. No se probó en Electron. Nada está validado contra el azar.
 - **Pruebas:** `server/tests/book_events_checks.py` (11), `book_defense_checks.py` (15), y en App 1 `sustainedlevels.test.mjs` (6) y `liquiditymap.test.mjs` (14).
 
+## Ladder para ejecutar (14/11)
+
+Pedido del usuario: el ladder para ejecutar, del plan del price ladder.
+
+- **Clic → panel de trading:** un clic en las columnas de Compra (o su Δ) pone una **Limit de compra** a ese precio en el panel de trading; en las de Venta, una de venta; en el precio o lo negociado, según el lado del precio (`pickSide`). Entre la mejor compra y la mejor venta pide elegir columna. La fila se resalta y el pie del ladder lo dice.
+  - El precio viaja por `localStorage` (`suite_ladder_pick`, evento `storage`, que llega a las otras pestañas y ventanas) y por un evento de la misma ventana (`ladderPick.js`). Vence a los 30 s.
+  - El panel (`TradingPanel.jsx`) deja la caja TP/SL, pone Limit, el lado y el precio, y lo avisa: el stop, el objetivo y el tamaño se revisan ahí, y enviarla sigue pidiendo la **confirmación de siempre**. No hay órdenes de un clic.
+  - Si el panel está en otra moneda, lo avisa y no cambia nada. El gráfico que muestra esa moneda abre el panel si estaba oculto (`ChartView.jsx`).
+- **Cola estimada de tus Limit:** en la etiqueta de cada Limit tuya en el ladder, "delante 0.5–2.0 · negoc. 1.0".
+  - Al verla por primera vez: lo que esperaba en su precio exacto menos tu cantidad (se supone que estás al final). Si la orden llevaba más de 15 s puesta, dice "desde que se vio".
+  - Lo negociado contra tu lado en tu precio te acerca; lo retirado no se sabe si estaba delante o detrás, por eso es un rango: pesimista (todo estaba detrás) y optimista (todo estaba delante, sin pasar de lo que espera ahora).
+  - Servidor: `/api/book/ladder` acepta `watch=precio:desde,...` (hasta 10) y responde, en el precio exacto (un tick), lo que espera de cada lado y lo negociado desde esa hora; `partial` si los trades guardados (30 min) no llegan tan atrás.
+  - La cola de cada orden se guarda en `suite_ladder_queue` (sobrevive a recargar) y sale al llenarse o cancelarse la orden. `botBook.linesFor` suma `createdAt` a las órdenes.
+- **Probado** en la copia aislada con el libro en vivo de Bybit (sin bot): el clic en Compra a 65,410 en la pestaña del mapa llegó al panel de la pestaña del gráfico, que quedó en Limit, LONG y 65410 con su aviso. La cola se probó solo con las pruebas y con la ruta (sin órdenes reales). No se probó en Electron ni con el bot.
+- **Pruebas:** `server/tests/ladder_checks.py` (19) y `web/tests/ladder.test.mjs` (12).
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -906,7 +922,7 @@ C:\Python314\python.exe -B tests\book_events_checks.py
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (8).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 

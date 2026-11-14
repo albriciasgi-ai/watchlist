@@ -87,6 +87,19 @@ ladder.add_trades("XUSDT", [{"T": 1, "p": "1.5", "v": "2", "S": "Buy"}, {"T": "x
 q = ladder._trades["XUSDT"]
 check("add_trades guarda lo valido y recorta lo viejo", list(q) == [(ladder.TRADE_KEEP_MS + 10, 1.6, 1.0, False)], str(list(q)))
 
+# cola de tus Limit: lo que espera y lo negociado en el precio exacto desde una hora
+check("watch: lee precio:desde y descarta lo ilegible", ladder.parse_watch("99.5:1000,x,100.3:abc,99.9:2000") == [(99.5, 1000), (99.9, 2000)])
+wb = make_book()
+wt = deque([(500, 99.5, 9.0, False),     # antes de "desde": no cuenta
+            (1500, 99.5, 2.0, False),    # venta agresiva contra las compras de 99.5
+            (1600, 99.5, 0.5, True),
+            (1700, 99.6, 3.0, False)])   # otro precio
+w = ladder.watch(wb, "TESTUSDT", [(99.5, 1000), (100.3, 1000)], trades=wt)
+check("watch: espera en el precio exacto y lo negociado desde esa hora", w[0]["bid"] == 5 and w[0]["sell"] == 2.0
+      and w[0]["buy"] == 0.5 and w[1]["ask"] == 7 and w[1]["sell"] == 0, str(w))
+check("watch: avisa si los trades guardados no llegan tan atras", w[0]["partial"] is False
+      and ladder.watch(wb, "TESTUSDT", [(99.5, 400)], trades=wt)[0]["partial"] is True)
+
 ok = sum(1 for _, passed in results if passed)
 print(f"\n{ok} de {len(results)} pruebas pasan")
 sys.exit(0 if ok == len(results) else 1)

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { onPick, readPick } from './ladderPick.js';
 import { orderPreview, orderQuantity, priceAtPercent, AUTO_ENTRY_DISTANCE } from '@app1/components/backtesting/orderPlan.js';
 import AnalysisLevels from '@app1/components/backtesting/AnalysisLevels.jsx';
 import { chosenLabel, knownLevels } from '@app1/components/indicators/analysisLevels.js';
@@ -80,6 +81,28 @@ export default function TradingPanel({ symbol, shapes, onClose, onDecision }) {
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState(null);
   const touched = useRef(new Map()); // id de la caja -> { key, at }: la tocada mas recientemente manda
+  // Precio elegido en el ladder (14/11/2026): prepara una Limit a ese precio, sin la caja; se envía con la confirmación
+  const [ladderNote, setLadderNote] = useState(null);
+  const pickApplied = useRef(0);
+  useEffect(() => {
+    const apply = (pick) => {
+      if (!pick || pick.at <= pickApplied.current) return;
+      pickApplied.current = pick.at;
+      if (pick.symbol !== symbol) {
+        setLadderNote(`El ladder eligió un precio de ${pick.symbol}; este panel está en ${symbol}.`);
+        return;
+      }
+      setUseBox(false);
+      setOrderType('limit');
+      setLimitText(String(pick.price));
+      setManualSide(pick.side);
+      setTab('trading');
+      setResult(null);
+      setLadderNote(`Del ladder: Limit ${pick.side === 'long' ? 'de compra' : 'de venta'} a ${pick.price}. Revisa el stop, el objetivo y el tamaño, y confirma.`);
+    };
+    apply(readPick());          // elegido justo antes de abrir el panel
+    return onPick(apply);
+  }, [symbol]);
 
   useEffect(() => {
     try { localStorage.setItem(SIZE_KEY, JSON.stringify(size)); } catch { /* sin almacenamiento */ }
@@ -242,6 +265,7 @@ export default function TradingPanel({ symbol, shapes, onClose, onDecision }) {
           <div className="trading-controls">
             <h3>{symbol} {price > 0 && <span style={{ fontWeight: 400, fontSize: 13 }}>· {fmt(price, priceDigits)}</span>}</h3>
             {mode === 'LIVE' && <div className="suite-live-warning">Cuenta REAL: las órdenes usan dinero real.</div>}
+            {ladderNote && <div className="price-hint" style={{ marginBottom: 8 }}>{ladderNote}</div>}
 
             <div className="control-section">
               <label>Tipo de Orden</label>

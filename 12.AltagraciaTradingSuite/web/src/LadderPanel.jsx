@@ -1,20 +1,27 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { THEME } from '@app1/components/uiTheme.js';
 import { linesFor, subscribeBook } from './botBook.js';
-import { LADDER_STEPS, LADDER_WINDOWS, fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf, stepLabel, stepFor } from './ladderLogic.js';
+import { LADDER_STEPS, LADDER_WINDOWS, fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf, stepLabel, stepFor,
+  pickSide, startQueue, queueNow, queueText } from './ladderLogic.js';
+import { makePick, sendPick } from './ladderPick.js';
 
 /**
  * Price ladder (14/11/2026), en la pestaña "Mapa", a la derecha del mapa. Pedido del usuario: el ladder en la misma
  * pestaña del mapa. Sale del libro que la suite ya tiene en memoria (/api/book/ladder): no abre otra conexión a Bybit.
  * Columnas, por precio: lo agregado o retirado en compra en los últimos 5 s, compra en espera, precio, venta en espera,
  * lo agregado o retirado en venta, y lo negociado en la ventana elegida (compra agresiva y venta agresiva).
- * Marca tus posiciones (entrada, SL, TP, liquidación) y tus órdenes. Solo para mirar: no envía ni cambia nada.
+ * Marca tus posiciones (entrada, SL, TP, liquidación) y tus órdenes.
+ * Para ejecutar (14/11/2026): un clic en Compra pone una Limit de compra a ese precio en el panel de trading (en Venta,
+ * de venta); enviarla sigue pidiendo la confirmación del panel. Tus Limit llevan la cola estimada: lo que tienes delante,
+ * en un rango (lo retirado no se sabe si estaba delante o detrás).
  */
 
 export const LADDER_WIDTH = 362;   // las columnas suman 356, mas el borde
 const ROW_H = 17;
 const HEAD_H = 20;
-const FOOT_H = 34;
+const FOOT_H = 50;
+const QUEUE_KEY = 'suite_ladder_queue';   // cola de cada Limit tuya, por orden: sobrevive a recargar la pestaña
+const NOTICE_MS = 8000;
 const POLL_MS = 250;
 const HIDDEN_POLL_MS = 2000;
 // x y ancho de cada columna
@@ -38,7 +45,7 @@ function markColor(side) {
   return THEME.accent || '#2962FF';
 }
 
-function draw(canvas, data, error, hover, marks) {
+function draw(canvas, data, error, hover, marks, extra = {}) {
   const dpr = window.devicePixelRatio || 1;
   const w = canvas.clientWidth;
   const h = canvas.clientHeight;
@@ -173,7 +180,9 @@ function draw(canvas, data, error, hover, marks) {
     if (r < 0) { r = 0; arrow = '↑ '; } else if (r >= visibleRows) { r = visibleRows - 1; arrow = '↓ '; }
     const slot = used.get(r) || 0;
     used.set(r, slot + 1);
-    const label = arrow ? `${arrow}${m.text} ${m.price.toFixed(digits)}` : m.text;
+    const queue = m.orderId ? extra.queues?.get(m.orderId) : null;
+    const text = queue ? `${m.text} · ${queue}` : m.text;
+    const label = arrow ? `${arrow}${text} ${m.price.toFixed(digits)}` : text;
     ctx.font = `600 10px ${font}`;
     const tw = ctx.measureText(label).width + 8;
     const y = HEAD_H + r * ROW_H + 2;
@@ -186,6 +195,16 @@ function draw(canvas, data, error, hover, marks) {
     if (!arrow) {
       ctx.fillStyle = markColor(m.side);
       ctx.fillRect(col.price.x, HEAD_H + r * ROW_H + ROW_H - 2, col.price.w, 2);
+    }
+  }
+
+  // el precio recién mandado al panel, resaltado un momento
+  if (extra.pick && Date.now() - extra.pick.at < 1500) {
+    const r = rowOf(extra.pick.price, top, step, n);
+    if (r >= 0 && r < visibleRows) {
+      ctx.strokeStyle = THEME.accent || '#2962FF';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(1, HEAD_H + r * ROW_H + 1, w - 2, ROW_H - 2);
     }
   }
 
@@ -210,6 +229,14 @@ function draw(canvas, data, error, hover, marks) {
     ctx.fillText(`Step ${Number(step.toFixed(10))} · a la vista: compra ${fmtQty(b)} · venta ${fmtQty(a)} (${imb > 0 ? '+' : ''}${imb}%)`, 6, fy + 10);
     ctx.fillText(`Negociado ${win}${data.trades ? '' : ' (sin trades todavía)'} · Δ = lo agregado o retirado en ${data.change_s} s`, 6, fy + 25);
   }
+  const notice = extra.notice && Date.now() - extra.notice.at < NOTICE_MS ? extra.notice.text
+    : 'Clic en Compra o Venta: Limit a ese precio en el panel de trading';
+  ctx.fillStyle = extra.notice && Date.now() - extra.notice.at < NOTICE_MS ? (THEME.accent || '#2962FF') : muted;
+  ctx.fillText(notice.length > 64 ? `${notice.slice(0, 63)}…` : notice, 6, fy + 40);
+}
+
+function loadTracks() {
+  try { return JSON.parse(localStorage.getItem(QUEUE_KEY)) || {}; } catch { return {}; }
 }
 
 export default function LadderPanel({ symbol, active = true, settings, onSettings }) {
@@ -219,6 +246,10 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
   const hoverRef = useRef(null);
   const centerRef = useRef(null);
   const marksRef = useRef([]);
+  const queuesRef = useRef(new Map());   // orden -> texto de su cola
+  const tracksRef = useRef(loadTracks());
+  const noticeRef = useRef(null);
+  const pickRef = useRef(null);
   const [follow, setFollow] = useState(true);
   const followRef = useRef(true);
   followRef.current = follow;
@@ -227,7 +258,10 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
   const windowS = LADDER_WINDOWS.includes(settings?.window) ? settings.window : 300;
 
   const redraw = useCallback(() => {
-    if (canvasRef.current) draw(canvasRef.current, dataRef.current, errorRef.current, hoverRef.current, marksRef.current);
+    if (canvasRef.current) {
+      draw(canvasRef.current, dataRef.current, errorRef.current, hoverRef.current, marksRef.current,
+        { queues: queuesRef.current, notice: noticeRef.current, pick: pickRef.current });
+    }
   }, []);
 
   const rowsWanted = () => {
@@ -259,6 +293,10 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
       const rows = rowsWanted();
       const params = new URLSearchParams({ step: String(mult), rows: String(rows), window: String(windowS) });
       if (centerRef.current) params.set('center', String(centerRef.current));
+      // tus Limit de esta moneda: lo que espera y lo negociado en su precio exacto, para la cola
+      const limits = linesFor(symbol).filter(l => l.kind === 'order' && l.orderType === 'Limit' && l.orderId && l.price > 0);
+      const now = Date.now();
+      if (limits.length) params.set('watch', limits.map(o => `${o.price}:${tracksRef.current[o.orderId]?.since ?? now}`).join(','));
       try {
         const r = await fetch(`/api/book/ladder/${encodeURIComponent(symbol)}?${params}`);
         const d = await r.json().catch(() => ({}));
@@ -269,6 +307,20 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
         } else {
           errorRef.current = null;
           dataRef.current = d;
+          const queues = new Map();
+          const keep = {};
+          limits.forEach((o, k) => {
+            const w = d.watch?.[k];
+            if (!w) return;
+            const track = tracksRef.current[o.orderId] || startQueue(o, w, now);
+            keep[o.orderId] = track;
+            queues.set(o.orderId, `${queueText(queueNow(track, w, o.side), track.late)}${w.partial ? ' · parcial' : ''}`);
+          });
+          queuesRef.current = queues;
+          if (JSON.stringify(keep) !== JSON.stringify(tracksRef.current)) {
+            tracksRef.current = keep;   // las órdenes que ya no están (llenas o canceladas) salen
+            try { localStorage.setItem(QUEUE_KEY, JSON.stringify(keep)); } catch { /* sin almacenamiento */ }
+          }
           setScale(v => (v.symbol === symbol && v.tick === d.tick && (mult || v.auto === d.step) ? v
             : { symbol, tick: d.tick, auto: mult ? (v.symbol === symbol ? v.auto : null) : d.step }));
           const price = d.last || d.mid;
@@ -315,6 +367,28 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
     if (next !== hoverRef.current) { hoverRef.current = next; redraw(); }
   };
   const onLeave = () => { hoverRef.current = null; redraw(); };
+  // Clic: la Limit a ese precio va al panel de trading, que pide la confirmación de siempre
+  const onClick = (e) => {
+    const d = dataRef.current;
+    if (!d) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const i = Math.floor((e.clientY - rect.top - HEAD_H) / ROW_H);
+    if (i < 0 || i >= d.rows.length || e.clientY - rect.top >= rect.height - FOOT_H) return;
+    const col = COLS.find(c => x >= c.x && x < c.x + c.w)?.key;
+    const price = d.rows[i][0];
+    const side = pickSide(col, price, d.best_bid, d.best_ask);
+    const now = Date.now();
+    if (!side) {
+      noticeRef.current = { text: 'Ese precio está entre la mejor compra y la mejor venta: elige Compra o Venta', at: now };
+    } else {
+      sendPick(makePick(symbol, price, side, now));
+      pickRef.current = { price, at: now };
+      noticeRef.current = { text: `Al panel: Limit ${side === 'long' ? 'compra' : 'venta'} a ${price.toFixed(priceDigits(d.step, d.tick))} · confírmala allí`, at: now };
+    }
+    redraw();
+    setTimeout(redraw, 1600);
+  };
 
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', borderLeft: '1px solid var(--t-line, #d0d4da)' }}>
@@ -335,7 +409,8 @@ export default function LadderPanel({ symbol, active = true, settings, onSetting
           title="Seguir al precio. La rueda del mouse mueve el ladder y deja de seguirlo">Centrar</button>
       </div>
       <canvas ref={canvasRef} style={{ flex: 1, width: '100%', minHeight: 0, display: 'block' }}
-        onWheel={onWheel} onMouseMove={onMove} onMouseLeave={onLeave} />
+        onWheel={onWheel} onMouseMove={onMove} onMouseLeave={onLeave} onClick={onClick}
+        title="Clic en Compra o Venta: una Limit a ese precio en el panel de trading, que pide la confirmación" />
     </div>
   );
 }

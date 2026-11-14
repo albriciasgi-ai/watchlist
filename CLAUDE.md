@@ -54,6 +54,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 14 Noviembre 2026: Ladder para Ejecutar
+
+**Pedido:** el ladder para ejecutar.
+
+**Cambios:**
+1. **Clic en el ladder → panel de trading:** en Compra pone una Limit de compra a ese precio; en Venta, una de venta. El panel deja la caja TP/SL y avisa; el stop, el objetivo y el tamaño se revisan ahí, y enviarla sigue pidiendo la confirmación de siempre. El precio viaja entre pestañas y ventanas (`ladderPick.js`); si el panel estaba oculto, el gráfico de esa moneda lo abre.
+2. **Cola estimada** de tus Limit en el ladder: "delante 0.5–2.0 · negoc. 1.0". Lo negociado en tu precio te acerca; lo retirado da un rango, porque no se sabe si estaba delante.
+3. **Servidor:** `/api/book/ladder` con `watch=precio:desde` da lo que espera y lo negociado en el precio exacto.
+4. **Pruebas:** `ladder_checks.py` (19) y `ladder.test.mjs` (12).
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- Probado en la copia aislada con el libro en vivo: el clic llegó al panel de otra pestaña. La cola solo con pruebas, sin órdenes reales. No se probó en Electron ni con el bot.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Ladder para ejecutar (14/11)"
+
+---
+
 ### Altagracia Trading Suite + PanelOrderFlow - 14 Noviembre 2026: Una Bajada de la Nube a la Vez
 
 **Pedido:** el registro de la suite tenía errores al bajar los trades de la nube ("el proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso", ETH del 14/11). Tras un reinicio, la bajada anterior seguía corriendo y chocaba con la nueva.

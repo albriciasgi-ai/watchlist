@@ -1,6 +1,7 @@
 // Pruebas de las cuentas del price ladder (src/ladderLogic.js). Uso: node tests/ladder.test.mjs
 import assert from 'node:assert/strict';
-import { fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf, stepLabel, stepFor } from '../src/ladderLogic.js';
+import { fmtQty, priceDigits, followCenter, wallThreshold, ladderMarks, rowOf, stepLabel, stepFor, pickSide, startQueue, queueNow, queueText } from '../src/ladderLogic.js';
+import { makePick, freshPick } from '../src/ladderPick.js';
 
 const tests = [];
 const test = (name, run) => tests.push([name, run]);
@@ -67,6 +68,42 @@ test('cada moneda recuerda su step; lo que no está en la lista es automático',
   assert.equal(stepFor(settings, 'XRPUSDT'), 0);
   assert.equal(stepFor(settings, 'SOLUSDT'), 0);
   assert.equal(stepFor({ step: 10 }, 'ETHUSDT'), 0);
+});
+
+test('clic en el ladder: el lado sale de la columna, o del precio', () => {
+  assert.equal(pickSide('bid', 101, 99.9, 100), 'long');
+  assert.equal(pickSide('ask', 98, 99.9, 100), 'short');
+  assert.equal(pickSide('price', 99.5, 99.9, 100), 'long');
+  assert.equal(pickSide('price', 100.5, 99.9, 100), 'short');
+  assert.equal(pickSide('traded', 99.95, 99.9, 100), null);
+});
+
+test('el precio que viaja al panel: con forma y no vencido', () => {
+  const p = makePick('BTCUSDT', 65500, 'long', 1000);
+  assert.deepEqual(p, { symbol: 'BTCUSDT', price: 65500, side: 'long', at: 1000 });
+  assert.ok(freshPick(p, 20000));
+  assert.equal(freshPick(p, 40000), null);
+  assert.equal(makePick('BTCUSDT', 0, 'long'), null);
+  assert.equal(freshPick({ symbol: 'X', price: 1, side: 'arriba', at: 1 }, 1), null);
+});
+
+test('cola de tu Limit: al verla, lo de delante es lo que esperaba sin lo tuyo', () => {
+  const t = startQueue({ side: 'Buy', qty: 0.5, createdAt: 1000 }, { price: 65500, since: 5000, bid: 3.5, ask: 0 }, 5000);
+  assert.deepEqual(t, { price: 65500, qty: 0.5, since: 5000, ahead0: 3, late: false });
+  assert.equal(startQueue({ side: 'Buy', qty: 0.5, createdAt: 1000 }, { price: 1, since: 60000, bid: 1, ask: 0 }, 60000).late, true);
+});
+
+test('cola: lo negociado acerca; lo retirado da un rango', () => {
+  const t = { ahead0: 3, qty: 0.5 };
+  // se negoció 1 contra la compra y espera 2.5 (con lo tuyo): delante entre 2 (nada retirado delante) y 2
+  assert.deepEqual(queueNow(t, { sell: 1, buy: 0, bid: 2.5, ask: 0 }, 'Buy'), { optimistic: 2, pessimistic: 2, traded: 1, resting: 2.5 });
+  // además se retiró 1.5: si estaba delante, quedan 0.5
+  const q = queueNow(t, { sell: 1, buy: 0, bid: 1, ask: 0 }, 'Buy');
+  assert.deepEqual([q.optimistic, q.pessimistic], [0.5, 2]);
+  assert.equal(queueText(q), 'delante 0.500–2.00 · negoc. 1.00');
+  assert.equal(queueText({ optimistic: 2, pessimistic: 2, traded: 0 }, true), 'delante ~2.00 · desde que se vio');
+  // venta: cuenta la compra agresiva
+  assert.equal(queueNow({ ahead0: 4, qty: 1 }, { sell: 9, buy: 1, bid: 0, ask: 5 }, 'Sell').pessimistic, 3);
 });
 
 let failed = 0;

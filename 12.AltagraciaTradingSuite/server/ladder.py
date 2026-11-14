@@ -9,12 +9,14 @@
 #   - lo negociado ahi en los ultimos minutos, compra agresiva y venta agresiva;
 #   - lo agregado o retirado en los ultimos segundos (el libro de ahora contra el de hace ~5 s).
 # Solo para mirar: no envia ni cambia ordenes.
+# Cola de tus Limit (14/11): con watch=precio:desde,... da, en el precio exacto (un tick), lo que espera de cada lado y
+# lo negociado ahi desde esa hora (compra y venta agresiva). La pagina estima con eso cuanto tienes delante.
 import math
 import time
 from collections import deque
 from typing import Dict, List, Optional, Tuple
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 import book_recorder
 
@@ -137,11 +139,54 @@ def view(book, symbol: str, mult: Optional[int] = None, rows: int = 60, center: 
             "rows": out_rows}
 
 
+MAX_WATCH = 10
+
+
+def parse_watch(text: Optional[str]) -> List[Tuple[float, int]]:
+    """'65500:1794600000000,65400.5:1794600100000' -> [(65500.0, 1794600000000), ...]; lo ilegible se ignora."""
+    out = []
+    for part in (text or "").split(","):
+        try:
+            p, since = part.split(":")
+            p, since = float(p), int(since)
+        except ValueError:
+            continue
+        if p > 0 and since > 0:
+            out.append((p, since))
+    return out[:MAX_WATCH]
+
+
+def watch(book, symbol: str, items: List[Tuple[float, int]], trades=None) -> List[dict]:
+    """En el precio exacto de cada orden: lo que espera ahora y lo negociado desde `since`. `partial` si los trades
+    guardados no llegan tan atras (se guardan TRADE_KEEP_MS)."""
+    tick = book.tick
+    trades = _trades.get(symbol) if trades is None else trades
+    first = trades[0][0] if trades else None
+    out = []
+    for price, since in items:
+        t = round(price / tick)
+        buy = sell = 0.0
+        if trades:
+            for T, p, v, is_buy in reversed(trades):
+                if T < since:
+                    break
+                if round(p / tick) == t:
+                    if is_buy:
+                        buy += v
+                    else:
+                        sell += v
+        out.append({"price": round(t * tick, 12), "since": since, "bid": round(book.bids.get(t, 0.0), 8),
+                    "ask": round(book.asks.get(t, 0.0), 8), "buy": round(buy, 8), "sell": round(sell, 8),
+                    "partial": first is None or first > since})
+    return out
+
+
 def make_router() -> APIRouter:
     r = APIRouter()
 
     @r.get("/api/book/ladder/{symbol}")
-    async def book_ladder(symbol: str, step: int = 0, rows: int = 60, center: Optional[float] = None, window: int = 300):
+    async def book_ladder(symbol: str, step: int = 0, rows: int = 60, center: Optional[float] = None, window: int = 300,
+                          watch_: Optional[str] = Query(None, alias="watch")):
         rec = book_recorder.get_recorder()
         if rec is None:
             raise HTTPException(status_code=503, detail="el libro no se graba en este servidor")
@@ -154,7 +199,11 @@ def make_router() -> APIRouter:
         if window not in WINDOWS:
             window = 300
         try:
-            return {"success": True, **view(book, sym, step or None, rows, center if center and center > 0 else None, window)}
+            res = view(book, sym, step or None, rows, center if center and center > 0 else None, window)
+            items = parse_watch(watch_)
+            if items:
+                res["watch"] = watch(book, sym, items)
+            return {"success": True, **res}
         except ValueError as e:
             raise HTTPException(status_code=503, detail=str(e))
 

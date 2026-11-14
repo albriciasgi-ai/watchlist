@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { onPick } from './ladderPick.js';
 import MiniChart from '@app1/components/MiniChart';
 import DrawingSidebar from '@app1/components/drawing/DrawingSidebar';
 import TimeframeTabs from '@app1/components/backtesting/TimeframeTabs';
@@ -243,6 +244,9 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarHidden, setSidebarHidden] = useState(false);
   const [showTrading, setShowTrading] = useState(saved.showTrading !== false);
+  // Un precio elegido en el ladder (pestaña Mapa) abre el panel de trading si estaba oculto (14/11/2026). Solo la
+  // pestaña que muestra esa moneda; el panel prepara la Limit y la confirma como siempre
+  useEffect(() => onPick((pick) => { if (pick.symbol === symbolRef.current) setShowTrading(true); }), []);
   const [adding, setAdding] = useState(false);
   const [newSymbol, setNewSymbol] = useState('');
   const [addError, setAddError] = useState('');
