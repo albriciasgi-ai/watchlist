@@ -16,6 +16,30 @@ function levelRow(top, levelHeight, height) {
   return [start, snapEdge(top + levelHeight) - crispWidth(1) - start];
 }
 
+/**
+ * Área de valor de una vela: desde el POC se suma el nivel vecino (arriba o abajo) con más volumen hasta llegar
+ * a `share` del volumen de la vela. Devuelve [primer, último] índice del área, o null sin volumen.
+ */
+export function valueAreaRange(levels, pocIndex, share = 0.7) {
+  const total = levels.reduce((sum, level) => sum + (level.total_volume || 0), 0);
+  if (!(total > 0) || !levels[pocIndex]) return null;
+  let low = pocIndex;
+  let high = pocIndex;
+  let inside = levels[pocIndex].total_volume || 0;
+  while (inside < total * share && (low > 0 || high < levels.length - 1)) {
+    const below = low > 0 ? levels[low - 1].total_volume || 0 : -1;
+    const above = high < levels.length - 1 ? levels[high + 1].total_volume || 0 : -1;
+    if (above >= below) {
+      high += 1;
+      inside += above;
+    } else {
+      low -= 1;
+      inside += below;
+    }
+  }
+  return [low, high];
+}
+
 const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 const MAX_CANDLES_TO_LOAD = 1600; // Con más velas en pantalla no se piden footprints: quedan a menos de 1 px por vela
 const MAX_DAYS_TO_LOAD = 70; // Ni con más días de trades: el almacén lee un archivo por día (400 velas de 4h, unos 2 s)
@@ -109,6 +133,8 @@ class OrderFlowIndicator extends IndicatorBase {
       showCandle: true,
       showProfile: true,
       profileMode: 'volume', // Perfil junto al footprint: 'volume', 'delta' o 'both' (volumen y al lado el delta)
+      showValueArea: true, // Área de valor de cada vela en su perfil de volumen, en otro color
+      valueAreaPct: 70,
       showFootprint: true,
       showPOC: true,
       showImbalances: true,
@@ -634,6 +660,7 @@ class OrderFlowIndicator extends IndicatorBase {
     const { levels, poc_index: pocIndex } = footprint;
     const maxVolume = levels.reduce((max, level) => Math.max(max, level.total_volume), 0);
     if (maxVolume === 0) return;
+    const area = this.config.showValueArea === false ? null : valueAreaRange(levels, pocIndex, (this.config.valueAreaPct ?? 70) / 100);
 
     for (let i = 0; i < levels.length; i++) {
       const level = levels[i];
@@ -643,10 +670,14 @@ class OrderFlowIndicator extends IndicatorBase {
 
       const barWidth = width * (level.total_volume / maxVolume);
       const isPOC = i === pocIndex;
-      if (isNewTheme()) {
-        ctx.fillStyle = isPOC ? THEME.fpPoc : THEME.fpProfile;
+      const inArea = area && i >= area[0] && i <= area[1];
+      if (isPOC) {
+        ctx.fillStyle = isNewTheme() ? THEME.fpPoc : this.colors.PROFILE_POC;
+      } else if (isNewTheme()) {
+        // Con área de valor, sus barras van en el color del área de valor del estilo (el del perfil de volumen)
+        ctx.fillStyle = inArea ? `rgba(${THEME.vpValueAreaRgb}, 0.75)` : THEME.fpProfile;
       } else {
-        ctx.fillStyle = isPOC ? this.colors.PROFILE_POC : this.colors.PROFILE_BAR;
+        ctx.fillStyle = !area || inArea ? this.colors.PROFILE_BAR : 'rgba(100, 149, 237, 0.3)';
       }
       // Barra de borde a borde del nivel en píxeles reales, con un hueco parejo de 1 px
       const [barY, barHeight] = levelRow(topY, levelHeight, Math.max(1, levelHeight - 1));

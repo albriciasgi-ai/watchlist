@@ -106,7 +106,8 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    - volumen de la vela en % del promedio de las N velas anteriores (1 a 100, 20 de fábrica), solo con velas anteriores;
    - volumen de la celda del imbalance en % de su vela; un stacked se mide por la suma de sus celdas.
 3. **Perfil de delta:** "Perfil junto al footprint": Volumen, Delta, o Volumen y al lado el delta.
-4. **Pruebas:** `orderflow.test.mjs` (34) y `test_footprint_rules.py` (con `test_footprint_live.py`, 35). Las de la suite siguen pasando.
+   Después, el **área de valor de cada vela** (70% de fábrica) en el perfil de volumen del footprint, en el color "Área de valor" del estilo.
+4. **Pruebas:** `orderflow.test.mjs` (36) y `test_footprint_rules.py` (con `test_footprint_live.py`, 35). Las de la suite siguen pasando.
 5. **Bot, trade que no llegaba al journal:** el TP de un short de BTC (abierto desde el 12/11) se ejecutó el 14/11 a las 10:25 en la cuenta Demo, pero Bybit nunca lo dio en `closed-pnl`, de donde el journal toma los cierres: quedó abierto. Ahora, si la posición lleva 3 minutos sin existir y `closed-pnl` no la cerró, el bot arma el cierre con las ejecuciones de la orden que cerró (`/v5/execution/list`): salida y comisión de cierre reales, apertura estimada. Queda marcado "≈" en la suite; si después llega la fila de `closed-pnl` de esa orden, la reemplaza. Los cierres se piden con 7 días cada minuto (antes 1). Pruebas: `journal_checks.py` del bot (37).
 
 **IMPORTANTE:**

@@ -599,6 +599,7 @@ GET /api/orderflow/coverage/{symbol}
   - `imbalanceCandleVolumePct` y `imbalanceCandleVolumeBars` (20): una vela solo tiene imbalances si su volumen llega a ese % del promedio de las N velas anteriores. Sin velas anteriores no se filtra. Cada footprint trae `candle_volume_ratio`;
   - `imbalanceCellSharePct`: un imbalance suelto queda si su celda (compra + venta) tiene ese % del volumen de su vela; un stacked, si la suma de sus celdas lo tiene (`_share_filter` en `footprint_store.py`);
   - 0 es sin filtro
+- **Área de valor de cada vela (14/11):** `showValueArea` (de fábrica) y `valueAreaPct` (70). `valueAreaRange()` suma desde el POC el nivel vecino con más volumen hasta ese %. Con Nítido sus barras van en `THEME.vpValueAreaRgb`; en Clásico, las de fuera en azul tenue
 - **Perfil junto al footprint (14/11):** `profileMode` `volume`, `delta` o `both` (volumen y al lado el delta). `renderDeltaProfile` dibuja el delta de cada nivel desde la izquierda, largo según el mayor |delta| de la vela, en el color del lado que ganó
 - **Franjas de stacked con zoom (14/11):** con el footprint a la vista, `renderStackedBands` dibuja, después de todas las velas, una franja por stacked desde su vela hacia la derecha (`stackedLineExtend` anchos de vela) con borde arriba y abajo. Con Nítido, un imbalance suelto lleva una barra de 2 px en su lado
 - `OrderFlowIndicator.updateConfig()` descarta lo cargado solo si cambia algo que afecta la respuesta (`_dataRules()`)

@@ -21,7 +21,8 @@ const NUMBER_LIMITS = {
   deltaMarkMinShare: [0.01, 1],
   stackedLineWidth: [1, 6],
   stackedLineExtend: [1, 8],
-  stackedOpacity: [0.1, 1]
+  stackedOpacity: [0.1, 1],
+  valueAreaPct: [50, 95]
 };
 
 const CHECKBOXES = [
@@ -29,6 +30,7 @@ const CHECKBOXES = [
   ['showFootprint', 'Celdas de compra y venta'],
   ['showProfile', 'Perfil de cada vela'],
   ['showPOC', 'POC de cada vela'],
+  ['showValueArea', 'Área de valor en el perfil de cada vela'],
   ['showImbalances', 'Resaltar imbalances'],
   ['showDelta', 'Delta debajo de la vela'],
   ['showDeltaMarks', 'Rombos de delta contrario a la vela']
@@ -222,6 +224,13 @@ const OrderFlowSettings = ({ symbol, indicator, activeTimeframe, onApply, onClos
                 <option value="both">Volumen y al lado el delta</option>
               </select>
             </div>
+            <NumberRow
+              label="Área de valor (% del volumen de la vela)"
+              hint="Desde el POC se suman los niveles vecinos con más volumen hasta este %."
+              step="5" min="50" max="95"
+              value={values.valueAreaPct}
+              onChange={(value) => set('valueAreaPct', value)}
+            />
             <NumberRow
               label="Parte del volumen contra la vela para el rombo (%)"
               step="1" min="1" max="100"

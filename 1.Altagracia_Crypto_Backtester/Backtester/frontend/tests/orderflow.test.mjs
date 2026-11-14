@@ -1,7 +1,7 @@
 // Pruebas del indicador de Order Flow sin navegador: que pide, cuando y que descarta.
 // Uso: node tests/orderflow.test.mjs
 import assert from 'node:assert/strict';
-import OrderFlowIndicator from '../src/components/indicators/OrderFlowIndicator.js';
+import OrderFlowIndicator, { valueAreaRange } from '../src/components/indicators/OrderFlowIndicator.js';
 
 const TF = 900000;
 const T0 = 1792800000000;
@@ -532,6 +532,27 @@ test('los filtros relativos son parte de las reglas: cambiarlo vuelve a pedir', 
   await draw(of, [closed(0), closed(1)], T0 + 2 * TF);
   assert.equal(requests.at(-1).query.get('imbalance_cell_pct'), '20');
   assert.equal(requests.at(-1).query.get('imbalance_candle_pct'), '0', 'de fábrica sin filtro de vela');
+});
+
+test('area de valor de la vela: desde el POC, el vecino con mas volumen hasta el 70%', () => {
+  const lv = vols => vols.map(v => ({ total_volume: v }));
+  // Total 100, POC en 2 (40): suma 25 (arriba) -> 65, luego 20 (abajo) -> 85
+  assert.deepEqual(valueAreaRange(lv([5, 20, 40, 25, 10]), 2, 0.7), [1, 3]);
+  assert.deepEqual(valueAreaRange(lv([5, 20, 40, 25, 10]), 2, 0.6), [2, 3]);
+  assert.deepEqual(valueAreaRange(lv([80, 10, 10]), 0, 0.7), [0, 0], 'el POC solo ya pasa del 70%');
+  assert.deepEqual(valueAreaRange(lv([10, 10, 80]), 2, 0.95), [0, 2], 'llega a los bordes sin pasarse');
+  assert.equal(valueAreaRange(lv([0, 0]), 0), null);
+});
+
+test('las barras del area de valor van en otro color, y se puede apagar', () => {
+  const inArea = 'rgba(100, 149, 237, 0.7)';
+  const outside = 'rgba(100, 149, 237, 0.3)';
+  // Perfil de la primera vela: 10, 9, 8, 7, 4 con POC en 0 -> area 70% (26.6 de 38) = niveles 0 a 2 (27); fuera, 3 y 4
+  const on = drawZoomed({}).calls.fills.filter(f => f.x < 100);
+  assert.equal(on.filter(f => f.style === inArea).length, 2, 'dos barras dentro, ademas del POC en su color');
+  assert.equal(on.filter(f => f.style === outside).length, 2, 'dos fuera');
+  const off = drawZoomed({ showValueArea: false }).calls.fills.filter(f => f.x < 100);
+  assert.equal(off.filter(f => f.style === outside).length, 0, 'sin area: todas iguales');
 });
 
 let failed = 0;
