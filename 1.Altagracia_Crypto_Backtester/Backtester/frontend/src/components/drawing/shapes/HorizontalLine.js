@@ -4,6 +4,7 @@
 import { alignY, crispWidth } from '../../chartPixels.js';
 
 import { priceText } from '../../backtesting/blindClock.js';
+import { THEME } from '../../uiTheme.js';
 class HorizontalLine {
   constructor(price, time) {
     this.type = 'horizontal';
@@ -17,6 +18,8 @@ class HorizontalLine {
       lineWidth: 2,
       dash: [5, 5]
     };
+    // Texto opcional sobre la línea (14/11/2026): la suite lo usa para las órdenes de su cinta. Sin texto se ve igual
+    this.label = null;
 
     this.isDragging = false;
     this.dragStartY = 0;
@@ -77,6 +80,18 @@ class HorizontalLine {
     ctx.font = 'bold 11px Arial';
     ctx.fillText(priceText(this.price, 2), endX + 5, y + 4);
 
+    // Texto de la línea, arriba a la izquierda, con fondo para leerse sobre las velas
+    if (this.label) {
+      ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+      const w = ctx.measureText(this.label).width + 8;
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = THEME.labelBg || 'rgba(255,255,255,0.9)';
+      ctx.fillRect(startX + 4, y - 16, w, 14);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = this.style.color;
+      ctx.fillText(this.label, startX + 8, y - 5);
+    }
+
     // Efecto hover
     if (isHovered && !isSelected && !isPreview) {
       ctx.strokeStyle = 'rgba(139, 92, 246, 0.3)';
@@ -97,7 +112,9 @@ class HorizontalLine {
       id: this.id,
       price: this.price,
       time: this.time,
-      style: { ...this.style }
+      style: { ...this.style },
+      ...(this.label ? { label: this.label } : {}),
+      ...(this.tape ? { tape: { ...this.tape } } : {})
     };
   }
 
@@ -107,6 +124,8 @@ class HorizontalLine {
     if (data.style) {
       line.style = { ...data.style };
     }
+    if (typeof data.label === 'string' && data.label) line.label = data.label;
+    if (data.tape && typeof data.tape === 'object') line.tape = { ...data.tape };   // la orden de la cinta que la creó
     return line;
   }
 }

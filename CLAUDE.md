@@ -54,6 +54,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Órdenes de la Cinta como Líneas en el Gráfico
+
+**Pedido:** al hacer clic en una orden de la cinta, verla en el gráfico como una línea horizontal con su información, y poder dejarla en firme o borrarla.
+
+**Cambios:**
+1. **Clic en la cinta:** pone una línea a su precio promedio, con el texto de la orden ("Cinta ▼ venta 1.16 · 76k · 14:47:19"), provisional y punteada. Una sola provisional por moneda.
+2. **"Dejar en firme" y "Borrar"** en la fila. En firme queda continua; es un dibujo de la moneda y se ve en el mapa, el gráfico principal y la Watchlist (`tapeLines.js`).
+3. **App 1:** `HorizontalLine.js` acepta un texto opcional (`label`). Sin texto se ve igual.
+4. **Pruebas:** `tapelines.test.mjs` (4). Las demás de App 1 siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- Probado en la copia aislada con trades en vivo: provisional, en firme y borrada. No se probó en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Órdenes de la cinta como líneas en el gráfico (14/11)"
+
+---
+
 ### Altagracia Trading Suite - 14 Noviembre 2026: Stop y Objetivo desde el Ladder y Cinta de Operaciones Grandes
 
 **Pedido:** sin una caja TP/SL dibujada, el clic en el ladder solo ponía el precio. El usuario pidió elegir en el ladder también el stop y el objetivo, que la app redibuje la caja, y la cinta de operaciones grandes.
