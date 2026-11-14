@@ -11,6 +11,9 @@
 # absorcion, defensa, retiro y rebote, retiro y cruce o consumida.
 # Ademas el estado de las zonas cerca del precio (a 2 ATR o menos), antes de que llegue: lo que hay ahora de su lado,
 # contra hace 30 minutos, y su antiguedad.
+# Zonas automaticas (14/11, tras la primera prueba: BTC no tenia dibujos y no se veia nada): ademas de los dibujos,
+# POC, VAH y VAL del perfil del dia anterior, los FVG de 1h abiertos y los niveles elegidos en el journal, con las
+# funciones de book_study.
 # No es una senal ni esta validado contra el azar: eso lo mide book_study con semanas de libro.
 import asyncio
 import json
@@ -128,11 +131,30 @@ def _r(x):
     return None if x is None else round(float(x))
 
 
-def _compute(symbol: str, start: int, end: int, shapes: List[dict], with_trades: bool = True) -> dict:
+def auto_zones(symbol: str, start: int, end: int, fs=None) -> List[dict]:
+    """POC, VAH y VAL del dia anterior (de cada dia del rango), FVG de 1h y niveles del journal, como en book_study."""
+    out = []
+    try:
+        fs = fs or book_study._app1()
+        day = start - start % book_study.DAY
+        while day < end:
+            for z in book_study.vp_zones(fs, symbol, day):
+                out.append(dict(z, label=f"{z['label']} ayer", id=f"vp:{z['label']}:{day}"))
+            day += book_study.DAY
+        for k, z in enumerate(book_study.fvg_zones(fs, symbol, start, end, 60)):
+            out.append(dict(z, label=f"FVG 1h {z['label']}", id=f"fvg60:{z['from']}:{k}"))
+    except Exception:
+        pass
+    for k, z in enumerate(book_study.journal_zones(symbol, start, end)):
+        out.append(dict(z, label=f"journal {z['label']}", id=f"journal:{k}:{z['from']}"))
+    return [dict(z, **{"from": max(z["from"], start), "to": min(z["to"], end)}) for z in out if z["to"] > start and z["from"] < end]
+
+
+def _compute(symbol: str, start: int, end: int, shapes: List[dict], with_trades: bool = True, auto: bool = True) -> dict:
     base = book_store.sources(CONFIG["orderflow_data"])
-    zones = zones_from_drawings(shapes, start, end)
+    zones = zones_from_drawings(shapes, start, end) + (auto_zones(symbol, start, end) if auto else [])
     if not zones:
-        return {"zones": [], "visits": [], "status": [], "note": "sin lineas ni rectangulos dibujados en esta moneda"}
+        return {"zones": [], "visits": [], "status": [], "note": "sin lineas ni rectangulos dibujados ni perfil del dia anterior"}
     # 4 horas antes: el ATR de 15m necesita 14 velas cerradas
     sec = book_study.load_seconds(base, symbol, start - 4 * 3600000, end)
     mins = book_study.load_minutes(base, symbol, start - (book_study.AGE_MAX_MIN + 2) * MINUTE, end)
@@ -154,7 +176,7 @@ def make_router(drawings_dir: Path) -> APIRouter:
     r = APIRouter()
 
     @r.get("/api/book/defense/{symbol}")
-    async def book_defense(symbol: str, from_ms: int = 0, to_ms: int = 0):
+    async def book_defense(symbol: str, from_ms: int = 0, to_ms: int = 0, auto: int = 1):
         symbol = symbol.upper()
         if not SYMBOL_RE.match(symbol):
             raise HTTPException(status_code=404, detail="moneda invalida")
@@ -169,11 +191,11 @@ def make_router(drawings_dir: Path) -> APIRouter:
             shapes = json.loads(raw).get("shapes") or []
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"dibujos ilegibles: {e}")
-        key = (symbol, from_ms // (15 * MINUTE), to_ms // MINUTE, hash(raw))
+        key = (symbol, from_ms // (15 * MINUTE), to_ms // MINUTE, hash(raw), bool(auto))
         hit = _cache.get(key)
         if hit and time.time() - hit[0] < CACHE_SECONDS:
             return {"success": True, **hit[1]}
-        res = await asyncio.to_thread(_compute, symbol, from_ms, to_ms, shapes)
+        res = await asyncio.to_thread(_compute, symbol, from_ms, to_ms, shapes, True, bool(auto))
         res.update(from_ms=from_ms, to_ms=to_ms)
         if len(_cache) > 40:
             _cache.clear()

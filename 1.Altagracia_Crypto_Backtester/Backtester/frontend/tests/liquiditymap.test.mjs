@@ -3,7 +3,7 @@
 // Uso: node tests/liquiditymap.test.mjs
 import assert from 'node:assert/strict';
 
-const { LiquidityMapStore, decodeCells, visibleScale, ramp, buildImage, cellUsd, ENC, sideRamp, hexRgb } = await import('../src/components/liquidityMap.js');
+const { LiquidityMapStore, decodeCells, visibleScale, ramp, buildImage, cellUsd, ENC, sideRamp, hexRgb, cutPercentile } = await import('../src/components/liquidityMap.js');
 
 let count = 0;
 const t = (name, fn) => { fn(); count++; console.log('ok', name); };
@@ -133,6 +133,19 @@ t('rampa de un lado: transparente con poco, firme con mucho; colores del estilo'
   assert.ok(sideRamp(1, [41, 98, 255], true)[0] > 41, 'y se aclara en fondo oscuro');
   assert.deepEqual(hexRgb('#2962FF'), [41, 98, 255]);
   assert.deepEqual(hexRgb('rojo', [1, 2, 3]), [1, 2, 3]);
+});
+
+t('filtro solo lo grande: sube el corte de abajo del contraste', () => {
+  assert.equal(cutPercentile(0), 0.3);
+  assert.equal(cutPercentile(100), 0.95);
+  assert.equal(cutPercentile(500), 0.95);
+});
+
+t('con el corte más alto queda transparente más de lo que hay', () => {
+  const col = Uint8Array.from([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
+  const a = visibleScale([col], { lo: 0.3 });
+  const b = visibleScale([col], { lo: 0.95 });
+  assert.ok(b.lo > a.lo);
 });
 
 console.log(`\n${count} pruebas pasan`);

@@ -85,6 +85,29 @@ check("la de 960, a mas de 2 ATR, sin estado; la de 1000 con su liquidez", "z960
       str(st))
 check("sin libro: nada", book_defense.defense(None, zones, None, mins) == {"zones": [], "visits": [], "status": []})
 
+# ---------- zonas automaticas: perfil del dia anterior ----------
+class FakeStore:
+    """Un dia de minutos con todo el volumen en 1000 (POC) y algo en 990 y 1010."""
+    def minutes(self, symbol, a, b, live=None):
+        n = 1440
+        return {"m": np.arange(a, a + n), "l": np.full(n, 990.0), "h": np.full(n, 1010.0)}
+
+    def profile(self, symbol, a, b, known, low, high, rows, live=None):
+        buy = np.zeros(rows)
+        buy[int((1000 - low) / (high - low) * rows)] = 100.0
+        buy[0] = buy[-1] = 1.0
+        return {"buy": buy.tolist(), "sell": [0.0] * rows}
+
+
+DAY = 86400000
+D0 = T0 - T0 % DAY
+az = book_defense.auto_zones("XUSDT", D0 + 3600000, D0 + 7200000, fs=FakeStore())
+labels = sorted(z["label"] for z in az if z["kind"] == "perfil")
+poc = [z for z in az if z["label"] == "POC ayer"]
+check("zonas automaticas: POC, VAH y VAL del dia anterior", labels == ["POC ayer", "VAH ayer", "VAL ayer"], str(labels))
+check("el POC en su precio, dentro del rango pedido", poc and abs((poc[0]["lo"] + poc[0]["hi"]) / 2 - 1000) < 0.2
+      and poc[0]["from"] == D0 + 3600000 and poc[0]["to"] == D0 + 7200000, str(poc))
+
 # ---------- la ruta ----------
 import json  # noqa: E402
 import tempfile  # noqa: E402
@@ -96,9 +119,9 @@ tmp = Path(tempfile.mkdtemp(prefix="defense_checks_"))
 app = FastAPI()
 app.include_router(book_defense.make_router(tmp))
 with TestClient(app) as client:
-    empty = client.get("/api/book/defense/XUSDT", params={"from_ms": T0, "to_ms": T0 + MIN}).json()
-    check("sin dibujos: lo dice y no lee el libro", empty.get("success") and empty["visits"] == [] and "sin lineas" in empty.get("note", ""),
-          str(empty))
+    empty = client.get("/api/book/defense/XUSDT", params={"from_ms": T0, "to_ms": T0 + MIN, "auto": 0}).json()
+    check("sin dibujos ni zonas automaticas: lo dice y no lee el libro", empty.get("success") and empty["visits"] == []
+          and "sin lineas" in empty.get("note", ""), str(empty))
     bad = [client.get("/api/book/defense/XUSDT", params=p).status_code for p in ({"from_ms": 5, "to_ms": 1}, {})]
     check("rango invalido: 400", bad == [400, 400], str(bad))
     check("moneda invalida: 404", client.get("/api/book/defense/x-1", params={"from_ms": 1, "to_ms": 2}).status_code == 404)

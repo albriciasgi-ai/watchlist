@@ -13,7 +13,7 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import { THEME } from '../uiTheme.js';
-import { LiquidityMapStore, visibleScale, buildImage, hexRgb } from '../liquidityMap.js';
+import { LiquidityMapStore, visibleScale, buildImage, hexRgb, cutPercentile } from '../liquidityMap.js';
 
 const FRAME_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000 };
 const TAIL_MS = 30000;        // la ultima vela se vuelve a pedir cada 30 s
@@ -23,7 +23,7 @@ const MAX_COLS = 1500;        // lo mismo que acepta el servidor
 const REFRESH_MS = 60000;     // velas recientes incompletas: se vuelven a pedir cada minuto (la nube las puede llenar)
 const RECENT_MS = 12 * 3600000;
 
-export const LIQUIDITY_MAP_DEFAULTS = { mode: 'sostenida', minutes: 30, opacity: 0.9, sides: true };
+export const LIQUIDITY_MAP_DEFAULTS = { mode: 'sostenida', minutes: 30, opacity: 0.9, sides: true, cut: 0 };
 export const LIQUIDITY_MAP_MINUTES = [5, 15, 30, 60, 120, 240];
 
 export default class LiquidityMapIndicator extends IndicatorBase {
@@ -161,7 +161,7 @@ export default class LiquidityMapIndicator extends IndicatorBase {
     const cols = visibleCandles.map(c => this.store.column(c.timestamp));
     if (!cols.some(Boolean)) return;
     const dark = !!THEME.dark;
-    const scale = visibleScale(cols);
+    const scale = visibleScale(cols, { lo: cutPercentile(this.config.cut) });
     const colors = this._sideColors();
     const key = [visibleCandles[0].timestamp, visibleCandles.length, this.store.columns.size, this.store.lastMs, dark,
       this.config.opacity, scale?.lo, scale?.hi, this.store.row0, this.store.rows, this.store.sides,

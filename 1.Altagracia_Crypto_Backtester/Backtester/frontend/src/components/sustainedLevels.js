@@ -71,3 +71,12 @@ export function lastNear(levels, now, maxAgeMs = 3600000) {
   const price = Number(((best.lo + best.hi) / 2).toPrecision(8)).toLocaleString('en-US');
   return `${best.side === 'b' ? 'compra' : 'venta'} ${price} hace ${fmtMinutes((now - best.end) / 60000)}`;
 }
+
+/** Filtro "solo lo grande" (14/11): con cut de 1 a 100, deja los niveles con USD en ese percentil o más (de los dados) */
+export function bigOnly(levels, cut) {
+  const c = Math.max(0, Math.min(100, Number(cut) || 0));
+  if (!c || !levels?.length) return levels || [];
+  const usd = levels.map(lv => lv.usd || 0).sort((a, b) => a - b);
+  const th = usd[Math.min(usd.length - 1, Math.floor((usd.length - 1) * c / 100))];
+  return levels.filter(lv => (lv.usd || 0) >= th);
+}

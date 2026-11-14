@@ -12,14 +12,14 @@
 import IndicatorBase from './IndicatorBase.js';
 import { API_BASE_URL } from '../../config.js';
 import { THEME } from '../uiTheme.js';
-import { levelLabel, needsFetch, visibleLevels, nearLabel, lastNear } from '../sustainedLevels.js';
+import { levelLabel, needsFetch, visibleLevels, nearLabel, lastNear, bigOnly } from '../sustainedLevels.js';
 
 const FRAME_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000 };
 const REFRESH_MS = 60000;
 const RETRY_MS = 15000;
 const MAX_SPAN_MS = 3 * 86400000;   // lo que acepta el servidor (velas de 1 minuto del gráfico en vivo)
 
-export const SUSTAINED_LEVELS_DEFAULTS = { minutes: 30, showEnded: true };
+export const SUSTAINED_LEVELS_DEFAULTS = { minutes: 30, showEnded: true, cut: 0 };
 export const SUSTAINED_LEVELS_MINUTES = [15, 30, 60, 120, 240];
 
 export default class SustainedLevelsIndicator extends IndicatorBase {
@@ -123,7 +123,7 @@ export default class SustainedLevelsIndicator extends IndicatorBase {
       return x == null ? null : x - bar / 2;
     };
     const right = x1 + bar / 2;
-    const list = visibleLevels(this.levels, from, lastTs + frame, minPrice, maxPrice, this.config.showEnded);
+    const list = bigOnly(visibleLevels(this.levels, from, lastTs + frame, minPrice, maxPrice, this.config.showEnded), this.config.cut);
     const now = Date.now();
     const font = THEME.font || 'Segoe UI, sans-serif';
     const halo = THEME.chartBg || '#FFFFFF';

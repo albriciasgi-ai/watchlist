@@ -63,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (16), book_levels_checks.py (16) y book_defense_checks.py (13), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (16), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (11), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -840,6 +840,22 @@ Pedido del usuario: primero marcar aparte el nivel que se retira con el precio c
 - **Probado** en la copia aislada con el libro y los trades reales de BTC y ETH, y tus líneas de ETH más zonas de prueba en una carpeta aparte (`SUITE_DATA_DIR`). No se probó en Electron. No es una señal ni está validado contra el azar.
 - **Pruebas:** `server/tests/book_defense_checks.py` (13) y `tests/zonedefense.test.mjs` de App 1 (4).
 
+## Menú "Capas", filtro, zonas automáticas y absorción y barrido del libro (14/11)
+
+Pedidos del usuario tras probar la defensa y los niveles.
+
+- **Barra del mapa:** ya no cabía en 1366 px. Quedan la moneda, los marcos, **"Capas ▾"** y el **filtro**. "Capas" (como el menú Pestañas) tiene el modo y los minutos del mapa, los colores, Niveles con sus minutos, Defensa de zona, Ladder y "Seguir al gráfico principal".
+- **Filtro "Solo lo grande"** (0 a 100, guardado como `cut`): en el mapa sube el corte de abajo del contraste del percentil 30 al 95 (`cutPercentile` de `liquidityMap.js`): lo de menos queda transparente. En Niveles deja los de USD en ese percentil o más de los que están a la vista (`bigOnly`).
+- **Defensa sin dibujos:** BTC no tenía dibujos y solo se veía el aviso. Ahora suma zonas automáticas (`auto_zones`, con las funciones de `book_study`): POC, VAH y VAL del perfil del día anterior, los FVG de 1h abiertos y los niveles del journal. `auto=0` las quita. En BTC, 12 horas: 13 zonas.
+- **Minutos de Niveles:** sí cambian lo que se dibuja (BTC, 10 horas: 57 niveles con 15 min, 13 con 30, 9 con 1 h, 7 con 2 h y 4 con 4 h). Las franjas gruesas son del mapa, que tiene sus propios minutos; los niveles son las líneas finas con contorno.
+- **Absorción y barrido del libro en Elementos OF** (`server/book_events.py`): la ruta `/api/orderflow/elements` de la suite suma dos códigos al resultado de `of_elements` de App 1, con su formato. Se conocen al cerrar la vela; guarda 50 s cada respuesta.
+  - **AB, Absorción en el libro:** en una vela, en un cubo del libro de minutos (~0.03%), se negoció contra ese lado al menos 2 veces lo que esperaba en promedio; lo que esperaba al final es al menos la mitad de lo del principio; el precio cerró de su lado; y lo negociado pasa el percentil 90 de las velas de las 24 horas anteriores (sin mirar el futuro; con menos de 20 velas no marca). Alcista si fueron compras que absorbieron venta.
+  - **BL, Barrido del libro:** un nivel sostenido (`book_levels`, 15 minutos o más) consumido en la vela. Bajista si fue una compra barrida.
+  - En las 12 horas de BTC hasta el 14/11 a las 12:30: AB en 12 de 144 velas de 5m y 5 de 48 de 15m; BL 19. ETH: AB 9 y 6, BL 16. Tarda 1 a 2 s.
+  - App 1 (`ofElements.js`) los tiene en su catálogo con `book: true` y encendidos de fábrica; su modal dice "libro: solo en la suite". App 1 no los calcula.
+- **Probado** en la copia aislada con el libro, los trades, el almacén en vivo y las velas reales de BTC y ETH: el menú, el filtro al 80%, las zonas automáticas de BTC (estado de dos FVG de 1h y una visita que aguantó con 17M negociados) y los dos elementos en el modal y en la respuesta. No se probó en Electron. Nada está validado contra el azar.
+- **Pruebas:** `server/tests/book_events_checks.py` (11), `book_defense_checks.py` (15), y en App 1 `sustainedlevels.test.mjs` (6) y `liquiditymap.test.mjs` (14).
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -884,6 +900,7 @@ C:\Python314\python.exe -B tests\book_heatmap_checks.py
 C:\Python314\python.exe -B tests\ladder_checks.py
 C:\Python314\python.exe -B tests\book_levels_checks.py
 C:\Python314\python.exe -B tests\book_defense_checks.py
+C:\Python314\python.exe -B tests\book_events_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.

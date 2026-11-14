@@ -54,6 +54,31 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Menú Capas, Filtro, Zonas Automáticas y Absorción y Barrido del Libro
+
+**Pedido:** tras probar:
+- la defensa no mostraba nada en BTC;
+- los minutos de Niveles no parecían cambiar el gráfico;
+- un control para dejar solo lo significativo;
+- absorción y barrido en los elementos del footprint;
+- un menú para la barra llena.
+
+**Cambios:**
+1. **Menú "Capas ▾"** en la pestaña "Mapa": modo y minutos del mapa, colores, Niveles, Defensa, Ladder y seguir al gráfico principal. En la barra quedan la moneda, los marcos y el filtro.
+2. **Filtro "Solo lo grande"** (0 a 100): en el mapa deja transparente lo de menos; en Niveles deja los de más USD.
+3. **Defensa con zonas automáticas:** BTC no tenía dibujos. Ahora suma POC, VAH y VAL del día anterior, FVG de 1h y niveles del journal.
+4. **Niveles:** los minutos sí cambian lo que se dibuja (BTC: 57 niveles con 15 min, 4 con 4 h). Las franjas gruesas son del mapa, que tiene sus propios minutos.
+5. **Elementos OF con el libro** (`book_events.py`, solo en la suite): **AB** absorción en el libro y **BL** barrido de un nivel sostenido. En BTC 5m, 12 horas: AB en 12 de 144 velas, BL 19.
+6. **Pruebas:** `book_events_checks.py` (11), `book_defense_checks.py` (15), y en App 1 `sustainedlevels.test.mjs` (6) y `liquiditymap.test.mjs` (14). Las demás siguen pasando, también las de Elementos OF.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- Probado en la copia aislada con el libro, los trades y el almacén reales de BTC y ETH; no se probó en Electron. Nada está validado contra el azar.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Menú "Capas", filtro, zonas automáticas y absorción y barrido del libro (14/11)"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 14 Noviembre 2026: Retiro Cerca y Defensa de Zona
 
 **Pedido:** primero marcar aparte el nivel que se retira con el precio cerca, y después la defensa de las zonas: si una zona se sostiene hasta que el precio vuelve.

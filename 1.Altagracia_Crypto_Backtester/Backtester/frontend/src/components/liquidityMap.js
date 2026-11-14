@@ -214,3 +214,7 @@ export function buildImage(columns, rows, scale, dark = false, opacity = 1, side
   }
   return { width: w, height: h, data };
 }
+
+// Filtro "solo lo grande" (14/11/2026): de 0 a 100. Sube el corte de abajo del contraste del percentil 30 hasta el 95:
+// lo de menos queda transparente.
+export const cutPercentile = (cut) => 0.3 + 0.65 * Math.max(0, Math.min(100, Number(cut) || 0)) / 100;

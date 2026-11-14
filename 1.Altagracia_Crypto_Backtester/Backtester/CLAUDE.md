@@ -748,6 +748,8 @@ Tasas de BTC del 02/10 al 01/11/2026. Los umbrales de XD y SM usan solo velas co
 
 Queda fuera Market Weakness, sin regla en las láminas.
 
+**Con el libro grabado (14/11, solo en la suite):** `AB` Absorción en el libro y `BL` Barrido del libro (nivel sostenido), franjas con `book: true` en `ofElements.js`, encendidas de fábrica. Los calcula el servidor de la suite (`12.AltagraciaTradingSuite/server/book_events.py`) y los suma a su `/api/orderflow/elements`; App 1 no tiene libro de sus fechas y nunca los recibe.
+
 ### Setups como recetas (fase 3, 10/11)
 
 Inspirado en el "Consenso" de Strategic Flows (strategicflows.com, el producto de Mike Valtos para NinjaTrader), que combina señales pero no trae backtest ni estadísticas. Aquí cada receta se evalúa en el histórico con costos.

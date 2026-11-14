@@ -21,6 +21,8 @@ import LadderPanel, { LADDER_WIDTH } from './LadderPanel.jsx';
  * - "Niveles" (14/11/2026): los niveles de liquidez sostenida (book_levels.py), encima del mapa, con cómo terminó cada uno.
  * - "Defensa" (14/11/2026): en cada llegada del precio a tus líneas y rectángulos, qué hizo la liquidez (la regla de
  *   book_study, /api/book/defense), y el estado de las zonas cerca del precio.
+ * - Menú "Capas" y "Filtro" (14/11/2026): lo que no cabía en la barra va al menú; el filtro deja solo lo grande en el
+ *   mapa y en Niveles.
  * - El ladder (14/11/2026), a la derecha: el libro de ahora de la misma moneda, del grabador de la suite. Se oculta con
  *   el botón "Ladder".
  */
@@ -36,6 +38,27 @@ const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWh
 const SETTINGS_KEY = `suite_mapa_${TAB}`;
 const MAIN_SETTINGS_KEY = 'suite_chart_1';
 const noop = () => {};
+const ROW = { gap: 6 };
+const NAME = { width: 120, flexShrink: 0 };
+
+// Menú "Capas" (14/11/2026): la barra del mapa ya no cabía en 1366 px. Abre y cierra como el de Pestañas.
+function LayersMenu({ children }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [open]);
+  return (
+    <div className="tabs-menu-anchor" ref={ref}>
+      <button type="button" className={`suite-btn ${open ? 'active' : ''}`} onClick={() => setOpen(v => !v)}
+        title="Qué se muestra: el mapa, los niveles, la defensa de zona y el ladder">Capas ▾</button>
+      {open && <div className="suite-menu" style={{ minWidth: 320 }}>{children}</div>}
+    </div>
+  );
+}
 const none = () => [];
 
 function loadSettings() {
@@ -63,6 +86,7 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
   const [mode, setMode] = useState(saved.mode === 'toda' ? 'toda' : 'sostenida');
   const [minutes, setMinutes] = useState(LIQUIDITY_MAP_MINUTES.includes(saved.minutes) ? saved.minutes : 30);
   const [sides, setSides] = useState(saved.sides !== false);
+  const [cut, setCut] = useState(Number.isFinite(saved.cut) ? Math.max(0, Math.min(100, saved.cut)) : 0);
   // Sigue al gráfico principal (pestaña 1) mientras no se elija aquí otra moneda u otro marco
   const [follow, setFollow] = useState(TAB !== 1 && (URL_SYMBOL ? true : saved.follow !== false));
   const [ladderOn, setLadderOn] = useState(saved.ladder !== false);
@@ -83,11 +107,11 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
 
   useEffect(() => {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder, levels: levelsOn, levelMinutes, sides, defense: defenseOn }));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ symbol, timeframe: tf, mode, minutes, follow, ladder: ladderOn, ladderSettings: ladder, levels: levelsOn, levelMinutes, sides, defense: defenseOn, cut }));
     } catch {
       // Sin almacenamiento la elección dura hasta cerrar la pestaña
     }
-  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder, levelsOn, levelMinutes, sides, defenseOn]);
+  }, [symbol, tf, mode, minutes, follow, ladderOn, ladder, levelsOn, levelMinutes, sides, defenseOn, cut]);
 
   useEffect(() => {
     getJson('/api/suite/symbols').then(d => setSymbols(d.symbols)).catch(() => {});
@@ -112,26 +136,26 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
     const apply = () => {
       const indicator = chartRef.current?.getIndicatorManager?.()?.liquidityMapIndicator;
       if (!indicator) return false;
-      indicator.updateConfig({ mode, minutes, sides });
+      indicator.updateConfig({ mode, minutes, sides, cut });
       return true;
     };
     if (apply()) return undefined;
     const timer = setInterval(() => { if (apply()) clearInterval(timer); }, 300);
     return () => clearInterval(timer);
-  }, [mode, minutes, sides, symbol, tf]);
+  }, [mode, minutes, sides, cut, symbol, tf]);
 
   // Los minutos de los niveles sostenidos, igual
   useEffect(() => {
     const apply = () => {
       const indicator = chartRef.current?.getIndicatorManager?.()?.sustainedLevelsIndicator;
       if (!indicator) return false;
-      indicator.updateConfig({ minutes: levelMinutes });
+      indicator.updateConfig({ minutes: levelMinutes, cut });
       return true;
     };
     if (apply()) return undefined;
     const timer = setInterval(() => { if (apply()) clearInterval(timer); }, 300);
     return () => clearInterval(timer);
-  }, [levelMinutes, symbol, tf]);
+  }, [levelMinutes, cut, symbol, tf]);
 
   // Los dibujos que cambian en el gráfico principal o en otra pestaña llegan aquí (aquí no se editan)
   useEffect(() => onAnyDrawings((sym, shapes) => {
@@ -173,40 +197,64 @@ export default function LiquidityMapView({ active = true, onBack = null, onOpenT
         {TIMEFRAMES.map(t => (
           <button key={t} type="button" className={`suite-btn ${t === tf ? 'active' : ''}`} onClick={() => pickTf(t)}>{t}</button>
         ))}
-        <select className="suite-select" value={mode} onChange={(e) => setMode(e.target.value)} aria-label="Qué liquidez mostrar"
-          title="Solo la sostenida: lo que estuvo los últimos minutos hasta el cierre de cada vela, sin lo que aparece y desaparece. Toda: el promedio de la vela">
-          <option value="sostenida">Solo la sostenida</option>
-          <option value="toda">Toda la liquidez</option>
-        </select>
-        {mode === 'sostenida' && (
-          <select className="suite-select" value={minutes} onChange={(e) => setMinutes(Number(e.target.value))} aria-label="Minutos sostenida">
-            {LIQUIDITY_MAP_MINUTES.map(m => <option key={m} value={m}>{m < 60 ? `${m} min` : `${m / 60} h`}</option>)}
-          </select>
-        )}
-        <select className="suite-select" value={sides ? 'lados' : 'una'} onChange={(e) => setSides(e.target.value === 'lados')}
-          aria-label="Colores del mapa" title="Compra y venta: cada lado en su color, así se ve un soporte que pasa a resistencia. Una escala: las dos sumadas">
-          <option value="lados">Compra y venta</option>
-          <option value="una">Una escala</option>
-        </select>
-        {TAB !== 1 && (
-          <label className="wl-muted" title="Cambia de moneda y de marco con el gráfico principal">
-            <input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} /> Seguir al gráfico principal
-          </label>
-        )}
-        <button type="button" className={`suite-btn ${levelsOn ? 'active' : ''}`} onClick={() => setLevelsOn(v => !v)}
-          title="Niveles de liquidez sostenida: solo lo grande que esperó en el libro al menos los minutos elegidos, y cómo terminó (● consumido, × retirado)">Niveles</button>
-        {levelsOn && (
-          <select className="suite-select" value={levelMinutes} onChange={(e) => setLevelMinutes(Number(e.target.value))} aria-label="Minutos de los niveles sostenidos"
-            title="Cuánto debe esperar en el libro para ser un nivel sostenido">
-            {SUSTAINED_LEVELS_MINUTES.map(m => <option key={m} value={m}>{`≥ ${m < 60 ? `${m} min` : `${m / 60} h`}`}</option>)}
-          </select>
-        )}
-        <button type="button" className={`suite-btn ${defenseOn ? 'active' : ''}`} onClick={() => setDefenseOn(v => !v)}
-          title="Defensa de zona: qué hizo la liquidez cuando el precio llegó a tus líneas y rectángulos, y el estado de las zonas cerca del precio">Defensa</button>
-        <button type="button" className={`suite-btn ${ladderOn ? 'active' : ''}`} onClick={() => setLadderOn(v => !v)}
-          title="El libro de ahora de esta moneda, a la derecha del mapa">Ladder</button>
+        <LayersMenu>
+          <div className="suite-menu-row" style={ROW}>
+            <span style={NAME}>Mapa</span>
+            <select className="suite-select" value={mode} onChange={(e) => setMode(e.target.value)} aria-label="Qué liquidez mostrar"
+              title="Solo la sostenida: lo que estuvo los últimos minutos hasta el cierre de cada vela, sin lo que aparece y desaparece. Toda: el promedio de la vela">
+              <option value="sostenida">Solo la sostenida</option>
+              <option value="toda">Toda la liquidez</option>
+            </select>
+            {mode === 'sostenida' && (
+              <select className="suite-select" value={minutes} onChange={(e) => setMinutes(Number(e.target.value))} aria-label="Minutos sostenida">
+                {LIQUIDITY_MAP_MINUTES.map(m => <option key={m} value={m}>{m < 60 ? `${m} min` : `${m / 60} h`}</option>)}
+              </select>
+            )}
+          </div>
+          <div className="suite-menu-row" style={ROW}>
+            <span style={NAME}>Colores</span>
+            <select className="suite-select" value={sides ? 'lados' : 'una'} onChange={(e) => setSides(e.target.value === 'lados')}
+              aria-label="Colores del mapa" title="Compra y venta: cada lado en su color, así se ve un soporte que pasa a resistencia. Una escala: las dos sumadas">
+              <option value="lados">Compra y venta</option>
+              <option value="una">Una escala</option>
+            </select>
+          </div>
+          <div className="suite-menu-row" style={ROW}>
+            <label style={NAME} title="Niveles de liquidez sostenida: solo lo grande que esperó en el libro al menos los minutos elegidos, y cómo terminó (● consumido, × retirado, ✕ retiro cerca)">
+              <input type="checkbox" checked={levelsOn} onChange={(e) => setLevelsOn(e.target.checked)} /> Niveles
+            </label>
+            <select className="suite-select" value={levelMinutes} disabled={!levelsOn} onChange={(e) => setLevelMinutes(Number(e.target.value))}
+              aria-label="Minutos de los niveles sostenidos" title="Cuánto debe esperar en el libro para ser un nivel sostenido">
+              {SUSTAINED_LEVELS_MINUTES.map(m => <option key={m} value={m}>{`≥ ${m < 60 ? `${m} min` : `${m / 60} h`}`}</option>)}
+            </select>
+          </div>
+          <div className="suite-menu-row" style={ROW}>
+            <label style={{ flex: 1 }} title="Defensa de zona: qué hizo la liquidez cuando el precio llegó a tus líneas y rectángulos, al perfil del día anterior, a los FVG de 1h y a los niveles del journal, y el estado de las zonas cerca del precio">
+              <input type="checkbox" checked={defenseOn} onChange={(e) => setDefenseOn(e.target.checked)} /> Defensa de zona
+            </label>
+          </div>
+          <div className="suite-menu-row" style={ROW}>
+            <label style={{ flex: 1 }} title="El libro de ahora de esta moneda, a la derecha del mapa">
+              <input type="checkbox" checked={ladderOn} onChange={(e) => setLadderOn(e.target.checked)} /> Ladder
+            </label>
+          </div>
+          {TAB !== 1 && (
+            <div className="suite-menu-row" style={ROW}>
+              <label style={{ flex: 1 }} title="Cambia de moneda y de marco con el gráfico principal">
+                <input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} /> Seguir al gráfico principal
+              </label>
+            </div>
+          )}
+          <div className="wl-muted tabs-menu-note">Libro grabado desde el 13/11 · solo para mirar</div>
+        </LayersMenu>
+        <label className="wl-muted" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          title="Solo lo grande: deja en el mapa solo la liquidez más cargada a la vista, y en Niveles solo los de más USD. A la izquierda, todo">
+          Filtro
+          <input type="range" min={0} max={100} step={5} value={cut} onChange={(e) => setCut(Number(e.target.value))} style={{ width: 110 }}
+            aria-label="Solo lo grande" />
+          <span style={{ minWidth: 30 }}>{cut ? `${cut}%` : 'todo'}</span>
+        </label>
         <div className="suite-spacer" />
-        <span className="wl-muted" title="El libro completo se graba desde el 13/11/2026: antes no hay mapa">Libro grabado desde el 13/11 · solo para mirar</span>
         <TabsMenu onModule={onModule} />
         <button type="button" className="suite-btn" onClick={onOpenTheme}>Estilo</button>
       </div>

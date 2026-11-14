@@ -68,7 +68,7 @@ const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose, onOpen
                     <label className="checkbox-label">
                       <input type="checkbox" checked={!!values.codes[code]} onChange={(e) => setCode(code, e.target.checked)} />
                       <strong style={{ width: '24px', display: 'inline-block' }}>{code}</strong> {info.name}
-                      <span className="hint" style={{ marginLeft: '6px' }}>({SHAPE_TEXT[info.shape]}{info.volume ? ', vol.' : ''}{info.flow ? ', flujo' : ''})</span>
+                      <span className="hint" style={{ marginLeft: '6px' }}>({SHAPE_TEXT[info.shape]}{info.volume ? ', vol.' : ''}{info.flow ? ', flujo' : ''}{info.book ? ', libro: solo en la suite' : ''})</span>
                     </label>
                   </div>
                 ))}

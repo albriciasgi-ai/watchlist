@@ -430,13 +430,48 @@ async def orderflow_elements(symbol: str, interval: str, start_timestamp: int, e
     symbol = candles.symbol_code(symbol)
     tf = _tf(interval)
 
+    # Absorcion (AB) y barrido del libro (BL), 14/11: del libro grabado por la suite (book_events.py). Las velas de 1
+    # minuto (para saber si un nivel se consumio) solo si lo pedido toca los ultimos 3 dias: el libro empieza el 13/11.
+    import book_events
+    import book_levels
+    now = _now_ms()
+    bars = await book_levels._bars(symbol, max(start_timestamp, now - 3 * 86400000) - 4 * 3600000) \
+        if end_timestamp > now - 3 * 86400000 else None
+
     def body():
         cut = _live_cut(symbol, known_until)
         result = of_elements.detect(symbol, tf, start_timestamp, end_timestamp, cut, target,
                                     max(0, min(band_days, 14)), vol_filter, live=True)
-        return {"success": True, "catalog": {k: v[:2] for k, v in of_elements.CATALOG.items()}, **result}
+        catalog = {k: v[:2] for k, v in of_elements.CATALOG.items()}
+        catalog.update(book_events.CATALOG)
+        try:
+            book_cut = min(cut, now) if cut else now
+            extra = _book_events_cached(symbol, tf, start_timestamp - max(0, min(band_days, 14)) * 86400000,
+                                        end_timestamp, book_cut, bars)
+            result["events"] = sorted(result.get("events", []) + extra, key=lambda e: (e["t"], e["code"]))
+        except Exception as e:
+            result["book_error"] = f"{type(e).__name__}: {str(e)[:200]}"
+        return {"success": True, "catalog": catalog, **result}
 
     return _json(await run_in_threadpool(body))
+
+
+_book_events_cache = {}
+
+
+def _book_events_cached(symbol, tf, start, end, known_until, bars):
+    """book_events.detect con 50 s de memoria: el grafico pide los elementos de cada marco al moverse."""
+    import book_events
+    import book_store
+    key = (symbol, tf, start // (tf * 60000), end // 60000, known_until // 60000)
+    hit = _book_events_cache.get(key)
+    if hit and time.time() - hit[0] < 50:
+        return hit[1]
+    res = book_events.detect(book_store.sources(DATA), symbol, tf, start, end, known_until, bars)
+    if len(_book_events_cache) > 60:
+        _book_events_cache.clear()
+    _book_events_cache[key] = (time.time(), res)
+    return res
 
 
 @router.post("/api/orderflow/setups/{symbol}")

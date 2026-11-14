@@ -2,7 +2,7 @@
 // Uso: node tests/sustainedlevels.test.mjs
 import assert from 'node:assert/strict';
 
-const { fmtUsd, fmtMinutes, levelLabel, needsFetch, visibleLevels, nearLabel, lastNear } = await import('../src/components/sustainedLevels.js');
+const { fmtUsd, fmtMinutes, levelLabel, needsFetch, visibleLevels, nearLabel, lastNear, bigOnly } = await import('../src/components/sustainedLevels.js');
 
 let count = 0;
 const t = (name, fn) => { fn(); count++; console.log('ok', name); };
@@ -58,6 +58,14 @@ t('retiro cerca: etiqueta y aviso del último de la última hora', () => {
   ];
   assert.equal(lastNear(lv, now), 'compra 65,510 hace 3m');
   assert.equal(lastNear(lv.slice(0, 2), now), null);
+});
+
+t('filtro solo lo grande: deja los de más USD', () => {
+  const lv = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(u => ({ usd: u * 1e6 }));
+  assert.equal(bigOnly(lv, 0).length, 10);
+  assert.deepEqual(bigOnly(lv, 50).map(x => x.usd / 1e6), [5, 6, 7, 8, 9, 10]);
+  assert.deepEqual(bigOnly(lv, 100).map(x => x.usd / 1e6), [10]);
+  assert.deepEqual(bigOnly([], 80), []);
 });
 
 console.log(`\n${count} pruebas pasan`);
