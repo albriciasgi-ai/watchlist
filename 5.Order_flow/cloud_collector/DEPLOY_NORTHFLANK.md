@@ -226,9 +226,9 @@ anoto el hueco. Falta comparar un dia completo grabado en la nube contra el arch
 - **Variables nuevas** (se cambian sin rehacer la imagen: basta reiniciar el servicio):
   - `BOOK`: 1 por omisión; 0 lo apaga;
   - `BOOK_SYMBOLS`: las de `SYMBOLS` por omisión;
-  - `BOOK_KEEP_DAYS`: 3 días;
+  - `BOOK_KEEP_DAYS`: 7 días;
   - `BOOK_MIN_FREE_MB`: 150.
-- **Espacio:** unos 200 MB por día con 20 monedas (medido en el PC el 13/11: 73% los segundos y 27% los minutos). Cada 10 minutos se borran los días del libro de más de `BOOK_KEEP_DAYS`. Si el volumen queda con menos de `BOOK_MIN_FREE_MB` libres, también los días más viejos del libro. Nunca se borran el día de hoy, los trades ni los footprints. Si aun así falta espacio, el libro deja de grabarse hasta reiniciar.
+- **Espacio:** unos 200 MB por día con 20 monedas (medido en el PC el 13/11: 73% los segundos y 27% los minutos), así que 7 días son unos 1.4 GB. El volumen real es de 6 GB NVMe (0.15 USD por GB al mes), no el de 1 GB del paso 5. Cada 10 minutos se borran los días del libro de más de `BOOK_KEEP_DAYS`. Si el volumen queda con menos de `BOOK_MIN_FREE_MB` libres, también los días más viejos del libro. Nunca se borran el día de hoy, los trades ni los footprints. Si aun así falta espacio, el libro deja de grabarse hasta reiniciar.
 - **Pedidos a Bybit:** a lo sumo 5 fotos REST por segundo; solo lectura.
 - **Memoria y CPU** (medido en el PC el 13/11, 4 minutos con las 21 monedas de `SYMBOLS`):
   - con el libro, 113 MB de memoria contra 69 MB sin él, y 5.1% de un núcleo contra 0.6%;
@@ -244,3 +244,35 @@ anoto el hueco. Falta comparar un dia completo grabado en la nube contra el arch
 - **En el PC:** `12.AltagraciaTradingSuite/server/book_cloud.py` baja cada 10 minutos solo los minutos que el PC no tiene completos, a `OrderFlowData/live/book_cloud`. Los lectores juntan las dos carpetas.
 - **Pruebas sin conexión:** `tests/book_cloud_checks.py` de la suite (16) corre este `main.py` en el mismo proceso, con `httpx.ASGITransport`.
 - **Despliegue:** copiar a la rama `deploy` de `albriciasgi-ai/footprint-collector` `main.py`, `Dockerfile`, `requirements.txt` (suma httpx), `book_recorder.py` y `book_store.py`.
+
+
+## Trades sumados al final del día, sin quedarse sin memoria (13/11/2026)
+
+**Problema:** al ir a desplegar el libro, Northflank mostraba el servicio con 4 reinicios en un día, el último "Out-of-Memory killed (OOMKilled)". Fueron hoy a las 12:51, 13:34 y 14:58 de Colombia, todos por la tarde UTC. El plan es `nf-compute-20`: 0.2 vCPU y 512 MB. Cada reinicio deja un hueco en los trades.
+
+**Causa:** cada 5 minutos, `_merge_write` leía el archivo del día entero, lo unía con los trades nuevos, lo ordenaba y lo reescribía. Eso ponía en memoria varias copias del día. A las 15:00 de Colombia BTC tenía 2,705,109 trades: la unión ocupaba 260 MB, medidos con tracemalloc sobre el archivo real.
+
+**Cambios:**
+- `append_tape` en `tape_format.py`: suma los trades nuevos uniendo los planos de bytes de cada columna, sin decodificar el día. Ocupa 41 MB con ese mismo BTC.
+  - El archivo queda byte a byte igual al de antes: el formato no cambia, y `ingest.py`, `build_store.py` y `sync_nube.py` lo leen igual.
+  - Si un trade nuevo es anterior al último guardado, o la suma falla, se une y se ordena todo como antes.
+- `ENV MALLOC_ARENA_MAX=2` en el Dockerfile: glibc retiene menos memoria entre los hilos de escritura.
+- **Pruebas:** `tests/tape_append_checks.py` (13), byte a byte contra la unión de antes:
+  - planos que crecen, horas iguales en el borde, trades desordenados, día que se cierra y trade atrasado;
+  - el día real de BTC, si está en el PC.
+
+  `tape_checks.py` sigue con 18 de 22. Las 4 que fallan ya fallaban antes: usan el 12/11 como día en curso.
+
+**Desplegado el 13/11:** build `composed-eggnog-3952` (commit fe7d3bf de la rama `deploy`, con el libro completo), con el botón "Deploy" desde el navegador integrado y la sesión del usuario.
+
+**Medido después**, en los primeros 10 minutos:
+- **Servicio:** 0 reinicios. Memoria 167 MB y CPU 0.027 vCPU (14% del plan), contra 226 MB y 0.044 vCPU (22%) de la versión anterior, que no tenía el libro.
+- **Libro:** las 20 monedas listas, cada foto en 3.4 a 8.1 s; TONUSDT fuera, sin huecos ni errores.
+- **Primer guardado de trades con `append_tape`:** las 20 monedas, sin errores. Los archivos de LPT, PAXG y BTC bajados de la nube se leen bien, están ordenados y empiezan con los mismos trades que el PC tenía de las 15:14.
+- **Descargas:** BTC (4.3 MB) en 6.7 s, unos 620 KB/s; antes, de 15 a 40 KB/s. `/health` responde en 0.7 s.
+- **Desde la suite:** `book_cloud.py` bajó de la nube real 5 minutos completos de BTC en 1 s, a una carpeta temporal. La segunda vuelta no bajó nada.
+- **Huecos de los reinicios de hoy**, que siguen anotados en los archivos de la nube:
+  - 10:13, 12:46, 13:28 y 14:53 de Colombia, de unos 5 minutos cada uno: lo que iba desde el último guardado;
+  - el despliegue dejó uno de 1 minuto.
+
+  El PC los tapa con lo que grabó la suite.

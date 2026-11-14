@@ -26,7 +26,7 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
-from tape_format import read_meta, read_tape, write_tape
+from tape_format import append_tape, read_meta, read_tape, write_tape
 
 logger = logging.getLogger(__name__)
 
@@ -252,8 +252,25 @@ class TapeRecorder:
 
     # ---------- escritura ----------
     def _merge_write(self, path: Path, meta: dict, new, level: int) -> int:
-        """Une lo ya guardado del dia con los trades nuevos, ordena por hora y reescribe. En otro hilo."""
+        """Une lo ya guardado del dia con los trades nuevos, ordena por hora y reescribe. En otro hilo.
+
+        Desde el 13/11/2026 los trades nuevos se suman al final sin decodificar el dia (append_tape): el
+        archivo queda igual y la memoria no crece con el dia. Antes, con BTC por la tarde, el collector se
+        quedaba sin memoria y Northflank lo reiniciaba. Si un trade nuevo es anterior al ultimo guardado,
+        se une y se ordena todo como antes."""
         t, p, q, side, rpi = (np.frombuffer(a, dtype=np.int64 if a.typecode == 'q' else np.int8) for a in new)
+        if path.exists():
+            order = np.argsort(t, kind="stable")
+            try:
+                n = append_tape(path, meta, t[order], p[order], q[order], side[order], rpi[order], level=level)
+            except (OSError, MemoryError):
+                raise
+            except Exception as e:
+                # lo decide la union completa: si el archivo de verdad no se lee, read_tape lo dira
+                logger.warning(f"[TAPE] {path.name}: no se pudo sumar al final ({e}); se une todo")
+                n = None
+            if n is not None:
+                return n
         if path.exists():
             try:
                 _, t0, p0, q0, s0, r0 = read_tape(path)

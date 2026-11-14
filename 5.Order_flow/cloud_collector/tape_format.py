@@ -64,6 +64,78 @@ def write_tape(path, meta, t, p, q, side, rpi, level=9):
     os.replace(tmp, path)
 
 
+def _sum_planes(raw, k, n):
+    """Suma de los n valores guardados en k planos de bytes, sin armarlos (13/11/2026)."""
+    return sum(int(np.frombuffer(raw, np.uint8, count=n, offset=j * n).sum(dtype=np.uint64)) << (8 * j) for j in range(k))
+
+
+def _sum_unzig(raw, k, n, chunk=1 << 18):
+    """Suma de los n valores zigzag guardados en k planos, de a tramos para no ocupar memoria (13/11/2026)."""
+    total = 0
+    for a in range(0, n, chunk):
+        b = min(n, a + chunk)
+        out = np.zeros((b - a, 8), np.uint8)
+        for j in range(k):
+            out[:, j] = np.frombuffer(raw, np.uint8, count=b - a, offset=j * n + a)
+        total += int(unzig(out.view('<u8').reshape(-1)).sum())
+    return total
+
+
+def append_tape(path, meta, t, p, q, side, rpi, level=9):
+    """Suma trades al final de un dia ya guardado sin decodificarlo entero (13/11/2026).
+
+    No esta en ingest.py y no cambia el formato: el archivo queda byte a byte igual al que daria write_tape
+    con todos los trades. write_tape necesita el dia entero en memoria, varias veces (BTC: 2.7 millones de
+    trades, unos 250 MB), y el collector de la nube, con 512 MB, se reiniciaba por falta de memoria. Aqui
+    se unen los planos de bytes de cada columna: unos 40 MB con BTC.
+    t, p, q, side y rpi son los trades nuevos ya ordenados por hora. Devuelve el total de trades, o None si
+    el primero es anterior al ultimo guardado: entonces hay que unir y ordenar todo con write_tape."""
+    b = open(path, 'rb').read()
+    assert b[:4] == MAGIC
+    hl = struct.unpack_from('<I', b, 4)[0]
+    old = json.loads(b[8:8 + hl]); o = 8 + hl; n = old['n']; m = len(t)
+    raw = {}
+    for s in old['sections']:
+        raw[s['name']] = (zlib.decompress(b[o:o + s['zlen']]), s['planes']); o += s['zlen']
+    del b
+    t_last = old['t0'] + _sum_planes(*raw['dt'], n)
+    if m and int(t[0]) < t_last:
+        return None
+    p_last = old['p0'] + _sum_unzig(*raw['dp'], n) if m else old['p0']
+    secs = []
+    blobs = []
+    new_cols = (('dt', np.diff(t, prepend=t_last).astype(np.uint64)),
+                ('dp', zig(np.diff(p, prepend=p_last).astype(np.int64))),
+                ('q', q.astype(np.uint64)))
+    for name, arr in new_cols:
+        data, k_old = raw.pop(name)
+        k_new, new_planes = planes_encode(arr)
+        k = max(k_old, k_new)
+        merged = bytearray(k * (n + m))
+        for j in range(k):
+            base = j * (n + m)
+            if j < k_old:
+                merged[base:base + n] = data[j * n:(j + 1) * n]
+            if j < k_new:
+                merged[base + n:base + n + m] = new_planes[j * m:(j + 1) * m]
+        del data
+        z = zlib.compress(merged, level); secs.append({'name': name, 'planes': k, 'zlen': len(z)}); blobs.append(z)
+        del merged
+    for name, arr in (('side', side > 0), ('rpi', rpi > 0)):
+        data, _ = raw.pop(name)
+        bits = np.concatenate([np.unpackbits(np.frombuffer(data, np.uint8))[:n].astype(bool), np.asarray(arr, bool)])
+        z = zlib.compress(np.packbits(bits).tobytes(), level); secs.append({'name': name, 'planes': 0, 'zlen': len(z)}); blobs.append(z)
+    meta = dict(meta, n=n + m, t0=int(old['t0']), p0=int(old['p0']), sections=secs, t_unit='1e-4s')
+    head = json.dumps(meta, separators=(',', ':')).encode()
+    tmp = str(path) + '.tmp'
+    with open(tmp, 'wb') as f:
+        f.write(MAGIC + struct.pack('<I', len(head)) + head)
+        for z in blobs:
+            f.write(z)
+    os.replace(tmp, path)
+    return n + m
+
+
 def read_meta(path):
     """Solo la cabecera (rapido: no descomprime los trades)."""
     with open(path, 'rb') as f:

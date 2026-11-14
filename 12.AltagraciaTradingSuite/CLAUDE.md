@@ -569,11 +569,13 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
 - **Nube** (13/11, pedido del usuario: la grabación corre solo con la suite abierta, y no la puede tener abierta todas esas semanas):
   - el collector de Northflank graba el libro completo todo el día, con copias exactas de `book_recorder.py` y `book_store.py`. Ver `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md`, "Libro completo de Bybit";
   - `server/book_cloud.py`, 90 s después de arrancar y luego cada 10 minutos, lista `/api/book/days` de la nube. De cada moneda de la suite y cada día baja solo los minutos que el PC no tiene completos, a `OrderFlowData/live/book_cloud`;
-  - cada pedido trae 60 minutos, primero los segundos y después los minutos, hasta 40 MB por vuelta. Lo que no alcanza queda para la siguiente, que sigue a los 5 s. La nube entrega de 15 a 40 KB/s: un día completo de las 20 monedas tarda de 1.5 a 4 horas;
+  - cada pedido trae 60 minutos, primero los segundos y después los minutos, hasta 40 MB por vuelta. Lo que no alcanza queda para la siguiente, que sigue a los 5 s. Medido tras desplegar (13/11): unos 620 KB/s, BTC (4.3 MB) en 6.7 s. Con eso, un día completo de las 20 monedas tarda unos 6 minutos; antes del arreglo de memoria del collector, la nube daba de 15 a 40 KB/s;
   - nunca toca lo grabado en el PC. Los lectores (`book_store.sources`) juntan las dos carpetas: de cada minuto, el bloque con más cobertura. Las medidas del journal y `book_study.py` leen las dos;
-  - la nube guarda 3 días (`BOOK_KEEP_DAYS`): con el PC apagado más tiempo, lo más viejo se pierde;
+  - la nube guarda 7 días (`BOOK_KEEP_DAYS`), unos 1.4 GB de su volumen de 6 GB: con el PC apagado más tiempo, lo más viejo se pierde;
   - `SUITE_CLOUD_URL` cambia la dirección (la de `sync_nube.py` por omisión). `SUITE_BOOK_CLOUD=0` lo apaga; sin esa variable sigue a `SUITE_BOOK` y luego a `SUITE_RECORD`;
   - `GET /api/book/cloud`: última vuelta, minutos y bytes bajados, lo pendiente y el último error. `/api/suite/status` trae `book_cloud`.
+  - **desplegado el 13/11** (build `composed-eggnog-3952`). Desde el PC, a una carpeta temporal, bajó 5 minutos completos de BTC de la nube real en 1 s, y la segunda vuelta nada;
+  - **en la suite del usuario** (13/11): había estado cerrada de las 15:15 a las 18:39 de Colombia. Al abrirla, la primera vuelta bajó 3,540 minutos de las 20 monedas (15:43 a 18:40), 29.5 MB en 82 s. En BTC, ETH, SOL, XRP y PAXG los 177 minutos quedaron completos, sin repetidos ni huecos: hasta las 18:39 salen de la nube y desde las 18:40, del PC.
 - **Journal** (`server/book_measures.py`): las medidas del libro de cada trade real van con las 58 de App 1, en el grupo "Libro". Se ven en el detalle y entran al informe de ganadoras contra perdedoras:
   - liquidez a ±0.5% en los 5 minutos antes de decidir, y su percentil contra las 24 horas anteriores;
   - desequilibrio a ±0.5% a favor del trade;

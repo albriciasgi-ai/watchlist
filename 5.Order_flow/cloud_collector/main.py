@@ -54,11 +54,11 @@ TAPE_SNAPSHOT_SECONDS = int(os.environ.get("TAPE_SNAPSHOT_SECONDS", "300"))
 
 # Libro completo de Bybit (orderbook.full): el mismo grabador de la suite, para tapar los huecos del PC.
 # BOOK=0 lo apaga. BOOK_SYMBOLS cambia las monedas (sin rehacer la imagen: basta reiniciar el servicio).
-# Ocupa unos 10 MB por moneda y dia: se guardan BOOK_KEEP_DAYS dias, y si el volumen queda con menos de
-# BOOK_MIN_FREE_MB libres se borran los dias mas viejos del libro (nunca los trades ni los footprints).
+# Ocupa unos 10 MB por moneda y dia: se guardan BOOK_KEEP_DAYS dias (7: el volumen es de 6 GB), y si queda
+# con menos de BOOK_MIN_FREE_MB libres se borran los dias mas viejos del libro (nunca los trades ni los footprints).
 BOOK_ON = os.environ.get("BOOK", "1") != "0"
 BOOK_SYMBOLS = [s.strip().upper() for s in os.environ.get("BOOK_SYMBOLS", ",".join(SYMBOLS)).split(",") if s.strip()]
-BOOK_KEEP_DAYS = int(os.environ.get("BOOK_KEEP_DAYS", "3"))
+BOOK_KEEP_DAYS = int(os.environ.get("BOOK_KEEP_DAYS", "7"))
 BOOK_MIN_FREE_MB = int(os.environ.get("BOOK_MIN_FREE_MB", "150"))
 BOOK_ROOT = book_store.root(DATA_DIR)
 
