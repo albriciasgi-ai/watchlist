@@ -40,6 +40,8 @@ _task = None
 _lock_fh = None
 _waiting = None
 LOCK_RETRY_SECONDS = 60
+START_RETRY_SECONDS = 30   # sin red al arrancar (13/11/2026)
+_start_error = None
 _stats = {"builds": 0, "build_errors": 0, "last_build": None, "last_build_seconds": None, "last_error": None,
           "last_cloud": None, "cloud_errors": 0, "cloud_running": False, "last_cloud_error": None}
 _cloud_task = None
@@ -80,7 +82,8 @@ async def start(ws_manager, symbols):
         return
     try:
         if _take_lock():
-            await _start(ws_manager, symbols)
+            # en otra tarea: sin red al arrancar, se reintenta sin frenar el arranque (13/11/2026)
+            _waiting = asyncio.create_task(_start_retrying(ws_manager, symbols))
             return
     except Exception as e:
         logger.error(f"[LOCAL_TAPE] No se pudo tomar el candado: {e}")
@@ -94,8 +97,7 @@ async def _wait_lock(ws_manager, symbols):
         await asyncio.sleep(LOCK_RETRY_SECONDS)
         try:
             if _take_lock():
-                _waiting = None
-                await _start(ws_manager, symbols)
+                await _start_retrying(ws_manager, symbols)
                 return
         except asyncio.CancelledError:
             raise
@@ -103,8 +105,18 @@ async def _wait_lock(ws_manager, symbols):
             logger.error(f"[LOCAL_TAPE] No se pudo tomar el candado: {e}")
 
 
-async def _start(ws_manager, symbols):
-    global _recorder, _task
+async def _start_retrying(ws_manager, symbols):
+    """Con el candado ya tomado: arranca, y si falla (13/11: la suite abrio sin red y Bybit no respondio los
+    decimales de cada moneda) lo vuelve a intentar cada START_RETRY_SECONDS. Antes quedaba sin grabar ni bajar la
+    nube hasta reiniciar."""
+    global _waiting
+    while not await _start(ws_manager, symbols):
+        await asyncio.sleep(START_RETRY_SECONDS)
+    _waiting = None
+
+
+async def _start(ws_manager, symbols) -> bool:
+    global _recorder, _task, _start_error
     try:
         rec = TapeRecorder(symbols, DATA / "live" / "local", keep_days=3, snapshot_seconds=SECONDS)
         await asyncio.to_thread(rec.load_scales)
@@ -114,9 +126,13 @@ async def _start(ws_manager, symbols):
         _task = asyncio.create_task(_loop(rec))
         logger.info(f"[LOCAL_TAPE] Grabando trades de {len(rec.scales)} monedas en {rec.root}")
         print(f"[STARTUP] Grabador local de trades: {len(rec.scales)} monedas en {rec.root}")
+        _start_error = None
+        return True
     except Exception as e:
-        logger.error(f"[LOCAL_TAPE] No se pudo iniciar: {e}")
-        print(f"[STARTUP] Warning: grabador local de trades no iniciado: {e}")
+        _start_error = str(e)[:200]
+        logger.error(f"[LOCAL_TAPE] No se pudo iniciar: {e}; se reintenta en {START_RETRY_SECONDS} s")
+        print(f"[STARTUP] Warning: grabador local de trades no iniciado: {e}; se reintenta en {START_RETRY_SECONDS} s")
+        return False
 
 
 async def stop():
@@ -210,6 +226,8 @@ async def _loop(rec):
 
 def status() -> dict:
     if _recorder is None:
-        return {"enabled": ENABLED, "running": False, "other_process_records": _waiting is not None}
+        # con el candado tomado y esperando la red no es otro proceso: lo dice start_error
+        return {"enabled": ENABLED, "running": False, "other_process_records": _waiting is not None and _lock_fh is None,
+                "start_error": _start_error}
     return dict(enabled=ENABLED, running=True, root=str(_recorder.root), symbols=sorted(_recorder.scales),
                 every_seconds=SECONDS, cloud_minutes=CLOUD_MINUTES, tape=_recorder.get_stats(), build=dict(_stats))

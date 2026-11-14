@@ -13,6 +13,7 @@ import time
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
+import httpx
 from fastapi import APIRouter
 
 import book_store
@@ -25,6 +26,8 @@ CHUNK_MINUTES = 60            # minutos por pedido: la nube entrega de 15 a 40 K
 MAX_BYTES_PER_RUN = 40 << 20  # lo que no alcance queda para la vuelta siguiente
 PENDING_PAUSE = 5             # segundos entre vueltas mientras quede algo pendiente
 MINUTE = 60000
+# Un pedido que pasa 2 minutos sin recibir nada se da por perdido (13/11: uno hecho sin red quedo colgado 10 minutos)
+REQUEST_TIMEOUT = httpx.Timeout(120.0, connect=15.0)
 
 
 def enabled() -> bool:
@@ -59,7 +62,7 @@ class CloudSync:
         now_ms = now_ms or int(time.time() * 1000)
         self.stats["runs"] += 1
         self.stats["last_run"] = int(started * 1000)
-        r = await self.http.get(f"{self.url}/api/book/days", timeout=120)
+        r = await self.http.get(f"{self.url}/api/book/days", timeout=REQUEST_TIMEOUT)
         r.raise_for_status()
         listing = r.json().get("symbols") or {}
         self.stats["cloud_symbols"] = len(listing)
@@ -85,7 +88,7 @@ class CloudSync:
                             if kind not in kinds:
                                 continue
                             resp = await self.http.get(f"{self.url}/api/book/{sym}/{day}/{kind}",
-                                                       params={"from_ms": start, "to_ms": end}, timeout=600)
+                                                       params={"from_ms": start, "to_ms": end}, timeout=REQUEST_TIMEOUT)
                             if resp.status_code == 404:
                                 continue
                             resp.raise_for_status()

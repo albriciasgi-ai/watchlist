@@ -18,6 +18,8 @@ const TAIL_MS = 30000;        // la ultima vela se vuelve a pedir cada 30 s
 const REQUEST_GAP_MS = 400;   // tiempo minimo entre dos pedidos
 const RETRY_MS = 15000;       // tras un error
 const MAX_COLS = 1500;        // lo mismo que acepta el servidor
+const REFRESH_MS = 60000;     // velas recientes incompletas: se vuelven a pedir cada minuto (la nube las puede llenar)
+const RECENT_MS = 12 * 3600000;
 
 export const LIQUIDITY_MAP_DEFAULTS = { mode: 'sostenida', minutes: 30, opacity: 0.9 };
 export const LIQUIDITY_MAP_MINUTES = [5, 15, 30, 60, 120, 240];
@@ -33,6 +35,7 @@ export default class LiquidityMapIndicator extends IndicatorBase {
     this.loading = false;
     this.lastRequest = 0;
     this.lastTail = 0;
+    this.lastRefresh = 0;
     this.lastError = 0;
     this.error = null;
     this.generation = 0;
@@ -134,6 +137,14 @@ export default class LiquidityMapIndicator extends IndicatorBase {
       const b = Math.min(missing[missing.length - 1], a + (MAX_COLS - 1) * frame);
       this._request(a, b + frame, grid);
       return;
+    }
+    if (now - this.lastRefresh > REFRESH_MS) {
+      this.lastRefresh = now;
+      const stale = times.filter(t => t >= now - RECENT_MS && t < last - frame && (this.store.coverage.get(t) ?? 0) < 100);
+      if (stale.length) {
+        this._request(stale[0], Math.min(stale[stale.length - 1], stale[0] + (MAX_COLS - 1) * frame) + frame, grid);
+        return;
+      }
     }
     if (now - this.lastTail > TAIL_MS) this._request(last - frame, last + frame, grid, true);
   }
