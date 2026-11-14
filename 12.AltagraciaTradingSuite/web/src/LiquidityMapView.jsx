@@ -41,7 +41,8 @@ const noop = () => {};
 const ROW = { gap: 6 };
 const NAME = { width: 120, flexShrink: 0 };
 
-// Menú "Capas" (14/11/2026): la barra del mapa ya no cabía en 1366 px. Abre y cierra como el de Pestañas.
+// Menú "Capas" (14/11/2026): la barra del mapa ya no cabía en 1366 px. Abre y cierra como el de Pestañas. Su ancho
+// sigue al contenido: con el ancho fijo del menú salía una barra de desplazamiento (pedido del usuario: agrandarlo).
 function LayersMenu({ children }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -55,7 +56,7 @@ function LayersMenu({ children }) {
     <div className="tabs-menu-anchor" ref={ref}>
       <button type="button" className={`suite-btn ${open ? 'active' : ''}`} onClick={() => setOpen(v => !v)}
         title="Qué se muestra: el mapa, los niveles, la defensa de zona y el ladder">Capas ▾</button>
-      {open && <div className="suite-menu" style={{ minWidth: 320 }}>{children}</div>}
+      {open && <div className="suite-menu" style={{ width: 'max-content', minWidth: 340, overflowX: 'visible' }}>{children}</div>}
     </div>
   );
 }

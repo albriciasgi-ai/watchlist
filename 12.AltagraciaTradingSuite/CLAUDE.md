@@ -844,7 +844,8 @@ Pedido del usuario: primero marcar aparte el nivel que se retira con el precio c
 
 Pedidos del usuario tras probar la defensa y los niveles.
 
-- **Barra del mapa:** ya no cabía en 1366 px. Quedan la moneda, los marcos, **"Capas ▾"** y el **filtro**. "Capas" (como el menú Pestañas) tiene el modo y los minutos del mapa, los colores, Niveles con sus minutos, Defensa de zona, Ladder y "Seguir al gráfico principal".
+- **Barra del mapa** (el menú crece con su contenido: con el ancho fijo de los menús salía una barra de desplazamiento, y el usuario prefirió agrandarlo):
+  ya no cabía en 1366 px. Quedan la moneda, los marcos, **"Capas ▾"** y el **filtro**. "Capas" (como el menú Pestañas) tiene el modo y los minutos del mapa, los colores, Niveles con sus minutos, Defensa de zona, Ladder y "Seguir al gráfico principal".
 - **Filtro "Solo lo grande"** (0 a 100, guardado como `cut`): en el mapa sube el corte de abajo del contraste del percentil 30 al 95 (`cutPercentile` de `liquidityMap.js`): lo de menos queda transparente. En Niveles deja los de USD en ese percentil o más de los que están a la vista (`bigOnly`).
 - **Defensa sin dibujos:** BTC no tenía dibujos y solo se veía el aviso. Ahora suma zonas automáticas (`auto_zones`, con las funciones de `book_study`): POC, VAH y VAL del perfil del día anterior, los FVG de 1h abiertos y los niveles del journal. `auto=0` las quita. En BTC, 12 horas: 13 zonas.
 - **Minutos de Niveles:** sí cambian lo que se dibuja (BTC, 10 horas: 57 niveles con 15 min, 13 con 30, 9 con 1 h, 7 con 2 h y 4 con 4 h). Las franjas gruesas son del mapa, que tiene sus propios minutos; los niveles son las líneas finas con contorno.
