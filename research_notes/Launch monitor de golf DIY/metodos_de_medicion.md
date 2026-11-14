@@ -75,7 +75,7 @@ Los módulos más baratos (HB100, CDM324) son de un solo canal, sin I/Q, y no di
   - Geometría mal medida (inclinación, distancias al tee y a la red, alturas): da un ángulo plausible pero equivocado, sin error visible — [launch-angle.md](https://github.com/open-flight/openflight/blob/main/docs/how-it-works/launch-angle.md), [positioning.md](https://github.com/open-flight/openflight/blob/main/docs/how-it-works/positioning.md).
 - Comparativa propia de OpenFlight, K-LD7 (24 GHz, 2 RX × 1 TX, ±15°) contra IWR6843 (60 GHz, 4 RX × 3 TX):
   - ángulo vertical en hierros: 2.14° contra 0.83° de MAE, con sesgo de +1.85° en el K-LD7;
-  - driver: 4.80° contra 1.42°;
+  - driver: 4.80° contra 1.42°, con filtro de trazas fantasma. No coincide con el 3.55° de MAE para driver de launch-angle.md, que no tiene ese filtro: son cifras internas distintas del mismo proyecto;
   - resolución Doppler: 0.85 m/s, aliada sobre 62 mph, contra 0.18 m/s.
 
   El K-LD7 quedó obsoleto en el proyecto — [iwr6843_vs_kld7_comparison.md](https://github.com/open-flight/openflight/blob/main/docs/iwr6843_vs_kld7_comparison.md), [README OpenFlight](https://github.com/open-flight/openflight).
@@ -90,9 +90,9 @@ Los módulos más baratos (HB100, CDM324) son de un solo canal, sin I/Q, y no di
 - Litigio: el Tribunal Federal de Justicia de Alemania resolvió que FlightScope no infringía esa patente de TrackMan en Alemania. FlightScope afirma que el método se conocía desde los años 80 en radares balísticos, aunque es una afirmación de parte — [Golf Business News](https://golfbusinessnews.com/news/innovation-centre/flightscope-wins-patent-infringement-case-against-trackman-in-germany/), [FirstCallGolf](https://www.firstcallgolf.com/industry-news/release/2022-11-16/flightscope-wins-patent-infringement-case-against-trackman-in-german-federal-court-of-justice).
 - Full Swing ilustra con espectros que el número de picos principales y su separación cambian con el spin, y que la posición del radar respecto del eje de spin cambia esos rasgos. Ejemplo de la figura: "RPM = 9941, AXIS = 3.2°" — [US 11,311,789 B2](https://patentimages.storage.googleapis.com/c4/12/c0/b3f55a7f05d52b/US11311789.pdf).
 - FlightScope recomienda pegatinas metálicas para medir el spin en interior con el Mevo+, porque el vuelo es corto; afuera no hacen falta. La pegatina debe quedar mirando directamente al Mevo+ (resumen de búsqueda) — [PlayBetter FAQ Mevo+](https://help.playbetter.com/en-US/flightscope-mevo+-faqs-&-specs-35650).
-  - Una reseña dice que en interior el spin solo se **mide** con bolas Titleist RCT o con las pegatinas, y que si no se estima con un algoritmo (fuente de baja calidad) — [reseña](https://golf-sim-lab-pro.pages.dev/reviews/flightscope-mevo-plus).
+  - Una reseña dice que en interior el spin solo se **mide** con bolas Titleist RCT o con las pegatinas, y que si no se estima con un algoritmo. Es un resumen de búsqueda con atribución exacta no verificada, y la fuente probable es de baja calidad — [reseña](https://golf-sim-lab-pro.pages.dev/reviews/flightscope-mevo-plus).
   - Un usuario reportó un 30–40% de spins medidos con pegatina en "Short Indoors" — [GolfSimulatorForum](https://golfsimulatorforum.com/forum/flightscope/360576-mevo-spin-measured-vs-calculated).
-  - Un vendedor dice que las pegatinas de FlightScope tienen tamaño, grosor y reflectividad específicos, y que se cambian cuando se gastan (afirmación comercial) — [MIA Golf](https://miagolftechnology.com/products/flightscope-metallic-stickers).
+  - Un vendedor dice que las pegatinas de FlightScope tienen tamaño, grosor y reflectividad específicos, y que se cambian cuando se gastan (afirmación comercial; resumen de búsqueda con atribución exacta no verificada) — [MIA Golf](https://miagolftechnology.com/products/flightscope-metallic-stickers).
 - OpenFlight describe el problema del spin con un CW barato:
   - el estimador de producción usa la envolvente de amplitud, que solo capta la parte AM (1–5% de profundidad de modulación) y descarta la modulación de fase, donde va casi toda la energía;
   - la **desaceleración** de la bola "chirpea" la portadora ~3–4 kHz/s con driver, así que en 60 ms la portadora y las bandas se corren ~200 Hz, mientras las separaciones son de 40–270 Hz (2,500–8,000 rpm). Una FFT simple las borronea;
@@ -160,7 +160,7 @@ Los módulos más baratos (HB100, CDM324) son de un solo canal, sin I/Q, y no di
 ### Takeaway
 PiTrac es la referencia abierta, de código y diseño libres, con Raspberry Pi 5, dos cámaras global shutter IMX296 y un estroboscopio LED.
 1. **Disparo:** la cámara 1 vigila la bola en un recorte de 98×88 a ~572 fps y detecta el movimiento.
-2. **Captura:** la cámara 2, en disparo externo, abre el obturador mientras el estroboscopio da pulsos de ~8.7 µs con intervalos irregulares (0.7, 1.8, 3.0… ms). Así quedan varias bolas en una sola imagen.
+2. **Captura:** la cámara 2, en disparo externo, abre el obturador mientras el estroboscopio da pulsos de 1 bit a 115,200 baudios (≈8.7 µs, cálculo propio) con intervalos irregulares (0.7, 1.8, 3.0… ms). Así quedan varias bolas en una sola imagen.
 3. **Detección:** las bolas se encuentran con YOLO (por defecto) o HoughCircles.
 4. **Posición:** la distancia de cada bola sale de su radio en píxeles (profundidad por tamaño), y la velocidad y los ángulos de las posiciones 3D y del tiempo entre pulsos. El intervalo de cada imagen se reconoce por la razón de distancias.
 
@@ -179,8 +179,8 @@ La profundidad por tamaño es mucho menos precisa que la posición en el plano d
 - La geometría de fábrica pone la cámara 1 a (−0.200, −0.234, 0.54) m de la bola esperada y la cámara 2 a (0.0, −0.051, 0.45) m. El radio esperado de la bola a 40 cm es de 87 px, un dato "crítico para el cálculo de distancias" — [configurations.json](https://github.com/PiTracLM/PiTrac/blob/main/Software/web-server/configurations.json).
 
 **Estroboscopio**
-- Vector de pulsos para driver: `[0.7, 1.8, 3.0, 2.2, 3.0, 7.1, 4.0, 0]` ms; para putter: `[5.0, 30.0, 30.0, 30.0, 50.0, 0]` ms.
-- El ancho del pulso es de 1 bit, a 115,200 baudios para pulsos rápidos y lentos.
+- Vector de pulsos para driver: `[0.7, 1.8, 3.0, 2.2, 3.0, 7.1, 4.0, 0]` ms; para putter: `[5.0, 30.0, 30.0, 30.0, 50.0, 0]` ms — [configurations.json](https://github.com/PiTracLM/PiTrac/blob/main/Software/web-server/configurations.json).
+- El ancho del pulso es de 1 bit, a 115,200 baudios para pulsos rápidos y lentos — [configurations.json](https://github.com/PiTracLM/PiTrac/blob/main/Software/web-server/configurations.json).
 - Antes de la captura se mandan 12 pulsos de "cebado" a 15 fps para estabilizar la exposición — [configurations.json](https://github.com/PiTracLM/PiTrac/blob/main/Software/web-server/configurations.json).
 - El tren de pulsos se genera **por el bus SPI** (`lgSpiWrite`) como un patrón de bits a una tasa fija, y el obturador externo (XTR) se maneja con GPIO25 (pin 22).
   - Primero se abre el obturador, luego se envía todo el tren SPI y al final se cierra.
@@ -192,7 +192,7 @@ La profundidad por tamaño es mucho menos precisa que la posición en el plano d
   - Otros fabricantes llaman XVS o FSIN a sus pines de disparo — [Arducam external trigger](https://docs.arducam.com/Raspberry-Pi-Camera/Multi-Camera-CamArray/external-trigger/).
 
 **Qué intervalo corresponde a cada bola**
-- PiTrac compara las razones entre las distancias de las bolas de la imagen con las razones entre los intervalos del estroboscopio. La mejor correlación da la correspondencia, y el tiempo útil es el que hay entre las dos bolas más centradas, que suelen no estar solapadas.
+- PiTrac compara las razones entre las distancias de las bolas de la imagen con las razones entre los intervalos del estroboscopio. La mejor correlación da la correspondencia, y el tiempo útil es el que hay entre las dos bolas más centradas, que suelen no estar solapadas — [gs_camera.cpp](https://github.com/PiTracLM/PiTrac/blob/main/Software/LMSourceCode/ImageProcessing/gs_camera.cpp).
 - El código remite a la patente **US 12,401,909** — [gs_camera.cpp](https://github.com/PiTracLM/PiTrac/blob/main/Software/LMSourceCode/ImageProcessing/gs_camera.cpp).
 - US 12,401,909 B2, "Timing determination in camera-based motion measurement systems" (solicitud 18/428,191): su fondo menciona que las imágenes múltiples superpuestas dificultan analizar el movimiento de la bola (resumen de búsqueda) — [Google Patents US12401909](https://patents.google.com/patent/US12401909).
 
@@ -297,7 +297,8 @@ No hay cifras de precisión publicadas de PiTrac. En tenis de mesa con cámara d
 - US 7,209,576 ("Methods, apparatus and computer program products for processing images of a golf ball") determina backspin y sidespin desplazando imágenes de la bola hasta la mejor coincidencia (resumen de búsqueda) — [US7209576](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/7209576).
 - Otras patentes de la misma búsqueda: US 6,458,035, "Method of measuring rotational motion of a golf ball"; US 12,714,910, "Devices, systems, and methods for measuring spin of a golf ball"; y US 12,008,770, "…measuring ball spin" — [US6458035](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6458035), [US12714910](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12714910), [US12008770](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12008770).
   - El resumen atribuye a estas patentes, sin decir a cuál, cuatro ideas: recuperar el vector de rotación 3D con pocas imágenes de una cámara, con más precisión cuanto más cuadros (15–30); proyectar a un hemisferio y probar rotaciones candidatas, con la dificultad de que no se ve la cara trasera de la bola; correlacionar los centros de los hoyuelos; y una advertencia de que borrar los brillos del centro perjudica la precisión. Sin verificar.
-- Imai et al. (IEEE SII 2016) estiman rotaciones grandes, de hasta ~60° entre dos cuadros infrarrojos, de una bola **sin marcas** (resumen de búsqueda) — [Imai 2016 (DOI vía unpaywall)](https://unpaywall.org/10.1109%2FSII.2016.7844057), [J-STAGE Robomec 2015](https://www.jstage.jst.go.jp/article/jsmermd/2015/0/2015__2A1-S08_1/_article/-char/en).
+- Imai et al. (IEEE SII 2016) estiman rotaciones grandes, de hasta ~60° entre dos cuadros infrarrojos, de una bola **sin marcas** (resumen de búsqueda) — [Imai 2016 (DOI vía unpaywall)](https://unpaywall.org/10.1109%2FSII.2016.7844057).
+  - En los mismos resultados apareció un trabajo de Robomec 2015 en J-STAGE, posiblemente relacionado; no se verificaron sus autores ni su contenido — [J-STAGE Robomec 2015](https://www.jstage.jst.go.jp/article/jsmermd/2015/0/2015__2A1-S08_1/_article/-char/en).
 
 **Tenis de mesa**
 - Tebbe, Klamt, Gao y Zell (ICRA 2020) comparan tres métodos: dos con una cámara rápida a 380 Hz que mira el logo, y uno que deduce el spin de la trayectoria por la fuerza de Magnus. El de trayectoria fue el más preciso, y el ajuste de segmentos circulares mejoró la extracción del logo (resumen de búsqueda) — [arXiv 1905.07967](https://ar5iv.arxiv.org/html/1905.07967).
@@ -308,7 +309,7 @@ No hay cifras de precisión publicadas de PiTrac. En tenis de mesa con cámara d
 **Comerciales**
 - **Rapsodo MLM2PRO:** la cámara lee un patrón impreso en las bolas RPT a **240 fps** para el spin y su eje. Sin bolas RPT no hay spin medido; los demás datos sí salen. El patrón va bajo la capa transparente, con tolerancias estrictas de impresión (resumen de búsqueda) — [Rapsodo RPT](https://rapsodo.com/products/callaway-chrome-tour-golf-balls-rpt), [MyGolfSpy](https://mygolfspy.com/first-look-rapsodo-mobile-launch-monitor-mlm2pro/).
   - Un reseñador dice que el spin queda dentro del 1% y a menos de 200 rpm en la mayoría de los tiros, en una prueba informal. Es un resumen de búsqueda, y no se pudo confirmar cuál de las reseñas lo dice; la candidata es Golfers Authority — [Golfers Authority](https://golfersauthority.com/rapsodo-mlm2pro-launch-monitor/).
-- **SkyTrak:** pide poner la bola sobre el punto láser y con el logo hacia la lente para un spin más preciso (resumen de búsqueda) — [SkyTrak FAQ](https://resources.skytrakgolf.com/frequently-asked-questions-about-the-skytrak-launch-monitor), [SkyTrak specs](https://resources.skytrakgolf.com/skytrak-technical-specifications).
+- **SkyTrak:** pide poner la bola sobre el punto láser y con el logo hacia la lente para un spin más preciso (resumen de búsqueda; no se verificó en cuál de las dos páginas está) — [SkyTrak FAQ](https://resources.skytrakgolf.com/frequently-asked-questions-about-the-skytrak-launch-monitor), [SkyTrak specs](https://resources.skytrakgolf.com/skytrak-technical-specifications).
 - **Uneekor:** anuncia una tecnología patentada para bolas sin marcas ("Dimple Optix"); no se halló el número de patente — [Uneekor EYE XR](https://uneekor.com/golf-launch-monitors/eye-xr).
 - **Foresight (afirmación propia):** en golpes centrados, el GCQuad dio una desviación estándar de spin de 82 rpm (rango de 226) contra 175 (620) del TrackMan 4 — [Foresight blog](https://www.foresightsports.com/blogs/golf-tips/comparing-golf-launch-monitor-foresight-sports-gcquad-and-gc3-stand-above-the-rest).
 
@@ -355,9 +356,11 @@ No hay cifras de precisión publicadas de PiTrac. En tenis de mesa con cámara d
   - un sensor inercial cubre los momentos en que los marcadores salen de la vista;
   - la variante US 8,758,151 trabaja con una sola cámara y marcadores fuera de la cara (resumen de búsqueda) — [US8951138](https://patents.google.com/patent/US8951138), [US8758151](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/8758151).
 - Según Foresight, **cuatro marcadores** permiten todos los datos, incluidos el ángulo de la cara y el punto de impacto, y uno solo da los básicos. El ángulo de la cara es el giro (yaw) del plano de la cara respecto de la línea de objetivo — [Foresight club markers](https://help.foresightsports.com/hc/en-us/articles/4408197030035-How-to-Apply-and-Maintain-Club-Markers-for-Foresight-Sports-Devices), [Fiducial Application Guide](https://support.foresightsports.com/fiducial-application-guide), [Club Head Data Definitions](https://help.foresightsports.com/hc/en-us/articles/47214673873811-Club-Head-Data-Measurements-Definitions).
-- **Uneekor:** los datos de bola funcionan sin marcas, pero los del palo necesitan sus pegatinas reflectantes de barra y punto (resumen de búsqueda) — [Golfers Authority Uneekor](https://golfersauthority.com/uneekor-eye-xo-launch-monitor/).
-- **Rapsodo:** según un revendedor, desde mayo de 2025 el MLM2PRO mide el camino y el ángulo de ataque con el radar y dos cámaras — [Carl's Place MLM2PRO](https://shop.carlofet.com/rapsodo-mlm2pro-launch-monitor).
-- **FlightScope** vende un "Pro Package and Face Impact Location"; el Pro Package agrega camino y cara contra camino (según un revendedor) — [PlayBetter Pro Package & FIL](https://www.playbetter.com/products/flightscope-pro-package-and-face-impact-location?ghref=2301%3A1337756), [FlightScope Mevo Gen2 Pro Package](https://flightscope.com/products/mevo-gen2-with-pro-package).
+- **Uneekor:** los datos de bola funcionan sin marcas, pero los del palo necesitan sus pegatinas reflectantes de barra y punto (resumen de búsqueda; atribución exacta no verificada) — [Golfers Authority Uneekor](https://golfersauthority.com/uneekor-eye-xo-launch-monitor/).
+- **Rapsodo:** según un revendedor, desde mayo de 2025 el MLM2PRO mide el camino y el ángulo de ataque con el radar y dos cámaras (resumen de búsqueda; atribución exacta no verificada) — [Carl's Place MLM2PRO](https://shop.carlofet.com/rapsodo-mlm2pro-launch-monitor).
+- **FlightScope** vende un producto llamado "Pro Package and Face Impact Location" — [PlayBetter Pro Package & FIL](https://www.playbetter.com/products/flightscope-pro-package-and-face-impact-location?ghref=2301%3A1337756).
+  - El Pro Package agrega más parámetros y "Fusion Tracking" — [FlightScope Mevo Gen2 Pro Package](https://flightscope.com/products/mevo-gen2-with-pro-package).
+  - Un revendedor lo lista con camino y cara contra camino (resumen de búsqueda; atribución exacta no verificada) — [Carl's Place Mevo Pro Package](https://shop.carlofet.com/launch-monitors-and-software/golf-simulator-software/mevo-pro-package).
 - **Plano D:** según TrackMan, citado por Titleist, el ángulo de la cara explica ~75% de la dirección de salida en hierros medios (25% el camino) y ~85% con driver (15%) — [Titleist club path](https://www.titleist.com/learning-lab/performance/golf-club-path), [Titleist face angle](https://www.titleist.com/learning-lab/performance/golf-club-face-angle).
   - GolfWRX da 75–80% sin separar por palo — [GolfWRX](https://www.golfwrx.com/146509/what-flightscope-and-trackman-can-tell-you-and-me/).
   - TrackMan define "face to path" como la diferencia entre el ángulo de la cara y el camino — [TrackMan Parameter Definitions](https://support.trackmangolf.com/hc/en-us/articles/5089892383515-TrackMan-Data-Parameter-Definitions), [TrackMan, What is face angle](https://www.trackman.com/blog/golf/what-is-face-angle).
@@ -400,12 +403,12 @@ Lo crítico es que **ningún disparo pase por software lento**. Para cámaras y 
   - El bucle de detección de movimiento corre con prioridad de tiempo real, y la codificación se hace después de revisar el movimiento, para sacarla del camino crítico.
   - Usa la etapa `motion_detect` de rpicam-apps con parámetros de diferencia y umbral de región — [libcamera_interface.cpp](https://github.com/PiTracLM/PiTrac/blob/main/Software/LMSourceCode/ImageProcessing/libcamera_interface.cpp), [ball_watcher.cpp](https://github.com/PiTracLM/PiTrac/blob/main/Software/LMSourceCode/ImageProcessing/ball_watcher.cpp), [configurations.json](https://github.com/PiTracLM/PiTrac/blob/main/Software/web-server/configurations.json).
 - El obturador externo se maneja con GPIO25 y el estroboscopio con SPI desde la Pi 5, sin microcontrolador aparte — [pulse_strobe.cpp](https://github.com/PiTracLM/PiTrac/blob/main/Software/LMSourceCode/ImageProcessing/pulse_strobe.cpp).
-- Raspberry Pi documenta cómo disparar la GS Camera con una Pico por XTR (1.8 V) — [Raspberry Pi docs GS Camera](https://www.raspberrypi.com/documentation/accessories/global-shutter-camera.html).
+- Raspberry Pi documenta cómo disparar la GS Camera con una Pico por XTR (1.8 V) (resumen de búsqueda) — [Raspberry Pi docs GS Camera](https://www.raspberrypi.com/documentation/accessories/global-shutter-camera.html).
 
 **Cortina láser (SkyTrak)**
-- Según un foro de usuarios, cuando la bola cruza la línea láser IR, invisible a simple vista, las cámaras se disparan y toman una foto cada una.
-- Según una patente citada en el foro, el sensor también estimaría la velocidad por la intensidad de la luz reflejada.
-- Riesgo especulado: que la varilla cruce primero la cortina y dispare sin bola.
+- Según un foro de usuarios, cuando la bola cruza la línea láser IR, invisible a simple vista, las cámaras se disparan y toman una foto cada una — [GolfSimulatorForum SkyTrak FAQ](https://golfsimulatorforum.com/forum/skytrak/33189-skytrak-technical-faq).
+- Según una patente citada en el foro, el sensor también estimaría la velocidad por la intensidad de la luz reflejada — [GolfSimulatorForum SkyTrak FAQ](https://golfsimulatorforum.com/forum/skytrak/33189-skytrak-technical-faq).
+- Riesgo especulado en el mismo foro: que la varilla cruce primero la cortina y dispare sin bola — [GolfSimulatorForum SkyTrak FAQ](https://golfsimulatorforum.com/forum/skytrak/33189-skytrak-technical-faq).
 - Otro usuario reporta 3 imágenes por tiro. Todo es información de usuarios (resumen de búsqueda) — [GolfSimulatorForum SkyTrak FAQ](https://golfsimulatorforum.com/forum/skytrak/33189-skytrak-technical-faq).
 
 **Microcontrolador**

@@ -5,7 +5,7 @@ Nota de método (para quien redacte el informe): las fuentes principales son los
 ## 1. PiTrac: estado en 2026, hardware, BOM, geometría, qué mide, precisión, software, simuladores, dificultad, limitaciones y roadmap
 
 ### Takeaway
-PiTrac es el único launch monitor fotométrico open source con mediciones de spin. Funciona con 1 Raspberry Pi 5, 2 cámaras global shutter Sony IMX296 y un estroboscopio IR de 10 LED en una placa propia de componentes pasantes. Mide velocidad de bola, VLA, HLA, backspin y sidespin, y se conecta a GSPro, E6, OpenGolfSim y a TCP genérico. En noviembre de 2026 sigue siendo un proyecto inmaduro, sin releases formales y con poca actividad desde junio. Solo funciona bajo techo, no entrega datos del palo y no publica su costo total. La única comparación numérica contra un equipo comercial (Uneekor, 10 tiros, febrero de 2025) da unas 2.3 mph de error en velocidad, 0.6° en VLA, 2° en HLA y unos 300 rpm de backspin.
+PiTrac es el único launch monitor fotométrico open source con mediciones de spin. Funciona con 1 Raspberry Pi 5, 2 cámaras global shutter Sony IMX296 y un estroboscopio IR de 10 LED en una placa propia de componentes pasantes. Mide velocidad de bola, VLA, HLA, backspin y sidespin, y se conecta a GSPro, E6, OpenGolfSim y a TCP genérico. En noviembre de 2026 sigue siendo un proyecto inmaduro, sin releases formales y con poca actividad desde junio. Solo funciona bajo techo, no entrega datos del palo y no publica su costo total. La única comparación numérica que encontré contra un equipo comercial (Uneekor, 10 tiros, febrero de 2025) da unas 2.3 mph de error en velocidad, 0.6° en VLA, 2° en HLA y unos 300 rpm de backspin.
 
 ### Cited Findings
 
@@ -47,8 +47,8 @@ PiTrac es el único launch monitor fotométrico open source con mediciones de sp
 - **Connector Board V3**, toda de componentes pasantes. "Vendor assembly is not recommended": se arma a mano — [PCB Assembly](https://github.com/PiTracLM/Docs/blob/main/docs/hardware/pcb-assembly.md). Sus componentes principales son:
   - regulador conmutado MC33063AP, LM317L e inductor de 33 µH;
   - driver de compuerta MCP1407 y 2 MOSFET IRLU024N;
-  - DAC MCP4801 y ADC MCP3202, usados para calibrar el estroboscopio;
-  - resistencias sensoras de 0.15 Ω y 0.1 Ω.
+  - DAC MCP4801 y ADC MCP3202, que según parece sirven para calibrar el estroboscopio (inferencia: existe un "V3 Board Calibration GUI", [#186](https://github.com/PiTracLM/PiTrac/commits/main), y un [strobe_calibration_manager.py](https://github.com/PiTracLM/PiTrac/blob/main/Software/web-server/strobe_calibration_manager.py));
+  - resistencias de potencia de 0.15 Ω (3 W) y 0.1 Ω (1 W).
 
   [BOM V3](https://github.com/PiTracLM/PiTrac/blob/main/Hardware/Assembly%20Files/V3%20Connector%20Only%20PCB/V3%20Connector%20Only%20Assembly/V3%20Connector%20Only%20Bill%20of%20Materials.csv).
 - **Placa IRLED2**: 10 emisores IR Vishay **VSMA1085400** (SMD; se recomienda mandarlos a soldar al fabricante de la PCB) — [IRLED2 BOM](https://github.com/PiTracLM/PiTrac/blob/main/Hardware/Assembly%20Files/IRLED2%20Only%20PCB/IRLED2%20Only%20Assembly/IRLED2%20Only%20Bill%20of%20Materials.csv); [PCB Assembly](https://github.com/PiTracLM/Docs/blob/main/docs/hardware/pcb-assembly.md).
@@ -232,7 +232,7 @@ Su propio historial cuenta que empezó con los módulos baratos HB100/CDM324 y l
   | Velocidad de bola | **2.69 mph (2.2%)** | 3.66 mph | todas en contra |
   | Velocidad del palo | 5.6 mph (6.5%) | 13.5 mph | — |
   | Smash | +0.06 | — | — |
-  | Ángulo vertical | 6.9° | — | de antes del IWR6843 |
+  | Ángulo vertical | 6.9° | — | probablemente de la época de los K-LD7, antes del IWR6843 (inferencia por la fecha) |
   | Spin | ≈3,000 rpm | — | solo 5 de 22 tiros tuvieron valor |
   | Carry | 16.6 yd | — | — |
 
@@ -335,7 +335,7 @@ Hay código maduro para casi todas las piezas: detección de bola, spin, procesa
 | Putt con webcam | [alleexx/cam-putting-py](https://github.com/alleexx/cam-putting-py) | Tiene archivo de licencia, pero la página no dice cuál | Python y OpenCV | Seguimiento HSV, velocidad y HLA del putt |
 | Velocidad del putt | [natterman12/Golf-Ball-Tracking-and-Speed-Detection](https://github.com/natterman12/Golf-Ball-Tracking-and-Speed-Detection) | GPL-3.0 | Python (deducido) | Base de cam-putting-py |
 
-- Formato del mensaje a GSPro, tal como lo arma PiTrac: `{"DeviceID", "Units":"Yards", "ShotNumber", "APIversion":"1", "BallData":{...}, "ClubData":{Speed, AngleOfAttack, FaceToTarget, Lie, Loft, Path, SpeedAtImpact, VerticalFaceImpact, HorizontalFaceImpact, ClosureRate}, "ShotDataOptions":{ContainsBallData, ContainsClubData, LaunchMonitorIsReady, LaunchMonitorBallDetected, IsHeartBeat}}`, con latido periódico y tope de 200 mph — [gspro_sim.py](https://github.com/PiTracLM/PiTrac/blob/main/Software/web-server/sims/gspro_sim.py).
+- Formato del mensaje a GSPro, tal como lo arma PiTrac: `{"DeviceID", "Units":"Yards", "ShotNumber", "APIversion":"1", "BallData":{...}, "ClubData":{Speed, AngleOfAttack, FaceToTarget, Lie, Loft, Path, SpeedAtImpact, VerticalFaceImpact, HorizontalFaceImpact, ClosureRate}, "ShotDataOptions":{ContainsBallData, ContainsClubData, LaunchMonitorIsReady, LaunchMonitorBallDetected, IsHeartBeat}}`, con mensajes de latido (`IsHeartBeat`) y un tope de 200 mph (`_MAX_SPEED_MPH`) — [gspro_sim.py](https://github.com/PiTracLM/PiTrac/blob/main/Software/web-server/sims/gspro_sim.py).
 - GSPro requiere una licencia pagada convertida al tipo "OpenAPI"; la API Open Connect viene incluida — [OpenFlight: GSPro](https://github.com/jewbetcha/openflight/blob/main/docs/using/simulator/gspro.md).
 - OpenGolfSim: "Developer API" en el puerto TCP 3111, protocolo OpenConnect V1, "the API has no auth" — [OpenFlight: OpenGolfSim](https://github.com/jewbetcha/openflight/blob/main/docs/using/simulator/opengolfsim.md).
 - PAR-TEE: simulador para iPhone y iPad, OpenConnect V1, puerto TCP 921 — [OpenFlight: PAR-TEE](https://github.com/jewbetcha/openflight/blob/main/docs/using/simulator/partee.md).
