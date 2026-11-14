@@ -214,6 +214,8 @@ const MiniChart = forwardRef(({
   onPositionAction = null, // { type: 'close' | 'cancel' | 'move' | 'remove', line, field, price }: lo decide quien da los datos
   chosenStyle = 'labels', // Lo elegido para el análisis: 'labels' (etiqueta morada) o 'numbers', un número pequeño con su etiqueta al pasar el mouse
   captureChosenStyle = null, // En las imágenes de las órdenes: el mismo de chosenStyle, o 'lines' (solo sus líneas y aros: App 1, cuyo visor pone los números)
+  chosenItems = null, // Lo elegido que se muestra en lugar de la lista del panel (suite, 13/11: lo de un trade en su análisis post-trade). Mientras está, un clic no abre el menú de niveles. App 1 no lo pasa
+  drawingsSource = null, // Otra capa de dibujos en lugar de los de la moneda (suite, 13/11: el análisis post-trade de un trade): { key, load(), save(shapes) }. Sin ella, /api/drawings/{símbolo} como siempre
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -255,6 +257,10 @@ const MiniChart = forwardRef(({
   liveRedrawMsRef.current = liveRedrawMs;
   const viewOnlyRef = useRef(viewOnly);
   viewOnlyRef.current = viewOnly;
+  const chosenItemsRef = useRef(chosenItems);
+  chosenItemsRef.current = Array.isArray(chosenItems) ? chosenItems : null;
+  const drawingsSourceRef = useRef(drawingsSource);
+  drawingsSourceRef.current = drawingsSource;
   const livePacerRef = useRef(null);
   const mountedRef = useRef(true);
   const indicatorManagerRef = useRef(null);
@@ -746,9 +752,16 @@ const MiniChart = forwardRef(({
         const itemsFramed = ownItems && frameItems(items);
         const viewChanged = Boolean(frameFrom || context || itemsFramed);
 
-        // Lo más reciente y sin la cruceta del mouse ni la marca de "Ir al gráfico"
+        // Lo más reciente y sin la cruceta del mouse ni la marca de "Ir al gráfico". Tampoco la selección ni el resaltado de
+        // un dibujo (13/11): la imagen muestra los dibujos como quedan
         const focus = focusMarkRef.current;
         focusMarkRef.current = null;
+        const drawings = drawingManagerRef.current;
+        const marked = drawings ? [drawings.selectedShape, drawings.hoveredShape] : null;
+        if (drawings) {
+          drawings.selectedShape = null;
+          drawings.hoveredShape = null;
+        }
         captureItemsRef.current = ownItems ? items : null;
         // La imagen sale con al menos el doble de píxeles que la pantalla: se puede ampliar sin perder detalle
         const screen = screenDensity();
@@ -758,6 +771,7 @@ const MiniChart = forwardRef(({
         }
         captureItemsRef.current = null;
         focusMarkRef.current = focus;
+        if (drawings) [drawings.selectedShape, drawings.hoveredShape] = marked;
         const imageSize = { width: canvas.width, height: canvas.height };
 
         // Dónde quedó en la imagen cada nivel o marca de la orden, como parte del ancho y del alto
@@ -1382,8 +1396,9 @@ const MiniChart = forwardRef(({
       // Lo elegido en otro marco va en la vela de este marco que contiene su hora
       const candleX = (timestamp) => candleCenterX(visibleCandles, TF_MS[interval], marginLeft, barWidth, timestamp) ?? timeToX(timestamp);
       const area = { priceToY, timeToX, candleX, left: marginLeft, right: marginLeft + chartWidth, top: marginTop, bottom: marginTop + priceChartHeight };
-      // Al tomar la imagen de una orden, lo elegido para ella. Con números, cada uno lleva el suyo (su lugar en la lista)
-      const chosen = captureItemsRef.current ?? knownLevels(symbol, simulatedNowRef.current ?? priceContext.knownUntil);
+      // Al tomar la imagen de una orden, lo elegido para ella. Con números, cada uno lleva el suyo (su lugar en la lista).
+      // Con chosenItems (análisis post-trade de la suite), lo de ese trade en lugar de la lista del panel
+      const chosen = captureItemsRef.current ?? chosenItemsRef.current ?? knownLevels(symbol, simulatedNowRef.current ?? priceContext.knownUntil);
       const shownStyle = captureItemsRef.current ? (captureChosenStyle ?? chosenStyle) : chosenStyle;
       const chosenNumberMap = shownStyle === 'numbers' ? chosenNumbers(chosen) : null;
       const levelBadges = drawChosenLevels(ctx, chosen, area, { numbers: chosenNumberMap, bare: shownStyle === 'lines' });
@@ -2177,9 +2192,25 @@ const MiniChart = forwardRef(({
   const loadDrawings = async () => {
     if (!drawingManagerRef.current) return;
 
+    // Otra capa de dibujos (drawingsSource, suite): se carga aunque esté vacía, y solo si sigue siendo la elegida
+    const source = drawingsSourceRef.current;
+    if (source) {
+      try {
+        const shapes = (await source.load()) || [];
+        if (drawingsSourceRef.current?.key !== source.key || !drawingManagerRef.current) return;
+        drawingManagerRef.current.loadShapes(shapes);
+        updateChartRectangles();
+        if (candlesRef.current.length > 0) drawChart(candlesRef.current, lastPriceRef.current, null, null);
+      } catch (error) {
+        console.error(`[${symbol}] ❌ Error cargando la capa de dibujos ${source.key}:`, error);
+      }
+      return;
+    }
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/drawings/${symbol}`);
       const data = await response.json();
+      if (drawingsSourceRef.current) return; // se eligió otra capa mientras cargaba
 
       if (data.shapes && data.shapes.length > 0) {
         drawingManagerRef.current.loadShapes(data.shapes);
@@ -2202,6 +2233,17 @@ const MiniChart = forwardRef(({
     try {
       const shapes = drawingManagerRef.current.getShapes();
 
+      // Otra capa (drawingsSource, suite): se guarda en ella, nunca en los dibujos de la moneda
+      const source = drawingsSourceRef.current;
+      if (source) {
+        await source.save(shapes);
+        // Si mientras se guardaba se volvió a otra capa, estos dibujos ya no son los de la vista: no se avisan
+        if (drawingsSourceRef.current?.key !== source.key) return;
+        updateChartRectangles();
+        if (onDrawingsChange) onDrawingsChange(shapes, interval);
+        return;
+      }
+
       // 🔧 FIX: En modo backtesting, solo sincronizar (no guardar al backend)
       if (backtestingMode) {
         if (onDrawingsChange) {
@@ -2222,6 +2264,7 @@ const MiniChart = forwardRef(({
       });
 
       console.log(`[${symbol}] ✅ Guardados ${shapes.length} dibujos`);
+      if (drawingsSourceRef.current) return; // mientras se guardaban se pasó a otra capa (suite): ya no son los de la vista
       updateChartRectangles();
       // En vivo (suite): los demás marcos y la otra pestaña reciben los mismos dibujos. App 1 no usa este modo
       if (onDrawingsChange) {
@@ -2231,6 +2274,26 @@ const MiniChart = forwardRef(({
       console.error(`[${symbol}] ❌ Error guardando dibujos:`, error);
     }
   };
+
+  // Al cambiar de capa de dibujos (drawingsSource: el análisis post-trade de la suite, y de vuelta a los de la moneda)
+  // se quitan los de la anterior antes de cargar los de la nueva: nunca se mezclan, y lo dibujado se guarda solo en la
+  // capa a la vista. App 1 no cambia de capa
+  const drawingsKey = drawingsSource?.key ?? null;
+  const drawingsKeyRef = useRef(drawingsKey);
+  useEffect(() => {
+    if (drawingsKeyRef.current === drawingsKey) return; // al montar, los carga la inicialización del dibujo
+    drawingsKeyRef.current = drawingsKey;
+    if (!drawingManagerRef.current) return;
+    drawingManagerRef.current.loadShapes([]);
+    updateChartRectangles();
+    if (candlesRef.current.length > 0) drawChart(candlesRef.current, lastPriceRef.current, null, null);
+    loadDrawings();
+  }, [drawingsKey]);
+
+  // Lo elegido a la vista cambió (chosenItems): se dibuja ya, sin esperar el próximo precio
+  useEffect(() => {
+    if (candlesRef.current.length > 0) drawChart(candlesRef.current, lastPriceRef.current, null, null);
+  }, [chosenItems]);
 
   // ==================== DATA LOADING ====================
 
@@ -2579,15 +2642,16 @@ const MiniChart = forwardRef(({
       setMousePos({ x, y });
       drawChart(candlesRef.current, lastPriceRef.current, x, y);
       const positionHit = onPositionAction ? hitPositionTarget(positionTargetsRef.current, x, y) : null;
-      canvas.style.cursor = positionHit ? positionHit.cursor : (!viewOnlyRef.current && levelsNear(levelTargetsRef.current, x, y).length ? 'pointer' : 'crosshair');
+      canvas.style.cursor = positionHit ? positionHit.cursor : (!viewOnlyRef.current && !chosenItemsRef.current && levelsNear(levelTargetsRef.current, x, y).length ? 'pointer' : 'crosshair');
     }
   };
 
-  // Clic sin arrastrar sobre un nivel: abre el menú para incluirlo en el análisis
+  // Clic sin arrastrar sobre un nivel: abre el menú para incluirlo en el análisis. Con chosenItems no: el menú cambia la
+  // lista del panel, que no está a la vista
   const handleChartClick = (e) => {
     const drag = dragStateRef.current;
     const canvas = canvasRef.current;
-    if (!drag.isDragging || drag.drawingHandled || e.button !== 0 || !canvas || viewOnlyRef.current) return;
+    if (!drag.isDragging || drag.drawingHandled || e.button !== 0 || !canvas || viewOnlyRef.current || chosenItemsRef.current) return;
     if (drawingManagerRef.current && drawingManagerRef.current.currentTool !== 'select') return;
 
     const rect = canvas.getBoundingClientRect();

@@ -1203,6 +1203,10 @@ Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la 
 - Las velas se validan al cargarlas. `drawChart` no copia ni filtra en reproducción
 - El límite de 33 ms actúa desde el segundo dibujo y siempre dibuja lo último pedido
 - En vivo, cada precio de Bybit pide un dibujo (unas 10 veces por segundo por moneda). La prop `liveRedrawMs` (13/11) los junta con `redrawPacer.js`: a lo sumo un dibujo cada tantos ms, y al cambiar el valor lo pendiente se dibuja ya. La usa la Watchlist de la suite: 500 ms a la vista y 30 s fuera de ella. Sin la prop, como siempre: uno por cuadro. App 1 no la usa
+- Dos props para el análisis post-trade de la suite (13/11); App 1 no las pasa y nada cambia:
+  - `drawingsSource` = `{ key, load(), save(shapes) }`: otra capa de dibujos en lugar de `/api/drawings/{símbolo}`. Al cambiar su `key` (o al quitarla) el gráfico vacía los dibujos y carga los de la capa nueva: nunca se mezclan, y lo dibujado se guarda solo en la capa a la vista. Un guardado que termina después de cambiar de capa no se avisa a `onDrawingsChange`;
+  - `chosenItems`: lo elegido que se muestra en lugar de la lista del panel (lo de un trade). Mientras está, un clic no abre el menú de niveles, que cambiaría esa lista.
+- `captureScreenshot` dibuja la imagen sin la selección ni el resaltado de un dibujo (13/11), como ya lo hacía sin la cruz del mouse. Vale también para las imágenes de las órdenes de App 1
 - La prop `viewOnly` (13/11) deja el gráfico solo para mirar: el arrastre mueve las velas y la rueda acerca, pero los dibujos no se eligen, mueven, editan ni borran (el clic va directo al paneo), un clic no abre el menú de niveles y no se dibujan los divisores de altura ni los ▲▼ de los paneles. La usa la Watchlist de la suite, cuyas celdas muestran los dibujos y las alturas de la moneda que usa su gráfico principal. App 1 no la usa
 
 ### Indicadores

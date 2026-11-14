@@ -54,6 +54,36 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Análisis Post-Trade desde el Journal
+
+**Pedido:** desde "Ver en el gráfico" de un trade del journal, poder dibujar sobre el gráfico (por ejemplo conclusiones) y guardar una imagen en el journal: un análisis post-trade.
+
+**Cambios:**
+1. **"Análisis post-trade"** en la barra de "Ver en el gráfico". Mientras dura:
+   - lo dibujado va a una capa del trade, no a los dibujos de la moneda;
+   - los cinco marcos la muestran en lugar de los de la moneda;
+   - no pasa al panel de trading, al Swing ni a las otras pestañas;
+   - al volver a abrir el análisis del trade, sus dibujos siguen ahí y se pueden editar.
+2. **Lo elegido:** el gráfico muestra los niveles de la decisión de ese trade, numerados, en lugar de la lista del panel.
+3. **"Guardar imagen en el journal":** la imagen del marco a la vista, tal como se ve, con una conclusión opcional. El journal la muestra entre las imágenes del trade como "Análisis post-trade", con su conclusión. Se pueden guardar varias.
+4. **Termina** con "Terminar análisis", "Quitar", otra moneda u otro trade: vuelven los dibujos de la moneda.
+5. **App 1:** `MiniChart` suma dos props opcionales que App 1 no pasa: `drawingsSource`, otra capa de dibujos, y `chosenItems`, lo elegido a la vista. Sus imágenes ya no salen con la selección ni el resaltado de un dibujo.
+6. **Pruebas:** `journal_checks.py` de la suite (79). Las demás de la suite y de App 1 siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla.
+- Una imagen guardada no se puede borrar desde la suite.
+- Probado en la copia aislada con un bot falso y un trade de BTC con su decisión:
+  - una línea de BTC dibujada antes desapareció en el análisis y volvió al terminarlo;
+  - la línea y la caja de texto del análisis quedaron solo en el trade, también en 1H, y volvieron al abrirlo otra vez;
+  - la imagen llevó la caja del trade, el ① de su VAL y lo dibujado, sin la línea de BTC, y salió en el journal con su conclusión.
+
+  No se probó con trades reales ni en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Journal", "Análisis post-trade"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Pendientes del Journal (Regla del Laboratorio, Delta y OI Recientes, Lo Elegido en la Apertura)
 
 **Pedido:** los tres pendientes del journal:

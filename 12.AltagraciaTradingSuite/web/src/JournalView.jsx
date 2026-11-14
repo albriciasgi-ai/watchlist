@@ -58,7 +58,7 @@ function distances(t, position) {
 const pct = (v) => `${v.toFixed(2)}%`;
 
 const imageUrl = (path) => `/api/screenshots/session/${path}`;
-const IMAGE_NAMES = { decision: 'Decisión', open: 'Apertura', close: 'Cierre', after: '10 velas después' };
+const IMAGE_NAMES = { decision: 'Decisión', open: 'Apertura', close: 'Cierre', after: '10 velas después', analysis: 'Análisis post-trade' };
 const value = (v) => (v === null || v === undefined ? '—' : Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2));
 
 // La regla del laboratorio (13/11/2026): los mismos nombres del Observador de App 1
@@ -528,7 +528,10 @@ export default function JournalView({ active, onShowTrade }) {
           <h3>
             {selected.symbol} · {selected.side === 'Buy' ? 'LONG' : 'SHORT'} · {originText(selected)}{selected.pattern ? ` · ${selected.pattern}` : ''}
             {onShowTrade && (selected.opened_at || selected.closed_at) && (
-              <button type="button" className="suite-btn" style={{ marginLeft: 10 }} onClick={() => onShowTrade(selected)}>Ver en el gráfico</button>
+              <button type="button" className="suite-btn" style={{ marginLeft: 10 }} onClick={() => onShowTrade(selected)}
+                title="El trade en su moneda, desde su apertura y con su caja. Ahí, con “Análisis post-trade”, puedes dibujar sobre él y guardar una imagen aquí">
+                Ver en el gráfico
+              </button>
             )}
           </h3>
           {selected.images?.length > 0 && (
@@ -537,6 +540,7 @@ export default function JournalView({ active, onShowTrade }) {
                 <a key={img.image} href={imageUrl(img.image)} target="_blank" rel="noreferrer" title="Abrir a tamaño real" style={{ textAlign: 'center', fontSize: 12 }}>
                   <img src={imageUrl(img.image)} alt={IMAGE_NAMES[img.kind]} style={{ width: 260, border: '1px solid var(--t-line, #ccc)', display: 'block' }} />
                   {IMAGE_NAMES[img.kind] || img.kind} · {when(img.until || img.at)}{img.frame ? ` · ${img.frame}` : ''}
+                  {img.note && <div style={{ maxWidth: 260, whiteSpace: 'normal', opacity: 0.85 }}>“{img.note}”</div>}
                 </a>
               ))}
             </div>

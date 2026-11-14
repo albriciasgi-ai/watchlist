@@ -474,6 +474,31 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     });
   }, [captureFor, saveContext, pumpOffscreen, chartSize, closePlan, openPlan]);
 
+  // Análisis post-trade (13/11/2026, pedido del usuario): desde "Ver en el gráfico", dibujar sobre el trade (por ejemplo
+  // sus conclusiones) y guardar una imagen en el journal. Lo dibujado va a una capa del trade (data/journal/analysis), que
+  // los gráficos muestran en lugar de los dibujos de la moneda mientras dura el análisis (drawingsSource de MiniChart):
+  // no pasa al panel de trading, al Swing ni a las otras pestañas, y se puede seguir editando otro día. Lo elegido a la
+  // vista es lo de ese trade, con los números de su decisión (chosenItems)
+  const [analysis, setAnalysis] = useState(null); // el trade que se analiza
+  const analysisRef = useRef(null);
+  analysisRef.current = analysis;
+  const [analysisNote, setAnalysisNote] = useState('');
+  const [analysisBusy, setAnalysisBusy] = useState(false);
+  const analysisSource = useMemo(() => {
+    if (!analysis) return null;
+    const path = `/api/journal/analysis/${encodeURIComponent(analysis.trade_id)}/drawings`;
+    return {
+      key: `analysis:${analysis.trade_id}`,
+      load: async () => (await getJson(path)).shapes || [],
+      save: (shapes) => postJson(path, { shapes }),
+    };
+  }, [analysis]);
+  const analysisItems = useMemo(() => (analysis ? (analysis.decision?.levels || []) : null), [analysis]);
+  // El análisis es de la moneda del trade: otra moneda lo termina
+  useEffect(() => {
+    if (analysisRef.current && analysisRef.current.symbol !== symbol) setAnalysis(null);
+  }, [symbol]);
+
   // "Ver en el gráfico" desde el journal: su moneda, la vista en su apertura y su caja con entrada, SL y TP iniciales
   const focusBoxRef = useRef(null);
   const [focusedTrade, setFocusedTrade] = useState(null);
@@ -489,6 +514,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     const t = focusTrade;
     const start = t.opened_at || t.closed_at;
     if (!start) return undefined;
+    setAnalysis(null); // otro trade (o el mismo, pedido de nuevo): el análisis anterior termina
     // Cerrado: con el SL y el TP vigentes al cerrar, como su imagen de cierre. Abierto: con los iniciales (el plan);
     // los vigentes ya están en las líneas de la posición
     const closedTrade = t.status === 'closed';
@@ -513,7 +539,33 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   const clearFocusedTrade = () => {
     focusBoxRef.current = null;
     setFocusedTrade(null);
+    setAnalysis(null);
     chartRefs.current[activeTfRef.current]?.forceRedraw?.();
+  };
+  // La imagen del análisis: lo que se ve en el marco a la vista (caja del trade, lo elegido y lo dibujado), con la
+  // conclusión escrita. Se une al trade por su número, a cualquier hora
+  const saveAnalysisImage = async () => {
+    const t = analysisRef.current;
+    if (!t || analysisBusy) return;
+    setAnalysisBusy(true);
+    let result;
+    try {
+      const shot = await captureFor(`analysis-${Date.now()}`);
+      if (!shot.image) throw new Error('no se pudo tomar la imagen del gráfico');
+      const note = analysisNote.trim();
+      await postJson('/api/journal/context', {
+        kind: 'analysis', symbol: t.symbol, side: t.side, at: Date.now(), trade_id: t.trade_id, image: shot.image, frame: shot.frame,
+        ...(note ? { note } : {}),
+      });
+      setAnalysisNote('');
+      result = { ok: true, message: `Imagen del análisis guardada en el journal del trade (${shot.frame})` };
+    } catch (e) {
+      result = { ok: false, message: `La imagen del análisis no se guardó: ${e.message}` };
+    } finally {
+      setAnalysisBusy(false);
+    }
+    setPositionNotice(result);
+    setTimeout(() => setPositionNotice(n => (n === result ? null : n)), result.ok ? 5000 : 12000);
   };
   const handlePositionAction = useCallback(async (action) => {
     const result = await runPositionAction(action);
@@ -585,17 +637,27 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     return () => document.removeEventListener('mousedown', close);
   }, [showList]);
 
-  // Dibujos: los mismos en los cinco marcos y en la otra pestana, si mira la misma moneda
+  // Dibujos: los mismos en los cinco marcos y en la otra pestana, si mira la misma moneda. Durante un análisis
+  // post-trade los gráficos muestran la capa del trade: los de la moneda (de otra pestaña) solo van al panel y al Swing
   const loadEverywhere = useCallback((list, except) => {
-    TIMEFRAMES.forEach(tf => {
-      if (tf !== except) chartRefs.current[tf]?.loadDrawings?.(list, true);
-    });
+    if (!analysisRef.current) {
+      TIMEFRAMES.forEach(tf => {
+        if (tf !== except) chartRefs.current[tf]?.loadDrawings?.(list, true);
+      });
+    }
     setShapes(list);
     // Los rectángulos son las zonas del filtro VWAP del Swing: el servidor ya tiene los dibujos guardados
     swingVersionRef.current += 1;
     notifySwingChanged(symbolRef.current);
   }, []);
   const handleDrawingsChange = useCallback((list, sourceInterval) => {
+    if (analysisRef.current) {
+      // Lo dibujado en el análisis: ya quedó en la capa del trade; solo pasa a los otros marcos
+      TIMEFRAMES.forEach(tf => {
+        if (tf !== sourceInterval) chartRefs.current[tf]?.loadDrawings?.(list, true);
+      });
+      return;
+    }
     loadEverywhere(list, sourceInterval);
     sendDrawings(symbol, list);
   }, [symbol, loadEverywhere]);
@@ -1142,6 +1204,8 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                   getPositionLines={getPositionLines}
                   onPositionAction={handlePositionAction}
                   chosenStyle="numbers"
+                  chosenItems={analysisItems}
+                  drawingsSource={analysisSource}
                   onRequestPause={noop}
                   onRequestTimeChange={noop}
                   onDrawingsChange={handleDrawingsChange}
@@ -1150,10 +1214,34 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
             ))}
           </div>
           {focusedTrade && focusedTrade.symbol === symbol && (
-            <div className="suite-result ok" style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', zIndex: 60, background: 'var(--t-chart, #fff)', marginTop: 0 }}>
-              Trade del journal: {focusedTrade.side === 'Buy' ? 'LONG' : 'SHORT'} {focusedTrade.symbol}
+            <div className="suite-result ok" style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', zIndex: 60, background: 'var(--t-chart, #fff)', marginTop: 0, width: 'max-content', maxWidth: '94%' }}>
+              {analysis ? 'Análisis post-trade' : 'Trade del journal'}: {focusedTrade.side === 'Buy' ? 'LONG' : 'SHORT'} {focusedTrade.symbol}
               {focusedTrade.pnl !== null && focusedTrade.pnl !== undefined ? ` · ${focusedTrade.pnl >= 0 ? '+' : '−'}${Math.abs(focusedTrade.pnl).toFixed(2)} USD` : ''}
+              {!analysis && (
+                <>
+                  {' '}<button type="button" className="suite-btn" onClick={() => setAnalysis(focusedTrade)}
+                    title="Dibujar sobre el trade (por ejemplo sus conclusiones) y guardar una imagen en su journal. Lo dibujado queda en el trade, no en el gráfico de la moneda">
+                    Análisis post-trade
+                  </button>
+                </>
+              )}
+              {analysis && (
+                <>
+                  {' '}<input type="text" className="suite-input" style={{ width: 260 }} maxLength={4000} placeholder="Conclusión (opcional)"
+                    value={analysisNote} onChange={(e) => setAnalysisNote(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') saveAnalysisImage(); }} />
+                  {' '}<button type="button" className="suite-btn" disabled={analysisBusy} onClick={saveAnalysisImage}>
+                    {analysisBusy ? 'Guardando…' : 'Guardar imagen en el journal'}
+                  </button>
+                  {' '}<button type="button" className="suite-btn" onClick={() => setAnalysis(null)}>Terminar análisis</button>
+                </>
+              )}
               {' '}<button type="button" className="suite-btn" onClick={clearFocusedTrade}>Quitar</button>
+              {analysis && (
+                <div style={{ fontSize: 11, opacity: 0.8, marginTop: 4 }}>
+                  Lo que dibujes queda en este trade, no en el gráfico de la moneda, y vuelve al abrir su análisis otra vez. Los números son lo elegido para él.
+                </div>
+              )}
             </div>
           )}
           {positionNotice && (

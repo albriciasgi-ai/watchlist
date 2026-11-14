@@ -176,6 +176,40 @@ try:
     check("resultado desconocido o raro: solo placed y unknown quedan",
           so.clean_context({"kind": "decision", "symbol": "ADAUSDT", "side": "Buy", "at": NOW, "outcome": "x"}).get("outcome") is None)
 
+    # ---------- analisis post-trade (13/11/2026): imagen con conclusion, unida por el numero del trade ----------
+    san = JournalStore(TMP / "analysis")
+    shut = NOW - 5 * 86400000  # un trade cerrado hace 5 dias: el analisis se hace despues, a cualquier hora
+    san.add_context({"kind": "close", "symbol": "BTCUSDT", "side": "Buy", "at": shut + 3000, "image": path})
+    san.add_context({"kind": "analysis", "symbol": "BTCUSDT", "side": "Buy", "at": NOW - 60000, "trade_id": "BTC-AN-1", "image": path,
+                     "frame": "1h", "note": "  Entré antes de la confirmación  "})
+    san.add_context({"kind": "analysis", "symbol": "BTCUSDT", "side": "Buy", "at": NOW - 120000, "trade_id": "BTC-AN-1", "image": path, "frame": "15m"})
+    san.add_context({"kind": "analysis", "symbol": "BTCUSDT", "side": "Buy", "at": NOW, "trade_id": "BTC-OTRO", "image": path})
+    an = san.merge([{"trade_id": "BTC-AN-1", "symbol": "BTCUSDT", "side": "Buy", "opened_at": shut - 3600000, "closed_at": shut,
+                     "pre_existing": False}])[0]
+    kinds = [(i["kind"], i.get("frame"), i.get("note")) for i in an["images"]]
+    check("analisis unido por el numero del trade, dias despues del cierre, en el orden tomado y con su conclusion",
+          kinds == [("close", None, None), ("analysis", "15m", None), ("analysis", "1h", "Entré antes de la confirmación")], str(kinds))
+    for bad, name in (({}, "sin trade_id"), ({"trade_id": "a b"}, "trade_id invalido"), ({"trade_id": "X-1", "image": None}, "sin imagen")):
+        try:
+            body = {"kind": "analysis", "symbol": "BTCUSDT", "side": "Buy", "at": NOW, "image": path, **bad}
+            san.clean_context({k: v for k, v in body.items() if v is not None})
+            check(f"analisis rechazado: {name}", False)
+        except ValueError:
+            check(f"analisis rechazado: {name}", True)
+    # La capa de dibujos de cada trade
+    check("dibujos del analisis: vacios al empezar", san.analysis_drawings_get("BTC-AN-1") == [])
+    shapes = [{"id": "r1", "type": "rectangle", "time1": 1, "time2": 2, "price1": 100, "price2": 101}, {"id": "t1", "type": "text", "text": "Salí tarde"}]
+    check("dibujos del analisis: se guardan y se leen", san.analysis_drawings_put("BTC-AN-1", shapes) == 2
+          and san.analysis_drawings_get("BTC-AN-1") == shapes and san.analysis_drawings_get("BTC-OTRO") == [])
+    for bad, name in (("x", "no es lista"), ([{"id": 1}], "dibujo sin type"), ([{"type": "line"}] * 301, "mas de 300"),
+                      ([{"type": "text", "text": "x" * (3 * 1024 * 1024)}], "mas de 2 MB")):
+        try:
+            san.analysis_drawings_put("BTC-AN-1", bad)
+            check(f"dibujos del analisis rechazados: {name}", False)
+        except ValueError:
+            check(f"dibujos del analisis rechazados: {name}", True)
+    check("dibujos del analisis: un rechazo no toca lo guardado", san.analysis_drawings_get("BTC-AN-1") == shapes)
+
     # ---------- medidas de App 1 con velas simuladas ----------
     journal_measures.candles.klines = fake_klines_factory()
     import asyncio
@@ -355,6 +389,27 @@ try:
         check("la segunda vez sale guardada", c.get("/api/journal/reading/COV-1", headers=H).json().get("cached") is True)
         check("lectura: trade desconocido 404 e id invalido 400", c.get("/api/journal/reading/NADA-1", headers=H).status_code == 404
               and c.get("/api/journal/reading/a%20b", headers=H).status_code == 400)
+
+        # Analisis post-trade por las rutas: la capa de dibujos del trade y su imagen en el journal
+        tid = "ETHUSDT-Buy-1"
+        r = c.get(f"/api/journal/analysis/{tid}/drawings", headers=H)
+        check("ruta de dibujos del analisis: vacia al empezar", r.status_code == 200 and r.json()["shapes"] == [], r.text[:200])
+        r = c.post(f"/api/journal/analysis/{tid}/drawings", headers=H, json={"shapes": [{"id": "a", "type": "trendline"}]})
+        check("ruta de dibujos del analisis: guardados", r.status_code == 200 and r.json()["count"] == 1
+              and c.get(f"/api/journal/analysis/{tid}/drawings", headers=H).json()["shapes"][0]["type"] == "trendline", r.text[:200])
+        check("ruta de dibujos del analisis: invalidos 400, de otra pagina 403",
+              c.post(f"/api/journal/analysis/{tid}/drawings", headers=H, json={"shapes": "x"}).status_code == 400
+              and c.post("/api/journal/analysis/a%20b/drawings", headers=H, json={"shapes": []}).status_code == 400
+              and c.post(f"/api/journal/analysis/{tid}/drawings", headers={**H, "Origin": "https://evil.example"},
+                         json={"shapes": []}).status_code == 403)
+        check("ruta de dibujos con un numero de trade con dos puntos (cierre sin apertura)",
+              c.post("/api/journal/analysis/close%3Ao3%3A1/drawings", headers=H, json={"shapes": []}).status_code == 200)
+        r = c.post("/api/journal/context", headers=H, json={"kind": "analysis", "symbol": "ETHUSDT", "side": "Buy", "at": NOW,
+                                                            "trade_id": tid, "image": shot, "frame": "1h", "note": "Buen trade"})
+        j = c.get("/api/bot/journal", headers=H).json()
+        eth = next(t for t in j["trades"] if t["trade_id"] == tid)
+        check("imagen del analisis guardada y en el journal del trade, con su conclusion",
+              r.status_code == 200 and eth["images"][-1]["kind"] == "analysis" and eth["images"][-1]["note"] == "Buen trade", str(eth["images"])[:300])
 
         # Informe de la regla: 6 ganadoras con 4 horas a favor y cerca de una zona, 6 perdedoras en contra y lejos
         for i in range(12):

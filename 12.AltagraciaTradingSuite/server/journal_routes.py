@@ -96,6 +96,27 @@ def make_router(store: JournalStore, bot) -> APIRouter:
     async def catalog():
         return {"success": True, "measures": journal_measures.catalog()}
 
+    # ---------- analisis post-trade: la capa de dibujos de cada trade (13/11/2026) ----------
+    @r.get("/api/journal/analysis/{trade_id}/drawings")
+    async def analysis_drawings(trade_id: str):
+        if not TRADE_ID_RE.match(trade_id):
+            raise HTTPException(status_code=400, detail="trade invalido")
+        return {"success": True, "shapes": store.analysis_drawings_get(trade_id)}
+
+    @r.post("/api/journal/analysis/{trade_id}/drawings")
+    async def save_analysis_drawings(trade_id: str, request: Request):
+        if not TRADE_ID_RE.match(trade_id):
+            raise HTTPException(status_code=400, detail="trade invalido")
+        try:
+            body = await request.json()
+        except Exception:
+            raise HTTPException(status_code=400, detail="cuerpo JSON invalido")
+        try:
+            count = store.analysis_drawings_put(trade_id, body.get("shapes") if isinstance(body, dict) else None)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        return {"success": True, "count": count}
+
     # ---------- lectura de la regla del laboratorio (como el Observador de App 1: solo con el trade cerrado) ----------
     @r.get("/api/journal/reading/{trade_id}")
     async def trade_reading(trade_id: str):

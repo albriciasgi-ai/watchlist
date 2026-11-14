@@ -5,6 +5,8 @@
 #   papel y nota, la nota del usuario y la orden propuesta.
 # - Imagenes de apertura y de cierre: las toma la pagina al ver abrirse o cerrarse una posicion de la moneda a la vista.
 # - Medidas al decidir (cache de journal_measures.py) y lectura de la regla del laboratorio (de journal_reading.py).
+# - Analisis post-trade (13/11/2026): imagenes tomadas desde "Ver en el grafico", con su conclusion, y la capa de dibujos
+#   de cada trade (data/journal/analysis).
 #
 # Todo en data/journal (SUITE_DATA_DIR), en archivos que solo se agregan. Se une a los trades del bot al leerlos:
 # misma moneda y lado; la decision por su orden de Bybit si se sabe, si no por hora (merge).
@@ -24,8 +26,12 @@ ORDER_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 OUTCOMES = {"placed", "unknown"}
 # "after" (12/11/2026): la imagen 10 velas despues del cierre, como la de cierre de App 1. Su `at` es la hora del cierre
 # (se une al trade como la de cierre) y `until`, el final de lo que muestra
-KINDS = {"decision", "open", "close", "after"}
+# "analysis" (13/11/2026): imagen del analisis post-trade, tomada desde "Ver en el grafico" con lo dibujado sobre el trade
+# y una conclusion opcional. Se une al trade por su `trade_id`, a cualquier hora
+KINDS = {"decision", "open", "close", "after", "analysis"}
 MAX_IMAGE_BYTES = 12 * 1024 * 1024
+MAX_ANALYSIS_SHAPES = 300            # dibujos del analisis de un trade
+MAX_ANALYSIS_BYTES = 2 * 1024 * 1024
 MINUTE = 60000
 # Ventanas para unir un contexto con su trade (respecto de la apertura o el cierre que anota el bot)
 DECISION_BEFORE, DECISION_AFTER = 15 * MINUTE, 2 * MINUTE
@@ -57,6 +63,7 @@ class JournalStore:
         self.contexts_file = self.base / "contexts.jsonl"
         self.measures_dir = self.base / "measures"
         self.readings_dir = self.base / "readings"
+        self.analysis_dir = self.base / "analysis"
         self._cache: Optional[List[Dict[str, Any]]] = None
         self._cache_key = None
 
@@ -88,7 +95,7 @@ class JournalStore:
             raise ValueError("cuerpo invalido")
         kind = body.get("kind")
         if kind not in KINDS:
-            raise ValueError("kind debe ser decision, open, close o after")
+            raise ValueError("kind debe ser decision, open, close, after o analysis")
         symbol = str(body.get("symbol") or "").upper()
         if not SYMBOL_RE.match(symbol):
             raise ValueError("simbolo invalido")
@@ -116,6 +123,13 @@ class JournalStore:
         note = _text(body.get("note"), 4000)
         if note:
             event["note"] = note
+        if kind == "analysis":
+            trade_id = body.get("trade_id")
+            if not isinstance(trade_id, str) or not TRADE_ID_RE.match(trade_id):
+                raise ValueError("trade_id invalido: el analisis va unido a un trade")
+            if not event.get("image"):
+                raise ValueError("el analisis lleva su imagen")
+            event["trade_id"] = trade_id
         levels = body.get("levels")
         if isinstance(levels, list):
             clean = []
@@ -198,7 +212,11 @@ class JournalStore:
         apertura), nunca la de otra orden conocida: la de una Limit cancelada no pasa al trade que la reemplazo.
         """
         by_key: Dict[tuple, List[Dict[str, Any]]] = {}
+        by_trade: Dict[str, List[Dict[str, Any]]] = {}  # analisis post-trade, por su trade_id
         for event in self.contexts():
+            if event["kind"] == "analysis":
+                by_trade.setdefault(event.get("trade_id"), []).append(event)
+                continue
             by_key.setdefault((event["symbol"], event["side"]), []).append(event)
         for t in trades:
             events = by_key.get((t.get("symbol"), t.get("side")), [])
@@ -227,6 +245,10 @@ class JournalStore:
             decision = decision or by_time
             if decision and decision.get("image"):
                 images.insert(0, {"kind": "decision", "image": decision["image"], "at": decision["at"], "frame": decision.get("frame")})
+            # Analisis post-trade: despues de las demas, en el orden en que se tomaron, con su conclusion
+            analysis = sorted(by_trade.get(t.get("trade_id"), []), key=lambda e: e["at"])
+            images += [{k: v for k, v in {"kind": "analysis", "image": e.get("image"), "at": e["at"], "frame": e.get("frame"),
+                                          "note": e.get("note")}.items() if v is not None} for e in analysis]
             t["decision"] = decision
             t["images"] = [i for i in images if i.get("image")]
         return trades
@@ -267,3 +289,22 @@ class JournalStore:
 
     def readings_put(self, trade_id: str, data: Dict[str, Any]) -> None:
         self._cache_put(self.readings_dir, trade_id, data)
+
+    # Analisis post-trade (13/11/2026): lo dibujado sobre el trade desde "Ver en el grafico". Es una capa aparte: el
+    # grafico la muestra en lugar de los dibujos de la moneda mientras dura el analisis, y se puede seguir editando
+    def analysis_drawings_get(self, trade_id: str) -> List[Dict[str, Any]]:
+        data = self._cache_get(self.analysis_dir, trade_id)
+        shapes = data.get("shapes") if isinstance(data, dict) else None
+        return shapes if isinstance(shapes, list) else []
+
+    def analysis_drawings_put(self, trade_id: str, shapes: Any) -> int:
+        if not TRADE_ID_RE.match(trade_id or ""):
+            raise ValueError("trade invalido")
+        if (not isinstance(shapes, list) or len(shapes) > MAX_ANALYSIS_SHAPES
+                or not all(isinstance(s, dict) and isinstance(s.get("type"), str) for s in shapes)):
+            raise ValueError(f"shapes debe ser una lista de hasta {MAX_ANALYSIS_SHAPES} dibujos, cada uno con su type")
+        data = {"shapes": shapes, "saved_at": int(time.time() * 1000)}
+        if len(json.dumps(data, ensure_ascii=False).encode("utf-8")) > MAX_ANALYSIS_BYTES:
+            raise ValueError("los dibujos del analisis pasan de 2 MB")
+        self._cache_put(self.analysis_dir, trade_id, data)
+        return len(shapes)
