@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MAX_TABS, TAB, openTab } from './tabs.js';
 
-const MODULE_LABELS = [['chart', 'Gráfico'], ['watchlist', 'Watchlist'], ['journal', 'Journal'], ['bot', 'Bot']];
+const MODULE_LABELS = [['chart', 'Gráfico'], ['watchlist', 'Watchlist'], ['journal', 'Journal'], ['bot', 'Bot'], ['mapa', 'Mapa']];
 
 /**
  * Menú "Pestañas" (13/11/2026): abre de la 2 a la 5 con el módulo que se elija (en Electron, otra ventana) o cambia el
@@ -29,7 +29,7 @@ export default function TabsMenu({ onModule, buttonClass = 'suite-btn', children
         type="button"
         className={buttonClass}
         onClick={() => setOpen(v => !v)}
-        title="Abrir otra pestaña con el gráfico, la Watchlist, el journal o el bot"
+        title="Abrir otra pestaña con el gráfico, la Watchlist, el journal, el bot o el mapa de liquidez"
       >
         {children || 'Pestañas'}
       </button>

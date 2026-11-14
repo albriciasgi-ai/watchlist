@@ -6,7 +6,7 @@
 import { installOwnSettings } from '@app1/components/backtesting/secondaryStorage.js';
 
 export const MAX_TABS = 5;
-export const MODULES = ['chart', 'watchlist', 'journal', 'bot'];
+export const MODULES = ['chart', 'watchlist', 'journal', 'bot', 'mapa'];
 
 const params = (() => {
   try {
@@ -27,11 +27,16 @@ if (TAB > 1 && typeof document !== 'undefined') document.title = `Pestaña ${TAB
 /** El módulo con que se abrió esta pestaña desde el menú (?modulo=...), o null */
 export const MODULE_PARAM = MODULES.includes(params.get('modulo')) ? params.get('modulo') : null;
 
-/** Dirección de la pestaña n, abierta en `module` */
-export function tabUrl(n, module = null) {
+/** La moneda y el marco con que se abrió (13/11, el mapa los trae del gráfico principal), o null */
+export const URL_SYMBOL = /^[A-Z0-9]{2,20}$/.test(params.get('moneda') || '') ? params.get('moneda') : null;
+export const URL_TIMEFRAME = ['1m', '5m', '15m', '1h', '4h'].includes(params.get('marco')) ? params.get('marco') : null;
+
+/** Dirección de la pestaña n, abierta en `module` (extra: moneda y marco) */
+export function tabUrl(n, module = null, extra = null) {
   const query = new URLSearchParams();
   if (n > 1) query.set('pestana', String(n));
   if (module) query.set('modulo', module);
+  for (const [key, value] of Object.entries(extra || {})) if (value) query.set(key, String(value));
   const text = query.toString();
   return text ? `/?${text}` : '/';
 }
@@ -40,8 +45,52 @@ export function tabUrl(n, module = null) {
  * Abre la pestaña n (o la trae al frente si ya está abierta: cada una tiene su nombre de ventana). En Electron la
  * crea la app como ventana propia, con su propio hilo (desktop/main.cjs); en el navegador comparte el de esta
  */
-export function openTab(n, module = null) {
-  return window.open(tabUrl(n, module), `suite_pestana_${n}`);
+export function openTab(n, module = null, extra = null) {
+  return window.open(tabUrl(n, module, extra), `suite_pestana_${n}`);
+}
+
+// Qué pestañas están abiertas y con qué módulo (13/11): cada una lo anota cada 4 s. 90 s sin anotar cuenta como
+// cerrada: en el navegador una pestaña oculta puede quedar en un aviso por minuto
+const ALIVE_PREFIX = 'suite_tab_alive_';
+const ALIVE_MS = 90000;
+
+export function startTabHeartbeat(getModule) {
+  const beat = () => {
+    try { localStorage.setItem(`${ALIVE_PREFIX}${TAB}`, JSON.stringify({ at: Date.now(), module: getModule() })); } catch { /* sin almacenamiento */ }
+  };
+  const bye = () => {
+    try { localStorage.removeItem(`${ALIVE_PREFIX}${TAB}`); } catch { /* sin almacenamiento */ }
+  };
+  beat();
+  const timer = setInterval(beat, 4000);
+  window.addEventListener('pagehide', bye);
+  return () => {
+    clearInterval(timer);
+    window.removeEventListener('pagehide', bye);
+  };
+}
+
+export function openTabsNow(now = Date.now(), storage = typeof localStorage !== 'undefined' ? localStorage : null) {
+  return Array.from({ length: MAX_TABS }, (_, i) => i + 1).map(n => {
+    let note = null;
+    try { note = JSON.parse(storage?.getItem(`${ALIVE_PREFIX}${n}`) || 'null'); } catch { note = null; }
+    const alive = !!note && Number.isFinite(note.at) && now - note.at < ALIVE_MS;
+    return { n, alive, module: alive ? note.module : null };
+  });
+}
+
+/** Dónde abrir el mapa: la pestaña que ya lo muestra, o la primera libre de la 2 a la 5 (null: todas ocupadas) */
+export function mapTabNumber(tabs = openTabsNow(), current = TAB) {
+  const others = tabs.filter(t => t.n >= 2 && t.n !== current);
+  return (others.find(t => t.alive && t.module === 'mapa') || others.find(t => !t.alive))?.n ?? null;
+}
+
+/** El mapa de liquidez en otra pestaña, con esa moneda y ese marco. Devuelve el número de pestaña, o null */
+export function openMapTab(symbol, timeframe) {
+  const n = mapTabNumber();
+  if (!n) return null;
+  openTab(n, 'mapa', { moneda: symbol, marco: timeframe });
+  return n;
 }
 
 /**

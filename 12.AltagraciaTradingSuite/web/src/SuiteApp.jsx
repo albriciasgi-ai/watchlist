@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useUiTheme } from '@app1/components/useUiTheme.js';
 import ThemeSettings from '@app1/components/ThemeSettings.jsx';
 import ChartView from './ChartView.jsx';
@@ -7,7 +7,8 @@ import BotView from './BotView.jsx';
 import BotConfig from './BotConfig.jsx';
 import JournalView from './JournalView.jsx';
 import TabsMenu from './TabsMenu.jsx';
-import { MODULE_PARAM, TAB, tabUrl } from './tabs.js';
+import LiquidityMapView from './LiquidityMapView.jsx';
+import { MODULE_PARAM, TAB, startTabHeartbeat, tabUrl } from './tabs.js';
 import { useBotNotifications } from './botNotifications.js';
 
 const MODULE_KEY = `suite_module_${TAB}`;
@@ -43,9 +44,16 @@ export default function SuiteApp() {
   const [focusSymbol, setFocusSymbol] = useState(null); // una moneda de la Watchlist
   // La Watchlist se arma la primera vez que se abre y después queda armada: sus gráficos no se pausan
   const [watchlistOn, setWatchlistOn] = useState(START.module === 'watchlist');
+  // El mapa de liquidez (13/11), igual: se arma la primera vez y queda armado
+  const [mapOn, setMapOn] = useState(START.module === 'mapa');
+  // Cada pestaña anota que está abierta y con qué módulo: el botón "Mapa" busca así una libre (tabs.js)
+  const moduleRef = useRef(module);
+  moduleRef.current = module;
+  useEffect(() => startTabHeartbeat(() => moduleRef.current), []);
 
   const choose = (id) => {
     if (id === 'watchlist') setWatchlistOn(true);
+    if (id === 'mapa') setMapOn(true);
     setModule(id);
     saveModule(id);
   };
@@ -84,6 +92,16 @@ export default function SuiteApp() {
             active={module === 'watchlist'}
             onOpenChart={openChart}
             onBack={() => choose('chart')}
+            onOpenTheme={() => setShowTheme(true)}
+            onModule={openModule}
+          />
+        </div>
+      )}
+      {mapOn && (
+        <div style={{ display: module === 'mapa' ? 'block' : 'none' }}>
+          <LiquidityMapView
+            active={module === 'mapa'}
+            onBack={TAB === 1 ? () => choose('chart') : null}
             onOpenTheme={() => setShowTheme(true)}
             onModule={openModule}
           />

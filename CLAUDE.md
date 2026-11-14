@@ -54,6 +54,37 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 13 Noviembre 2026: Mapa de Liquidez en una Pestaña Aparte
+
+**Pedido:** construir el mapa de liquidez como una opción del gráfico principal que abra una pestaña aparte. Así se mantiene la visualización original y sus datos sin mezclarlos con el mapa.
+
+**Cambios:**
+1. **Botón "Mapa"** en el encabezado del gráfico principal: abre el mapa en otra pestaña (en Electron, otra ventana), con la moneda y el marco a la vista. Usa la pestaña que ya lo muestra, o la primera libre de la 2 a la 5: cada pestaña anota cada 4 s que está abierta. El menú "Pestañas" suma "Mapa". El gráfico principal no cambia.
+2. **Pestaña "Mapa"** (`LiquidityMapView.jsx`):
+   - un gráfico solo con el mapa, detrás de las velas;
+   - tus dibujos se ven sin editarse, y las posiciones del bot sin acciones;
+   - "Solo la sostenida" (de 5 minutos a 4 horas) o "Toda la liquidez";
+   - "Seguir al gráfico principal".
+3. **Servidor:** `/api/book/heatmap/{símbolo}` (`book_heatmap.py`), por vela y precio, del libro grabado en el PC y bajado de la nube. Cada celda va en un byte.
+4. **App 1:**
+   - `MiniChart` suma un fondo para los indicadores (`renderBackground`), dibujado antes de las velas;
+   - el indicador "Mapa de liquidez" (`LiquidityMapIndicator.js`, `liquidityMap.js`). App 1 no lo ofrece: no tiene libro de sus fechas. Sin él, nada cambia.
+5. **Pruebas:** `book_heatmap_checks.py` de la suite (17) y `liquiditymap.test.mjs` de App 1 (10). Las demás siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- El mapa existe desde el 13/11 a las 14:43. Lo que no se grabó, como las 15:15 a 15:42, queda vacío.
+- **Probado en la copia aislada con el libro real:**
+  - BTC y ETH, en 15m y 1m, en los dos modos y con Nítido y Oscuro;
+  - la pestaña siguió al gráfico principal;
+  - ETH 1m de 2 horas pesó 36 KB y tardó 14 ms.
+
+  El panel de pruebas abrió el mapa en la misma pestaña porque no abre ventanas. No se probó en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Mapa de liquidez" y `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "REPRODUCCIÓN LIGERA", "Fondo de los indicadores"
+
+---
+
 ### Altagracia Trading Suite + TradingBot + App 1 - 13 Noviembre 2026: Prueba en Demo, Apalancamiento, Nube contra el Oficial y Excel del Dashboard
 
 **Pedido:** para cerrar la etapa, cuatro cosas:

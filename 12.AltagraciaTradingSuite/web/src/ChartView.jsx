@@ -28,7 +28,7 @@ import { openDecisionLevels } from './openDecision.js';
 import { getJson, postJson } from './api.js';
 import { linesFor, runPositionAction, subscribeBook, subscribeCancels } from './botBook.js';
 import { dropLevels, knownLevels, restoreLevels } from '@app1/components/indicators/analysisLevels.js';
-import { TAB, onDrawings, onSymbolsChanged, sendDrawings, symbolsChanged } from './tabs.js';
+import { TAB, onDrawings, onSymbolsChanged, openMapTab, sendDrawings, symbolsChanged } from './tabs.js';
 import TabsMenu from './TabsMenu.jsx';
 import {
   SWING, RULE_KEYS, VISUAL_KEYS, attachSwing, feedSwing, frameName, notifySwingChanged, pick, profileRectIds,
@@ -246,6 +246,17 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   const [adding, setAdding] = useState(false);
   const [newSymbol, setNewSymbol] = useState('');
   const [addError, setAddError] = useState('');
+  // Mapa de liquidez (13/11): en otra pestaña, con esta moneda y este marco; este gráfico no cambia
+  const [mapNote, setMapNote] = useState('');
+  const openMap = () => {
+    const n = openMapTab(symbol, activeTimeframe);
+    setMapNote(n ? '' : 'Las pestañas 2 a 5 están abiertas: cierra una para abrir el mapa');
+  };
+  useEffect(() => {
+    if (!mapNote) return undefined;
+    const timer = setTimeout(() => setMapNote(''), 6000);
+    return () => clearTimeout(timer);
+  }, [mapNote]);
   const [shapes, setShapes] = useState([]);
   const [rejectionConfig, setRejectionConfig] = useState(null);
   const [positionNotice, setPositionNotice] = useState(null);
@@ -1092,6 +1103,10 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
               {newTheme ? <><Icon name="rect" size={15} /><span>Watchlist</span></> : '▦'}
             </button>
           )}
+          <button className="btn-action-compact theme-settings-btn" onClick={openMap} title="Mapa de liquidez del libro grabado, en otra pestaña: este gráfico no cambia">
+            {newTheme ? <><Icon name="profile" size={15} /><span>Mapa</span></> : '▤'}
+          </button>
+          {mapNote && <span className="suite-add-error">{mapNote}</span>}
           <button className="btn-action-compact theme-settings-btn" onClick={onOpenBot} title="Bot: estado, configuración y riesgo">
             {newTheme ? <><Icon name="sliders" size={15} /><span>Bot</span></> : '🤖'}
           </button>

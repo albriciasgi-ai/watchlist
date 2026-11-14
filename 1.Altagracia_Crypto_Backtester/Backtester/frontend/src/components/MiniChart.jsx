@@ -1293,6 +1293,41 @@ const MiniChart = forwardRef(({
       ctx.fillText(priceText(price, 2), width - marginRight + 5, y + 4);
     }
 
+    // Escala del precio y lugar de cada vela: para el fondo de los indicadores (antes de las velas) y los overlays (después)
+    const priceToY = (price) => {
+      return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
+    };
+
+    const timeToX = (timestamp) => {
+      if (!visibleCandles || visibleCandles.length === 0) return null;
+      const exactIndex = timestampIndex(visibleCandles, timestamp);
+      if (exactIndex !== -1) {
+        return marginLeft + (exactIndex * barWidth) + (barWidth / 2);
+      }
+      const firstTs = visibleCandles[0].timestamp;
+      const lastTs = visibleCandles[visibleCandles.length - 1].timestamp;
+      const avgInterval = (lastTs - firstTs) / Math.max(1, visibleCandles.length - 1);
+      if (avgInterval <= 0) return null;
+      const relativeIndex = (timestamp - firstTs) / avgInterval;
+      const x = marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
+      return x;
+    };
+
+    // Detrás de las velas (13/11): el fondo de un indicador, hoy solo el mapa de liquidez de la suite. App 1 no lo usa
+    if (indicatorManagerRef.current?.hasBackgrounds?.()) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, snapEdge(marginTop), width, snapEdge(marginTop + priceChartHeight) - snapEdge(marginTop));
+      ctx.clip();
+      indicatorManagerRef.current.renderBackgrounds(ctx, { x: marginLeft, y: marginTop, width: chartWidth, height: priceChartHeight },
+        visibleCandles, displayCandles, {
+          minPrice, maxPrice, priceRange, verticalZoom, verticalOffset, yScale, priceToY, timeToX,
+          knownUntil: !backtestingMode ? Date.now() : simulatedNowRef.current,
+          requestRedraw: () => indicatorManagerRef.current?.requestRedraw?.(),
+        });
+      ctx.restore();
+    }
+
     // 🎯 DIBUJAR VELAS PRIMERO (para que los overlays se vean encima)
     ctx.lineWidth = 1;
     const crispCandles = barWidth * pixelRatio() >= 1;
@@ -1344,25 +1379,6 @@ const MiniChart = forwardRef(({
         y: marginTop,
         width: chartWidth,
         height: priceChartHeight
-      };
-
-      const priceToY = (price) => {
-        return marginTop + priceChartHeight - (price - minPrice) * yScale + verticalOffset;
-      };
-
-      const timeToX = (timestamp) => {
-        if (!visibleCandles || visibleCandles.length === 0) return null;
-        const exactIndex = timestampIndex(visibleCandles, timestamp);
-        if (exactIndex !== -1) {
-          return marginLeft + (exactIndex * barWidth) + (barWidth / 2);
-        }
-        const firstTs = visibleCandles[0].timestamp;
-        const lastTs = visibleCandles[visibleCandles.length - 1].timestamp;
-        const avgInterval = (lastTs - firstTs) / Math.max(1, visibleCandles.length - 1);
-        if (avgInterval <= 0) return null;
-        const relativeIndex = (timestamp - firstTs) / avgInterval;
-        const x = marginLeft + (relativeIndex * barWidth) + (barWidth / 2);
-        return x;
       };
 
       const newestCandle = displayCandles[displayCandles.length - 1];

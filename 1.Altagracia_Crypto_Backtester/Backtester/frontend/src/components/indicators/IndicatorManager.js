@@ -24,6 +24,7 @@ import VolumeProfilePeriodicIndicator from "./VolumeProfilePeriodicIndicator";
 import ResponseVolumeIndicator from "./ResponseVolumeIndicator";
 import LiquidationsIndicator from "./LiquidationsIndicator";
 import OrderFlowElementsIndicator from "./OrderFlowElementsIndicator";
+import LiquidityMapIndicator from "./LiquidityMapIndicator"; // Mapa de liquidez del libro grabado (solo la suite)
 import { SessionProfiles } from "./sessionProfile.js";
 import { MIN_PANEL_HEIGHT, clearPanelLayout, movePanel, orderPanels, panelLayout, savePanelLayout } from "./panelLayout.js";
 
@@ -93,8 +94,12 @@ class IndicatorManager {
     const doubleTopBottomIndicator = new DoubleTopBottomIndicator(this.symbol, this.interval, this.days, { backtestingMode });
     doubleTopBottomIndicator.requestRedraw = () => this.requestRedraw?.();
     volumeIndicator.setDeltaSource(this.orderFlowIndicator);
+    // Mapa de liquidez (13/11): lo enciende la pestaña "Mapa" de la suite; se dibuja detrás de las velas
+    this.liquidityMapIndicator = new LiquidityMapIndicator(this.symbol, this.interval, this.days);
+    this.liquidityMapIndicator.requestRedraw = () => this.requestRedraw?.();
 
     this.indicators = [
+      this.liquidityMapIndicator, // Su dibujo es el fondo (renderBackground), antes de las velas
       this.liquidationsIndicator, // Primero: sus franjas quedan debajo de los demás dibujos
       this.ofElementsIndicator, // Franjas y marcas de order flow, debajo de los perfiles y footprints
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
@@ -536,6 +541,22 @@ class IndicatorManager {
 
   getScaledHeight() {
     return this.indicators.reduce((sum, indicator) => sum + this.getPanelHeight(indicator), 0);
+  }
+
+  // Detrás de las velas (13/11): lo que un indicador dibuja como fondo. Hoy solo el mapa de liquidez de la suite
+  hasBackgrounds() {
+    return this.indicators.some(indicator => indicator.enabled && typeof indicator.renderBackground === 'function');
+  }
+
+  renderBackgrounds(ctx, bounds, visibleCandles, allCandles, priceContext = null) {
+    for (const indicator of this.indicators) {
+      if (!indicator.enabled || typeof indicator.renderBackground !== 'function') continue;
+      try {
+        indicator.renderBackground(ctx, bounds, visibleCandles, allCandles, priceContext);
+      } catch (error) {
+        console.error(`[${this.symbol}] Error en el fondo de ${indicator.name}:`, error);
+      }
+    }
   }
 
   renderOverlays(ctx, bounds, visibleCandles, allCandles, priceContext = null) {

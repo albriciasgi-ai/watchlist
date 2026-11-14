@@ -55,6 +55,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── book_recorder.py   Graba el libro completo de Bybit (orderbook.full) de las monedas de la suite (ver "Libro completo")
 │   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book, y live/book_cloud de la nube)
 │   ├── book_cloud.py      Baja de la nube (Northflank) los minutos del libro que el PC no tiene completos
+│   ├── book_heatmap.py    Mapa de liquidez por vela y precio, para la pestaña "Mapa" (/api/book/heatmap)
 │   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro")
 │   ├── book_study.py      Medición de semanas: qué hace la liquidez al llegar el precio a tus zonas, contra zonas al azar
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
@@ -62,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69) y book_cloud_checks.py (16), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16) y book_heatmap_checks.py (17), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -82,7 +83,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
         ├── openDecision.js    Lo elegido para un trade que se abre (su decisión en el journal), para la imagen de apertura
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
-        └── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
+        ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
+        └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
     └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12) y openDecision.test.mjs (5), con node
 ```
 
@@ -704,8 +706,47 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
 
   No se probó dentro de la suite ni en Electron, ni con una caída de la conexión real (sí con las pruebas sin conexión).
 - **Falta:**
-  - el mapa de liquidez en App 1 y el ladder junto al panel de trading;
+  - el ladder junto al panel de trading;
   - las monedas que se quitan de la suite siguen grabándose hasta reiniciar.
+
+## Mapa de liquidez (13/11)
+
+Pedido del usuario: construir el mapa como una opción del gráfico principal que abra una pestaña aparte, para mantener la visualización original y sus datos sin mezclarlos con el mapa.
+
+- **Cómo se abre:**
+  - el botón **"Mapa"** del encabezado del gráfico principal lo abre en otra pestaña (en Electron, otra ventana), con la moneda y el marco a la vista. El gráfico principal no cambia;
+  - también desde el menú "Pestañas", que suma "Mapa" en cada pestaña;
+  - para elegir la pestaña, cada una anota cada 4 s que está abierta y con qué módulo (`suite_tab_alive_<n>` en `localStorage`; 90 s sin anotar cuenta como cerrada). El botón usa la pestaña que ya muestra el mapa, o la primera libre de la 2 a la 5 (`openMapTab` de `tabs.js`). Con las cuatro abiertas, lo avisa junto al botón;
+  - la dirección lleva la moneda y el marco (`?pestana=n&modulo=mapa&moneda=…&marco=…`, `URL_SYMBOL` y `URL_TIMEFRAME` de `tabs.js`).
+- **La pestaña** (`web/src/LiquidityMapView.jsx`):
+  - un solo gráfico de App 1 en vivo (`MiniChart`), con solo el indicador "Mapa de liquidez": ningún otro;
+  - los dibujos de la moneda se ven, para mirar la liquidez en tus zonas, pero no se mueven ni se borran (`viewOnly`). Llegan al instante si cambian en otra pestaña. Las posiciones del bot se ven, sin acciones;
+  - "Solo la sostenida", con 5 minutos a 4 horas, o "Toda la liquidez";
+  - "Seguir al gráfico principal": cambia de moneda y de marco con la pestaña 1 (lee `suite_chart_1`). Elegir aquí otra moneda u otro marco lo apaga;
+  - lo elegido se guarda por pestaña (`suite_mapa_<n>`).
+- **El indicador** (App 1, `components/indicators/LiquidityMapIndicator.js`, con `components/liquidityMap.js`):
+  - se dibuja detrás de las velas: `MiniChart` suma `renderBackground` (13/11), que solo usa este indicador;
+  - es una imagen con una columna por vela y una fila por precio, estirada sin suavizar sobre el área del precio;
+  - el contraste sale de lo que está a la vista: lo de abajo del percentil 30 queda transparente, y lo más cargado va en naranja. Con Oscuro, la rampa va de violeta a amarillo;
+  - pide al servidor lo que está a la vista, con filas para el doble del rango de precios. Lo que falta lo pide al desplazarse, y las dos últimas velas cada 30 s;
+  - el gráfico principal no lo enciende: su nombre no está en sus listas de indicadores.
+- **Servidor** (`server/book_heatmap.py`): `GET /api/book/heatmap/{símbolo}?interval&from_ms&to_ms&mode=toda|sostenida&minutes&low&high&step`. Sale del libro de minutos, lo grabado en el PC y lo bajado de la nube, en cubos de ~0.03% del precio (BTC 20 USD).
+  - **Toda:** el promedio de la vela.
+  - **Sostenida:** el menor promedio de los últimos N minutos hasta el cierre de la vela (5, 15, 30, 60, 120 o 240). Si falta uno de esos minutos, la vela queda sin dato.
+  - **Formato:** cada celda es un byte, `round(16 · log10(1 + USD))`, en base64, más la cobertura de cada vela.
+  - **Límites:** a lo sumo 1,500 velas (las más recientes), 10 días de minutos y 600 filas.
+- **Medido** (13/11, copia aislada con el libro real):
+  - BTC 15m, con las horas grabadas a la vista: el servidor arma el mapa en unos 40 ms. Al cargar la página, con el servidor ocupado en velas y footprints, un pedido tardó hasta 2.5 s;
+  - ETH 1m de 2 horas, 36 KB en 14 ms; la cola de las últimas velas, 4 ms;
+  - 6 horas de 1m en sostenida, 124 KB en 0.75 s.
+- **Probado en la copia aislada:**
+  - el mapa en BTC y ETH, 15m y 1m, en los dos modos y con Nítido y Oscuro;
+  - la pestaña siguió al gráfico principal de BTC a ETH;
+  - el botón abrió el mapa con la moneda a la vista. El panel del navegador de pruebas no abre ventanas: la abrió en la misma pestaña. En Chrome y en Electron sale aparte, con la misma función del menú "Pestañas";
+  - el gráfico principal siguió igual, sin el mapa.
+
+  No se probó en Electron.
+- **Pruebas:** `tests/book_heatmap_checks.py` (17) y, en App 1, `tests/liquiditymap.test.mjs` (10).
 
 ## Escritorio (Electron)
 
@@ -747,6 +788,7 @@ C:\Python314\python.exe -B tests\journal_checks.py
 C:\Python314\python.exe -B tests\swing_checks.py
 C:\Python314\python.exe -B tests\book_checks.py
 C:\Python314\python.exe -B tests\book_cloud_checks.py
+C:\Python314\python.exe -B tests\book_heatmap_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
