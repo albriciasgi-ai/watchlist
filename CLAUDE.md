@@ -70,6 +70,10 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    - `MiniChart` suma un fondo para los indicadores (`renderBackground`), dibujado antes de las velas;
    - el indicador "Mapa de liquidez" (`LiquidityMapIndicator.js`, `liquidityMap.js`). App 1 no lo ofrece: no tiene libro de sus fechas. Sin él, nada cambia.
 5. **Pruebas:** `book_heatmap_checks.py` de la suite (17) y `liquiditymap.test.mjs` de App 1 (10). Las demás siguen pasando.
+6. **Tras la primera prueba del usuario:**
+   - el mapa vuelve a pedir cada minuto las velas recientes incompletas, y lo que llega de la nube aparece sin recargar;
+   - la grabación de trades reintenta si la suite abre sin red. Ese día no grabó ni bajó la nube, y faltaron footprints de más de una hora (`local_tape.py`; prueba `local_tape_checks.py`, 3);
+   - un pedido del libro a la nube se da por perdido tras 2 minutos sin datos.
 
 **IMPORTANTE:**
 - La suite se reinicia sola al abrirla y arma la página nueva.

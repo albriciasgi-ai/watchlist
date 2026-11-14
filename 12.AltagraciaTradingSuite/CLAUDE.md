@@ -747,6 +747,10 @@ Pedido del usuario: construir el mapa como una opción del gráfico principal qu
 
   No se probó en Electron.
 - **Pruebas:** `tests/book_heatmap_checks.py` (17) y, en App 1, `tests/liquiditymap.test.mjs` (10).
+- **Tras la primera prueba del usuario (13/11):**
+  - **velas recientes incompletas:** el mapa las vuelve a pedir cada minuto, hasta 12 horas atrás, y lo que llega después de la nube aparece sin recargar. Antes, una vela pedida sin libro quedaba vacía hasta recargar;
+  - **grabación de trades sin red al abrir:** la suite abrió sin red y la grabación de trades falló al pedir a Bybit los decimales de cada moneda. No volvió a intentarlo, y esa misma pieza (`local_tape.py`) baja la nube cada 15 minutos: faltaron footprints y Elementos OF de más de una hora. Ahora reintenta cada 30 s sin frenar el arranque, y `/api/suite/status` lo dice en `start_error`. Prueba: `5.Order_flow/backend/tests/local_tape_checks.py` (3). Vale también para el 11000;
+  - **bajada del libro de la nube:** un pedido que pasa 2 minutos sin recibir nada se da por perdido. Antes esperaba 600 s: uno hecho sin red tuvo la vuelta colgada más de 10 minutos.
 
 ## Escritorio (Electron)
 
