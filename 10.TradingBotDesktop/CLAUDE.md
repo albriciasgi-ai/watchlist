@@ -227,5 +227,30 @@ Paso 4 de la integración: el journal de la suite será el Observador de App 1 c
 
 **IMPORTANTE:** reiniciar el bot. Al arrancar trae los cierres de la última semana: los trades de antes quedan como "sin apertura" y las posiciones abiertas como "anterior". Las órdenes del historial anteriores al 12/11 no tienen número: sus trades se reconocen por la regla de los 10 minutos.
 
+## Apalancamiento desde la suite y prueba en Demo (13 Noviembre 2026)
+
+Pedido del usuario: cambiar el apalancamiento desde la suite (el bot solo lo fijaba al agregar una moneda), y probar a fondo en Demo cerrar, mover el SL y el TP y cancelar órdenes.
+
+- **Ruta nueva** `POST /api/config/leverage`, con `{"symbol", "leverage"}` (entero de 1 a 100):
+  - lo pide a Bybit (`set-leverage`, compra y venta) bajo el candado de la moneda; con la cuenta cambiando responde 409 y no sale nada;
+  - queda en `trading_config.json` solo si Bybit lo acepta. "leverage not modified" (110043) cuenta como aceptado;
+  - si Bybit lo rechaza (más que el máximo de la moneda, margen que no alcanza), 502 con su mensaje, y nada cambia;
+  - moneda que el bot no tiene: 404.
+- **`BybitClient.set_leverage`:** siempre va a Bybit y olvida lo fijado en la sesión para esa moneda. La orden siguiente no lo repite, y un valor anterior se vuelve a pedir si se vuelve a él.
+- **Cuenta activa:** el apalancamiento es de cada moneda en cada cuenta de Bybit. Al cambiar de cuenta, la primera orden de cada moneda lo fija con el valor guardado (`ensure_leverage`), como antes.
+- **Lo ya abierto:** no cambia su tamaño, pero sí su margen y su precio de liquidación.
+- **La suite** lo pide con la palabra `CAMBIAR_APALANCAMIENTO`: ver `12.AltagraciaTradingSuite/CLAUDE.md`, "Configuración del bot".
+- **Pruebas:** `backend/tests/leverage_checks.py` (13), con el cliente real y un `_make_request` falso, y la ruta con un cliente falso. Las de cuentas, journal y posiciones siguen pasando.
+
+**Prueba en Demo (13/11)**, con la suite y el bot reales del usuario y su cuenta Demo ("Cuenta principal"), en XRPUSDT con 20 XRP (unos 20 USD):
+- una compra a mercado entró con su SL (0.9971) y su TP (1.0273), con apalancamiento 10;
+- mover el SL a 0.9985 y el TP a 1.0300, quitar el TP y ponerlo en 1.0280: cada uno llegó a Bybit, y la confirmación dijo la cuenta, el precio y lo que se perdería o ganaría ahí;
+- rechazados sin tocar la posición: quitar el SL ("stop_loss fuera de rango"), un SL de un long sobre el precio y cerrar sin la palabra de confirmación;
+- "Cerrar posición…" la cerró a mercado, y el short de BTC del usuario siguió con su SL y su TP;
+- una Limit de compra a 0.96 quedó pendiente con su SL y su TP, y "Cancelar orden…" la canceló;
+- el journal anotó el trade: MANUAL · MANUAL_TRADE, entrada 1.0072, salida 1.0084, +0.0018 USD neto de comisiones y 4 cambios de SL/TP. Tiene una nota que dice que es una prueba.
+
+El cambio de apalancamiento no se probó en Demo: el bot que corría no tenía la ruta, y hay que reiniciarlo. Se probó con un bot falso desde la suite aislada.
+
 ---
 

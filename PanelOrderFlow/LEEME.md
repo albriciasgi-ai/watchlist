@@ -92,3 +92,26 @@ C:\Python314\python.exe -B sync_nube.py --sin-nube
 - **Descargas de la nube:** una descarga que no llega al `Content-Length` se descarta, y el archivo se lee entero antes de reemplazar el anterior. Antes una conexión cortada dejaba un `.tape` incompleto y el día no se podía unir. Si un archivo de la nube resulta ilegible, el día se une solo con lo del PC y se borra su estado para volver a bajarlo.
 - **Nube aparte (12/11):** `--solo-nube` solo baja de la nube, sin armar. `local_tape.py` (11000 o suite) arma cada minuto con `--sin-nube` y baja la nube cada 15 minutos en otro proceso: antes cada armado esperaba la descarga y, con la nube trabada, pasaba de 600 s y se cortaba. Cada archivo espera 90 s como mucho.
 - **Descargas con httpx (12/11):** `urllib` pide "Connection: close" y el proxy de Northflank cortaba a mitad las descargas lentas, como las de BTC y ETH (0.68 de 2.08 MB). Con httpx se bajan enteras. Sin httpx, se usa `urllib` y se rechaza la descarga incompleta.
+
+## Nube contra el archivo oficial (`comparar_nube.py`, 13/11/2026)
+
+Compara un día grabado en la nube con el archivo oficial de Bybit, sin escribir en OrderFlowData:
+
+```
+C:\Python314\python.exe -I -B comparar_nube.py 2026-11-13 BTCUSDT,ETHUSDT,SOLUSDT,XRPUSDT
+C:\Python314\python.exe -I -B comparar_nube.py 2026-11-13 BTCUSDT --bajados C:\carpeta\oficial --salida informe.json
+```
+
+- **El oficial** sale de `tape/` si el almacén ya tiene ese día. Si no, se baja de public.bybit.com a `--bajados`, o a una carpeta temporal que se borra al terminar. Bybit lo publica pasada la 01:00 UTC del día siguiente, a unos 290 KB/s: BTC pesa unos 110 MB.
+- **Dos fuentes contra el oficial:** la nube sola (`live/cloud/tape`) y la unión nube + PC (`live/tape`), cada una en lo que dice haber cubierto, sin sus huecos.
+- **Qué compara:**
+  - trade por trade: milisegundo, precio, cantidad y lado, y aparte con la marca RPI;
+  - cada minuto entero: trades, volumen, compra, venta, máximo y mínimo;
+  - cada celda del footprint (minuto, precio y lado);
+  - lo que el oficial tiene fuera de lo cubierto (huecos y lo no grabado).
+- **Resultado del 13/11**, el primer día entero de la nube, en BTC, ETH, SOL y XRP:
+  - fuera de los minutos que tocan un hueco, la nube es idéntica al oficial, y nunca tiene un trade de más;
+  - lo perdido pasa hasta 9 s el hueco anotado (1 s en la mediana; en el PC, hasta 6.7 s);
+  - por eso la unión dejó 2 o 3 minutos "enteros" por moneda con menos volumen, cuando la nube volvía de un reinicio.
+
+  Detalle en `12.AltagraciaTradingSuite/CLAUDE.md`, sección "Nube contra el archivo oficial".

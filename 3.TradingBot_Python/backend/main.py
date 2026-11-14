@@ -154,6 +154,11 @@ class ConfigUpdateRequest(BaseModel):
     take_profit_percent: Optional[Decimal] = None
 
 
+class LeverageRequest(BaseModel):
+    symbol: str = Field(min_length=2, max_length=20)
+    leverage: int = Field(ge=1, le=100)
+
+
 class AddCoinRequest(BaseModel):
     symbol: str
     category: str = "linear"
@@ -1404,6 +1409,34 @@ async def update_config(req: ConfigUpdateRequest):
     except Exception as e:
         state.log("error", f"Failed to update config: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/config/leverage")
+async def update_leverage(req: LeverageRequest):
+    """
+    Cambia el apalancamiento de una moneda (13/11/2026, pedido desde la suite). Lo fija ya en Bybit para la cuenta
+    activa (compra y venta) y solo si Bybit lo acepta lo guarda en la configuracion, que usan las ordenes siguientes.
+    Con una posicion abierta Bybit cambia su margen y su precio de liquidacion, o lo rechaza: entonces no cambia nada.
+    Toma el candado de la moneda: no corre a la vez que una orden de ella.
+    """
+    symbol = _symbol_or_400(req.symbol)
+    if symbol not in state.trading_config:
+        raise HTTPException(status_code=404, detail=f"Symbol {symbol} not found")
+    client = state.bybit_client
+    if not client:
+        raise HTTPException(status_code=400, detail="Credentials not configured")
+    config = state.trading_config[symbol]
+    async with state.get_symbol_lock(symbol):
+        _same_account(client)
+        result = await client.set_leverage(symbol, req.leverage, config.get("category", "linear"))
+        if result.get("retCode") != 0:
+            state.log("error", f"[CONFIG] Bybit no acepto {req.leverage}x en {symbol}: {result.get('retMsg')}")
+            raise HTTPException(status_code=502, detail=f"Bybit no acepto {req.leverage}x en {symbol}: {result.get('retMsg')}")
+        before = config.get("leverage")
+        config["leverage"] = req.leverage
+        state.save_trading_config()
+    state.log("success", f"[CONFIG] Apalancamiento de {symbol}: {before}x -> {req.leverage}x, fijado en Bybit")
+    return {"success": True, "symbol": symbol, "leverage": req.leverage, "before": before, "config": config}
 
 
 @app.post("/api/config/add")

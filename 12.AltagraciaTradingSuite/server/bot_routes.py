@@ -4,6 +4,7 @@
 # El bot (3.TradingBot_Python) sigue siendo su propio proceso y no pide confirmacion en ninguna ruta.
 # Aqui cada cambio exige una palabra en el cuerpo, para que ningun clic suelto ni pagina ajena lo haga:
 #   CAMBIAR_CONFIG   configuracion de monedas, riesgo, metodo, origenes y direcciones
+#   CAMBIAR_APALANCAMIENTO  apalancamiento de una moneda: el bot lo fija ya en Bybit para la cuenta activa (13/11/2026)
 #   CAMBIAR_CLAVES   credenciales y cuentas de Bybit (nunca se guardan ni se escriben en el registro de la suite)
 #   CAMBIAR_CUENTA   cambiar la cuenta activa del bot (alertas y ordenes pasan a operar en ella)
 #   ENVIAR_ORDEN_REAL  orden manual: siempre con stop y objetivo, del lado correcto del precio
@@ -113,6 +114,15 @@ def make_router(bot, journal_store=None) -> APIRouter:
         if leverage is not None:
             payload["leverage"] = int(leverage)
         return await bot("POST", "/api/config/add", json=payload)
+
+    @r.post("/config/leverage")
+    async def config_leverage(request: Request):
+        """Apalancamiento de una moneda, entero de 1 a 100. El bot lo fija en Bybit y solo si lo acepta lo guarda"""
+        b = await _body(request, "CAMBIAR_APALANCAMIENTO")
+        leverage = _number(b, "leverage", upper=100)
+        if leverage < 1 or leverage != int(leverage):
+            raise HTTPException(status_code=400, detail="el apalancamiento es un entero de 1 a 100")
+        return await bot("POST", "/api/config/leverage", json={"symbol": _symbol(b.get("symbol")), "leverage": int(leverage)})
 
     @r.post("/config/sync-precision/{symbol}")
     async def sync_precision(symbol: str, request: Request):

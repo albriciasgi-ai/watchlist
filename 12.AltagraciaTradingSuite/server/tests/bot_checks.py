@@ -75,6 +75,16 @@ try:
     check("config valida: solo los campos pedidos", r.status_code == 200 and calls[-1][2] == {"symbol": "BTCUSDT", "risk_amount": 5.0})
     r = c.post("/api/bot/config/add", json={"symbol": "LINKUSDT", "risk_amount": 3, "stop_loss_percent": 0.02, "take_profit_percent": 0.04, "leverage": 5, "confirm": "CAMBIAR_CONFIG"})
     check("agregar moneda con apalancamiento", r.status_code == 200 and calls[-1][2]["leverage"] == 5)
+    # Apalancamiento despues de agregar la moneda (13/11/2026): su propia palabra, entero de 1 a 100
+    calls.clear()
+    check("apalancamiento con la palabra de config: no llega",
+          c.post("/api/bot/config/leverage", json={"symbol": "BTCUSDT", "leverage": 5, "confirm": "CAMBIAR_CONFIG"}).status_code == 400 and not calls)
+    check("apalancamiento fuera de 1 a 100 o con decimales: no llega",
+          all(c.post("/api/bot/config/leverage", json={"symbol": "BTCUSDT", "leverage": v, "confirm": "CAMBIAR_APALANCAMIENTO"}).status_code == 400
+              for v in (0, 0.5, 2.5, 101, "x", True)) and not calls)
+    r = c.post("/api/bot/config/leverage", json={"symbol": "btcusdt", "leverage": "7", "confirm": "CAMBIAR_APALANCAMIENTO"})
+    check("apalancamiento valido: va al bot como entero", r.status_code == 200 and calls[-1][1] == "/api/config/leverage"
+          and calls[-1][2] == {"symbol": "BTCUSDT", "leverage": 7}, str(calls[-1:]))
     check("origen desconocido rechazado", c.post("/api/bot/settings/allowed-origins", json={"origin": "X", "enabled": True, "confirm": "CAMBIAR_CONFIG"}).status_code == 400)
     check("origen con enabled no booleano rechazado", c.post("/api/bot/settings/allowed-origins", json={"origin": "WATCHLIST", "enabled": "si", "confirm": "CAMBIAR_CONFIG"}).status_code == 400)
     r = c.post("/api/bot/settings/execution-method", json={"use_integrated": False, "confirm": "CAMBIAR_CONFIG"})

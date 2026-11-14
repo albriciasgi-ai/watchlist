@@ -57,6 +57,17 @@ export function toDashboardTrades(trades) {
         exitTime: t.closed_at,
         closeReason: closeReason(t),
         notes: (t.notes || []).map(n => n.text).filter(Boolean).join(' · '),
+        // Para el Excel (journalExcel.js); los widgets no los usan
+        openedAt: num(t.opened_at),
+        closedQty: num(t.closed_qty),
+        initialStopLoss: num(t.initial_stop_loss),
+        initialTakeProfit: num(t.initial_take_profit),
+        stopLoss: num(t.stop_loss),
+        takeProfit: num(t.take_profit),
+        leverage: num(t.leverage),
+        risk: num(t.risk),
+        durationMin: num(t.duration_min),
+        mode: t.mode || null,
       };
     });
 }

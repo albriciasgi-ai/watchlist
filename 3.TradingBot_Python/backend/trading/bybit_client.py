@@ -786,6 +786,15 @@ class BybitClient:
         logger.warning(f"[BYBIT] No se pudo fijar apalancamiento {lev_str}x en {symbol}: {result.get('retMsg')} (retCode={code})")
         return result
 
+    async def set_leverage(self, symbol: str, leverage: Any, category: str = "linear") -> Dict[str, Any]:
+        """
+        Cambio pedido a mano (13/11/2026, desde la suite): siempre se le pide a Bybit, aunque ese valor ya se hubiera
+        fijado en esta sesion (de 10 a 5 y de vuelta a 10, Bybit tiene 5). Olvida lo recordado de esa moneda.
+        """
+        prefix = f"{symbol}:"
+        self._leverage_set = {key for key in self._leverage_set if not key.startswith(prefix)}
+        return await self.ensure_leverage(symbol, leverage, category)
+
     async def get_open_orders(self, symbol: str, category: str = "linear") -> Optional[List[Dict[str, Any]]]:
         """Ordenes activas del simbolo. None si Bybit no respondio (no se pudo verificar)."""
         result = await self._make_request("GET", "/v5/order/realtime", {"category": category, "symbol": symbol})

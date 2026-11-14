@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import ExcelJS from 'exceljs';
 import html2canvas from 'html2canvas';
+import { Chart } from 'chart.js';
 import { isBlind, maskDate, maskPrice, maskVolume } from '../blindClock.js';
 
 import { tradeLabel } from '../OrderManager.js';
-const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
+
+/**
+ * Exporta el dashboard a Excel: hojas de datos y las imágenes de los gráficos.
+ * Opcional (13/11/2026, para el dashboard del journal de la Altagracia Trading Suite; App 1 no los pasa):
+ * - addSheets(workbook): pone sus hojas de datos en lugar de "Trades" y "Métricas", que salen del OrderManager;
+ * - fileName: el nombre del archivo;
+ * - imageBackground: el fondo de las imágenes de los gráficos (el del estilo elegido).
+ */
+const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown', addSheets, fileName, imageBackground = '#FFFFFF' }) => {
   const [isExporting, setIsExporting] = useState(false);
 
   /**
@@ -27,6 +36,21 @@ const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
   };
 
   /**
+   * Los gráficos de Chart.js del elemento, dibujados ya en su estado final (13/11/2026). Chart.js anima al abrirse
+   * y con cada cambio de datos, filtro o modo, y el lienzo tiene el último cuadro dibujado: exportando en ese
+   * momento, la imagen salía en blanco o con la curva anterior
+   */
+  const finishCharts = (element) => {
+    element.querySelectorAll('canvas').forEach((canvas) => {
+      const chart = Chart.getChart(canvas);
+      if (chart) {
+        chart.stop();
+        chart.update('none');
+      }
+    });
+  };
+
+  /**
    * Captura un elemento HTML como imagen PNG
    */
   const captureElement = async (elementId) => {
@@ -37,8 +61,9 @@ const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
     }
 
     try {
+      finishCharts(element);
       const canvas = await html2canvas(element, {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: imageBackground,
         scale: 2, // Alta resolución
         logging: false,
         windowWidth: element.scrollWidth,
@@ -50,6 +75,112 @@ const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
       console.error(`[ExportExcel] Error capturando ${elementId}:`, error);
       return null;
     }
+  };
+
+  /**
+   * Hojas de datos de App 1: los trades y las métricas del OrderManager (saldo simulado)
+   */
+  const addBacktestSheets = (workbook) => {
+    const metrics = orderManager.getMetrics();
+    const balance = orderManager.getBalance();
+
+    // ===== SHEET 1: TRADES =====
+    const tradesSheet = workbook.addWorksheet('Trades', {
+      views: [{ state: 'frozen', xSplit: 0, ySplit: 1 }]
+    });
+
+    tradesSheet.columns = [
+      { header: 'ID', key: 'id', width: 8 },
+      { header: 'Side', key: 'side', width: 10 },
+      { header: 'Entry Price', key: 'entryPrice', width: 12 },
+      { header: 'Exit Price', key: 'exitPrice', width: 12 },
+      { header: 'Quantity', key: 'quantity', width: 10 },
+      { header: 'PnL ($)', key: 'pnl', width: 12 },
+      { header: 'PnL (%)', key: 'pnlPercent', width: 12 },
+      { header: 'Entry Time', key: 'entryTime', width: 20 },
+      { header: 'Exit Time', key: 'exitTime', width: 20 },
+      { header: 'Duration', key: 'duration', width: 12 },
+      { header: 'Close Reason', key: 'closeReason', width: 15 },
+      { header: 'Notes', key: 'notes', width: 30 }
+    ];
+
+    // Estilo del header
+    tradesSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    tradesSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF2196F3' }
+    };
+
+    // Agregar datos
+    trades.forEach(trade => {
+      const row = tradesSheet.addRow({
+        id: tradeLabel(trade),
+        side: trade.side.toUpperCase(),
+        entryPrice: maskPrice(trade.entryPrice),
+        exitPrice: maskPrice(trade.exitPrice),
+        quantity: maskVolume(trade.quantity),
+        pnl: trade.pnl,
+        pnlPercent: trade.pnlPercent,
+        entryTime: isBlind() ? maskDate(trade.entryTime) : new Date(trade.entryTime).toISOString(),
+        exitTime: isBlind() ? maskDate(trade.exitTime) : new Date(trade.exitTime).toISOString(),
+        duration: formatDuration(trade.entryTime, trade.exitTime),
+        closeReason: trade.closeReason,
+        notes: trade.notes || ''
+      });
+
+      // Colorear según resultado
+      const pnlCell = row.getCell('pnl');
+      const pnlPercentCell = row.getCell('pnlPercent');
+
+      if (trade.pnl > 0) {
+        pnlCell.font = { color: { argb: 'FF4CAF50' }, bold: true };
+        pnlPercentCell.font = { color: { argb: 'FF4CAF50' }, bold: true };
+      } else {
+        pnlCell.font = { color: { argb: 'FFEF5350' }, bold: true };
+        pnlPercentCell.font = { color: { argb: 'FFEF5350' }, bold: true };
+      }
+    });
+
+    // ===== SHEET 2: MÉTRICAS =====
+    const metricsSheet = workbook.addWorksheet('Métricas');
+
+    metricsSheet.columns = [
+      { header: 'Métrica', key: 'metric', width: 30 },
+      { header: 'Valor', key: 'value', width: 20 }
+    ];
+
+    metricsSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    metricsSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF2196F3' }
+    };
+
+    const metricsData = [
+      ['Balance Inicial', `$${balance.initial.toFixed(2)}`],
+      ['Balance Final', `$${balance.current.toFixed(2)}`],
+      ['PnL Realizado', `$${balance.realizedPnL.toFixed(2)}`],
+      ['PnL No Realizado', `$${balance.unrealizedPnL.toFixed(2)}`],
+      ['Total Trades', metrics.totalTrades],
+      ['Trades Abiertos', metrics.openTrades],
+      ['Ganadores', metrics.winningTrades],
+      ['Perdedores', metrics.losingTrades],
+      ['Win Rate', `${metrics.winRate.toFixed(2)}%`],
+      ['Ganancia Promedio', `$${metrics.avgWin.toFixed(2)}`],
+      ['Pérdida Promedio', `$${metrics.avgLoss.toFixed(2)}`],
+      ['Profit Factor', metrics.profitFactor.toFixed(2)],
+      ['Max Drawdown (%)', `${metrics.maxDrawdown.toFixed(2)}%`],
+      ['Max Drawdown ($)', `$${metrics.maxDrawdownUSD.toFixed(2)}`],
+      ['Max Growth (%)', `${metrics.maxGrowth.toFixed(2)}%`],
+      ['Max Growth ($)', `$${metrics.maxGrowthUSD.toFixed(2)}`],
+      ['Mayor Ganancia', `$${metrics.largestWin.toFixed(2)}`],
+      ['Mayor Pérdida', `$${metrics.largestLoss.toFixed(2)}`]
+    ];
+
+    metricsData.forEach(([metric, value]) => {
+      metricsSheet.addRow({ metric, value });
+    });
   };
 
   /**
@@ -65,106 +196,8 @@ const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
 
     try {
       const workbook = new ExcelJS.Workbook();
-      const metrics = orderManager.getMetrics();
-      const balance = orderManager.getBalance();
-
-      // ===== SHEET 1: TRADES =====
-      const tradesSheet = workbook.addWorksheet('Trades', {
-        views: [{ state: 'frozen', xSplit: 0, ySplit: 1 }]
-      });
-
-      tradesSheet.columns = [
-        { header: 'ID', key: 'id', width: 8 },
-        { header: 'Side', key: 'side', width: 10 },
-        { header: 'Entry Price', key: 'entryPrice', width: 12 },
-        { header: 'Exit Price', key: 'exitPrice', width: 12 },
-        { header: 'Quantity', key: 'quantity', width: 10 },
-        { header: 'PnL ($)', key: 'pnl', width: 12 },
-        { header: 'PnL (%)', key: 'pnlPercent', width: 12 },
-        { header: 'Entry Time', key: 'entryTime', width: 20 },
-        { header: 'Exit Time', key: 'exitTime', width: 20 },
-        { header: 'Duration', key: 'duration', width: 12 },
-        { header: 'Close Reason', key: 'closeReason', width: 15 },
-        { header: 'Notes', key: 'notes', width: 30 }
-      ];
-
-      // Estilo del header
-      tradesSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      tradesSheet.getRow(1).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FF2196F3' }
-      };
-
-      // Agregar datos
-      trades.forEach(trade => {
-        const row = tradesSheet.addRow({
-          id: tradeLabel(trade),
-          side: trade.side.toUpperCase(),
-          entryPrice: maskPrice(trade.entryPrice),
-          exitPrice: maskPrice(trade.exitPrice),
-          quantity: maskVolume(trade.quantity),
-          pnl: trade.pnl,
-          pnlPercent: trade.pnlPercent,
-          entryTime: isBlind() ? maskDate(trade.entryTime) : new Date(trade.entryTime).toISOString(),
-          exitTime: isBlind() ? maskDate(trade.exitTime) : new Date(trade.exitTime).toISOString(),
-          duration: formatDuration(trade.entryTime, trade.exitTime),
-          closeReason: trade.closeReason,
-          notes: trade.notes || ''
-        });
-
-        // Colorear según resultado
-        const pnlCell = row.getCell('pnl');
-        const pnlPercentCell = row.getCell('pnlPercent');
-
-        if (trade.pnl > 0) {
-          pnlCell.font = { color: { argb: 'FF4CAF50' }, bold: true };
-          pnlPercentCell.font = { color: { argb: 'FF4CAF50' }, bold: true };
-        } else {
-          pnlCell.font = { color: { argb: 'FFEF5350' }, bold: true };
-          pnlPercentCell.font = { color: { argb: 'FFEF5350' }, bold: true };
-        }
-      });
-
-      // ===== SHEET 2: MÉTRICAS =====
-      const metricsSheet = workbook.addWorksheet('Métricas');
-
-      metricsSheet.columns = [
-        { header: 'Métrica', key: 'metric', width: 30 },
-        { header: 'Valor', key: 'value', width: 20 }
-      ];
-
-      metricsSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      metricsSheet.getRow(1).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FF2196F3' }
-      };
-
-      const metricsData = [
-        ['Balance Inicial', `$${balance.initial.toFixed(2)}`],
-        ['Balance Final', `$${balance.current.toFixed(2)}`],
-        ['PnL Realizado', `$${balance.realizedPnL.toFixed(2)}`],
-        ['PnL No Realizado', `$${balance.unrealizedPnL.toFixed(2)}`],
-        ['Total Trades', metrics.totalTrades],
-        ['Trades Abiertos', metrics.openTrades],
-        ['Ganadores', metrics.winningTrades],
-        ['Perdedores', metrics.losingTrades],
-        ['Win Rate', `${metrics.winRate.toFixed(2)}%`],
-        ['Ganancia Promedio', `$${metrics.avgWin.toFixed(2)}`],
-        ['Pérdida Promedio', `$${metrics.avgLoss.toFixed(2)}`],
-        ['Profit Factor', metrics.profitFactor.toFixed(2)],
-        ['Max Drawdown (%)', `${metrics.maxDrawdown.toFixed(2)}%`],
-        ['Max Drawdown ($)', `$${metrics.maxDrawdownUSD.toFixed(2)}`],
-        ['Max Growth (%)', `${metrics.maxGrowth.toFixed(2)}%`],
-        ['Max Growth ($)', `$${metrics.maxGrowthUSD.toFixed(2)}`],
-        ['Mayor Ganancia', `$${metrics.largestWin.toFixed(2)}`],
-        ['Mayor Pérdida', `$${metrics.largestLoss.toFixed(2)}`]
-      ];
-
-      metricsData.forEach(([metric, value]) => {
-        metricsSheet.addRow({ metric, value });
-      });
+      if (addSheets) await addSheets(workbook);
+      else addBacktestSheets(workbook);
 
       // ===== SHEET 3: EQUITY CURVE (IMAGEN) =====
       const equitySheet = workbook.addWorksheet('Equity Curve');
@@ -266,7 +299,7 @@ const ExportExcelButton = ({ trades, orderManager, symbol = 'Unknown' }) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `backtesting_dashboard_${symbol}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      a.download = fileName || `backtesting_dashboard_${symbol}_${new Date().toISOString().split('T')[0]}.xlsx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

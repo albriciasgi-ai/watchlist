@@ -6,9 +6,11 @@ import WinRateGauge from '@app1/components/backtesting/dashboard/WinRateGauge.js
 import AvgProfitLossGauge from '@app1/components/backtesting/dashboard/AvgProfitLossGauge.jsx';
 import DrawdownGrowthCards from '@app1/components/backtesting/dashboard/DrawdownGrowthCards.jsx';
 import TradesDataGrid from '@app1/components/backtesting/dashboard/TradesDataGrid.jsx';
+import ExportExcelButton from '@app1/components/backtesting/dashboard/ExportExcelButton.jsx';
 import { THEME, isNewTheme } from '@app1/components/uiTheme.js';
 import useUiTheme from '@app1/components/useUiTheme.js';
 import { filterOptions, priceText, riskReward, signature, toDashboardTrades, totals } from './journalStats.js';
+import { addJournalSheets, journalFileName } from './journalExcel.js';
 import { TAB } from './tabs.js';
 
 /**
@@ -19,6 +21,8 @@ import { TAB } from './tabs.js';
  * - Los colores salen del estilo elegido: Chart.js y los medidores con `themed`, las tarjetas y la tabla con las
  *   variables --dash-* de dashboard_styles.css. Con el Clásico se ve como el de App 1.
  * - Solo trades cerrados de los días elegidos en el journal. Un trade nuevo entra seleccionado.
+ * - "Exportar a Excel" es el botón de App 1, con las hojas de datos del journal (journalExcel.js) y las imágenes de
+ *   los gráficos: solo los trades seleccionados.
  */
 
 const EQUITY_MODES = [
@@ -130,6 +134,9 @@ export default function JournalDashboard({ trades, days }) {
     `R: ${Number.isFinite(t.r) ? t.r.toFixed(2) : 'sin SL'}`,
   ], []);
   const metrics = { maxDrawdown: risk.maxDrawdown, maxDrawdownUSD: risk.maxDrawdownR, maxGrowth: risk.maxGrowth, maxGrowthUSD: risk.maxGrowthR };
+  const addSheets = (workbook) => addJournalSheets(workbook, {
+    trades: selected, filters: { symbol, origin, account }, days, total: filtered.length,
+  });
 
   const select = (label, value, onChange, list, allText) => (
     <select className="filter-select" value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
@@ -151,6 +158,12 @@ export default function JournalDashboard({ trades, days }) {
           {select('Filtrar por moneda', symbol, setSymbol, options.symbols, 'Todas las monedas')}
           {select('Filtrar por origen', origin, setOrigin, options.origins, 'Todos los orígenes')}
           {options.accounts.length > 1 && select('Filtrar por cuenta', account, setAccount, options.accounts, 'Todas las cuentas')}
+          <ExportExcelButton
+            trades={selected}
+            addSheets={addSheets}
+            fileName={journalFileName({ symbol })}
+            imageBackground={isNewTheme() ? THEME.page : '#FFFFFF'}
+          />
         </div>
       </div>
 

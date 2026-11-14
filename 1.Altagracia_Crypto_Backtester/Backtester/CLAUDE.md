@@ -1310,6 +1310,13 @@ Los widgets de `components/backtesting/dashboard/` también los usa el journal d
 - `formatPrice` y `tooltipExtra` (P&L por trade), `formatPrice`, `formatQuantity`, `extraColumns` e `idSortKey` (tabla), y `mainText` y `subText` (tarjetas de riesgo y recompensa)
 - `uiTheme.js` suma `readableOn(color, fondo, ratio)`: un color legible como texto sobre un fondo, en cualquier estilo
 - Las tarjetas, textos y tablas siguen con las variables `--dash-*` de `dashboard_styles.css`: la suite las cambia en su contenedor
+- **"Exportar a Excel"** (`ExportExcelButton`, 13/11): la suite lo usa en su dashboard con tres opciones que App 1 no pasa:
+  - `addSheets(workbook)` pone sus hojas de datos en lugar de "Trades" y "Métricas", que salen del OrderManager (ahora en `addBacktestSheets`);
+  - `fileName`;
+  - `imageBackground`, el fondo de las imágenes (`#FFFFFF` si no se pasa).
+
+  Las imágenes de los gráficos siguen saliendo con los mismos `id`.
+- **Imágenes del Excel con los gráficos terminados** (13/11, también en App 1): antes de copiar cada elemento, el botón termina sus gráficos de Chart.js (`chart.stop()` y `update('none')`). Chart.js anima al abrirse y con cada cambio de datos o de modo, y el lienzo tiene el último cuadro dibujado. Exportando en ese momento, la imagen salía en blanco o con la curva anterior: en la prueba de la suite, con la curva recién pasada a R, salió la de dólares. Ahora sale el estado final, sin cambio a la vista en la página. Los medidores (SVG) no se tocan
 
 ## NITIDEZ DEL GRÁFICO (Noviembre 2026)
 

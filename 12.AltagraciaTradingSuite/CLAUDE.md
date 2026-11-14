@@ -18,8 +18,12 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **Paso 5, 12 y 13/11:** el servidor detecta el Swing con las reglas de App 1 y lo anota, sin enviar alertas (parte A); el indicador del gráfico dibuja lo que calcula el servidor (parte B), y la vista Watchlist muestra todas las monedas (parte C). Ver "Swing del servidor" y "Watchlist".
 - **Tras probar la Watchlist (13/11):** sus gráficos se mueven y se acercan, las monedas se agregan desde ella, las pestañas 2 a 5 abren cualquier módulo y los indicadores son los mismos en los cinco marcos. Ver "Pedidos tras probar la Watchlist".
 - **Dashboard del journal (13/11):** los widgets del dashboard de App 1 con los trades reales del bot y el estilo elegido. Ver "Journal".
+- **Para cerrar esta etapa (13/11):**
+  - prueba en Demo de cerrar, mover el SL y el TP y cancelar (ver "Posiciones en el gráfico");
+  - el apalancamiento se cambia desde la suite (ver "Configuración del bot");
+  - un día completo de la nube comparado con el archivo oficial (ver "Nube contra el archivo oficial");
+  - "Exportar a Excel" en el dashboard (ver "Journal").
 - **Falta:**
-  - del journal: delta y OI de los días recientes en las medidas, y la lectura de la regla del laboratorio;
   - las alertas del Swing quedan para la central de alertas de confluencia;
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
 
@@ -58,7 +62,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (56), journal_checks.py (89), swing_checks.py (102), book_checks.py (60) y book_cloud_checks.py (16), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (60) y book_cloud_checks.py (16), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -74,11 +78,12 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── JournalView.jsx    Journal de trades reales (Bot > Journal): "Trades" o "Dashboard"
         ├── JournalDashboard.jsx   Dashboard del journal: los widgets del dashboard de App 1 con los trades reales y el estilo elegido
         ├── journalStats.js    Cálculos del dashboard (sin React): trades del bot para los widgets, cómo cerró cada uno, riesgo y recompensa
+        ├── journalExcel.js    Hojas de datos de "Exportar a Excel" (sin React): trades, resumen, por origen y por moneda
         ├── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
         ├── openDecision.js    Lo elegido para un trade que se abre (su decisión en el journal), para la imagen de apertura
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         └── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
-    └── tests/             journalStats.test.mjs (9) y openDecision.test.mjs (5), con node
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12) y openDecision.test.mjs (5), con node
 ```
 
 ## Puertos
@@ -125,6 +130,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `GET /api/ticker/{symbol}` | Último precio de Bybit (caché de 1 s), para el panel de trading |
 | `GET /api/bot/config`, `/settings`, `/directions`, `/credentials/check`, `/position/{symbol}`, `/logs` | Lectura del bot |
 | `POST /api/bot/config/update`, `/config/add`, `/config/sync-precision/{symbol}`, `/config/update-risk-all`, `/settings/daily-risk-limit`, `/settings/daily-risk-reset`, `/settings/execution-method`, `/settings/allowed-origins`, `/directions/update` | Cambios del bot. Exigen `"confirm": "CAMBIAR_CONFIG"` y validan cada campo (SL hasta 50%, TP hasta 500%, apalancamiento hasta 100, orígenes y direcciones conocidos) |
+| `POST /api/bot/config/leverage` | Apalancamiento de una moneda, fijado ya en Bybit para la cuenta activa (13/11). Exige `"confirm": "CAMBIAR_APALANCAMIENTO"` y un entero de 1 a 100. Si Bybit lo rechaza, nada cambia y responde con su mensaje |
 | `POST /api/bot/credentials` | Claves de Bybit al bot. Exige `"confirm": "CAMBIAR_CLAVES"` y `demo` booleano. La suite no las guarda |
 | `GET /api/bot/accounts`, `/accounts/{id}/summary` | Cuentas de Bybit del bot (sin el secreto; de la clave, los últimos 4 caracteres) y el patrimonio, el disponible y las posiciones de cada una |
 | `POST /api/bot/accounts`, `/accounts/{id}/delete` | Agregar o borrar una cuenta. Exigen `"confirm": "CAMBIAR_CLAVES"`; agregar, además, nombre de 1 a 40 caracteres y `demo` booleano |
@@ -249,12 +255,27 @@ Probado el 12/11 en la copia aislada con un bot falso y el precio real de BTC, c
 
 Nada se probó contra el bot real ni contra Bybit.
 
+**Probado en Demo el 13/11** (pedido del usuario), con la suite y el bot reales y la cuenta Demo del usuario, en XRPUSDT con 20 XRP:
+- una compra a mercado entró con su SL y su TP, y el panel (pestaña Posición) mostró "Mover SL…", "Mover TP…", "Quitar TP…" y "Cerrar posición…";
+- mover el SL y el TP, quitar el TP y volver a ponerlo llegaron a Bybit. Cada confirmación dijo la cuenta, el precio y lo que se perdería o ganaría ahí;
+- el servidor y el bot rechazaron, sin tocar la posición, quitar el SL, un SL de un long sobre el precio y cerrar sin la palabra;
+- "Cerrar posición…" cerró a mercado, y el short de BTC del usuario siguió con su SL y su TP;
+- una Limit a 0.96 quedó pendiente con su SL y su TP, y "Cancelar orden…" la canceló;
+- el journal anotó el trade con su origen, sus 4 cambios de SL/TP y las imágenes de apertura y cierre. Tiene una nota de prueba.
+
+Las acciones se probaron desde los botones del panel, no arrastrando las líneas del gráfico. La página de la prueba se abrió con `?tab=5`, que no existe (es `?pestana=`): quedó como pestaña 1 y tomó una segunda imagen de cierre del trade. Detalle en `10.TradingBotDesktop/CLAUDE.md`, "Apalancamiento desde la suite y prueba en Demo".
+
 ## Configuración del bot
 
 En Bot > "Configuración y riesgo" (`BotConfig.jsx`), lo de App 10:
 - **Riesgo:** riesgo diario usado y su reinicio, límite diario, riesgo por trade para todas las monedas y método de ejecución (integrado o secuencial).
 - **Orígenes de alertas:** Analizador, Watchlist y Order Flow.
-- **Monedas:** riesgo, SL %, TP %, dirección (DISABLED, LONG, SHORT, BOTH) y precisión de Bybit por moneda; agregar una con riesgo, SL, TP y apalancamiento. El apalancamiento solo se fija al agregarla: el bot no tiene ruta para cambiarlo.
+- **Monedas:** riesgo, SL %, TP %, dirección (DISABLED, LONG, SHORT, BOTH) y precisión de Bybit por moneda; agregar una con riesgo, SL, TP y apalancamiento.
+- **Apalancamiento** (13/11, pedido del usuario; antes solo se fijaba al agregar la moneda): se escribe en su celda y sale "Aplicar".
+  - La confirmación dice de cuánto a cuánto, que el bot lo fija ya en Bybit para la cuenta activa, y que una posición abierta cambia su margen y su liquidación.
+  - Va al bot con la palabra `CAMBIAR_APALANCAMIENTO` (ruta `/api/config/leverage` del bot). Si Bybit lo rechaza, nada cambia y sale su mensaje.
+  - No es parte de "Guardar": se aplica aparte.
+  - Probado en la copia aislada con un bot falso: la confirmación dijo "de 10x a 7x" y llegó una sola llamada con BTCUSDT y 7. El servidor rechazó el pedido sin la palabra y con 7.5. Con el bot real no se probó: el que corría no tenía la ruta.
 - **Cuentas de Bybit:** ver la sección siguiente.
 - Cada cambio pide confirmación en la página y la palabra en el servidor.
 
@@ -339,8 +360,19 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   - **Filtros:** moneda, origen y cuenta (si hay más de una). Se guardan por pestaña con los modos;
   - **Estilo:** los gráficos, los medidores, las tarjetas y la tabla toman los colores y la letra del estilo elegido, y cambian al instante si se elige otro. Con el Clásico se ve como el de App 1;
   - solo trades cerrados. El journal se lee cada 15 s, y los gráficos cambian solo si cambiaron los trades (`signature`);
-  - no trae "Exportar a Excel": el de App 1 depende de su simulación (saldo y métricas del OrderManager).
-- **Paquetes de la página** (13/11): `chart.js`, `react-chartjs-2` y `react-gauge-chart`, los del dashboard de App 1. `react-gauge-chart` usa `prop-types` y `lodash` sin declararlos: van en `web/package.json` (sin ellos, el armado los deja afuera y la página no arranca). La app de escritorio instala los paquetes cuando `web/package.json` es más nuevo que lo instalado (ver "Escritorio").
+  - **"Exportar a Excel"** (13/11, pedido del usuario): el botón de App 1 junto a los filtros, con sus imágenes de los gráficos y las hojas de datos del journal (`journalExcel.js`). Exporta los trades seleccionados, con los filtros puestos. Hojas:
+    - "Trades": uno por fila, con moneda, lado, origen, cuenta, modo, cantidad cerrada, apalancamiento, entrada, salida, SL y TP iniciales y al cerrar, riesgo del SL inicial, P&L neto, % a favor, R, apertura y cierre en hora de Colombia, duración, cómo cerró y notas. Son números y fechas de Excel: se suman, se ordenan y se filtran. Lo que no hay queda vacío;
+    - "Resumen": lo de los widgets (ganadoras, Win Rate, P&L, R acumulado y promedio, ganancia y pérdida promedio, el Profit Factor del medidor y además ganancia total ÷ pérdida total, mayor caída y mejor racha en dólares y en R), los filtros, los días y cuántos trades se exportaron de cuántos había;
+    - "Por origen" y "Por moneda", de más trades a menos;
+    - "Equity Curve", "PnL Histogram", "Gauges" y "Drawdown & Growth": las imágenes, como en App 1, con el estilo elegido.
+
+    El archivo es `journal_<moneda o "todas">_<día de Colombia>.xlsx`. En la app de escritorio la descarga llega a Electron con su nombre y su tamaño (probado en una ventana aparte, cancelada antes de guardar): sin un destino fijado, Electron pregunta dónde guardarlo. Con el estilo Nítido el botón toma el acento del estilo; con el Clásico es el de App 1.
+
+    Probado el 13/11 en la copia aislada con 36 trades de prueba del bot falso:
+    - las 8 hojas; el resumen igual a los widgets (P&L +39.80, Win Rate 61.1%, Profit Factor 1.37, mayor caída $5.66 y 2.29 R, mejor racha $12.59 y 5.56 R);
+    - con BTCUSDT filtrado y un trade quitado de la selección, el archivo `journal_BTCUSDT_…` llevó 4 de 5, y el resumen lo dijo;
+    - las imágenes en Nítido, Oscuro y Clásico. La curva recién cambiada a R y las barras a % salieron así en la imagen (ver "Exportar a Excel" en `Backtester/CLAUDE.md`).
+- **Paquetes de la página** (13/11): `chart.js`, `react-chartjs-2` y `react-gauge-chart`, los del dashboard de App 1, y `exceljs` y `html2canvas`, los de su Excel (con las versiones de App 1; ninguna otra versión cambió). `react-gauge-chart` usa `prop-types` y `lodash` sin declararlos: van en `web/package.json` (sin ellos, el armado los deja afuera y la página no arranca). La app de escritorio instala los paquetes cuando `web/package.json` es más nuevo que lo instalado (ver "Escritorio").
 Probado el 13/11 (borrar y "Volver al journal") en la copia aislada, con un bot falso y la ventana a 1024 px:
 - la barra cupo en el área del gráfico, en dos líneas, con "Volver al journal" al final;
 - con una conclusión escrita, "Volver al journal" preguntó; con "no" siguió el análisis con la conclusión, y con "sí" abrió el journal con el BTC elegido y la vista en su detalle;
@@ -554,6 +586,40 @@ El usuario pidió seis cosas al probar la Watchlist.
 
 **VWAP que no se detenía** (hallado en el mismo registro): al cambiar de moneda, el VWAP de la anterior seguía pidiendo sus datos cada 30 s, en los cinco marcos, hasta cerrar la página; XRP se pidió 117 veces. `IndicatorManager.destroy()` de App 1 no detenía su temporizador, y un pedido en camino lo volvía a arrancar al llegar. Arreglado en App 1 con `dispose()` del VWAP. Medido en la copia: tras pasar de BTC a ETH, ningún pedido del VWAP de BTC en 40 s.
 
+## Nube contra el archivo oficial (13/11)
+
+Pedido del usuario: comparar un día completo de la nube con el archivo oficial de Bybit. El 13/11 (UTC) fue el primer día entero grabado en la nube, con 8 huecos:
+- tres reconexiones de 6 s;
+- cuatro reinicios por falta de memoria, de unos 5.4 minutos cada uno, antes del arreglo de `append_tape`;
+- el despliegue de ese arreglo, de 58 s.
+
+- **Herramienta:** `PanelOrderFlow/comparar_nube.py` (ver `PanelOrderFlow/LEEME.md`).
+  - Compara trade por trade (milisegundo, precio, cantidad, lado y marca RPI), minuto a minuto y cada celda del footprint.
+  - Lo hace en lo que cada fuente dice haber cubierto: la nube sola (`live/cloud/tape`) y la unión nube + PC (`live/tape`), que es la que leen la suite y App 1.
+  - Solo lee OrderFlowData. El oficial lo baja aparte, si el almacén no tiene ese día.
+- **Resultado** (13/11):
+
+| Moneda | Trades del oficial | Nube: trades con pareja exacta | Nube: minutos enteros y celdas iguales | Nube: sin cubrir | Nube + PC: sin cubrir | Nube + PC: minutos enteros con menos volumen |
+|---|---|---|---|---|---|---|
+| BTC | 3,026,971 | 99.993% | 1,410 de 1,410 · 745,385 de 745,385 | 23 min, 0.54% del volumen | 2 min, 0.03% | 3 |
+| ETH | 1,780,081 | 99.989% | 1,410 de 1,410 · 425,323 de 425,323 | 22 min, 0.98% | 1.9 min, 0.04% | 3 |
+| SOL | 610,083 | 99.990% | 1,410 de 1,410 · 31,380 de 31,380 | 22 min, 1.06% | 1.8 min, 0.05% | 2 |
+| XRP | 632,238 | 99.993% | 1,415 de 1,415 · 39,768 de 39,768 | 17 min, 0.41% | 1 min, 0.08% | 2 |
+
+  - La nube nunca tiene un trade de más. En los trades con pareja, la marca RPI es la misma.
+  - Fuera de los minutos que tocan un hueco, todo es idéntico al oficial: volumen, compra, venta, máximo, mínimo y cada celda.
+  - El PC llenó casi todo lo que la nube perdió en sus reinicios: lo sin cubrir bajó de unos 22 minutos a unos 2.
+- **Hallazgo: lo perdido pasa un poco el hueco anotado.** Todos los trades sin pareja están a menos de 10 s del borde de un hueco:
+  - en la nube, de 0.5 a 1.2 s en la mediana y 9.1 s como mucho;
+  - en el PC, unos 2 s en la mediana y 6.7 s como mucho.
+
+  El grabador anota el hueco desde el último mensaje recibido hasta el primer trade al volver, pero pierde además algo antes y después.
+  - Por eso la unión nube + PC tiene 2 o 3 minutos "enteros" por moneda con menos volumen. Caen justo cuando la nube volvía de un reinicio (15:18, 17:51, 18:34 y 19:58 UTC): ahí manda la nube desde su primer trade, y el PC, que sí tenía esos segundos, no se usa.
+  - El peor es SOL a las 17:51, con 40% menos. En BTC, el de las 15:18 tiene 2.8% menos.
+  - Una vela que toca un hueco ya lleva "parcial". Estas no lo tocan, así que salen como completas.
+  - **Arreglo posible, no hecho:** ensanchar cada hueco 10 s a cada lado al unir (`sync_nube.py`). El PC llenaría esos segundos, y donde ninguna fuente los tiene la vela saldría "parcial".
+- **Probado** solo leyendo. El oficial se bajó a una carpeta aparte: Bybit lo publica pasada la 01:00 UTC del día siguiente y lo entrega a unos 290 KB/s (BTC, 111 MB, en 6.5 minutos).
+
 ## Libro completo (13/11)
 
 Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price ladder en nuestro trading.md` y `reports/Patrones del price ladder y cancelaciones.md`, en el worktree `price-ladder-orderflow`): grabar el libro completo, medir con semanas de datos qué hace la liquidez cuando el precio llega a sus zonas, y llevar medidas del libro al journal. Bybit publica el libro completo de sus perpetuos desde el 11/08/2026. Su historia no se recupera: los archivos gratis de Bybit traen 200 niveles, que en BTC alcanzan ±0.05%.
@@ -666,7 +732,7 @@ C:\Python314\python.exe -B tests\book_cloud_checks.py
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 

@@ -54,6 +54,47 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + TradingBot + App 1 - 13 Noviembre 2026: Prueba en Demo, Apalancamiento, Nube contra el Oficial y Excel del Dashboard
+
+**Pedido:** para cerrar la etapa, cuatro cosas:
+- probar a fondo en Demo cerrar, mover el SL y el TP y cancelar órdenes;
+- cambiar el apalancamiento desde la suite (el bot no tenía cómo);
+- comparar un día completo de la nube con el archivo oficial de Bybit;
+- "Exportar a Excel" en el dashboard del journal.
+
+**Cambios:**
+1. **Prueba en Demo**, con la suite, el bot y la cuenta Demo del usuario, en XRPUSDT con 20 XRP:
+   - abrir, mover el SL y el TP, quitar y poner el TP, cerrar a mercado y cancelar una Limit llegaron a Bybit, cada uno con su confirmación;
+   - se rechazaron, sin tocar la posición, quitar el SL, un SL del lado equivocado y cerrar sin la palabra;
+   - el short de BTC del usuario no se tocó, y el trade quedó en el journal con una nota de prueba.
+2. **Apalancamiento:**
+   - **bot:** ruta `POST /api/config/leverage`. Lo fija en Bybit bajo el candado de la moneda y lo guarda solo si Bybit lo acepta;
+   - **suite:** "Aplicar" en la celda de cada moneda, con la palabra `CAMBIAR_APALANCAMIENTO`.
+3. **Nube contra el oficial:** `PanelOrderFlow/comparar_nube.py` compara trade por trade, minuto a minuto y celda por celda. Solo lee OrderFlowData y baja el oficial aparte. Resultado del 13/11, el primer día entero de la nube, en BTC, ETH, SOL y XRP:
+   - fuera de los minutos que tocan un hueco, la nube fue idéntica al oficial y nunca tuvo un trade de más. Del 99.989% al 99.993% de los trades tuvo pareja exacta, y todos los minutos enteros y todas las celdas del footprint fueron iguales;
+   - lo perdido pasa hasta 9 s el hueco anotado. Por eso la unión nube + PC dejó 2 o 3 minutos "enteros" por moneda con menos volumen, donde la nube volvía de un reinicio. El peor, SOL a las 17:51 UTC, tiene 40% menos;
+   - arreglo posible, no hecho: ensanchar los huecos 10 s al unir.
+4. **Excel del dashboard:**
+   - el botón de App 1 con las hojas del journal: trades, resumen, por origen y por moneda, más las imágenes de los gráficos;
+   - exporta los trades seleccionados con los filtros puestos.
+
+   App 1 suma `addSheets`, `fileName` e `imageBackground`, que App 1 no pasa. Además, el botón termina los gráficos de Chart.js antes de copiarlos: exportando durante su animación, la imagen salía en blanco o con la curva anterior. Esto vale también en App 1.
+5. **Pruebas:**
+   - `leverage_checks.py` del bot (13);
+   - en la suite, `bot_checks.py` (59) y `journalExcel.test.mjs` (12).
+
+   Las demás de la suite y del bot siguen pasando.
+
+**IMPORTANTE:**
+- **Reiniciar:** el bot (5000), para la ruta del apalancamiento. La suite se reinicia sola al abrirla. Los paquetes del Excel (`exceljs` y `html2canvas`) ya quedaron instalados en la copia principal.
+- **Apalancamiento:** probado en la copia aislada con un bot falso, no en Demo.
+- **Excel en Electron:** la descarga llegó a Electron con su nombre y su tamaño (probado en una ventana aparte). El diálogo para guardar no se vio.
+- **Demo:** la página de prueba se abrió con `?tab=5` en lugar de `?pestana=5`, quedó como pestaña 1 y tomó una segunda imagen de cierre del trade de XRP.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` secciones "Posiciones en el gráfico", "Configuración del bot", "Nube contra el archivo oficial" y "Journal"; `10.TradingBotDesktop/CLAUDE.md` sección "Apalancamiento desde la suite y prueba en Demo"; `PanelOrderFlow/LEEME.md` sección "Nube contra el archivo oficial"; `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "DASHBOARD DE TRADING, COMPARTIDO CON LA SUITE"
+
+---
+
 ### Altagracia Trading Suite - 13 Noviembre 2026: Borrar Imágenes del Análisis y Volver al Journal
 
 **Pedido:** tras probar el análisis post-trade: poder borrar una imagen desde la suite, y un botón en la barra del gráfico para volver al journal.

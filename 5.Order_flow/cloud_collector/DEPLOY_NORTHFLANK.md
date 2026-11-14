@@ -192,7 +192,14 @@ precio fino y el flujo, igual que de un dia oficial. Sirve para los dias que Byb
 
 Probado en el PC con BTC, ETH y XRP: los 18 minutos completos grabados coincidieron exactos con las
 velas de 1 minuto oficiales de Bybit en volumen y cierre, y un reinicio brusco recupero lo guardado y
-anoto el hueco. Falta comparar un dia completo grabado en la nube contra el archivo oficial de Bybit.
+anoto el hueco.
+
+Comparado el 13/11/2026, el primer dia entero de la nube, con `PanelOrderFlow/comparar_nube.py` en BTC, ETH, SOL y XRP:
+- fuera de los minutos que tocan un hueco, la nube es identica al archivo oficial trade por trade, en cada minuto y en cada celda;
+- nunca tiene un trade de mas;
+- lo perdido pasa hasta 9 s el hueco anotado (1 s en la mediana).
+
+Ver `12.AltagraciaTradingSuite/CLAUDE.md`, seccion "Nube contra el archivo oficial".
 
 
 ## Footprints guardados fuera del bucle (12/11/2026)

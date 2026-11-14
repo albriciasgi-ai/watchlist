@@ -196,3 +196,10 @@ body.theme-nitido .suite-dashboard .btn-select-all:hover { background: var(--das
 body.theme-nitido .suite-dashboard .badge-side.long { background: color-mix(in srgb, var(--dash-primary-green) 15%, transparent); }
 body.theme-nitido .suite-dashboard .badge-side.short { background: color-mix(in srgb, var(--dash-primary-red) 15%, transparent); }
 body.theme-nitido .suite-dashboard .chart-card:hover { box-shadow: 0 4px 14px var(--dash-shadow); }
+/* "Exportar a Excel" (13/11): el botón de App 1 con el acento del estilo, como "Seleccionar todos" */
+body.theme-nitido .suite-dashboard .btn-export-excel {
+  background: var(--dash-primary-blue); border-radius: 6px; padding: 7px 14px; font-size: 13px; box-shadow: none;
+}
+body.theme-nitido .suite-dashboard .btn-export-excel:hover:not(:disabled) {
+  transform: none; filter: brightness(0.92); box-shadow: 0 2px 8px var(--dash-shadow);
+}

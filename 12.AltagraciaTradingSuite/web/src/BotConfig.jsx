@@ -3,12 +3,14 @@ import { getJson, postJson } from './api.js';
 import BotAccounts from './BotAccounts.jsx';
 
 /**
- * Configuracion del bot, como en App 10: monedas y sus parametros (riesgo, SL, TP, apalancamiento al agregar,
- * precision de Bybit), riesgo diario, metodo de ejecucion, origenes de alertas, direcciones por moneda y
- * credenciales de Bybit. Cada cambio pide confirmacion aqui y una palabra en el servidor.
+ * Configuracion del bot, como en App 10: monedas y sus parametros (riesgo, SL, TP, apalancamiento, que desde el
+ * 13/11/2026 tambien se cambia despues de agregar la moneda y se fija ya en Bybit, precision de Bybit), riesgo diario,
+ * metodo de ejecucion, origenes de alertas, direcciones por moneda y credenciales de Bybit. Cada cambio pide
+ * confirmacion aqui y una palabra en el servidor.
  */
 
 const CONFIG_WORD = 'CAMBIAR_CONFIG';
+const LEVERAGE_WORD = 'CAMBIAR_APALANCAMIENTO'; // 13/11/2026: el bot lo fija ya en Bybit para la cuenta activa
 const pct = (fraction) => (fraction === null || fraction === undefined ? '' : String(+(Number(fraction) * 100).toFixed(4)));
 const ORIGINS = [
   ['ANALIZADOR', 'Analizador (App 4/8)'],
@@ -21,19 +23,22 @@ function CoinRow({ coin, direction, onSaved, onError }) {
   const [risk, setRisk] = useState(String(coin.risk_amount));
   const [sl, setSl] = useState(pct(coin.stop_loss_percent));
   const [tp, setTp] = useState(pct(coin.take_profit_percent));
+  const [lev, setLev] = useState(String(coin.leverage ?? ''));
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     setRisk(String(coin.risk_amount));
     setSl(pct(coin.stop_loss_percent));
     setTp(pct(coin.take_profit_percent));
   }, [coin.risk_amount, coin.stop_loss_percent, coin.take_profit_percent]);
+  useEffect(() => setLev(String(coin.leverage ?? '')), [coin.leverage]);
   const dirty = risk !== String(coin.risk_amount) || sl !== pct(coin.stop_loss_percent) || tp !== pct(coin.take_profit_percent);
+  const levDirty = lev !== String(coin.leverage ?? '');
 
-  const run = async (text, path, body) => {
+  const run = async (text, path, body, word = CONFIG_WORD) => {
     if (!window.confirm(text)) return;
     setBusy(true);
     try {
-      await postJson(path, { ...body, confirm: CONFIG_WORD });
+      await postJson(path, { ...body, confirm: word });
       onSaved();
     } catch (e) {
       onError(`${coin.symbol}: ${e.message}`);
@@ -47,6 +52,20 @@ function CoinRow({ coin, direction, onSaved, onError }) {
     { symbol: coin.symbol, risk_amount: Number(risk), stop_loss_percent: Number(sl) / 100, take_profit_percent: Number(tp) / 100 },
   );
   const setDirection = (value) => run(`Dirección de ${coin.symbol}: ${value}?`, '/api/bot/directions/update', { symbol: coin.symbol, direction: value });
+  // Apalancamiento (13/11/2026): se fija ya en Bybit, por eso va aparte de "Guardar"
+  const applyLeverage = () => {
+    const value = Number(lev);
+    if (!Number.isInteger(value) || value < 1 || value > 100) {
+      onError(`${coin.symbol}: el apalancamiento es un entero de 1 a 100`);
+      return;
+    }
+    run(
+      `Cambiar el apalancamiento de ${coin.symbol} de ${coin.leverage ?? '—'}x a ${value}x?\n\n`
+      + 'El bot lo fija ya en Bybit para la cuenta activa, y las órdenes siguientes lo usan. '
+      + 'Si hay una posición abierta, cambian su margen y su precio de liquidación (o Bybit lo rechaza y nada cambia).',
+      '/api/bot/config/leverage', { symbol: coin.symbol, leverage: value }, LEVERAGE_WORD,
+    );
+  };
   const syncPrecision = () => run(`Leer de Bybit tick, paso y mínimo de ${coin.symbol}?`, `/api/bot/config/sync-precision/${coin.symbol}`, {});
 
   return (
@@ -55,7 +74,16 @@ function CoinRow({ coin, direction, onSaved, onError }) {
       <td><input className="suite-input" type="number" step="0.5" value={risk} onChange={(e) => setRisk(e.target.value)} /></td>
       <td><input className="suite-input" type="number" step="0.1" value={sl} onChange={(e) => setSl(e.target.value)} /></td>
       <td><input className="suite-input" type="number" step="0.1" value={tp} onChange={(e) => setTp(e.target.value)} /></td>
-      <td>{coin.leverage ?? '—'}x</td>
+      <td style={{ whiteSpace: 'nowrap' }}>
+        <input className="suite-input" type="number" min="1" max="100" step="1" style={{ width: 52 }} value={lev}
+          onChange={(e) => setLev(e.target.value)} title="Apalancamiento: se fija en Bybit al aplicarlo" />x
+        {levDirty && (
+          <button type="button" className="suite-btn" style={{ marginLeft: 4 }} disabled={busy} onClick={applyLeverage}
+            title="Fijar ya este apalancamiento en Bybit (cuenta activa)">
+            Aplicar
+          </button>
+        )}
+      </td>
       <td title="tick · paso · mínimo">{coin.tick_size} · {coin.step_size} · {coin.min_qty}</td>
       <td>
         <select className="suite-select" value={direction || 'DISABLED'} onChange={(e) => setDirection(e.target.value)} disabled={busy}>
