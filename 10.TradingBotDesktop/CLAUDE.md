@@ -227,6 +227,16 @@ Paso 4 de la integración: el journal de la suite será el Observador de App 1 c
 
 **IMPORTANTE:** reiniciar el bot. Al arrancar trae los cierres de la última semana: los trades de antes quedan como "sin apertura" y las posiciones abiertas como "anterior". Las órdenes del historial anteriores al 12/11 no tienen número: sus trades se reconocen por la regla de los 10 minutos.
 
+### Cierres que Bybit no da en closed-pnl (14 Noviembre 2026)
+
+El TP de un short de BTC de la cuenta Demo se ejecutó el 14/11 a las 10:25 (lo vio el WebSocket privado y `/v5/execution/list`), pero `/v5/position/closed-pnl` no lo dio, ni con 7 días ni sin fechas, más de una hora después. Como el journal solo tomaba cierres de ahí, el trade quedó abierto.
+
+- `journal_fallback()` (en `journal_loop`, cada minuto): un trade abierto de la cuenta activa cuya posición no está en el libro del WebSocket (solo con el libro listo) se espera 3 minutos; si `closed-pnl` no lo cerró, se piden sus ejecuciones desde su apertura (hasta 7 días) y cada orden de cierre (`execType` Trade, lado contrario, `closedSize` > 0) se anota con `record_exec_close()`. Reintenta cada 5 minutos si no hay ejecuciones.
+- El resultado: bruto con la entrada del trade, menos la comisión de cierre real y una de apertura estimada (taker 0.055%). Queda `estimated` y el trade `pnl_estimated`; la suite lo marca "≈".
+- Si después llega la fila de `closed-pnl` de esa orden (`order_id`), va al mismo trade y reemplaza al aproximado.
+- `journal_sync` pide 7 días cada minuto y al desaparecer una posición (antes 1 día).
+- Pruebas: `journal_checks.py` (37).
+
 ## Apalancamiento desde la suite y prueba en Demo (13 Noviembre 2026)
 
 Pedido del usuario: cambiar el apalancamiento desde la suite (el bot solo lo fijaba al agregar una moneda), y probar a fondo en Demo cerrar, mover el SL y el TP y cancelar órdenes.

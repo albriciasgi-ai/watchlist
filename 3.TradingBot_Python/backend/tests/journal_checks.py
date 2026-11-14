@@ -91,6 +91,7 @@ try:
 
     # ---------- dentro del bot ----------
     CLOSED = []
+    EXECS = []
 
     class FakeClient:
         def __init__(self, api_key, api_secret, testnet=False, demo=False):
@@ -116,6 +117,9 @@ try:
         async def _make_request(self, method, endpoint, params=None, **kw):
             if endpoint == "/v5/position/closed-pnl":
                 rows = [r for r in CLOSED if not params.get("symbol") or r["symbol"] == params["symbol"]]
+                return {"retCode": 0, "result": {"list": rows, "nextPageCursor": ""}}
+            if endpoint == "/v5/execution/list":
+                rows = [r for r in EXECS if r["symbol"] == params.get("symbol") and int(r["execTime"]) >= params.get("startTime", 0)]
                 return {"retCode": 0, "result": {"list": rows, "nextPageCursor": ""}}
             return {"retCode": 0, "result": {"list": []}}
 
@@ -243,6 +247,60 @@ try:
             check("orden exacta reemplaza el origen de la regla de 10 minutos", x3["origin"] == "MANUAL" and x3["open_order_id"] == "o9")
             j3.record_link(tid3, {"origin": "WATCHLIST", "order_id": "o9"})
             check("un enlace sin la orden exacta no cambia un origen ya sabido", TradeJournal(TMP / "unit3" / "trades.jsonl").trades()[0]["origin"] == "MANUAL")
+
+            # ---------- cierre que Bybit no da en closed-pnl (14/11: TP de un short de BTC en Demo) ----------
+            class BookStream(FakeStream):
+                ready = True
+
+                def __init__(self, client, positions):
+                    super().__init__()
+                    self.client = client
+                    self.positions = {f"{p['symbol']}:0": p for p in positions}
+
+            start = int(time.time() * 1000)
+            short = pos(symbol="SOLUSDT", side="Sell", size="2", entry="200", sl="210", tp="180")
+            st.stream = BookStream(st.bybit_client, [short])
+            c.portal.call(main.journal_positions, [short])
+            sol = lambda: next(x for x in c.get("/api/journal/trades?symbol=SOLUSDT", headers=H).json()["trades"])
+            check("short de SOL abierto", sol()["status"] == "open")
+            # El TP se ejecuta: la posicion desaparece, Bybit no da la fila en closed-pnl y si la ejecucion
+            st.stream.positions = {}
+            EXECS.append({"symbol": "SOLUSDT", "orderId": "tp-sol", "side": "Buy", "execType": "Trade", "execPrice": "180",
+                          "execQty": "2", "closedSize": "2", "execFee": "0.198", "execTime": str(start + 1000),
+                          "orderType": "Market", "stopOrderType": "TakeProfit"})
+            EXECS.append({"symbol": "SOLUSDT", "orderId": "fund-1", "side": "Sell", "execType": "Funding", "execPrice": "190",
+                          "execQty": "2", "closedSize": "0", "execFee": "-0.01", "execTime": str(start + 500)})
+            c.portal.call(main.journal_fallback, start + 1000)  # la vuelta que ve que falta la posicion
+            check("a los 2 minutos sin posicion aun se espera a closed-pnl",
+                  c.portal.call(main.journal_fallback, start + 121000) == 0 and sol()["status"] == "open")
+            added = c.portal.call(main.journal_fallback, start + 200000)
+            x = sol()
+            expected = round((200 - 180) * 2 - 0.198 - 200 * 2 * 0.00055, 6)
+            check("a los 3 minutos se cierra con las ejecuciones del TP (P&L aproximado)",
+                  added == 1 and x["status"] == "closed" and x["exit"] == 180 and x["pnl"] == expected and x["pnl_estimated"],
+                  str({k: x.get(k) for k in ("status", "exit", "pnl", "pnl_estimated")}))
+            check("el funding no cuenta como cierre", len(x["closes"]) == 1 and x["closes"][0]["order_id"] == "tp-sol")
+            check("otra vuelta no lo repite", c.portal.call(main.journal_fallback, start + 900000) == 0 and len(sol()["closes"]) == 1)
+            # Mas tarde llega la fila de Bybit de esa orden: reemplaza la aproximada, en el mismo trade
+            CLOSED.append(close_row("tp-sol", "2", "180", "39.45", symbol="SOLUSDT", entry="200", at=start + 1000))
+            c.post("/api/journal/sync", headers=H)
+            sols = [t for t in c.get("/api/journal/trades?symbol=SOLUSDT", headers=H).json()["trades"]]
+            x = sols[0]
+            check("la fila de closed-pnl reemplaza al cierre aproximado, sin otro trade",
+                  len(sols) == 1 and x["pnl"] == 39.45 and not x["pnl_estimated"] and len(x["closes"]) == 1, str(sols))
+            # Sin el libro al dia no se cierra nada: no se sabe si la posicion sigue
+            long_ = pos(symbol="AVAXUSDT", side="Buy", size="10", entry="30", sl="29", tp="33")
+            st.stream = BookStream(st.bybit_client, [long_])
+            c.portal.call(main.journal_positions, [long_])
+            st.stream.positions = {}
+            st.stream.ready = False
+            check("sin el libro al dia no se arma ningun cierre", c.portal.call(main.journal_fallback, start + 10 ** 7) == 0)
+            # Con el libro y sin ejecuciones de cierre: sigue abierto
+            st.stream.ready = True
+            c.portal.call(main.journal_fallback, start + 2 * 10 ** 7)
+            later = c.portal.call(main.journal_fallback, start + 2 * 10 ** 7 + 400000)
+            avax = next(x for x in c.get("/api/journal/trades?symbol=AVAXUSDT", headers=H).json()["trades"])
+            check("sin ejecuciones que cierren, el trade sigue abierto", later == 0 and avax["status"] == "open")
         finally:
             st.stream = real_stream
 finally:

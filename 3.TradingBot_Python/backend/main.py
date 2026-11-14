@@ -879,7 +879,7 @@ async def journal_positions(positions: List[Dict[str, Any]]) -> None:
     for key in list(state.journal_active):
         if key not in current:
             state.journal_active.pop(key)
-            asyncio.create_task(journal_sync(symbol=key.split(":")[0], days=1, delay=3))
+            asyncio.create_task(journal_sync(symbol=key.split(":")[0], days=7, delay=3))  # 7 dias: una fila de closed-pnl puede llegar tarde o con hora vieja
 
 
 async def journal_sync(symbol: Optional[str] = None, days: int = 1, delay: float = 0.0) -> int:
@@ -917,12 +917,84 @@ async def journal_sync(symbol: Optional[str] = None, days: int = 1, delay: float
     return added
 
 
+FALLBACK_AFTER_MS = 180000  # Sin posicion por 3 minutos y sin cierre en closed-pnl: se arma con las ejecuciones
+FALLBACK_RETRY_MS = 300000
+
+
+async def journal_fallback(now: Optional[int] = None) -> int:
+    """
+    Trades abiertos en el journal cuya posicion ya no existe en Bybit y que closed-pnl no cerro: el cierre se arma con
+    las ejecuciones de las ordenes que cerraron (/v5/execution/list). En Demo, el TP de un short de BTC (14/11) se
+    ejecuto y nunca aparecio en closed-pnl, y el trade quedo abierto. Solo con el libro al dia: sin el, no se sabe.
+    """
+    client, stream = state.bybit_client, state.stream
+    if not client or stream is None or stream.client is not client or not stream.ready:
+        return 0
+    now = now or now_ms()
+    account = state.active_account
+    account_id = (account or {}).get("id")
+    live = {(p.get("symbol"), p.get("side")) for p in stream.positions.values() if (_num(p.get("size")) or 0) > 0}
+    missing = getattr(state, "journal_missing", None)
+    if missing is None:
+        missing = state.journal_missing = {}
+    added = 0
+    seen = set()
+    for t in state.journal.trades(days=30, account=account_id):
+        if t["status"] != "open" or (t["symbol"], t["side"]) in live:
+            continue
+        seen.add(t["trade_id"])
+        first, tried = missing.setdefault(t["trade_id"], [now, 0])
+        if now - first < FALLBACK_AFTER_MS or now - tried < FALLBACK_RETRY_MS:
+            continue
+        missing[t["trade_id"]][1] = now
+        start = max((t.get("opened_at") or now) - 60000, now - 7 * 86400000)
+        query = {"category": "linear", "symbol": t["symbol"], "limit": 100, "startTime": start}
+        rows, cursor = [], None
+        for _ in range(5):
+            if cursor:
+                query["cursor"] = cursor
+            result = await client._make_request("GET", "/v5/execution/list", query)
+            if result.get("retCode") != 0:
+                state.log("warning", f"[JOURNAL] Bybit no dio las ejecuciones de {t['symbol']}: {result.get('retMsg')}")
+                break
+            body = result.get("result") or {}
+            rows.extend(body.get("list") or [])
+            cursor = body.get("nextPageCursor")
+            if not cursor:
+                break
+        if client is not state.bybit_client:
+            return added
+        closing = "Buy" if t["side"] == "Sell" else "Sell"
+        done = {c.get("order_id") for c in t["closes"]}
+        orders: Dict[str, list] = {}
+        for r in rows:
+            if (r.get("execType") == "Trade" and r.get("side") == closing and (_num(r.get("closedSize")) or 0) > 0
+                    and int(_num(r.get("execTime")) or 0) >= (t.get("opened_at") or 0) and r.get("orderId") not in done):
+                orders.setdefault(r["orderId"], []).append(r)
+        left = (t.get("size") or 0) - (t.get("closed_qty") or 0)
+        for order_id, fills in sorted(orders.items(), key=lambda kv: min(int(_num(f.get("execTime")) or 0) for f in kv[1])):
+            if left <= 0:
+                break
+            if state.journal.record_exec_close(t, order_id, fills, account):
+                added += 1
+                left -= sum(_num(f.get("closedSize")) or 0 for f in fills)
+                state.log("warning", f"[JOURNAL] {t['symbol']} {t['side']}: Bybit no dio el cierre en closed-pnl; anotado con las "
+                                     f"ejecuciones de la orden {order_id} (P&L aproximado)")
+    for trade_id in list(missing):
+        if trade_id not in seen:
+            missing.pop(trade_id)
+    if added:
+        await state.broadcast_event("journal_update", {"added": added})
+    return added
+
+
 async def journal_loop() -> None:
     """Cada minuto, los cierres del ultimo dia (los de TP o SL que no pasaron por el bot tambien)."""
     while True:
         await asyncio.sleep(60)
         try:
-            await journal_sync(days=1)
+            await journal_sync(days=7)  # una llamada por minuto; antes 1 dia
+            await journal_fallback()
         except Exception as e:
             state.log("warning", f"[JOURNAL] {e}")
 

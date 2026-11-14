@@ -540,7 +540,7 @@ export default function JournalView({ active, onShowTrade, focus = null, onFocus
                     <td>{price(t.entry)}</td>
                     <td>{price(t.exit)}</td>
                     <td>{t.initial_stop_loss ? price(t.initial_stop_loss) : <span className="neg">sin SL</span>}</td>
-                    <td className={(pnl || 0) >= 0 ? 'pos' : 'neg'}>{money(pnl)}{open && pnl !== null ? ' *' : ''}</td>
+                    <td className={(pnl || 0) >= 0 ? 'pos' : 'neg'}>{money(pnl)}{open && pnl !== null ? ' *' : ''}{!open && t.pnl_estimated ? <span title="Bybit no dio este cierre en closed-pnl: armado con las ejecuciones, comisión de apertura estimada"> ≈</span> : ''}</td>
                     <td title={gap?.mark ? `Precio marca ${price(gap.mark)}` : ''}>
                       {!gap || gap.mark === null ? '—' : gap.hasTp ? pct(gap.tp) : 'sin TP'}
                     </td>
@@ -622,7 +622,7 @@ export default function JournalView({ active, onShowTrade, focus = null, onFocus
                 {selected.closes.map(cl => (
                   <tr key={cl.close_id}>
                     <td>{when(cl.closed_at)}</td><td>{cl.qty}</td><td>{price(cl.entry)}</td><td>{price(cl.exit)}</td>
-                    <td className={(cl.pnl || 0) >= 0 ? 'pos' : 'neg'}>{money(cl.pnl)}</td><td>{cl.order_type || ''} {cl.exec_type || ''}</td>
+                    <td className={(cl.pnl || 0) >= 0 ? 'pos' : 'neg'}>{money(cl.pnl)}{cl.estimated ? <span title="Armado con las ejecuciones: Bybit no dio este cierre en closed-pnl. Comisión de apertura estimada"> ≈</span> : ''}</td><td>{cl.order_type || ''} {cl.exec_type || ''}</td>
                   </tr>
                 ))}
               </tbody>

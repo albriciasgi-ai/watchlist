@@ -8,6 +8,10 @@ base: los hechos de cada trade, tomados de Bybit, para que la suite los muestre 
   cuenta y origen (la orden del historial del bot que la abrio: Swing, panel, etc.; si no hay, "externa").
 - Cierre: el P&L cerrado de Bybit (/v5/position/closed-pnl): cantidad, entrada y salida promedio y resultado neto
   (con comisiones). Un trade puede tener varios cierres parciales.
+- Cierre de respaldo (14/11): si la posicion ya no existe y Bybit no da su cierre en closed-pnl (en Demo, un TP
+  de BTC nunca aparecio ahi), se arma con las ejecuciones de la orden que cerro (/v5/execution/list): salida y
+  comision de cierre reales, resultado bruto con la entrada del trade y comision de apertura estimada (taker).
+  Queda "estimated"; si despues llega la fila de closed-pnl de esa misma orden, la reemplaza.
 - Notas del usuario.
 
 Archivo de eventos que solo se agregan (JSONL): una linea cortada a mitad por un apagon se salta al leer, y nada
@@ -20,6 +24,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 TRADE_ID_RE = re.compile(r"^[A-Za-z0-9:._-]{1,160}$")
+TAKER_FEE = 0.00055  # Comision de apertura estimada en un cierre de respaldo (VIP 0 de Bybit)
 
 
 def _num(value) -> Optional[float]:
@@ -127,25 +132,61 @@ class TradeJournal:
     def record_close(self, row: Dict[str, Any], account: Optional[Dict[str, Any]]) -> bool:
         """Un registro de /v5/position/closed-pnl. Su `side` es el de la orden que cerro: la posicion es la contraria."""
         close_id = f"{row.get('orderId')}:{row.get('updatedTime')}"
-        self._load()
+        events = self._load()
         if close_id in self._close_ids:
             return False
         side = "Sell" if row.get("side") == "Buy" else "Buy"
         closed_at = int(_num(row.get("updatedTime")) or now_ms())
         account_id = (account or {}).get("id")
         trade_id = None
-        for t in self.open_trades(row.get("symbol"), side, account_id):
-            if t["opened_at"] <= closed_at + 5000:
-                trade_id = t["trade_id"]
-                break
+        # Un cierre de respaldo de esta misma orden ya cerro el trade: la fila de Bybit va a ese trade y lo reemplaza
+        for e in events:
+            if e.get("type") == "close" and e.get("estimated") and row.get("orderId") and e.get("order_id") == row.get("orderId"):
+                trade_id = e.get("trade_id")
+        if trade_id is None:
+            for t in self.open_trades(row.get("symbol"), side, account_id):
+                if t["opened_at"] <= closed_at + 5000:
+                    trade_id = t["trade_id"]
+                    break
         self._append({
-            "type": "close", "close_id": close_id, "trade_id": trade_id, "symbol": row.get("symbol"), "side": side,
+            "type": "close", "close_id": close_id, "trade_id": trade_id, "order_id": row.get("orderId"),
+            "symbol": row.get("symbol"), "side": side,
             "qty": _num(row.get("closedSize")) or _num(row.get("qty")), "entry": _price(row.get("avgEntryPrice")),
             "exit": _price(row.get("avgExitPrice")), "pnl": _num(row.get("closedPnl")), "order_type": row.get("orderType"),
             "exec_type": row.get("execType"), "fills": _num(row.get("fillCount")), "leverage": _num(row.get("leverage")),
             "closed_at": closed_at, "account_id": account_id, "account": (account or {}).get("name"),
         })
         self._close_ids.add(close_id)
+        return True
+
+    def record_exec_close(self, trade: Dict[str, Any], order_id: str, fills: List[Dict[str, Any]],
+                          account: Optional[Dict[str, Any]]) -> bool:
+        """
+        Cierre de respaldo con las ejecuciones (de /v5/execution/list) de una orden que cerro el trade, cuando Bybit
+        no lo da en closed-pnl. Resultado = bruto (con la entrada del trade) - comision de cierre - apertura estimada.
+        """
+        events = self._load()
+        if not order_id or any(e.get("type") == "close" and e.get("order_id") == order_id for e in events):
+            return False
+        qty = sum(_num(f.get("closedSize")) or 0 for f in fills)
+        if qty <= 0:
+            return False
+        exit_ = sum((_num(f.get("execPrice")) or 0) * (_num(f.get("closedSize")) or 0) for f in fills) / qty
+        entry = trade.get("entry")
+        fee = sum(_num(f.get("execFee")) or 0 for f in fills)
+        pnl = None
+        if entry:
+            gross = (exit_ - entry) * qty if trade.get("side") == "Buy" else (entry - exit_) * qty
+            pnl = round(gross - fee - entry * qty * TAKER_FEE, 8)
+        last = max(int(_num(f.get("execTime")) or 0) for f in fills) or now_ms()
+        self._append({
+            "type": "close", "close_id": f"exec:{order_id}", "trade_id": trade["trade_id"], "order_id": order_id,
+            "symbol": trade.get("symbol"), "side": trade.get("side"), "qty": qty, "entry": entry, "exit": exit_, "pnl": pnl,
+            "order_type": fills[0].get("orderType"), "exec_type": fills[0].get("stopOrderType") or "Trade",
+            "fills": len(fills), "leverage": trade.get("leverage"), "closed_at": last, "estimated": True,
+            "close_fee": round(fee, 8), "account_id": (account or {}).get("id"), "account": (account or {}).get("name"),
+        })
+        self._close_ids.add(f"exec:{order_id}")
         return True
 
     # ---------- notas ----------
@@ -159,6 +200,8 @@ class TradeJournal:
     def _build(self) -> Dict[str, Dict[str, Any]]:
         trades: Dict[str, Dict[str, Any]] = {}
         events = self._load()
+        # Ordenes con su fila de closed-pnl: su cierre de respaldo (estimated) ya no cuenta
+        real_orders = {e.get("order_id") for e in events if e.get("type") == "close" and not e.get("estimated") and e.get("order_id")}
         for e in events:
             if e["type"] == "open":
                 trades[e["trade_id"]] = {
@@ -189,6 +232,8 @@ class TradeJournal:
                     t["initial_take_profit"] = e["take_profit"]
                 t["changes"].append({k: e[k] for k in e if k not in ("type", "trade_id")})
             elif e["type"] == "close":
+                if e.get("estimated") and e.get("order_id") in real_orders:
+                    continue
                 if not t:
                     # Cierre sin apertura anotada (abierto antes del journal o con el bot apagado)
                     tid = f"close:{e['close_id']}"
@@ -199,7 +244,8 @@ class TradeJournal:
                         "account": e.get("account"), "mode": None, "initial_stop_loss": None, "initial_take_profit": None,
                         "closes": [], "notes": [], "changes": [],
                     }
-                t["closes"].append({k: e.get(k) for k in ("close_id", "qty", "entry", "exit", "pnl", "order_type", "exec_type", "fills", "closed_at")})
+                t["closes"].append({k: e.get(k) for k in ("close_id", "order_id", "qty", "entry", "exit", "pnl", "order_type", "exec_type",
+                                                           "fills", "closed_at", "estimated")})
             elif e["type"] == "note":
                 t = trades.get(e.get("trade_id") or "")
                 if t:
@@ -211,6 +257,7 @@ class TradeJournal:
             t["closed_qty"] = closed_qty
             t["status"] = "closed" if closes and closed_qty >= size * 0.999 else "open"
             t["pnl"] = round(sum(c.get("pnl") or 0 for c in closes), 6) if closes else None
+            t["pnl_estimated"] = any(c.get("estimated") for c in closes)  # cierre de respaldo: P&L aproximado
             t["exit"] = (sum((c.get("exit") or 0) * (c.get("qty") or 0) for c in closes) / closed_qty) if closed_qty else None
             t["closed_at"] = max((c.get("closed_at") or 0) for c in closes) if closes else None
             if t.get("entry") is None and closes:
