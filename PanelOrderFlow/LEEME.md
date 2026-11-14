@@ -108,7 +108,11 @@ C:\Python314\python.exe -I -B comparar_nube.py 2026-11-13 BTCUSDT --bajados C:\c
   - trade por trade: milisegundo, precio, cantidad y lado, y aparte con la marca RPI;
   - cada minuto entero: trades, volumen, compra, venta, máximo y mínimo;
   - cada celda del footprint (minuto, precio y lado);
-  - lo que el oficial tiene fuera de lo cubierto (huecos y lo no grabado).
+  - lo que el oficial tiene fuera de lo cubierto (huecos y lo no grabado);
+  - a cuántos segundos del borde de un hueco quedan los trades sin pareja. En la unión también cuenta donde pasa de la nube al PC.
+
+  La salida lista además los minutos enteros con otro volumen, con su diferencia.
+- **Decisión del 13/11:** no se cambió la unión. Se vuelve a comparar en unos días, desde el 14/11, ya sin los reinicios del collector, para ver si esos minutos vuelven a aparecer.
 - **Resultado del 13/11**, el primer día entero de la nube, en BTC, ETH, SOL y XRP:
   - fuera de los minutos que tocan un hueco, la nube es idéntica al oficial, y nunca tiene un trade de más;
   - lo perdido pasa hasta 9 s el hueco anotado (1 s en la mediana; en el PC, hasta 6.7 s);

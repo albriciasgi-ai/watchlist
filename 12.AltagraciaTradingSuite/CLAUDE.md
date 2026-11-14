@@ -618,6 +618,7 @@ Pedido del usuario: comparar un día completo de la nube con el archivo oficial 
   - El peor es SOL a las 17:51, con 40% menos. En BTC, el de las 15:18 tiene 2.8% menos.
   - Una vela que toca un hueco ya lleva "parcial". Estas no lo tocan, así que salen como completas.
   - **Arreglo posible, no hecho:** ensanchar cada hueco 10 s a cada lado al unir (`sync_nube.py`). El PC llenaría esos segundos, y donde ninguna fuente los tiene la vela saldría "parcial".
+  - **Decisión del usuario (13/11):** dejarlo así y volver a comparar en unos días. El collector ya no se reinicia por memoria desde el despliegue del 13/11, así que desde el 14/11 deberían quedar solo las reconexiones de unos 6 s. Si los minutos "enteros" con menos volumen no vuelven a aparecer, no hace falta el arreglo.
 - **Probado** solo leyendo. El oficial se bajó a una carpeta aparte: Bybit lo publica pasada la 01:00 UTC del día siguiente y lo entrega a unos 290 KB/s (BTC, 111 MB, en 6.5 minutos).
 
 ## Libro completo (13/11)

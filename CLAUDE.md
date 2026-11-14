@@ -73,7 +73,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 3. **Nube contra el oficial:** `PanelOrderFlow/comparar_nube.py` compara trade por trade, minuto a minuto y celda por celda. Solo lee OrderFlowData y baja el oficial aparte. Resultado del 13/11, el primer día entero de la nube, en BTC, ETH, SOL y XRP:
    - fuera de los minutos que tocan un hueco, la nube fue idéntica al oficial y nunca tuvo un trade de más. Del 99.989% al 99.993% de los trades tuvo pareja exacta, y todos los minutos enteros y todas las celdas del footprint fueron iguales;
    - lo perdido pasa hasta 9 s el hueco anotado. Por eso la unión nube + PC dejó 2 o 3 minutos "enteros" por moneda con menos volumen, donde la nube volvía de un reinicio. El peor, SOL a las 17:51 UTC, tiene 40% menos;
-   - arreglo posible, no hecho: ensanchar los huecos 10 s al unir.
+   - arreglo posible, no hecho: ensanchar los huecos 10 s al unir. El usuario prefirió dejarlo así y volver a comparar en unos días, ya sin los reinicios del collector.
 4. **Excel del dashboard:**
    - el botón de App 1 con las hojas del journal: trades, resumen, por origen y por moneda, más las imágenes de los gráficos;
    - exporta los trades seleccionados con los filtros puestos.

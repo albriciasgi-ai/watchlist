@@ -190,7 +190,24 @@ def cells(t10, p, s, q, ds, keep_minutes):
     return uniq, np.bincount(inv.ravel(), weights=q[ok], minlength=len(uniq)).round().astype(np.int64)
 
 
-def compare(off, src, spans, day, label):
+def edge_distance(left, spans, day, extra_edges=()):
+    """
+    A cuantos ms del borde de un hueco quedan los trades del oficial sin pareja. En la union, tambien cuentan como
+    borde los huecos de la nube que llena el PC: ahi la union cambia de fuente. El 13/11 todo lo perdido quedo a
+    menos de 10 s de un borde: el grabador pierde algo mas de lo que anota como hueco
+    """
+    if not len(left):
+        return None
+    ds = day_start(day)
+    edges = sorted({x for a, e in subtract([[ds, ds + DAY_MS]], spans) for x in (a, e)} | set(extra_edges))
+    if not edges:
+        return None
+    d = np.abs(left[:, 0][:, None] - np.array(edges, dtype=np.int64)[None, :]).min(axis=1)
+    return dict(mediana_ms=int(np.median(d)), max_ms=int(d.max()), menos_de_2s=int((d < 2000).sum()),
+                de_2_a_10s=int(((d >= 2000) & (d < 10000)).sum()), mas_de_10s=int((d >= 10000).sum()))
+
+
+def compare(off, src, spans, day, label, extra_edges=()):
     """Una fuente contra el oficial, en sus tramos cubiertos."""
     ds = day_start(day)
     o_in = inside(off["t"], spans)
@@ -201,12 +218,13 @@ def compare(off, src, spans, day, label):
     s_cols = [s_ms, src["p"][s_in], src["q"][s_in], src["s"][s_in].astype(np.int64)]
     exact, _, _ = multiset(o_cols, s_cols)
     with_rpi, _, _ = multiset(o_cols + [off["r"][o_in].astype(np.int64)], s_cols + [src["r"][s_in].astype(np.int64)])
+    o_keys = np.stack(o_cols, axis=1)
+    s_keys = np.stack(s_cols, axis=1)
+    o_left = left_over(o_keys, s_keys) if exact["only_official"] else np.zeros((0, 4), np.int64)
+    edges = edge_distance(o_left, spans, day, extra_edges)
     # Lo que no tuvo pareja exacta, con 1 ms de tolerancia en la hora
     near = None
     if exact["only_official"] and exact["only_source"]:
-        o_keys = np.stack(o_cols, axis=1)
-        s_keys = np.stack(s_cols, axis=1)
-        o_left = left_over(o_keys, s_keys)
         s_left = left_over(s_keys, o_keys)
         found = 0
         for shift in (-1, 1):
@@ -241,7 +259,7 @@ def compare(off, src, spans, day, label):
         fuente=label,
         tramos=len(spans), ms_cubiertos=int(sum(e - s for s, e in spans)),
         trades=dict(oficial=int(o_in.sum()), fuente=int(s_in.sum()), **exact,
-                    pareja_con_rpi=with_rpi["matched"], a_1ms=near),
+                    pareja_con_rpi=with_rpi["matched"], a_1ms=near, sin_pareja_al_borde=edges),
         volumen=dict(oficial=vol_o / off["qs"], fuente=vol_s / off["qs"], diferencia_pct=(vol_s - vol_o) / vol_o * 100 if vol_o else None),
         minutos=dict(enteros=int(len(minutes)), iguales=same, peores=worst_minutes),
         footprint=dict(celdas=cells_total, iguales=cells_same),
@@ -292,6 +310,7 @@ def run(day, symbols, data: Path, folder: Path, log=print):
             report["monedas"][sym] = dict(error=str(e))
             continue
         entry = dict(oficial=dict(origen=off["origin"], trades=int(len(off["t"])), volumen=int(off["q"].sum()) / off["qs"]))
+        cloud_edges = []  # huecos de la nube: en la union, ahi se pasa del PC a la nube y al reves
         for label, root in (("nube", data / "live" / "cloud" / "tape"), ("nube + PC", data / "live" / "tape")):
             src = source_trades(tf, root / sym / day[:4] / f"{sym}_{day}.tape")
             if src is None:
@@ -300,9 +319,11 @@ def run(day, symbols, data: Path, folder: Path, log=print):
             ps, qs = max(off["ps"], src["ps"]), max(off["qs"], src["qs"])
             o2, s2 = rescale(off, ps, qs), rescale(src, ps, qs)
             spans = coverage(src["meta"], day)
-            res = compare(o2, s2, spans, day, label)
+            res = compare(o2, s2, spans, day, label, cloud_edges if label == "nube + PC" else ())
             res["fuera"] = missed(o2, spans, day)
             entry[label] = res
+            if label == "nube":
+                cloud_edges = [int(x) for gap in src["meta"].get("gaps", []) for x in gap]
         entry["segundos"] = round(time.perf_counter() - t0, 1)
         report["monedas"][sym] = entry
         log(summary_line(sym, entry))
@@ -318,12 +339,17 @@ def summary_line(sym, e):
             continue
         tr, mi, fp, out = r["trades"], r["minutos"], r["footprint"], r["fuera"]
         pct = tr["matched"] / tr["oficial"] * 100 if tr["oficial"] else 0
+        edge = tr.get("sin_pareja_al_borde")
         lines.append(
             f"  {label}: {tr['matched']:,} de {tr['oficial']:,} trades del oficial con pareja exacta ({pct:.4f}%), "
             f"{tr['only_source']:,} de más; volumen {r['volumen']['diferencia_pct']:+.4f}%; "
             f"minutos enteros {mi['enteros']} (volumen igual en {mi['iguales']['vol']}, máximo y mínimo en "
             f"{min(mi['iguales']['high'], mi['iguales']['low'])}); celdas del footprint iguales {fp['iguales']:,} de {fp['celdas']:,}; "
-            f"sin cubrir {out['segundos']:.0f} s ({out['pct_volumen']:.2f}% del volumen del día)")
+            f"sin cubrir {out['segundos']:.0f} s ({out['pct_volumen']:.2f}% del volumen del día)"
+            + (f"; lo sin pareja, a {edge['max_ms'] / 1000:.1f} s como mucho del borde de un hueco ({edge['mas_de_10s']} a más de 10 s)" if edge else ""))
+        if mi["peores"]:
+            lines.append("    minutos enteros con otro volumen (UTC): "
+                         + ", ".join(f"{p['minuto']} ({(p['fuente'] - p['oficial']) / p['oficial'] * 100:+.1f}%)" for p in mi["peores"] if p["oficial"]))
     return "\n".join(lines)
 
 
