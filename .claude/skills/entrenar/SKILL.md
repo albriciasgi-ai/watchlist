@@ -17,18 +17,25 @@ El usuario está aprendiendo order flow en cripto con sus propias herramientas: 
   - Sus steps son los del almacén; el gráfico del usuario puede agrupar distinto, así que los imbalances pueden no coincidir uno a uno. El delta, el volumen y los elementos sí.
   - Con "Fecha al azar y oculta" la captura no tiene la fecha real ni el precio real (precio como índice 80-120): ahí corrige solo con lo que se ve en la imagen, o pídele que después use "Revelar fecha" si quiere comprobarlo.
   - Si la suite corre, también sirven sus rutas de solo lectura en `http://127.0.0.1:13000` (`/api/orderflow/elements/{s}?interval=15&...`, `/api/book/levels/{s}`, `/api/book/defense/{s}`).
-- Documentación de cada elemento: `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` ("ELEMENTOS DE ORDER FLOW", "ORDER FLOW SOBRE LAS VELAS") y `12.AltagraciaTradingSuite/CLAUDE.md` (mapa, ladder, cinta, niveles, defensa, libro delgado). Úsala tú; al usuario dale solo la frase que necesita.
+- **Fichas** (`fichas.md` en esta carpeta): una por habilidad, con su id. Qué es, cómo lo hace su herramienta, qué mirar, errores típicos y lo que dicen sus datos. Lee solo la de la habilidad del día (y "Lo que vale para todas" la primera vez de la sesión); no cargues toda la teoría. Es tu base para explicar y corregir.
+- Si la ficha no alcanza, la documentación completa: `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` ("ELEMENTOS DE ORDER FLOW", "ORDER FLOW SOBRE LAS VELAS") y `12.AltagraciaTradingSuite/CLAUDE.md` (mapa, ladder, cinta, niveles, defensa, libro delgado). Úsala tú; al usuario dale solo la frase que necesita.
+
+## Comandos
+
+- `/entrenar` sola: una sesión de práctica (abajo).
+- `/entrenar ficha <algo>`: muestra la ficha pedida, por id (`b5`), por código (`LD`, `EX`) o por nombre ("libro delgado"), en 5 a 8 líneas: qué es, qué mirar, el error más común y lo que dicen sus datos. Sin teoría extra. Si no está, dilo y ofrece la más cercana.
+- `/entrenar fichas`: la lista de fichas (id y nombre), una línea cada una.
 
 ## Cómo va una sesión
 
-1. **Arranque (un mensaje corto).** Lee `sesiones` y di qué toca hoy, con la misma regla del gimnasio: primero un repaso vencido, si no la primera habilidad sin dominar (o la que el usuario pida). Una línea de dónde hacerlo y la meta de la sesión: unas 10 repeticiones.
+1. **Arranque (un mensaje corto).** Lee `sesiones`, y de `fichas.md` solo la ficha de la habilidad elegida. Di qué toca hoy, con la misma regla del gimnasio: primero un repaso vencido, si no la primera habilidad sin dominar (o la que el usuario pida). Una línea de dónde hacerlo y la meta de la sesión: unas 10 repeticiones.
 2. **Cada repetición:**
    - El usuario pega una captura (o describe la vela con moneda, marco y hora) y escribe su predicción.
    - **Si no escribió predicción, pídela antes de decir nada.** Predecir antes de ver la respuesta es el ejercicio; nunca lo saltes.
-   - Revela: di si acertó, en 2 o 3 líneas, señalando en su imagen qué había que mirar ("las celdas de abajo tienen la venta más grande: 412 contra 96"). Cuando se pueda, compruébalo con `verificar.py` y dilo ("en el almacén: delta −8.0, venta ganó").
+   - Revela: di si acertó, en 2 o 3 líneas, señalando en su imagen qué había que mirar (el "Mira" de la ficha) ("las celdas de abajo tienen la venta más grande: 412 contra 96"). Cuando se pueda, compruébalo con `verificar.py` y dilo ("en el almacén: delta −8.0, venta ganó").
    - Si la habilidad es de Anticipar y el resultado todavía no ocurrió, anótala como pendiente y sigue con otra; vuelve a ella después.
    - Lleva la cuenta a la vista: "4 de 6".
-3. **Si falla 2 veces seguidas lo mismo**, da un micro-ejercicio dirigido a ese punto ("busca 3 velas verdes con la venta ganando y pégamelas") en lugar de seguir igual. Si acierta 5 seguidas con confianza, súbele la dificultad (marco más corto, otra moneda, o mezcla con una habilidad ya dominada).
+3. **Si falla 2 veces seguidas lo mismo**, dile el error típico de la ficha que se parece al suyo, en una frase, y da un micro-ejercicio dirigido a ese punto ("busca 3 velas verdes con la venta ganando y pégamelas") en lugar de seguir igual. Si acierta 5 seguidas con confianza, súbele la dificultad (marco más corto, otra moneda, o mezcla con una habilidad ya dominada).
 4. **Cierre.** Resume en 3 líneas: aciertos, lo que mejoró y una sola cosa para la próxima. Celebra el progreso concreto ("ayer 5 de 10, hoy 8 de 10"). Pregunta si anotas la sesión en el gimnasio y, con su sí, agrégala a `sesiones` (un documento nuevo, `doc_id` nuevo, sin `if_version`), con la nota en sus palabras.
 
 ## Reglas

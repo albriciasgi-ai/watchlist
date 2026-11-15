@@ -60,7 +60,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 **Cambios:**
 1. **Gimnasio de Order Flow** (artefacto privado, https://claude.ai/artifact/H8pzTyhuPvJcHheAEcQVho): 5 etapas y 16 habilidades, cada una con su ejercicio "predice, revela y anota" en App 1 o en la suite, registro de sesiones, repasos a 1, 3, 7, 14 y 30 días y un entrenador. Fuente: `.claude/skills/entrenar/gimnasio.html`.
-2. **Skill `/entrenar`** (`.claude/skills/entrenar/SKILL.md`): sesión de práctica con Claude Code sobre las capturas del usuario. Lee y anota el registro del gimnasio, y comprueba cada lectura con `verificar.py` (solo lectura: delta, volumen, POC, imbalances, Elementos OF con AB, BL y LD, y lo que hizo el precio después).
+2. **Skill `/entrenar`** (`.claude/skills/entrenar/SKILL.md`): sesión de práctica con Claude Code sobre las capturas del usuario. Con una ficha por habilidad (`fichas.md`): qué es, cómo lo hace la herramienta, qué mirar, errores típicos y lo medido en sus datos. Se lee solo la del día; `/entrenar ficha LD` muestra una. Lee y anota el registro del gimnasio, y comprueba cada lectura con `verificar.py` (solo lectura: delta, volumen, POC, imbalances, Elementos OF con AB, BL y LD, y lo que hizo el precio después).
 
 **IMPORTANTE:**
 - El skill aparece en una sesión nueva de Claude Code abierta en el repositorio.
