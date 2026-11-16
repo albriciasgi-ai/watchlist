@@ -367,7 +367,10 @@ class SwingDetectorIndicator extends IndicatorBase {
       '240': 14400000,
       '4h': 14400000,
       'D': 86400000,
-      'W': 604800000
+      'W': 604800000,
+      '1D': 86400000,
+      '1W': 604800000,
+      '1M': 2678400000   // el mes más largo (31 días): una señal nunca se muestra antes de confirmarse
     };
     return intervalMap[this.interval] || 3600000;
   }

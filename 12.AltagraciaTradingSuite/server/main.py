@@ -59,9 +59,8 @@ from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
-INTERVALS = {"1": 1, "5": 5, "15": 15, "60": 60, "240": 240}
-# Dias de velas por marco para el grafico en vivo (cada pedido a Bybit trae 1000 velas)
-LIVE_DAYS = {"1": 3, "5": 10, "15": 30, "60": 120, "240": 365}
+INTERVALS = candles.INTERVALS       # tambien D, W y M (16/11): los de candles.py
+LIVE_DAYS = candles.LIVE_DAYS
 CANDLE_CACHE_SECONDS = 5
 DRAWINGS_DIR = Path(CONFIG["data_dir"]) / "drawings"
 
@@ -147,14 +146,7 @@ def _symbol(symbol: str) -> str:
 
 
 def _interval(interval: str) -> str:
-    text = (interval or "").strip().lower()
-    if text.endswith("h") and text[:-1].isdigit():
-        text = str(int(text[:-1]) * 60)
-    elif text.endswith("m") and text[:-1].isdigit():
-        text = text[:-1]
-    if text not in INTERVALS:
-        raise HTTPException(status_code=400, detail="marco no soportado")
-    return text
+    return candles.interval_code(interval)
 
 
 def _json(body) -> Response:
@@ -227,6 +219,12 @@ async def orderflow_historical(
     """Footprints del almacen (oficial, y nube + PC donde falta el oficial), como el backend de App 1.
     step_mode=uniform (el grafico en vivo): un solo step para todas las velas; sin step, el de _uniform_step."""
     symbol, interval = _symbol(symbol), _interval(interval)
+    if interval in ("W", "M"):
+        # Semana y mes (16/11): sin footprints. La semana de Bybit empieza el lunes y el mes no mide lo mismo; el
+        # almacen arma velas de minutos fijos desde 1970 (un jueves). El dia si (1440 minutos, desde las 00:00 UTC)
+        return _json({"success": True, "footprints": [], "count": 0, "step_size": None, "cell_size": None,
+                      "known_until": int(time.time() * 1000), "interval": interval, "source": "store",
+                      "note": "sin footprints en semana ni mes"})
     now = int(time.time() * 1000)
     if start_timestamp is None or end_timestamp is None:
         end_timestamp = now
@@ -246,7 +244,7 @@ async def orderflow_historical(
             step = await _uniform_step(symbol, interval)
 
     def body():
-        result = footprint_store.footprints(symbol, int(interval), start_timestamp, end_timestamp, cut, step, rules,
+        result = footprint_store.footprints(symbol, INTERVALS[interval], start_timestamp, end_timestamp, cut, step, rules,
                                             limit, live=True)
         return {"success": True, "footprints": result["footprints"], "count": len(result["footprints"]),
                 "step_size": result["step_size"], "cell_size": result.get("cell_size"),

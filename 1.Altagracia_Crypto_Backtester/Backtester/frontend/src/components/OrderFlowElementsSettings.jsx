@@ -89,6 +89,11 @@ const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose, onOpen
                   <input type="checkbox" checked={!!values[key]} onChange={(e) => set(key, e.target.checked)} />
                   {label}
                 </label>
+                {key === 'showGlyphs' && (
+                  <p className="hint" style={{ margin: '2px 0 0 22px' }}>
+                    ▲ verde bajo la vela: esa vela tiene uno o más elementos alcistas (a favor de la compra). ▼ rojo sobre la vela: bajistas (a favor de la venta). Una vela puede tener los dos. Desde 16 px por vela salen sus códigos, uno por línea, debajo del ▲ o encima del ▼ (por ejemplo EX y DD); con menos zoom, solo el triángulo, y por debajo de 4 px no se dibuja. Agrupan las franjas, celdas y contornos de esa vela; los de la tabla (DV, XD, SM) no llevan triángulo. Es ayuda de lectura, no una señal: el color dice hacia dónde apuntan los elementos, no hacia dónde irá el precio.
+                  </p>
+                )}
               </div>
             ))}
             <div className="setting-row">

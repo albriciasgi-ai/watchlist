@@ -80,13 +80,18 @@ def _iso(ms) -> str:
 
 
 def _interval(value) -> str:
-    text = str(value if value is not None else "").strip().lower()
+    raw = str(value if value is not None else "").strip()
+    if raw in ("D", "1D", "d", "1d"):
+        return "D"
+    if raw in ("W", "1W", "w", "1w"):
+        return "W"
+    text = raw.lower()
     if text.endswith("h") and text[:-1].isdigit():
         text = str(int(text[:-1]) * 60)
     elif text.endswith("m") and text[:-1].isdigit():
         text = text[:-1]
     if text not in INTERVAL_MS:
-        raise ValueError("el marco es 1, 5, 15, 60 o 240 minutos")
+        raise ValueError("el marco es 1, 5, 15, 60 o 240 minutos, D (dia) o W (semana)")
     return text
 
 

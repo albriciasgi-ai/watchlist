@@ -8,7 +8,10 @@
 import { getJson, postJson } from './api.js';
 
 export const SWING = 'Swing Detector';
-export const INTERVAL_CODE = { '1m': '1', '5m': '5', '15m': '15', '1h': '60', '4h': '240' };
+// 1D y 1W (16/11): el servidor los calcula; 1M no (sus velas no miden siempre lo mismo) y queda sin Swing
+export const INTERVAL_CODE = { '1m': '1', '5m': '5', '15m': '15', '1h': '60', '4h': '240', '1D': 'D', '1W': 'W' };
+// La semana de Bybit empieza el lunes; los marcos de minutos se cuentan desde 1970, que fue jueves
+export const TF_OFFSET = { '1W': 4 * 86400000 };
 const FRAME_NAME = Object.fromEntries(Object.entries(INTERVAL_CODE).map(([tf, code]) => [code, tf]));
 export const frameName = (code) => FRAME_NAME[code] || code;
 // Lo que el modal de App 1 cambia de la regla (las zonas de precio no están en el modal y no se mandan)
@@ -24,7 +27,8 @@ export const pick = (obj, keys) => Object.fromEntries(keys.filter(k => obj?.[k] 
 export const swingOf = (manager) => manager?.indicators?.find(i => i.name === SWING) || null;
 
 /** La última vela que el servidor ya da como cerrada a esta hora */
-export const lastClosed = (tfMs, now = Date.now()) => Math.floor((now - CLOSE_GRACE_MS) / tfMs) * tfMs - tfMs;
+export const lastClosed = (tfMs, now = Date.now(), offset = 0) =>
+  Math.floor((now - CLOSE_GRACE_MS - offset) / tfMs) * tfMs + offset - tfMs;
 
 /** Señales de un gráfico. `days`: los que carga el gráfico (la Watchlist pide menos); sin él, los del gráfico principal */
 export function fetchSwing(symbol, tf, days = null) {
@@ -56,8 +60,9 @@ export function attachSwing(st, ind, visual) {
  * no se pisan. Devuelve true si llegaron señales nuevas.
  */
 export async function feedSwing(st, { symbol, tf, tfMs, days = null, version, visual, keepRules = false, isAlive = () => true }) {
-  if (!st.ind) return false;
-  const due = st.version !== version || !(st.last >= lastClosed(tfMs));
+  if (!st.ind || !INTERVAL_CODE[tf]) return false;
+  const offset = TF_OFFSET[tf] || 0;
+  const due = st.version !== version || !(st.last >= lastClosed(tfMs, Date.now(), offset));
   if (!due || st.pending || Date.now() - (st.tried || 0) < SWING_RETRY_MS) return false;
   st.pending = true;
   st.tried = Date.now();
@@ -66,7 +71,7 @@ export async function feedSwing(st, { symbol, tf, tfMs, days = null, version, vi
     if (!isAlive()) return false;
     st.data = data;
     st.version = version;
-    st.last = data.candles?.last ?? lastClosed(tfMs);
+    st.last = data.candles?.last ?? lastClosed(tfMs, Date.now(), offset);
     if (keepRules) st.ind.setExternalSignals(data.signals || []);
     else applySwing(st.ind, data, visual);
     return true;

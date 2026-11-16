@@ -148,7 +148,9 @@ const getIntervalMilliseconds = (interval) => {
     "W": 604800000,
     // Marcos con letra (App 1 y la suite)
     "1m": 60000, "3m": 180000, "5m": 300000, "15m": 900000, "30m": 1800000,
-    "1h": 3600000, "2h": 7200000, "4h": 14400000, "1d": 86400000, "1D": 86400000, "1w": 604800000, "1W": 604800000
+    "1h": 3600000, "2h": 7200000, "4h": 14400000, "1d": 86400000, "1D": 86400000, "1w": 604800000, "1W": 604800000,
+    // El mes (la suite, 16/11) en 30 días: solo para estimar; sus velas las da Bybit con su fecha real
+    "M": 2592000000, "1M": 2592000000
   };
   return map[interval] || 900000;
 };
@@ -964,7 +966,7 @@ const MiniChart = forwardRef(({
       "60": "60", "120": "120", "240": "240", "D": "D", "W": "W",
       // Marcos con letra (App 1 y la suite): antes caian todos en "15" y cada grafico recibia las velas de 15m
       "1m": "1", "3m": "3", "5m": "5", "15m": "15", "30m": "30",
-      "1h": "60", "2h": "120", "4h": "240", "1d": "D", "1D": "D", "1w": "W", "1W": "W"
+      "1h": "60", "2h": "120", "4h": "240", "1d": "D", "1D": "D", "1w": "W", "1W": "W", "M": "M", "1M": "M"
     };
     return map[interval] || "15";
   };

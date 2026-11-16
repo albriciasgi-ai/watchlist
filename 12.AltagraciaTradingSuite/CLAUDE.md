@@ -914,6 +914,21 @@ Pedido del usuario: al hacer clic en una orden de la cinta, verla en el gráfico
   - Pruebas: `tapelines.test.mjs` (6) y `tapelevels.test.mjs` de App 1 (1).
 - **La cinta titilaba (16/11, visto por el usuario al elegir una orden):** los botones "Provisional · Dejar en firme · Borrar" de la fila elegida no cabían en los 236 px de la cinta. La lista medía 249 px por dentro y 235 por fuera, salía una barra de desplazamiento horizontal y, con pocas filas, las barras podían aparecer y desaparecer. Ahora los botones bajan de línea, la lista nunca se desborda de lado (`overflowX: hidden`), cada fila conserva su lugar al llegar órdenes nuevas (la clave ya no es su posición en la lista) y la cinta solo se vuelve a dibujar si cambiaron sus líneas. En la copia aislada no se vio titilar antes del arreglo: se comprobó el desborde (249 contra 235 px) y que ya no está.
 
+## Marcos de 1 día, 1 semana y 1 mes (16/11)
+
+Pedido del usuario. En el gráfico principal y en la Watchlist, después de 4h: **1D**, **1W** y **1M**, con las velas de Bybit (`D`, `W` y `M`, también por su WebSocket).
+
+- **Calendario (UTC):** el día empieza a las 00:00, la semana el lunes y el mes el día 1. `candles.candle_end()` da dónde termina una vela (el mes, el día 1 del siguiente) y `is_candle_start()` si una hora es el comienzo de una. Días que se cargan: 1000 en 1D, 2600 en 1W (desde marzo de 2020 en BTC, 348 velas) y 3000 en 1M (81 velas).
+- **Nombres:** `candles.interval_code()` mira la mayúscula antes de pasar a minúsculas: `1M` es el mes y `1m` el minuto. También acepta `D`, `1D`, `1440`, `W`, `1W`, `10080`, `M` y `43200`.
+- **Gráficos que se arman al abrirlos:** los de 1D, 1W y 1M no se arman al cargar la página, sino la primera vez que se abre cada uno, y después quedan armados como los demás (`openedTfs` en `ChartView.jsx`). `TimeframeTabs` de App 1 acepta `tabs`; App 1 sigue con sus cinco.
+- **Qué indicadores dan:**
+  - todos los que calculan con velas (perfil, delta de volumen, CVD, FVG, S&R, VWAP, patrones, Volumen de Respuesta);
+  - footprints y Elementos OF solo en 1D (el almacén arma velas de minutos fijos, y 1440 empieza a las 00:00 UTC); en 1W y 1M responden vacíos, porque la semana de Bybit empieza el lunes (1970 fue jueves) y el mes no mide siempre lo mismo;
+  - interés abierto: el diario de Bybit, en la hora de comienzo de cada vela;
+  - Swing del servidor: en 1D y 1W (la semana alineada al lunes, `TF_OFFSET` en `swingServer.js`); en 1M no se calcula y el indicador queda sin flechas. El Swing en vivo de la Watchlist sigue vigilando solo de 1m a 4h.
+- **No en la pestaña "Mapa":** el libro existe desde el 13/11, así que sigue con los cinco marcos de siempre.
+- **Probado** en la copia aislada con velas reales de BTC: los tres marcos se dibujan, la vela en curso queda marcada, footprints de 1D con step 250 y Swing de 1D con 249 señales. Ningún pedido de los marcos nuevos falló. No se probó en Electron.
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.

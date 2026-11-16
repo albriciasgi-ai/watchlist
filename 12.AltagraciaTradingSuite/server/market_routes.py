@@ -57,10 +57,12 @@ router = APIRouter()
 _rejection = RejectionDetector()
 _double = DoubleTopBottomDetector()
 DAY_MS = 86_400_000
-TF_MINUTES = (1, 5, 15, 60, 240)
+TF_MINUTES = (1, 5, 15, 60, 240, 1440)   # el dia (16/11): 1440 minutos desde las 00:00 UTC
+NO_FLOW = (10080, 43200)                   # semana y mes: sin footprints ni elementos (ver main.orderflow_historical)
+SETUP_TFS = ("1", "5", "15", "60", "240", "1440")
 
 # Interes abierto: Bybit da 5min, 15min, 1h y 4h; 1m usa 5min, como App 1
-OI_BYBIT = {5: "5min", 15: "15min", 60: "1h", 240: "4h"}
+OI_BYBIT = {5: "5min", 15: "15min", 60: "1h", 240: "4h", 1440: "1d"}   # D, W y M usan el diario
 OI_PAGE = 200            # puntos por pedido a Bybit
 OI_MAX_REQUESTS = 25     # 5,000 puntos por consulta como mucho
 OI_TAIL_SECONDS = 60     # el ultimo tramo se vuelve a pedir a Bybit pasado este tiempo
@@ -152,7 +154,8 @@ async def open_interest(symbol: str, interval: str = "15", days: int = 30, start
     lo que falta hasta ahora, Bybit REST. local_only se acepta y se ignora: en vivo lo reciente esta en Bybit.
     """
     symbol, code = candles.symbol_code(symbol), candles.interval_code(interval)
-    minutes = max(int(code), 5)
+    calendar = code in candles.CALENDAR
+    minutes = 1440 if calendar else max(candles.INTERVALS[code], 5)
     step = minutes * 60_000
     now = _now_ms()
     if start_timestamp_ms is None or end_timestamp_ms is None:
@@ -163,7 +166,8 @@ async def open_interest(symbol: str, interval: str = "15", days: int = 30, start
         return {"symbol": symbol, "interval": code, "indicator": "openInterest", "success": False, "data": [],
                 "error": "rango vacio"}
 
-    local = await run_in_threadpool(oi_store.series, symbol, str(minutes), start, end)
+    # D, W y M (16/11): el diario de Bybit; la serie local es de 5 minutos y no arma dias
+    local = None if calendar else await run_in_threadpool(oi_store.series, symbol, str(minutes), start, end)
     points = {p["timestamp"]: p["openInterest"] for p in (local or {}).get("data", [])}
     local_last = (local or {}).get("oi_last_timestamp")
     gap_from = start if not points else max(start, (local_last or start) + 1)
@@ -171,7 +175,8 @@ async def open_interest(symbol: str, interval: str = "15", days: int = 30, start
     if gap_from < end:
         try:
             fresh = await _bybit_oi_cached(symbol, minutes, gap_from, now)
-            added = {ts: v for ts, v in fresh.items() if gap_from <= ts <= end and ts % step == 0}
+            added = {ts: v for ts, v in fresh.items() if gap_from <= ts <= end and
+                     (candles.is_candle_start(ts, code) if calendar else ts % step == 0)}
             if added:
                 points.update(added)
                 source = "local+bybit" if source == "local" else "bybit"
@@ -428,6 +433,9 @@ async def orderflow_elements(symbol: str, interval: str, start_timestamp: int, e
                              vol_filter: float = 2.0):
     """Elementos OF (of_elements de App 1) con live=True: dias oficiales y, donde faltan, nube + PC."""
     symbol = candles.symbol_code(symbol)
+    if str(interval).isdigit() and int(interval) in NO_FLOW:
+        return _json({"success": True, "catalog": {}, "events": [], "bars": [], "known_until": _now_ms(), "warming": True,
+                      "note": "sin elementos en semana ni mes"})
     tf = _tf(interval)
 
     # Absorcion (AB), barrido del libro (BL) y libro delgado (LD), 14/11: del libro grabado por la suite (book_events.py). Las velas de 1
@@ -480,7 +488,7 @@ async def orderflow_setups(symbol: str, request: Request):
     symbol = candles.symbol_code(symbol)
     body = await request.json()
     recipes = body.get("recipes") or []
-    if str(body.get("interval")) not in ("1", "5", "15", "60", "240") or not isinstance(recipes, list) or len(recipes) > 200:
+    if str(body.get("interval")) not in SETUP_TFS or not isinstance(recipes, list) or len(recipes) > 200:
         return {"success": False, "message": "Marco o recetas no válidos", "matches": []}
 
     def run():
@@ -501,7 +509,7 @@ async def orderflow_setups_evaluate(symbol: str, request: Request):
     """
     symbol = candles.symbol_code(symbol)
     body = await request.json()
-    if str(body.get("interval")) not in ("1", "5", "15", "60", "240"):
+    if str(body.get("interval")) not in SETUP_TFS:
         return {"success": False, "message": "Marco no válido"}
     if body.get("validation"):
         return {"success": False, "message": "La comprobación final se hace en App 1, donde queda registrada"}

@@ -40,7 +40,8 @@ export function valueAreaRange(levels, pocIndex, share = 0.7) {
   return [low, high];
 }
 
-const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
+// 1D, 1W y 1M (la suite, 16/11): el servidor da footprints del día y ninguno de la semana ni del mes
+const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240, '1D': 1440, '1W': 10080, '1M': 43200 };
 const MAX_CANDLES_TO_LOAD = 1600; // Con más velas en pantalla no se piden footprints: quedan a menos de 1 px por vela
 const MAX_DAYS_TO_LOAD = 70; // Ni con más días de trades: el almacén lee un archivo por día (400 velas de 4h, unos 2 s)
 const MAX_PAD_CANDLES = 200; // Velas de más a cada lado al desplazarse: media pantalla, hasta este tope

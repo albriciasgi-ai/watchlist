@@ -14,7 +14,9 @@
 # Aqui no hay red ni archivos: velas, VWAP y rectangulos llegan como argumentos.
 import math
 
-INTERVAL_MS = {"1": 60_000, "5": 300_000, "15": 900_000, "60": 3_600_000, "240": 14_400_000}
+# Dia y semana (16/11): sus velas miden siempre lo mismo. El mes no: el Swing no se calcula en 1M
+INTERVAL_MS = {"1": 60_000, "5": 300_000, "15": 900_000, "60": 3_600_000, "240": 14_400_000,
+               "D": 86_400_000, "W": 604_800_000}
 DIRECTIONS = ("BOTH", "LONG", "SHORT")
 
 # Valores de fabrica del indicador de App 1 (su constructor)

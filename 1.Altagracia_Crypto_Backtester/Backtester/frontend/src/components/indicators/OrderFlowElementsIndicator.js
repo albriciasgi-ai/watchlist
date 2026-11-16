@@ -10,7 +10,8 @@ import {
 import { activeRecipes, allRecipes, loadSetupsConfig, recipeLabel } from './ofSetups.js';
 
 import { maskVolume } from '../backtesting/blindClock.js';
-const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
+// 1D, 1W y 1M (la suite, 16/11): el servidor da elementos del día y ninguno de la semana ni del mes
+const MINUTES_BY_INTERVAL = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240, '1D': 1440, '1W': 10080, '1M': 43200 };
 const DAY_MS = 86400000;
 const MAX_VIEW_DAYS = 60; // Con más días a la vista no se piden elementos
 const MAX_PAD_MS = 3 * DAY_MS;

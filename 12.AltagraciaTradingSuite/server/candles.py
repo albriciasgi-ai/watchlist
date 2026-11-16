@@ -16,9 +16,13 @@ from settings import CONFIG
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
-INTERVALS = {"1": 1, "5": 5, "15": 15, "60": 60, "240": 240}
+# Marcos de Bybit y sus minutos. D, W y M (16/11/2026, pedido del usuario): dia, semana (empieza el lunes 00:00 UTC)
+# y mes (empieza el dia 1): el mes no mide siempre lo mismo, por eso el final de una vela sale de candle_end()
+INTERVALS = {"1": 1, "5": 5, "15": 15, "60": 60, "240": 240, "D": 1440, "W": 10080, "M": 43200}
+CALENDAR = ("D", "W", "M")
 # Dias de velas por marco para el grafico en vivo (cada pedido a Bybit trae 1000 velas)
-LIVE_DAYS = {"1": 3, "5": 10, "15": 30, "60": 120, "240": 365}
+LIVE_DAYS = {"1": 3, "5": 10, "15": 30, "60": 120, "240": 365, "D": 1000, "W": 2600, "M": 3000}
+DAY_MS = 86_400_000
 CANDLE_CACHE_SECONDS = 5
 # Pedidos a Bybit por segundo desde este servidor. Bybit cuenta en una ventana de 1 s y responde "Too many visits"
 # (retCode 10006) si se pasa: con la pagina recien abierta, cinco marcos, el Swing y la Watchlist piden a la vez
@@ -68,8 +72,16 @@ def symbol_code(symbol: str) -> str:
 
 
 def interval_code(interval: str) -> str:
-    """'15m', '1h', '4h', '60'... a la clave de Bybit ('15', '60', '240'). Otro marco: 400."""
-    text = (str(interval) if interval is not None else "").strip().lower()
+    """'15m', '1h', '4h', '60', '1D', '1W', '1M'... a la clave de Bybit ('15', '60', '240', 'D', 'W', 'M').
+    '1M' (mayuscula) es el mes y '1m' el minuto: se mira antes de pasar a minusculas. Otro marco: 400."""
+    raw = (str(interval) if interval is not None else "").strip()
+    if raw in ("M", "1M") or raw.lower() in ("1mo", "mo", "43200"):
+        return "M"
+    if raw.lower() in ("d", "1d", "1440"):
+        return "D"
+    if raw.lower() in ("w", "1w", "10080"):
+        return "W"
+    text = raw.lower()
     if text.endswith("h") and text[:-1].isdigit():
         text = str(int(text[:-1]) * 60)
     elif text.endswith("m") and text[:-1].isdigit():
@@ -77,6 +89,26 @@ def interval_code(interval: str) -> str:
     if text not in INTERVALS:
         raise HTTPException(status_code=400, detail="marco no soportado")
     return text
+
+
+def candle_end(ts: int, interval: str) -> int:
+    """Donde termina la vela que empieza en ts (el mes, el dia 1 del mes siguiente)."""
+    if interval == "M":
+        d = datetime.fromtimestamp(ts / 1000, tz=timezone.utc)
+        nxt = datetime(d.year + (d.month == 12), d.month % 12 + 1, 1, tzinfo=timezone.utc)
+        return int(nxt.timestamp() * 1000)
+    return int(ts) + INTERVALS[interval] * 60_000
+
+
+def is_candle_start(ts: int, interval: str) -> bool:
+    """Si ts es el comienzo de una vela del marco (la semana, el lunes; el mes, el dia 1), en UTC."""
+    ts = int(ts)
+    if interval in CALENDAR:
+        if ts % DAY_MS:
+            return False
+        d = datetime.fromtimestamp(ts / 1000, tz=timezone.utc)
+        return interval == "D" or (interval == "W" and d.weekday() == 0) or (interval == "M" and d.day == 1)
+    return ts % (INTERVALS[interval] * 60_000) == 0
 
 
 async def klines(symbol: str, interval: str, days: int):
@@ -111,7 +143,7 @@ async def klines(symbol: str, interval: str, days: int):
         if not batch:
             break
         out.extend(batch)
-        cursor = int(batch[-1][0]) + minutes * 60_000
+        cursor = candle_end(int(batch[-1][0]), interval)
         if cursor > end_ms or len(batch) < 1000:
             break
     seen, candles = set(), []
@@ -122,7 +154,7 @@ async def klines(symbol: str, interval: str, days: int):
         seen.add(ts)
         candles.append({
             "timestamp": ts, "open": float(c[1]), "high": float(c[2]), "low": float(c[3]), "close": float(c[4]),
-            "volume": float(c[5]), "in_progress": end_ms - ts < minutes * 60_000,
+            "volume": float(c[5]), "in_progress": candle_end(ts, interval) > end_ms,
             "datetime_colombia": datetime.fromtimestamp(ts / 1000, tz=COLOMBIA_TZ).strftime("%Y-%m-%d %H:%M:%S"),
         })
     return candles

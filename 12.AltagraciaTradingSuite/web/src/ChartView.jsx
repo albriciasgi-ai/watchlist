@@ -42,10 +42,21 @@ import {
  * Cada pestana (1 y 2) tiene sus indicadores; los dibujos son por moneda y se comparten al instante.
  */
 
-const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
+// 1D, 1W y 1M (16/11, pedido del usuario): velas de Bybit; la semana empieza el lunes y el mes el día 1 (UTC). Sus
+// gráficos se arman la primera vez que se abren (CALENDAR_TFS), no al cargar la página
+const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1D', '1W', '1M'];
+const CALENDAR_TFS = ['1D', '1W', '1M'];
+const FRAME_TABS = [
+  { id: '1m', label: '1m', color: '#E91E63', emoji: '⚡' }, { id: '5m', label: '5m', color: '#9C27B0', emoji: '🔥' },
+  { id: '15m', label: '15m', color: '#2196F3', emoji: '📊' }, { id: '1h', label: '1h', color: '#4CAF50', emoji: '📈' },
+  { id: '4h', label: '4h', color: '#FF9800', emoji: '🏆' }, { id: '1D', label: '1D', color: '#795548', emoji: '📅' },
+  { id: '1W', label: '1W', color: '#607D8B', emoji: '🗓' }, { id: '1M', label: '1M', color: '#3F51B5', emoji: '🗓' },
+];
 // Dias de velas por marco (el servidor tiene el mismo tope)
-const DAYS = { '1m': 3, '5m': 10, '15m': 30, '1h': 120, '4h': 365 };
-const TF_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000 };
+const DAYS = { '1m': 3, '5m': 10, '15m': 30, '1h': 120, '4h': 365, '1D': 1000, '1W': 2600, '1M': 3000 };
+// El mes, en 30 días: solo sirve para estimar cuántas velas caben (la imagen de cierre y "10 velas después")
+const TF_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000, '1D': 86400000,
+  '1W': 604800000, '1M': 2592000000 };
 const CLOSE_MAX_CANDLES = 200; // un trade más largo que esto en el marco a la vista se retrata en un marco mayor
 
 // Imagen 10 velas después del cierre, como la de cierre de App 1 (12/11/2026): queda en localStorage hasta tomarla, así
@@ -208,6 +219,11 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   const [symbols, setSymbols] = useState([saved.symbol || 'BTCUSDT']);
   const [symbol, setSymbol] = useState(saved.symbol || 'BTCUSDT');
   const [activeTimeframe, setActiveTimeframe] = useState(TIMEFRAMES.includes(saved.timeframe) ? saved.timeframe : '15m');
+  // Los gráficos de 1D, 1W y 1M se arman al abrirlos por primera vez y después quedan armados, como los demás
+  const [openedTfs, setOpenedTfs] = useState(() => new Set([activeTimeframe]));
+  useEffect(() => {
+    setOpenedTfs(prev => (prev.has(activeTimeframe) ? prev : new Set([...prev, activeTimeframe])));
+  }, [activeTimeframe]);
   const [tabStates, setTabStates] = useState(() => initialTabStates(saved));
   // Los mismos indicadores para todas las monedas, o los propios de cada una (los que no tienen, usan los comunes)
   const [indicatorMode, setIndicatorMode] = useState(saved.indicatorMode === 'coin' ? 'coin' : 'shared');
@@ -1095,7 +1111,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
         </div>
 
         <div className="header-center">
-          <TimeframeTabs activeTimeframe={activeTimeframe} onTabChange={setActiveTimeframe} compact={true} />
+          <TimeframeTabs activeTimeframe={activeTimeframe} onTabChange={setActiveTimeframe} compact={true} tabs={FRAME_TABS} />
         </div>
 
         <div className="header-right">
@@ -1215,7 +1231,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
           style={{ flex: 1, display: 'flex', position: 'relative' }} // la barra del trade y los avisos se centran sobre el gráfico, no bajo la barra de dibujo
         >
           <div className="timeframes-container" ref={chartsBoxRef}>
-            {TIMEFRAMES.map(tf => (
+            {TIMEFRAMES.filter(tf => !CALENDAR_TFS.includes(tf) || openedTfs.has(tf)).map(tf => (
               <div key={tf} className="timeframe-panel" style={{ display: activeTimeframe === tf ? 'block' : 'none' }}>
                 <MiniChart
                   ref={el => { chartRefs.current[tf] = el; }}

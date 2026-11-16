@@ -24,11 +24,16 @@ import { INTERVAL_CODE, SWING, attachSwing, feedSwing, frameName, onSwingChanged
  * - Panel del Swing del servidor: si detecta, su marco, las monedas que vigila y las últimas señales. No envía alertas.
  */
 
-const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
-const TF_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000 };
+// 1D, 1W y 1M (16/11): la semana empieza el lunes y el mes el día 1; el mes no tiene Swing
+const TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h', '1D', '1W', '1M'];
+const SWING_TFS = ['1m', '5m', '15m', '1h', '4h'];   // marcos que el Swing del servidor puede vigilar en vivo
+const WS_CODE = { ...INTERVAL_CODE, '1M': 'M' };
+const TF_MS = { '1m': 60000, '5m': 300000, '15m': 900000, '1h': 3600000, '4h': 14400000, '1D': 86400000,
+  '1W': 604800000, '1M': 2592000000 };
 // Días que carga cada gráfico (el principal carga más): en casi todos los marcos es un solo pedido a Bybit por moneda
-const DAY_OPTIONS = { '1m': [1, 2, 3], '5m': [1, 3, 5, 10], '15m': [2, 5, 10, 30], '1h': [7, 14, 30, 60, 120], '4h': [30, 60, 120, 365] };
-const DEFAULT_DAYS = { '1m': 1, '5m': 3, '15m': 5, '1h': 14, '4h': 60 };
+const DAY_OPTIONS = { '1m': [1, 2, 3], '5m': [1, 3, 5, 10], '15m': [2, 5, 10, 30], '1h': [7, 14, 30, 60, 120], '4h': [30, 60, 120, 365],
+  '1D': [90, 180, 365, 1000], '1W': [365, 730, 1825, 2600], '1M': [1095, 2600, 3000] };
+const DEFAULT_DAYS = { '1m': 1, '5m': 3, '15m': 5, '1h': 14, '4h': 60, '1D': 180, '1W': 730, '1M': 3000 };
 // Indicadores livianos: se calculan en la página o los da el servidor sin pedir más a Bybit
 const LIGHT = [
   ['Swing Detector', 'Swing (del servidor)'], ['Volume Delta', 'Delta de volumen'], ['CVD', 'CVD'], ['FVG', 'FVG'],
@@ -90,7 +95,7 @@ function CellHead({ symbol, tf, note, onOpen, onDragStart, onDragEnd }) {
       if (d.price24hPcnt !== undefined) merged.pct = parseFloat(d.price24hPcnt) * 100;
       if (!timer) timer = setTimeout(flush, Math.max(0, last + 1000 - Date.now()));
     };
-    const code = INTERVAL_CODE[tf];
+    const code = WS_CODE[tf];
     wsManager.subscribe(symbol, onMessage, code);
     return () => {
       if (timer) clearTimeout(timer);
@@ -187,13 +192,13 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide }) {
         <div className="wl-row">
           <span>Marco que vigila</span>
           <select className="suite-select" value={liveTf} disabled={swing.saving} onChange={(e) => onChange({ interval: INTERVAL_CODE[e.target.value] })}>
-            {TIMEFRAMES.map(t => <option key={t} value={t}>{t}</option>)}
+            {SWING_TFS.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div className="wl-row wl-muted">
           {liveTf === gridTf ? `La cuadrícula está en el mismo marco: sus flechas son las que anota.` : `La cuadrícula está en ${gridTf}: sus flechas son solo para ver.`}
         </div>
-        {liveTf !== gridTf && (
+        {liveTf !== gridTf && SWING_TFS.includes(gridTf) && (
           <div className="wl-row">
             <button type="button" className="suite-btn" disabled={swing.saving} onClick={() => onChange({ interval: INTERVAL_CODE[gridTf] })}>
               Vigilar en {gridTf}

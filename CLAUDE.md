@@ -54,6 +54,25 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 16 Noviembre 2026: Marcos 1D, 1W y 1M y Triángulos de Elementos OF Explicados
+
+**Pedido:** los marcos de 1 día, 1 semana y 1 mes, y explicar en el modal de Elementos OF qué son los triángulos rojos y verdes.
+
+**Cambios:**
+1. **1D, 1W y 1M** en el gráfico principal y en la Watchlist de la suite, con velas de Bybit. La semana empieza el lunes y el mes el día 1 (UTC). Sus gráficos se arman la primera vez que se abren.
+2. **Indicadores:** los de velas funcionan en los tres. Footprints y Elementos OF, solo en 1D. Interés abierto, con el diario de Bybit. Swing, en 1D y 1W.
+3. **Modal de Elementos OF (App 1):** debajo de "Triángulo con los códigos", qué significa el ▲ verde y el ▼ rojo, desde qué zoom salen los códigos y que no son señales.
+4. **App 1:** `TimeframeTabs` acepta los marcos que le pasen, y `MiniChart` y los indicadores conocen `1M`. App 1 sigue con sus cinco marcos.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- En 1W y 1M no hay footprints ni Elementos OF, y en 1M tampoco Swing.
+- Probado en la copia aislada con velas reales de BTC. No se probó en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Marcos de 1 día, 1 semana y 1 mes (16/11)"
+
+---
+
 ### Altagracia Trading Suite - 16 Noviembre 2026: Hueco del Mapa Sostenido y Cinta que Titilaba
 
 **Pedido:** el mapa tenía un hueco de unos 30 minutos, y la cinta titilaba al elegir una orden.

@@ -14,15 +14,17 @@ const TimeframeTabs = ({
   onTabChange,
   orderCounts = {},
   downloadingTimeframes = new Set(),
-  compact = false
+  compact = false,
+  tabs: customTabs = null   // la suite pasa sus marcos (también 1D, 1W y 1M); App 1 usa los cinco de siempre
 }) => {
-  const tabs = [
+  const defaultTabs = [
     { id: '1m', label: '1m', color: '#E91E63', emoji: '⚡' },   // 2 años de datos
     { id: '5m', label: '5m', color: '#9C27B0', emoji: '🔥' },   // 5 años de datos
     { id: '15m', label: '15m', color: '#2196F3', emoji: '📊' }, // 5 años de datos
     { id: '1h', label: '1h', color: '#4CAF50', emoji: '📈' },   // 5 años de datos
     { id: '4h', label: '4h', color: '#FF9800', emoji: '🏆' }    // 5 años de datos
   ];
+  const tabs = customTabs || defaultTabs;
 
   return (
     <div className={`timeframe-tabs-container ${compact ? 'compact' : ''}`}>
