@@ -1,7 +1,7 @@
 # Pruebas sin conexion del mapa de liquidez (book_heatmap.py, 13/11/2026), con minutos de libro armados a mano:
 #   - "toda" promedia la vela y "sostenida" deja solo lo que estuvo los ultimos N minutos;
 #   - un muro fijo queda en su fila de precio; lo que aparece y desaparece se va en "sostenida";
-#   - un minuto que falta deja sin dato lo sostenido que lo incluye, y baja la cobertura de su vela;
+#   - un minuto que falta no deja sin dato lo sostenido (16/11); seis seguidos si; y baja la cobertura de su vela;
 #   - el paso y la primera fila pedidos se respetan (para pedir despues solo las ultimas velas);
 #   - la ruta valida lo que recibe.
 # Uso, desde 12.AltagraciaTradingSuite\server:  C:\Python314\python.exe -B tests\book_heatmap_checks.py
@@ -96,13 +96,21 @@ try:
                                                           for x in cs[1:, r_wall]), str(cs[:, r_wall]))
     check("sostenida 30: lo que parpadea desaparece", int(cs[:, r_flick].max()) == 0, str(cs[:, r_flick]))
 
-    # un minuto que falta (el 50): lo sostenido de las velas que lo incluyen queda sin dato
+    # un minuto que falta (el 50): lo sostenido de las velas que lo incluyen sigue, con los minutos que si estan (16/11)
     write(base, "HUECOUSDT", minutes, skip={T0 + 50 * MIN})
-    hs = cells(book_heatmap.grid(srcs, "HUECOUSDT", 15, T0, T0 + 120 * MIN, "sostenida", 30))
+    hg = book_heatmap.grid(srcs, "HUECOUSDT", 15, T0, T0 + 120 * MIN, "sostenida", 30)
+    hs = cells(hg)
     ht = book_heatmap.grid(srcs, "HUECOUSDT", 15, T0, T0 + 120 * MIN, "toda")
-    # vela 3 (45-59) y 4 (60-74) incluyen el minuto 50 en sus ultimos 30; la 5 (75-89) ya no
-    check("un minuto que falta deja sin dato lo sostenido que lo incluye",
-          int(hs[3].max()) == 0 and int(hs[4].max()) == 0 and int(hs[5].max()) > 0, str(hs[:, WALL_K - book_heatmap.grid(srcs, "HUECOUSDT", 15, T0, T0 + 120 * MIN, "toda")["row0"]]))
+    hw = hs[:, WALL_K - hg["row0"]]
+    # vela 3 (45-59) y 4 (60-74) incluyen el minuto 50 en sus ultimos 30
+    check("un minuto que falta no deja sin dato lo sostenido: el muro sigue con su USD",
+          all(abs(book_heatmap.decode(np.array([x]))[0] / wall_usd - 1) < 0.08 for x in hw[1:]), str(hw))
+    check("y lo que parpadea sigue sin aparecer", int(hs[:, FLICK_K - hg["row0"]].max()) == 0)
+    # seis minutos seguidos que faltan (50 a 55): esas velas quedan sin dato, la de despues de 30 minutos ya no
+    write(base, "HUECO6USDT", minutes, skip={T0 + k * MIN for k in range(50, 56)})
+    h6 = cells(book_heatmap.grid(srcs, "HUECO6USDT", 15, T0, T0 + 120 * MIN, "sostenida", 30))
+    check("seis minutos seguidos que faltan dejan sin dato lo sostenido que los incluye",
+          int(h6[3].max()) == 0 and int(h6[4].max()) == 0 and int(h6[6].max()) > 0, str(h6[:, WALL_K - hg["row0"]]))
     check("y baja la cobertura de su vela (14 de 15 minutos)", ht["coverage"][3] == 93 and ht["coverage"][2] == 100, str(ht["coverage"]))
 
     # compra y venta por separado (14/11): un soporte que pasa a resistencia. La primera hora hay 10 BTC de compra en

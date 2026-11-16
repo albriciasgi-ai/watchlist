@@ -54,6 +54,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 16 Noviembre 2026: Hueco del Mapa Sostenido y Cinta que Titilaba
+
+**Pedido:** el mapa tenía un hueco de unos 30 minutos, y la cinta titilaba al elegir una orden.
+
+**Cambios:**
+1. **Hueco del mapa:** el minuto de las 12:50 (17:50 UTC) de BTC quedó incompleto por una resincronización del libro. Con "Solo la sostenida 30 min", un solo minuto así dejaba en blanco las velas de los 30 minutos siguientes. Ahora se saltan los minutos que faltan mientras sean a lo sumo 5 seguidos y esté al menos el 80% de la ventana (`book_heatmap.py`). Con el libro real, las velas de 17:50 a 18:15 UTC ya tienen datos.
+2. **Cinta:** los botones de la fila elegida no cabían y la lista se desbordaba de lado (249 contra 235 px). Ahora bajan de línea, la lista no se desborda, cada fila conserva su lugar al llegar órdenes nuevas y la cinta solo se redibuja si cambiaron sus líneas (`TapePanel.jsx`).
+3. **Pruebas:** `book_heatmap_checks.py` (24). Las demás siguen pasando.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- El titileo no se pudo ver en la copia aislada: se corrigió el desborde que lo causa con pocas filas. Si sigue titilando, avisar con una captura o un video corto.
+- Las resincronizaciones del libro siguen ocurriendo (286 en las 22 monedas desde el 15/11); este cambio solo evita que un minuto suelto borre media hora del mapa.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` secciones "Mapa de liquidez" y "Órdenes de la cinta como líneas en el gráfico (14/11)"
+
+---
+
 ### Entrenamiento - 14 Noviembre 2026: Gimnasio de Order Flow y Skill /entrenar
 
 **Pedido:** un plan para aprender order flow (footprints, Elementos OF y el libro) practicando con las herramientas que ya hay, a pasos pequeños y sin mucha teoría.

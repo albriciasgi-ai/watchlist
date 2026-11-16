@@ -63,7 +63,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (22), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (18), sin conexión
+│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (18), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -732,7 +732,7 @@ Pedido del usuario: construir el mapa como una opción del gráfico principal qu
   - el gráfico principal no lo enciende: su nombre no está en sus listas de indicadores.
 - **Servidor** (`server/book_heatmap.py`): `GET /api/book/heatmap/{símbolo}?interval&from_ms&to_ms&mode=toda|sostenida&minutes&low&high&step`. Sale del libro de minutos, lo grabado en el PC y lo bajado de la nube, en cubos de ~0.03% del precio (BTC 20 USD).
   - **Toda:** el promedio de la vela.
-  - **Sostenida:** el menor promedio de los últimos N minutos hasta el cierre de la vela (5, 15, 30, 60, 120 o 240). Si falta uno de esos minutos, la vela queda sin dato.
+  - **Sostenida:** el menor promedio de los últimos N minutos hasta el cierre de la vela (5, 15, 30, 60, 120 o 240). Los minutos sin grabar o incompletos se saltan, mientras falten a lo sumo 5 seguidos y esté al menos el 80% de la ventana; con más, la vela queda sin dato. Hasta el 16/11 un solo minuto incompleto dejaba sin dato las velas de los N minutos siguientes: el usuario vio un hueco de 30 minutos en BTC por el minuto de las 17:50 UTC, que quedó incompleto por una resincronización del libro (el grabador llevaba 286 resincronizaciones de las 22 monedas desde el 15/11).
   - **Formato:** cada celda es un byte, `round(16 · log10(1 + USD))`, en base64, más la cobertura de cada vela.
   - **Límites:** a lo sumo 1,500 velas (las más recientes), 10 días de minutos y 600 filas.
 - **Medido** (13/11, copia aislada con el libro real):
@@ -746,7 +746,7 @@ Pedido del usuario: construir el mapa como una opción del gráfico principal qu
   - el gráfico principal siguió igual, sin el mapa.
 
   No se probó en Electron.
-- **Pruebas:** `tests/book_heatmap_checks.py` (17) y, en App 1, `tests/liquiditymap.test.mjs` (10).
+- **Pruebas:** `tests/book_heatmap_checks.py` (24 desde el 16/11) y, en App 1, `tests/liquiditymap.test.mjs` (10).
 - **Tras la primera prueba del usuario (13/11):**
   - **velas recientes incompletas:** el mapa las vuelve a pedir cada minuto, hasta 12 horas atrás, y lo que llega después de la nube aparece sin recargar. Antes, una vela pedida sin libro quedaba vacía hasta recargar;
   - **grabación de trades sin red al abrir:** la suite abrió sin red y la grabación de trades falló al pedir a Bybit los decimales de cada moneda. No volvió a intentarlo, y esa misma pieza (`local_tape.py`) baja la nube cada 15 minutos: faltaron footprints y Elementos OF de más de una hora. Ahora reintenta cada 30 s sin frenar el arranque, y `/api/suite/status` lo dice en `start_error`. Prueba: `5.Order_flow/backend/tests/local_tape_checks.py` (3). Vale también para el 11000;
@@ -912,6 +912,7 @@ Pedido del usuario: al hacer clic en una orden de la cinta, verla en el gráfico
   - **App 1** (`HorizontalLine.js`): `style.opacity`, `style.labelSize` y `style.labelBg`, opcionales; sin ellos se ve igual.
   - **Defensa de zona:** una línea de la cinta cuenta como zona ("cinta") con su texto corto; las demás líneas, con su precio redondeado (antes salía con 10 cifras).
   - Pruebas: `tapelines.test.mjs` (6) y `tapelevels.test.mjs` de App 1 (1).
+- **La cinta titilaba (16/11, visto por el usuario al elegir una orden):** los botones "Provisional · Dejar en firme · Borrar" de la fila elegida no cabían en los 236 px de la cinta. La lista medía 249 px por dentro y 235 por fuera, salía una barra de desplazamiento horizontal y, con pocas filas, las barras podían aparecer y desaparecer. Ahora los botones bajan de línea, la lista nunca se desborda de lado (`overflowX: hidden`), cada fila conserva su lugar al llegar órdenes nuevas (la clave ya no es su posición en la lista) y la cinta solo se vuelve a dibujar si cambiaron sus líneas. En la copia aislada no se vio titilar antes del arreglo: se comprobó el desborde (249 contra 235 px) y que ya no está.
 
 ## Escritorio (Electron)
 

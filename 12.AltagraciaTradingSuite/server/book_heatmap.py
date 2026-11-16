@@ -8,7 +8,10 @@
 #   - "toda": el promedio de la liquidez en los minutos de la vela;
 #   - "sostenida": la que estuvo los ultimos N minutos hasta el cierre de la vela (el menor promedio de esos
 #     minutos). Quita lo que aparece y desaparece, como las franjas de los creadores de mercado que siguen al precio.
-#     Si falta uno de esos minutos, la vela queda sin dato: lo de ese minuto no se sabe.
+#     Los minutos sin grabar o incompletos (una resincronizacion del libro) se saltan: el minimo sale de los que si
+#     estan, mientras falten a lo sumo GAP_TOLERANCE minutos seguidos y haya al menos MIN_PRESENT de la ventana
+#     (16/11/2026: antes un solo minuto incompleto dejaba en blanco las N velas de minutos siguientes; el usuario vio
+#     un hueco de 30 minutos en BTC por el minuto de las 17:50 UTC). Con mas, la vela queda sin dato.
 # Cada celda va en un byte: round(16 * log10(1 + USD)), de 0 a 255 (cada paso es 15.5% mas). El grafico elige el
 # contraste con lo que esta a la vista.
 # Con sides (14/11/2026, pedido del usuario): compra y venta por separado (cells_b y cells_a), cada una con su propio
@@ -30,6 +33,8 @@ MINUTE = 60000
 FRAMES = {"1m": 1, "5m": 5, "15m": 15, "1h": 60, "4h": 240, "1": 1, "5": 5, "15": 15, "60": 60, "240": 240}
 SUSTAIN = (5, 15, 30, 60, 120, 240)
 MODES = ("toda", "sostenida")
+GAP_TOLERANCE = 5        # minutos seguidos sin grabar que lo sostenido tolera (como book_levels)
+MIN_PRESENT = 0.8        # parte de la ventana que debe estar grabada
 MAX_COLS = 1500
 MAX_MINUTES = 10 * 1440      # a lo sumo 10 dias de minutos por pedido
 MAX_ROWS = 600
@@ -50,6 +55,15 @@ def decode(cells: np.ndarray) -> np.ndarray:
 
 def _width(h: dict) -> float:
     return float(h["step"]) * float(h["tick"])
+
+
+def _longest_missing(ok: np.ndarray) -> int:
+    """La racha mas larga de minutos que faltan."""
+    run = best = 0
+    for x in ok:
+        run = 0 if x else run + 1
+        best = max(best, run)
+    return best
 
 
 def grid(base, symbol: str, frame_min: int, start: int, end: int, mode: str = "toda", sustain: int = 30,
@@ -138,10 +152,11 @@ def grid(base, symbol: str, frame_min: int, start: int, end: int, mode: str = "t
             wa = last + 1 - sustain
             if wa < 0:
                 continue
-            if np.isnan(M[wa:last + 1, 0]).any():
-                continue                                   # falto un minuto: lo sostenido no se sabe
+            ok = ~np.isnan(M[wa:last + 1, 0])
+            if ok.sum() < MIN_PRESENT * sustain or _longest_missing(ok) > GAP_TOLERANCE:
+                continue                                   # faltaron demasiados minutos: lo sostenido no se sabe
             for nm in names:
-                vals_by[nm][c] = Ms[nm][wa:last + 1].min(axis=0)
+                vals_by[nm][c] = Ms[nm][wa:last + 1][ok].min(axis=0)
     b64 = lambda v: base64.b64encode(encode(v).tobytes()).decode("ascii")  # noqa: E731
     out.update(row0=row0, rows=nrows, step=w, coverage=[min(100, int(x)) for x in cover])
     if sides:

@@ -50,11 +50,14 @@ export default function TapePanel({ symbol, active = true, minUsd = 0, onMinUsd 
   styleRef.current = style;
 
   // Las líneas de la cinta que ya están en los dibujos de la moneda (también si cambian en otra pestaña)
+  // Solo cambia el estado si cambió algo: cada aviso de dibujos (de esta y de las otras pestañas) volvía a dibujar la cinta
   const readStates = (shapes) => {
     const out = {};
     for (const sh of shapes || []) if (sh?.tape && typeof sh.id === 'string') out[sh.id] = lineState([sh], sh.id);
-    setLineStates(out);
-    setFirm(firmLines(shapes));
+    setLineStates(prev => JSON.stringify(prev) === JSON.stringify(out) ? prev : out);
+    const nextFirm = firmLines(shapes);
+    setFirm(prev => (prev.length === nextFirm.length && prev.every((sh, i) => sh.id === nextFirm[i].id && sh.label === nextFirm[i].label
+      && sh.price === nextFirm[i].price && sh.style?.color === nextFirm[i].style?.color) ? prev : nextFirm));
   };
   // Otro estilo: se guarda y se aplica a todas las líneas de la cinta de esta moneda
   const changeStyle = (patch) => {
@@ -193,12 +196,14 @@ export default function TapePanel({ symbol, active = true, minUsd = 0, onMinUsd 
           </div>
         )}
       </div>
-      <div style={{ flex: 1, overflowY: 'auto', borderTop: '1px solid var(--t-line, #d0d4da)' }}>
+      {/* sin desborde de lado (16/11): con los botones de la fila elegida la lista medía 14 px más que la cinta, salía
+          una barra horizontal y, con pocas filas, las barras aparecían y desaparecían: la cinta titilaba */}
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', borderTop: '1px solid var(--t-line, #d0d4da)' }}>
         {error && <div className="wl-muted" style={{ padding: 6 }}>Cinta: {error}</div>}
         {lineError && <div className="wl-muted" style={{ padding: 6 }}>{lineError}</div>}
         {!error && data?.note && <div className="wl-muted" style={{ padding: 6 }}>{data.note}</div>}
         {!error && data && !data.note && !data.orders.length && <div className="wl-muted" style={{ padding: 6 }}>Ninguna orden de ese tamaño en 30 minutos</div>}
-        {(data?.orders || []).map((o, k) => {
+        {(data?.orders || []).map((o) => {
           const color = o.side === 'buy' ? up : down;
           const strong = thr > 0 && o.usd >= 3 * thr;
           const mine = limits.some(p => p >= o.lo - 1e-9 && p <= o.hi + 1e-9);
@@ -206,7 +211,7 @@ export default function TapePanel({ symbol, active = true, minUsd = 0, onMinUsd 
           const id = tapeLineId(symbol, o);
           const state = lineStates[id];
           return (
-            <div key={`${o.t}-${o.side}-${k}`} onClick={() => showOnChart(o)}
+            <div key={`${o.t}-${o.side}-${o.p0}-${o.qty}`} onClick={() => showOnChart(o)}
               title={`${o.trades} trades${o.levels > 1 ? ` · cruzó ${priceText(o.hi - o.lo)} (${o.levels} ticks)` : ''}${mine ? ' · tocó el precio de tu Limit' : ''} · clic: verla en el gráfico`}
               style={{ padding: '2px 6px', cursor: 'pointer', fontWeight: strong ? 700 : 400,
                 background: mine || selected === id ? 'var(--t-accent-soft, rgba(41,98,255,0.12))' : undefined,
@@ -221,7 +226,7 @@ export default function TapePanel({ symbol, active = true, minUsd = 0, onMinUsd 
               <span style={{ color, width: 38, textAlign: 'right', flexShrink: 0 }}>{fmtUsd(o.usd)}</span>
             </div>
             {state && (
-              <div style={{ display: 'flex', gap: 4, alignItems: 'center', margin: '2px 0 1px 56px', fontWeight: 400, whiteSpace: 'nowrap' }}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center', margin: '2px 0 1px 56px', fontWeight: 400 }}
                 onClick={(e) => e.stopPropagation()}>
                 <span className="wl-muted" title={state === 'pending' ? 'En el gráfico, provisional: punteada' : 'En el gráfico, en firme'}>
                   {state === 'pending' ? 'Provisional' : '✓ En firme'}
