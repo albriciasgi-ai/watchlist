@@ -123,7 +123,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 **Pedido:** un plan para aprender order flow (footprints, Elementos OF y el libro) practicando con las herramientas que ya hay, a pasos pequeños y sin mucha teoría.
 
 **Cambios:**
-1. **Gimnasio de Order Flow** (artefacto privado, https://claude.ai/artifact/H8pzTyhuPvJcHheAEcQVho): 5 etapas y 16 habilidades, cada una con su ejercicio "predice, revela y anota" en App 1 o en la suite, registro de sesiones, repasos a 1, 3, 7, 14 y 30 días y un entrenador. Fuente: `.claude/skills/entrenar/gimnasio.html`.
+1. **Gimnasio de Order Flow** (artefacto privado, https://claude.ai/artifact/H8pzTyhuPvJcHheAEcQVho): 5 etapas y 21 habilidades (16/11: los Elementos OF por familias, zonas, giro, continuación, tabla y libro, con un código del día que rota y se anota en la sesión), cada una con su ejercicio "predice, revela y anota" en App 1 o en la suite, registro de sesiones, repasos a 1, 3, 7, 14 y 30 días y un entrenador. Fuente: `.claude/skills/entrenar/gimnasio.html`.
 2. **Skill `/entrenar`** (`.claude/skills/entrenar/SKILL.md`): sesión de práctica con Claude Code sobre las capturas del usuario. Con una ficha por habilidad (`fichas.md`): qué es, cómo lo hace la herramienta, qué mirar, errores típicos y lo medido en sus datos. Se lee solo la del día; `/entrenar ficha LD` muestra una. Lee y anota el registro del gimnasio, y comprueba cada lectura con `verificar.py` (solo lectura: delta, volumen, POC, imbalances, Elementos OF con AB, BL y LD, y lo que hizo el precio después).
 
 **IMPORTANTE:**

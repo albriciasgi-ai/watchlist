@@ -54,6 +54,8 @@ header p { margin: 4px 0 0; max-width: 60ch; color: var(--muted) }
 .steps li:nth-child(1) b { color: var(--accent) }
 .steps li:nth-child(2) b { color: var(--buy) }
 .steps li:nth-child(3) b { color: var(--gold) }
+.codeday { margin: 0 0 14px; font-size: 14px; padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 6px 6px 0 }
+.codeday b { font-family: var(--mono); font-weight: 500; margin-right: 6px }
 .trap { margin-top: 14px; font-size: 14px; padding: 8px 10px; border-left: 3px solid var(--sell); background: var(--sell-soft); border-radius: 0 6px 6px 0 }
 .goal { margin-top: 10px; font-size: 13px; color: var(--muted) }
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center }
@@ -139,6 +141,7 @@ summary { cursor: pointer; font-family: var(--display); font-weight: 700 }
       <div class="row"><span class="eyebrow">Hoy</span><span id="tWhy" class="tag">Siguiente</span><span id="tKind" class="tag"></span></div>
       <h2 id="tTitle" style="margin-top:8px">Cargando…</h2>
       <div id="tWhere" class="where"></div>
+      <div id="tCode" class="codeday" hidden></div>
       <ol class="steps" id="tSteps"></ol>
       <div id="tTrap" class="trap"></div>
       <div id="tGoal" class="goal"></div>
@@ -239,25 +242,51 @@ const STAGES = [
               'Anota. Mira también si el stacked era a favor o en contra del movimiento.'],
       trap: 'No estás buscando 80%: estás juntando casos para saber si a ti te sirve.' },
   ]},
-  { id: 's2', name: 'Elementos del footprint', tool: APP1 + ', Elementos OF con un solo código encendido', skills: [
-    { id: 'e1', kind: 'reconocer', name: 'Encuentra el Exhaustion Print (EX)',
-      where: 'Elementos OF con todos los códigos apagados. BTC 15m.',
-      steps: ['En 20 velas, señala dónde crees que el lado pasivo del extremo quedó casi en cero.',
-              'Enciende solo EX en el modal y mira dónde marca.',
-              'Acierto: marca que señalaste. Después prueba con DD (Delta Divergence) y AD.'],
-      trap: 'EX mira el extremo donde la vela empieza; no la mecha más larga.' },
-    { id: 'e2', kind: 'anticipar', name: '¿Giro o sigue?',
-      where: 'Elementos OF con EX, DT, DD y AD encendidos.',
+  { id: 's2', name: 'Elementos del footprint', tool: APP1 + ', Elementos OF; un código a la vez', skills: [
+    { id: 'z1', kind: 'reconocer', name: 'Zonas: encuentra el elemento', codes: ['VA', 'OG', 'AP', 'SL', 'OP', 'RL'],
+      where: 'Elementos OF con todos los códigos apagados. BTC 15m. El código de hoy cambia en cada sesión.',
+      steps: ['Lee qué es el código de hoy. En 20 velas, señala dónde crees que aparece.',
+              'Enciende solo ese código en el modal y mira dónde marca.',
+              'Acierto: marca que señalaste. Una marca que no viste es un fallo.'],
+      trap: 'Las zonas se conocen al cerrar la vela (la VA abandonada, al cerrar la siguiente): no las busques en la vela en curso.' },
+    { id: 'z2', kind: 'anticipar', name: 'Zonas: ¿el precio la respeta?', codes: ['VA', 'OG', 'AP', 'SL', 'OP', 'RL'],
+      where: 'Elementos OF con las zonas encendidas. Las franjas siguen hasta que el precio vuelve.',
+      steps: ['Cuando el precio vuelva a una franja, pausa y di si rebota o la cruza.',
+              'Reproduce hasta que se aleje de la franja o la pase con claridad.',
+              'Anota qué código era. Con 20 casos por código ya ves cuál te dice algo.'],
+      trap: 'Una franja vieja o en contra de la tendencia de 1h pesa menos que una reciente y a favor.' },
+    { id: 'e1', kind: 'reconocer', name: 'Giro: encuentra el elemento', codes: ['EX', 'ZP', 'DT', 'RS', 'DD', 'PD', 'AD', 'IV', 'IR'],
+      where: 'Elementos OF con todos los códigos apagados. BTC 15m. Los marcados "vol." solo salen en velas de mucho volumen.',
+      steps: ['Lee qué es el código de hoy. En 20 velas, señala dónde crees que aparece.',
+              'Enciende solo ese código en el modal y mira dónde marca.',
+              'Acierto: marca que señalaste. Una marca que no viste es un fallo.'],
+      trap: 'Casi todos miran el extremo donde la vela empieza (el mínimo en una verde, el máximo en una roja), no la mecha más larga.' },
+    { id: 'e2', kind: 'anticipar', name: '¿Giro o sigue?', codes: ['EX', 'ZP', 'DT', 'RS', 'DD', 'PD', 'AD', 'IV', 'IR'],
+      where: 'Elementos OF con los elementos de giro encendidos; el código de hoy es en el que te fijas.',
       steps: ['Cada vez que aparezca una marca nueva, pausa y di "gira" o "sigue" para las 3 velas siguientes.',
               'Reproduce 3 velas.',
               'Anota qué código era. Con 20 casos por código ya ves cuál te dice algo.'],
       trap: 'Un elemento de giro sin una zona detrás casi no dice nada. Fíjate dónde aparece.' },
-    { id: 'e3', kind: 'anticipar', name: 'Barridos y órdenes grandes',
-      where: 'Elementos OF con SW, BR y GR encendidos.',
-      steps: ['En cada franja nueva de barrido u orden grande, di si el precio vuelve a ella en las 10 velas siguientes.',
+    { id: 'n1', kind: 'reconocer', name: 'Continuación: encuentra el elemento',
+      codes: ['SW', 'VL', 'SQ', 'DB', 'PW', 'ST', 'VI', 'RD', 'VD', 'TP', 'RX', 'BR', 'GR'],
+      where: 'Elementos OF con todos los códigos apagados. BTC 15m. Los marcados "vol." vienen apagados de fábrica: enciende solo el de hoy.',
+      steps: ['Lee qué es el código de hoy. En 20 velas, señala dónde crees que aparece.',
+              'Enciende solo ese código en el modal y mira dónde marca.',
+              'Acierto: marca que señalaste. Una marca que no viste es un fallo.'],
+      trap: 'Los de continuación marcan fuerza a favor de la vela; en un extremo de rango pueden ser el último empuje.' },
+    { id: 'e3', kind: 'anticipar', name: 'Continuación: ¿vuelve a la franja?',
+      codes: ['SW', 'BR', 'GR', 'ST', 'VL', 'DB', 'RD'],
+      where: 'Elementos OF con los de continuación encendidos; el código de hoy es en el que te fijas.',
+      steps: ['En cada franja nueva, di si el precio vuelve a ella en las 10 velas siguientes.',
               'Reproduce 10 velas.',
               'Anota si volvió y si la franja aguantó.'],
       trap: 'Una orden grande puede ser alguien cerrando una posición, no abriendo.' },
+    { id: 't1', kind: 'reconocer', name: 'Tabla de la vela: lee DV, XD y SM', codes: ['DV', 'XD', 'SM'],
+      where: 'Elementos OF con "Panel con la tabla de la vela" encendido. No mires la tabla al predecir.',
+      steps: ['Mira la vela y su footprint, y di si la tabla va a marcar el código de hoy.',
+              'Mira la tabla: Delta en color con XD, Máx o Mín Δ en ámbar con SM, Δ/Vol resaltado con DV.',
+              'Acierto si coincide. Repite con la vela siguiente.'],
+      trap: 'XD y SM usan el delta exacto de cada trade; sin el almacén de flujo de esa fecha quedan vacíos.' },
   ]},
   { id: 's3', name: 'El libro en vivo', tool: 'Suite · pestaña "Mapa" con Ladder y Cinta. Solo mirar, sin operar', skills: [
     { id: 'b1', kind: 'anticipar', name: 'Mapa: ¿rebota o cruza?',
@@ -284,6 +313,12 @@ const STAGES = [
               'Espera a que salga la letra en el gráfico.',
               'Acierto si coincide. Mira el "quedó %" de la etiqueta.'],
       trap: 'Las letras se conocen tarde, cuando la visita se resuelve: es para entrenar el ojo, no para entrar.' },
+    { id: 'b6', kind: 'reconocer', name: 'Libro: encuentra AB, BL o LD', codes: ['AB', 'BL', 'LD'],
+      where: 'Suite, gráfico principal con Elementos OF, en 5m. Al predecir, el código de hoy apagado.',
+      steps: ['Lee qué es el código de hoy. En las últimas 20 velas cerradas, señala dónde crees que aparece (el mapa y la cinta ayudan).',
+              'Enciende ese código en el modal y mira dónde marca.',
+              'Acierto: marca que señalaste. Una marca que no viste es un fallo.'],
+      trap: 'Solo existen desde el 13/11/2026, cuando empezó la grabación del libro: no salen en App 1.' },
     { id: 'b5', kind: 'anticipar', name: 'Libro delgado: ¿se mueve más?',
       where: 'Gráfico principal con Elementos OF y LD encendido. Marcos de 5m.',
       steps: ['Cuando salga un LD, di si la vela siguiente tendrá más rango que la anterior.',
@@ -317,6 +352,45 @@ const STAGES = [
 const SKILLS = STAGES.flatMap(s => s.skills.map(k => ({ ...k, stage: s })));
 const BYID = Object.fromEntries(SKILLS.map(k => [k.id, k]));
 const KIND = { reconocer: 'Reconocer', anticipar: 'Anticipar', proceso: 'Proceso' };
+// Qué es cada código de Elementos OF, en una línea (16/11). "vol." = solo en velas de mucho volumen, apagado de fábrica
+const CODES = {
+  VA: 'VA abandonada: la vela siguiente no entra en el área de valor (70%) de esta vela.',
+  OG: 'Orderflows Gap: las áreas de valor de dos velas no se tocan y queda un hueco grande entre ellas.',
+  AP: 'POC alineado: el mismo POC en dos velas seguidas.',
+  SL: 'Slingshot: dos velas del mismo color con el POC hacia atrás.',
+  OP: 'Open POC (vol.): el POC queda fuera del rango de las 5 velas anteriores.',
+  RL: 'Absorción (propuesta propia): un nivel enorme del último mes con 40% o más del lado pasivo.',
+  EX: 'Exhaustion Print: en el extremo donde empieza la vela, el lado pasivo casi en cero.',
+  ZP: 'Zero Print: un 0 en una de las dos celdas del extremo donde empieza la vela.',
+  DT: 'Delta Tail: delta en contra en el extremo y a favor en el resto de la vela.',
+  RS: 'Retail Suck: el lado pasivo del extremo baja tres niveles seguidos.',
+  DD: 'Delta Divergence: la vela hace el extremo de 5 velas con el delta a favor de su color.',
+  PD: 'Price Action Divergence: el delta va contra el color de la vela.',
+  AD: 'Acumulación/Distribución: la celda más grande está del lado contrario, en el tercio donde empieza la vela.',
+  IV: 'Inverse Imbalance: dos desequilibrios contrarios seguidos en la mitad lejana de la vela.',
+  IR: 'Imbalance Reversal (vol.): un desequilibrio contrario en uno de los dos precios donde empieza la vela.',
+  SW: 'Market Sweep: una racha de niveles sin contrapartida.',
+  VL: 'Vertical Liquidity: una racha de niveles con el agresor muy grande.',
+  SQ: 'Orderflows Sequencing: el agresor crece nivel tras nivel desde el extremo.',
+  DB: 'Delta Breakout: salto de delta entre dos velas del mismo color.',
+  PW: 'POC Wave: tres velas con el POC escalonado, como en el libro.',
+  ST: 'Stacked Imbalance (vol.): tres desequilibrios diagonales seguidos a favor del color.',
+  VI: 'Volume Imbalance (vol.): tres o más desequilibrios a favor, seguidos o no.',
+  RD: 'Imbalance Reload (vol.): un desequilibrio al mismo precio en dos velas seguidas del mismo color.',
+  VD: 'Volume Decline (vol.): el lado pasivo crece del 1.º al 3.º precio desde el inicio.',
+  TP: 'Thin Print (vol.): un nivel interior con contrapartida 0.',
+  RX: 'Ratio de extremos (vol.): el 2.º precio dividido por el extremo, en el lado pasivo, sale de 0.70 a 30.',
+  BR: 'Barrido real: la mayor orden de la vela que cruzó 3 precios o más.',
+  GR: 'Orden grande: la mayor orden de la vela.',
+  DV: 'Delta/Volume extremo: Δ/Vol muy a favor de la vela.',
+  XD: 'Extreme Delta: la vela cierra con el delta en 95% o más de su máximo o mínimo.',
+  SM: 'Small Min/Max Delta: el lado contrario al color casi no movió el delta.',
+  AB: 'Absorción en el libro: se negoció contra un lado el doble de lo que esperaba, se quedó y el precio no pasó.',
+  BL: 'Barrido del libro: un nivel sostenido de 15 minutos o más que el precio se comió.',
+  LD: 'Libro delgado: poca liquidez a 0.25% del precio, comparado con el último día.',
+};
+/** El código que toca hoy en una habilidad con varios: rota con cada sesión anotada */
+const codeOfDay = (k, st) => (k.codes ? k.codes[st.list.length % k.codes.length] : null);
 const REVIEW_DAYS = [1, 3, 7, 14, 30];
 const DAY = 86400000;
 
@@ -383,6 +457,15 @@ function render() {
   $('tWhy').textContent = pick.why; $('tWhy').className = 'tag' + (pick.review ? ' review' : '');
   $('tKind').textContent = KIND[k.kind]; $('tKind').className = 'tag kind-' + k.kind;
   $('tWhere').textContent = k.stage.tool + '. ' + k.where;
+  const code = codeOfDay(k, st);
+  const tc = $('tCode');
+  tc.hidden = !code;
+  tc.replaceChildren();
+  if (code) {
+    tc.append(el('b', '', 'Código de hoy: ' + code), document.createTextNode(CODES[code] || ''));
+    const rest = k.codes.filter(c => c !== code);
+    if (rest.length) tc.append(el('div', 'note', 'Después, uno por sesión: ' + rest.join(', ') + '.'));
+  }
   const ol = $('tSteps'); ol.replaceChildren();
   ['Predice', 'Revela', 'Anota'].forEach((w, i) => { const li = el('li'); li.append(el('b', '', w), el('span', '', k.steps[i])); ol.append(li); });
   $('tTrap').textContent = k.trap;
@@ -434,7 +517,7 @@ function render() {
     const li = el('li'); const sk = BYID[s.skill];
     li.append(el('span', 'mono muted', new Date(s.at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })));
     const mid = el('span'); const p = pct(s.hits, s.reps);
-    mid.append(document.createTextNode((sk ? sk.name : s.skill) + ' · '), el('span', 'mono pct ' + (sk && sk.kind === 'reconocer' ? (p >= 80 ? 'good' : 'bad') : ''), `${s.hits}/${s.reps} (${p}%)`));
+    mid.append(document.createTextNode((sk ? sk.name : s.skill) + (s.code ? ' · ' + s.code : '') + ' · '), el('span', 'mono pct ' + (sk && sk.kind === 'reconocer' ? (p >= 80 ? 'good' : 'bad') : ''), `${s.hits}/${s.reps} (${p}%)`));
     if (s.note) { mid.append(el('br')); mid.append(el('span', 'note', s.note)); }
     const x = el('button', 'x', '×'); x.type = 'button'; x.title = 'Borrar esta sesión'; x.setAttribute('aria-label', 'Borrar esta sesión');
     x.addEventListener('click', () => removeSession(s.id, x));
@@ -450,7 +533,8 @@ $('logForm').addEventListener('submit', async (ev) => {
   if (!db) { $('dbStatus').textContent = 'No se puede guardar en esta vista. Ábrela con tu cuenta de claude.ai.'; return; }
   const k = BYID[nextSkill().id];
   const before = skillStats(k.id);
-  const body = { skill: k.id, at: Date.now(), reps, hits, conf: +(document.querySelector('input[name=conf]:checked')?.value || 2), note: $('fNote').value.trim().slice(0, 500) };
+  const code = codeOfDay(k, before);
+  const body = { skill: k.id, ...(code ? { code } : {}), at: Date.now(), reps, hits, conf: +(document.querySelector('input[name=conf]:checked')?.value || 2), note: $('fNote').value.trim().slice(0, 500) };
   $('saveBtn').disabled = true; $('dbStatus').textContent = 'Guardando…';
   try {
     await db.collection('sesiones').add(body);
@@ -491,12 +575,12 @@ $('coachBtn').addEventListener('click', async () => {
   if (!q) { $('coachSt').textContent = 'Escribe primero qué viste o qué duda tienes.'; return; }
   if (!coach) { $('coachSt').textContent = 'El entrenador no está disponible en esta vista.'; return; }
   const k = BYID[nextSkill().id], st = skillStats(k.id);
-  const recent = [...sessions].sort((a, b) => b.at - a.at).slice(0, 6).map(s => `${BYID[s.skill]?.name || s.skill}: ${s.hits}/${s.reps}${s.note ? ' — ' + s.note : ''}`).join('\n');
+  const recent = [...sessions].sort((a, b) => b.at - a.at).slice(0, 6).map(s => `${BYID[s.skill]?.name || s.skill}${s.code ? ' (' + s.code + ')' : ''}: ${s.hits}/${s.reps}${s.note ? ' — ' + s.note : ''}`).join('\n');
   const prompt = `Eres el entrenador de un trader que está aprendiendo order flow en cripto (Bybit). Aprende practicando, no le gusta leer teoría. Responde en español, en 6 líneas o menos, directo y concreto, sin listas largas ni jerga sin explicar. Si algo no se sabe o no está validado, dilo. Termina siempre con una sola tarea de 5 minutos que pueda hacer en su herramienta.
 
 Su herramienta: App 1 (reproducción histórica con fecha oculta; indicador Order Flow con footprints, imbalances y stacked; "Elementos OF" con códigos como EX Exhaustion Print, DT Delta Tail, DD Delta Divergence, AD Acumulación/Distribución, SW Market Sweep, BR barrido real, GR orden grande; Observador que registra cada orden y compara ganadoras con perdedoras). La suite en vivo: pestaña Mapa con el mapa de liquidez del libro (compra azul, venta naranja), Niveles sostenidos, Defensa de zona (letras D defensa, A absorción, B barrido, R retiro y rebote, X retiro y cruce, C consumida), Ladder con agregado/retirado en 5 s, Cinta de órdenes grandes, y en Elementos OF los eventos del libro AB absorción, BL barrido de un nivel sostenido y LD libro delgado (poca liquidez a 0.25% del precio).
 
-Habilidad que practica ahora: "${k.name}" (${KIND[k.kind]}). Lleva ${st.reps} repeticiones, ${pct(st.hits, st.reps)}% de acierto.
+Habilidad que practica ahora: "${k.name}" (${KIND[k.kind]})${codeOfDay(k, st) ? `, código de hoy ${codeOfDay(k, st)}: ${CODES[codeOfDay(k, st)]}` : ""}. Lleva ${st.reps} repeticiones, ${pct(st.hits, st.reps)}% de acierto.
 Últimas sesiones:
 ${recent || '(ninguna todavía)'}
 

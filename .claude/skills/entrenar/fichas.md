@@ -39,37 +39,69 @@ Fuentes: `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` ("ORDER FLOW SOBR
 - **Errores típicos:** tratar todos los stacked igual; olvidar que con los filtros de vela y celda (en %) del modal cambian cuántos ves.
 - **Tus datos:** con la regla literal del libro (diagonal 4x) marcaba 28-45% de las velas de BTC 15m: es muy frecuente. Con el filtro de volumen de la vela (2 veces la mediana) baja a 11.7% en 15m. No se midió si la franja aguanta más que un precio al azar: esta habilidad junta esos casos.
 
-## e1 · Encuentra el Exhaustion Print (EX)
+## Familias de Elementos OF (z1, z2, e1, e2, n1, e3, t1, b6)
 
-- **Qué es:** en el extremo donde empieza la vela (mínimo en una verde, máximo en una roja), el lado pasivo casi en cero: nadie quiso seguir del otro lado.
-- **En tu herramienta:** Elementos OF, código EX, franja. Umbral relativo: con el libro (≤6% del nivel promedio) marcaba 44% en 2026; calibrado queda en ≤0.15-0.2% del nivel promedio, casi un cero, cerca del 5% de las velas.
-- **Mira:** las dos o tres celdas del extremo de inicio. Un número muy chico en el lado pasivo, al lado de uno normal en el agresivo.
-- **Errores típicos:** mirar la mecha más larga en vez del extremo donde empieza la vela; confundirlo con Zero Print (ZP: un 0 exacto en una de las dos celdas del extremo).
-- **Tus datos:** calibrado para marcar ~5% de las velas. Sin medición de qué hace el precio después.
+Desde el 16/11 la etapa 2 va por familias, como las agrupa el modal de Elementos OF: zonas, giro, continuación y tabla de la vela; el libro (AB, BL, LD) está en la etapa 3. Las de **reconocer** tienen un **código de hoy** que rota con cada sesión anotada (`codes[n.º de sesiones de la habilidad % largo]`) y se guarda en la sesión (`code`). Las de **anticipar** usan el código de hoy como el elemento en el que fijarse. Qué es cada código, en "Códigos" al final; la regla completa y lo medido, en `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, "ELEMENTOS DE ORDER FLOW".
+
+- **Lo común:** son ayudas de lectura, calibradas para marcar cerca del 5% de las velas con los 30 días anteriores (umbrales relativos); con menos de 100 velas de historia solo salen los literales. Solo velas cerradas. Los "vol." solo aparecen en velas con volumen ≥ 2 veces la mediana de las 20 anteriores y vienen apagados de fábrica.
+- **Tus datos:** el estudio de los 91 setups de Orderflows Unlocked en BTC no encontró uno robusto. Ningún código está medido contra el azar como señal.
+
+## z1 · Zonas: encuentra el elemento
+
+- **Qué es:** reconocer dónde quedan zonas del footprint: VA, OG, AP, SL, OP y RL.
+- **En tu herramienta:** franjas que siguen hasta que el precio vuelve. La VA abandonada se conoce al cerrar la vela siguiente.
+- **Mira:** el área de valor (el 70% del volumen alrededor del POC) y el POC de cada vela, comparados con los de la vela de al lado.
+- **Errores típicos:** buscarla en la vela en curso; confundir el POC de la vela con el del perfil del día.
+- **Tus datos:** sin medición de qué hace el precio al volver.
+
+## z2 · Zonas: ¿el precio la respeta?
+
+- **Qué es:** anticipar si una franja de zona aguanta cuando el precio vuelve.
+- **Mira:** si la franja es reciente, a favor de la tendencia de 1h, y si coincide con otra zona tuya (perfil, FVG, nivel).
+- **Errores típicos:** dar el mismo peso a una franja de hace días que a una de hace una hora.
+- **Tus datos:** no medido; esta habilidad junta esos casos.
+
+## e1 · Giro: encuentra el elemento
+
+- **Qué es:** reconocer los elementos de giro: EX, ZP, DT, RS, DD, PD, AD, IV e IR.
+- **En tu herramienta:** casi todos miran el extremo donde empieza la vela (mínimo en una verde, máximo en una roja). EX: con el libro (≤6% del nivel promedio) marcaba 44% de las velas de BTC 15m en 2026; calibrado queda en un casi cero, cerca del 5%. DD: extremo de 5 velas con delta a favor del color, ~7-8% de las velas (literal). PD: delta contra el color, 2-5%. DT es raro (~1%).
+- **Mira:** las dos o tres celdas del extremo de inicio y el delta de la vela.
+- **Errores típicos:** mirar la mecha más larga en vez del extremo donde empieza la vela; confundir EX con ZP (un 0 exacto en una de las dos celdas del extremo).
 
 ## e2 · ¿Giro o sigue?
 
-- **Qué es:** anticipar si una marca de giro (EX Exhaustion Print, DT Delta Tail, DD Delta Divergence, AD Acumulación/Distribución) termina en giro en las 3 velas siguientes.
-- **En tu herramienta:**
-  - DT: delta contrario en el extremo y a favor en el resto de la vela (raro, ~1%).
-  - DD: extremo de 5 velas con delta a favor del color (~7-8% de las velas, regla literal).
-  - AD: la celda más grande está del lado contrario y en el tercio del inicio.
-  - Se conocen al cerrar la vela (la VA abandonada, en la siguiente).
-- **Mira:** dónde aparece la marca. En una zona tuya (perfil de ayer, FVG, nivel) tiene una historia; en medio de la nada, poca.
-- **Errores típicos:** juzgar el elemento por uno o dos casos; olvidar el contexto de 1h y 4h (contra una tendencia fuerte casi todo "falla").
-- **Tus datos:** el estudio de los 91 setups no encontró ninguno robusto. Con 20 casos por código ya ves cuál te dice algo **a ti**; con 60 se puede comparar con el 50%.
+- **Qué es:** anticipar si una marca de giro termina en giro en las 3 velas siguientes.
+- **Mira:** dónde aparece. En una zona tuya tiene una historia; en medio de la nada, poca.
+- **Errores típicos:** juzgar por uno o dos casos; olvidar el contexto de 1h y 4h (contra una tendencia fuerte casi todo "falla").
+- **Tus datos:** con 20 casos por código ya ves cuál te dice algo a ti; con 60 se puede comparar con el 50%.
 
-## e3 · Barridos y órdenes grandes
+## n1 · Continuación: encuentra el elemento
 
-- **Qué es:** franjas donde una orden agresiva cruzó varios precios de una vez (barrido) o fue muy grande.
-- **En tu herramienta:** Elementos OF con el almacén de flujo:
-  - BR barrido real: la mayor orden de la vela que cruzó 3 precios o más, con USD sobre el umbral relativo;
-  - GR orden grande: la mayor orden de la vela, con USD sobre su umbral;
-  - SW Market Sweep: racha de niveles sin contrapartida en el footprint.
-  - Del 07/12/2021 al 19/12/2022 no hay órdenes (Bybit dio la hora en segundos).
-- **Mira:** si la franja quedó en el extremo de la vela (alguien persiguió el precio) o en el medio, y si el precio volvió a ella.
+- **Qué es:** reconocer los elementos de continuación: SW, VL, SQ, DB, PW, ST, VI, RD, VD, TP, RX, BR y GR.
+- **En tu herramienta:** BR y GR salen del almacén de flujo (órdenes reales; del 07/12/2021 al 19/12/2022 no hay) y marcan ~5% de las velas. ST, VI, RD, VD, TP y RX son "vol.": sin el filtro de volumen marcarían del 12% al 74% de las velas.
+- **Mira:** rachas de niveles del mismo lado (SW, VL, SQ), desequilibrios (ST, VI, RD) y el delta entre velas seguidas (DB).
+- **Errores típicos:** olvidar encender un "vol." para el ejercicio; tomar un empuje en el extremo de un rango como continuación segura.
+
+## e3 · Continuación: ¿vuelve a la franja?
+
+- **Qué es:** anticipar si el precio vuelve a una franja de continuación (barrido, orden grande, stacked…) en 10 velas.
+- **Mira:** si la franja quedó en el extremo de la vela (alguien persiguió el precio) o en el medio.
 - **Errores típicos:** suponer que una orden grande es alguien entrando: puede ser un cierre o una liquidación.
-- **Tus datos:** BR y GR marcan ~5% de las velas de BTC (15m y 1h). Si el precio vuelve a la franja no se midió.
+- **Tus datos:** no medido si el precio vuelve.
+
+## t1 · Tabla de la vela: lee DV, XD y SM
+
+- **Qué es:** anticipar, viendo la vela y su footprint, si la tabla marcará DV (Δ/Vol extremo), XD (delta en su extremo) o SM (el lado contrario casi no movió el delta).
+- **En tu herramienta:** panel "Tabla de la vela": Delta en color con XD, Máx o Mín Δ en ámbar con SM. Máx y Mín Δ son exactos (almacén de flujo). Cada uno marca ~5-6% de las velas de BTC.
+- **Mira:** una vela que cierra en su extremo con mucho delta (XD); una vela verde cuyo mínimo de delta casi no bajó de cero (SM).
+- **Errores típicos:** confundir Δ/Vol (proporción) con el delta (tamaño).
+
+## b6 · Libro: encuentra AB, BL o LD
+
+- **Qué es:** reconocer los eventos del libro en Elementos OF de la suite.
+- **En tu herramienta:** AB = se negoció contra un lado al menos el doble de lo que esperaba, se quedó y el precio no pasó (sobre el p90 de 24 h). BL = un nivel sostenido de 15 minutos o más consumido en la vela. LD = poca liquidez a 0.25% del precio (bajo el p5 de 24 h). Solo desde el 13/11/2026 y solo en la suite.
+- **Mira:** el mapa y la cinta: AB suele coincidir con un muro que no se va; BL con un nivel de "Niveles" que termina "consumido".
+- **Tus datos:** en BTC 5m, 12 horas: AB en 12 de 144 velas, BL 19; LD 31 de 288 en un día. Nada validado contra el azar.
 
 ## b1 · Mapa: ¿rebota o cruza?
 
@@ -140,3 +172,36 @@ Fuentes: `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` ("ORDER FLOW SOBR
 - **Mira:** que la cuenta diga DEMO antes de enviar, y que lo elegido esté en la lista del panel.
 - **Errores típicos:** subir el tamaño tras ganar; dejar el análisis post-trade para después.
 - **Tus datos:** el informe del journal compara ganadoras y perdedoras en cada medida (también las del libro y la regla del laboratorio). Con pocas operaciones, solo describe.
+
+## Códigos
+
+| Código | Qué es |
+|---|---|
+| VA | VA abandonada: la vela siguiente no entra en el área de valor (70%) |
+| OG | Orderflows Gap: áreas de valor de dos velas sin tocarse, con hueco grande |
+| AP / SL | POC alineado (mismo POC en dos velas) / Slingshot (dos velas del mismo color con el POC hacia atrás) |
+| OP | Open POC (vol.): POC fuera del rango de las 5 velas anteriores |
+| RL | Absorción (propuesta propia): nivel enorme del mes con ≥40% pasivo |
+| EX | Exhaustion Print: lado pasivo del extremo de inicio casi en cero |
+| ZP | Zero Print: un 0 en una de las dos celdas del extremo de inicio |
+| DT | Delta Tail: delta en contra en el extremo y a favor en el resto |
+| RS | Retail Suck: el pasivo del extremo baja tres niveles seguidos |
+| DD | Delta Divergence: extremo de 5 velas con delta a favor del color |
+| PD | Price Action Divergence: delta contra el color de la vela |
+| AD | Acumulación/Distribución: la mayor celda del lado contrario, en el tercio del inicio |
+| IV | Inverse Imbalance: dos desequilibrios contrarios seguidos en la mitad lejana |
+| IR | Imbalance Reversal (vol.): desequilibrio contrario en uno de los dos precios del inicio |
+| SW | Market Sweep: racha de niveles sin contrapartida |
+| VL | Vertical Liquidity: racha de niveles con el agresor muy grande |
+| SQ | Orderflows Sequencing: agresor creciente desde el extremo |
+| DB | Delta Breakout: salto de delta entre dos velas del mismo color |
+| PW | POC Wave: tres velas con el POC escalonado |
+| ST | Stacked Imbalance (vol.): 3 desequilibrios diagonales seguidos a favor |
+| VI | Volume Imbalance (vol.): 3 o más desequilibrios a favor |
+| RD | Imbalance Reload (vol.): desequilibrio al mismo precio en dos velas del mismo color |
+| VD | Volume Decline (vol.): el pasivo crece del 1.º al 3.º precio |
+| TP | Thin Print (vol.): nivel interior con contrapartida 0 |
+| RX | Ratio de extremos (vol.): 2.º precio ÷ extremo fuera de 0.70 a 30 |
+| BR / GR | Barrido real (orden que cruzó 3 precios o más) / Orden grande |
+| DV / XD / SM | Tabla: Δ/Vol extremo / delta en su extremo / Small Min/Max Delta |
+| AB / BL / LD | Libro (solo la suite): absorción / barrido de un nivel sostenido / libro delgado |
