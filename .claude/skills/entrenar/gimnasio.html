@@ -222,9 +222,9 @@ const STAGES = [
   { id: 's1', name: 'Leer una vela', tool: APP1 + ', Order Flow encendido', skills: [
     { id: 'f1', kind: 'reconocer', name: '¿Quién ganó la vela?',
       where: 'BTC 15m, zoom medio: celdas visibles, sin el número de delta (16 a 59 px por vela).',
-      steps: ['Elige una vela cerrada y mira sus celdas. Di "ganó compra" o "ganó venta", y si fue por poco o por mucho.',
-              'Acerca el zoom hasta ver el delta bajo la vela.',
-              'Acierto si el lado coincide. Repite con la vela siguiente.'],
+      steps: ['Elige una vela cerrada y mira sus celdas. Di "ganó compra" o "ganó venta", y si fue por poco o por mucho. Ganar es el lado que negoció más dentro de esa vela (el signo del delta), no hacia dónde va el precio después.',
+              'Acerca el zoom hasta ver el delta bajo la vela: positivo, ganó la compra; negativo, ganó la venta.',
+              'Acierto si el signo coincide. "Por poco" es un delta menor que más o menos el 10% del volumen de la vela. Repite con la siguiente.'],
       trap: 'El color de la vela no es el delta: una vela verde puede cerrar con la venta ganando.' },
     { id: 'f2', kind: 'reconocer', name: 'Delta contra el color',
       where: 'BTC 15m, zoom medio. Revela alejando la vista: con menos de 16 px por vela salen los rombos de delta contrario.',
