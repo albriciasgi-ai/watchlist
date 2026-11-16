@@ -185,6 +185,7 @@ function hammerCandles() {
 function drawnPatterns(known, all) {
   const rejection = new Rejection('BTCUSDT', '1h', 30);
   rejection.enabled = true;
+  rejection.config.filters.requireTrend = false; // la vela en formación, no la tendencia previa (16/11)
   const marks = [];
   rejection.drawPatternMarker = (_, x, y, pattern) => marks.push(pattern);
   rejection.renderOverlay(ctx, bounds, known, all, context(known, known[known.length - 1].timestamp));

@@ -12,6 +12,8 @@ from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, asdict
 import math
 
+import candle_patterns
+
 
 @dataclass
 class ReferenceLevel:
@@ -79,10 +81,14 @@ class RejectionDetector:
 
         all_levels = reference_levels
 
-        # 2. Detect patterns in each candle
-        for i in range(1, len(candles)):  # Start at 1 to have at least 1 previous candle
+        # 2. Patrones con la regla comun (candle_patterns.py, 16/11/2026: la misma del navegador). Solo velas
+        #    cerradas: un patron es la forma final de la vela, y la vela en formacion todavia no la tiene
+        candles = [c for c in candles if not c.get('in_progress')]
+        opts = candle_patterns.rule_options(config)
+        for hit in candle_patterns.find_patterns(candles, opts):
+            i = hit['index']
             candle = candles[i]
-            prev_candles = candles[max(0, i-20):i]  # 20 previous candles for context
+            prev_candles = candles[max(0, i - 20):i]  # 20 previous candles for context
 
             if known_levels_only:
                 reference_levels = [
@@ -92,56 +98,10 @@ class RejectionDetector:
                 if not reference_levels:
                     continue
 
-            # Detect each pattern type if enabled
-            if config.get('patterns', {}).get('hammer', {}).get('enabled', False):
-                if self._is_hammer(candle, prev_candles, config['patterns']['hammer']):
-                    pattern = self._create_pattern(
-                        candle,
-                        "HAMMER",
-                        reference_levels,
-                        config,
-                        prev_candles
-                    )
-                    if pattern:
-                        detected_patterns.append(pattern)
-
-            if config.get('patterns', {}).get('shootingStar', {}).get('enabled', False):
-                if self._is_shooting_star(candle, prev_candles, config['patterns']['shootingStar']):
-                    pattern = self._create_pattern(
-                        candle,
-                        "SHOOTING_STAR",
-                        reference_levels,
-                        config,
-                        prev_candles
-                    )
-                    if pattern:
-                        detected_patterns.append(pattern)
-
-            if config.get('patterns', {}).get('engulfing', {}).get('enabled', False) and i > 0:
-                engulfing_type = self._is_engulfing(candles[i-1], candle)
-                if engulfing_type:
-                    pattern = self._create_pattern(
-                        candle,
-                        engulfing_type,
-                        reference_levels,
-                        config,
-                        prev_candles
-                    )
-                    if pattern:
-                        detected_patterns.append(pattern)
-
-            if config.get('patterns', {}).get('doji', {}).get('enabled', False):
-                doji_type = self._is_doji(candle, prev_candles)
-                if doji_type:
-                    pattern = self._create_pattern(
-                        candle,
-                        doji_type,
-                        reference_levels,
-                        config,
-                        prev_candles
-                    )
-                    if pattern:
-                        detected_patterns.append(pattern)
+            pattern = self._create_pattern(candle, hit['type'], reference_levels, config, prev_candles)
+            if pattern:
+                pattern.metrics['volume_z'] = None if hit['volumeZ'] is None else round(hit['volumeZ'], 2)
+                detected_patterns.append(pattern)
 
         return detected_patterns
 
@@ -230,13 +190,20 @@ class RejectionDetector:
         """
         close_price = candle['close']
         proximity_pct = config.get('filters', {}).get('proximityPercent', 1.0) / 100
+        # 16/11/2026: el rechazo se mide en la mecha que toca el nivel (el minimo en un patron alcista, el maximo en
+        # uno bajista) y la vela tiene que cerrar de su lado: sobre el nivel uno alcista, bajo el nivel uno bajista.
+        # Antes se media con el cierre y sin lado: un martillo que cerro 0.72% bajo un VAL contaba como "cerca"
+        bullish = pattern_type in candle_patterns.BULLISH
+        touch = candle['low'] if bullish else candle['high']
 
-        # Find nearby levels
-        near_levels = []
-        for level in reference_levels:
-            distance_pct = abs(close_price - level.price) / close_price
-            if distance_pct <= proximity_pct:
-                near_levels.append(level)
+        def touch_distance(level):
+            return abs(touch - level.price) / level.price if level.price else float('inf')
+
+        def closes_on_side(level):
+            return close_price >= level.price if bullish else close_price <= level.price
+
+        near_levels = [level for level in reference_levels
+                       if touch_distance(level) <= proximity_pct and closes_on_side(level)]
 
         # If near level is required and there are none, reject
         if config.get('filters', {}).get('requireNearLevel', True) and not near_levels:
@@ -263,8 +230,7 @@ class RejectionDetector:
             if source_key not in context_scores:
                 context_scores[source_key] = 0
             # Score based on proximity and weight
-            distance_pct = abs(close_price - level.price) / close_price
-            proximity_score = max(0, 1 - (distance_pct / proximity_pct))
+            proximity_score = max(0, 1 - (touch_distance(level) / proximity_pct)) if proximity_pct > 0 else 1
             context_scores[source_key] += proximity_score * level.weight * 100
 
         return RejectionPattern(
@@ -306,9 +272,14 @@ class RejectionDetector:
 
         # 2. Proximity to levels (40 points)
         if near_levels:
-            # Use the highest weight among near levels
-            max_weight = max(level.weight for level in near_levels)
-            proximity_score = max_weight
+            # El mejor nivel: su peso por lo cerca que toco la mecha (la mitad por tocarlo, la otra mitad por la
+            # distancia). Antes era solo el peso del contexto
+            bullish = pattern_type in candle_patterns.BULLISH
+            touch = candle['low'] if bullish else candle['high']
+            prox = config.get('filters', {}).get('proximityPercent', 1.0) / 100
+            proximity_score = max(
+                level.weight * (0.5 + 0.5 * max(0.0, 1 - (abs(touch - level.price) / level.price) / prox if prox > 0 else 1))
+                for level in near_levels)
             confidence += proximity_score * 40
             metrics['proximity_score'] = round(proximity_score, 3)
             metrics['near_levels_count'] = len(near_levels)
@@ -422,110 +393,7 @@ class RejectionDetector:
         else:
             return 0.2
 
-    # ==================== PATTERN DETECTION FUNCTIONS ====================
-
-    def _is_hammer(self, candle: Dict, prev_candles: List[Dict], config: Dict) -> bool:
-        """
-        Detects Hammer (bullish pin bar)
-        - Long lower shadow (>= 2x body)
-        - Small upper shadow (<= 10% of body)
-        - Close in upper third of range
-        """
-        o, h, l, c = candle['open'], candle['high'], candle['low'], candle['close']
-        body = abs(c - o)
-        lower_shadow = min(o, c) - l
-        upper_shadow = h - max(o, c)
-        total_range = h - l
-
-        if total_range == 0:
-            return False
-
-        min_wick_ratio = config.get('minWickRatio', 2.0)
-
-        # Conditions
-        return (
-            lower_shadow >= min_wick_ratio * body and
-            upper_shadow <= 0.1 * body and
-            (c - l) / total_range >= 0.6
-        )
-
-    def _is_shooting_star(self, candle: Dict, prev_candles: List[Dict], config: Dict) -> bool:
-        """
-        Detects Shooting Star (bearish pin bar)
-        - Long upper shadow (>= 2x body)
-        - Small lower shadow (<= 10% of body)
-        - Close in lower third of range
-        """
-        o, h, l, c = candle['open'], candle['high'], candle['low'], candle['close']
-        body = abs(c - o)
-        lower_shadow = min(o, c) - l
-        upper_shadow = h - max(o, c)
-        total_range = h - l
-
-        if total_range == 0:
-            return False
-
-        min_wick_ratio = config.get('minWickRatio', 2.0)
-
-        return (
-            upper_shadow >= min_wick_ratio * body and
-            lower_shadow <= 0.1 * body and
-            (h - c) / total_range >= 0.6
-        )
-
-    def _is_engulfing(self, prev_candle: Dict, curr_candle: Dict) -> Optional[str]:
-        """
-        Detects Engulfing pattern (bullish or bearish)
-        Returns pattern type or None
-        """
-        prev_body_top = max(prev_candle['open'], prev_candle['close'])
-        prev_body_bottom = min(prev_candle['open'], prev_candle['close'])
-        curr_body_top = max(curr_candle['open'], curr_candle['close'])
-        curr_body_bottom = min(curr_candle['open'], curr_candle['close'])
-
-        # Bullish engulfing
-        if (prev_candle['close'] < prev_candle['open'] and  # Prev bearish
-            curr_candle['close'] > curr_candle['open'] and  # Curr bullish
-            curr_body_bottom < prev_body_bottom and
-            curr_body_top > prev_body_top):
-            return "ENGULFING_BULLISH"
-
-        # Bearish engulfing
-        if (prev_candle['close'] > prev_candle['open'] and  # Prev bullish
-            curr_candle['close'] < curr_candle['open'] and  # Curr bearish
-            curr_body_top > prev_body_top and
-            curr_body_bottom < prev_body_bottom):
-            return "ENGULFING_BEARISH"
-
-        return None
-
-    def _is_doji(self, candle: Dict, prev_candles: List[Dict]) -> Optional[str]:
-        """
-        Detects Doji patterns (Dragonfly or Gravestone)
-        Returns pattern type or None
-        """
-        o, h, l, c = candle['open'], candle['high'], candle['low'], candle['close']
-        body = abs(c - o)
-        lower_shadow = min(o, c) - l
-        upper_shadow = h - max(o, c)
-        total_range = h - l
-
-        if total_range == 0:
-            return None
-
-        # Doji = very small body (< 5% of range)
-        if body / total_range > 0.05:
-            return None
-
-        # Dragonfly Doji: long lower shadow, no upper shadow
-        if lower_shadow > total_range * 0.6 and upper_shadow < total_range * 0.1:
-            return "DOJI_DRAGONFLY"
-
-        # Gravestone Doji: long upper shadow, no lower shadow
-        if upper_shadow > total_range * 0.6 and lower_shadow < total_range * 0.1:
-            return "DOJI_GRAVESTONE"
-
-        return None
+    # Las formas (martillo, estrella, envolvente y doji) estan en candle_patterns.py desde el 16/11/2026.
 
 
 def serialize_pattern(pattern: RejectionPattern) -> Dict:

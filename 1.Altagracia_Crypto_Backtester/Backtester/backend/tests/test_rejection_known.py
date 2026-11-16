@@ -17,7 +17,8 @@ CONFIG = {
         "engulfing": {"enabled": False},
         "doji": {"enabled": False},
     },
-    "filters": {"minConfidence": 0, "requireNearLevel": True, "proximityPercent": 1.0, "requireVolumeSpike": False},
+    "filters": {"minConfidence": 0, "requireNearLevel": True, "proximityPercent": 1.0, "requireVolumeSpike": False,
+                "requireTrend": False},  # estas pruebas miden los niveles conocidos, no la tendencia (16/11)
 }
 
 
@@ -25,8 +26,10 @@ def flat(i, price=1000.0):
     return {"timestamp": START + i * HOUR, "open": price, "high": price + 5, "low": price - 5, "close": price + 2, "volume": 100.0}
 
 
-def hammer(i, close=1000.0):
-    return {"timestamp": START + i * HOUR, "open": close - 4, "high": close + 0.2, "low": close - 40, "close": close, "volume": 300.0}
+def hammer(i, level=1000.0):
+    # 16/11/2026: el rechazo se mide en la mecha, que toca el nivel (el POC), y el martillo cierra sobre el nivel
+    return {"timestamp": START + i * HOUR, "open": level + 3, "high": level + 4.2, "low": level - 0.5, "close": level + 4,
+            "volume": 300.0}
 
 
 def candles_with_hammers(*indexes, count=40):

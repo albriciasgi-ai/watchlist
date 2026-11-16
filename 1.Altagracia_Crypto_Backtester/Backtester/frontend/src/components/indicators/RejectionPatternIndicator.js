@@ -98,7 +98,9 @@ class RejectionPatternIndicator extends IndicatorBase {
         minConfidence: 60,
         requireNearLevel: true,
         proximityPercent: 1.0,
-        requireVolumeSpike: true
+        requireVolumeSpike: true,   // solo suma confianza en el modo validado; el filtro de volumen es volumeZScore
+        requireTrend: true,         // 16/11/2026: tendencia previa, como en los libros (candlePatterns.js)
+        trendBars: 5
       },
       alertsEnabled: false
     };
@@ -271,7 +273,8 @@ class RejectionPatternIndicator extends IndicatorBase {
    */
   _closedCandlesToDetect(visibleCandles, allCandles, priceContext) {
     const known = priceContext?.knownCandles || allCandles;
-    const lookback = (this.config.volumeZScore?.lookbackPeriod || 20) + 1;
+    // las anteriores que piden el Z-Score de volumen y la tendencia previa (candlePatterns.js)
+    const lookback = Math.max(this.config.volumeZScore?.lookbackPeriod || 20, this.config.filters?.trendBars || 5) + 1;
     const first = lowerBound(known, visibleCandles[0].timestamp);
     const end = lowerBound(known, visibleCandles[visibleCandles.length - 1].timestamp) + 1;
     return known.slice(Math.max(0, first - lookback), end).filter(candle => !candle.in_progress);

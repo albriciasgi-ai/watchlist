@@ -936,6 +936,32 @@ Con el archivo compara Swing, VWAP y Rejection con velas reales, con y sin el fu
 
 ---
 
+## REJECTION PATTERNS: REGLA CORREGIDA (16/11/2026)
+
+Pedido del usuario: revisar si el indicador identifica bien los patrones. Una auditoría con 1000 velas reales de BTC por marco encontró:
+- **el envolvente del servidor nunca salía:** en cripto cada vela abre donde cerró la anterior, y la regla pedía superar los dos bordes del cuerpo anterior de forma estricta. Daba 0 en 15m, 1h y 4h;
+- **el envolvente del navegador salía en el 26% de las velas:** aceptaba empates, sin cuerpo mayor ni mínimo, y también con dojis;
+- **la mecha contraria se medía contra el cuerpo y no contra el rango:** se perdía casi la mitad de los martillos y estrellas de libro;
+- **ninguno miraba la tendencia previa:** un martillo después de una subida (hanging man) se marcaba igual;
+- **"requireVolumeSpike" no filtraba:** solo sumaba confianza;
+- **el modo validado medía la distancia al nivel con el cierre y sin lado:** un martillo que cerró 0.72% bajo un VAL contaba como "cerca".
+
+**Ahora:** una sola regla en `indicators/candlePatterns.js` (navegador, modo "todos") y `backend/candle_patterns.py` (servidor, modo "validado" y la suite), línea por línea.
+- **Formas (Nison, Bulkowski),** con rango = máximo − mínimo:
+  - doji: cuerpo de hasta 5% del rango; libélula con la mecha de arriba de hasta 10%, lápida con la de abajo de hasta 10%;
+  - martillo: cuerpo de hasta 33% del rango, mecha de abajo de al menos `minWickRatio` cuerpos (2) y mecha de arriba de hasta 10% del rango. La estrella fugaz, al revés;
+  - envolvente: colores opuestos, la anterior con cuerpo de al menos 10% de su rango, la actual con al menos 30% del suyo, el cuerpo más grande y cubriendo el anterior (un empate en un borde vale);
+  - una vela tiene a lo sumo un patrón: doji, si no envolvente, si no martillo o estrella.
+- **Tendencia previa** (`filters.requireTrend`, de fábrica sí; `filters.trendBars`, 5): los alcistas piden que el cierre anterior esté bajo el de 5 velas antes, y los bajistas, sobre él. Se apaga en el modal.
+- **Volumen:** el filtro es `volumeZScore` (z-score contra las velas anteriores, sin la vela) y ahora vale en los dos modos. `requireVolumeSpike` sigue sumando confianza en el validado, con su texto corregido en el modal.
+- **Solo velas cerradas,** también en el servidor (`in_progress`).
+- **Validado:** el rechazo se mide en la mecha que toca el nivel (el mínimo en un patrón alcista, el máximo en uno bajista) y la vela tiene que cerrar de su lado. La proximidad suma el peso del nivel por lo cerca que lo tocó.
+- **Medido** con 999 velas cerradas de BTC (15m, 1h y 4h), con la tendencia:
+  - en 15m: 29 martillos, 19 estrellas y 130 envolventes (antes: 0 en el servidor y 271 en el navegador). El 18% de las velas lleva un patrón;
+  - 17% de las velas en 1h y 14.5% en 4h.
+  En cripto el envolvente es frecuente porque cada vela abre en el cierre anterior.
+- **Pruebas:** `backend/tests/test_candle_patterns.py` (9, con la paridad contra el navegador en 30,000 velas al azar), `test_rejection_known.py` (13) y `leaks.test.mjs` (43).
+
 ## OBSERVADOR (Noviembre 2026)
 
 Mide cada operación manual contra la regla del laboratorio, sin mostrar esa lectura antes de decidir.

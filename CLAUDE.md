@@ -54,6 +54,33 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 16 Noviembre 2026: Rejection Patterns con la Regla Corregida
+
+**Pedido:** revisar si el indicador de patrones de rechazo identifica bien los patrones, y corregirlo.
+
+**Hallado** con 1000 velas reales de BTC por marco:
+- el envolvente del servidor nunca salía (en cripto la vela abre en el cierre anterior), y el del navegador salía en el 26% de las velas;
+- la mecha contraria se medía contra el cuerpo: se perdía la mitad de los martillos;
+- no se miraba la tendencia previa;
+- el filtro de volumen no filtraba;
+- el modo validado medía con el cierre y sin lado.
+
+**Cambios:**
+1. **Una sola regla** para los dos detectores: `candlePatterns.js` (navegador) y `candle_patterns.py` (servidor y suite), con las formas de Nison y Bulkowski.
+2. **Tendencia previa** de fábrica, que se apaga en el modal. El filtro de volumen (Z-Score) vale en los dos modos. Solo velas cerradas.
+3. **Validado:** cuenta la mecha que toca el nivel y que la vela cierre de su lado.
+4. **Pruebas:** `test_candle_patterns.py` (9, con paridad navegador contra servidor), `test_rejection_known.py` (13) y `leaks.test.mjs` (43).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. La suite se reinicia sola al abrirla.
+- Con la tendencia, en BTC 15m marca 29 martillos, 19 estrellas y 130 envolventes en 999 velas; antes, 0 o 271 envolventes según el modo.
+- Se verá distinto: menos envolventes, martillos que antes faltaban y ninguno tras una subida.
+- Probado con velas reales y en la pantalla de la suite. No en Electron ni en la pantalla de App 1 (usa el mismo indicador).
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "REJECTION PATTERNS: REGLA CORREGIDA (16/11/2026)"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 16 Noviembre 2026: Marcos 1D, 1W y 1M y Triángulos de Elementos OF Explicados
 
 **Pedido:** los marcos de 1 día, 1 semana y 1 mes, y explicar en el modal de Elementos OF qué son los triángulos rojos y verdes.

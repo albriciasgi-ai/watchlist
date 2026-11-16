@@ -470,9 +470,45 @@ const RejectionPatternSettings = ({
                 checked={config.filters.requireVolumeSpike}
                 onChange={(e) => updateFilter('requireVolumeSpike', e.target.checked)}
               />
-              <span>Require elevated volume on pattern candle (legacy)</span>
+              <span>Volumen alto suma confianza (solo modo validado)</span>
             </label>
+            <span className="filter-hint">
+              No filtra: suma hasta 15 puntos de confianza. Para dejar solo los patrones con volumen alto, usa el filtro Z-Score de abajo, que vale en los dos modos.
+            </span>
           </div>
+
+          <div className="filter-item">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={config.filters.requireTrend !== false}
+                onChange={(e) => updateFilter('requireTrend', e.target.checked)}
+              />
+              <span>Pedir tendencia previa (como en los libros)</span>
+            </label>
+            <span className="filter-hint">
+              Martillo, libélula y envolvente alcista solo después de una bajada; estrella fugaz, lápida y envolvente bajista solo después de una subida. Sin esto, un martillo tras una subida (hanging man) también se marca.
+            </span>
+          </div>
+
+          {config.filters.requireTrend !== false && (
+            <div className="filter-item">
+              <label>
+                Velas para la tendencia: {config.filters.trendBars || 5}
+                <input
+                  type="range"
+                  min="2"
+                  max="20"
+                  step="1"
+                  value={config.filters.trendBars || 5}
+                  onChange={(e) => updateFilter('trendBars', parseInt(e.target.value))}
+                />
+              </label>
+              <span className="filter-hint">
+                Compara el cierre de la vela anterior con el de tantas velas antes.
+              </span>
+            </div>
+          )}
         </section>
 
         {/* Section 3.5: Volume Z-Score Filter */}
