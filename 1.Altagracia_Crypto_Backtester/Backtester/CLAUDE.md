@@ -936,6 +936,19 @@ Con el archivo compara Swing, VWAP y Rejection con velas reales, con y sin el fu
 
 ---
 
+## ESTADO PARA EL ENTRENADOR (17/11/2026)
+
+Pedido del usuario: entrenar con el skill `/entrenar` y que Claude vea lo que tiene en App 1, no solo una captura. Claude lo lee con el navegador integrado de la app de Claude o con la extensión Claude in Chrome, ejecutando JavaScript en la pestaña de App 1.
+
+- `backtesting/coachState.js` instala `window.__app1Coach` desde `BacktestingApp` (al montar; se quita al desmontar). Es de solo lectura: nada cambia la app ni su estilo.
+  - `state()`: moneda, marco, hora a la vista, reproducción, precio, velas a la vista con las últimas 30, indicadores encendidos con sus ajustes, lo elegido para el análisis (`knownLevels`, hasta la hora a la vista), órdenes vivas, las últimas 5 cerradas y la caja TP/SL libre (`latestFreeBox`). `query` lleva `symbol`, `interval_minutes`, `known_until` y el rango a la vista, para pedir al backend.
+  - `footprints(n)` y `elements(n)`: piden `/api/orderflow/historical` y `/api/orderflow/elements` de las velas a la vista con `known_until`, y devuelven delta, volumen, POC, niveles, imbalances, stacked y marcas.
+  - `get(path, params)`: otra ruta GET `/api/` del backend; `price()`, `volume()` y `time()` convierten lo que devuelva a lo que ve el usuario.
+- **Sin futuro:** las velas se filtran a la hora a la vista (`currentTime`), y los pedidos llevan `known_until`.
+- **Fecha oculta:** horas como "Día N HH:MM", precio como índice y volumen en la escala oculta (`blindClock.js`), sin P&L en dólares, y las horas guardadas en los ajustes salen "(oculto)". Solo `query` trae horas reales.
+- `MiniChart` suma `getVisibleCandles()` en su ref: las velas del último dibujo.
+- Prueba: `tests/coach.test.mjs` (7).
+
 ## REJECTION PATTERNS: REGLA CORREGIDA (16/11/2026)
 
 Pedido del usuario: revisar si el indicador identifica bien los patrones. Una auditoría con 1000 velas reales de BTC por marco encontró:

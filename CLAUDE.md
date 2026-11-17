@@ -54,6 +54,24 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Entrenamiento - 17 Noviembre 2026: Claude Ve App 1 al Entrenar
+
+**Pedido:** que en el entrenamiento Claude pueda mirar App 1 (indicadores, footprints, lo que está haciendo) y aconsejar cuando se le pida, no solo interpretar una captura.
+
+**Cambios:**
+1. **App 1:** `window.__app1Coach` (`coachState.js`), de solo lectura. `state()` da moneda, marco, hora, precio, velas a la vista, indicadores con sus ajustes, lo elegido para el análisis, órdenes y caja TP/SL. `footprints()` y `elements()` piden al backend lo que está a la vista, cortado en la hora simulada. Con fecha oculta todo sale como lo ve el usuario.
+2. **Skill `/entrenar`:** cómo leerlo con el navegador integrado o con Claude in Chrome. Sin futuro, sin revelar la fecha oculta, la predicción primero y sin tocar la página.
+3. **Pruebas:** `coach.test.mjs` (7). Las demás de App 1 siguen pasando.
+
+**IMPORTANTE:**
+- Basta recargar la página de App 1: no hay cambios en el backend ni en lo que se ve.
+- Con Chrome, instalar la extensión Claude in Chrome y permitirle `localhost`. Claude usa la pestaña de App 1 que ya está abierta, sin recargarla.
+- Probado en la copia aislada con BTC 15m: estado, footprints y Elementos OF, sin nada después de la hora simulada. La fecha oculta, solo con pruebas. No se probó con Chrome ni en una sesión de `/entrenar`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ESTADO PARA EL ENTRENADOR (17/11/2026)" y `.claude/skills/entrenar/SKILL.md`, "Ver App 1 en vivo"
+
+---
+
 ### App 1 + Altagracia Trading Suite - 16 Noviembre 2026: Rejection Patterns con la Regla Corregida
 
 **Pedido:** revisar si el indicador de patrones de rechazo identifica bien los patrones, y corregirlo.

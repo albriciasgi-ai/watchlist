@@ -338,6 +338,7 @@ const MiniChart = forwardRef(({
   }, [symbol]);
 
   // 🎯 NUEVO: Exponer métodos de drawing manager al componente padre
+  const visibleCandlesRef = useRef([]);
   useImperativeHandle(ref, () => ({
     undo: () => {
       if (drawingManagerRef.current) {
@@ -392,6 +393,8 @@ const MiniChart = forwardRef(({
     getPositionTargets: () => positionTargetsRef.current,
     // Velas cargadas: la suite espera a tenerlas antes de tomar una imagen con un gráfico armado fuera de la pantalla
     candleCount: () => candlesRef.current?.length ?? 0,
+    // Velas dibujadas en el último cuadro: el entrenador (/entrenar) lee lo que el usuario está mirando
+    getVisibleCandles: () => visibleCandlesRef.current,
     // 🎯 NUEVO: Obtener el IndicatorManager (para acceso directo desde BacktestingApp)
     getIndicatorManager: () => {
       return indicatorManagerRef.current;
@@ -1176,6 +1179,7 @@ const MiniChart = forwardRef(({
     const startIdx = Math.max(0, displayCandles.length - candlesPerScreen - offset);
     const endIdx = Math.min(displayCandles.length, startIdx + candlesPerScreen);
     const visibleCandles = displayCandles.slice(startIdx, endIdx);
+    visibleCandlesRef.current = visibleCandles; // Lo que se ve, para el entrenador (getVisibleCandles)
 
     if (priceDecimalsRef.current?.symbol !== symbol && displayCandles.length) {
       priceDecimalsRef.current = { symbol, value: priceDecimals(displayCandles) };

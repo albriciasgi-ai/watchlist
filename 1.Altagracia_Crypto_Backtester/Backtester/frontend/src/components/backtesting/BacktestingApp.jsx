@@ -43,6 +43,7 @@ import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, re
 import { blindAnchor, blindScale, isBlind, maskDate, priceText, pricesHidden, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
 import { boxesFollowOrders, latestFreeBox } from './orderPlan.js';
+import { installCoach } from './coachState.js';
 import { drawingsForOrder } from './tradeContext.js';
 import { restoreLevels, takeLevels } from '../indicators/analysisLevels.js';
 import SessionLoadModal from './SessionLoadModal';
@@ -1427,6 +1428,18 @@ const BacktestingApp = () => {
       settleOrders(marketData.timeframes, currentTime);
     }
   }, [currentTime, marketData, activeTimeframe]);
+
+  // Entrenador (/entrenar, 17/11): window.__app1Coach.state() da lo que hay en pantalla, de solo lectura
+  const coachReadRef = useRef(null);
+  coachReadRef.current = () => ({
+    symbol, timeframe: activeTimeframe, currentTime, currentPrice,
+    playing: !!timeControllerRef.current?.isPlaying, speed: timeControllerRef.current?.playbackSpeed ?? playbackSpeed,
+    indicatorStates: tabStates[activeTimeframe]?.indicatorStates || {},
+    chart: miniChartRefs.current[activeTimeframe],
+    orders: orderManagerRef.current?.orders || [],
+    shapes: chartShapes
+  });
+  useEffect(() => installCoach(() => coachReadRef.current()), []);
 
   // Estables para que el panel del Observador no se redibuje con cada cambio de hora
   const observerViewer = useCallback(() => ({
