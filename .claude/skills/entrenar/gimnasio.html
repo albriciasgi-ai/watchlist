@@ -110,6 +110,15 @@ button:disabled { opacity: 0.5; cursor: default }
 .log-list li:first-child { border-top: 0 }
 .log-list .x { border: 0; padding: 0 4px; color: var(--muted); background: none }
 .pct.good { color: var(--buy) } .pct.bad { color: var(--sell) }
+.drop { border: 1px dashed var(--line); border-radius: 8px; padding: 8px 10px; display: grid; gap: 8px }
+.drop.over { border-color: var(--accent); background: var(--accent-soft) }
+.btnlike { display: inline-block; cursor: pointer; border-radius: 6px; padding: 6px 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 14px }
+.btnlike:focus-within { outline: 2px solid var(--accent); outline-offset: 2px }
+.thumbs { display: flex; gap: 10px; flex-wrap: wrap }
+.thumbs:empty { display: none }
+.thumb { position: relative }
+.thumb img { display: block; width: 84px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--line) }
+.thumb button { position: absolute; top: -8px; right: -8px; padding: 0 6px; border-radius: 999px; font-size: 12px; line-height: 18px }
 .coach-out { white-space: pre-wrap; font-size: 14px; background: var(--bg); border-radius: 8px; padding: 10px 12px; min-height: 40px }
 details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px }
 summary { cursor: pointer; font-family: var(--display); font-weight: 700 }
@@ -192,6 +201,13 @@ summary { cursor: pointer; font-family: var(--display); font-weight: 700 }
       <h2>Pregúntale al entrenador</h2>
       <p class="note" style="margin:0">Cuéntale qué viste o qué no entendiste. Responde corto y te deja una tarea de 5 minutos en tu herramienta.</p>
       <textarea id="coachQ" placeholder="Ej.: vi un AB en BTC 5m pero el precio siguió bajando. ¿Qué miro la próxima vez?"></textarea>
+      <div id="coachDrop" class="drop" hidden>
+        <div class="row">
+          <label class="btnlike">Adjuntar captura<input type="file" id="coachFile" multiple hidden></label>
+          <span class="note">o pégala aquí (Ctrl+V) o arrástrala. Claude la mira junto con tu pregunta.</span>
+        </div>
+        <div id="coachThumbs" class="thumbs" aria-label="Capturas adjuntas"></div>
+      </div>
       <div class="row"><button type="button" id="coachBtn">Preguntar</button><span id="coachSt" class="status"></span></div>
       <div id="coachOut" class="coach-out" hidden></div>
     </div>
@@ -570,9 +586,58 @@ $('timerBtn').addEventListener('click', () => {
 });
 
 // ---- Entrenador -----------------------------------------------------------------------------
+// ---- Capturas para el entrenador (16/11): adjuntar, pegar o arrastrar. Claude las mira con la pregunta -------------
+let coachImages = [];   // [{file, url}]
+let imgLimits = null;   // lo que esta vista acepta (sample.limits().images), o null si no puede mandar imágenes
+function renderThumbs() {
+  const box = $('coachThumbs');
+  box.replaceChildren();
+  coachImages.forEach((img, i) => {
+    const t = el('div', 'thumb');
+    const pic = document.createElement('img');
+    pic.src = img.url;
+    pic.alt = 'Captura ' + (i + 1);
+    const x = el('button', '', '×');
+    x.type = 'button';
+    x.title = 'Quitar esta captura';
+    x.setAttribute('aria-label', 'Quitar la captura ' + (i + 1));
+    x.addEventListener('click', () => { URL.revokeObjectURL(img.url); coachImages.splice(i, 1); renderThumbs(); });
+    t.append(pic, x);
+    box.append(t);
+  });
+}
+function addImages(files) {
+  if (!imgLimits) return;
+  for (const f of files) {
+    if (!f || !f.type?.startsWith('image/')) continue;
+    if (!imgLimits.mediaTypes.includes(f.type)) { $('coachSt').textContent = 'Solo imágenes JPG, PNG, WebP o GIF.'; continue; }
+    if (f.size > imgLimits.maxInputBytes) { $('coachSt').textContent = 'Esa imagen es demasiado grande.'; continue; }
+    if (coachImages.length >= imgLimits.maxCount) { $('coachSt').textContent = `Hasta ${imgLimits.maxCount} capturas por pregunta.`; break; }
+    coachImages.push({ file: f, url: URL.createObjectURL(f) });
+  }
+  renderThumbs();
+}
+$('coachFile').addEventListener('change', (e) => { addImages([...e.target.files]); e.target.value = ''; });
+document.addEventListener('paste', (e) => {
+  const files = [...(e.clipboardData?.files || [])].filter(f => f.type.startsWith('image/'));
+  if (!files.length || !imgLimits) return;
+  e.preventDefault();
+  addImages(files);
+});
+const coachPanel = $('coachDrop').closest('.panel');
+coachPanel.addEventListener('dragover', (e) => { if (!imgLimits) return; e.preventDefault(); $('coachDrop').classList.add('over'); });
+coachPanel.addEventListener('dragleave', (e) => { if (!coachPanel.contains(e.relatedTarget)) $('coachDrop').classList.remove('over'); });
+coachPanel.addEventListener('drop', (e) => {
+  if (!imgLimits) return;
+  e.preventDefault();
+  $('coachDrop').classList.remove('over');
+  addImages([...(e.dataTransfer?.files || [])]);
+});
+
 $('coachBtn').addEventListener('click', async () => {
-  const q = $('coachQ').value.trim();
-  if (!q) { $('coachSt').textContent = 'Escribe primero qué viste o qué duda tienes.'; return; }
+  const sent = coachImages.slice();
+  const q = $('coachQ').value.trim() || (sent.length ? 'Mira la captura y dime qué ves y qué debería mirar.' : '');
+  if (!q) { $('coachSt').textContent = 'Escribe primero qué viste o qué duda tienes, o adjunta una captura.'; return; }
   if (!coach) { $('coachSt').textContent = 'El entrenador no está disponible en esta vista.'; return; }
   const k = BYID[nextSkill().id], st = skillStats(k.id);
   const recent = [...sessions].sort((a, b) => b.at - a.at).slice(0, 6).map(s => `${BYID[s.skill]?.name || s.skill}${s.code ? ' (' + s.code + ')' : ''}: ${s.hits}/${s.reps}${s.note ? ' — ' + s.note : ''}`).join('\n');
@@ -585,14 +650,22 @@ Habilidad que practica ahora: "${k.name}" (${KIND[k.kind]})${codeOfDay(k, st) ? 
 ${recent || '(ninguna todavía)'}
 
 Lo que cuenta o pregunta:
-${q}`;
+${q}${sent.length ? `
+
+Adjunta ${sent.length === 1 ? 'una captura' : sent.length + ' capturas'} de su gráfico (App 1 o la suite). Míralas antes de responder: di qué ves en ellas que responda su duda, señalando dónde (qué vela, a qué precio, qué color o código), y si lo que cree ver es correcto. Puedes usar hasta 10 líneas. Si algo no se lee en la imagen (cifras muy pequeñas, recortes), dilo y pídele la captura con más zoom.` : ''}`;
   $('coachBtn').disabled = true; $('coachSt').textContent = 'Pensando…'; const out = $('coachOut'); out.hidden = false; out.textContent = '';
   try {
-    const r = await coach(prompt, { onText: ({ text }) => { out.textContent = text; } });
+    const r = await coach(prompt, { onText: ({ text }) => { out.textContent = text; }, ...(sent.length ? { images: sent.map(x => x.file) } : {}) });
     out.textContent = r.text; $('coachSt').textContent = '';
+    // Las capturas ya enviadas salen de la lista: la próxima pregunta va sin ellas, salvo que adjuntes otras
+    sent.forEach(img => URL.revokeObjectURL(img.url));
+    coachImages = coachImages.filter(img => !sent.includes(img));
+    renderThumbs();
   } catch (e) {
     if (e && e.code === 'not_granted') { $('coachSt').textContent = 'El entrenador quedó desactivado en esta vista.'; coach = null; }
     else if (e && e.code === 'rate_limited') $('coachSt').textContent = 'Demasiadas preguntas seguidas. Espera un poco.';
+    else if (e && e.code === 'image_rejected') $('coachSt').textContent = 'Una captura no sirvió (tipo, tamaño o archivo dañado). Quítala y prueba con otra.';
+    else if (e && e.code === 'images_unavailable') { $('coachSt').textContent = 'En esta vista no se pueden mandar imágenes.'; imgLimits = null; $('coachDrop').hidden = true; }
     else $('coachSt').textContent = 'No respondió. Intenta otra vez.';
     if (!out.textContent) out.hidden = true;
   } finally { $('coachBtn').disabled = false; }
@@ -602,7 +675,12 @@ ${q}`;
 render();
 (async () => {
   try { coach = await window.claude?.use?.('sample') || null; } catch { coach = null; }
-  if (!coach) { $('coachBtn').disabled = true; $('coachSt').textContent = 'Disponible al abrir la página en claude.ai.'; }
+  if (!coach) { $('coachBtn').disabled = true; $('coachSt').textContent = 'Disponible al abrir la página en claude.ai.'; return; }
+  try { imgLimits = (await coach.limits())?.images || null; } catch { imgLimits = null; }
+  if (imgLimits) {
+    $('coachFile').accept = imgLimits.mediaTypes.join(',');
+    $('coachDrop').hidden = false;
+  }
 })();
 (async () => {
   try { db = await window.claude?.use?.('db') || null; } catch { db = null; }
