@@ -31,7 +31,7 @@ export function defaultRule() {
     useTarget: true, targetR: 2, trail: false, trailBars: 5, useHorizon: true, horizon: 200, opposite: false,
     oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05,
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
-    first: [], liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3
+    first: [], liqWhat: 'zone', liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3
   };
 }
 
@@ -57,7 +57,7 @@ export function toBackendRule(rule) {
     name: (rule.name || 'Regla').trim().slice(0, 60),
     tf: RULE_TIMEFRAMES.includes(Number(rule.tf)) ? Number(rule.tf) : 15,
     ...(codes.includes('LIQ') ? {
-      liq: { variant: rule.liqVariant === 'reclaim' ? 'reclaim' : 'pierce', swingBars: number(rule.liqSwingBars, 5), reclaimBars: number(rule.liqReclaimBars, 3) }
+      liq: { what: rule.liqWhat === 'swing' ? 'swing' : 'zone', variant: rule.liqVariant === 'reclaim' ? 'reclaim' : 'pierce', swingBars: number(rule.liqSwingBars, 5), reclaimBars: number(rule.liqReclaimBars, 3) }
     } : {}),
     recipe: {
       // En secuencia: todo el contexto primero y, en la misma vela o después, al menos `min` del gatillo
@@ -107,7 +107,7 @@ export function fromBackendRule(saved) {
     mode: sequence ? 'sequence' : (recipe.mode === 'threshold' ? 'atLeast' : 'all'),
     min: sequence ? (recipe.groupMins?.[1] ?? 1) : (recipe.min || 1), window: recipe.window || 1,
     first: sequence ? (recipe.slots || []).filter(slot => !slot.group).map(slot => slot.codes?.[0]).filter(Boolean) : [],
-    liqVariant: saved.liq?.variant || 'pierce', liqSwingBars: saved.liq?.swingBars ?? 5, liqReclaimBars: saved.liq?.reclaimBars ?? 3,
+    liqWhat: saved.liq?.what || 'swing', liqVariant: saved.liq?.variant || 'pierce', liqSwingBars: saved.liq?.swingBars ?? 5, liqReclaimBars: saved.liq?.reclaimBars ?? 3,
     side: recipe.side || 'both', invert: !!saved.invert,
     swing: !!recipe.swing?.on, swingBars: recipe.swing?.bars ?? 5, momentum: !!recipe.momentum,
     confirm: !!recipe.entry?.on, confirmAtr: recipe.entry?.atr ?? 0.25, confirmBars: recipe.entry?.bars ?? 2,
@@ -128,7 +128,7 @@ export function describeRule(saved) {
   const recipe = saved.recipe;
   const codes = (recipe.slots || []).map(slot => (slot.codes || []).join('|'));
   const part = (group) => (recipe.slots || []).filter(slot => (slot.group || 0) === group).map(slot => (slot.codes || []).join('|'));
-  const liq = saved.liq ? ` (${saved.liq.variant === 'reclaim' ? 'recupera' : 'perfora'}, swing ${saved.liq.swingBars})` : '';
+  const liq = saved.liq ? ` (${saved.liq.what === 'zone' ? 'zona' : `swing ${saved.liq.swingBars}`}, ${saved.liq.variant === 'reclaim' ? 'recupera' : 'perfora'})` : '';
   const joined = (recipe.mode === 'sequence' ? `${part(0).join(' + ')} → ${part(1).join(recipe.groupMins?.[1] > 1 ? ' + ' : ' o ')}`
     : recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ')) + liq;
   const stop = { swing: `swing ${saved.stop?.bars}`, candle: 'vela del elemento', zone: 'borde de la zona', atr: `${saved.stop?.atr} ATR` }[saved.stop?.type] || '';

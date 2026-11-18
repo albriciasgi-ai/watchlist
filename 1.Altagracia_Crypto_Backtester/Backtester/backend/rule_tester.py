@@ -125,7 +125,9 @@ def clean_rule(raw):
     extra = {}
     if any("LIQ" in slot["codes"] for slot in recipe["slots"]):
         # pierce: basta pasar el swing. reclaim: además una vela cierra de vuelta, en reclaimBars velas o menos
-        extra["liq"] = {"variant": "reclaim" if liq.get("variant") == "reclaim" else "pierce",
+        # what: "swing" barre un swing dentro de una zona; "zone", la zona misma de lado a lado
+        extra["liq"] = {"what": "zone" if liq.get("what") == "zone" else "swing",
+                        "variant": "reclaim" if liq.get("variant") == "reclaim" else "pierce",
                         "swingBars": int(_num(liq.get("swingBars"), 5, 2, 20)),
                         "reclaimBars": int(_num(liq.get("reclaimBars"), 3, 0, 10))}
     return {
@@ -524,12 +526,13 @@ def _extra_events(symbol, rule, span, ctx, control=False):
     codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
     if not codes & set(EXTRA_CODES):
         return []
-    liq = rule.get("liq") or {"variant": "pierce", "swingBars": 5, "reclaimBars": 3}
-    key = (id(span["bars"]), symbol, rule["tf"], liq["variant"], liq["swingBars"], liq["reclaimBars"])
+    liq = {"what": "swing", "variant": "pierce", "swingBars": 5, "reclaimBars": 3, **(rule.get("liq") or {})}
+    key = (id(span["bars"]), symbol, rule["tf"], liq["what"], liq["variant"], liq["swingBars"], liq["reclaimBars"])
     with _lock:
         found = _extra.get(key)
     if found is None:
-        found = liq_sweeps.events(symbol, span["bars"], rule["tf"], liq["swingBars"], liq["variant"], liq["reclaimBars"], ctx["atr"])
+        found = liq_sweeps.events(symbol, span["bars"], rule["tf"], liq["swingBars"], liq["variant"], liq["reclaimBars"], ctx["atr"],
+                                  what=liq["what"])
         with _lock:
             _extra[key] = found
             while len(_extra) > 6:

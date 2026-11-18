@@ -12,7 +12,11 @@ del indicador Liquidaciones. Barrer un mínimo es alcista; barrer un máximo, ba
   barrido o hasta `reclaim_bars` después) que cierra de vuelta del lado del swing.
 - VH: vela con `VOLUME_TIMES` veces el volumen normal de su hora en los 30 días anteriores, hacia su color.
 
-La zona de cada evento va del extremo del barrido al precio del swing.
+- what="zone": en vez de un swing, se barre la zona misma. El precio estuvo entero de un lado de una zona
+  mostrada (la vela no la toca) y después una vela pasa su borde contrario: bajar a través de la zona es
+  alcista, subir a través de ella, bajista. Cada zona se barre una vez hasta que el precio vuelve a salir.
+
+La zona de cada evento va del extremo del barrido al precio del swing (o al borde pasado de la zona).
 """
 import math
 
@@ -123,8 +127,9 @@ def pick_zones(zones, price):
     return chosen
 
 
-def zones_at(symbol, t, price, sources=None):
-    """(zonas mostradas, id de la fuente) con lo conocido hasta t. (None, None) sin datos en esa fecha."""
+def zones_at(symbol, t, price, sources=None, cache=None):
+    """(zonas mostradas, id de la fuente) con lo conocido hasta t. (None, None) sin datos en esa fecha.
+    cache: dict para no rearmar el histograma mientras no lleguen celdas nuevas ni cambie el ancho de franja."""
     sources = liq_store._sources(symbol) if sources is None else sources
     found = _source_at(sources, t)
     if found is None:
@@ -135,8 +140,47 @@ def zones_at(symbol, t, price, sources=None):
         return [], info["id"]
     part = slice(first, stop)
     width = max(nice_step(price * BIN_PCT / 100), info.get("cell_width") or 0)
-    zones = build_zones(data["low"][part], data["high"][part], data["long"][part], data["short"][part], data["known"][part], width)
+    key = (info["id"], int(first), int(stop), width)
+    zones = cache.get(key) if cache is not None else None
+    if zones is None:
+        zones = build_zones(data["low"][part], data["high"][part], data["long"][part], data["short"][part], data["known"][part], width)
+        if cache is not None:
+            if len(cache) > 50:
+                cache.clear()
+            cache[key] = zones
     return pick_zones(zones, price), info["id"]
+
+
+def zone_sweeps(symbol, bars, reclaim_bars=3, sources=None):
+    """
+    Zonas barridas de lado a lado: {i, dir, price: borde pasado, r, extreme, zone, source}. La zona debe existir
+    con el precio entero de un lado (queda armada) antes de que una vela pase su borde contrario.
+    """
+    sources = liq_store._sources(symbol) if sources is None else sources
+    n = len(bars)
+    closes = [b["c"] for b in bars]
+    armed, cache, out = {}, {}, []
+    for i, bar in enumerate(bars):
+        zones, source = zones_at(symbol, bar["t"], bar["o"], sources, cache)
+        if not zones:
+            continue
+        if len(armed) > 5000:
+            armed.clear()
+        for zone in zones:
+            for d in (1, -1):
+                key = (zone["low"], zone["high"], d)
+                level = zone["low"] if d > 0 else zone["high"]
+                beyond = bar["l"] < level if d > 0 else bar["h"] > level
+                clear = bar["l"] > zone["high"] if d > 0 else bar["h"] < zone["low"]
+                if armed.get(key) and beyond:
+                    armed[key] = False
+                    r = next((x for x in range(i, min(n, i + reclaim_bars + 1)) if (closes[x] - level) * d > 0), None)
+                    span = bars[i:(r if r is not None else i) + 1]
+                    out.append({"i": i, "dir": d, "price": level, "r": r, "zone": zone, "source": source,
+                                "extreme": min(b["l"] for b in span) if d > 0 else max(b["h"] for b in span)})
+                elif clear:
+                    armed[key] = True
+    return out
 
 
 def _is_pivot(window, value, sign):
@@ -194,8 +238,9 @@ def _volume_events(bars, tf_ms):
     return out
 
 
-def events(symbol, bars, tf, swing_bars=5, variant="pierce", reclaim_bars=3, atr=None, sources=None):
-    """Eventos LIQ, SWP y VH de las velas, con la forma de los de of_elements más `info` para el registro."""
+def events(symbol, bars, tf, swing_bars=5, variant="pierce", reclaim_bars=3, atr=None, sources=None, what="swing"):
+    """Eventos LIQ, SWP y VH de las velas, con la forma de los de of_elements más `info` para el registro.
+    what: "swing" (un swing dentro de una zona) o "zone" (la zona misma, de lado a lado). SWP siempre es de swings."""
     tf_ms = int(tf) * 60000
     out = _volume_events(bars, tf_ms)
     sources = liq_store._sources(symbol) if sources is None else sources
@@ -236,6 +281,23 @@ def events(symbol, bars, tf, swing_bars=5, variant="pierce", reclaim_bars=3, atr
                             zoneAgeDays=round((bar["t"] - best_zone["last"]) / DAY_MS, 2))
             out.append({"code": code, "dir": d, "t": bar["t"], "known": bars[last]["t"] + tf_ms,
                         "lo": min(extreme, best["price"]), "hi": max(extreme, best["price"]), "info": info})
+    if what == "zone":
+        out = [e for e in out if e["code"] != "LIQ"]
+        for s in zone_sweeps(symbol, bars, reclaim_bars, sources):
+            if variant == "reclaim" and s["r"] is None:
+                continue
+            i, d, zone = s["i"], s["dir"], s["zone"]
+            last = s["r"] if variant == "reclaim" else i
+            extreme = s["extreme"] if variant == "reclaim" else (bars[i]["l"] if d > 0 else bars[i]["h"])
+            unit = atr[i] if atr is not None and atr[i] > 0 else None
+            info = {"swing": s["price"], "swingAgeBars": None, "extreme": extreme, "source": s["source"], "what": "zone",
+                    "depthAtr": round(abs(s["price"] - extreme) / unit, 3) if unit else None, "swept": 1,
+                    "zoneLow": zone["low"], "zoneHigh": zone["high"],
+                    "usd": round(zone["total"]), "longUsd": round(zone["long"]), "shortUsd": round(zone["short"]),
+                    "zoneSide": zone["side"], "share": round(zone["share"], 3),
+                    "zoneAgeDays": round((bars[i]["t"] - zone["last"]) / DAY_MS, 2)}
+            out.append({"code": "LIQ", "dir": d, "t": bars[i]["t"], "known": bars[last]["t"] + tf_ms,
+                        "lo": min(extreme, s["price"]), "hi": max(extreme, s["price"]), "info": info})
     out.sort(key=lambda e: e["known"])
     return out
 

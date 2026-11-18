@@ -113,3 +113,29 @@ def test_la_regla_en_secuencia_entra_con_el_gatillo_tras_el_barrido(monkeypatch)
     same = rt.run("X", rule, {"bars": bars, "events": [ev(40)]}, PHASE, None, base=False)
     assert [t["signal"] for t in same["trades"]] == [bars[40]["t"]]
     assert "liq" not in rt.clean_rule({**raw, "recipe": {"slots": [{"codes": ["EX"]}]}})
+
+
+def test_la_zona_se_barre_de_lado_a_lado_y_solo_si_existia_con_el_precio_fuera():
+    bars = flat()  # El precio entre 99.5 y 100.5: entero encima de una zona en 98
+    bars[40]["l"] = 97.5          # Pasa el borde de abajo de la zona (97.9 a 98.0)
+    bars[41]["l"] = 97.4          # La misma zona no se barre dos veces sin que el precio salga
+    found = [e for e in ls.events("X", bars, TF, 5, "pierce", 3, sources=source([(T0 - DAY, 97.95, 5e6)]), what="zone") if e["code"] == "LIQ"]
+    assert [(e["t"], e["dir"]) for e in found] == [(bars[40]["t"], 1)]
+    info = found[0]["info"]
+    assert info["what"] == "zone" and info["zoneLow"] < 97.95 < info["zoneHigh"] and found[0]["lo"] == 97.5 and found[0]["hi"] == info["zoneLow"]
+    # Una zona que se conoce cuando el precio ya está dentro no queda armada
+    late = [dict(b) for b in flat()]
+    late[39].update(l=97.95)
+    late[40]["l"] = 97.5
+    born = late[39]["t"]
+    none = [e for e in ls.events("X", late, TF, 5, "pierce", 3, sources=source([(born, 97.95, 5e6), (T0 - DAY, 150.0, 1e3)]), what="zone") if e["code"] == "LIQ"]
+    assert none == []
+
+
+def test_subir_a_traves_de_una_zona_es_bajista_y_recuperar_espera_el_cierre():
+    bars = flat()
+    bars[40].update(h=102.5, c=102.3)           # Pasa la zona de 102 y cierra encima
+    bars[41].update(o=102.3, h=102.6, l=101.0, c=101.5)  # Cierra de vuelta debajo
+    src = source([(T0 - DAY, 102.05, 5e6)])
+    liq = [e for e in ls.events("X", bars, TF, 5, "reclaim", 3, sources=src, what="zone") if e["code"] == "LIQ"][0]
+    assert liq["dir"] == -1 and liq["t"] == bars[40]["t"] and liq["known"] == bars[42]["t"] and liq["hi"] == 102.6

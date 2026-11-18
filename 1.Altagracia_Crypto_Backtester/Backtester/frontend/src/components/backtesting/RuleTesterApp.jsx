@@ -453,16 +453,24 @@ const RuleTesterApp = () => {
         {rule.codes.includes('LIQ') && (
           <>
             <div className="rt-row">
-              <span>Barrido:</span>
+              <span>Barrido de</span>
+              <select value={rule.liqWhat} onChange={(e) => patch({ liqWhat: e.target.value })}
+                title="La zona: el precio viene de un lado de la franja de liquidaciones y la pasa entera. Un swing: el precio pasa un máximo o mínimo anterior que está dentro de una franja">
+                <option value="zone">la zona de liquidaciones, de lado a lado</option>
+                <option value="swing">un swing dentro de una zona</option>
+              </select>
+            </div>
+            <div className="rt-row">
               <select value={rule.liqVariant} onChange={(e) => patch({ liqVariant: e.target.value })}>
-                <option value="pierce">Basta pasar el swing</option>
-                <option value="reclaim">Pasa el swing y cierra de vuelta</option>
+                <option value="pierce">Basta pasarla</option>
+                <option value="reclaim">La pasa y cierra de vuelta</option>
               </select>
               {rule.liqVariant === 'reclaim' && <><span>en</span><Num value={rule.liqReclaimBars} min={0} max={10} onChange={(liqReclaimBars) => patch({ liqReclaimBars })} /><span>velas</span></>}
-              <span>· swing de</span><Num value={rule.liqSwingBars} min={2} max={20} onChange={(liqSwingBars) => patch({ liqSwingBars })} /><span>velas por lado</span>
+              {rule.liqWhat === 'swing' && <><span>· swing de</span><Num value={rule.liqSwingBars} min={2} max={20} onChange={(liqSwingBars) => patch({ liqSwingBars })} /><span>velas por lado</span></>}
             </div>
             <div className="rt-note">
-              Barrer un mínimo con liquidaciones es alcista; un máximo, bajista. {liqFrom ? `Hay liquidaciones desde el ${liqFrom}: antes no sale ningún barrido. ` : 'Este símbolo no tiene liquidaciones descargadas. '}
+              {rule.liqWhat === 'swing' ? 'Barrer un mínimo con liquidaciones es alcista; un máximo, bajista. ' : 'Bajar a través de una zona es alcista; subir a través de ella, bajista. La zona debe existir con el precio fuera de ella antes del barrido. '}
+              El gráfico dibuja las zonas del final de la fase, no las que había en cada trade: las de ese momento están en el detalle del trade. {liqFrom ? `Hay liquidaciones desde el ${liqFrom}: antes no sale ningún barrido. ` : 'Este símbolo no tiene liquidaciones descargadas. '}
               Para el stop detrás del barrido usa "Extremo de la vela del elemento".
             </div>
           </>
@@ -704,7 +712,7 @@ const RuleTesterApp = () => {
             Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
-            {selectedTrade.liq && <><br />Barrido: swing en {selectedTrade.liq.swing} de hace {selectedTrade.liq.swingAgeBars} velas, pasado hasta {selectedTrade.liq.extreme}{selectedTrade.liq.depthAtr != null && ` (${selectedTrade.liq.depthAtr} ATR)`} · zona de {Math.round((selectedTrade.liq.usd || 0) / 1000).toLocaleString('es-CO')}K USD ({selectedTrade.liq.zoneSide === 'long' ? 'largos' : 'cortos'} liquidados), última liquidación {selectedTrade.liq.zoneAgeDays} días antes · {selectedTrade.liq.source}</>}
+            {selectedTrade.liq && <><br />Barrido: {selectedTrade.liq.what === 'zone' ? `zona ${selectedTrade.liq.zoneLow}–${selectedTrade.liq.zoneHigh}` : `swing en ${selectedTrade.liq.swing} de hace ${selectedTrade.liq.swingAgeBars} velas`}, pasado hasta {selectedTrade.liq.extreme}{selectedTrade.liq.depthAtr != null && ` (${selectedTrade.liq.depthAtr} ATR)`} · zona de {Math.round((selectedTrade.liq.usd || 0) / 1000).toLocaleString('es-CO')}K USD ({selectedTrade.liq.zoneSide === 'long' ? 'largos' : 'cortos'} liquidados), última liquidación {selectedTrade.liq.zoneAgeDays} días antes · {selectedTrade.liq.source}</>}
           </div>
           {detail?.trade?.n === selectedTrade.n && detail.measures.length > 0 && (
             <details style={{ marginTop: 4 }}>
