@@ -204,6 +204,51 @@ export function orderAhead(trade, { reached }) {
   return !!reached && !!end && end > reached;
 }
 
+const REAL_DATE = { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' };
+
+/**
+ * Una orden del registro en el gráfico: a dónde ir y qué dibujar, o por qué no se puede.
+ * El registro guarda órdenes de todas las sesiones, y el gráfico solo muestra hasta la hora simulada:
+ * una orden de una fecha posterior no se puede dibujar sin mostrar velas que esta corrida no ha vivido.
+ * `now` es la hora simulada a la vista. Devuelve { problem } o { time, price, timeframe, line, box }.
+ */
+export function registryChartView(trade, { now, symbol, blindActive, sessionId }) {
+  if (trade.symbol && symbol && trade.symbol !== symbol) return { problem: `Esta orden es de ${trade.symbol}: abre ese símbolo para verla.` };
+  if (blindActive && trade.session !== sessionId) {
+    return { problem: 'Con fecha oculta no se muestran órdenes de otras sesiones: ubicarlas en el gráfico revelaría la época.' };
+  }
+  const start = trade.fill_time ?? trade.time;
+  const end = trade.exit_time ?? trade.cancel_time ?? null;
+  if (!Number.isFinite(start)) return { problem: 'La orden no guardó su hora.' };
+  const date = (ms) => (blindActive ? maskDate(ms) : new Date(ms).toLocaleString('es-CO', REAL_DATE));
+  if (!Number.isFinite(now)) return { problem: 'Inicia la simulación para ver la orden en el gráfico.' };
+  if (start > now) {
+    return {
+      problem: `Esta orden es del ${date(start)} y la simulación va en ${date(now)}. El gráfico solo muestra hasta la hora simulada: `
+        + `para verla dibujada, inicia la simulación en una fecha posterior${end ? ` al ${date(end)}` : ''}, o avanza hasta ahí.`
+    };
+  }
+  const filled = trade.fill_time != null;
+  const entry = Number(trade.fill_price ?? trade.entry);
+  const view = {
+    time: start, price: Number.isFinite(entry) ? entry : null, timeframe: trade.timeframe,
+    line: filled ? { entryTime: start, exitTime: end !== null && end <= now ? end : null, tradeNumber: trade.trade_number ?? trade.order_number ?? '' } : null,
+    box: null,
+    partial: end !== null && end > now // Termina después de la hora simulada: se dibuja solo hasta ahí
+  };
+  const stop = Number(trade.stop), target = Number(trade.target);
+  // La caja de una orden de esta sesión ya está entre los dibujos del gráfico
+  if (filled && Number.isFinite(entry) && trade.session !== sessionId && (trade.stop != null || trade.target != null)) {
+    view.box = {
+      side: trade.side === 'short' ? 'short' : 'long', entry,
+      stop: trade.stop != null && Number.isFinite(stop) ? stop : null,
+      target: trade.target != null && Number.isFinite(target) ? target : null,
+      start, end: end !== null && end <= now ? end : null
+    };
+  }
+  return view;
+}
+
 /** Qué muestra la imagen: su marco, su hora y si salió después de lo que debía mostrar */
 export function imageCaption(trade, kind) {
   const image = trade.images?.[kind];

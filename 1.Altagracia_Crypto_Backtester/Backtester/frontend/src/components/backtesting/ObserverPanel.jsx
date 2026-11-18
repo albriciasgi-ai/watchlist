@@ -40,8 +40,9 @@ const Comparison = ({ comparison }) => {
   );
 };
 
-const OrderRow = ({ trade, catalog, viewer, expanded, onToggle, onGoTo }) => {
+const OrderRow = ({ trade, catalog, viewer, expanded, onToggle, onGoTo, onShowOnChart }) => {
   const [revealed, setRevealed] = useState(false);
+  const [chartNote, setChartNote] = useState(null);
   const ended = trade.status === 'closed' || trade.status === 'cancelled';
   const hidden = !revealed && orderAhead(trade, viewer());
   const reasons = trade.marks?.reasons || [];
@@ -72,6 +73,19 @@ const OrderRow = ({ trade, catalog, viewer, expanded, onToggle, onGoTo }) => {
           </div>
           {reasons.length > 0 && <div className="observer-subnote">Motivos: {reasons.map(reasonLabel).join(', ')}</div>}
           {trade.notes && <div className="observer-subnote">“{trade.notes}”</div>}
+          {onShowOnChart && (
+            <div style={{ margin: '4px 0' }}>
+              <button
+                type="button"
+                className="btn-quick"
+                title="Lleva el gráfico a esta orden y dibuja su entrada, stop y objetivo. Solo si la simulación ya pasó por su fecha"
+                onClick={() => setChartNote(onShowOnChart(trade) || 'Dibujada en el gráfico.')}
+              >
+                Ver en el gráfico
+              </button>
+              {chartNote && <div className="observer-note">{chartNote}</div>}
+            </div>
+          )}
           {ended
             ? (
               <>
@@ -88,7 +102,7 @@ const OrderRow = ({ trade, catalog, viewer, expanded, onToggle, onGoTo }) => {
 };
 
 /** Órdenes registradas y, cuando terminan, en qué coincidieron con la regla */
-const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate, sessionManager, viewer, onGoToItem, onPopOut = null }) => {
+const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate, sessionManager, viewer, onGoToItem, onShowOnChart = null, onPopOut = null }) => {
   const [orders, setOrders] = useState(null);
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = useState(null);
@@ -164,6 +178,7 @@ const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate, sessionMan
           catalog={catalog}
           viewer={viewer}
           onGoTo={onGoToItem}
+          onShowOnChart={onShowOnChart}
           expanded={expanded === trade.id}
           onToggle={() => setExpanded(current => (current === trade.id ? null : trade.id))}
         />

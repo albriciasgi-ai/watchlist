@@ -39,7 +39,7 @@ import SessionSaveModal from './SessionSaveModal';
 import ObserverPanel from './ObserverPanel';
 import PopupWindow, { openPopup } from './PopupWindow';
 import { HEARTBEAT_MS, SECONDARY_GONE_MS, openReplayChannel, secondaryChartUrl, stepTimeframes } from './replayChannel.js';
-import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordImage, recordOrder } from './observer.js';
+import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordImage, recordOrder, registryChartView } from './observer.js';
 import { blindAnchor, blindScale, isBlind, maskDate, priceText, pricesHidden, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
 import { boxesFollowOrders, latestFreeBox } from './orderPlan.js';
@@ -1481,6 +1481,31 @@ const BacktestingApp = () => {
     focusPending();
   }, [activeTimeframe]);
 
+  // "Ver en el gráfico" de una orden del registro del Observador, que puede ser de otra sesión: el gráfico
+  // va a su entrada y dibuja su línea y su caja. Nunca mueve la hora simulada ni muestra más allá de ella
+  const registryViewRef = useRef(null);
+  const showRegistryTrade = useCallback((trade) => {
+    const now = timeControllerRef.current?.currentTime;
+    const view = registryChartView(trade, { now, symbol, blindActive: isBlind(), sessionId: sessionIdRef.current });
+    if (view.problem) return view.problem;
+    registryViewRef.current = view;
+    const problem = goToItem({ time: view.time, price: view.price, timeframe: view.timeframe });
+    if (problem) return problem;
+    Object.values(miniChartRefs.current).forEach(chart => chart?.redraw?.());
+    return view.partial ? 'Dibujada hasta la hora simulada: la orden termina después.' : null;
+  }, [goToItem, symbol]);
+  // Si se retrocede antes de la orden, deja de dibujarse
+  const registryLines = () => {
+    const view = registryViewRef.current;
+    const now = timeControllerRef.current?.currentTime;
+    return view?.line && Number.isFinite(now) && view.time <= now ? [view.line] : [];
+  };
+  const getRegistryBoxes = useCallback(() => {
+    const view = registryViewRef.current;
+    const now = timeControllerRef.current?.currentTime;
+    return view?.box && Number.isFinite(now) && view.time <= now ? [view.box] : [];
+  }, []);
+
   const revealDate = useCallback(() => {
     setBlindAnchor(null);
     setBlindScale(null);
@@ -2488,6 +2513,7 @@ const BacktestingApp = () => {
           blindActive={blindActive}
           onRevealDate={revealDate}
           onGoToItem={goToItem}
+          onShowOnChart={showRegistryTrade}
           onPopOut={popOutObserver}
         />
       )}
@@ -3020,7 +3046,8 @@ const BacktestingApp = () => {
                   rejectionPatternConfig={tabStates[tf]?.rejectionPatternConfig}
                   currentTool={currentTool}
                   onToolChange={setCurrentTool}
-                  getTradeBoundaries={() => tradeBoundaries(orderManagerRef.current?.orders)}
+                  getTradeBoundaries={() => [...tradeBoundaries(orderManagerRef.current?.orders), ...registryLines()]}
+                  getTradeBoxes={getRegistryBoxes}
                   onRequestPause={handlePause}
                   onRequestTimeChange={(newTime) => {
                     // 🎯 FIX: Permitir navegación a cualquier timestamp del playback
@@ -3131,6 +3158,7 @@ const BacktestingApp = () => {
               blindActive={blindActive}
               onRevealDate={revealDate}
               onGoToItem={(item) => { window.focus(); goToItem(item); }}
+              onShowOnChart={(trade) => { const problem = showRegistryTrade(trade); if (!problem) window.focus(); return problem; }}
             />
           </div>
         </PopupWindow>

@@ -1089,6 +1089,15 @@ GET /api/observer/report                                Informe de todo lo regis
 - `record_order()` nunca devuelve la lectura. `public_trade()` quita `reading` siempre y agrega `comparison` solo en órdenes cerradas o canceladas
 - Si un cambio necesita mostrar algo antes, debe pasar por `public_trade()`. La prueba `test_la_lectura_no_sale_mientras_la_orden_sigue_viva` lo vigila
 
+### Ver una orden del registro en el gráfico (17/11)
+
+El panel lista las órdenes de todas las sesiones (`journal.jsonl`), pero el gráfico solo dibujaba las de la sesión abierta, y nunca pasa de la hora simulada. Al abrir una orden de otra sesión se veía su información y nada en el gráfico.
+
+- Cada orden tiene "Ver en el gráfico" (`registryChartView()` en `observer.js`, `showRegistryTrade` en `BacktestingApp`): cambia a su marco, lleva la vista a su entrada con `focusOn()` y dibuja su línea (`getTradeBoundaries`) y su caja de entrada, stop y objetivo (`getTradeBoxes`). No mueve la hora simulada.
+- Solo si la simulación ya pasó por la entrada. Si no, el botón dice la fecha de la orden, la hora simulada y desde qué fecha hay que iniciar para verla. Si la orden termina después de la hora simulada, la caja llega hasta ahí.
+- Con fecha oculta no muestra órdenes de otras sesiones. Una orden de otro símbolo avisa cuál abrir. La caja de una orden de la sesión abierta no se repite: ya está entre los dibujos.
+- Se dibuja una orden a la vez, y deja de dibujarse si se retrocede antes de ella. Prueba en `observer.test.mjs`. No se probó en pantalla.
+
 ### Retrocesos y fecha oculta
 
 - `maxSimTimeRef` guarda hasta dónde llegó la simulación. Una orden anterior a ese punto queda con `rewound: true` y el informe la excluye salvo que se pida

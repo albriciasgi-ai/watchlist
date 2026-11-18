@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {
   describeComparison, emptyMarks, formatR, imageBlock, imageCaption, imageSlots, orderAhead, rangesInUse, recordCancel, recordClose, recordFill,
-  recordImage, recordOrder, screenshotUrl, simulatedDate, withSessionImages, yearsToShow
+  recordImage, recordOrder, registryChartView, screenshotUrl, simulatedDate, withSessionImages, yearsToShow
 } from '../src/components/backtesting/observer.js';
 import { blindAnchor, isBlind, maskDate, setBlindAnchor } from '../src/components/backtesting/blindClock.js';
 
@@ -390,6 +390,33 @@ test('imagen: viaja con la posición de cada nivel o marca de la orden', async (
   sent = [];
   await recordImage({ observerId: 'x1' }, 'entry', { path: 's/a.png', sim_time: 1, frame: '15m', markers: [{ id: 'a', x: 0.5, y: 0.25 }] });
   assert.deepEqual(sent[0].body.markers, [{ id: 'a', x: 0.5, y: 0.25 }]);
+});
+
+test('una orden del registro se dibuja solo si la simulación ya pasó por su fecha', () => {
+  const trade = { symbol: 'BTCUSDT', session: 'vieja', side: 'short', timeframe: '1h', time: START, fill_time: START + 600000, fill_price: 100,
+    entry: 101, stop: 103, target: 95, exit_time: START + DAY, trade_number: 7 };
+  const at = (now, extra = {}) => registryChartView({ ...trade, ...extra }, { now, symbol: 'BTCUSDT', blindActive: false, sessionId: 'actual' });
+
+  const before = at(START - DAY);
+  assert.match(before.problem, /la simulación va en/);
+  assert.match(before.problem, /posterior al 04\/06\/26/, 'dice desde qué fecha se puede ver');
+
+  const after = at(START + 2 * DAY);
+  assert.equal(after.time, START + 600000);
+  assert.equal(after.timeframe, '1h');
+  assert.deepEqual(after.line, { entryTime: START + 600000, exitTime: START + DAY, tradeNumber: 7 });
+  assert.deepEqual(after.box, { side: 'short', entry: 100, stop: 103, target: 95, start: START + 600000, end: START + DAY });
+
+  const during = at(START + DAY / 2);
+  assert.equal(during.partial, true);
+  assert.equal(during.box.end, null, 'la caja llega hasta la hora simulada, no hasta una salida que aún no ocurre');
+  assert.equal(during.line.exitTime, null);
+
+  assert.match(at(START + 2 * DAY, { symbol: 'ETHUSDT' }).problem, /ETHUSDT/);
+  assert.equal(at(START + 2 * DAY, { session: 'actual' }).box, null, 'la caja de esta sesión ya está entre los dibujos');
+  assert.equal(at(START + 2 * DAY, { fill_time: null, fill_price: null, exit_time: null, cancel_time: START + 60000 }).line, null, 'una cancelada no tiene línea');
+  const blind = registryChartView(trade, { now: START + 2 * DAY, symbol: 'BTCUSDT', blindActive: true, sessionId: 'actual' });
+  assert.match(blind.problem, /fecha oculta/);
 });
 
 let failed = 0;
