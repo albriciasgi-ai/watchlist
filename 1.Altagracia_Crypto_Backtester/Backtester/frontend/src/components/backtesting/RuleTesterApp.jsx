@@ -9,7 +9,7 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import { lastClosedIndex } from './replayClock';
 import {
-  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
+  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
   fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
@@ -560,6 +560,35 @@ const RuleTesterApp = () => {
             <div className="rt-note">Son los patrones del indicador Rejection Patterns, con su misma regla. El lado lo da el patrón: una vela tiene a lo sumo uno. Para el stop detrás de la vela usa "Extremo de la vela del elemento".</div>
           </>
         )}
+        {usesResponse(rule) && (
+          <>
+            <div className="rt-row">
+              <span title="El tramo gira cuando un cierre se aleja tantos ATR de su extremo: la misma regla del indicador Volumen de Respuesta">Tramo: gira a</span>
+              <Num value={rule.rvLeg} min={0.5} max={10} step={0.5} onChange={(rvLeg) => patch({ rvLeg })} /><span>ATR</span>
+            </div>
+            {rule.codes.includes('RF') && (
+              <div className="rt-row">
+                <span title="Volumen de la vela contra la mediana de su misma hora en los 30 días anteriores">Flecha (RF): volumen ≥</span>
+                <Num value={rule.rvSpike} min={1.2} max={20} step={0.5} onChange={(rvSpike) => patch({ rvSpike })} /><span>veces su hora ·</span>
+                <select value={rule.rvArrow} onChange={(e) => patch({ rvArrow: e.target.value })}>
+                  <option value="with">vela a favor del tramo</option>
+                  <option value="against">vela contra el tramo</option>
+                  <option value="any">cualquier vela</option>
+                </select>
+              </div>
+            )}
+            {rule.codes.includes('RB') && (
+              <div className="rt-row">
+                <span title="El rombo sale cuando la respuesta iguala a la tendencia después de que esta dominó">Rombo (RB): se opera</span>
+                <select value={rule.rvRombo} onChange={(e) => patch({ rvRombo: e.target.value })}>
+                  <option value="turn">contra el tramo (giro)</option>
+                  <option value="follow">a favor del tramo (sigue)</option>
+                </select>
+              </div>
+            )}
+            <div className="rt-note">Son las marcas del indicador Volumen de Respuesta, con su regla de fábrica. La flecha se opera hacia el color de su vela. En el estudio del 18/11 se usó stop de 2 ATR y objetivo 2R en 4 horas.</div>
+          </>
+        )}
         {[['vwap', 'VWAP móvil de', rule.vwapMode, rule.vwapPeriod, rule.vwapSlope], ['ema', 'EMA de', rule.emaMode, rule.emaPeriod, rule.emaSlope]].map(([kind, label, mode, period, slope]) => (
           <div className="rt-row" key={kind}>
             <span title="Filtro sobre la vela que da a conocer la señal, a favor del trade. Vale para cualquier regla">{label}</span>
@@ -869,6 +898,7 @@ const RuleTesterApp = () => {
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
             {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
+            {selectedTrade.rv && <><br />{selectedTrade.rv.code === 'RF' ? `Flecha: ${selectedTrade.rv.times} veces el volumen de su hora` : `Rombo: extremo del tramo ${selectedTrade.rv.extreme}`} · tramo {selectedTrade.rv.leg > 0 ? 'alcista' : 'bajista'}</>}
             {selectedTrade.pat && <><br />Patrón: {selectedTrade.pat.type}{selectedTrade.pat.volumeZ != null && ` · volumen z ${selectedTrade.pat.volumeZ}`}</>}
             {selectedTrade.lines?.length > 0 && <><br />{selectedTrade.lines.map(l => `${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period} en ${l.value}`).join(' · ')}</>}
             {selectedTrade.cc && <><br />Cambio de carácter: swing roto en {selectedTrade.cc.level}, extremo de la tendencia en {selectedTrade.cc.extreme}, estructura en velas de {selectedTrade.cc.structTf >= 60 ? `${selectedTrade.cc.structTf / 60} h` : `${selectedTrade.cc.structTf} m`}</>}

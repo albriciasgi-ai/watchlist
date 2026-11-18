@@ -31,6 +31,7 @@ import observer
 import of_elements as oe
 import of_setups as os_
 import patterns
+import response_volume
 import candle_patterns
 import structure
 import vp_sessions
@@ -58,7 +59,8 @@ PATTERN_CODES = {"HM": "Martillo (alcista) o estrella fugaz (bajista)", "EN": "E
 PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", "ENGULFING_BEARISH": "EN",
               "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
 LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES)  # Elementos del probador que no son de of_elements
+RV_CODES = tuple(response_volume.CODES)  # Flecha y rombo del Volumen de Respuesta
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -85,7 +87,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ")
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB")
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -262,6 +264,13 @@ def clean_rule(raw):
         extra["pat"] = {"trend": pat.get("trend") is not False, "trendBars": int(_num(pat.get("trendBars"), 5, 1, 50)),
                         "minZ": None if pat.get("minZ") in (None, "") else _num(pat.get("minZ"), 1.0, -3.0, 20.0),
                         "wick": _num(pat.get("wick"), 2.0, 0.5, 10.0)}
+    if any(c in RV_CODES for slot in recipe["slots"] for c in slot["codes"]):
+        rv = raw.get("rv") or {}
+        # leg: ATR con que gira el tramo. spike: veces el volumen normal de su hora. arrow: la flecha va a favor del
+        # tramo, en contra o cualquiera. rombo: se opera contra el tramo (turn) o a favor (follow)
+        extra["rv"] = {"leg": _num(rv.get("leg"), 2.0, 0.5, 10.0), "spike": _num(rv.get("spike"), 2.0, 1.2, 20.0),
+                       "arrow": rv.get("arrow") if rv.get("arrow") in response_volume.ARROWS else "with",
+                       "rombo": rv.get("rombo") if rv.get("rombo") in response_volume.ROMBOS else "turn"}
     lines = []
     for item in (raw.get("lines") or [])[:2]:
         if item.get("type") in LINE_TYPES and item.get("mode") in ("side", "touch"):
@@ -821,6 +830,25 @@ def _pattern_events(rule, span):
     return found
 
 
+def _rv_events(rule, span):
+    """Flecha y rombo del Volumen de Respuesta (response_volume.py) sobre las velas de la fase."""
+    rv = rule.get("rv")
+    bars = span["bars"]
+    if not rv or not bars:
+        return []
+    key = (id(bars), rule["tf"], "rv", rv["leg"], rv["spike"], rv["arrow"], rv["rombo"])
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = response_volume.events(bars, rule["tf"], rv["leg"], rv["spike"], rv["arrow"], rv["rombo"])
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
+    return [e for e in found if e["code"] in codes]
+
+
 def _cc_events(rule, span):
     """Cambio de carácter (structure.py) sobre las velas de la fase."""
     cc = rule.get("cc")
@@ -841,7 +869,7 @@ def _cc_events(rule, span):
 
 def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
-    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span)
+    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span) + _rv_events(rule, span)
 
 
 def _liq_vp_events(symbol, rule, span, ctx, control=False, vp_shift=None):
@@ -920,6 +948,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     vp_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in VP_CODES}
     cc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "CC"}
     pat_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in PATTERN_CODES}
+    rv_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in RV_CODES}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -1004,6 +1033,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         shape = next((pat_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in pat_info), None)
         if shape is not None:
             trade["pat"] = shape  # Qué patrón fue y el z-score del volumen de su vela
+        seen = next((rv_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in rv_info), None)
+        if seen is not None:
+            trade["rv"] = seen  # Flecha: veces el volumen de su hora y lado del tramo. Rombo: tramo y su extremo
         if rule.get("lines"):
             trade["lines"] = [{"type": item["type"], "period": item["period"], "value": round(float(_line(ctx, item["type"], item["period"])[k]), 8)}
                               for item in rule["lines"]]

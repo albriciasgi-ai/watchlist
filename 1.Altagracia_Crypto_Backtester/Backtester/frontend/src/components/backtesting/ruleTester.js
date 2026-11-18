@@ -41,7 +41,9 @@ export function defaultRule() {
     // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
     // Filtros de línea: off, side (cierra del lado a favor) o touch (además la mecha la toca)
-    vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, emaMode: 'off', emaPeriod: 14, emaSlope: false
+    vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, emaMode: 'off', emaPeriod: 14, emaSlope: false,
+    // Volumen de Respuesta: ATR con que gira el tramo, veces el volumen de su hora, flecha a favor o en contra del tramo, y rombo como giro o para seguir
+    rvLeg: 2, rvSpike: 2, rvArrow: 'with', rvRombo: 'turn'
   };
 }
 
@@ -53,6 +55,8 @@ export const VP_CODES = ['VR', 'VF', 'VX', 'VE'];
 export const VP_SHAPES = [['D', 'D · volumen en el medio'], ['P', 'P · volumen arriba, cola abajo'], ['b', 'b · volumen abajo, cola arriba'], ['B', 'B · dos distribuciones']];
 export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24, '1 día'], [168, '1 semana']];
 export const PATTERN_CODES = ['HM', 'EN', 'DJ'];
+export const RV_CODES = ['RF', 'RB'];
+export const usesResponse = (rule) => (rule.codes || []).some(code => RV_CODES.includes(code));
 export const usesPatterns = (rule) => (rule.codes || []).some(code => PATTERN_CODES.includes(code));
 export const CC_STRUCT_TFS = [[0, 'el marco de la regla'], [60, '1 hora'], [240, '4 horas'], [1440, '1 día']];
 export const CC_OFFSETS = [[0, '00:00 UTC'], [810, '13:30 UTC (apertura de Nueva York, verano)'], [870, '14:30 UTC (apertura de Nueva York, invierno)']];
@@ -87,6 +91,9 @@ export function toBackendRule(rule) {
     } : {}),
     ...(usesPatterns(rule) ? {
       pat: { trend: rule.patTrend !== false, trendBars: number(rule.patTrendBars, 5), minZ: rule.patVolume ? number(rule.patMinZ, 1) : null, wick: number(rule.patWick, 2) }
+    } : {}),
+    ...(usesResponse(rule) ? {
+      rv: { leg: number(rule.rvLeg, 2), spike: number(rule.rvSpike, 2), arrow: ['with', 'against', 'any'].includes(rule.rvArrow) ? rule.rvArrow : 'with', rombo: rule.rvRombo === 'follow' ? 'follow' : 'turn' }
     } : {}),
     ...(rule.vwapMode !== 'off' || rule.emaMode !== 'off' ? {
       lines: [
@@ -158,6 +165,7 @@ export function fromBackendRule(saved) {
     useTarget: saved.exit?.targetR != null || !!saved.targetAt, targetR: saved.exit?.targetR ?? 2, targetAt: saved.targetAt || 'r',
     ccTf: saved.cc && saved.cc.tf !== saved.tf ? saved.cc.tf : 0, ccOffset: saved.cc?.offset ?? 0, ccSwing: saved.cc?.swing ?? 3, ccLegs: saved.cc?.legs ?? 2,
     patTrend: saved.pat ? saved.pat.trend !== false : true, patTrendBars: saved.pat?.trendBars ?? 5,
+    rvLeg: saved.rv?.leg ?? 2, rvSpike: saved.rv?.spike ?? 2, rvArrow: saved.rv?.arrow || 'with', rvRombo: saved.rv?.rombo || 'turn',
     patVolume: saved.pat?.minZ != null, patMinZ: saved.pat?.minZ ?? 1, patWick: saved.pat?.wick ?? 2,
     vwapMode: (saved.lines || []).find(l => l.type === 'vwap')?.mode || 'off', vwapPeriod: (saved.lines || []).find(l => l.type === 'vwap')?.period ?? 200,
     vwapSlope: !!(saved.lines || []).find(l => l.type === 'vwap')?.slope,
@@ -193,6 +201,7 @@ export function describeRule(saved) {
     + `${saved.vaGap > 0 ? ` · hueco ≥ ${saved.vaGap} ATR` : ''}`
     + `${saved.cc ? ` · estructura ${saved.cc.tf >= 60 ? `${saved.cc.tf / 60} h` : `${saved.cc.tf} m`}, swing ${saved.cc.swing}` : ''}`
     + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`
+    + `${saved.rv ? ` · tramo ${saved.rv.leg} ATR${codes.includes('RF') ? `, flecha ≥ ${saved.rv.spike}x ${{ with: 'a favor del tramo', against: 'contra el tramo', any: 'de cualquier lado' }[saved.rv.arrow]}` : ''}${codes.includes('RB') ? `, rombo ${saved.rv.rombo === 'follow' ? 'siguiendo el tramo' : 'como giro'}` : ''}` : ''}`
     + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
