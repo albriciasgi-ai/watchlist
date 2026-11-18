@@ -29,7 +29,7 @@ export function defaultRule() {
     entryType: 'market', entryAt: 'near', entryExpiry: 8,
     stopType: 'swing', stopBars: 5, stopAtr: 1.5, stopBuffer: 0.1, stopMaxAtr: 6,
     useTarget: true, targetR: 2, trail: false, trailBars: 5, useHorizon: true, horizon: 200, opposite: false,
-    oneAtATime: true, filters: [], volFilter: 2, target: 0.05
+    oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05
   };
 }
 
@@ -65,6 +65,8 @@ export function toBackendRule(rule) {
       opposite: !!rule.opposite
     },
     oneAtATime: rule.oneAtATime !== false,
+    cooldown: rule.oneAtATime !== false ? Math.max(0, Math.round(number(rule.cooldown, 0))) : 0,
+    vaGap: (rule.codes || []).includes('VA') ? Math.max(0, number(rule.vaGap, 0)) : 0,
     filters: (rule.filters || []).filter(f => f.key && f.value !== '' && Number.isFinite(Number(f.value))).slice(0, MAX_FILTERS)
       .map(f => ({ key: f.key, op: f.op === '<=' ? '<=' : '>=', value: Number(f.value) })),
     volFilter: number(rule.volFilter, 2), target: number(rule.target, 0.05)
@@ -90,7 +92,7 @@ export function fromBackendRule(saved) {
     useTarget: saved.exit?.targetR != null, targetR: saved.exit?.targetR ?? 2,
     trail: saved.exit?.trail === 'swing', trailBars: saved.exit?.trailBars ?? 5,
     useHorizon: saved.exit?.horizon != null, horizon: saved.exit?.horizon ?? 200, opposite: !!saved.exit?.opposite,
-    oneAtATime: saved.oneAtATime !== false, filters: saved.filters || [],
+    oneAtATime: saved.oneAtATime !== false, cooldown: saved.cooldown ?? 0, vaGap: saved.vaGap ?? 0, filters: saved.filters || [],
     volFilter: saved.volFilter ?? 2, target: saved.target ?? 0.05
   };
 }
@@ -108,7 +110,9 @@ export function describeRule(saved) {
   if (saved.exit?.horizon != null) exits.push(`${saved.exit.horizon} velas`);
   if (saved.exit?.opposite) exits.push('señal contraria');
   return `${TF_LABEL[saved.tf] || saved.tf} · ${joined}${recipe.window > 1 ? ` @${recipe.window}` : ''}${saved.invert ? ' · invertida' : ''}`
-    + ` · ${saved.entry?.type === 'limit' ? 'limit' : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`;
+    + `${saved.vaGap > 0 ? ` · hueco ≥ ${saved.vaGap} ATR` : ''}`
+    + ` · ${saved.entry?.type === 'limit' ? 'limit' : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
+    + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;
 }
 
 const RULES_KEY = 'tester_rules_v1';

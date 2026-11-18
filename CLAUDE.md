@@ -66,7 +66,8 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 5. **Registro por trade:** todos los elementos presentes en su ventana (a favor y en contra) y las 58 medidas del Observador al decidir, con ganadores contra perdedores.
 6. **Menú de inicio con dos modos** (pedido después de probarlo): "Simulación manual", la de siempre, y "Backtesting global", que abre esta ventana en la misma pestaña, con sus fechas fijas y sin depender de la reproducción.
 7. **Órdenes manuales:** en el backtesting global, la pestaña "Mis órdenes" dibuja las órdenes del Observador de cualquier sesión, sea cual sea su fecha. En la simulación manual, cada orden del Observador tiene "Ver en el gráfico", que la dibuja si la simulación ya pasó por su fecha.
-8. **Pruebas:** `test_rule_tester.py` (14), `ruletester.test.mjs` (8) y `observer.test.mjs` (44).
+8. **Pruebas:** `test_rule_tester.py` (16), `ruletester.test.mjs` (8) y `observer.test.mjs` (44).
+9. **Después de la primera prueba del usuario:** "Esperar N velas tras cerrar" (8 de fábrica) y, con la VA elegida, "hueco mínimo" en ATR entre el área de valor y la vela que la abandona (0 de fábrica: la regla literal del libro).
 
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página.

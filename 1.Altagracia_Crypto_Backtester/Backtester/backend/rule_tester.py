@@ -130,6 +130,10 @@ def clean_rule(raw):
         "exit": {"targetR": target_r, "trail": trail, "trailBars": int(_num(exit_.get("trailBars"), 5, 2, 20)),
                  "horizon": horizon, "opposite": bool(exit_.get("opposite"))},
         "oneAtATime": raw.get("oneAtATime") is not False,
+        # Velas de espera tras cerrar un trade antes de tomar otra señal (solo con una posición a la vez)
+        "cooldown": int(_num(raw.get("cooldown"), 0, 0, 500)),
+        # Hueco mínimo, en ATR, entre el área de valor y la vela que la abandona. 0 = la regla literal
+        "vaGap": _num(raw.get("vaGap"), 0.0, 0.0, 5.0),
         "filters": filters,
         "target": _num(raw.get("target"), oe.DEFAULT_TARGET, 0.005, 0.3),
         "volFilter": _num(raw.get("volFilter"), oe.DEFAULT_VOL_FILTER, 0.0, 10.0),
@@ -486,6 +490,21 @@ def _passes(filters, row):
     return True
 
 
+def _va_gap_ok(min_gap, match, zones, index, ctx, tf_ms):
+    """Cada VA abandonada de la señal deja al menos min_gap ATR entre su área y la vela que la abandonó."""
+    for code, t in match["votes"]:
+        if code != "VA":
+            continue
+        i = index.get(t)  # El voto cuenta en la vela que abandona el área
+        if i is None or not ctx["atr"][i] > 0:
+            return False
+        for lo, hi in zones.get((code, match["dir"], t + tf_ms), []):
+            gap = ctx["L"][i] - hi if match["dir"] > 0 else lo - ctx["H"][i]
+            if gap / ctx["atr"][i] < min_gap:
+                return False
+    return True
+
+
 def run(symbol, rule, span, phase, table=None, base=True):
     """La regla sobre las velas y elementos de la fase. Devuelve resumen, cortes y cada trade."""
     bars, events, tf = span["bars"], span["events"], rule["tf"]
@@ -516,6 +535,12 @@ def run(symbol, rule, span, phase, table=None, base=True):
         side = m["dir"] * flip
         if rule["oneAtATime"] and k < busy_until:
             busy += 1
+            continue
+        if rule["oneAtATime"] and k < busy_until + rule["cooldown"]:
+            skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
+            continue
+        if rule["vaGap"] > 0 and not _va_gap_ok(rule["vaGap"], m, zones, index, ctx, tf_ms):
+            skipped["VA con hueco pequeño"] = skipped.get("VA con hueco pequeño", 0) + 1
             continue
         measured = None
         if table is not None:

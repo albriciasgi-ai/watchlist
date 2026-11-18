@@ -175,3 +175,24 @@ def test_fases_la_tres_pide_la_dos_y_lo_corrido_no_se_repite(tmp_path, monkeypat
     assert rt.start("X", r, 3)["needsConfirm"] is True
     assert rt.public_run(rt.load_run(run_id))["trades"][0].get("measures") is None
     assert rt.export_csv(run_id).count("\n") == 2
+
+
+def test_enfriamiento_salta_las_senales_tras_cerrar():
+    bars = flat(400)
+    events = [ev("EX", 30), ev("EX", 43), ev("EX", 50)]
+    plain = go(bars, events, rule(exit={"targetR": None, "horizon": 10}))
+    assert [t["signal"] // MS for t in plain["trades"]] == [30, 43]
+    cool = go(bars, events, rule(exit={"targetR": None, "horizon": 10}, cooldown=5))
+    assert [t["signal"] // MS for t in cool["trades"]] == [30, 50] and cool["skipped"] == {"enfriamiento": 1}
+    assert rt.rule_hash("TEST", rule(cooldown=5)) != rt.rule_hash("TEST", rule())
+
+
+def test_hueco_minimo_de_la_va_abandonada():
+    bars = flat(400)  # La vela 31 tiene el mínimo en 99.5: con el área hasta 99.0 deja 0.5 ATR de hueco
+    events = [ev("VA", 30, lo=98.0, hi=99.0, known_bar=31)]
+    recipe = {"slots": [{"codes": ["VA"]}], "mode": "strict", "window": 1}
+    rule_va = lambda **kw: rule(recipe=recipe, exit={"targetR": None, "horizon": 10}, **kw)
+    assert len(go(bars, events, rule_va())["trades"]) == 1
+    assert len(go(bars, events, rule_va(vaGap=0.3))["trades"]) == 1
+    far = go(bars, events, rule_va(vaGap=0.8))
+    assert far["trades"] == [] and far["skipped"] == {"VA con hueco pequeño": 1}

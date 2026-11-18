@@ -973,6 +973,8 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - **Salida:** objetivo en R, stop arrastrado al último swing confirmado a favor, cierre a las N velas y señal contraria. Sin ninguna, 96 velas.
 - **Filtros:** hasta 3 medidas de `measures.py`, leídas a favor del trade en la última fila cerrada al conocerse la señal. Una señal sin medidas (antes del inicio de la tabla) no pasa un filtro.
 - `invert` opera en contra del elemento. `oneAtATime` (de fábrica) salta las señales con una posición abierta; sin él cuentan todas.
+- `cooldown` (17/11, 8 velas en la ventana, 0 en el backend): con una posición a la vez, velas de espera tras cerrar un trade; las señales de ese tramo quedan en `skipped` como "enfriamiento".
+- `vaGap` (17/11, 0 de fábrica): hueco mínimo en ATR entre el área de valor y la vela que la abandona. La VA abandonada sigue la regla literal del libro y en BTC 15m marca el 9.1% de las velas; en el 43% el hueco es menor de 0.1 ATR y en el 51% el precio vuelve al área en 3 velas. Medido en la fase 1 con stop en el swing y 1R: pedir más hueco no mejora (0.25 ATR: -0.38 R contra -0.32 del azar).
 
 ### Simulación
 

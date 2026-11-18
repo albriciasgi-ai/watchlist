@@ -426,6 +426,12 @@ const RuleTesterApp = () => {
           </select>
           <Check checked={rule.invert} onChange={(invert) => patch({ invert })} title="Operar en contra del elemento: un elemento alcista abre un corto">Invertir</Check>
         </div>
+        {rule.codes.includes('VA') && (
+          <div className="rt-row">
+            <span title="La regla del libro cuenta cualquier vela que no toque el área de valor de la anterior, aunque quede a un tick. Con un hueco mínimo solo cuentan las que se alejan de verdad. 0 = regla literal">VA abandonada: hueco mínimo</span>
+            <Num value={rule.vaGap} min={0} max={5} step={0.05} onChange={(vaGap) => patch({ vaGap })} /><span>ATR</span>
+          </div>
+        )}
         <div className="rt-row">
           <Check checked={rule.swing} onChange={(swing) => patch({ swing })} title="La señal debe darse en un mínimo (alcista) o máximo (bajista) de N velas">En un extremo de</Check>
           <Num value={rule.swingBars} min={2} max={20} disabled={!rule.swing} onChange={(swingBars) => patch({ swingBars })} /><span>velas</span>
@@ -492,6 +498,8 @@ const RuleTesterApp = () => {
         {!rule.useTarget && !rule.trail && !rule.useHorizon && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
         <div className="rt-row">
           <Check checked={rule.oneAtATime} onChange={(oneAtATime) => patch({ oneAtATime })} title="Marcado: lo que operarías. Sin marcar: todas las señales, para medir el elemento">Una posición a la vez</Check>
+          <span title="Velas de espera después de cerrar un trade antes de tomar otra señal. 0 = sin espera">Esperar</span>
+          <Num value={rule.cooldown} min={0} max={500} disabled={!rule.oneAtATime} onChange={(cooldown) => patch({ cooldown })} /><span>velas tras cerrar</span>
         </div>
       </div>
 
