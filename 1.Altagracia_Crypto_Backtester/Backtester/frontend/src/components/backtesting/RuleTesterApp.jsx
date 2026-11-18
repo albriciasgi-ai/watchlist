@@ -9,7 +9,7 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import { lastClosedIndex } from './replayClock';
 import {
-  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
+  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
   fmtPct, fmtR, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
@@ -510,6 +510,43 @@ const RuleTesterApp = () => {
           </select>
           <Check checked={rule.invert} onChange={(invert) => patch({ invert })} title="Operar en contra del elemento: un elemento alcista abre un corto">Invertir</Check>
         </div>
+        {rule.codes.includes('CC') && (
+          <>
+            <div className="rt-row">
+              <span title="Las velas con que se arma la tendencia. Pueden ser mayores que las de la regla: la entrada y el stop se siguen en las velas de la regla">Estructura en velas de</span>
+              <select value={rule.ccTf} onChange={(e) => patch({ ccTf: Number(e.target.value) })}>
+                {CC_STRUCT_TFS.filter(([minutes]) => minutes === 0 || (minutes > rule.tf && minutes % rule.tf === 0)).map(([minutes, label]) => <option key={minutes} value={minutes}>{label}</option>)}
+              </select>
+              {rule.ccTf >= 240 && (
+                <>
+                  <span>contadas desde las</span>
+                  <select value={rule.ccOffset} onChange={(e) => patch({ ccOffset: Number(e.target.value) })}>
+                    {CC_OFFSETS.map(([minutes, label]) => <option key={minutes} value={minutes}>{label}</option>)}
+                  </select>
+                </>
+              )}
+            </div>
+            <div className="rt-row">
+              <span>Swing de</span><Num value={rule.ccSwing} min={2} max={20} onChange={(ccSwing) => patch({ ccSwing })} /><span>velas por lado ·</span>
+              <span title="Cuántos máximos y cuántos mínimos seguidos deben ir en la misma dirección">tendencia de</span>
+              <Num value={rule.ccLegs} min={2} max={5} onChange={(ccLegs) => patch({ ccLegs })} /><span>tramos</span>
+            </div>
+            <div className="rt-note">
+              CC: una tendencia de máximos y mínimos crecientes y una vela que cierra bajo su último mínimo abre un corto (al revés, un largo). "Invertir" opera a favor de la tendencia.
+              Para el stop detrás del extremo de la tendencia usa "Borde lejano de la zona" y sube el "Máximo" del stop: con la estructura en 4 horas queda a muchos ATR de las velas de la regla.
+            </div>
+          </>
+        )}
+        <div className="rt-row">
+          <Check checked={rule.useHours} onChange={(useHours) => patch({ useHours })} title="Solo se operan las señales que se conocen entre esas horas, en UTC. La hora es la del cierre de la vela de la señal, que es cuando se entra">Solo señales entre las</Check>
+          <input type="text" value={rule.hoursFrom} disabled={!rule.useHours} onChange={(e) => patch({ hoursFrom: e.target.value })} style={{ width: 56 }} placeholder="17:30" />
+          <span>y las</span>
+          <input type="text" value={rule.hoursTo} disabled={!rule.useHours} onChange={(e) => patch({ hoursTo: e.target.value })} style={{ width: 56 }} placeholder="21:30" />
+          <span>UTC</span>
+          <Check checked={rule.hoursWeekdays} onChange={(hoursWeekdays) => patch({ hoursWeekdays })}>lunes a viernes</Check>
+        </div>
+        {rule.useHours && (minuteOfDay(rule.hoursFrom) === null || minuteOfDay(rule.hoursTo) === null) && <div className="rt-note">Escribe las horas como 17:30. Mientras no sean válidas, el horario no se aplica.</div>}
+        {rule.useHours && <div className="rt-note">Sesión de Nueva York: de 13:30 a 20:00 UTC en verano y de 14:30 a 21:00 en invierno. Con velas de 4 horas contadas desde las 13:30, las que cierran dentro de la sesión se conocen a las 17:30 y a las 21:30.</div>}
         {usesProfile(rule) && (
           <>
             <div className="rt-row">
@@ -797,6 +834,7 @@ const RuleTesterApp = () => {
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
             {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
+            {selectedTrade.cc && <><br />Cambio de carácter: swing roto en {selectedTrade.cc.level}, extremo de la tendencia en {selectedTrade.cc.extreme}, estructura en velas de {selectedTrade.cc.structTf >= 60 ? `${selectedTrade.cc.structTf / 60} h` : `${selectedTrade.cc.structTf} m`}</>}
             {selectedTrade.liq && <><br />Barrido: {selectedTrade.liq.what === 'zone' ? `zona ${selectedTrade.liq.zoneLow}–${selectedTrade.liq.zoneHigh}` : `swing en ${selectedTrade.liq.swing} de hace ${selectedTrade.liq.swingAgeBars} velas`}, pasado hasta {selectedTrade.liq.extreme}{selectedTrade.liq.depthAtr != null && ` (${selectedTrade.liq.depthAtr} ATR)`} · zona de {Math.round((selectedTrade.liq.usd || 0) / 1000).toLocaleString('es-CO')}K USD ({selectedTrade.liq.zoneSide === 'long' ? 'largos' : 'cortos'} liquidados), última liquidación {selectedTrade.liq.zoneAgeDays} días antes · {selectedTrade.liq.source}</>}
           </div>
           {detail?.trade?.n === selectedTrade.n && detail.measures.length > 0 && (

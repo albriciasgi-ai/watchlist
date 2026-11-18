@@ -33,7 +33,11 @@ export function defaultRule() {
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
     first: [], liqWhat: 'zone', liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3,
     // Perfil por sesión (VR, VF, VX): periodo, minutos sostenido dentro o fuera del valor y velas para que un fallo cierre de vuelta
-    vpHours: 24, vpAccept: 30, vpFailBars: 3, vpShapes: [], vpVeEntry: 'touch', targetAt: 'r'
+    vpHours: 24, vpAccept: 30, vpFailBars: 3, vpShapes: [], vpVeEntry: 'touch', targetAt: 'r',
+    // Cambio de carácter: marco de la estructura (0 = el de la regla), desde qué hora UTC se cuentan sus velas, velas del swing y tramos
+    ccTf: 0, ccOffset: 0, ccSwing: 3, ccLegs: 2,
+    // Horario: solo señales que se conocen entre esas horas UTC
+    useHours: false, hoursFrom: '17:30', hoursTo: '21:30', hoursWeekdays: true
   };
 }
 
@@ -44,6 +48,15 @@ export const VP_CODES = ['VR', 'VF', 'VX', 'VE'];
 // Forma del perfil de la sesión anterior: dónde quedó el volumen dentro de su rango
 export const VP_SHAPES = [['D', 'D · volumen en el medio'], ['P', 'P · volumen arriba, cola abajo'], ['b', 'b · volumen abajo, cola arriba'], ['B', 'B · dos distribuciones']];
 export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24, '1 día'], [168, '1 semana']];
+export const CC_STRUCT_TFS = [[0, 'el marco de la regla'], [60, '1 hora'], [240, '4 horas'], [1440, '1 día']];
+export const CC_OFFSETS = [[0, '00:00 UTC'], [810, '13:30 UTC (apertura de Nueva York, verano)'], [870, '14:30 UTC (apertura de Nueva York, invierno)']];
+/** 'HH:MM' a minutos del día; null si no es una hora */
+export const minuteOfDay = (text) => {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(String(text || '').trim());
+  if (!match || Number(match[1]) > 23 || Number(match[2]) > 59) return null;
+  return Number(match[1]) * 60 + Number(match[2]);
+};
+const clock = (minutes) => `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
 export const usesProfile = (rule) => (rule.codes || []).some(code => VP_CODES.includes(code));
 
 /** En secuencia, qué elementos son el contexto y cuáles el gatillo. Sin uno de los dos no hay secuencia */
@@ -66,6 +79,9 @@ export function toBackendRule(rule) {
     ...(codes.includes('LIQ') ? {
       liq: { what: rule.liqWhat === 'swing' ? 'swing' : 'zone', variant: rule.liqVariant === 'reclaim' ? 'reclaim' : 'pierce', swingBars: number(rule.liqSwingBars, 5), reclaimBars: number(rule.liqReclaimBars, 3) }
     } : {}),
+    ...(codes.includes('CC') ? { cc: { tf: number(rule.ccTf, 0) || undefined, offset: number(rule.ccOffset, 0), swing: number(rule.ccSwing, 3), legs: number(rule.ccLegs, 2) } } : {}),
+    ...(rule.useHours && minuteOfDay(rule.hoursFrom) !== null && minuteOfDay(rule.hoursTo) !== null
+      ? { hours: { on: true, from: minuteOfDay(rule.hoursFrom), to: minuteOfDay(rule.hoursTo), weekdays: !!rule.hoursWeekdays } } : {}),
     ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [], veEntry: rule.vpVeEntry === 'resting' ? 'resting' : 'touch' } } : {}),
     recipe: {
       // En secuencia: todo el contexto primero y, en la misma vela o después, al menos `min` del gatillo
@@ -125,6 +141,9 @@ export function fromBackendRule(saved) {
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
     stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6,
     useTarget: saved.exit?.targetR != null || !!saved.targetAt, targetR: saved.exit?.targetR ?? 2, targetAt: saved.targetAt || 'r',
+    ccTf: saved.cc && saved.cc.tf !== saved.tf ? saved.cc.tf : 0, ccOffset: saved.cc?.offset ?? 0, ccSwing: saved.cc?.swing ?? 3, ccLegs: saved.cc?.legs ?? 2,
+    useHours: !!saved.hours, hoursFrom: saved.hours ? clock(saved.hours.from) : '17:30', hoursTo: saved.hours ? clock(saved.hours.to) : '21:30',
+    hoursWeekdays: saved.hours ? !!saved.hours.weekdays : true,
     vpShapes: saved.vp?.shapes || [], vpVeEntry: saved.vp?.veEntry || 'touch', vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
     trail: saved.exit?.trail === 'swing', trailBars: saved.exit?.trailBars ?? 5,
     useHorizon: saved.exit?.horizon != null, horizon: saved.exit?.horizon ?? 200, opposite: !!saved.exit?.opposite,
@@ -151,6 +170,8 @@ export function describeRule(saved) {
   if (saved.exit?.opposite) exits.push('señal contraria');
   return `${TF_LABEL[saved.tf] || saved.tf} · ${joined}${recipe.window > 1 ? ` @${recipe.window}` : ''}${saved.invert ? ' · invertida' : ''}`
     + `${saved.vaGap > 0 ? ` · hueco ≥ ${saved.vaGap} ATR` : ''}`
+    + `${saved.cc ? ` · estructura ${saved.cc.tf >= 60 ? `${saved.cc.tf / 60} h` : `${saved.cc.tf} m`}, swing ${saved.cc.swing}` : ''}`
+    + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
     + ` · ${saved.entry?.type === 'limit' ? 'limit' : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
     + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;
@@ -235,8 +256,15 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     }
     if (Number.isFinite(vp.extreme)) bands.push({ kind: 'mark', time: trade.signal, price: vp.extreme, label: 'Extremo' });
   }
+  const cc = trade.cc;
+  if (cc && Number.isFinite(cc.level)) {
+    // El swing que se rompió, desde su vela, y el extremo de la tendencia
+    bands.push({ kind: 'level', price: cc.level, start: cc.levelT, end, label: 'Swing roto' });
+    bands.push({ kind: 'level', price: cc.extreme, start: cc.levelT, end, label: 'Extremo de la tendencia' });
+    bands.push({ kind: 'mark', time: trade.signal, price: cc.level, label: 'Ruptura' });
+  }
   for (const mark of trade.marks || []) {
-    if (mark.code === 'LIQ' || VP_CODES.includes(mark.code)) continue;
+    if (mark.code === 'LIQ' || mark.code === 'CC' || VP_CODES.includes(mark.code)) continue;
     bands.push({ kind: 'element', low: mark.lo, high: mark.hi, start: mark.t, end, strong: false, label: `${mark.code} ${names[mark.code] || ''}`.trim() });
   }
   return bands;

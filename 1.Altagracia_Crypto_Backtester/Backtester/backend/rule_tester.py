@@ -30,6 +30,7 @@ import observer
 import of_elements as oe
 import of_setups as os_
 import patterns
+import structure
 import vp_sessions
 
 TFS = (5, 15, 30, 60, 240)
@@ -49,7 +50,7 @@ SMALL_SAMPLE = 30
 MAX_FILTERS = 3
 MAX_WINDOW = 10           # Un gatillo puede llegar hasta 10 velas después del barrido
 VP_CODES = ("VR", "VF", "VX", "VE")  # Contra el valor de la sesión anterior (vp_sessions.py)
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES  # Elementos del probador que no son de of_elements
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -155,6 +156,19 @@ def clean_rule(raw):
     if (extra.get("vp") or {}).get("veEntry") == "resting":
         # La orden espera en el borde del valor hasta que termina la sesión
         entry_rule = {"type": "limit", "at": "near", "expiry": max(1, extra["vp"]["hours"] * 60 // tf)}
+    if any("CC" in slot["codes"] for slot in recipe["slots"]):
+        cc = raw.get("cc") or {}
+        struct_tf = int(_num(cc.get("tf"), tf, 1, 1440))
+        if struct_tf not in structure.STRUCT_TFS or struct_tf < tf or struct_tf % tf:
+            struct_tf = tf
+        # tf: marco de las velas de la estructura. offset: minutos desde las 00:00 UTC en que empiezan (810 = 13:30)
+        extra["cc"] = {"tf": struct_tf, "offset": int(_num(cc.get("offset"), 0, 0, 1439)) % struct_tf,
+                       "swing": int(_num(cc.get("swing"), 3, 2, 20)), "legs": int(_num(cc.get("legs"), 2, 2, 5))}
+    hours = raw.get("hours") or {}
+    if hours.get("on"):
+        # Solo señales que se conocen (y entran) entre esas horas UTC, en minutos del día; de lunes a viernes si se pide
+        extra["hours"] = {"from": int(_num(hours.get("from"), 0, 0, 1439)), "to": int(_num(hours.get("to"), 1439, 0, 1439)),
+                          "weekdays": bool(hours.get("weekdays"))}
     return {
         **extra,
         "name": name, "tf": tf, "recipe": recipe, "invert": bool(raw.get("invert")),
@@ -608,7 +622,40 @@ def _va_gap_ok(min_gap, match, zones, index, ctx, tf_ms):
 _extra = {}
 
 
+def _in_hours(hours, t):
+    """Si la hora t (ms) cae en el horario de la regla. Un horario que cruza la medianoche también vale."""
+    moment = dt.datetime.fromtimestamp(t / 1000, dt.timezone.utc)
+    if hours["weekdays"] and moment.weekday() >= 5:
+        return False
+    minute = moment.hour * 60 + moment.minute
+    start, end = hours["from"], hours["to"]
+    return start <= minute <= end if start <= end else (minute >= start or minute <= end)
+
+
+def _cc_events(rule, span):
+    """Cambio de carácter (structure.py) sobre las velas de la fase."""
+    cc = rule.get("cc")
+    bars = span["bars"]
+    if not cc or not bars:
+        return []
+    key = (id(bars), rule["tf"], "cc", cc["tf"], cc["offset"], cc["swing"], cc["legs"])
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = structure.events(bars, rule["tf"], cc["tf"], cc["offset"], cc["swing"], cc["legs"])
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
+
+
 def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
+    """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
+    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span)
+
+
+def _liq_vp_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """LIQ y VH de liq_sweeps para las velas de la fase. control: los barridos sin liquidación pasan por LIQ."""
     codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
     if not codes & set(EXTRA_CODES):
@@ -682,6 +729,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     events = events + extra if extra else events
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
     vp_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in VP_CODES}
+    cc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "CC"}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -712,6 +760,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             continue
         if rule["oneAtATime"] and not defer and k < busy_until + rule["cooldown"]:
             skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
+            continue
+        if rule.get("hours") and not _in_hours(rule["hours"], m["known"]):
+            skipped["fuera de horario"] = skipped.get("fuera de horario", 0) + 1
             continue
         if rule["vaGap"] > 0 and not _va_gap_ok(rule["vaGap"], m, zones, index, ctx, tf_ms):
             skipped["VA con hueco pequeño"] = skipped.get("VA con hueco pequeño", 0) + 1
@@ -754,6 +805,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             trade["liq"] = swept  # La zona barrida: dinero, antigüedad y hasta dónde pasó el precio
         if ctx["vp"] is not None:
             trade["vp"] = ctx["vp"]  # El valor de la sesión anterior que usó la regla, y dónde abrió la sesión
+        broken = next((cc_info[(m["dir"], t + tf_ms)] for code, t in m["votes"] if code == "CC" and (m["dir"], t + tf_ms) in cc_info), None)
+        if broken is not None:
+            trade["cc"] = broken  # El swing roto y el extremo de la tendencia
         trade["measures"] = measured
         if defer:
             pending.append(trade)
