@@ -1,0 +1,787 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import MiniChart from '../MiniChart';
+import { API_BASE_URL } from '../../config.js';
+import { useUiTheme } from '../useUiTheme.js';
+import { THEME, isNewTheme } from '../uiTheme.js';
+import { withoutSubdivisions } from './marketData';
+import { cachedMarketData } from './SecondaryChartApp';
+import {
+  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
+  fmtPct, fmtR, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBoxes
+} from './ruleTester.js';
+import '../../backtesting_styles.css';
+import '../../rule_tester.css';
+
+/**
+ * Probador de reglas del Observador (?probador=1), en su propia ventana. Una regla (elementos de order flow,
+ * entrada, stop y salida) se corre sobre una fase fija del histórico y cada trade queda contabilizado.
+ * El gráfico no reproduce: muestra la fase completa con la caja de cada trade, y un clic en la lista lleva a él.
+ * La fase 1 se ve siempre; las fases 2 y 3 muestran primero el informe y el gráfico solo cuando se pide.
+ * Todo el cálculo es del backend (rule_tester.py): aquí solo se arma la regla y se lee el resultado.
+ */
+
+const DAY_MS = 86400000;
+const MAX_DAYS = { '1m': 730, '5m': 1825, '15m': 1825, '1h': 1825, '4h': 1825 };
+const VIEW_KEY = 'tester_view_v1';
+const PAGE = 300;
+const INDICATORS = [
+  'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
+  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Rejection Patterns', 'Support & Resistance',
+  'S&R v2', 'Swing Detector'
+];
+const DEFAULT_ON = new Set(['Volume Delta', 'Order Flow', 'Elementos OF']);
+const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true };
+const TIME = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+const stamp = (ms) => TIME.format(new Date(ms));
+const noop = () => {};
+
+const loadView = () => {
+  try {
+    return JSON.parse(localStorage.getItem(VIEW_KEY)) || {};
+  } catch {
+    return {};
+  }
+};
+
+const api = async (path, body) => {
+  const response = await fetch(`${API_BASE_URL}${path}`, body === undefined ? undefined : {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  if (!response.ok) throw new Error(`El backend respondió ${response.status}`);
+  return response.json();
+};
+
+const tone = (value) => {
+  if (!value) return undefined;
+  if (value > 0) return isNewTheme() ? THEME.upText : '#0a7d5a';
+  return isNewTheme() ? THEME.downText : '#c62828';
+};
+
+const R = ({ value, digits }) => <span style={{ color: tone(value) }}>{fmtR(value, digits)}</span>;
+
+const Num = ({ value, onChange, min, max, step = 1, disabled }) => (
+  <input type="number" value={value} min={min} max={max} step={step} disabled={disabled} onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))} />
+);
+
+const Check = ({ checked, onChange, children, title }) => (
+  <label title={title}><input type="checkbox" checked={!!checked} onChange={(e) => onChange(e.target.checked)} />{children}</label>
+);
+
+/** Curva de R acumulado, en orden de salida */
+const Equity = ({ points }) => {
+  if (!points?.length) return null;
+  const values = points.map(p => p[1]);
+  const low = Math.min(0, ...values), high = Math.max(0, ...values);
+  const span = high - low || 1;
+  const x = (i) => (points.length === 1 ? 300 : (i / (points.length - 1)) * 600);
+  const y = (v) => 105 - ((v - low) / span) * 100;
+  const last = values[values.length - 1];
+  return (
+    <svg className="rt-equity" viewBox="0 0 600 110" preserveAspectRatio="none">
+      <line x1="0" x2="600" y1={y(0)} y2={y(0)} stroke="currentColor" strokeOpacity="0.25" strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
+      <polyline fill="none" stroke={tone(last) || 'currentColor'} strokeWidth="1.5" vectorEffect="non-scaling-stroke" points={points.map((p, i) => `${x(i).toFixed(1)},${y(p[1]).toFixed(1)}`).join(' ')} />
+    </svg>
+  );
+};
+
+const BriefTable = ({ title, rows, first = '' }) => (!rows?.length ? null : (
+  <div className="rt-group">
+    <h4>{title}</h4>
+    <table className="rt-table">
+      <thead><tr><th>{first}</th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th></tr></thead>
+      <tbody>
+        {rows.map(row => (
+          <tr key={row.label}><td>{row.label}</td><td>{row.n}</td><td>{fmtPct(row.winRate)}</td><td><R value={row.avgR} digits={3} /></td><td><R value={row.totalR} /></td></tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+));
+
+const SplitTable = ({ title, rows, names, note }) => (!rows?.length ? null : (
+  <div className="rt-group">
+    <h4>{title}</h4>
+    {note && <div className="rt-note" style={{ marginBottom: 4 }}>{note}</div>}
+    <table className="rt-table">
+      <thead><tr><th>Elemento</th><th>Con</th><th>R medio</th><th>Sin</th><th>R medio</th><th>Dif.</th></tr></thead>
+      <tbody>
+        {rows.map(row => (
+          <tr key={row.label} title={names[row.label] || ''}>
+            <td><b>{row.label}</b> {(names[row.label] || '').slice(0, 18)}</td>
+            <td>{row.with.n} · {fmtPct(row.with.winRate)}</td><td><R value={row.with.avgR} digits={3} /></td>
+            <td>{row.without.n} · {fmtPct(row.without.winRate)}</td><td><R value={row.without.avgR} digits={3} /></td>
+            <td>{row.with.avgR !== null && row.without.avgR !== null ? <R value={row.with.avgR - row.without.avgR} digits={3} /> : '—'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+));
+
+const RuleTesterApp = () => {
+  useUiTheme();
+  const symbol = useMemo(testerSymbol, []);
+  const view = useMemo(loadView, []);
+  const [info, setInfo] = useState(null);
+  const [phase, setPhase] = useState(1);
+  const [rule, setRule] = useState(() => ({ ...defaultRule(), ...(view.rule || {}) }));
+  const [saved, setSaved] = useState(loadSavedRules);
+  const [tab, setTab] = useState('regla');
+  const [job, setJob] = useState(null);
+  const [results, setResults] = useState({});       // Corrida a la vista de cada fase
+  const [revealed, setRevealed] = useState({});     // Fases 2 y 3 cuyo gráfico ya se pidió ver
+  const [selected, setSelected] = useState(null);   // Número del trade elegido
+  const [detail, setDetail] = useState(null);
+  const [sens, setSens] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [sort, setSort] = useState({ key: 'n', desc: false });
+  const [shown, setShown] = useState(PAGE);
+  const [chartTf, setChartTf] = useState(CHART_TIMEFRAMES.includes(view.chartTf) ? view.chartTf : '15m');
+  const [indicatorStates, setIndicatorStates] = useState(() => Object.fromEntries(INDICATORS.map(name => [name, view.indicators?.[name] ?? DEFAULT_ON.has(name)])));
+  const [showList, setShowList] = useState(false);
+  const [market, setMarket] = useState(null);
+  const [status, setStatus] = useState('Cargando…');
+  const [tool, setTool] = useState('select');
+  const chartRef = useRef(null);
+  const marketRef = useRef(null);
+  const boxesRef = useRef([]);
+  const linesRef = useRef([]);
+
+  const result = results[phase] || null;
+  const phaseInfo = info?.phases?.find(p => p.phase === phase) || null;
+  const names = useMemo(() => Object.fromEntries((info?.elements || []).map(e => [e.code, e.name])), [info]);
+  const patch = (change) => setRule(previous => ({ ...previous, ...change }));
+
+  const refreshInfo = useCallback(() => api(`/api/tester/info/${symbol}`).then(setInfo).catch(error => setMessage(error.message)), [symbol]);
+
+  useEffect(() => {
+    document.title = `App 1 · Probador de reglas · ${symbol}`;
+    refreshInfo();
+  }, [symbol, refreshInfo]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates }));
+    } catch {
+      // Sin almacenamiento la vista dura hasta cerrar la ventana
+    }
+  }, [rule, chartTf, indicatorStates]);
+
+  // Velas: del caché del navegador que guardó la principal. Si no están, se pide al backend solo el marco
+  // del gráfico: esta ventana no necesita los cinco marcos
+  useEffect(() => {
+    let active = true;
+    const has = (data) => data?.timeframes?.[chartTf]?.main?.length > 0;
+    (async () => {
+      let data = marketRef.current;
+      if (has(data)) return;
+      setStatus(`Cargando las velas de ${symbol}…`);
+      if (!data) data = await cachedMarketData(symbol);
+      if (!has(data)) {
+        try {
+          setStatus(`Pidiendo las velas de ${chartTf} de ${symbol} al backend…`);
+          const response = await fetch(`${API_BASE_URL}/api/backtesting/bulk-data/${symbol}?timeframe=${chartTf}`);
+          const part = withoutSubdivisions(await response.json());
+          if (!has(part)) throw new Error('el backend no devolvió velas de ese marco');
+          const known = marketRef.current || data;
+          data = { ...(known || {}), ...part, timeframes: { ...(known?.timeframes || {}), ...part.timeframes } };
+        } catch (error) {
+          if (active) setStatus(`No se pudieron cargar las velas: ${error.message}`);
+          return;
+        }
+      }
+      marketRef.current = data;
+      if (!active) return;
+      setMarket(data);
+      setStatus(null);
+    })();
+    return () => { active = false; };
+  }, [symbol, chartTf]);
+
+  // El trabajo en curso: avance cada segundo, y al terminar se lee la corrida
+  const loadRun = useCallback(async (id) => {
+    const run = await api(`/api/tester/result/${id}`);
+    if (!run.success) {
+      setMessage(run.message || 'No se pudo leer la corrida');
+      return;
+    }
+    setResults(previous => ({ ...previous, [run.phase]: run }));
+    setPhase(run.phase);
+    setSelected(null);
+    setDetail(null);
+    setSens(null);
+    setShown(PAGE);
+    setTab('resumen');
+  }, []);
+
+  useEffect(() => {
+    if (!job?.id || job.state !== 'running') return undefined;
+    const timer = setInterval(async () => {
+      try {
+        const { job: current } = await api(`/api/tester/job/${job.id}`);
+        if (!current) return;
+        setJob(current);
+        if (current.state === 'done') {
+          await loadRun(current.run);
+          refreshInfo();
+        } else if (current.state === 'error') {
+          setMessage(current.error);
+        }
+      } catch (error) {
+        setMessage(error.message);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [job?.id, job?.state, loadRun, refreshInfo]);
+
+  const running = job?.state === 'running';
+
+  const runPhase = async (confirm = false) => {
+    setMessage(null);
+    if (!rule.codes.length) {
+      setMessage('Elige al menos un elemento.');
+      return;
+    }
+    try {
+      const response = await api(`/api/tester/run/${symbol}`, { rule: toBackendRule(rule), phase, confirm });
+      if (!response.success) {
+        setMessage(response.message);
+        return;
+      }
+      if (response.needsConfirm) {
+        const gate = response.gate;
+        const text = phase === 2
+          ? `Fase 2 (validación), del ${response.phase.from} al ${response.phase.to}.\n\nEsta regla exacta se corre una sola vez aquí: el resultado queda guardado y no se recalcula. `
+            + `Llevas ${gate.variantsPhase1} variantes probadas en la fase 1 y ${gate.rulesInPhase} reglas distintas corridas en la fase 2.`
+            + `${gate.ranPhase1 ? '' : '\n\nEsta regla exacta no se corrió en la fase 1.'}\n\n¿Correrla?`
+          : `Fase 3 (final), del ${response.phase.from} al ${response.phase.to}.\n\nEs la última comprobación de esta regla y se corre una sola vez. `
+            + `Ya hay ${gate.rulesInPhase} reglas distintas corridas en esta fase.\n\n¿Correrla?`;
+        if (window.confirm(text)) await runPhase(true);
+        return;
+      }
+      if (response.run) {
+        await loadRun(response.run);
+        if (response.stored) setMessage('Esta regla exacta ya se había corrido en esta fase: se muestra el resultado guardado.');
+        return;
+      }
+      setJob({ id: response.job, state: 'running', done: 0, total: 1, stage: 'Elementos del tramo' });
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  // Cajas de los trades y línea del trade elegido, para el gráfico
+  const trades = result?.trades || [];
+  const chartOpen = phase === 1 || !!revealed[phase];
+  useEffect(() => {
+    boxesRef.current = chartOpen && result ? tradeBoxes(trades, result.rule.tf) : [];
+    const trade = trades.find(t => t.n === selected);
+    linesRef.current = chartOpen && trade ? [{ entryTime: trade.entry_t, exitTime: trade.exit_t, tradeNumber: trade.n }] : [];
+    chartRef.current?.redraw?.();
+  }, [result, selected, chartOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const pick = useCallback((trade) => {
+    setSelected(trade.n);
+    setDetail(null);
+    if (chartOpen) chartRef.current?.focusOn?.(trade.entry_t, trade.entry);
+    api(`/api/tester/result/${result.id}/trade/${trade.n}`).then(d => d.success && setDetail(d)).catch(noop);
+  }, [result, chartOpen]);
+
+  const sorted = useMemo(() => sortTrades(trades, sort.key, sort.desc), [trades, sort]);
+
+  // Flechas: trade anterior y siguiente de la lista, como está ordenada
+  useEffect(() => {
+    const onKey = (event) => {
+      if (tab !== 'trades' || !sorted.length || /INPUT|SELECT|TEXTAREA/.test(event.target.tagName)) return;
+      const step = event.key === 'ArrowDown' || event.key === 'ArrowRight' ? 1 : (event.key === 'ArrowUp' || event.key === 'ArrowLeft' ? -1 : 0);
+      if (!step) return;
+      event.preventDefault();
+      const index = sorted.findIndex(t => t.n === selected);
+      const next = sorted[Math.max(0, Math.min(sorted.length - 1, index + step))];
+      if (next) pick(next);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [tab, sorted, selected, pick]);
+
+  const getTradeBoxes = useCallback(() => boxesRef.current, []);
+  const getTradeBoundaries = useCallback(() => linesRef.current, []);
+  // Lo que deja ver el gráfico: la fase 1 completa; la 2 y la 3 solo hasta su inicio mientras no se pida verlas
+  const chartTime = phaseInfo ? (chartOpen ? phaseInfo.end : phaseInfo.start) : null;
+  const days = useMemo(() => (phaseInfo ? Math.min(Math.ceil((Date.now() - phaseInfo.start) / DAY_MS) + 60, MAX_DAYS[chartTf]) : MAX_DAYS[chartTf]), [phaseInfo, chartTf]);
+
+  const toggleCode = (code) => setRule(previous => {
+    const has = previous.codes.includes(code);
+    if (!has && previous.codes.length >= MAX_ELEMENTS) return previous;
+    return { ...previous, codes: has ? previous.codes.filter(c => c !== code) : [...previous.codes, code] };
+  });
+  const setFilter = (index, change) => patch({ filters: rule.filters.map((f, i) => (i === index ? { ...f, ...change } : f)) });
+  const measureGroups = useMemo(() => {
+    const groups = {};
+    (info?.measures || []).forEach(m => { (groups[m.group] = groups[m.group] || []).push(m); });
+    return groups;
+  }, [info]);
+
+  const head = (key, label) => (
+    <th className="sort" onClick={() => setSort(s => ({ key, desc: s.key === key ? !s.desc : key !== 'n' }))}>{label}{sort.key === key ? (sort.desc ? ' ↓' : ' ↑') : ''}</th>
+  );
+
+  // ==================== Pestañas del panel ====================
+
+  const ruleTab = (
+    <>
+      <div className="rt-group">
+        <div className="rt-row">
+          <input type="text" value={rule.name} onChange={(e) => patch({ name: e.target.value })} style={{ flex: 1 }} placeholder="Nombre de la regla" />
+          <button type="button" className="rt-btn" onClick={() => setSaved(saveRule(rule))} title="Guardar esta regla con su nombre">Guardar</button>
+        </div>
+        {saved.length > 0 && (
+          <div className="rt-row">
+            <select value="" onChange={(e) => { const item = saved.find(s => s.name === e.target.value); if (item) setRule({ ...defaultRule(), ...item }); }} style={{ flex: 1 }}>
+              <option value="">Cargar una regla guardada…</option>
+              {saved.map(item => <option key={item.name} value={item.name}>{item.name}</option>)}
+            </select>
+            {saved.some(s => s.name === rule.name) && <button type="button" className="rt-btn" onClick={() => setSaved(deleteRule(rule.name))}>Borrar</button>}
+          </div>
+        )}
+      </div>
+
+      <div className="rt-group">
+        <h4>Marco de la regla</h4>
+        <div className="rt-row">
+          {RULE_TIMEFRAMES.map(tf => <button key={tf} type="button" className={`rt-btn${rule.tf === tf ? ' on' : ''}`} onClick={() => patch({ tf })}>{TF_LABEL[tf]}</button>)}
+        </div>
+      </div>
+
+      <div className="rt-group">
+        <h4>Elementos que disparan ({rule.codes.length} de {MAX_ELEMENTS})</h4>
+        <div className="rt-chips">
+          {(info?.elements || []).map(e => (
+            <button key={e.code} type="button" className={`rt-chip${rule.codes.includes(e.code) ? ' on' : ''}`} onClick={() => toggleCode(e.code)}
+              title={`${e.name}${e.volume ? ' · solo en velas de mucho volumen' : ''}${e.flow ? ' · necesita el almacén de flujo' : ''}`}>
+              {e.code} {e.name}
+            </button>
+          ))}
+        </div>
+        {rule.codes.length > 1 && (
+          <div className="rt-row" style={{ marginTop: 6 }}>
+            <select value={rule.mode} onChange={(e) => patch({ mode: e.target.value })}>
+              <option value="all">Todos</option>
+              <option value="atLeast">Al menos</option>
+            </select>
+            {rule.mode === 'atLeast' && <Num value={rule.min} min={1} max={rule.codes.length} onChange={(min) => patch({ min })} />}
+            <span>en una ventana de</span>
+            <Num value={rule.window} min={1} max={5} onChange={(window) => patch({ window })} />
+            <span>velas</span>
+          </div>
+        )}
+        <div className="rt-row" style={{ marginTop: 6 }}>
+          <span>Lado</span>
+          <select value={rule.side} onChange={(e) => patch({ side: e.target.value })}>
+            <option value="both">Alcistas y bajistas</option>
+            <option value="long">Solo alcistas</option>
+            <option value="short">Solo bajistas</option>
+          </select>
+          <Check checked={rule.invert} onChange={(invert) => patch({ invert })} title="Operar en contra del elemento: un elemento alcista abre un corto">Invertir</Check>
+        </div>
+        <div className="rt-row">
+          <Check checked={rule.swing} onChange={(swing) => patch({ swing })} title="La señal debe darse en un mínimo (alcista) o máximo (bajista) de N velas">En un extremo de</Check>
+          <Num value={rule.swingBars} min={2} max={20} disabled={!rule.swing} onChange={(swingBars) => patch({ swingBars })} /><span>velas</span>
+          <Check checked={rule.momentum} onChange={(momentum) => patch({ momentum })} title="EMA 14 con pendiente a favor y el precio de su lado">Momentum</Check>
+        </div>
+        <div className="rt-row">
+          <Check checked={rule.confirm} onChange={(confirm) => patch({ confirm })} title="La señal vale cuando el precio avanza a favor">Confirmar con</Check>
+          <Num value={rule.confirmAtr} min={0.05} max={3} step={0.05} disabled={!rule.confirm} onChange={(confirmAtr) => patch({ confirmAtr })} /><span>ATR a favor en</span>
+          <Num value={rule.confirmBars} min={1} max={5} disabled={!rule.confirm} onChange={(confirmBars) => patch({ confirmBars })} /><span>velas</span>
+        </div>
+      </div>
+
+      <div className="rt-group">
+        <h4>Entrada</h4>
+        <div className="rt-row">
+          <select value={rule.entryType} onChange={(e) => patch({ entryType: e.target.value })}>
+            <option value="market">A mercado, en la apertura de la vela siguiente</option>
+            <option value="limit">Limit en la zona del elemento</option>
+          </select>
+        </div>
+        {rule.entryType === 'limit' && (
+          <div className="rt-row">
+            <select value={rule.entryAt} onChange={(e) => patch({ entryAt: e.target.value })}>
+              <option value="near">Borde cercano</option>
+              <option value="mid">Mitad de la zona</option>
+              <option value="far">Borde lejano</option>
+            </select>
+            <span>vence en</span><Num value={rule.entryExpiry} min={1} max={200} onChange={(entryExpiry) => patch({ entryExpiry })} /><span>velas</span>
+          </div>
+        )}
+      </div>
+
+      <div className="rt-group">
+        <h4>Stop</h4>
+        <div className="rt-row">
+          <select value={rule.stopType} onChange={(e) => patch({ stopType: e.target.value })}>
+            <option value="swing">Swing anterior a la señal</option>
+            <option value="candle">Extremo de la vela del elemento</option>
+            <option value="zone">Borde lejano de la zona</option>
+            <option value="atr">Distancia en ATR</option>
+          </select>
+          {rule.stopType === 'swing' && <><Num value={rule.stopBars} min={2} max={20} onChange={(stopBars) => patch({ stopBars })} /><span>velas por lado</span></>}
+          {rule.stopType === 'atr' && <><Num value={rule.stopAtr} min={0.1} max={20} step={0.1} onChange={(stopAtr) => patch({ stopAtr })} /><span>ATR</span></>}
+        </div>
+        <div className="rt-row">
+          {rule.stopType !== 'atr' && <><span>Margen</span><Num value={rule.stopBuffer} min={0} max={5} step={0.05} onChange={(stopBuffer) => patch({ stopBuffer })} /><span>ATR</span></>}
+          <span title="Una señal con el stop más lejos no se opera">Máximo</span><Num value={rule.stopMaxAtr} min={0.2} max={100} step={0.5} onChange={(stopMaxAtr) => patch({ stopMaxAtr })} /><span>ATR</span>
+        </div>
+      </div>
+
+      <div className="rt-group">
+        <h4>Salida</h4>
+        <div className="rt-row">
+          <Check checked={rule.useTarget} onChange={(useTarget) => patch({ useTarget })} title="Sin marcar no hay objetivo: se ve hasta dónde llega">Objetivo</Check>
+          <Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span>
+          <Check checked={rule.trail} onChange={(trail) => patch({ trail })} title="El stop sube al último swing confirmado a favor">Arrastrar el stop por swings de</Check>
+          <Num value={rule.trailBars} min={2} max={20} disabled={!rule.trail} onChange={(trailBars) => patch({ trailBars })} />
+        </div>
+        <div className="rt-row">
+          <Check checked={rule.useHorizon} onChange={(useHorizon) => patch({ useHorizon })}>Cerrar a las</Check>
+          <Num value={rule.horizon} min={1} max={2000} disabled={!rule.useHorizon} onChange={(horizon) => patch({ horizon })} /><span>velas</span>
+          <Check checked={rule.opposite} onChange={(opposite) => patch({ opposite })}>Cerrar con la señal contraria</Check>
+        </div>
+        {!rule.useTarget && !rule.trail && !rule.useHorizon && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
+        <div className="rt-row">
+          <Check checked={rule.oneAtATime} onChange={(oneAtATime) => patch({ oneAtATime })} title="Marcado: lo que operarías. Sin marcar: todas las señales, para medir el elemento">Una posición a la vez</Check>
+        </div>
+      </div>
+
+      <div className="rt-group">
+        <h4>Filtros de contexto (medidas del Observador)</h4>
+        {rule.filters.map((filter, index) => (
+          <div className="rt-row" key={index}>
+            <select value={filter.key} onChange={(e) => setFilter(index, { key: e.target.value })} style={{ maxWidth: 220 }}>
+              <option value="">Medida…</option>
+              {Object.entries(measureGroups).map(([group, items]) => (
+                <optgroup key={group} label={group}>{items.map(m => <option key={m.key} value={m.key}>{m.label}</option>)}</optgroup>
+              ))}
+            </select>
+            <select value={filter.op} onChange={(e) => setFilter(index, { op: e.target.value })}><option value=">=">≥</option><option value="<=">≤</option></select>
+            <Num value={filter.value} step={0.1} onChange={(value) => setFilter(index, { value })} />
+            <button type="button" className="rt-btn" onClick={() => patch({ filters: rule.filters.filter((_, i) => i !== index) })}>×</button>
+          </div>
+        ))}
+        {rule.filters.length < MAX_FILTERS && <button type="button" className="rt-btn" onClick={() => patch({ filters: [...rule.filters, { key: '', op: '>=', value: 0 }] })}>+ Filtro</button>}
+        <div className="rt-note" style={{ marginTop: 4 }}>Cada medida se lee a favor del trade, al cierre de la vela de la señal.</div>
+      </div>
+
+      <div className="rt-group">
+        <h4>Detección de los elementos</h4>
+        <div className="rt-row">
+          <span title="Para los elementos marcados 'vol.': volumen de la vela en veces la mediana de las 20 anteriores">Filtro de volumen</span>
+          <Num value={rule.volFilter} min={0} max={10} step={0.5} onChange={(volFilter) => patch({ volFilter })} />
+          <span title="Parte de las velas que marca cada elemento relativo">Frecuencia</span>
+          <Num value={rule.target} min={0.005} max={0.3} step={0.005} onChange={(target) => patch({ target })} />
+        </div>
+        <div className="rt-note">Cambiar estos dos obliga a detectar de nuevo los elementos de toda la fase (varios minutos).</div>
+      </div>
+    </>
+  );
+
+  const s = result?.summary;
+  const summaryTab = !result ? <div className="rt-note">Todavía no hay una corrida de esta fase. Arma la regla y córrela.</div> : (
+    <>
+      <div className="rt-group">
+        <b>{result.rule.name}</b> · Fase {result.phase} · {result.from} a {result.to}
+        <div className="rt-note">{describeRule(result.rule)}</div>
+      </div>
+      {result.phase > 1 && (
+        <div className="rt-warn">
+          Esta fase es de comprobación. Si cambias la regla por lo que veas aquí, la fase queda gastada para la regla nueva.
+          Variantes probadas en la fase 1: {result.gate?.variantsPhase1 ?? '—'}.
+        </div>
+      )}
+      {!s?.n ? <div className="rt-note">La regla no dejó trades cerrados en esta fase ({result.signals} señales).</div> : (
+        <>
+          {s.smallSample && <div className="rt-warn">Muestra pequeña ({s.n} trades): con menos de 30 nada se distingue del azar.</div>}
+          <div className="rt-cards">
+            <div className="rt-card"><b>{s.n}</b><span>Trades cerrados</span></div>
+            <div className="rt-card"><b>{fmtPct(s.winRate)}</b><span>Acierto ({s.wilson?.[0]}–{s.wilson?.[1]}%)</span></div>
+            <div className="rt-card"><b><R value={s.avgR} digits={3} /></b><span>R medio neto</span></div>
+            <div className="rt-card"><b><R value={s.totalR} /></b><span>R total</span></div>
+            <div className="rt-card"><b>{s.profitFactor ?? '—'}</b><span>Profit factor</span></div>
+            <div className="rt-card"><b>{s.maxDrawdownR} R</b><span>Mayor caída</span></div>
+            <div className="rt-card"><b>{s.bestStreak} / {s.worstStreak}</b><span>Racha ganadora / perdedora</span></div>
+            <div className="rt-card"><b>{s.medianMfe} / {s.medianMae}</b><span>Mediana a favor / en contra (R)</span></div>
+            <div className="rt-card"><b>{s.avgBars}</b><span>Velas por trade</span></div>
+          </div>
+          <Equity points={result.equity} />
+          {result.baseline?.n > 0 && (
+            <div className="rt-group">
+              <h4>Contra el azar</h4>
+              <table className="rt-table">
+                <thead><tr><th></th><th>Trades</th><th>Acierto</th><th>R medio</th></tr></thead>
+                <tbody>
+                  <tr><td>La regla</td><td>{s.n}</td><td>{fmtPct(s.winRate)}</td><td><R value={s.avgR} digits={3} /></td></tr>
+                  <tr><td>Entradas al azar</td><td>{result.baseline.n}</td><td>{fmtPct(result.baseline.winRate)}</td><td><R value={result.baseline.avgR} digits={3} /></td></tr>
+                </tbody>
+              </table>
+              {result.edge && (
+                <div className="rt-note">
+                  Ventaja: <R value={result.edge.r} digits={3} /> R por trade (entre {fmtR(result.edge.low, 3)} y {fmtR(result.edge.high, 3)}).{' '}
+                  {result.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue del azar.'} Las entradas al azar usan el mismo stop, la misma salida y la misma proporción de largos y cortos.
+                </div>
+              )}
+            </div>
+          )}
+          {s.reach && (
+            <div className="rt-group">
+              <h4>Hasta dónde llegó antes del stop inicial</h4>
+              <table className="rt-table">
+                <thead><tr><th></th>{Object.keys(s.reach).map(level => <th key={level}>≥ {level}R</th>)}<th>Mediana</th></tr></thead>
+                <tbody>
+                  <tr><td>La regla</td>{Object.values(s.reach).map((v, i) => <td key={i}>{fmtPct(v)}</td>)}<td>{s.medianReach} R</td></tr>
+                  {result.baseline?.reach && <tr><td>Al azar</td>{Object.values(result.baseline.reach).map((v, i) => <td key={i}>{fmtPct(v)}</td>)}<td>{result.baseline.medianReach} R</td></tr>}
+                </tbody>
+              </table>
+              <div className="rt-note">No depende del objetivo elegido: mira {s.reachN} trades durante 300 velas o hasta tocar el stop inicial.</div>
+            </div>
+          )}
+        </>
+      )}
+      <div className="rt-group">
+        <h4>Señales</h4>
+        <div className="rt-note">
+          {result.signals} señales en {result.bars.toLocaleString('es-CO')} velas. {result.busy > 0 && `${result.busy} con una posición ya abierta. `}
+          {Object.entries(result.skipped || {}).map(([why, count]) => `${count} sin operar por ${why}. `)}
+          {result.open > 0 && `${result.open} seguían abiertas al final de la fase y no cuentan. `}
+          {!result.measuresAvailable && 'Sin tabla de medidas para este símbolo: los trades no llevan medidas.'}
+        </div>
+      </div>
+      <div className="rt-row">
+        <a className="rt-btn" href={`${API_BASE_URL}/api/tester/result/${result.id}/csv`} style={{ textDecoration: 'none' }}>Descargar CSV</a>
+        {result.phase === 1 && <button type="button" className="rt-btn" disabled={sens === 'loading'} onClick={async () => {
+          setSens('loading');
+          try {
+            const response = await api(`/api/tester/sensitivity/${symbol}`, { rule: result.rule });
+            setSens(response.success ? response.rows : null);
+            if (!response.success) setMessage(response.message);
+          } catch (error) {
+            setSens(null);
+            setMessage(error.message);
+          }
+        }}>{sens === 'loading' ? 'Calculando…' : 'Sensibilidad'}</button>}
+      </div>
+      {Array.isArray(sens) && (
+        <div className="rt-group" style={{ marginTop: 8 }}>
+          <h4>Sensibilidad (valores vecinos)</h4>
+          <table className="rt-table">
+            <thead><tr><th></th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th></tr></thead>
+            <tbody>
+              {sens.map(row => <tr key={row.label} className={row.current ? 'sel' : ''}><td>{row.label}</td><td>{row.n}</td><td>{fmtPct(row.winRate)}</td><td><R value={row.avgR} digits={3} /></td><td><R value={row.totalR} /></td></tr>)}
+            </tbody>
+          </table>
+          <div className="rt-note">Una regla que solo gana con un valor exacto es frágil.</div>
+        </div>
+      )}
+    </>
+  );
+
+  const selectedTrade = trades.find(t => t.n === selected);
+  const tradesTab = !result ? <div className="rt-note">Sin corrida en esta fase.</div> : (
+    <>
+      {selectedTrade && (
+        <div className="rt-group">
+          <b>Trade {selectedTrade.n}</b> · {selectedTrade.dir > 0 ? 'Largo' : 'Corto'} · <R value={selectedTrade.r} /> R · {selectedTrade.reason}
+          <div className="rt-note">
+            Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
+            Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
+            Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
+          </div>
+          {detail?.trade?.n === selectedTrade.n && detail.measures.length > 0 && (
+            <details style={{ marginTop: 4 }}>
+              <summary style={{ cursor: 'pointer' }}>Medidas al decidir ({detail.measures.length})</summary>
+              <table className="rt-table">
+                <tbody>{detail.measures.map(m => <tr key={m.key}><td>{m.group} · {m.label}</td><td>{m.value ?? '—'}</td></tr>)}</tbody>
+              </table>
+            </details>
+          )}
+        </div>
+      )}
+      <div className="rt-note" style={{ marginBottom: 4 }}>Clic en un trade para verlo en el gráfico. Las flechas del teclado pasan al siguiente.</div>
+      <table className="rt-table">
+        <thead>
+          <tr>{head('n', '#')}{head('entry_t', 'Entrada')}{head('dir', 'Lado')}{head('r', 'R')}{head('mfe', 'A favor')}{head('mae', 'En contra')}{head('reach', 'Alcance')}{head('bars', 'Velas')}{head('reason', 'Salida')}{head('votes', 'Elem.')}</tr>
+        </thead>
+        <tbody>
+          {sorted.slice(0, shown).map(t => (
+            <tr key={t.n} className={`pick${t.n === selected ? ' sel' : ''}`} onClick={() => pick(t)}>
+              <td>{t.n}</td><td>{stamp(t.entry_t)}</td><td>{t.dir > 0 ? 'L' : 'C'}</td><td><R value={t.r} /></td><td>{t.mfe}</td><td>{t.mae}</td>
+              <td>{t.reach ?? '—'}</td><td>{t.bars}</td><td>{t.reason}</td><td>{t.votes.join(' ')}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {sorted.length > shown && <button type="button" className="rt-btn" onClick={() => setShown(n => n + PAGE)}>Mostrar {Math.min(PAGE, sorted.length - shown)} más ({sorted.length - shown} restantes)</button>}
+    </>
+  );
+
+  const b = result?.breakdowns;
+  const wl = result?.winnersVsLosers;
+  const patternsTab = !result || !s?.n ? <div className="rt-note">Sin trades en esta fase.</div> : (
+    <>
+      <BriefTable title="Por año" rows={b.year} />
+      <BriefTable title="Por lado" rows={b.side} />
+      <BriefTable title="Por hora de entrada (UTC)" rows={b.hour} />
+      <BriefTable title="Por salida" rows={b.reason} />
+      <BriefTable title="Por combinación de elementos de la regla" rows={b.combo} />
+      <SplitTable title="Aporte de cada elemento de la regla" rows={b.ruleElements} names={names} />
+      <SplitTable title="Otros elementos presentes, a favor del trade" rows={b.otherElements} names={names} note="Elementos que no están en la regla y aparecieron en la ventana de la señal. Ordenados por diferencia de R." />
+      <SplitTable title="Elementos en contra del trade" rows={b.againstElements} names={names} />
+      <div className="rt-group">
+        <h4>Medidas: ganadores contra perdedores</h4>
+        {!wl ? <div className="rt-note">Faltan trades con medidas (al menos 5 ganadores y 5 perdedores).</div> : (
+          <>
+            <table className="rt-table">
+              <thead><tr><th>Medida</th><th>Ganadores</th><th>Perdedores</th><th>Separa</th></tr></thead>
+              <tbody>
+                {wl.rows.map(row => (
+                  <tr key={row.key} style={{ fontWeight: row.clear ? 600 : 400 }} title={row.clear ? 'Supera lo que da el azar al mirar todas las medidas' : ''}>
+                    <td>{row.group} · {row.label}</td><td>{row.first_median}</td><td>{row.second_median}</td><td>{(row.share * 100).toFixed(0)}%{row.clear ? ' ●' : ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="rt-note">Mediana de cada grupo. "Separa" es en cuántos pares ganador-perdedor el ganador tiene el valor mayor: 50% es no distinguirlos. ● supera el umbral del azar ({wl.threshold}). En la fase 1 sirve para proponer un filtro; hay que comprobarlo en la fase 2.</div>
+          </>
+        )}
+      </div>
+    </>
+  );
+
+  const historyTab = (
+    <>
+      <div className="rt-note" style={{ marginBottom: 6 }}>
+        Cada corrida queda registrada. Variantes distintas probadas en la fase 1: <b>{info?.variantsPhase1 ?? 0}</b>. Con muchas variantes, la mejor se ve bien por azar.
+      </div>
+      <table className="rt-table">
+        <thead><tr><th>Regla</th><th>Fase</th><th>Trades</th><th>R medio</th><th>Ventaja</th><th></th></tr></thead>
+        <tbody>
+          {(info?.runs || []).map(run => (
+            <tr key={run.id} title={describeRule(run.rule)}>
+              <td>{run.name}<br /><span className="rt-note">{TF_LABEL[run.tf]} · {new Date(run.at).toLocaleDateString('es-CO')}</span></td>
+              <td>{run.phase}</td><td>{run.summary?.n ?? 0}</td><td><R value={run.summary?.avgR} digits={3} /></td><td><R value={run.edge?.r} digits={3} /></td>
+              <td>
+                <button type="button" className="rt-btn" onClick={() => loadRun(run.id)}>Ver</button>{' '}
+                <button type="button" className="rt-btn" onClick={() => { setRule(fromBackendRule(run.rule)); setTab('regla'); }} title="Cargar esta regla en el editor">Regla</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {!info?.runs?.length && <div className="rt-note">Sin corridas todavía.</div>}
+    </>
+  );
+
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['historial', 'Historial']];
+  const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
+
+  return (
+    <div className="rt-root">
+      <div className="rt-head">
+        <strong>{symbol}</strong>
+        <span style={{ opacity: 0.7 }}>Probador de reglas</span>
+        <div style={{ display: 'flex', gap: 2, marginLeft: 8 }}>
+          {(info?.phases || []).map(p => (
+            <button key={p.phase} type="button" className={`rt-btn${p.phase === phase ? ' on' : ''}`} disabled={!p.available || running}
+              title={p.available ? `${p.name}: ${p.from} a ${p.to}` : 'El almacén de trades no cubre esta fase'} onClick={() => { setPhase(p.phase); setSelected(null); setDetail(null); setSens(null); }}>
+              Fase {p.phase} · {p.name}
+            </button>
+          ))}
+        </div>
+        {phaseInfo && <span className="rt-note">{phaseInfo.from} a {phaseInfo.to}</span>}
+        <div style={{ display: 'flex', gap: 2, marginLeft: 'auto' }}>
+          {CHART_TIMEFRAMES.map(tf => <button key={tf} type="button" className={`rt-btn${tf === chartTf ? ' on' : ''}`} onClick={() => setChartTf(tf)} title="Marco del gráfico (el de la regla se elige en la regla)">{tf.toUpperCase()}</button>)}
+        </div>
+        <div style={{ position: 'relative' }}>
+          <button type="button" className="rt-btn" onClick={() => setShowList(open => !open)}>Indicadores {enabledCount}</button>
+          {showList && (
+            <div className="rt-menu" style={{ left: 'auto', right: 0 }}>
+              {INDICATORS.map(name => (
+                <label key={name} style={{ display: 'block', padding: '3px 0', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={!!indicatorStates[name]} onChange={() => setIndicatorStates(previous => ({ ...previous, [name]: !previous[name] }))} style={{ marginRight: 8 }} />{name}
+                </label>
+              ))}
+              <div className="rt-note" style={{ marginTop: 6 }}>Usan los ajustes de la pestaña principal.</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="rt-body">
+        <div className="rt-side">
+          <div className="rt-tabs">
+            {tabs.map(([key, label]) => <button key={key} type="button" className={`rt-tab${tab === key ? ' on' : ''}`} onClick={() => setTab(key)}>{label}</button>)}
+          </div>
+          <div className="rt-scroll">
+            {message && <div className="rt-warn" onClick={() => setMessage(null)} style={{ cursor: 'pointer' }} title="Clic para cerrar">{message}</div>}
+            {tab === 'regla' && ruleTab}
+            {tab === 'resumen' && summaryTab}
+            {tab === 'trades' && tradesTab}
+            {tab === 'patrones' && patternsTab}
+            {tab === 'historial' && historyTab}
+          </div>
+          <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
+            <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={running || !phaseInfo?.available} onClick={() => runPhase(false)}>
+              {running ? `${job.stage}… ${job.done}/${job.total}` : `Correr la regla en la fase ${phase}`}
+            </button>
+            {running && <div className="rt-progress"><div style={{ width: `${Math.round(100 * job.done / Math.max(1, job.total))}%` }} /></div>}
+            {running && <div className="rt-note" style={{ marginTop: 4 }}>La primera corrida de cada marco y fase detecta los elementos de todo el tramo y tarda varios minutos. Las siguientes, segundos.</div>}
+          </div>
+        </div>
+
+        <div className="rt-chart backtesting-main" onMouseDown={() => setShowList(false)}>
+          {status && <div className="rt-overlay">{status}</div>}
+          {!status && phaseInfo && !chartOpen && (
+            <div className="rt-overlay" style={{ zIndex: 5, background: 'var(--t-page, #fff)', opacity: 1, flexDirection: 'column', gap: 12 }}>
+              <div style={{ maxWidth: 460 }}>
+                Fase {phase} · {phaseInfo.name}. El gráfico de esta fase no se muestra hasta que lo pidas: primero el informe.
+                {result ? ' Verlo no gasta nada por sí solo; cambiar la regla por lo que veas, sí.' : ' Corre la regla para ver su informe.'}
+              </div>
+              {result && <button type="button" className="rt-btn" onClick={() => setRevealed(previous => ({ ...previous, [phase]: true }))}>Ver el gráfico de la fase {phase}</button>}
+            </div>
+          )}
+          {!status && market?.timeframes?.[chartTf]?.main?.length > 0 && chartTime !== null && (
+            <div className="timeframe-panel" style={{ position: 'absolute', inset: 0 }}>
+              <MiniChart
+                ref={chartRef}
+                key={`${symbol}-${chartTf}-${phase}-${chartOpen}`}
+                symbol={symbol}
+                interval={chartTf}
+                days={days}
+                isActive={true}
+                indicatorStates={indicatorStates}
+                backtestingMode={true}
+                backtestingData={market}
+                currentTime={chartTime}
+                simulationStartTime={phaseInfo.start}
+                vpConfig={VP_CONFIG}
+                vpFixedRange={null}
+                oiMode="histogram"
+                rejectionPatternConfig={null}
+                currentTool={tool}
+                onToolChange={setTool}
+                getTradeBoundaries={getTradeBoundaries}
+                getTradeBoxes={getTradeBoxes}
+                onRequestPause={noop}
+                onRequestTimeChange={noop}
+                onDrawingsChange={noop}
+                onCandleClick={noop}
+                chosenStyle="numbers"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RuleTesterApp;

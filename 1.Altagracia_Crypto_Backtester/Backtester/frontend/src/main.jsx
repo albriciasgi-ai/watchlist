@@ -5,6 +5,8 @@ import ReactDOM from "react-dom/client";
 import BacktestingApp from "./components/backtesting/BacktestingApp";
 import SecondaryChartApp from "./components/backtesting/SecondaryChartApp";
 import { isSecondaryChart } from "./components/backtesting/replayChannel.js";
+import RuleTesterApp from "./components/backtesting/RuleTesterApp";
+import { isRuleTester } from "./components/backtesting/ruleTester.js";
 import "./styles.css";
 import "./volume_profile_styles.css";
 import "./theme_nitido.css"; // Estilo Nítido (uiTheme.js); el clásico no lo usa
@@ -13,7 +15,8 @@ const App = () => {
   return (
     <div>
       {/* ?grafico=2: segundo gráfico que sigue la reproducción de la pestaña principal */}
-      {isSecondaryChart() ? <SecondaryChartApp /> : <BacktestingApp />}
+      {/* ?probador=1: probador de reglas del Observador, en su propia ventana */}
+      {isRuleTester() ? <RuleTesterApp /> : isSecondaryChart() ? <SecondaryChartApp /> : <BacktestingApp />}
     </div>
   );
 };

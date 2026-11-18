@@ -20,6 +20,7 @@ import oi_store
 import observer
 import measures
 import patterns
+import rule_tester
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import OrderedDict
@@ -3816,6 +3817,82 @@ async def get_setup_validations(request: Request, symbol: str):
             rows = [json.loads(line) for line in fh if line.strip()]
     rows = [r for r in rows if r.get("symbol") == sanitize_filename(symbol)]
     return {"success": True, "validations": rows[::-1]}
+
+
+# ==================== PROBADOR DE REGLAS DEL OBSERVADOR ====================
+
+def _json_response(data):
+    return Response(content=json.dumps(data, allow_nan=False, separators=(",", ":")).encode("utf-8"),
+                    media_type="application/json")
+
+
+@app.get("/api/tester/info/{symbol}")
+@limiter.limit("120/minute")
+async def tester_info(request: Request, symbol: str):
+    """Fases del símbolo, elementos y medidas que puede usar una regla, y las corridas ya hechas."""
+    safe = sanitize_filename(symbol)
+    runs = await run_in_threadpool(rule_tester.history, safe)
+    return {"success": True, "phases": await run_in_threadpool(rule_tester.phases, safe),
+            "timeframes": list(rule_tester.TFS),
+            "elements": [{"code": code, "name": item[0], "volume": code in of_elements.VOLUME_FILTERED,
+                          "flow": code in of_elements.FLOW_CODES} for code, item in of_elements.CATALOG.items()],
+            "measures": measures.catalog(), "runs": runs[::-1][:200],
+            "variantsPhase1": len({r["hash"] for r in runs if r["phase"] == 1})}
+
+
+@app.post("/api/tester/run/{symbol}")
+@limiter.limit("60/minute")
+async def tester_run(request: Request, symbol: str):
+    """Corre una regla en una fase (body: rule, phase, confirm). Responde un trabajo, o la corrida ya guardada."""
+    body = await request.json()
+    phase = int(body.get("phase", 1))
+    if phase not in (1, 2, 3):
+        return {"success": False, "message": "Fase no válida"}
+    return await run_in_threadpool(rule_tester.start, sanitize_filename(symbol), body.get("rule") or {}, phase,
+                                   bool(body.get("confirm")))
+
+
+@app.get("/api/tester/job/{job_id}")
+@limiter.limit("600/minute")
+async def tester_job(request: Request, job_id: str):
+    job = rule_tester.job_status(sanitize_filename(job_id))
+    return {"success": job is not None, "job": job}
+
+
+@app.get("/api/tester/result/{run_id}")
+@limiter.limit("120/minute")
+async def tester_result(request: Request, run_id: str):
+    """Una corrida guardada: resumen, cortes y cada trade (sin sus medidas, que se piden por trade)."""
+    result = await run_in_threadpool(lambda: rule_tester.public_run(rule_tester.load_run(sanitize_filename(run_id))))
+    if result is None:
+        return {"success": False, "message": "Corrida no encontrada"}
+    return _json_response(result)
+
+
+@app.get("/api/tester/result/{run_id}/trade/{number}")
+@limiter.limit("600/minute")
+async def tester_trade(request: Request, run_id: str, number: int):
+    detail = await run_in_threadpool(rule_tester.trade_detail, sanitize_filename(run_id), number)
+    return {"success": detail is not None, **(detail or {})}
+
+
+@app.get("/api/tester/result/{run_id}/csv")
+@limiter.limit("30/minute")
+async def tester_csv(request: Request, run_id: str):
+    safe = sanitize_filename(run_id)
+    content = await run_in_threadpool(rule_tester.export_csv, safe)
+    if content is None:
+        return {"success": False, "message": "Corrida no encontrada"}
+    headers = {"Content-Disposition": f'attachment; filename="probador_{safe}.csv"'}
+    return Response(content="﻿" + content, media_type="text/csv; charset=utf-8", headers=headers)
+
+
+@app.post("/api/tester/sensitivity/{symbol}")
+@limiter.limit("30/minute")
+async def tester_sensitivity(request: Request, symbol: str):
+    """Solo fase 1: la regla con valores vecinos de objetivo, ventana y margen del stop."""
+    body = await request.json()
+    return _json_response(await run_in_threadpool(rule_tester.sensitivity, sanitize_filename(symbol), body.get("rule") or {}))
 
 
 @app.get("/api/orderflow/coverage/{symbol}")

@@ -104,7 +104,7 @@ function saveSettings(settings) {
 }
 
 /** Las velas que guardó la principal en el navegador, o null */
-function cachedMarketData(symbol) {
+export function cachedMarketData(symbol) {
   return new Promise((resolve) => {
     let request;
     try {

@@ -7,6 +7,7 @@ import ObserverReport from './ObserverReport';
 import TradeImages from './TradeImages';
 import './Observer.css';
 import { priceText } from './blindClock.js';
+import { ruleTesterUrl } from './ruleTester.js';
 
 const MEASURES_PENDING = ['building', 'missing'];
 const MEASURES_POLL_MS = 5000;
@@ -129,6 +130,14 @@ const ObserverPanel = ({ revision, symbol, blindActive, onRevealDate, sessionMan
         <h3>Observador</h3>
         <div style={{ display: 'flex', gap: 6 }}>
           {onPopOut && <button type="button" className="btn-quick" onClick={onPopOut} title="Abrir el Observador en una ventana aparte, para leerlo con más espacio">Ventana aparte</button>}
+          <button
+            type="button"
+            className="btn-quick"
+            onClick={() => { if (!window.open(ruleTesterUrl(symbol), 'app1-probador')) window.alert('El navegador bloqueó la ventana. Permite las ventanas emergentes para esta página y vuelve a intentarlo.'); }}
+            title="Probar una regla (elementos de order flow, stop y salida) sobre el histórico por fases, en otra ventana"
+          >
+            Probador de reglas
+          </button>
           <button type="button" className="btn-quick" onClick={() => setShowReport(true)}>Ver informe</button>
         </div>
       </div>

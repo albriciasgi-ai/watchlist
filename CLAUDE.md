@@ -54,6 +54,30 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 17 Noviembre 2026: Probador de Reglas del Observador
+
+**Pedido:** la parte que sigue del Observador: probar sobre el histórico por fases, para que lo decidido en la primera parte se compruebe con datos frescos en la segunda y la tercera. Elegir elementos de order flow (varios a la vez), con stop y objetivo (o sin objetivo, para ver hasta dónde llega), ver todo en pantalla sin reproducción, contabilizar cada trade con un informe y guardar lo que había en cada trade aunque no esté en la regla. Marcos de 15 y 5 minutos, con 30 minutos, 1 hora y 4 horas habilitados, en ventana aparte.
+
+**Cambios:**
+1. **Ventana "Probador de reglas"** (`?probador=1`, botón en el Observador): a la izquierda la regla y el informe; a la derecha el gráfico de la fase completa, sin reproducción, con la caja de cada trade. Un clic en la lista, o las flechas, lleva al trade.
+2. **Regla:** hasta 6 elementos (todos o al menos N, en una ventana de 1 a 5 velas), lado o invertida, entrada a mercado o limit en la zona del elemento, stop (swing anterior, vela del elemento, borde de la zona o ATR) y salida (objetivo en R, sin objetivo, stop arrastrado, tiempo o señal contraria). Hasta 3 filtros con las medidas del Observador.
+3. **Tres fases por fecha:** 1 Exploración (hasta el 31/12/2023), 2 Validación (01/01/2024 al 30/06/2025) y 3 Final (desde el 01/07/2025). La 2 y la 3 piden confirmar, guardan el resultado por regla exacta y no lo recalculan; la 3 exige haber pasado por la 2, y su gráfico no se muestra hasta pedirlo.
+4. **Informe:** acierto, R neto de comisiones, profit factor, caída, rachas, curva, contra entradas al azar con margen, hasta dónde llegó cada trade antes del stop, cortes por año, lado, hora y salida, aporte de cada elemento, sensibilidad a valores vecinos y CSV.
+5. **Registro por trade:** todos los elementos presentes en su ventana (a favor y en contra) y las 58 medidas del Observador al decidir, con ganadores contra perdedores.
+6. **Pruebas:** `test_rule_tester.py` (14) y `ruletester.test.mjs` (8).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- La primera corrida de cada marco y fase detecta los elementos de todo el tramo: en BTC 15m, 3 minutos la fase 1 y cerca de 1.5 la fase 2. Las siguientes tardan segundos.
+- Solo BTC tiene historia para las tres fases. Los elementos del libro (AB, BL, LD) no se pueden probar: el libro existe desde el 13/11/2026.
+- Las medidas empiezan donde empieza la tabla de medidas (unos 5 años atrás): los trades de 2020 y parte de 2021 no las llevan. Los indicadores que solo calcula el navegador (VWAP, S&R, Swing, patrones) no se guardan por trade.
+- Primera corrida real (VA abandonada, stop en el swing, 2R, BTC 15m): fase 1, 2,154 trades y -0.20 R por trade contra -0.28 del azar; fase 2, 863 trades y -0.22 R contra -0.32. En ninguna se distingue del azar.
+- Probado en la copia aislada con el almacén real de BTC: fases 1 y 2 en 15m, gráfico con cajas, lista, patrones, CSV y el candado de las fases. No se probó en 5m, el botón desde el Observador ni la fase 3.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR (17/11/2026)"
+
+---
+
 ### App 1 + Entrenamiento - 17 Noviembre 2026: Claude Ve App 1 al Entrenar
 
 **Pedido:** que en el entrenamiento Claude pueda mirar App 1 (indicadores, footprints, lo que está haciendo) y aconsejar cuando se le pida, no solo interpretar una captura.

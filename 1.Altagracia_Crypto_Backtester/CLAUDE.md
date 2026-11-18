@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Probador de Reglas del Observador
+
+Ventana aparte (`?probador=1`) que corre una regla de elementos de order flow, con entrada, stop y salida, sobre tres fases fijas del histórico: explorar, validar y comprobar. Muestra la fase completa con la caja de cada trade, sin reproducción, y da el informe de todos los trades contra entradas al azar. Detalle en `Backtester/CLAUDE.md`, "PROBADOR DE REGLAS DEL OBSERVADOR (17/11/2026)".
+
 ### Noviembre 2026: Ajustes Propios del 2.º Gráfico
 
 Cada indicador del 2.º gráfico tiene su ⚙️ con los modales de la principal; lo cambiado ahí queda solo en ese gráfico. Detalle en `Backtester/CLAUDE.md`, "Ajustes propios del 2.º gráfico".

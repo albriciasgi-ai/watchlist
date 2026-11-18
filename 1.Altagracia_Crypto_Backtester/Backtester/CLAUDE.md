@@ -637,6 +637,7 @@ node tests/redrawPacer.test.mjs
 node tests/liquiditymap.test.mjs
 node tests/sustainedlevels.test.mjs
 node tests/zonedefense.test.mjs
+node tests/ruletester.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -935,6 +936,79 @@ node tests/leaks.test.mjs ruta\velas.json
 Con el archivo compara Swing, VWAP y Rejection con velas reales, con y sin el futuro. El archivo trae `{ "5m": [...], "15m": [...], "1h": [...], "4h": [...] }`. `tests/test_dtb_known.py` compara Double Top/Bottom con todos los datos contra solo lo cerrado. `tests/test_rejection_known.py` comprueba que una vela no cambia con velas posteriores y que una simulación no avisa al bot.
 
 ---
+
+## PROBADOR DE REGLAS DEL OBSERVADOR (17/11/2026)
+
+Pedido del usuario: probar reglas sobre el histórico por fases, para que lo que se decide en la primera parte se compruebe con datos frescos en las otras dos. Sin reproducción: toda la fase en pantalla, con cada trade a la vista.
+
+### Flujo
+
+```
+RuleTesterApp.jsx (?probador=1) + ruleTester.js          La regla, el informe y el gráfico
+        │  POST /api/tester/run/{symbol}                   { rule, phase, confirm } → trabajo, o la corrida guardada
+        │  GET  /api/tester/job/{id}                       Avance
+        ▼
+backend/rule_tester.py
+   detect_span()   elementos de toda la fase (of_elements.detect por tramos de 60 días), en disco
+   run()           of_setups.match_recipes() → simulate() por señal → resumen, cortes y azar
+        ▼
+OrderFlowData/observer/tester/   cache/*.npz (elementos por fase), runs/*.json.gz (cada corrida), runs.jsonl (registro)
+        ▼
+GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/tester/info/{symbol}  ·  POST /api/tester/sensitivity/{symbol}
+```
+
+### Fases
+
+- `CUTS` = 2024-01-01 y 2025-07-01 (UTC). La fase 1 empieza 31 días después del primer día del almacén, por los umbrales de 30 días. La 3 empieza en el corte de los setups y termina en el último día del almacén.
+- **Fase 1:** libre. Cada corrida queda en `runs.jsonl`: el historial dice cuántas variantes distintas se probaron.
+- **Fases 2 y 3:** `start()` responde `needsConfirm` y la ventana pide confirmar. Una regla exacta ya corrida en esa fase no se recalcula: se devuelve la guardada (`gate()`, por `rule_hash()`, que no mira el nombre). La 3 exige que esa misma regla tenga corrida en la 2.
+- El gráfico de las fases 2 y 3 queda tapado hasta que se pide verlo, y solo con una corrida hecha. Mientras tanto la hora del gráfico es el inicio de la fase.
+- No hay días de separación entre fases. Lo que evita la fuga es que un trade abierto al final de la fase no cuenta (`open`): su salida está en la fase siguiente.
+
+### Regla
+
+- `clean_rule()` acota todo. La receta es la de `of_setups.clean_recipe()`: cada elemento elegido en la ventana es una casilla, con modo `strict` (todos) o `threshold` (al menos N), ventana, lado, swing, momentum y confirmación.
+- **Entrada:** a mercado en la apertura de la vela siguiente a la que da a conocer la señal, o limit en la zona de los elementos que votaron (borde cercano, mitad o lejano), que se llena al cruzar y vence en N velas. Una limit del lado equivocado entra a mercado.
+- **Stop**, con velas ya cerradas: último swing confirmado detrás de la entrada (`_pivot`, único extremo de su ventana), extremo desde la primera vela del elemento, borde lejano de la zona, o ATR. Más un margen en ATR. Una señal con el stop a más de `maxAtr` o menos de `minAtr` no se opera.
+- **Salida:** objetivo en R, stop arrastrado al último swing confirmado a favor, cierre a las N velas y señal contraria. Sin ninguna, 96 velas.
+- **Filtros:** hasta 3 medidas de `measures.py`, leídas a favor del trade en la última fila cerrada al conocerse la señal. Una señal sin medidas (antes del inicio de la tabla) no pasa un filtro.
+- `invert` opera en contra del elemento. `oneAtATime` (de fábrica) salta las señales con una posición abierta; sin él cuentan todas.
+
+### Simulación
+
+- Comisión taker (0.055%) en entrada y salida; maker (0.02%) en una limit llenada. R neto = bruto − comisiones ÷ riesgo. Con stops muy cortos la comisión pesa mucho.
+- Stop y objetivo en la misma vela, o stop en la vela en que se llena la limit: se mira minuto a minuto con `footprint_store.minutes`. En el mismo minuto, o sin minutos, cuenta el stop.
+- Un hueco de datos de más de 6 horas cierra el trade en la última vela conocida.
+- `reach`: lo máximo a favor en R antes de tocar el stop inicial, en 300 velas, sin importar la salida elegida. El informe da qué parte llegó a 1, 2, 3 y 5 R.
+- **Azar:** 3,000 entradas en velas al azar con el mismo stop y la misma salida, a mercado y con la misma proporción de largos y cortos (el stop por zona pasa a vela). La ventaja es la diferencia de R medio, con margen de 1.96 errores estándar; `clear` solo si el margen no incluye el cero y hay 30 trades o más.
+
+### Lo que guarda cada trade
+
+- `votes` (elementos de la regla que dispararon), `present` (todos los elementos de su lado en la ventana, estén o no en la regla) y `against` (los del lado contrario).
+- `measures`: las 58 medidas al decidir. No viajan con la lista: `/trade/{n}` las da y el CSV las trae todas.
+- `_breakdowns()`: por año, lado, hora, salida y combinación; con y sin cada elemento de la regla, cada otro elemento presente y cada elemento en contra (al menos 5 trades por lado).
+- `_winners_vs_losers()`: `patterns.compare_groups()` entre ganadores y perdedores.
+- No se guardan los indicadores que solo calcula el navegador: VWAP, S&R, Swing, Double Top/Bottom y Rejection.
+
+### Ventana
+
+- `main.jsx` monta `RuleTesterApp` con `?probador=1&symbol=…`. La abre el botón "Probador de reglas" del Observador.
+- El gráfico es `MiniChart` en modo backtesting con `currentTime` = final de la fase: no hay reloj. Las cajas van por `getTradeBoxes` y el trade elegido por `getTradeBoundaries` y `focusOn()`.
+- El marco del gráfico es aparte del de la regla (una regla de 30m se mira en 15m o 1h). Las velas salen del caché del navegador de la principal o, si faltan, se pide al backend solo ese marco.
+- Los indicadores usan los ajustes de la principal. Las reglas guardadas quedan en `tester_rules_v1` y la vista en `tester_view_v1`.
+
+### Medido y probado
+
+- BTC 15m, fase 1 (1,346 días, 129,214 velas): 179 s la primera vez; después la corrida tarda segundos y la sensibilidad (8 variantes) 26 s. Fase 2, cerca de 90 s la primera vez.
+- VA abandonada, stop en el swing de 5 velas, 2R, 200 velas: fase 1, 2,154 trades, 35.6% y -0.201 R contra -0.276 del azar (ventaja +0.075, entre -0.009 y +0.159). Fase 2, 863 trades, -0.221 R contra -0.324 (entre -0.007 y +0.213). No se distingue del azar.
+- Pruebas: `backend/tests/test_rule_tester.py` (14: entrada, comisiones, minutos, limit al cruzar, sin objetivo, una posición, trade abierto, invertir, elementos presentes, swing confirmado, que lo cerrado no cambie con velas posteriores, azar, identidad de la regla y fases) y `frontend/tests/ruletester.test.mjs` (8).
+- Probado en la copia aislada con el almacén real: fases 1 y 2 en 15m desde la ventana (gráfico, lista, patrones, CSV y candado), y por la ruta una regla de 30m con dos elementos, limit, sin objetivo, stop arrastrado y un filtro (105 trades). No se probó 5m, la fase 3 ni el botón desde el Observador.
+
+### Falta
+
+- Modos de grupos y secuencia de las recetas, y casillas con códigos alternativos, en el editor de la ventana.
+- Abrir la reproducción de la principal unas velas antes de una señal, con fecha oculta.
+- Guardar por trade lo que marcan los indicadores del navegador.
 
 ## ESTADO PARA EL ENTRENADOR (17/11/2026)
 
