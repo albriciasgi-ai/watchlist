@@ -4,13 +4,23 @@
 export const REVIEW_DAYS = 28;
 export const ACTION_LABEL = { skip: 'No entro', rule: 'Como la regla', long: 'Largo propio', short: 'Corto propio', passed: 'Pasó con el trade abierto' };
 
-/** Cajas de las decisiones tomadas, para el gráfico. Una que sigue abierta llega hasta la hora a la vista. */
+/** Si la decisión tiene algo que dibujar: un trade, o la orden que se pidió y no se llenó (o aún no se sabe). */
+export const hasBox = (d) => (Number.isFinite(d?.entry) && Number.isFinite(d?.stop)) || (Number.isFinite(d?.plan?.entry) && Number.isFinite(d?.plan?.stop));
+
+/**
+ * Cajas de las decisiones, para el gráfico. Un trade que sigue abierto llega hasta la hora a la vista. Una orden
+ * sin llenar se dibuja como se pidió, desde su candidato hasta que venció: así se ve que el precio no llegó.
+ */
 export function reviewBoxes(decisions = [], now = null, tfMinutes = 15) {
   const step = tfMinutes * 60000;
-  return decisions.filter(d => Number.isFinite(d.entry) && Number.isFinite(d.stop)).map(d => ({
+  const orders = decisions.filter(d => !Number.isFinite(d.entry) && Number.isFinite(d.plan?.entry) && Number.isFinite(d.plan?.stop)).map(d => ({
+    side: d.plan.dir > 0 ? 'long' : 'short', entry: d.plan.entry, stop: d.plan.stop, target: d.plan.target ?? d.plan.entry, start: d.time,
+    end: Math.max(d.expired ?? now ?? d.time, d.time + step)
+  }));
+  return orders.concat(decisions.filter(d => Number.isFinite(d.entry) && Number.isFinite(d.stop)).map(d => ({
     side: d.dir > 0 ? 'long' : 'short', entry: d.entry, stop: d.stop, target: d.target ?? d.exit ?? d.entry, start: d.entry_t,
     end: Math.max(d.exit_t ?? now ?? d.entry_t, d.entry_t + step)
-  }));
+  })));
 }
 
 /**

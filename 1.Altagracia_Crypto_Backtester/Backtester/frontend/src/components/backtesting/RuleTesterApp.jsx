@@ -10,7 +10,7 @@ import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings'
 import { lastClosedIndex } from './replayClock';
 import { latestFreeBox } from './orderPlan.js';
 import { priceText, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
-import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, reviewBoxes, statText } from './candidateReview.js';
+import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, hasBox, reviewBoxes, statText } from './candidateReview.js';
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
@@ -213,6 +213,7 @@ const RuleTesterApp = () => {
   const [reviewAny, setReviewAny] = useState(false);
   const [reviewBusy, setReviewBusy] = useState(false);
   const [reviewPick, setReviewPick] = useState(null);     // Decisión cuya caja se muestra; sin elegir, la del último trade
+  const [reviewWait, setReviewWait] = useState(12);       // Velas que espera la limit de la caja
   const [reviewLimit, setReviewLimit] = useState(true);   // La caja entra como limit en su precio de entrada
   const [reviewFollow, setReviewFollow] = useState(true); // Tras entrar, seguir hasta que el trade cierre
   const [reviewShapes, setReviewShapes] = useState([]); // Dibujos del gráfico, para leer la caja TP/SL de una decisión
@@ -518,7 +519,7 @@ const RuleTesterApp = () => {
   const decideReview = async (action, plan = null) => {
     setReviewBusy(true);
     try {
-      const answer = await api('/api/review/decide', { session: review.session.id, i: review.candidate.i, action, stop: plan?.stop ?? null, target: plan?.target ?? null, entry: plan?.limit ?? null, follow: reviewFollow,
+      const answer = await api('/api/review/decide', { session: review.session.id, i: review.candidate.i, action, stop: plan?.stop ?? null, target: plan?.target ?? null, entry: plan?.limit ?? null, wait: reviewWait, follow: reviewFollow,
         seconds: shownAtRef.current ? (Date.now() - shownAtRef.current) / 1000 : null });
       if (takeReview(answer)) {
         if (plan?.boxId) {
@@ -571,7 +572,7 @@ const RuleTesterApp = () => {
     if (review?.session) {
       // En revisión solo se ven las decisiones de la sesión: nada de corridas anteriores, que mostrarían el futuro
       // Una sola caja a la vista: la del trade elegido en la lista o, sin elegir, la del último. Todas juntas tapan el gráfico
-      const withTrade = review.decisions.filter(d => Number.isFinite(d.entry));
+      const withTrade = review.decisions.filter(hasBox);
       const shown = withTrade.find(d => d.i === reviewPick) || withTrade[withTrade.length - 1];
       boxesRef.current = reviewBoxes(shown ? [shown] : [], review.candidate?.time ?? null, review.session.tf);
       // La vela del candidato a la vista, marcada: es donde hay que decidir ahora
@@ -1489,7 +1490,8 @@ const RuleTesterApp = () => {
           </div>
           <button type="button" className="rt-btn" style={{ width: '100%', padding: '6px 0', marginTop: 4 }} disabled={reviewBusy} onClick={() => decideReview('skip')}>No entro</button>
           <div className="rt-row" style={{ marginTop: 4 }}>
-            <Check checked={reviewLimit} onChange={setReviewLimit} title="Marcada: la orden espera en el precio de entrada de tu caja, hasta 12 velas, y se llena cuando el precio lo cruza; si no llega, queda sin llenar. Si el mercado ya está mejor que ese precio, entra a mercado. Sin marcar: entra a mercado en la apertura de la vela siguiente, y de la caja solo usa el stop y el objetivo">Entrar en el precio de mi caja (limit)</Check>
+            <Check checked={reviewLimit} onChange={setReviewLimit} title="Marcada: la orden espera en el precio de entrada de tu caja, las velas que digas, y se llena cuando el precio lo cruza; si no llega, queda sin llenar. Si el mercado ya está mejor que ese precio, entra a mercado. Sin marcar: entra a mercado en la apertura de la vela siguiente, y de la caja solo usa el stop y el objetivo">Entrar en el precio de mi caja (limit)</Check>
+            <span>y esperar</span><Num value={reviewWait} min={1} max={200} disabled={!reviewLimit} onChange={setReviewWait} /><span>velas</span>
           </div>
           <div className="rt-row">
             <Check checked={reviewFollow} onChange={setReviewFollow} title="Como al operar una posición a la vez: tras entrar, el gráfico avanza hasta que tu trade cierra y unas velas más, para ver cómo terminó y qué hizo el precio después. Los candidatos que caen en ese tramo no se deciden. Sin marcar, pasa al candidato siguiente aunque el trade siga abierto">Tras entrar, seguir hasta que el trade cierre</Check>
@@ -1512,7 +1514,7 @@ const RuleTesterApp = () => {
       {review?.session && review.decisions.length > 0 && (
         <>
           <h4>Decisiones de esta sesión</h4>
-          <div className="rt-note" style={{ marginBottom: 4 }}>El gráfico muestra solo la caja del último trade. Un clic en otro lo lleva ahí y muestra la suya.</div>
+          <div className="rt-note" style={{ marginBottom: 4 }}>El gráfico muestra solo la caja de tu última orden: el trade, o la orden como la pediste si no se llenó. Un clic en otra fila lleva ahí y muestra la suya.</div>
           <table className="rt-table">
             <thead><tr><th style={{ textAlign: 'left' }}>#</th><th style={{ textAlign: 'left' }}>Decisión</th><th>Tu R</th><th title="Lo que hizo la regla en ese candidato">La regla</th></tr></thead>
             <tbody>

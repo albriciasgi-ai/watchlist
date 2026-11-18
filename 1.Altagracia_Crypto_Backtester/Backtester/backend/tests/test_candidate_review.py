@@ -178,6 +178,9 @@ def test_la_caja_entra_como_limit_en_su_precio_y_puede_quedar_sin_llenar(world):
     c2 = answer["candidate"]
     far = cr.decide(sid, c2["i"], "long", stop=c2["entry"] - 60, target=c2["entry"] - 20, entry=c2["entry"] - 40, follow=True)
     assert far["success"] and far["decisions"][c2["i"]]["unfilled"] is True and "entry" not in far["decisions"][c2["i"]]
+    # La orden como se pidió sigue ahí para dibujarla, con la hora en que venció
+    row = far["decisions"][c2["i"]]
+    assert row["plan"] == {"dir": 1, "entry": c2["entry"] - 40, "stop": c2["entry"] - 60, "target": c2["entry"] - 20} and row["expired"] == far["candidate"]["time"] or row["expired"] <= far["candidate"]["time"]
     k2 = next(j for j, b in enumerate(world) if b["t"] == c2["signal"])
     assert far["candidate"]["time"] >= world[k2 + cr.LIMIT_BARS]["t"] + MS
     # Si la apertura ya es mejor que la limit, entra a mercado
@@ -196,3 +199,9 @@ def test_una_limit_pendiente_no_dice_si_se_lleno_hasta_que_pasa_su_hora(world):
     row = far["decisions"][0]
     expiry = cr.sessions()[sid]["decisions"][0]["unfilled"]
     assert ("pending" in row) == (far["candidate"]["time"] < expiry) and ("unfilled" in row) == (far["candidate"]["time"] >= expiry)
+    # La espera de la limit se puede cambiar
+    s2 = cr.start("X", RAW, 30, seed=7)
+    c2 = s2["candidate"]
+    cr.decide(s2["session"]["id"], 0, "long", stop=c2["entry"] - 60, target=c2["entry"] - 20, entry=c2["entry"] - 40, wait=30)
+    k = next(j for j, b in enumerate(world) if b["t"] == c2["signal"])
+    assert cr.sessions()[s2["session"]["id"]]["decisions"][0]["unfilled"] == world[k + 30]["t"] + MS

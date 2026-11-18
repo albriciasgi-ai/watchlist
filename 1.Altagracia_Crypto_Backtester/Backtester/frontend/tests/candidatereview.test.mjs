@@ -1,7 +1,7 @@
 // Revisión de candidatos: lo que la ventana arma con la sesión que entrega el backend.
 // Uso: node tests/candidatereview.test.mjs
 import assert from 'node:assert/strict';
-import { boxDecision, gapText, reviewBoxes, statText } from '../src/components/backtesting/candidateReview.js';
+import { boxDecision, gapText, hasBox, reviewBoxes, statText } from '../src/components/backtesting/candidateReview.js';
 
 const tests = [];
 const test = (name, run) => tests.push([name, run]);
@@ -18,6 +18,14 @@ test('las cajas salen solo de lo que se entró, y una abierta llega hasta la hor
   assert.equal(boxes.length, 2);
   assert.deepEqual(boxes[0], { side: 'long', entry: 100, stop: 98, target: 104, start: 10 * TF, end: 14 * TF });
   assert.deepEqual(boxes[1], { side: 'short', entry: 105, stop: 107, target: 101, start: 20 * TF, end: 26 * TF });
+  // Una orden sin llenar se dibuja como se pidió, de su candidato a su vencimiento; pendiente, hasta la hora a la vista
+  const unfilled = { i: 3, action: 'short', time: 30 * TF, unfilled: true, expired: 42 * TF, plan: { dir: -1, entry: 110, stop: 112, target: 106 } };
+  assert.deepEqual(reviewBoxes([unfilled], 50 * TF, 15), [{ side: 'short', entry: 110, stop: 112, target: 106, start: 30 * TF, end: 42 * TF }]);
+  assert.equal(reviewBoxes([{ ...unfilled, unfilled: undefined, expired: undefined, pending: true }], 33 * TF, 15)[0].end, 33 * TF);
+  assert.equal(hasBox(unfilled), true);
+  assert.equal(hasBox({ action: 'skip' }), false);
+  // Un trade ya llenado se dibuja como trade, no como la orden pedida
+  assert.equal(reviewBoxes([{ ...decisions[1], plan: { dir: 1, entry: 99, stop: 98, target: 104 } }], 26 * TF, 15).length, 1);
   // Sin objetivo la caja usa la salida, o la entrada si sigue abierta; nunca mide menos de una vela
   const open = reviewBoxes([{ action: 'long', dir: 1, entry: 50, stop: 49, target: null, entry_t: 5 * TF }], 5 * TF, 15)[0];
   assert.equal(open.target, 50);

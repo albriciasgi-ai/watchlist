@@ -3921,7 +3921,7 @@ async def review_decide(request: Request):
     index = body.get("i")
     return await run_in_threadpool(candidate_review.decide, str(body.get("session") or ""), index if isinstance(index, int) else -1,
                                    str(body.get("action") or ""), _review_number(body.get("stop")), _review_number(body.get("target")),
-                                   _review_number(body.get("seconds")), bool(body.get("follow")), _review_number(body.get("entry")))
+                                   _review_number(body.get("seconds")), bool(body.get("follow")), _review_number(body.get("entry")), _review_number(body.get("wait")))
 
 
 @app.post("/api/review/end")
