@@ -25,6 +25,7 @@ import uuid
 import numpy as np
 
 import footprint_store as fs
+import gaussian_channel
 import liq_sweeps
 import measures
 import observer
@@ -60,7 +61,7 @@ PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", 
               "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
 LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
 RV_CODES = tuple(response_volume.CODES)  # Flecha y rombo del Volumen de Respuesta
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES  # Elementos del probador que no son de of_elements
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -87,7 +88,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB")
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC")
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -241,8 +242,6 @@ def clean_rule(raw):
         # Objetivo en un nivel del perfil en vez de un múltiplo del riesgo. mid: el centro del rango de la sesión anterior
         if exit_.get("targetAt") in ("poc", "edge", "mid"):
             extra["targetAt"], target_r = exit_["targetAt"], None
-    if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra:
-        horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
     entry_rule = {"type": entry.get("type") if entry.get("type") in ("market", "limit") else "market",
                   "at": entry.get("at") if entry.get("at") in ("near", "mid", "far") else "near",
                   "expiry": int(_num(entry.get("expiry"), 8, 1, 200))}
@@ -271,6 +270,13 @@ def clean_rule(raw):
         extra["rv"] = {"leg": _num(rv.get("leg"), 2.0, 0.5, 10.0), "spike": _num(rv.get("spike"), 2.0, 1.2, 20.0),
                        "arrow": rv.get("arrow") if rv.get("arrow") in response_volume.ARROWS else "with",
                        "rombo": rv.get("rombo") if rv.get("rombo") in response_volume.ROMBOS else "turn"}
+    if any("GC" in slot["codes"] for slot in recipe["slots"]):
+        gc = raw.get("gc") or {}
+        # period y poles: el filtro. mult: ancho de las bandas en rangos verdaderos filtrados. trend: la línea central va a
+        # favor. exit: sale al cerrar de vuelta dentro de la banda (band), al otro lado de la línea central (mid) o no sale por el canal
+        extra["gc"] = {"period": int(_num(gc.get("period"), 144, 10, 1000)), "poles": int(_num(gc.get("poles"), 4, 1, 9)),
+                       "mult": _num(gc.get("mult"), 1.414, 0.2, 10.0), "trend": gc.get("trend") is not False,
+                       "exit": gc.get("exit") if gc.get("exit") in gaussian_channel.EXITS else "band"}
     lines = []
     for item in (raw.get("lines") or [])[:2]:
         if item.get("type") in LINE_TYPES and item.get("mode") in ("side", "touch"):
@@ -285,6 +291,9 @@ def clean_rule(raw):
         # Solo señales que se conocen (y entran) entre esas horas UTC, en minutos del día; de lunes a viernes si se pide
         extra["hours"] = {"from": int(_num(hours.get("from"), 0, 0, 1439)), "to": int(_num(hours.get("to"), 1439, 0, 1439)),
                           "weekdays": bool(hours.get("weekdays"))}
+    leaves_channel = (extra.get("gc") or {}).get("exit") in ("band", "mid")
+    if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra and not leaves_channel:
+        horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
     return {
         **extra,
         "name": name, "tf": tf, "recipe": recipe, "invert": bool(raw.get("invert")),
@@ -581,6 +590,10 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
         if exit_rule["opposite"] and opposite is not None and j > k and j in opposite and j + 1 < n:
             exit_price, exit_t, reason = O[j + 1], T[j + 1], "señal contraria"
             break
+        leave = (ctx.get("exitAt") or {}).get(side)
+        if leave is not None and j > k and j in leave and j + 1 < n:
+            exit_price, exit_t, reason = O[j + 1], T[j + 1], "sale del canal"
+            break
         if exit_rule["horizon"] and j - entry_i + 1 >= exit_rule["horizon"]:
             exit_price, exit_t, reason = C[j], T[j] + tf_ms, "tiempo"
             break
@@ -849,6 +862,24 @@ def _rv_events(rule, span):
     return [e for e in found if e["code"] in codes]
 
 
+def _gc_events(rule, span):
+    """Gaussian Channel (gaussian_channel.py) sobre las velas de la fase."""
+    gc = rule.get("gc")
+    bars = span["bars"]
+    if not gc or not bars:
+        return []
+    key = (id(bars), rule["tf"], "gc", gc["period"], gc["poles"], gc["mult"], gc["trend"])
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = gaussian_channel.events(bars, rule["tf"], gc["period"], gc["poles"], gc["mult"], gc["trend"])
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
+
+
 def _cc_events(rule, span):
     """Cambio de carácter (structure.py) sobre las velas de la fase."""
     cc = rule.get("cc")
@@ -869,7 +900,7 @@ def _cc_events(rule, span):
 
 def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
-    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span) + _rv_events(rule, span)
+    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span) + _rv_events(rule, span) + _gc_events(rule, span)
 
 
 def _liq_vp_events(symbol, rule, span, ctx, control=False, vp_shift=None):
@@ -942,6 +973,11 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     if len(bars) < 100:
         return {"success": False, "message": "Sin velas suficientes en el almacén para esa fase"}
     ctx = _context(symbol, tf, bars)
+    if rule.get("gc"):
+        gc = rule["gc"]
+        # Con la regla invertida el trade va contra el canal: su salida por el canal también es la contraria
+        leave = gaussian_channel.exits(bars, gc["period"], gc["poles"], gc["mult"], gc["exit"])
+        ctx["exitAt"] = {1: leave[-1], -1: leave[1]} if leave and rule["invert"] else leave
     extra = _extra_events(symbol, rule, span, ctx, control, vp_shift)
     events = events + extra if extra else events
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
@@ -949,6 +985,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     cc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "CC"}
     pat_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in PATTERN_CODES}
     rv_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in RV_CODES}
+    gc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "GC"}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -1036,6 +1073,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         seen = next((rv_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in rv_info), None)
         if seen is not None:
             trade["rv"] = seen  # Flecha: veces el volumen de su hora y lado del tramo. Rombo: tramo y su extremo
+        band = next((gc_info[(m["dir"], t + tf_ms)] for code, t in m["votes"] if code == "GC" and (m["dir"], t + tf_ms) in gc_info), None)
+        if band is not None:
+            trade["gc"] = band  # Línea central y bandas del canal en la vela de la señal
         if rule.get("lines"):
             trade["lines"] = [{"type": item["type"], "period": item["period"], "value": round(float(_line(ctx, item["type"], item["period"])[k]), 8)}
                               for item in rule["lines"]]

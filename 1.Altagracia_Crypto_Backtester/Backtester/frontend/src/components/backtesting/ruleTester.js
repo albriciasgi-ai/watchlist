@@ -43,7 +43,9 @@ export function defaultRule() {
     // Filtros de línea: off, side (cierra del lado a favor) o touch (además la mecha la toca)
     vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, emaMode: 'off', emaPeriod: 14, emaSlope: false,
     // Volumen de Respuesta: ATR con que gira el tramo, veces el volumen de su hora, flecha a favor o en contra del tramo, y rombo como giro o para seguir
-    rvLeg: 2, rvSpike: 2, rvArrow: 'with', rvRombo: 'turn'
+    rvLeg: 2, rvSpike: 2, rvArrow: 'with', rvRombo: 'turn',
+    // Gaussian Channel: periodo y polos del filtro, ancho de las bandas, canal a favor y cómo sale por el canal
+    gcPeriod: 144, gcPoles: 4, gcMult: 1.414, gcTrend: true, gcExit: 'band'
   };
 }
 
@@ -91,6 +93,9 @@ export function toBackendRule(rule) {
     } : {}),
     ...(usesPatterns(rule) ? {
       pat: { trend: rule.patTrend !== false, trendBars: number(rule.patTrendBars, 5), minZ: rule.patVolume ? number(rule.patMinZ, 1) : null, wick: number(rule.patWick, 2) }
+    } : {}),
+    ...(codes.includes('GC') ? {
+      gc: { period: number(rule.gcPeriod, 144), poles: number(rule.gcPoles, 4), mult: number(rule.gcMult, 1.414), trend: rule.gcTrend !== false, exit: ['band', 'mid', 'none'].includes(rule.gcExit) ? rule.gcExit : 'band' }
     } : {}),
     ...(usesResponse(rule) ? {
       rv: { leg: number(rule.rvLeg, 2), spike: number(rule.rvSpike, 2), arrow: ['with', 'against', 'any'].includes(rule.rvArrow) ? rule.rvArrow : 'with', rombo: rule.rvRombo === 'follow' ? 'follow' : 'turn' }
@@ -167,6 +172,7 @@ export function fromBackendRule(saved) {
     ccTf: saved.cc && saved.cc.tf !== saved.tf ? saved.cc.tf : 0, ccOffset: saved.cc?.offset ?? 0, ccSwing: saved.cc?.swing ?? 3, ccLegs: saved.cc?.legs ?? 2,
     patTrend: saved.pat ? saved.pat.trend !== false : true, patTrendBars: saved.pat?.trendBars ?? 5,
     rvLeg: saved.rv?.leg ?? 2, rvSpike: saved.rv?.spike ?? 2, rvArrow: saved.rv?.arrow || 'with', rvRombo: saved.rv?.rombo || 'turn',
+    gcPeriod: saved.gc?.period ?? 144, gcPoles: saved.gc?.poles ?? 4, gcMult: saved.gc?.mult ?? 1.414, gcTrend: saved.gc ? saved.gc.trend !== false : true, gcExit: saved.gc?.exit || 'band',
     patVolume: saved.pat?.minZ != null, patMinZ: saved.pat?.minZ ?? 1, patWick: saved.pat?.wick ?? 2,
     vwapMode: (saved.lines || []).find(l => l.type === 'vwap')?.mode || 'off', vwapPeriod: (saved.lines || []).find(l => l.type === 'vwap')?.period ?? 200,
     vwapSlope: !!(saved.lines || []).find(l => l.type === 'vwap')?.slope,
@@ -198,11 +204,13 @@ export function describeRule(saved) {
   if (saved.exit?.trail === 'swing') exits.push('stop arrastrado');
   if (saved.exit?.horizon != null) exits.push(`${saved.exit.horizon} velas`);
   if (saved.exit?.opposite) exits.push('señal contraria');
+  if (saved.gc && saved.gc.exit !== 'none') exits.push(saved.gc.exit === 'mid' ? 'cierre al otro lado de la línea central' : 'cierre de vuelta dentro de la banda');
   return `${TF_LABEL[saved.tf] || saved.tf} · ${joined}${recipe.window > 1 ? ` @${recipe.window}` : ''}${saved.invert ? ' · invertida' : ''}`
     + `${saved.vaGap > 0 ? ` · hueco ≥ ${saved.vaGap} ATR` : ''}`
     + `${saved.cc ? ` · estructura ${saved.cc.tf >= 60 ? `${saved.cc.tf / 60} h` : `${saved.cc.tf} m`}, swing ${saved.cc.swing}` : ''}`
     + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`
     + `${saved.rv ? ` · tramo ${saved.rv.leg} ATR${codes.includes('RF') ? `, flecha ≥ ${saved.rv.spike}x ${{ with: 'a favor del tramo', against: 'contra el tramo', any: 'de cualquier lado' }[saved.rv.arrow]}` : ''}${codes.includes('RB') ? `, rombo ${saved.rv.rombo === 'follow' ? 'siguiendo el tramo' : 'como giro'}` : ''}` : ''}`
+    + `${saved.gc ? ` · canal ${saved.gc.period}, ${saved.gc.poles} polos, ×${saved.gc.mult}${saved.gc.trend ? ', a favor' : ''}` : ''}`
     + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
@@ -293,6 +301,11 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     // Dónde estaba la línea en la vela de la señal
     bands.push({ kind: 'level', price: line.value, start: trade.signal - 20 * tf, end: trade.signal + 2 * tf, label: `${line.type === 'vwap' ? 'VWAP' : 'EMA'} ${line.period}` });
   }
+  if (trade.gc) {
+    // El canal en la vela de la señal: la banda que se cruzó y la línea central
+    bands.push({ kind: 'level', price: trade.dir > 0 ? trade.gc.high : trade.gc.low, start: trade.signal - 20 * tf, end: trade.signal + 2 * tf, label: trade.dir > 0 ? 'Banda superior' : 'Banda inferior' });
+    bands.push({ kind: 'level', price: trade.gc.mid, start: trade.signal - 20 * tf, end: trade.signal + 2 * tf, label: 'Línea central' });
+  }
   const cc = trade.cc;
   if (cc && Number.isFinite(cc.level)) {
     // El swing que se rompió, desde su vela, y el extremo de la tendencia
@@ -301,7 +314,7 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     bands.push({ kind: 'mark', time: trade.signal, price: cc.level, label: 'Ruptura' });
   }
   for (const mark of trade.marks || []) {
-    if (mark.code === 'LIQ' || mark.code === 'CC' || VP_CODES.includes(mark.code)) continue;
+    if (mark.code === 'LIQ' || mark.code === 'CC' || mark.code === 'GC' || VP_CODES.includes(mark.code)) continue;
     bands.push({ kind: 'element', low: mark.lo, high: mark.hi, start: mark.t, end, strong: false, label: `${mark.code} ${names[mark.code] || ''}`.trim() });
   }
   return bands;

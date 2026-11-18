@@ -661,6 +661,31 @@ const RuleTesterApp = () => {
             <div className="rt-note">Son los patrones del indicador Rejection Patterns, con su misma regla. El lado lo da el patrón: una vela tiene a lo sumo uno. Para el stop detrás de la vela usa "Extremo de la vela del elemento".</div>
           </>
         )}
+        {rule.codes.includes('GC') && (
+          <>
+            <div className="rt-row">
+              <span title="Velas del ciclo del filtro gaussiano: más alto, canal más lento">Canal: periodo</span>
+              <Num value={rule.gcPeriod} min={10} max={1000} onChange={(gcPeriod) => patch({ gcPeriod })} />
+              <span title="Polos del filtro, de 1 a 9: más polos, línea más suave y más atrasada">polos</span>
+              <Num value={rule.gcPoles} min={1} max={9} onChange={(gcPoles) => patch({ gcPoles })} />
+              <span title="Ancho de las bandas, en rangos verdaderos filtrados">ancho ×</span>
+              <Num value={rule.gcMult} min={0.2} max={10} step={0.1} onChange={(gcMult) => patch({ gcMult })} />
+            </div>
+            <div className="rt-row">
+              <Check checked={rule.gcTrend} onChange={(gcTrend) => patch({ gcTrend })} title="Largos solo con la línea central subiendo, y cortos solo con ella bajando">Solo con el canal a favor</Check>
+              <span>· sale por el canal</span>
+              <select value={rule.gcExit} onChange={(e) => patch({ gcExit: e.target.value })}>
+                <option value="band">al cerrar de vuelta dentro de la banda</option>
+                <option value="mid">al cerrar al otro lado de la línea central</option>
+                <option value="none">no: solo las salidas de abajo</option>
+              </select>
+            </div>
+            <div className="rt-note">
+              Entra cuando una vela cierra fuera de la banda (arriba, largo; abajo, corto). La estrategia conocida es solo de largos: pon "Lado: solo alcistas".
+              No trae stop: para medir en R usa "Borde lejano de la zona" (queda en la línea central) y sube su "Máximo", o un stop en ATR. Sin "Objetivo" ni "Cerrar a las", sale solo por el canal o por el stop.
+            </div>
+          </>
+        )}
         {usesResponse(rule) && (
           <>
             <div className="rt-row">
@@ -829,7 +854,7 @@ const RuleTesterApp = () => {
           <Num value={rule.horizon} min={1} max={2000} disabled={!rule.useHorizon} onChange={(horizon) => patch({ horizon })} /><span>velas</span>
           <Check checked={rule.opposite} onChange={(opposite) => patch({ opposite })}>Cerrar con la señal contraria</Check>
         </div>
-        {!rule.useTarget && !rule.trail && !rule.useHorizon && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
+        {!rule.useTarget && !rule.trail && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
         <div className="rt-row">
           <Check checked={rule.oneAtATime} onChange={(oneAtATime) => patch({ oneAtATime })} title="Marcado: lo que operarías. Sin marcar: todas las señales, para medir el elemento">Una posición a la vez</Check>
           <span title="Velas de espera después de cerrar un trade antes de tomar otra señal. 0 = sin espera">Esperar</span>
@@ -1015,6 +1040,7 @@ const RuleTesterApp = () => {
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
             {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
+            {selectedTrade.gc && <><br />Canal en la señal: banda superior {selectedTrade.gc.high}, línea central {selectedTrade.gc.mid}, banda inferior {selectedTrade.gc.low}</>}
             {selectedTrade.rv && <><br />{selectedTrade.rv.code === 'RF' ? `Flecha: ${selectedTrade.rv.times} veces el volumen de su hora` : `Rombo: extremo del tramo ${selectedTrade.rv.extreme}`} · tramo {selectedTrade.rv.leg > 0 ? 'alcista' : 'bajista'}</>}
             {selectedTrade.pat && <><br />Patrón: {selectedTrade.pat.type}{selectedTrade.pat.volumeZ != null && ` · volumen z ${selectedTrade.pat.volumeZ}`}</>}
             {selectedTrade.lines?.length > 0 && <><br />{selectedTrade.lines.map(l => `${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period} en ${l.value}`).join(' · ')}</>}
