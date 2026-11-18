@@ -39,6 +39,7 @@ import SessionSaveModal from './SessionSaveModal';
 import ObserverPanel from './ObserverPanel';
 import PopupWindow, { openPopup } from './PopupWindow';
 import { HEARTBEAT_MS, SECONDARY_GONE_MS, openReplayChannel, secondaryChartUrl, stepTimeframes } from './replayChannel.js';
+import { ruleTesterUrl } from './ruleTester.js';
 import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordImage, recordOrder, registryChartView } from './observer.js';
 import { blindAnchor, blindScale, isBlind, maskDate, priceText, pricesHidden, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
@@ -271,6 +272,22 @@ const BacktestingApp = () => {
   const indicatorPanelRef = useRef(null);
   const indicatorManagerRef = useRef(null); // Ref para IndicatorManager del tab activo
   const sessionIdRef = useRef(null); // Sesión que recibe los trades y sus imágenes
+  // Menú de inicio: simulación manual (reproducción) o backtesting global (reglas por fases, ?probador=1)
+  const [startMode, setStartMode] = useState(() => {
+    try {
+      return localStorage.getItem('app1_start_mode') === 'global' ? 'global' : 'manual';
+    } catch {
+      return 'manual';
+    }
+  });
+  const chooseStartMode = (mode) => {
+    setStartMode(mode);
+    try {
+      localStorage.setItem('app1_start_mode', mode);
+    } catch {
+      // Sin almacenamiento la elección dura hasta recargar
+    }
+  };
   const sessionSaveRef = useRef(Promise.resolve()); // Los guardados van uno detrás de otro
   const latestRef = useRef({}); // Valores de este render, para eventos que se conectan una sola vez
   latestRef.current.symbol = symbol;
@@ -2304,11 +2321,36 @@ const BacktestingApp = () => {
    * Renderizar vista de configuración inicial
    */
   if (!initialized) {
+    const globalMode = startMode === 'global';
+    const modeButton = (mode, label) => (
+      <button
+        type="button"
+        onClick={() => chooseStartMode(mode)}
+        disabled={loading}
+        style={{
+          flex: 1, padding: '10px 8px', cursor: 'pointer', borderRadius: '6px', fontSize: '14px',
+          border: startMode === mode ? '2px solid #667eea' : '1px solid #ccc',
+          background: startMode === mode ? '#eef0ff' : '#fff', color: '#333', fontWeight: startMode === mode ? 600 : 400
+        }}
+      >
+        {label}
+      </button>
+    );
     return (
       <div className="backtesting-container">
         <div className="backtesting-setup">
           <h1>Backtesting Engine</h1>
           <p className="subtitle">Simula operaciones con datos históricos del mercado</p>
+
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+            {modeButton('manual', 'Simulación manual')}
+            {modeButton('global', 'Backtesting global')}
+          </div>
+          <p className="subtitle" style={{ fontSize: '13px' }}>
+            {globalMode
+              ? 'Prueba una regla (elementos de order flow, stop y salida) sobre todo el histórico, en tres fases de fechas fijas. Sin reproducción: cada trade se ve en el gráfico y queda en el informe. También muestra tus órdenes manuales de cualquier sesión.'
+              : 'Reproduce el mercado desde la fecha que elijas y opera a mano. Cada orden queda en el Observador.'}
+          </p>
 
           {error && (
             <div className="error-message">
@@ -2328,8 +2370,18 @@ const BacktestingApp = () => {
               />
             </div>
 
+            {globalMode && (
+              <button
+                className="btn-primary"
+                onClick={() => window.location.assign(ruleTesterUrl(symbol || 'BTCUSDT'))}
+              >
+                Abrir backtesting global de {symbol || 'BTCUSDT'}
+              </button>
+            )}
+
             {/* 🎯 Timeframe selector eliminado - ahora se cargan los 3 timeframes automáticamente */}
 
+            {!globalMode && <>
             <div className="form-group">
               <label>Fecha de Inicio (opcional)</label>
               <input
@@ -2389,6 +2441,7 @@ const BacktestingApp = () => {
                 </div>
               </div>
             )}
+            </>}
           </div>
         </div>
       </div>

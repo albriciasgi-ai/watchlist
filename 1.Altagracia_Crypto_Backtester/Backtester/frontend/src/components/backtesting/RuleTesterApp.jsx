@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import MiniChart from '../MiniChart';
 import { API_BASE_URL } from '../../config.js';
 import { useUiTheme } from '../useUiTheme.js';
+import { formatR, registryChartView } from './observer.js';
 import { THEME, isNewTheme } from '../uiTheme.js';
 import { withoutSubdivisions } from './marketData';
 import { cachedMarketData } from './SecondaryChartApp';
@@ -142,6 +143,9 @@ const RuleTesterApp = () => {
   const [market, setMarket] = useState(null);
   const [status, setStatus] = useState('Cargando…');
   const [tool, setTool] = useState('select');
+  const [myOrders, setMyOrders] = useState(null);   // Órdenes manuales del registro del Observador, de este símbolo
+  const [ordersView, setOrdersView] = useState(false); // El gráfico muestra esas órdenes en vez de la fase
+  const [pickedOrder, setPickedOrder] = useState(null);
   const chartRef = useRef(null);
   const marketRef = useRef(null);
   const boxesRef = useRef([]);
@@ -155,7 +159,7 @@ const RuleTesterApp = () => {
   const refreshInfo = useCallback(() => api(`/api/tester/info/${symbol}`).then(setInfo).catch(error => setMessage(error.message)), [symbol]);
 
   useEffect(() => {
-    document.title = `App 1 · Probador de reglas · ${symbol}`;
+    document.title = `App 1 · Backtesting global · ${symbol}`;
     refreshInfo();
   }, [symbol, refreshInfo]);
 
@@ -270,22 +274,60 @@ const RuleTesterApp = () => {
     }
   };
 
+  // Tus órdenes manuales (registro del Observador). Aquí no hay hora simulada: se ven todas, de cualquier sesión
+  const lastEnd = info?.phases?.length ? Math.max(...info.phases.map(p => p.end)) : null;
+  const orderViews = useMemo(() => (myOrders || []).map(order => ({
+    order, view: registryChartView(order, { now: Number.MAX_SAFE_INTEGER, symbol, blindActive: false, sessionId: null })
+  })).filter(item => !item.view.problem), [myOrders, symbol]);
+  useEffect(() => {
+    if (tab !== 'ordenes' || myOrders) return;
+    api('/api/observer/orders?limit=500')
+      .then(data => setMyOrders((data.orders || []).filter(order => order.symbol === symbol && order.status !== 'pending')))
+      .catch(error => setMessage(error.message));
+  }, [tab, myOrders, symbol]);
+
+  // El gráfico se vuelve a montar al cambiar de marco o de vista: se insiste hasta que pueda ir al punto
+  const focusTimer = useRef(null);
+  const focusLater = useCallback((time, price) => {
+    clearTimeout(focusTimer.current);
+    let tries = 0;
+    const attempt = () => {
+      if (chartRef.current?.focusOn?.(time, price)) return;
+      if (tries++ < 40) focusTimer.current = setTimeout(attempt, 150);
+    };
+    focusTimer.current = setTimeout(attempt, 0);
+  }, []);
+  useEffect(() => () => clearTimeout(focusTimer.current), []);
+
   // Cajas de los trades y línea del trade elegido, para el gráfico
   const trades = result?.trades || [];
-  const chartOpen = phase === 1 || !!revealed[phase];
+  const chartOpen = ordersView || phase === 1 || !!revealed[phase];
   useEffect(() => {
-    boxesRef.current = chartOpen && result ? tradeBoxes(trades, result.rule.tf) : [];
-    const trade = trades.find(t => t.n === selected);
-    linesRef.current = chartOpen && trade ? [{ entryTime: trade.entry_t, exitTime: trade.exit_t, tradeNumber: trade.n }] : [];
+    if (ordersView) {
+      boxesRef.current = orderViews.map(item => item.view.box).filter(Boolean);
+      linesRef.current = orderViews.filter(item => item.order.id === pickedOrder && item.view.line).map(item => item.view.line);
+    } else {
+      boxesRef.current = chartOpen && result ? tradeBoxes(trades, result.rule.tf) : [];
+      const trade = trades.find(t => t.n === selected);
+      linesRef.current = chartOpen && trade ? [{ entryTime: trade.entry_t, exitTime: trade.exit_t, tradeNumber: trade.n }] : [];
+    }
     chartRef.current?.redraw?.();
-  }, [result, selected, chartOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pick = useCallback((trade) => {
     setSelected(trade.n);
     setDetail(null);
-    if (chartOpen) chartRef.current?.focusOn?.(trade.entry_t, trade.entry);
+    setOrdersView(false);
+    if (phase === 1 || revealed[phase]) focusLater(trade.entry_t, trade.entry);
     api(`/api/tester/result/${result.id}/trade/${trade.n}`).then(d => d.success && setDetail(d)).catch(noop);
-  }, [result, chartOpen]);
+  }, [result, phase, revealed, focusLater]);
+
+  const pickOrder = useCallback(({ order, view }) => {
+    setPickedOrder(order.id);
+    setOrdersView(true);
+    if (CHART_TIMEFRAMES.includes(view.timeframe)) setChartTf(view.timeframe);
+    focusLater(view.time, view.price);
+  }, [focusLater]);
 
   const sorted = useMemo(() => sortTrades(trades, sort.key, sort.desc), [trades, sort]);
 
@@ -307,7 +349,7 @@ const RuleTesterApp = () => {
   const getTradeBoxes = useCallback(() => boxesRef.current, []);
   const getTradeBoundaries = useCallback(() => linesRef.current, []);
   // Lo que deja ver el gráfico: la fase 1 completa; la 2 y la 3 solo hasta su inicio mientras no se pida verlas
-  const chartTime = phaseInfo ? (chartOpen ? phaseInfo.end : phaseInfo.start) : null;
+  const chartTime = ordersView && lastEnd ? lastEnd : (phaseInfo ? (chartOpen ? phaseInfo.end : phaseInfo.start) : null);
   const days = useMemo(() => (phaseInfo ? Math.min(Math.ceil((Date.now() - phaseInfo.start) / DAY_MS) + 60, MAX_DAYS[chartTf]) : MAX_DAYS[chartTf]), [phaseInfo, chartTf]);
 
   const toggleCode = (code) => setRule(previous => {
@@ -680,18 +722,54 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['historial', 'Historial']];
+  const STATUS = { closed: 'cerrada', open: 'abierta', cancelled: 'cancelada' };
+  const ordersTab = (
+    <>
+      <div className="rt-note" style={{ marginBottom: 6 }}>
+        Tus órdenes manuales de {symbol}, de todas las sesiones (registro del Observador). Aquí no hay hora simulada: un clic las muestra en el gráfico, sea cual sea su fecha.
+      </div>
+      {ordersView && (
+        <div className="rt-warn">
+          El gráfico muestra tus órdenes sobre todo el histórico, también las fechas de las fases 2 y 3.{' '}
+          <button type="button" className="rt-btn" onClick={() => setOrdersView(false)}>Volver a la fase {phase}</button>
+        </div>
+      )}
+      {!ordersView && orderViews.length > 0 && (
+        <div className="rt-note" style={{ marginBottom: 6 }}>Al elegir una, el gráfico deja la fase y muestra el histórico completo, incluidas las fechas de las fases 2 y 3.</div>
+      )}
+      {!myOrders && <div className="rt-note">Leyendo el registro…</div>}
+      {myOrders && orderViews.length === 0 && <div className="rt-note">No hay órdenes de {symbol} en el registro.</div>}
+      {orderViews.length > 0 && (
+        <table className="rt-table">
+          <thead><tr><th>#</th><th>Entrada</th><th>Marco</th><th>Lado</th><th>Estado</th><th>R</th></tr></thead>
+          <tbody>
+            {orderViews.map(item => (
+              <tr key={item.order.id} className={`pick${ordersView && item.order.id === pickedOrder ? ' sel' : ''}`} onClick={() => pickOrder(item)}>
+                <td>{item.order.trade_number ?? item.order.order_number ?? ''}</td><td>{stamp(item.view.time)}</td><td>{item.order.timeframe}</td>
+                <td>{item.order.side === 'short' ? 'C' : 'L'}</td>
+                <td>{STATUS[item.order.status] || item.order.status}</td>
+                <td style={{ color: tone(item.order.r) }}>{item.order.status === 'closed' && item.order.r !== null && item.order.r !== undefined ? formatR(item.order.r) : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </>
+  );
+
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
     <div className="rt-root">
       <div className="rt-head">
+        <a className="rt-btn" href={window.location.pathname} title="Volver al menú de inicio de App 1" style={{ textDecoration: 'none' }}>← Inicio</a>
         <strong>{symbol}</strong>
-        <span style={{ opacity: 0.7 }}>Probador de reglas</span>
+        <span style={{ opacity: 0.7 }}>Backtesting global</span>
         <div style={{ display: 'flex', gap: 2, marginLeft: 8 }}>
           {(info?.phases || []).map(p => (
             <button key={p.phase} type="button" className={`rt-btn${p.phase === phase ? ' on' : ''}`} disabled={!p.available || running}
-              title={p.available ? `${p.name}: ${p.from} a ${p.to}` : 'El almacén de trades no cubre esta fase'} onClick={() => { setPhase(p.phase); setSelected(null); setDetail(null); setSens(null); }}>
+              title={p.available ? `${p.name}: ${p.from} a ${p.to}` : 'El almacén de trades no cubre esta fase'} onClick={() => { setPhase(p.phase); setOrdersView(false); setSelected(null); setDetail(null); setSens(null); }}>
               Fase {p.phase} · {p.name}
             </button>
           ))}
@@ -727,6 +805,7 @@ const RuleTesterApp = () => {
             {tab === 'trades' && tradesTab}
             {tab === 'patrones' && patternsTab}
             {tab === 'historial' && historyTab}
+            {tab === 'ordenes' && ordersTab}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
             <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={running || !phaseInfo?.available} onClick={() => runPhase(false)}>
@@ -739,7 +818,7 @@ const RuleTesterApp = () => {
 
         <div className="rt-chart backtesting-main" onMouseDown={() => setShowList(false)}>
           {status && <div className="rt-overlay">{status}</div>}
-          {!status && phaseInfo && !chartOpen && (
+          {!status && phaseInfo && !chartOpen && !ordersView && (
             <div className="rt-overlay" style={{ zIndex: 5, background: 'var(--t-page, #fff)', opacity: 1, flexDirection: 'column', gap: 12 }}>
               <div style={{ maxWidth: 460 }}>
                 Fase {phase} · {phaseInfo.name}. El gráfico de esta fase no se muestra hasta que lo pidas: primero el informe.
@@ -752,7 +831,7 @@ const RuleTesterApp = () => {
             <div className="timeframe-panel" style={{ position: 'absolute', inset: 0 }}>
               <MiniChart
                 ref={chartRef}
-                key={`${symbol}-${chartTf}-${phase}-${chartOpen}`}
+                key={`${symbol}-${chartTf}-${phase}-${chartOpen}-${ordersView}`}
                 symbol={symbol}
                 interval={chartTf}
                 days={days}

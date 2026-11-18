@@ -992,7 +992,9 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 
 ### Ventana
 
-- `main.jsx` monta `RuleTesterApp` con `?probador=1&symbol=…`. La abre el botón "Probador de reglas" del Observador.
+- `main.jsx` monta `RuleTesterApp` con `?probador=1&symbol=…`. La abre el botón "Probador de reglas" del Observador, en otra ventana, o el menú de inicio.
+- **Menú de inicio con dos modos** (pedido del usuario el 17/11): "Simulación manual" (la reproducción de siempre, con su fecha de inicio) y "Backtesting global", que abre esta ventana en la misma pestaña. El modo elegido queda en `app1_start_mode`. "← Inicio" en el encabezado vuelve al menú. En la ventana el nombre a la vista es "Backtesting global".
+- **Pestaña "Mis órdenes":** las órdenes manuales del símbolo, de todas las sesiones (`/api/observer/orders?limit=500`, con `registryChartView()`). Aquí no hay hora simulada: un clic cambia al marco de la orden, deja la fase y muestra el histórico completo (`ordersView`, hora del gráfico = final de la última fase) con la caja de cada orden. Eso deja ver fechas de las fases 2 y 3, y la pestaña lo avisa; "Volver a la fase" o elegir una fase lo quita. Muestra también las órdenes hechas con fecha oculta, con su fecha real.
 - El gráfico es `MiniChart` en modo backtesting con `currentTime` = final de la fase: no hay reloj. Las cajas van por `getTradeBoxes` y el trade elegido por `getTradeBoundaries` y `focusOn()`.
 - El marco del gráfico es aparte del de la regla (una regla de 30m se mira en 15m o 1h). Las velas salen del caché del navegador de la principal o, si faltan, se pide al backend solo ese marco.
 - Los indicadores usan los ajustes de la principal. Las reglas guardadas quedan en `tester_rules_v1` y la vista en `tester_view_v1`.

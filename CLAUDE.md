@@ -64,7 +64,9 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 3. **Tres fases por fecha:** 1 Exploración (hasta el 31/12/2023), 2 Validación (01/01/2024 al 30/06/2025) y 3 Final (desde el 01/07/2025). La 2 y la 3 piden confirmar, guardan el resultado por regla exacta y no lo recalculan; la 3 exige haber pasado por la 2, y su gráfico no se muestra hasta pedirlo.
 4. **Informe:** acierto, R neto de comisiones, profit factor, caída, rachas, curva, contra entradas al azar con margen, hasta dónde llegó cada trade antes del stop, cortes por año, lado, hora y salida, aporte de cada elemento, sensibilidad a valores vecinos y CSV.
 5. **Registro por trade:** todos los elementos presentes en su ventana (a favor y en contra) y las 58 medidas del Observador al decidir, con ganadores contra perdedores.
-6. **Pruebas:** `test_rule_tester.py` (14) y `ruletester.test.mjs` (8).
+6. **Menú de inicio con dos modos** (pedido después de probarlo): "Simulación manual", la de siempre, y "Backtesting global", que abre esta ventana en la misma pestaña, con sus fechas fijas y sin depender de la reproducción.
+7. **Órdenes manuales:** en el backtesting global, la pestaña "Mis órdenes" dibuja las órdenes del Observador de cualquier sesión, sea cual sea su fecha. En la simulación manual, cada orden del Observador tiene "Ver en el gráfico", que la dibuja si la simulación ya pasó por su fecha.
+8. **Pruebas:** `test_rule_tester.py` (14), `ruletester.test.mjs` (8) y `observer.test.mjs` (44).
 
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página.
@@ -72,7 +74,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - Solo BTC tiene historia para las tres fases. Los elementos del libro (AB, BL, LD) no se pueden probar: el libro existe desde el 13/11/2026.
 - Las medidas empiezan donde empieza la tabla de medidas (unos 5 años atrás): los trades de 2020 y parte de 2021 no las llevan. Los indicadores que solo calcula el navegador (VWAP, S&R, Swing, patrones) no se guardan por trade.
 - Primera corrida real (VA abandonada, stop en el swing, 2R, BTC 15m): fase 1, 2,154 trades y -0.20 R por trade contra -0.28 del azar; fase 2, 863 trades y -0.22 R contra -0.32. En ninguna se distingue del azar.
-- Probado en la copia aislada con el almacén real de BTC: fases 1 y 2 en 15m, gráfico con cajas, lista, patrones, CSV y el candado de las fases. No se probó en 5m, el botón desde el Observador ni la fase 3.
+- Probado en la copia aislada con el almacén real de BTC: fases 1 y 2 en 15m, gráfico con cajas, lista, patrones, CSV y el candado de las fases. También el menú de inicio y "Mis órdenes" con una copia del registro real (30 órdenes). No se probó en 5m, la fase 3, el botón desde el Observador ni "Ver en el gráfico" de la simulación manual.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR (17/11/2026)"
 
