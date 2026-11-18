@@ -137,6 +137,7 @@ const RuleTesterApp = () => {
   const [selected, setSelected] = useState(null);   // Número del trade elegido
   const [detail, setDetail] = useState(null);
   const [sens, setSens] = useState(null);
+  const [allReport, setAllReport] = useState(null); // Informe de todas las monedas, de la regla y la fase con que se pidió
   const [message, setMessage] = useState(null);
   const [sort, setSort] = useState({ key: 'n', desc: false });
   const [shown, setShown] = useState(PAGE);
@@ -246,6 +247,18 @@ const RuleTesterApp = () => {
     setTab('resumen');
   }, []);
 
+  // El informe de todas las monedas que ya corrieron esa regla exacta en esa fase
+  const loadAll = useCallback(async (backendRule, phaseNumber) => {
+    const report = await api('/api/tester/consolidated', { rule: backendRule, phase: phaseNumber });
+    if (!report.success) {
+      setMessage(report.message || 'No se pudo armar el informe de todas las monedas');
+      return;
+    }
+    setAllReport(report);
+    setTab('todas');
+  }, []);
+  const allRuleRef = useRef(null);
+
   useEffect(() => {
     if (!job?.id || job.state !== 'running') return undefined;
     const timer = setInterval(async () => {
@@ -253,7 +266,10 @@ const RuleTesterApp = () => {
         const { job: current } = await api(`/api/tester/job/${job.id}`);
         if (!current) return;
         setJob(current);
-        if (current.state === 'done') {
+        if (current.state === 'done' && current.all) {
+          await loadAll(allRuleRef.current, current.phase);
+          refreshInfo();
+        } else if (current.state === 'done') {
           await loadRun(current.run);
           refreshInfo();
         } else if (current.state === 'error') {
@@ -264,7 +280,7 @@ const RuleTesterApp = () => {
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [job?.id, job?.state, loadRun, refreshInfo]);
+  }, [job?.id, job?.state, loadRun, loadAll, refreshInfo]);
 
   const running = job?.state === 'running';
 
@@ -297,6 +313,40 @@ const RuleTesterApp = () => {
         return;
       }
       setJob({ id: response.job, state: 'running', done: 0, total: 1, stage: 'Elementos del tramo' });
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  const runAll = async (confirm = false) => {
+    setMessage(null);
+    if (!rule.codes.length) {
+      setMessage('Elige al menos un elemento.');
+      return;
+    }
+    try {
+      const backendRule = toBackendRule(rule);
+      const response = await api('/api/tester/run-all', { rule: backendRule, phase, confirm });
+      if (!response.success) {
+        setMessage(response.message);
+        return;
+      }
+      const names = (action) => response.plan.filter(row => row.action === action).map(row => row.symbol);
+      if (response.needsConfirm) {
+        const skipped = response.plan.filter(row => row.action === 'skip').map(row => `${row.symbol} (${row.reason})`);
+        const text = `Fase ${phase} en todas las monedas.\n\nSe corre una sola vez por moneda y el resultado queda guardado.\n\n`
+          + `Se van a correr: ${names('run').join(', ')}.`
+          + `${names('stored').length ? `\nYa corridas, se usa lo guardado: ${names('stored').join(', ')}.` : ''}`
+          + `${skipped.length ? `\nNo entran: ${skipped.join('; ')}.` : ''}\n\n¿Correrlas?`;
+        if (window.confirm(text)) await runAll(true);
+        return;
+      }
+      allRuleRef.current = backendRule;
+      if (response.done) {
+        await loadAll(backendRule, phase);
+        return;
+      }
+      setJob({ id: response.job, state: 'running', done: 0, total: 1, stage: names('run')[0], all: true, phase });
     } catch (error) {
       setMessage(error.message);
     }
@@ -992,6 +1042,86 @@ const RuleTesterApp = () => {
     </>
   );
 
+  const a = allReport?.summary;
+  const allTab = !allReport ? (
+    <div className="rt-note">Todavía no hay un informe de todas las monedas. Arma la regla y usa "Correr en todas las monedas": corre la fase elegida en cada una y junta los trades.</div>
+  ) : (
+    <>
+      <div className="rt-group">
+        <b>{allReport.rule.name}</b> · Fase {allReport.phase} · {allReport.symbols.length} monedas
+        <div className="rt-note">{describeRule(allReport.rule)}</div>
+      </div>
+      {allReport.phase > 1 && <div className="rt-warn">Esta fase es de comprobación. Si cambias la regla por lo que veas aquí, la fase queda gastada para la regla nueva en todas las monedas.</div>}
+      {!a?.n ? <div className="rt-note">La regla no dejó trades cerrados en esta fase.</div> : (
+        <>
+          {a.smallSample && <div className="rt-warn">Muestra pequeña ({a.n} trades): con menos de 30 nada se distingue del azar.</div>}
+          <div className="rt-cards">
+            <div className="rt-card"><b>{a.n}</b><span>Trades cerrados</span></div>
+            <div className="rt-card"><b>{fmtPct(a.winRate)}</b><span>Acierto ({a.wilson?.[0]}–{a.wilson?.[1]}%)</span></div>
+            <div className="rt-card"><b><R value={a.avgR} digits={3} /></b><span>R medio neto</span></div>
+            <div className="rt-card"><b><R value={a.totalR} /></b><span>R total</span></div>
+            <div className="rt-card"><b>{a.profitFactor ?? '—'}</b><span>Profit factor</span></div>
+            <div className="rt-card"><b>{allReport.positive} de {allReport.withTrades}</b><span>Monedas con R medio positivo</span></div>
+          </div>
+          <Equity points={allReport.equity} />
+          <div className="rt-note">Curva de todos los trades en orden de salida, con 1 R por trade. Las monedas operan a la vez: no es la curva de una sola cuenta.</div>
+          {allReport.baseline && (
+            <div className="rt-group">
+              <h4>Contra el azar</h4>
+              <table className="rt-table">
+                <thead><tr><th></th><th>Trades</th><th>Acierto</th><th>R medio</th></tr></thead>
+                <tbody>
+                  <tr><td>La regla</td><td>{a.n}</td><td>{fmtPct(a.winRate)}</td><td><R value={a.avgR} digits={3} /></td></tr>
+                  <tr><td>Entradas al azar</td><td>—</td><td>{fmtPct(allReport.baseline.winRate)}</td><td><R value={allReport.baseline.avgR} digits={3} /></td></tr>
+                </tbody>
+              </table>
+              {allReport.edge && (
+                <div className="rt-note" style={{ marginTop: 4 }}>
+                  Ventaja: <R value={allReport.edge.r} digits={3} /> R por trade (entre {fmtR(allReport.edge.low, 3)} y {fmtR(allReport.edge.high, 3)}).{' '}
+                  {allReport.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue del azar.'} El azar de cada moneda pesa según los trades que la regla hizo en ella.
+                </div>
+              )}
+            </div>
+          )}
+          {a.reach && (
+            <div className="rt-group">
+              <h4>Hasta dónde llegó antes del stop inicial</h4>
+              <table className="rt-table">
+                <thead><tr><th></th>{Object.keys(a.reach).map(level => <th key={level}>≥ {level}R</th>)}</tr></thead>
+                <tbody>
+                  <tr><td>La regla</td>{Object.keys(a.reach).map(level => <td key={level}>{fmtPct(a.reach[level])}</td>)}</tr>
+                  {allReport.baseline?.reach && <tr><td>Al azar</td>{Object.keys(a.reach).map(level => <td key={level}>{fmtPct(allReport.baseline.reach[level])}</td>)}</tr>}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+      <div className="rt-group">
+        <h4>Por moneda</h4>
+        <table className="rt-table">
+          <thead><tr><th>Moneda</th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th><th>Azar</th><th>Ventaja</th></tr></thead>
+          <tbody>
+            {allReport.symbols.map(row => (
+              <tr key={row.symbol} title={`${row.from} a ${row.to}${row.edge ? ` · ventaja entre ${fmtR(row.edge.low, 3)} y ${fmtR(row.edge.high, 3)}` : ''}`}>
+                <td>{row.symbol === symbol
+                  ? <button type="button" className="rt-btn" onClick={() => loadRun(row.run)} title="Ver esta corrida con sus trades en el gráfico">{row.symbol.replace('USDT', '')}</button>
+                  : <a className="rt-btn" style={{ textDecoration: 'none' }} href={`?${TESTER_PARAM}=1&symbol=${row.symbol}`} title="Abrir esta moneda; su corrida queda en el Historial">{row.symbol.replace('USDT', '')}</a>}</td>
+                <td>{row.n}</td><td>{fmtPct(row.winRate)}</td><td><R value={row.avgR} digits={3} /></td><td><R value={row.totalR} /></td>
+                <td><R value={row.baseR} digits={3} /></td><td><R value={row.edge?.r} digits={3} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {allReport.plan.some(row => row.action === 'skip') && (
+          <div className="rt-note" style={{ marginTop: 4 }}>No entraron: {allReport.plan.filter(row => row.action === 'skip').map(row => `${row.symbol.replace('USDT', '')} (${row.reason})`).join('; ')}.</div>
+        )}
+      </div>
+      <BriefTable title="Por año" rows={allReport.byYear} first="Año" />
+      <BriefTable title="Por lado" rows={allReport.bySide} first="Lado" />
+    </>
+  );
+
   const STATUS = { closed: 'cerrada', open: 'abierta', cancelled: 'cancelada' };
   const ordersTab = (
     <>
@@ -1027,7 +1157,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes']];
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -1092,12 +1222,17 @@ const RuleTesterApp = () => {
             {tab === 'resumen' && summaryTab}
             {tab === 'trades' && tradesTab}
             {tab === 'patrones' && patternsTab}
+            {tab === 'todas' && allTab}
             {tab === 'historial' && historyTab}
             {tab === 'ordenes' && ordersTab}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
             <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={running || !phaseInfo?.available} onClick={() => runPhase(false)}>
               {running ? `${job.stage}… ${job.done}/${job.total}` : `Correr la regla en la fase ${phase}`}
+            </button>
+            <button type="button" className="rt-btn" style={{ width: '100%', padding: '5px 0', marginTop: 4 }} disabled={running} onClick={() => runAll(false)}
+              title="Corre esta fase en cada moneda con velas guardadas, una tras otra, y junta los trades en un solo informe">
+              {running && job.all ? `Todas las monedas: ${job.symbolsDone ?? 0} de ${job.symbolsTotal ?? '…'}` : `Correr en todas las monedas (fase ${phase})`}
             </button>
             {running && <div className="rt-progress"><div style={{ width: `${Math.round(100 * job.done / Math.max(1, job.total))}%` }} /></div>}
             {running && <div className="rt-note" style={{ marginTop: 4 }}>La primera corrida de cada marco y fase detecta los elementos de todo el tramo y tarda varios minutos. Las siguientes, segundos.</div>}

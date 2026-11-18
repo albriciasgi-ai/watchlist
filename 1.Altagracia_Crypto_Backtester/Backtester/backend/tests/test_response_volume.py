@@ -82,3 +82,46 @@ def test_la_regla_con_la_flecha_abre_el_trade_y_guarda_lo_que_vio(monkeypatch):
     # Una regla sin estos elementos no lleva sus ajustes
     assert "rv" not in rt.clean_rule({**raw, "recipe": {"slots": [{"codes": ["VH"]}]}})
     assert {"RF", "RB"} <= set(rt.CANDLE_CODES)
+
+
+def test_todas_las_monedas_un_trabajo_y_un_informe_conjunto(tmp_path, monkeypatch):
+    import time
+
+    monkeypatch.setattr(rt.observer, "OBSERVER_DIR", tmp_path)
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    monkeypatch.setattr(rt, "candle_symbols", lambda: ["AAAUSDT", "BBBUSDT", "CCCUSDT"])
+    monkeypatch.setattr(rt, "has_store", lambda s: s == "AAAUSDT")
+    monkeypatch.setattr(rt.measures, "table_for", lambda s: None)
+    phase = {"phase": 1, "name": "Exploración", "from": "2020-01-01", "to": "2020-01-31", "available": True}
+    monkeypatch.setattr(rt, "phases", lambda s: [{**phase, "phase": n, "available": not (s == "CCCUSDT" and n == 1)} for n in (1, 2, 3)])
+    monkeypatch.setattr(rt, "detect_span", lambda symbol, tf, ph, rule, progress=None: {"bars": marked(), "events": []})
+    raw = {"name": "F", "tf": TF, "recipe": {"slots": [{"codes": ["RF"]}]}, "stop": {"type": "atr", "atr": 2.0},
+           "exit": {"targetR": 2.0, "horizon": 5}, "cooldown": 0}
+
+    def wait(job_id):
+        for _ in range(200):
+            job = rt.job_status(job_id)
+            if job["state"] != "running":
+                return job
+            time.sleep(0.05)
+        raise AssertionError("el trabajo no terminó")
+
+    started = rt.start_all(raw, 1)
+    assert [(r["symbol"], r["action"]) for r in started["plan"]] == [("AAAUSDT", "run"), ("BBBUSDT", "run"), ("CCCUSDT", "skip")]
+    job = wait(started["job"])
+    assert job["state"] == "done" and job["symbolsDone"] == 2 and all(r["run"] for r in job["plan"][:2])
+    report = rt.consolidated(raw, 1)
+    assert [r["symbol"] for r in report["symbols"]] == ["AAAUSDT", "BBBUSDT"] and report["summary"]["n"] == 2
+    assert report["symbols"][0]["n"] == 1 and report["withTrades"] == 2 and [r["label"] for r in report["bySide"]] == ["Largos"]
+    assert report["plan"][2]["reason"] == "sin datos de esa fase" and len(report["equity"]) == 2
+    # Lo ya corrido no se repite, y otra regla no ve esas corridas
+    again = rt.start_all(raw, 1)
+    assert again.get("done") and "job" not in again and len(rt.history()) == 2
+    assert rt.consolidated({**raw, "rv": {"spike": 3}}, 1)["success"] is False
+    # La fase 2 pide confirmar, y la 3 no corre sin la 2
+    assert rt.start_all(raw, 2)["needsConfirm"] is True and len(rt.history()) == 2
+    blocked = rt.start_all(raw, 3)
+    assert blocked["success"] is False and {r["reason"] for r in blocked["plan"]} == {"falta correr esta regla en la fase 2"}
+    # Una moneda sin almacén no entra con elementos de order flow
+    mixed = rt.start_all({**raw, "recipe": {"slots": [{"codes": ["VA"]}]}}, 2)
+    assert [r["action"] for r in mixed["plan"]] == ["run", "skip", "skip"] and "VA" in mixed["plan"][1]["reason"]

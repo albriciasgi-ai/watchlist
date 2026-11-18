@@ -3873,6 +3873,28 @@ async def tester_run(request: Request, symbol: str):
                                    bool(body.get("confirm")))
 
 
+@app.post("/api/tester/run-all")
+@limiter.limit("60/minute")
+async def tester_run_all(request: Request):
+    """La regla en todas las monedas con velas guardadas (body: rule, phase, confirm), en un solo trabajo."""
+    body = await request.json()
+    phase = int(body.get("phase", 1))
+    if phase not in (1, 2, 3):
+        return {"success": False, "message": "Fase no válida"}
+    return await run_in_threadpool(rule_tester.start_all, body.get("rule") or {}, phase, bool(body.get("confirm")))
+
+
+@app.post("/api/tester/consolidated")
+@limiter.limit("120/minute")
+async def tester_consolidated(request: Request):
+    """Informe de todas las monedas que ya corrieron esa regla exacta en la fase (body: rule, phase)."""
+    body = await request.json()
+    phase = int(body.get("phase", 1))
+    if phase not in (1, 2, 3):
+        return {"success": False, "message": "Fase no válida"}
+    return _json_response(await run_in_threadpool(rule_tester.consolidated, body.get("rule") or {}, phase))
+
+
 @app.get("/api/tester/job/{job_id}")
 @limiter.limit("600/minute")
 async def tester_job(request: Request, job_id: str):

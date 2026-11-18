@@ -113,7 +113,8 @@ export function toBackendRule(rule) {
       mode: sequence ? 'sequence' : (all ? 'strict' : 'threshold'),
       ...(sequence ? { sameBar: true, groupMins: { 0: first.length, 1: Math.max(1, Math.min(trigger.length, number(rule.min, 1))) } } : {}),
       min: all || sequence ? codes.length : Math.max(1, Math.min(codes.length, number(rule.min, 1))),
-      window: Math.max(1, Math.min(MAX_WINDOW, number(rule.window, 1))),
+      // Con un solo elemento la ventana no se ve en pantalla: vale 1, aunque quede una mayor de una regla anterior
+      window: codes.length > 1 ? Math.max(1, Math.min(MAX_WINDOW, number(rule.window, 1))) : 1,
       side: ['both', 'long', 'short'].includes(rule.side) ? rule.side : 'both',
       swing: { on: !!rule.swing, bars: number(rule.swingBars, 5), flex: 1 },
       momentum: !!rule.momentum,

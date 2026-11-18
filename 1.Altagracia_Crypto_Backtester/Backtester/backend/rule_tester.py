@@ -1280,6 +1280,125 @@ def start(symbol, raw_rule, phase_number, confirm=False):
     return {"success": True, "job": job_id, "gate": info}
 
 
+# ==================== TODAS LAS MONEDAS ====================
+# La misma regla en cada moneda con velas guardadas, una tras otra, y el informe de todas juntas.
+
+def _plan(rule, phase_number):
+    """Qué pasa con cada moneda: se corre, ya tiene esa regla exacta corrida en la fase, o no se puede (y por qué)."""
+    codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
+    rows = []
+    for symbol in candle_symbols():
+        row = {"symbol": symbol, "action": "skip", "run": None, "reason": None}
+        phase = next((p for p in phases(symbol) if p["phase"] == phase_number), None)
+        info = gate(symbol, rule, phase_number)
+        same = [r for r in history(symbol) if r["hash"] == info["hash"] and r["phase"] == phase_number]
+        if same:
+            row.update(action="stored", run=same[-1]["id"])  # La corrida es determinista: no se repite
+        elif phase is None or not phase["available"]:
+            row["reason"] = "sin datos de esa fase"
+        elif not has_store(symbol) and codes - set(CANDLE_CODES):
+            row["reason"] = f"sin almacén de trades: no puede usar {', '.join(sorted(codes - set(CANDLE_CODES)))}"
+        elif info["blocked"]:
+            row["reason"] = "falta correr esta regla en la fase 2"
+        else:
+            row["action"] = "run"
+        rows.append(row)
+    return rows
+
+
+def start_all(raw_rule, phase_number, confirm=False):
+    """La regla en todas las monedas, en un solo trabajo. Las fases 2 y 3 piden confirmar lo que se va a gastar."""
+    rule = clean_rule(raw_rule)
+    if rule is None:
+        return {"success": False, "message": "La regla no tiene elementos conocidos"}
+    plan = _plan(rule, phase_number)
+    todo = [row for row in plan if row["action"] == "run"]
+    if not todo and not any(row["action"] == "stored" for row in plan):
+        return {"success": False, "message": "Ninguna moneda puede correr esta regla en esta fase", "plan": plan}
+    if phase_number > 1 and todo and not confirm:
+        return {"success": True, "needsConfirm": True, "plan": plan}
+    if not todo:
+        return {"success": True, "done": True, "plan": plan}
+    job_id = uuid.uuid4().hex[:12]
+    job = {"id": job_id, "state": "running", "done": 0, "total": 1, "stage": todo[0]["symbol"], "run": None, "error": None,
+           "all": True, "phase": phase_number, "plan": plan, "symbolsDone": 0, "symbolsTotal": len(todo)}
+    with _lock:
+        _jobs[job_id] = job
+
+    def work():
+        for number, row in enumerate(todo):
+            symbol = row["symbol"]
+            try:
+                job.update(stage=f"{symbol} ({number + 1} de {len(todo)}): elementos", done=0, total=1)
+                phase = next(p for p in phases(symbol) if p["phase"] == phase_number)
+                info = gate(symbol, rule, phase_number)
+                span = detect_span(symbol, rule["tf"], phase, rule, lambda d, t: job.update(done=d, total=t))
+                job["stage"] = f"{symbol} ({number + 1} de {len(todo)}): trades"
+                result = run(symbol, rule, span, phase, measures.table_for(symbol))
+                if not result.get("success"):
+                    row.update(action="skip", reason=result.get("message"))
+                else:
+                    result["gate"] = info
+                    row.update(action="stored", run=_save(result, info["hash"]))
+            except Exception as error:  # Una moneda que falla no detiene a las demás
+                row.update(action="skip", reason=f"{type(error).__name__}: {error}")
+            job["symbolsDone"] = number + 1
+        job.update(state="done")
+
+    threading.Thread(target=work, daemon=True).start()
+    return {"success": True, "job": job_id, "plan": plan}
+
+
+def _pooled_row(label, trades):
+    s = summary(sorted(trades, key=lambda t: t["exit_t"]))
+    return {"label": label, "n": s.get("n", 0), "winRate": s.get("winRate"), "avgR": s.get("avgR"), "totalR": s.get("totalR")}
+
+
+def consolidated(raw_rule, phase_number):
+    """Informe de todas las monedas que ya tienen esa regla exacta corrida en la fase: juntas y una por una."""
+    rule = clean_rule(raw_rule)
+    if rule is None:
+        return {"success": False, "message": "La regla no tiene elementos conocidos"}
+    plan = _plan(rule, phase_number)
+    rows, pooled, weights = [], [], []
+    for row in plan:
+        result = load_run(row["run"]) if row["run"] else None
+        if result is None:
+            continue
+        s, b, trades = result["summary"], result.get("baseline") or {}, result["trades"]
+        for t in trades:
+            pooled.append({"r": t["r"], "dir": t["dir"], "entry_t": t["entry_t"], "exit_t": t["exit_t"], "mfe": t.get("mfe"), "mae": t.get("mae"),
+                           "bars": t.get("bars"), "reach": t.get("reach"), "symbol": row["symbol"]})
+        rows.append({"symbol": row["symbol"], "run": row["run"], "from": result["from"], "to": result["to"], "n": s.get("n", 0),
+                     "winRate": s.get("winRate"), "avgR": s.get("avgR"), "totalR": s.get("totalR"), "profitFactor": s.get("profitFactor"),
+                     "maxDrawdownR": s.get("maxDrawdownR"), "baseR": b.get("avgR"), "edge": result.get("edge")})
+        if s.get("n") and b.get("n"):
+            weights.append((s["n"], b))
+    if not rows:
+        return {"success": False, "message": "Ninguna moneda tiene esta regla corrida en esta fase", "plan": plan}
+    ordered = sorted(pooled, key=lambda t: t["exit_t"])
+    out = {"success": True, "rule": rule, "phase": phase_number, "plan": plan, "symbols": rows, "summary": summary(ordered) if ordered else {"n": 0},
+           "equity": _equity(ordered), "positive": sum(1 for r in rows if (r["avgR"] or 0) > 0), "withTrades": sum(1 for r in rows if r["n"])}
+    if ordered:
+        years = sorted({dt.datetime.fromtimestamp(t["entry_t"] / 1000, dt.timezone.utc).year for t in ordered})
+        out["byYear"] = [_pooled_row(str(y), [t for t in ordered if dt.datetime.fromtimestamp(t["entry_t"] / 1000, dt.timezone.utc).year == y]) for y in years]
+        out["bySide"] = [_pooled_row(label, [t for t in ordered if t["dir"] == d]) for label, d in (("Largos", 1), ("Cortos", -1)) if any(t["dir"] == d for t in ordered)]
+    if weights and ordered:
+        # El azar de cada moneda pesa según los trades que la regla hizo en ella
+        total = sum(n for n, _ in weights)
+        base = sum(n * b["avgR"] for n, b in weights) / total
+        base_se = math.sqrt(sum((n * b["seR"]) ** 2 for n, b in weights)) / total
+        s = out["summary"]
+        edge, se = s["avgR"] - base, math.sqrt(s["seR"] ** 2 + base_se ** 2)
+        reach = {level: round(sum(n * b["reach"][level] for n, b in weights if b.get("reach")) / max(1, sum(n for n, b in weights if b.get("reach"))), 1)
+                 for level in (str(x) for x in REACH_LEVELS)} if any(b.get("reach") for _, b in weights) else None
+        out["baseline"] = {"avgR": round(base, 3), "seR": round(base_se, 4), "reach": reach,
+                           "winRate": round(sum(n * b["winRate"] for n, b in weights) / total, 1)}
+        out["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
+                       "clear": abs(edge) > 1.96 * se and not s["smallSample"]}
+    return out
+
+
 def job_status(job_id):
     with _lock:
         job = _jobs.get(job_id)
