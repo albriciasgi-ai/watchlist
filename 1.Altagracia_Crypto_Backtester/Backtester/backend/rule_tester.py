@@ -1311,6 +1311,10 @@ def start_all(raw_rule, phase_number, confirm=False):
     rule = clean_rule(raw_rule)
     if rule is None:
         return {"success": False, "message": "La regla no tiene elementos conocidos"}
+    with _lock:
+        busy = next((j for j in _jobs.values() if j.get("all") and j["state"] == "running"), None)
+    if busy is not None:  # Un segundo clic no lanza otro trabajo: se sigue el que ya corre
+        return {"success": True, "job": busy["id"], "plan": busy["plan"], "already": True}
     plan = _plan(rule, phase_number)
     todo = [row for row in plan if row["action"] == "run"]
     if not todo and not any(row["action"] == "stored" for row in plan):

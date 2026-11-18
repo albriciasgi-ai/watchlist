@@ -137,6 +137,7 @@ const RuleTesterApp = () => {
   const [selected, setSelected] = useState(null);   // Número del trade elegido
   const [detail, setDetail] = useState(null);
   const [sens, setSens] = useState(null);
+  const [allStarting, setAllStarting] = useState(false); // Entre el clic y la respuesta del backend
   const [allReport, setAllReport] = useState(null); // Informe de todas las monedas, de la regla y la fase con que se pidió
   const [message, setMessage] = useState(null);
   const [sort, setSort] = useState({ key: 'n', desc: false });
@@ -324,6 +325,7 @@ const RuleTesterApp = () => {
       setMessage('Elige al menos un elemento.');
       return;
     }
+    setAllStarting(true);
     try {
       const backendRule = toBackendRule(rule);
       const response = await api('/api/tester/run-all', { rule: backendRule, phase, confirm });
@@ -338,17 +340,22 @@ const RuleTesterApp = () => {
           + `Se van a correr: ${names('run').join(', ')}.`
           + `${names('stored').length ? `\nYa corridas, se usa lo guardado: ${names('stored').join(', ')}.` : ''}`
           + `${skipped.length ? `\nNo entran: ${skipped.join('; ')}.` : ''}\n\n¿Correrlas?`;
+        setAllStarting(false);
         if (window.confirm(text)) await runAll(true);
         return;
       }
-      allRuleRef.current = backendRule;
+      // Si ya corría un trabajo de todas las monedas, se sigue ese, con la regla con que se lanzó
+      if (response.already) setMessage('Ya hay una corrida de todas las monedas en curso: se sigue esa.');
+      if (!response.already || !allRuleRef.current) allRuleRef.current = backendRule;
       if (response.done) {
         await loadAll(backendRule, phase);
         return;
       }
-      setJob({ id: response.job, state: 'running', done: 0, total: 1, stage: names('run')[0], all: true, phase });
+      setJob({ id: response.job, state: 'running', done: 0, total: 1, stage: names('run')[0] || 'Todas las monedas', all: true, phase });
     } catch (error) {
       setMessage(error.message);
+    } finally {
+      setAllStarting(false);
     }
   };
 
@@ -1230,9 +1237,9 @@ const RuleTesterApp = () => {
             <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={running || !phaseInfo?.available} onClick={() => runPhase(false)}>
               {running ? `${job.stage}… ${job.done}/${job.total}` : `Correr la regla en la fase ${phase}`}
             </button>
-            <button type="button" className="rt-btn" style={{ width: '100%', padding: '5px 0', marginTop: 4 }} disabled={running} onClick={() => runAll(false)}
+            <button type="button" className="rt-btn" style={{ width: '100%', padding: '5px 0', marginTop: 4 }} disabled={running || allStarting} onClick={() => runAll(false)}
               title="Corre esta fase en cada moneda con velas guardadas, una tras otra, y junta los trades en un solo informe">
-              {running && job.all ? `Todas las monedas: ${job.symbolsDone ?? 0} de ${job.symbolsTotal ?? '…'}` : `Correr en todas las monedas (fase ${phase})`}
+              {allStarting ? 'Preparando: revisando qué falta en cada moneda…' : running && job.all ? `Todas las monedas: ${job.symbolsDone ?? 0} de ${job.symbolsTotal ?? '…'}` : `Correr en todas las monedas (fase ${phase})`}
             </button>
             {running && <div className="rt-progress"><div style={{ width: `${Math.round(100 * job.done / Math.max(1, job.total))}%` }} /></div>}
             {running && <div className="rt-note" style={{ marginTop: 4 }}>La primera corrida de cada marco y fase detecta los elementos de todo el tramo y tarda varios minutos. Las siguientes, segundos.</div>}
