@@ -14,13 +14,17 @@ export function reviewBoxes(decisions = [], now = null, tfMinutes = 15) {
 }
 
 /**
- * La decisión que sale de una caja TP/SL dibujada: lado, stop y objetivo. La entrada es la apertura de la vela
- * siguiente, no la de la caja: por eso se revisa contra `entry` que el stop quede detrás y el objetivo delante.
+ * La decisión que sale de una caja TP/SL dibujada: lado, entrada, stop y objetivo.
+ * `mode` 'limit' (de fábrica): la entrada es la de la caja, como una orden limit que espera a que el precio vuelva;
+ * si el mercado ya está mejor que ese precio, entra a mercado. 'market': entra en la apertura de la vela siguiente
+ * (`open`), sea cual sea la entrada de la caja. El riesgo beneficio se mide desde la entrada que de verdad se usa.
  */
-export function boxDecision(box, entry) {
+export function boxDecision(box, open, mode = 'limit') {
   if (!box || !Number.isFinite(box.slPrice) || !Number.isFinite(box.tpPrice)) return null;
   const side = box.tpPrice >= box.slPrice ? 1 : -1;
-  const plan = { action: side > 0 ? 'long' : 'short', side, stop: box.slPrice, target: box.tpPrice, boxId: box.id, problem: null };
+  const plan = { action: side > 0 ? 'long' : 'short', side, stop: box.slPrice, target: box.tpPrice, boxId: box.id, problem: null, limit: null };
+  if (mode === 'limit' && Number.isFinite(box.entryPrice) && Number.isFinite(open) && (open - box.entryPrice) * side > 0) plan.limit = box.entryPrice;
+  const entry = plan.limit ?? open;
   if (Number.isFinite(entry)) {
     if ((entry - box.slPrice) * side <= 0) plan.problem = 'El stop de la caja no queda detrás de la entrada';
     else if ((box.tpPrice - entry) * side <= 0) plan.problem = 'El objetivo de la caja no queda delante de la entrada';

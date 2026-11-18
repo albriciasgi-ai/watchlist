@@ -26,16 +26,26 @@ test('las cajas salen solo de lo que se entró, y una abierta llega hasta la hor
 
 test('la caja TP/SL da el lado, el stop y el objetivo, y avisa si no cuadra con la entrada real', () => {
   assert.equal(boxDecision(null, 100), null);
-  const long = boxDecision({ id: 'a', entryPrice: 100, slPrice: 98, tpPrice: 106 }, 100.5);
+  const long = boxDecision({ id: 'a', entryPrice: 100, slPrice: 98, tpPrice: 106 }, 100.5, 'market');
   assert.equal(long.action, 'long');
   assert.equal(long.stop, 98);
   assert.equal(long.target, 106);
   assert.equal(long.boxId, 'a');
   assert.equal(long.problem, null);
   assert.ok(Math.abs(long.rr - 5.5 / 2.5) < 1e-9);
-  const short = boxDecision({ id: 'b', entryPrice: 100, slPrice: 103, tpPrice: 94 }, 99);
+  const short = boxDecision({ id: 'b', entryPrice: 100, slPrice: 103, tpPrice: 94 }, 99, 'market');
   assert.equal(short.action, 'short');
   assert.ok(Math.abs(short.rr - 5 / 4) < 1e-9);
+  // De fábrica la entrada es la de la caja, como una limit: el riesgo beneficio es el que se dibujó
+  const drawn = boxDecision({ id: 'e', entryPrice: 108, slPrice: 107, tpPrice: 110 }, 108.9);
+  assert.equal(drawn.limit, 108);
+  assert.ok(Math.abs(drawn.rr - 2) < 1e-9);
+  // A mercado, la misma caja vale lo que da la apertura siguiente
+  const market = boxDecision({ id: 'e', entryPrice: 108, slPrice: 107, tpPrice: 110 }, 108.9, 'market');
+  assert.equal(market.limit, null);
+  assert.ok(Math.abs(market.rr - 1.1 / 1.9) < 1e-9);
+  // Si el mercado ya está mejor que la entrada de la caja, entra a mercado
+  assert.equal(boxDecision({ id: 'f', entryPrice: 108, slPrice: 107, tpPrice: 110 }, 107.8).limit, null);
   // La entrada real (apertura siguiente) ya pasó el stop o el objetivo de la caja
   assert.match(boxDecision({ id: 'c', slPrice: 98, tpPrice: 106 }, 97.5).problem, /stop/);
   assert.match(boxDecision({ id: 'd', slPrice: 98, tpPrice: 106 }, 107).problem, /objetivo/);

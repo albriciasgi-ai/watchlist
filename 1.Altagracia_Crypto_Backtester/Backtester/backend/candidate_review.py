@@ -25,6 +25,7 @@ MIN_DAYS, MAX_DAYS = 7, 120
 MIN_CANDIDATES = 8        # Con menos no hay sesión que valga: se busca otro tramo
 MAX_CANDIDATES = 60       # Una sesión más larga se corta ahí
 TRIES = 40
+LIMIT_BARS = 12          # Velas que espera una entrada limit propia antes de vencer
 AFTER_BARS = 8           # Velas que se ven después de la salida de un trade antes del candidato siguiente
 POSITION_GROUPS = ((1, 5), (6, 10), (11, 20), (21, MAX_CANDIDATES))
 _lock = threading.Lock()
@@ -165,8 +166,10 @@ def start(symbol, raw_rule, days=DEFAULT_DAYS, any_symbol=False, seed=None):
     return {"success": False, "message": f"La regla da menos de {MIN_CANDIDATES} candidatos en {days} días: sube los días o afloja la regla"}
 
 
-def _own_trade(session, candidate, side, stop, target):
-    """El trade de quien decide, con su stop y su objetivo, simulado con las reglas del probador."""
+def _own_trade(session, candidate, side, stop, target, limit=None):
+    """El trade de quien decide, con su stop y su objetivo, simulado con las reglas del probador. Con `limit`, la entrada
+    espera en ese precio hasta LIMIT_BARS velas y se llena al cruzarlo; si la apertura siguiente ya es mejor que ese
+    precio, entra a mercado. Devuelve (trade, problema, vencimiento): sin llenarse, trade es None y vencimiento su hora."""
     symbol, rule = session["symbol"], session["rule"]
     span = rt.detect_span(symbol, rule["tf"], _phase1(symbol), rule)
     bars = span["bars"]
@@ -174,12 +177,15 @@ def _own_trade(session, candidate, side, stop, target):
     times = ctx["T"]
     k = bisect.bisect_left(times, candidate["signal"])
     if k >= len(times) or times[k] != candidate["signal"] or k + 1 >= len(times):
-        return None, "No se encontró la vela del candidato"
+        return None, "No se encontró la vela del candidato", None
     entry, atr = ctx["O"][k + 1], ctx["atr"][k]
+    waits = limit is not None and (entry - limit) * side > 0   # El precio tiene que volver hasta la limit
+    if waits:
+        entry = limit
     if stop is None or (entry - stop) * side <= 0:
-        return None, "El stop tiene que quedar detrás de la entrada"
+        return None, "El stop tiene que quedar detrás de la entrada", None
     if target is not None and (target - entry) * side <= 0:
-        return None, "El objetivo tiene que quedar delante de la entrada"
+        return None, "El objetivo tiene que quedar delante de la entrada", None
     risk = abs(entry - stop)
     own = copy.deepcopy(rule)
     own["invert"] = False
@@ -187,14 +193,17 @@ def _own_trade(session, candidate, side, stop, target):
     own["exit"] = {**own["exit"], "targetR": abs(target - entry) / risk if target is not None else None, "trail": "none", "opposite": False,
                    "horizon": own["exit"].get("horizon") or rt.DEFAULT_HORIZON}
     own.pop("targetAt", None)
-    trade = rt.simulate(own, ctx, k, side)
+    own["entry"] = {"type": "limit", "at": "near", "expiry": LIMIT_BARS} if waits else {**own["entry"], "type": "market"}
+    trade = rt.simulate(own, ctx, k, side, zone=(limit, limit) if waits else None)
+    if trade and trade.get("skip") == "limit sin llenar":
+        return None, None, times[min(len(times) - 1, k + LIMIT_BARS)] + rule["tf"] * 60000
     if not trade or trade.get("skip") or trade.get("open"):
-        return None, "Ese trade no se pudo simular hasta su salida"
-    return {"dir": side, "entry": trade["entry"], "entry_t": trade["entry_t"], "stop": trade["stop"], "target": trade.get("target"),
-            "exit": trade["exit"], "exit_t": trade["exit_t"], "r": trade["r"], "reason": trade["reason"]}, None
+        return None, "Ese trade no se pudo simular hasta su salida", None
+    return {"order": "limit" if waits else "market", "dir": side, "entry": trade["entry"], "entry_t": trade["entry_t"], "stop": trade["stop"], "target": trade.get("target"),
+            "exit": trade["exit"], "exit_t": trade["exit_t"], "r": trade["r"], "reason": trade["reason"]}, None, None
 
 
-def decide(session_id, index, action, stop=None, target=None, seconds=None, follow=False):
+def decide(session_id, index, action, stop=None, target=None, seconds=None, follow=False, entry=None):
     """Una decisión sobre el candidato a la vista: `skip`, `rule` (como propone la regla), `long` o `short` con stop y objetivo propios.
     Con `follow`, tras entrar el gráfico sigue hasta que el trade cierra y unas velas más: los candidatos que caen en ese
     tramo quedan como `passed` (no se deciden), como al operar una posición a la vez."""
@@ -208,20 +217,22 @@ def decide(session_id, index, action, stop=None, target=None, seconds=None, foll
     candidate = session["candidates"][index]
     if action not in ("skip", "rule", "long", "short"):
         return {"success": False, "message": "Decisión no válida"}
-    trade = None
+    trade, unfilled = None, None
     if action == "rule":
         trade = {k: candidate[k] for k in ("dir", "entry", "stop", "target", "exit", "exit_t", "r", "reason")}
         trade["entry_t"] = candidate["time"]
     elif action in ("long", "short"):
-        trade, problem = _own_trade(session, candidate, 1 if action == "long" else -1, stop, target)
-        if trade is None:
+        trade, problem, unfilled = _own_trade(session, candidate, 1 if action == "long" else -1, stop, target, entry)
+        if trade is None and unfilled is None:
             return {"success": False, "message": problem}
     event = {"event": "decision", "session": session_id, "i": index, "action": action, "trade": trade, "at": int(time.time() * 1000),
              "seconds": round(float(seconds), 1) if isinstance(seconds, (int, float)) and 0 <= seconds < 86400 else None}
+    if unfilled is not None:
+        event["unfilled"] = unfilled  # La limit no se llenó: hora en que venció
     _append(event)
     session["decisions"].append(event)
-    if follow and trade:
-        resume = trade["exit_t"] + AFTER_BARS * session["tf"] * 60000
+    if follow and (trade or unfilled is not None):
+        resume = trade["exit_t"] + AFTER_BARS * session["tf"] * 60000 if trade else unfilled
         for later in session["candidates"][index + 1:]:
             if later["time"] >= resume:
                 break
@@ -263,8 +274,12 @@ def public(session):
         candidate = session["candidates"][d["i"]]
         row = {"i": d["i"], "action": d["action"], "time": candidate["time"], "proposed": candidate["dir"]}
         trade = d.get("trade")
-        if trade:
-            row.update(dir=trade["dir"], entry=trade["entry"], entry_t=trade["entry_t"], stop=trade["stop"], target=trade["target"])
+        if d.get("unfilled") is not None:
+            row["unfilled" if done or d["unfilled"] <= now else "pending"] = True
+        if trade and not done and trade["entry_t"] > now:
+            row["pending"] = True  # Una limit que se llena después de la hora a la vista: todavía no se sabe
+        elif trade:
+            row.update(dir=trade["dir"], entry=trade["entry"], entry_t=trade["entry_t"], stop=trade["stop"], target=trade["target"], order=trade.get("order"))
             if done or trade["exit_t"] <= now:
                 row.update(exit=trade["exit"], exit_t=trade["exit_t"], r=trade["r"], reason=trade["reason"])
         if done or candidate["exit_t"] <= now:
@@ -282,6 +297,7 @@ def _until(session):
     """Hasta dónde se muestra el gráfico de una sesión terminada: la salida del último trade y unas velas más, sin pasar del tramo siguiente por decidir."""
     step = AFTER_BARS * session["tf"] * 60000
     times = [session["candidates"][d["i"]]["time"] for d in session["decisions"]] + [d["trade"]["exit_t"] + step for d in session["decisions"] if d.get("trade")]
+    times += [d["unfilled"] for d in session["decisions"] if d.get("unfilled") is not None]
     return max(times) if times else session["start"]
 
 
@@ -302,7 +318,7 @@ def _row(session, decision):
     candidate = session["candidates"][decision["i"]]
     trade = decision.get("trade")
     return {"position": decision["i"] + 1, "taken": trade is not None, "r": trade["r"] if trade else None, "ruleR": candidate["r"],
-            "action": decision["action"], "seconds": decision.get("seconds"), "symbol": session["symbol"], "session": session["id"],
+            "action": "unfilled" if decision.get("unfilled") is not None else decision["action"], "seconds": decision.get("seconds"), "symbol": session["symbol"], "session": session["id"],
             "exit_t": trade["exit_t"] if trade else None, "time": candidate["time"]}
 
 
@@ -333,10 +349,12 @@ def _gap(a, b):
 
 def _summary(rows):
     passed = sum(1 for r in rows if r["action"] == "passed")
-    rows = [r for r in rows if r["action"] != "passed"]  # Lo que pasó con un trade abierto no fue una decisión
+    unfilled = sum(1 for r in rows if r["action"] == "unfilled")
+    # Lo que pasó con un trade abierto no fue una decisión, y una limit sin llenar no fue un trade ni un "no entro"
+    rows = [r for r in rows if r["action"] not in ("passed", "unfilled")]
     taken = [r for r in rows if r["taken"]]
     skipped = [r for r in rows if not r["taken"]]
-    out = {"decisions": len(rows), "passed": passed, "taken": _stat([r["r"] for r in taken]), "takenAsRule": _stat([r["ruleR"] for r in taken]),
+    out = {"decisions": len(rows), "passed": passed, "unfilled": unfilled, "taken": _stat([r["r"] for r in taken]), "takenAsRule": _stat([r["ruleR"] for r in taken]),
            "skipped": _stat([r["ruleR"] for r in skipped]), "rule": _stat([r["ruleR"] for r in rows]),
            # Lo que agrega elegir: lo tomado contra lo dejado, medido con la misma vara (lo que hizo la regla en cada uno)
            "selection": _gap([r["ruleR"] for r in taken], [r["ruleR"] for r in skipped]),

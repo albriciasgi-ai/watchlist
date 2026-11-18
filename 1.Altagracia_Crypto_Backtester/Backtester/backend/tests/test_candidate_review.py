@@ -154,3 +154,45 @@ def test_tras_entrar_se_puede_seguir_hasta_que_el_trade_cierre(world):
     # El gráfico de la sesión terminada llega hasta después de la salida del trade, no hasta el final de la fase
     assert done["session"]["until"] >= resume and done["session"]["until"] < full["end"] + 60 * DAY
     assert cr.report()["decisions"] == 2
+
+
+def test_la_caja_entra_como_limit_en_su_precio_y_puede_quedar_sin_llenar(world):
+    s = cr.start("X", RAW, 60, seed=2)
+    sid, c = s["session"]["id"], s["candidate"]
+    k = next(i for i, b in enumerate(world) if b["t"] == c["signal"])
+    after = world[k + 1:k + 1 + cr.LIMIT_BARS]
+    opens = c["entry"]
+    # Una limit de compra un poco abajo de la apertura: se llena en la primera vela que la cruza, a su precio
+    reach = next((b for b in after if b["l"] < opens - 0.2), None)
+    answer = cr.decide(sid, 0, "long", stop=opens - 3.2, target=opens + 5.8, entry=opens - 0.2, follow=True)
+    assert answer["success"]
+    event = cr.sessions()[sid]["decisions"][0]
+    if reach:
+        mine = event["trade"]
+        assert mine["order"] == "limit" and mine["entry"] == pytest.approx(opens - 0.2) and mine["entry_t"] == reach["t"]
+        assert mine["stop"] == pytest.approx(opens - 3.2) and mine["target"] == pytest.approx(opens + 5.8)
+        assert answer["decisions"][0]["r"] == mine["r"]           # Con seguir, el resultado ya quedó atrás
+    else:
+        assert event["trade"] is None and event["unfilled"] == world[k + cr.LIMIT_BARS]["t"] + MS
+    # Una limit lejísimos no se llena: no es un trade ni un "no entro", y con seguir se reanuda al vencer
+    c2 = answer["candidate"]
+    far = cr.decide(sid, c2["i"], "long", stop=c2["entry"] - 60, target=c2["entry"] - 20, entry=c2["entry"] - 40, follow=True)
+    assert far["success"] and far["decisions"][c2["i"]]["unfilled"] is True and "entry" not in far["decisions"][c2["i"]]
+    k2 = next(j for j, b in enumerate(world) if b["t"] == c2["signal"])
+    assert far["candidate"]["time"] >= world[k2 + cr.LIMIT_BARS]["t"] + MS
+    # Si la apertura ya es mejor que la limit, entra a mercado
+    c3 = far["candidate"]
+    assert cr.decide(sid, c3["i"], "long", stop=c3["entry"] - 3, target=c3["entry"] + 9, entry=c3["entry"] + 1)["success"]
+    last = cr.sessions()[sid]["decisions"][-1]["trade"]
+    assert last["order"] == "market" and last["entry"] == c3["entry"]
+    done = cr.end(sid)
+    assert done["summary"]["unfilled"] == (1 if reach else 2) and done["summary"]["taken"]["n"] == (2 if reach else 1) and done["summary"]["skipped"]["n"] == 0
+
+
+def test_una_limit_pendiente_no_dice_si_se_lleno_hasta_que_pasa_su_hora(world):
+    s = cr.start("X", RAW, 60, seed=2)
+    sid, c = s["session"]["id"], s["candidate"]
+    far = cr.decide(sid, 0, "long", stop=c["entry"] - 60, target=c["entry"] - 20, entry=c["entry"] - 40)   # Sin seguir
+    row = far["decisions"][0]
+    expiry = cr.sessions()[sid]["decisions"][0]["unfilled"]
+    assert ("pending" in row) == (far["candidate"]["time"] < expiry) and ("unfilled" in row) == (far["candidate"]["time"] >= expiry)

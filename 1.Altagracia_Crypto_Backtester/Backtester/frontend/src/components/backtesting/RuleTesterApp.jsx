@@ -212,6 +212,8 @@ const RuleTesterApp = () => {
   const [reviewDays, setReviewDays] = useState(REVIEW_DAYS);
   const [reviewAny, setReviewAny] = useState(false);
   const [reviewBusy, setReviewBusy] = useState(false);
+  const [reviewPick, setReviewPick] = useState(null);     // Decisión cuya caja se muestra; sin elegir, la del último trade
+  const [reviewLimit, setReviewLimit] = useState(true);   // La caja entra como limit en su precio de entrada
   const [reviewFollow, setReviewFollow] = useState(true); // Tras entrar, seguir hasta que el trade cierre
   const [reviewShapes, setReviewShapes] = useState([]); // Dibujos del gráfico, para leer la caja TP/SL de una decisión
   const usedBoxesRef = useRef(new Set());
@@ -516,10 +518,17 @@ const RuleTesterApp = () => {
   const decideReview = async (action, plan = null) => {
     setReviewBusy(true);
     try {
-      const answer = await api('/api/review/decide', { session: review.session.id, i: review.candidate.i, action, stop: plan?.stop ?? null, target: plan?.target ?? null, follow: reviewFollow,
+      const answer = await api('/api/review/decide', { session: review.session.id, i: review.candidate.i, action, stop: plan?.stop ?? null, target: plan?.target ?? null, entry: plan?.limit ?? null, follow: reviewFollow,
         seconds: shownAtRef.current ? (Date.now() - shownAtRef.current) / 1000 : null });
       if (takeReview(answer)) {
-        if (plan?.boxId) usedBoxesRef.current.add(plan.boxId);
+        if (plan?.boxId) {
+          usedBoxesRef.current.add(plan.boxId);
+          const rest = drawingsRef.current.filter(shape => shape.id !== plan.boxId);
+          drawingsRef.current = rest;
+          setReviewShapes(rest);
+          chartRef.current?.loadDrawings?.(rest, true);
+        }
+        setReviewPick(null);
         setTool('select');
         if (answer.session.done) loadReviewReport();
       }
@@ -561,7 +570,10 @@ const RuleTesterApp = () => {
   useEffect(() => {
     if (review?.session) {
       // En revisión solo se ven las decisiones de la sesión: nada de corridas anteriores, que mostrarían el futuro
-      boxesRef.current = reviewBoxes(review.decisions, review.candidate?.time ?? null, review.session.tf);
+      // Una sola caja a la vista: la del trade elegido en la lista o, sin elegir, la del último. Todas juntas tapan el gráfico
+      const withTrade = review.decisions.filter(d => Number.isFinite(d.entry));
+      const shown = withTrade.find(d => d.i === reviewPick) || withTrade[withTrade.length - 1];
+      boxesRef.current = reviewBoxes(shown ? [shown] : [], review.candidate?.time ?? null, review.session.tf);
       // La vela del candidato a la vista, marcada: es donde hay que decidir ahora
       bandsRef.current = review.candidate ? [{ kind: 'mark', time: review.candidate.signal, price: review.candidate.entry, label: `Candidato ${review.candidate.i + 1}` }] : [];
       linesRef.current = [];
@@ -577,7 +589,7 @@ const RuleTesterApp = () => {
       bandsRef.current = chartOpen && trade ? tradeBands(trade, result.rule.tf, names) : [];
     }
     chartRef.current?.redraw?.();
-  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder, review]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder, review, reviewPick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pick = useCallback((trade) => {
     setSelected(trade.n);
@@ -1437,7 +1449,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const reviewPlan = reviewOn ? boxDecision(latestFreeBox(reviewShapes, [...usedBoxesRef.current].map(id => ({ status: 'open', tpslBoxId: id }))), review.candidate.entry) : null;
+  const reviewPlan = reviewOn ? boxDecision(latestFreeBox(reviewShapes, [...usedBoxesRef.current].map(id => ({ status: 'open', tpslBoxId: id }))), review.candidate.entry, reviewLimit ? 'limit' : 'market') : null;
   const reviewTab = (
     <>
       {!review?.session && (
@@ -1467,8 +1479,8 @@ const RuleTesterApp = () => {
           </div>
           <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={reviewBusy} onClick={() => decideReview('rule')}>Entro como propone la regla</button>
           <button type="button" className="rt-btn" style={{ width: '100%', padding: '6px 0', marginTop: 4 }} disabled={reviewBusy || !reviewPlan || !!reviewPlan.problem}
-            onClick={() => decideReview(reviewPlan.action, reviewPlan)} title="Usa el lado, el stop y el objetivo de la última caja TP/SL que dibujaste. La entrada es la apertura de la vela siguiente">
-            {reviewPlan && !reviewPlan.problem ? `Entro con mi caja: ${reviewPlan.side > 0 ? 'largo' : 'corto'}, stop ${priceText(reviewPlan.stop)}, objetivo ${priceText(reviewPlan.target)} (${reviewPlan.rr.toFixed(1)} a 1)` : 'Entro con mi caja TP/SL'}
+            onClick={() => decideReview(reviewPlan.action, reviewPlan)} title="Usa el lado, la entrada, el stop y el objetivo de la última caja TP/SL que dibujaste">
+            {reviewPlan && !reviewPlan.problem ? `Entro con mi caja: ${reviewPlan.side > 0 ? 'largo' : 'corto'} ${reviewPlan.limit != null ? `limit en ${priceText(reviewPlan.limit)}` : 'a mercado'}, stop ${priceText(reviewPlan.stop)}, objetivo ${priceText(reviewPlan.target)} (${reviewPlan.rr.toFixed(1)} a 1)` : 'Entro con mi caja TP/SL'}
           </button>
           {reviewPlan?.problem && <div className="rt-note" style={{ marginTop: 2 }}>{reviewPlan.problem}.</div>}
           <div className="rt-row" style={{ marginTop: 4 }}>
@@ -1477,6 +1489,9 @@ const RuleTesterApp = () => {
           </div>
           <button type="button" className="rt-btn" style={{ width: '100%', padding: '6px 0', marginTop: 4 }} disabled={reviewBusy} onClick={() => decideReview('skip')}>No entro</button>
           <div className="rt-row" style={{ marginTop: 4 }}>
+            <Check checked={reviewLimit} onChange={setReviewLimit} title="Marcada: la orden espera en el precio de entrada de tu caja, hasta 12 velas, y se llena cuando el precio lo cruza; si no llega, queda sin llenar. Si el mercado ya está mejor que ese precio, entra a mercado. Sin marcar: entra a mercado en la apertura de la vela siguiente, y de la caja solo usa el stop y el objetivo">Entrar en el precio de mi caja (limit)</Check>
+          </div>
+          <div className="rt-row">
             <Check checked={reviewFollow} onChange={setReviewFollow} title="Como al operar una posición a la vez: tras entrar, el gráfico avanza hasta que tu trade cierra y unas velas más, para ver cómo terminó y qué hizo el precio después. Los candidatos que caen en ese tramo no se deciden. Sin marcar, pasa al candidato siguiente aunque el trade siga abierto">Tras entrar, seguir hasta que el trade cierre</Check>
           </div>
           <div className="rt-note" style={{ margin: '6px 0 10px' }}>
@@ -1488,7 +1503,7 @@ const RuleTesterApp = () => {
       {review?.session?.done && (
         <>
           <div className="rt-warn">
-            <b>Sesión terminada</b> · {review.summary?.decisions ?? review.session.position} candidatos decididos de {review.session.total}{review.summary?.passed ? `, ${review.summary.passed} pasaron con un trade abierto` : ''}.{' '}
+            <b>Sesión terminada</b> · {review.summary?.decisions ?? review.session.position} candidatos decididos de {review.session.total}{review.summary?.passed ? `, ${review.summary.passed} pasaron con un trade abierto` : ''}{review.summary?.unfilled ? `, ${review.summary.unfilled} órdenes sin llenar` : ''}.{' '}
             <button type="button" className="rt-btn" onClick={closeReview}>Cerrar la sesión</button>
           </div>
           {reviewSummary(review.summary)}
@@ -1497,14 +1512,15 @@ const RuleTesterApp = () => {
       {review?.session && review.decisions.length > 0 && (
         <>
           <h4>Decisiones de esta sesión</h4>
+          <div className="rt-note" style={{ marginBottom: 4 }}>El gráfico muestra solo la caja del último trade. Un clic en otro lo lleva ahí y muestra la suya.</div>
           <table className="rt-table">
             <thead><tr><th style={{ textAlign: 'left' }}>#</th><th style={{ textAlign: 'left' }}>Decisión</th><th>Tu R</th><th title="Lo que hizo la regla en ese candidato">La regla</th></tr></thead>
             <tbody>
               {[...review.decisions].reverse().map(d => (
-                <tr key={d.i} style={{ cursor: 'pointer' }} onClick={() => chartRef.current?.focusOn?.(d.time, d.entry ?? null)} title="Ir a ese momento en el gráfico">
+                <tr key={d.i} style={{ cursor: 'pointer', fontWeight: d.i === reviewPick ? 600 : undefined }} onClick={() => { setReviewPick(d.i); chartRef.current?.focusOn?.(d.time, d.entry ?? null); }} title="Ir a ese momento en el gráfico y mostrar la caja de ese trade">
                   <td style={{ textAlign: 'left' }}>{d.i + 1}</td>
                   <td style={{ textAlign: 'left' }}>{ACTION_LABEL[d.action]}{d.action === 'rule' ? (d.dir > 0 ? ' (largo)' : ' (corto)') : ''}</td>
-                  <td>{d.action === 'skip' || d.action === 'passed' ? '—' : (d.r != null ? <R value={d.r} digits={2} /> : 'abierto')}</td>
+                  <td>{d.action === 'skip' || d.action === 'passed' ? '—' : (d.unfilled ? 'sin llenar' : d.pending ? 'pendiente' : d.r != null ? <R value={d.r} digits={2} /> : 'abierto')}</td>
                   <td>{d.ruleR != null ? <R value={d.ruleR} digits={2} /> : 'abierto'}</td>
                 </tr>
               ))}
