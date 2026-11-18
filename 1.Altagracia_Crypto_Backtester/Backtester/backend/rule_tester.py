@@ -31,6 +31,7 @@ import observer
 import of_elements as oe
 import of_setups as os_
 import patterns
+import candle_patterns
 import structure
 import vp_sessions
 
@@ -51,7 +52,13 @@ SMALL_SAMPLE = 30
 MAX_FILTERS = 3
 MAX_WINDOW = 10           # Un gatillo puede llegar hasta 10 velas después del barrido
 VP_CODES = ("VR", "VF", "VX", "VE")  # Contra el valor de la sesión anterior (vp_sessions.py)
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",)  # Elementos del probador que no son de of_elements
+# Patrones de vela de "Rejection Patterns" (candle_patterns.py): el lado lo da el patrón
+PATTERN_CODES = {"HM": "Martillo (alcista) o estrella fugaz (bajista)", "EN": "Envolvente alcista o bajista",
+                 "DJ": "Doji libélula (alcista) o lápida (bajista)"}
+PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", "ENGULFING_BEARISH": "EN",
+              "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
+LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -78,7 +85,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ")
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ")
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -248,6 +255,22 @@ def clean_rule(raw):
         # tf: marco de las velas de la estructura. offset: minutos desde las 00:00 UTC en que empiezan (810 = 13:30)
         extra["cc"] = {"tf": struct_tf, "offset": int(_num(cc.get("offset"), 0, 0, 1439)) % struct_tf,
                        "swing": int(_num(cc.get("swing"), 3, 2, 20)), "legs": int(_num(cc.get("legs"), 2, 2, 5))}
+    if any(c in PATTERN_CODES for slot in recipe["slots"] for c in slot["codes"]):
+        pat = raw.get("pat") or {}
+        # trend: el patrón pide un movimiento previo en contra, de trendBars velas. minZ: z-score mínimo del volumen de su vela
+        # contra las 20 anteriores (None = sin filtro). wick: mecha mínima del martillo y la estrella, en cuerpos
+        extra["pat"] = {"trend": pat.get("trend") is not False, "trendBars": int(_num(pat.get("trendBars"), 5, 1, 50)),
+                        "minZ": None if pat.get("minZ") in (None, "") else _num(pat.get("minZ"), 1.0, -3.0, 20.0),
+                        "wick": _num(pat.get("wick"), 2.0, 0.5, 10.0)}
+    lines = []
+    for item in (raw.get("lines") or [])[:2]:
+        if item.get("type") in LINE_TYPES and item.get("mode") in ("side", "touch"):
+            # side: la vela de la señal cierra del lado de la línea a favor del trade. touch: además su mecha la toca.
+            # slope: la línea va a favor en las últimas 5 velas
+            lines.append({"type": item["type"], "period": int(_num(item.get("period"), 200 if item["type"] == "vwap" else 14, 2, 1000)),
+                          "mode": item["mode"], "slope": bool(item.get("slope"))})
+    if lines:
+        extra["lines"] = lines
     hours = raw.get("hours") or {}
     if hours.get("on"):
         # Solo señales que se conocen (y entran) entre esas horas UTC, en minutos del día; de lunes a viernes si se pide
@@ -685,7 +708,53 @@ def _breakdowns(trades, rule):
 def _context(symbol, tf, bars):
     _, atr, _ = os_._series(bars)
     return {"symbol": symbol, "tf": tf, "T": [b["t"] for b in bars], "O": [b["o"] for b in bars], "H": [b["h"] for b in bars],
-            "L": [b["l"] for b in bars], "C": [b["c"] for b in bars], "atr": atr, "minutes": fs.minutes}
+            "L": [b["l"] for b in bars], "C": [b["c"] for b in bars], "V": [b["vol"] for b in bars], "atr": atr, "minutes": fs.minutes}
+
+
+LINE_SLOPE_BARS = 5
+
+
+def _line(ctx, kind, period):
+    """VWAP móvil (precio típico por volumen de las últimas `period` velas, con la vela incluida) o EMA del cierre. NaN sin velas suficientes."""
+    cache = ctx.setdefault("lines", {})
+    key = (kind, period)
+    if key not in cache:
+        close = np.array(ctx["C"], dtype=float)
+        n = len(close)
+        out = np.full(n, np.nan)
+        if kind == "vwap":
+            volume = np.array(ctx["V"], dtype=float)
+            typical = (np.array(ctx["H"]) + np.array(ctx["L"]) + close) / 3
+            pv, vv = np.r_[0, np.cumsum(typical * volume)], np.r_[0, np.cumsum(volume)]
+            if n >= period:
+                total = vv[period:] - vv[:-period]
+                out[period - 1:] = np.where(total > 0, (pv[period:] - pv[:-period]) / np.where(total > 0, total, 1), np.nan)
+        else:
+            k, value = 2 / (period + 1), close[0] if n else 0.0
+            for i in range(n):
+                value = close[i] * k + value * (1 - k)
+                if i >= period - 1:
+                    out[i] = value
+        cache[key] = out
+    return cache[key]
+
+
+def _lines_ok(lines, ctx, k, side):
+    """Si la vela k, que da a conocer la señal, cumple los filtros de línea a favor del trade."""
+    for item in lines:
+        line = _line(ctx, item["type"], item["period"])
+        level = line[k]
+        if not level == level:  # NaN: todavía no hay línea
+            return False
+        if (ctx["C"][k] - level) * side <= 0:
+            return False
+        if item["mode"] == "touch" and ((ctx["L"][k] if side > 0 else ctx["H"][k]) - level) * side > 0:
+            return False
+        if item["slope"]:
+            before = line[k - LINE_SLOPE_BARS] if k >= LINE_SLOPE_BARS else float("nan")
+            if not (level - before) * side > 0:
+                return False
+    return True
 
 
 def _passes(filters, row):
@@ -724,6 +793,34 @@ def _in_hours(hours, t):
     return start <= minute <= end if start <= end else (minute >= start or minute <= end)
 
 
+def _pattern_events(rule, span):
+    """Patrones de vela de candle_patterns sobre las velas de la fase: una vela, a lo sumo un patrón."""
+    pat = rule.get("pat")
+    bars = span["bars"]
+    if not pat or not bars:
+        return []
+    key = (id(bars), rule["tf"], "pat", pat["trend"], pat["trendBars"], pat["minZ"], pat["wick"])
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        tf_ms = rule["tf"] * 60000
+        candles = [{"open": b["o"], "high": b["h"], "low": b["l"], "close": b["c"], "volume": b["vol"]} for b in bars]
+        opts = {"minWickRatio": pat["wick"], "enabled": {"hammer": True, "shootingStar": True, "engulfing": True, "doji": True},
+                "requireTrend": pat["trend"], "trendBars": pat["trendBars"],
+                "volume": {"enabled": pat["minZ"] is not None, "lookback": 20, "minZ": pat["minZ"] if pat["minZ"] is not None else 0.0}}
+        found = []
+        for p in candle_patterns.find_patterns(candles, opts):
+            b = bars[p["index"]]
+            found.append({"code": PATTERN_OF[p["type"]], "dir": 1 if p["type"] in candle_patterns.BULLISH else -1, "t": b["t"],
+                          "known": b["t"] + tf_ms, "lo": b["l"], "hi": b["h"],
+                          "info": {"type": p["type"], "volumeZ": None if p["volumeZ"] is None else round(p["volumeZ"], 2)}})
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
+
+
 def _cc_events(rule, span):
     """Cambio de carácter (structure.py) sobre las velas de la fase."""
     cc = rule.get("cc")
@@ -744,7 +841,7 @@ def _cc_events(rule, span):
 
 def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
-    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span)
+    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span)
 
 
 def _liq_vp_events(symbol, rule, span, ctx, control=False, vp_shift=None):
@@ -822,6 +919,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
     vp_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in VP_CODES}
     cc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "CC"}
+    pat_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in PATTERN_CODES}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -852,6 +950,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             continue
         if rule["oneAtATime"] and not defer and k < busy_until + rule["cooldown"]:
             skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
+            continue
+        if rule.get("lines") and not _lines_ok(rule["lines"], ctx, k, side):
+            skipped["filtro de VWAP o EMA"] = skipped.get("filtro de VWAP o EMA", 0) + 1
             continue
         if rule.get("hours") and not _in_hours(rule["hours"], m["known"]):
             skipped["fuera de horario"] = skipped.get("fuera de horario", 0) + 1
@@ -900,6 +1001,12 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         broken = next((cc_info[(m["dir"], t + tf_ms)] for code, t in m["votes"] if code == "CC" and (m["dir"], t + tf_ms) in cc_info), None)
         if broken is not None:
             trade["cc"] = broken  # El swing roto y el extremo de la tendencia
+        shape = next((pat_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in pat_info), None)
+        if shape is not None:
+            trade["pat"] = shape  # Qué patrón fue y el z-score del volumen de su vela
+        if rule.get("lines"):
+            trade["lines"] = [{"type": item["type"], "period": item["period"], "value": round(float(_line(ctx, item["type"], item["period"])[k]), 8)}
+                              for item in rule["lines"]]
         trade["measures"] = measured
         if defer:
             pending.append(trade)

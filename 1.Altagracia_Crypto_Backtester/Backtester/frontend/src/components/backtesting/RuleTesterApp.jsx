@@ -9,7 +9,7 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import { lastClosedIndex } from './replayClock';
 import {
-  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
+  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
   fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
@@ -545,6 +545,33 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {usesPatterns(rule) && (
+          <>
+            <div className="rt-row">
+              <Check checked={rule.patTrend} onChange={(patTrend) => patch({ patTrend })} title="Un patrón alcista pide que el precio venga bajando, y uno bajista, subiendo">Patrón tras un movimiento en contra de</Check>
+              <Num value={rule.patTrendBars} min={1} max={50} disabled={!rule.patTrend} onChange={(patTrendBars) => patch({ patTrendBars })} /><span>velas</span>
+            </div>
+            <div className="rt-row">
+              <Check checked={rule.patVolume} onChange={(patVolume) => patch({ patVolume })} title="Volumen de la vela del patrón contra las 20 anteriores, en desviaciones estándar">Volumen de su vela: z ≥</Check>
+              <Num value={rule.patMinZ} min={-3} max={20} step={0.5} disabled={!rule.patVolume} onChange={(patMinZ) => patch({ patMinZ })} />
+              <span title="Mecha mínima del martillo y de la estrella fugaz, en veces su cuerpo">· mecha ≥</span>
+              <Num value={rule.patWick} min={0.5} max={10} step={0.5} onChange={(patWick) => patch({ patWick })} /><span>cuerpos</span>
+            </div>
+            <div className="rt-note">Son los patrones del indicador Rejection Patterns, con su misma regla. El lado lo da el patrón: una vela tiene a lo sumo uno. Para el stop detrás de la vela usa "Extremo de la vela del elemento".</div>
+          </>
+        )}
+        {[['vwap', 'VWAP móvil de', rule.vwapMode, rule.vwapPeriod, rule.vwapSlope], ['ema', 'EMA de', rule.emaMode, rule.emaPeriod, rule.emaSlope]].map(([kind, label, mode, period, slope]) => (
+          <div className="rt-row" key={kind}>
+            <span title="Filtro sobre la vela que da a conocer la señal, a favor del trade. Vale para cualquier regla">{label}</span>
+            <Num value={period} min={2} max={1000} onChange={(value) => patch({ [`${kind}Period`]: value })} /><span>velas:</span>
+            <select value={mode} onChange={(e) => patch({ [`${kind}Mode`]: e.target.value })}>
+              <option value="off">sin filtro</option>
+              <option value="side">el precio cierra a favor</option>
+              <option value="touch">la mecha la toca y cierra a favor</option>
+            </select>
+            <Check checked={slope} onChange={(value) => patch({ [`${kind}Slope`]: value })} title="La línea sube para un largo o baja para un corto, en las últimas 5 velas">pendiente a favor</Check>
+          </div>
+        ))}
         <div className="rt-row">
           <Check checked={rule.useHours} onChange={(useHours) => patch({ useHours })} title="Solo se operan las señales que se conocen entre esas horas, en UTC. La hora es la del cierre de la vela de la señal, que es cuando se entra">Solo señales entre las</Check>
           <input type="text" value={rule.hoursFrom} disabled={!rule.useHours} onChange={(e) => patch({ hoursFrom: e.target.value })} style={{ width: 56 }} placeholder="17:30" />
@@ -842,6 +869,8 @@ const RuleTesterApp = () => {
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
             {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
+            {selectedTrade.pat && <><br />Patrón: {selectedTrade.pat.type}{selectedTrade.pat.volumeZ != null && ` · volumen z ${selectedTrade.pat.volumeZ}`}</>}
+            {selectedTrade.lines?.length > 0 && <><br />{selectedTrade.lines.map(l => `${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period} en ${l.value}`).join(' · ')}</>}
             {selectedTrade.cc && <><br />Cambio de carácter: swing roto en {selectedTrade.cc.level}, extremo de la tendencia en {selectedTrade.cc.extreme}, estructura en velas de {selectedTrade.cc.structTf >= 60 ? `${selectedTrade.cc.structTf / 60} h` : `${selectedTrade.cc.structTf} m`}</>}
             {selectedTrade.liq && <><br />Barrido: {selectedTrade.liq.what === 'zone' ? `zona ${selectedTrade.liq.zoneLow}–${selectedTrade.liq.zoneHigh}` : `swing en ${selectedTrade.liq.swing} de hace ${selectedTrade.liq.swingAgeBars} velas`}, pasado hasta {selectedTrade.liq.extreme}{selectedTrade.liq.depthAtr != null && ` (${selectedTrade.liq.depthAtr} ATR)`} · zona de {Math.round((selectedTrade.liq.usd || 0) / 1000).toLocaleString('es-CO')}K USD ({selectedTrade.liq.zoneSide === 'long' ? 'largos' : 'cortos'} liquidados), última liquidación {selectedTrade.liq.zoneAgeDays} días antes · {selectedTrade.liq.source}</>}
           </div>

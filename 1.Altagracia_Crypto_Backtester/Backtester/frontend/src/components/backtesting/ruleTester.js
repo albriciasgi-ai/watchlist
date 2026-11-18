@@ -37,7 +37,11 @@ export function defaultRule() {
     // Cambio de carácter: marco de la estructura (0 = el de la regla), desde qué hora UTC se cuentan sus velas, velas del swing y tramos
     ccTf: 0, ccOffset: 0, ccSwing: 3, ccLegs: 2,
     // Horario: solo señales que se conocen entre esas horas UTC
-    useHours: false, hoursFrom: '17:30', hoursTo: '21:30', hoursWeekdays: true
+    useHours: false, hoursFrom: '17:30', hoursTo: '21:30', hoursWeekdays: true,
+    // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
+    patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
+    // Filtros de línea: off, side (cierra del lado a favor) o touch (además la mecha la toca)
+    vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, emaMode: 'off', emaPeriod: 14, emaSlope: false
   };
 }
 
@@ -48,6 +52,8 @@ export const VP_CODES = ['VR', 'VF', 'VX', 'VE'];
 // Forma del perfil de la sesión anterior: dónde quedó el volumen dentro de su rango
 export const VP_SHAPES = [['D', 'D · volumen en el medio'], ['P', 'P · volumen arriba, cola abajo'], ['b', 'b · volumen abajo, cola arriba'], ['B', 'B · dos distribuciones']];
 export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24, '1 día'], [168, '1 semana']];
+export const PATTERN_CODES = ['HM', 'EN', 'DJ'];
+export const usesPatterns = (rule) => (rule.codes || []).some(code => PATTERN_CODES.includes(code));
 export const CC_STRUCT_TFS = [[0, 'el marco de la regla'], [60, '1 hora'], [240, '4 horas'], [1440, '1 día']];
 export const CC_OFFSETS = [[0, '00:00 UTC'], [810, '13:30 UTC (apertura de Nueva York, verano)'], [870, '14:30 UTC (apertura de Nueva York, invierno)']];
 /** 'HH:MM' a minutos del día; null si no es una hora */
@@ -78,6 +84,15 @@ export function toBackendRule(rule) {
     tf: RULE_TIMEFRAMES.includes(Number(rule.tf)) ? Number(rule.tf) : 15,
     ...(codes.includes('LIQ') ? {
       liq: { what: rule.liqWhat === 'swing' ? 'swing' : 'zone', variant: rule.liqVariant === 'reclaim' ? 'reclaim' : 'pierce', swingBars: number(rule.liqSwingBars, 5), reclaimBars: number(rule.liqReclaimBars, 3) }
+    } : {}),
+    ...(usesPatterns(rule) ? {
+      pat: { trend: rule.patTrend !== false, trendBars: number(rule.patTrendBars, 5), minZ: rule.patVolume ? number(rule.patMinZ, 1) : null, wick: number(rule.patWick, 2) }
+    } : {}),
+    ...(rule.vwapMode !== 'off' || rule.emaMode !== 'off' ? {
+      lines: [
+        ...(['side', 'touch'].includes(rule.vwapMode) ? [{ type: 'vwap', period: number(rule.vwapPeriod, 200), mode: rule.vwapMode, slope: !!rule.vwapSlope }] : []),
+        ...(['side', 'touch'].includes(rule.emaMode) ? [{ type: 'ema', period: number(rule.emaPeriod, 14), mode: rule.emaMode, slope: !!rule.emaSlope }] : [])
+      ]
     } : {}),
     ...(codes.includes('CC') ? { cc: { tf: number(rule.ccTf, 0) || undefined, offset: number(rule.ccOffset, 0), swing: number(rule.ccSwing, 3), legs: number(rule.ccLegs, 2) } } : {}),
     ...(rule.useHours && minuteOfDay(rule.hoursFrom) !== null && minuteOfDay(rule.hoursTo) !== null
@@ -142,6 +157,12 @@ export function fromBackendRule(saved) {
     stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6,
     useTarget: saved.exit?.targetR != null || !!saved.targetAt, targetR: saved.exit?.targetR ?? 2, targetAt: saved.targetAt || 'r',
     ccTf: saved.cc && saved.cc.tf !== saved.tf ? saved.cc.tf : 0, ccOffset: saved.cc?.offset ?? 0, ccSwing: saved.cc?.swing ?? 3, ccLegs: saved.cc?.legs ?? 2,
+    patTrend: saved.pat ? saved.pat.trend !== false : true, patTrendBars: saved.pat?.trendBars ?? 5,
+    patVolume: saved.pat?.minZ != null, patMinZ: saved.pat?.minZ ?? 1, patWick: saved.pat?.wick ?? 2,
+    vwapMode: (saved.lines || []).find(l => l.type === 'vwap')?.mode || 'off', vwapPeriod: (saved.lines || []).find(l => l.type === 'vwap')?.period ?? 200,
+    vwapSlope: !!(saved.lines || []).find(l => l.type === 'vwap')?.slope,
+    emaMode: (saved.lines || []).find(l => l.type === 'ema')?.mode || 'off', emaPeriod: (saved.lines || []).find(l => l.type === 'ema')?.period ?? 14,
+    emaSlope: !!(saved.lines || []).find(l => l.type === 'ema')?.slope,
     useHours: !!saved.hours, hoursFrom: saved.hours ? clock(saved.hours.from) : '17:30', hoursTo: saved.hours ? clock(saved.hours.to) : '21:30',
     hoursWeekdays: saved.hours ? !!saved.hours.weekdays : true,
     vpShapes: saved.vp?.shapes || [], vpVeEntry: saved.vp?.veEntry || 'touch', vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
@@ -171,6 +192,8 @@ export function describeRule(saved) {
   return `${TF_LABEL[saved.tf] || saved.tf} · ${joined}${recipe.window > 1 ? ` @${recipe.window}` : ''}${saved.invert ? ' · invertida' : ''}`
     + `${saved.vaGap > 0 ? ` · hueco ≥ ${saved.vaGap} ATR` : ''}`
     + `${saved.cc ? ` · estructura ${saved.cc.tf >= 60 ? `${saved.cc.tf / 60} h` : `${saved.cc.tf} m`}, swing ${saved.cc.swing}` : ''}`
+    + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`
+    + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
     + ` · ${saved.entry?.type === 'limit' ? 'limit' : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
@@ -255,6 +278,10 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
       bands.push({ kind: 'level', price: vp.low, start, end: stop, label: 'Mínimo anterior' });
     }
     if (Number.isFinite(vp.extreme)) bands.push({ kind: 'mark', time: trade.signal, price: vp.extreme, label: 'Extremo' });
+  }
+  for (const line of trade.lines || []) {
+    // Dónde estaba la línea en la vela de la señal
+    bands.push({ kind: 'level', price: line.value, start: trade.signal - 20 * tf, end: trade.signal + 2 * tf, label: `${line.type === 'vwap' ? 'VWAP' : 'EMA'} ${line.period}` });
   }
   const cc = trade.cc;
   if (cc && Number.isFinite(cc.level)) {

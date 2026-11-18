@@ -94,3 +94,59 @@ def test_una_moneda_sin_almacen_corre_sobre_el_cache_de_velas(tmp_path, monkeypa
     assert span["events"] == [] and span["bars"][0]["t"] == phases[0]["start"] and span["bars"][-1]["t"] < phases[0]["end"]
     refused = rt.start("ZZZUSDT", {"name": "V", "recipe": {"slots": [{"codes": ["VA"]}]}}, 1)
     assert refused["success"] is False and "VA" in refused["message"]
+
+
+def hammer_day():
+    """Baja 30 velas y hace un martillo: cuerpo chico arriba y mecha larga abajo."""
+    bars = path([130 - k * 0.5 for k in range(60)] + [100] * 60)
+    for k, bar in enumerate(bars):
+        bar["vol"] = 9.0 + 2 * (k % 2)  # Con volumen parejo el z-score no existe
+    bars[45].update(o=107.4, c=107.5, h=107.55, l=106.0, vol=40.0)
+    return bars
+
+
+def test_patron_de_rechazo_como_elemento_con_tendencia_y_volumen(monkeypatch):
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    bars = hammer_day()
+    raw = {"name": "P", "tf": TF, "recipe": {"slots": [{"codes": ["HM"]}]}, "stop": {"type": "candle", "buffer": 0.1, "maxAtr": 100},
+           "exit": {"targetR": None, "horizon": 5}, "cooldown": 0}
+    rule = rt.clean_rule(raw)
+    assert rule["pat"] == {"trend": True, "trendBars": 5, "minZ": None, "wick": 2.0} and "lines" not in rule
+    result = rt.run("X", rule, {"bars": bars, "events": []}, PHASE, None, base=False)
+    trade = result["trades"][0]
+    assert trade["signal"] == bars[45]["t"] and trade["dir"] == 1 and trade["pat"]["type"] == "HAMMER" and trade["stop"] < 106.0
+    loud = rt.clean_rule({**raw, "pat": {"minZ": 2}})
+    assert [t["signal"] for t in rt.run("X", loud, {"bars": list(bars), "events": []}, PHASE, None, base=False)["trades"]] == [bars[45]["t"]]
+    quiet = [dict(b) for b in bars]
+    quiet[45]["vol"] = 10.0
+    assert rt.run("X", loud, {"bars": quiet, "events": []}, PHASE, None, base=False)["trades"] == []
+    # Sin el movimiento previo en contra no es un martillo que valga, salvo que se quite esa condición
+    rising = path([100 + k * 0.5 for k in range(60)] + [130] * 60)
+    rising[45].update(o=122.9, c=123.0, h=123.05, l=121.5)
+    assert rt.run("X", rule, {"bars": rising, "events": []}, PHASE, None, base=False)["trades"] == []
+    free = rt.clean_rule({**raw, "pat": {"trend": False}})
+    assert len(rt.run("X", free, {"bars": list(rising), "events": []}, PHASE, None, base=False)["trades"]) == 1
+
+
+def test_filtros_de_vwap_movil_y_ema(monkeypatch):
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    bars = hammer_day()
+    ctx = rt._context("X", TF, bars)
+    ema = rt._line(ctx, "ema", 14)
+    vwap = rt._line(ctx, "vwap", 20)
+    assert ema[12] != ema[12] and ema[13] == ema[13] and vwap[18] != vwap[18]
+    typical = [(b["h"] + b["l"] + b["c"]) / 3 for b in bars[26:46]]
+    volume = [b["vol"] for b in bars[26:46]]
+    assert vwap[45] == pytest.approx(sum(p * v for p, v in zip(typical, volume)) / sum(volume))
+    # El martillo cierra bajo la EMA (viene de una bajada): un largo no pasa el filtro de lado, un corto sí
+    assert bars[45]["c"] < ema[45]
+    assert not rt._lines_ok([{"type": "ema", "period": 14, "mode": "side", "slope": False}], ctx, 45, 1)
+    assert rt._lines_ok([{"type": "ema", "period": 14, "mode": "side", "slope": False}], ctx, 45, -1)
+    assert rt._lines_ok([{"type": "ema", "period": 14, "mode": "side", "slope": True}], ctx, 45, -1)
+    assert not rt._lines_ok([{"type": "ema", "period": 14, "mode": "touch", "slope": False}], ctx, 45, -1)  # El máximo no llega a la EMA
+    raw = {"name": "P", "tf": TF, "recipe": {"slots": [{"codes": ["HM"]}]}, "exit": {"targetR": None, "horizon": 5}, "cooldown": 0,
+           "lines": [{"type": "ema", "period": 14, "mode": "side"}, {"type": "otro", "mode": "side"}]}
+    rule = rt.clean_rule(raw)
+    assert rule["lines"] == [{"type": "ema", "period": 14, "mode": "side", "slope": False}]
+    result = rt.run("X", rule, {"bars": bars, "events": []}, PHASE, None, base=False)
+    assert result["trades"] == [] and result["skipped"] == {"filtro de VWAP o EMA": 1}
