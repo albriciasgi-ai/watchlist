@@ -30,6 +30,7 @@ import observer
 import of_elements as oe
 import of_setups as os_
 import patterns
+import vp_sessions
 
 TFS = (5, 15, 30, 60, 240)
 CUTS = ("2024-01-01", "2025-07-01")  # Inicio de la fase 2 y de la fase 3 (la 3 coincide con el corte de los setups)
@@ -47,7 +48,9 @@ BASE_TRADES = 3000
 SMALL_SAMPLE = 30
 MAX_FILTERS = 3
 MAX_WINDOW = 10           # Un gatillo puede llegar hasta 10 velas después del barrido
-EXTRA_CODES = ("LIQ", "VH")  # Elementos del probador que no son de of_elements (liq_sweeps.py)
+VP_CODES = ("VR", "VF", "VX")  # Contra el valor de la sesión anterior (vp_sessions.py)
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES  # Elementos del probador que no son de of_elements
+MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
 _jobs = {}
 _spans = {}
@@ -114,8 +117,6 @@ def clean_rule(raw):
     trail = exit_.get("trail") if exit_.get("trail") in ("none", "swing") else "none"
     horizon = exit_.get("horizon")
     horizon = None if horizon in (None, "", 0, "0") else int(_num(horizon, DEFAULT_HORIZON, 1, MAX_HORIZON))
-    if target_r is None and trail == "none" and horizon is None:
-        horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
     known_keys = {item[0] for item in measures.MEASURES}
     filters = []
     for item in (raw.get("filters") or [])[:MAX_FILTERS]:
@@ -130,6 +131,18 @@ def clean_rule(raw):
                         "variant": "reclaim" if liq.get("variant") == "reclaim" else "pierce",
                         "swingBars": int(_num(liq.get("swingBars"), 5, 2, 20)),
                         "reclaimBars": int(_num(liq.get("reclaimBars"), 3, 0, 10))}
+    if any(c in VP_CODES for slot in recipe["slots"] for c in slot["codes"]):
+        vp = raw.get("vp") or {}
+        hours = int(_num(vp.get("hours"), 24, 4, 168))
+        # accept: minutos seguidos cerrando dentro (VR) o fuera (VX) del valor. failBars: velas para que un fallo cierre de vuelta
+        extra["vp"] = {"hours": hours if hours in vp_sessions.PERIODS else 24, "accept": int(_num(vp.get("accept"), 30, 5, 480)),
+                       "failBars": int(_num(vp.get("failBars"), 3, 1, 20)), "rows": int(_num(vp.get("rows"), 50, 10, 400)),
+                       "share": _num(vp.get("share"), 70, 40, 95)}
+        # Objetivo en un nivel del perfil en vez de un múltiplo del riesgo
+        if exit_.get("targetAt") in ("poc", "edge"):
+            extra["targetAt"], target_r = exit_["targetAt"], None
+    if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra:
+        horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
     return {
         **extra,
         "name": name, "tf": tf, "recipe": recipe, "invert": bool(raw.get("invert")),
@@ -351,6 +364,14 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
     if stop_atr > rule["stop"]["maxAtr"]:
         return {"skip": "stop muy largo"}
     target = entry + side * risk * exit_rule["targetR"] if exit_rule["targetR"] else None
+    if rule.get("targetAt"):
+        # Objetivo en el POC o en el borde contrario del valor de la sesión anterior
+        levels = ctx.get("vp")
+        if levels is None:
+            return {"skip": "sin perfil para el objetivo"}
+        target = levels["poc"] if rule["targetAt"] == "poc" else (levels["vah"] if side > 0 else levels["val"])
+        if (target - entry) * side < MIN_TARGET_R * risk:
+            return {"skip": "objetivo del perfil muy cerca o ya pasado"}
     initial_stop = stop
 
     def favorable(j):
@@ -402,7 +423,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
             break
         if hit_goal:
             exit_price, reason, exit_t = target, "objetivo", exit_t or T[j]
-            mfe = max(mfe, exit_rule["targetR"])
+            mfe = max(mfe, (target - entry) * side / risk)
             break
         mfe, mae = max(mfe, favorable(j)), min(mae, adverse(j))
         # Con la vela cerrada: señal contraria, horizonte y stop arrastrado
@@ -568,6 +589,8 @@ def _extra_events(symbol, rule, span, ctx, control=False):
     codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
     if not codes & set(EXTRA_CODES):
         return []
+    if not codes & {"LIQ", "VH"}:
+        return _vp_events(symbol, rule, span)
     liq = {"what": "swing", "variant": "pierce", "swingBars": 5, "reclaimBars": 3, **(rule.get("liq") or {})}
     key = (id(span["bars"]), symbol, rule["tf"], liq["what"], liq["variant"], liq["swingBars"], liq["reclaimBars"])
     with _lock:
@@ -580,7 +603,45 @@ def _extra_events(symbol, rule, span, ctx, control=False):
             while len(_extra) > 6:
                 _extra.pop(next(iter(_extra)))
     wanted = "SWP" if control else "LIQ"
-    return [{**e, "code": "LIQ"} if e["code"] == wanted else e for e in found if e["code"] in (wanted, "VH")]
+    out = [{**e, "code": "LIQ"} if e["code"] == wanted else e for e in found if e["code"] in (wanted, "VH")]
+    return out + _vp_events(symbol, rule, span)
+
+
+def _vp_levels(symbol, hours, rows, share, start_ms, end_ms):
+    """Niveles de las sesiones del tramo, guardados en disco: una sesión cerrada no cambia."""
+    path = tester_dir() / "cache" / f"vp_{symbol}_{hours}h_{rows}_{int(share)}_{_iso(start_ms)}_{_iso(end_ms - 1)}.json"
+    if path.exists():
+        with open(path, encoding="utf-8") as fh:
+            return {int(k): v for k, v in json.load(fh).items()}
+    levels = vp_sessions.sessions(symbol, hours, start_ms - hours * vp_sessions.HOUR, end_ms, rows, share / 100)
+    if levels:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        partial = path.with_suffix(".tmp")
+        with open(partial, "w", encoding="utf-8") as fh:
+            json.dump(levels, fh)
+        partial.replace(path)
+    return levels
+
+
+def _vp_events(symbol, rule, span):
+    """VR, VF y VX contra el valor de la sesión anterior."""
+    vp = rule.get("vp")
+    bars = span["bars"]
+    if not vp or not bars:
+        return []
+    key = (id(bars), symbol, rule["tf"], "vp", vp["hours"], vp["accept"], vp["failBars"], vp["rows"], vp["share"])
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        tf_ms = rule["tf"] * 60000
+        levels = _vp_levels(symbol, vp["hours"], vp["rows"], vp["share"], bars[0]["t"], bars[-1]["t"] + tf_ms)
+        accept = max(1, round(vp["accept"] / rule["tf"]))
+        found = vp_sessions.events(bars, rule["tf"], levels, vp["hours"], accept, vp["failBars"])
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
 
 
 def run(symbol, rule, span, phase, table=None, base=True, control=False):
@@ -593,6 +654,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
     extra = _extra_events(symbol, rule, span, ctx, control)
     events = events + extra if extra else events
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
+    vp_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in VP_CODES}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -633,6 +695,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
         found = [z for code, t in m["votes"] for z in zones.get((code, m["dir"], t + tf_ms), [])]
         zone = (min(z[0] for z in found), max(z[1] for z in found)) if found else None
         ctx["i0"] = index.get(min([e_t for _, e_t in m["votes"]] + [m["t0"]]), k)
+        ctx["vp"] = next((vp_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in vp_info), None)
         trade = simulate(rule, ctx, k, side, zone, known_at[-side])
         if trade is None:
             continue
@@ -655,6 +718,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
                       if code == "LIQ" and (m["dir"], t + tf_ms) in liq_info), None)
         if swept is not None:
             trade["liq"] = swept  # La zona barrida: dinero, antigüedad y hasta dónde pasó el precio
+        if ctx["vp"] is not None:
+            trade["vp"] = ctx["vp"]  # El valor de la sesión anterior que usó la regla, y dónde abrió la sesión
         trade["measures"] = measured
         trades.append(trade)
         if rule["oneAtATime"]:
@@ -716,6 +781,11 @@ def _baseline(rule, ctx, trades, symbol):
         # Ese stop depende del elemento, que al azar no existe: se usa la distancia mediana de los trades de la regla
         stop = {**stop, "type": "atr", "atr": max(0.1, float(np.median([t["stop_atr"] for t in trades])))}
     base_rule = {**rule, "entry": {**rule["entry"], "type": "market"}, "stop": stop}
+    if rule.get("targetAt"):
+        # Al azar no hay perfil: el objetivo es el múltiplo del riesgo mediano que tuvieron los trades de la regla
+        reward = [abs(t["target"] - t["entry"]) / t["risk"] for t in trades if t.get("target") is not None and t["risk"] > 0]
+        base_rule = {k: v for k, v in base_rule.items() if k != "targetAt"}
+        base_rule["exit"] = {**rule["exit"], "targetR": max(0.2, float(np.median(reward))) if reward else 1.0}
     light = {**ctx, "minutes": None, "i0": None}  # Sin minuto a minuto: en la duda cuenta el stop, como en contra de la base no sesga a favor
     done = []
     for _ in range(BASE_TRADES):

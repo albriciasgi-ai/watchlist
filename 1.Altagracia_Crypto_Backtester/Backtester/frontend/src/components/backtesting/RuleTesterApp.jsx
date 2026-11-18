@@ -9,7 +9,7 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import { lastClosedIndex } from './replayClock';
 import {
-  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, sequenceParts, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
+  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
   fmtPct, fmtR, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
@@ -510,6 +510,24 @@ const RuleTesterApp = () => {
           </select>
           <Check checked={rule.invert} onChange={(invert) => patch({ invert })} title="Operar en contra del elemento: un elemento alcista abre un corto">Invertir</Check>
         </div>
+        {usesProfile(rule) && (
+          <>
+            <div className="rt-row">
+              <span title="La sesión cuyo perfil se usa: siempre la anterior ya cerrada. Las sesiones van en UTC">Perfil de</span>
+              <select value={rule.vpHours} onChange={(e) => patch({ vpHours: Number(e.target.value) })}>
+                {VP_PERIODS.map(([hours, label]) => <option key={hours} value={hours}>{label}</option>)}
+              </select>
+              <span title="VR: minutos seguidos cerrando dentro del valor. VX: minutos seguidos cerrando fuera">· sostenido</span>
+              <Num value={rule.vpAccept} min={5} max={480} step={5} onChange={(vpAccept) => patch({ vpAccept })} /><span>min</span>
+              <span title="VF: velas que tiene el precio para cerrar de vuelta dentro del valor después de salir">· fallo en</span>
+              <Num value={rule.vpFailBars} min={1} max={20} onChange={(vpFailBars) => patch({ vpFailBars })} /><span>velas</span>
+            </div>
+            <div className="rt-note">
+              Todo se mide contra el POC, el VAH y el VAL de la sesión anterior, con volumen real. VR: abre fuera del valor y vuelve a sostenerse dentro (va al borde contrario).
+              VF: sale del valor y cierra de vuelta dentro (va al POC). VX: se sostiene fuera (sigue la salida). Para el stop detrás del extremo usa "Borde lejano de la zona".
+            </div>
+          </>
+        )}
         {rule.codes.includes('VA') && (
           <div className="rt-row">
             <span title="La regla del libro cuenta cualquier vela que no toque el área de valor de la anterior, aunque quede a un tick. Con un hueco mínimo solo cuentan las que se alejan de verdad. 0 = regla literal">VA abandonada: hueco mínimo</span>
@@ -570,7 +588,14 @@ const RuleTesterApp = () => {
         <h4>Salida</h4>
         <div className="rt-row">
           <Check checked={rule.useTarget} onChange={(useTarget) => patch({ useTarget })} title="Sin marcar no hay objetivo: se ve hasta dónde llega">Objetivo</Check>
-          <Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span>
+          {usesProfile(rule) && (
+            <select value={rule.targetAt} disabled={!rule.useTarget} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
+              <option value="r">en R</option>
+              <option value="poc">en el POC anterior</option>
+              <option value="edge">en el borde contrario del valor</option>
+            </select>
+          )}
+          {!(usesProfile(rule) && rule.targetAt !== 'r') && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
           <Check checked={rule.trail} onChange={(trail) => patch({ trail })} title="El stop sube al último swing confirmado a favor">Arrastrar el stop por swings de</Check>
           <Num value={rule.trailBars} min={2} max={20} disabled={!rule.trail} onChange={(trailBars) => patch({ trailBars })} />
         </div>
@@ -738,6 +763,7 @@ const RuleTesterApp = () => {
             Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
+            {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
             {selectedTrade.liq && <><br />Barrido: {selectedTrade.liq.what === 'zone' ? `zona ${selectedTrade.liq.zoneLow}–${selectedTrade.liq.zoneHigh}` : `swing en ${selectedTrade.liq.swing} de hace ${selectedTrade.liq.swingAgeBars} velas`}, pasado hasta {selectedTrade.liq.extreme}{selectedTrade.liq.depthAtr != null && ` (${selectedTrade.liq.depthAtr} ATR)`} · zona de {Math.round((selectedTrade.liq.usd || 0) / 1000).toLocaleString('es-CO')}K USD ({selectedTrade.liq.zoneSide === 'long' ? 'largos' : 'cortos'} liquidados), última liquidación {selectedTrade.liq.zoneAgeDays} días antes · {selectedTrade.liq.source}</>}
           </div>
           {detail?.trade?.n === selectedTrade.n && detail.measures.length > 0 && (

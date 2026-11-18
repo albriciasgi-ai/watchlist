@@ -1771,7 +1771,7 @@ const MiniChart = forwardRef(({
       const { priceToY, timeToX } = scaleConverterRef.current;
       const viewStart = visibleCandles[0].timestamp;
       const viewEnd = visibleCandles[visibleCandles.length - 1].timestamp + TF_MS[interval];
-      const colors = { liqLong: '233, 30, 99', liqShort: '3, 155, 229', element: '41, 98, 255' };
+      const colors = { liqLong: '233, 30, 99', liqShort: '3, 155, 229', element: '41, 98, 255', value: '255, 152, 0' };
       const ink = isNewTheme() ? THEME.text : '#222';
       ctx.save();
       ctx.beginPath();
