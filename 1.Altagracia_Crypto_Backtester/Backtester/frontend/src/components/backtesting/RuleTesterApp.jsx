@@ -562,7 +562,8 @@ const RuleTesterApp = () => {
     if (review?.session) {
       // En revisión solo se ven las decisiones de la sesión: nada de corridas anteriores, que mostrarían el futuro
       boxesRef.current = reviewBoxes(review.decisions, review.candidate?.time ?? null, review.session.tf);
-      bandsRef.current = [];
+      // La vela del candidato a la vista, marcada: es donde hay que decidir ahora
+      bandsRef.current = review.candidate ? [{ kind: 'mark', time: review.candidate.signal, price: review.candidate.entry, label: `Candidato ${review.candidate.i + 1}` }] : [];
       linesRef.current = [];
     } else if (ordersView) {
       boxesRef.current = orderViews.map(item => item.view.box).filter(Boolean);
@@ -1460,6 +1461,7 @@ const RuleTesterApp = () => {
         <>
           <div className="rt-warn">
             <b>Candidato {review.session.position + 1} de {review.session.total}</b> · {review.session.name} · {TF_LABEL[review.session.tf]}<br />
+            {review.decisions.length > 0 && <>Ya estás en el candidato siguiente: es la última vela del gráfico, marcada "Candidato {review.candidate.i + 1}". Decide aquí y el gráfico vuelve a avanzar.<br /></>}
             La regla propone un <b>{review.candidate.dir > 0 ? 'largo' : 'corto'}</b>{review.candidate.votes?.length ? ` (${review.candidate.votes.join(', ')})` : ''}:
             {' '}entrada {priceText(review.candidate.entry)}, stop {priceText(review.candidate.stop)}{review.candidate.target != null ? `, objetivo ${priceText(review.candidate.target)}` : ', sin objetivo fijo'}.
           </div>
