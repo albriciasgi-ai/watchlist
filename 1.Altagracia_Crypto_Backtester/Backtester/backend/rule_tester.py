@@ -37,7 +37,8 @@ import candle_patterns
 import structure
 import vp_sessions
 
-TFS = (5, 15, 30, 60, 240)
+TFS = (5, 15, 30, 60, 240, 1440)
+DAILY = 1440   # En 1 día la regla corre sobre velas, en todas las monedas: solo valen los elementos de CANDLE_CODES
 CUTS = ("2024-01-01", "2025-07-01")  # Inicio de la fase 2 y de la fase 3 (la 3 coincide con el corte de los setups)
 PHASE_NAMES = {1: "Exploración", 2: "Validación", 3: "Final"}
 WARM_DAYS = oe.WINDOW_DAYS + 1  # Los umbrales relativos necesitan 30 días previos
@@ -89,13 +90,18 @@ def _iso(ms):
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
 CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC")
-CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1)}  # marco → (clave del caché, velas que se unen)
+CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
 
 
 def has_store(symbol):
     return fs.coverage(symbol).get("days", 0) >= MIN_STORE_DAYS
+
+
+def _on_candles(symbol, tf):
+    """Si la regla corre sobre las velas guardadas y no sobre el almacén de trades: monedas sin almacén, y el marco de 1 día."""
+    return tf == DAILY or not has_store(symbol)
 
 
 def candle_symbols():
@@ -135,11 +141,24 @@ def candle_bars(symbol, tf):
         else:
             bars.append({"t": start, "o": float(c["open"]), "h": float(c["high"]), "l": float(c["low"]), "c": float(c["close"]),
                          "delta": 0.0, "vol": float(c.get("volume") or 0)})
+    if tf == DAILY and bars and rows and int(rows[0]["timestamp"]) != bars[0]["t"]:
+        bars = bars[1:]  # El caché empieza a mitad de un día: ese día no está completo
     with _lock:
         _candles[key] = bars
         while len(_candles) > 3:
             _candles.pop(next(iter(_candles)))
     return bars
+
+
+def daily_bars(symbol):
+    """Velas de 1 día (UTC): las de 4 horas del caché unidas y, antes de ellas, las del almacén de trades si la moneda lo tiene."""
+    bars = candle_bars(symbol, DAILY)
+    if not bars or not has_store(symbol):
+        return bars
+    early = early_candles(symbol, DAILY, bars[0]["t"])
+    older = [{"t": int(t), "o": float(o), "h": float(h), "l": float(l), "c": float(c), "delta": 0.0, "vol": float(v)}
+             for t, o, h, l, c, v in zip(early["t"], early["o"], early["h"], early["l"], early["c"], early["v"]) if t < bars[0]["t"]]
+    return older + bars
 
 
 def _candle_cover(symbol):
@@ -341,9 +360,13 @@ def detect_span(symbol, tf, phase, rule, progress=None):
         cached = _spans.get(str(path))
     if cached is not None:
         return cached
-    if not has_store(symbol):
-        # Sin almacén: las velas del caché de App 1 y ningún elemento de order flow
-        span = {"bars": [b for b in candle_bars(symbol, tf) if phase["start"] <= b["t"] < phase["end"]], "events": []}
+    if _on_candles(symbol, tf):
+        # Sin almacén, o en 1 día: las velas guardadas y ningún elemento de order flow
+        source = daily_bars(symbol) if tf == DAILY else candle_bars(symbol, tf)
+        span = {"bars": [b for b in source if phase["start"] <= b["t"] < phase["end"]], "events": []}
+        if tf == DAILY:
+            # Velas anteriores a la fase: ya ocurrieron, y un indicador lento (Gaussian Channel de 144 días) arranca con ellas
+            span["warm"] = [b for b in source if b["t"] < phase["start"]]
         with _lock:
             _spans[str(path)] = span
             while len(_spans) > 3:
@@ -500,7 +523,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
     T, O, H, L, C, atr = ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["atr"]
     n, tf_ms = len(T), ctx["tf"] * 60000
     e = k + 1
-    if e >= n or T[e] - T[k] > GAP_MS:
+    if e >= n or T[e] - T[k] > max(GAP_MS, 2 * ctx["tf"] * 60000):
         return None
     entry_rule, exit_rule = rule["entry"], rule["exit"]
     entry, entry_i, fee_in, limit_fill = O[e], e, TAKER_FEE, False
@@ -548,7 +571,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
     mfe, mae = 0.0, 0.0
     j = entry_i
     while j < n:
-        if j > entry_i and T[j] - T[j - 1] > GAP_MS:
+        if j > entry_i and T[j] - T[j - 1] > max(GAP_MS, 2 * ctx["tf"] * 60000):
             exit_price, exit_t, reason = C[j - 1], T[j - 1] + tf_ms, "hueco de datos"
             break
         low, high = L[j], H[j]
@@ -615,7 +638,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
     # Hasta dónde llegó antes del stop inicial, sin importar la salida elegida
     reach, reach_done = 0.0, False
     for i in range(entry_i + (1 if limit_fill else 0), min(n, entry_i + REACH_BARS)):
-        if i > entry_i and T[i] - T[i - 1] > GAP_MS:
+        if i > entry_i and T[i] - T[i - 1] > max(GAP_MS, 2 * ctx["tf"] * 60000):
             reach_done = True
             break
         if (L[i] <= initial_stop) if side > 0 else (H[i] >= initial_stop):
@@ -907,11 +930,13 @@ def _gc_events(rule, span):
     bars = span["bars"]
     if not gc or not bars:
         return []
-    key = (_bars_key(bars), rule["tf"], "gc", gc["period"], gc["poles"], gc["mult"], gc["trend"])
+    first = bars[0]["t"]
+    bars = (span.get("warm") or []) + bars
+    key = (_bars_key(bars), first, rule["tf"], "gc", gc["period"], gc["poles"], gc["mult"], gc["trend"])
     with _lock:
         found = _extra.get(key)
     if found is None:
-        found = gaussian_channel.events(bars, rule["tf"], gc["period"], gc["poles"], gc["mult"], gc["trend"])
+        found = [e for e in gaussian_channel.events(bars, rule["tf"], gc["period"], gc["poles"], gc["mult"], gc["trend"]) if e["t"] >= first]
         with _lock:
             _extra[key] = found
             while len(_extra) > 6:
@@ -1015,7 +1040,10 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     if rule.get("gc"):
         gc = rule["gc"]
         # Con la regla invertida el trade va contra el canal: su salida por el canal también es la contraria
-        leave = gaussian_channel.exits(bars, gc["period"], gc["poles"], gc["mult"], gc["exit"])
+        warm = span.get("warm") or []
+        leave = gaussian_channel.exits(warm + bars, gc["period"], gc["poles"], gc["mult"], gc["exit"])
+        if leave and warm:
+            leave = {side: {i - len(warm) for i in found if i >= len(warm)} for side, found in leave.items()}
         ctx["exitAt"] = {1: leave[-1], -1: leave[1]} if leave and rule["invert"] else leave
     extra = _extra_events(symbol, rule, span, ctx, control, vp_shift)
     events = events + extra if extra else events
@@ -1262,7 +1290,7 @@ def with_leg_baseline(result):
         return result
     symbol, rule = result["symbol"], result["rule"]
     phase = next((p for p in phases(symbol) if p["phase"] == result["phase"]), None)
-    if phase is None or (has_store(symbol) and not _span_path(symbol, rule["tf"], phase, rule).exists()):
+    if phase is None or (not _on_candles(symbol, rule["tf"]) and not _span_path(symbol, rule["tf"], phase, rule).exists()):
         return result  # Sin los elementos de la fase en disco habría que detectarlos de nuevo: no se hace solo por esto
     try:
         span = detect_span(symbol, rule["tf"], phase, rule)
@@ -1395,10 +1423,11 @@ def start(symbol, raw_rule, phase_number, confirm=False):
     phase = next((p for p in phases(symbol) if p["phase"] == phase_number), None)
     if phase is None or not phase["available"]:
         return {"success": False, "message": "No hay datos de esa fase para este símbolo"}
-    if not has_store(symbol):
+    if _on_candles(symbol, rule["tf"]):
         codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
         if codes - set(CANDLE_CODES):
-            return {"success": False, "message": f"{symbol} no tiene almacén de trades: aquí solo se pueden usar {', '.join(CANDLE_CODES)}. "
+            why = "En 1 día la regla corre sobre velas" if rule["tf"] == DAILY else f"{symbol} no tiene almacén de trades"
+            return {"success": False, "message": f"{why}: aquí solo se pueden usar {', '.join(CANDLE_CODES)}. "
                                                  f"Quita {', '.join(sorted(codes - set(CANDLE_CODES)))} de la regla"}
     info = gate(symbol, rule, phase_number)
     if info["blocked"]:
@@ -1446,8 +1475,8 @@ def _plan(rule, phase_number):
             row.update(action="stored", run=same[-1]["id"])  # La corrida es determinista: no se repite
         elif phase is None or not phase["available"]:
             row["reason"] = "sin datos de esa fase"
-        elif not has_store(symbol) and codes - set(CANDLE_CODES):
-            row["reason"] = f"sin almacén de trades: no puede usar {', '.join(sorted(codes - set(CANDLE_CODES)))}"
+        elif _on_candles(symbol, rule["tf"]) and codes - set(CANDLE_CODES):
+            row["reason"] = f"corre sobre velas: no puede usar {', '.join(sorted(codes - set(CANDLE_CODES)))}"
         elif info["blocked"]:
             row["reason"] = "falta correr esta regla en la fase 2"
         else:
@@ -1578,7 +1607,7 @@ def sensitivity(symbol, raw_rule):
     phase = next((p for p in phases(symbol) if p["phase"] == 1), None)
     if rule is None or phase is None or not phase["available"]:
         return {"success": False, "message": "Regla o fase no válidas"}
-    if has_store(symbol) and not _span_path(symbol, rule["tf"], phase, rule).exists():
+    if not _on_candles(symbol, rule["tf"]) and not _span_path(symbol, rule["tf"], phase, rule).exists():
         return {"success": False, "message": "Corre primero la regla en la fase 1"}
     span = detect_span(symbol, rule["tf"], phase, rule)
     table = measures.table_for(symbol) if rule["filters"] else None

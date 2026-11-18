@@ -9,7 +9,7 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import { lastClosedIndex } from './replayClock';
 import {
-  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
+  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
@@ -210,6 +210,8 @@ const RuleTesterApp = () => {
   const phaseInfo = info?.phases?.find(p => p.phase === phase) || null;
   const names = useMemo(() => Object.fromEntries((info?.elements || []).map(e => [e.code, e.name])), [info]);
   const patch = (change) => setRule(previous => ({ ...previous, ...change }));
+  // Sin almacén de trades, o con la regla en 1 día, corre sobre velas: solo valen los elementos de candleCodes
+  const candleOnly = !!info && (!!info.storeless || rule.tf === DAILY_TF);
 
   const refreshInfo = useCallback(() => api(`/api/tester/info/${symbol}`).then(setInfo).catch(error => setMessage(error.message)), [symbol]);
 
@@ -539,16 +541,16 @@ const RuleTesterApp = () => {
         <div className="rt-chips">
           {(info?.elements || []).map(e => (
             <button key={e.code} type="button" className={`rt-chip${rule.codes.includes(e.code) ? ' on' : ''}`} onClick={() => toggleCode(e.code)}
-              disabled={!!info?.storeless && !info.candleCodes.includes(e.code) && !rule.codes.includes(e.code)}
-              style={info?.storeless && !info.candleCodes.includes(e.code) ? { opacity: 0.4 } : undefined}
+              disabled={candleOnly && !info.candleCodes.includes(e.code) && !rule.codes.includes(e.code)}
+              style={candleOnly && !info.candleCodes.includes(e.code) ? { opacity: 0.4 } : undefined}
               title={`${e.name}${e.volume ? ' · solo en velas de mucho volumen' : ''}${e.flow ? ' · necesita el almacén de flujo' : ''}${e.code === 'LIQ' ? ' · el precio pasa un swing que coincide con una zona del indicador Liquidaciones' : ''}${e.code === 'VH' ? ' · vela con el doble del volumen normal de su hora, hacia su color' : ''}`}>
               {e.code} {e.name}
             </button>
           ))}
         </div>
-        {info?.storeless && (
+        {candleOnly && (
           <div className="rt-note" style={{ marginTop: 4 }}>
-            {symbol} no tiene almacén de trades: la regla corre sobre las velas guardadas y solo valen {info.candleCodes.join(', ')}.
+            {info.storeless ? `${symbol} no tiene almacén de trades` : 'En 1 día'}: la regla corre sobre las velas guardadas y solo valen {info.candleCodes.join(', ')}.
             {rule.codes.some(code => !info.candleCodes.includes(code)) && ' Quita de la regla los demás elementos para poder correrla.'}
           </div>
         )}

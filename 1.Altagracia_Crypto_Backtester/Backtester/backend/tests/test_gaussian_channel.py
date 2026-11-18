@@ -103,3 +103,28 @@ def test_la_regla_sale_al_cerrar_de_vuelta_dentro_de_la_banda(monkeypatch):
     slow = rt.run("X", rt.clean_rule({**raw, "gc": {"exit": "mid"}}), {"bars": bars, "events": []}, PHASE, None, base=False)["trades"]
     assert sum(t["bars"] for t in slow) / len(slow) >= sum(t["bars"] for t in trades) / len(trades)
     assert "GC" in rt.CANDLE_CODES and "gc" not in rt.clean_rule({**raw, "recipe": {"slots": [{"codes": ["VH"]}]}})
+
+
+def test_en_1_dia_corre_sobre_velas_y_el_canal_arranca_con_las_anteriores_a_la_fase(monkeypatch):
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    day = 86400000
+    bars = [dict(b, t=k * day) for k, b in enumerate(walk(900, drift=0.05))]
+    raw = {"name": "GC", "tf": 1440, "recipe": {"slots": [{"codes": ["GC"]}], "side": "long"}, "stop": {"type": "zone", "buffer": 0.0, "maxAtr": 100},
+           "exit": {"targetR": None, "horizon": None}, "cooldown": 0}
+    rule = rt.clean_rule(raw)
+    assert rule["tf"] == 1440 and rt._on_candles("X", 1440) and 1440 in rt.TFS
+    whole = rt.run("X", rule, {"bars": bars, "events": []}, PHASE, None, base=False)["trades"]
+    # La fase empieza en la vela 400: con las anteriores como arranque, sus trades son los mismos que al correr todo junto
+    cut = 400
+    warm = rt.run("X", rule, {"bars": bars[cut:], "warm": bars[:cut], "events": []}, PHASE, None, base=False)["trades"]
+    cold = rt.run("X", rule, {"bars": bars[cut:], "events": []}, PHASE, None, base=False)["trades"]
+    late = [t for t in whole if t["signal"] >= bars[cut]["t"]]
+    assert warm and all(t["signal"] >= bars[cut]["t"] for t in warm)
+    key = lambda t: (t["signal"], t["exit_t"], t["reason"], round(t["stop"], 6))
+    assert [key(t) for t in warm if t["signal"] >= late[1]["signal"]] == [key(t) for t in late[1:]]
+    # Sin arranque la fase pierde sus primeras 288 velas
+    assert min(t["signal"] for t in cold) >= bars[cut + 288]["t"] and min(t["signal"] for t in warm) < bars[cut + 288]["t"]
+    # En 1 día solo valen los elementos de velas
+    monkeypatch.setattr(rt, "phases", lambda s: [{**PHASE, "start": 0, "end": 900 * day, "available": True}])
+    answer = rt.start("X", {**raw, "recipe": {"slots": [{"codes": ["VA"]}]}}, 1)
+    assert answer["success"] is False and "1 día" in answer["message"]
