@@ -68,9 +68,12 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 7. **Órdenes manuales:** en el backtesting global, la pestaña "Mis órdenes" dibuja las órdenes del Observador de cualquier sesión, sea cual sea su fecha. En la simulación manual, cada orden del Observador tiene "Ver en el gráfico", que la dibuja si la simulación ya pasó por su fecha.
 8. **Pruebas:** `test_rule_tester.py` (16), `ruletester.test.mjs` (8) y `observer.test.mjs` (44).
 9. **Después de la primera prueba del usuario:** "Esperar N velas tras cerrar" (8 de fábrica) y, con la VA elegida, "hueco mínimo" en ATR entre el área de valor y la vela que la abandona (0 de fábrica: la regla literal del libro).
+10. **Barrido de liquidaciones (LIQ):** elemento nuevo del probador. El precio pasa un swing que coincide con una zona del indicador Liquidaciones: barrer un mínimo es alcista y un máximo, bajista. Dos variantes: basta pasar el swing, o además una vela cierra de vuelta. Con LIQ la regla va "en secuencia": primero el contexto y después el gatillo, en la misma vela o hasta 10 velas después. El gatillo puede ser cualquier elemento o **VH**, volumen alto para su hora. El informe suma "¿Aportan las liquidaciones?": la misma regla tras barrer un swing sin liquidaciones. Cada trade guarda la zona barrida (`liq_sweeps.py`, `test_liq_sweeps.py`, 8).
+11. **Ajustes de los indicadores** en el backtesting global: ⚙️ junto a cada indicador encendido, con los modales de la principal (`ChartIndicatorSettings.jsx`). Son los mismos ajustes de la simulación manual.
 
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página.
+- LIQ en BTC 15m, fase 1 (desde julio de 2021, cuando empiezan las liquidaciones): 3,239 barridos con liquidaciones y 4,221 sin ellas. Con volumen alto de gatillo, stop detrás del barrido y 2R: 607 trades, -0.20 R por trade, contra -0.22 del azar y -0.25 de los barridos sin liquidaciones. No se distingue de ninguno de los dos.
 - La primera corrida de cada marco y fase detecta los elementos de todo el tramo: en BTC 15m, 3 minutos la fase 1 y cerca de 1.5 la fase 2. Las siguientes tardan segundos.
 - Solo BTC tiene historia para las tres fases. Los elementos del libro (AB, BL, LD) no se pueden probar: el libro existe desde el 13/11/2026.
 - Las medidas empiezan donde empieza la tabla de medidas (unos 5 años atrás): los trades de 2020 y parte de 2021 no las llevan. Los indicadores que solo calcula el navegador (VWAP, S&R, Swing, patrones) no se guardan por trade.

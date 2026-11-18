@@ -6,8 +6,10 @@ import { formatR, registryChartView } from './observer.js';
 import { THEME, isNewTheme } from '../uiTheme.js';
 import { withoutSubdivisions } from './marketData';
 import { cachedMarketData } from './SecondaryChartApp';
+import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
+import { lastClosedIndex } from './replayClock';
 import {
-  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
+  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, sequenceParts, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
   fmtPct, fmtR, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
@@ -140,6 +142,10 @@ const RuleTesterApp = () => {
   const [chartTf, setChartTf] = useState(CHART_TIMEFRAMES.includes(view.chartTf) ? view.chartTf : '15m');
   const [indicatorStates, setIndicatorStates] = useState(() => Object.fromEntries(INDICATORS.map(name => [name, view.indicators?.[name] ?? DEFAULT_ON.has(name)])));
   const [showList, setShowList] = useState(false);
+  const [settingsFor, setSettingsFor] = useState(null); // Indicador cuyo modal de ajustes está abierto
+  const [vpConfig, setVpConfig] = useState(() => ({ ...VP_CONFIG, ...(view.vpConfig || {}) }));
+  const [vpFixedRange, setVpFixedRange] = useState(null);
+  const [rejectionConfig, setRejectionConfig] = useState(null);
   const [market, setMarket] = useState(null);
   const [status, setStatus] = useState('Cargando…');
   const [tool, setTool] = useState('select');
@@ -165,11 +171,11 @@ const RuleTesterApp = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates }));
+      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig }));
     } catch {
       // Sin almacenamiento la vista dura hasta cerrar la ventana
     }
-  }, [rule, chartTf, indicatorStates]);
+  }, [rule, chartTf, indicatorStates, vpConfig]);
 
   // Velas: del caché del navegador que guardó la principal. Si no están, se pide al backend solo el marco
   // del gráfico: esta ventana no necesita los cinco marcos
@@ -355,8 +361,14 @@ const RuleTesterApp = () => {
   const toggleCode = (code) => setRule(previous => {
     const has = previous.codes.includes(code);
     if (!has && previous.codes.length >= MAX_ELEMENTS) return previous;
-    return { ...previous, codes: has ? previous.codes.filter(c => c !== code) : [...previous.codes, code] };
+    const next = { ...previous, codes: has ? previous.codes.filter(c => c !== code) : [...previous.codes, code] };
+    // El barrido es contexto: al elegirlo la regla pasa a secuencia, con el gatillo hasta 10 velas después
+    if (code === 'LIQ' && !has) Object.assign(next, { mode: 'sequence', first: [...new Set([...(previous.first || []), 'LIQ'])], window: MAX_WINDOW, min: 1 });
+    return next;
   });
+  const toggleFirst = (code) => patch({ first: (rule.first || []).includes(code) ? rule.first.filter(c => c !== code) : [...(rule.first || []), code] });
+  const parts = sequenceParts(rule);
+  const liqFrom = info?.liqFrom ? new Date(info.liqFrom).toISOString().slice(0, 10).split('-').reverse().join('/') : null;
   const setFilter = (index, change) => patch({ filters: rule.filters.map((f, i) => (i === index ? { ...f, ...change } : f)) });
   const measureGroups = useMemo(() => {
     const groups = {};
@@ -400,7 +412,7 @@ const RuleTesterApp = () => {
         <div className="rt-chips">
           {(info?.elements || []).map(e => (
             <button key={e.code} type="button" className={`rt-chip${rule.codes.includes(e.code) ? ' on' : ''}`} onClick={() => toggleCode(e.code)}
-              title={`${e.name}${e.volume ? ' · solo en velas de mucho volumen' : ''}${e.flow ? ' · necesita el almacén de flujo' : ''}`}>
+              title={`${e.name}${e.volume ? ' · solo en velas de mucho volumen' : ''}${e.flow ? ' · necesita el almacén de flujo' : ''}${e.code === 'LIQ' ? ' · el precio pasa un swing que coincide con una zona del indicador Liquidaciones' : ''}${e.code === 'VH' ? ' · vela con el doble del volumen normal de su hora, hacia su color' : ''}`}>
               {e.code} {e.name}
             </button>
           ))}
@@ -410,12 +422,50 @@ const RuleTesterApp = () => {
             <select value={rule.mode} onChange={(e) => patch({ mode: e.target.value })}>
               <option value="all">Todos</option>
               <option value="atLeast">Al menos</option>
+              <option value="sequence">En secuencia: contexto y después gatillo</option>
             </select>
             {rule.mode === 'atLeast' && <Num value={rule.min} min={1} max={rule.codes.length} onChange={(min) => patch({ min })} />}
-            <span>en una ventana de</span>
-            <Num value={rule.window} min={1} max={5} onChange={(window) => patch({ window })} />
-            <span>velas</span>
+            <span>{rule.mode === 'sequence' ? 'gatillo hasta' : 'en una ventana de'}</span>
+            <Num value={rule.window} min={1} max={MAX_WINDOW} onChange={(window) => patch({ window })} />
+            <span>{rule.mode === 'sequence' ? 'velas después' : 'velas'}</span>
           </div>
+        )}
+        {rule.codes.length > 1 && rule.mode === 'sequence' && (
+          <>
+            <div className="rt-row">
+              <span title="Clic en un elemento para pasarlo de contexto a gatillo o al revés">Contexto (primero, todos):</span>
+              {rule.codes.map(code => (
+                <button key={code} type="button" className={`rt-chip${(rule.first || []).includes(code) ? ' on' : ''}`} onClick={() => toggleFirst(code)}
+                  title={(rule.first || []).includes(code) ? 'Contexto: debe darse primero. Clic para pasarlo a gatillo' : 'Gatillo: dispara la entrada, en la misma vela del contexto o después. Clic para pasarlo a contexto'}>
+                  {code}
+                </button>
+              ))}
+            </div>
+            {parts.first.length > 0 ? (
+              <div className="rt-row">
+                <span>Gatillo: al menos</span>
+                <Num value={rule.min} min={1} max={parts.trigger.length} onChange={(min) => patch({ min })} />
+                <span>de {parts.trigger.join(', ')}</span>
+              </div>
+            ) : <div className="rt-note">Marca al menos un elemento como contexto y deja otro como gatillo; si no, se piden todos a la vez.</div>}
+          </>
+        )}
+        {rule.codes.includes('LIQ') && (
+          <>
+            <div className="rt-row">
+              <span>Barrido:</span>
+              <select value={rule.liqVariant} onChange={(e) => patch({ liqVariant: e.target.value })}>
+                <option value="pierce">Basta pasar el swing</option>
+                <option value="reclaim">Pasa el swing y cierra de vuelta</option>
+              </select>
+              {rule.liqVariant === 'reclaim' && <><span>en</span><Num value={rule.liqReclaimBars} min={0} max={10} onChange={(liqReclaimBars) => patch({ liqReclaimBars })} /><span>velas</span></>}
+              <span>· swing de</span><Num value={rule.liqSwingBars} min={2} max={20} onChange={(liqSwingBars) => patch({ liqSwingBars })} /><span>velas por lado</span>
+            </div>
+            <div className="rt-note">
+              Barrer un mínimo con liquidaciones es alcista; un máximo, bajista. {liqFrom ? `Hay liquidaciones desde el ${liqFrom}: antes no sale ningún barrido. ` : 'Este símbolo no tiene liquidaciones descargadas. '}
+              Para el stop detrás del barrido usa "Extremo de la vela del elemento".
+            </div>
+          </>
         )}
         <div className="rt-row" style={{ marginTop: 6 }}>
           <span>Lado</span>
@@ -576,7 +626,7 @@ const RuleTesterApp = () => {
               {result.edge && (
                 <div className="rt-note">
                   Ventaja: <R value={result.edge.r} digits={3} /> R por trade (entre {fmtR(result.edge.low, 3)} y {fmtR(result.edge.high, 3)}).{' '}
-                  {result.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue del azar.'} Las entradas al azar usan el mismo stop, la misma salida y la misma proporción de largos y cortos.
+                  {result.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue del azar.'} Las entradas al azar usan el mismo stop (si depende del elemento, su distancia mediana en ATR), la misma salida y la misma proporción de largos y cortos.
                 </div>
               )}
             </div>
@@ -595,6 +645,16 @@ const RuleTesterApp = () => {
             </div>
           )}
         </>
+      )}
+      {result.control && (
+        <div className="rt-group">
+          <h4>¿Aportan las liquidaciones?</h4>
+          <div className="rt-note">
+            La misma regla tras barrer un swing <b>sin</b> liquidaciones: {result.control.n ?? 0} trades{result.control.n ? <>, acierto {fmtPct(result.control.winRate)}, <R value={result.control.avgR} digits={3} /> R por trade</> : null}.
+            {result.control.edge && <> Diferencia a favor de las liquidaciones: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}). {result.control.edge.clear ? 'Se distingue.' : 'No se distingue de un barrido cualquiera.'}</>}
+            {result.liqFrom && <> Liquidaciones desde el {result.liqFrom.split('-').reverse().join('/')}.</>}
+          </div>
+        </div>
       )}
       <div className="rt-group">
         <h4>Señales</h4>
@@ -644,6 +704,7 @@ const RuleTesterApp = () => {
             Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
+            {selectedTrade.liq && <><br />Barrido: swing en {selectedTrade.liq.swing} de hace {selectedTrade.liq.swingAgeBars} velas, pasado hasta {selectedTrade.liq.extreme}{selectedTrade.liq.depthAtr != null && ` (${selectedTrade.liq.depthAtr} ATR)`} · zona de {Math.round((selectedTrade.liq.usd || 0) / 1000).toLocaleString('es-CO')}K USD ({selectedTrade.liq.zoneSide === 'long' ? 'largos' : 'cortos'} liquidados), última liquidación {selectedTrade.liq.zoneAgeDays} días antes · {selectedTrade.liq.source}</>}
           </div>
           {detail?.trade?.n === selectedTrade.n && detail.measures.length > 0 && (
             <details style={{ marginTop: 4 }}>
@@ -791,11 +852,24 @@ const RuleTesterApp = () => {
           {showList && (
             <div className="rt-menu" style={{ left: 'auto', right: 0 }}>
               {INDICATORS.map(name => (
-                <label key={name} style={{ display: 'block', padding: '3px 0', cursor: 'pointer' }}>
-                  <input type="checkbox" checked={!!indicatorStates[name]} onChange={() => setIndicatorStates(previous => ({ ...previous, [name]: !previous[name] }))} style={{ marginRight: 8 }} />{name}
-                </label>
+                <div key={name} style={{ display: 'flex', alignItems: 'center', padding: '3px 0' }}>
+                  <label style={{ flex: 1, cursor: 'pointer' }}>
+                    <input type="checkbox" checked={!!indicatorStates[name]} onChange={() => setIndicatorStates(previous => ({ ...previous, [name]: !previous[name] }))} style={{ marginRight: 8 }} />{name}
+                  </label>
+                  {WITH_SETTINGS.has(name) && (
+                    <button
+                      type="button"
+                      title={indicatorStates[name] ? `Ajustes de ${name}` : `Enciende ${name} para abrir sus ajustes`}
+                      disabled={!indicatorStates[name]}
+                      onClick={() => { setShowList(false); setSettingsFor(name); }}
+                      style={{ border: 'none', background: 'transparent', cursor: indicatorStates[name] ? 'pointer' : 'default', fontSize: 14, padding: '0 4px', opacity: indicatorStates[name] ? 1 : 0.35 }}
+                    >
+                      ⚙️
+                    </button>
+                  )}
+                </div>
               ))}
-              <div className="rt-note" style={{ marginTop: 6 }}>Usan los ajustes de la pestaña principal.</div>
+              <div className="rt-note" style={{ marginTop: 6 }}>⚙️ abre los ajustes de cada indicador. Son los mismos de la simulación manual: lo que cambies aquí vale también allá.</div>
             </div>
           )}
         </div>
@@ -849,10 +923,10 @@ const RuleTesterApp = () => {
                 backtestingData={market}
                 currentTime={chartTime}
                 simulationStartTime={phaseInfo.start}
-                vpConfig={VP_CONFIG}
-                vpFixedRange={null}
+                vpConfig={vpConfig}
+                vpFixedRange={vpFixedRange}
                 oiMode="histogram"
-                rejectionPatternConfig={null}
+                rejectionPatternConfig={rejectionConfig}
                 currentTool={tool}
                 onToolChange={setTool}
                 getTradeBoundaries={getTradeBoundaries}
@@ -867,6 +941,28 @@ const RuleTesterApp = () => {
           )}
         </div>
       </div>
+      {settingsFor && (
+        <ChartIndicatorSettings
+          name={settingsFor}
+          setName={setSettingsFor}
+          chartRef={chartRef}
+          symbol={symbol}
+          timeframe={chartTf}
+          candles={market?.timeframes?.[chartTf]?.main || []}
+          closedCandles={() => {
+            const candles = market?.timeframes?.[chartTf]?.main || [];
+            return chartTime === null ? [] : candles.slice(0, lastClosedIndex(candles, chartTf, chartTime) + 1);
+          }}
+          startTime={phaseInfo?.start}
+          label="backtesting global"
+          vpConfig={vpConfig}
+          setVpConfig={setVpConfig}
+          setVpFixedRange={setVpFixedRange}
+          rejectionConfig={rejectionConfig}
+          setRejectionConfig={setRejectionConfig}
+          setIndicatorStates={setIndicatorStates}
+        />
+      )}
     </div>
   );
 };

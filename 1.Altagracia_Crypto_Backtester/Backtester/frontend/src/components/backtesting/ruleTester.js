@@ -29,24 +29,45 @@ export function defaultRule() {
     entryType: 'market', entryAt: 'near', entryExpiry: 8,
     stopType: 'swing', stopBars: 5, stopAtr: 1.5, stopBuffer: 0.1, stopMaxAtr: 6,
     useTarget: true, targetR: 2, trail: false, trailBars: 5, useHorizon: true, horizon: 200, opposite: false,
-    oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05
+    oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05,
+    // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
+    first: [], liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3
   };
 }
 
 const number = (value, fallback) => (Number.isFinite(Number(value)) && value !== '' && value !== null ? Number(value) : fallback);
 
+export const MAX_WINDOW = 10;
+
+/** En secuencia, qué elementos son el contexto y cuáles el gatillo. Sin uno de los dos no hay secuencia */
+export function sequenceParts(rule, codes = rule.codes || []) {
+  if (rule.mode !== 'sequence') return { first: [], trigger: codes };
+  const first = codes.filter(code => (rule.first || []).includes(code));
+  const trigger = codes.filter(code => !first.includes(code));
+  return first.length && trigger.length ? { first, trigger } : { first: [], trigger: codes };
+}
+
 /** La regla de la ventana en la forma que espera el backend. Cada elemento elegido es una casilla */
 export function toBackendRule(rule) {
   const codes = [...new Set(rule.codes || [])].slice(0, MAX_ELEMENTS);
   const all = rule.mode !== 'atLeast';
+  const { first, trigger } = sequenceParts(rule, codes);
+  const sequence = first.length > 0;
   return {
     name: (rule.name || 'Regla').trim().slice(0, 60),
     tf: RULE_TIMEFRAMES.includes(Number(rule.tf)) ? Number(rule.tf) : 15,
+    ...(codes.includes('LIQ') ? {
+      liq: { variant: rule.liqVariant === 'reclaim' ? 'reclaim' : 'pierce', swingBars: number(rule.liqSwingBars, 5), reclaimBars: number(rule.liqReclaimBars, 3) }
+    } : {}),
     recipe: {
-      slots: codes.map(code => ({ codes: [code], group: 0 })),
-      mode: all ? 'strict' : 'threshold',
-      min: all ? codes.length : Math.max(1, Math.min(codes.length, number(rule.min, 1))),
-      window: Math.max(1, Math.min(5, number(rule.window, 1))),
+      // En secuencia: todo el contexto primero y, en la misma vela o después, al menos `min` del gatillo
+      slots: sequence
+        ? [...first.map(code => ({ codes: [code], group: 0 })), ...trigger.map(code => ({ codes: [code], group: 1 }))]
+        : codes.map(code => ({ codes: [code], group: 0 })),
+      mode: sequence ? 'sequence' : (all ? 'strict' : 'threshold'),
+      ...(sequence ? { sameBar: true, groupMins: { 0: first.length, 1: Math.max(1, Math.min(trigger.length, number(rule.min, 1))) } } : {}),
+      min: all || sequence ? codes.length : Math.max(1, Math.min(codes.length, number(rule.min, 1))),
+      window: Math.max(1, Math.min(MAX_WINDOW, number(rule.window, 1))),
       side: ['both', 'long', 'short'].includes(rule.side) ? rule.side : 'both',
       swing: { on: !!rule.swing, bars: number(rule.swingBars, 5), flex: 1 },
       momentum: !!rule.momentum,
@@ -78,11 +99,15 @@ export function fromBackendRule(saved) {
   const base = defaultRule();
   if (!saved?.recipe) return base;
   const recipe = saved.recipe;
+  const sequence = recipe.mode === 'sequence';
   return {
     ...base,
     name: saved.name || base.name, tf: saved.tf || 15,
     codes: (recipe.slots || []).map(slot => slot.codes?.[0]).filter(Boolean),
-    mode: recipe.mode === 'threshold' ? 'atLeast' : 'all', min: recipe.min || 1, window: recipe.window || 1,
+    mode: sequence ? 'sequence' : (recipe.mode === 'threshold' ? 'atLeast' : 'all'),
+    min: sequence ? (recipe.groupMins?.[1] ?? 1) : (recipe.min || 1), window: recipe.window || 1,
+    first: sequence ? (recipe.slots || []).filter(slot => !slot.group).map(slot => slot.codes?.[0]).filter(Boolean) : [],
+    liqVariant: saved.liq?.variant || 'pierce', liqSwingBars: saved.liq?.swingBars ?? 5, liqReclaimBars: saved.liq?.reclaimBars ?? 3,
     side: recipe.side || 'both', invert: !!saved.invert,
     swing: !!recipe.swing?.on, swingBars: recipe.swing?.bars ?? 5, momentum: !!recipe.momentum,
     confirm: !!recipe.entry?.on, confirmAtr: recipe.entry?.atr ?? 0.25, confirmBars: recipe.entry?.bars ?? 2,
@@ -102,7 +127,10 @@ export function describeRule(saved) {
   if (!saved?.recipe) return '';
   const recipe = saved.recipe;
   const codes = (recipe.slots || []).map(slot => (slot.codes || []).join('|'));
-  const joined = recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ');
+  const part = (group) => (recipe.slots || []).filter(slot => (slot.group || 0) === group).map(slot => (slot.codes || []).join('|'));
+  const liq = saved.liq ? ` (${saved.liq.variant === 'reclaim' ? 'recupera' : 'perfora'}, swing ${saved.liq.swingBars})` : '';
+  const joined = (recipe.mode === 'sequence' ? `${part(0).join(' + ')} → ${part(1).join(recipe.groupMins?.[1] > 1 ? ' + ' : ' o ')}`
+    : recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ')) + liq;
   const stop = { swing: `swing ${saved.stop?.bars}`, candle: 'vela del elemento', zone: 'borde de la zona', atr: `${saved.stop?.atr} ATR` }[saved.stop?.type] || '';
   const exits = [];
   if (saved.exit?.targetR != null) exits.push(`${saved.exit.targetR}R`);

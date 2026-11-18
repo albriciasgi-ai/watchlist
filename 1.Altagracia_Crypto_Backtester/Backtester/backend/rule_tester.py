@@ -24,6 +24,7 @@ import uuid
 import numpy as np
 
 import footprint_store as fs
+import liq_sweeps
 import measures
 import observer
 import of_elements as oe
@@ -45,6 +46,8 @@ GAP_MS = 6 * 3600000      # Un hueco de datos mayor cierra el trade en la últim
 BASE_TRADES = 3000
 SMALL_SAMPLE = 30
 MAX_FILTERS = 3
+MAX_WINDOW = 10           # Un gatillo puede llegar hasta 10 velas después del barrido
+EXTRA_CODES = ("LIQ", "VH")  # Elementos del probador que no son de of_elements (liq_sweeps.py)
 
 _jobs = {}
 _spans = {}
@@ -99,7 +102,7 @@ def clean_rule(raw):
     """Regla válida con valores dentro de rango; None si no tiene elementos conocidos."""
     raw = raw or {}
     name = str(raw.get("name") or "Regla")[:60]
-    recipe = os_.clean_recipe({**(raw.get("recipe") or {}), "id": name})
+    recipe = os_.clean_recipe({**(raw.get("recipe") or {}), "id": name}, EXTRA_CODES, MAX_WINDOW)
     if recipe is None:
         return None
     tf = int(raw.get("tf") or 15)
@@ -118,7 +121,15 @@ def clean_rule(raw):
     for item in (raw.get("filters") or [])[:MAX_FILTERS]:
         if item.get("key") in known_keys and item.get("op") in (">=", "<="):
             filters.append({"key": item["key"], "op": item["op"], "value": _num(item.get("value"), 0.0, -1e9, 1e9)})
+    liq = raw.get("liq") or {}
+    extra = {}
+    if any("LIQ" in slot["codes"] for slot in recipe["slots"]):
+        # pierce: basta pasar el swing. reclaim: además una vela cierra de vuelta, en reclaimBars velas o menos
+        extra["liq"] = {"variant": "reclaim" if liq.get("variant") == "reclaim" else "pierce",
+                        "swingBars": int(_num(liq.get("swingBars"), 5, 2, 20)),
+                        "reclaimBars": int(_num(liq.get("reclaimBars"), 3, 0, 10))}
     return {
+        **extra,
         "name": name, "tf": tf, "recipe": recipe, "invert": bool(raw.get("invert")),
         "entry": {"type": entry.get("type") if entry.get("type") in ("market", "limit") else "market",
                   "at": entry.get("at") if entry.get("at") in ("near", "mid", "far") else "near",
@@ -505,13 +516,38 @@ def _va_gap_ok(min_gap, match, zones, index, ctx, tf_ms):
     return True
 
 
-def run(symbol, rule, span, phase, table=None, base=True):
+_extra = {}
+
+
+def _extra_events(symbol, rule, span, ctx, control=False):
+    """LIQ y VH de liq_sweeps para las velas de la fase. control: los barridos sin liquidación pasan por LIQ."""
+    codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
+    if not codes & set(EXTRA_CODES):
+        return []
+    liq = rule.get("liq") or {"variant": "pierce", "swingBars": 5, "reclaimBars": 3}
+    key = (id(span["bars"]), symbol, rule["tf"], liq["variant"], liq["swingBars"], liq["reclaimBars"])
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = liq_sweeps.events(symbol, span["bars"], rule["tf"], liq["swingBars"], liq["variant"], liq["reclaimBars"], ctx["atr"])
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    wanted = "SWP" if control else "LIQ"
+    return [{**e, "code": "LIQ"} if e["code"] == wanted else e for e in found if e["code"] in (wanted, "VH")]
+
+
+def run(symbol, rule, span, phase, table=None, base=True, control=False):
     """La regla sobre las velas y elementos de la fase. Devuelve resumen, cortes y cada trade."""
     bars, events, tf = span["bars"], span["events"], rule["tf"]
     tf_ms = tf * 60000
     if len(bars) < 100:
         return {"success": False, "message": "Sin velas suficientes en el almacén para esa fase"}
     ctx = _context(symbol, tf, bars)
+    extra = _extra_events(symbol, rule, span, ctx, control)
+    events = events + extra if extra else events
+    liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -567,6 +603,10 @@ def run(symbol, rule, span, phase, table=None, base=True):
         trade["present"] = sorted({c for j in range(lo, k + 1) for c in votes[m["dir"]][j]})
         trade["against"] = sorted({c for j in range(lo, k + 1) for c in votes[-m["dir"]][j]})
         trade["zone"] = [round(zone[0], 8), round(zone[1], 8)] if zone else None
+        swept = next((liq_info[(m["dir"], t + tf_ms)] for code, t in m["votes"]
+                      if code == "LIQ" and (m["dir"], t + tf_ms) in liq_info), None)
+        if swept is not None:
+            trade["liq"] = swept  # La zona barrida: dinero, antigüedad y hasta dónde pasó el precio
         trade["measures"] = measured
         trades.append(trade)
         if rule["oneAtATime"]:
@@ -592,6 +632,18 @@ def run(symbol, rule, span, phase, table=None, base=True):
             se = math.sqrt(s["seR"] ** 2 + b["seR"] ** 2)
             result["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
                               "clear": abs(edge) > 1.96 * se and not s["smallSample"]}
+        if "liq" in rule and not control:
+            # El mismo gatillo tras barrer un swing sin liquidaciones: dice si las liquidaciones aportan algo
+            other = run(symbol, rule, span, phase, table, base=False, control=True)
+            c = other.get("summary") or {}
+            result["control"] = {key: c.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "smallSample")}
+            if s.get("n") and c.get("n"):
+                edge = s["avgR"] - c["avgR"]
+                se = math.sqrt(s["seR"] ** 2 + c["seR"] ** 2)
+                result["control"]["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
+                                             "clear": abs(edge) > 1.96 * se and not s["smallSample"] and not c["smallSample"]}
+            first = liq_sweeps.first_day(symbol)
+            result["liqFrom"] = _iso(first) if first else None
     result["winnersVsLosers"] = _winners_vs_losers(trades)
     return result
 
@@ -611,8 +663,11 @@ def _baseline(rule, ctx, trades, symbol):
     n = len(ctx["T"])
     longs = sum(1 for t in trades if t["dir"] > 0) / len(trades)
     rng = random.Random(int(hashlib.sha1(f"{symbol}{rule['tf']}{n}".encode()).hexdigest()[:8], 16))
-    base_rule = {**rule, "entry": {**rule["entry"], "type": "market"},
-                 "stop": {**rule["stop"], "type": "candle" if rule["stop"]["type"] == "zone" else rule["stop"]["type"]}}
+    stop = rule["stop"]
+    if stop["type"] in ("zone", "candle"):
+        # Ese stop depende del elemento, que al azar no existe: se usa la distancia mediana de los trades de la regla
+        stop = {**stop, "type": "atr", "atr": max(0.1, float(np.median([t["stop_atr"] for t in trades])))}
+    base_rule = {**rule, "entry": {**rule["entry"], "type": "market"}, "stop": stop}
     light = {**ctx, "minutes": None, "i0": None}  # Sin minuto a minuto: en la duda cuenta el stop, como en contra de la base no sesga a favor
     done = []
     for _ in range(BASE_TRADES):
@@ -787,7 +842,7 @@ def sensitivity(symbol, raw_rule):
         for value in sorted({round(target * f, 2) for f in (0.5, 0.75, 1.25, 1.5)}):
             add(f"Objetivo {value} R", {**rule, "exit": {**rule["exit"], "targetR": value}})
     for window in (rule["recipe"]["window"] - 1, rule["recipe"]["window"] + 1):
-        if 1 <= window <= os_.MAX_WINDOW and len(rule["recipe"]["slots"]) > 1:
+        if 1 <= window <= MAX_WINDOW and len(rule["recipe"]["slots"]) > 1:
             add(f"Ventana {window} velas", {**rule, "recipe": {**rule["recipe"], "window": window}})
     for buffer in sorted({round(rule["stop"]["buffer"] * f, 3) for f in (0.5, 2.0)} | {0.0}):
         if buffer != rule["stop"]["buffer"]:
@@ -802,7 +857,7 @@ def export_csv(run_id):
     keys = [item[0] for item in measures.MEASURES]
     head = ["n", "lado", "senal_utc", "entrada_utc", "salida_utc", "orden", "entrada", "stop", "objetivo", "salida", "motivo",
             "r_neto", "r_bruto", "max_favor_r", "max_contra_r", "alcance_r", "velas", "stop_atr", "elementos_regla",
-            "elementos_presentes", "elementos_en_contra"] + keys
+            "elementos_presentes", "elementos_en_contra", "liq_swing", "liq_extremo", "liq_usd", "liq_dias", "liq_atr"] + keys
     stamp = lambda ms: dt.datetime.fromtimestamp(ms / 1000, dt.timezone.utc).strftime("%Y-%m-%d %H:%M")
     lines = [",".join(head)]
     for t in result["trades"]:
@@ -811,6 +866,8 @@ def export_csv(run_id):
                t["order"], t["entry"], round(t["stop"], 8), "" if t["target"] is None else round(t["target"], 8), t["exit"],
                t["reason"], t["r"], t["gross"], t["mfe"], t["mae"], "" if t["reach"] is None else t["reach"], t["bars"],
                t["stop_atr"], " ".join(t["votes"]), " ".join(t["present"]), " ".join(t["against"])]
+        liq = t.get("liq") or {}
+        row += ["" if liq.get(k) is None else liq[k] for k in ("swing", "extreme", "usd", "zoneAgeDays", "depthAtr")]
         row += ["" if m.get(k) is None else m[k] for k in keys]
         lines.append(",".join(str(x) for x in row))
     return "\n".join(lines) + "\n"

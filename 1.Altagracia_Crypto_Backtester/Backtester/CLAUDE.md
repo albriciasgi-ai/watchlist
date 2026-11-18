@@ -973,6 +973,17 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - **Salida:** objetivo en R, stop arrastrado al último swing confirmado a favor, cierre a las N velas y señal contraria. Sin ninguna, 96 velas.
 - **Filtros:** hasta 3 medidas de `measures.py`, leídas a favor del trade en la última fila cerrada al conocerse la señal. Una señal sin medidas (antes del inicio de la tabla) no pasa un filtro.
 - `invert` opera en contra del elemento. `oneAtATime` (de fábrica) salta las señales con una posición abierta; sin él cuentan todas.
+- **Barrido de liquidaciones, LIQ (17/11, `liq_sweeps.py`).** No es de `of_elements`: lo calcula el probador al correr y no va al caché de la fase.
+  - Swing: el único extremo de `swingBars` velas por lado (5). Barrido: la primera vela posterior que lo pasa; cada swing se barre una vez y deja de seguirse a los 30 días.
+  - Zonas: la regla de `liquidationZones.js` (`buildZones` y `pickZones`: 30 días, franjas de 0.1%, 3 por lado a 6% o menos) con las celdas conocidas antes de abrir la vela del barrido y el precio de esa apertura. Una fuente por fecha, sin mezclar. Si esa regla cambia en el navegador, hay que cambiarla aquí.
+  - LIQ: el swing cae en una zona mostrada, con 0.1% de margen. SWP: el mismo barrido sin zona; no se ofrece, es el control del informe (`result["control"]`).
+  - `liq.variant`: `pierce` se conoce al cerrar la vela del barrido; `reclaim`, al cerrar la primera vela que cierra de vuelta, en `reclaimBars` velas o menos (3).
+  - La zona del evento va del extremo del barrido al swing: el stop "Extremo de la vela del elemento" queda detrás del barrido.
+  - Cada trade guarda `liq`: swing, antigüedad, extremo, profundidad en ATR, USD de la zona, lado liquidado, días desde su última liquidación y fuente. El CSV lo lleva en cinco columnas.
+  - VH: vela con el doble del volumen medio de su misma hora en los 30 días anteriores, hacia su color.
+- **Secuencia:** receta `sequence` con `sameBar` (solo del probador): el grupo 0 es el contexto (todos) y el grupo 1 el gatillo (al menos `groupMins[1]`), en la misma vela o después, dentro de `window` (hasta 10 en el probador; los setups siguen en 5).
+- **Azar con stop del elemento:** con stop `candle` o `zone`, las entradas al azar usan un stop en ATR con la distancia mediana de los trades de la regla. Con el extremo de una sola vela salían con stops mínimos y -1.2 R por comisiones.
+- **Ajustes de indicadores:** `ChartIndicatorSettings.jsx` abre los modales de la principal desde la lista "Indicadores" de la ventana. No usa `secondaryStorage`: lo cambiado vale también en la simulación manual. `SecondaryChartApp.jsx` conserva su propia copia de ese código.
 - `cooldown` (17/11, 8 velas en la ventana, 0 en el backend): con una posición a la vez, velas de espera tras cerrar un trade; las señales de ese tramo quedan en `skipped` como "enfriamiento".
 - `vaGap` (17/11, 0 de fábrica): hueco mínimo en ATR entre el área de valor y la vela que la abandona. La VA abandonada sigue la regla literal del libro y en BTC 15m marca el 9.1% de las velas; en el 43% el hueco es menor de 0.1 ATR y en el 51% el precio vuelve al área en 3 velas. Medido en la fase 1 con stop en el swing y 1R: pedir más hueco no mejora (0.25 ATR: -0.38 R contra -0.32 del azar).
 

@@ -21,6 +21,7 @@ import observer
 import measures
 import patterns
 import rule_tester
+import liq_sweeps
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from collections import OrderedDict
@@ -3835,7 +3836,9 @@ async def tester_info(request: Request, symbol: str):
     return {"success": True, "phases": await run_in_threadpool(rule_tester.phases, safe),
             "timeframes": list(rule_tester.TFS),
             "elements": [{"code": code, "name": item[0], "volume": code in of_elements.VOLUME_FILTERED,
-                          "flow": code in of_elements.FLOW_CODES} for code, item in of_elements.CATALOG.items()],
+                          "flow": code in of_elements.FLOW_CODES} for code, item in of_elements.CATALOG.items()]
+            + [{"code": code, "name": liq_sweeps.CODES[code], "volume": False, "flow": False, "extra": True} for code in rule_tester.EXTRA_CODES],
+            "liqFrom": await run_in_threadpool(liq_sweeps.first_day, safe),
             "measures": measures.catalog(), "runs": runs[::-1][:200],
             "variantsPhase1": len({r["hash"] for r in runs if r["phase"] == 1})}
 

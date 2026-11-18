@@ -25,11 +25,12 @@ SLOPE_ATR = 0.25
 TAKER_FEE = 0.00055  # Por lado, como el bot y las órdenes de App 1
 
 
-def clean_recipe(raw):
-    """Receta válida con valores dentro de rango; None si no tiene casillas con códigos conocidos."""
+def clean_recipe(raw, extra_codes=(), max_window=MAX_WINDOW):
+    """Receta válida con valores dentro de rango; None si no tiene casillas con códigos conocidos.
+    extra_codes y max_window son del probador de reglas, que suma sus propios elementos y una ventana más larga."""
     slots = []
     for slot in (raw.get("slots") or [])[:MAX_SLOTS]:
-        codes = [c for c in (slot.get("codes") or []) if c in oe.CATALOG]
+        codes = [c for c in (slot.get("codes") or []) if c in oe.CATALOG or c in extra_codes]
         if codes:
             slots.append({"codes": codes, "group": max(0, min(3, int(slot.get("group", 0) or 0)))})
     if not slots:
@@ -39,7 +40,7 @@ def clean_recipe(raw):
     mins = raw.get("groupMins") or {}
     swing = raw.get("swing") or {}
     entry = raw.get("entry") or {}
-    return {
+    recipe = {
         "id": str(raw.get("id") or "receta")[:60],
         "side": raw.get("side") if raw.get("side") in ("both", "long", "short") else "both",
         "mode": mode,
@@ -47,13 +48,16 @@ def clean_recipe(raw):
         "min": max(1, min(len(slots), int(raw.get("min") or len(slots)))),
         "groups": groups,
         "groupMins": {g: max(1, int(mins.get(str(g), mins.get(g, 1)) or 1)) for g in groups},
-        "window": max(1, min(MAX_WINDOW, int(raw.get("window") or 1))),
+        "window": max(1, min(max_window, int(raw.get("window") or 1))),
         "swing": {"on": bool(swing.get("on")), "bars": max(2, min(20, int(swing.get("bars") or 5))),
                   "flex": max(0, min(5, int(swing.get("flex") or 0))), "onSwing": bool(swing.get("onSwing"))},
         "momentum": bool(raw.get("momentum")),
         "entry": {"on": bool(entry.get("on")), "atr": max(0.05, min(3.0, float(entry.get("atr") or 0.25))),
                   "bars": max(1, min(5, int(entry.get("bars") or 2)))},
     }
+    if mode == "sequence" and raw.get("sameBar"):
+        recipe["sameBar"] = True  # Un grupo anterior puede votar en la misma vela que el siguiente
+    return recipe
 
 
 def _series(bars):
@@ -108,14 +112,15 @@ def _consensus(recipe, votes_side, i):
     last = groups[-1]
     if sum(1 for s, h in zip(slots, hits) if s["group"] == last and i in h) < recipe["groupMins"][last]:
         return None
-    limit = i
+    same = 1 if recipe.get("sameBar") else 0
+    limit = i + same
     for g in reversed(groups[:-1]):
         member = [(s, h) for s, h in zip(slots, hits) if s["group"] == g]
         latest = [max([j for j in h if j < limit], default=None) for _, h in member]
         latest = [j for j in latest if j is not None]
         if len(latest) < recipe["groupMins"][g]:
             return None
-        limit = min(sorted(latest, reverse=True)[:recipe["groupMins"][g]])
+        limit = min(sorted(latest, reverse=True)[:recipe["groupMins"][g]]) + same
     return hits
 
 
