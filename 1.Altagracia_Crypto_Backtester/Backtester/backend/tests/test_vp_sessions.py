@@ -117,3 +117,45 @@ def test_el_filtro_de_forma_deja_solo_esas_sesiones(monkeypatch):
     assert [t["vp"]["shape"] for t in both["trades"]] == ["P", "b"] and "shapes" not in rt.clean_rule({"name": "V", "recipe": {"slots": [{"codes": ["VF"]}]}})["vp"]
     assert [row["label"] for row in both["breakdowns"]["vpShape"]] == ["P", "b"]
     assert [t["vp"]["shape"] for t in run(["b"])["trades"]] == ["b"]
+
+
+WIDE = {0: {"poc": 100.0, "vah": 102.0, "val": 98.0, "high": 104.0, "low": 96.0, "shape": "D"}}
+
+
+def test_extremo_del_valor_primer_toque_de_cada_borde_si_abre_dentro():
+    bars = day([100, 99, (99, 99.2, 97.8, 98.5), (98.5, 98.6, 97.5, 98.2), 100, (100, 102.3, 99.9, 101.8), 101])
+    ve = [e for e in vp.events(bars, TF, WIDE, 24, accept=9, fail_bars=1) if e["code"] == "VE"]
+    assert codes(ve) == [("VE", 1, 2), ("VE", -1, 5)]
+    assert (ve[0]["lo"], ve[0]["hi"]) == (96.0, 98.0) and (ve[1]["lo"], ve[1]["hi"]) == (102.0, 104.0)
+    outside = day([103, 101, (101, 102.5, 97.5, 100)])
+    assert [e for e in vp.events(outside, TF, WIDE, 24) if e["code"] == "VE"] == []
+
+
+def test_orden_esperando_sale_al_cerrar_la_sesion_anterior_dentro_del_valor():
+    bars = day([100] * 96, start=0) + day([100, 99, 98.5])
+    ve = [e for e in vp.events(bars, TF, WIDE, 24, ve_entry="resting") if e["code"] == "VE"]
+    assert [(e["dir"], e["t"], e["known"]) for e in ve] == [(1, DAY - MS, DAY), (-1, DAY - MS, DAY)]
+    closed_out = day([100] * 95 + [103], start=0) + day([103, 100])
+    assert [e for e in vp.events(closed_out, TF, WIDE, 24, ve_entry="resting") if e["code"] == "VE"] == []
+
+
+def test_las_dos_ordenes_del_rango_se_toman_por_orden_de_llenado(monkeypatch):
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    monkeypatch.setattr(rt, "_vp_levels", lambda *a: WIDE)
+    # Primero sube al VAH (la venta se llena en la vela 10 y llega al centro en la 20); después baja al VAL (vela 40)
+    today = [100] * 10 + [(100, 102.4, 99.9, 102.2)] + [102.2] * 9 + [(102.2, 102.3, 99.8, 100)] + [100] * 19 \
+        + [(100, 100.1, 97.6, 97.8)] + [97.8] * 9 + [(97.8, 100.2, 97.7, 100)] + [100] * 45
+    span = {"bars": day([100] * 96, start=0) + day(today), "events": []}
+    raw = {"name": "V", "tf": TF, "recipe": {"slots": [{"codes": ["VE"]}]}, "vp": {"hours": 24, "veEntry": "resting", "shapes": ["D"]},
+           "stop": {"type": "zone", "buffer": 0.1}, "exit": {"targetAt": "mid"}, "cooldown": 0}
+    rule = rt.clean_rule(raw)
+    assert rule["entry"] == {"type": "limit", "at": "near", "expiry": 96} and rule["targetAt"] == "mid"
+    result = rt.run("X", rule, span, PHASE, None, base=False)
+    trades = result["trades"]
+    assert [(t["dir"], t["entry"], t["target"], t["order"], t["reason"]) for t in trades] == [(-1, 102.0, 100.0, "limit", "objetivo"), (1, 98.0, 100.0, "limit", "objetivo")]
+    assert trades[0]["entry_t"] == DAY + 10 * MS and trades[1]["entry_t"] == DAY + 40 * MS and trades[0]["stop"] > 104.0
+    assert "entry_i" not in trades[0] and result["busy"] == 0
+    # Con otro perfil anterior no hay órdenes
+    monkeypatch.setattr(rt, "_vp_levels", lambda *a: {0: {**WIDE[0], "shape": "P"}})
+    fresh = {"bars": list(span["bars"]), "events": []}  # Los elementos de un tramo quedan en memoria: otro tramo los recalcula
+    assert rt.run("X", rule, fresh, PHASE, None, base=False)["trades"] == []

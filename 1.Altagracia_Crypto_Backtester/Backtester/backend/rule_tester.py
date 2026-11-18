@@ -48,7 +48,7 @@ BASE_TRADES = 3000
 SMALL_SAMPLE = 30
 MAX_FILTERS = 3
 MAX_WINDOW = 10           # Un gatillo puede llegar hasta 10 velas después del barrido
-VP_CODES = ("VR", "VF", "VX")  # Contra el valor de la sesión anterior (vp_sessions.py)
+VP_CODES = ("VR", "VF", "VX", "VE")  # Contra el valor de la sesión anterior (vp_sessions.py)
 EXTRA_CODES = ("LIQ", "VH") + VP_CODES  # Elementos del probador que no son de of_elements
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -140,17 +140,24 @@ def clean_rule(raw):
                        "hours": hours if hours in vp_sessions.PERIODS else 24, "accept": int(_num(vp.get("accept"), 30, 5, 480)),
                        "failBars": int(_num(vp.get("failBars"), 3, 1, 20)), "rows": int(_num(vp.get("rows"), 50, 10, 400)),
                        "share": _num(vp.get("share"), 70, 40, 95)}
-        # Objetivo en un nivel del perfil en vez de un múltiplo del riesgo
-        if exit_.get("targetAt") in ("poc", "edge"):
+        if any("VE" in slot["codes"] for slot in recipe["slots"]):
+            # touch: entra tras el primer toque del borde. resting: orden limit esperando en el borde toda la sesión
+            extra["vp"]["veEntry"] = "resting" if vp.get("veEntry") == "resting" else "touch"
+        # Objetivo en un nivel del perfil en vez de un múltiplo del riesgo. mid: el centro del rango de la sesión anterior
+        if exit_.get("targetAt") in ("poc", "edge", "mid"):
             extra["targetAt"], target_r = exit_["targetAt"], None
     if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra:
         horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
+    entry_rule = {"type": entry.get("type") if entry.get("type") in ("market", "limit") else "market",
+                  "at": entry.get("at") if entry.get("at") in ("near", "mid", "far") else "near",
+                  "expiry": int(_num(entry.get("expiry"), 8, 1, 200))}
+    if (extra.get("vp") or {}).get("veEntry") == "resting":
+        # La orden espera en el borde del valor hasta que termina la sesión
+        entry_rule = {"type": "limit", "at": "near", "expiry": max(1, extra["vp"]["hours"] * 60 // tf)}
     return {
         **extra,
         "name": name, "tf": tf, "recipe": recipe, "invert": bool(raw.get("invert")),
-        "entry": {"type": entry.get("type") if entry.get("type") in ("market", "limit") else "market",
-                  "at": entry.get("at") if entry.get("at") in ("near", "mid", "far") else "near",
-                  "expiry": int(_num(entry.get("expiry"), 8, 1, 200))},
+        "entry": entry_rule,
         "stop": {"type": stop.get("type") if stop.get("type") in ("swing", "candle", "zone", "atr") else "swing",
                  "bars": int(_num(stop.get("bars"), 5, 2, 20)), "atr": _num(stop.get("atr"), 1.5, 0.1, 20.0),
                  "buffer": _num(stop.get("buffer"), 0.1, 0.0, 5.0), "minAtr": _num(stop.get("minAtr"), 0.1, 0.0, 10.0),
@@ -371,7 +378,10 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
         levels = ctx.get("vp")
         if levels is None:
             return {"skip": "sin perfil para el objetivo"}
-        target = levels["poc"] if rule["targetAt"] == "poc" else (levels["vah"] if side > 0 else levels["val"])
+        if rule["targetAt"] == "mid" and levels.get("high") is not None:
+            target = (levels["high"] + levels["low"]) / 2
+        else:
+            target = levels["poc"] if rule["targetAt"] in ("poc", "mid") else (levels["vah"] if side > 0 else levels["val"])
         if (target - entry) * side < MIN_TARGET_R * risk:
             return {"skip": "objetivo del perfil muy cerca o ya pasado"}
     initial_stop = stop
@@ -459,7 +469,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
     else:
         reach_done = entry_i + REACH_BARS <= n
 
-    trade = {"k": k, "dir": side, "signal": T[k], "known": T[k] + tf_ms, "entry_t": T[entry_i], "entry": entry,
+    trade = {"k": k, "entry_i": entry_i, "dir": side, "signal": T[k], "known": T[k] + tf_ms, "entry_t": T[entry_i], "entry": entry,
              "stop": initial_stop, "target": target, "risk": risk, "stop_atr": round(stop_atr, 3),
              "order": "limit" if limit_fill else "market", "reach": round(reach, 3) if reach_done else None}
     if exit_price is None:
@@ -642,14 +652,14 @@ def _vp_events(symbol, rule, span):
     bars = span["bars"]
     if not vp or not bars:
         return []
-    key = (id(bars), symbol, rule["tf"], "vp", vp["hours"], vp["accept"], vp["failBars"], vp["rows"], vp["share"])
+    key = (id(bars), symbol, rule["tf"], "vp", vp["hours"], vp["accept"], vp["failBars"], vp["rows"], vp["share"], vp.get("veEntry"))
     with _lock:
         found = _extra.get(key)
     if found is None:
         tf_ms = rule["tf"] * 60000
         levels = _vp_levels(symbol, vp["hours"], vp["rows"], vp["share"], bars[0]["t"], bars[-1]["t"] + tf_ms)
         accept = max(1, round(vp["accept"] / rule["tf"]))
-        found = vp_sessions.events(bars, rule["tf"], levels, vp["hours"], accept, vp["failBars"])
+        found = vp_sessions.events(bars, rule["tf"], levels, vp["hours"], accept, vp["failBars"], vp.get("veEntry") or "touch")
         with _lock:
             _extra[key] = found
             while len(_extra) > 6:
@@ -685,15 +695,19 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
 
     trades, skipped, open_count, busy_until, busy = [], {}, 0, -1, 0
     window = rule["recipe"]["window"]
+    # Con órdenes limit, una señal posterior puede llenarse antes que una anterior (o las dos órdenes de un rango,
+    # la de arriba y la de abajo): se simulan todas y se toman por orden de llenado, no de señal
+    defer = rule["oneAtATime"] and rule["entry"]["type"] == "limit"
+    pending = []
     for m in matches:
         k = index.get(m["known"] - tf_ms)
         if k is None:
             continue
         side = m["dir"] * flip
-        if rule["oneAtATime"] and k < busy_until:
+        if rule["oneAtATime"] and not defer and k < busy_until:
             busy += 1
             continue
-        if rule["oneAtATime"] and k < busy_until + rule["cooldown"]:
+        if rule["oneAtATime"] and not defer and k < busy_until + rule["cooldown"]:
             skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
             continue
         if rule["vaGap"] > 0 and not _va_gap_ok(rule["vaGap"], m, zones, index, ctx, tf_ms):
@@ -717,8 +731,11 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
             skipped[trade["skip"]] = skipped.get(trade["skip"], 0) + 1
             continue
         if trade.get("open"):
-            open_count += 1
-            busy_until = len(bars)
+            if defer:
+                pending.append(trade)
+            else:
+                open_count += 1
+                busy_until = len(bars)
             continue
         lo = max(0, k - window + 1)
         trade["votes"] = sorted({code for code, _ in m["votes"]})
@@ -735,14 +752,29 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
         if ctx["vp"] is not None:
             trade["vp"] = ctx["vp"]  # El valor de la sesión anterior que usó la regla, y dónde abrió la sesión
         trade["measures"] = measured
+        if defer:
+            pending.append(trade)
+            continue
         trades.append(trade)
         if rule["oneAtATime"]:
             busy_until = trade.pop("exit_i") + 1
         else:
             trade.pop("exit_i")
+    for trade in sorted(pending, key=lambda t: (t["entry_i"], t["k"])):
+        if trade["entry_i"] < busy_until:
+            busy += 1
+        elif trade["entry_i"] < busy_until + rule["cooldown"]:
+            skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
+        elif trade.get("open"):
+            open_count += 1
+            busy_until = len(bars)
+        else:
+            trades.append(trade)
+            busy_until = trade.pop("exit_i") + 1
     for number, trade in enumerate(trades, 1):
         trade["n"] = number
         trade.pop("k", None)
+        trade.pop("entry_i", None)
 
     ordered = sorted(trades, key=lambda t: t["exit_t"])
     result = {

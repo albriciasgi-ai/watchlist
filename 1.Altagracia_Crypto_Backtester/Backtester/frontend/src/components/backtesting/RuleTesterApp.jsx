@@ -532,9 +532,21 @@ const RuleTesterApp = () => {
               ))}
               <span className="rt-note">{(rule.vpShapes || []).length ? '' : 'todas'}</span>
             </div>
+            {rule.codes.includes('VE') && (
+              <div className="rt-row">
+                <span title="VE: la sesión abre dentro del valor anterior y el precio llega a un borde. Compra en el VAL, vende en el VAH">VE entra:</span>
+                <select value={rule.vpVeEntry} onChange={(e) => patch({ vpVeEntry: e.target.value })}>
+                  <option value="touch">tras el primer toque del borde</option>
+                  <option value="resting">con una orden limit esperando en cada borde toda la sesión</option>
+                </select>
+              </div>
+            )}
+            {rule.codes.includes('VE') && rule.vpVeEntry === 'resting' && (
+              <div className="rt-note">Con la orden esperando, la entrada es siempre limit en el borde del valor y vale hasta que termina la sesión: lo elegido en "Entrada" no cuenta. Se opera la orden que se llene primero.</div>
+            )}
             <div className="rt-note">
               Todo se mide contra el POC, el VAH y el VAL de la sesión anterior, con volumen real. VR: abre fuera del valor y vuelve a sostenerse dentro (va al borde contrario).
-              VF: sale del valor y cierra de vuelta dentro (va al POC). VX: se sostiene fuera (sigue la salida). Para el stop detrás del extremo usa "Borde lejano de la zona".
+              VF: sale del valor y cierra de vuelta dentro (va al POC). VX: se sostiene fuera (sigue la salida). VE: abre dentro y llega a un borde (compra en el VAL, vende en el VAH; pensado para perfiles D). Para el stop detrás del extremo usa "Borde lejano de la zona".
             </div>
           </>
         )}
@@ -603,6 +615,7 @@ const RuleTesterApp = () => {
               <option value="r">en R</option>
               <option value="poc">en el POC anterior</option>
               <option value="edge">en el borde contrario del valor</option>
+              <option value="mid">en el centro del rango anterior</option>
             </select>
           )}
           {!(usesProfile(rule) && rule.targetAt !== 'r') && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}

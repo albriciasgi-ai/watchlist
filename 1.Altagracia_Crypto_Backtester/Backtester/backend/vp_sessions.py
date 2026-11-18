@@ -12,6 +12,11 @@ Elementos, todos contra el valor de la sesión inmediatamente anterior:
   cierran dentro. Dirección: hacia el borde contrario. Una vez por sesión.
 - VF, fallo fuera del valor: con el cierre anterior dentro del valor, una vela pasa el VAH o el VAL y en
   `fail_bars` velas o menos una vela cierra de vuelta dentro. Dirección: hacia el POC.
+- VE, extremo del valor (para operar el rango tras un perfil equilibrado): la sesión abre dentro del valor
+  anterior y el precio llega a un borde. En el VAL es alcista y en el VAH bajista. Dos formas (`ve_entry`):
+  "touch", al cerrar la primera vela que toca cada borde en la sesión; "resting", al cerrar la sesión anterior,
+  para dejar una orden limit esperando en cada borde durante toda la sesión siguiente. La zona va del borde al
+  mínimo o máximo de la sesión anterior, que es donde queda el stop.
 - Forma del perfil de la sesión anterior (`shape`), por dónde quedó el volumen dentro del rango de la sesión:
   "P" si el POC está en el tercio de arriba (el volumen se juntó arriba y dejó una cola delgada abajo), "b" si
   está en el tercio de abajo, "D" si está en el medio, y "B" si hay dos distribuciones: un segundo pico con al
@@ -35,7 +40,7 @@ SPLIT_GAP = 0.25
 VALLEY = 0.5
 SMOOTH_ROWS = 5            # El perfil se suaviza antes de buscar picos: una franja suelta no es una distribución
 CODES = {"VR": "Regreso al valor de la sesión anterior", "VF": "Fallo fuera del valor de la sesión anterior",
-         "VX": "Aceptación fuera del valor de la sesión anterior"}
+         "VX": "Aceptación fuera del valor de la sesión anterior", "VE": "Extremo del valor de la sesión anterior"}
 
 
 def session_start(t, hours):
@@ -114,8 +119,8 @@ def sessions(symbol, hours, start_ms, end_ms, rows=50, share=0.7):
     return out
 
 
-def events(bars, tf, levels, hours, accept=2, fail_bars=3):
-    """VR, VF y VX de las velas, con la forma de los eventos de of_elements más `info` (los niveles usados)."""
+def events(bars, tf, levels, hours, accept=2, fail_bars=3, ve_entry="touch"):
+    """VR, VF, VX y VE de las velas, con la forma de los eventos de of_elements más `info` (los niveles usados)."""
     tf_ms = int(tf) * 60000
     length = hours * HOUR
     out = []
@@ -124,9 +129,17 @@ def events(bars, tf, levels, hours, accept=2, fail_bars=3):
         start = session_start(b["t"], hours)
         if start != current:
             current, prior = start, levels.get(start - length)
+            if prior is not None and ve_entry == "resting" and i > 0 and session_start(bars[i - 1]["t"], hours) == start - length \
+                    and prior["val"] <= bars[i - 1]["c"] <= prior["vah"]:
+                # La sesión anterior cerró dentro de su valor: órdenes en los dos bordes para toda la sesión que empieza
+                last = bars[i - 1]
+                rest = {"poc": prior["poc"], "vah": prior["vah"], "val": prior["val"], "high": prior["high"], "low": prior["low"],
+                        "session": start, "open": 0, "hours": hours, "shape": prior.get("shape"), "pocPos": prior.get("pocPos")}
+                out.append({"code": "VE", "dir": 1, "t": last["t"], "known": last["t"] + tf_ms, "lo": prior["low"], "hi": prior["val"], "info": rest})
+                out.append({"code": "VE", "dir": -1, "t": last["t"], "known": last["t"] + tf_ms, "lo": prior["vah"], "hi": prior["high"], "info": rest})
             if prior is not None:
                 where = 1 if b["o"] > prior["vah"] else (-1 if b["o"] < prior["val"] else 0)
-                state = {"open": where, "inside": 0, "outside": 0, "side": 0, "vr": where == 0, "vx": set(),
+                state = {"open": where, "inside": 0, "outside": 0, "side": 0, "vr": where == 0, "vx": set(), "ve": set(),
                          "hi": b["h"], "lo": b["l"], "trip": None, "prev_in": where == 0}
         if prior is None:
             continue
@@ -135,12 +148,21 @@ def events(bars, tf, levels, hours, accept=2, fail_bars=3):
         s["hi"], s["lo"] = max(s["hi"], b["h"]), min(s["lo"], b["l"])
         close_in = val <= b["c"] <= vah
         side = 0 if close_in else (1 if b["c"] > vah else -1)
-        info = {"poc": poc, "vah": vah, "val": val, "session": current, "open": s["open"], "hours": hours,
+        info = {"poc": poc, "vah": vah, "val": val, "high": prior["high"], "low": prior["low"], "session": current, "open": s["open"], "hours": hours,
                 "shape": prior.get("shape"), "pocPos": prior.get("pocPos")}
 
         def add(code, d, lo, hi, extra=None):
             out.append({"code": code, "dir": d, "t": b["t"], "known": b["t"] + tf_ms, "lo": lo, "hi": hi,
                         "info": {**info, **(extra or {})}})
+
+        # VE: la sesión abrió dentro del valor y el precio toca un borde por primera vez
+        if ve_entry == "touch" and s["open"] == 0:
+            if b["l"] <= val and 1 not in s["ve"]:
+                s["ve"].add(1)
+                add("VE", 1, min(prior["low"], b["l"]), val, {"extreme": b["l"]})
+            if b["h"] >= vah and -1 not in s["ve"]:
+                s["ve"].add(-1)
+                add("VE", -1, vah, max(prior["high"], b["h"]), {"extreme": b["h"]})
 
         # VF: salida desde dentro del valor que no se sostiene
         if s["trip"] is None and s["prev_in"]:

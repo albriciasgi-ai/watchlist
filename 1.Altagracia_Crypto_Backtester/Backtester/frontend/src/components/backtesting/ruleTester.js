@@ -33,14 +33,14 @@ export function defaultRule() {
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
     first: [], liqWhat: 'zone', liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3,
     // Perfil por sesión (VR, VF, VX): periodo, minutos sostenido dentro o fuera del valor y velas para que un fallo cierre de vuelta
-    vpHours: 24, vpAccept: 30, vpFailBars: 3, vpShapes: [], targetAt: 'r'
+    vpHours: 24, vpAccept: 30, vpFailBars: 3, vpShapes: [], vpVeEntry: 'touch', targetAt: 'r'
   };
 }
 
 const number = (value, fallback) => (Number.isFinite(Number(value)) && value !== '' && value !== null ? Number(value) : fallback);
 
 export const MAX_WINDOW = 10;
-export const VP_CODES = ['VR', 'VF', 'VX'];
+export const VP_CODES = ['VR', 'VF', 'VX', 'VE'];
 // Forma del perfil de la sesión anterior: dónde quedó el volumen dentro de su rango
 export const VP_SHAPES = [['D', 'D · volumen en el medio'], ['P', 'P · volumen arriba, cola abajo'], ['b', 'b · volumen abajo, cola arriba'], ['B', 'B · dos distribuciones']];
 export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24, '1 día'], [168, '1 semana']];
@@ -66,7 +66,7 @@ export function toBackendRule(rule) {
     ...(codes.includes('LIQ') ? {
       liq: { what: rule.liqWhat === 'swing' ? 'swing' : 'zone', variant: rule.liqVariant === 'reclaim' ? 'reclaim' : 'pierce', swingBars: number(rule.liqSwingBars, 5), reclaimBars: number(rule.liqReclaimBars, 3) }
     } : {}),
-    ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [] } } : {}),
+    ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [], veEntry: rule.vpVeEntry === 'resting' ? 'resting' : 'touch' } } : {}),
     recipe: {
       // En secuencia: todo el contexto primero y, en la misma vela o después, al menos `min` del gatillo
       slots: sequence
@@ -90,7 +90,7 @@ export function toBackendRule(rule) {
     exit: {
       targetR: rule.useTarget ? number(rule.targetR, 2) : null,
       // Objetivo en un nivel del perfil de la sesión anterior, en vez de un múltiplo del riesgo
-      ...(rule.useTarget && usesProfile(rule) && ['poc', 'edge'].includes(rule.targetAt) ? { targetAt: rule.targetAt } : {}),
+      ...(rule.useTarget && usesProfile(rule) && ['poc', 'edge', 'mid'].includes(rule.targetAt) ? { targetAt: rule.targetAt } : {}),
       trail: rule.trail ? 'swing' : 'none', trailBars: number(rule.trailBars, 5),
       horizon: rule.useHorizon ? number(rule.horizon, 200) : null,
       opposite: !!rule.opposite
@@ -125,7 +125,7 @@ export function fromBackendRule(saved) {
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
     stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6,
     useTarget: saved.exit?.targetR != null || !!saved.targetAt, targetR: saved.exit?.targetR ?? 2, targetAt: saved.targetAt || 'r',
-    vpShapes: saved.vp?.shapes || [], vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
+    vpShapes: saved.vp?.shapes || [], vpVeEntry: saved.vp?.veEntry || 'touch', vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
     trail: saved.exit?.trail === 'swing', trailBars: saved.exit?.trailBars ?? 5,
     useHorizon: saved.exit?.horizon != null, horizon: saved.exit?.horizon ?? 200, opposite: !!saved.exit?.opposite,
     oneAtATime: saved.oneAtATime !== false, cooldown: saved.cooldown ?? 0, vaGap: saved.vaGap ?? 0, filters: saved.filters || [],
@@ -144,7 +144,7 @@ export function describeRule(saved) {
     : recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ')) + liq;
   const stop = { swing: `swing ${saved.stop?.bars}`, candle: 'vela del elemento', zone: 'borde de la zona', atr: `${saved.stop?.atr} ATR` }[saved.stop?.type] || '';
   const exits = [];
-  if (saved.targetAt) exits.push(saved.targetAt === 'poc' ? 'POC anterior' : 'borde contrario del valor');
+  if (saved.targetAt) exits.push({ poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
   else if (saved.exit?.targetR != null) exits.push(`${saved.exit.targetR}R`);
   if (saved.exit?.trail === 'swing') exits.push('stop arrastrado');
   if (saved.exit?.horizon != null) exits.push(`${saved.exit.horizon} velas`);
@@ -229,6 +229,10 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     const stop = Math.max(end, Math.min(vp.session + vp.hours * 3600000, end + 20 * tf));
     bands.push({ kind: 'value', low: vp.val, high: vp.vah, start, end: stop, strong: false, label: `Valor de la sesión anterior (${vp.hours} h${vp.shape ? `, perfil ${vp.shape}` : ''})` });
     bands.push({ kind: 'level', price: vp.poc, start, end: stop, label: 'POC anterior' });
+    if (Number.isFinite(vp.high) && Number.isFinite(vp.low)) {
+      bands.push({ kind: 'level', price: vp.high, start, end: stop, label: 'Máximo anterior' });
+      bands.push({ kind: 'level', price: vp.low, start, end: stop, label: 'Mínimo anterior' });
+    }
     if (Number.isFinite(vp.extreme)) bands.push({ kind: 'mark', time: trade.signal, price: vp.extreme, label: 'Extremo' });
   }
   for (const mark of trade.marks || []) {
