@@ -12,6 +12,7 @@ sobre un tramo fijo del histórico, con cada trade contabilizado.
   medidas de measures.py al decidir, para buscar qué separa a los ganadores de los perdedores.
 """
 import datetime as dt
+import pathlib
 import gzip
 import hashlib
 import json
@@ -72,11 +73,94 @@ def _iso(ms):
     return dt.datetime.fromtimestamp(ms / 1000, dt.timezone.utc).strftime("%Y-%m-%d")
 
 
+# ==================== MONEDAS SIN ALMACÉN DE TRADES ====================
+# Solo BTC tiene el almacén de trades completo. Los elementos que salen de las velas (CC, VH) y el barrido de
+# liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
+
+CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
+CANDLE_CODES = ("CC", "VH", "LIQ")
+CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1)}  # marco → (clave del caché, velas que se unen)
+MIN_STORE_DAYS = 60
+_candles = {}
+
+
+def has_store(symbol):
+    return fs.coverage(symbol).get("days", 0) >= MIN_STORE_DAYS
+
+
+def candle_symbols():
+    """Monedas con caché de velas de App 1."""
+    return sorted(p.name.split("_")[0] for p in CANDLE_DIR.glob("*_backtesting_data.json.gz"))
+
+
+def _candle_path(symbol):
+    return CANDLE_DIR / f"{symbol}_backtesting_data.json.gz"
+
+
+def candle_bars(symbol, tf):
+    """Velas cerradas del caché de App 1 en el marco de la regla, con la forma de las del almacén (sin delta)."""
+    path = _candle_path(symbol)
+    if tf not in CANDLE_KEYS or not path.exists():
+        return []
+    key = (symbol, tf, path.stat().st_mtime)
+    with _lock:
+        found = _candles.get(key)
+    if found is not None:
+        return found
+    name, group = CANDLE_KEYS[tf]
+    with gzip.open(path, "rt", encoding="utf-8") as fh:
+        rows = ((json.load(fh).get("timeframes") or {}).get(name) or {}).get("main") or []
+    now = time.time() * 1000
+    step = tf * 60000
+    bars = []
+    for c in rows:
+        t = int(c["timestamp"])
+        start = t // step * step
+        if start + step > now or not c["high"] >= c["low"] > 0:
+            continue  # La vela en curso no cuenta
+        if bars and bars[-1]["t"] == start:
+            last = bars[-1]
+            last.update(h=max(last["h"], float(c["high"])), l=min(last["l"], float(c["low"])), c=float(c["close"]),
+                        vol=last["vol"] + float(c.get("volume") or 0))
+        else:
+            bars.append({"t": start, "o": float(c["open"]), "h": float(c["high"]), "l": float(c["low"]), "c": float(c["close"]),
+                         "delta": 0.0, "vol": float(c.get("volume") or 0)})
+    with _lock:
+        _candles[key] = bars
+        while len(_candles) > 3:
+            _candles.pop(next(iter(_candles)))
+    return bars
+
+
+def _candle_cover(symbol):
+    """Primer y último día con velas de 15m en el caché, guardado junto al probador para no abrir el archivo cada vez."""
+    path = _candle_path(symbol)
+    if not path.exists():
+        return None
+    note = tester_dir() / "cache" / f"velas_tramo_{symbol}.json"
+    stamp = path.stat().st_mtime
+    try:
+        with open(note, encoding="utf-8") as fh:
+            saved = json.load(fh)
+        if saved.get("stamp") == stamp:
+            return saved
+    except (OSError, ValueError):
+        pass
+    bars = candle_bars(symbol, 15)
+    if not bars:
+        return None
+    saved = {"stamp": stamp, "first": _iso(bars[0]["t"] + oe.DAY_MS), "last": _iso(bars[-1]["t"] - oe.DAY_MS)}  # Días completos
+    note.parent.mkdir(parents=True, exist_ok=True)
+    with open(note, "w", encoding="utf-8") as fh:
+        json.dump(saved, fh)
+    return saved
+
+
 # ==================== FASES ====================
 
 def phases(symbol):
-    """Tramo de cada fase para el símbolo, según lo que hay en el almacén."""
-    cov = fs.coverage(symbol)
+    """Tramo de cada fase para el símbolo, según lo que hay en el almacén (o en el caché de velas si no tiene almacén)."""
+    cov = fs.coverage(symbol) if has_store(symbol) else (_candle_cover(symbol) or {})
     if not cov.get("first"):
         return []
     first = _ms(cov["first"]) + WARM_DAYS * oe.DAY_MS
@@ -212,6 +296,14 @@ def detect_span(symbol, tf, phase, rule, progress=None):
         cached = _spans.get(str(path))
     if cached is not None:
         return cached
+    if not has_store(symbol):
+        # Sin almacén: las velas del caché de App 1 y ningún elemento de order flow
+        span = {"bars": [b for b in candle_bars(symbol, tf) if phase["start"] <= b["t"] < phase["end"]], "events": []}
+        with _lock:
+            _spans[str(path)] = span
+            while len(_spans) > 3:
+                _spans.pop(next(iter(_spans)))
+        return span
     if path.exists():
         with np.load(path, allow_pickle=False) as z:
             bars = [dict(t=int(t), o=float(o), h=float(h), l=float(l), c=float(c), delta=float(d), vol=float(v))
@@ -1013,7 +1105,12 @@ def start(symbol, raw_rule, phase_number, confirm=False):
         return {"success": False, "message": "La regla no tiene elementos conocidos"}
     phase = next((p for p in phases(symbol) if p["phase"] == phase_number), None)
     if phase is None or not phase["available"]:
-        return {"success": False, "message": "El almacén de trades no cubre esa fase para este símbolo"}
+        return {"success": False, "message": "No hay datos de esa fase para este símbolo"}
+    if not has_store(symbol):
+        codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
+        if codes - set(CANDLE_CODES):
+            return {"success": False, "message": f"{symbol} no tiene almacén de trades: aquí solo se pueden usar {', '.join(CANDLE_CODES)}. "
+                                                 f"Quita {', '.join(sorted(codes - set(CANDLE_CODES)))} de la regla"}
     info = gate(symbol, rule, phase_number)
     if info["blocked"]:
         return {"success": False, "message": info["blocked"], "gate": info}
@@ -1056,7 +1153,7 @@ def sensitivity(symbol, raw_rule):
     phase = next((p for p in phases(symbol) if p["phase"] == 1), None)
     if rule is None or phase is None or not phase["available"]:
         return {"success": False, "message": "Regla o fase no válidas"}
-    if not _span_path(symbol, rule["tf"], phase, rule).exists():
+    if has_store(symbol) and not _span_path(symbol, rule["tf"], phase, rule).exists():
         return {"success": False, "message": "Corre primero la regla en la fase 1"}
     span = detect_span(symbol, rule["tf"], phase, rule)
     table = measures.table_for(symbol) if rule["filters"] else None

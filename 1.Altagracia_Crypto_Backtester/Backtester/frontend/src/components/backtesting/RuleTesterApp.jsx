@@ -10,7 +10,7 @@ import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings'
 import { lastClosedIndex } from './replayClock';
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
-  fmtPct, fmtR, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
+  fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
 import '../../rule_tester.css';
@@ -438,11 +438,19 @@ const RuleTesterApp = () => {
         <div className="rt-chips">
           {(info?.elements || []).map(e => (
             <button key={e.code} type="button" className={`rt-chip${rule.codes.includes(e.code) ? ' on' : ''}`} onClick={() => toggleCode(e.code)}
+              disabled={!!info?.storeless && !info.candleCodes.includes(e.code) && !rule.codes.includes(e.code)}
+              style={info?.storeless && !info.candleCodes.includes(e.code) ? { opacity: 0.4 } : undefined}
               title={`${e.name}${e.volume ? ' · solo en velas de mucho volumen' : ''}${e.flow ? ' · necesita el almacén de flujo' : ''}${e.code === 'LIQ' ? ' · el precio pasa un swing que coincide con una zona del indicador Liquidaciones' : ''}${e.code === 'VH' ? ' · vela con el doble del volumen normal de su hora, hacia su color' : ''}`}>
               {e.code} {e.name}
             </button>
           ))}
         </div>
+        {info?.storeless && (
+          <div className="rt-note" style={{ marginTop: 4 }}>
+            {symbol} no tiene almacén de trades: la regla corre sobre las velas guardadas y solo valen {info.candleCodes.join(', ')}.
+            {rule.codes.some(code => !info.candleCodes.includes(code)) && ' Quita de la regla los demás elementos para poder correrla.'}
+          </div>
+        )}
         {rule.codes.length > 1 && (
           <div className="rt-row" style={{ marginTop: 6 }}>
             <select value={rule.mode} onChange={(e) => patch({ mode: e.target.value })}>
@@ -967,7 +975,12 @@ const RuleTesterApp = () => {
     <div className="rt-root">
       <div className="rt-head">
         <a className="rt-btn" href={window.location.pathname} title="Volver al menú de inicio de App 1" style={{ textDecoration: 'none' }}>← Inicio</a>
-        <strong>{symbol}</strong>
+        {info?.symbols?.length > 1 ? (
+          <select value={symbol} title="Moneda. Solo BTC tiene los elementos de order flow; en las demás valen CC, VH y LIQ"
+            onChange={(e) => { window.location.search = `?${TESTER_PARAM}=1&symbol=${e.target.value}`; }} style={{ fontWeight: 600 }}>
+            {[...new Set([symbol, ...info.symbols])].map(name => <option key={name} value={name}>{name}</option>)}
+          </select>
+        ) : <strong>{symbol}</strong>}
         <span style={{ opacity: 0.7 }}>Backtesting global</span>
         <div style={{ display: 'flex', gap: 2, marginLeft: 8 }}>
           {(info?.phases || []).map(p => (
