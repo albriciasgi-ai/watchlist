@@ -728,6 +728,16 @@ const RuleTesterApp = () => {
           )}
         </>
       )}
+      {result.vpControl && (
+        <div className="rt-group">
+          <h4>¿Aporta el perfil?</h4>
+          <div className="rt-note">
+            La misma regla con los perfiles desplazados al azar (cada sesión movida entre 30% y 100% de su rango, {result.vpControl.runs} corridas juntas):
+            {' '}{result.vpControl.n ?? 0} trades{result.vpControl.n ? <>, acierto {fmtPct(result.vpControl.winRate)}, <R value={result.vpControl.avgR} digits={3} /> R por trade</> : null}.
+            {result.vpControl.edge && <> Diferencia a favor del perfil real: <R value={result.vpControl.edge.r} digits={3} /> R (de {result.vpControl.edge.low} a {result.vpControl.edge.high}). {result.vpControl.edge.clear ? 'Se distingue: el lugar del volumen importa.' : 'No se distingue: con niveles puestos en cualquier parte da lo mismo.'}</>}
+          </div>
+        </div>
+      )}
       {result.control && (
         <div className="rt-group">
           <h4>¿Aportan las liquidaciones?</h4>

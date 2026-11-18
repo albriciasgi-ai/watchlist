@@ -159,3 +159,23 @@ def test_las_dos_ordenes_del_rango_se_toman_por_orden_de_llenado(monkeypatch):
     monkeypatch.setattr(rt, "_vp_levels", lambda *a: {0: {**WIDE[0], "shape": "P"}})
     fresh = {"bars": list(span["bars"]), "events": []}  # Los elementos de un tramo quedan en memoria: otro tramo los recalcula
     assert rt.run("X", rule, fresh, PHASE, None, base=False)["trades"] == []
+
+
+def test_el_control_desplaza_cada_sesion_entera_y_no_cambia_su_forma():
+    moved = vp.shifted(WIDE, 1)[0]
+    offset = moved["poc"] - WIDE[0]["poc"]
+    assert 0.3 * 8 <= abs(offset) <= 1.0 * 8 and moved["shape"] == "D"
+    assert all(moved[k] - WIDE[0][k] == pytest.approx(offset) for k in ("vah", "val", "high", "low"))
+    assert vp.shifted(WIDE, 1) == vp.shifted(WIDE, 1) and vp.shifted(WIDE, 1) != vp.shifted(WIDE, 2)
+
+
+def test_el_informe_trae_el_control_con_perfiles_desplazados(monkeypatch):
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    monkeypatch.setattr(rt, "_vp_levels", lambda *a: WIDE)
+    today = [100] * 10 + [(100, 102.4, 99.9, 102.2)] + [102.2] * 9 + [(102.2, 102.3, 99.8, 100)] + [100] * 75
+    span = {"bars": day([100] * 96, start=0) + day(today), "events": []}
+    rule = rt.clean_rule({"name": "V", "tf": TF, "recipe": {"slots": [{"codes": ["VE"]}]}, "vp": {"hours": 24, "veEntry": "resting"},
+                          "stop": {"type": "zone", "buffer": 0.1}, "exit": {"targetAt": "poc"}, "cooldown": 0})
+    result = rt.run("X", rule, span, PHASE, None, base=True)
+    assert len(result["trades"]) == 1 and result["vpControl"]["runs"] == rt.VP_CONTROL_RUNS and "n" in result["vpControl"]
+    assert "vpControl" not in rt.run("X", rt.clean_rule({"name": "E", "tf": TF, "recipe": {"slots": [{"codes": ["EX"]}]}}), span, PHASE, None, base=True)

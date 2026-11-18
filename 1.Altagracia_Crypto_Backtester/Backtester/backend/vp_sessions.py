@@ -134,6 +134,24 @@ def sessions(symbol, hours, start_ms, end_ms, rows=50, share=0.7):
     return out
 
 
+SHIFT_RANGE = (0.3, 1.0)   # Control: cada sesión se desplaza entre estas partes de su rango, arriba o abajo
+
+
+def shifted(levels, seed):
+    """
+    Los mismos perfiles en precios donde no estuvo el volumen: los niveles de cada sesión (POC, VAH, VAL, máximo y
+    mínimo) se mueven juntos, arriba o abajo al azar, entre SHIFT_RANGE de su rango. Conservan su forma y sus
+    distancias, así una regla da lo mismo con ellos solo si el lugar del volumen no importa.
+    """
+    import random
+    out = {}
+    for start, lv in levels.items():
+        rng = random.Random(f"{seed}:{start}")
+        offset = rng.choice((-1, 1)) * rng.uniform(*SHIFT_RANGE) * (lv["high"] - lv["low"])
+        out[start] = {**lv, **{k: round(lv[k] + offset, 8) for k in ("poc", "vah", "val", "high", "low")}}
+    return out
+
+
 def events(bars, tf, levels, hours, accept=2, fail_bars=3, ve_entry="touch"):
     """VR, VF, VX y VE de las velas, con la forma de los eventos de of_elements más `info` (los niveles usados)."""
     tf_ms = int(tf) * 60000

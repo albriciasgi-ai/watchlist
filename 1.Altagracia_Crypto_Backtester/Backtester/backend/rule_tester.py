@@ -50,6 +50,7 @@ MAX_FILTERS = 3
 MAX_WINDOW = 10           # Un gatillo puede llegar hasta 10 velas después del barrido
 VP_CODES = ("VR", "VF", "VX", "VE")  # Contra el valor de la sesión anterior (vp_sessions.py)
 EXTRA_CODES = ("LIQ", "VH") + VP_CODES  # Elementos del probador que no son de of_elements
+VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
 _jobs = {}
@@ -607,13 +608,13 @@ def _va_gap_ok(min_gap, match, zones, index, ctx, tf_ms):
 _extra = {}
 
 
-def _extra_events(symbol, rule, span, ctx, control=False):
+def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """LIQ y VH de liq_sweeps para las velas de la fase. control: los barridos sin liquidación pasan por LIQ."""
     codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
     if not codes & set(EXTRA_CODES):
         return []
     if not codes & {"LIQ", "VH"}:
-        return _vp_events(symbol, rule, span)
+        return _vp_events(symbol, rule, span, vp_shift)
     liq = {"what": "swing", "variant": "pierce", "swingBars": 5, "reclaimBars": 3, **(rule.get("liq") or {})}
     key = (id(span["bars"]), symbol, rule["tf"], liq["what"], liq["variant"], liq["swingBars"], liq["reclaimBars"])
     with _lock:
@@ -627,7 +628,7 @@ def _extra_events(symbol, rule, span, ctx, control=False):
                 _extra.pop(next(iter(_extra)))
     wanted = "SWP" if control else "LIQ"
     out = [{**e, "code": "LIQ"} if e["code"] == wanted else e for e in found if e["code"] in (wanted, "VH")]
-    return out + _vp_events(symbol, rule, span)
+    return out + _vp_events(symbol, rule, span, vp_shift)
 
 
 def _vp_levels(symbol, hours, rows, share, start_ms, end_ms):
@@ -646,18 +647,20 @@ def _vp_levels(symbol, hours, rows, share, start_ms, end_ms):
     return levels
 
 
-def _vp_events(symbol, rule, span):
-    """VR, VF y VX contra el valor de la sesión anterior."""
+def _vp_events(symbol, rule, span, shift=None):
+    """VR, VF, VX y VE contra el valor de la sesión anterior. shift: semilla del control con los perfiles desplazados."""
     vp = rule.get("vp")
     bars = span["bars"]
     if not vp or not bars:
         return []
-    key = (id(bars), symbol, rule["tf"], "vp", vp["hours"], vp["accept"], vp["failBars"], vp["rows"], vp["share"], vp.get("veEntry"))
+    key = (id(bars), symbol, rule["tf"], "vp", vp["hours"], vp["accept"], vp["failBars"], vp["rows"], vp["share"], vp.get("veEntry"), shift)
     with _lock:
         found = _extra.get(key)
     if found is None:
         tf_ms = rule["tf"] * 60000
         levels = _vp_levels(symbol, vp["hours"], vp["rows"], vp["share"], bars[0]["t"], bars[-1]["t"] + tf_ms)
+        if shift is not None:
+            levels = vp_sessions.shifted(levels, shift)
         accept = max(1, round(vp["accept"] / rule["tf"]))
         found = vp_sessions.events(bars, rule["tf"], levels, vp["hours"], accept, vp["failBars"], vp.get("veEntry") or "touch")
         with _lock:
@@ -668,14 +671,14 @@ def _vp_events(symbol, rule, span):
     return [e for e in found if e["info"].get("shape") in shapes] if shapes else found
 
 
-def run(symbol, rule, span, phase, table=None, base=True, control=False):
+def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shift=None):
     """La regla sobre las velas y elementos de la fase. Devuelve resumen, cortes y cada trade."""
     bars, events, tf = span["bars"], span["events"], rule["tf"]
     tf_ms = tf * 60000
     if len(bars) < 100:
         return {"success": False, "message": "Sin velas suficientes en el almacén para esa fase"}
     ctx = _context(symbol, tf, bars)
-    extra = _extra_events(symbol, rule, span, ctx, control)
+    extra = _extra_events(symbol, rule, span, ctx, control, vp_shift)
     events = events + extra if extra else events
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
     vp_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in VP_CODES}
@@ -803,6 +806,18 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
                                              "clear": abs(edge) > 1.96 * se and not s["smallSample"] and not c["smallSample"]}
             first = liq_sweeps.first_day(symbol)
             result["liqFrom"] = _iso(first) if first else None
+    if base and rule.get("vp") and not control and vp_shift is None:
+        # La misma regla con los perfiles desplazados al azar: dice si importa dónde estuvo el volumen
+        pooled = []
+        for seed in range(1, VP_CONTROL_RUNS + 1):
+            pooled += run(symbol, rule, span, phase, table, base=False, vp_shift=seed).get("trades") or []
+        s, c = result["summary"], summary(sorted(pooled, key=lambda t: t["exit_t"]))
+        result["vpControl"] = {"runs": VP_CONTROL_RUNS, **{key: c.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "smallSample")}}
+        if s.get("n") and c.get("n"):
+            edge = s["avgR"] - c["avgR"]
+            se = math.sqrt(s["seR"] ** 2 + c["seR"] ** 2)
+            result["vpControl"]["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
+                                           "clear": abs(edge) > 1.96 * se and not s["smallSample"] and not c["smallSample"]}
     result["winnersVsLosers"] = _winners_vs_losers(trades)
     return result
 
