@@ -760,25 +760,29 @@ def report(symbol=None, blind="all", include_rewound=False):
 
 def blind_start(symbol, first_ms, last_ms):
     """
-    Fecha de inicio al azar dentro del tramo sin huecos del almacen, lejos de sus bordes y de las
+    Fecha de inicio al azar dentro de un tramo sin huecos del almacen, lejos de sus bordes y de las
     fechas ocultas ya usadas. Queda registrada para no repetirla.
+
+    Vale cualquier tramo sin huecos, no solo el ultimo: un solo dia que falte cerca del final (el 14/11/2026 en BTC)
+    dejaba como unico tramo los dos dias siguientes, y ninguna fecha servia.
     """
-    span = footprint_store.continuous_days(symbol)
-    if span is None:
+    runs = footprint_store.continuous_runs(symbol)
+    if not runs:
         return {"timestamp": None, "reason": "No hay trades descargados para este símbolo."}
 
     def as_ms(day):
         return int(dt.datetime(day.year, day.month, day.day, tzinfo=dt.timezone.utc).timestamp() * 1000)
 
     day_ms = 86400000
-    low = max(as_ms(span[0]), first_ms) + BLIND_MARGIN_START_DAYS * day_ms
-    high = min(as_ms(span[1]), last_ms) - BLIND_MARGIN_END_DAYS * day_ms
-
     used = [event["time"] for event in _events() if event.get("event") == "blind" and event.get("symbol") == symbol]
-    days = [
-        day for day in range(low - low % day_ms + day_ms, high, day_ms)
-        if all(abs(day - time) > BLIND_MIN_SEPARATION_DAYS * day_ms for time in used)
-    ]
+    days = []
+    for span in runs:
+        low = max(as_ms(span[0]), first_ms) + BLIND_MARGIN_START_DAYS * day_ms
+        high = min(as_ms(span[1]), last_ms) - BLIND_MARGIN_END_DAYS * day_ms
+        days.extend(
+            day for day in range(low - low % day_ms + day_ms, high, day_ms)
+            if all(abs(day - time) > BLIND_MIN_SEPARATION_DAYS * day_ms for time in used)
+        )
     if not days:
         return {"timestamp": None, "reason": "No quedan fechas sin usar en los datos descargados."}
 

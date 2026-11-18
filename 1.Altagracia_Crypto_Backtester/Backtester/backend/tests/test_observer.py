@@ -504,6 +504,7 @@ def test_fecha_sin_trades(real_store):
 def fake_span(monkeypatch, first, last):
     import datetime as dt
     monkeypatch.setattr(footprint_store, "continuous_days", lambda symbol: (dt.date.fromisoformat(first), dt.date.fromisoformat(last)))
+    monkeypatch.setattr(footprint_store, "continuous_runs", lambda symbol: [(dt.date.fromisoformat(first), dt.date.fromisoformat(last))])
 
 
 def test_fecha_oculta_respeta_los_margenes(journal, monkeypatch):
@@ -535,8 +536,32 @@ def test_fecha_oculta_respeta_las_velas_cargadas(journal, monkeypatch):
     assert result["timestamp"] >= first + 45 * DAY
 
 
+def test_fecha_oculta_usa_los_tramos_anteriores_a_un_hueco(journal, monkeypatch):
+    import datetime as dt
+    # Falta un día cerca del final: el último tramo sin huecos mide dos días y no alcanza para ninguna fecha
+    runs = [(dt.date(2025, 1, 1), dt.date(2026, 1, 1)), (dt.date(2026, 1, 3), dt.date(2026, 1, 4))]
+    monkeypatch.setattr(footprint_store, "continuous_runs", lambda symbol: runs)
+    start = 1735689600000  # 2025-01-01
+    for _ in range(20):
+        result = observer.blind_start("BTCUSDT", 0, 1 << 60)
+        assert start + 45 * DAY <= result["timestamp"] <= start + (365 - 14) * DAY
+        (journal / observer.JOURNAL_NAME).unlink()
+
+
+def test_tramos_sin_huecos_del_almacen(tmp_path, monkeypatch):
+    import datetime as dt
+    monkeypatch.setattr(footprint_store, "STORE_DIR", tmp_path)
+    for day in ("2026-11-12", "2026-11-13", "2026-11-15", "2026-11-16"):
+        path = tmp_path / "X" / "2026" / f"X_{day}.npz"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"")
+    assert footprint_store.continuous_runs("X") == [(dt.date(2026, 11, 12), dt.date(2026, 11, 13)), (dt.date(2026, 11, 15), dt.date(2026, 11, 16))]
+    assert footprint_store.continuous_days("X") == (dt.date(2026, 11, 15), dt.date(2026, 11, 16)) and footprint_store.continuous_runs("Y") == []
+
+
 def test_fecha_oculta_sin_almacen(journal, monkeypatch):
     monkeypatch.setattr(footprint_store, "continuous_days", lambda symbol: None)
+    monkeypatch.setattr(footprint_store, "continuous_runs", lambda symbol: [])
     assert observer.blind_start("BTCUSDT", 0, 1)["timestamp"] is None
 
 

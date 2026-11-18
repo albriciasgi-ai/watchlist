@@ -127,6 +127,18 @@ def continuous_days(symbol):
     return first, days[-1]
 
 
+def continuous_runs(symbol):
+    """Todos los tramos sin huecos del almacen, como (primer dia, ultimo dia), del mas viejo al mas nuevo."""
+    days = sorted(dt.date.fromisoformat(p.stem.rsplit("_", 1)[1]) for p in (STORE_DIR / symbol).glob("*/*.npz"))
+    runs = []
+    for day in days:
+        if runs and (day - runs[-1][1]).days <= 1:
+            runs[-1][1] = day
+        else:
+            runs.append([day, day])
+    return [tuple(run) for run in runs]
+
+
 def auto_step(price, interval_minutes, cell):
     """Step legible para el marco: valor redondo y multiplo de la celda guardada."""
     target = price * STEP_BY_INTERVAL.get(interval_minutes, 0.000125)
