@@ -185,6 +185,37 @@ export function tradeBoxes(trades = [], tfMinutes = 15) {
   }));
 }
 
+const usdShort = (usd) => (usd >= 1e6 ? `${(usd / 1e6).toFixed(1)}M` : `${Math.round(usd / 1e3)}K`);
+
+/**
+ * Lo que la regla vio en un trade, para dibujarlo al elegirlo (MiniChart, getTradeBands): las zonas de liquidaciones
+ * que había en el barrido (la barrida, resaltada), el nivel pasado y dónde estaba cada elemento de la regla.
+ * Las corridas anteriores al 18/11/2026 no guardaron esto: devuelve [].
+ */
+export function tradeBands(trade, tfMinutes = 15, names = {}) {
+  if (!trade) return [];
+  const tf = tfMinutes * 60000;
+  const end = Math.max(trade.exit_t, trade.entry_t + tf);
+  const bands = [];
+  const liq = trade.liq;
+  if (liq?.zones && Number.isFinite(liq.t)) {
+    const start = Math.min(liq.swingT ?? liq.t, liq.t) - 30 * tf;
+    for (const [low, high, usd, side, swept] of liq.zones) {
+      bands.push({
+        kind: side === 'long' ? 'liqLong' : 'liqShort', low, high, start, end, strong: !!swept,
+        label: `${swept ? 'Barrida · ' : ''}${usdShort(usd)} ${side === 'long' ? 'largos' : 'cortos'} liquidados`
+      });
+    }
+    bands.push({ kind: 'level', price: liq.swing, start: liq.swingT ?? start, end, label: liq.what === 'zone' ? 'Borde pasado' : 'Swing barrido' });
+    bands.push({ kind: 'mark', time: liq.t, price: liq.extreme, label: 'Barrido' });
+  }
+  for (const mark of trade.marks || []) {
+    if (mark.code === 'LIQ') continue;
+    bands.push({ kind: 'element', low: mark.lo, high: mark.hi, start: mark.t, end, strong: false, label: `${mark.code} ${names[mark.code] || ''}`.trim() });
+  }
+  return bands;
+}
+
 export const fmtR = (value, digits = 2) => (value === null || value === undefined ? '—' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}`);
 export const fmtPct = (value) => (value === null || value === undefined ? '—' : `${Number(value).toFixed(1)}%`);
 

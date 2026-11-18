@@ -98,7 +98,7 @@ def build_zones(low, high, long_usd, short_usd, known, width):
         if long_total + short_total <= 0:
             continue
         mask = (keys - base >= lo) & (keys - base <= hi)
-        out.append({"low": (lo + base) * width, "high": (hi + base + 1) * width, "long": long_total, "short": short_total,
+        out.append({"low": float(f"{(lo + base) * width:.10g}"), "high": float(f"{(hi + base + 1) * width:.10g}"), "long": long_total, "short": short_total,
                     "total": long_total + short_total, "side": "long" if long_total >= short_total else "short",
                     "last": int(known[mask].max()), "first": int(known[mask].min())})
     out.sort(key=lambda z: -z["total"])
@@ -176,11 +176,17 @@ def zone_sweeps(symbol, bars, reclaim_bars=3, sources=None):
                     armed[key] = False
                     r = next((x for x in range(i, min(n, i + reclaim_bars + 1)) if (closes[x] - level) * d > 0), None)
                     span = bars[i:(r if r is not None else i) + 1]
-                    out.append({"i": i, "dir": d, "price": level, "r": r, "zone": zone, "source": source,
+                    out.append({"i": i, "dir": d, "price": level, "r": r, "zone": zone, "source": source, "zones": zones,
                                 "extreme": min(b["l"] for b in span) if d > 0 else max(b["h"] for b in span)})
                 elif clear:
                     armed[key] = True
     return out
+
+
+def _zone_rows(zones, swept=None):
+    """Las zonas a la vista en el barrido, para dibujarlas con el trade: [bajo, alto, usd, lado, barrida]."""
+    return [[round(z["low"], 8), round(z["high"], 8), round(z["total"]), z["side"], z is swept or (swept is not None and z["low"] == swept["low"])]
+            for z in zones]
 
 
 def _is_pivot(window, value, sign):
@@ -274,9 +280,11 @@ def events(symbol, bars, tf, swing_bars=5, variant="pierce", reclaim_bars=3, atr
             extreme = best["extreme"] if variant == "reclaim" else (bar["l"] if d > 0 else bar["h"])
             unit = atr[i] if atr is not None and atr[i] > 0 else None
             info = {"swing": best["price"], "swingAgeBars": i - best["j"], "extreme": extreme, "source": source,
-                    "depthAtr": round(abs(best["price"] - extreme) / unit, 3) if unit else None, "swept": len(side)}
+                    "depthAtr": round(abs(best["price"] - extreme) / unit, 3) if unit else None, "swept": len(side),
+                    "t": bar["t"], "swingT": bars[best["j"]]["t"]}
             if best_zone is not None:
-                info.update(usd=round(best_zone["total"]), longUsd=round(best_zone["long"]), shortUsd=round(best_zone["short"]),
+                info.update(zoneLow=best_zone["low"], zoneHigh=best_zone["high"], zones=_zone_rows(zones, best_zone),
+                            usd=round(best_zone["total"]), longUsd=round(best_zone["long"]), shortUsd=round(best_zone["short"]),
                             zoneSide=best_zone["side"], share=round(best_zone["share"], 3),
                             zoneAgeDays=round((bar["t"] - best_zone["last"]) / DAY_MS, 2))
             out.append({"code": code, "dir": d, "t": bar["t"], "known": bars[last]["t"] + tf_ms,
@@ -292,7 +300,7 @@ def events(symbol, bars, tf, swing_bars=5, variant="pierce", reclaim_bars=3, atr
             unit = atr[i] if atr is not None and atr[i] > 0 else None
             info = {"swing": s["price"], "swingAgeBars": None, "extreme": extreme, "source": s["source"], "what": "zone",
                     "depthAtr": round(abs(s["price"] - extreme) / unit, 3) if unit else None, "swept": 1,
-                    "zoneLow": zone["low"], "zoneHigh": zone["high"],
+                    "zoneLow": zone["low"], "zoneHigh": zone["high"], "t": bars[i]["t"], "zones": _zone_rows(s["zones"], zone),
                     "usd": round(zone["total"]), "longUsd": round(zone["long"]), "shortUsd": round(zone["short"]),
                     "zoneSide": zone["side"], "share": round(zone["share"], 3),
                     "zoneAgeDays": round((bars[i]["t"] - zone["last"]) / DAY_MS, 2)}

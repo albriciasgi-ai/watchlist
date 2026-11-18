@@ -511,7 +511,7 @@ def _va_gap_ok(min_gap, match, zones, index, ctx, tf_ms):
         i = index.get(t)  # El voto cuenta en la vela que abandona el área
         if i is None or not ctx["atr"][i] > 0:
             return False
-        for lo, hi in zones.get((code, match["dir"], t + tf_ms), []):
+        for lo, hi, _ in zones.get((code, match["dir"], t + tf_ms), []):
             gap = ctx["L"][i] - hi if match["dir"] > 0 else lo - ctx["H"][i]
             if gap / ctx["atr"][i] < min_gap:
                 return False
@@ -555,7 +555,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
     for e in events:
-        zones.setdefault((e["code"], e["dir"], e["known"]), []).append((e["lo"], e["hi"]))
+        zones.setdefault((e["code"], e["dir"], e["known"]), []).append((e["lo"], e["hi"], e["t"]))
     matches = os_.match_recipes(bars, events, [rule["recipe"]], tf)
     matches.sort(key=lambda m: m["known"])
     flip = -1 if rule["invert"] else 1
@@ -606,6 +606,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False):
         trade["present"] = sorted({c for j in range(lo, k + 1) for c in votes[m["dir"]][j]})
         trade["against"] = sorted({c for j in range(lo, k + 1) for c in votes[-m["dir"]][j]})
         trade["zone"] = [round(zone[0], 8), round(zone[1], 8)] if zone else None
+        # Dónde estaba cada elemento de la regla, para dibujarlo con el trade
+        trade["marks"] = [{"code": code, "t": z[2], "lo": round(z[0], 8), "hi": round(z[1], 8)}
+                          for code, t in m["votes"] for z in zones.get((code, m["dir"], t + tf_ms), [])]
         swept = next((liq_info[(m["dir"], t + tf_ms)] for code, t in m["votes"]
                       if code == "LIQ" and (m["dir"], t + tf_ms) in liq_info), None)
         if swept is not None:

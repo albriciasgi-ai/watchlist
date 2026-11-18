@@ -210,6 +210,7 @@ const MiniChart = forwardRef(({
   oiMode,
   getTradeBoundaries,
   getTradeBoxes = null, // Cajas TP/SL de los trades, para el 2.º gráfico: { side, entry, stop, target, start, end }
+  getTradeBands = null, // Lo que una regla vio en el trade elegido (probador): franjas, nivel y marca. Ver tradeBands() en ruleTester.js
   getPositionLines = null, // Posiciones y órdenes reales (suite en vivo), ver positionLines.js. App 1 no lo pasa
   liveRedrawMs = null, // En vivo: a lo sumo un dibujo por precio cada tantos ms (Watchlist de la suite). Sin él, uno por cuadro
   viewOnly = false, // Solo para mirar (Watchlist de la suite): los dibujos se ven pero no se eligen, mueven, editan ni borran, y un clic no abre el menú de niveles. El arrastre mueve las velas y la rueda acerca
@@ -1762,6 +1763,70 @@ const MiniChart = forwardRef(({
         console.error(`[${symbol}] Error rendering drawings:`, error);
         // No propagar el error para evitar crash de la aplicación
       }
+    }
+
+    // Lo que la regla vio en el trade elegido (probador de reglas): debajo de las cajas
+    const tradeBands = getTradeBands?.() || [];
+    if (tradeBands.length > 0 && scaleConverterRef.current && visibleCandles.length > 0) {
+      const { priceToY, timeToX } = scaleConverterRef.current;
+      const viewStart = visibleCandles[0].timestamp;
+      const viewEnd = visibleCandles[visibleCandles.length - 1].timestamp + TF_MS[interval];
+      const colors = { liqLong: '233, 30, 99', liqShort: '3, 155, 229', element: '41, 98, 255' };
+      const ink = isNewTheme() ? THEME.text : '#222';
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(marginLeft, marginTop, chartWidth, priceChartHeight);
+      ctx.clip();
+      ctx.font = '11px "Segoe UI", Arial, sans-serif';
+      ctx.textBaseline = 'middle';
+      try {
+        for (const band of tradeBands) {
+          if (band.kind === 'mark') {
+            if (band.time < viewStart || band.time > viewEnd) continue;
+            const x = timeToX(band.time + TF_MS[interval] / 2);
+            const y = priceToY(band.price);
+            ctx.strokeStyle = ink;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(x, y, 6, 0, Math.PI * 2);
+            ctx.stroke();
+            continue;
+          }
+          if (band.end < viewStart || band.start > viewEnd) continue;
+          const x1 = Math.max(marginLeft, timeToX(Math.max(band.start, viewStart)));
+          const x2 = Math.min(marginLeft + chartWidth, timeToX(Math.min(band.end, viewEnd)));
+          if (!(x2 > x1)) continue;
+          if (band.kind === 'level') {
+            const y = Math.round(priceToY(band.price)) + 0.5;
+            ctx.strokeStyle = ink;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 4]);
+            ctx.beginPath();
+            ctx.moveTo(x1, y);
+            ctx.lineTo(x2, y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = ink;
+            ctx.fillText(band.label, x1 + 4, y - 8);
+            continue;
+          }
+          const rgb = colors[band.kind] || colors.element;
+          const top = priceToY(band.high);
+          const height = Math.max(2, priceToY(band.low) - top);
+          ctx.fillStyle = `rgba(${rgb}, ${band.strong ? 0.32 : 0.12})`;
+          ctx.fillRect(x1, top, x2 - x1, height);
+          ctx.strokeStyle = `rgba(${rgb}, ${band.strong ? 0.95 : 0.45})`;
+          ctx.lineWidth = band.strong ? 1.5 : 1;
+          ctx.strokeRect(x1 + 0.5, Math.round(top) + 0.5, x2 - x1 - 1, Math.round(height));
+          ctx.fillStyle = ink;
+          ctx.globalAlpha = band.strong ? 1 : 0.7;
+          ctx.fillText(band.label, x1 + 4, top + height / 2);
+          ctx.globalAlpha = 1;
+        }
+      } catch (error) {
+        // Una franja que no se puede ubicar en este marco no detiene el dibujo
+      }
+      ctx.restore();
     }
 
     // Cajas TP/SL de los trades que llegan de afuera (el 2.º gráfico no tiene los dibujos de la principal)

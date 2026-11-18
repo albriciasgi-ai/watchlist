@@ -10,7 +10,7 @@ import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings'
 import { lastClosedIndex } from './replayClock';
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, sequenceParts, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
-  fmtPct, fmtR, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBoxes
+  fmtPct, fmtR, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
 import '../../rule_tester.css';
@@ -156,6 +156,7 @@ const RuleTesterApp = () => {
   const marketRef = useRef(null);
   const boxesRef = useRef([]);
   const linesRef = useRef([]);
+  const bandsRef = useRef([]);
 
   const result = results[phase] || null;
   const phaseInfo = info?.phases?.find(p => p.phase === phase) || null;
@@ -311,11 +312,14 @@ const RuleTesterApp = () => {
   useEffect(() => {
     if (ordersView) {
       boxesRef.current = orderViews.map(item => item.view.box).filter(Boolean);
+      bandsRef.current = [];
       linesRef.current = orderViews.filter(item => item.order.id === pickedOrder && item.view.line).map(item => item.view.line);
     } else {
       boxesRef.current = chartOpen && result ? tradeBoxes(trades, result.rule.tf) : [];
       const trade = trades.find(t => t.n === selected);
       linesRef.current = chartOpen && trade ? [{ entryTime: trade.entry_t, exitTime: trade.exit_t, tradeNumber: trade.n }] : [];
+      // Lo que la regla vio en el trade elegido: zonas de liquidaciones de ese momento y dónde estaba cada elemento
+      bandsRef.current = chartOpen && trade ? tradeBands(trade, result.rule.tf, names) : [];
     }
     chartRef.current?.redraw?.();
   }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -353,6 +357,7 @@ const RuleTesterApp = () => {
   }, [tab, sorted, selected, pick]);
 
   const getTradeBoxes = useCallback(() => boxesRef.current, []);
+  const getTradeBands = useCallback(() => bandsRef.current, []);
   const getTradeBoundaries = useCallback(() => linesRef.current, []);
   // Lo que deja ver el gráfico: la fase 1 completa; la 2 y la 3 solo hasta su inicio mientras no se pida verlas
   const chartTime = ordersView && lastEnd ? lastEnd : (phaseInfo ? (chartOpen ? phaseInfo.end : phaseInfo.start) : null);
@@ -470,7 +475,7 @@ const RuleTesterApp = () => {
             </div>
             <div className="rt-note">
               {rule.liqWhat === 'swing' ? 'Barrer un mínimo con liquidaciones es alcista; un máximo, bajista. ' : 'Bajar a través de una zona es alcista; subir a través de ella, bajista. La zona debe existir con el precio fuera de ella antes del barrido. '}
-              El gráfico dibuja las zonas del final de la fase, no las que había en cada trade: las de ese momento están en el detalle del trade. {liqFrom ? `Hay liquidaciones desde el ${liqFrom}: antes no sale ningún barrido. ` : 'Este símbolo no tiene liquidaciones descargadas. '}
+              Al elegir un trade, el gráfico dibuja las zonas que había en su barrido (la barrida, resaltada). El indicador Liquidaciones, en cambio, muestra las del final de la fase. {liqFrom ? `Hay liquidaciones desde el ${liqFrom}: antes no sale ningún barrido. ` : 'Este símbolo no tiene liquidaciones descargadas. '}
               Para el stop detrás del barrido usa "Extremo de la vela del elemento".
             </div>
           </>
@@ -939,6 +944,7 @@ const RuleTesterApp = () => {
                 onToolChange={setTool}
                 getTradeBoundaries={getTradeBoundaries}
                 getTradeBoxes={getTradeBoxes}
+                getTradeBands={getTradeBands}
                 onRequestPause={noop}
                 onRequestTimeChange={noop}
                 onDrawingsChange={noop}
