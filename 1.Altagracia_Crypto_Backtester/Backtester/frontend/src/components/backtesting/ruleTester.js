@@ -41,7 +41,7 @@ export function defaultRule() {
     // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
     // Filtros de línea: off, side (cierra del lado a favor) o touch (además la mecha la toca)
-    vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, emaMode: 'off', emaPeriod: 14, emaSlope: false,
+    vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, vwapMaxDevOn: false, vwapMaxDev: 1, emaMode: 'off', emaPeriod: 14, emaSlope: false,
     // Volumen de Respuesta: ATR con que gira el tramo, veces el volumen de su hora, flecha a favor o en contra del tramo, y rombo como giro o para seguir
     rvLeg: 2, rvSpike: 2, rvArrow: 'with', rvRombo: 'turn',
     // Gaussian Channel: periodo y polos del filtro, ancho de las bandas, canal a favor y cómo sale por el canal
@@ -102,7 +102,7 @@ export function toBackendRule(rule) {
     } : {}),
     ...(rule.vwapMode !== 'off' || rule.emaMode !== 'off' ? {
       lines: [
-        ...(['side', 'touch'].includes(rule.vwapMode) ? [{ type: 'vwap', period: number(rule.vwapPeriod, 200), mode: rule.vwapMode, slope: !!rule.vwapSlope }] : []),
+        ...(['side', 'touch'].includes(rule.vwapMode) ? [{ type: 'vwap', period: number(rule.vwapPeriod, 200), mode: rule.vwapMode, slope: !!rule.vwapSlope, ...(rule.vwapMaxDevOn ? { maxDev: number(rule.vwapMaxDev, 1) } : {}) }] : []),
         ...(['side', 'touch'].includes(rule.emaMode) ? [{ type: 'ema', period: number(rule.emaPeriod, 14), mode: rule.emaMode, slope: !!rule.emaSlope }] : [])
       ]
     } : {}),
@@ -176,6 +176,7 @@ export function fromBackendRule(saved) {
     patVolume: saved.pat?.minZ != null, patMinZ: saved.pat?.minZ ?? 1, patWick: saved.pat?.wick ?? 2,
     vwapMode: (saved.lines || []).find(l => l.type === 'vwap')?.mode || 'off', vwapPeriod: (saved.lines || []).find(l => l.type === 'vwap')?.period ?? 200,
     vwapSlope: !!(saved.lines || []).find(l => l.type === 'vwap')?.slope,
+    vwapMaxDevOn: (saved.lines || []).find(l => l.type === 'vwap')?.maxDev != null, vwapMaxDev: (saved.lines || []).find(l => l.type === 'vwap')?.maxDev ?? 1,
     emaMode: (saved.lines || []).find(l => l.type === 'ema')?.mode || 'off', emaPeriod: (saved.lines || []).find(l => l.type === 'ema')?.period ?? 14,
     emaSlope: !!(saved.lines || []).find(l => l.type === 'ema')?.slope,
     useHours: !!saved.hours, hoursFrom: saved.hours ? clock(saved.hours.from) : '17:30', hoursTo: saved.hours ? clock(saved.hours.to) : '21:30',
@@ -211,7 +212,7 @@ export function describeRule(saved) {
     + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`
     + `${saved.rv ? ` · tramo ${saved.rv.leg} ATR${codes.includes('RF') ? `, flecha ≥ ${saved.rv.spike}x ${{ with: 'a favor del tramo', against: 'contra el tramo', any: 'de cualquier lado' }[saved.rv.arrow]}` : ''}${codes.includes('RB') ? `, rombo ${saved.rv.rombo === 'follow' ? 'siguiendo el tramo' : 'como giro'}` : ''}` : ''}`
     + `${saved.gc ? ` · canal ${saved.gc.period}, ${saved.gc.poles} polos, ×${saved.gc.mult}${saved.gc.trend ? ', a favor' : ''}` : ''}`
-    + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}`).join('')
+    + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
     + ` · ${saved.entry?.type === 'limit' ? 'limit' : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
@@ -300,6 +301,7 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
   for (const line of trade.lines || []) {
     // Dónde estaba la línea en la vela de la señal
     bands.push({ kind: 'level', price: line.value, start: trade.signal - 20 * tf, end: trade.signal + 2 * tf, label: `${line.type === 'vwap' ? 'VWAP' : 'EMA'} ${line.period}` });
+    if (Number.isFinite(line.limit)) bands.push({ kind: 'level', price: line.limit, start: trade.signal - 20 * tf, end: trade.signal + 2 * tf, label: `VWAP ${line.maxDev} desv.` });
   }
   if (trade.gc) {
     // El canal en la vela de la señal: la banda que se cruzó y la línea central

@@ -150,3 +150,10 @@ def test_control_de_seguir_el_tramo_y_corridas_guardadas_antes(tmp_path, monkeyp
     filled = rt.with_leg_baseline(rt.load_run(run_id))
     assert filled["legBaseline"] == leg and filled["summary"] == result["summary"]
     assert rt.load_run(run_id)["legBaseline"] == leg, "queda guardado para la próxima vez"
+
+def test_los_elementos_en_memoria_no_pasan_de_unas_velas_a_otras():
+    # La clave era id(bars): al soltarse una lista, la de otra moneda podía recibir el mismo id y heredar sus elementos
+    a = [{"t": k, "o": 1.0, "h": 2.0, "l": 0.5, "c": 1.5, "vol": 10.0} for k in range(50)]
+    b = [dict(x, c=1.6) for x in a]
+    assert rt._bars_key(a) == rt._bars_key(list(a)) and rt._bars_key(a) != rt._bars_key(b) and rt._bars_key(a) != rt._bars_key(a[:-1])
+    assert "id(bars)" not in open(rt.__file__, encoding="utf-8").read().replace("`id(bars)`", "")

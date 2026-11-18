@@ -727,6 +727,12 @@ const RuleTesterApp = () => {
             <Check checked={slope} onChange={(value) => patch({ [`${kind}Slope`]: value })} title="La línea sube para un largo o baja para un corto, en las últimas 5 velas">pendiente a favor</Check>
           </div>
         ))}
+        {rule.vwapMode !== 'off' && (
+          <div className="rt-row">
+            <Check checked={rule.vwapMaxDevOn} onChange={(vwapMaxDevOn) => patch({ vwapMaxDevOn })} title="No opera si la vela de la señal abrió más allá de esa banda del VWAP, del lado del trade: sobre la banda de arriba en un largo, bajo la de abajo en un corto. La desviación es la de las bandas del indicador VWAP móvil, con las mismas velas">La vela abre a no más de</Check>
+            <Num value={rule.vwapMaxDev} min={0.1} max={10} step={0.1} disabled={!rule.vwapMaxDevOn} onChange={(vwapMaxDev) => patch({ vwapMaxDev })} /><span>desviaciones del VWAP</span>
+          </div>
+        )}
         <div className="rt-row">
           <Check checked={rule.useHours} onChange={(useHours) => patch({ useHours })} title="Solo se operan las señales que se conocen entre esas horas, en UTC. La hora es la del cierre de la vela de la señal, que es cuando se entra">Solo señales entre las</Check>
           <input type="text" value={rule.hoursFrom} disabled={!rule.useHours} onChange={(e) => patch({ hoursFrom: e.target.value })} style={{ width: 56 }} placeholder="17:30" />

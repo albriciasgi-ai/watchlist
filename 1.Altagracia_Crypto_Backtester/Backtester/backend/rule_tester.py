@@ -284,6 +284,10 @@ def clean_rule(raw):
             # slope: la línea va a favor en las últimas 5 velas
             lines.append({"type": item["type"], "period": int(_num(item.get("period"), 200 if item["type"] == "vwap" else 14, 2, 1000)),
                           "mode": item["mode"], "slope": bool(item.get("slope"))})
+            # maxDev (solo VWAP): la vela de la señal no puede abrir a más de tantas desviaciones del VWAP, del lado del
+            # trade. Solo entra a la regla si se pide: así una regla ya corrida conserva su identidad
+            if item["type"] == "vwap" and item.get("maxDev") not in (None, "", False):
+                lines[-1]["maxDev"] = _num(item.get("maxDev"), 1.0, 0.1, 10.0)
     if lines:
         extra["lines"] = lines
     hours = raw.get("hours") or {}
@@ -761,6 +765,30 @@ def _line(ctx, kind, period):
     return cache[key]
 
 
+def _vwap_dev(ctx, period):
+    """Desviación del VWAP móvil: la del precio típico alrededor del VWAP, pesada por volumen, en sus mismas `period`
+    velas. Es la de las bandas del indicador VWAP en modo rolling. Se suma ventana por ventana: con sumas de todo el
+    historial un tramo tranquilo no alcanza a medirse."""
+    cache = ctx.setdefault("lines", {})
+    key = ("vwapdev", period)
+    if key not in cache:
+        vwap = _line(ctx, "vwap", period)
+        n = len(vwap)
+        out = np.full(n, np.nan)
+        if n >= period:
+            volume = np.array(ctx["V"], dtype=float)
+            typical = (np.array(ctx["H"], dtype=float) + np.array(ctx["L"], dtype=float) + np.array(ctx["C"], dtype=float)) / 3
+            tw = np.lib.stride_tricks.sliding_window_view(typical, period)
+            vw = np.lib.stride_tricks.sliding_window_view(volume, period)
+            for a in range(0, len(tw), 2048):
+                center = vwap[period - 1 + a: period - 1 + a + len(tw[a:a + 2048])]
+                total = vw[a:a + 2048].sum(axis=1)
+                spread = (vw[a:a + 2048] * (tw[a:a + 2048] - center[:, None]) ** 2).sum(axis=1)
+                out[period - 1 + a: period - 1 + a + len(total)] = np.sqrt(np.where(total > 0, spread / np.where(total > 0, total, 1), np.nan))
+        cache[key] = out
+    return cache[key]
+
+
 def _lines_ok(lines, ctx, k, side):
     """Si la vela k, que da a conocer la señal, cumple los filtros de línea a favor del trade."""
     for item in lines:
@@ -775,6 +803,10 @@ def _lines_ok(lines, ctx, k, side):
         if item["slope"]:
             before = line[k - LINE_SLOPE_BARS] if k >= LINE_SLOPE_BARS else float("nan")
             if not (level - before) * side > 0:
+                return False
+        if item.get("maxDev"):
+            dev = _vwap_dev(ctx, item["period"])[k]
+            if not dev == dev or (ctx["O"][k] - level) * side > item["maxDev"] * dev:
                 return False
     return True
 
@@ -815,13 +847,20 @@ def _in_hours(hours, t):
     return start <= minute <= end if start <= end else (minute >= start or minute <= end)
 
 
+def _bars_key(bars):
+    """Huella de unas velas para el caché de elementos. No sirve `id(bars)`: al soltarse una lista, la de otra moneda
+    puede recibir el mismo id y quedarse con los elementos de la anterior."""
+    return (len(bars), bars[0]["t"], bars[-1]["t"], sum(b["h"] for b in bars), sum(b["l"] for b in bars), sum(b["c"] for b in bars),
+            sum(b["vol"] for b in bars))
+
+
 def _pattern_events(rule, span):
     """Patrones de vela de candle_patterns sobre las velas de la fase: una vela, a lo sumo un patrón."""
     pat = rule.get("pat")
     bars = span["bars"]
     if not pat or not bars:
         return []
-    key = (id(bars), rule["tf"], "pat", pat["trend"], pat["trendBars"], pat["minZ"], pat["wick"])
+    key = (_bars_key(bars), rule["tf"], "pat", pat["trend"], pat["trendBars"], pat["minZ"], pat["wick"])
     with _lock:
         found = _extra.get(key)
     if found is None:
@@ -849,7 +888,7 @@ def _rv_events(rule, span):
     bars = span["bars"]
     if not rv or not bars:
         return []
-    key = (id(bars), rule["tf"], "rv", rv["leg"], rv["spike"], rv["arrow"], rv["rombo"])
+    key = (_bars_key(bars), rule["tf"], "rv", rv["leg"], rv["spike"], rv["arrow"], rv["rombo"])
     with _lock:
         found = _extra.get(key)
     if found is None:
@@ -868,7 +907,7 @@ def _gc_events(rule, span):
     bars = span["bars"]
     if not gc or not bars:
         return []
-    key = (id(bars), rule["tf"], "gc", gc["period"], gc["poles"], gc["mult"], gc["trend"])
+    key = (_bars_key(bars), rule["tf"], "gc", gc["period"], gc["poles"], gc["mult"], gc["trend"])
     with _lock:
         found = _extra.get(key)
     if found is None:
@@ -886,7 +925,7 @@ def _cc_events(rule, span):
     bars = span["bars"]
     if not cc or not bars:
         return []
-    key = (id(bars), rule["tf"], "cc", cc["tf"], cc["offset"], cc["swing"], cc["legs"])
+    key = (_bars_key(bars), rule["tf"], "cc", cc["tf"], cc["offset"], cc["swing"], cc["legs"])
     with _lock:
         found = _extra.get(key)
     if found is None:
@@ -911,7 +950,7 @@ def _liq_vp_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     if not codes & {"LIQ", "VH"}:
         return _vp_events(symbol, rule, span, vp_shift)
     liq = {"what": "swing", "variant": "pierce", "swingBars": 5, "reclaimBars": 3, **(rule.get("liq") or {})}
-    key = (id(span["bars"]), symbol, rule["tf"], liq["what"], liq["variant"], liq["swingBars"], liq["reclaimBars"])
+    key = (_bars_key(span["bars"]), symbol, rule["tf"], liq["what"], liq["variant"], liq["swingBars"], liq["reclaimBars"])
     with _lock:
         found = _extra.get(key)
     if found is None:
@@ -948,7 +987,7 @@ def _vp_events(symbol, rule, span, shift=None):
     bars = span["bars"]
     if not vp or not bars:
         return []
-    key = (id(bars), symbol, rule["tf"], "vp", vp["hours"], vp["accept"], vp["failBars"], vp["rows"], vp["share"], vp.get("veEntry"), shift)
+    key = (_bars_key(bars), symbol, rule["tf"], "vp", vp["hours"], vp["accept"], vp["failBars"], vp["rows"], vp["share"], vp.get("veEntry"), shift)
     with _lock:
         found = _extra.get(key)
     if found is None:
@@ -1077,7 +1116,10 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         if band is not None:
             trade["gc"] = band  # Línea central y bandas del canal en la vela de la señal
         if rule.get("lines"):
-            trade["lines"] = [{"type": item["type"], "period": item["period"], "value": round(float(_line(ctx, item["type"], item["period"])[k]), 8)}
+            trade["lines"] = [{"type": item["type"], "period": item["period"], "value": round(float(_line(ctx, item["type"], item["period"])[k]), 8),
+                               # El tope de la apertura: el VWAP más `maxDev` desviaciones, del lado del trade
+                               **({"limit": round(float(_line(ctx, "vwap", item["period"])[k] + side * item["maxDev"] * _vwap_dev(ctx, item["period"])[k]), 8),
+                                   "maxDev": item["maxDev"]} if item.get("maxDev") else {})}
                               for item in rule["lines"]]
         trade["measures"] = measured
         if defer:

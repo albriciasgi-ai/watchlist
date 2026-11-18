@@ -150,3 +150,31 @@ def test_filtros_de_vwap_movil_y_ema(monkeypatch):
     assert rule["lines"] == [{"type": "ema", "period": 14, "mode": "side", "slope": False}]
     result = rt.run("X", rule, {"bars": bars, "events": []}, PHASE, None, base=False)
     assert result["trades"] == [] and result["skipped"] == {"filtro de VWAP o EMA": 1}
+
+
+def test_la_vela_no_abre_mas_alla_de_las_desviaciones_del_vwap():
+    bars = hammer_day()
+    ctx = rt._context("X", TF, bars)
+    vwap, dev = rt._line(ctx, "vwap", 20), rt._vwap_dev(ctx, 20)
+    typical = [(b["h"] + b["l"] + b["c"]) / 3 for b in bars[26:46]]
+    volume = [b["vol"] for b in bars[26:46]]
+    # La desviación de las bandas del VWAP móvil: la del precio típico alrededor del VWAP, pesada por volumen
+    assert dev[45] == pytest.approx((sum(v * (p - vwap[45]) ** 2 for p, v in zip(typical, volume)) / sum(volume)) ** 0.5)
+    assert dev[18] != dev[18] and dev[45] > 0
+    # Lo conocido no cambia con velas posteriores
+    short = rt._context("X", TF, bars[:46])
+    assert rt._vwap_dev(short, 20)[45] == pytest.approx(dev[45]) and rt._line(short, "vwap", 20)[45] == pytest.approx(vwap[45])
+    # La vela 45 cierra bajo el VWAP: un corto va a favor. Su apertura queda a `gap` desviaciones bajo el VWAP
+    gap = (vwap[45] - bars[45]["o"]) / dev[45]
+    assert bars[45]["c"] < vwap[45] and gap > 0.2
+    base = {"type": "vwap", "period": 20, "mode": "side", "slope": False}
+    assert rt._lines_ok([base], ctx, 45, -1)
+    assert rt._lines_ok([{**base, "maxDev": gap + 0.1}], ctx, 45, -1)
+    assert not rt._lines_ok([{**base, "maxDev": gap - 0.1}], ctx, 45, -1)
+    # El tope solo entra a la regla si se pide (una regla ya corrida conserva su identidad) y solo en el VWAP
+    raw = {"name": "P", "tf": TF, "recipe": {"slots": [{"codes": ["HM"]}]}}
+    plain = rt.clean_rule({**raw, "lines": [{"type": "vwap", "period": 20, "mode": "side"}]})
+    assert plain["lines"] == [base]
+    capped = rt.clean_rule({**raw, "lines": [{"type": "vwap", "period": 20, "mode": "side", "maxDev": 1}, {"type": "ema", "mode": "side", "maxDev": 1}]})
+    assert capped["lines"][0] == {**base, "maxDev": 1.0} and "maxDev" not in capped["lines"][1]
+    assert rt.rule_hash("X", plain) != rt.rule_hash("X", capped)

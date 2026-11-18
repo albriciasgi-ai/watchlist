@@ -157,7 +157,8 @@ def test_las_dos_ordenes_del_rango_se_toman_por_orden_de_llenado(monkeypatch):
     assert "entry_i" not in trades[0] and result["busy"] == 0
     # Con otro perfil anterior no hay órdenes
     monkeypatch.setattr(rt, "_vp_levels", lambda *a: {0: {**WIDE[0], "shape": "P"}})
-    fresh = {"bars": list(span["bars"]), "events": []}  # Los elementos de un tramo quedan en memoria: otro tramo los recalcula
+    rt._extra.clear()  # Los elementos de unas velas quedan en memoria: aquí cambió el perfil, no las velas
+    fresh = {"bars": list(span["bars"]), "events": []}
     assert rt.run("X", rule, fresh, PHASE, None, base=False)["trades"] == []
 
 
