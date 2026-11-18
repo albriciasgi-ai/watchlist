@@ -1101,6 +1101,28 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - Abrir la reproducción de la principal unas velas antes de una señal, con fecha oculta.
 - Guardar por trade lo que marcan los indicadores del navegador.
 
+## REVISIÓN DE CANDIDATOS POR SESIONES (18/11/2026)
+
+Pedido del usuario: sus trades manuales (24 cerrados, 42% de acierto y +0.26 R ±0.71 al 18/11) rinden más que las reglas del probador, y cree que es por intuición que una regla rígida no recoge. Esto lo mide: una regla floja propone y él decide. Además notó que en una corrida de trades seguidos los primeros le salen peor, porque va leyendo el mercado: por eso las sesiones son un tramo seguido y en orden, no momentos sueltos.
+
+```
+RuleTesterApp.jsx, pestaña "Revisión" + candidateReview.js
+        │  POST /api/review/start    { symbol, rule, days, anySymbol }
+        │  POST /api/review/decide   { session, i, action, stop, target, seconds }
+        │  POST /api/review/end      ·  GET /api/review/active/{symbol}  ·  GET /api/review/report
+        ▼
+backend/candidate_review.py → OrderFlowData/observer/review/sessions.jsonl   (solo se agregan líneas: session, decision, end)
+```
+
+- **Sesión:** una moneda y un tramo seguido de la **fase 1** (nunca de la 2 ni de la 3), de 7 a 120 días (28 de fábrica), elegido al azar, a 10 días o más del inicio de la fase y sin pisar un tramo ya usado si se puede. Entre 8 y 60 candidatos; con menos busca otro tramo.
+- **Candidatos:** la regla de la pestaña "Regla" con `_generator()`: cada señal cuenta (sin una posición a la vez ni enfriamiento) y a mercado. Salen de `rule_tester.run()` sobre la fase 1, con lo que la regla habría hecho en cada uno. En una moneda con almacén la regla tiene que haber corrido antes en la fase 1 (`_ready()`): la revisión no detecta elementos.
+- **Decisión** (`decide`): `rule` (como propone la regla), `long` o `short` con stop y objetivo propios, o `skip`. Solo sobre el candidato a la vista. El trade propio entra en la apertura de la vela siguiente y se simula con `rule_tester.simulate()` (comisiones, minuto a minuto, cierre por tiempo de la regla), con el stop como ATR y el objetivo en R equivalentes.
+- **Sin futuro:** `public()` es lo único que sale del servidor. Del candidato a la vista da hora, lado, entrada, stop y objetivo propuestos. El resultado de una decisión (`r`) y lo que hizo la regla ahí (`ruleR`) salen solo si su salida es anterior a la hora del candidato a la vista, o al terminar la sesión. `report()` aplica lo mismo a una sesión sin terminar.
+- **Ventana:** el gráfico llega hasta el cierre de la vela del candidato (`chartTime`), con fecha y precio ocultos (`blindClock`, índice fijado por el id de la sesión) y solo las cajas de las decisiones de la sesión. Se puede retroceder, cambiar de marco y usar los indicadores. "Dibujar caja larga" y "Dibujar caja corta" activan la herramienta TP/SL; `boxDecision()` lee la última caja libre (`latestFreeBox`) y avisa si su stop o su objetivo no cuadran con la entrada real. Al decidir, `MiniChart.followLatest()` (nuevo en su ref) vuelve a la última vela. Una sesión sin terminar se retoma al abrir la ventana de esa moneda. Con "moneda al azar" la ventana cambia a la moneda elegida.
+- **Informe** (`_summary`): tus trades; esos mismos como la regla; los que dejaste pasar (con el resultado de la regla); la regla en todos. `selection` = lo tomado menos lo dejado, los dos medidos como la regla: lo que agrega elegir. `overRule` = tus trades menos tomar todos: el criterio completo (elegir, lado, stop y objetivo). Cada diferencia con su margen, y `clear` solo con 30 por grupo. Por lugar en la sesión (1 a 5, 6 a 10, 11 a 20, 21 en adelante) con la mediana de segundos por decisión; tras un trade ganado y tras uno perdido (el último ya cerrado al decidir).
+- **Límites:** el nombre de la moneda se ve. El trade propio no usa la salida por el canal del Gaussian Channel ni stop arrastrado. La regla que propone decide qué se llega a ver: lo que el usuario habría operado fuera de esos momentos no se mide. No guarda todavía las medidas ni los elementos presentes de cada candidato (falta para armar una puntuación).
+- **Pruebas:** `tests/test_candidate_review.py` (5) y `frontend/tests/candidatereview.test.mjs` (3). Probado en la copia aislada con BTC 4h y la flecha: sesión de 23 candidatos, decisiones, caja corta propia, retomar tras recargar, terminar e informe. No se probó la moneda al azar, 15m ni una sesión completa.
+
 ## ESTADO PARA EL ENTRENADOR (17/11/2026)
 
 Pedido del usuario: entrenar con el skill `/entrenar` y que Claude vea lo que tiene en App 1, no solo una captura. Claude lo lee con el navegador integrado de la app de Claude o con la extensión Claude in Chrome, ejecutando JavaScript en la pestaña de App 1.

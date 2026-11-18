@@ -24,6 +24,7 @@ import rule_tester
 import liq_sweeps
 import structure
 import gaussian_channel
+import candidate_review
 import response_volume
 import vp_sessions
 from pathlib import Path
@@ -3895,6 +3896,51 @@ async def tester_consolidated(request: Request):
     if phase not in (1, 2, 3):
         return {"success": False, "message": "Fase no válida"}
     return _json_response(await run_in_threadpool(rule_tester.consolidated, body.get("rule") or {}, phase))
+
+
+# ==================== REVISIÓN DE CANDIDATOS ====================
+
+@app.post("/api/review/start")
+@limiter.limit("30/minute")
+async def review_start(request: Request):
+    """Abre una sesión de revisión (body: symbol, rule, days, anySymbol): la regla propone candidatos de un tramo de la fase 1."""
+    body = await request.json()
+    return await run_in_threadpool(candidate_review.start, sanitize_filename(str(body.get("symbol") or "")), body.get("rule") or {},
+                                   body.get("days"), bool(body.get("anySymbol")))
+
+
+def _review_number(value):
+    return float(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+
+
+@app.post("/api/review/decide")
+@limiter.limit("240/minute")
+async def review_decide(request: Request):
+    """Una decisión sobre el candidato a la vista (body: session, i, action, stop, target, seconds)."""
+    body = await request.json()
+    index = body.get("i")
+    return await run_in_threadpool(candidate_review.decide, str(body.get("session") or ""), index if isinstance(index, int) else -1,
+                                   str(body.get("action") or ""), _review_number(body.get("stop")), _review_number(body.get("target")),
+                                   _review_number(body.get("seconds")))
+
+
+@app.post("/api/review/end")
+@limiter.limit("60/minute")
+async def review_end(request: Request):
+    body = await request.json()
+    return await run_in_threadpool(candidate_review.end, str(body.get("session") or ""))
+
+
+@app.get("/api/review/active/{symbol}")
+@limiter.limit("240/minute")
+async def review_active(request: Request, symbol: str):
+    return await run_in_threadpool(candidate_review.active, sanitize_filename(symbol))
+
+
+@app.get("/api/review/report")
+@limiter.limit("120/minute")
+async def review_report(request: Request):
+    return await run_in_threadpool(candidate_review.report)
 
 
 @app.get("/api/tester/job/{job_id}")

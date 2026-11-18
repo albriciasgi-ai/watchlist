@@ -8,6 +8,9 @@ import { withoutSubdivisions } from './marketData';
 import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import { lastClosedIndex } from './replayClock';
+import { latestFreeBox } from './orderPlan.js';
+import { priceText, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
+import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, reviewBoxes, statText } from './candidateReview.js';
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
@@ -199,6 +202,16 @@ const RuleTesterApp = () => {
   const [myOrders, setMyOrders] = useState(null);   // Órdenes manuales del registro del Observador, de este símbolo
   const [ordersView, setOrdersView] = useState(false); // El gráfico muestra esas órdenes en vez de la fase
   const [pickedOrder, setPickedOrder] = useState(null);
+  const [review, setReview] = useState(null);       // Sesión de revisión de candidatos a la vista
+  const [reviewReport, setReviewReport] = useState(null);
+  const [reviewDays, setReviewDays] = useState(REVIEW_DAYS);
+  const [reviewAny, setReviewAny] = useState(false);
+  const [reviewBusy, setReviewBusy] = useState(false);
+  const [reviewShapes, setReviewShapes] = useState([]); // Dibujos del gráfico, para leer la caja TP/SL de una decisión
+  const usedBoxesRef = useRef(new Set());
+  const shownAtRef = useRef(null);
+  const blindRef = useRef(null);
+  const [blindShown, setBlindShown] = useState(null); // Sesión cuyo índice de precios ya está puesto
   const chartRef = useRef(null);
   const marketRef = useRef(null);
   const extendedRef = useRef(new Map()); // Por marco, el pedido de las velas anteriores al caché
@@ -417,6 +430,110 @@ const RuleTesterApp = () => {
       .catch(error => setMessage(error.message));
   }, [tab, myOrders, symbol]);
 
+  // Revisión de candidatos: la sesión abierta de esta moneda, si la hay
+  const loadReviewReport = useCallback(() => api('/api/review/report').then(r => r.success && setReviewReport(r)).catch(noop), []);
+  useEffect(() => {
+    api(`/api/review/active/${symbol}`).then(answer => {
+      if (answer.session) {
+        setReview(answer);
+        setPhase(1);
+        setTab('revision');
+      }
+    }).catch(noop);
+  }, [symbol]);
+  useEffect(() => { if (tab === 'revision') loadReviewReport(); }, [tab, loadReviewReport]);
+  const reviewOn = !!review?.session && !review.session.done && !!review.candidate;
+
+  // Fecha y precio ocultos mientras se decide, como en la simulación manual con fecha oculta
+  const reviewBlind = reviewOn ? review.session.id : null;
+  const reviewCandles = market?.timeframes?.[chartTf]?.main;
+  useEffect(() => {
+    if (!reviewBlind || !reviewCandles?.length) return undefined;
+    const start = review.session.start;
+    if (blindRef.current?.id !== reviewBlind) {
+      // El índice sale del id de la sesión: al recargar la página los precios ocultos siguen siendo los mismos
+      const seed = [...reviewBlind].reduce((sum, ch) => (sum * 31 + ch.charCodeAt(0)) % 1000003, 7) / 1000003;
+      blindRef.current = { id: reviewBlind, scale: scaleFromCandles(reviewCandles, start, () => seed) };
+    }
+    setBlindAnchor(start);
+    setBlindScale(blindRef.current.scale);
+    setBlindShown(reviewBlind); // El panel también escribe precios: se vuelve a pintar ya con el índice
+    chartRef.current?.redraw?.();
+    return () => {
+      setBlindAnchor(null);
+      setBlindScale(null);
+      setBlindShown(null);
+      chartRef.current?.redraw?.();
+    };
+  }, [reviewBlind, reviewCandles]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Al llegar un candidato el gráfico vuelve a la última vela conocida y empieza a contar el tiempo de la decisión
+  const reviewIndex = reviewOn ? review.candidate.i : null;
+  useEffect(() => {
+    if (reviewIndex === null) return undefined;
+    shownAtRef.current = Date.now();
+    const timer = setTimeout(() => chartRef.current?.followLatest?.(), 80);
+    return () => clearTimeout(timer);
+  }, [reviewIndex, chartTf]);
+
+  const takeReview = (answer) => {
+    if (!answer.success) {
+      setMessage(answer.message || 'No se pudo');
+      return false;
+    }
+    setReview(answer.session ? answer : null);
+    return true;
+  };
+  const startReview = async () => {
+    setMessage(null);
+    setReviewBusy(true);
+    try {
+      const answer = await api('/api/review/start', { symbol, rule: toBackendRule(rule), days: reviewDays, anySymbol: reviewAny });
+      if (answer.success && answer.session.symbol !== symbol) {
+        window.location.search = `?${TESTER_PARAM}=1&symbol=${answer.session.symbol}`; // La ventana de esa moneda la retoma al abrir
+        return;
+      }
+      if (takeReview(answer)) {
+        usedBoxesRef.current = new Set();
+        setPhase(1);
+        setOrdersView(false);
+        setSelected(null);
+      }
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setReviewBusy(false);
+    }
+  };
+  const decideReview = async (action, plan = null) => {
+    setReviewBusy(true);
+    try {
+      const answer = await api('/api/review/decide', { session: review.session.id, i: review.candidate.i, action, stop: plan?.stop ?? null, target: plan?.target ?? null,
+        seconds: shownAtRef.current ? (Date.now() - shownAtRef.current) / 1000 : null });
+      if (takeReview(answer)) {
+        if (plan?.boxId) usedBoxesRef.current.add(plan.boxId);
+        setTool('select');
+        if (answer.session.done) loadReviewReport();
+      }
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setReviewBusy(false);
+    }
+  };
+  const endReview = async () => {
+    if (!window.confirm('¿Terminar la sesión aquí? Los candidatos que faltan no se podrán decidir después.')) return;
+    try {
+      if (takeReview(await api('/api/review/end', { session: review.session.id }))) loadReviewReport();
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+  const closeReview = () => {
+    setReview(null);
+    loadReviewReport();
+  };
+
   // El gráfico se vuelve a montar al cambiar de marco o de vista: se insiste hasta que pueda ir al punto
   const focusTimer = useRef(null);
   const focusLater = useCallback((time, price) => {
@@ -434,7 +551,12 @@ const RuleTesterApp = () => {
   const trades = result?.trades || [];
   const chartOpen = ordersView || phase === 1 || !!revealed[phase];
   useEffect(() => {
-    if (ordersView) {
+    if (review?.session) {
+      // En revisión solo se ven las decisiones de la sesión: nada de corridas anteriores, que mostrarían el futuro
+      boxesRef.current = reviewBoxes(review.decisions, review.candidate?.time ?? null, review.session.tf);
+      bandsRef.current = [];
+      linesRef.current = [];
+    } else if (ordersView) {
       boxesRef.current = orderViews.map(item => item.view.box).filter(Boolean);
       bandsRef.current = [];
       linesRef.current = orderViews.filter(item => item.order.id === pickedOrder && item.view.line).map(item => item.view.line);
@@ -446,7 +568,7 @@ const RuleTesterApp = () => {
       bandsRef.current = chartOpen && trade ? tradeBands(trade, result.rule.tf, names) : [];
     }
     chartRef.current?.redraw?.();
-  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder, review]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pick = useCallback((trade) => {
     setSelected(trade.n);
@@ -484,7 +606,8 @@ const RuleTesterApp = () => {
   const getTradeBands = useCallback(() => bandsRef.current, []);
   const getTradeBoundaries = useCallback(() => linesRef.current, []);
   // Lo que deja ver el gráfico: la fase 1 completa; la 2 y la 3 solo hasta su inicio mientras no se pida verlas
-  const chartTime = ordersView && lastEnd ? lastEnd : (phaseInfo ? (chartOpen ? phaseInfo.end : phaseInfo.start) : null);
+  const chartTime = reviewOn ? review.candidate.time
+    : (ordersView && lastEnd ? lastEnd : (phaseInfo ? (chartOpen ? phaseInfo.end : phaseInfo.start) : null));
   const days = useMemo(() => (phaseInfo ? Math.min(Math.ceil((Date.now() - phaseInfo.start) / DAY_MS) + 60, MAX_DAYS[chartTf]) : MAX_DAYS[chartTf]), [phaseInfo, chartTf]);
 
   const toggleCode = (code) => setRule(previous => {
@@ -1243,6 +1366,145 @@ const RuleTesterApp = () => {
   );
 
   const STATUS = { closed: 'cerrada', open: 'abierta', cancelled: 'cancelada' };
+  // ==================== Revisión de candidatos ====================
+
+  const reviewSummary = (s) => !s ? null : (
+    <>
+      <table className="rt-table">
+        <thead><tr><th style={{ textAlign: 'left' }}></th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th></tr></thead>
+        <tbody>
+          {[['Tus trades', s.taken, 'Lo que entraste, con tu lado, tu stop y tu objetivo'],
+            ['Esos mismos, como la regla', s.takenAsRule, 'Los candidatos que tomaste, con el stop y la salida de la regla'],
+            ['Los que dejaste pasar', s.skipped, 'Lo que hizo la regla en los candidatos que no tomaste'],
+            ['La regla en todos', s.rule, 'Tomar todos los candidatos como propone la regla']].map(([label, stat, title]) => (
+            <tr key={label} title={title}><td style={{ textAlign: 'left' }}>{label}</td><td>{stat.n}</td><td>{stat.n ? fmtPct(stat.winRate) : '—'}</td>
+              <td>{stat.n ? <><R value={stat.avgR} digits={2} />{stat.margin != null ? <span className="rt-note"> ±{stat.margin.toFixed(2)}</span> : null}</> : '—'}</td>
+              <td>{stat.n ? <R value={stat.totalR} digits={1} /> : '—'}</td></tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="rt-note" style={{ marginBottom: 6 }}><b>Lo que agrega elegir</b> (lo tomado contra lo dejado, los dos medidos como la regla): {gapText(s.selection, fmtR)}</div>
+      <div className="rt-note" style={{ marginBottom: 8 }}><b>Tu criterio completo contra la regla</b> (tus trades contra tomar todos): {gapText(s.overRule, fmtR)}</div>
+      {s.byPosition?.length > 0 && (
+        <>
+          <h4>Por lugar en la sesión</h4>
+          <table className="rt-table">
+            <thead><tr><th style={{ textAlign: 'left' }}>Candidatos</th><th>Decisiones</th><th>Tus trades</th><th>Dejados</th><th>La regla</th><th title="Mediana de segundos por decisión">Seg.</th></tr></thead>
+            <tbody>
+              {s.byPosition.map(g => (
+                <tr key={g.label}><td style={{ textAlign: 'left' }}>{g.label}</td><td>{g.decisions}</td>
+                  <td>{g.taken.n ? <>{g.taken.n} · <R value={g.taken.avgR} digits={2} /></> : '—'}</td>
+                  <td>{g.skipped.n ? <>{g.skipped.n} · <R value={g.skipped.avgR} digits={2} /></> : '—'}</td>
+                  <td><R value={g.rule.avgR} digits={2} /></td><td>{g.seconds != null ? Math.round(g.seconds) : '—'}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="rt-note" style={{ marginBottom: 8 }}>Si los primeros candidatos de cada sesión rinden peor que los siguientes, ir leyendo el mercado te ayuda. Cada casilla: trades · R medio.</div>
+        </>
+      )}
+    </>
+  );
+
+  const reviewPlan = reviewOn ? boxDecision(latestFreeBox(reviewShapes, [...usedBoxesRef.current].map(id => ({ status: 'open', tpslBoxId: id }))), review.candidate.entry) : null;
+  const reviewTab = (
+    <>
+      {!review?.session && (
+        <>
+          <div className="rt-note" style={{ marginBottom: 8 }}>
+            La regla de la pestaña "Regla" propone momentos y tú decides en cada uno si entras, sin ver lo que sigue. Una sesión es un tramo seguido
+            de la fase 1, con la fecha y el precio ocultos: decides un candidato, el gráfico avanza hasta el siguiente y ves cómo terminó lo anterior.
+            Sirve para medir qué agrega tu criterio sobre la regla. Conviene una regla floja, que proponga mucho.
+          </div>
+          <div className="rt-row">
+            <span>Tramo de</span><Num value={reviewDays} min={7} max={120} onChange={setReviewDays} /><span>días</span>
+            <Check checked={reviewAny} onChange={setReviewAny} title="Elige al azar entre las monedas que ya corrieron esta regla en la fase 1. La ventana cambia a esa moneda">moneda al azar</Check>
+          </div>
+          <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0', margin: '6px 0 10px' }} disabled={reviewBusy} onClick={startReview}>
+            {reviewBusy ? 'Buscando un tramo…' : 'Empezar una sesión de revisión'}
+          </button>
+        </>
+      )}
+      {reviewOn && blindShown !== review.session.id && <div className="rt-note" style={{ marginBottom: 8 }}>Preparando el gráfico de la sesión…</div>}
+      {reviewOn && blindShown === review.session.id && (
+        <>
+          <div className="rt-warn">
+            <b>Candidato {review.session.position + 1} de {review.session.total}</b> · {review.session.name} · {TF_LABEL[review.session.tf]}<br />
+            La regla propone un <b>{review.candidate.dir > 0 ? 'largo' : 'corto'}</b>{review.candidate.votes?.length ? ` (${review.candidate.votes.join(', ')})` : ''}:
+            {' '}entrada {priceText(review.candidate.entry)}, stop {priceText(review.candidate.stop)}{review.candidate.target != null ? `, objetivo ${priceText(review.candidate.target)}` : ', sin objetivo fijo'}.
+          </div>
+          <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={reviewBusy} onClick={() => decideReview('rule')}>Entro como propone la regla</button>
+          <button type="button" className="rt-btn" style={{ width: '100%', padding: '6px 0', marginTop: 4 }} disabled={reviewBusy || !reviewPlan || !!reviewPlan.problem}
+            onClick={() => decideReview(reviewPlan.action, reviewPlan)} title="Usa el lado, el stop y el objetivo de la última caja TP/SL que dibujaste. La entrada es la apertura de la vela siguiente">
+            {reviewPlan && !reviewPlan.problem ? `Entro con mi caja: ${reviewPlan.side > 0 ? 'largo' : 'corto'}, stop ${priceText(reviewPlan.stop)}, objetivo ${priceText(reviewPlan.target)} (${reviewPlan.rr.toFixed(1)} a 1)` : 'Entro con mi caja TP/SL'}
+          </button>
+          {reviewPlan?.problem && <div className="rt-note" style={{ marginTop: 2 }}>{reviewPlan.problem}.</div>}
+          <div className="rt-row" style={{ marginTop: 4 }}>
+            <button type="button" className={`rt-btn${tool === 'tpsl' ? ' on' : ''}`} style={{ flex: 1 }} onClick={() => setTool(tool === 'tpsl' ? 'select' : 'tpsl')}>Dibujar caja larga</button>
+            <button type="button" className={`rt-btn${tool === 'tpsl-short' ? ' on' : ''}`} style={{ flex: 1 }} onClick={() => setTool(tool === 'tpsl-short' ? 'select' : 'tpsl-short')}>Dibujar caja corta</button>
+          </div>
+          <button type="button" className="rt-btn" style={{ width: '100%', padding: '6px 0', marginTop: 4 }} disabled={reviewBusy} onClick={() => decideReview('skip')}>No entro</button>
+          <div className="rt-note" style={{ margin: '6px 0 10px' }}>
+            El gráfico llega hasta el cierre de la vela del candidato. Puedes moverte hacia atrás, cambiar de marco y usar tus indicadores.
+            Fecha y precio están ocultos; el resultado de cada decisión aparece cuando un candidato posterior ya lo dejó atrás.
+          </div>
+        </>
+      )}
+      {review?.session?.done && (
+        <>
+          <div className="rt-warn">
+            <b>Sesión terminada</b> · {review.session.position} de {review.session.total} candidatos decididos.{' '}
+            <button type="button" className="rt-btn" onClick={closeReview}>Cerrar la sesión</button>
+          </div>
+          {reviewSummary(review.summary)}
+        </>
+      )}
+      {review?.session && review.decisions.length > 0 && (
+        <>
+          <h4>Decisiones de esta sesión</h4>
+          <table className="rt-table">
+            <thead><tr><th style={{ textAlign: 'left' }}>#</th><th style={{ textAlign: 'left' }}>Decisión</th><th>Tu R</th><th title="Lo que hizo la regla en ese candidato">La regla</th></tr></thead>
+            <tbody>
+              {[...review.decisions].reverse().map(d => (
+                <tr key={d.i} style={{ cursor: 'pointer' }} onClick={() => chartRef.current?.focusOn?.(d.time, d.entry ?? null)} title="Ir a ese momento en el gráfico">
+                  <td style={{ textAlign: 'left' }}>{d.i + 1}</td>
+                  <td style={{ textAlign: 'left' }}>{ACTION_LABEL[d.action]}{d.action === 'rule' ? (d.dir > 0 ? ' (largo)' : ' (corto)') : ''}</td>
+                  <td>{d.action === 'skip' ? '—' : (d.r != null ? <R value={d.r} digits={2} /> : 'abierto')}</td>
+                  <td>{d.ruleR != null ? <R value={d.ruleR} digits={2} /> : 'abierto'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
+      {reviewOn && <button type="button" className="rt-btn" style={{ width: '100%', marginBottom: 10 }} disabled={reviewBusy} onClick={endReview} title="Lo decidido hasta aquí queda en el informe">Terminar la sesión aquí</button>}
+      {!reviewOn && reviewReport && (
+        <>
+          <h4>Todas tus sesiones ({reviewReport.sessions.length})</h4>
+          {reviewReport.decisions === 0 ? <div className="rt-note">Todavía no hay decisiones registradas.</div> : (
+            <>
+              {reviewReport.smallSample && <div className="rt-note" style={{ marginBottom: 6 }}>Muestra pequeña: con menos de 30 trades tomados, esto solo describe. Para saber si tu criterio agrega hacen falta unas 150 decisiones.</div>}
+              {reviewSummary(reviewReport)}
+              <div className="rt-note" style={{ marginBottom: 8 }}>
+                Tras un trade ganado: {statText(reviewReport.afterWin, fmtR)}. Tras uno perdido: {statText(reviewReport.afterLoss, fmtR)}. (trades · acierto · R medio)
+              </div>
+              <table className="rt-table">
+                <thead><tr><th style={{ textAlign: 'left' }}>Sesión</th><th>Decididos</th><th>Tus trades</th><th>La regla</th></tr></thead>
+                <tbody>
+                  {reviewReport.sessions.map(s => (
+                    <tr key={s.id}><td style={{ textAlign: 'left' }}>{s.symbol} · {TF_LABEL[s.tf]} · {new Date(s.at).toLocaleDateString('es-CO')}{s.done ? '' : ' · sin terminar'}<br /><span className="rt-note">{s.name}</span></td>
+                      <td>{s.decided} de {s.total}</td>
+                      <td>{s.taken.n ? <>{s.taken.n} · <R value={s.taken.avgR} digits={2} /></> : '—'}</td>
+                      <td>{s.rule.n ? <R value={s.rule.avgR} digits={2} /> : '—'}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+        </>
+      )}
+    </>
+  );
+
   const ordersTab = (
     <>
       <div className="rt-note" style={{ marginBottom: 6 }}>
@@ -1277,7 +1539,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes']];
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -1345,6 +1607,7 @@ const RuleTesterApp = () => {
             {tab === 'todas' && allTab}
             {tab === 'historial' && historyTab}
             {tab === 'ordenes' && ordersTab}
+            {tab === 'revision' && reviewTab}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
             <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={running || !phaseInfo?.available} onClick={() => runPhase(false)}>
@@ -1374,7 +1637,7 @@ const RuleTesterApp = () => {
             <div className="timeframe-panel" style={{ position: 'absolute', inset: 0 }}>
               <MiniChart
                 ref={chartRef}
-                key={`${symbol}-${chartTf}-${phase}-${chartOpen}-${ordersView}`}
+                key={`${symbol}-${chartTf}-${phase}-${chartOpen}-${ordersView}-${reviewOn ? review.session.id : ''}`}
                 symbol={symbol}
                 interval={chartTf}
                 days={days}
@@ -1395,7 +1658,7 @@ const RuleTesterApp = () => {
                 getTradeBands={getTradeBands}
                 onRequestPause={noop}
                 onRequestTimeChange={noop}
-                onDrawingsChange={noop}
+                onDrawingsChange={(shapes) => setReviewShapes([...(shapes || [])])}
                 onCandleClick={noop}
                 chosenStyle="numbers"
               />

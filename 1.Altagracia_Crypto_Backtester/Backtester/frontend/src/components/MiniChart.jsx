@@ -853,6 +853,13 @@ const MiniChart = forwardRef(({
         drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
       }
     },
+    // Vuelve a la última vela conocida, como el botón de seguir el precio
+    followLatest: () => {
+      viewStateRef.current.offset = 0;
+      manualPanRef.current = false;
+      setShowFollowButton(false);
+      if (candlesRef.current?.length > 0) drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+    },
     // Promedio de ms de los últimos dibujos por cambio de hora. El 2.º gráfico avanza la hora en cada
     // cuadro de la pantalla y con esto baja el ritmo cuando el dibujo es caro (miles de velas a la vista)
     // Tras una pausa la medida ya no vale (pudo cambiar el zoom): se empieza de nuevo
