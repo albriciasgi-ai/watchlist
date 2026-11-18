@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {
   defaultRule, deleteRule, describeRule, fromBackendRule, isRuleTester, loadSavedRules, ruleTesterUrl, saveRule,
-  sortTrades, testerSymbol, toBackendRule, tradeBoxes
+  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes
 } from '../src/components/backtesting/ruleTester.js';
 
 const tests = [];
@@ -85,6 +85,38 @@ test('orden de la tabla: por R, con los vacíos al final', () => {
   assert.deepEqual(sortTrades(trades, 'r', true).map(t => t.n), [3, 1, 2]);
   assert.deepEqual(sortTrades(trades, 'reach', false).map(t => t.n), [3, 2, 1]);
   assert.deepEqual(sortTrades(trades, 'votes', false).map(t => t.n), [2, 3, 1]);
+});
+
+test('como cuenta: cada trade arriesga un % del capital al entrar, con posiciones a la vez y retornos diarios', () => {
+  const DAY = 86400000;
+  // Dos trades abiertos a la vez el día 0 (los dos miden su tamaño con el capital inicial), y uno el día 2
+  const trades = [
+    { entry_t: 0, exit_t: DAY / 2, r: 2 },
+    { entry_t: 1000, exit_t: DAY / 2 + 1000, r: -1 },
+    [2 * DAY, 2 * DAY + 3600000, -1]
+  ];
+  const stats = accountStats(trades, 1);
+  assert.equal(stats.trades, 3);
+  assert.equal(stats.maxOpen, 2);
+  assert.equal(stats.maxOpenRisk, 2);
+  assert.equal(stats.days, 3, 'del día 0 al 2, con un día sin cierres');
+  // 1 + 0.02 - 0.01 = 1.01, y el tercero pierde 1% de 1.01
+  assert.equal(stats.totalReturn, -0.0);
+  assert.ok(Math.abs(stats.equity[2][1] - (1.01 * 0.99 - 1) * 100) < 0.01);
+  assert.equal(stats.maxDrawdown, 2, 'del máximo de 1.02 a 0.9999: las dos pérdidas seguidas');
+  assert.equal(stats.bestDay, 1);
+  assert.equal(stats.worstDay, -1);
+  assert.equal(stats.annualReturn, null, 'con menos de 3 meses no se anualiza');
+  assert.ok(stats.sharpe === null || Number.isFinite(stats.sharpe));
+  // El doble de riesgo, el doble de resultado en cada trade
+  assert.equal(accountStats(trades, 2).bestDay, 2);
+  // Sortino mayor que Sharpe cuando se pierde poco muchas veces y se gana mucho pocas
+  const many = Array.from({ length: 300 }, (_, i) => ({ entry_t: i * DAY, exit_t: i * DAY + 3600000, r: i % 5 < 2 ? 2 : -1 }));
+  const long = accountStats(many, 1);
+  assert.ok(long.sharpe > 0 && long.sortino > long.sharpe);
+  assert.ok(long.annualReturn > 0 && long.positiveMonths <= long.months && long.months >= 9);
+  assert.equal(accountStats([], 1), null);
+  assert.equal(accountStats(trades, 0), null);
 });
 
 let failed = 0;

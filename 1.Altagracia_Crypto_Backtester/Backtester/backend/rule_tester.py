@@ -1382,6 +1382,7 @@ def consolidated(raw_rule, phase_number):
         return {"success": False, "message": "Ninguna moneda tiene esta regla corrida en esta fase", "plan": plan}
     ordered = sorted(pooled, key=lambda t: t["exit_t"])
     out = {"success": True, "rule": rule, "phase": phase_number, "plan": plan, "symbols": rows, "summary": summary(ordered) if ordered else {"n": 0},
+           "trades": [[t["entry_t"], t["exit_t"], t["r"]] for t in ordered],  # Para la vista "como cuenta" de la ventana
            "equity": _equity(ordered), "positive": sum(1 for r in rows if (r["avgR"] or 0) > 0), "withTrades": sum(1 for r in rows if r["n"])}
     if ordered:
         years = sorted({dt.datetime.fromtimestamp(t["entry_t"] / 1000, dt.timezone.utc).year for t in ordered})

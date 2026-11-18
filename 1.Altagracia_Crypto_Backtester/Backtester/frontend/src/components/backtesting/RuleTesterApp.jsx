@@ -10,7 +10,7 @@ import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings'
 import { lastClosedIndex } from './replayClock';
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
-  fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
+  accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
 import '../../rule_tester.css';
@@ -122,6 +122,48 @@ const SplitTable = ({ title, rows, names, note }) => (!rows?.length ? null : (
   </div>
 ));
 
+/** Las dos formas de leer los trades: 1 R por trade, o como una cuenta que arriesga un % del capital en cada uno */
+const ModeSwitch = ({ mode, onMode, risk, onRisk }) => (
+  <div className="rt-row" style={{ marginBottom: 6 }}>
+    <button type="button" className={`rt-btn${mode !== 'account' ? ' on' : ''}`} onClick={() => onMode('trade')} title="Cada trade cuenta 1 R, sin importar cuántos haya abiertos a la vez">Por trade</button>
+    <button type="button" className={`rt-btn${mode === 'account' ? ' on' : ''}`} onClick={() => onMode('account')} title="Una sola cuenta: cada trade arriesga un % del capital que hay al entrar">Como cuenta</button>
+    {mode === 'account' && (
+      <>
+        <span title="Parte del capital que se pierde si un trade toca su stop">Riesgo por trade</span>
+        <Num value={risk} min={0.05} max={10} step={0.25} onChange={onRisk} /><span>%</span>
+      </>
+    )}
+  </div>
+);
+
+const signedPct = (value, digits = 1) => (value === null || value === undefined ? '—' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}%`);
+
+const AccountView = ({ trades, risk }) => {
+  const stats = useMemo(() => accountStats(trades, risk), [trades, risk]);
+  if (!stats) return <div className="rt-note">Pon un riesgo por trade mayor que cero para ver la cuenta.</div>;
+  return (
+    <>
+      <div className="rt-cards">
+        <div className="rt-card"><b style={{ color: tone(stats.totalReturn) }}>{signedPct(stats.totalReturn)}</b><span>Retorno total ({stats.years} años)</span></div>
+        <div className="rt-card"><b style={{ color: tone(stats.annualReturn) }}>{signedPct(stats.annualReturn)}</b><span>Retorno anual</span></div>
+        <div className="rt-card"><b>{stats.maxDrawdown}%</b><span>Mayor caída del capital</span></div>
+        <div className="rt-card"><b>{stats.sharpe ?? '—'}</b><span>Sharpe anual</span></div>
+        <div className="rt-card"><b>{stats.sortino ?? '—'}</b><span>Sortino anual</span></div>
+        <div className="rt-card"><b>{stats.positiveMonths} de {stats.months}</b><span>Meses positivos (peor {signedPct(stats.worstMonth)})</span></div>
+        <div className="rt-card"><b>{stats.maxOpen}</b><span>Máximo de posiciones a la vez ({stats.maxOpenRisk}% en riesgo)</span></div>
+        <div className="rt-card"><b>{signedPct(stats.worstDay, 2)}</b><span>Peor día (mejor {signedPct(stats.bestDay, 2)})</span></div>
+        <div className="rt-card"><b>{stats.trades}</b><span>Trades en {stats.days} días</span></div>
+      </div>
+      <Equity points={stats.equity} />
+      <div className="rt-note">
+        Una cuenta que arriesga {stats.riskPct}% del capital que tiene al entrar en cada trade, con comisiones. Sharpe y Sortino salen de los retornos diarios (UTC), por 365 días.
+        El resultado de un trade entra a la cuenta al cerrarse: lo que se mueve una posición abierta no se ve, así que la caída real dentro del día puede ser mayor.
+        No cuenta el financiamiento ni el deslizamiento.
+      </div>
+    </>
+  );
+};
+
 const RuleTesterApp = () => {
   useUiTheme();
   const symbol = useMemo(testerSymbol, []);
@@ -137,6 +179,8 @@ const RuleTesterApp = () => {
   const [selected, setSelected] = useState(null);   // Número del trade elegido
   const [detail, setDetail] = useState(null);
   const [sens, setSens] = useState(null);
+  const [statsMode, setStatsMode] = useState(view.statsMode === 'account' ? 'account' : 'trade'); // Por trade (1 R cada uno) o como cuenta
+  const [accountRisk, setAccountRisk] = useState(Number(view.accountRisk) > 0 ? Number(view.accountRisk) : 1);
   const [allStarting, setAllStarting] = useState(false); // Entre el clic y la respuesta del backend
   const [allReport, setAllReport] = useState(null); // Informe de todas las monedas, de la regla y la fase con que se pidió
   const [message, setMessage] = useState(null);
@@ -176,11 +220,11 @@ const RuleTesterApp = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig }));
+      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk }));
     } catch {
       // Sin almacenamiento la vista dura hasta cerrar la ventana
     }
-  }, [rule, chartTf, indicatorStates, vpConfig]);
+  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk]);
 
   // Velas: del caché del navegador que guardó la principal. Si no están, se pide al backend solo el marco
   // del gráfico: esta ventana no necesita los cinco marcos
@@ -841,6 +885,9 @@ const RuleTesterApp = () => {
       {!s?.n ? <div className="rt-note">La regla no dejó trades cerrados en esta fase ({result.signals} señales).</div> : (
         <>
           {s.smallSample && <div className="rt-warn">Muestra pequeña ({s.n} trades): con menos de 30 nada se distingue del azar.</div>}
+          <ModeSwitch mode={statsMode} onMode={setStatsMode} risk={accountRisk} onRisk={setAccountRisk} />
+          {statsMode === 'account' ? <AccountView trades={result.trades} risk={accountRisk} /> : (
+          <>
           <div className="rt-cards">
             <div className="rt-card"><b>{s.n}</b><span>Trades cerrados</span></div>
             <div className="rt-card"><b>{fmtPct(s.winRate)}</b><span>Acierto ({s.wilson?.[0]}–{s.wilson?.[1]}%)</span></div>
@@ -853,6 +900,8 @@ const RuleTesterApp = () => {
             <div className="rt-card"><b>{s.avgBars}</b><span>Velas por trade</span></div>
           </div>
           <Equity points={result.equity} />
+          </>
+          )}
           {result.baseline?.n > 0 && (
             <div className="rt-group">
               <h4>Contra el azar</h4>
@@ -1062,6 +1111,12 @@ const RuleTesterApp = () => {
       {!a?.n ? <div className="rt-note">La regla no dejó trades cerrados en esta fase.</div> : (
         <>
           {a.smallSample && <div className="rt-warn">Muestra pequeña ({a.n} trades): con menos de 30 nada se distingue del azar.</div>}
+          <ModeSwitch mode={statsMode} onMode={setStatsMode} risk={accountRisk} onRisk={setAccountRisk} />
+          {statsMode === 'account' ? (allReport.trades
+            ? <AccountView trades={allReport.trades} risk={accountRisk} />
+            : <div className="rt-note">Este informe se armó antes de tener la vista como cuenta: pulsa otra vez "Correr en todas las monedas" (no recalcula nada).</div>
+          ) : (
+          <>
           <div className="rt-cards">
             <div className="rt-card"><b>{a.n}</b><span>Trades cerrados</span></div>
             <div className="rt-card"><b>{fmtPct(a.winRate)}</b><span>Acierto ({a.wilson?.[0]}–{a.wilson?.[1]}%)</span></div>
@@ -1071,7 +1126,9 @@ const RuleTesterApp = () => {
             <div className="rt-card"><b>{allReport.positive} de {allReport.withTrades}</b><span>Monedas con R medio positivo</span></div>
           </div>
           <Equity points={allReport.equity} />
-          <div className="rt-note">Curva de todos los trades en orden de salida, con 1 R por trade. Las monedas operan a la vez: no es la curva de una sola cuenta.</div>
+          <div className="rt-note">Curva de todos los trades en orden de salida, con 1 R por trade. Las monedas operan a la vez: no es la curva de una sola cuenta (para eso, "Como cuenta").</div>
+          </>
+          )}
           {allReport.baseline && (
             <div className="rt-group">
               <h4>Contra el azar</h4>

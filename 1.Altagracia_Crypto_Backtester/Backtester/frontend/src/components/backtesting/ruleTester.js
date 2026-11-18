@@ -322,3 +322,77 @@ export function sortTrades(trades, key, descending) {
   });
   return descending ? sorted.reverse() : sorted;
 }
+
+const DAY_MS = 86400000;
+const YEAR_DAYS = 365; // Cripto opera todos los días
+
+/**
+ * Los trades como una sola cuenta: cada uno arriesga `riskPct` % del capital que hay al entrar, y su resultado
+ * (R por lo arriesgado) entra a la cuenta al salir. Varias posiciones pueden estar abiertas a la vez.
+ * Los retornos son diarios (UTC) y solo con trades cerrados: lo que pasa dentro de un trade abierto no se ve.
+ * trades: objetos con entry_t, exit_t y r, o ternas [entry_t, exit_t, r]. Devuelve null sin trades o sin riesgo.
+ */
+export function accountStats(trades = [], riskPct = 1) {
+  const risk = Math.max(0, Number(riskPct) || 0) / 100;
+  const list = (trades || []).map(t => (Array.isArray(t) ? { entry_t: t[0], exit_t: t[1], r: t[2] } : t))
+    .filter(t => t && Number.isFinite(t.r) && Number.isFinite(t.entry_t) && Number.isFinite(t.exit_t));
+  if (!list.length || !risk) return null;
+  const events = [];
+  list.forEach((t, i) => {
+    events.push([t.entry_t, 1, i]);
+    events.push([Math.max(t.exit_t, t.entry_t + 1), 0, i]);
+  });
+  events.sort((a, b) => a[0] - b[0] || a[1] - b[1]); // A la misma hora, primero las salidas
+  let equity = 1, open = 0, maxOpen = 0, peak = 1, maxDrawdown = 0;
+  const size = new Array(list.length);
+  const closes = new Map(); // día → capital al final de ese día
+  const curve = [];
+  for (const [time, kind, i] of events) {
+    if (kind === 1) {
+      size[i] = risk * equity;
+      open += 1;
+      maxOpen = Math.max(maxOpen, open);
+    } else {
+      equity = Math.max(0, equity + list[i].r * size[i]);
+      open -= 1;
+      peak = Math.max(peak, equity);
+      if (peak > 0) maxDrawdown = Math.max(maxDrawdown, 1 - equity / peak);
+      closes.set(Math.floor(time / DAY_MS), equity);
+      curve.push([time, Math.round((equity - 1) * 10000) / 100]);
+    }
+  }
+  const first = Math.floor(events[0][0] / DAY_MS), last = Math.floor(events[events.length - 1][0] / DAY_MS);
+  const returns = [];
+  const months = new Map(); // mes → [capital al empezar, capital al terminar]
+  let previous = 1;
+  for (let day = first; day <= last; day++) {
+    const now = closes.has(day) ? closes.get(day) : previous;
+    returns.push(previous > 0 ? now / previous - 1 : 0);
+    const date = new Date(day * DAY_MS);
+    const key = date.getUTCFullYear() * 12 + date.getUTCMonth();
+    if (!months.has(key)) months.set(key, [previous, now]);
+    else months.get(key)[1] = now;
+    previous = now;
+  }
+  const n = returns.length;
+  const mean = returns.reduce((sum, r) => sum + r, 0) / n;
+  const deviation = n > 1 ? Math.sqrt(returns.reduce((sum, r) => sum + (r - mean) ** 2, 0) / (n - 1)) : 0;
+  const downside = Math.sqrt(returns.reduce((sum, r) => sum + Math.min(r, 0) ** 2, 0) / n);
+  const years = n / YEAR_DAYS;
+  const round = (value, digits = 2) => (Number.isFinite(value) ? Math.round(value * 10 ** digits) / 10 ** digits : null);
+  const monthly = [...months.values()].map(([start, end]) => (start > 0 ? end / start - 1 : 0));
+  return {
+    trades: list.length, days: n, years: round(years, 2), riskPct: risk * 100,
+    totalReturn: round((equity - 1) * 100, 1),
+    // Con menos de 3 meses, anualizar exagera
+    annualReturn: years >= 0.25 && equity > 0 ? round((equity ** (1 / years) - 1) * 100, 1) : null,
+    sharpe: deviation > 0 ? round((mean / deviation) * Math.sqrt(YEAR_DAYS)) : null,
+    sortino: downside > 0 ? round((mean / downside) * Math.sqrt(YEAR_DAYS)) : null,
+    maxDrawdown: round(maxDrawdown * 100, 1),
+    worstDay: round(Math.min(...returns) * 100, 2), bestDay: round(Math.max(...returns) * 100, 2),
+    maxOpen, maxOpenRisk: round(maxOpen * risk * 100, 2),
+    months: monthly.length, positiveMonths: monthly.filter(r => r > 0).length,
+    worstMonth: round(Math.min(...monthly) * 100, 1),
+    equity: curve
+  };
+}
