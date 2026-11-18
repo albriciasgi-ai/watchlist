@@ -40,6 +40,9 @@ const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWh
 const TIME = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 const stamp = (ms) => TIME.format(new Date(ms));
 const noop = () => {};
+// Herramientas de dibujo del gráfico, las mismas de la barra de dibujo de la simulación manual
+const DRAW_TOOLS = [['select', 'Cursor'], ['trendline', 'Línea de tendencia'], ['horizontal', 'Línea horizontal'], ['vertical', 'Línea vertical'],
+  ['rectangle', 'Rectángulo'], ['fibonacci', 'Fibonacci'], ['textbox', 'Texto'], ['tpsl', 'Caja TP/SL larga'], ['tpsl-short', 'Caja TP/SL corta']];
 const TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 
 const loadView = () => {
@@ -192,6 +195,8 @@ const RuleTesterApp = () => {
   const [chartTf, setChartTf] = useState(CHART_TIMEFRAMES.includes(view.chartTf) ? view.chartTf : '15m');
   const [indicatorStates, setIndicatorStates] = useState(() => Object.fromEntries(INDICATORS.map(name => [name, view.indicators?.[name] ?? DEFAULT_ON.has(name)])));
   const [showList, setShowList] = useState(false);
+  const [showDraw, setShowDraw] = useState(false);   // Menú de herramientas de dibujo
+  const drawingsRef = useRef([]);                    // Dibujos del gráfico: se vuelven a poner al cambiar de marco
   const [settingsFor, setSettingsFor] = useState(null); // Indicador cuyo modal de ajustes está abierto
   const [vpConfig, setVpConfig] = useState(() => ({ ...VP_CONFIG, ...(view.vpConfig || {}) }));
   const [vpFixedRange, setVpFixedRange] = useState(null);
@@ -207,6 +212,7 @@ const RuleTesterApp = () => {
   const [reviewDays, setReviewDays] = useState(REVIEW_DAYS);
   const [reviewAny, setReviewAny] = useState(false);
   const [reviewBusy, setReviewBusy] = useState(false);
+  const [reviewFollow, setReviewFollow] = useState(true); // Tras entrar, seguir hasta que el trade cierre
   const [reviewShapes, setReviewShapes] = useState([]); // Dibujos del gráfico, para leer la caja TP/SL de una decisión
   const usedBoxesRef = useRef(new Set());
   const shownAtRef = useRef(null);
@@ -495,6 +501,8 @@ const RuleTesterApp = () => {
       }
       if (takeReview(answer)) {
         usedBoxesRef.current = new Set();
+        drawingsRef.current = [];
+        setReviewShapes([]);
         setPhase(1);
         setOrdersView(false);
         setSelected(null);
@@ -508,7 +516,7 @@ const RuleTesterApp = () => {
   const decideReview = async (action, plan = null) => {
     setReviewBusy(true);
     try {
-      const answer = await api('/api/review/decide', { session: review.session.id, i: review.candidate.i, action, stop: plan?.stop ?? null, target: plan?.target ?? null,
+      const answer = await api('/api/review/decide', { session: review.session.id, i: review.candidate.i, action, stop: plan?.stop ?? null, target: plan?.target ?? null, follow: reviewFollow,
         seconds: shownAtRef.current ? (Date.now() - shownAtRef.current) / 1000 : null });
       if (takeReview(answer)) {
         if (plan?.boxId) usedBoxesRef.current.add(plan.boxId);
@@ -602,11 +610,34 @@ const RuleTesterApp = () => {
     return () => window.removeEventListener('keydown', onKey);
   }, [tab, sorted, selected, pick]);
 
+  // Dibujos: el gráfico se monta de nuevo al cambiar de marco o de vista, y ahí se le devuelven los que había
+  const keepDrawings = useCallback((shapes) => {
+    drawingsRef.current = [...(shapes || [])];
+    setReviewShapes(drawingsRef.current);
+  }, []);
+  const chartKey = `${symbol}-${chartTf}-${phase}-${chartOpen}-${ordersView}-${reviewOn ? review.session.id : ''}`;
+  useEffect(() => {
+    if (!drawingsRef.current.length) return undefined;
+    let tries = 0;
+    let timer = null;
+    const attempt = () => {
+      if (chartRef.current?.candleCount?.() > 0) chartRef.current.loadDrawings(drawingsRef.current, true);
+      else if (tries++ < 60) timer = setTimeout(attempt, 150);
+    };
+    timer = setTimeout(attempt, 0);
+    return () => clearTimeout(timer);
+  }, [chartKey, status]);
+  const clearDrawings = () => {
+    drawingsRef.current = [];
+    setReviewShapes([]);
+    chartRef.current?.clearAll?.();
+  };
+
   const getTradeBoxes = useCallback(() => boxesRef.current, []);
   const getTradeBands = useCallback(() => bandsRef.current, []);
   const getTradeBoundaries = useCallback(() => linesRef.current, []);
   // Lo que deja ver el gráfico: la fase 1 completa; la 2 y la 3 solo hasta su inicio mientras no se pida verlas
-  const chartTime = reviewOn ? review.candidate.time
+  const chartTime = reviewOn ? review.candidate.time : review?.session?.done && review.session.until ? review.session.until
     : (ordersView && lastEnd ? lastEnd : (phaseInfo ? (chartOpen ? phaseInfo.end : phaseInfo.start) : null));
   const days = useMemo(() => (phaseInfo ? Math.min(Math.ceil((Date.now() - phaseInfo.start) / DAY_MS) + 60, MAX_DAYS[chartTf]) : MAX_DAYS[chartTf]), [phaseInfo, chartTf]);
 
@@ -1443,8 +1474,11 @@ const RuleTesterApp = () => {
             <button type="button" className={`rt-btn${tool === 'tpsl-short' ? ' on' : ''}`} style={{ flex: 1 }} onClick={() => setTool(tool === 'tpsl-short' ? 'select' : 'tpsl-short')}>Dibujar caja corta</button>
           </div>
           <button type="button" className="rt-btn" style={{ width: '100%', padding: '6px 0', marginTop: 4 }} disabled={reviewBusy} onClick={() => decideReview('skip')}>No entro</button>
+          <div className="rt-row" style={{ marginTop: 4 }}>
+            <Check checked={reviewFollow} onChange={setReviewFollow} title="Como al operar una posición a la vez: tras entrar, el gráfico avanza hasta que tu trade cierra y unas velas más, para ver cómo terminó y qué hizo el precio después. Los candidatos que caen en ese tramo no se deciden. Sin marcar, pasa al candidato siguiente aunque el trade siga abierto">Tras entrar, seguir hasta que el trade cierre</Check>
+          </div>
           <div className="rt-note" style={{ margin: '6px 0 10px' }}>
-            El gráfico llega hasta el cierre de la vela del candidato. Puedes moverte hacia atrás, cambiar de marco y usar tus indicadores.
+            El gráfico llega hasta el cierre de la vela del candidato. Puedes moverte hacia atrás, cambiar de marco, usar tus indicadores y dibujar (botón "Dibujo", arriba).
             Fecha y precio están ocultos; el resultado de cada decisión aparece cuando un candidato posterior ya lo dejó atrás.
           </div>
         </>
@@ -1452,7 +1486,7 @@ const RuleTesterApp = () => {
       {review?.session?.done && (
         <>
           <div className="rt-warn">
-            <b>Sesión terminada</b> · {review.session.position} de {review.session.total} candidatos decididos.{' '}
+            <b>Sesión terminada</b> · {review.summary?.decisions ?? review.session.position} candidatos decididos de {review.session.total}{review.summary?.passed ? `, ${review.summary.passed} pasaron con un trade abierto` : ''}.{' '}
             <button type="button" className="rt-btn" onClick={closeReview}>Cerrar la sesión</button>
           </div>
           {reviewSummary(review.summary)}
@@ -1468,7 +1502,7 @@ const RuleTesterApp = () => {
                 <tr key={d.i} style={{ cursor: 'pointer' }} onClick={() => chartRef.current?.focusOn?.(d.time, d.entry ?? null)} title="Ir a ese momento en el gráfico">
                   <td style={{ textAlign: 'left' }}>{d.i + 1}</td>
                   <td style={{ textAlign: 'left' }}>{ACTION_LABEL[d.action]}{d.action === 'rule' ? (d.dir > 0 ? ' (largo)' : ' (corto)') : ''}</td>
-                  <td>{d.action === 'skip' ? '—' : (d.r != null ? <R value={d.r} digits={2} /> : 'abierto')}</td>
+                  <td>{d.action === 'skip' || d.action === 'passed' ? '—' : (d.r != null ? <R value={d.r} digits={2} /> : 'abierto')}</td>
                   <td>{d.ruleR != null ? <R value={d.ruleR} digits={2} /> : 'abierto'}</td>
                 </tr>
               ))}
@@ -1566,7 +1600,25 @@ const RuleTesterApp = () => {
           {CHART_TIMEFRAMES.map(tf => <button key={tf} type="button" className={`rt-btn${tf === chartTf ? ' on' : ''}`} onClick={() => setChartTf(tf)} title="Marco del gráfico (el de la regla se elige en la regla)">{tf.toUpperCase()}</button>)}
         </div>
         <div style={{ position: 'relative' }}>
-          <button type="button" className="rt-btn" onClick={() => setShowList(open => !open)}>Indicadores {enabledCount}</button>
+          <button type="button" className={`rt-btn${tool !== 'select' ? ' on' : ''}`} onClick={() => { setShowDraw(open => !open); setShowList(false); }}
+            title="Herramientas de dibujo. Supr borra el dibujo elegido">Dibujo{tool !== 'select' ? `: ${DRAW_TOOLS.find(([id]) => id === tool)?.[1] || ''}` : ''}</button>
+          {showDraw && (
+            <div className="rt-menu" style={{ left: 'auto', right: 0, minWidth: 190 }}>
+              {DRAW_TOOLS.map(([id, label]) => (
+                <button key={id} type="button" className={`rt-btn${tool === id ? ' on' : ''}`} style={{ display: 'block', width: '100%', textAlign: 'left', marginBottom: 2 }}
+                  onClick={() => { setTool(id); setShowDraw(false); }}>{label}</button>
+              ))}
+              <div style={{ display: 'flex', gap: 2, marginTop: 6 }}>
+                <button type="button" className="rt-btn" style={{ flex: 1 }} onClick={() => chartRef.current?.undo?.()}>Deshacer</button>
+                <button type="button" className="rt-btn" style={{ flex: 1 }} onClick={() => chartRef.current?.redo?.()}>Rehacer</button>
+              </div>
+              <button type="button" className="rt-btn" style={{ width: '100%', marginTop: 2 }} onClick={() => { if (window.confirm('¿Borrar todos los dibujos del gráfico?')) clearDrawings(); setShowDraw(false); }}>Borrar todos</button>
+              <div className="rt-note" style={{ marginTop: 6 }}>Los dibujos siguen al cambiar de marco y se pierden al cerrar la ventana. Una sesión de revisión nueva empieza sin dibujos.</div>
+            </div>
+          )}
+        </div>
+        <div style={{ position: 'relative' }}>
+          <button type="button" className="rt-btn" onClick={() => { setShowList(open => !open); setShowDraw(false); }}>Indicadores {enabledCount}</button>
           {showList && (
             <div className="rt-menu" style={{ left: 'auto', right: 0 }}>
               {INDICATORS.map(name => (
@@ -1622,7 +1674,7 @@ const RuleTesterApp = () => {
           </div>
         </div>
 
-        <div className="rt-chart backtesting-main" onMouseDown={() => setShowList(false)}>
+        <div className="rt-chart backtesting-main" onMouseDown={() => { setShowList(false); setShowDraw(false); }}>
           {status && <div className="rt-overlay">{status}</div>}
           {!status && phaseInfo && !chartOpen && !ordersView && (
             <div className="rt-overlay" style={{ zIndex: 5, background: 'var(--t-page, #fff)', opacity: 1, flexDirection: 'column', gap: 12 }}>
@@ -1637,7 +1689,7 @@ const RuleTesterApp = () => {
             <div className="timeframe-panel" style={{ position: 'absolute', inset: 0 }}>
               <MiniChart
                 ref={chartRef}
-                key={`${symbol}-${chartTf}-${phase}-${chartOpen}-${ordersView}-${reviewOn ? review.session.id : ''}`}
+                key={chartKey}
                 symbol={symbol}
                 interval={chartTf}
                 days={days}
@@ -1658,7 +1710,7 @@ const RuleTesterApp = () => {
                 getTradeBands={getTradeBands}
                 onRequestPause={noop}
                 onRequestTimeChange={noop}
-                onDrawingsChange={(shapes) => setReviewShapes([...(shapes || [])])}
+                onDrawingsChange={keepDrawings}
                 onCandleClick={noop}
                 chosenStyle="numbers"
               />

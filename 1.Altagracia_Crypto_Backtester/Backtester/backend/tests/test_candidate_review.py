@@ -131,3 +131,26 @@ def test_moneda_al_azar_y_tramos_que_no_se_repiten(world):
     # Una regla que casi no da señales no arma sesión
     rare = cr.start("X", {**RAW, "rv": {"arrow": "any", "spike": 50}}, 30, seed=1)
     assert rare["success"] is False and "candidatos" in rare["message"]
+
+
+def test_tras_entrar_se_puede_seguir_hasta_que_el_trade_cierre(world):
+    s = cr.start("X", RAW, 60, seed=1)
+    sid = s["session"]["id"]
+    full = cr.sessions()[sid]
+    first = full["candidates"][0]
+    answer = cr.decide(sid, 0, "rule", follow=True)
+    resume = first["exit_t"] + cr.AFTER_BARS * MS
+    inside = [c for c in full["candidates"][1:] if c["time"] < resume]
+    # El resultado ya se ve, y lo que cayó con el trade abierto no se decide
+    assert answer["decisions"][0]["r"] == first["r"] and [d["action"] for d in answer["decisions"][1:]] == ["passed"] * len(inside)
+    if answer["candidate"]:
+        assert answer["candidate"]["time"] >= resume and answer["candidate"]["i"] == 1 + len(inside)
+    # No entrar, o entrar sin seguir, pasa al candidato siguiente
+    nxt = answer["candidate"]["i"]
+    assert cr.decide(sid, nxt, "skip", follow=True)["candidate"]["i"] == nxt + 1
+    done = cr.end(sid)
+    assert done["session"]["done"] and done["summary"]["decisions"] == 2 and done["summary"]["passed"] == len(inside)
+    assert done["summary"]["taken"]["n"] == 1 and done["summary"]["skipped"]["n"] == 1
+    # El gráfico de la sesión terminada llega hasta después de la salida del trade, no hasta el final de la fase
+    assert done["session"]["until"] >= resume and done["session"]["until"] < full["end"] + 60 * DAY
+    assert cr.report()["decisions"] == 2

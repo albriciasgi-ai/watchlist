@@ -25,6 +25,7 @@ MIN_DAYS, MAX_DAYS = 7, 120
 MIN_CANDIDATES = 8        # Con menos no hay sesión que valga: se busca otro tramo
 MAX_CANDIDATES = 60       # Una sesión más larga se corta ahí
 TRIES = 40
+AFTER_BARS = 8           # Velas que se ven después de la salida de un trade antes del candidato siguiente
 POSITION_GROUPS = ((1, 5), (6, 10), (11, 20), (21, MAX_CANDIDATES))
 _lock = threading.Lock()
 
@@ -193,8 +194,10 @@ def _own_trade(session, candidate, side, stop, target):
             "exit": trade["exit"], "exit_t": trade["exit_t"], "r": trade["r"], "reason": trade["reason"]}, None
 
 
-def decide(session_id, index, action, stop=None, target=None, seconds=None):
-    """Una decisión sobre el candidato a la vista: `skip`, `rule` (como propone la regla), `long` o `short` con stop y objetivo propios."""
+def decide(session_id, index, action, stop=None, target=None, seconds=None, follow=False):
+    """Una decisión sobre el candidato a la vista: `skip`, `rule` (como propone la regla), `long` o `short` con stop y objetivo propios.
+    Con `follow`, tras entrar el gráfico sigue hasta que el trade cierra y unas velas más: los candidatos que caen en ese
+    tramo quedan como `passed` (no se deciden), como al operar una posición a la vez."""
     session = sessions().get(session_id)
     if session is None:
         return {"success": False, "message": "Esa sesión no existe"}
@@ -217,6 +220,14 @@ def decide(session_id, index, action, stop=None, target=None, seconds=None):
              "seconds": round(float(seconds), 1) if isinstance(seconds, (int, float)) and 0 <= seconds < 86400 else None}
     _append(event)
     session["decisions"].append(event)
+    if follow and trade:
+        resume = trade["exit_t"] + AFTER_BARS * session["tf"] * 60000
+        for later in session["candidates"][index + 1:]:
+            if later["time"] >= resume:
+                break
+            passed = {"event": "decision", "session": session_id, "i": later["i"], "action": "passed", "trade": None, "at": event["at"], "seconds": None}
+            _append(passed)
+            session["decisions"].append(passed)
     if len(session["decisions"]) >= len(session["candidates"]):
         _append({"event": "end", "session": session_id, "at": event["at"]})
         session["ended"] = event["at"]
@@ -260,11 +271,18 @@ def public(session):
             row["ruleR"] = candidate["r"]  # Lo que hizo la regla ahí, se haya entrado o no
         decisions.append(row)
     out = {"session": {"id": session["id"], "symbol": session["symbol"], "tf": session["tf"], "start": session["start"], "total": len(session["candidates"]),
-                       "position": position, "done": done, "name": session["rule"].get("name")},
+                       "position": position, "done": done, "name": session["rule"].get("name"), "until": _until(session) if done else None},
            "candidate": _shown(current) if current else None, "decisions": decisions}
     if done:
         out["summary"] = _summary([_row(session, d) for d in session["decisions"]])
     return out
+
+
+def _until(session):
+    """Hasta dónde se muestra el gráfico de una sesión terminada: la salida del último trade y unas velas más, sin pasar del tramo siguiente por decidir."""
+    step = AFTER_BARS * session["tf"] * 60000
+    times = [session["candidates"][d["i"]]["time"] for d in session["decisions"]] + [d["trade"]["exit_t"] + step for d in session["decisions"] if d.get("trade")]
+    return max(times) if times else session["start"]
 
 
 def active(symbol=None):
@@ -314,9 +332,11 @@ def _gap(a, b):
 
 
 def _summary(rows):
+    passed = sum(1 for r in rows if r["action"] == "passed")
+    rows = [r for r in rows if r["action"] != "passed"]  # Lo que pasó con un trade abierto no fue una decisión
     taken = [r for r in rows if r["taken"]]
     skipped = [r for r in rows if not r["taken"]]
-    out = {"decisions": len(rows), "taken": _stat([r["r"] for r in taken]), "takenAsRule": _stat([r["ruleR"] for r in taken]),
+    out = {"decisions": len(rows), "passed": passed, "taken": _stat([r["r"] for r in taken]), "takenAsRule": _stat([r["ruleR"] for r in taken]),
            "skipped": _stat([r["ruleR"] for r in skipped]), "rule": _stat([r["ruleR"] for r in rows]),
            # Lo que agrega elegir: lo tomado contra lo dejado, medido con la misma vara (lo que hizo la regla en cada uno)
            "selection": _gap([r["ruleR"] for r in taken], [r["ruleR"] for r in skipped]),

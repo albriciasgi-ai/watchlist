@@ -2,12 +2,12 @@
 // El servidor guarda la sesión y nunca entrega nada posterior al candidato a la vista.
 
 export const REVIEW_DAYS = 28;
-export const ACTION_LABEL = { skip: 'No entro', rule: 'Como la regla', long: 'Largo propio', short: 'Corto propio' };
+export const ACTION_LABEL = { skip: 'No entro', rule: 'Como la regla', long: 'Largo propio', short: 'Corto propio', passed: 'Pasó con el trade abierto' };
 
 /** Cajas de las decisiones tomadas, para el gráfico. Una que sigue abierta llega hasta la hora a la vista. */
 export function reviewBoxes(decisions = [], now = null, tfMinutes = 15) {
   const step = tfMinutes * 60000;
-  return decisions.filter(d => d.action !== 'skip' && Number.isFinite(d.entry) && Number.isFinite(d.stop)).map(d => ({
+  return decisions.filter(d => Number.isFinite(d.entry) && Number.isFinite(d.stop)).map(d => ({
     side: d.dir > 0 ? 'long' : 'short', entry: d.entry, stop: d.stop, target: d.target ?? d.exit ?? d.entry, start: d.entry_t,
     end: Math.max(d.exit_t ?? now ?? d.entry_t, d.entry_t + step)
   }));
