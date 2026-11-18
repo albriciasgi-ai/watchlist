@@ -135,7 +135,9 @@ def clean_rule(raw):
         vp = raw.get("vp") or {}
         hours = int(_num(vp.get("hours"), 24, 4, 168))
         # accept: minutos seguidos cerrando dentro (VR) o fuera (VX) del valor. failBars: velas para que un fallo cierre de vuelta
-        extra["vp"] = {"hours": hours if hours in vp_sessions.PERIODS else 24, "accept": int(_num(vp.get("accept"), 30, 5, 480)),
+        shapes = sorted({s for s in (vp.get("shapes") or []) if s in vp_sessions.SHAPES})
+        extra["vp"] = {**({"shapes": shapes} if shapes and len(shapes) < len(vp_sessions.SHAPES) else {}),  # Formas del perfil anterior que se operan
+                       "hours": hours if hours in vp_sessions.PERIODS else 24, "accept": int(_num(vp.get("accept"), 30, 5, 480)),
                        "failBars": int(_num(vp.get("failBars"), 3, 1, 20)), "rows": int(_num(vp.get("rows"), 50, 10, 400)),
                        "share": _num(vp.get("share"), 70, 40, 95)}
         # Objetivo en un nivel del perfil en vez de un múltiplo del riesgo
@@ -533,6 +535,17 @@ def _breakdowns(trades, rule):
         by["hour"].setdefault(f"{moment.hour // 4 * 4:02d}-{moment.hour // 4 * 4 + 4:02d} UTC", []).append(t)
         by["reason"].setdefault(t["reason"], []).append(t)
         by["combo"].setdefault("+".join(sorted(t["votes"])), []).append(t)
+    # Perfil de la sesión anterior: su forma y dónde abrió la sesión del trade, también por lado
+    open_names = {1: "Abrió encima del valor", -1: "Abrió debajo del valor", 0: "Abrió dentro del valor"}
+    by.update(vpShape={}, vpShapeSide={}, vpOpen={})
+    for t in trades:
+        vp = t.get("vp")
+        if not vp:
+            continue
+        shape = vp.get("shape") or "?"
+        by["vpShape"].setdefault(shape, []).append(t)
+        by["vpShapeSide"].setdefault(f"{shape} · {'largos' if t['dir'] > 0 else 'cortos'}", []).append(t)
+        by["vpOpen"].setdefault(open_names.get(vp.get("open"), "?"), []).append(t)
     out = {name: [{"label": key, **_brief(group)} for key, group in sorted(groups.items())] for name, groups in by.items()}
     out["combo"].sort(key=lambda row: -row["n"])
     out["combo"] = out["combo"][:20]
@@ -609,7 +622,7 @@ def _extra_events(symbol, rule, span, ctx, control=False):
 
 def _vp_levels(symbol, hours, rows, share, start_ms, end_ms):
     """Niveles de las sesiones del tramo, guardados en disco: una sesión cerrada no cambia."""
-    path = tester_dir() / "cache" / f"vp_{symbol}_{hours}h_{rows}_{int(share)}_{_iso(start_ms)}_{_iso(end_ms - 1)}.json"
+    path = tester_dir() / "cache" / f"vp2_{symbol}_{hours}h_{rows}_{int(share)}_{_iso(start_ms)}_{_iso(end_ms - 1)}.json"
     if path.exists():
         with open(path, encoding="utf-8") as fh:
             return {int(k): v for k, v in json.load(fh).items()}
@@ -641,7 +654,8 @@ def _vp_events(symbol, rule, span):
             _extra[key] = found
             while len(_extra) > 6:
                 _extra.pop(next(iter(_extra)))
-    return found
+    shapes = vp.get("shapes")
+    return [e for e in found if e["info"].get("shape") in shapes] if shapes else found
 
 
 def run(symbol, rule, span, phase, table=None, base=True, control=False):

@@ -12,6 +12,11 @@ Elementos, todos contra el valor de la sesión inmediatamente anterior:
   cierran dentro. Dirección: hacia el borde contrario. Una vez por sesión.
 - VF, fallo fuera del valor: con el cierre anterior dentro del valor, una vela pasa el VAH o el VAL y en
   `fail_bars` velas o menos una vela cierra de vuelta dentro. Dirección: hacia el POC.
+- Forma del perfil de la sesión anterior (`shape`), por dónde quedó el volumen dentro del rango de la sesión:
+  "P" si el POC está en el tercio de arriba (el volumen se juntó arriba y dejó una cola delgada abajo), "b" si
+  está en el tercio de abajo, "D" si está en el medio, y "B" si hay dos distribuciones: un segundo pico con al
+  menos SECOND_PEAK del volumen del POC, a SPLIT_GAP del rango o más, con un valle entre los dos por debajo de
+  VALLEY del pico menor. La forma se conoce al cerrar la sesión.
 - VX, aceptación fuera del valor: `accept` velas seguidas cierran fuera, del mismo lado. Dirección: la de la
   salida. Una vez por lado y sesión.
 """
@@ -24,6 +29,11 @@ DAY_MS = 24 * HOUR
 MONDAY_OFFSET = 4 * DAY_MS  # El 1 de enero de 1970 fue jueves
 PERIODS = (4, 8, 12, 24, 168)
 MIN_COVERAGE = 0.9          # Una sesión con menos minutos en el almacén no da niveles
+SHAPES = ("D", "P", "b", "B")
+SECOND_PEAK = 0.7
+SPLIT_GAP = 0.25
+VALLEY = 0.5
+SMOOTH_ROWS = 5            # El perfil se suaviza antes de buscar picos: una franja suelta no es una distribución
 CODES = {"VR": "Regreso al valor de la sesión anterior", "VF": "Fallo fuera del valor de la sesión anterior",
          "VX": "Aceptación fuera del valor de la sesión anterior"}
 
@@ -60,7 +70,27 @@ def profile_levels(prices, volumes, rows=50, share=0.7):
             covered += above
     step = (high - low) / rows
     mid = lambda i: round(low + step * (i + 0.5), 8)
-    return {"poc": mid(poc), "vah": mid(hi), "val": mid(lo), "high": high, "low": low}
+    return {"poc": mid(poc), "vah": mid(hi), "val": mid(lo), "high": high, "low": low,
+            "shape": profile_shape(levels), "pocPos": round((poc + 0.5) / rows, 3)}
+
+
+def profile_shape(levels):
+    """Forma del perfil: "B" con dos distribuciones; si no, "P", "b" o "D" según el tercio donde está el POC."""
+    rows = len(levels)
+    width = max(1, min(SMOOTH_ROWS, rows // 8))
+    smooth = np.convolve(levels, np.ones(width) / width, "same")
+    main = int(np.argmax(smooth))
+    gap = max(2, int(round(SPLIT_GAP * rows)))
+    for other in sorted(range(rows), key=lambda i: -smooth[i]):
+        if abs(other - main) < gap:
+            continue
+        if smooth[other] < SECOND_PEAK * smooth[main]:
+            break
+        a, b = sorted((main, other))
+        if smooth[a:b + 1].min() < VALLEY * smooth[other]:
+            return "B"
+    position = (int(np.argmax(levels)) + 0.5) / rows
+    return "P" if position >= 2 / 3 else ("b" if position <= 1 / 3 else "D")
 
 
 def sessions(symbol, hours, start_ms, end_ms, rows=50, share=0.7):
@@ -105,7 +135,8 @@ def events(bars, tf, levels, hours, accept=2, fail_bars=3):
         s["hi"], s["lo"] = max(s["hi"], b["h"]), min(s["lo"], b["l"])
         close_in = val <= b["c"] <= vah
         side = 0 if close_in else (1 if b["c"] > vah else -1)
-        info = {"poc": poc, "vah": vah, "val": val, "session": current, "open": s["open"], "hours": hours}
+        info = {"poc": poc, "vah": vah, "val": val, "session": current, "open": s["open"], "hours": hours,
+                "shape": prior.get("shape"), "pocPos": prior.get("pocPos")}
 
         def add(code, d, lo, hi, extra=None):
             out.append({"code": code, "dir": d, "t": b["t"], "known": b["t"] + tf_ms, "lo": lo, "hi": hi,

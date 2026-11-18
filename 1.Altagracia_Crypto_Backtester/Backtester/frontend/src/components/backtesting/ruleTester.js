@@ -33,7 +33,7 @@ export function defaultRule() {
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
     first: [], liqWhat: 'zone', liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3,
     // Perfil por sesión (VR, VF, VX): periodo, minutos sostenido dentro o fuera del valor y velas para que un fallo cierre de vuelta
-    vpHours: 24, vpAccept: 30, vpFailBars: 3, targetAt: 'r'
+    vpHours: 24, vpAccept: 30, vpFailBars: 3, vpShapes: [], targetAt: 'r'
   };
 }
 
@@ -41,6 +41,8 @@ const number = (value, fallback) => (Number.isFinite(Number(value)) && value !==
 
 export const MAX_WINDOW = 10;
 export const VP_CODES = ['VR', 'VF', 'VX'];
+// Forma del perfil de la sesión anterior: dónde quedó el volumen dentro de su rango
+export const VP_SHAPES = [['D', 'D · volumen en el medio'], ['P', 'P · volumen arriba, cola abajo'], ['b', 'b · volumen abajo, cola arriba'], ['B', 'B · dos distribuciones']];
 export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24, '1 día'], [168, '1 semana']];
 export const usesProfile = (rule) => (rule.codes || []).some(code => VP_CODES.includes(code));
 
@@ -64,7 +66,7 @@ export function toBackendRule(rule) {
     ...(codes.includes('LIQ') ? {
       liq: { what: rule.liqWhat === 'swing' ? 'swing' : 'zone', variant: rule.liqVariant === 'reclaim' ? 'reclaim' : 'pierce', swingBars: number(rule.liqSwingBars, 5), reclaimBars: number(rule.liqReclaimBars, 3) }
     } : {}),
-    ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3) } } : {}),
+    ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [] } } : {}),
     recipe: {
       // En secuencia: todo el contexto primero y, en la misma vela o después, al menos `min` del gatillo
       slots: sequence
@@ -123,7 +125,7 @@ export function fromBackendRule(saved) {
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
     stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6,
     useTarget: saved.exit?.targetR != null || !!saved.targetAt, targetR: saved.exit?.targetR ?? 2, targetAt: saved.targetAt || 'r',
-    vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
+    vpShapes: saved.vp?.shapes || [], vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
     trail: saved.exit?.trail === 'swing', trailBars: saved.exit?.trailBars ?? 5,
     useHorizon: saved.exit?.horizon != null, horizon: saved.exit?.horizon ?? 200, opposite: !!saved.exit?.opposite,
     oneAtATime: saved.oneAtATime !== false, cooldown: saved.cooldown ?? 0, vaGap: saved.vaGap ?? 0, filters: saved.filters || [],
@@ -149,7 +151,7 @@ export function describeRule(saved) {
   if (saved.exit?.opposite) exits.push('señal contraria');
   return `${TF_LABEL[saved.tf] || saved.tf} · ${joined}${recipe.window > 1 ? ` @${recipe.window}` : ''}${saved.invert ? ' · invertida' : ''}`
     + `${saved.vaGap > 0 ? ` · hueco ≥ ${saved.vaGap} ATR` : ''}`
-    + `${saved.vp ? ` · perfil de ${saved.vp.hours} h` : ''}`
+    + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
     + ` · ${saved.entry?.type === 'limit' ? 'limit' : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
     + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;
 }
@@ -225,7 +227,7 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     // El valor de la sesión anterior, dibujado sobre la sesión del trade, donde la regla lo usó
     const start = vp.session;
     const stop = Math.max(end, Math.min(vp.session + vp.hours * 3600000, end + 20 * tf));
-    bands.push({ kind: 'value', low: vp.val, high: vp.vah, start, end: stop, strong: false, label: `Valor de la sesión anterior (${vp.hours} h)` });
+    bands.push({ kind: 'value', low: vp.val, high: vp.vah, start, end: stop, strong: false, label: `Valor de la sesión anterior (${vp.hours} h${vp.shape ? `, perfil ${vp.shape}` : ''})` });
     bands.push({ kind: 'level', price: vp.poc, start, end: stop, label: 'POC anterior' });
     if (Number.isFinite(vp.extreme)) bands.push({ kind: 'mark', time: trade.signal, price: vp.extreme, label: 'Extremo' });
   }

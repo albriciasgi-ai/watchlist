@@ -9,7 +9,7 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import { lastClosedIndex } from './replayClock';
 import {
-  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
+  CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, sequenceParts, usesProfile, RULE_TIMEFRAMES, TF_LABEL, defaultRule, deleteRule, describeRule,
   fmtPct, fmtR, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
 import '../../backtesting_styles.css';
@@ -522,6 +522,16 @@ const RuleTesterApp = () => {
               <span title="VF: velas que tiene el precio para cerrar de vuelta dentro del valor después de salir">· fallo en</span>
               <Num value={rule.vpFailBars} min={1} max={20} onChange={(vpFailBars) => patch({ vpFailBars })} /><span>velas</span>
             </div>
+            <div className="rt-row">
+              <span title="Solo se operan las sesiones cuya sesión anterior tuvo una de estas formas. Sin marcar ninguna, todas">Forma del perfil anterior:</span>
+              {VP_SHAPES.map(([shape, label]) => (
+                <button key={shape} type="button" className={`rt-chip${(rule.vpShapes || []).includes(shape) ? ' on' : ''}`} title={label}
+                  onClick={() => patch({ vpShapes: (rule.vpShapes || []).includes(shape) ? rule.vpShapes.filter(s => s !== shape) : [...(rule.vpShapes || []), shape] })}>
+                  {shape}
+                </button>
+              ))}
+              <span className="rt-note">{(rule.vpShapes || []).length ? '' : 'todas'}</span>
+            </div>
             <div className="rt-note">
               Todo se mide contra el POC, el VAH y el VAL de la sesión anterior, con volumen real. VR: abre fuera del valor y vuelve a sostenerse dentro (va al borde contrario).
               VF: sale del valor y cierra de vuelta dentro (va al POC). VX: se sostiene fuera (sigue la salida). Para el stop detrás del extremo usa "Borde lejano de la zona".
@@ -763,7 +773,7 @@ const RuleTesterApp = () => {
             Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
-            {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
+            {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
             {selectedTrade.liq && <><br />Barrido: {selectedTrade.liq.what === 'zone' ? `zona ${selectedTrade.liq.zoneLow}–${selectedTrade.liq.zoneHigh}` : `swing en ${selectedTrade.liq.swing} de hace ${selectedTrade.liq.swingAgeBars} velas`}, pasado hasta {selectedTrade.liq.extreme}{selectedTrade.liq.depthAtr != null && ` (${selectedTrade.liq.depthAtr} ATR)`} · zona de {Math.round((selectedTrade.liq.usd || 0) / 1000).toLocaleString('es-CO')}K USD ({selectedTrade.liq.zoneSide === 'long' ? 'largos' : 'cortos'} liquidados), última liquidación {selectedTrade.liq.zoneAgeDays} días antes · {selectedTrade.liq.source}</>}
           </div>
           {detail?.trade?.n === selectedTrade.n && detail.measures.length > 0 && (
@@ -802,6 +812,9 @@ const RuleTesterApp = () => {
       <BriefTable title="Por lado" rows={b.side} />
       <BriefTable title="Por hora de entrada (UTC)" rows={b.hour} />
       <BriefTable title="Por salida" rows={b.reason} />
+      <BriefTable title="Por forma del perfil de la sesión anterior" rows={b.vpShape} first="D medio · P arriba · b abajo · B doble" />
+      <BriefTable title="Por forma del perfil y lado" rows={b.vpShapeSide} />
+      <BriefTable title="Por apertura de la sesión frente al valor anterior" rows={b.vpOpen} />
       <BriefTable title="Por combinación de elementos de la regla" rows={b.combo} />
       <SplitTable title="Aporte de cada elemento de la regla" rows={b.ruleElements} names={names} />
       <SplitTable title="Otros elementos presentes, a favor del trade" rows={b.otherElements} names={names} note="Elementos que no están en la regla y aparecieron en la ventana de la señal. Ordenados por diferencia de R." />

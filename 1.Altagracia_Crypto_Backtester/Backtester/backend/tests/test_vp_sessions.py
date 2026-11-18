@@ -87,3 +87,33 @@ def test_objetivo_en_el_poc_y_en_el_borde_contrario(monkeypatch):
     assert edge["target"] == 98.0 and edge["reason"] == "objetivo" and edge["exit_t"] > poc["exit_t"]
     plain = rt.clean_rule({"name": "V", "tf": TF, "recipe": {"slots": [{"codes": ["EX"]}]}, "exit": {"targetAt": "poc"}})
     assert "targetAt" not in plain and "vp" not in plain and plain["exit"]["horizon"] == rt.DEFAULT_HORIZON
+
+
+def bell(center, rows=50, width=6.0, height=100.0):
+    return height * np.exp(-((np.arange(rows) - center) / width) ** 2)
+
+
+def test_forma_del_perfil_segun_donde_quedo_el_volumen():
+    assert vp.profile_shape(bell(25)) == "D"
+    assert vp.profile_shape(bell(40)) == "P" and vp.profile_shape(bell(8)) == "b"
+    assert vp.profile_shape(bell(10) + bell(38, height=80)) == "B"
+    assert vp.profile_shape(bell(25) + bell(40, height=30)) == "D"       # El segundo pico es chico
+    assert vp.profile_shape(bell(22, width=12) + bell(30, width=12)) == "D"  # Dos picos pegados son una sola distribución
+
+
+def test_el_filtro_de_forma_deja_solo_esas_sesiones(monkeypatch):
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    levels = {0: {**LEVELS[0], "shape": "P"}, DAY: {**LEVELS[0], "shape": "b"}}
+    monkeypatch.setattr(rt, "_vp_levels", lambda *a: levels)
+    fail = [100, 101, (101, 102.8, 100.9, 102.5), (102.5, 103.1, 101.2, 101.5)] + [101.5] * 92
+    span = {"bars": day([100] * 96, start=0) + day(fail) + day(fail, start=2 * DAY), "events": []}
+
+    def run(shapes):
+        raw = {"name": "V", "tf": TF, "recipe": {"slots": [{"codes": ["VF"]}]}, "vp": {"hours": 24, "accept": 600, "shapes": shapes},
+               "stop": {"type": "zone"}, "exit": {"targetR": None, "horizon": 5}, "cooldown": 0}
+        return rt.run("X", rt.clean_rule(raw), span, PHASE, None, base=False)
+
+    both = run([])
+    assert [t["vp"]["shape"] for t in both["trades"]] == ["P", "b"] and "shapes" not in rt.clean_rule({"name": "V", "recipe": {"slots": [{"codes": ["VF"]}]}})["vp"]
+    assert [row["label"] for row in both["breakdowns"]["vpShape"]] == ["P", "b"]
+    assert [t["vp"]["shape"] for t in run(["b"])["trades"]] == ["b"]
