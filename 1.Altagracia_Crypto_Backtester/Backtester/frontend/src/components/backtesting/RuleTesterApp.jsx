@@ -37,6 +37,7 @@ const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWh
 const TIME = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 const stamp = (ms) => TIME.format(new Date(ms));
 const noop = () => {};
+const TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 
 const loadView = () => {
   try {
@@ -154,6 +155,7 @@ const RuleTesterApp = () => {
   const [pickedOrder, setPickedOrder] = useState(null);
   const chartRef = useRef(null);
   const marketRef = useRef(null);
+  const extendedRef = useRef(new Map()); // Por marco, el pedido de las velas anteriores al caché
   const boxesRef = useRef([]);
   const linesRef = useRef([]);
   const bandsRef = useRef([]);
@@ -185,7 +187,7 @@ const RuleTesterApp = () => {
     const has = (data) => data?.timeframes?.[chartTf]?.main?.length > 0;
     (async () => {
       let data = marketRef.current;
-      if (has(data)) return;
+      if (has(data) && (TF_MINUTES[chartTf] < 5 || data.timeframes[chartTf].extended)) return;
       setStatus(`Cargando las velas de ${symbol}…`);
       if (!data) data = await cachedMarketData(symbol);
       if (!has(data)) {
@@ -199,6 +201,25 @@ const RuleTesterApp = () => {
         } catch (error) {
           if (active) setStatus(`No se pudieron cargar las velas: ${error.message}`);
           return;
+        }
+      }
+      // El caché de velas guarda 5 años y la fase 1 empieza antes: lo que falta sale del almacén de trades.
+      // En 1m serían millones de velas: ese marco se queda con lo que tiene el caché
+      const minutes = TF_MINUTES[chartTf];
+      if (minutes >= 5 && !data.timeframes[chartTf].extended) {
+        try {
+          const main = data.timeframes[chartTf].main;
+          setStatus(`Completando las velas de ${chartTf} anteriores al ${new Date(main[0].timestamp).toISOString().slice(0, 10)} (la primera vez tarda)…`);
+          // Un solo pedido por marco, aunque el efecto corra dos veces: los dos esperan la misma respuesta
+          if (!extendedRef.current.has(chartTf)) {
+            extendedRef.current.set(chartTf, api(`/api/tester/candles/${symbol}?tf=${minutes}&before=${main[0].timestamp}`).then(early => (
+              early.success ? early.t.map((t, i) => ({ timestamp: t, open: early.o[i], high: early.h[i], low: early.l[i], close: early.c[i], volume: early.v[i] })) : []
+            )));
+          }
+          const older = (await extendedRef.current.get(chartTf)).filter(candle => candle.timestamp < main[0].timestamp);
+          data = { ...data, timeframes: { ...data.timeframes, [chartTf]: { ...data.timeframes[chartTf], main: [...older, ...main], extended: true } } };
+        } catch (error) {
+          extendedRef.current.delete(chartTf); // Sin esas velas el gráfico sigue con las del caché, y se vuelve a intentar al volver al marco
         }
       }
       marketRef.current = data;

@@ -219,6 +219,48 @@ def detect_span(symbol, tf, phase, rule, progress=None):
     return span
 
 
+def early_candles(symbol, tf, before_ms):
+    """
+    Velas del almacén de trades desde el inicio de la fase 1 hasta before_ms, para el gráfico de la ventana: el caché
+    de velas de App 1 guarda 5 años y la fase 1 empieza antes. Columnas t, o, h, l, c, v. Queda en disco por mes.
+    """
+    tf = int(tf)
+    first = next((p["start"] for p in phases(symbol) if p["phase"] == 1), None)
+    empty = {"t": [], "o": [], "h": [], "l": [], "c": [], "v": []}
+    if first is None or tf not in TFS or before_ms <= first:
+        return empty
+    step = tf * 60000
+    end = before_ms // step * step
+    # El final se lleva al cierre del día: el archivo no cambia cada vez que el caché de velas corre una vela
+    stop = -(-end // oe.DAY_MS) * oe.DAY_MS
+    path = tester_dir() / "cache" / f"velas_{symbol}_{tf}_{_iso(first)}_{_iso(stop - 1)}.npz"
+    if path.exists():
+        with np.load(path, allow_pickle=False) as z:
+            cols = {k: z[k] for k in empty}
+    else:
+        parts_t, parts = [], {k: [] for k in "ohlcv"}
+        start = first
+        while start < stop:
+            chunk = min(stop, start + CHUNK_DAYS * oe.DAY_MS)
+            found = fs._parts(symbol, start // 60000, chunk // 60000)
+            if found:
+                c = fs._candles(found, tf)
+                parts_t.append(c["start"].astype(np.int64) * 60000)
+                for key, name in (("o", "open"), ("h", "high"), ("l", "low"), ("c", "close")):
+                    parts[key].append(c[name])
+                parts["v"].append(c["buy"] + c["sell"])
+            start = chunk
+        if not parts_t:
+            return empty
+        cols = {"t": np.concatenate(parts_t), **{k: np.concatenate(v) for k, v in parts.items()}}
+        path.parent.mkdir(parents=True, exist_ok=True)
+        partial = path.with_suffix(".tmp.npz")
+        np.savez_compressed(partial, **cols)
+        partial.replace(path)
+    keep = cols["t"] < end
+    return {"t": cols["t"][keep].tolist(), **{k: np.round(cols[k][keep], 8).tolist() for k in "ohlcv"}}
+
+
 # ==================== SIMULACIÓN ====================
 
 def _pivot(values, start, n, sign):

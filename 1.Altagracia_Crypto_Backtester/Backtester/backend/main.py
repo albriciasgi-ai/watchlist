@@ -3843,6 +3843,14 @@ async def tester_info(request: Request, symbol: str):
             "variantsPhase1": len({r["hash"] for r in runs if r["phase"] == 1})}
 
 
+@app.get("/api/tester/candles/{symbol}")
+@limiter.limit("60/minute")
+async def tester_candles(request: Request, symbol: str, tf: int = 15, before: int = 0):
+    """Velas del almacén de trades anteriores a `before`, desde el inicio de la fase 1: lo que no cubre el caché de velas."""
+    cols = await run_in_threadpool(rule_tester.early_candles, sanitize_filename(symbol), tf, before)
+    return _json_response({"success": True, **cols})
+
+
 @app.post("/api/tester/run/{symbol}")
 @limiter.limit("60/minute")
 async def tester_run(request: Request, symbol: str):
