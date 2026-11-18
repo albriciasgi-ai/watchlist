@@ -910,12 +910,23 @@ const RuleTesterApp = () => {
                 <tbody>
                   <tr><td>La regla</td><td>{s.n}</td><td>{fmtPct(s.winRate)}</td><td><R value={s.avgR} digits={3} /></td></tr>
                   <tr><td>Entradas al azar</td><td>{result.baseline.n}</td><td>{fmtPct(result.baseline.winRate)}</td><td><R value={result.baseline.avgR} digits={3} /></td></tr>
+                  {result.legBaseline?.n > 0 && (
+                    <tr title="Velas al azar, entrando siempre a favor del tramo en curso, con el mismo stop y la misma salida"><td>Seguir el tramo al azar</td><td>{result.legBaseline.n}</td><td>{fmtPct(result.legBaseline.winRate)}</td><td><R value={result.legBaseline.avgR} digits={3} /></td></tr>
+                  )}
                 </tbody>
               </table>
               {result.edge && (
                 <div className="rt-note">
                   Ventaja: <R value={result.edge.r} digits={3} /> R por trade (entre {fmtR(result.edge.low, 3)} y {fmtR(result.edge.high, 3)}).{' '}
                   {result.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue del azar.'} Las entradas al azar usan el mismo stop (si depende del elemento, su distancia mediana en ATR), la misma salida y la misma proporción de largos y cortos.
+                </div>
+              )}
+              {result.legEdge && (
+                <div className="rt-note" style={{ marginTop: 4 }}>
+                  Contra seguir el tramo al azar: <R value={result.legEdge.r} digits={3} /> R por trade (entre {fmtR(result.legEdge.low, 3)} y {fmtR(result.legEdge.high, 3)}).{' '}
+                  {result.legEdge.clear ? 'El margen no incluye el cero.' : 'No se distingue de seguir el tramo.'}{' '}
+                  El tramo es el del Volumen de Respuesta: gira cuando un cierre se aleja {result.legBaseline.leg} ATR de su extremo.
+                  Si la regla sigue el movimiento, esta es la comparación que importa: dice cuánto pone la señal y cuánto el mercado.
                 </div>
               )}
             </div>
@@ -1137,12 +1148,23 @@ const RuleTesterApp = () => {
                 <tbody>
                   <tr><td>La regla</td><td>{a.n}</td><td>{fmtPct(a.winRate)}</td><td><R value={a.avgR} digits={3} /></td></tr>
                   <tr><td>Entradas al azar</td><td>—</td><td>{fmtPct(allReport.baseline.winRate)}</td><td><R value={allReport.baseline.avgR} digits={3} /></td></tr>
+                  {allReport.legBaseline && (
+                    <tr title="Velas al azar, entrando siempre a favor del tramo en curso, con el mismo stop y la misma salida"><td>Seguir el tramo al azar</td><td>—</td><td>{fmtPct(allReport.legBaseline.winRate)}</td><td><R value={allReport.legBaseline.avgR} digits={3} /></td></tr>
+                  )}
                 </tbody>
               </table>
               {allReport.edge && (
                 <div className="rt-note" style={{ marginTop: 4 }}>
                   Ventaja: <R value={allReport.edge.r} digits={3} /> R por trade (entre {fmtR(allReport.edge.low, 3)} y {fmtR(allReport.edge.high, 3)}).{' '}
                   {allReport.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue del azar.'} El azar de cada moneda pesa según los trades que la regla hizo en ella.
+                </div>
+              )}
+              {allReport.legEdge && (
+                <div className="rt-note" style={{ marginTop: 4 }}>
+                  Contra seguir el tramo al azar: <R value={allReport.legEdge.r} digits={3} /> R por trade (entre {fmtR(allReport.legEdge.low, 3)} y {fmtR(allReport.legEdge.high, 3)}).{' '}
+                  {allReport.legEdge.clear ? 'El margen no incluye el cero.' : 'No se distingue de seguir el tramo.'}{' '}
+                  El tramo es el del Volumen de Respuesta: gira cuando un cierre se aleja {allReport.legBaseline.leg} ATR de su extremo.
+                  Si la regla sigue el movimiento, esta es la comparación que importa: dice cuánto pone la señal y cuánto el mercado.
                 </div>
               )}
             </div>
@@ -1164,15 +1186,15 @@ const RuleTesterApp = () => {
       <div className="rt-group">
         <h4>Por moneda</h4>
         <table className="rt-table">
-          <thead><tr><th>Moneda</th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th><th>Azar</th><th>Ventaja</th></tr></thead>
+          <thead><tr><th>Moneda</th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th><th title="R medio de la regla menos el de las entradas al azar">Vs. azar</th><th title="R medio de la regla menos el de seguir el tramo al azar">Vs. tramo</th></tr></thead>
           <tbody>
             {allReport.symbols.map(row => (
-              <tr key={row.symbol} title={`${row.from} a ${row.to}${row.edge ? ` · ventaja entre ${fmtR(row.edge.low, 3)} y ${fmtR(row.edge.high, 3)}` : ''}`}>
+              <tr key={row.symbol} title={`${row.from} a ${row.to} · azar ${fmtR(row.baseR, 3)} R${row.legR != null ? ` · seguir el tramo al azar ${fmtR(row.legR, 3)} R` : ''}${row.edge ? ` · contra el azar, entre ${fmtR(row.edge.low, 3)} y ${fmtR(row.edge.high, 3)}` : ''}`}>
                 <td>{row.symbol === symbol
                   ? <button type="button" className="rt-btn" onClick={() => loadRun(row.run)} title="Ver esta corrida con sus trades en el gráfico">{row.symbol.replace('USDT', '')}</button>
                   : <a className="rt-btn" style={{ textDecoration: 'none' }} href={`?${TESTER_PARAM}=1&symbol=${row.symbol}`} title="Abrir esta moneda; su corrida queda en el Historial">{row.symbol.replace('USDT', '')}</a>}</td>
                 <td>{row.n}</td><td>{fmtPct(row.winRate)}</td><td><R value={row.avgR} digits={3} /></td><td><R value={row.totalR} /></td>
-                <td><R value={row.baseR} digits={3} /></td><td><R value={row.edge?.r} digits={3} /></td>
+                <td><R value={row.edge?.r} digits={3} /></td><td><R value={row.legEdge?.r} digits={3} /></td>
               </tr>
             ))}
           </tbody>

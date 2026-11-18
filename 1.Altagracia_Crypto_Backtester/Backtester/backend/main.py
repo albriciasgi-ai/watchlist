@@ -3906,7 +3906,7 @@ async def tester_job(request: Request, job_id: str):
 @limiter.limit("120/minute")
 async def tester_result(request: Request, run_id: str):
     """Una corrida guardada: resumen, cortes y cada trade (sin sus medidas, que se piden por trade)."""
-    result = await run_in_threadpool(lambda: rule_tester.public_run(rule_tester.load_run(sanitize_filename(run_id))))
+    result = await run_in_threadpool(lambda: rule_tester.public_run(rule_tester.with_leg_baseline(rule_tester.load_run(sanitize_filename(run_id)))))
     if result is None:
         return {"success": False, "message": "Corrida no encontrada"}
     return _json_response(result)

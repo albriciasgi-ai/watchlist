@@ -125,3 +125,28 @@ def test_todas_las_monedas_un_trabajo_y_un_informe_conjunto(tmp_path, monkeypatc
     # Una moneda sin almacén no entra con elementos de order flow
     mixed = rt.start_all({**raw, "recipe": {"slots": [{"codes": ["VA"]}]}}, 2)
     assert [r["action"] for r in mixed["plan"]] == ["run", "skip", "skip"] and "VA" in mixed["plan"][1]["reason"]
+
+
+def test_control_de_seguir_el_tramo_y_corridas_guardadas_antes(tmp_path, monkeypatch):
+    monkeypatch.setattr(rt.observer, "OBSERVER_DIR", tmp_path)
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    monkeypatch.setattr(rt, "has_store", lambda s: False)
+    monkeypatch.setattr(rt, "phases", lambda s: [{"phase": 1, "from": "2020-01-01", "to": "2020-01-31", "available": True}])
+    bars = noisy()
+    monkeypatch.setattr(rt, "detect_span", lambda symbol, tf, ph, rule, progress=None: {"bars": bars, "events": []})
+    rule = rt.clean_rule({"name": "F", "tf": TF, "recipe": {"slots": [{"codes": ["RF"]}]}, "stop": {"type": "atr", "atr": 2.0},
+                          "exit": {"targetR": 2.0, "horizon": 50}, "cooldown": 0, "rv": {"arrow": "any", "leg": 3}})
+    result = rt.run("X", rule, {"bars": bars, "events": []}, PHASE)
+    leg = result["legBaseline"]
+    assert leg["leg"] == 3.0 and leg["n"] > 1000 and result["legEdge"]["low"] <= result["legEdge"]["r"] <= result["legEdge"]["high"]
+    # El control siempre entra a favor del tramo: no es el azar de largos y cortos
+    assert leg["avgR"] != result["baseline"]["avgR"]
+    # Sin la bandera base no se calcula, y es el mismo cada vez
+    assert "legBaseline" not in rt.run("X", rule, {"bars": bars, "events": []}, PHASE, base=False)
+    assert rt.run("X", rule, {"bars": bars, "events": []}, PHASE)["legBaseline"] == leg
+    # Una corrida guardada sin el control lo recibe al pedirla, sin cambiar sus trades
+    old = {k: v for k, v in result.items() if k not in ("legBaseline", "legEdge")}
+    run_id = rt._save(old, "abc")
+    filled = rt.with_leg_baseline(rt.load_run(run_id))
+    assert filled["legBaseline"] == leg and filled["summary"] == result["summary"]
+    assert rt.load_run(run_id)["legBaseline"] == leg, "queda guardado para la próxima vez"

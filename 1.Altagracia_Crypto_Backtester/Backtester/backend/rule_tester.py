@@ -1079,6 +1079,10 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             se = math.sqrt(s["seR"] ** 2 + b["seR"] ** 2)
             result["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
                               "clear": abs(edge) > 1.96 * se and not s["smallSample"]}
+        if not control and vp_shift is None:
+            # Seguir el tramo en velas al azar: lo que el mercado ya daba por ir a favor del movimiento
+            result["legBaseline"] = _leg_baseline(rule, ctx, trades, symbol)
+            result["legEdge"] = _edge(s, result["legBaseline"])
         if "liq" in rule and not control:
             # El mismo gatillo tras barrer un swing sin liquidaciones: dice si las liquidaciones aportan algo
             other = run(symbol, rule, span, phase, table, base=False, control=True)
@@ -1122,16 +1126,7 @@ def _baseline(rule, ctx, trades, symbol):
     n = len(ctx["T"])
     longs = sum(1 for t in trades if t["dir"] > 0) / len(trades)
     rng = random.Random(int(hashlib.sha1(f"{symbol}{rule['tf']}{n}".encode()).hexdigest()[:8], 16))
-    stop = rule["stop"]
-    if stop["type"] in ("zone", "candle"):
-        # Ese stop depende del elemento, que al azar no existe: se usa la distancia mediana de los trades de la regla
-        stop = {**stop, "type": "atr", "atr": max(0.1, float(np.median([t["stop_atr"] for t in trades])))}
-    base_rule = {**rule, "entry": {**rule["entry"], "type": "market"}, "stop": stop}
-    if rule.get("targetAt"):
-        # Al azar no hay perfil: el objetivo es el múltiplo del riesgo mediano que tuvieron los trades de la regla
-        reward = [abs(t["target"] - t["entry"]) / t["risk"] for t in trades if t.get("target") is not None and t["risk"] > 0]
-        base_rule = {k: v for k, v in base_rule.items() if k != "targetAt"}
-        base_rule["exit"] = {**rule["exit"], "targetR": max(0.2, float(np.median(reward))) if reward else 1.0}
+    base_rule = _random_rule(rule, trades)
     light = {**ctx, "minutes": None, "i0": None}  # Sin minuto a minuto: en la duda cuenta el stop, como en contra de la base no sesga a favor
     done = []
     for _ in range(BASE_TRADES):
@@ -1143,6 +1138,79 @@ def _baseline(rule, ctx, trades, symbol):
             done.append(trade)
     stats = summary(done)
     return {key: stats.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "reach", "medianReach")}
+
+
+def _leg_baseline(rule, ctx, trades, symbol):
+    """Entradas en velas al azar, siempre a favor del tramo en curso (el zigzag del Volumen de Respuesta), con el mismo
+    stop y la misma salida. Dice cuánto de lo que gana una regla que sigue el movimiento lo pone el mercado."""
+    if not trades:
+        return {"n": 0}
+    n = len(ctx["T"])
+    high, low, close = (np.array(ctx[key], dtype=float) for key in ("H", "L", "C"))
+    leg = float((rule.get("rv") or {}).get("leg", measures.LEG_ATR))
+    direction, _, _ = measures.zigzag(high, low, close, measures.atr(high, low, close), leg)
+    rng = random.Random(int(hashlib.sha1(f"{symbol}{rule['tf']}{n}tramo".encode()).hexdigest()[:8], 16))
+    base_rule = _random_rule(rule, trades)
+    light = {**ctx, "minutes": None, "i0": None}
+    done = []
+    for _ in range(BASE_TRADES):
+        k = rng.randrange(30, n - 2)
+        light["i0"] = k
+        trade = simulate(base_rule, light, k, int(direction[k]))
+        if trade and "skip" not in trade and not trade.get("open"):
+            done.append(trade)
+    stats = summary(done)
+    return {"leg": leg, **{key: stats.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "reach", "medianReach")}}
+
+
+def _edge(s, b):
+    """Diferencia de R medio entre la regla y un control, con su margen. None si alguno no tiene trades."""
+    if not s.get("n") or not b.get("n"):
+        return None
+    edge = s["avgR"] - b["avgR"]
+    se = math.sqrt(s["seR"] ** 2 + b["seR"] ** 2)
+    return {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
+            "clear": abs(edge) > 1.96 * se and not s.get("smallSample")}
+
+
+def with_leg_baseline(result):
+    """Una corrida guardada antes de existir el control del tramo lo recibe la primera vez que se pide. No recalcula la
+    regla: solo suma el control, con las velas ya guardadas de la fase."""
+    if result is None or "legBaseline" in result or not result.get("trades"):
+        return result
+    symbol, rule = result["symbol"], result["rule"]
+    phase = next((p for p in phases(symbol) if p["phase"] == result["phase"]), None)
+    if phase is None or (has_store(symbol) and not _span_path(symbol, rule["tf"], phase, rule).exists()):
+        return result  # Sin los elementos de la fase en disco habría que detectarlos de nuevo: no se hace solo por esto
+    try:
+        span = detect_span(symbol, rule["tf"], phase, rule)
+        result["legBaseline"] = _leg_baseline(rule, _context(symbol, rule["tf"], span["bars"]), result["trades"], symbol)
+        result["legEdge"] = _edge(result["summary"], result["legBaseline"])
+        with _write_lock:
+            path = _run_path(result["id"])
+            partial = path.with_suffix(".tmp")
+            with gzip.open(partial, "wt", encoding="utf-8") as fh:
+                json.dump(result, fh, allow_nan=False, separators=(",", ":"))
+            partial.replace(path)
+    except Exception:  # Sin el control la corrida se muestra igual
+        result.pop("legBaseline", None)
+        result.pop("legEdge", None)
+    return result
+
+
+def _random_rule(rule, trades):
+    """La regla que usan las entradas al azar: a mercado, y sin lo que depende del elemento."""
+    stop = rule["stop"]
+    if stop["type"] in ("zone", "candle"):
+        # Ese stop depende del elemento, que al azar no existe: se usa la distancia mediana de los trades de la regla
+        stop = {**stop, "type": "atr", "atr": max(0.1, float(np.median([t["stop_atr"] for t in trades])))}
+    base_rule = {**rule, "entry": {**rule["entry"], "type": "market"}, "stop": stop}
+    if rule.get("targetAt"):
+        # Al azar no hay perfil: el objetivo es el múltiplo del riesgo mediano que tuvieron los trades de la regla
+        reward = [abs(t["target"] - t["entry"]) / t["risk"] for t in trades if t.get("target") is not None and t["risk"] > 0]
+        base_rule = {k: v for k, v in base_rule.items() if k != "targetAt"}
+        base_rule["exit"] = {**rule["exit"], "targetR": max(0.2, float(np.median(reward))) if reward else 1.0}
+    return base_rule
 
 
 def _winners_vs_losers(trades):
@@ -1364,18 +1432,22 @@ def consolidated(raw_rule, phase_number):
     if rule is None:
         return {"success": False, "message": "La regla no tiene elementos conocidos"}
     plan = _plan(rule, phase_number)
-    rows, pooled, weights = [], [], []
+    rows, pooled, weights, leg_weights = [], [], [], []
     for row in plan:
-        result = load_run(row["run"]) if row["run"] else None
+        result = with_leg_baseline(load_run(row["run"])) if row["run"] else None
         if result is None:
             continue
         s, b, trades = result["summary"], result.get("baseline") or {}, result["trades"]
+        leg = result.get("legBaseline") or {}
+        if s.get("n") and leg.get("n"):
+            leg_weights.append((s["n"], leg))
         for t in trades:
             pooled.append({"r": t["r"], "dir": t["dir"], "entry_t": t["entry_t"], "exit_t": t["exit_t"], "mfe": t.get("mfe"), "mae": t.get("mae"),
                            "bars": t.get("bars"), "reach": t.get("reach"), "symbol": row["symbol"]})
         rows.append({"symbol": row["symbol"], "run": row["run"], "from": result["from"], "to": result["to"], "n": s.get("n", 0),
                      "winRate": s.get("winRate"), "avgR": s.get("avgR"), "totalR": s.get("totalR"), "profitFactor": s.get("profitFactor"),
-                     "maxDrawdownR": s.get("maxDrawdownR"), "baseR": b.get("avgR"), "edge": result.get("edge")})
+                     "maxDrawdownR": s.get("maxDrawdownR"), "baseR": b.get("avgR"), "edge": result.get("edge"),
+                     "legR": leg.get("avgR"), "legEdge": result.get("legEdge")})
         if s.get("n") and b.get("n"):
             weights.append((s["n"], b))
     if not rows:
@@ -1401,6 +1473,14 @@ def consolidated(raw_rule, phase_number):
                            "winRate": round(sum(n * b["winRate"] for n, b in weights) / total, 1)}
         out["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
                        "clear": abs(edge) > 1.96 * se and not s["smallSample"]}
+    # El control del tramo solo vale si lo tienen todas las monedas con trades: con una parte, compararía grupos distintos
+    if leg_weights and ordered and len(leg_weights) == sum(1 for r in rows if r["n"]):
+        total = sum(n for n, _ in leg_weights)
+        pooled_leg = {"n": total, "avgR": sum(n * b["avgR"] for n, b in leg_weights) / total,
+                      "seR": math.sqrt(sum((n * b["seR"]) ** 2 for n, b in leg_weights)) / total}
+        out["legEdge"] = _edge(out["summary"], pooled_leg)
+        out["legBaseline"] = {"avgR": round(pooled_leg["avgR"], 3), "seR": round(pooled_leg["seR"], 4), "leg": leg_weights[0][1].get("leg"),
+                              "winRate": round(sum(n * b["winRate"] for n, b in leg_weights) / total, 1)}
     return out
 
 
