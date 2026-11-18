@@ -213,7 +213,7 @@ const RuleTesterApp = () => {
   const [reviewAny, setReviewAny] = useState(false);
   const [reviewBusy, setReviewBusy] = useState(false);
   const [reviewPick, setReviewPick] = useState(null);     // Decisión cuya caja se muestra; sin elegir, la del último trade
-  const [reviewWait, setReviewWait] = useState(12);       // Velas que espera la limit de la caja
+  const [reviewWait, setReviewWait] = useState(Number(view.reviewWait) > 0 ? Number(view.reviewWait) : 48);       // Velas que espera la limit de la caja
   const [reviewLimit, setReviewLimit] = useState(true);   // La caja entra como limit en su precio de entrada
   const [reviewFollow, setReviewFollow] = useState(true); // Tras entrar, seguir hasta que el trade cierre
   const [reviewShapes, setReviewShapes] = useState([]); // Dibujos del gráfico, para leer la caja TP/SL de una decisión
@@ -244,11 +244,11 @@ const RuleTesterApp = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk }));
+      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait }));
     } catch {
       // Sin almacenamiento la vista dura hasta cerrar la ventana
     }
-  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk]);
+  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait]);
 
   // Velas: del caché del navegador que guardó la principal. Si no están, se pide al backend solo el marco
   // del gráfico: esta ventana no necesita los cinco marcos
@@ -1491,7 +1491,7 @@ const RuleTesterApp = () => {
           <button type="button" className="rt-btn" style={{ width: '100%', padding: '6px 0', marginTop: 4 }} disabled={reviewBusy} onClick={() => decideReview('skip')}>No entro</button>
           <div className="rt-row" style={{ marginTop: 4 }}>
             <Check checked={reviewLimit} onChange={setReviewLimit} title="Marcada: la orden espera en el precio de entrada de tu caja, las velas que digas, y se llena cuando el precio lo cruza; si no llega, queda sin llenar. Si el mercado ya está mejor que ese precio, entra a mercado. Sin marcar: entra a mercado en la apertura de la vela siguiente, y de la caja solo usa el stop y el objetivo">Entrar en el precio de mi caja (limit)</Check>
-            <span>y esperar</span><Num value={reviewWait} min={1} max={200} disabled={!reviewLimit} onChange={setReviewWait} /><span>velas</span>
+            <span>y esperar</span><Num value={reviewWait} min={1} max={500} disabled={!reviewLimit} onChange={setReviewWait} /><span>velas ({Math.round((Number(reviewWait) || 0) * review.session.tf / 6) / 10} h)</span>
           </div>
           <div className="rt-row">
             <Check checked={reviewFollow} onChange={setReviewFollow} title="Como al operar una posición a la vez: tras entrar, el gráfico avanza hasta que tu trade cierra y unas velas más, para ver cómo terminó y qué hizo el precio después. Los candidatos que caen en ese tramo no se deciden. Sin marcar, pasa al candidato siguiente aunque el trade siga abierto">Tras entrar, seguir hasta que el trade cierre</Check>
