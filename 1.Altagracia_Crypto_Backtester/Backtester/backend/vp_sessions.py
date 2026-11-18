@@ -17,11 +17,10 @@ Elementos, todos contra el valor de la sesión inmediatamente anterior:
   "touch", al cerrar la primera vela que toca cada borde en la sesión; "resting", al cerrar la sesión anterior,
   para dejar una orden limit esperando en cada borde durante toda la sesión siguiente. La zona va del borde al
   mínimo o máximo de la sesión anterior, que es donde queda el stop.
-- Forma del perfil de la sesión anterior (`shape`), por dónde quedó el volumen dentro del rango de la sesión:
-  "P" si el POC está en el tercio de arriba (el volumen se juntó arriba y dejó una cola delgada abajo), "b" si
-  está en el tercio de abajo, "D" si está en el medio, y "B" si hay dos distribuciones: un segundo pico con al
-  menos SECOND_PEAK del volumen del POC, a SPLIT_GAP del rango o más, con un valle entre los dos por debajo de
-  VALLEY del pico menor. La forma se conoce al cerrar la sesión.
+- Forma del perfil de la sesión anterior (`shape`), ver profile_shape: "B" con dos distribuciones separadas por
+  un valle; si no, por las colas que quedan fuera del área de valor: "P" con la cola larga abajo, "b" con la cola
+  larga arriba y "D" con las dos parecidas. La forma se conoce al cerrar la sesión. (La primera versión miraba
+  solo en qué tercio del rango caía el POC, y marcaba como D perfiles con dos nodos o con una cola larga.)
 - VX, aceptación fuera del valor: `accept` velas seguidas cierran fuera, del mismo lado. Dirección: la de la
   salida. Una vez por lado y sesión.
 """
@@ -35,10 +34,11 @@ MONDAY_OFFSET = 4 * DAY_MS  # El 1 de enero de 1970 fue jueves
 PERIODS = (4, 8, 12, 24, 168)
 MIN_COVERAGE = 0.9          # Una sesión con menos minutos en el almacén no da niveles
 SHAPES = ("D", "P", "b", "B")
-SECOND_PEAK = 0.7
-SPLIT_GAP = 0.25
-VALLEY = 0.5
-SMOOTH_ROWS = 5            # El perfil se suaviza antes de buscar picos: una franja suelta no es una distribución
+SECOND_PEAK = 0.6          # B: el segundo pico tiene al menos esta parte del volumen del POC
+SPLIT_GAP = 0.15           # ... está a esta parte del rango o más
+VALLEY = 0.6               # ... y entre los dos el volumen baja a esta parte del pico menor, o menos
+SMOOTH_ROWS = 3            # El perfil se suaviza antes de buscar picos: una franja suelta no es una distribución
+TAIL_GAP = 0.2             # P o b: una cola fuera del valor es más larga que la otra en esta parte del rango
 CODES = {"VR": "Regreso al valor de la sesión anterior", "VF": "Fallo fuera del valor de la sesión anterior",
          "VX": "Aceptación fuera del valor de la sesión anterior", "VE": "Extremo del valor de la sesión anterior"}
 
@@ -49,18 +49,10 @@ def session_start(t, hours):
     return (t - anchor) // length * length + anchor
 
 
-def profile_levels(prices, volumes, rows=50, share=0.7):
-    """POC, VAH y VAL (precio medio de su franja) de un perfil; None sin rango o sin volumen."""
-    if not len(prices):
-        return None
-    low, high = float(prices.min()), float(prices.max())
-    if not high > low:
-        return None
-    row = np.clip(((prices - low) / (high - low) * rows).astype(np.int64), 0, rows - 1)
-    levels = np.bincount(row, weights=volumes, minlength=rows)
+def _value_area(levels, share):
+    """Franja del POC y franjas extremas del área de valor, creciendo hacia la vecina mayor."""
+    rows = len(levels)
     total = levels.sum()
-    if not total > 0:
-        return None
     poc = int(np.argmax(levels))
     lo = hi = poc
     covered = levels[poc]
@@ -73,29 +65,52 @@ def profile_levels(prices, volumes, rows=50, share=0.7):
         else:
             hi += 1
             covered += above
+    return poc, lo, hi
+
+
+def profile_levels(prices, volumes, rows=50, share=0.7):
+    """POC, VAH y VAL (precio medio de su franja) de un perfil, y su forma; None sin rango o sin volumen."""
+    if not len(prices):
+        return None
+    low, high = float(prices.min()), float(prices.max())
+    if not high > low:
+        return None
+    row = np.clip(((prices - low) / (high - low) * rows).astype(np.int64), 0, rows - 1)
+    levels = np.bincount(row, weights=volumes, minlength=rows)
+    if not levels.sum() > 0:
+        return None
+    poc, lo, hi = _value_area(levels, share)
     step = (high - low) / rows
     mid = lambda i: round(low + step * (i + 0.5), 8)
     return {"poc": mid(poc), "vah": mid(hi), "val": mid(lo), "high": high, "low": low,
-            "shape": profile_shape(levels), "pocPos": round((poc + 0.5) / rows, 3)}
+            "shape": profile_shape(levels, share), "pocPos": round((poc + 0.5) / rows, 3)}
 
 
-def profile_shape(levels):
-    """Forma del perfil: "B" con dos distribuciones; si no, "P", "b" o "D" según el tercio donde está el POC."""
+def profile_shape(levels, share=0.7):
+    """
+    Forma del perfil. "B": dos distribuciones separadas por un valle. Si no, según las colas que quedan fuera del
+    área de valor: "P" con la cola larga abajo (el volumen quedó arriba), "b" con la cola larga arriba, y "D" con
+    las dos colas parecidas (el volumen en el medio).
+    """
+    levels = np.asarray(levels, dtype=float)
     rows = len(levels)
-    width = max(1, min(SMOOTH_ROWS, rows // 8))
+    width = max(1, min(SMOOTH_ROWS, rows // 12))
     smooth = np.convolve(levels, np.ones(width) / width, "same")
     main = int(np.argmax(smooth))
     gap = max(2, int(round(SPLIT_GAP * rows)))
-    for other in sorted(range(rows), key=lambda i: -smooth[i]):
-        if abs(other - main) < gap:
-            continue
-        if smooth[other] < SECOND_PEAK * smooth[main]:
-            break
+    peaks = [i for i in range(rows) if smooth[i] >= SECOND_PEAK * smooth[main] and abs(i - main) >= gap
+             and smooth[i] >= smooth[max(0, i - 1)] and smooth[i] >= smooth[min(rows - 1, i + 1)]]
+    for other in sorted(peaks, key=lambda i: -smooth[i]):
         a, b = sorted((main, other))
-        if smooth[a:b + 1].min() < VALLEY * smooth[other]:
+        if smooth[a:b + 1].min() <= VALLEY * smooth[other]:
             return "B"
-    position = (int(np.argmax(levels)) + 0.5) / rows
-    return "P" if position >= 2 / 3 else ("b" if position <= 1 / 3 else "D")
+    _, lo, hi = _value_area(levels, share)
+    below, above = lo / rows, (rows - 1 - hi) / rows
+    if below - above >= TAIL_GAP:
+        return "P"
+    if above - below >= TAIL_GAP:
+        return "b"
+    return "D"
 
 
 def sessions(symbol, hours, start_ms, end_ms, rows=50, share=0.7):

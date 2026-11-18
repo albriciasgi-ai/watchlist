@@ -632,7 +632,7 @@ def _extra_events(symbol, rule, span, ctx, control=False):
 
 def _vp_levels(symbol, hours, rows, share, start_ms, end_ms):
     """Niveles de las sesiones del tramo, guardados en disco: una sesión cerrada no cambia."""
-    path = tester_dir() / "cache" / f"vp2_{symbol}_{hours}h_{rows}_{int(share)}_{_iso(start_ms)}_{_iso(end_ms - 1)}.json"
+    path = tester_dir() / "cache" / f"vp3_{symbol}_{hours}h_{rows}_{int(share)}_{_iso(start_ms)}_{_iso(end_ms - 1)}.json"
     if path.exists():
         with open(path, encoding="utf-8") as fh:
             return {int(k): v for k, v in json.load(fh).items()}
