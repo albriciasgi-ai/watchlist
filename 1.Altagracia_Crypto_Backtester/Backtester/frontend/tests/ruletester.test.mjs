@@ -47,7 +47,7 @@ test('una regla del historial vuelve al editor igual', () => {
     stopType: 'zone', useTarget: false, trail: true, useHorizon: false, opposite: true, oneAtATime: false, filters: [{ key: 'k', op: '<=', value: 2 }] };
   const back = fromBackendRule(toBackendRule(original));
   assert.deepEqual(toBackendRule(back), toBackendRule(original));
-  assert.match(describeRule(toBackendRule(original)), /30m · EX \+ ST @2 · invertida · limit · stop borde de la zona · stop arrastrado, señal contraria/);
+  assert.match(describeRule(toBackendRule(original)), /30m · Agotamiento en el extremo \+ Desequilibrios apilados @2 · invertida · limit · stop borde de la zona · stop arrastrado, señal contraria/);
 });
 
 test('guardar reemplaza la del mismo nombre y borrar la quita', () => {

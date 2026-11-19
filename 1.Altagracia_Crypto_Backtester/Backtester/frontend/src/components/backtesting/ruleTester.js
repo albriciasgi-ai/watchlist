@@ -2,6 +2,7 @@
  * Probador de reglas del Observador: lo que no depende de React. La regla que arma la ventana, su forma para
  * el backend (backend/rule_tester.py), las reglas guardadas y los textos del informe.
  */
+import { elementLabel, elementLabels } from './elementLabels.js';
 
 export const TESTER_PARAM = 'probador';
 export const RULE_TIMEFRAMES = [5, 15, 30, 60, 240, 1440];
@@ -216,10 +217,11 @@ export function fromBackendRule(saved) {
 
 /** La regla en una línea, para el historial y el encabezado del informe */
 export function describeRule(saved) {
+  const L = (text) => elementLabels(String(text).split('+'));
   if (!saved?.recipe) return '';
   const recipe = saved.recipe;
-  const codes = (recipe.slots || []).map(slot => (slot.codes || []).join('|'));
-  const part = (group) => (recipe.slots || []).filter(slot => (slot.group || 0) === group).map(slot => (slot.codes || []).join('|'));
+  const codes = (recipe.slots || []).map(slot => L((slot.codes || []).join('|')));
+  const part = (group) => (recipe.slots || []).filter(slot => (slot.group || 0) === group).map(slot => L((slot.codes || []).join('|')));
   const liq = saved.liq ? ` (${saved.liq.what === 'zone' ? 'zona' : `swing ${saved.liq.swingBars}`}, ${saved.liq.variant === 'reclaim' ? 'recupera' : 'perfora'})` : '';
   const joined = (recipe.mode === 'sequence' ? `${part(0).join(' + ')} → ${part(1).join(recipe.groupMins?.[1] > 1 ? ' + ' : ' o ')}`
     : recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ')) + liq;
@@ -353,7 +355,7 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
   }
   for (const mark of trade.marks || []) {
     if (mark.code === 'LIQ' || mark.code === 'CC' || mark.code === 'GC' || VP_CODES.includes(mark.code)) continue;
-    bands.push({ kind: 'element', low: mark.lo, high: mark.hi, start: mark.t, end, strong: false, label: `${mark.code} ${names[mark.code] || ''}`.trim() });
+    bands.push({ kind: 'element', low: mark.lo, high: mark.hi, start: mark.t, end, strong: false, label: elementLabel(mark.code, names[mark.code]) });
   }
   return bands;
 }

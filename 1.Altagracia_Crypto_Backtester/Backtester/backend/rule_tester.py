@@ -1014,6 +1014,18 @@ def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
             + _rv_events(rule, span) + _gc_events(rule, span) + _box_events(rule, span) + _fs_events(rule, span))
 
 
+# Nombres cortos para los mensajes: los mismos de frontend/src/components/backtesting/elementLabels.js
+LABELS = {"LIQ": "Barrido de liquidaciones", "VH": "Volumen alto", "VR": "Regreso al valor", "VF": "Fallo fuera del valor",
+          "VX": "Aceptación fuera del valor", "VE": "Borde del valor", "CC": "Cambio de carácter", "HM": "Martillo o estrella",
+          "EN": "Envolvente", "DJ": "Doji", "RF": "Flecha de volumen", "RB": "Rombo de volumen", "GC": "Canal gaussiano",
+          "BX": "Ruptura de caja", "BE": "Borde de caja", "FV": "FVG nuevo", "SP": "Swing"}
+
+
+def _labels(codes):
+    """Los códigos con su nombre corto, para los mensajes; un elemento OF va con el nombre de su catálogo."""
+    return ", ".join(LABELS.get(c) or (oe.CATALOG[c][0] if c in oe.CATALOG else c) for c in codes)
+
+
 def _fs_events(rule, span):
     """FVG nuevo y swing del detector (fvg_swing.py)."""
     fv, sp = rule.get("fv"), rule.get("sp")
@@ -1652,8 +1664,8 @@ def start(symbol, raw_rule, phase_number, confirm=False):
         codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
         if codes - set(CANDLE_CODES):
             why = "En 1 día la regla corre sobre velas" if rule["tf"] == DAILY else f"{symbol} no tiene almacén de trades"
-            return {"success": False, "message": f"{why}: aquí solo se pueden usar {', '.join(CANDLE_CODES)}. "
-                                                 f"Quita {', '.join(sorted(codes - set(CANDLE_CODES)))} de la regla"}
+            return {"success": False, "message": f"{why}: aquí solo se pueden usar {_labels(CANDLE_CODES)}. "
+                                                 f"Quita {_labels(sorted(codes - set(CANDLE_CODES)))} de la regla"}
     info = gate(symbol, rule, phase_number)
     if info["blocked"]:
         return {"success": False, "message": info["blocked"], "gate": info}
@@ -1701,7 +1713,7 @@ def _plan(rule, phase_number):
         elif phase is None or not phase["available"]:
             row["reason"] = "sin datos de esa fase"
         elif _on_candles(symbol, rule["tf"]) and codes - set(CANDLE_CODES):
-            row["reason"] = f"corre sobre velas: no puede usar {', '.join(sorted(codes - set(CANDLE_CODES)))}"
+            row["reason"] = f"corre sobre velas: no puede usar {_labels(sorted(codes - set(CANDLE_CODES)))}"
         elif info["blocked"]:
             row["reason"] = "falta correr esta regla en la fase 2"
         else:

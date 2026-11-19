@@ -1095,6 +1095,10 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - Pruebas: `backend/tests/test_rule_tester.py` (14: entrada, comisiones, minutos, limit al cruzar, sin objetivo, una posición, trade abierto, invertir, elementos presentes, swing confirmado, que lo cerrado no cambie con velas posteriores, azar, identidad de la regla y fases) y `frontend/tests/ruletester.test.mjs` (8).
 - Probado en la copia aislada con el almacén real: fases 1 y 2 en 15m desde la ventana (gráfico, lista, patrones, CSV y candado), y por la ruta una regla de 30m con dos elementos, limit, sin objetivo, stop arrastrado y un filtro (105 trades). No se probó 5m, la fase 3 ni el botón desde el Observador.
 
+### Nombres de los elementos (19/11)
+
+Pedido del usuario: las iniciales costaban. La ventana muestra un nombre corto en español en las casillas, la descripción de la regla (historial, "Todas", búsqueda), la lista y el detalle de los trades, los cortes por elemento y por combinación, la revisión y las notas: "Ruptura de caja", "FVG nuevo", "Desequilibrios apilados". El código y el nombre largo (el del libro) salen al pasar el mouse. Los nombres viven en `elementLabels.js`; los mensajes del backend usan los mismos (`rule_tester.LABELS`, que hay que cambiar junto con ese archivo). **Los códigos no cambian:** siguen siendo la identidad de las reglas y corridas guardadas. El indicador Elementos OF del gráfico principal sigue con sus códigos en los triángulos.
+
 ### Falta
 
 - Modos de grupos y secuencia de las recetas, y casillas con códigos alternativos, en el editor de la ventana.
