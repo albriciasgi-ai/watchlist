@@ -77,6 +77,8 @@ CATALOG.update({
 })
 FLOW_CODES = {"XD", "SM", "BR", "GR"}
 FLOW_DIR = Path(os.environ.get("ORDERFLOW_FLOW", r"C:\Users\inven\OrderFlowData\flow"))
+# Flujo de las acciones de Alpaca (alpaca_store.py): OrderFlowData/alpaca/flow, junto a alpaca/store
+ALPACA_FLOW_DIR = Path(os.environ.get("ALPACA_FLOW", str(fs.ALPACA_STORE_DIR.parent / "flow")))
 # Flujo de los dias de la nube (live=True), como footprint_store: OrderFlowData/live/flow, junto a live/store.
 # None = al lado de fs.LIVE_DIR. ORDERFLOW_LIVE_FLOW cambia la carpeta
 LIVE_FLOW_DIR = Path(os.environ["ORDERFLOW_LIVE_FLOW"]) if os.environ.get("ORDERFLOW_LIVE_FLOW") else None
@@ -199,7 +201,7 @@ def _load_bars(symbol, tf, day, known_min, live=False):
     day_start = int(dt.datetime(day.year, day.month, day.day, tzinfo=dt.timezone.utc).timestamp()) // 60
     complete = day_start + 1440 <= known_min
     key = (symbol, tf, day.isoformat())
-    flow_path = FLOW_DIR / symbol / day.isoformat()[:4] / f"{symbol}_{day.isoformat()}.npz"
+    flow_path = _flow_path(symbol, day)
     if complete:
         with _lock:
             cached = _cache.get(key)
@@ -262,9 +264,15 @@ def _load_live_bars(symbol, tf, day, day_start, known_min, data, key):
     return result
 
 
+def _flow_path(symbol, day):
+    """Flujo de un dia: el de acciones (OrderFlowData/alpaca/flow, alpaca_store.py) o el de las monedas."""
+    root = ALPACA_FLOW_DIR if fs.is_stock(symbol) else FLOW_DIR
+    return root / symbol / day.isoformat()[:4] / f"{symbol}_{day.isoformat()}.npz"
+
+
 def _load_flow(symbol, day):
     """Delta dentro de cada minuto y órdenes agresivas del día, o None si no se armó."""
-    path = FLOW_DIR / symbol / day.isoformat()[:4] / f"{symbol}_{day.isoformat()}.npz"
+    path = _flow_path(symbol, day)
     if not path.exists():
         return None
     with np.load(path) as z:

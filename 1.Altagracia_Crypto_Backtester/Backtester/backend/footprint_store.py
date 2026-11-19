@@ -8,6 +8,10 @@ Dias de la nube (live=True): si falta el dia oficial, se lee el que grabo el col
 Northflank y bajo PanelOrderFlow/sync_nube.py a OrderFlowData/live/store. Esta apagado por
 defecto: App 1 (Observador, medidas, setups) usa solo dias oficiales. Lo enciende la app en
 tiempo real con live=True o con ORDERFLOW_USE_LIVE=1. El dia oficial siempre manda.
+
+Acciones de EE. UU. (19/11/2026): un simbolo sin USDT con carpeta en OrderFlowData/alpaca/store (la arma
+alpaca_store.py con los trades de Alpaca, solo la sesion regular, celda de 0.01 USD) se lee de ahi, con el mismo
+formato. Las monedas no cambian: nunca tienen carpeta ahi.
 """
 import datetime as dt
 import json
@@ -22,6 +26,7 @@ import numpy as np
 STORE_DIR = Path(os.environ.get("ORDERFLOW_STORE", r"C:\Users\inven\OrderFlowData\store"))
 LIVE_DIR = Path(os.environ.get("ORDERFLOW_LIVE_STORE", str(STORE_DIR.parent / "live" / "store")))
 USE_LIVE = os.environ.get("ORDERFLOW_USE_LIVE", "0") == "1"
+ALPACA_STORE_DIR = Path(os.environ.get("ALPACA_STORE", str(STORE_DIR.parent / "alpaca" / "store")))
 MAX_DAYS_IN_MEMORY = 96
 IMBALANCE_RATIO = 3.0
 STACKED_MIN_LEVELS = 3
@@ -39,8 +44,18 @@ _days = OrderedDict()
 _days_lock = threading.Lock()  # El observador lee en otro hilo
 
 
+def is_stock(symbol):
+    """Accion de Alpaca: sin USDT y con su carpeta en el almacen de acciones."""
+    return not symbol.upper().endswith("USDT") and (ALPACA_STORE_DIR / symbol).is_dir()
+
+
+def store_root(symbol):
+    """Carpeta del almacen de un simbolo: el de acciones o el de las monedas."""
+    return ALPACA_STORE_DIR if is_stock(symbol) else STORE_DIR
+
+
 def _day_path(symbol, day):
-    return STORE_DIR / symbol / day[:4] / f"{symbol}_{day}.npz"
+    return store_root(symbol) / symbol / day[:4] / f"{symbol}_{day}.npz"
 
 
 def _live_path(symbol, day):
@@ -110,13 +125,13 @@ def _load_day(symbol, day, live=False):
 
 def coverage(symbol):
     """Primer dia, ultimo dia y cantidad de dias disponibles."""
-    days = sorted(p.stem.rsplit("_", 1)[1] for p in (STORE_DIR / symbol).glob("*/*.npz"))
+    days = sorted(p.stem.rsplit("_", 1)[1] for p in (store_root(symbol) / symbol).glob("*/*.npz"))
     return {"first": days[0], "last": days[-1], "days": len(days)} if days else {"first": None, "last": None, "days": 0}
 
 
 def continuous_days(symbol):
     """Primer y ultimo dia del tramo sin huecos mas reciente del almacen."""
-    days = sorted(dt.date.fromisoformat(p.stem.rsplit("_", 1)[1]) for p in (STORE_DIR / symbol).glob("*/*.npz"))
+    days = sorted(dt.date.fromisoformat(p.stem.rsplit("_", 1)[1]) for p in (store_root(symbol) / symbol).glob("*/*.npz"))
     if not days:
         return None
     first = days[-1]
@@ -129,7 +144,7 @@ def continuous_days(symbol):
 
 def continuous_runs(symbol):
     """Todos los tramos sin huecos del almacen, como (primer dia, ultimo dia), del mas viejo al mas nuevo."""
-    days = sorted(dt.date.fromisoformat(p.stem.rsplit("_", 1)[1]) for p in (STORE_DIR / symbol).glob("*/*.npz"))
+    days = sorted(dt.date.fromisoformat(p.stem.rsplit("_", 1)[1]) for p in (store_root(symbol) / symbol).glob("*/*.npz"))
     runs = []
     for day in days:
         if runs and (day - runs[-1][1]).days <= 1:
