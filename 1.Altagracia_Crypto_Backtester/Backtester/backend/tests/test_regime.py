@@ -80,3 +80,26 @@ def test_la_calificacion():
     state = np.array([1, 1, 0, 1, 0, 1, 0, 0], dtype=bool)
     sc = rd.score(state, labels, np.ones(8, dtype=bool))
     assert sc["recall"] == 0.6 and sc["leak"] == round(1 / 3, 3) and sc["j"] == round(0.6 - 1 / 3, 3)
+
+
+def test_el_rango_mayor_no_cambia_lo_cerrado_y_une_cajas():
+    a = regime.arrays(series(seed=9))
+    parts = [{"i": z["detected"], "low": z["low"], "high": z["high"]} for z in rd.er_box(a, 20, 0.3, 0.5)["zones"]]
+    full = rd.major(a, parts, 8, 0.5, 3)
+    cut = 650
+    short = rd.major({k: v[:cut] for k, v in a.items()}, [p for p in parts if p["i"] < cut], 8, 0.5, 3)
+    assert np.array_equal(full["state"][:cut], short["state"])
+    assert sum(z["parts"] for z in full["zones"]) == len(parts)
+
+
+def test_el_rango_mayor_aguanta_cierres_fuera_hasta_el_limite():
+    n = 40
+    c = np.full(n, 100.0)
+    c[20:22] = 105.0           # Dos cierres fuera
+    c[30:] = 106.0             # Y después se va
+    a = {"t": np.arange(n) * MS, "o": c, "h": c + 0.5, "l": c - 0.5, "c": c, "v": np.ones(n)}
+    parts = [{"i": 5, "low": 99.0, "high": 101.0}]
+    one = rd.major(a, parts, 20, 0.0, 1)["zones"][0]
+    three = rd.major(a, parts, 20, 0.0, 3)["zones"][0]
+    assert one["end"] == 19                     # Con 1 cierre, termina en la primera salida
+    assert three["end"] == 31                   # Con 3, aguanta los dos de afuera y termina tras el tercero seguido
