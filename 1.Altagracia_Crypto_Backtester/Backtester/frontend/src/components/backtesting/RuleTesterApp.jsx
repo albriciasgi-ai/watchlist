@@ -9,6 +9,7 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import RuleSearchTab from './RuleSearchTab';
 import RegimeTab from './RegimeTab';
+import StrategiesTab from './StrategiesTab';
 import { lastClosedIndex } from './replayClock';
 import { latestFreeBox } from './orderPlan.js';
 import { priceText, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
@@ -1756,7 +1757,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['estrategias', 'Estrategias'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -1844,6 +1845,16 @@ const RuleTesterApp = () => {
             {tab === 'ordenes' && ordersTab}
             {tab === 'revision' && reviewTab}
             {tab === 'regimen' && <RegimeTab symbol={symbol} chartTf={chartTf} onBands={setRegimeBands} onFocus={(time, price) => { setPhase(1); focusLater(time, price); }} />}
+            {tab === 'estrategias' && (
+              <StrategiesTab onLoadRule={(saved) => { setRule(fromBackendRule(saved)); setPhase(1); setTab('regla'); }}
+                onOpenReport={(saved, phaseNumber, group) => {
+                  // El informe "Todas" de esas monedas y esa fase, con lo ya corrido: no se recalcula nada
+                  coinGroupRef.current = group;
+                  setCoinGroup(group);
+                  allRuleRef.current = saved;
+                  loadAll(saved, phaseNumber);
+                }} />
+            )}
             {tab === 'busqueda' && <RuleSearchTab onLoadRule={(saved) => { setRule(fromBackendRule(saved)); setPhase(1); setTab('regla'); }} />}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
