@@ -23,6 +23,7 @@ import patterns
 import rule_tester
 import rule_search
 import regime_detectors
+import box_elements
 import liq_sweeps
 import structure
 import gaussian_channel
@@ -3849,7 +3850,8 @@ async def tester_info(request: Request, symbol: str):
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True} for code, name in structure.CODES.items()]
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True, "pattern": True} for code, name in rule_tester.PATTERN_CODES.items()]
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True} for code, name in response_volume.CODES.items()]
-            + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True} for code, name in gaussian_channel.CODES.items()],
+            + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True} for code, name in gaussian_channel.CODES.items()]
+            + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True, "box": True} for code, name in box_elements.CODES.items()],
             # Sin almacén de trades la moneda corre sobre las velas: solo valen los elementos de candleCodes
             "storeless": not rule_tester.has_store(safe), "candleCodes": list(rule_tester.CANDLE_CODES),
             "symbols": rule_tester.candle_symbols(),

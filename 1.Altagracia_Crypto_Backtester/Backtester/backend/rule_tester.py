@@ -24,6 +24,7 @@ import uuid
 
 import numpy as np
 
+import box_elements
 import footprint_store as fs
 import gaussian_channel
 import liq_sweeps
@@ -63,7 +64,7 @@ PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", 
               "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
 LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
 RV_CODES = tuple(response_volume.CODES)  # Flecha y rombo del Volumen de Respuesta
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES)  # Elementos del probador que no son de of_elements
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -90,7 +91,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC")
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE")
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -297,6 +298,19 @@ def clean_rule(raw):
         extra["gc"] = {"period": int(_num(gc.get("period"), 144, 10, 1000)), "poles": int(_num(gc.get("poles"), 4, 1, 9)),
                        "mult": _num(gc.get("mult"), 1.414, 0.2, 10.0), "trend": gc.get("trend") is not False,
                        "exit": gc.get("exit") if gc.get("exit") in gaussian_channel.EXITS else "band"}
+    codes_used = {c for slot in recipe["slots"] for c in slot["codes"]}
+    if "BX" in codes_used:
+        bx = raw.get("bx") or {}
+        # maxHeight: solo rupturas de cajas de hasta tantos ATR de alto (None = todas)
+        extra["bx"] = {"maxHeight": None if bx.get("maxHeight") in (None, "", 0) else _num(bx.get("maxHeight"), 5.0, 0.5, 50.0)}
+    if "BE" in codes_used:
+        be = raw.get("be") or {}
+        # share: parte de la caja que cuenta como borde. maxBody: cuerpo máximo de la vela en ATR (0 = sin límite).
+        # rejection: dónde tiene que cerrar la vela, de 0 (en el borde) a 1 (en el otro extremo de su vela)
+        extra["be"] = {"share": _num(be.get("share"), 0.2, 0.05, 0.5), "maxBody": _num(be.get("maxBody"), 1.0, 0.0, 10.0),
+                       "rejection": _num(be.get("rejection"), 0.6, 0.0, 1.0)}
+        if exit_.get("targetAt") == "mid" and not any(c in VP_CODES for c in codes_used):
+            extra["targetAt"], target_r = "mid", None  # Objetivo en el centro de la caja
     lines = []
     for item in (raw.get("lines") or [])[:2]:
         if item.get("type") in LINE_TYPES and item.get("mode") in ("side", "touch"):
@@ -974,7 +988,26 @@ def _cc_events(rule, span):
 
 def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
-    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span) + _rv_events(rule, span) + _gc_events(rule, span)
+    return (_liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span)
+            + _rv_events(rule, span) + _gc_events(rule, span) + _box_events(rule, span))
+
+
+def _box_events(rule, span):
+    """Ruptura y borde de las cajas del detector de régimen (box_elements.py)."""
+    bx, be = rule.get("bx"), rule.get("be")
+    bars = span["bars"]
+    if (bx is None and be is None) or not bars:
+        return []
+    key = (_bars_key(bars), rule["tf"], "box", json.dumps(bx, sort_keys=True), json.dumps(be, sort_keys=True))
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = box_elements.events(bars, rule["tf"], bx, be)
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
 
 
 def _liq_vp_events(symbol, rule, span, ctx, control=False, vp_shift=None):
@@ -1065,6 +1098,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     pat_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in PATTERN_CODES}
     rv_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in RV_CODES}
     gc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "GC"}
+    box_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in box_elements.CODES}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -1119,6 +1153,10 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         zone = (min(z[0] for z in found), max(z[1] for z in found)) if found else None
         ctx["i0"] = index.get(min([e_t for _, e_t in m["votes"]] + [m["t0"]]), k)
         ctx["vp"] = next((vp_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in vp_info), None)
+        boxed = next((box_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in box_info), None)
+        if ctx["vp"] is None and boxed is not None:
+            # El objetivo "centro" de un borde de caja: el centro de la caja
+            ctx["vp"] = {"high": boxed["high"], "low": boxed["low"], "poc": (boxed["high"] + boxed["low"]) / 2, "vah": boxed["high"], "val": boxed["low"]}
         trade = simulate(rule, ctx, k, side, zone, known_at[-side])
         if trade is None:
             continue
@@ -1144,7 +1182,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                       if code == "LIQ" and (m["dir"], t + tf_ms) in liq_info), None)
         if swept is not None:
             trade["liq"] = swept  # La zona barrida: dinero, antigüedad y hasta dónde pasó el precio
-        if ctx["vp"] is not None:
+        if boxed is not None:
+            trade["box"] = boxed  # La caja de la ruptura o del borde, para dibujarla con el trade
+        elif ctx["vp"] is not None:
             trade["vp"] = ctx["vp"]  # El valor de la sesión anterior que usó la regla, y dónde abrió la sesión
         broken = next((cc_info[(m["dir"], t + tf_ms)] for code, t in m["votes"] if code == "CC" and (m["dir"], t + tf_ms) in cc_info), None)
         if broken is not None:

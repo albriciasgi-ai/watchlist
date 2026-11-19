@@ -864,6 +864,31 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {(rule.codes.includes('BX') || rule.codes.includes('BE')) && (
+          <>
+            {rule.codes.includes('BX') && (
+              <div className="rt-row">
+                <Check checked={rule.bxMaxHeightOn} onChange={(bxMaxHeightOn) => patch({ bxMaxHeightOn })} title="Solo rupturas de cajas estrechas, medidas en ATR de la vela que rompe">Ruptura de cajas de hasta</Check>
+                <Num value={rule.bxMaxHeight} min={0.5} max={50} step={0.5} disabled={!rule.bxMaxHeightOn} onChange={(bxMaxHeight) => patch({ bxMaxHeight })} /><span>ATR de alto</span>
+              </div>
+            )}
+            {rule.codes.includes('BE') && (
+              <div className="rt-row">
+                <span title="Parte de la caja que cuenta como borde">Borde: el</span>
+                <Num value={rule.beShare} min={0.05} max={0.5} step={0.05} onChange={(beShare) => patch({ beShare })} /><span>de la caja · cuerpo hasta</span>
+                <Num value={rule.beMaxBody} min={0} max={10} step={0.1} onChange={(beMaxBody) => patch({ beMaxBody })} /><span>ATR · cierra a</span>
+                <Num value={rule.beRejection} min={0} max={1} step={0.05} onChange={(beRejection) => patch({ beRejection })} /><span>o más del borde en su vela</span>
+              </div>
+            )}
+            <div className="rt-note">
+              Las cajas son las de la pestaña Régimen (eficiencia con caja). <b>BX</b> entra en la vela que cierra fuera de una caja, a favor de la ruptura.
+              <b> BE</b> entra hacia el centro cuando una vela llega al borde de una caja vigente; con "cuerpo hasta" en 0 y "cierra a" en 0 no filtra la vela.
+              Para BE, el stop "Borde lejano de la zona" queda detrás del borde (con su margen) y el objetivo puede ir al centro de la caja.
+              Medido en la fase 1 (4h, siete monedas): BX a favor de la EMA 200 con stop de 1.5 ATR y 3R, +0.19 R antes de 2023 y +0.13 en 2023;
+              con cajas de hasta 5.5 ATR, +0.24 y +0.21 (los controles, +0.02). BE con stop a 0.5 ATR tras el borde y objetivo al centro, +0.04 y −0.02; sin filtros de vela, −0.07 y −0.15.
+            </div>
+          </>
+        )}
         {usesResponse(rule) && (
           <>
             <div className="rt-row">
@@ -1038,6 +1063,12 @@ const RuleTesterApp = () => {
         <h4>Salida</h4>
         <div className="rt-row">
           <Check checked={rule.useTarget} onChange={(useTarget) => patch({ useTarget })} title="Sin marcar no hay objetivo: se ve hasta dónde llega">Objetivo</Check>
+          {!usesProfile(rule) && rule.codes.includes('BE') && (
+            <select value={rule.targetAt === 'mid' ? 'mid' : 'r'} disabled={!rule.useTarget} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
+              <option value="r">en R</option>
+              <option value="mid">en el centro de la caja</option>
+            </select>
+          )}
           {usesProfile(rule) && (
             <select value={rule.targetAt} disabled={!rule.useTarget} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
               <option value="r">en R</option>
@@ -1046,7 +1077,7 @@ const RuleTesterApp = () => {
               <option value="mid">en el centro del rango anterior</option>
             </select>
           )}
-          {!(usesProfile(rule) && rule.targetAt !== 'r') && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
+          {!((usesProfile(rule) && rule.targetAt !== 'r') || (!usesProfile(rule) && rule.codes.includes('BE') && rule.targetAt === 'mid')) && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
           <Check checked={rule.trail} onChange={(trail) => patch({ trail })} title="El stop sube al último swing confirmado a favor">Arrastrar el stop por swings de</Check>
           <Num value={rule.trailBars} min={2} max={20} disabled={!rule.trail} onChange={(trailBars) => patch({ trailBars })} />
         </div>

@@ -168,3 +168,18 @@ def test_el_estudio_de_rupturas_y_bordes_no_mira_adelante():
     for e in st.edges(a):
         if (e["t"], e["side"]) in old:
             assert old[(e["t"], e["side"])] == pytest.approx(e["f"])  # Lo medido en la vela no cambia con velas nuevas
+
+
+def test_ruptura_y_borde_de_caja_como_elementos():
+    import box_elements as bx
+    bars = series(seed=9)
+    full = bx.events(bars, 240, {"maxHeight": None}, {"share": 0.2, "maxBody": 1.0, "rejection": 0.6})
+    assert {e["code"] for e in full} == {"BX", "BE"}
+    for e in full:
+        assert e["known"] == e["t"] + 240 * 60000
+        if e["code"] == "BE":  # Hacia el centro: el borde de abajo da largos y el de arriba, cortos
+            assert (e["dir"] > 0) == (e["lo"] == pytest.approx(e["info"]["low"]))
+    cut = 700
+    short = {(e["code"], e["t"], e["dir"]) for e in bx.events(bars[:cut], 240, {"maxHeight": None}, {"share": 0.2, "maxBody": 1.0, "rejection": 0.6})}
+    known = {(e["code"], e["t"], e["dir"]) for e in full if e["known"] <= bars[cut - 1]["t"] + 240 * 60000}
+    assert known == short  # Lo que se sabía con esas velas no cambia con velas nuevas

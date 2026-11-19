@@ -39,6 +39,7 @@ export function defaultRule() {
     ccTf: 0, ccOffset: 0, ccSwing: 3, ccLegs: 2,
     // Horario: solo señales que se conocen entre esas horas UTC
     useHours: false, hoursFrom: '17:30', hoursTo: '21:30', hoursWeekdays: true,
+    bxMaxHeightOn: false, bxMaxHeight: 5.5, beShare: 0.2, beMaxBody: 1, beRejection: 0.6,
     regimeMode: 'any', regimeMajor: true, regimeMajorOut: 6, regimeAfter: 6, regimeDaily: false,
     // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
@@ -111,6 +112,8 @@ export function toBackendRule(rule) {
     ...(codes.includes('CC') ? { cc: { tf: number(rule.ccTf, 0) || undefined, offset: number(rule.ccOffset, 0), swing: number(rule.ccSwing, 3), legs: number(rule.ccLegs, 2) } } : {}),
     ...(rule.useHours && minuteOfDay(rule.hoursFrom) !== null && minuteOfDay(rule.hoursTo) !== null
       ? { hours: { on: true, from: minuteOfDay(rule.hoursFrom), to: minuteOfDay(rule.hoursTo), weekdays: !!rule.hoursWeekdays } } : {}),
+    ...(codes.includes('BX') ? { bx: { maxHeight: rule.bxMaxHeightOn ? number(rule.bxMaxHeight, 5.5) : null } } : {}),
+    ...(codes.includes('BE') ? { be: { share: number(rule.beShare, 0.2), maxBody: number(rule.beMaxBody, 1), rejection: number(rule.beRejection, 0.6) } } : {}),
     ...(['inside', 'outside', 'breakout'].includes(rule.regimeMode)
       ? { regime: { mode: rule.regimeMode, major: !!rule.regimeMajor, majorOut: number(rule.regimeMajorOut, 6), after: number(rule.regimeAfter, 6),
         ...(rule.regimeDaily && number(rule.tf, 15) < DAILY_TF ? { tf: DAILY_TF } : {}) } } : {}),
@@ -140,6 +143,8 @@ export function toBackendRule(rule) {
       targetR: rule.useTarget ? number(rule.targetR, 2) : null,
       // Objetivo en un nivel del perfil de la sesión anterior, en vez de un múltiplo del riesgo
       ...(rule.useTarget && usesProfile(rule) && ['poc', 'edge', 'mid'].includes(rule.targetAt) ? { targetAt: rule.targetAt } : {}),
+      // Un borde de caja puede apuntar al centro de su caja
+      ...(rule.useTarget && !usesProfile(rule) && (rule.codes || []).includes('BE') && rule.targetAt === 'mid' ? { targetAt: 'mid' } : {}),
       trail: rule.trail ? 'swing' : 'none', trailBars: number(rule.trailBars, 5),
       horizon: rule.useHorizon ? number(rule.horizon, 200) : null,
       opposite: !!rule.opposite
@@ -186,6 +191,8 @@ export function fromBackendRule(saved) {
     emaSlope: !!(saved.lines || []).find(l => l.type === 'ema')?.slope,
     useHours: !!saved.hours, hoursFrom: saved.hours ? clock(saved.hours.from) : '17:30', hoursTo: saved.hours ? clock(saved.hours.to) : '21:30',
     hoursWeekdays: saved.hours ? !!saved.hours.weekdays : true,
+    bxMaxHeightOn: saved.bx?.maxHeight != null, bxMaxHeight: saved.bx?.maxHeight ?? 5.5,
+    beShare: saved.be?.share ?? 0.2, beMaxBody: saved.be?.maxBody ?? 1, beRejection: saved.be?.rejection ?? 0.6,
     regimeMode: saved.regime?.mode || 'any', regimeMajor: saved.regime ? saved.regime.major !== false : true,
     regimeMajorOut: saved.regime?.majorOut ?? 6, regimeAfter: saved.regime?.after ?? 6, regimeDaily: saved.regime?.tf === DAILY_TF,
     vpShapes: saved.vp?.shapes || [], vpVeEntry: saved.vp?.veEntry || 'touch', vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
@@ -207,7 +214,7 @@ export function describeRule(saved) {
     : recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ')) + liq;
   const stop = { swing: `swing ${saved.stop?.bars}`, candle: 'vela del elemento', zone: 'borde de la zona', atr: `${saved.stop?.atr} ATR` }[saved.stop?.type] || '';
   const exits = [];
-  if (saved.targetAt) exits.push({ poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
+  if (saved.targetAt) exits.push(saved.be && !saved.vp ? 'centro de la caja' : { poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
   else if (saved.exit?.targetR != null) exits.push(`${saved.exit.targetR}R`);
   if (saved.exit?.trail === 'swing') exits.push('stop arrastrado');
   if (saved.exit?.horizon != null) exits.push(`${saved.exit.horizon} velas`);
@@ -292,6 +299,13 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     }
     bands.push({ kind: 'level', price: liq.swing, start: liq.swingT ?? start, end, label: liq.what === 'zone' ? 'Borde pasado' : 'Swing barrido' });
     bands.push({ kind: 'mark', time: liq.t, price: liq.extreme, label: 'Barrido' });
+  }
+  if (trade.box && Number.isFinite(trade.box.low)) {
+    // La caja de la ruptura o del borde: punteada antes de que se supiera, continua desde que se supo
+    const box = trade.box;
+    if (box.start < box.detected) bands.push({ kind: 'outline', low: box.low, high: box.high, start: box.start, end: box.detected, strong: false });
+    bands.push({ kind: 'outline', low: box.low, high: box.high, start: box.detected, end: Math.min(end, Math.max(trade.signal + tf, box.detected)), strong: true });
+    bands.push({ kind: 'level', price: (box.low + box.high) / 2, start: box.detected, end, label: 'Centro de la caja' });
   }
   const vp = trade.vp;
   if (vp && Number.isFinite(vp.session)) {
