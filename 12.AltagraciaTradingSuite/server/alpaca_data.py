@@ -56,6 +56,8 @@ RTH_OPEN, RTH_CLOSE = 9 * 60 + 30, 16 * 60
 MAX_ONDEMAND_DAYS = 2                # dias sin bajar que un pedido de footprints baja en el momento
 MAX_JOB_DAYS = 31
 MAX_RANGE_DAYS = 31
+OI_DEFAULT_DAYS = 60                 # vencimientos de los proximos 60 dias si no se pide fecha final
+OI_MAX_DAYS = 800
 UNIFORM_LEVELS = 10
 ZSCORE_LOOKBACK = 20
 SYMBOL_RE = re.compile(r"^[A-Z]{1,5}([.][A-Z]{1,2})?$")      # AAPL, BRK.B
@@ -610,16 +612,24 @@ def _previous_snapshot(symbol: str, scope: str, oi_date: Optional[str]) -> Optio
         return None
 
 
-async def options_oi(symbol: str, exp_from: Optional[str], exp_to: Optional[str]) -> dict:
+async def options_oi(symbol: str, exp_from: Optional[str], exp_to: Optional[str],
+                     days: int = OI_DEFAULT_DAYS, today: Optional[date] = None) -> dict:
+    """Sin expiration_to, Alpaca solo da lo que vence hasta el proximo fin de semana (20/11/2026: 194 contratos de
+    AAPL). Por eso, sin fecha final se piden los vencimientos de los proximos `days` dias (60 de fabrica). Esa
+    ventana corre con los dias: su foto se guarda como "<days>d" y el cambio se mide contra la del dia anterior con
+    la misma ventana (un vencimiento que entra por el final suma OI que antes no se contaba)."""
     params = {"underlying_symbols": symbol, "status": "active", "limit": PAGE_LIMIT}
+    window = None
+    if not exp_to:
+        window = max(1, min(int(days), OI_MAX_DAYS))
+        exp_to = ((today or datetime.now(timezone.utc).date()) + timedelta(days=window)).isoformat()
     if exp_from:
         params["expiration_date_gte"] = exp_from
-    if exp_to:
-        params["expiration_date_lte"] = exp_to
+    params["expiration_date_lte"] = exp_to
     contracts = []
     async for rows in _pages(_trading_url(), "/v2/options/contracts", params, "option_contracts"):
         contracts.extend(rows)
-    scope = f"{exp_from or 'all'}_{exp_to or 'all'}"
+    scope = f"{window}d" if window else f"{exp_from or 'hoy'}_{exp_to}"
     probe = summarize_oi(contracts)
     previous = await run_in_threadpool(_previous_snapshot, symbol, scope, probe["oi_date"])
     out = summarize_oi(contracts, previous)
@@ -630,7 +640,7 @@ async def options_oi(symbol: str, exp_from: Optional[str], exp_to: Optional[str]
         tmp = folder / f"{out['oi_date']}_{scope}.json.tmp"
         tmp.write_text(json.dumps(snap, separators=(",", ":")), encoding="utf-8")
         os.replace(tmp, folder / f"{out['oi_date']}_{scope}.json")
-    out.update({"underlying": symbol, "expiration_from": exp_from, "expiration_to": exp_to})
+    out.update({"underlying": symbol, "expiration_from": exp_from, "expiration_to": exp_to, "window_days": window})
     return out
 
 
@@ -735,11 +745,13 @@ def make_router() -> APIRouter:
 
     @r.get("/api/alpaca/options/oi/{symbol}")
     async def alpaca_options_oi(symbol: str, expiration_from: Optional[str] = None,
-                                expiration_to: Optional[str] = None):
+                                expiration_to: Optional[str] = None, days: int = OI_DEFAULT_DAYS):
         symbol = _symbol(symbol)
         exp_from, exp_to = _day(expiration_from, "expiration_from"), _day(expiration_to, "expiration_to")
+        if not 1 <= days <= OI_MAX_DAYS:
+            raise HTTPException(status_code=400, detail=f"days debe ir de 1 a {OI_MAX_DAYS}")
         try:
-            out = await options_oi(symbol, exp_from, exp_to)
+            out = await options_oi(symbol, exp_from, exp_to, days)
         except AlpacaError as e:
             _fail(e)
         return {"success": True, **out}

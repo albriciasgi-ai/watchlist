@@ -185,17 +185,26 @@ check("put/call", sm["put_call_ratio"] == 0.75, sm["put_call_ratio"])
 check("por strike", [(r["strike"], r["total"]) for r in sm["by_strike"]] == [(90.0, 400), (100.0, 700), (110.0, 300)])
 check("por vencimiento", [r["expiration"] for r in sm["by_expiration"]] == ["2026-08-21", "2026-09-18"])
 check("max pain", sm["max_pain"] == 100.0, sm["max_pain"])
-first = asyncio.run(A.options_oi("AAPL", None, None))
+from datetime import date as _date  # noqa: E402
+calls.clear()
+first = asyncio.run(A.options_oi("AAPL", None, None, today=_date(2026, 7, 16)))
+oi_call = [c for c in calls if "/options/contracts" in c.url.path][0]
+check("sin fecha final pide 60 dias de vencimientos", oi_call.url.params.get("expiration_date_lte") == "2026-09-14"
+      and first["window_days"] == 60 and first["expiration_to"] == "2026-09-14", oi_call.url.params)
 check("primera foto sin cambio", first["change"] is None and first["oi_date"] == "2026-07-16")
-check("foto guardada", (A._oi_dir("AAPL") / "2026-07-16_all_all.json").exists())
+check("foto guardada con la ventana", (A._oi_dir("AAPL") / "2026-07-16_60d.json").exists())
 OPTIONS["now"] = [dict(c, open_interest_date="2026-07-17") for c in OPTIONS["now"]]
 OPTIONS["now"][0]["open_interest"] = "650"
-second = asyncio.run(A.options_oi("AAPL", None, None))
+second = asyncio.run(A.options_oi("AAPL", None, None, today=_date(2026, 7, 17)))
 check("cambio contra la foto anterior", second["change"] and second["change"]["call_oi"] == 150
       and second["change"]["since"] == "2026-07-16", second["change"] and second["change"]["call_oi"])
 chg100 = [r for r in second["change"]["by_strike"] if r["strike"] == 100.0][0]
 check("cambio por strike", chg100["call_oi"] == 150 and chg100["put_oi"] == 0, chg100)
-
+calls.clear()
+third = asyncio.run(A.options_oi("AAPL", "2026-08-01", "2026-12-31"))
+p = [c for c in calls if "/options/contracts" in c.url.path][0].url.params
+check("rango pedido se respeta", p.get("expiration_date_gte") == "2026-08-01" and p.get("expiration_date_lte") == "2026-12-31"
+      and third["window_days"] is None and third["change"] is None, dict(p))
 # ---------- rutas ----------
 app = FastAPI()
 app.include_router(A.make_router())
@@ -209,6 +218,8 @@ check("simbolo con punto vale", A._symbol("brk.b") == "BRK.B")
 check("metodo invalido", client.get("/api/alpaca/footprints/AAPL?method=x").status_code == 400)
 check("sesion invalida", client.get("/api/alpaca/footprints/AAPL?session=x").status_code == 400)
 check("fecha invalida", client.get("/api/alpaca/options/oi/AAPL?expiration_from=2026-13-01").status_code == 400)
+check("dias del OI fuera de rango", client.get("/api/alpaca/options/oi/AAPL?days=0").status_code == 400
+      and client.get("/api/alpaca/options/oi/AAPL?days=5000").status_code == 400)
 start = A.day_ms("2026-06-01")
 r = client.get(f"/api/alpaca/footprints/AAPL?interval=5&start_timestamp={start}&end_timestamp={start + 10 * 86_400_000}")
 check("muchos dias sin bajar piden la bajada", r.status_code == 409 and "download" in r.text, r.text[:200])
