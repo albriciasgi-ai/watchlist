@@ -162,6 +162,9 @@ def test_el_estudio_de_rupturas_y_bordes_no_mira_adelante():
     a.update(ema200=st._ema(c, 200), ema50=st._ema(c, 50), ema120=st._ema(c, 120), rsi=st._rsi(c), bbwp=st._bbwp(c),
              hvol=np.ones(len(c)), eff=rd.er(a, 20, 0.3)["value"], store=False)
     a["leg"], _, _ = measures.zigzag(h, l, c, a["atr"], 2.0)
+    nan = np.full(len(c), np.nan)
+    a.update(oi=nan, oi_z=nan, vol_z=st._zscore(a["v"] * (c - a["o"])), cvd20=nan, pattern=np.zeros(len(c)))
+    a["swing_highs"], a["swing_lows"] = st._pivots(h, l)
     cut = 760
     short = {k: (v[:cut] if isinstance(v, np.ndarray) else v) for k, v in a.items()}
     old = {(e["t"], e["side"]): e["f"] for e in st.edges(short)}

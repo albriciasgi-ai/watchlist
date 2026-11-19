@@ -25,6 +25,8 @@ import uuid
 import numpy as np
 
 import box_elements
+import flow_filters
+import fvg_swing
 import footprint_store as fs
 import gaussian_channel
 import liq_sweeps
@@ -64,7 +66,7 @@ PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", 
               "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
 LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
 RV_CODES = tuple(response_volume.CODES)  # Flecha y rombo del Volumen de Respuesta
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES)  # Elementos del probador que no son de of_elements
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES) + tuple(fvg_swing.CODES)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -91,7 +93,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE")
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "FV", "SP")
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -309,8 +311,28 @@ def clean_rule(raw):
         # rejection: dónde tiene que cerrar la vela, de 0 (en el borde) a 1 (en el otro extremo de su vela)
         extra["be"] = {"share": _num(be.get("share"), 0.2, 0.05, 0.5), "maxBody": _num(be.get("maxBody"), 1.0, 0.0, 10.0),
                        "rejection": _num(be.get("rejection"), 0.6, 0.0, 1.0)}
+        if be.get("pattern"):
+            extra["be"]["pattern"] = True  # Además un patrón de rechazo a favor en la vela; solo entra si se pide
         if exit_.get("targetAt") == "mid" and not any(c in VP_CODES for c in codes_used):
             extra["targetAt"], target_r = "mid", None  # Objetivo en el centro de la caja
+    if "FV" in codes_used:
+        fv = raw.get("fv") or {}
+        extra["fv"] = {"minAtr": _num(fv.get("minAtr"), 0.0, 0.0, 5.0)}  # Hueco mínimo en ATR
+    if "SP" in codes_used:
+        sp = raw.get("sp") or {}
+        extra["sp"] = {"bars": int(_num(sp.get("bars"), 5, 2, 20)),
+                       "minZ": None if sp.get("minZ") in (None, "") else _num(sp.get("minZ"), 1.0, -3.0, 10.0)}
+    flow = raw.get("flow") or {}
+    clean_flow = {}
+    if flow.get("cvd"):
+        clean_flow["cvd"] = int(_num(flow.get("cvd"), 20, 2, 500))  # CVD de N velas a favor
+    if flow.get("oi") in OI_MODES:
+        clean_flow["oi"] = flow["oi"]
+        if flow["oi"] in ("rise", "fall"):
+            clean_flow["oiBars"] = int(_num(flow.get("oiBars"), 6, 1, 100))
+            clean_flow["oiPct"] = _num(flow.get("oiPct"), 2.0, 0.0, 50.0)
+    if clean_flow:
+        extra["flow"] = clean_flow  # Solo entra si se pide: una regla sin él conserva su identidad
     lines = []
     for item in (raw.get("lines") or [])[:2]:
         if item.get("type") in LINE_TYPES and item.get("mode") in ("side", "touch"):
@@ -989,7 +1011,45 @@ def _cc_events(rule, span):
 def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
     return (_liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span)
-            + _rv_events(rule, span) + _gc_events(rule, span) + _box_events(rule, span))
+            + _rv_events(rule, span) + _gc_events(rule, span) + _box_events(rule, span) + _fs_events(rule, span))
+
+
+def _fs_events(rule, span):
+    """FVG nuevo y swing del detector (fvg_swing.py)."""
+    fv, sp = rule.get("fv"), rule.get("sp")
+    bars = span["bars"]
+    if (fv is None and sp is None) or not bars:
+        return []
+    key = (_bars_key(bars), rule["tf"], "fs", json.dumps(fv, sort_keys=True), json.dumps(sp, sort_keys=True))
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = fvg_swing.events(bars, rule["tf"], fv, sp)
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
+
+
+def _flow_ok(flow, ctx, k, side):
+    """Filtros de CVD y OI de la vela k a favor del trade (flow_filters.py)."""
+    cache, bars = ctx.setdefault("flow", {}), ctx["bars"]
+    if flow.get("cvd"):
+        if ("cvd", flow["cvd"]) not in cache:
+            cache[("cvd", flow["cvd"])] = flow_filters.cvd(bars, flow["cvd"])[0]
+        value = cache[("cvd", flow["cvd"])][k]
+        if not value == value or value * side <= 0:
+            return False
+    if flow.get("oi"):
+        if "oi" not in cache:
+            oi = flow_filters.oi_at_close(ctx["symbol"], bars, ctx["tf"])
+            signed = flow_filters.signed_volume(bars)[0]
+            cache["oi"] = (oi, signed, None if oi is None else flow_filters.z_pair(oi, signed))
+        oi, signed, z = cache["oi"]
+        if not flow_filters.oi_ok(flow["oi"], oi, signed, k, side, flow.get("oiBars", 6), flow.get("oiPct", 2.0), z):
+            return False
+    return True
 
 
 def _box_events(rule, span):
@@ -1080,6 +1140,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     if len(bars) < 100:
         return {"success": False, "message": "Sin velas suficientes en el almacén para esa fase"}
     ctx = _context(symbol, tf, bars)
+    ctx["bars"] = bars
     if rule.get("gc"):
         gc = rule["gc"]
         # Con la regla invertida el trade va contra el canal: su salida por el canal también es la contraria
@@ -1099,6 +1160,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     rv_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in RV_CODES}
     gc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "GC"}
     box_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in box_elements.CODES}
+    fs_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in fvg_swing.CODES}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -1132,6 +1194,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             continue
         if rule.get("lines") and not _lines_ok(rule["lines"], ctx, k, side):
             skipped["filtro de VWAP o EMA"] = skipped.get("filtro de VWAP o EMA", 0) + 1
+            continue
+        if rule.get("flow") and not _flow_ok(rule["flow"], ctx, k, side):
+            skipped["filtro de CVD u OI"] = skipped.get("filtro de CVD u OI", 0) + 1
             continue
         if rule.get("regime") and not ctx["regimeOK"][k]:
             skipped["filtro de régimen"] = skipped.get("filtro de régimen", 0) + 1
@@ -1182,6 +1247,16 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                       if code == "LIQ" and (m["dir"], t + tf_ms) in liq_info), None)
         if swept is not None:
             trade["liq"] = swept  # La zona barrida: dinero, antigüedad y hasta dónde pasó el precio
+        found_fs = [fs_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in fs_info]
+        if found_fs:
+            trade["fs"] = found_fs  # El hueco del FVG o el swing que dispararon
+        if rule.get("flow"):
+            flow_cache = ctx.get("flow", {})
+            trade["flow"] = {}
+            if ("cvd", rule["flow"].get("cvd")) in flow_cache:
+                trade["flow"]["cvd"] = round(float(flow_cache[("cvd", rule["flow"]["cvd"])][k]), 4)
+            if flow_cache.get("oi") and flow_cache["oi"][0] is not None:
+                trade["flow"]["oi"] = float(flow_cache["oi"][0][k])
         if boxed is not None:
             trade["box"] = boxed  # La caja de la ruptura o del borde, para dibujarla con el trade
         elif ctx["vp"] is not None:
@@ -1297,9 +1372,14 @@ def _baseline(rule, ctx, trades, symbol):
     allowed = _allowed(ctx, n)
     if allowed is not None and not len(allowed):
         return {"n": 0}
-    for _ in range(BASE_TRADES):
+    flow = rule.get("flow") if "bars" in ctx else None
+    for _ in range(BASE_TRADES * (6 if flow else 1)):
+        if flow and len(done) >= BASE_TRADES:
+            break
         k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(30, n - 2)
         side = 1 if rng.random() < longs else -1
+        if flow and not _flow_ok(flow, ctx, k, side):
+            continue  # Con filtro de CVD u OI, el azar entra solo donde el filtro deja entrar a ese lado
         light["i0"] = k
         trade = simulate(base_rule, light, k, side)
         if trade and "skip" not in trade and not trade.get("open"):
@@ -1324,8 +1404,13 @@ def _leg_baseline(rule, ctx, trades, symbol):
     allowed = _allowed(ctx, n)
     if allowed is not None and not len(allowed):
         return {"n": 0}
-    for _ in range(BASE_TRADES):
+    flow = rule.get("flow") if "bars" in ctx else None
+    for _ in range(BASE_TRADES * (6 if flow else 1)):
+        if flow and len(done) >= BASE_TRADES:
+            break
         k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(30, n - 2)
+        if flow and not _flow_ok(flow, ctx, k, int(direction[k])):
+            continue
         light["i0"] = k
         trade = simulate(base_rule, light, k, int(direction[k]))
         if trade and "skip" not in trade and not trade.get("open"):
@@ -1334,6 +1419,7 @@ def _leg_baseline(rule, ctx, trades, symbol):
     return {"leg": leg, **{key: stats.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "reach", "medianReach")}}
 
 
+OI_MODES = ("rise", "fall", "conf", "noconf")  # Filtro de OI: sube, baja, confluencia OI-volumen a favor, sin ella en contra
 REGIME_MODES = ("inside", "outside", "breakout")
 _regime_cache = {}
 

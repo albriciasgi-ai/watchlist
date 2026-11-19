@@ -7,7 +7,8 @@ Elementos del probador hechos con las cajas de la eficiencia con caja (regime_de
   el centro. Un evento por llegada; se rearma cuando el precio vuelve al tercio del centro. Filtros del estudio:
   la vela no puede ser grande (cuerpo ≤ `maxBody` ATR) y tiene que cerrar lejos del borde (en su vela, a
   `rejection` o más del extremo del borde). La zona va del borde a su quinto: el stop "borde lejano de la zona"
-  queda detrás del borde, y el objetivo "centro" es el centro de la caja.
+  queda detrás del borde, y el objetivo "centro" es el centro de la caja. Con `pattern`, la vela tiene que ser además
+  un patrón de rechazo a favor (martillo, envolvente o doji, con tendencia previa: la regla de candle_patterns).
 
 Una caja se sabe vigente en la vela i si se detectó antes y todavía no se rompió (la ruptura es la vela end + 1).
 """
@@ -31,6 +32,15 @@ def events(bars, tf, bx=None, be=None):
     zones = rd.er_box(a, **rd.PARAMS["er_box"]["params"])["zones"]
     step = tf * 60000
     o, h, l, c, t = a["o"], a["h"], a["l"], a["c"], a["t"]
+    pattern = np.zeros(len(c))
+    if be is not None and be.get("pattern"):
+        import candle_patterns
+        found = candle_patterns.find_patterns(
+            [{"open": o[i], "high": h[i], "low": l[i], "close": c[i], "volume": a["v"][i]} for i in range(len(c))],
+            {"minWickRatio": 2.0, "enabled": {"hammer": True, "shootingStar": True, "engulfing": True, "doji": True},
+             "requireTrend": True, "trendBars": 5, "volume": {"enabled": False, "lookback": 20, "minZ": 0.0}})
+        for p in found:
+            pattern[p["index"]] = 1 if p["type"] in ("HAMMER", "ENGULFING_BULLISH", "DOJI_DRAGONFLY") else -1
     out = []
     for z in zones:
         height = z["high"] - z["low"]
@@ -60,6 +70,8 @@ def events(bars, tf, bx=None, be=None):
                     if be["maxBody"] and abs(c[i] - o[i]) > be["maxBody"] * atr[i]:
                         continue
                     if close_at < be["rejection"]:
+                        continue
+                    if be.get("pattern") and pattern[i] != side:
                         continue
                     lo, hi = (z["low"], z["low"] + share * height) if side > 0 else (z["high"] - share * height, z["high"])
                     out.append({"code": "BE", "dir": side, "t": int(t[i]), "known": int(t[i] + step), "lo": lo, "hi": hi,

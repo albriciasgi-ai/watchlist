@@ -1212,8 +1212,37 @@ regime.py (referencia y velas de la fase 1) + regime_detectors.py (detectores, c
   - *Ruptura*: la vela que cierra fuera de la caja y la termina. Trade a favor, stop de 1.5 ATR y 3R. 784 rupturas: +0.13 R (búsqueda) y +0.10 (2023), contra +0.02 y −0.07 de seguir el tramo al azar con el mismo trade, y +0.06 y −0.01 al azar fuera de las cajas. El 48% vuelve adentro en 6 velas (esas, −0.62 R; las demás, +0.79). Lo que se repite en los dos tramos: **a favor de la EMA 200** (+0.21 y +0.15, contra −0.15 y −0.07 en contra); caja estrecha (≤ 4 ATR, +0.29 pero +0.06 en 2023); BBWP alto. El volumen alto en la ruptura no se sostuvo (+0.26 y +0.05). A favor del tramo, caja ≤ 5.5 ATR y volumen ≥ 1.4×: +0.25 y +0.15, 4 de 7 monedas. Ningún margen deja de tocar el cero.
   - *Borde*: dentro de una caja vigente, la vela que llega al quinto de arriba o de abajo (un evento por llegada). Trade hacia el centro, stop a 0.5 ATR tras el borde. 2,106: −0.08 y −0.11 R. Lo que se repite: entrar contra una vela grande (cuerpo > 1 ATR) es lo peor (−0.20 y −0.22); que la vela cierre lejos del borde (rechazo) deja cerca de 0 (−0.00 y +0.04); objetivo a 1R o menos, cerca de 0; delta a favor, +0.03 y +0.01. Nada gana claro.
 - **Elementos BX y BE del probador** (19/11, `box_elements.py`, en `CANDLE_CODES`: valen en todas las monedas). Las cajas son las de la eficiencia con caja afinada, en el marco de la regla. **BX**: la vela que cierra fuera de una caja vigente y la termina, a favor de la ruptura; `bx.maxHeight` deja solo cajas de hasta tantos ATR. **BE**: dentro de una caja vigente, la vela que llega a su borde (`be.share`, 0.2), hacia el centro, con cuerpo de hasta `be.maxBody` ATR (1; 0 sin límite) y cierre a `be.rejection` o más del borde en su vela (0.6; 0 sin filtro); su zona va del borde a su quinto, y `exit.targetAt: "mid"` pone el objetivo en el centro de la caja (por `ctx["vp"]`). Cada trade guarda `box` y el gráfico dibuja la caja y su centro. Por el probador, fase 1, 4h, siete monedas: BX con stop de 1.5 ATR y 3R, +0.07 R antes de 2023 y +0.06 en 2023; a favor de la EMA 200, +0.19 y +0.13; además con cajas de hasta 5.5 ATR, +0.24 y +0.21 (controles, +0.01 a +0.02). BE con stop a 0.5 ATR tras el borde y objetivo al centro, +0.04 y −0.02; sin filtros de vela, −0.07 y −0.15.
+- **OI, CVD, confluencia, FVG, patrones y swing** (19/11, pedido del usuario: los indicadores que no se habían usado en estas fases). Primero medidos en las rupturas y los bordes del estudio (`regime_study.py`, con OI de 4 horas de Bybit alineado al cierre de cada vela) y después como piezas del probador.
+  - *En el estudio*, con y sin cada uno, antes de 2023 y en 2023. En las rupturas, **CVD de 20 velas a favor**: +0.23 y +0.30 R, contra +0.04 y −0.30 sin él (solo monedas con almacén). La confluencia OI-volumen en contra resta (−0.07 y −0.26, con 35 y 20 casos). El OI que sube o baja, el FVG, el patrón y pasar el último swing no se repiten de un tramo al otro. En los bordes, el patrón a favor y la confluencia a favor dejan cerca de 0, contra −0.10 sin ellos; el patrón en contra, −0.25.
+  - **Filtros de flujo** (`flow_filters.py`, `flow` en la regla, solo si se pide): `cvd` = N velas (la delta de esas velas sobre su volumen, a favor del trade; real con almacén, estimada por el cierre en la vela sin él); `oi` = `rise` o `fall` (más de `oiPct` % en `oiBars` velas), `conf` (confluencia OI-volumen a favor: volumen con signo y cambio del OI, en z de 20 velas, los dos a favor) o `noconf` (no los dos en contra). El OI es el conocido al cierre de la vela: BTC con su serie de 5 minutos (`oi_store`), las demás con `OrderFlowData/oi/{moneda}_4h.json`, que baja `oi_update.py` (desde 2020 o desde que cotiza, hasta hoy); con la de 4 horas el filtro solo vale en 4h y 1D. Una vela sin OI no pasa. **Las entradas al azar de los dos controles solo entran donde el filtro deja entrar a ese lado.** Lo descartado va a `skipped` como "filtro de CVD u OI"; cada trade guarda `flow` (CVD y OI en la señal).
+  - **BE con patrón** (`be.pattern`): además la vela es un martillo, envolvente o doji a favor con tendencia previa.
+  - **FV y SP** (`fvg_swing.py`, en `CANDLE_CODES`). **FV**: la vela deja un hueco con la de dos antes (la regla del indicador FVG), de al menos `fv.minAtr` ATR (0.3); la zona es el hueco. **SP**: un mínimo o máximo único de `sp.bars` velas por lado (5), como el indicador Swing, con volumen z ≥ `sp.minZ` si se pide; se conoce al cerrar la última vela de su derecha, a favor del giro; la zona es su vela. Cada trade guarda `fs`.
+  - *Por el probador*, fase 1, 4h, siete monedas (antes de 2023 · 2023 · azar y tramo de toda la fase):
+
+| Regla | Antes de 2023 | 2023 | Azar · tramo | Monedas sobre el azar |
+|---|---|---|---|---|
+| BX (1.5 ATR, 3R) | 361, +0.07 | 258, +0.06 | +0.01 · +0.02 | 5 |
+| BX con CVD 20 a favor | 307, +0.09 | 220, +0.10 | +0.05 · +0.07 | 5 |
+| BX sin confluencia OI-vol en contra | 335, +0.11 | 251, +0.09 | +0.03 · +0.05 | 4 |
+| BX, EMA 200 y caja ≤ 5.5 ATR | 207, +0.24 | 144, +0.21 | +0.01 · +0.02 | 4 |
+| BX, EMA 200, caja ≤ 5.5 y CVD 20 | 160, +0.32 (±0.29) | 120, +0.32 (±0.34) | +0.06 · +0.07 | 6 |
+| BE (al centro) | 193, +0.04 | 116, −0.02 | −0.03 · −0.04 | 3 |
+| BE con patrón | 49, +0.03 | 25, −0.11 | −0.03 · −0.04 | 3 |
+| BE con confluencia a favor | 56, −0.03 | 34, +0.16 | −0.03 · −0.04 | 3 |
+| BE con CVD 20 a favor | 73, −0.04 | 36, +0.19 | 0.00 · −0.02 | 4 |
+| FV a mercado, hueco ≥ 0.3, 1.5 ATR, 2R | 809, +0.15 (±0.10) | 549, +0.09 (±0.12) | −0.02 · −0.03 | 7 |
+| FV igual, 3R | 595, +0.23 (±0.15) | 421, +0.31 (±0.18) | +0.01 · +0.02 | 6 |
+| FV con cualquier hueco, 2R | 1007, +0.06 | 690, −0.02 | −0.02 · −0.03 | 3 |
+| FV con CVD 20 a favor, 2R | 613, +0.16 | 448, +0.10 | +0.02 · +0.01 | 5 |
+| FV a favor de la EMA 200, 2R | 612, +0.14 | 457, +0.03 | −0.02 · −0.03 | 4 |
+| FV invertida, 2R | 780, −0.08 | 581, −0.13 | −0.03 · −0.03 | 2 |
+| FV limit en la mitad del hueco, stop tras él, 2R | 967, −0.06 | 660, −0.01 | −0.15 · −0.17 | 5 |
+| SP (stop tras la vela, 2R) | 1656, −0.12 | 1366, −0.20 | −0.13 · −0.15 | 2 |
+| SP con volumen z ≥ 1 | 715, −0.12 | 632, −0.20 | −0.13 · −0.15 | 2 |
+
+  - Lo que se sostiene en los dos tramos: el CVD a favor sobre BX (+0.08 y +0.11 sobre BX con EMA y caja, con márgenes que se tocan) y **FV a mercado con hueco de 0.3 ATR o más**, que sigue el hueco: a 3R sus márgenes no tocan el cero en ninguno de los dos tramos, y al revés pierde. Pero se probaron seis variantes de FV y diecisiete reglas en total sobre los mismos datos: es una candidata para la fase 2, no un resultado. El swing del detector pierde como el azar; en BE nada se repite.
 - **MiniChart:** dos formas nuevas en `getTradeBands`, `strip` (tramo de tiempo) y `outline` (caja solo con contorno). Sin ellas, nada cambia.
-- **Pruebas:** `tests/test_regime.py` (20). Probado en la copia aislada con BTC 4h: la pestaña, el dibujo y la lista. No se probó en 15m ni en otras monedas en pantalla.
+- **Pruebas:** `tests/test_regime.py` (20) y `tests/test_flow_elements.py` (5: FV y SP sin futuro, CVD real y estimado, OI conocido al cierre, identidad de la regla con la ida y vuelta por la ventana, y que el filtro de CVD vale para la regla y los controles). Probado en la copia aislada con BTC 4h: la pestaña, el dibujo y la lista. No se probó en 15m ni en otras monedas en pantalla.
 - **Falta:** valores afinados por marco en la ventana (hoy son los de 4h), y decidir con el usuario si las pausas dentro de una tendencia son rango.
 
 ## ESTADO PARA EL ENTRENADOR (17/11/2026)

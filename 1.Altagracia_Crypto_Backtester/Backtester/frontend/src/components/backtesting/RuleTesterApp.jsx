@@ -864,6 +864,30 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {(rule.codes.includes('FV') || rule.codes.includes('SP')) && (
+          <>
+            {rule.codes.includes('FV') && (
+              <div className="rt-row">
+                <span title="Hueco entre el mínimo de la vela y el máximo de dos velas antes (alcista), o al revés (bajista)">FVG: hueco de al menos</span>
+                <Num value={rule.fvMinAtr} min={0} max={5} step={0.05} onChange={(fvMinAtr) => patch({ fvMinAtr })} /><span>ATR</span>
+              </div>
+            )}
+            {rule.codes.includes('SP') && (
+              <div className="rt-row">
+                <span title="El mínimo (alcista) o máximo (bajista) único de tantas velas a cada lado, como el indicador Swing. Se conoce al cerrar la última vela de su derecha">Swing de</span>
+                <Num value={rule.spBars} min={2} max={20} onChange={(spBars) => patch({ spBars })} /><span>velas por lado</span>
+                <Check checked={rule.spVolume} onChange={(spVolume) => patch({ spVolume })} title="Volumen de la vela del swing en z-score contra las 20 anteriores">con volumen z ≥</Check>
+                <Num value={rule.spMinZ} min={-3} max={10} step={0.5} disabled={!rule.spVolume} onChange={(spMinZ) => patch({ spMinZ })} />
+              </div>
+            )}
+            <div className="rt-note">
+              <b>FV</b> entra con el hueco recién formado; con entrada limit en la zona espera que el precio vuelva al hueco, y el stop "Borde lejano de la zona" queda al otro lado.
+              <b> SP</b> entra cuando el swing se confirma, a favor del giro; el stop "Extremo de la vela del elemento" queda detrás del swing.
+              Medido en la fase 1 (4h, siete monedas): FV a mercado con hueco de 0.3 ATR o más, stop de 1.5 ATR y 3R, +0.23 R antes de 2023 y +0.31 en 2023 (controles cerca de 0);
+              con cualquier hueco, cerca de 0; al revés, pierde. SP, −0.12 y −0.20, como el azar.
+            </div>
+          </>
+        )}
         {(rule.codes.includes('BX') || rule.codes.includes('BE')) && (
           <>
             {rule.codes.includes('BX') && (
@@ -878,6 +902,7 @@ const RuleTesterApp = () => {
                 <Num value={rule.beShare} min={0.05} max={0.5} step={0.05} onChange={(beShare) => patch({ beShare })} /><span>de la caja · cuerpo hasta</span>
                 <Num value={rule.beMaxBody} min={0} max={10} step={0.1} onChange={(beMaxBody) => patch({ beMaxBody })} /><span>ATR · cierra a</span>
                 <Num value={rule.beRejection} min={0} max={1} step={0.05} onChange={(beRejection) => patch({ beRejection })} /><span>o más del borde en su vela</span>
+                <Check checked={rule.bePattern} onChange={(bePattern) => patch({ bePattern })} title="Además la vela es un martillo, envolvente o doji a favor, con tendencia previa (la regla del indicador Rejection Patterns)">con patrón de rechazo</Check>
               </div>
             )}
             <div className="rt-note">
@@ -943,6 +968,20 @@ const RuleTesterApp = () => {
           <input type="text" value={rule.hoursTo} disabled={!rule.useHours} onChange={(e) => patch({ hoursTo: e.target.value })} style={{ width: 56 }} placeholder="21:30" />
           <span>UTC</span>
           <Check checked={rule.hoursWeekdays} onChange={(hoursWeekdays) => patch({ hoursWeekdays })}>lunes a viernes</Check>
+        </div>
+        <div className="rt-row">
+          <Check checked={rule.cvdOn} onChange={(cvdOn) => patch({ cvdOn })} title="La delta de las últimas velas, con la de la señal, sobre su volumen va a favor del trade. Con almacén de trades es la delta real; sin él, o en 1D, se estima por dónde cerró cada vela. Los controles al azar entran solo donde el filtro deja entrar">CVD de</Check>
+          <Num value={rule.cvdBars} min={2} max={500} disabled={!rule.cvdOn} onChange={(cvdBars) => patch({ cvdBars })} /><span>velas a favor</span>
+          <span title="Open Interest conocido al cierre de la vela de la señal. BTC tiene OI de 5 minutos; las demás monedas, de 4 horas: en ellas el filtro solo vale en 4h y 1D. Una vela sin OI no pasa">· OI</span>
+          <select value={rule.oiMode} onChange={(e) => patch({ oiMode: e.target.value })}>
+            <option value="off">sin filtro</option>
+            <option value="rise">sube</option>
+            <option value="fall">baja</option>
+            <option value="conf">confluencia OI-volumen a favor</option>
+            <option value="noconf">sin confluencia OI-volumen en contra</option>
+          </select>
+          {['rise', 'fall'].includes(rule.oiMode) && <><span>más de</span><Num value={rule.oiPct} min={0} max={50} step={0.5} onChange={(oiPct) => patch({ oiPct })} /><span>% en</span>
+            <Num value={rule.oiBars} min={1} max={100} onChange={(oiBars) => patch({ oiBars })} /><span>velas</span></>}
         </div>
         <div className="rt-row">
           <span title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">Régimen</span>

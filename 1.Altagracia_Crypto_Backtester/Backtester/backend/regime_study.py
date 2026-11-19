@@ -10,8 +10,12 @@ lo hallado se comprueba después con el probador.
 """
 import math
 
+import json
+import pathlib
+
 import numpy as np
 
+import candle_patterns
 import measures
 import regime_detectors as rd
 import rule_tester as rt
@@ -73,6 +77,36 @@ def _trade(a, i, side, stop, target, horizon=48):
     return (out - entry) * side / risk - TAKER * (entry + out) / risk
 
 
+OI_DIR = None  # Carpeta con el OI de 4h bajado de Bybit ({símbolo}_4h.json: [[ms, oi], ...]); sin ella no hay medidas de OI
+
+
+def _zscore(x, n=20):
+    out = np.full(len(x), np.nan)
+    for i in range(n, len(x)):
+        w = x[i - n:i]
+        sd = w.std()
+        if sd > 0:
+            out[i] = (x[i] - w.mean()) / sd  # Contra las n velas anteriores, sin la actual
+    return out
+
+
+def _pivots(h, l, n=5):
+    """Swings confirmados: el único extremo de n velas a cada lado. Se conoce n velas después (en `known`)."""
+    highs, lows = [], []
+    for j in range(n, len(h) - n):
+        if h[j] == h[j - n:j + n + 1].max() and (h[j - n:j + n + 1] == h[j]).sum() == 1:
+            highs.append((j + n, j, h[j]))
+        if l[j] == l[j - n:j + n + 1].min() and (l[j - n:j + n + 1] == l[j]).sum() == 1:
+            lows.append((j + n, j, l[j]))
+    return highs, lows
+
+
+def _last_swing(swings, i):
+    """El último swing ya confirmado en la vela i: (vela del swing, precio) o None."""
+    known = [s for s in swings if s[0] <= i]
+    return known[-1][1:] if known else None
+
+
 def series(symbol, tf=240):
     ph = next((p for p in rt.phases(symbol) if p["phase"] == 1), None)
     if ph is None or not ph["available"]:
@@ -92,6 +126,33 @@ def series(symbol, tf=240):
     a["leg"], _, _ = measures.zigzag(h, l, c, a["atr"], 2.0)
     a["eff"] = rd.er(a, 20, 0.3)["value"]
     a["store"] = bool(np.abs(a["d"]).sum() > 0)
+    # Volumen con signo: la delta real si hay almacén; si no, estimada por dónde cerró la vela
+    rng = np.where(h - l > 0, h - l, 1.0)
+    signed = a["d"] if a["store"] else a["v"] * (c - a["o"]) / rng
+    a["vol_z"] = _zscore(signed)
+    a["cvd20"] = np.full(len(c), np.nan)
+    if a["store"]:
+        cd, cv = np.cumsum(a["d"]), np.cumsum(a["v"])
+        a["cvd20"][20:] = (cd[20:] - cd[:-20]) / np.maximum(cv[20:] - cv[:-20], 1e-12)
+    a["oi"] = np.full(len(c), np.nan)
+    path = pathlib.Path(OI_DIR) / f"{symbol}_4h.json" if OI_DIR else None
+    if tf == 240 and path is not None and path.exists():
+        oi = dict(json.load(open(path)))
+        step = tf * 60000
+        # Al cierre de la vela se conoce el OI de ese instante (el de la vela siguiente); se arrastra el último conocido
+        last = np.nan
+        for i, t0 in enumerate(a["t"]):
+            last = oi.get(int(t0 + step), last)
+            a["oi"][i] = last
+    a["oi_z"] = _zscore(np.diff(a["oi"], prepend=np.nan))
+    pats = candle_patterns.find_patterns([{"open": o_, "high": h_, "low": l_, "close": c_, "volume": v_}
+                                          for o_, h_, l_, c_, v_ in zip(a["o"], h, l, c, a["v"])],
+                                         {"minWickRatio": 2.0, "enabled": {"hammer": True, "shootingStar": True, "engulfing": True, "doji": True},
+                                          "requireTrend": True, "trendBars": 5, "volume": {"enabled": False, "lookback": 20, "minZ": 0.0}})
+    a["pattern"] = np.zeros(len(c))
+    for p in pats:
+        a["pattern"][p["index"]] = 1 if p["type"] in ("HAMMER", "ENGULFING_BULLISH", "DOJI_DRAGONFLY") else -1
+    a["swing_highs"], a["swing_lows"] = _pivots(h, l)
     return a
 
 
@@ -113,7 +174,37 @@ def _common(a, i, side):
     }
     if a["store"] and v[i] > 0:
         f["delta_vol"] = side * a["d"][i] / v[i]
+        f["cvd_20_a_favor"] = side * a["cvd20"][i]
+        f["cvd_diverge"] = float(np.sign(a["cvd20"][i]) != np.sign(c[i] - c[i - 20]))
+    if np.isfinite(a["oi"][i]) and i >= 6 and np.isfinite(a["oi"][i - 6]) and a["oi"][i - 6] > 0:
+        f["oi_cambio_6"] = (a["oi"][i] / a["oi"][i - 6] - 1) * 100
+        f["oi_z"] = a["oi_z"][i]
+        vz, oz = a["vol_z"][i], a["oi_z"][i]
+        if np.isfinite(vz) and np.isfinite(oz):
+            f["confluencia_oi_vol"] = side * (1.0 if (vz > 0 and oz > 0) else -1.0 if (vz < 0 and oz < 0) else 0.0)
+    if i >= 2:
+        bull = l[i] > h[i - 2] or (i >= 3 and l[i - 1] > h[i - 3])
+        bear = h[i] < l[i - 2] or (i >= 3 and h[i - 1] < l[i - 3])
+        f["fvg_a_favor"] = float(bull if side > 0 else bear)
+        f["fvg_en_contra"] = float(bear if side > 0 else bull)
+    f["patron_a_favor"] = float(a["pattern"][i] == side)
+    f["patron_en_contra"] = float(a["pattern"][i] == -side)
     return f
+
+
+def _swing_break(a, i, side):
+    """Si la ruptura pasa el último swing confirmado de su lado, y a qué distancia en ATR."""
+    last = _last_swing(a["swing_highs"] if side > 0 else a["swing_lows"], i)
+    if last is None:
+        return {}
+    return {"rompe_swing": float(side * (a["c"][i] - last[1]) > 0), "sobre_swing_atr": side * (a["c"][i] - last[1]) / a["atr"][i]}
+
+
+def _swing_at_edge(a, i, side, edge, height):
+    """1 si hay un swing confirmado de ese lado (un mínimo en el borde de abajo) en las últimas 15 velas, cerca del borde."""
+    swings = a["swing_lows"] if side > 0 else a["swing_highs"]
+    near = [s for s in swings if s[0] <= i and i - s[1] <= 15 and abs(s[2] - edge) <= 0.25 * height]
+    return float(bool(near))
 
 
 def breakouts(a, params=None):
@@ -136,6 +227,7 @@ def breakouts(a, params=None):
             "duracion_caja": float(z["end"] - z["start"] + 1),
             "pasa_el_borde_atr": side * (c[i] - edge) / atr[i],
             "vol_vs_caja": a["v"][i] / max(np.median(a["v"][box]), 1e-12),
+            **_swing_break(a, i, side),
             "toques_del_borde": float(sum(1 for j in range(z["detected"], i)
                                           if ((a["h"][j] >= edge - 0.15 * height) if side > 0 else (a["l"][j] <= edge + 0.15 * height)))),
         })
@@ -185,6 +277,7 @@ def edges(a, params=None, share=0.2):
                     "alto_caja_atr": height / atr[i],
                     "vol_vs_caja": a["v"][i] / max(np.median(a["v"][z["start"]:z["detected"] + 1]), 1e-12),
                     "al_centro_r": (mid - c[i]) * side / max((c[i] - stop) * side, 1e-12),
+                    "swing_en_borde": _swing_at_edge(a, i, side, edge, height),
                 })
                 out.append({"t": int(a["t"][i]), "side": side, "r": r, "f": f, "low": z["low"], "high": z["high"]})
     return out
