@@ -933,6 +933,7 @@ const RuleTesterApp = () => {
           <div className="rt-row">
             <Check checked={rule.regimeMajor} onChange={(regimeMajor) => patch({ regimeMajor })} title="Sin marcar, valen las cajas chicas del detector">con el rango mayor</Check>
             {rule.regimeMajor && <><span>que termina tras</span><Num value={rule.regimeMajorOut} min={1} max={50} onChange={(regimeMajorOut) => patch({ regimeMajorOut })} /><span>cierres fuera</span></>}
+            {rule.tf < DAILY_TF && <Check checked={rule.regimeDaily} onChange={(regimeDaily) => patch({ regimeDaily })} title="El régimen se mide en velas diarias (las de la regla unidas por día UTC) y cada vela de la regla usa el del último día cerrado. Medido en 4h, separa peor que en el marco de la regla">medido en 1D</Check>}
           </div>
         )}
         {rule.useHours && (minuteOfDay(rule.hoursFrom) === null || minuteOfDay(rule.hoursTo) === null) && <div className="rt-note">Escribe las horas como 17:30. Mientras no sean válidas, el horario no se aplica.</div>}

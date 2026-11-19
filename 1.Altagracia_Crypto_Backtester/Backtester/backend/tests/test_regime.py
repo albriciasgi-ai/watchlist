@@ -109,7 +109,7 @@ def test_el_filtro_de_regimen_del_probador():
     import rule_tester as rt
     bars = [{**b, "delta": 0.0} for b in series(seed=9)]
     masks = {m: rt.regime_mask({"mode": m, "major": True, "majorOut": 6, "after": 6}, bars) for m in ("inside", "outside", "breakout")}
-    assert np.array_equal(masks["inside"], ~masks["outside"])
+    assert np.array_equal(masks["inside"][20:], ~masks["outside"][20:])  # Las primeras 20 velas no tienen régimen
     assert not (masks["breakout"] & masks["inside"]).any() and masks["breakout"].any()
     cut = 700
     short = rt.regime_mask({"mode": "inside", "major": True, "majorOut": 6, "after": 6}, bars[:cut])
@@ -137,3 +137,34 @@ def test_una_regla_sin_regimen_conserva_su_identidad_y_la_ventana_la_devuelve_ig
     subprocess.run([node, "--input-type=module", "-e", script, module, str(source), str(target)], check=True, capture_output=True)
     again = json.loads(target.read_text(encoding="utf-8"))[0]
     assert rt.clean_rule(again)["regime"] == rule["regime"]
+
+
+def test_el_regimen_diario_solo_usa_dias_cerrados():
+    import rule_tester as rt
+    bars = [{**b, "delta": 0.0} for b in series(seed=9)]  # Velas de 4h: 6 por día
+    reg = {"mode": "inside", "major": False, "majorOut": 6, "after": 6, "tf": 1440}
+    full = rt.regime_mask(reg, bars)
+    cut = 600  # A mitad de un día: ese día todavía no cuenta
+    assert np.array_equal(rt.regime_mask(reg, bars[:cut]), full[:cut])
+    seen = np.array([(b["t"] + MS) // 86400000 for b in bars])  # La vela que cierra a medianoche ya ve ese día
+    for d in np.unique(seen)[:40]:
+        assert len(set(full[seen == d])) == 1  # Las velas que ven el mismo último día cerrado tienen el mismo régimen
+    assert not full[:6 * 21].any()  # Sin las 20 velas diarias del detector no se sabe el régimen
+
+
+def test_el_estudio_de_rupturas_y_bordes_no_mira_adelante():
+    import regime_study as st
+    a = regime.arrays(series(seed=9))
+    a = {**a, "d": np.zeros(len(a["t"]))}
+    h, l, c = a["h"], a["l"], a["c"]
+    import measures
+    a["atr"] = measures.atr(h, l, c)
+    a.update(ema200=st._ema(c, 200), ema50=st._ema(c, 50), ema120=st._ema(c, 120), rsi=st._rsi(c), bbwp=st._bbwp(c),
+             hvol=np.ones(len(c)), eff=rd.er(a, 20, 0.3)["value"], store=False)
+    a["leg"], _, _ = measures.zigzag(h, l, c, a["atr"], 2.0)
+    cut = 760
+    short = {k: (v[:cut] if isinstance(v, np.ndarray) else v) for k, v in a.items()}
+    old = {(e["t"], e["side"]): e["f"] for e in st.edges(short)}
+    for e in st.edges(a):
+        if (e["t"], e["side"]) in old:
+            assert old[(e["t"], e["side"])] == pytest.approx(e["f"])  # Lo medido en la vela no cambia con velas nuevas

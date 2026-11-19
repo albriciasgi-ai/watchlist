@@ -38,6 +38,7 @@ import structure
 import vp_sessions
 
 TFS = (5, 15, 30, 60, 240, 1440)
+DAY_MS = 86400000
 DAILY = 1440   # En 1 día la regla corre sobre velas, en todas las monedas: solo valen los elementos de CANDLE_CODES
 CUTS = ("2024-01-01", "2025-07-01")  # Inicio de la fase 2 y de la fase 3 (la 3 coincide con el corte de los setups)
 PHASE_NAMES = {1: "Exploración", 2: "Validación", 3: "Final"}
@@ -321,6 +322,8 @@ def clean_rule(raw):
         # velas que siguen a la ruptura de un rango, mientras no empiece otro. Solo entra a la regla si se pide
         extra["regime"] = {"mode": reg["mode"], "major": reg.get("major") is not False,
                            "majorOut": int(_num(reg.get("majorOut"), 6, 1, 50)), "after": int(_num(reg.get("after"), 6, 1, 200))}
+        if int(_num(reg.get("tf"), 0, 0, DAILY)) == DAILY and tf < DAILY:
+            extra["regime"]["tf"] = DAILY  # Medido en velas diarias; solo entra si se pide
     leaves_channel = (extra.get("gc") or {}).get("exit") in ("band", "mid")
     if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra and not leaves_channel:
         horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
@@ -1295,17 +1298,11 @@ REGIME_MODES = ("inside", "outside", "breakout")
 _regime_cache = {}
 
 
-def regime_mask(reg, bars):
-    """Velas en que la regla puede operar según el régimen, conocido al cierre de cada vela (sin futuro)."""
+def _regime_ok(a, reg):
+    """Velas permitidas por el régimen, en las velas de `a` (las del marco en que se mide)."""
     import regime_detectors as rd
-    key = (_bars_key(bars), json.dumps(reg, sort_keys=True))
-    with _lock:
-        found = _regime_cache.get(key)
-    if found is not None:
-        return found
-    a = {"t": np.array([b["t"] for b in bars], dtype=np.int64), **{k: np.array([b[src] for b in bars], dtype=float)
-         for k, src in (("o", "o"), ("h", "h"), ("l", "l"), ("c", "c"), ("v", "vol"))}}
-    boxes = rd.er_box(a, **rd.PARAMS["er_box"]["params"])
+    params = rd.PARAMS["er_box"]["params"]
+    boxes = rd.er_box(a, **params)
     zones = rd.major(a, [{"i": z["detected"], "low": z["low"], "high": z["high"]} for z in boxes["zones"]], 8.0, 0.5, reg["majorOut"]) if reg["major"] else boxes
     state = zones["state"]
     if reg["mode"] == "inside":
@@ -1317,6 +1314,49 @@ def regime_mask(reg, bars):
         for z in zones["zones"]:
             ok[z["end"] + 1:z["end"] + 1 + reg["after"]] = True  # La vela que rompe y las que siguen
         ok &= ~state
+    ok[:params["n"]] = False  # Antes de tener las velas del detector no se sabe el régimen
+    return ok
+
+
+def _daily(a, step):
+    """Las velas unidas por día UTC; solo los días completos."""
+    day = a["t"] // DAY_MS
+    per = DAY_MS // step
+    out = {k: [] for k in ("t", "o", "h", "l", "c", "v")}
+    starts = np.flatnonzero(np.diff(day, prepend=day[0] - 1))
+    for k, s0 in enumerate(starts):
+        s1 = starts[k + 1] if k + 1 < len(starts) else len(day)
+        if s1 - s0 != per:
+            continue
+        out["t"].append(int(day[s0] * DAY_MS)); out["o"].append(a["o"][s0]); out["c"].append(a["c"][s1 - 1])
+        out["h"].append(a["h"][s0:s1].max()); out["l"].append(a["l"][s0:s1].min()); out["v"].append(a["v"][s0:s1].sum())
+    return {k: np.array(v, dtype=np.int64 if k == "t" else float) for k, v in out.items()}
+
+
+def regime_mask(reg, bars):
+    """
+    Velas en que la regla puede operar según el régimen, conocido al cierre de cada vela (sin futuro). Con
+    `reg["tf"]` = 1440 el régimen se mide en velas diarias (las de la regla unidas por día UTC), y cada vela de la
+    regla usa el del último día ya cerrado; `after` cuenta entonces en días.
+    """
+    key = (_bars_key(bars), json.dumps(reg, sort_keys=True))
+    with _lock:
+        found = _regime_cache.get(key)
+    if found is not None:
+        return found
+    a = {"t": np.array([b["t"] for b in bars], dtype=np.int64), **{k: np.array([b[src] for b in bars], dtype=float)
+         for k, src in (("o", "o"), ("h", "h"), ("l", "l"), ("c", "c"), ("v", "vol"))}}
+    step = int(np.median(np.diff(a["t"]))) if len(a["t"]) > 1 else DAY_MS
+    if reg.get("tf") == DAILY and step < DAY_MS:
+        d = _daily(a, step)
+        coarse = _regime_ok(d, reg) if len(d["t"]) > 30 else np.zeros(len(d["t"]), dtype=bool)
+        # La vela de la regla que cierra en el instante c ve el último día que cerró en c o antes
+        k = np.searchsorted(d["t"] + DAY_MS, a["t"] + step, side="right") - 1
+        ok = np.zeros(len(a["t"]), dtype=bool)
+        seen = k >= 0
+        ok[seen] = coarse[k[seen]]
+    else:
+        ok = _regime_ok(a, reg)
     with _lock:
         _regime_cache[key] = ok
         while len(_regime_cache) > 40:
