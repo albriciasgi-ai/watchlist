@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { impossibleSides } from './indicators/dtbFeasibility.js';
 
 /**
  * Default configuration for Double Top/Bottom indicator
@@ -147,8 +148,8 @@ const DoubleTopBottomSettings = ({
   };
 
   useEffect(() => {
-    // Load config from localStorage
-    const savedConfig = localStorage.getItem(`double_topbottom_config_${symbol}`);
+    // Lo guardado solo si no llega la configuración del indicador (que ya lo leyó y es la que dibuja)
+    const savedConfig = initialConfig ? null : localStorage.getItem(`double_topbottom_config_${symbol}`);
     if (savedConfig) {
       try {
         setConfig(JSON.parse(savedConfig));
@@ -168,29 +169,11 @@ const DoubleTopBottomSettings = ({
     };
   }, [symbol]);
 
-  useEffect(() => {
-    // Solo guardar en localStorage, NO notificar al parent
-    // El parent solo se notificará cuando el usuario presione "Save & Close"
-    localStorage.setItem(`double_topbottom_config_${symbol}`, JSON.stringify(config));
-
-    // Debounce del log (solo para logging)
-    if (saveLogTimerRef.current) {
-      clearTimeout(saveLogTimerRef.current);
-    }
-
-    saveLogTimerRef.current = setTimeout(() => {
-      console.log(`[PRUEBA_DBT] Config saved to localStorage for ${symbol}`);
-    }, 500);
-
-    // Cleanup
-    return () => {
-      if (saveLogTimerRef.current) {
-        clearTimeout(saveLogTimerRef.current);
-      }
-    };
-  }, [config, symbol]);
+  // Nada se guarda hasta "Save & Close": cerrar sin guardar deja la configuración como estaba.
+  // Al guardar, applyConfig del indicador la escribe en localStorage.
 
   const handleSave = () => {
+    localStorage.setItem(`double_topbottom_config_${symbol}`, JSON.stringify(config));
     console.log(`[PRUEBA_DBT] ${symbol} - User clicked Save & Close - will reload patterns`);
 
     // Cancelar timer pendiente
@@ -210,8 +193,7 @@ const DoubleTopBottomSettings = ({
   const handleReset = () => {
     console.log(`[PRUEBA_DBT] ${symbol} - Resetting to default configuration`);
     const defaultConfig = getDefaultConfig();
-    setConfig(defaultConfig);
-    localStorage.removeItem(`double_topbottom_config_${symbol}`);
+    setConfig(defaultConfig); // se guarda al presionar "Save & Close"
     console.log(`[PRUEBA_DBT] ${symbol} - Reset complete`, defaultConfig);
   };
 
@@ -1283,6 +1265,32 @@ const DoubleTopBottomSettings = ({
           </button>
         </div>
       </div>
+
+      {(() => {
+        const blocked = impossibleSides(config);
+        if (!blocked.length) return null;
+        const names = blocked.map(b => b.name).join(' ni ');
+        const why = blocked[0].reason === 'both'
+          ? 'no hay ningún patrón de rechazo encendido para ese lado y "Require Rejection at Both Extremes" está activo'
+          : `sin patrones de rechazo la confianza llega a lo sumo a ${blocked[0].max} y Min Confidence es ${blocked[0].min}`;
+        const fix = blocked[0].reason === 'both'
+          ? 'Enciende un patrón de rechazo en Pattern o apaga "Require Rejection at Both Extremes" en Filters.'
+          : `Enciende un patrón de rechazo en Pattern o baja Min Confidence a ${blocked[0].max} o menos en Filters.`;
+        return (
+          <div style={{
+            margin: '0 4px 10px',
+            padding: '8px 10px',
+            background: '#FFF3E0',
+            border: '1px solid #FF9800',
+            borderRadius: '4px',
+            color: '#5D4037',
+            fontSize: '12px',
+            lineHeight: 1.4
+          }}>
+            <strong>Con esta configuración no saldrá ningún {names}:</strong> {why}. {fix}
+          </div>
+        );
+      })()}
 
       <div style={{
         maxHeight: '500px',
