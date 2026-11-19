@@ -147,8 +147,8 @@ const DoubleTopBottomSettings = ({
   };
 
   useEffect(() => {
-    // Load config from localStorage
-    const savedConfig = localStorage.getItem(`double_topbottom_config_${symbol}`);
+    // Lo guardado solo si no llega la configuración del indicador (que ya lo leyó y es la que dibuja)
+    const savedConfig = initialConfig ? null : localStorage.getItem(`double_topbottom_config_${symbol}`);
     if (savedConfig) {
       try {
         setConfig(JSON.parse(savedConfig));
@@ -168,29 +168,11 @@ const DoubleTopBottomSettings = ({
     };
   }, [symbol]);
 
-  useEffect(() => {
-    // Solo guardar en localStorage, NO notificar al parent
-    // El parent solo se notificará cuando el usuario presione "Save & Close"
-    localStorage.setItem(`double_topbottom_config_${symbol}`, JSON.stringify(config));
-
-    // Debounce del log (solo para logging)
-    if (saveLogTimerRef.current) {
-      clearTimeout(saveLogTimerRef.current);
-    }
-
-    saveLogTimerRef.current = setTimeout(() => {
-      console.log(`[PRUEBA_DBT] Config saved to localStorage for ${symbol}`);
-    }, 500);
-
-    // Cleanup
-    return () => {
-      if (saveLogTimerRef.current) {
-        clearTimeout(saveLogTimerRef.current);
-      }
-    };
-  }, [config, symbol]);
+  // Nada se guarda hasta "Save & Close": cerrar sin guardar deja la configuración como estaba.
+  // Al guardar, applyConfig del indicador la escribe en localStorage.
 
   const handleSave = () => {
+    localStorage.setItem(`double_topbottom_config_${symbol}`, JSON.stringify(config));
     console.log(`[PRUEBA_DBT] ${symbol} - User clicked Save & Close - will reload patterns`);
 
     // Cancelar timer pendiente
@@ -210,8 +192,7 @@ const DoubleTopBottomSettings = ({
   const handleReset = () => {
     console.log(`[PRUEBA_DBT] ${symbol} - Resetting to default configuration`);
     const defaultConfig = getDefaultConfig();
-    setConfig(defaultConfig);
-    localStorage.removeItem(`double_topbottom_config_${symbol}`);
+    setConfig(defaultConfig); // se guarda al presionar "Save & Close"
     console.log(`[PRUEBA_DBT] ${symbol} - Reset complete`, defaultConfig);
   };
 

@@ -169,6 +169,12 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     };
   }
 
+  /** Encenderlo desde la lista también lo enciende en su configuración: fetchData y el dibujo la miran */
+  setEnabled(enabled) {
+    this.enabled = enabled;
+    this.config.enabled = enabled;
+  }
+
   updateConfig(config) {
     this.config = config;
 
@@ -413,14 +419,17 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     }
 
     this.loading = true;
+    this.requestRedraw?.();
     const startTime = Date.now();
+    // Solo cuenta la respuesta del último pedido: un refresco viejo no pisa lo pedido con otra configuración
+    const requestId = (this._fetchSeq = (this._fetchSeq || 0) + 1);
 
     try {
       console.log(`[${this.symbol}] 🔍 Fetching Double Top/Bottom patterns...`);
 
-      // Timeout de 30 segundos para evitar bloqueos
+      // Timeout de 60 segundos para evitar bloqueos (4h pide un año de velas)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
 
       const response = await fetch(`${API_BASE_URL}/api/double-topbottom/detect`, {
         method: 'POST',
@@ -438,19 +447,24 @@ class DoubleTopBottomIndicator extends IndicatorBase {
 
       clearTimeout(timeoutId);
 
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const result = await response.json();
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      if (requestId !== this._fetchSeq) return; // llegó otro pedido después
 
       if (result.success && result.patterns) {
         this.patterns = result.patterns;
+        // Los registros de renderOverlay vuelven a salir con los patrones nuevos
+        this._earlyReturnLogged = false;
+        this._loggedPatternInfo = false;
         console.log(`[${this.symbol}] ✅ Double Top/Bottom: ${this.patterns.length} patterns detected in ${duration}s`);
 
         if (this.config.debugMode) {
           console.log(`[${this.symbol}] Patterns:`, this.patterns);
         }
       } else {
-        console.error(`[${this.symbol}] ❌ Double Top/Bottom detection failed:`, result.error);
-        this.patterns = [];
+        // Sin respuesta válida se conservan los patrones que ya había (un refresco fallido no borra el gráfico)
+        console.error(`[${this.symbol}] ❌ Double Top/Bottom detection failed:`, result.error || result.detail);
       }
 
     } catch (error) {
@@ -460,9 +474,9 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       } else {
         console.error(`[${this.symbol}] ❌ Error fetching Double Top/Bottom patterns after ${duration}s:`, error);
       }
-      this.patterns = [];
     } finally {
-      this.loading = false;
+      if (requestId === this._fetchSeq) this.loading = false;
+      this.requestRedraw?.();
 
       // Verificar y enviar alertas si están habilitadas
       if (this.config.alertsEnabled && this.patterns.length > 0) {
@@ -857,7 +871,7 @@ class DoubleTopBottomIndicator extends IndicatorBase {
     // La hora simulada llega en cada dibujo: también vale en las pestañas que no estaban activas.
     const currentTime = priceContext.knownCandles ? priceContext.knownUntil : (this._currentPlaybackTime || Date.now());
     const visiblePatterns = this.patterns.filter(pattern =>
-      pattern.knownAt <= currentTime && (pattern.replacedAt === null || currentTime < pattern.replacedAt)
+      (pattern.knownAt ?? 0) <= currentTime && (pattern.replacedAt == null || currentTime < pattern.replacedAt)
     );
 
     if (!this._loggedPatternInfo) {
@@ -1220,6 +1234,10 @@ class DoubleTopBottomIndicator extends IndicatorBase {
       } else {
         console.warn(`[${this.symbol}] ⚠️ DTB habilitado en backtesting pero no se recibieron velas desde IndicatorManager`);
       }
+    } else if (!this.backtestingMode && this.enabled) {
+      // En vivo los patrones dependen de la configuración: se vuelven a pedir con la nueva
+      await this.fetchData();
+      console.log(`[${this.symbol}] DTB: Configuración aplicada (${this.patterns.length} patrones cargados)`);
     } else {
       console.log(`[${this.symbol}] DTB: Configuración aplicada (${this.patterns.length} patrones cargados)`);
     }

@@ -51,6 +51,8 @@ class DoubleTopBottomDetector:
         # 🎯 OPTIMIZACIÓN: Caché de z-scores para evitar recálculos
         # Formato: { "hash_key": { "z_scores": [...], "period": int } }
         self._z_score_cache = {}
+        # Las lineas por cada candidato (miles por pedido) solo con debugMode
+        self._debug = False
 
     def detect_patterns(
         self,
@@ -70,6 +72,7 @@ class DoubleTopBottomDetector:
             List of detected double top/bottom patterns
         """
         detected_patterns = []
+        self._debug = bool(config.get("debugMode", False))
 
         if len(candles) < 10:
             print(f"WARNING: Not enough candles for {symbol}. Need at least 10.")
@@ -437,11 +440,11 @@ class DoubleTopBottomDetector:
                 if max_zscore >= z_threshold:
                     # Volumen alto encontrado en ventana
                     filtered_extremes.append(extreme)
-                    print(f"    [OK] ACCEPTED: Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
+                    if self._debug: print(f"    [OK] ACCEPTED: Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
                           f"Max z-score={max_zscore:.2f} at offset={offset:+d} (threshold={z_threshold:.1f})")
                 else:
                     # Volumen bajo en toda la ventana
-                    print(f"    [REJECTED] Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
+                    if self._debug: print(f"    [REJECTED] Extreme at idx={candle_idx} (price={extreme_price:.2f}, ts={extreme_ts}) | "
                           f"Max z-score={max_zscore:.2f} < threshold={z_threshold:.1f}")
             else:
                 # Edge case: sin z-scores disponibles, mantener
@@ -520,7 +523,7 @@ class DoubleTopBottomDetector:
 
                     if breakout_amount > breakout_tolerance_pct:
                         # El precio sobrepasó el primer extremo - patrón invalidado
-                        print(f"    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos ({breakout_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
+                        if self._debug: print(f"    [PRUEBA_DBT] Double top REJECTED: Breakout entre extremos ({breakout_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
                         continue
 
                 # Validate rejection patterns at both extremes
@@ -705,7 +708,7 @@ class DoubleTopBottomDetector:
 
                     if breakdown_amount > breakout_tolerance_pct:
                         # El precio cayó por debajo del primer extremo - patrón invalidado
-                        print(f"    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos ({breakdown_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
+                        if self._debug: print(f"    [PRUEBA_DBT] Double bottom REJECTED: Breakdown entre extremos ({breakdown_amount*100:.2f}% > {breakout_tolerance_pct*100:.2f}%)")
                         continue
 
                 # Validate rejection patterns
@@ -863,7 +866,8 @@ class DoubleTopBottomDetector:
                 return {'has_pattern': True, 'pattern_type': 'SHOOTING_STAR', 'quality': quality}
 
         # Check for Engulfing patterns
-        if len(prev_candles) > 0 and rejection_patterns.get('bullishEngulfing', True):
+        # Cada envolvente con su propio interruptor (antes el bajista dependia del alcista)
+        if len(prev_candles) > 0:
             prev_candle = prev_candles[-1]
 
             prev_body_top = max(prev_candle['open'], prev_candle['close'])
@@ -872,7 +876,7 @@ class DoubleTopBottomDetector:
             curr_body_bottom = min(o, c)
 
             # Bullish engulfing
-            if expected_direction == 'bullish':
+            if expected_direction == 'bullish' and rejection_patterns.get('bullishEngulfing', True):
                 if (prev_candle['close'] < prev_candle['open'] and
                     c > o and
                     curr_body_bottom < prev_body_bottom and

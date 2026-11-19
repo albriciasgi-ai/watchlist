@@ -928,7 +928,17 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
             <DoubleTopBottomSettings
               symbol={symbol}
               initialConfig={current.getIndicatorConfig('Double Top/Bottom')}
-              onConfigChange={async (newConfig) => { await current.applyConfig('Double Top/Bottom', newConfig); redraw(); }}
+              onConfigChange={async (newConfig) => {
+                // Vale para los cinco marcos (comparten la configuración guardada de la moneda) y no lo enciende
+                // ni lo apaga: eso lo decide la lista de indicadores
+                await Promise.all(TIMEFRAMES.map(async tf => {
+                  const m = managerOf(tf);
+                  const ind = m?.indicators?.find(i => i.name === 'Double Top/Bottom');
+                  if (!ind) return;
+                  await m.applyConfig('Double Top/Bottom', { ...newConfig, enabled: ind.enabled });
+                  chartRefs.current[tf]?.forceRedraw?.();
+                }));
+              }}
               onClose={closeSettings}
             />
           </ModalBox>
