@@ -3948,7 +3948,8 @@ async def regime_catalog(request: Request):
 @app.get("/api/regime/{symbol}")
 @limiter.limit("120/minute")
 async def regime_view(request: Request, symbol: str, tf: int = 240, detector: str = "er_box", params: str = "",
-                      window: int = 48, min_run: int = 8, detect_tf: int = 0):
+                      window: int = 48, min_run: int = 8, detect_tf: int = 0, major: int = 0,
+                      major_atr: float = 8.0, major_buffer: float = 0.5, major_out: int = 1):
     """Referencia de regímenes (mira el futuro: solo para calificar) y zonas de horizontalidad de un detector, fase 1."""
     try:
         raw = json.loads(params) if params else {}
@@ -3956,7 +3957,9 @@ async def regime_view(request: Request, symbol: str, tf: int = 240, detector: st
         raw = {}
     window, min_run = max(6, min(400, window)), max(1, min(100, min_run))
     return _json_response(await run_in_threadpool(regime_detectors.view, sanitize_filename(symbol), tf, detector, raw, window, min_run,
-                                                          "2023-01-01", detect_tf or None))
+                                                          "2023-01-01", detect_tf or None, bool(major),
+                                                          max(1.0, min(50.0, major_atr)), max(0.0, min(5.0, major_buffer)),
+                                                          max(1, min(50, major_out))))
 
 
 @app.post("/api/search/start")

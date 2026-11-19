@@ -1805,9 +1805,10 @@ const MiniChart = forwardRef(({
           if (!(x2 > x1)) continue;
           if (band.kind === 'strip') {
             // Un tramo de tiempo. Tendencia de la referencia: fondo tenue y barra arriba. Rango de un detector: barra abajo
-            if (band.dir === 'range') {
-              ctx.fillStyle = 'rgba(123, 31, 162, 0.8)';
-              ctx.fillRect(x1, marginTop + priceChartHeight - 6, x2 - x1, 6);
+            if (band.dir === 'range' || band.dir === 'major') {
+              // El rango mayor va en una segunda barra, encima de la del detector
+              ctx.fillStyle = band.dir === 'major' ? 'rgba(239, 108, 0, 0.85)' : 'rgba(123, 31, 162, 0.8)';
+              ctx.fillRect(x1, marginTop + priceChartHeight - (band.dir === 'major' ? 13 : 6), x2 - x1, 6);
               continue;
             }
             const rgb = band.dir > 0 ? '8, 153, 129' : '242, 54, 69';
@@ -1821,8 +1822,8 @@ const MiniChart = forwardRef(({
             // Caja de un rango detectado: solo el contorno, punteado antes de que se supiera
             const top = Math.round(priceToY(band.high)) + 0.5;
             const height = Math.max(2, Math.round(priceToY(band.low) - priceToY(band.high)));
-            ctx.strokeStyle = `rgba(123, 31, 162, ${band.strong ? 0.9 : 0.45})`;
-            ctx.lineWidth = band.strong ? 1.5 : 1;
+            ctx.strokeStyle = `rgba(${band.tone === 'major' ? '239, 108, 0' : '123, 31, 162'}, ${band.strong ? 0.9 : 0.45})`;
+            ctx.lineWidth = band.tone === 'major' ? 2 : band.strong ? 1.5 : 1;
             ctx.setLineDash(band.strong ? [] : [4, 3]);
             ctx.strokeRect(x1 + 0.5, top, x2 - x1 - 1, height);
             ctx.setLineDash([]);

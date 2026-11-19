@@ -374,6 +374,51 @@ def score(state, labels, valid, mask=None):
             "recall": round(float(recall), 3), "leak": round(float(leak), 3), "j": round(float(recall - leak), 3)}
 
 
+# ==================== RANGO MAYOR ====================
+
+def major(a, parts, max_atr=8.0, buffer=0.5, closes_out=1):
+    """
+    Rango mayor armado con las cajas de un detector, sin futuro. Empieza con una caja, en la vela en que se supo, y sigue
+    mientras los cierres queden dentro de su caja con `buffer` ATR de margen. Una caja nueva que aparece mientras sigue
+    activo lo agranda si el conjunto no pasa de `max_atr` ATR de alto; si pasa, el rango mayor termina y empieza otro
+    con la caja nueva. Termina tras `closes_out` cierres seguidos fuera de la caja: la ruptura (con 1, el primero;
+    con más, aguanta las falsas rupturas, y las velas de afuera que no llegan a cortarlo siguen contando como rango).
+    `parts`: [{"i": vela del marco en que se supo, "low", "high"}], en el marco de `a`.
+    """
+    c = a["c"]
+    atr = regime.atr(a["h"], a["l"], c)
+    by_bar = {}
+    for p in parts:
+        by_bar.setdefault(int(p["i"]), []).append(p)
+    n = len(c)
+    state = np.zeros(n, dtype=bool)
+    zones, z, out = [], None, 0
+    for i in range(n):
+        if z is not None:
+            if c[i] > z["high"] + buffer * atr[i] or c[i] < z["low"] - buffer * atr[i]:
+                out += 1
+                if out >= closes_out:
+                    zones.append(z)
+                    z = None
+            else:
+                out = 0
+        for p in by_bar.get(i, []):
+            if z is not None:
+                lo, hi = min(z["low"], p["low"]), max(z["high"], p["high"])
+                if hi - lo <= max_atr * atr[i]:
+                    z.update(low=lo, high=hi, parts=z["parts"] + 1)
+                    continue
+                zones.append(z)
+            z = {"start": i, "detected": i, "end": i, "low": float(p["low"]), "high": float(p["high"]), "parts": 1, "startT": p.get("startT")}
+            out = 0
+        if z is not None:
+            z["end"] = i
+            state[i] = True
+    if z is not None:
+        zones.append(z)
+    return {"state": state, "zones": zones}
+
+
 # ==================== VISTA PARA EL GRÁFICO ====================
 # Valores de cada detector: los de fábrica (como estaban en App 1 y App 8) y los afinados en la fase 1 (lo anterior a
 # 2023, calificados en 2023) contra la referencia de 48 velas. Ver la sección del CLAUDE.md de App 1.
@@ -437,7 +482,8 @@ def on_frame(fine, fine_tf, coarse, coarse_tf):
     return state
 
 
-def view(symbol, tf, detector, raw_params=None, window=regime.DEFAULT_WINDOW * 2, min_run=8, split="2023-01-01", detect_tf=None):
+def view(symbol, tf, detector, raw_params=None, window=regime.DEFAULT_WINDOW * 2, min_run=8, split="2023-01-01", detect_tf=None,
+         major_on=False, major_atr=8.0, major_buffer=0.5, major_out=1):
     """
     Referencia, zonas del detector y su calificación en la fase 1, en horas (ms) para dibujarlas. Con `detect_tf`
     menor que `tf` el detector corre en esas velas (sus parámetros cuentan en velas de ese marco) y se califica en `tf`.
@@ -481,9 +527,29 @@ def view(symbol, tf, detector, raw_params=None, window=regime.DEFAULT_WINDOW * 2
                       "low": z["low"], "high": z["high"], "bars": int(z["end"] - z["detected"] + 1), "barsTf": dtf,
                       "match": round(float(flat[seg][ok].mean()), 2) if ok.any() else None,
                       **({"shape": z["shape"], "d": z["d"]} if "shape" in z else {})})
+    extra = {}
+    if major_on:
+        # Las cajas del detector, en la vela del gráfico que cierra cuando se supo cada una
+        parts = []
+        for z in out["zones"]:
+            known = dt[z["detected"]] + dstep
+            i = int(np.searchsorted(t + step, known, side="left"))
+            if i < len(t):
+                parts.append({"i": i, "low": z["low"], "high": z["high"], "startT": int(dt[z["start"]])})
+        big = major(a, parts, float(major_atr), float(major_buffer), int(major_out))
+        mz = []
+        for z in big["zones"]:
+            seg = slice(z["detected"], z["end"] + 1)
+            ok = tr["valid"][seg]
+            mz.append({"start": int(z["startT"] if z.get("startT") is not None else t[z["start"]]), "detected": int(t[z["detected"]] + step),
+                       "end": int(t[z["end"]] + step), "low": z["low"], "high": z["high"], "parts": z["parts"],
+                       "bars": int(z["end"] - z["detected"] + 1), "match": round(float(flat[seg][ok].mean()), 2) if ok.any() else None})
+        extra = {"major": {"maxAtr": float(major_atr), "buffer": float(major_buffer), "closesOut": int(major_out), "zones": mz,
+                           "score": {"all": score(big["state"], tr["labels"], tr["valid"]), "train": score(big["state"], tr["labels"], tr["valid"], cut),
+                                     "hold": score(big["state"], tr["labels"], tr["valid"], ~cut)}}}
     truth_zones = [{"start": int(t[a_]), "end": int(t[b - 1] + step), "dir": lab, "bars": b - a_}
                    for a_, b, lab in regime._runs(tr["labels"]) if lab != 0]
-    return {"success": True, "symbol": symbol, "tf": tf, "detectTf": dtf, "detector": detector, "params": params,
+    return {**extra, "success": True, "symbol": symbol, "tf": tf, "detectTf": dtf, "detector": detector, "params": params,
             "phase": {"from": phase["from"], "to": phase["to"]}, "split": split,
             "truth": {"window": int(window), "minRun": int(min_run), "zones": truth_zones,
                       "trendShare": round(float((tr["labels"][tr["valid"]] != 0).mean()), 3)},

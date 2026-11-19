@@ -51,6 +51,7 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
   const [win, setWin] = useState(saved.window || 48);
   const [minRun, setMinRun] = useState(saved.minRun || 8);
   const [detectTf, setDetectTf] = useState(saved.detectTf || 0);  // 0 = el marco del gráfico
+  const [major, setMajor] = useState(saved.major || { on: false, atr: 8, buffer: 0.5, out: 3 });  // Rango mayor
   const [showTruth, setShowTruth] = useState(saved.showTruth !== false);
   const [showZones, setShowZones] = useState(saved.showZones !== false);
   const [onlyBad, setOnlyBad] = useState(false);
@@ -67,9 +68,9 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
   const shown = { ...(entry?.params || {}), ...(params[detector] || {}) };
   useEffect(() => {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ detector, params, window: win, minRun, showTruth, showZones, detectTf }));
+      localStorage.setItem(KEY, JSON.stringify({ detector, params, window: win, minRun, showTruth, showZones, detectTf, major }));
     } catch { /* sin almacenamiento se usa igual */ }
-  }, [detector, params, win, minRun, showTruth, showZones, detectTf]);
+  }, [detector, params, win, minRun, showTruth, showZones, detectTf, major]);
 
   const setParam = (key, value) => setParams(previous => ({ ...previous, [detector]: { ...shown, [key]: value } }));
   const preset = (which) => setParams(previous => ({ ...previous, [detector]: { ...(entry?.params || {}), ...(which === 'original' ? entry?.original || {} : {}) } }));
@@ -83,7 +84,8 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
     setMessage('');
     try {
       const query = new URLSearchParams({ tf: String(tf), detector, params: JSON.stringify(shown), window: String(win), min_run: String(minRun),
-        detect_tf: String(detectTf && detectTf < tf ? detectTf : tf) });
+        detect_tf: String(detectTf && detectTf < tf ? detectTf : tf),
+        ...(major.on ? { major: '1', major_atr: String(major.atr), major_buffer: String(major.buffer), major_out: String(major.out) } : {}) });
       const answer = await api(`/api/regime/${symbol}?${query}`);
       if (!answer.success) setMessage(answer.message);
       else setData(answer);
@@ -109,6 +111,11 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
         bands.push({ kind: 'strip', dir: 'range', start: z.detected, end: z.end });
       }
     }
+    for (const z of data.major?.zones || []) {
+      if (z.start < z.detected) bands.push({ kind: 'outline', tone: 'major', low: z.low, high: z.high, start: z.start, end: z.detected, strong: false });
+      bands.push({ kind: 'outline', tone: 'major', low: z.low, high: z.high, start: z.detected, end: z.end, strong: true });
+      bands.push({ kind: 'strip', dir: 'major', start: z.detected, end: z.end });
+    }
     onBands(bands);
   }, [data, showTruth, showZones, tf, symbol]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => onBands(null), []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -124,7 +131,8 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
       <div className="rt-note" style={{ marginBottom: 8 }}>
         Zonas de horizontalidad en la fase 1, en el gráfico. <b>Arriba</b>, la referencia: barra verde en tendencia alcista, roja en bajista y
         nada en horizontal (mira el futuro a propósito: es la vara para calificar, no algo operable). <b>Abajo</b>, barra morada mientras el
-        detector dice rango, con la caja de cada rango: punteada antes de que se pudiera saber, continua desde la vela en que se supo.
+        detector dice rango, con la caja de cada rango: punteada antes de que se pudiera saber, continua desde la vela en que se supo. El rango
+        mayor, si se construye, va en naranja, con su barra encima de la morada.
         Donde hay barra arriba y abajo a la vez, el detector confundió tendencia con rango.
       </div>
 
@@ -162,6 +170,21 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
       </div>
 
       <div className="rt-group">
+        <label><input type="checkbox" checked={major.on} onChange={(e) => setMajor(m => ({ ...m, on: e.target.checked }))} /> <b>Construir el rango mayor</b></label>
+        <div className="rt-note">Une las cajas del detector en un rango de más tiempo, en naranja: empieza con una caja, crece con las que aparecen
+          mientras sigue y termina tras varios cierres seguidos fuera. Sin futuro.</div>
+        {major.on && (
+          <>
+            <div className="rt-row"><span style={{ flex: 1 }}>Alto máximo del rango (ATR)</span><input type="number" step="any" value={major.atr} style={{ width: 80 }} onChange={(e) => setMajor(m => ({ ...m, atr: Number(e.target.value) || 8 }))} /></div>
+            <div className="rt-row"><span style={{ flex: 1 }}>Margen fuera de la caja (ATR)</span><input type="number" step="any" value={major.buffer} style={{ width: 80 }} onChange={(e) => setMajor(m => ({ ...m, buffer: e.target.value === '' ? 0 : Number(e.target.value) }))} /></div>
+            <div className="rt-row"><span style={{ flex: 1 }}>Cierres seguidos fuera para terminar</span><input type="number" value={major.out} min={1} max={50} style={{ width: 80 }} onChange={(e) => setMajor(m => ({ ...m, out: Number(e.target.value) || 1 }))} /></div>
+            <div className="rt-note">Medido en 4h, siete monedas, con la eficiencia con caja: con 1 cierre dura lo mismo que las cajas chicas; con 3, unos 5 días (J 0.25
+              en 2023, contra 0.32 de las cajas); con 6, de 8 a 12 días (J 0.21). Aguantar las rupturas lo alarga, pero también lo deja más tiempo en tendencia.</div>
+          </>
+        )}
+      </div>
+
+      <div className="rt-group">
         <h4>Referencia</h4>
         <div className="rt-row">
           <span>Ventana de</span><input type="number" value={win} min={6} max={400} style={{ width: 64 }} onChange={(e) => setWin(Number(e.target.value) || 48)} />
@@ -189,6 +212,8 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
                 {row(`Fase 1 completa`, data.score.all)}
                 {row(`Hasta ${data.split}`, data.score.train)}
                 {row(`Desde ${data.split}`, data.score.hold)}
+                {data.major && row(`Rango mayor, fase 1`, data.major.score.all)}
+                {data.major && row(`Rango mayor, desde ${data.split}`, data.major.score.hold)}
               </tbody>
             </table>
             <div className="rt-note">
@@ -199,6 +224,7 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
           </div>
 
           <div className="rt-group">
+            {data.major && <div className="rt-note" style={{ marginBottom: 4 }}>Rangos mayores: {data.major.zones.length}, con una mediana de {(() => { const b = data.major.zones.map(z => z.bars).sort((x, y) => x - y); return b.length ? b[Math.floor(b.length / 2)] : 0; })()} velas desde que se supo.</div>}
             <h4>Zonas ({data.zones.length})</h4>
             <label className="rt-note"><input type="checkbox" checked={onlyBad} onChange={(e) => setOnlyBad(e.target.checked)} />solo las que caen más en tendencia que en rango</label>
             <table className="rt-table" style={{ marginTop: 4 }}>
