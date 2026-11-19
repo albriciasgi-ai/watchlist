@@ -919,6 +919,22 @@ const RuleTesterApp = () => {
           <span>UTC</span>
           <Check checked={rule.hoursWeekdays} onChange={(hoursWeekdays) => patch({ hoursWeekdays })}>lunes a viernes</Check>
         </div>
+        <div className="rt-row">
+          <span title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">Régimen</span>
+          <select value={rule.regimeMode} onChange={(e) => patch({ regimeMode: e.target.value })}>
+            <option value="any">cualquiera</option>
+            <option value="inside">solo dentro de un rango</option>
+            <option value="outside">solo fuera de los rangos</option>
+            <option value="breakout">solo tras romper un rango</option>
+          </select>
+          {rule.regimeMode === 'breakout' && <><Num value={rule.regimeAfter} min={1} max={200} onChange={(regimeAfter) => patch({ regimeAfter })} /><span>velas</span></>}
+        </div>
+        {rule.regimeMode !== 'any' && (
+          <div className="rt-row">
+            <Check checked={rule.regimeMajor} onChange={(regimeMajor) => patch({ regimeMajor })} title="Sin marcar, valen las cajas chicas del detector">con el rango mayor</Check>
+            {rule.regimeMajor && <><span>que termina tras</span><Num value={rule.regimeMajorOut} min={1} max={50} onChange={(regimeMajorOut) => patch({ regimeMajorOut })} /><span>cierres fuera</span></>}
+          </div>
+        )}
         {rule.useHours && (minuteOfDay(rule.hoursFrom) === null || minuteOfDay(rule.hoursTo) === null) && <div className="rt-note">Escribe las horas como 17:30. Mientras no sean válidas, el horario no se aplica.</div>}
         {rule.useHours && <div className="rt-note">Sesión de Nueva York: de 13:30 a 20:00 UTC en verano y de 14:30 a 21:00 en invierno. Con velas de 4 horas contadas desde las 13:30, las que cierran dentro de la sesión se conocen a las 17:30 y a las 21:30.</div>}
         {usesProfile(rule) && (

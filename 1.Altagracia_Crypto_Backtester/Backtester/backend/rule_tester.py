@@ -314,6 +314,13 @@ def clean_rule(raw):
         # Solo señales que se conocen (y entran) entre esas horas UTC, en minutos del día; de lunes a viernes si se pide
         extra["hours"] = {"from": int(_num(hours.get("from"), 0, 0, 1439)), "to": int(_num(hours.get("to"), 1439, 0, 1439)),
                           "weekdays": bool(hours.get("weekdays"))}
+    reg = raw.get("regime") or {}
+    if reg.get("mode") in REGIME_MODES:
+        # Régimen de la vela de la señal, con el detector de regime_detectors (eficiencia con caja afinada) y, con
+        # major, el rango mayor que une sus cajas. inside: solo en rango; outside: solo fuera; breakout: en las `after`
+        # velas que siguen a la ruptura de un rango, mientras no empiece otro. Solo entra a la regla si se pide
+        extra["regime"] = {"mode": reg["mode"], "major": reg.get("major") is not False,
+                           "majorOut": int(_num(reg.get("majorOut"), 6, 1, 50)), "after": int(_num(reg.get("after"), 6, 1, 200))}
     leaves_channel = (extra.get("gc") or {}).get("exit") in ("band", "mid")
     if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra and not leaves_channel:
         horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
@@ -1045,6 +1052,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         if leave and warm:
             leave = {side: {i - len(warm) for i in found if i >= len(warm)} for side, found in leave.items()}
         ctx["exitAt"] = {1: leave[-1], -1: leave[1]} if leave and rule["invert"] else leave
+    if rule.get("regime"):
+        ctx["regimeOK"] = regime_mask(rule["regime"], bars)
     extra = _extra_events(symbol, rule, span, ctx, control, vp_shift)
     events = events + extra if extra else events
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
@@ -1086,6 +1095,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             continue
         if rule.get("lines") and not _lines_ok(rule["lines"], ctx, k, side):
             skipped["filtro de VWAP o EMA"] = skipped.get("filtro de VWAP o EMA", 0) + 1
+            continue
+        if rule.get("regime") and not ctx["regimeOK"][k]:
+            skipped["filtro de régimen"] = skipped.get("filtro de régimen", 0) + 1
             continue
         if rule.get("hours") and not _in_hours(rule["hours"], m["known"]):
             skipped["fuera de horario"] = skipped.get("fuera de horario", 0) + 1
@@ -1239,8 +1251,11 @@ def _baseline(rule, ctx, trades, symbol):
     base_rule = _random_rule(rule, trades)
     light = {**ctx, "minutes": None, "i0": None}  # Sin minuto a minuto: en la duda cuenta el stop, como en contra de la base no sesga a favor
     done = []
+    allowed = _allowed(ctx, n)
+    if allowed is not None and not len(allowed):
+        return {"n": 0}
     for _ in range(BASE_TRADES):
-        k = rng.randrange(30, n - 2)
+        k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(30, n - 2)
         side = 1 if rng.random() < longs else -1
         light["i0"] = k
         trade = simulate(base_rule, light, k, side)
@@ -1263,14 +1278,58 @@ def _leg_baseline(rule, ctx, trades, symbol):
     base_rule = _random_rule(rule, trades)
     light = {**ctx, "minutes": None, "i0": None}
     done = []
+    allowed = _allowed(ctx, n)
+    if allowed is not None and not len(allowed):
+        return {"n": 0}
     for _ in range(BASE_TRADES):
-        k = rng.randrange(30, n - 2)
+        k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(30, n - 2)
         light["i0"] = k
         trade = simulate(base_rule, light, k, int(direction[k]))
         if trade and "skip" not in trade and not trade.get("open"):
             done.append(trade)
     stats = summary(done)
     return {"leg": leg, **{key: stats.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "reach", "medianReach")}}
+
+
+REGIME_MODES = ("inside", "outside", "breakout")
+_regime_cache = {}
+
+
+def regime_mask(reg, bars):
+    """Velas en que la regla puede operar según el régimen, conocido al cierre de cada vela (sin futuro)."""
+    import regime_detectors as rd
+    key = (_bars_key(bars), json.dumps(reg, sort_keys=True))
+    with _lock:
+        found = _regime_cache.get(key)
+    if found is not None:
+        return found
+    a = {"t": np.array([b["t"] for b in bars], dtype=np.int64), **{k: np.array([b[src] for b in bars], dtype=float)
+         for k, src in (("o", "o"), ("h", "h"), ("l", "l"), ("c", "c"), ("v", "vol"))}}
+    boxes = rd.er_box(a, **rd.PARAMS["er_box"]["params"])
+    zones = rd.major(a, [{"i": z["detected"], "low": z["low"], "high": z["high"]} for z in boxes["zones"]], 8.0, 0.5, reg["majorOut"]) if reg["major"] else boxes
+    state = zones["state"]
+    if reg["mode"] == "inside":
+        ok = state.copy()
+    elif reg["mode"] == "outside":
+        ok = ~state
+    else:
+        ok = np.zeros(len(state), dtype=bool)
+        for z in zones["zones"]:
+            ok[z["end"] + 1:z["end"] + 1 + reg["after"]] = True  # La vela que rompe y las que siguen
+        ok &= ~state
+    with _lock:
+        _regime_cache[key] = ok
+        while len(_regime_cache) > 40:
+            _regime_cache.pop(next(iter(_regime_cache)))
+    return ok
+
+
+def _allowed(ctx, n):
+    """Con filtro de régimen, las velas en que pueden entrar los controles al azar: las mismas que la regla."""
+    ok = ctx.get("regimeOK")
+    if ok is None:
+        return None
+    return np.flatnonzero(ok[30:n - 2]) + 30
 
 
 def _edge(s, b):
