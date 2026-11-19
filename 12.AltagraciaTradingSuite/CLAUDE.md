@@ -63,7 +63,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
-│   └── tests/             run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (18), sin conexión
+│   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (18), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -1000,3 +1001,19 @@ Probado el 12/11 (segunda ronda) en una copia aislada: servidor en 13100 con un 
 Hallado en la prueba: una descarga de la nube se cortó a mitad (0.67 de 1.8 MB) y `sync_nube.py` la guardaba igual, así que el día de BTC no se podía unir. Ahora rechaza una descarga incompleta, lee el archivo entero antes de reemplazar el anterior y, si un archivo de la nube es ilegible, une el día con lo del PC y lo vuelve a bajar.
 
 No se probó contra el bot real, con claves reales ni con el 11000 grabando a la vez.
+
+## Alpaca: acciones de EE. UU. (19/11)
+
+**Pedido:** datos gratuitos de un broker regulado, además de Bybit, para order flow y open interest de acciones de la NYSE. Se eligió Alpaca porque su plan gratuito trae el histórico consolidado (SIP) de trades y quotes, salvo los últimos 15 minutos, y el OI de las opciones. Por ahora está solo en el servidor (`server/alpaca_data.py`); el gráfico todavía no lo usa.
+
+- **Claves:** `alpaca_key_id` y `alpaca_secret_key` en `config/suite.json` (que no va a git), o `SUITE_ALPACA_KEY_ID` / `SUITE_ALPACA_SECRET_KEY`. Sirven las de una cuenta paper. `alpaca_feed`: `sip` (de fábrica) o `iex`. Las claves nunca salen en una respuesta.
+- **Lado del agresor:** el feed de acciones no lo trae. `lee_ready` compara cada trade con el quote anterior (sobre el medio es compra, bajo el medio es venta, en el medio se usa la regla del tick) y baja todos los quotes del día, así que es lento en acciones muy negociadas. `tick` usa solo la regla del tick y es rápido. Lo que no se puede clasificar va mitad y mitad. Las condiciones del SIP que no son una agresión (precio promedio, fuera de secuencia, contingentes, oficiales, etc.) se dejan fuera (`EXCLUDED_CONDITIONS`).
+- **Guardado:** cada día UTC completo queda en `data/alpaca/trades/<SIM>/<día>_<método>.npz` y no se vuelve a bajar. El OI se guarda como foto en `data/alpaca/oi/<SIM>/<fecha del OI>_<rango>.json`. Alpaca da solo el OI del día, así que la historia y el cambio diario se arman con esas fotos.
+- **Sesión:** `all` o `rth` (09:30 a 16:00 de Nueva York, con el horario de verano calculado a mano porque Windows no trae tzdata). En `rth`, las velas de 1 h y 4 h arrancan a las 09:30, y la diaria a la medianoche de Nueva York.
+- **Rutas:**
+  - `GET /api/alpaca/status`: claves configuradas, feed, días guardados y bajadas.
+  - `GET /api/alpaca/historical/{SIM}?interval=1|5|15|60|240|D&days=`: velas, con la forma de `/api/historical`.
+  - `GET /api/alpaca/footprints/{SIM}?interval&start_timestamp&end_timestamp&method&session&step&imbalance_*`: con la forma de `/api/orderflow/historical` (imbalances de App 1), más `cvd`. Baja en el momento a lo sumo 2 días; con más faltantes responde 409.
+  - `POST /api/alpaca/download?symbol&start=AAAA-MM-DD&end=AAAA-MM-DD&method`: baja hasta 31 días en segundo plano; `GET /api/alpaca/download` muestra cómo va.
+  - `GET /api/alpaca/options/oi/{SIM}?expiration_from&expiration_to`: OI de calls y puts, put/call, por strike y vencimiento, max pain y cambio contra la foto anterior.
+- **Límites del plan gratuito:** 200 pedidos por minuto (el conector usa 190, con reintento ante 429) y el SIP sin los últimos 15 minutos (el conector corta 16).

@@ -23,6 +23,14 @@ DEFAULTS = {
     "bybit_url": "https://api.bybit.com",
     # Paginas que pueden usar la API (el frontend de desarrollo y el servido por este mismo servidor)
     "allowed_origin_hosts": ["localhost", "127.0.0.1"],
+    # Alpaca (acciones de EE. UU., alpaca_data.py): las claves van en config/suite.json (no va a git) o en
+    # SUITE_ALPACA_KEY_ID / SUITE_ALPACA_SECRET_KEY. Sirven las de una cuenta paper. feed: sip (todos los exchanges,
+    # gratis salvo los ultimos 15 minutos) o iex (un exchange, en tiempo real)
+    "alpaca_key_id": "",
+    "alpaca_secret_key": "",
+    "alpaca_feed": "sip",
+    "alpaca_data_url": "https://data.alpaca.markets",
+    "alpaca_trading_url": "https://paper-api.alpaca.markets",
 }
 
 
