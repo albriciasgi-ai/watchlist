@@ -35,7 +35,7 @@ def world(tmp_path, monkeypatch):
     monkeypatch.setattr(cr.observer, "OBSERVER_DIR", tmp_path)
     monkeypatch.setattr(rt, "phases", lambda s: [phase])
     monkeypatch.setattr(rt, "has_store", lambda s: False)
-    monkeypatch.setattr(rt, "candle_symbols", lambda: ["X", "Y"])
+    monkeypatch.setattr(rt, "candle_symbols", lambda group="base": ["X", "Y"])
     monkeypatch.setattr(rt, "detect_span", lambda *a, **k: {"bars": data, "events": []})
     monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
     return data

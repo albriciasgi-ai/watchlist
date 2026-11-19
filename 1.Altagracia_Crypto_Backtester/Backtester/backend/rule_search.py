@@ -47,7 +47,9 @@ STOPS = (("atr", 1.0), ("atr", 1.5), ("atr", 2.0), ("atr", 3.0), ("swing", 3), (
 TARGETS = (1.0, 1.5, 2.0, 3.0, 5.0, None)
 HORIZONS = (None, 24, 96)
 WINDOWS = (1, 2, 3, 5)
-ENTRIES = (("market", "near"), ("limit", "near"), ("limit", "mid"))
+# Las opciones nuevas van al final de cada lista: una búsqueda guardada antes conserva el sentido de sus genes
+ENTRIES = (("market", "near"), ("limit", "near"), ("limit", "mid"), ("straddle", "zone"), ("straddle", "close"))
+TRAILS = ("none", "swing", ("atr", 3.0), ("atr", 4.0), ("pct", 5.0))
 LINES = (None, ("vwap", 50, "side"), ("vwap", 200, "side"), ("ema", 14, "touch"), ("ema", 50, "side"), ("ema", 200, "side"))
 
 # Nombre del gen → opciones. Los genes de un elemento solo pesan si el elemento está en la regla: un cambio en uno
@@ -61,8 +63,14 @@ GENES = {
     "ccStruct": (0, 1, 2), "ccSwing": (2, 3, 5), "ccLegs": (2, 3),
     "gcPeriod": (72, 144, 200), "gcMult": (1.0, 1.414, 2.0), "gcTrend": (True, False), "gcExit": ("band", "mid", "none"),
     "liqWhat": ("zone", "swing"), "liqVariant": ("pierce", "reclaim"),
-    "entry": ENTRIES, "stop": STOPS, "target": TARGETS, "trail": ("none", "swing"), "horizon": HORIZONS,
+    "entry": ENTRIES, "stop": STOPS, "target": TARGETS, "trail": TRAILS, "horizon": HORIZONS,
     "opposite": (False, True), "line": LINES, "slope": (False, True),
+    # Desde el 19/11. Cada gen nuevo empieza en "apagado": un genoma guardado antes, sin él, queda como estaba
+    "bxMax": (None, 4.0, 5.5, 8.0), "bePattern": (False, True), "cpMax": (None, 5.5),
+    "fvMin": (0.0, 0.3, 0.6), "spBars": (3, 5, 8), "spMinZ": (None, 1.0), "imBars": (2, 3, 5), "imAtr": (1.5, 2.0, 3.0),
+    "straddleOff": (0.2, 0.5, 1.0), "trailStart": (None, 1.0), "breakEven": (None, 1.5),
+    "cvd": (None, 20, 50), "oi": (None, "noconf", "conf", "rise"),
+    "regime": (None, "outside", "inside", "breakout"), "regimeMajor": (True, False),
 }
 
 _lock = threading.Lock()
@@ -108,6 +116,11 @@ def clean_config(raw):
         "minTrades": int(rt._num(raw.get("minTrades"), 150, 20, 5000)),
         "minCoins": int(rt._num(raw.get("minCoins"), 4, 1, 10)),
         "lines": raw.get("lines") is not False, "invert": raw.get("invert") is not False,
+        # Piezas que la búsqueda puede usar además de los elementos (todas de fábrica)
+        "flow": raw.get("flow") is not False, "regime": raw.get("regime") is not False,
+        "trailing": raw.get("trailing") is not False, "straddle": raw.get("straddle") is not False,
+        # Al terminar, las finalistas se corren también en las monedas nuevas (que nunca eligieron nada)
+        "checkNew": raw.get("checkNew") is not False,
         "seed": seed,
     }
 
@@ -122,6 +135,14 @@ def _options(cfg):
         opts["line"] = (None,)
     if not cfg["invert"]:
         opts["invert"] = (False,)
+    if not cfg.get("flow", True):
+        opts["cvd"], opts["oi"] = (None,), (None,)
+    if not cfg.get("regime", True):
+        opts["regime"] = (None,)
+    if not cfg.get("trailing", True):
+        opts["trail"] = TRAILS[:2]
+    if not cfg.get("straddle", True):
+        opts["entry"] = ENTRIES[:3]
     return opts
 
 
@@ -129,7 +150,7 @@ def random_genome(cfg, rng):
     opts = _options(cfg)
     genome = {name: rng.randrange(len(values)) for name, values in opts.items()}
     # Reglas simples primero: el segundo y el tercer elemento, y el filtro de línea, empiezan apagados más seguido
-    for name in ("e2", "e3", "line"):
+    for name in ("e2", "e3", "line", "cvd", "oi", "regime"):
         if len(opts[name]) > 1 and rng.random() < 0.6:
             genome[name] = 0
     return genome
@@ -148,21 +169,40 @@ def decode(genome, cfg):
     tf = pick["tf"]
     need = len(codes) - pick["need"] if len(codes) > 1 else 1
     stop_type, stop_value = pick["stop"]
+    entry_type, entry_at = pick["entry"]
+    if "CP" in codes and entry_type != "straddle":
+        entry_type, entry_at = "straddle", "zone"  # La compresión no tiene dirección: solo va con las dos órdenes
+    if entry_type == "straddle":
+        entry = {"type": "straddle", "from": entry_at, "offset": pick["straddleOff"], "expiry": 12}
+    else:
+        entry = {"type": entry_type, "at": entry_at, "expiry": 3}
+    trail = pick["trail"]
+    exit_ = {"targetR": pick["target"], "trail": trail if isinstance(trail, str) else trail[0],
+             "horizon": pick["horizon"], "opposite": pick["opposite"], "breakEven": pick["breakEven"]}
+    if not isinstance(trail, str):
+        exit_["trailAtr" if trail[0] == "atr" else "trailPct"] = trail[1]
+        exit_["trailStart"] = pick["trailStart"]
     raw = {
         "name": "Búsqueda", "tf": tf, "invert": pick["invert"],
         "recipe": {"slots": [{"codes": [c]} for c in codes], "mode": "strict" if need >= len(codes) else "threshold",
                    "min": need, "window": pick["window"] if len(codes) > 1 else 1,
                    # Como la manda la ventana (toBackendRule): así la regla cargada allí conserva su identidad
                    "swing": {"on": False, "bars": 5, "flex": 1}},
-        "entry": {"type": pick["entry"][0], "at": pick["entry"][1], "expiry": 3},
+        "entry": entry,
         "stop": {"type": stop_type, "atr": stop_value if stop_type == "atr" else 1.5,
                  "bars": stop_value if stop_type == "swing" else 5, "buffer": 0.1, "maxAtr": 8},
-        "exit": {"targetR": pick["target"], "trail": pick["trail"], "horizon": pick["horizon"], "opposite": pick["opposite"]},
+        "exit": exit_,
         "rv": {"arrow": pick["rvArrow"], "rombo": pick["rvRombo"], "spike": pick["rvSpike"], "leg": pick["rvLeg"]},
         "pat": {"trend": pick["patTrend"], "minZ": pick["patMinZ"]},
         "gc": {"period": pick["gcPeriod"], "mult": pick["gcMult"], "trend": pick["gcTrend"], "exit": pick["gcExit"]},
         "liq": {"what": pick["liqWhat"], "variant": pick["liqVariant"]},
+        "bx": {"maxHeight": pick["bxMax"]}, "be": {"pattern": pick["bePattern"]}, "cp": {"maxHeight": pick["cpMax"]},
+        "fv": {"minAtr": pick["fvMin"]}, "sp": {"bars": pick["spBars"], "minZ": pick["spMinZ"]},
+        "im": {"bars": pick["imBars"], "atr": pick["imAtr"]},
+        "flow": {"cvd": pick["cvd"], "oi": pick["oi"]},
     }
+    if pick["regime"]:
+        raw["regime"] = {"mode": pick["regime"], "major": pick["regimeMajor"], "majorOut": 6, "after": 6}
     struct = [s for s in structure.STRUCT_TFS if s >= tf and s % tf == 0]
     raw["cc"] = {"tf": struct[min(len(struct) - 1, pick["ccStruct"])] if struct else tf, "swing": pick["ccSwing"], "legs": pick["ccLegs"]}
     if pick["line"]:
@@ -176,7 +216,9 @@ def rule_key(rule):
 
 
 def complexity(rule):
-    return len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
+    flow = rule.get("flow") or {}
+    return (len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
+            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(rule.get("regime")))
 
 
 # ==================== EVALUACIÓN ====================
@@ -184,16 +226,17 @@ def complexity(rule):
 class Evaluator:
     """Velas, elementos y controles de cada moneda, cargados una vez para toda la búsqueda."""
 
-    def __init__(self, cfg, progress=None):
+    def __init__(self, cfg, progress=None, group="base"):
         self.cfg = cfg
         self.split = rt._ms(cfg["split"])
         self.data = {}      # (moneda, marco) → {span, phase, ctx, bounds}
         self.controls = {}  # clave del control → resumen
         self.legs = {}      # (moneda, marco, ATR del tramo) → dirección del tramo en cada vela
         self.progress = progress
+        self.group = group
 
     def symbols(self):
-        return rt.candle_symbols()
+        return rt.candle_symbols(self.group)
 
     def load(self, symbol, tf, rule):
         key = (symbol, tf)
@@ -234,7 +277,8 @@ class Evaluator:
         longs = sum(1 for t in trades if t["dir"] > 0) / len(trades)
         leg = float((rule.get("rv") or {}).get("leg", measures.LEG_ATR))
         core = {"stop": base_rule["stop"], "exit": {**base_rule["exit"], "opposite": False}, "gc": rule.get("gc"),
-                "invert": rule["invert"] if rule.get("gc") else False}
+                "invert": rule["invert"] if rule.get("gc") else False, "entry": base_rule["entry"],
+                "regime": rule.get("regime"), "flow": rule.get("flow")}
         # El control al azar se guarda por lado (largos y cortos aparte) y se mezcla con la proporción de cada regla:
         # así lo comparten todas las reglas con el mismo stop y la misma salida
         key = json.dumps([symbol, tf, segment, kind, core, None if kind == "random" else leg], sort_keys=True, default=str)
@@ -247,18 +291,38 @@ class Evaluator:
             direction = self._leg_direction(symbol, tf, item["ctx"], leg) if kind == "leg" else None
             rng = random.Random(int(hashlib.sha1(key.encode()).hexdigest()[:8], 16))
             by_side = {1: [], -1: []}
-            for number in range(CTRL_TRADES):
-                k = rng.randrange(lo, hi - 2)
+            # Con filtro de régimen el azar entra solo en las velas que el filtro deja; con filtro de flujo, solo del lado
+            # que el filtro deja entrar. Si no, la ventaja mezclaría el filtro con la señal
+            allowed = None
+            if rule.get("regime"):
+                mask = rt.regime_mask(rule["regime"], item["span"]["bars"])
+                allowed = [k for k in range(lo, hi - 2) if mask[k]]
+                if len(allowed) < 50:
+                    return None
+            flow = rule.get("flow")
+            fctx = {**item["ctx"], "bars": item["span"]["bars"]} if flow else None
+            straddle = base_rule["entry"]["type"] == "straddle"
+            taken = 0
+            for number in range(CTRL_TRADES * (6 if flow else 1)):
+                if flow and taken >= CTRL_TRADES:
+                    break
+                k = allowed[rng.randrange(len(allowed))] if allowed is not None else rng.randrange(lo, hi - 2)
                 side = int(direction[k]) if kind == "leg" else (1 if number % 2 == 0 else -1)
                 if side == 0:
                     continue
+                sides = (side,) if kind == "leg" or not straddle else (1, -1)
+                if flow:
+                    sides = tuple(sd for sd in sides if rt._flow_ok(flow, fctx, k, sd))
+                    if not sides:
+                        continue
+                taken += 1
                 ctx["i0"] = k
-                trade = rt.simulate(base_rule, ctx, k, side)
+                trade = rt.simulate(base_rule, ctx, k, side, sides=sides)
                 if not trade or "skip" in trade or trade.get("open"):
                     continue
                 if segment == "train" and trade["exit_t"] >= self.split:
                     continue
-                by_side[side].append(trade["r"])
+                by_side[trade["dir"]].append(trade["r"])
             found = {side: float(np.mean(rs)) if rs else None for side, rs in by_side.items()}
             found["all"] = float(np.mean(by_side[1] + by_side[-1])) if by_side[1] or by_side[-1] else None
             self.controls[key] = found
@@ -388,7 +452,8 @@ def _distance(a, b):
     codes = lambda r: {c for s in r["recipe"]["slots"] for c in s["codes"]}
     if codes(ra) != codes(rb) or ra["tf"] != rb["tf"] or ra["invert"] != rb["invert"]:
         return 99
-    return sum(1 for k in ("stop", "exit", "entry", "lines", "rv", "pat", "cc", "gc", "liq") if ra.get(k) != rb.get(k)) \
+    return sum(1 for k in ("stop", "exit", "entry", "lines", "rv", "pat", "cc", "gc", "liq", "bx", "be", "cp", "fv", "sp", "im", "flow", "regime")
+               if ra.get(k) != rb.get(k)) \
         + (ra["recipe"]["window"] != rb["recipe"]["window"]) + (ra["recipe"]["min"] != rb["recipe"]["min"])
 
 
@@ -449,6 +514,14 @@ def _finish(state, evaluator, job):
         out.append({"key": record["key"], "rule": record["rule"], "fitness": record["fitness"], "train": record["train"],
                     "hold": hold, "coins": record["coins"], "neighbors": near, "neighborsUp": up, "stable": bool(stable),
                     "candidate": verdict == "Candidata a la fase 2", "verdict": verdict})
+    if cfg.get("checkNew", True) and rt.new_symbols():
+        # Las finalistas en las monedas nuevas, en toda su fase 1: datos que la búsqueda nunca vio. Solo informa
+        fresh = Evaluator(cfg, lambda text: job.update(stage=f"Monedas nuevas: {text}"), group="new")
+        for number, item in enumerate(out, 1):
+            job.update(stage=f"Monedas nuevas: finalista {number} de {len(out)}")
+            result = fresh.evaluate(item["rule"])
+            item["newCoins"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"],
+                                "all": _pooled(result)}
     # El umbral de suerte cuenta todas las reglas probadas, vecinas incluidas; la comparación de la validación, solo las
     # que eligió la búsqueda: dice si elegir por aptitud sirvió de algo
     every = [r for r in state["evaluated"].values() if r["train"]["n"] >= cfg["minTrades"]]
@@ -465,6 +538,18 @@ def _finish(state, evaluator, job):
         "topHoldEdge": round(float(np.mean(top_hold)), 4) if top_hold else None, "topCount": len(top_hold),
         "allHoldEdge": round(float(np.mean(all_hold)), 4) if all_hold else None,
     }
+
+
+def _pooled(result):
+    """Los dos tramos juntos: ventaja media pesada por trades y monedas a favor."""
+    t, h = result["train"], result["hold"]
+    n = (t["n"] or 0) + (h["n"] or 0)
+    if not n:
+        return {"n": 0}
+    edge = ((t["edge"] or 0) * (t["n"] or 0) + (h["edge"] or 0) * (h["n"] or 0)) / n
+    rows = [c for c in result["coins"] if (c["train"]["n"] + c["hold"]["n"]) >= MIN_COIN_TRADES]
+    up = sum(1 for c in rows if ((c["train"].get("edge") or 0) * c["train"]["n"] + (c["hold"].get("edge") or 0) * c["hold"]["n"]) > 0)
+    return {"n": n, "edge": round(edge, 4), "coinsUp": up, "coinsWith": len(rows)}
 
 
 def _work(state, job):

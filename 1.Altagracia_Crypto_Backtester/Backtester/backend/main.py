@@ -3856,7 +3856,7 @@ async def tester_info(request: Request, symbol: str):
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True} for code, name in fvg_swing.CODES.items()],
             # Sin almacén de trades la moneda corre sobre las velas: solo valen los elementos de candleCodes
             "storeless": not rule_tester.has_store(safe), "candleCodes": list(rule_tester.CANDLE_CODES),
-            "symbols": rule_tester.candle_symbols(),
+            "symbols": rule_tester.candle_symbols("all"), "baseSymbols": rule_tester.base_symbols(), "newSymbols": rule_tester.new_symbols(),
             "liqFrom": await run_in_threadpool(liq_sweeps.first_day, safe),
             "measures": measures.catalog(), "runs": runs[::-1][:200],
             "variantsPhase1": len({r["hash"] for r in runs if r["phase"] == 1})}
@@ -3890,7 +3890,8 @@ async def tester_run_all(request: Request):
     phase = int(body.get("phase", 1))
     if phase not in (1, 2, 3):
         return {"success": False, "message": "Fase no válida"}
-    return await run_in_threadpool(rule_tester.start_all, body.get("rule") or {}, phase, bool(body.get("confirm")))
+    group = body.get("group") if body.get("group") in rule_tester.GROUPS else "base"
+    return await run_in_threadpool(rule_tester.start_all, body.get("rule") or {}, phase, bool(body.get("confirm")), group)
 
 
 @app.post("/api/tester/consolidated")
@@ -3901,7 +3902,8 @@ async def tester_consolidated(request: Request):
     phase = int(body.get("phase", 1))
     if phase not in (1, 2, 3):
         return {"success": False, "message": "Fase no válida"}
-    return _json_response(await run_in_threadpool(rule_tester.consolidated, body.get("rule") or {}, phase))
+    group = body.get("group") if body.get("group") in rule_tester.GROUPS else "base"
+    return _json_response(await run_in_threadpool(rule_tester.consolidated, body.get("rule") or {}, phase, group))
 
 
 # ==================== REVISIÓN DE CANDIDATOS ====================

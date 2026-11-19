@@ -13,11 +13,14 @@ import { elementLabel, elementLabels } from './elementLabels.js';
 const SEARCH_KEY = 'tester_search_v1';
 const NAMES = {
   CC: 'Cambio de carácter', VH: 'Volumen alto para su hora', LIQ: 'Barrido de liquidaciones', HM: 'Martillo o estrella',
-  EN: 'Envolvente', DJ: 'Doji', RF: 'Flecha de Volumen de Respuesta', RB: 'Rombo de Volumen de Respuesta', GC: 'Gaussian Channel'
+  EN: 'Envolvente', DJ: 'Doji', RF: 'Flecha de Volumen de Respuesta', RB: 'Rombo de Volumen de Respuesta', GC: 'Gaussian Channel',
+  BX: 'Ruptura de caja', BE: 'Borde de caja, hacia el centro', CP: 'Compresión (va con las dos órdenes stop)', FV: 'FVG nuevo',
+  SP: 'Swing del detector', IM: 'Impulso'
 };
 const DEFAULT_CONFIG = {
-  tfs: [240], codes: ['CC', 'VH', 'HM', 'EN', 'DJ', 'RF', 'RB', 'GC'], population: 60, generations: 25, maxElements: 2,
-  minTrades: 150, minCoins: 4, split: '2023-01-01', lines: true, invert: true, mutation: 0.1
+  tfs: [240], codes: ['CC', 'VH', 'HM', 'EN', 'DJ', 'RF', 'RB', 'GC', 'BX', 'BE', 'CP', 'FV', 'SP', 'IM'], population: 60, generations: 25, maxElements: 2,
+  minTrades: 150, minCoins: 4, split: '2023-01-01', lines: true, invert: true, mutation: 0.1,
+  flow: true, regime: true, trailing: true, straddle: true, checkNew: true
 };
 
 const api = async (path, body) => {
@@ -158,6 +161,21 @@ export default function RuleSearchTab({ onLoadRule }) {
             <Check checked={config.invert} onChange={(invert) => patch({ invert })}>puede invertir</Check>
           </div>
           <div className="rt-row">
+            <span>Puede usar</span>
+            <Check checked={config.flow !== false} onChange={(flow) => patch({ flow })} title="Filtros de CVD de N velas a favor y de OI">filtros de CVD y OI</Check>
+            <Check checked={config.regime !== false} onChange={(regime) => patch({ regime })} title="Solo dentro, solo fuera o solo tras romper un rango">régimen</Check>
+            <Check checked={config.trailing !== false} onChange={(trailing) => patch({ trailing })} title="Trailing a 3 o 4 ATR o al 5% del mejor precio, con arranque y stop a la entrada">trailing</Check>
+            <Check checked={config.straddle !== false} onChange={(straddle) => patch({ straddle })} title="Dos órdenes stop, una arriba y otra abajo: entra la primera">dos órdenes stop</Check>
+          </div>
+          <div className="rt-row">
+            <Check checked={config.checkNew !== false} onChange={(checkNew) => patch({ checkNew })}
+              title="Al terminar, cada finalista se corre también en las monedas nuevas, en toda su fase 1. Nunca eligen nada: solo dicen si lo encontrado se repite en monedas que la búsqueda no vio">
+              Al terminar, comprobar las finalistas en las monedas nuevas</Check>
+          </div>
+          <div className="rt-note">
+            La búsqueda elige siempre con las 7 monedas de siempre. Con más piezas hay más reglas posibles y más suerte: el umbral de suerte del informe lo tiene en cuenta.
+          </div>
+          <div className="rt-row">
             <span>Población</span><Num value={config.population} min={10} max={300} onChange={(population) => patch({ population })} />
             <span>generaciones</span><Num value={config.generations} min={1} max={200} onChange={(generations) => patch({ generations })} />
             <span>mutación</span><Num value={config.mutation} min={0.01} max={0.5} step={0.01} onChange={(mutation) => patch({ mutation })} />
@@ -241,6 +259,12 @@ export default function RuleSearchTab({ onLoadRule }) {
                 <tbody>
                   <tr><td>Búsqueda</td><td>{f.train.n}</td><td><R value={f.train.avgR} /></td><td><R value={f.train.edge} /> ±{f.train.se ? (1.96 * f.train.se).toFixed(2) : '—'}</td><td>{f.train.coinsUp} de {f.train.coinsWith}</td></tr>
                   <tr><td>Validación</td><td>{f.hold.n}</td><td><R value={f.hold.avgR} /></td><td><R value={f.hold.edge} /> ±{f.hold.se ? (1.96 * f.hold.se).toFixed(2) : '—'}</td><td>{f.hold.coinsUp} de {f.hold.coinsWith}</td></tr>
+                  {f.newCoins && ['train', 'hold'].map(seg => (
+                    <tr key={seg} title="Las monedas nuevas, que la búsqueda nunca vio, en el mismo tramo de su fase 1">
+                      <td>Nuevas, {seg === 'train' ? 'búsqueda' : 'validación'}</td><td>{f.newCoins[seg].n}</td><td><R value={f.newCoins[seg].avgR} /></td>
+                      <td><R value={f.newCoins[seg].edge} /> ±{f.newCoins[seg].se ? (1.96 * f.newCoins[seg].se).toFixed(2) : '—'}</td><td>{f.newCoins[seg].coinsUp} de {f.newCoins[seg].coinsWith}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
               <div className="rt-note" style={{ marginTop: 4 }}>

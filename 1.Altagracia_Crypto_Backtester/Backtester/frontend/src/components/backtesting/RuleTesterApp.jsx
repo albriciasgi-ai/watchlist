@@ -192,6 +192,10 @@ const RuleTesterApp = () => {
   const [statsMode, setStatsMode] = useState(view.statsMode === 'account' ? 'account' : 'trade'); // Por trade (1 R cada uno) o como cuenta
   const [accountRisk, setAccountRisk] = useState(Number(view.accountRisk) > 0 ? Number(view.accountRisk) : 1);
   const [allStarting, setAllStarting] = useState(false); // Entre el clic y la respuesta del backend
+  // Grupo de monedas de "Correr en todas": base (las 7 de App 1, con las que se eligen las reglas), new (las nuevas) o all
+  const [coinGroup, setCoinGroup] = useState(() => { try { return localStorage.getItem('tester_coin_group') || 'base'; } catch { return 'base'; } });
+  const coinGroupRef = useRef(coinGroup);
+  useEffect(() => { coinGroupRef.current = coinGroup; try { localStorage.setItem('tester_coin_group', coinGroup); } catch { /* sin almacenamiento */ } }, [coinGroup]);
   const [allReport, setAllReport] = useState(null); // Informe de todas las monedas, de la regla y la fase con que se pidió
   const [message, setMessage] = useState(null);
   const [sort, setSort] = useState({ key: 'n', desc: false });
@@ -322,7 +326,7 @@ const RuleTesterApp = () => {
 
   // El informe de todas las monedas que ya corrieron esa regla exacta en esa fase
   const loadAll = useCallback(async (backendRule, phaseNumber) => {
-    const report = await api('/api/tester/consolidated', { rule: backendRule, phase: phaseNumber });
+    const report = await api('/api/tester/consolidated', { rule: backendRule, phase: phaseNumber, group: coinGroupRef.current });
     if (!report.success) {
       setMessage(report.message || 'No se pudo armar el informe de todas las monedas');
       return;
@@ -400,7 +404,7 @@ const RuleTesterApp = () => {
     setAllStarting(true);
     try {
       const backendRule = toBackendRule(rule);
-      const response = await api('/api/tester/run-all', { rule: backendRule, phase, confirm });
+      const response = await api('/api/tester/run-all', { rule: backendRule, phase, confirm, group: coinGroup });
       if (!response.success) {
         setMessage(response.message);
         return;
@@ -1476,7 +1480,7 @@ const RuleTesterApp = () => {
   ) : (
     <>
       <div className="rt-group">
-        <b>{allReport.rule.name}</b> · Fase {allReport.phase} · {allReport.symbols.length} monedas
+        <b>{allReport.rule.name}</b> · Fase {allReport.phase} · {allReport.symbols.length} monedas{allReport.group === 'new' ? ' nuevas' : allReport.group === 'all' ? ' (las de siempre y las nuevas)' : ' de siempre'}
         <div className="rt-note">{describeRule(allReport.rule)}</div>
       </div>
       {allReport.phase > 1 && <div className="rt-warn">Esta fase es de comprobación. Si cambias la regla por lo que veas aquí, la fase queda gastada para la regla nueva en todas las monedas.</div>}
@@ -1846,6 +1850,14 @@ const RuleTesterApp = () => {
             <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={running || !phaseInfo?.available} onClick={() => runPhase(false)}>
               {running ? `${job.stage}… ${job.done}/${job.total}` : `Correr la regla en la fase ${phase}`}
             </button>
+            <div className="rt-row" style={{ marginTop: 6, marginBottom: 0 }}>
+              <span title="Las de siempre son las 7 de App 1, con las que se han elegido las reglas. Las nuevas nunca se usaron para elegir nada: comprobar ahí una regla es como tener datos frescos en todas sus fechas">Monedas</span>
+              <select value={coinGroup} disabled={running || allStarting} onChange={(e) => { setCoinGroup(e.target.value); setAllReport(null); }}>
+                <option value="base">las de siempre ({info?.baseSymbols?.length ?? 7})</option>
+                <option value="new">las nuevas ({info?.newSymbols?.length ?? 0})</option>
+                <option value="all">todas ({(info?.baseSymbols?.length ?? 7) + (info?.newSymbols?.length ?? 0)})</option>
+              </select>
+            </div>
             <button type="button" className="rt-btn" style={{ width: '100%', padding: '5px 0', marginTop: 4 }} disabled={running || allStarting} onClick={() => runAll(false)}
               title="Corre esta fase en cada moneda con velas guardadas, una tras otra, y junta los trades en un solo informe">
               {allStarting ? 'Preparando: revisando qué falta en cada moneda…' : running && job.all ? `Todas las monedas: ${job.symbolsDone ?? 0} de ${job.symbolsTotal ?? '…'}` : `Correr en todas las monedas (fase ${phase})`}
