@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { impossibleSides } from './indicators/dtbFeasibility.js';
 
 /**
  * Default configuration for Double Top/Bottom indicator
@@ -1264,6 +1265,32 @@ const DoubleTopBottomSettings = ({
           </button>
         </div>
       </div>
+
+      {(() => {
+        const blocked = impossibleSides(config);
+        if (!blocked.length) return null;
+        const names = blocked.map(b => b.name).join(' ni ');
+        const why = blocked[0].reason === 'both'
+          ? 'no hay ningún patrón de rechazo encendido para ese lado y "Require Rejection at Both Extremes" está activo'
+          : `sin patrones de rechazo la confianza llega a lo sumo a ${blocked[0].max} y Min Confidence es ${blocked[0].min}`;
+        const fix = blocked[0].reason === 'both'
+          ? 'Enciende un patrón de rechazo en Pattern o apaga "Require Rejection at Both Extremes" en Filters.'
+          : `Enciende un patrón de rechazo en Pattern o baja Min Confidence a ${blocked[0].max} o menos en Filters.`;
+        return (
+          <div style={{
+            margin: '0 4px 10px',
+            padding: '8px 10px',
+            background: '#FFF3E0',
+            border: '1px solid #FF9800',
+            borderRadius: '4px',
+            color: '#5D4037',
+            fontSize: '12px',
+            lineHeight: 1.4
+          }}>
+            <strong>Con esta configuración no saldrá ningún {names}:</strong> {why}. {fix}
+          </div>
+        );
+      })()}
 
       <div style={{
         maxHeight: '500px',
