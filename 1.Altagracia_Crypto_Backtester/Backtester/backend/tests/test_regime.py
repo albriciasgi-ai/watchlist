@@ -103,3 +103,37 @@ def test_el_rango_mayor_aguanta_cierres_fuera_hasta_el_limite():
     three = rd.major(a, parts, 20, 0.0, 3)["zones"][0]
     assert one["end"] == 19                     # Con 1 cierre, termina en la primera salida
     assert three["end"] == 31                   # Con 3, aguanta los dos de afuera y termina tras el tercero seguido
+
+
+def test_el_filtro_de_regimen_del_probador():
+    import rule_tester as rt
+    bars = [{**b, "delta": 0.0} for b in series(seed=9)]
+    masks = {m: rt.regime_mask({"mode": m, "major": True, "majorOut": 6, "after": 6}, bars) for m in ("inside", "outside", "breakout")}
+    assert np.array_equal(masks["inside"], ~masks["outside"])
+    assert not (masks["breakout"] & masks["inside"]).any() and masks["breakout"].any()
+    cut = 700
+    short = rt.regime_mask({"mode": "inside", "major": True, "majorOut": 6, "after": 6}, bars[:cut])
+    assert np.array_equal(short, masks["inside"][:cut])  # Sin futuro
+
+
+def test_una_regla_sin_regimen_conserva_su_identidad_y_la_ventana_la_devuelve_igual(tmp_path):
+    import json
+    import pathlib
+    import shutil
+    import subprocess
+    import rule_tester as rt
+    base = {"tf": 240, "recipe": {"slots": [{"codes": ["RF"]}]}, "stop": {"type": "atr", "atr": 2}, "exit": {"targetR": 2}}
+    assert "regime" not in rt.clean_rule(base) and "regime" not in rt.clean_rule({**base, "regime": {"mode": "any"}})
+    rule = rt.clean_rule({**base, "regime": {"mode": "breakout", "major": True, "majorOut": 4, "after": 9}})
+    assert rule["regime"] == {"mode": "breakout", "major": True, "majorOut": 4, "after": 9}
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("sin node")
+    source, target = tmp_path / "r.json", tmp_path / "b.json"
+    source.write_text(json.dumps([rule]), encoding="utf-8")
+    module = (pathlib.Path(__file__).resolve().parents[2] / "frontend" / "src" / "components" / "backtesting" / "ruleTester.js").as_uri()
+    script = ("const fs = await import('node:fs'); const m = await import(process.argv[1]);"
+              "fs.writeFileSync(process.argv[3], JSON.stringify(JSON.parse(fs.readFileSync(process.argv[2], 'utf8')).map(r => m.toBackendRule(m.fromBackendRule(r)))));")
+    subprocess.run([node, "--input-type=module", "-e", script, module, str(source), str(target)], check=True, capture_output=True)
+    again = json.loads(target.read_text(encoding="utf-8"))[0]
+    assert rt.clean_rule(again)["regime"] == rule["regime"]
