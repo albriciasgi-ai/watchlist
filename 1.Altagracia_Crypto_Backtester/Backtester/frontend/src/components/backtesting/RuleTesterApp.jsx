@@ -7,6 +7,7 @@ import { THEME, isNewTheme } from '../uiTheme.js';
 import { withoutSubdivisions } from './marketData';
 import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
+import RuleSearchTab from './RuleSearchTab';
 import { lastClosedIndex } from './replayClock';
 import { latestFreeBox } from './orderPlan.js';
 import { priceText, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
@@ -1593,7 +1594,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión']];
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -1680,6 +1681,7 @@ const RuleTesterApp = () => {
             {tab === 'historial' && historyTab}
             {tab === 'ordenes' && ordersTab}
             {tab === 'revision' && reviewTab}
+            {tab === 'busqueda' && <RuleSearchTab onLoadRule={(saved) => { setRule(fromBackendRule(saved)); setPhase(1); setTab('regla'); }} />}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
             <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={running || !phaseInfo?.available} onClick={() => runPhase(false)}>
