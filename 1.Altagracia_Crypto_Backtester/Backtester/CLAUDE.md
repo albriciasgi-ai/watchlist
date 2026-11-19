@@ -1124,6 +1124,19 @@ Pedido del usuario: un bot de cripto que vio entraba hacia donde el precio empez
   - Se probaron 11 reglas más sobre los mismos datos: ninguna pasa a la fase 2 solo por esto.
   - Pruebas: `tests/test_trailing_straddle.py` (6).
 
+### Tablero de estrategias (19/11)
+
+Pedido del usuario: "no recuerdo cómo salieron las anteriores y dependo de Claude para saberlo", y que la app compare las métricas y diga cuál es más ganadora y por qué, como la lectura que se hacía con cada captura.
+
+- **Pestaña "Estrategias"** del backtesting global (`StrategiesTab.jsx`) y `backend/strategy_board.py`, con `GET /api/tester/strategies` y `POST /api/tester/strategies/note`.
+- **Una estrategia** es una regla exacta sin contar su nombre (`rule_hash` con un símbolo fijo); la misma guardada con dos nombres es una, y lleva los dos. Cada celda fase × grupo (las de siempre, S; las nuevas, N) junta la última corrida de cada moneda igual que el informe "Todas": mismo R, mismo azar pesado por trades y el tramo solo si lo tienen todas las monedas con trades. Comprobado con la copia del registro: da los números de los informes (por ejemplo 1,566 trades, +0.247 y ventaja de +0.135 a +0.320).
+- **Pasa** (✓): ventaja sobre los dos controles con margen que no toca el cero, como se acordó, y además R medio positivo: perder menos que el azar no es ganar.
+- **Lectura** (`analyze`): cada fase con su veredicto; si la ventaja se achica al pasar a datos frescos; si la pone un lado (con la sugerencia de probar solo ese lado); si una moneda pone el 40% o más del R; cuántas monedas ganan; años que pierden; pocos trades. "Comprobación" es todo lo que no se usó para elegir la regla: las fases 2 y 3, y cualquier fase de las monedas nuevas. Veredicto: cayó en tal fase, pasa todas, pasa N y le falta la fase 3, solo explorada, o no pasa ni la exploración.
+- **"Las más sólidas"** (`rank`): solo reglas corridas en 2 monedas o más; primero las que no cayeron en ninguna comprobación, luego las que pasan más, y entre iguales la de peor margen inferior más alto, con el porqué en una línea.
+- **Estado y nota** del usuario por estrategia (`strategy_notes.json` junto al registro). Un clic en una fase abre su informe "Todas" (con el grupo de monedas), y "Cargar en la pestaña Regla" la deja lista.
+- **Resumen de cada corrida** en `cache/run_stats_v2.json` (con sus años). La primera vez se arma en segundo plano y la pestaña muestra el avance: con 430 corridas tardó unos 4 minutos, sobre todo por las viejas que reciben ahí el control del tramo. Después responde en décimas de segundo.
+- Pruebas: `tests/test_strategy_board.py` (4). Probado en la copia aislada con una copia del registro real: tabla, orden, detalle, ancho del panel (sin barra horizontal) y nota guardada.
+
 ### Monedas nuevas y búsqueda con todas las piezas (19/11)
 
 Pedido del usuario tras caer en la fase 3 la Ruptura de caja con EMA 200 y CVD: unas 50 monedas, para tener datos frescos, y que la búsqueda genética combine los elementos, el régimen, el trailing y las dos órdenes nuevas.

@@ -25,6 +25,7 @@ import rule_search
 import regime_detectors
 import box_elements
 import fvg_swing
+import strategy_board
 import liq_sweeps
 import structure
 import gaussian_channel
@@ -4003,6 +4004,21 @@ async def search_summary(request: Request, search_id: str):
 @limiter.limit("120/minute")
 async def review_report(request: Request):
     return await run_in_threadpool(candidate_review.report)
+
+
+@app.get("/api/tester/strategies")
+@limiter.limit("60/minute")
+async def tester_strategies(request: Request):
+    """Tablero de estrategias: cada regla corrida, con su resultado por fase y por grupo de monedas."""
+    return _json_response(await run_in_threadpool(strategy_board.board))
+
+
+@app.post("/api/tester/strategies/note")
+@limiter.limit("120/minute")
+async def tester_strategy_note(request: Request):
+    """Estado y nota del usuario para una estrategia (body: key, status, note)."""
+    body = await request.json()
+    return await run_in_threadpool(strategy_board.set_note, body.get("key"), body.get("status"), body.get("note"))
 
 
 @app.get("/api/tester/job/{job_id}")
