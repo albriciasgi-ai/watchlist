@@ -89,7 +89,7 @@ def test_todas_las_monedas_un_trabajo_y_un_informe_conjunto(tmp_path, monkeypatc
 
     monkeypatch.setattr(rt.observer, "OBSERVER_DIR", tmp_path)
     monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
-    monkeypatch.setattr(rt, "candle_symbols", lambda: ["AAAUSDT", "BBBUSDT", "CCCUSDT"])
+    monkeypatch.setattr(rt, "candle_symbols", lambda group="base": ["AAAUSDT", "BBBUSDT", "CCCUSDT"])
     monkeypatch.setattr(rt, "has_store", lambda s: s == "AAAUSDT")
     monkeypatch.setattr(rt.measures, "table_for", lambda s: None)
     phase = {"phase": 1, "name": "Exploración", "from": "2020-01-01", "to": "2020-01-31", "available": True}

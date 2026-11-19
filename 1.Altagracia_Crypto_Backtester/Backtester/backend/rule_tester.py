@@ -12,6 +12,7 @@ sobre un tramo fijo del histórico, con cada trade contabilizado.
   medidas de measures.py al decidir, para buscar qué separa a los ganadores de los perdedores.
 """
 import datetime as dt
+import os
 import pathlib
 import gzip
 import hashlib
@@ -108,28 +109,58 @@ def _on_candles(symbol, tf):
     return tf == DAILY or not has_store(symbol)
 
 
-def candle_symbols():
-    """Monedas con caché de velas de App 1."""
+# Monedas nuevas: velas de 1h y 4h de Bybit que baja candles_update.py, fuera del repositorio. Nunca se usaron para
+# elegir reglas: sirven para comprobar en todas sus fechas una regla elegida en las de App 1
+EXTRA_DIR = pathlib.Path(os.environ.get("TESTER_CANDLES", r"C:\Users\inven\OrderFlowData\candles"))
+EXTRA_KEYS = {60: ("60", 1), 240: ("240", 1), 1440: ("240", 6)}
+GROUPS = ("base", "new", "all")
+
+
+def base_symbols():
+    """Monedas con caché de velas de App 1: con las que se han elegido las reglas."""
     return sorted(p.name.split("_")[0] for p in CANDLE_DIR.glob("*_backtesting_data.json.gz"))
 
 
+def new_symbols():
+    """Monedas nuevas, sin caché de App 1."""
+    base = set(base_symbols())
+    return sorted(s for s in (p.name.split(".")[0] for p in EXTRA_DIR.glob("*.json.gz")) if s not in base)
+
+
+def candle_symbols(group="base"):
+    """Monedas del grupo: base (las de App 1, las de siempre), new (las nuevas) o all."""
+    if group == "new":
+        return new_symbols()
+    if group == "all":
+        return sorted(set(base_symbols()) | set(new_symbols()))
+    return base_symbols()
+
+
 def _candle_path(symbol):
-    return CANDLE_DIR / f"{symbol}_backtesting_data.json.gz"
+    own = CANDLE_DIR / f"{symbol}_backtesting_data.json.gz"
+    extra = EXTRA_DIR / f"{symbol}.json.gz"
+    return own if own.exists() or not extra.exists() else extra
 
 
 def candle_bars(symbol, tf):
     """Velas cerradas del caché de App 1 en el marco de la regla, con la forma de las del almacén (sin delta)."""
     path = _candle_path(symbol)
-    if tf not in CANDLE_KEYS or not path.exists():
+    extra = path.parent == EXTRA_DIR
+    keys = EXTRA_KEYS if extra else CANDLE_KEYS
+    if tf not in keys or not path.exists():
         return []
     key = (symbol, tf, path.stat().st_mtime)
     with _lock:
         found = _candles.get(key)
     if found is not None:
         return found
-    name, group = CANDLE_KEYS[tf]
+    name, group = keys[tf]
     with gzip.open(path, "rt", encoding="utf-8") as fh:
-        rows = ((json.load(fh).get("timeframes") or {}).get(name) or {}).get("main") or []
+        if extra:
+            rows = [{"timestamp": r[0], "open": r[1], "high": r[2], "low": r[3], "close": r[4], "volume": r[5]}
+                    for r in json.load(fh).get(name) or []]
+        else:
+            rows = ((json.load(fh).get("timeframes") or {}).get(name) or {}).get("main") or []
     now = time.time() * 1000
     step = tf * 60000
     bars = []
@@ -179,7 +210,7 @@ def _candle_cover(symbol):
             return saved
     except (OSError, ValueError):
         pass
-    bars = candle_bars(symbol, 15)
+    bars = candle_bars(symbol, 15) or candle_bars(symbol, 60)
     if not bars:
         return None
     saved = {"stamp": stamp, "first": _iso(bars[0]["t"] + oe.DAY_MS), "last": _iso(bars[-1]["t"] - oe.DAY_MS)}  # Días completos
@@ -1802,11 +1833,11 @@ def start(symbol, raw_rule, phase_number, confirm=False):
 # ==================== TODAS LAS MONEDAS ====================
 # La misma regla en cada moneda con velas guardadas, una tras otra, y el informe de todas juntas.
 
-def _plan(rule, phase_number):
-    """Qué pasa con cada moneda: se corre, ya tiene esa regla exacta corrida en la fase, o no se puede (y por qué)."""
+def _plan(rule, phase_number, group="base"):
+    """Qué pasa con cada moneda del grupo: se corre, ya tiene esa regla exacta corrida en la fase, o no se puede (y por qué)."""
     codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
     rows = []
-    for symbol in candle_symbols():
+    for symbol in candle_symbols(group if group in GROUPS else "base"):
         row = {"symbol": symbol, "action": "skip", "run": None, "reason": None}
         phase = next((p for p in phases(symbol) if p["phase"] == phase_number), None)
         info = gate(symbol, rule, phase_number)
@@ -1825,7 +1856,7 @@ def _plan(rule, phase_number):
     return rows
 
 
-def start_all(raw_rule, phase_number, confirm=False):
+def start_all(raw_rule, phase_number, confirm=False, group="base"):
     """La regla en todas las monedas, en un solo trabajo. Las fases 2 y 3 piden confirmar lo que se va a gastar."""
     rule = clean_rule(raw_rule)
     if rule is None:
@@ -1834,7 +1865,7 @@ def start_all(raw_rule, phase_number, confirm=False):
         busy = next((j for j in _jobs.values() if j.get("all") and j["state"] == "running"), None)
     if busy is not None:  # Un segundo clic no lanza otro trabajo: se sigue el que ya corre
         return {"success": True, "job": busy["id"], "plan": busy["plan"], "already": True}
-    plan = _plan(rule, phase_number)
+    plan = _plan(rule, phase_number, group)
     todo = [row for row in plan if row["action"] == "run"]
     if not todo and not any(row["action"] == "stored" for row in plan):
         return {"success": False, "message": "Ninguna moneda puede correr esta regla en esta fase", "plan": plan}
@@ -1844,7 +1875,7 @@ def start_all(raw_rule, phase_number, confirm=False):
         return {"success": True, "done": True, "plan": plan}
     job_id = uuid.uuid4().hex[:12]
     job = {"id": job_id, "state": "running", "done": 0, "total": 1, "stage": todo[0]["symbol"], "run": None, "error": None,
-           "all": True, "phase": phase_number, "plan": plan, "symbolsDone": 0, "symbolsTotal": len(todo)}
+           "all": True, "phase": phase_number, "group": group, "plan": plan, "symbolsDone": 0, "symbolsTotal": len(todo)}
     with _lock:
         _jobs[job_id] = job
 
@@ -1877,12 +1908,12 @@ def _pooled_row(label, trades):
     return {"label": label, "n": s.get("n", 0), "winRate": s.get("winRate"), "avgR": s.get("avgR"), "totalR": s.get("totalR")}
 
 
-def consolidated(raw_rule, phase_number):
+def consolidated(raw_rule, phase_number, group="base"):
     """Informe de todas las monedas que ya tienen esa regla exacta corrida en la fase: juntas y una por una."""
     rule = clean_rule(raw_rule)
     if rule is None:
         return {"success": False, "message": "La regla no tiene elementos conocidos"}
-    plan = _plan(rule, phase_number)
+    plan = _plan(rule, phase_number, group)
     rows, pooled, weights, leg_weights = [], [], [], []
     for row in plan:
         result = with_leg_baseline(load_run(row["run"])) if row["run"] else None
@@ -1904,7 +1935,7 @@ def consolidated(raw_rule, phase_number):
     if not rows:
         return {"success": False, "message": "Ninguna moneda tiene esta regla corrida en esta fase", "plan": plan}
     ordered = sorted(pooled, key=lambda t: t["exit_t"])
-    out = {"success": True, "rule": rule, "phase": phase_number, "plan": plan, "symbols": rows, "summary": summary(ordered) if ordered else {"n": 0},
+    out = {"success": True, "rule": rule, "phase": phase_number, "group": group, "plan": plan, "symbols": rows, "summary": summary(ordered) if ordered else {"n": 0},
            "trades": [[t["entry_t"], t["exit_t"], t["r"]] for t in ordered],  # Para la vista "como cuenta" de la ventana
            "equity": _equity(ordered), "positive": sum(1 for r in rows if (r["avgR"] or 0) > 0), "withTrades": sum(1 for r in rows if r["n"])}
     if ordered:
