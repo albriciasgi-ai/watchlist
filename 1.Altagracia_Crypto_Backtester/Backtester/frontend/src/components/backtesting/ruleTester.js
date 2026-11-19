@@ -2,6 +2,7 @@
  * Probador de reglas del Observador: lo que no depende de React. La regla que arma la ventana, su forma para
  * el backend (backend/rule_tester.py), las reglas guardadas y los textos del informe.
  */
+import { elementLabel, elementLabels } from './elementLabels.js';
 
 export const TESTER_PARAM = 'probador';
 export const RULE_TIMEFRAMES = [5, 15, 30, 60, 240, 1440];
@@ -27,9 +28,12 @@ export function defaultRule() {
   return {
     name: 'VA abandonada', tf: 15, codes: ['VA'], mode: 'all', min: 1, window: 1, side: 'both', invert: false,
     swing: false, swingBars: 5, momentum: false, confirm: false, confirmAtr: 0.25, confirmBars: 2,
-    entryType: 'market', entryAt: 'near', entryExpiry: 8,
+    entryType: 'market', entryAt: 'near', entryExpiry: 8, straddleFrom: 'zone', straddleOffset: 0.2,
     stopType: 'swing', stopBars: 5, stopAtr: 1.5, stopBuffer: 0.1, stopMaxAtr: 6,
-    useTarget: true, targetR: 2, trail: false, trailBars: 5, useHorizon: true, horizon: 200, opposite: false,
+    useTarget: true, targetR: 2, trail: false, trailBars: 5,
+    // Trailing desde el mejor precio (atr o pct; trail sigue siendo el de swings), con arranque y stop a la entrada
+    trailMode: 'off', trailAtr: 4, trailPct: 5, trailStartOn: false, trailStart: 1, breakEvenOn: false, breakEven: 1.5,
+    cpMaxHeightOn: false, cpMaxHeight: 5.5, imBars: 3, imAtr: 2, imRangeOn: false, imRange: 1.5, useHorizon: true, horizon: 200, opposite: false,
     oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05,
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
     first: [], liqWhat: 'zone', liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3,
@@ -39,7 +43,12 @@ export function defaultRule() {
     ccTf: 0, ccOffset: 0, ccSwing: 3, ccLegs: 2,
     // Horario: solo señales que se conocen entre esas horas UTC
     useHours: false, hoursFrom: '17:30', hoursTo: '21:30', hoursWeekdays: true,
-    regimeMode: 'any', regimeMajor: true, regimeMajorOut: 6, regimeAfter: 6,
+    bxMaxHeightOn: false, bxMaxHeight: 5.5, beShare: 0.2, beMaxBody: 1, beRejection: 0.6, bePattern: false,
+    // FVG nuevo (hueco mínimo en ATR) y swing del detector (velas por lado y volumen mínimo)
+    fvMinAtr: 0.3, spBars: 5, spVolume: false, spMinZ: 1,
+    // Filtros de flujo: CVD de N velas a favor y OI (rise, fall, conf, noconf u off)
+    cvdOn: false, cvdBars: 20, oiMode: 'off', oiBars: 6, oiPct: 2,
+    regimeMode: 'any', regimeMajor: true, regimeMajorOut: 6, regimeAfter: 6, regimeDaily: false,
     // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
     // Filtros de línea: off, side (cierra del lado a favor) o touch (además la mecha la toca)
@@ -111,8 +120,18 @@ export function toBackendRule(rule) {
     ...(codes.includes('CC') ? { cc: { tf: number(rule.ccTf, 0) || undefined, offset: number(rule.ccOffset, 0), swing: number(rule.ccSwing, 3), legs: number(rule.ccLegs, 2) } } : {}),
     ...(rule.useHours && minuteOfDay(rule.hoursFrom) !== null && minuteOfDay(rule.hoursTo) !== null
       ? { hours: { on: true, from: minuteOfDay(rule.hoursFrom), to: minuteOfDay(rule.hoursTo), weekdays: !!rule.hoursWeekdays } } : {}),
+    ...(codes.includes('BX') ? { bx: { maxHeight: rule.bxMaxHeightOn ? number(rule.bxMaxHeight, 5.5) : null } } : {}),
+    ...(codes.includes('BE') ? { be: { share: number(rule.beShare, 0.2), maxBody: number(rule.beMaxBody, 1), rejection: number(rule.beRejection, 0.6), ...(rule.bePattern ? { pattern: true } : {}) } } : {}),
+    ...(codes.includes('CP') ? { cp: { maxHeight: rule.cpMaxHeightOn ? number(rule.cpMaxHeight, 5.5) : null } } : {}),
+    ...(codes.includes('IM') ? { im: { bars: number(rule.imBars, 3), atr: number(rule.imAtr, 2), range: rule.imRangeOn ? number(rule.imRange, 1.5) : null } } : {}),
+    ...(codes.includes('FV') ? { fv: { minAtr: number(rule.fvMinAtr, 0.3) } } : {}),
+    ...(codes.includes('SP') ? { sp: { bars: number(rule.spBars, 5), minZ: rule.spVolume ? number(rule.spMinZ, 1) : null } } : {}),
+    ...(rule.cvdOn || ['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode)
+      ? { flow: { ...(rule.cvdOn ? { cvd: number(rule.cvdBars, 20) } : {}),
+        ...(['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode) ? { oi: rule.oiMode, oiBars: number(rule.oiBars, 6), oiPct: number(rule.oiPct, 2) } : {}) } } : {}),
     ...(['inside', 'outside', 'breakout'].includes(rule.regimeMode)
-      ? { regime: { mode: rule.regimeMode, major: !!rule.regimeMajor, majorOut: number(rule.regimeMajorOut, 6), after: number(rule.regimeAfter, 6) } } : {}),
+      ? { regime: { mode: rule.regimeMode, major: !!rule.regimeMajor, majorOut: number(rule.regimeMajorOut, 6), after: number(rule.regimeAfter, 6),
+        ...(rule.regimeDaily && number(rule.tf, 15) < DAILY_TF ? { tf: DAILY_TF } : {}) } } : {}),
     ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [], veEntry: rule.vpVeEntry === 'resting' ? 'resting' : 'touch' } } : {}),
     recipe: {
       // En secuencia: todo el contexto primero y, en la misma vela o después, al menos `min` del gatillo
@@ -130,7 +149,9 @@ export function toBackendRule(rule) {
       entry: { on: !!rule.confirm, atr: number(rule.confirmAtr, 0.25), bars: number(rule.confirmBars, 2) }
     },
     invert: !!rule.invert,
-    entry: { type: rule.entryType === 'limit' ? 'limit' : 'market', at: rule.entryAt || 'near', expiry: number(rule.entryExpiry, 8) },
+    entry: rule.entryType === 'straddle'
+      ? { type: 'straddle', from: rule.straddleFrom === 'close' ? 'close' : 'zone', offset: number(rule.straddleOffset, 0.2), expiry: number(rule.entryExpiry, 8) }
+      : { type: rule.entryType === 'limit' ? 'limit' : 'market', at: rule.entryAt || 'near', expiry: number(rule.entryExpiry, 8) },
     stop: {
       type: rule.stopType || 'swing', bars: number(rule.stopBars, 5), atr: number(rule.stopAtr, 1.5),
       buffer: number(rule.stopBuffer, 0.1), maxAtr: number(rule.stopMaxAtr, 6)
@@ -139,7 +160,13 @@ export function toBackendRule(rule) {
       targetR: rule.useTarget ? number(rule.targetR, 2) : null,
       // Objetivo en un nivel del perfil de la sesión anterior, en vez de un múltiplo del riesgo
       ...(rule.useTarget && usesProfile(rule) && ['poc', 'edge', 'mid'].includes(rule.targetAt) ? { targetAt: rule.targetAt } : {}),
-      trail: rule.trail ? 'swing' : 'none', trailBars: number(rule.trailBars, 5),
+      // Un borde de caja puede apuntar al centro de su caja
+      ...(rule.useTarget && !usesProfile(rule) && (rule.codes || []).includes('BE') && rule.targetAt === 'mid' ? { targetAt: 'mid' } : {}),
+      trail: rule.trail ? 'swing' : (['atr', 'pct'].includes(rule.trailMode) ? rule.trailMode : 'none'), trailBars: number(rule.trailBars, 5),
+      ...(!rule.trail && rule.trailMode === 'atr' ? { trailAtr: number(rule.trailAtr, 4) } : {}),
+      ...(!rule.trail && rule.trailMode === 'pct' ? { trailPct: number(rule.trailPct, 5) } : {}),
+      ...(!rule.trail && ['atr', 'pct'].includes(rule.trailMode) && rule.trailStartOn ? { trailStart: number(rule.trailStart, 1) } : {}),
+      ...(rule.breakEvenOn ? { breakEven: number(rule.breakEven, 1.5) } : {}),
       horizon: rule.useHorizon ? number(rule.horizon, 200) : null,
       opposite: !!rule.opposite
     },
@@ -170,6 +197,11 @@ export function fromBackendRule(saved) {
     swing: !!recipe.swing?.on, swingBars: recipe.swing?.bars ?? 5, momentum: !!recipe.momentum,
     confirm: !!recipe.entry?.on, confirmAtr: recipe.entry?.atr ?? 0.25, confirmBars: recipe.entry?.bars ?? 2,
     entryType: saved.entry?.type || 'market', entryAt: saved.entry?.at || 'near', entryExpiry: saved.entry?.expiry ?? 8,
+    straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
+    trailMode: ['atr', 'pct'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
+    trailStartOn: saved.exit?.trailStart != null, trailStart: saved.exit?.trailStart ?? 1, breakEvenOn: saved.exit?.breakEven != null, breakEven: saved.exit?.breakEven ?? 1.5,
+    cpMaxHeightOn: saved.cp?.maxHeight != null, cpMaxHeight: saved.cp?.maxHeight ?? 5.5,
+    imBars: saved.im?.bars ?? 3, imAtr: saved.im?.atr ?? 2, imRangeOn: saved.im?.range != null, imRange: saved.im?.range ?? 1.5,
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
     stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6,
     useTarget: saved.exit?.targetR != null || !!saved.targetAt, targetR: saved.exit?.targetR ?? 2, targetAt: saved.targetAt || 'r',
@@ -185,8 +217,12 @@ export function fromBackendRule(saved) {
     emaSlope: !!(saved.lines || []).find(l => l.type === 'ema')?.slope,
     useHours: !!saved.hours, hoursFrom: saved.hours ? clock(saved.hours.from) : '17:30', hoursTo: saved.hours ? clock(saved.hours.to) : '21:30',
     hoursWeekdays: saved.hours ? !!saved.hours.weekdays : true,
+    bxMaxHeightOn: saved.bx?.maxHeight != null, bxMaxHeight: saved.bx?.maxHeight ?? 5.5,
+    beShare: saved.be?.share ?? 0.2, beMaxBody: saved.be?.maxBody ?? 1, beRejection: saved.be?.rejection ?? 0.6, bePattern: !!saved.be?.pattern,
+    fvMinAtr: saved.fv?.minAtr ?? 0.3, spBars: saved.sp?.bars ?? 5, spVolume: saved.sp?.minZ != null, spMinZ: saved.sp?.minZ ?? 1,
+    cvdOn: !!saved.flow?.cvd, cvdBars: saved.flow?.cvd ?? 20, oiMode: saved.flow?.oi || 'off', oiBars: saved.flow?.oiBars ?? 6, oiPct: saved.flow?.oiPct ?? 2,
     regimeMode: saved.regime?.mode || 'any', regimeMajor: saved.regime ? saved.regime.major !== false : true,
-    regimeMajorOut: saved.regime?.majorOut ?? 6, regimeAfter: saved.regime?.after ?? 6,
+    regimeMajorOut: saved.regime?.majorOut ?? 6, regimeAfter: saved.regime?.after ?? 6, regimeDaily: saved.regime?.tf === DAILY_TF,
     vpShapes: saved.vp?.shapes || [], vpVeEntry: saved.vp?.veEntry || 'touch', vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
     trail: saved.exit?.trail === 'swing', trailBars: saved.exit?.trailBars ?? 5,
     useHorizon: saved.exit?.horizon != null, horizon: saved.exit?.horizon ?? 200, opposite: !!saved.exit?.opposite,
@@ -197,23 +233,30 @@ export function fromBackendRule(saved) {
 
 /** La regla en una línea, para el historial y el encabezado del informe */
 export function describeRule(saved) {
+  const L = (text) => elementLabels(String(text).split('+'));
   if (!saved?.recipe) return '';
   const recipe = saved.recipe;
-  const codes = (recipe.slots || []).map(slot => (slot.codes || []).join('|'));
-  const part = (group) => (recipe.slots || []).filter(slot => (slot.group || 0) === group).map(slot => (slot.codes || []).join('|'));
+  const codes = (recipe.slots || []).map(slot => L((slot.codes || []).join('|')));
+  const part = (group) => (recipe.slots || []).filter(slot => (slot.group || 0) === group).map(slot => L((slot.codes || []).join('|')));
   const liq = saved.liq ? ` (${saved.liq.what === 'zone' ? 'zona' : `swing ${saved.liq.swingBars}`}, ${saved.liq.variant === 'reclaim' ? 'recupera' : 'perfora'})` : '';
   const joined = (recipe.mode === 'sequence' ? `${part(0).join(' + ')} → ${part(1).join(recipe.groupMins?.[1] > 1 ? ' + ' : ' o ')}`
     : recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ')) + liq;
   const stop = { swing: `swing ${saved.stop?.bars}`, candle: 'vela del elemento', zone: 'borde de la zona', atr: `${saved.stop?.atr} ATR` }[saved.stop?.type] || '';
   const exits = [];
-  if (saved.targetAt) exits.push({ poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
+  if (saved.targetAt) exits.push(saved.be && !saved.vp ? 'centro de la caja' : { poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
   else if (saved.exit?.targetR != null) exits.push(`${saved.exit.targetR}R`);
   if (saved.exit?.trail === 'swing') exits.push('stop arrastrado');
+  if (saved.exit?.trail === 'atr') exits.push(`trailing a ${saved.exit.trailAtr} ATR${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
+  if (saved.exit?.trail === 'pct') exits.push(`trailing a ${saved.exit.trailPct}%${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
+  if (saved.exit?.breakEven) exits.push(`stop a la entrada en ${saved.exit.breakEven}R`);
   if (saved.exit?.horizon != null) exits.push(`${saved.exit.horizon} velas`);
   if (saved.exit?.opposite) exits.push('señal contraria');
   if (saved.gc && saved.gc.exit !== 'none') exits.push(saved.gc.exit === 'mid' ? 'cierre al otro lado de la línea central' : 'cierre de vuelta dentro de la banda');
   return `${TF_LABEL[saved.tf] || saved.tf} · ${joined}${recipe.window > 1 ? ` @${recipe.window}` : ''}${saved.invert ? ' · invertida' : ''}`
     + `${saved.vaGap > 0 ? ` · hueco ≥ ${saved.vaGap} ATR` : ''}`
+    + `${saved.flow?.cvd ? ` · CVD ${saved.flow.cvd} a favor` : ''}`
+    + `${saved.flow?.oi ? ` · ${{ rise: `OI sube > ${saved.flow.oiPct}% en ${saved.flow.oiBars}`, fall: `OI baja > ${saved.flow.oiPct}% en ${saved.flow.oiBars}`, conf: 'confluencia OI-vol a favor', noconf: 'sin confluencia OI-vol en contra' }[saved.flow.oi]}` : ''}`
+    + `${saved.be?.pattern ? ' · borde con patrón' : ''}`
     + `${saved.regime ? ` · ${{ inside: 'solo en rango', outside: 'solo fuera de rango', breakout: `${saved.regime.after} velas tras romper` }[saved.regime.mode]}${saved.regime.major ? ' mayor' : ''}` : ''}`
     + `${saved.cc ? ` · estructura ${saved.cc.tf >= 60 ? `${saved.cc.tf / 60} h` : `${saved.cc.tf} m`}, swing ${saved.cc.swing}` : ''}`
     + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`
@@ -222,7 +265,7 @@ export function describeRule(saved) {
     + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
-    + ` · ${saved.entry?.type === 'limit' ? 'limit' : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
+    + ` · ${saved.entry?.type === 'limit' ? 'limit' : saved.entry?.type === 'straddle' ? `dos órdenes stop a ${saved.entry.offset} ATR ${saved.entry.from === 'zone' ? 'fuera de la zona' : 'del cierre'}` : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
     + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;
 }
 
@@ -292,6 +335,13 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     bands.push({ kind: 'level', price: liq.swing, start: liq.swingT ?? start, end, label: liq.what === 'zone' ? 'Borde pasado' : 'Swing barrido' });
     bands.push({ kind: 'mark', time: liq.t, price: liq.extreme, label: 'Barrido' });
   }
+  if (trade.box && Number.isFinite(trade.box.low)) {
+    // La caja de la ruptura o del borde: punteada antes de que se supiera, continua desde que se supo
+    const box = trade.box;
+    if (box.start < box.detected) bands.push({ kind: 'outline', low: box.low, high: box.high, start: box.start, end: box.detected, strong: false });
+    bands.push({ kind: 'outline', low: box.low, high: box.high, start: box.detected, end: Math.min(end, Math.max(trade.signal + tf, box.detected)), strong: true });
+    bands.push({ kind: 'level', price: (box.low + box.high) / 2, start: box.detected, end, label: 'Centro de la caja' });
+  }
   const vp = trade.vp;
   if (vp && Number.isFinite(vp.session)) {
     // El valor de la sesión anterior, dibujado sobre la sesión del trade, donde la regla lo usó
@@ -324,7 +374,7 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
   }
   for (const mark of trade.marks || []) {
     if (mark.code === 'LIQ' || mark.code === 'CC' || mark.code === 'GC' || VP_CODES.includes(mark.code)) continue;
-    bands.push({ kind: 'element', low: mark.lo, high: mark.hi, start: mark.t, end, strong: false, label: `${mark.code} ${names[mark.code] || ''}`.trim() });
+    bands.push({ kind: 'element', low: mark.lo, high: mark.hi, start: mark.t, end, strong: false, label: elementLabel(mark.code, names[mark.code]) });
   }
   return bands;
 }

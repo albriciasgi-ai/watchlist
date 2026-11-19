@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { API_BASE_URL } from '../../config.js';
 import { THEME, isNewTheme } from '../uiTheme.js';
 import { TF_LABEL, describeRule, fmtR } from './ruleTester.js';
+import { elementLabel, elementLabels } from './elementLabels.js';
 
 /**
  * Pestaña "Búsqueda" del backtesting global: algoritmo genético sobre las casillas de la regla, solo en la fase 1.
@@ -146,8 +147,8 @@ export default function RuleSearchTab({ onLoadRule }) {
           <div className="rt-chips" style={{ margin: '6px 0' }}>
             {Object.keys(NAMES).map(code => (
               <button key={code} type="button" className={`rt-chip${config.codes.includes(code) ? ' on' : ''}`} onClick={() => toggle('codes', code)}
-                title={code === 'LIQ' ? 'Lento: arma las zonas de liquidaciones en cada vela' : NAMES[code]}>
-                {code} {NAMES[code]}
+                title={`${code} · ${NAMES[code]}${code === 'LIQ' ? ' · lento: arma las zonas de liquidaciones en cada vela' : ''}`}>
+                {elementLabel(code, NAMES[code])}
               </button>
             ))}
           </div>
@@ -186,7 +187,7 @@ export default function RuleSearchTab({ onLoadRule }) {
         <div className="rt-group">
           <h4>Búsqueda {data.id} · {STATE[data.state] || data.state}</h4>
           <div className="rt-note">
-            {cfg.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {cfg.codes.join(', ')} · hasta {cfg.maxElements} elementos · población {cfg.population} ·
+            {cfg.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {elementLabels(cfg.codes, ', ')} · hasta {cfg.maxElements} elementos · población {cfg.population} ·
             {' '}{cfg.generations} generaciones · validación desde {cfg.split} · semilla {cfg.seed} · empezada {date(data.startedAt)}
           </div>
           {running && job && (
@@ -287,7 +288,7 @@ export default function RuleSearchTab({ onLoadRule }) {
             <tbody>
               {list.map(s => (
                 <tr key={s.id}>
-                  <td style={{ whiteSpace: 'normal', textAlign: 'left' }}>{date(s.startedAt)}<br /><span className="rt-note">{s.config.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {s.config.codes.join(', ')} · {s.tested} reglas</span></td>
+                  <td style={{ whiteSpace: 'normal', textAlign: 'left' }}>{date(s.startedAt)}<br /><span className="rt-note">{s.config.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {elementLabels(s.config.codes, ', ')} · {s.tested} reglas</span></td>
                   <td>{STATE[s.state] || s.state}</td><td>{s.state === 'done' ? s.candidates : '—'}</td>
                   <td><button type="button" className="rt-btn" onClick={() => setCurrent(s.id)}>Ver</button></td>
                 </tr>

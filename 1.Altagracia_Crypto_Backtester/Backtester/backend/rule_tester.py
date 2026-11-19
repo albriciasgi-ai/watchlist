@@ -24,6 +24,9 @@ import uuid
 
 import numpy as np
 
+import box_elements
+import flow_filters
+import fvg_swing
 import footprint_store as fs
 import gaussian_channel
 import liq_sweeps
@@ -38,6 +41,7 @@ import structure
 import vp_sessions
 
 TFS = (5, 15, 30, 60, 240, 1440)
+DAY_MS = 86400000
 DAILY = 1440   # En 1 día la regla corre sobre velas, en todas las monedas: solo valen los elementos de CANDLE_CODES
 CUTS = ("2024-01-01", "2025-07-01")  # Inicio de la fase 2 y de la fase 3 (la 3 coincide con el corte de los setups)
 PHASE_NAMES = {1: "Exploración", 2: "Validación", 3: "Final"}
@@ -62,7 +66,7 @@ PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", 
               "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
 LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
 RV_CODES = tuple(response_volume.CODES)  # Flecha y rombo del Volumen de Respuesta
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES)  # Elementos del probador que no son de of_elements
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES) + tuple(fvg_swing.CODES)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -89,7 +93,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC")
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM")
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -229,7 +233,7 @@ def clean_rule(raw):
     entry, stop, exit_ = raw.get("entry") or {}, raw.get("stop") or {}, raw.get("exit") or {}
     target_r = exit_.get("targetR")
     target_r = None if target_r in (None, "", 0, "0") else _num(target_r, 2.0, 0.2, 50.0)
-    trail = exit_.get("trail") if exit_.get("trail") in ("none", "swing") else "none"
+    trail = exit_.get("trail") if exit_.get("trail") in TRAILS else "none"
     horizon = exit_.get("horizon")
     horizon = None if horizon in (None, "", 0, "0") else int(_num(horizon, DEFAULT_HORIZON, 1, MAX_HORIZON))
     known_keys = {item[0] for item in measures.MEASURES}
@@ -261,9 +265,14 @@ def clean_rule(raw):
         # Objetivo en un nivel del perfil en vez de un múltiplo del riesgo. mid: el centro del rango de la sesión anterior
         if exit_.get("targetAt") in ("poc", "edge", "mid"):
             extra["targetAt"], target_r = exit_["targetAt"], None
-    entry_rule = {"type": entry.get("type") if entry.get("type") in ("market", "limit") else "market",
+    entry_rule = {"type": entry.get("type") if entry.get("type") in ("market", "limit", "straddle") else "market",
                   "at": entry.get("at") if entry.get("at") in ("near", "mid", "far") else "near",
                   "expiry": int(_num(entry.get("expiry"), 8, 1, 200))}
+    if entry_rule["type"] == "straddle":
+        # Dos órdenes stop, una a cada lado; entra la que se llena primero y la otra se cancela. from: "close" pone cada
+        # una a `offset` ATR del cierre de la vela de la señal; "zone", a `offset` ATR por fuera de la zona del elemento
+        entry_rule = {"type": "straddle", "from": entry.get("from") if entry.get("from") in ("close", "zone") else "close",
+                      "offset": _num(entry.get("offset"), 1.0, 0.0, 10.0), "expiry": entry_rule["expiry"]}
     if (extra.get("vp") or {}).get("veEntry") == "resting":
         # La orden espera en el borde del valor hasta que termina la sesión
         entry_rule = {"type": "limit", "at": "near", "expiry": max(1, extra["vp"]["hours"] * 60 // tf)}
@@ -296,6 +305,46 @@ def clean_rule(raw):
         extra["gc"] = {"period": int(_num(gc.get("period"), 144, 10, 1000)), "poles": int(_num(gc.get("poles"), 4, 1, 9)),
                        "mult": _num(gc.get("mult"), 1.414, 0.2, 10.0), "trend": gc.get("trend") is not False,
                        "exit": gc.get("exit") if gc.get("exit") in gaussian_channel.EXITS else "band"}
+    codes_used = {c for slot in recipe["slots"] for c in slot["codes"]}
+    if "BX" in codes_used:
+        bx = raw.get("bx") or {}
+        # maxHeight: solo rupturas de cajas de hasta tantos ATR de alto (None = todas)
+        extra["bx"] = {"maxHeight": None if bx.get("maxHeight") in (None, "", 0) else _num(bx.get("maxHeight"), 5.0, 0.5, 50.0)}
+    if "BE" in codes_used:
+        be = raw.get("be") or {}
+        # share: parte de la caja que cuenta como borde. maxBody: cuerpo máximo de la vela en ATR (0 = sin límite).
+        # rejection: dónde tiene que cerrar la vela, de 0 (en el borde) a 1 (en el otro extremo de su vela)
+        extra["be"] = {"share": _num(be.get("share"), 0.2, 0.05, 0.5), "maxBody": _num(be.get("maxBody"), 1.0, 0.0, 10.0),
+                       "rejection": _num(be.get("rejection"), 0.6, 0.0, 1.0)}
+        if be.get("pattern"):
+            extra["be"]["pattern"] = True  # Además un patrón de rechazo a favor en la vela; solo entra si se pide
+        if exit_.get("targetAt") == "mid" and not any(c in VP_CODES for c in codes_used):
+            extra["targetAt"], target_r = "mid", None  # Objetivo en el centro de la caja
+    if "CP" in codes_used:
+        cp = raw.get("cp") or {}
+        extra["cp"] = {"maxHeight": None if cp.get("maxHeight") in (None, "", 0) else _num(cp.get("maxHeight"), 5.0, 0.5, 50.0)}
+    if "IM" in codes_used:
+        im = raw.get("im") or {}
+        extra["im"] = {"bars": int(_num(im.get("bars"), 3, 1, 50)), "atr": _num(im.get("atr"), 2.0, 0.2, 20.0),
+                       "range": None if im.get("range") in (None, "", 0) else _num(im.get("range"), 1.5, 0.1, 20.0)}
+    if "FV" in codes_used:
+        fv = raw.get("fv") or {}
+        extra["fv"] = {"minAtr": _num(fv.get("minAtr"), 0.0, 0.0, 5.0)}  # Hueco mínimo en ATR
+    if "SP" in codes_used:
+        sp = raw.get("sp") or {}
+        extra["sp"] = {"bars": int(_num(sp.get("bars"), 5, 2, 20)),
+                       "minZ": None if sp.get("minZ") in (None, "") else _num(sp.get("minZ"), 1.0, -3.0, 10.0)}
+    flow = raw.get("flow") or {}
+    clean_flow = {}
+    if flow.get("cvd"):
+        clean_flow["cvd"] = int(_num(flow.get("cvd"), 20, 2, 500))  # CVD de N velas a favor
+    if flow.get("oi") in OI_MODES:
+        clean_flow["oi"] = flow["oi"]
+        if flow["oi"] in ("rise", "fall"):
+            clean_flow["oiBars"] = int(_num(flow.get("oiBars"), 6, 1, 100))
+            clean_flow["oiPct"] = _num(flow.get("oiPct"), 2.0, 0.0, 50.0)
+    if clean_flow:
+        extra["flow"] = clean_flow  # Solo entra si se pide: una regla sin él conserva su identidad
     lines = []
     for item in (raw.get("lines") or [])[:2]:
         if item.get("type") in LINE_TYPES and item.get("mode") in ("side", "touch"):
@@ -321,6 +370,8 @@ def clean_rule(raw):
         # velas que siguen a la ruptura de un rango, mientras no empiece otro. Solo entra a la regla si se pide
         extra["regime"] = {"mode": reg["mode"], "major": reg.get("major") is not False,
                            "majorOut": int(_num(reg.get("majorOut"), 6, 1, 50)), "after": int(_num(reg.get("after"), 6, 1, 200))}
+        if int(_num(reg.get("tf"), 0, 0, DAILY)) == DAILY and tf < DAILY:
+            extra["regime"]["tf"] = DAILY  # Medido en velas diarias; solo entra si se pide
     leaves_channel = (extra.get("gc") or {}).get("exit") in ("band", "mid")
     if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra and not leaves_channel:
         horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
@@ -333,7 +384,7 @@ def clean_rule(raw):
                  "buffer": _num(stop.get("buffer"), 0.1, 0.0, 5.0), "minAtr": _num(stop.get("minAtr"), 0.1, 0.0, 10.0),
                  "maxAtr": _num(stop.get("maxAtr"), 6.0, 0.2, 100.0)},
         "exit": {"targetR": target_r, "trail": trail, "trailBars": int(_num(exit_.get("trailBars"), 5, 2, 20)),
-                 "horizon": horizon, "opposite": bool(exit_.get("opposite"))},
+                 "horizon": horizon, "opposite": bool(exit_.get("opposite")), **_trail_extra(exit_, trail)},
         "oneAtATime": raw.get("oneAtATime") is not False,
         # Velas de espera tras cerrar un trade antes de tomar otra señal (solo con una posición a la vez)
         "cooldown": int(_num(raw.get("cooldown"), 0, 0, 500)),
@@ -343,6 +394,26 @@ def clean_rule(raw):
         "target": _num(raw.get("target"), oe.DEFAULT_TARGET, 0.005, 0.3),
         "volFilter": _num(raw.get("volFilter"), oe.DEFAULT_VOL_FILTER, 0.0, 10.0),
     }
+
+
+TRAILS = ("none", "swing", "atr", "pct")
+
+
+def _trail_extra(exit_, trail):
+    """Lo nuevo de la salida, solo si se usa: así una regla ya corrida conserva su identidad.
+    trail atr: el stop queda a trailAtr ATR del mejor precio desde la entrada (máximo en un largo); pct: a trailPct %.
+    trailStart: el trailing empieza cuando el trade llegó a tantos R a favor (0 = desde la entrada).
+    breakEven: al llegar a tantos R a favor, el stop pasa a la entrada."""
+    out = {}
+    if trail == "atr":
+        out["trailAtr"] = _num(exit_.get("trailAtr"), 3.0, 0.2, 20.0)
+    if trail == "pct":
+        out["trailPct"] = _num(exit_.get("trailPct"), 2.0, 0.05, 50.0)
+    if trail in ("atr", "pct") and exit_.get("trailStart") not in (None, "", 0, "0"):
+        out["trailStart"] = _num(exit_.get("trailStart"), 1.0, 0.0, 20.0)
+    if exit_.get("breakEven") not in (None, "", 0, "0", False):
+        out["breakEven"] = _num(exit_.get("breakEven"), 1.0, 0.1, 20.0)
+    return out
 
 
 def rule_hash(symbol, rule):
@@ -522,7 +593,39 @@ def _minute_path(ctx, j):
     return list(zip((int(m) * 60000 for m in data["m"]), (float(x) for x in data["h"]), (float(x) for x in data["l"])))
 
 
-def simulate(rule, ctx, k, side, zone=None, opposite=None):
+def _straddle_fill(rule, ctx, k, e, zone, sides):
+    """Las dos órdenes stop puestas al cierre de la vela k: (lado, precio, vela) de la que se llena primero, o None.
+    Si las dos se tocan en la misma vela decide el minuto a minuto; sin minutos, la que quedaba más cerca de la apertura."""
+    T, O, H, L, C, atr = ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["atr"]
+    ent = rule["entry"]
+    off = ent["offset"] * atr[k]
+    if ent["from"] == "zone" and zone is not None:
+        up, dn = zone[1] + off, zone[0] - off
+    else:
+        up, dn = C[k] + off, C[k] - off
+    for j in range(e, min(len(T), e + ent["expiry"])):
+        hit = {sd: (H[j] >= up if sd > 0 else L[j] <= dn) for sd in sides}
+        hit = [sd for sd, v in hit.items() if v]
+        if not hit:
+            continue
+        if len(hit) == 2:
+            first = None
+            minutes = _minute_path(ctx, j)
+            for _, mh, ml in minutes or []:
+                if mh >= up or ml <= dn:
+                    first = 1 if mh >= up and not ml <= dn else -1 if ml <= dn and not mh >= up else None
+                    break
+            if first is None:
+                first = 1 if abs(up - O[j]) <= abs(O[j] - dn) else -1
+            hit = [first]
+        sd = hit[0]
+        price = up if sd > 0 else dn
+        gapped = (O[j] > up) if sd > 0 else (O[j] < dn)  # Abrió más allá: se llena en la apertura
+        return sd, (O[j] if gapped else price), j
+    return None
+
+
+def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
     """
     Un trade con la señal conocida al cierre de la vela k. Devuelve None si no hay vela siguiente,
     {"skip": motivo} si la orden no entra, o el trade con "open": True si la fase termina antes de su salida.
@@ -533,7 +636,15 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
     if e >= n or T[e] - T[k] > max(GAP_MS, 2 * ctx["tf"] * 60000):
         return None
     entry_rule, exit_rule = rule["entry"], rule["exit"]
-    entry, entry_i, fee_in, limit_fill = O[e], e, TAKER_FEE, False
+    entry, entry_i, fee_in, limit_fill, stop_fill = O[e], e, TAKER_FEE, False, False
+    if entry_rule["type"] == "straddle":
+        filled = _straddle_fill(rule, ctx, k, e, zone, sides or (1, -1))
+        if filled is None:
+            return {"skip": "ninguna orden stop se llenó"}
+        side, entry, entry_i = filled
+        stop_fill = entry != O[entry_i]  # En la apertura no hay vela previa que mirar
+    if isinstance(opposite, dict):
+        opposite = opposite.get(-side)
     if entry_rule["type"] == "limit" and zone is not None:
         share = {"near": 1.0, "mid": 0.5, "far": 0.0}[entry_rule["at"]]
         price = zone[0] + share * (zone[1] - zone[0]) if side > 0 else zone[1] - share * (zone[1] - zone[0])
@@ -584,7 +695,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
         low, high = L[j], H[j]
         hit_stop = low <= stop if side > 0 else high >= stop
         hit_goal = target is not None and (high >= target if side > 0 else low <= target)
-        first_bar = limit_fill and j == entry_i
+        first_bar = (limit_fill or stop_fill) and j == entry_i
         if hit_stop and (hit_goal or first_bar):
             # Dudoso a nivel de vela: se mira minuto a minuto. En el minuto del llenado no cuenta el objetivo
             minutes = _minute_path(ctx, j)
@@ -595,7 +706,8 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
                 filled = not first_bar
                 for mt, mh, ml in minutes:
                     if not filled:
-                        if (ml < entry) if side > 0 else (mh > entry):
+                        crossed = ((mh >= entry) if side > 0 else (ml <= entry)) if stop_fill else ((ml < entry) if side > 0 else (mh > entry))
+                        if crossed:
                             filled = True
                             if (ml <= stop) if side > 0 else (mh >= stop):
                                 hit_stop, exit_t = True, mt
@@ -611,7 +723,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
         if hit_stop:
             gapped = (O[j] < stop) if side > 0 else (O[j] > stop)
             exit_price = O[j] if gapped and not first_bar else stop
-            reason = "stop" if stop == initial_stop else "stop arrastrado"
+            reason = "stop" if stop == initial_stop else ("stop en la entrada" if stop == entry else "stop arrastrado")
             exit_t = exit_t or T[j]
             mae = min(mae, (exit_price - entry) * side / risk)
             break
@@ -640,11 +752,20 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
                 level = values[p] - side * rule["stop"]["buffer"] * atr[j]
                 if is_pivot and (level - stop) * side > 0 and (C[j] - level) * side > 0:
                     stop = level
+        elif exit_rule["trail"] in ("atr", "pct") and mfe >= exit_rule.get("trailStart", 0.0):
+            # Con la vela cerrada: el mejor precio desde la entrada, menos la distancia; el stop solo se acerca
+            best = entry + side * mfe * risk
+            gap = exit_rule["trailAtr"] * atr[j] if exit_rule["trail"] == "atr" else best * exit_rule["trailPct"] / 100
+            level = best - side * gap
+            if (level - stop) * side > 0 and (C[j] - level) * side > 0:
+                stop = level
+        if exit_rule.get("breakEven") and mfe >= exit_rule["breakEven"] and (entry - stop) * side > 0 and (C[j] - entry) * side > 0:
+            stop = entry
         j += 1
 
     # Hasta dónde llegó antes del stop inicial, sin importar la salida elegida
     reach, reach_done = 0.0, False
-    for i in range(entry_i + (1 if limit_fill else 0), min(n, entry_i + REACH_BARS)):
+    for i in range(entry_i + (1 if limit_fill or stop_fill else 0), min(n, entry_i + REACH_BARS)):
         if i > entry_i and T[i] - T[i - 1] > max(GAP_MS, 2 * ctx["tf"] * 60000):
             reach_done = True
             break
@@ -657,7 +778,9 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None):
 
     trade = {"k": k, "entry_i": entry_i, "dir": side, "signal": T[k], "known": T[k] + tf_ms, "entry_t": T[entry_i], "entry": entry,
              "stop": initial_stop, "target": target, "risk": risk, "stop_atr": round(stop_atr, 3),
-             "order": "limit" if limit_fill else "market", "reach": round(reach, 3) if reach_done else None}
+             "order": "limit" if limit_fill else ("stop" if entry_rule["type"] == "straddle" else "market"), "reach": round(reach, 3) if reach_done else None}
+    if entry_rule["type"] == "straddle":
+        trade["trigger_atr"] = round(abs(entry - C[k]) / atr[k], 3) if atr[k] > 0 else 0.0
     if exit_price is None:
         trade["open"] = True
         return trade
@@ -971,7 +1094,76 @@ def _cc_events(rule, span):
 
 def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
-    return _liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span) + _rv_events(rule, span) + _gc_events(rule, span)
+    return (_liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span)
+            + _rv_events(rule, span) + _gc_events(rule, span) + _box_events(rule, span) + _fs_events(rule, span))
+
+
+# Nombres cortos para los mensajes: los mismos de frontend/src/components/backtesting/elementLabels.js
+LABELS = {"CP": "Compresión", "IM": "Impulso", "LIQ": "Barrido de liquidaciones", "VH": "Volumen alto", "VR": "Regreso al valor", "VF": "Fallo fuera del valor",
+          "VX": "Aceptación fuera del valor", "VE": "Borde del valor", "CC": "Cambio de carácter", "HM": "Martillo o estrella",
+          "EN": "Envolvente", "DJ": "Doji", "RF": "Flecha de volumen", "RB": "Rombo de volumen", "GC": "Canal gaussiano",
+          "BX": "Ruptura de caja", "BE": "Borde de caja", "FV": "FVG nuevo", "SP": "Swing"}
+
+
+def _labels(codes):
+    """Los códigos con su nombre corto, para los mensajes; un elemento OF va con el nombre de su catálogo."""
+    return ", ".join(LABELS.get(c) or (oe.CATALOG[c][0] if c in oe.CATALOG else c) for c in codes)
+
+
+def _fs_events(rule, span):
+    """FVG nuevo y swing del detector (fvg_swing.py)."""
+    fv, sp, im = rule.get("fv"), rule.get("sp"), rule.get("im")
+    bars = span["bars"]
+    if (fv is None and sp is None and im is None) or not bars:
+        return []
+    key = (_bars_key(bars), rule["tf"], "fs", json.dumps(fv, sort_keys=True), json.dumps(sp, sort_keys=True), json.dumps(im, sort_keys=True))
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = fvg_swing.events(bars, rule["tf"], fv, sp, im)
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
+
+
+def _flow_ok(flow, ctx, k, side):
+    """Filtros de CVD y OI de la vela k a favor del trade (flow_filters.py)."""
+    cache, bars = ctx.setdefault("flow", {}), ctx["bars"]
+    if flow.get("cvd"):
+        if ("cvd", flow["cvd"]) not in cache:
+            cache[("cvd", flow["cvd"])] = flow_filters.cvd(bars, flow["cvd"])[0]
+        value = cache[("cvd", flow["cvd"])][k]
+        if not value == value or value * side <= 0:
+            return False
+    if flow.get("oi"):
+        if "oi" not in cache:
+            oi = flow_filters.oi_at_close(ctx["symbol"], bars, ctx["tf"])
+            signed = flow_filters.signed_volume(bars)[0]
+            cache["oi"] = (oi, signed, None if oi is None else flow_filters.z_pair(oi, signed))
+        oi, signed, z = cache["oi"]
+        if not flow_filters.oi_ok(flow["oi"], oi, signed, k, side, flow.get("oiBars", 6), flow.get("oiPct", 2.0), z):
+            return False
+    return True
+
+
+def _box_events(rule, span):
+    """Ruptura y borde de las cajas del detector de régimen (box_elements.py)."""
+    bx, be, cp = rule.get("bx"), rule.get("be"), rule.get("cp")
+    bars = span["bars"]
+    if (bx is None and be is None and cp is None) or not bars:
+        return []
+    key = (_bars_key(bars), rule["tf"], "box", json.dumps(bx, sort_keys=True), json.dumps(be, sort_keys=True), json.dumps(cp, sort_keys=True))
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = box_elements.events(bars, rule["tf"], bx, be, cp)
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
 
 
 def _liq_vp_events(symbol, rule, span, ctx, control=False, vp_shift=None):
@@ -1044,6 +1236,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     if len(bars) < 100:
         return {"success": False, "message": "Sin velas suficientes en el almacén para esa fase"}
     ctx = _context(symbol, tf, bars)
+    ctx["bars"] = bars
     if rule.get("gc"):
         gc = rule["gc"]
         # Con la regla invertida el trade va contra el canal: su salida por el canal también es la contraria
@@ -1062,6 +1255,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     pat_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in PATTERN_CODES}
     rv_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in RV_CODES}
     gc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "GC"}
+    box_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in box_elements.CODES}
+    fs_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in fvg_swing.CODES}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -1080,22 +1275,36 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     window = rule["recipe"]["window"]
     # Con órdenes limit, una señal posterior puede llenarse antes que una anterior (o las dos órdenes de un rango,
     # la de arriba y la de abajo): se simulan todas y se toman por orden de llenado, no de señal
-    defer = rule["oneAtATime"] and rule["entry"]["type"] == "limit"
-    pending = []
+    straddle = rule["entry"]["type"] == "straddle"
+    defer = rule["oneAtATime"] and rule["entry"]["type"] in ("limit", "straddle")
+    pending, placed = [], set()
     for m in matches:
         k = index.get(m["known"] - tf_ms)
         if k is None:
             continue
         side = m["dir"] * flip
+        if straddle:
+            if k in placed:
+                continue  # Las dos órdenes de esa vela ya están puestas
+            placed.add(k)
         if rule["oneAtATime"] and not defer and k < busy_until:
             busy += 1
             continue
         if rule["oneAtATime"] and not defer and k < busy_until + rule["cooldown"]:
             skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
             continue
-        if rule.get("lines") and not _lines_ok(rule["lines"], ctx, k, side):
-            skipped["filtro de VWAP o EMA"] = skipped.get("filtro de VWAP o EMA", 0) + 1
-            continue
+        # Con dos órdenes, cada filtro que mira el lado decide si se pone la orden de ese lado
+        sides = (1, -1) if straddle else (side,)
+        if rule.get("lines"):
+            sides = tuple(sd for sd in sides if _lines_ok(rule["lines"], ctx, k, sd))
+            if not sides:
+                skipped["filtro de VWAP o EMA"] = skipped.get("filtro de VWAP o EMA", 0) + 1
+                continue
+        if rule.get("flow"):
+            sides = tuple(sd for sd in sides if _flow_ok(rule["flow"], ctx, k, sd))
+            if not sides:
+                skipped["filtro de CVD u OI"] = skipped.get("filtro de CVD u OI", 0) + 1
+                continue
         if rule.get("regime") and not ctx["regimeOK"][k]:
             skipped["filtro de régimen"] = skipped.get("filtro de régimen", 0) + 1
             continue
@@ -1108,15 +1317,21 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         measured = None
         if table is not None:
             row = measures.row_at(table, m["known"])
-            measured = measures.read_row(table, row, side) if row is not None else None
-        if rule["filters"] and not _passes(rule["filters"], measured):
+            if row is not None and rule["filters"]:
+                sides = tuple(sd for sd in sides if _passes(rule["filters"], measures.read_row(table, row, sd)))
+            measured = measures.read_row(table, row, sides[0] if sides else side) if row is not None else None
+        if rule["filters"] and (not sides or (table is None and not _passes(rule["filters"], None))):
             skipped["filtro de contexto"] = skipped.get("filtro de contexto", 0) + 1
             continue
         found = [z for code, t in m["votes"] for z in zones.get((code, m["dir"], t + tf_ms), [])]
         zone = (min(z[0] for z in found), max(z[1] for z in found)) if found else None
         ctx["i0"] = index.get(min([e_t for _, e_t in m["votes"]] + [m["t0"]]), k)
         ctx["vp"] = next((vp_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in vp_info), None)
-        trade = simulate(rule, ctx, k, side, zone, known_at[-side])
+        boxed = next((box_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in box_info), None)
+        if ctx["vp"] is None and boxed is not None:
+            # El objetivo "centro" de un borde de caja: el centro de la caja
+            ctx["vp"] = {"high": boxed["high"], "low": boxed["low"], "poc": (boxed["high"] + boxed["low"]) / 2, "vah": boxed["high"], "val": boxed["low"]}
+        trade = simulate(rule, ctx, k, side, zone, known_at if straddle else known_at[-side], sides=sides)
         if trade is None:
             continue
         if "skip" in trade:
@@ -1141,7 +1356,19 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                       if code == "LIQ" and (m["dir"], t + tf_ms) in liq_info), None)
         if swept is not None:
             trade["liq"] = swept  # La zona barrida: dinero, antigüedad y hasta dónde pasó el precio
-        if ctx["vp"] is not None:
+        found_fs = [fs_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in fs_info]
+        if found_fs:
+            trade["fs"] = found_fs  # El hueco del FVG o el swing que dispararon
+        if rule.get("flow"):
+            flow_cache = ctx.get("flow", {})
+            trade["flow"] = {}
+            if ("cvd", rule["flow"].get("cvd")) in flow_cache:
+                trade["flow"]["cvd"] = round(float(flow_cache[("cvd", rule["flow"]["cvd"])][k]), 4)
+            if flow_cache.get("oi") and flow_cache["oi"][0] is not None:
+                trade["flow"]["oi"] = float(flow_cache["oi"][0][k])
+        if boxed is not None:
+            trade["box"] = boxed  # La caja de la ruptura o del borde, para dibujarla con el trade
+        elif ctx["vp"] is not None:
             trade["vp"] = ctx["vp"]  # El valor de la sesión anterior que usó la regla, y dónde abrió la sesión
         broken = next((cc_info[(m["dir"], t + tf_ms)] for code, t in m["votes"] if code == "CC" and (m["dir"], t + tf_ms) in cc_info), None)
         if broken is not None:
@@ -1254,9 +1481,14 @@ def _baseline(rule, ctx, trades, symbol):
     allowed = _allowed(ctx, n)
     if allowed is not None and not len(allowed):
         return {"n": 0}
-    for _ in range(BASE_TRADES):
+    flow = rule.get("flow") if "bars" in ctx else None
+    for _ in range(BASE_TRADES * (6 if flow else 1)):
+        if flow and len(done) >= BASE_TRADES:
+            break
         k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(30, n - 2)
         side = 1 if rng.random() < longs else -1
+        if flow and not _flow_ok(flow, ctx, k, side):
+            continue  # Con filtro de CVD u OI, el azar entra solo donde el filtro deja entrar a ese lado
         light["i0"] = k
         trade = simulate(base_rule, light, k, side)
         if trade and "skip" not in trade and not trade.get("open"):
@@ -1281,31 +1513,31 @@ def _leg_baseline(rule, ctx, trades, symbol):
     allowed = _allowed(ctx, n)
     if allowed is not None and not len(allowed):
         return {"n": 0}
-    for _ in range(BASE_TRADES):
+    flow = rule.get("flow") if "bars" in ctx else None
+    for _ in range(BASE_TRADES * (6 if flow else 1)):
+        if flow and len(done) >= BASE_TRADES:
+            break
         k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(30, n - 2)
+        if flow and not _flow_ok(flow, ctx, k, int(direction[k])):
+            continue
         light["i0"] = k
-        trade = simulate(base_rule, light, k, int(direction[k]))
+        trade = simulate(base_rule, light, k, int(direction[k]), sides=(int(direction[k]),))
         if trade and "skip" not in trade and not trade.get("open"):
             done.append(trade)
     stats = summary(done)
     return {"leg": leg, **{key: stats.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "reach", "medianReach")}}
 
 
+OI_MODES = ("rise", "fall", "conf", "noconf")  # Filtro de OI: sube, baja, confluencia OI-volumen a favor, sin ella en contra
 REGIME_MODES = ("inside", "outside", "breakout")
 _regime_cache = {}
 
 
-def regime_mask(reg, bars):
-    """Velas en que la regla puede operar según el régimen, conocido al cierre de cada vela (sin futuro)."""
+def _regime_ok(a, reg):
+    """Velas permitidas por el régimen, en las velas de `a` (las del marco en que se mide)."""
     import regime_detectors as rd
-    key = (_bars_key(bars), json.dumps(reg, sort_keys=True))
-    with _lock:
-        found = _regime_cache.get(key)
-    if found is not None:
-        return found
-    a = {"t": np.array([b["t"] for b in bars], dtype=np.int64), **{k: np.array([b[src] for b in bars], dtype=float)
-         for k, src in (("o", "o"), ("h", "h"), ("l", "l"), ("c", "c"), ("v", "vol"))}}
-    boxes = rd.er_box(a, **rd.PARAMS["er_box"]["params"])
+    params = rd.PARAMS["er_box"]["params"]
+    boxes = rd.er_box(a, **params)
     zones = rd.major(a, [{"i": z["detected"], "low": z["low"], "high": z["high"]} for z in boxes["zones"]], 8.0, 0.5, reg["majorOut"]) if reg["major"] else boxes
     state = zones["state"]
     if reg["mode"] == "inside":
@@ -1317,6 +1549,49 @@ def regime_mask(reg, bars):
         for z in zones["zones"]:
             ok[z["end"] + 1:z["end"] + 1 + reg["after"]] = True  # La vela que rompe y las que siguen
         ok &= ~state
+    ok[:params["n"]] = False  # Antes de tener las velas del detector no se sabe el régimen
+    return ok
+
+
+def _daily(a, step):
+    """Las velas unidas por día UTC; solo los días completos."""
+    day = a["t"] // DAY_MS
+    per = DAY_MS // step
+    out = {k: [] for k in ("t", "o", "h", "l", "c", "v")}
+    starts = np.flatnonzero(np.diff(day, prepend=day[0] - 1))
+    for k, s0 in enumerate(starts):
+        s1 = starts[k + 1] if k + 1 < len(starts) else len(day)
+        if s1 - s0 != per:
+            continue
+        out["t"].append(int(day[s0] * DAY_MS)); out["o"].append(a["o"][s0]); out["c"].append(a["c"][s1 - 1])
+        out["h"].append(a["h"][s0:s1].max()); out["l"].append(a["l"][s0:s1].min()); out["v"].append(a["v"][s0:s1].sum())
+    return {k: np.array(v, dtype=np.int64 if k == "t" else float) for k, v in out.items()}
+
+
+def regime_mask(reg, bars):
+    """
+    Velas en que la regla puede operar según el régimen, conocido al cierre de cada vela (sin futuro). Con
+    `reg["tf"]` = 1440 el régimen se mide en velas diarias (las de la regla unidas por día UTC), y cada vela de la
+    regla usa el del último día ya cerrado; `after` cuenta entonces en días.
+    """
+    key = (_bars_key(bars), json.dumps(reg, sort_keys=True))
+    with _lock:
+        found = _regime_cache.get(key)
+    if found is not None:
+        return found
+    a = {"t": np.array([b["t"] for b in bars], dtype=np.int64), **{k: np.array([b[src] for b in bars], dtype=float)
+         for k, src in (("o", "o"), ("h", "h"), ("l", "l"), ("c", "c"), ("v", "vol"))}}
+    step = int(np.median(np.diff(a["t"]))) if len(a["t"]) > 1 else DAY_MS
+    if reg.get("tf") == DAILY and step < DAY_MS:
+        d = _daily(a, step)
+        coarse = _regime_ok(d, reg) if len(d["t"]) > 30 else np.zeros(len(d["t"]), dtype=bool)
+        # La vela de la regla que cierra en el instante c ve el último día que cerró en c o antes
+        k = np.searchsorted(d["t"] + DAY_MS, a["t"] + step, side="right") - 1
+        ok = np.zeros(len(a["t"]), dtype=bool)
+        seen = k >= 0
+        ok[seen] = coarse[k[seen]]
+    else:
+        ok = _regime_ok(a, reg)
     with _lock:
         _regime_cache[key] = ok
         while len(_regime_cache) > 40:
@@ -1373,7 +1648,13 @@ def _random_rule(rule, trades):
     if stop["type"] in ("zone", "candle"):
         # Ese stop depende del elemento, que al azar no existe: se usa la distancia mediana de los trades de la regla
         stop = {**stop, "type": "atr", "atr": max(0.1, float(np.median([t["stop_atr"] for t in trades])))}
-    base_rule = {**rule, "entry": {**rule["entry"], "type": "market"}, "stop": stop}
+    entry = {**rule["entry"], "type": "market"}
+    if rule["entry"]["type"] == "straddle":
+        # Las dos órdenes en velas al azar, a la distancia mediana del cierre que tuvieron las de la regla
+        dist = [t["trigger_atr"] for t in trades if t.get("trigger_atr") is not None]
+        entry = {"type": "straddle", "from": "close", "offset": float(np.median(dist)) if dist else rule["entry"]["offset"],
+                 "expiry": rule["entry"]["expiry"]}
+    base_rule = {**rule, "entry": entry, "stop": stop}
     if rule.get("targetAt"):
         # Al azar no hay perfil: el objetivo es el múltiplo del riesgo mediano que tuvieron los trades de la regla
         reward = [abs(t["target"] - t["entry"]) / t["risk"] for t in trades if t.get("target") is not None and t["risk"] > 0]
@@ -1486,8 +1767,8 @@ def start(symbol, raw_rule, phase_number, confirm=False):
         codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
         if codes - set(CANDLE_CODES):
             why = "En 1 día la regla corre sobre velas" if rule["tf"] == DAILY else f"{symbol} no tiene almacén de trades"
-            return {"success": False, "message": f"{why}: aquí solo se pueden usar {', '.join(CANDLE_CODES)}. "
-                                                 f"Quita {', '.join(sorted(codes - set(CANDLE_CODES)))} de la regla"}
+            return {"success": False, "message": f"{why}: aquí solo se pueden usar {_labels(CANDLE_CODES)}. "
+                                                 f"Quita {_labels(sorted(codes - set(CANDLE_CODES)))} de la regla"}
     info = gate(symbol, rule, phase_number)
     if info["blocked"]:
         return {"success": False, "message": info["blocked"], "gate": info}
@@ -1535,7 +1816,7 @@ def _plan(rule, phase_number):
         elif phase is None or not phase["available"]:
             row["reason"] = "sin datos de esa fase"
         elif _on_candles(symbol, rule["tf"]) and codes - set(CANDLE_CODES):
-            row["reason"] = f"corre sobre velas: no puede usar {', '.join(sorted(codes - set(CANDLE_CODES)))}"
+            row["reason"] = f"corre sobre velas: no puede usar {_labels(sorted(codes - set(CANDLE_CODES)))}"
         elif info["blocked"]:
             row["reason"] = "falta correr esta regla en la fase 2"
         else:

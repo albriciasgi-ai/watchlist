@@ -17,6 +17,7 @@ import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
 } from './ruleTester.js';
+import { elementLabel, elementLabels } from './elementLabels.js';
 import '../../backtesting_styles.css';
 import '../../rule_tester.css';
 
@@ -96,14 +97,14 @@ const Equity = ({ points }) => {
   );
 };
 
-const BriefTable = ({ title, rows, first = '' }) => (!rows?.length ? null : (
+const BriefTable = ({ title, rows, first = '', labels = false }) => (!rows?.length ? null : (
   <div className="rt-group">
     <h4>{title}</h4>
     <table className="rt-table">
       <thead><tr><th>{first}</th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th></tr></thead>
       <tbody>
         {rows.map(row => (
-          <tr key={row.label}><td>{row.label}</td><td>{row.n}</td><td>{fmtPct(row.winRate)}</td><td><R value={row.avgR} digits={3} /></td><td><R value={row.totalR} /></td></tr>
+          <tr key={row.label}><td>{labels ? elementLabels(row.label) : row.label}</td><td>{row.n}</td><td>{fmtPct(row.winRate)}</td><td><R value={row.avgR} digits={3} /></td><td><R value={row.totalR} /></td></tr>
         ))}
       </tbody>
     </table>
@@ -118,8 +119,8 @@ const SplitTable = ({ title, rows, names, note }) => (!rows?.length ? null : (
       <thead><tr><th>Elemento</th><th>Con</th><th>R medio</th><th>Sin</th><th>R medio</th><th>Dif.</th></tr></thead>
       <tbody>
         {rows.map(row => (
-          <tr key={row.label} title={names[row.label] || ''}>
-            <td><b>{row.label}</b> {(names[row.label] || '').slice(0, 18)}</td>
+          <tr key={row.label} title={`${row.label} · ${names[row.label] || ''}`}>
+            <td>{elementLabel(row.label, names[row.label])}</td>
             <td>{row.with.n} · {fmtPct(row.with.winRate)}</td><td><R value={row.with.avgR} digits={3} /></td>
             <td>{row.without.n} · {fmtPct(row.without.winRate)}</td><td><R value={row.without.avgR} digits={3} /></td>
             <td>{row.with.avgR !== null && row.without.avgR !== null ? <R value={row.with.avgR - row.without.avgR} digits={3} /> : '—'}</td>
@@ -719,14 +720,14 @@ const RuleTesterApp = () => {
             <button key={e.code} type="button" className={`rt-chip${rule.codes.includes(e.code) ? ' on' : ''}`} onClick={() => toggleCode(e.code)}
               disabled={candleOnly && !info.candleCodes.includes(e.code) && !rule.codes.includes(e.code)}
               style={candleOnly && !info.candleCodes.includes(e.code) ? { opacity: 0.4 } : undefined}
-              title={`${e.name}${e.volume ? ' · solo en velas de mucho volumen' : ''}${e.flow ? ' · necesita el almacén de flujo' : ''}${e.code === 'LIQ' ? ' · el precio pasa un swing que coincide con una zona del indicador Liquidaciones' : ''}${e.code === 'VH' ? ' · vela con el doble del volumen normal de su hora, hacia su color' : ''}`}>
-              {e.code} {e.name}
+              title={`${e.code} · ${e.name}${e.volume ? ' · solo en velas de mucho volumen' : ''}${e.flow ? ' · necesita el almacén de flujo' : ''}${e.code === 'LIQ' ? ' · el precio pasa un swing que coincide con una zona del indicador Liquidaciones' : ''}${e.code === 'VH' ? ' · vela con el doble del volumen normal de su hora, hacia su color' : ''}`}>
+              {elementLabel(e.code, e.name)}
             </button>
           ))}
         </div>
         {candleOnly && (
           <div className="rt-note" style={{ marginTop: 4 }}>
-            {info.storeless ? `${symbol} no tiene almacén de trades` : 'En 1 día'}: la regla corre sobre las velas guardadas y solo valen {info.candleCodes.join(', ')}.
+            {info.storeless ? `${symbol} no tiene almacén de trades` : 'En 1 día'}: la regla corre sobre las velas guardadas y solo valen {elementLabels(info.candleCodes, ', ')}.
             {rule.codes.some(code => !info.candleCodes.includes(code)) && ' Quita de la regla los demás elementos para poder correrla.'}
           </div>
         )}
@@ -750,7 +751,7 @@ const RuleTesterApp = () => {
               {rule.codes.map(code => (
                 <button key={code} type="button" className={`rt-chip${(rule.first || []).includes(code) ? ' on' : ''}`} onClick={() => toggleFirst(code)}
                   title={(rule.first || []).includes(code) ? 'Contexto: debe darse primero. Clic para pasarlo a gatillo' : 'Gatillo: dispara la entrada, en la misma vela del contexto o después. Clic para pasarlo a contexto'}>
-                  {code}
+                  {elementLabel(code)}
                 </button>
               ))}
             </div>
@@ -819,7 +820,7 @@ const RuleTesterApp = () => {
               <Num value={rule.ccLegs} min={2} max={5} onChange={(ccLegs) => patch({ ccLegs })} /><span>tramos</span>
             </div>
             <div className="rt-note">
-              CC: una tendencia de máximos y mínimos crecientes y una vela que cierra bajo su último mínimo abre un corto (al revés, un largo). "Invertir" opera a favor de la tendencia.
+              Cambio de carácter: una tendencia de máximos y mínimos crecientes y una vela que cierra bajo su último mínimo abre un corto (al revés, un largo). "Invertir" opera a favor de la tendencia.
               Para el stop detrás del extremo de la tendencia usa "Borde lejano de la zona" y sube el "Máximo" del stop: con la estructura en 4 horas queda a muchos ATR de las velas de la regla.
             </div>
           </>
@@ -864,6 +865,79 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {(rule.codes.includes('IM') || rule.codes.includes('CP')) && (
+          <>
+            {rule.codes.includes('IM') && (
+              <div className="rt-row">
+                <span title="El cierre avanza tantos ATR contra el de tantas velas antes; un evento al empezar el impulso">Impulso: al menos</span>
+                <Num value={rule.imAtr} min={0.2} max={20} step={0.5} onChange={(imAtr) => patch({ imAtr })} /><span>ATR en</span>
+                <Num value={rule.imBars} min={1} max={50} onChange={(imBars) => patch({ imBars })} /><span>velas</span>
+                <Check checked={rule.imRangeOn} onChange={(imRangeOn) => patch({ imRangeOn })}>y la vela mide al menos</Check>
+                <Num value={rule.imRange} min={0.1} max={20} step={0.5} disabled={!rule.imRangeOn} onChange={(imRange) => patch({ imRange })} /><span>ATR</span>
+              </div>
+            )}
+            {rule.codes.includes('CP') && (
+              <div className="rt-row">
+                <Check checked={rule.cpMaxHeightOn} onChange={(cpMaxHeightOn) => patch({ cpMaxHeightOn })}>Compresión: solo cajas de hasta</Check>
+                <Num value={rule.cpMaxHeight} min={0.5} max={50} step={0.5} disabled={!rule.cpMaxHeightOn} onChange={(cpMaxHeight) => patch({ cpMaxHeight })} /><span>ATR de alto</span>
+              </div>
+            )}
+            <div className="rt-note">
+              <b>Impulso</b> entra hacia donde se mueve el precio. <b>Compresión</b> es la vela en que se detecta una caja (las de la pestaña Régimen); no tiene dirección:
+              úsala con "Dos órdenes stop" por fuera de la zona, que quedan sobre y bajo la caja.
+            </div>
+          </>
+        )}
+        {(rule.codes.includes('FV') || rule.codes.includes('SP')) && (
+          <>
+            {rule.codes.includes('FV') && (
+              <div className="rt-row">
+                <span title="Hueco entre el mínimo de la vela y el máximo de dos velas antes (alcista), o al revés (bajista)">FVG: hueco de al menos</span>
+                <Num value={rule.fvMinAtr} min={0} max={5} step={0.05} onChange={(fvMinAtr) => patch({ fvMinAtr })} /><span>ATR</span>
+              </div>
+            )}
+            {rule.codes.includes('SP') && (
+              <div className="rt-row">
+                <span title="El mínimo (alcista) o máximo (bajista) único de tantas velas a cada lado, como el indicador Swing. Se conoce al cerrar la última vela de su derecha">Swing de</span>
+                <Num value={rule.spBars} min={2} max={20} onChange={(spBars) => patch({ spBars })} /><span>velas por lado</span>
+                <Check checked={rule.spVolume} onChange={(spVolume) => patch({ spVolume })} title="Volumen de la vela del swing en z-score contra las 20 anteriores">con volumen z ≥</Check>
+                <Num value={rule.spMinZ} min={-3} max={10} step={0.5} disabled={!rule.spVolume} onChange={(spMinZ) => patch({ spMinZ })} />
+              </div>
+            )}
+            <div className="rt-note">
+              <b>FVG nuevo</b> entra con el hueco recién formado; con entrada limit en la zona espera que el precio vuelva al hueco, y el stop "Borde lejano de la zona" queda al otro lado.
+              <b> Swing</b> entra cuando el swing se confirma, a favor del giro; el stop "Extremo de la vela del elemento" queda detrás del swing.
+              Medido en la fase 1 (4h, siete monedas): FVG nuevo a mercado con hueco de 0.3 ATR o más, stop de 1.5 ATR y 3R, +0.23 R antes de 2023 y +0.31 en 2023 (controles cerca de 0);
+              con cualquier hueco, cerca de 0; al revés, pierde. Swing, −0.12 y −0.20, como el azar.
+            </div>
+          </>
+        )}
+        {(rule.codes.includes('BX') || rule.codes.includes('BE')) && (
+          <>
+            {rule.codes.includes('BX') && (
+              <div className="rt-row">
+                <Check checked={rule.bxMaxHeightOn} onChange={(bxMaxHeightOn) => patch({ bxMaxHeightOn })} title="Solo rupturas de cajas estrechas, medidas en ATR de la vela que rompe">Ruptura de cajas de hasta</Check>
+                <Num value={rule.bxMaxHeight} min={0.5} max={50} step={0.5} disabled={!rule.bxMaxHeightOn} onChange={(bxMaxHeight) => patch({ bxMaxHeight })} /><span>ATR de alto</span>
+              </div>
+            )}
+            {rule.codes.includes('BE') && (
+              <div className="rt-row">
+                <span title="Parte de la caja que cuenta como borde">Borde: el</span>
+                <Num value={rule.beShare} min={0.05} max={0.5} step={0.05} onChange={(beShare) => patch({ beShare })} /><span>de la caja · cuerpo hasta</span>
+                <Num value={rule.beMaxBody} min={0} max={10} step={0.1} onChange={(beMaxBody) => patch({ beMaxBody })} /><span>ATR · cierra a</span>
+                <Num value={rule.beRejection} min={0} max={1} step={0.05} onChange={(beRejection) => patch({ beRejection })} /><span>o más del borde en su vela</span>
+                <Check checked={rule.bePattern} onChange={(bePattern) => patch({ bePattern })} title="Además la vela es un martillo, envolvente o doji a favor, con tendencia previa (la regla del indicador Rejection Patterns)">con patrón de rechazo</Check>
+              </div>
+            )}
+            <div className="rt-note">
+              Las cajas son las de la pestaña Régimen (eficiencia con caja). <b>Ruptura de caja</b> entra en la vela que cierra fuera de una caja, a favor de la ruptura.
+              <b> Borde de caja</b> entra hacia el centro cuando una vela llega al borde de una caja vigente; con "cuerpo hasta" en 0 y "cierra a" en 0 no filtra la vela.
+              Para el borde de caja, el stop "Borde lejano de la zona" queda detrás del borde (con su margen) y el objetivo puede ir al centro de la caja.
+              Medido en la fase 1 (4h, siete monedas): ruptura de caja a favor de la EMA 200 con stop de 1.5 ATR y 3R, +0.19 R antes de 2023 y +0.13 en 2023;
+              con cajas de hasta 5.5 ATR, +0.24 y +0.21 (los controles, +0.02). Borde de caja con stop a 0.5 ATR tras el borde y objetivo al centro, +0.04 y −0.02; sin filtros de vela, −0.07 y −0.15.
+            </div>
+          </>
+        )}
         {usesResponse(rule) && (
           <>
             <div className="rt-row">
@@ -872,7 +946,7 @@ const RuleTesterApp = () => {
             </div>
             {rule.codes.includes('RF') && (
               <div className="rt-row">
-                <span title="Volumen de la vela contra la mediana de su misma hora en los 30 días anteriores">Flecha (RF): volumen ≥</span>
+                <span title="Volumen de la vela contra la mediana de su misma hora en los 30 días anteriores">Flecha: volumen ≥</span>
                 <Num value={rule.rvSpike} min={1.2} max={20} step={0.5} onChange={(rvSpike) => patch({ rvSpike })} /><span>veces su hora ·</span>
                 <select value={rule.rvArrow} onChange={(e) => patch({ rvArrow: e.target.value })}>
                   <option value="with">vela a favor del tramo</option>
@@ -883,7 +957,7 @@ const RuleTesterApp = () => {
             )}
             {rule.codes.includes('RB') && (
               <div className="rt-row">
-                <span title="El rombo sale cuando la respuesta iguala a la tendencia después de que esta dominó">Rombo (RB): se opera</span>
+                <span title="El rombo sale cuando la respuesta iguala a la tendencia después de que esta dominó">Rombo: se opera</span>
                 <select value={rule.rvRombo} onChange={(e) => patch({ rvRombo: e.target.value })}>
                   <option value="turn">contra el tramo (giro)</option>
                   <option value="follow">a favor del tramo (sigue)</option>
@@ -920,6 +994,20 @@ const RuleTesterApp = () => {
           <Check checked={rule.hoursWeekdays} onChange={(hoursWeekdays) => patch({ hoursWeekdays })}>lunes a viernes</Check>
         </div>
         <div className="rt-row">
+          <Check checked={rule.cvdOn} onChange={(cvdOn) => patch({ cvdOn })} title="La delta de las últimas velas, con la de la señal, sobre su volumen va a favor del trade. Con almacén de trades es la delta real; sin él, o en 1D, se estima por dónde cerró cada vela. Los controles al azar entran solo donde el filtro deja entrar">CVD de</Check>
+          <Num value={rule.cvdBars} min={2} max={500} disabled={!rule.cvdOn} onChange={(cvdBars) => patch({ cvdBars })} /><span>velas a favor</span>
+          <span title="Open Interest conocido al cierre de la vela de la señal. BTC tiene OI de 5 minutos; las demás monedas, de 4 horas: en ellas el filtro solo vale en 4h y 1D. Una vela sin OI no pasa">· OI</span>
+          <select value={rule.oiMode} onChange={(e) => patch({ oiMode: e.target.value })}>
+            <option value="off">sin filtro</option>
+            <option value="rise">sube</option>
+            <option value="fall">baja</option>
+            <option value="conf">confluencia OI-volumen a favor</option>
+            <option value="noconf">sin confluencia OI-volumen en contra</option>
+          </select>
+          {['rise', 'fall'].includes(rule.oiMode) && <><span>más de</span><Num value={rule.oiPct} min={0} max={50} step={0.5} onChange={(oiPct) => patch({ oiPct })} /><span>% en</span>
+            <Num value={rule.oiBars} min={1} max={100} onChange={(oiBars) => patch({ oiBars })} /><span>velas</span></>}
+        </div>
+        <div className="rt-row">
           <span title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">Régimen</span>
           <select value={rule.regimeMode} onChange={(e) => patch({ regimeMode: e.target.value })}>
             <option value="any">cualquiera</option>
@@ -933,6 +1021,7 @@ const RuleTesterApp = () => {
           <div className="rt-row">
             <Check checked={rule.regimeMajor} onChange={(regimeMajor) => patch({ regimeMajor })} title="Sin marcar, valen las cajas chicas del detector">con el rango mayor</Check>
             {rule.regimeMajor && <><span>que termina tras</span><Num value={rule.regimeMajorOut} min={1} max={50} onChange={(regimeMajorOut) => patch({ regimeMajorOut })} /><span>cierres fuera</span></>}
+            {rule.tf < DAILY_TF && <Check checked={rule.regimeDaily} onChange={(regimeDaily) => patch({ regimeDaily })} title="El régimen se mide en velas diarias (las de la regla unidas por día UTC) y cada vela de la regla usa el del último día cerrado. Medido en 4h, separa peor que en el marco de la regla">medido en 1D</Check>}
           </div>
         )}
         {rule.useHours && (minuteOfDay(rule.hoursFrom) === null || minuteOfDay(rule.hoursTo) === null) && <div className="rt-note">Escribe las horas como 17:30. Mientras no sean válidas, el horario no se aplica.</div>}
@@ -944,9 +1033,9 @@ const RuleTesterApp = () => {
               <select value={rule.vpHours} onChange={(e) => patch({ vpHours: Number(e.target.value) })}>
                 {VP_PERIODS.map(([hours, label]) => <option key={hours} value={hours}>{label}</option>)}
               </select>
-              <span title="VR: minutos seguidos cerrando dentro del valor. VX: minutos seguidos cerrando fuera">· sostenido</span>
+              <span title="Regreso al valor: minutos seguidos cerrando dentro del valor. Aceptación fuera: minutos seguidos cerrando fuera">· sostenido</span>
               <Num value={rule.vpAccept} min={5} max={480} step={5} onChange={(vpAccept) => patch({ vpAccept })} /><span>min</span>
-              <span title="VF: velas que tiene el precio para cerrar de vuelta dentro del valor después de salir">· fallo en</span>
+              <span title="Fallo fuera del valor: velas que tiene el precio para cerrar de vuelta dentro del valor después de salir">· fallo en</span>
               <Num value={rule.vpFailBars} min={1} max={20} onChange={(vpFailBars) => patch({ vpFailBars })} /><span>velas</span>
             </div>
             <div className="rt-row">
@@ -961,7 +1050,7 @@ const RuleTesterApp = () => {
             </div>
             {rule.codes.includes('VE') && (
               <div className="rt-row">
-                <span title="VE: la sesión abre dentro del valor anterior y el precio llega a un borde. Compra en el VAL, vende en el VAH">VE entra:</span>
+                <span title="Borde del valor: la sesión abre dentro del valor anterior y el precio llega a un borde. Compra en el VAL, vende en el VAH">Borde del valor entra:</span>
                 <select value={rule.vpVeEntry} onChange={(e) => patch({ vpVeEntry: e.target.value })}>
                   <option value="touch">tras el primer toque del borde</option>
                   <option value="resting">con una orden limit esperando en cada borde toda la sesión</option>
@@ -972,14 +1061,14 @@ const RuleTesterApp = () => {
               <div className="rt-note">Con la orden esperando, la entrada es siempre limit en el borde del valor y vale hasta que termina la sesión: lo elegido en "Entrada" no cuenta. Se opera la orden que se llene primero.</div>
             )}
             <div className="rt-note">
-              Todo se mide contra el POC, el VAH y el VAL de la sesión anterior, con volumen real. VR: abre fuera del valor y vuelve a sostenerse dentro (va al borde contrario).
-              VF: sale del valor y cierra de vuelta dentro (va al POC). VX: se sostiene fuera (sigue la salida). VE: abre dentro y llega a un borde (compra en el VAL, vende en el VAH; pensado para perfiles D). Para el stop detrás del extremo usa "Borde lejano de la zona".
+              Todo se mide contra el POC, el VAH y el VAL de la sesión anterior, con volumen real. Regreso al valor: abre fuera del valor y vuelve a sostenerse dentro (va al borde contrario).
+              Fallo fuera del valor: sale del valor y cierra de vuelta dentro (va al POC). Aceptación fuera del valor: se sostiene fuera (sigue la salida). Borde del valor: abre dentro y llega a un borde (compra en el VAL, vende en el VAH; pensado para perfiles D). Para el stop detrás del extremo usa "Borde lejano de la zona".
             </div>
           </>
         )}
         {rule.codes.includes('VA') && (
           <div className="rt-row">
-            <span title="La regla del libro cuenta cualquier vela que no toque el área de valor de la anterior, aunque quede a un tick. Con un hueco mínimo solo cuentan las que se alejan de verdad. 0 = regla literal">VA abandonada: hueco mínimo</span>
+            <span title="La regla del libro cuenta cualquier vela que no toque el área de valor de la anterior, aunque quede a un tick. Con un hueco mínimo solo cuentan las que se alejan de verdad. 0 = regla literal">Área de valor abandonada: hueco mínimo</span>
             <Num value={rule.vaGap} min={0} max={5} step={0.05} onChange={(vaGap) => patch({ vaGap })} /><span>ATR</span>
           </div>
         )}
@@ -1001,8 +1090,26 @@ const RuleTesterApp = () => {
           <select value={rule.entryType} onChange={(e) => patch({ entryType: e.target.value })}>
             <option value="market">A mercado, en la apertura de la vela siguiente</option>
             <option value="limit">Limit en la zona del elemento</option>
+            <option value="straddle">Dos órdenes stop, una arriba y otra abajo: entra la primera que se llena</option>
           </select>
         </div>
+        {rule.entryType === 'straddle' && (
+          <>
+            <div className="rt-row">
+              <span>a</span><Num value={rule.straddleOffset} min={0} max={10} step={0.1} onChange={(straddleOffset) => patch({ straddleOffset })} /><span>ATR</span>
+              <select value={rule.straddleFrom} onChange={(e) => patch({ straddleFrom: e.target.value })}>
+                <option value="zone">por fuera de la zona del elemento (arriba y abajo)</option>
+                <option value="close">del cierre de la vela de la señal</option>
+              </select>
+              <span>· vencen en</span><Num value={rule.entryExpiry} min={1} max={200} onChange={(entryExpiry) => patch({ entryExpiry })} /><span>velas</span>
+            </div>
+            <div className="rt-note">
+              La dirección no la da el elemento sino el precio: se llena la orden del lado hacia donde sale, al cruzar su precio (o en la apertura si salta por encima), y la otra se cancela.
+              Si las dos se tocan en la misma vela decide el minuto a minuto. Los filtros que miran el lado (VWAP, EMA, CVD, OI) deciden qué orden se pone.
+              Pensada para la Compresión: con "por fuera de la zona" quedan sobre la caja y debajo de ella. Los controles al azar ponen las dos órdenes en velas al azar, a la misma distancia.
+            </div>
+          </>
+        )}
         {rule.entryType === 'limit' && (
           <div className="rt-row">
             <select value={rule.entryAt} onChange={(e) => patch({ entryAt: e.target.value })}>
@@ -1037,6 +1144,12 @@ const RuleTesterApp = () => {
         <h4>Salida</h4>
         <div className="rt-row">
           <Check checked={rule.useTarget} onChange={(useTarget) => patch({ useTarget })} title="Sin marcar no hay objetivo: se ve hasta dónde llega">Objetivo</Check>
+          {!usesProfile(rule) && rule.codes.includes('BE') && (
+            <select value={rule.targetAt === 'mid' ? 'mid' : 'r'} disabled={!rule.useTarget} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
+              <option value="r">en R</option>
+              <option value="mid">en el centro de la caja</option>
+            </select>
+          )}
           {usesProfile(rule) && (
             <select value={rule.targetAt} disabled={!rule.useTarget} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
               <option value="r">en R</option>
@@ -1045,16 +1158,38 @@ const RuleTesterApp = () => {
               <option value="mid">en el centro del rango anterior</option>
             </select>
           )}
-          {!(usesProfile(rule) && rule.targetAt !== 'r') && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
-          <Check checked={rule.trail} onChange={(trail) => patch({ trail })} title="El stop sube al último swing confirmado a favor">Arrastrar el stop por swings de</Check>
-          <Num value={rule.trailBars} min={2} max={20} disabled={!rule.trail} onChange={(trailBars) => patch({ trailBars })} />
+          {!((usesProfile(rule) && rule.targetAt !== 'r') || (!usesProfile(rule) && rule.codes.includes('BE') && rule.targetAt === 'mid')) && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
         </div>
+        <div className="rt-row">
+          <span title="El stop se acerca solo a favor, con cada vela cerrada">Trailing</span>
+          <select value={rule.trail ? 'swing' : rule.trailMode} onChange={(e) => patch({ trail: e.target.value === 'swing', trailMode: e.target.value === 'swing' ? 'off' : e.target.value })}>
+            <option value="off">sin trailing</option>
+            <option value="swing">al último swing confirmado de</option>
+            <option value="atr">a una distancia en ATR del mejor precio</option>
+            <option value="pct">a un % del mejor precio</option>
+          </select>
+          {rule.trail && <><Num value={rule.trailBars} min={2} max={20} onChange={(trailBars) => patch({ trailBars })} /><span>velas</span></>}
+          {!rule.trail && rule.trailMode === 'atr' && <><Num value={rule.trailAtr} min={0.2} max={20} step={0.5} onChange={(trailAtr) => patch({ trailAtr })} /><span>ATR</span></>}
+          {!rule.trail && rule.trailMode === 'pct' && <><Num value={rule.trailPct} min={0.05} max={50} step={0.5} onChange={(trailPct) => patch({ trailPct })} /><span>%</span></>}
+        </div>
+        <div className="rt-row">
+          {!rule.trail && rule.trailMode !== 'off' && <>
+            <Check checked={rule.trailStartOn} onChange={(trailStartOn) => patch({ trailStartOn })} title="Hasta llegar a esos R a favor el stop queda en el inicial">El trailing empieza en</Check>
+            <Num value={rule.trailStart} min={0} max={20} step={0.5} disabled={!rule.trailStartOn} onChange={(trailStart) => patch({ trailStart })} /><span>R ·</span>
+          </>}
+          <Check checked={rule.breakEvenOn} onChange={(breakEvenOn) => patch({ breakEvenOn })} title="Al llegar a esos R a favor el stop pasa al precio de entrada (sin contar comisiones)">Stop a la entrada al llegar a</Check>
+          <Num value={rule.breakEven} min={0.1} max={20} step={0.5} disabled={!rule.breakEvenOn} onChange={(breakEven) => patch({ breakEven })} /><span>R</span>
+        </div>
+        {!rule.trail && rule.trailMode !== 'off' && <div className="rt-note">
+          Medido con entradas al azar (fase 1, 4h, siete monedas): un trailing ajustado pierde (1 a 3 ATR, de −0.06 a −0.01 R) y uno amplio gana algo solo, porque en 4h hubo tendencias:
+          stop de 2 ATR y trailing a 4 ATR, +0.10 R antes de 2023 y +0.04 en 2023. Una regla con trailing tiene que superar ese azar, que el informe ya usa como control.
+        </div>}
         <div className="rt-row">
           <Check checked={rule.useHorizon} onChange={(useHorizon) => patch({ useHorizon })}>Cerrar a las</Check>
           <Num value={rule.horizon} min={1} max={2000} disabled={!rule.useHorizon} onChange={(horizon) => patch({ horizon })} /><span>velas</span>
           <Check checked={rule.opposite} onChange={(opposite) => patch({ opposite })}>Cerrar con la señal contraria</Check>
         </div>
-        {!rule.useTarget && !rule.trail && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
+        {!rule.useTarget && !rule.trail && rule.trailMode === 'off' && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
         <div className="rt-row">
           <Check checked={rule.oneAtATime} onChange={(oneAtATime) => patch({ oneAtATime })} title="Marcado: lo que operarías. Sin marcar: todas las señales, para medir el elemento">Una posición a la vez</Check>
           <span title="Velas de espera después de cerrar un trade antes de tomar otra señal. 0 = sin espera">Esperar</span>
@@ -1238,7 +1373,7 @@ const RuleTesterApp = () => {
           <div className="rt-note">
             Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
-            Elementos de la regla: {selectedTrade.votes.join(' ')} · presentes: {selectedTrade.present.join(' ') || '—'} · en contra: {selectedTrade.against.join(' ') || '—'}
+            Elementos de la regla: {elementLabels(selectedTrade.votes, ', ')} · presentes: {elementLabels(selectedTrade.present, ', ') || '—'} · en contra: {elementLabels(selectedTrade.against, ', ') || '—'}
             {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
             {selectedTrade.gc && <><br />Canal en la señal: banda superior {selectedTrade.gc.high}, línea central {selectedTrade.gc.mid}, banda inferior {selectedTrade.gc.low}</>}
             {selectedTrade.rv && <><br />{selectedTrade.rv.code === 'RF' ? `Flecha: ${selectedTrade.rv.times} veces el volumen de su hora` : `Rombo: extremo del tramo ${selectedTrade.rv.extreme}`} · tramo {selectedTrade.rv.leg > 0 ? 'alcista' : 'bajista'}</>}
@@ -1266,7 +1401,7 @@ const RuleTesterApp = () => {
           {sorted.slice(0, shown).map(t => (
             <tr key={t.n} className={`pick${t.n === selected ? ' sel' : ''}`} onClick={() => pick(t)}>
               <td>{t.n}</td><td>{stamp(t.entry_t)}</td><td>{t.dir > 0 ? 'L' : 'C'}</td><td><R value={t.r} /></td><td>{t.mfe}</td><td>{t.mae}</td>
-              <td>{t.reach ?? '—'}</td><td>{t.bars}</td><td>{t.reason}</td><td>{t.votes.join(' ')}</td>
+              <td>{t.reach ?? '—'}</td><td>{t.bars}</td><td>{t.reason}</td><td>{elementLabels(t.votes, ', ')}</td>
             </tr>
           ))}
         </tbody>
@@ -1286,7 +1421,7 @@ const RuleTesterApp = () => {
       <BriefTable title="Por forma del perfil de la sesión anterior" rows={b.vpShape} first="D medio · P arriba · b abajo · B doble" />
       <BriefTable title="Por forma del perfil y lado" rows={b.vpShapeSide} />
       <BriefTable title="Por apertura de la sesión frente al valor anterior" rows={b.vpOpen} />
-      <BriefTable title="Por combinación de elementos de la regla" rows={b.combo} />
+      <BriefTable title="Por combinación de elementos de la regla" rows={b.combo} labels />
       <SplitTable title="Aporte de cada elemento de la regla" rows={b.ruleElements} names={names} />
       <SplitTable title="Otros elementos presentes, a favor del trade" rows={b.otherElements} names={names} note="Elementos que no están en la regla y aparecieron en la ventana de la señal. Ordenados por diferencia de R." />
       <SplitTable title="Elementos en contra del trade" rows={b.againstElements} names={names} />
@@ -1499,7 +1634,7 @@ const RuleTesterApp = () => {
           <div className="rt-warn">
             <b>Candidato {review.session.position + 1} de {review.session.total}</b> · {review.session.name} · {TF_LABEL[review.session.tf]}<br />
             {review.decisions.length > 0 && <>Ya estás en el candidato siguiente: es la última vela del gráfico, marcada "Candidato {review.candidate.i + 1}". Decide aquí y el gráfico vuelve a avanzar.<br /></>}
-            La regla propone un <b>{review.candidate.dir > 0 ? 'largo' : 'corto'}</b>{review.candidate.votes?.length ? ` (${review.candidate.votes.join(', ')})` : ''}:
+            La regla propone un <b>{review.candidate.dir > 0 ? 'largo' : 'corto'}</b>{review.candidate.votes?.length ? ` (${elementLabels(review.candidate.votes, ', ')})` : ''}:
             {' '}entrada {priceText(review.candidate.entry)}, stop {priceText(review.candidate.stop)}{review.candidate.target != null ? `, objetivo ${priceText(review.candidate.target)}` : ', sin objetivo fijo'}.
           </div>
           <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={reviewBusy} onClick={() => decideReview('rule')}>Entro como propone la regla</button>
@@ -1625,7 +1760,7 @@ const RuleTesterApp = () => {
       <div className="rt-head">
         <a className="rt-btn" href={window.location.pathname} title="Volver al menú de inicio de App 1" style={{ textDecoration: 'none' }}>← Inicio</a>
         {info?.symbols?.length > 1 ? (
-          <select value={symbol} title="Moneda. Solo BTC tiene los elementos de order flow; en las demás valen CC, VH y LIQ"
+          <select value={symbol} title="Moneda. Las que no tienen almacén de trades solo corren los elementos hechos con velas"
             onChange={(e) => { window.location.search = `?${TESTER_PARAM}=1&symbol=${e.target.value}`; }} style={{ fontWeight: 600 }}>
             {[...new Set([symbol, ...info.symbols])].map(name => <option key={name} value={name}>{name}</option>)}
           </select>
