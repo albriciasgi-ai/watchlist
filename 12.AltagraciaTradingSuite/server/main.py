@@ -55,6 +55,7 @@ import book_levels  # noqa: E402  niveles de liquidez sostenida, para la pestana
 import book_defense  # noqa: E402  defensa de las zonas dibujadas, para la pestana "Mapa"
 import ladder  # noqa: E402  price ladder de la pestana "Mapa", del libro en memoria
 import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca envia
+import alpaca_data  # noqa: E402  acciones de EE. UU. desde Alpaca: footprints, velas y OI de opciones
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -76,6 +77,7 @@ app.include_router(book_levels.make_router())
 app.include_router(book_defense.make_router(DRAWINGS_DIR))
 SWING = swing_watch.SwingWatch(Path(CONFIG["data_dir"]) / "swing", DRAWINGS_DIR)
 app.include_router(swing_watch.make_router(SWING))
+app.include_router(alpaca_data.make_router())
 
 
 @app.on_event("startup")
@@ -83,6 +85,7 @@ async def _startup():
     global _http
     _http = httpx.AsyncClient(timeout=httpx.Timeout(15.0, connect=5.0))
     candles.set_client(_http)
+    alpaca_data.set_client(_http)
     DRAWINGS_DIR.mkdir(parents=True, exist_ok=True)
     try:
         coins = SYMBOLS.load()
