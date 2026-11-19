@@ -8,6 +8,7 @@ import { withoutSubdivisions } from './marketData';
 import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import RuleSearchTab from './RuleSearchTab';
+import RegimeTab from './RegimeTab';
 import { lastClosedIndex } from './replayClock';
 import { latestFreeBox } from './orderPlan.js';
 import { priceText, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
@@ -184,6 +185,7 @@ const RuleTesterApp = () => {
   const [results, setResults] = useState({});       // Corrida a la vista de cada fase
   const [revealed, setRevealed] = useState({});     // Fases 2 y 3 cuyo gráfico ya se pidió ver
   const [selected, setSelected] = useState(null);   // Número del trade elegido
+  const [regimeBands, setRegimeBands] = useState(null); // Zonas de la pestaña Régimen, para el gráfico
   const [detail, setDetail] = useState(null);
   const [sens, setSens] = useState(null);
   const [statsMode, setStatsMode] = useState(view.statsMode === 'account' ? 'account' : 'trade'); // Por trade (1 R cada uno) o como cuenta
@@ -570,7 +572,12 @@ const RuleTesterApp = () => {
   const trades = result?.trades || [];
   const chartOpen = ordersView || phase === 1 || !!revealed[phase];
   useEffect(() => {
-    if (review?.session) {
+    if (tab === 'regimen' && regimeBands) {
+      // Régimen: solo la referencia y las zonas del detector, sin trades encima
+      boxesRef.current = [];
+      linesRef.current = [];
+      bandsRef.current = regimeBands;
+    } else if (review?.session) {
       // En revisión solo se ven las decisiones de la sesión: nada de corridas anteriores, que mostrarían el futuro
       // Una sola caja a la vista: la del trade elegido en la lista o, sin elegir, la del último. Todas juntas tapan el gráfico
       const withTrade = review.decisions.filter(hasBox);
@@ -591,7 +598,7 @@ const RuleTesterApp = () => {
       bandsRef.current = chartOpen && trade ? tradeBands(trade, result.rule.tf, names) : [];
     }
     chartRef.current?.redraw?.();
-  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder, review, reviewPick]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder, review, reviewPick, tab, regimeBands]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pick = useCallback((trade) => {
     setSelected(trade.n);
@@ -1594,7 +1601,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda']];
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -1681,6 +1688,7 @@ const RuleTesterApp = () => {
             {tab === 'historial' && historyTab}
             {tab === 'ordenes' && ordersTab}
             {tab === 'revision' && reviewTab}
+            {tab === 'regimen' && <RegimeTab symbol={symbol} chartTf={chartTf} onBands={setRegimeBands} onFocus={(time, price) => { setPhase(1); focusLater(time, price); }} />}
             {tab === 'busqueda' && <RuleSearchTab onLoadRule={(saved) => { setRule(fromBackendRule(saved)); setPhase(1); setTab('regla'); }} />}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>

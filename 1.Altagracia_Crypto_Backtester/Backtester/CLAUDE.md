@@ -1154,6 +1154,50 @@ OrderFlowData/observer/tester/search/{id}.json   (RULE_SEARCH_DIR cambia la carp
 - **Pruebas:** `tests/test_rule_search.py` (6): genomas válidos, genes inactivos, aptitud, que la validación no cambia el tramo de búsqueda (cortar las velas en la fecha deja lo mismo), una búsqueda completa con su archivo, y la ida y vuelta por la ventana.
 - **Probado** en la copia aislada (backend 9300, Vite 9301) con una búsqueda de 10 × 2 en 4h: 87 reglas, ninguna candidata; la pestaña, el avance, el resultado y "Cargar en la pestaña Regla". No se probó en 1h ni en 1D, ni una búsqueda larga.
 
+## REGÍMENES: TENDENCIA U HORIZONTALIDAD (19/11/2026)
+
+Pedido del usuario tras fallar en la fase 2 las finalistas de la búsqueda: los mercados pasan cerca del 25% del tiempo en tendencia y el resto en horizontal, y una misma estrategia no sirve para los dos. Pidió revisar y afinar los indicadores que ya había para eso (Range Detection, el TTM y el BandWidth del VWAP, y el "Progresivo (D creciente)" de las VP Zones de App 8) con corridas en la fase 1, sin estrategias, y verlo en el gráfico para comprobarlo a ojo.
+
+```
+RegimeTab.jsx (pestaña "Régimen" del backtesting global)
+        │  GET /api/regime/catalog  ·  GET /api/regime/{symbol}?tf&detector&params&window&min_run&detect_tf
+        ▼
+regime.py (referencia y velas de la fase 1) + regime_detectors.py (detectores, calificación y vista)
+```
+
+- **Referencia** (`regime.truth`), que mira el futuro a propósito: es la vara para calificar, no algo operable. Para cada vela, la eficiencia de su ventana centrada (avance neto de cierre a cierre ÷ lo recorrido). La cuarta parte del tiempo con más eficiencia es tendencia, con su signo; el resto, horizontal. Los tramos de menos de `min_run` velas se unen al vecino más largo. De fábrica, 48 velas y 8 de tramo mínimo: en 4h la tendencia queda en 23% del tiempo, con tramos de unos 4 días en la mediana y rangos de unos 12.
+- **Velas** (`phase_bars`): las del almacén de trades antes del caché de velas y después las del caché, solo de la fase 1. Si el caché se está reescribiendo (App 1 lo guarda sin archivo temporal), la lectura espera y repite.
+- **Detectores**, todos sin futuro (una prueba corta las velas y comprueba que lo ya cerrado no cambia):
+  - `atr_range`: el Range Detection de App 1 (estilo LuxAlgo). Corregido: la media en la vela actual (iba una vela atrás) y sin unir rangos de fechas distintas solo por compartir precio (`mergeOverlappingRanges` los unía).
+  - `vwap_bw`: el BandWidth del VWAP de sesión de App 1, con sus umbrales de "consolidación" por marco.
+  - `ttm`: TTM Squeeze clásico (Bollinger de 20 a 2σ dentro de Keltner de 20). App 1 lo calcula con las bandas del VWAP; aquí va el de los libros.
+  - `bbwp`: percentil del ancho de Bollinger.
+  - `vp_prog`: el "Progresivo (D creciente)" de App 8, con su forma y su d_score sin cambios. Corregido: se publica en la vela en que se detecta y crece con el área de valor de cada vela, no con la mejor ni la final (en App 8 la zona y sus niveles se decidían al terminar). Suma `range_atr`: el rango máximo en ATR en vez de en %; con 1.5% en 4h casi nunca se activaba.
+  - `er_box`: nuevo. Entra cuando la eficiencia de las últimas `n` velas queda baja y sale en el primer cierre a más de `buffer` ATR de la caja, que queda fija, o cuando la eficiencia sube.
+  - `adx` y `er`: referencias simples, para saber si los afinados ganan.
+- **Calificación** (`score`): parte del tiempo que marca, precisión (contra la parte horizontal de todo el tiempo), rango hallado, tendencia confundida con rango (el error caro) y J = rango hallado − tendencia confundida (0 es azar, 1 perfecto).
+- **Medido** en la fase 1, siete monedas, referencia de 48 velas; se afinó con lo anterior a 2023 y se calificó en 2023. J en 2023:
+
+| Detector | 4h, de fábrica | 4h, afinado | 1h, afinado |
+|---|---|---|---|
+| Eficiencia con caja | — | 0.32 (n 20, < 0.2, margen 0.5, salida 0.5) | — |
+| Eficiencia (referencia) | — | 0.31 (20, < 0.3) | 0.32 (30, < 0.25) |
+| VP progresivo | 0.00 (no se activa) | 0.25 (20 velas, 5 ATR, d ≥ 45) | 0.25 |
+| TTM | 0.11 | 0.22 (Keltner 2) | 0.23 |
+| ADX (referencia) | 0.12 (< 20) | 0.21 (< 30) | 0.20 |
+| Range Detection | 0.09 | 0.19 (30, ATR 50, ×2) | 0.24 (20, ATR 50, ×1.5) |
+| BBWP | 0.05 | 0.13 (126, < 50) | 0.19 |
+| BandWidth del VWAP | 0.00 | 0.01 | 0.07 |
+
+  - El techo lo pone la demora, no los detectores: la referencia misma, conocida 12 velas tarde, da J 0.49 en 4h; 24 velas tarde, 0.19. La eficiencia equivale a conocerla unas 17 velas tarde (casi 3 días en 4h).
+  - Juntar ER, TTM, VP y ADX en un voto no mejora (0.30 con 2 de 4).
+  - **Detectar en un marco menor** (pedido del usuario, `detect_tf`, `on_frame`): una vela del gráfico es rango si el detector lo decía en la última vela chica que cierra con ella. Contra la referencia de 4h separa peor: la eficiencia da 0.27 en 1h con 80 velas y 0.08 en 15m, y el TTM, 0.03 en 1h y 15m. En velas chicas, un retroceso dentro de una tendencia ya parece rango.
+  - En pantalla (BTC 4h, marzo de 2022) se ve el desacuerdo típico: la referencia marca la subida como tendencia y el detector pone cajas en sus escalones. Si una pausa dentro de una tendencia cuenta como horizontalidad es una decisión del usuario.
+- **Ventana:** elige detector, parámetros ("Afinados" son los de 4h; "De fábrica", como estaban en App 1 o App 8), marco de detección y la referencia. Dibuja arriba la referencia (barra verde o roja y fondo tenue en tendencia, nada en horizontal) y abajo una barra morada mientras el detector dice rango, con la caja de cada rango: punteada antes de que se pudiera saber y continua desde la vela en que se supo. Lista las zonas con la parte de su tiempo que fue horizontal y "Ver" lleva el gráfico ahí. El gráfico tiene que estar en 15m, 1h o 4h.
+- **MiniChart:** dos formas nuevas en `getTradeBands`, `strip` (tramo de tiempo) y `outline` (caja solo con contorno). Sin ellas, nada cambia.
+- **Pruebas:** `tests/test_regime.py` (13). Probado en la copia aislada con BTC 4h: la pestaña, el dibujo y la lista. No se probó en 15m ni en otras monedas en pantalla.
+- **Falta:** valores afinados por marco en la ventana (hoy son los de 4h), y decidir con el usuario si las pausas dentro de una tendencia son rango.
+
 ## ESTADO PARA EL ENTRENADOR (17/11/2026)
 
 Pedido del usuario: entrenar con el skill `/entrenar` y que Claude vea lo que tiene en App 1, no solo una captura. Claude lo lee con el navegador integrado de la app de Claude o con la extensión Claude in Chrome, ejecutando JavaScript en la pestaña de App 1.

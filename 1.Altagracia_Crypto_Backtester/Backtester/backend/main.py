@@ -22,6 +22,7 @@ import measures
 import patterns
 import rule_tester
 import rule_search
+import regime_detectors
 import liq_sweeps
 import structure
 import gaussian_channel
@@ -3936,6 +3937,26 @@ async def review_end(request: Request):
 @limiter.limit("240/minute")
 async def review_active(request: Request, symbol: str):
     return await run_in_threadpool(candidate_review.active, sanitize_filename(symbol))
+
+
+@app.get("/api/regime/catalog")
+@limiter.limit("120/minute")
+async def regime_catalog(request: Request):
+    return {"success": True, "detectors": regime_detectors.catalog()}
+
+
+@app.get("/api/regime/{symbol}")
+@limiter.limit("120/minute")
+async def regime_view(request: Request, symbol: str, tf: int = 240, detector: str = "er_box", params: str = "",
+                      window: int = 48, min_run: int = 8, detect_tf: int = 0):
+    """Referencia de regímenes (mira el futuro: solo para calificar) y zonas de horizontalidad de un detector, fase 1."""
+    try:
+        raw = json.loads(params) if params else {}
+    except ValueError:
+        raw = {}
+    window, min_run = max(6, min(400, window)), max(1, min(100, min_run))
+    return _json_response(await run_in_threadpool(regime_detectors.view, sanitize_filename(symbol), tf, detector, raw, window, min_run,
+                                                          "2023-01-01", detect_tf or None))
 
 
 @app.post("/api/search/start")

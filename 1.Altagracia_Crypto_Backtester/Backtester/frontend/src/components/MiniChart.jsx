@@ -1778,7 +1778,7 @@ const MiniChart = forwardRef(({
       const { priceToY, timeToX } = scaleConverterRef.current;
       const viewStart = visibleCandles[0].timestamp;
       const viewEnd = visibleCandles[visibleCandles.length - 1].timestamp + TF_MS[interval];
-      const colors = { liqLong: '233, 30, 99', liqShort: '3, 155, 229', element: '41, 98, 255', value: '255, 152, 0' };
+      const colors = { liqLong: '233, 30, 99', liqShort: '3, 155, 229', element: '41, 98, 255', value: '255, 152, 0', regime: '123, 31, 162' };
       const ink = isNewTheme() ? THEME.text : '#222';
       ctx.save();
       ctx.beginPath();
@@ -1803,6 +1803,31 @@ const MiniChart = forwardRef(({
           const x1 = Math.max(marginLeft, timeToX(Math.max(band.start, viewStart)));
           const x2 = Math.min(marginLeft + chartWidth, timeToX(Math.min(band.end, viewEnd)));
           if (!(x2 > x1)) continue;
+          if (band.kind === 'strip') {
+            // Un tramo de tiempo. Tendencia de la referencia: fondo tenue y barra arriba. Rango de un detector: barra abajo
+            if (band.dir === 'range') {
+              ctx.fillStyle = 'rgba(123, 31, 162, 0.8)';
+              ctx.fillRect(x1, marginTop + priceChartHeight - 6, x2 - x1, 6);
+              continue;
+            }
+            const rgb = band.dir > 0 ? '8, 153, 129' : '242, 54, 69';
+            ctx.fillStyle = `rgba(${rgb}, 0.06)`;
+            ctx.fillRect(x1, marginTop, x2 - x1, priceChartHeight);
+            ctx.fillStyle = `rgba(${rgb}, 0.85)`;
+            ctx.fillRect(x1, marginTop, x2 - x1, 6);
+            continue;
+          }
+          if (band.kind === 'outline') {
+            // Caja de un rango detectado: solo el contorno, punteado antes de que se supiera
+            const top = Math.round(priceToY(band.high)) + 0.5;
+            const height = Math.max(2, Math.round(priceToY(band.low) - priceToY(band.high)));
+            ctx.strokeStyle = `rgba(123, 31, 162, ${band.strong ? 0.9 : 0.45})`;
+            ctx.lineWidth = band.strong ? 1.5 : 1;
+            ctx.setLineDash(band.strong ? [] : [4, 3]);
+            ctx.strokeRect(x1 + 0.5, top, x2 - x1 - 1, height);
+            ctx.setLineDash([]);
+            continue;
+          }
           if (band.kind === 'level') {
             const y = Math.round(priceToY(band.price)) + 0.5;
             ctx.strokeStyle = ink;
