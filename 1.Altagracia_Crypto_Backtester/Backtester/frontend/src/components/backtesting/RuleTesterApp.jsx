@@ -865,6 +865,29 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {(rule.codes.includes('IM') || rule.codes.includes('CP')) && (
+          <>
+            {rule.codes.includes('IM') && (
+              <div className="rt-row">
+                <span title="El cierre avanza tantos ATR contra el de tantas velas antes; un evento al empezar el impulso">Impulso: al menos</span>
+                <Num value={rule.imAtr} min={0.2} max={20} step={0.5} onChange={(imAtr) => patch({ imAtr })} /><span>ATR en</span>
+                <Num value={rule.imBars} min={1} max={50} onChange={(imBars) => patch({ imBars })} /><span>velas</span>
+                <Check checked={rule.imRangeOn} onChange={(imRangeOn) => patch({ imRangeOn })}>y la vela mide al menos</Check>
+                <Num value={rule.imRange} min={0.1} max={20} step={0.5} disabled={!rule.imRangeOn} onChange={(imRange) => patch({ imRange })} /><span>ATR</span>
+              </div>
+            )}
+            {rule.codes.includes('CP') && (
+              <div className="rt-row">
+                <Check checked={rule.cpMaxHeightOn} onChange={(cpMaxHeightOn) => patch({ cpMaxHeightOn })}>Compresión: solo cajas de hasta</Check>
+                <Num value={rule.cpMaxHeight} min={0.5} max={50} step={0.5} disabled={!rule.cpMaxHeightOn} onChange={(cpMaxHeight) => patch({ cpMaxHeight })} /><span>ATR de alto</span>
+              </div>
+            )}
+            <div className="rt-note">
+              <b>Impulso</b> entra hacia donde se mueve el precio. <b>Compresión</b> es la vela en que se detecta una caja (las de la pestaña Régimen); no tiene dirección:
+              úsala con "Dos órdenes stop" por fuera de la zona, que quedan sobre y bajo la caja.
+            </div>
+          </>
+        )}
         {(rule.codes.includes('FV') || rule.codes.includes('SP')) && (
           <>
             {rule.codes.includes('FV') && (
@@ -1067,8 +1090,26 @@ const RuleTesterApp = () => {
           <select value={rule.entryType} onChange={(e) => patch({ entryType: e.target.value })}>
             <option value="market">A mercado, en la apertura de la vela siguiente</option>
             <option value="limit">Limit en la zona del elemento</option>
+            <option value="straddle">Dos órdenes stop, una arriba y otra abajo: entra la primera que se llena</option>
           </select>
         </div>
+        {rule.entryType === 'straddle' && (
+          <>
+            <div className="rt-row">
+              <span>a</span><Num value={rule.straddleOffset} min={0} max={10} step={0.1} onChange={(straddleOffset) => patch({ straddleOffset })} /><span>ATR</span>
+              <select value={rule.straddleFrom} onChange={(e) => patch({ straddleFrom: e.target.value })}>
+                <option value="zone">por fuera de la zona del elemento (arriba y abajo)</option>
+                <option value="close">del cierre de la vela de la señal</option>
+              </select>
+              <span>· vencen en</span><Num value={rule.entryExpiry} min={1} max={200} onChange={(entryExpiry) => patch({ entryExpiry })} /><span>velas</span>
+            </div>
+            <div className="rt-note">
+              La dirección no la da el elemento sino el precio: se llena la orden del lado hacia donde sale, al cruzar su precio (o en la apertura si salta por encima), y la otra se cancela.
+              Si las dos se tocan en la misma vela decide el minuto a minuto. Los filtros que miran el lado (VWAP, EMA, CVD, OI) deciden qué orden se pone.
+              Pensada para la Compresión: con "por fuera de la zona" quedan sobre la caja y debajo de ella. Los controles al azar ponen las dos órdenes en velas al azar, a la misma distancia.
+            </div>
+          </>
+        )}
         {rule.entryType === 'limit' && (
           <div className="rt-row">
             <select value={rule.entryAt} onChange={(e) => patch({ entryAt: e.target.value })}>
@@ -1118,15 +1159,37 @@ const RuleTesterApp = () => {
             </select>
           )}
           {!((usesProfile(rule) && rule.targetAt !== 'r') || (!usesProfile(rule) && rule.codes.includes('BE') && rule.targetAt === 'mid')) && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
-          <Check checked={rule.trail} onChange={(trail) => patch({ trail })} title="El stop sube al último swing confirmado a favor">Arrastrar el stop por swings de</Check>
-          <Num value={rule.trailBars} min={2} max={20} disabled={!rule.trail} onChange={(trailBars) => patch({ trailBars })} />
         </div>
+        <div className="rt-row">
+          <span title="El stop se acerca solo a favor, con cada vela cerrada">Trailing</span>
+          <select value={rule.trail ? 'swing' : rule.trailMode} onChange={(e) => patch({ trail: e.target.value === 'swing', trailMode: e.target.value === 'swing' ? 'off' : e.target.value })}>
+            <option value="off">sin trailing</option>
+            <option value="swing">al último swing confirmado de</option>
+            <option value="atr">a una distancia en ATR del mejor precio</option>
+            <option value="pct">a un % del mejor precio</option>
+          </select>
+          {rule.trail && <><Num value={rule.trailBars} min={2} max={20} onChange={(trailBars) => patch({ trailBars })} /><span>velas</span></>}
+          {!rule.trail && rule.trailMode === 'atr' && <><Num value={rule.trailAtr} min={0.2} max={20} step={0.5} onChange={(trailAtr) => patch({ trailAtr })} /><span>ATR</span></>}
+          {!rule.trail && rule.trailMode === 'pct' && <><Num value={rule.trailPct} min={0.05} max={50} step={0.5} onChange={(trailPct) => patch({ trailPct })} /><span>%</span></>}
+        </div>
+        <div className="rt-row">
+          {!rule.trail && rule.trailMode !== 'off' && <>
+            <Check checked={rule.trailStartOn} onChange={(trailStartOn) => patch({ trailStartOn })} title="Hasta llegar a esos R a favor el stop queda en el inicial">El trailing empieza en</Check>
+            <Num value={rule.trailStart} min={0} max={20} step={0.5} disabled={!rule.trailStartOn} onChange={(trailStart) => patch({ trailStart })} /><span>R ·</span>
+          </>}
+          <Check checked={rule.breakEvenOn} onChange={(breakEvenOn) => patch({ breakEvenOn })} title="Al llegar a esos R a favor el stop pasa al precio de entrada (sin contar comisiones)">Stop a la entrada al llegar a</Check>
+          <Num value={rule.breakEven} min={0.1} max={20} step={0.5} disabled={!rule.breakEvenOn} onChange={(breakEven) => patch({ breakEven })} /><span>R</span>
+        </div>
+        {!rule.trail && rule.trailMode !== 'off' && <div className="rt-note">
+          Medido con entradas al azar (fase 1, 4h, siete monedas): un trailing ajustado pierde (1 a 3 ATR, de −0.06 a −0.01 R) y uno amplio gana algo solo, porque en 4h hubo tendencias:
+          stop de 2 ATR y trailing a 4 ATR, +0.10 R antes de 2023 y +0.04 en 2023. Una regla con trailing tiene que superar ese azar, que el informe ya usa como control.
+        </div>}
         <div className="rt-row">
           <Check checked={rule.useHorizon} onChange={(useHorizon) => patch({ useHorizon })}>Cerrar a las</Check>
           <Num value={rule.horizon} min={1} max={2000} disabled={!rule.useHorizon} onChange={(horizon) => patch({ horizon })} /><span>velas</span>
           <Check checked={rule.opposite} onChange={(opposite) => patch({ opposite })}>Cerrar con la señal contraria</Check>
         </div>
-        {!rule.useTarget && !rule.trail && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
+        {!rule.useTarget && !rule.trail && rule.trailMode === 'off' && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
         <div className="rt-row">
           <Check checked={rule.oneAtATime} onChange={(oneAtATime) => patch({ oneAtATime })} title="Marcado: lo que operarías. Sin marcar: todas las señales, para medir el elemento">Una posición a la vez</Check>
           <span title="Velas de espera después de cerrar un trade antes de tomar otra señal. 0 = sin espera">Esperar</span>

@@ -28,9 +28,12 @@ export function defaultRule() {
   return {
     name: 'VA abandonada', tf: 15, codes: ['VA'], mode: 'all', min: 1, window: 1, side: 'both', invert: false,
     swing: false, swingBars: 5, momentum: false, confirm: false, confirmAtr: 0.25, confirmBars: 2,
-    entryType: 'market', entryAt: 'near', entryExpiry: 8,
+    entryType: 'market', entryAt: 'near', entryExpiry: 8, straddleFrom: 'zone', straddleOffset: 0.2,
     stopType: 'swing', stopBars: 5, stopAtr: 1.5, stopBuffer: 0.1, stopMaxAtr: 6,
-    useTarget: true, targetR: 2, trail: false, trailBars: 5, useHorizon: true, horizon: 200, opposite: false,
+    useTarget: true, targetR: 2, trail: false, trailBars: 5,
+    // Trailing desde el mejor precio (atr o pct; trail sigue siendo el de swings), con arranque y stop a la entrada
+    trailMode: 'off', trailAtr: 4, trailPct: 5, trailStartOn: false, trailStart: 1, breakEvenOn: false, breakEven: 1.5,
+    cpMaxHeightOn: false, cpMaxHeight: 5.5, imBars: 3, imAtr: 2, imRangeOn: false, imRange: 1.5, useHorizon: true, horizon: 200, opposite: false,
     oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05,
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
     first: [], liqWhat: 'zone', liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3,
@@ -119,6 +122,8 @@ export function toBackendRule(rule) {
       ? { hours: { on: true, from: minuteOfDay(rule.hoursFrom), to: minuteOfDay(rule.hoursTo), weekdays: !!rule.hoursWeekdays } } : {}),
     ...(codes.includes('BX') ? { bx: { maxHeight: rule.bxMaxHeightOn ? number(rule.bxMaxHeight, 5.5) : null } } : {}),
     ...(codes.includes('BE') ? { be: { share: number(rule.beShare, 0.2), maxBody: number(rule.beMaxBody, 1), rejection: number(rule.beRejection, 0.6), ...(rule.bePattern ? { pattern: true } : {}) } } : {}),
+    ...(codes.includes('CP') ? { cp: { maxHeight: rule.cpMaxHeightOn ? number(rule.cpMaxHeight, 5.5) : null } } : {}),
+    ...(codes.includes('IM') ? { im: { bars: number(rule.imBars, 3), atr: number(rule.imAtr, 2), range: rule.imRangeOn ? number(rule.imRange, 1.5) : null } } : {}),
     ...(codes.includes('FV') ? { fv: { minAtr: number(rule.fvMinAtr, 0.3) } } : {}),
     ...(codes.includes('SP') ? { sp: { bars: number(rule.spBars, 5), minZ: rule.spVolume ? number(rule.spMinZ, 1) : null } } : {}),
     ...(rule.cvdOn || ['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode)
@@ -144,7 +149,9 @@ export function toBackendRule(rule) {
       entry: { on: !!rule.confirm, atr: number(rule.confirmAtr, 0.25), bars: number(rule.confirmBars, 2) }
     },
     invert: !!rule.invert,
-    entry: { type: rule.entryType === 'limit' ? 'limit' : 'market', at: rule.entryAt || 'near', expiry: number(rule.entryExpiry, 8) },
+    entry: rule.entryType === 'straddle'
+      ? { type: 'straddle', from: rule.straddleFrom === 'close' ? 'close' : 'zone', offset: number(rule.straddleOffset, 0.2), expiry: number(rule.entryExpiry, 8) }
+      : { type: rule.entryType === 'limit' ? 'limit' : 'market', at: rule.entryAt || 'near', expiry: number(rule.entryExpiry, 8) },
     stop: {
       type: rule.stopType || 'swing', bars: number(rule.stopBars, 5), atr: number(rule.stopAtr, 1.5),
       buffer: number(rule.stopBuffer, 0.1), maxAtr: number(rule.stopMaxAtr, 6)
@@ -155,7 +162,11 @@ export function toBackendRule(rule) {
       ...(rule.useTarget && usesProfile(rule) && ['poc', 'edge', 'mid'].includes(rule.targetAt) ? { targetAt: rule.targetAt } : {}),
       // Un borde de caja puede apuntar al centro de su caja
       ...(rule.useTarget && !usesProfile(rule) && (rule.codes || []).includes('BE') && rule.targetAt === 'mid' ? { targetAt: 'mid' } : {}),
-      trail: rule.trail ? 'swing' : 'none', trailBars: number(rule.trailBars, 5),
+      trail: rule.trail ? 'swing' : (['atr', 'pct'].includes(rule.trailMode) ? rule.trailMode : 'none'), trailBars: number(rule.trailBars, 5),
+      ...(!rule.trail && rule.trailMode === 'atr' ? { trailAtr: number(rule.trailAtr, 4) } : {}),
+      ...(!rule.trail && rule.trailMode === 'pct' ? { trailPct: number(rule.trailPct, 5) } : {}),
+      ...(!rule.trail && ['atr', 'pct'].includes(rule.trailMode) && rule.trailStartOn ? { trailStart: number(rule.trailStart, 1) } : {}),
+      ...(rule.breakEvenOn ? { breakEven: number(rule.breakEven, 1.5) } : {}),
       horizon: rule.useHorizon ? number(rule.horizon, 200) : null,
       opposite: !!rule.opposite
     },
@@ -186,6 +197,11 @@ export function fromBackendRule(saved) {
     swing: !!recipe.swing?.on, swingBars: recipe.swing?.bars ?? 5, momentum: !!recipe.momentum,
     confirm: !!recipe.entry?.on, confirmAtr: recipe.entry?.atr ?? 0.25, confirmBars: recipe.entry?.bars ?? 2,
     entryType: saved.entry?.type || 'market', entryAt: saved.entry?.at || 'near', entryExpiry: saved.entry?.expiry ?? 8,
+    straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
+    trailMode: ['atr', 'pct'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
+    trailStartOn: saved.exit?.trailStart != null, trailStart: saved.exit?.trailStart ?? 1, breakEvenOn: saved.exit?.breakEven != null, breakEven: saved.exit?.breakEven ?? 1.5,
+    cpMaxHeightOn: saved.cp?.maxHeight != null, cpMaxHeight: saved.cp?.maxHeight ?? 5.5,
+    imBars: saved.im?.bars ?? 3, imAtr: saved.im?.atr ?? 2, imRangeOn: saved.im?.range != null, imRange: saved.im?.range ?? 1.5,
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
     stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6,
     useTarget: saved.exit?.targetR != null || !!saved.targetAt, targetR: saved.exit?.targetR ?? 2, targetAt: saved.targetAt || 'r',
@@ -230,6 +246,9 @@ export function describeRule(saved) {
   if (saved.targetAt) exits.push(saved.be && !saved.vp ? 'centro de la caja' : { poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
   else if (saved.exit?.targetR != null) exits.push(`${saved.exit.targetR}R`);
   if (saved.exit?.trail === 'swing') exits.push('stop arrastrado');
+  if (saved.exit?.trail === 'atr') exits.push(`trailing a ${saved.exit.trailAtr} ATR${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
+  if (saved.exit?.trail === 'pct') exits.push(`trailing a ${saved.exit.trailPct}%${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
+  if (saved.exit?.breakEven) exits.push(`stop a la entrada en ${saved.exit.breakEven}R`);
   if (saved.exit?.horizon != null) exits.push(`${saved.exit.horizon} velas`);
   if (saved.exit?.opposite) exits.push('señal contraria');
   if (saved.gc && saved.gc.exit !== 'none') exits.push(saved.gc.exit === 'mid' ? 'cierre al otro lado de la línea central' : 'cierre de vuelta dentro de la banda');
@@ -246,7 +265,7 @@ export function describeRule(saved) {
     + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
-    + ` · ${saved.entry?.type === 'limit' ? 'limit' : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
+    + ` · ${saved.entry?.type === 'limit' ? 'limit' : saved.entry?.type === 'straddle' ? `dos órdenes stop a ${saved.entry.offset} ATR ${saved.entry.from === 'zone' ? 'fuera de la zona' : 'del cierre'}` : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
     + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;
 }
 

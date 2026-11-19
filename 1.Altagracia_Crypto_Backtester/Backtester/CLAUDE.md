@@ -1095,6 +1095,35 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - Pruebas: `backend/tests/test_rule_tester.py` (14: entrada, comisiones, minutos, limit al cruzar, sin objetivo, una posición, trade abierto, invertir, elementos presentes, swing confirmado, que lo cerrado no cambie con velas posteriores, azar, identidad de la regla y fases) y `frontend/tests/ruletester.test.mjs` (8).
 - Probado en la copia aislada con el almacén real: fases 1 y 2 en 15m desde la ventana (gráfico, lista, patrones, CSV y candado), y por la ruta una regla de 30m con dos elementos, limit, sin objetivo, stop arrastrado y un filtro (105 trades). No se probó 5m, la fase 3 ni el botón desde el Observador.
 
+### Trailing, dos órdenes stop, Impulso y Compresión (19/11)
+
+Pedido del usuario: un bot de cripto que vio entraba hacia donde el precio empezaba a moverse con fuerza, con stop fijo y la ganancia con trailing; le funcionaba con fuerza y en horizontal salía casi siempre por el stop. Pidió el trailing primero y, además de entrar a mercado, probar las dos órdenes stop activas a la vez.
+
+- **Trailing** (`exit.trail`): además de `swing`, `atr` (el stop a `trailAtr` ATR del mejor precio desde la entrada) y `pct` (a `trailPct` %). `trailStart`: empieza al llegar a tantos R a favor. `breakEven`: al llegar a tantos R el stop pasa a la entrada (motivo "stop en la entrada"). Se actualiza con cada vela cerrada y solo se acerca. Los campos solo entran a la regla si se usan (`_trail_extra`): una regla ya corrida conserva su identidad.
+- **Dos órdenes stop** (`entry.type: "straddle"`, `from` `zone` o `close`, `offset` ATR, `expiry` velas): al cierre de la vela de la señal se pone una orden stop arriba y otra abajo (por fuera de la zona del elemento, o a `offset` ATR del cierre). Se llena la primera que el precio cruza, en su precio o en la apertura si salta por encima, y la otra se cancela (`_straddle_fill`); si las dos se tocan en la misma vela decide el minuto a minuto y, sin minutos, la más cerca de la apertura. La dirección la pone el precio, no el elemento. Los filtros que miran el lado (VWAP, EMA, CVD, OI y las medidas) deciden qué órdenes se ponen. Cada trade guarda `trigger_atr`; el control al azar pone las dos órdenes en velas al azar a esa distancia mediana del cierre, y el del tramo solo la orden a favor del tramo.
+- **Impulso, IM** (`fvg_swing.py`, `im` = `{bars, atr, range}`): el cierre avanzó al menos `atr` ATR en `bars` velas, hacia donde va; un evento al empezar el impulso; con `range`, la vela mide además ese alto. La zona va del mínimo al máximo del impulso.
+- **Compresión, CP** (`box_elements.py`, `cp.maxHeight`): la vela en que se detecta una caja de la eficiencia con caja. Sin dirección: sale hacia los dos lados y va con las dos órdenes stop por fuera de la caja.
+- **Medido.** Primero la salida sola, con 3,000 entradas al azar por moneda (fase 1, 4h, siete monedas; antes de 2023 · 2023): objetivo 2R, −0.03 · −0.03; 3R, +0.01 · −0.02; trailing a 1 ATR, −0.06 · −0.03; a 2 ATR, −0.03 · −0.05; a 3 ATR, −0.02 · −0.02; **stop 2 ATR y trailing a 4 ATR, +0.10 · +0.04** (a favor del tramo, +0.11 · +0.09). El trailing ajustado pierde por comisiones y salidas tempranas; el amplio gana algo solo porque en 4h hubo tendencias. Después, las reglas por el probador (azar y tramo de toda la fase):
+
+| Regla | Antes de 2023 | 2023 | Azar · tramo | Monedas |
+|---|---|---|---|---|
+| Impulso ≥ 2 ATR en 3, stop 1.5, objetivo 3R | 415, +0.13 (±0.17) | 292, +0.22 (±0.21) | +0.01 · +0.03 | 6 |
+| Impulso ≥ 2 ATR, stop 2, trailing 4 ATR | 395, +0.09 (±0.19) | 280, +0.37 (±0.37) | +0.12 · +0.17 | 5 |
+| Igual, stop a la entrada en 1.5R | 402, +0.09 | 287, +0.34 | +0.10 · +0.15 | 6 |
+| Impulso ≥ 3 ATR, trailing 4 | 121, +0.45 (±0.45) | 106, +0.64 (±0.69) | +0.14 · +0.18 | 4 |
+| Impulso ≥ 2 ATR, trailing 4, fuera de las cajas | 214, +0.22 (±0.29) | 157, +0.69 (±0.62) | +0.17 · +0.23 | 6 |
+| Compresión, dos stops a 0.2 ATR de la caja, trailing 4 | 217, +0.05 (±0.25) | 158, +0.41 (±0.55) | 0.00 · −0.03 | 5 |
+| Igual, cajas ≤ 5.5 ATR | 197, +0.05 | 143, +0.47 | −0.01 · −0.04 | 5 |
+| Compresión, dos stops, stop 1.5, objetivo 3R | 228, +0.04 (±0.23) | 164, −0.02 (±0.27) | −0.36 · −0.42 | 6 |
+| Compresión, dos stops, stop al otro lado de la caja, trailing 4 | 203, +0.05 | 145, +0.22 | +0.11 · +0.20 | 4 |
+| Ruptura de caja, EMA 200, caja ≤ 5.5, trailing 4 | 194, +0.33 (±0.34) | 139, +0.52 (±0.74) | +0.13 · +0.17 | 4 |
+| FVG nuevo ≥ 0.3 ATR, trailing 4 | 562, +0.14 (±0.16) | 410, +0.33 (±0.29) | +0.12 · +0.17 | 5 |
+
+  - Con trailing amplio todo sube, también los controles (+0.10 a +0.23): buena parte es la tendencia de 4h, no la entrada. Antes de 2023 casi ninguna regla con trailing supera a su control; en 2023 ganan más, pero con márgenes de ±0.3 a ±0.7, porque lo deciden pocos trades muy grandes. Con objetivo fijo de 3R la ventaja sobre el control es más clara y más estable: Impulso, Ruptura de caja con EMA y FVG nuevo.
+  - Las dos órdenes stop en velas al azar pierden mucho (−0.36 R con objetivo 3R): el precio toca una orden con el ruido y se da vuelta, lo mismo que el usuario vio en horizontal. Puestas por fuera de una compresión quedan cerca de 0 y se separan del azar con margen, pero no ganan antes de 2023.
+  - Se probaron 11 reglas más sobre los mismos datos: ninguna pasa a la fase 2 solo por esto.
+  - Pruebas: `tests/test_trailing_straddle.py` (6).
+
 ### Nombres de los elementos (19/11)
 
 Pedido del usuario: las iniciales costaban. La ventana muestra un nombre corto en español en las casillas, la descripción de la regla (historial, "Todas", búsqueda), la lista y el detalle de los trades, los cortes por elemento y por combinación, la revisión y las notas: "Ruptura de caja", "FVG nuevo", "Desequilibrios apilados". El código y el nombre largo (el del libro) salen al pasar el mouse. Los nombres viven en `elementLabels.js`; los mensajes del backend usan los mismos (`rule_tester.LABELS`, que hay que cambiar junto con ese archivo). **Los códigos no cambian:** siguen siendo la identidad de las reglas y corridas guardadas. El indicador Elementos OF del gráfico principal sigue con sus códigos en los triángulos.

@@ -10,11 +10,15 @@ Elementos del probador hechos con las cajas de la eficiencia con caja (regime_de
   queda detrás del borde, y el objetivo "centro" es el centro de la caja. Con `pattern`, la vela tiene que ser además
   un patrón de rechazo a favor (martillo, envolvente o doji, con tendencia previa: la regla de candle_patterns).
 
+- CP, compresión: la vela en que se detecta una caja (el mercado entró en rango). No tiene dirección: sale hacia los
+  dos lados y está pensada para la entrada con dos órdenes stop, una sobre la caja y otra debajo. La zona es la caja.
+
 Una caja se sabe vigente en la vela i si se detectó antes y todavía no se rompió (la ruptura es la vela end + 1).
 """
 import numpy as np
 
-CODES = {"BX": "Ruptura de caja (rango de la pestaña Régimen)", "BE": "Borde de caja, hacia el centro"}
+CODES = {"BX": "Ruptura de caja (rango de la pestaña Régimen)", "BE": "Borde de caja, hacia el centro",
+         "CP": "Compresión (se detecta una caja; para las dos órdenes stop)"}
 
 
 def _arrays(bars):
@@ -22,8 +26,8 @@ def _arrays(bars):
             **{k: np.array([b[s] for b in bars], dtype=float) for k, s in (("o", "o"), ("h", "h"), ("l", "l"), ("c", "c"), ("v", "vol"))}}
 
 
-def events(bars, tf, bx=None, be=None):
-    if not bars or (bx is None and be is None):
+def events(bars, tf, bx=None, be=None, cp=None):
+    if not bars or (bx is None and be is None and cp is None):
         return []
     import regime  # Aquí y no arriba: regime importa rule_tester, que importa este módulo
     import regime_detectors as rd
@@ -48,6 +52,12 @@ def events(bars, tf, bx=None, be=None):
             continue
         mid = (z["low"] + z["high"]) / 2
         box = {"low": round(z["low"], 8), "high": round(z["high"], 8), "start": int(t[z["start"]]), "detected": int(t[z["detected"]])}
+        if cp is not None:
+            i = z["detected"]
+            if cp.get("maxHeight") is None or height / atr[i] <= cp["maxHeight"]:
+                for side in (1, -1):
+                    out.append({"code": "CP", "dir": side, "t": int(t[i]), "known": int(t[i] + step), "lo": z["low"], "hi": z["high"],
+                                "info": {**box, "heightAtr": round(float(height / atr[i]), 2)}})
         if bx is not None:
             i = z["end"] + 1
             if i < len(c):
