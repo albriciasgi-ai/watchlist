@@ -1128,6 +1128,32 @@ backend/candidate_review.py → OrderFlowData/observer/review/sessions.jsonl   (
 - **Límites:** el nombre de la moneda se ve. El trade propio no usa la salida por el canal del Gaussian Channel ni stop arrastrado. La regla que propone decide qué se llega a ver: lo que el usuario habría operado fuera de esos momentos no se mide. No guarda todavía las medidas ni los elementos presentes de cada candidato (falta para armar una puntuación).
 - **Pruebas:** `tests/test_candidate_review.py` (6) y `frontend/tests/candidatereview.test.mjs` (3). Probado en la copia aislada con BTC 4h y la flecha: sesión de 23 candidatos, decisiones, caja corta propia, retomar tras recargar, terminar e informe. No se probó la moneda al azar, 15m ni una sesión completa.
 
+## BÚSQUEDA GENÉTICA DE REGLAS (18/11/2026)
+
+Pedido del usuario tras leer los artículos de algoritmos genéticos en trading (Brabazon y O'Neill, Ruggiero): usar la "gramática" que ya tiene el probador para que un algoritmo genético busque combinaciones en la fase 1, con reglas contra el sobreajuste, y llevar a la fase 2 solo lo prometedor.
+
+```
+RuleSearchTab.jsx (pestaña "Búsqueda")
+        │  POST /api/search/start   { config } o { resume: id }
+        │  POST /api/search/stop/{id}  ·  GET /api/search/{id}  ·  GET /api/search/list
+        ▼
+backend/rule_search.py → rule_tester.run() de cada moneda, sin controles propios del probador
+        ▼
+OrderFlowData/observer/tester/search/{id}.json   (RULE_SEARCH_DIR cambia la carpeta)
+```
+
+- **Genoma:** un índice por gen sobre opciones fijas (`GENES`): marco (1h, 4h, 1D, los elegidos), hasta 3 elementos de `CANDLE_CODES` (LIQ fuera de fábrica, es lento), todos o todos menos uno, ventana, invertir, parámetros de RF/RB, patrones, CC, GC y LIQ, entrada (mercado o limit cerca o a la mitad), stop (1, 1.5, 2 o 3 ATR, swing de 3 o 5, vela del elemento, borde de la zona; `maxAtr` 8), objetivo (1 a 5 R o ninguno), stop arrastrado, cierre por tiempo, señal contraria y un filtro de línea (VWAP 50 o 200 a favor, EMA 14 tocando, EMA 50 o 200 a favor, con pendiente opcional). `decode()` lo pasa por `clean_rule()`: cada individuo es una regla válida. Los genes que la regla no usa no cambian su identidad (`rule_hash`), así no se cuenta dos veces.
+- **Solo velas:** la regla corre en las siete monedas con `detect_span` de la fase 1, igual que el probador. En 1h, las monedas con almacén detectan los elementos de la fase la primera vez (varios minutos cada una).
+- **Partición de la fase 1:** `split` (01/01/2023 de fábrica, entre 01/06/2021 y tres meses antes del fin de la fase). Tramo de búsqueda: trades que salen antes de `split`. Validación: trades que entran desde `split`. Un trade que cruza la fecha no cuenta. La validación se calcula para cada regla, pero no entra en la aptitud ni en la selección, y `summary()` no la entrega hasta que la búsqueda terminó.
+- **Controles:** por moneda y tramo, 1,000 entradas al azar con el mismo stop y salida (`_random_rule`), guardadas por lado y mezcladas con la proporción de largos de cada regla, y 1,000 a favor del tramo en curso. Se usa el mejor de los dos. Se guardan por stop y salida, así los comparten las reglas que solo difieren en la entrada.
+- **Aptitud:** ventaja = R de la regla − control, pesada por los trades de cada moneda; aptitud = ventaja − su error estándar − 0.02 R por pieza extra − 0.05 R por moneda que falte para `minCoins` a favor (monedas con 10 trades o más). Con menos de `minTrades` queda por debajo de -1.
+- **Algoritmo:** población (60), generaciones (25), torneo de 3, cruce uniforme, mutación por gen (0.1), 4 élites y un 10% de reglas nuevas al azar por generación. Las reglas ya probadas no se vuelven a correr. El estado se guarda al terminar cada generación; "Detener" corta al terminar la regla en curso y "Retomar" sigue desde la última generación guardada (también si se reinició el backend).
+- **Al terminar** (`_finish`): hasta 5 finalistas con 3 o más genes distintos entre sí, de las que llegan al mínimo de trades; para cada una, sus vecinas (cada gen activo movido a la opción de al lado), marcadas `origin: "neighbor"`. Veredicto: "Candidata a la fase 2" con 30 trades o más en la validación, ventaja positiva ahí y el 60% de las vecinas con ventaja; si no, "frágil", "no se sostiene" o "pocos trades". El informe suma el umbral de suerte (mediana del error estándar × √(2 ln N), con N reglas probadas, vecinas incluidas), la validación del 10% con mejor aptitud contra la de todas, y la correlación por rangos entre tramo y validación.
+- **Lo que no hace:** no toca las fases 2 y 3 ni anota nada en `runs.jsonl`. Una finalista se carga con "Cargar en la pestaña Regla" (`fromBackendRule`) y desde ahí se corre como cualquier regla. La receta lleva `swing.flex` 1, como la manda la ventana, para que la regla cargada conserve su identidad (lo vigila una prueba con node).
+- **Costo:** sin tokens, todo en el backend. En 4h, una regla en las siete monedas tarda 2 a 4 s (la mitad son los controles); la primera vez, 23 s más por las zonas de liquidaciones que usa VH. 60 × 25 son una a dos horas, en el mismo proceso del backend: las demás rutas siguen respondiendo, más lentas.
+- **Pruebas:** `tests/test_rule_search.py` (6): genomas válidos, genes inactivos, aptitud, que la validación no cambia el tramo de búsqueda (cortar las velas en la fecha deja lo mismo), una búsqueda completa con su archivo, y la ida y vuelta por la ventana.
+- **Probado** en la copia aislada (backend 9300, Vite 9301) con una búsqueda de 10 × 2 en 4h: 87 reglas, ninguna candidata; la pestaña, el avance, el resultado y "Cargar en la pestaña Regla". No se probó en 1h ni en 1D, ni una búsqueda larga.
+
 ## ESTADO PARA EL ENTRENADOR (17/11/2026)
 
 Pedido del usuario: entrenar con el skill `/entrenar` y que Claude vea lo que tiene en App 1, no solo una captura. Claude lo lee con el navegador integrado de la app de Claude o con la extensión Claude in Chrome, ejecutando JavaScript en la pestaña de App 1.

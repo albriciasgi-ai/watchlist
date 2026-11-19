@@ -21,6 +21,7 @@ import observer
 import measures
 import patterns
 import rule_tester
+import rule_search
 import liq_sweeps
 import structure
 import gaussian_channel
@@ -3935,6 +3936,37 @@ async def review_end(request: Request):
 @limiter.limit("240/minute")
 async def review_active(request: Request, symbol: str):
     return await run_in_threadpool(candidate_review.active, sanitize_filename(symbol))
+
+
+@app.post("/api/search/start")
+@limiter.limit("30/minute")
+async def search_start(request: Request):
+    """Búsqueda genética de reglas en la fase 1 (body: config, o resume con el id de una búsqueda cortada)."""
+    body = await request.json()
+    resume = sanitize_filename(str(body["resume"])) if body.get("resume") else None
+    return await run_in_threadpool(rule_search.start, body.get("config") or {}, resume)
+
+
+@app.post("/api/search/stop/{search_id}")
+@limiter.limit("30/minute")
+async def search_stop(request: Request, search_id: str):
+    return rule_search.stop(sanitize_filename(search_id))
+
+
+@app.get("/api/search/list")
+@limiter.limit("120/minute")
+async def search_list(request: Request):
+    return {"success": True, "searches": await run_in_threadpool(rule_search.history),
+            "codes": list(rule_tester.CANDLE_CODES), "tfs": list(rule_search.SEARCH_TFS)}
+
+
+@app.get("/api/search/{search_id}")
+@limiter.limit("600/minute")
+async def search_summary(request: Request, search_id: str):
+    found = await run_in_threadpool(rule_search.summary, sanitize_filename(search_id))
+    if found is None:
+        return {"success": False, "message": "No se encontró esa búsqueda"}
+    return _json_response({"success": True, **found})
 
 
 @app.get("/api/review/report")
