@@ -60,7 +60,8 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
   const tf = TF_OF[chartTf];
 
   useEffect(() => {
-    api('/api/regime/catalog').then(r => r.success && setCatalog(r.detectors)).catch(error => setMessage(error.message));
+    api('/api/regime/catalog').then(r => r.success && setCatalog(r.detectors)).catch(error => setMessage(
+      /404/.test(error.message) ? 'El backend de App 1 no tiene todavía los detectores de régimen: reinícialo (puerto 9000) y recarga la página.' : error.message));
   }, []);
   const entry = catalog.find(d => d.key === detector);
   const shown = { ...(entry?.params || {}), ...(params[detector] || {}) };
@@ -129,6 +130,7 @@ export default function RegimeTab({ symbol, chartTf, onBands, onFocus }) {
 
       <div className="rt-group">
         <h4>Detector</h4>
+        {!catalog.length && message && <div className="rt-warn">{message}</div>}
         <select value={detector} onChange={(e) => setDetector(e.target.value)} style={{ width: '100%' }}>
           {catalog.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
         </select>
