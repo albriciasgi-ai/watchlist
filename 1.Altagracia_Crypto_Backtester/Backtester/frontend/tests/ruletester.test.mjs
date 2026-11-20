@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {
   defaultRule, deleteRule, describeRule, fromBackendRule, isRuleTester, loadSavedRules, ruleTesterUrl, saveRule,
-  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes
+  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals
 } from '../src/components/backtesting/ruleTester.js';
 
 const tests = [];
@@ -117,6 +117,34 @@ test('como cuenta: cada trade arriesga un % del capital al entrar, con posicione
   assert.ok(long.annualReturn > 0 && long.positiveMonths <= long.months && long.months >= 9);
   assert.equal(accountStats([], 1), null);
   assert.equal(accountStats(trades, 0), null);
+});
+
+test('lo que usó la regla en el trade elegido pasa al gráfico: líneas, elementos, régimen, filas y señales', () => {
+  const H = 3600000;
+  const context = {
+    success: true, tf: 240, from: 0, to: 40 * H, side: 1, signal: 8 * H,
+    lines: [{ label: 'EMA 50', type: 'ema', points: [[0, 100], [4 * H, 101]] },
+      { label: 'VWAP 200', type: 'vwap', points: [[0, 99]], limit: [[0, 103]], limitLabel: 'VWAP 200 +2 desv.' }],
+    channel: { mid: [[0, 100]], high: [[0, 104]], low: [[0, 96]] },
+    elements: [{ code: 'FV', dir: 1, t: 4 * H, known: 8 * H, lo: 98, hi: 99 }, { code: 'FV', dir: -1, t: 12 * H, known: 16 * H, lo: null, hi: 100 }],
+    regime: { label: 'Régimen', boxes: [{ start: 0, known: 8 * H, end: 20 * H, low: 95, high: 105, major: true }] },
+    rows: [{ key: 'oi', label: 'OI sube', items: [[0, 1], [4 * H, 0], [8 * H, null]], note: 'OI +3%' }, { key: 'cvd', label: 'CVD', items: [], note: '' }],
+    signals: [{ t: 8 * H, dir: 1, what: 'trade', n: 3 }, { t: 12 * H, dir: -1, what: 'filtro de CVD u OI' }]
+  };
+  const bands = contextBands(context, { FV: 'FVG nuevo' });
+  const kinds = (kind) => bands.filter(b => b.kind === kind);
+  assert.equal(kinds('outline').length, 2, 'la caja del régimen: punteada antes de saberse y continua después');
+  assert.ok(kinds('outline').every(b => b.tone === 'major'));
+  assert.equal(kinds('event').length, 1, 'un elemento sin zona no se dibuja');
+  assert.equal(kinds('event')[0].label, '▲ FVG nuevo');
+  assert.equal(kinds('event')[0].end, 12 * H, 'llega una vela más allá de cuando se supo');
+  assert.deepEqual(kinds('line').map(b => b.label), ['EMA 50', 'VWAP 200', 'VWAP 200 +2 desv.', 'Línea central', 'Banda superior', 'Banda inferior']);
+  assert.ok(kinds('line').every(b => b.tf === 4 * H), 'cada punto en su vela de la regla');
+  assert.deepEqual(kinds('ticks').map(b => [b.row, b.rows, b.label]), [[0, 2, 'OI sube'], [1, 2, 'CVD']]);
+  assert.deepEqual(kinds('signal').map(b => [b.taken, b.label, b.dir]), [[true, 'T3', 1], [false, '', -1]]);
+  assert.deepEqual(skippedSignals(context).map(s => s.what), ['filtro de CVD u OI']);
+  assert.deepEqual(contextBands({ success: false }), []);
+  assert.deepEqual(contextBands(null), []);
 });
 
 let failed = 0;

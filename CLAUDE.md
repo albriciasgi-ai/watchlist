@@ -54,6 +54,39 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 20 Noviembre 2026: Lo que Usó la Regla en el Trade Elegido (Backtesting Global)
+
+**Pedido:** al elegir un trade en el backtesting global se veían la caja TP/SL y la del elemento, pero no los indicadores de la regla, que solo se nombraban. Para depurar hace falta verlos como estaban, con los ajustes de la prueba.
+
+**Cambios:**
+1. **Backend:** `trade_context()` vuelve a correr la regla de la corrida, sin controles (`run(..., trace)`), y da una ventana alrededor del trade con:
+   - sus líneas enteras (EMA, VWAP móvil con su tope y canal gaussiano);
+   - todas las apariciones de sus elementos;
+   - las cajas del régimen;
+   - una fila por filtro que dice si pasa en cada vela;
+   - cada señal con lo que pasó: su trade o por qué no entró.
+
+   Ruta `/api/tester/result/{id}/trade/{n}/context`.
+2. **Gráfico:** las líneas con su nombre, los elementos tenues y, bajo las velas, una fila por filtro (verde pasa, rojo no pasa, gris sin dato). Los triángulos son las señales: rellenos los que dieron trade.
+3. **Detalle del trade:**
+   - la casilla "Ver en el gráfico lo que usó la regla";
+   - cada filtro en la vela de la señal, con su valor (por ejemplo, "OI +2.84% en 6 velas");
+   - las señales que no entraron, con su motivo.
+4. **Pruebas:** `test_trade_context.py` (4) y una más en `ruletester.test.mjs`.
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- La primera vez de cada corrida el backend repite la regla (2 s en BTC 4h, fase 1); los demás trades de esa corrida responden al instante.
+- Si al repetirla hoy la señal no da el mismo trade, el detalle lo avisa: pasaría con una corrida de un motor anterior.
+- **Probado:**
+  - en la B5 de BTC 4h, fase 1, los 119 trades se repiten iguales;
+  - corridas con régimen, CVD, VWAP con tope, canal gaussiano, funding, OI sostenido y horario;
+  - en pantalla, en el backtesting global con una copia aislada.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Lo que usó la regla en el trade elegido (20/11)"
+
+---
+
 ### App 1 + Altagracia Trading Suite - 20 Noviembre 2026: Perfil de Volumen sobre los Rangos Horizontales
 
 **Pedido:** que el indicador de rangos pueda dibujar el volume profile sobre cada rango detectado, y que el perfil crezca con el rango a medida que avanza el tiempo, en App 1 y en la suite.

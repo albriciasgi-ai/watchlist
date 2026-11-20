@@ -386,6 +386,52 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
   return bands;
 }
 
+/**
+ * Lo que usó la regla alrededor del trade elegido (20/11/2026, para depurar): lo que da el backend en
+ * /api/tester/result/{id}/trade/{n}/context (rule_tester.trade_context), como franjas para el gráfico. Va debajo de
+ * las de tradeBands():
+ * - las cajas del régimen;
+ * - todas las apariciones de los elementos de la regla, tenues;
+ * - sus líneas enteras: EMA, VWAP móvil con su tope y canal gaussiano;
+ * - una fila por filtro bajo las velas, que dice en cada vela si pasa para el lado del trade;
+ * - las señales de la regla en la ventana: la del trade y las que no entraron.
+ */
+export function contextBands(context, names = {}) {
+  if (!context?.success) return [];
+  const tf = context.tf * 60000;
+  const bands = [];
+  for (const box of context.regime?.boxes || []) {
+    const tone = box.major ? 'major' : undefined;
+    if (box.start < box.known) bands.push({ kind: 'outline', tone, low: box.low, high: box.high, start: box.start, end: box.known, strong: false });
+    bands.push({ kind: 'outline', tone, low: box.low, high: box.high, start: box.known, end: box.end, strong: true });
+  }
+  for (const e of context.elements || []) {
+    if (!Number.isFinite(e.lo) || !Number.isFinite(e.hi)) continue;
+    bands.push({ kind: 'event', dir: e.dir, low: e.lo, high: e.hi, start: e.t, end: Math.max(e.known, e.t + tf) + tf, label: `${e.dir > 0 ? '▲' : '▼'} ${elementLabel(e.code, names[e.code])}` });
+  }
+  for (const line of context.lines || []) {
+    bands.push({ kind: 'line', tf, tone: line.type, points: line.points, label: line.label });
+    if (line.limit?.length) bands.push({ kind: 'line', tf, tone: line.type, points: line.limit, label: line.limitLabel, dash: true });
+  }
+  if (context.channel) {
+    const { mid, high, low } = context.channel;
+    bands.push({ kind: 'line', tf, tone: 'channel', points: mid, label: 'Línea central' });
+    bands.push({ kind: 'line', tf, tone: 'channel', points: high, label: 'Banda superior', dash: true });
+    bands.push({ kind: 'line', tf, tone: 'channel', points: low, label: 'Banda inferior', dash: true });
+  }
+  const rows = context.rows || [];
+  rows.forEach((row, i) => bands.push({ kind: 'ticks', tf, row: i, rows: rows.length, label: row.label, items: row.items }));
+  for (const s of context.signals || []) {
+    bands.push({ kind: 'signal', tf, rows: rows.length, time: s.t, dir: s.dir, taken: s.what === 'trade', label: s.what === 'trade' ? `T${s.n}` : '' });
+  }
+  return bands;
+}
+
+/** Las señales de la ventana que no entraron, con su motivo, para la lista del trade elegido */
+export function skippedSignals(context) {
+  return (context?.signals || []).filter(s => s.what !== 'trade');
+}
+
 export const fmtR = (value, digits = 2) => (value === null || value === undefined ? '—' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}`);
 export const fmtPct = (value) => (value === null || value === undefined ? '—' : `${Number(value).toFixed(1)}%`);
 

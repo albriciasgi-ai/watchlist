@@ -1091,6 +1091,44 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - El marco del gráfico es aparte del de la regla (una regla de 30m se mira en 15m o 1h). Las velas salen del caché del navegador de la principal o, si faltan, se pide al backend solo ese marco.
 - Los indicadores usan los ajustes de la principal. Las reglas guardadas quedan en `tester_rules_v1` y la vista en `tester_view_v1`.
 
+### Lo que usó la regla en el trade elegido (20/11)
+
+Pedido del usuario para depurar: al elegir un trade se veían la caja TP/SL y la del elemento, pero los indicadores de la regla solo se nombraban; no se veía cómo estaban ni con qué ajustes.
+
+- **Backend:**
+  - `run(..., trace=dict)` guarda el contexto de las velas, los elementos y qué pasó con cada señal:
+    - el número de su trade;
+    - o el motivo: posición abierta, enfriamiento, filtro de VWAP o EMA, filtro de CVD u OI, filtro de régimen, fuera de horario, filtro de contexto, limit sin llenar, abierta al final de la fase…
+
+    Sin `trace` nada cambia (lo vigila una prueba).
+  - `trade_context(run_id, n)` (`GET /api/tester/result/{id}/trade/{n}/context`) vuelve a correr la regla de la corrida guardada con `trace`, sin controles y con el tramo de la corrida (no el de hoy). Las últimas 3 quedan en memoria: en BTC 4h, fase 1, tarda 2 s la primera vez y después responde al instante.
+  - Da una ventana de 150 velas antes de la señal y 60 después de la salida:
+    - las líneas de la regla enteras: la EMA y el VWAP móvil, con su tope de desviaciones; el canal gaussiano, desde donde la regla lo puede usar;
+    - todas las apariciones de sus elementos;
+    - las cajas del detector del régimen;
+    - una fila por filtro (líneas, CVD, OI, funding, OI sostenido, régimen, horario y medidas): si pasa en cada vela para el lado del trade, y su valor en la vela de la señal;
+    - las señales con lo que pasó;
+    - `same`: si al repetirla la señal da el mismo trade.
+  - Todo sale de las mismas funciones de la prueba y sin nada que la regla no supiera en cada vela.
+- **Ventana:**
+  - `contextBands()` (`ruleTester.js`) arma las franjas, y `MiniChart` suma sus clases:
+    - `line`: polilínea por el centro de cada vela de la regla, con su nombre;
+    - `event`: aparición tenue de un elemento;
+    - `ticks`: filas bajo las velas, verde pasa, rojo no pasa, gris sin dato;
+    - `signal`: triángulo, relleno con trade y hueco sin entrar.
+  - Van debajo de las de `tradeBands()`. Con las líneas enteras, se quita el tramo corto que marcaba su valor en la señal.
+  - **Detalle del trade:**
+    - la casilla "Ver en el gráfico lo que usó la regla", de fábrica encendida, en `tester_view_v1`;
+    - cada filtro en la vela de la señal;
+    - las señales de la ventana que no entraron, con su motivo.
+- **Probado:**
+  - con la corrida de la B5 en BTC 4h, fase 1: sus 119 trades se repiten iguales; EMA 50, OI subiendo 2% en 6 velas, FVG y doji, y señales;
+  - con corridas del registro que usan régimen (TRX), CVD (ZEC) y VWAP (TRX);
+  - con una corrida armada en TRX con canal gaussiano, VWAP con tope, funding, OI sostenido y horario: 61 trades iguales;
+  - en pantalla, en el backtesting global con la B5 en BTC.
+
+  Pruebas: `tests/test_trade_context.py` (4) y una más en `ruletester.test.mjs`.
+
 ### Medido y probado
 
 - BTC 15m, fase 1 (1,346 días, 129,214 velas): 179 s la primera vez; después la corrida tarda segundos y la sensibilidad (8 variantes) 26 s. Fase 2, cerca de 90 s la primera vez.

@@ -1779,7 +1779,13 @@ const MiniChart = forwardRef(({
       const viewStart = visibleCandles[0].timestamp;
       const viewEnd = visibleCandles[visibleCandles.length - 1].timestamp + TF_MS[interval];
       const colors = { liqLong: '233, 30, 99', liqShort: '3, 155, 229', element: '41, 98, 255', value: '255, 152, 0', regime: '123, 31, 162' };
+      const lineTones = { ema: '41, 98, 255', vwap: '245, 124, 0', channel: '123, 31, 162' };
       const ink = isNewTheme() ? THEME.text : '#222';
+      // Borde izquierdo de la vela de este gráfico que abre en t: las velas de la regla pueden ser de otro marco
+      const half = (timeToX(viewStart + TF_MS[interval]) - timeToX(viewStart)) / 2;
+      const edge = (t) => timeToX(t) - half;
+      const ROW = 12; // Filas de los filtros de la regla, bajo las velas
+      const rowsTop = (rows) => marginTop + priceChartHeight - 4 - rows * ROW;
       ctx.save();
       ctx.beginPath();
       ctx.rect(marginLeft, marginTop, chartWidth, priceChartHeight);
@@ -1797,6 +1803,77 @@ const MiniChart = forwardRef(({
             ctx.beginPath();
             ctx.arc(x, y, 6, 0, Math.PI * 2);
             ctx.stroke();
+            continue;
+          }
+          if (band.kind === 'line') {
+            // Una línea de la regla (EMA, VWAP, canal), por el centro de cada vela de la regla
+            const tf = band.tf || TF_MS[interval];
+            const rgb = lineTones[band.tone] || lineTones.ema;
+            ctx.strokeStyle = `rgba(${rgb}, 0.9)`;
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash(band.dash ? [5, 4] : []);
+            ctx.beginPath();
+            let last = null;
+            for (const [t, value] of band.points || []) {
+              if (t + tf < viewStart - tf || t > viewEnd + tf) continue;
+              const x = (edge(t) + edge(t + tf)) / 2;
+              const y = priceToY(value);
+              if (last) ctx.lineTo(x, y);
+              else ctx.moveTo(x, y);
+              last = [x, y];
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+            if (last && band.label) {
+              const x = Math.min(last[0] + 4, marginLeft + chartWidth - ctx.measureText(band.label).width - 4);
+              ctx.fillStyle = `rgb(${rgb})`;
+              ctx.fillText(band.label, x, last[1] - 8);
+            }
+            continue;
+          }
+          if (band.kind === 'ticks') {
+            // Una fila por filtro: si pasa en cada vela de la regla, para el lado del trade
+            const tf = band.tf || TF_MS[interval];
+            const y = rowsTop(band.rows) + band.row * ROW;
+            for (const [t, state] of band.items || []) {
+              if (t + tf < viewStart || t > viewEnd) continue;
+              const x1 = Math.max(marginLeft, edge(t));
+              const x2 = Math.min(marginLeft + chartWidth, edge(t + tf));
+              if (!(x2 > x1)) continue;
+              ctx.fillStyle = state === 1 ? 'rgba(8, 153, 129, 0.6)' : state === 0 ? 'rgba(242, 54, 69, 0.45)' : 'rgba(128, 128, 128, 0.18)';
+              ctx.fillRect(x1, y + 1, Math.max(1, x2 - x1 - (x2 - x1 > 3 ? 1 : 0)), ROW - 3);
+            }
+            const width = ctx.measureText(band.label).width;
+            ctx.fillStyle = isNewTheme() ? THEME.labelBg : 'rgba(255, 255, 255, 0.85)';
+            ctx.fillRect(marginLeft + 2, y, width + 8, ROW - 1);
+            ctx.fillStyle = ink;
+            ctx.fillText(band.label, marginLeft + 6, y + ROW / 2);
+            continue;
+          }
+          if (band.kind === 'signal') {
+            // Cada señal de la regla: rellena la que dio un trade, hueca la que no entró
+            const tf = band.tf || TF_MS[interval];
+            if (band.time + tf < viewStart || band.time > viewEnd) continue;
+            const x = (edge(band.time) + edge(band.time + tf)) / 2;
+            const y = rowsTop(band.rows || 0) - 9;
+            const rgb = band.taken ? '41, 98, 255' : '120, 120, 120';
+            ctx.beginPath();
+            ctx.moveTo(x, band.dir > 0 ? y - 5 : y + 5);
+            ctx.lineTo(x - 5, band.dir > 0 ? y + 4 : y - 4);
+            ctx.lineTo(x + 5, band.dir > 0 ? y + 4 : y - 4);
+            ctx.closePath();
+            if (band.taken) {
+              ctx.fillStyle = `rgba(${rgb}, 0.95)`;
+              ctx.fill();
+            } else {
+              ctx.strokeStyle = `rgba(${rgb}, 0.9)`;
+              ctx.lineWidth = 1.2;
+              ctx.stroke();
+            }
+            if (band.label) {
+              ctx.fillStyle = `rgb(${rgb})`;
+              ctx.fillText(band.label, x + 7, y);
+            }
             continue;
           }
           if (band.end < viewStart || band.start > viewEnd) continue;
@@ -1827,6 +1904,23 @@ const MiniChart = forwardRef(({
             ctx.setLineDash(band.strong ? [] : [4, 3]);
             ctx.strokeRect(x1 + 0.5, top, x2 - x1 - 1, height);
             ctx.setLineDash([]);
+            continue;
+          }
+          if (band.kind === 'event') {
+            // Otra aparición de un elemento de la regla: tenue, con su nombre si cabe
+            const top = priceToY(band.high);
+            const height = Math.max(2, priceToY(band.low) - top);
+            ctx.fillStyle = 'rgba(41, 98, 255, 0.06)';
+            ctx.fillRect(x1, top, x2 - x1, height);
+            ctx.strokeStyle = 'rgba(41, 98, 255, 0.35)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x1 + 0.5, Math.round(top) + 0.5, x2 - x1 - 1, Math.round(height));
+            if (band.label && x2 - x1 > ctx.measureText(band.label).width + 8) {
+              ctx.fillStyle = ink;
+              ctx.globalAlpha = 0.6;
+              ctx.fillText(band.label, x1 + 4, top - 7);
+              ctx.globalAlpha = 1;
+            }
             continue;
           }
           if (band.kind === 'level') {
