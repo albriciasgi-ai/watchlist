@@ -101,6 +101,8 @@ _candles = {}
 
 
 def has_store(symbol):
+    if is_stock(symbol):
+        return False  # Las acciones corren sobre sus velas (el almacén de Alpaca es de otra sesión y del gráfico)
     return fs.coverage(symbol).get("days", 0) >= MIN_STORE_DAYS
 
 
@@ -113,7 +115,14 @@ def _on_candles(symbol, tf):
 # elegir reglas: sirven para comprobar en todas sus fechas una regla elegida en las de App 1
 EXTRA_DIR = pathlib.Path(os.environ.get("TESTER_CANDLES", r"C:\Users\inven\OrderFlowData\candles"))
 EXTRA_KEYS = {60: ("60", 1), 240: ("240", 1), 1440: ("240", 6)}
-GROUPS = ("base", "new", "all")
+GROUPS = ("base", "new", "stocks", "all")
+# Acciones de EE. UU. (Alpaca), que baja alpaca_candles.py (otra sesión): velas de 15 minutos, 1 hora, 4 horas y 1 día
+# desde 2016, solo de la sesión regular. Las de 1h y 4h empiezan a las 09:30 de Nueva York y el día a la medianoche
+# de Nueva York: se leen tal como vienen, sin llevarlas a la hora en punto (eso adelantaría lo que se sabe de cada vela)
+STOCK_DIR = pathlib.Path(os.environ.get("ALPACA_CANDLES", "C:/Users/inven/OrderFlowData/alpaca/candles"))
+STOCK_KEYS = {15: "15", 60: "60", 240: "240", 1440: "1440"}
+STOCK_FEE = 0.0002            # Por lado: sin comisión, el spread. No cuenta el costo de pedir prestadas acciones para el corto
+STOCK_GAP_MS = 5 * 86400000   # Noches, fines de semana y feriados no son huecos: el trade sigue y una apertura más allá se llena ahí
 
 
 def base_symbols():
@@ -127,8 +136,20 @@ def new_symbols():
     return sorted(s for s in (p.name.split(".")[0] for p in EXTRA_DIR.glob("*.json.gz")) if s not in base)
 
 
+def stock_symbols():
+    """Acciones con velas de Alpaca."""
+    return sorted(s for s in (p.name.split(".")[0] for p in STOCK_DIR.glob("*.json.gz")) if not s.endswith("USDT"))
+
+
+def is_stock(symbol):
+    return not symbol.endswith("USDT") and (STOCK_DIR / f"{symbol}.json.gz").exists()
+
+
 def candle_symbols(group="base"):
-    """Monedas del grupo: base (las de App 1, las de siempre), new (las nuevas) o all."""
+    """Símbolos del grupo: base (las monedas de App 1, las de siempre), new (las monedas nuevas), all (todas las monedas)
+    o stocks (las acciones). "all" no incluye las acciones: son otro mercado."""
+    if group == "stocks":
+        return stock_symbols()
     if group == "new":
         return new_symbols()
     if group == "all":
@@ -137,6 +158,8 @@ def candle_symbols(group="base"):
 
 
 def _candle_path(symbol):
+    if is_stock(symbol):
+        return STOCK_DIR / f"{symbol}.json.gz"
     own = CANDLE_DIR / f"{symbol}_backtesting_data.json.gz"
     extra = EXTRA_DIR / f"{symbol}.json.gz"
     return own if own.exists() or not extra.exists() else extra
@@ -145,6 +168,8 @@ def _candle_path(symbol):
 def candle_bars(symbol, tf):
     """Velas cerradas del caché de App 1 en el marco de la regla, con la forma de las del almacén (sin delta)."""
     path = _candle_path(symbol)
+    if path.parent == STOCK_DIR:
+        return _stock_bars(symbol, tf, path)
     extra = path.parent == EXTRA_DIR
     keys = EXTRA_KEYS if extra else CANDLE_KEYS
     if tf not in keys or not path.exists():
@@ -183,6 +208,35 @@ def candle_bars(symbol, tf):
         while len(_candles) > 3:
             _candles.pop(next(iter(_candles)))
     return bars
+
+
+def _stock_bars(symbol, tf, path):
+    """Velas de una acción en el marco, con su hora de inicio tal como viene (09:30 de Nueva York en 1h y 4h)."""
+    if tf not in STOCK_KEYS or not path.exists():
+        return []
+    key = (symbol, tf, path.stat().st_mtime)
+    with _lock:
+        found = _candles.get(key)
+    if found is not None:
+        return found
+    with gzip.open(path, "rt", encoding="utf-8") as fh:
+        rows = json.load(fh).get(STOCK_KEYS[tf]) or []
+    now = time.time() * 1000
+    bars = [{"t": int(r[0]), "o": float(r[1]), "h": float(r[2]), "l": float(r[3]), "c": float(r[4]), "delta": 0.0, "vol": float(r[5])}
+            for r in rows if int(r[0]) + tf * 60000 <= now and r[2] >= r[3] > 0]  # La vela en curso no cuenta
+    with _lock:
+        _candles[key] = bars
+        while len(_candles) > 3:
+            _candles.pop(next(iter(_candles)))
+    return bars
+
+
+def codes_for(symbol, tf):
+    """Elementos que puede usar una regla en ese símbolo y marco: None si todos (almacén de trades). Las acciones, los
+    de velas menos el barrido de liquidaciones (no hay liquidaciones de acciones)."""
+    if is_stock(symbol):
+        return set(CANDLE_CODES) - {"LIQ"}
+    return set(CANDLE_CODES) if _on_candles(symbol, tf) else None
 
 
 def daily_bars(symbol):
@@ -671,10 +725,11 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
     T, O, H, L, C, atr = ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["atr"]
     n, tf_ms = len(T), ctx["tf"] * 60000
     e = k + 1
-    if e >= n or T[e] - T[k] > max(GAP_MS, 2 * ctx["tf"] * 60000):
+    if e >= n or T[e] - T[k] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
         return None
     entry_rule, exit_rule = rule["entry"], rule["exit"]
-    entry, entry_i, fee_in, limit_fill, stop_fill = O[e], e, TAKER_FEE, False, False
+    taker, maker = ctx.get("taker", TAKER_FEE), ctx.get("maker", MAKER_FEE)
+    entry, entry_i, fee_in, limit_fill, stop_fill = O[e], e, taker, False, False
     if entry_rule["type"] == "straddle":
         filled = _straddle_fill(rule, ctx, k, e, zone, sides or (1, -1))
         if filled is None:
@@ -690,7 +745,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
             entry_i = None
             for j in range(e, min(n, e + entry_rule["expiry"])):
                 if (L[j] < price) if side > 0 else (H[j] > price):  # Se llena al cruzar, no al tocar
-                    entry, entry_i, fee_in, limit_fill = price, j, MAKER_FEE, True
+                    entry, entry_i, fee_in, limit_fill = price, j, maker, True
                     break
             if entry_i is None:
                 return {"skip": "limit sin llenar"}
@@ -727,7 +782,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
     mfe, mae = 0.0, 0.0
     j = entry_i
     while j < n:
-        if j > entry_i and T[j] - T[j - 1] > max(GAP_MS, 2 * ctx["tf"] * 60000):
+        if j > entry_i and T[j] - T[j - 1] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
             exit_price, exit_t, reason = C[j - 1], T[j - 1] + tf_ms, "hueco de datos"
             break
         low, high = L[j], H[j]
@@ -804,7 +859,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
     # Hasta dónde llegó antes del stop inicial, sin importar la salida elegida
     reach, reach_done = 0.0, False
     for i in range(entry_i + (1 if limit_fill or stop_fill else 0), min(n, entry_i + REACH_BARS)):
-        if i > entry_i and T[i] - T[i - 1] > max(GAP_MS, 2 * ctx["tf"] * 60000):
+        if i > entry_i and T[i] - T[i - 1] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
             reach_done = True
             break
         if (L[i] <= initial_stop) if side > 0 else (H[i] >= initial_stop):
@@ -823,7 +878,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
         trade["open"] = True
         return trade
     gross = (exit_price - entry) * side / risk
-    cost = (fee_in * entry + TAKER_FEE * exit_price) / risk
+    cost = (fee_in * entry + taker * exit_price) / risk
     trade.update(exit_t=exit_t, exit=exit_price, reason=reason, r=round(gross - cost, 4), gross=round(gross, 4),
                  mfe=round(mfe, 3), mae=round(mae, 3), bars=j - entry_i + 1, exit_i=j)
     return trade
@@ -924,8 +979,12 @@ def _breakdowns(trades, rule):
 
 def _context(symbol, tf, bars):
     _, atr, _ = os_._series(bars)
+    stock = is_stock(symbol)
     return {"symbol": symbol, "tf": tf, "T": [b["t"] for b in bars], "O": [b["o"] for b in bars], "H": [b["h"] for b in bars],
-            "L": [b["l"] for b in bars], "C": [b["c"] for b in bars], "V": [b["vol"] for b in bars], "atr": atr, "minutes": fs.minutes}
+            "L": [b["l"] for b in bars], "C": [b["c"] for b in bars], "V": [b["vol"] for b in bars], "atr": atr, "minutes": fs.minutes,
+            # Un salto mayor cierra el trade como hueco de datos; en acciones la noche y el fin de semana no lo son
+            "gap": STOCK_GAP_MS if stock else max(GAP_MS, 2 * tf * 60000),
+            "taker": STOCK_FEE if stock else TAKER_FEE, "maker": STOCK_FEE if stock else MAKER_FEE}
 
 
 LINE_SLOPE_BARS = 5
@@ -1908,12 +1967,14 @@ def start(symbol, raw_rule, phase_number, confirm=False):
     phase = next((p for p in phases(symbol) if p["phase"] == phase_number), None)
     if phase is None or not phase["available"]:
         return {"success": False, "message": "No hay datos de esa fase para este símbolo"}
-    if _on_candles(symbol, rule["tf"]):
+    allowed = codes_for(symbol, rule["tf"])
+    if allowed is not None:
         codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
-        if codes - set(CANDLE_CODES):
-            why = "En 1 día la regla corre sobre velas" if rule["tf"] == DAILY else f"{symbol} no tiene almacén de trades"
-            return {"success": False, "message": f"{why}: aquí solo se pueden usar {_labels(CANDLE_CODES)}. "
-                                                 f"Quita {_labels(sorted(codes - set(CANDLE_CODES)))} de la regla"}
+        if codes - allowed:
+            why = (f"{symbol} es una acción y corre sobre sus velas" if is_stock(symbol)
+                   else "En 1 día la regla corre sobre velas" if rule["tf"] == DAILY else f"{symbol} no tiene almacén de trades")
+            return {"success": False, "message": f"{why}: aquí solo se pueden usar {_labels(sorted(allowed))}. "
+                                                 f"Quita {_labels(sorted(codes - allowed))} de la regla"}
     info = gate(symbol, rule, phase_number)
     if info["blocked"]:
         return {"success": False, "message": info["blocked"], "gate": info}
@@ -1960,8 +2021,8 @@ def _plan(rule, phase_number, group="base"):
             row.update(action="stored", run=same[-1]["id"])  # La corrida es determinista: no se repite
         elif phase is None or not phase["available"]:
             row["reason"] = "sin datos de esa fase"
-        elif _on_candles(symbol, rule["tf"]) and codes - set(CANDLE_CODES):
-            row["reason"] = f"corre sobre velas: no puede usar {_labels(sorted(codes - set(CANDLE_CODES)))}"
+        elif codes_for(symbol, rule["tf"]) is not None and codes - codes_for(symbol, rule["tf"]):
+            row["reason"] = f"corre sobre velas: no puede usar {_labels(sorted(codes - codes_for(symbol, rule['tf'])))}"
         elif info["blocked"]:
             row["reason"] = "falta correr esta regla en la fase 2"
         else:

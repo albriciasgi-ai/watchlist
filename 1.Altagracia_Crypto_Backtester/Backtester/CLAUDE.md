@@ -1124,6 +1124,20 @@ Pedido del usuario: un bot de cripto que vio entraba hacia donde el precio empez
   - Se probaron 11 reglas más sobre los mismos datos: ninguna pasa a la fase 2 solo por esto.
   - Pruebas: `tests/test_trailing_straddle.py` (6).
 
+### Acciones de Alpaca en el probador (20/11)
+
+Pedido del usuario: probar reglas en acciones, con más historia, y cruzar mercados (elegir en uno y comprobar en el otro). Las velas las baja otra sesión ("Acciones de Alpaca en App 1", `alpaca_candles.py`, rama `claude/app1-acciones-alpaca-43f491`) a `OrderFlowData/alpaca/candles/{acción}.json.gz` (`ALPACA_CANDLES` cambia la carpeta): 99 acciones, velas de 15 minutos, 1 hora, 4 horas y 1 día desde 2016 (o desde que salieron a bolsa), solo de la sesión regular, ajustadas por splits. Aquí solo se leen.
+
+- **Grupo "acciones"** (`candle_symbols("stocks")`, `stock_symbols`, `is_stock`). "Todas" sigue siendo todas las monedas: las acciones son otro mercado. Selector "Monedas: las acciones" en "Correr en todas las monedas", el grupo A en el tablero (comprobación en todas sus fases, como las monedas nuevas) y "y en las acciones" en la búsqueda (`checkStocks`: cada finalista se corre también en las acciones, en su fase 1).
+- **Velas con su hora** (`_stock_bars`): las de 1h y 4h empiezan a las 09:30 de Nueva York (la última de 1h dura 30 minutos y la segunda de 4h, 2.5 horas) y el día a la medianoche de Nueva York. Se leen tal como vienen; llevarlas a la hora en punto, como se hace con las monedas, adelantaría lo que se sabe de cada vela.
+- **Noches y fines de semana:** en acciones un salto de hasta 5 días no es un hueco de datos (`STOCK_GAP_MS`, por `ctx["gap"]`). El trade sigue abierto, y una apertura más allá del stop sale en la apertura.
+- **Costos:** 0.02% por lado (`STOCK_FEE`), sin comisión, solo el spread. No cuenta el costo de pedir prestadas acciones para el corto.
+- **Elementos:** solo los de velas, menos el barrido de liquidaciones (`codes_for`). El CVD se estima con cada vela; los filtros de OI y de funding no pasan, porque las acciones no tienen esos datos. `has_store` es falso para las acciones aunque exista su almacén de trades de Alpaca, que es del gráfico de la otra sesión.
+- **Fases** con los mismos cortes: la fase 1 va de 2016 a 2023.
+- **Gráfico de la ventana:** las monedas nuevas y las acciones piden sus velas a `/api/tester/chart-candles/{símbolo}`, que las lee del disco. Antes, una moneda nueva abierta en el gráfico se pedía a `/api/backtesting/bulk-data`, que la bajaba de Bybit y la guardaba en `backtesting_cache`: esa carpeta está en git y decide cuáles son las monedas de siempre. Las monedas nuevas tienen 1H y 4H; las acciones, 15M, 1H y 4H.
+- **Medido:** el Impulso (≥ 2 ATR en 3 velas, stop 1.5 ATR, 3R) en las 99 acciones, fase 1 en 4h: 12,102 trades y +0.004 R por trade, contra −0.027 del azar (ventaja +0.03 ±0.03), positivo en 50 de 99. La regla más constante de cripto no muestra ventaja en acciones. Las 99 corren en 79 s.
+- Pruebas: `tests/test_stocks.py` (4).
+
 ### Multitud, OI sostenido y constancia por trimestre (20/11)
 
 Salió de entender por qué la Ruptura de caja con EMA 200 y CVD cayó en la fase 3 (análisis aparte, sin tocar la app):
