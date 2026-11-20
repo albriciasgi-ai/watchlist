@@ -638,6 +638,8 @@ node tests/liquiditymap.test.mjs
 node tests/sustainedlevels.test.mjs
 node tests/zonedefense.test.mjs
 node tests/ruletester.test.mjs
+node tests/horizontalranges.test.mjs
+node tests/regimedetectors.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -1398,6 +1400,24 @@ regime.py (referencia y velas de la fase 1) + regime_detectors.py (detectores, c
 - **MiniChart:** dos formas nuevas en `getTradeBands`, `strip` (tramo de tiempo) y `outline` (caja solo con contorno). Sin ellas, nada cambia.
 - **Pruebas:** `tests/test_regime.py` (20) y `tests/test_flow_elements.py` (5: FV y SP sin futuro, CVD real y estimado, OI conocido al cierre, identidad de la regla con la ida y vuelta por la ventana, y que el filtro de CVD vale para la regla y los controles). Probado en la copia aislada con BTC 4h: la pestaña, el dibujo y la lista. No se probó en 15m ni en otras monedas en pantalla.
 - **Falta:** valores afinados por marco en la ventana (hoy son los de 4h), y decidir con el usuario si las pausas dentro de una tendencia son rango.
+- **El Range Detection (atr_range) repinta** (hallado el 20/11 al pasarlo a JS): los cierres fuera de la caja que no alcanzan a terminar el rango (hasta `max_out` seguidos) no son rango en ese momento, pero si el precio vuelve, `z.end` los pasa y quedan como rango hacia atrás. En BTC 4h y 15m, cortando cada 7 velas, solo él cambia velas ya cerradas (16 y 32 con los afinados): su J de 0.19 mira un poco el futuro. Los otros siete y el rango mayor no cambian nada ya cerrado. No se corrigió en Python.
+
+## RANGOS HORIZONTALES (20/11/2026)
+
+Pedido del usuario: un indicador con los métodos y parámetros de la pestaña Régimen, para la simulación manual, el backtesting global y la suite, con el método elegido en un modal.
+
+- **Cálculo en el navegador:** `components/indicators/regimeDetectors.js` repite `regime_detectors.py` (los ocho detectores, `major`, `PARAMS` con afinados y de fábrica, `cleanParams` y `runDetector`), con las cuentas en el orden de numpy (sumas de a pares, `std` poblacional, `round` al par). `tests/regimedetectors.test.mjs` lo compara con Python en BTC 4h, 1h y 15m y GALA: 26,960 zonas iguales al bit (35 pruebas, unos 35 s, casi todo Python leyendo los cachés). Con 10,000 velas cada detector tarda menos de 8 ms.
+- **Indicador** "Rangos horizontales" (`HorizontalRangesIndicator.js`): se dibuja sobre las velas (`height = 0`), apagado de fábrica, en el lugar 5 del administrador (debajo de los elementos, perfiles y footprints).
+  - **Sin futuro:** calcula solo con velas cerradas (`priceContext.knownCandles`, o las del gráfico en vivo, sin la vela en formación). Cada caja va tenue y punteada desde su primera vela hasta la vela en que se supo, y marcada desde ahí; una que sigue viva llega hasta la última vela cerrada.
+  - **Ventana:** la vista más 600 velas antes (el arranque más largo es el BBWP de fábrica, 272), con bordes de a 200 velas; solo recalcula si cambia la ventana, cierra una vela o cambian los ajustes. Un cálculo de más de 40 ms se repite a lo sumo cada 400 ms (nunca pasó en las pruebas). No dibuja con más de 3,000 velas a la vista.
+  - **Rango mayor:** como `regime_detectors.view`, con las cajas del método en la vela en que se supo cada una (`partsFromZones`), en naranja con su barra encima de la morada.
+  - `selectableLevels()`: techo, mitad y suelo de cada caja a la vista, para "Incluir en el análisis".
+- **Modal** (`HorizontalRangesSettings.jsx`): el método (los ocho, con su explicación y su J en 4h), sus parámetros con "Afinados (4h)" y "De fábrica", el rango mayor (alto máximo, margen y cierres fuera, 8, 0.5 y 6 de fábrica) y lo que se muestra (cajas, tramo punteado, barra y opacidad). Cada método guarda sus parámetros: al volver a él vuelven los suyos. `cleanHorizontalRangesSettings` (en el indicador) acota los valores. Ajustes por símbolo en `horizontal_ranges_settings_{símbolo}`, para todos los marcos; en `OWN_KEYS`, así el 2.º gráfico y las pestañas 2 a 5 de la suite guardan lo suyo.
+- **Dónde está:** la simulación manual (`BacktestingApp`, con `applyToAllTimeframes`), el 2.º gráfico (`SecondaryChartApp`), el backtesting global (`RuleTesterApp` y `ChartIndicatorSettings`) y el gráfico principal de la suite (`ChartView.jsx`). Los ajustes del backtesting global son los de la simulación manual.
+- **Atr_range repinta** (ver el punto de arriba): en el indicador no mira el futuro, porque recalcula con lo conocido, pero una caja suya puede alargarse hacia atrás al avanzar. El modal lo dice.
+- **Arreglado en el backtesting global (20/11):** cambiar el marco del gráfico antes de que terminara su primera carga dejaba el aviso "Completando las velas de…" del marco anterior y el gráfico tapado para siempre: el pedido viejo ponía su aviso sin estar ya vigente y, al terminar, no lo quitaba. Ahora los avisos solo salen del pedido vigente.
+- **Pruebas:** `tests/horizontalranges.test.mjs` (8): las cajas son las del detector en horas; lo conocido no cambia con velas posteriores (todos menos atr_range, y el rango mayor); la vela en formación no cuenta; el arreglo corrido de la suite da lo mismo; el modal acota; el registro en el administrador. `secondarystorage.test.mjs` suma la clave. Las de paneles, fugas, niveles, estilo, FVG y probador siguen pasando; liquidaciones sigue en 38 de 39, la que ya fallaba (pide Liquidaciones en el primer lugar, donde está el mapa de liquidez).
+- **Probado** en el backtesting global con una copia del frontend y un backend aparte: BTC 4h con la eficiencia con caja (22 cajas, 1.5 ms por cálculo) y con TTM y el rango mayor desde el modal (29 cajas y 14 rangos mayores, guardados), con los colores contados en el lienzo. Las páginas de App 1 y de la suite se arman (`vite build`). **No se probó en pantalla** la simulación manual, el 2.º gráfico ni la suite en vivo.
 
 ## ACCIONES DE ALPACA: ALMACÉN Y VELAS (19/11/2026)
 

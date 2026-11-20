@@ -22,6 +22,7 @@ test('las claves de ajustes son propias; lo que viaja entre pestañas no', () =>
   assert.equal(isOwnKey('orderflow_settings_BTCUSDT'), true);
   assert.equal(isOwnKey('support_resistance_2_config_ETHUSDT'), true);
   assert.equal(isOwnKey('indicator_panels_BTCUSDT'), true);
+  assert.equal(isOwnKey('horizontal_ranges_settings_BTCUSDT'), true, 'el método de los rangos horizontales es de cada gráfico');
   assert.equal(isOwnKey('analysis_levels_v2_BTCUSDT'), false, 'lo elegido para el análisis llega a la orden de la principal');
   assert.equal(isOwnKey('liquidation_pins_BTCUSDT'), false);
   assert.equal(isOwnKey('of_setups_BTCUSDT'), false, 'las recetas son una sola biblioteca');

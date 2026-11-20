@@ -36,7 +36,7 @@ const VIEW_KEY = 'tester_view_v1';
 const PAGE = 300;
 const INDICATORS = [
   'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Rejection Patterns', 'Support & Resistance',
+  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Rangos horizontales', 'Rejection Patterns', 'Support & Resistance',
   'S&R v2', 'Swing Detector'
 ];
 const DEFAULT_ON = new Set(['Volume Delta', 'Order Flow', 'Elementos OF']);
@@ -272,9 +272,11 @@ const RuleTesterApp = () => {
     if (external === null) return undefined;
     (async () => {
       let data = marketRef.current;
+      // Los avisos solo si este pedido sigue siendo el del marco a la vista: uno de un marco que se dejó, al terminar,
+      // ya no los quita, y su "Completando…" tapaba el gráfico del marco nuevo
       if (external) {
         if (has(data)) return;
-        setStatus(`Cargando las velas de ${chartTf} de ${symbol}…`);
+        if (active) setStatus(`Cargando las velas de ${chartTf} de ${symbol}…`);
         try {
           const found = await api(`/api/tester/chart-candles/${symbol}?tf=${TF_MINUTES[chartTf]}`);
           if (!found.success) throw new Error(found.message || 'sin velas');
@@ -291,11 +293,11 @@ const RuleTesterApp = () => {
         return;
       }
       if (has(data) && (TF_MINUTES[chartTf] < 5 || data.timeframes[chartTf].extended)) return;
-      setStatus(`Cargando las velas de ${symbol}…`);
+      if (active) setStatus(`Cargando las velas de ${symbol}…`);
       if (!data) data = await cachedMarketData(symbol);
       if (!has(data)) {
         try {
-          setStatus(`Pidiendo las velas de ${chartTf} de ${symbol} al backend…`);
+          if (active) setStatus(`Pidiendo las velas de ${chartTf} de ${symbol} al backend…`);
           const response = await fetch(`${API_BASE_URL}/api/backtesting/bulk-data/${symbol}?timeframe=${chartTf}`);
           const part = withoutSubdivisions(await response.json());
           if (!has(part)) throw new Error('el backend no devolvió velas de ese marco');
@@ -312,7 +314,7 @@ const RuleTesterApp = () => {
       if (minutes >= 5 && !data.timeframes[chartTf].extended) {
         try {
           const main = data.timeframes[chartTf].main;
-          setStatus(`Completando las velas de ${chartTf} anteriores al ${new Date(main[0].timestamp).toISOString().slice(0, 10)} (la primera vez tarda)…`);
+          if (active) setStatus(`Completando las velas de ${chartTf} anteriores al ${new Date(main[0].timestamp).toISOString().slice(0, 10)} (la primera vez tarda)…`);
           // Un solo pedido por marco, aunque el efecto corra dos veces: los dos esperan la misma respuesta
           if (!extendedRef.current.has(chartTf)) {
             extendedRef.current.set(chartTf, api(`/api/tester/candles/${symbol}?tf=${minutes}&before=${main[0].timestamp}`).then(early => (

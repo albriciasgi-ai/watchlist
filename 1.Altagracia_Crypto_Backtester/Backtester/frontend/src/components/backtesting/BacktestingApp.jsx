@@ -21,6 +21,7 @@ import SwingDetectorSettings from '../SwingDetectorSettings';
 import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
 import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
+import HorizontalRangesSettings from '../HorizontalRangesSettings';
 import LiquidationsSettings from '../LiquidationsSettings';
 import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
 import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
@@ -95,6 +96,7 @@ const BacktestingApp = () => {
       "OI-Volume Confluence": true, // 🎯 Confluencia OI-Volumen (muestra cuando movimientos son fuertes/débiles)
       "Order Flow": false, // 🎯 Order Flow con Footprints (overlays + sidebar)
       "FVG": false, // Fair value gaps abiertos
+      "Rangos horizontales": false, // Cajas de rango con los detectores de la pestaña Régimen
       "VP Periodic": false, // Un perfil por sesión
       "Volumen de Respuesta": false, // Velas principales de la tendencia contra las de la retracción
       "Liquidaciones": false, // Zonas donde se liquidó mucho dinero, cerca del precio
@@ -200,6 +202,7 @@ const BacktestingApp = () => {
   const [showOIVolumeConfluenceSettings, setShowOIVolumeConfluenceSettings] = useState(false);
   const [showOrderFlowSettings, setShowOrderFlowSettings] = useState(false);
   const [showFVGSettings, setShowFVGSettings] = useState(false);
+  const [showHorizontalRangesSettings, setShowHorizontalRangesSettings] = useState(false);
   const [showVPPeriodicSettings, setShowVPPeriodicSettings] = useState(false);
   const [showResponseVolumeSettings, setShowResponseVolumeSettings] = useState(false);
   const [showLiquidationsSettings, setShowLiquidationsSettings] = useState(false);
@@ -1978,6 +1981,7 @@ const BacktestingApp = () => {
     setShowOIVolumeConfluenceSettings(false);
     setShowOrderFlowSettings(false);
     setShowFVGSettings(false);
+    setShowHorizontalRangesSettings(false);
     setShowVPPeriodicSettings(false);
     setShowResponseVolumeSettings(false);
     setShowLiquidationsSettings(false);
@@ -2814,6 +2818,7 @@ const BacktestingApp = () => {
                     'OI-Volume Confluence': () => setShowOIVolumeConfluenceSettings(true),
                     'Order Flow': () => setShowOrderFlowSettings(true),
                     'FVG': () => setShowFVGSettings(true),
+                    'Rangos horizontales': () => setShowHorizontalRangesSettings(true),
                     'VP Periodic': () => setShowVPPeriodicSettings(true),
                     'Volumen de Respuesta': () => setShowResponseVolumeSettings(true),
                     'Liquidaciones': () => setShowLiquidationsSettings(true),
@@ -3501,6 +3506,15 @@ const BacktestingApp = () => {
           indicator={indicatorManagerRef.current.getFVGIndicator()}
           onApply={(settings) => applyToAllTimeframes(manager => manager.getFVGIndicator().updateConfig(settings))}
           onClose={() => setShowFVGSettings(false)}
+        />
+      )}
+
+      {showHorizontalRangesSettings && indicatorManagerRef.current && (
+        <HorizontalRangesSettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getHorizontalRangesIndicator()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getHorizontalRangesIndicator().updateConfig(settings))}
+          onClose={() => setShowHorizontalRangesSettings(false)}
         />
       )}
 
