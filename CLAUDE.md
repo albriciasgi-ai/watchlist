@@ -54,6 +54,40 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 19 y 20 Noviembre 2026: Acciones de Alpaca (Almacén de Order Flow y Velas Históricas)
+
+**Pedido:** llevar las acciones de EE. UU. de Alpaca a App 1, con footprints y Elementos OF de unos días recientes y, para el probador, velas históricas profundas de unas 100 acciones, sin la granularidad de los footprints.
+
+**Cambios:**
+1. **Almacén de order flow** (`alpaca_store.py`): los trades del conector de la suite (`alpaca_data.py`, importado sin copiarlo; SIP con el lado del agresor por la regla del tick), solo de la sesión regular, armados en el formato de App 1. Hay minuto × precio en `OrderFlowData/alpaca/store`, y delta dentro del minuto y órdenes en `OrderFlowData/alpaca/flow`. La celda es de 0.01 USD. Una orden son los trades del mismo lado separados por 1 ms o menos. Nunca escribe en el almacén de las monedas.
+2. **Lectores:** `footprint_store.py` (`is_stock`, `store_root`) y `of_elements.py` (`_flow_path`) leen esas carpetas para un símbolo sin USDT con carpeta de acciones. Las monedas no cambian.
+3. **Velas históricas** (`alpaca_candles.py`): 99 acciones en 4 grupos:
+   - índices: 6, con TQQQ y SOXL apalancados;
+   - tecnológicas: 38;
+   - consumo y otros: 30;
+   - volátiles: 25.
+
+   Son velas de 15 minutos de la sesión regular desde 2016 (o desde su salida a bolsa), más las de 1 hora y 4 horas, que empiezan a las 09:30 de Nueva York, y el día. Están ajustadas por splits y usan el calendario de Alpaca, con los cierres tempranos y los feriados. Se guardan en `OrderFlowData/alpaca/candles`: 206 MB. El probador las lee desde la entrada 37 del Probador de Reglas.
+4. **Pruebas:** `test_alpaca_store.py` (9) y `test_alpaca_candles.py` (6).
+
+**IMPORTANTE:**
+- **Cómo correrlo:** las claves de Alpaca están en `12.AltagraciaTradingSuite/config/suite.json`. Desde otra copia, pasar su ruta con `SUITE_CONFIG`.
+  - Almacén: `python -B alpaca_store.py AAPL,SPY,NVDA 2026-10-07 2026-11-18`. Hoy tiene AAPL, SPY y NVDA, 31 días cada una.
+  - Velas: `python -B alpaca_candles.py [ACCIONES] [--rebuild]`. Sin acciones, actualiza todas en unos 2 minutos; bajarlas todas desde cero tarda unos 68 minutos.
+  - Al actualizar se repiten los últimos 7 días, y si cambiaron por un split nuevo, la acción se baja entera otra vez.
+- **El plan gratis de Alpaca** da los datos con 15 minutos de atraso: no se pide lo de hoy.
+- **Huecos conocidos:**
+  - SMCI no tiene 349 días (de 2018-08 a 2020-01, cuando estuvo fuera del Nasdaq);
+  - ROKU termina el 2026-11-06, porque Alpaca la da como inactiva;
+  - NIO, DKNG y RIOT empiezan en la fecha en que el ticker pasó a ser de esa empresa (`START`).
+- **GE quedó fuera:** sus spin-offs dejan caídas que el ajuste por splits no corrige.
+- **El gráfico de la simulación manual no abre acciones:** pide sus velas a Bybit.
+- **Probado** con datos reales de Alpaca: almacén de 3 acciones y velas de las 99, revisadas acción por acción (inicio, días que faltan y saltos grandes). No se probó en pantalla.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ACCIONES DE ALPACA: ALMACÉN Y VELAS (19/11/2026)"
+
+---
+
 ### App 1 - 17 Noviembre 2026: Probador de Reglas del Observador
 
 **Pedido:** la parte que sigue del Observador: probar sobre el histórico por fases, para que lo decidido en la primera parte se compruebe con datos frescos en la segunda y la tercera. Elegir elementos de order flow (varios a la vez), con stop y objetivo (o sin objetivo, para ver hasta dónde llega), ver todo en pantalla sin reproducción, contabilizar cada trade con un informe y guardar lo que había en cada trade aunque no esté en la regla. Marcos de 15 y 5 minutos, con 30 minutos, 1 hora y 4 horas habilitados, en ventana aparte.

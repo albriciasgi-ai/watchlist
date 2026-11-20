@@ -1397,6 +1397,62 @@ regime.py (referencia y velas de la fase 1) + regime_detectors.py (detectores, c
 - **Pruebas:** `tests/test_regime.py` (20) y `tests/test_flow_elements.py` (5: FV y SP sin futuro, CVD real y estimado, OI conocido al cierre, identidad de la regla con la ida y vuelta por la ventana, y que el filtro de CVD vale para la regla y los controles). Probado en la copia aislada con BTC 4h: la pestaña, el dibujo y la lista. No se probó en 15m ni en otras monedas en pantalla.
 - **Falta:** valores afinados por marco en la ventana (hoy son los de 4h), y decidir con el usuario si las pausas dentro de una tendencia son rango.
 
+## ACCIONES DE ALPACA: ALMACÉN Y VELAS (19/11/2026)
+
+Pedido del usuario: acciones de la NYSE y el NASDAQ en App 1. Primero con footprints y Elementos OF de unos días recientes; después, velas profundas para el probador.
+
+### Almacén de order flow (`alpaca_store.py`)
+
+```
+12.AltagraciaTradingSuite/server/alpaca_data.py (conector, importado sin copiar)
+        │  trades SIP con el lado del agresor (regla del tick; Lee-Ready opcional)
+        ▼
+OrderFlowData/alpaca/trades/<SIM>/<día>_<método>.npz     crudos del día
+        │  alpaca_store.py: solo 09:30-16:00 de Nueva York
+        ▼
+OrderFlowData/alpaca/store/<SIM>/<AAAA>/<SIM>_<día>.npz  minuto × precio, como tools/build_store.py
+OrderFlowData/alpaca/flow/<SIM>/<AAAA>/<SIM>_<día>.npz   delta dentro del minuto y órdenes, como build_flow.py
+```
+
+- **Formato:**
+  - precio con 4 decimales (escala 10,000), porque hay trades a fracciones de centavo;
+  - celda de 0.01 USD;
+  - cantidad con 2 decimales, porque hay fracciones de acción;
+  - un trade sin lado (el primero del día con la regla del tick) va mitad y mitad.
+- **Órdenes:** en acciones, un barrido toca varios mercados con horas distintas, de microsegundos. Por eso una orden son los trades seguidos del mismo lado separados por 1 ms o menos (`ORDER_GAP_US`). Se guardan las que cruzan 3 precios con 100,000 USD o más, y las de 500,000 USD o más.
+- **Lectores:** `footprint_store.is_stock(símbolo)` es verdadero para un símbolo sin USDT con carpeta en `alpaca/store`, y `store_root()` elige la carpeta. `of_elements._flow_path()` hace lo mismo con el flujo. `ALPACA_STORE` y `ALPACA_FLOW` cambian las carpetas. Para las monedas nada cambia.
+- **Uso:** `python -B alpaca_store.py AAPL,SPY,NVDA 2026-10-07 2026-11-18 [tick|lee_ready] [--rebuild]`. Las claves están en el `config/suite.json` de la suite; desde otra copia, se pasa su ruta con `SUITE_CONFIG`. Hoy tiene AAPL, SPY y NVDA, 31 días cada una.
+- **Límite:** las velas de 1h y 4h de los footprints se cuentan desde la hora en punto UTC, así que la primera de 1h del día dura 30 minutos.
+
+### Velas históricas (`alpaca_candles.py`)
+
+- **Qué guarda:** `OrderFlowData/alpaca/candles/<SIM>.json.gz` (`ALPACA_CANDLES` cambia la carpeta), con las claves `"15"`, `"60"`, `"240"` y `"1440"`. Cada fila es `[ms, o, h, l, c, v, trades, vwap]`; las 6 primeras siguen el formato de `candles_update.py`. Son 99 acciones (`GROUPS`: índices, tech, consumo y volátiles) y 206 MB.
+- **Sesión regular:**
+  - la base son velas de 15 minutos;
+  - 1h y 4h salen de unirlas desde las 09:30 de Nueva York (`alpaca_data.candle_keys(t, tf, "rth")`): la última de 1h dura 30 minutos y la segunda de 4h, 2.5 horas;
+  - el día empieza a la medianoche de Nueva York;
+  - solo cuentan velas cerradas.
+- **Calendario de Alpaca** (`/v2/calendar`): deja los cierres tempranos (09:30 a 13:00) y quita los feriados. Sin calendario, en los cierres tempranos se colaba el horario extendido.
+- **Días casi vacíos:** un día con menos de la mitad de sus velas (`MIN_DAY_SHARE`) se quita y queda como hueco, porque algunas acciones de la NYSE traían días con una sola vela.
+- **Ajuste por splits** (`adjustment=split`): al actualizar se piden otra vez los últimos 7 días (`OVERLAP_DAYS`), y si sus precios cambiaron (un split nuevo), la acción se baja entera.
+- **Tickers que fueron de otra empresa:** Alpaca pasa la historia al nombre nuevo (`asof`). `START` fija desde cuándo cuenta cada uno: NIO desde 2018-09-12, DKNG desde 2020-04-24 y RIOT desde 2017-10-04. XYZ trae la historia de SQ, que es la misma empresa.
+- **Uso:** `python -B alpaca_candles.py [ACCIONES] [--rebuild]`. Sin acciones, actualiza todas. Bajar las 99 tarda unos 68 minutos (190 pedidos por minuto); actualizar, unos 2. El plan gratis da el SIP con 15 minutos de atraso, así que la descarga termina el día anterior.
+- **Revisadas:** 83 empiezan en 2016 y el resto en su salida a bolsa o en `START`.
+  - SMCI no tiene 349 días (de 2018-08 a 2020-01, cuando estuvo fuera del Nasdaq).
+  - ROKU termina el 2026-11-06, porque Alpaca la da como inactiva.
+  - GE quedó fuera: sus spin-offs (2023-01-04 y 2024-04-02) dejan caídas que el ajuste por splits no corrige.
+- **Probador:** las lee "Acciones de Alpaca en el probador (20/11)", en la sección del probador.
+
+### Pruebas
+
+`tests/test_alpaca_store.py` (9) y `tests/test_alpaca_candles.py` (6), sin conexión:
+- sesión regular en invierno y en verano;
+- marcos mayores desde la apertura de Nueva York;
+- actualización que suma lo nuevo y rehace la acción tras un split;
+- cierre temprano y feriado;
+- días casi vacíos;
+- `START`.
+
 ## ESTADO PARA EL ENTRENADOR (17/11/2026)
 
 Pedido del usuario: entrenar con el skill `/entrenar` y que Claude vea lo que tiene en App 1, no solo una captura. Claude lo lee con el navegador integrado de la app de Claude o con la extensión Claude in Chrome, ejecutando JavaScript en la pestaña de App 1.
