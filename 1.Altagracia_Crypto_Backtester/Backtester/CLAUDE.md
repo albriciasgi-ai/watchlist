@@ -1273,6 +1273,7 @@ OrderFlowData/observer/tester/search/{id}.json   (RULE_SEARCH_DIR cambia la carp
 - **Costo:** sin tokens, todo en el backend. En 4h, una regla en las siete monedas tarda 2 a 4 s (la mitad son los controles); la primera vez, 23 s más por las zonas de liquidaciones que usa VH. 60 × 25 son una a dos horas, en el mismo proceso del backend: las demás rutas siguen respondiendo, más lentas.
 - **Pruebas:** `tests/test_rule_search.py` (6): genomas válidos, genes inactivos, aptitud, que la validación no cambia el tramo de búsqueda (cortar las velas en la fecha deja lo mismo), una búsqueda completa con su archivo, y la ida y vuelta por la ventana.
 - **Probado** en la copia aislada (backend 9300, Vite 9301) con una búsqueda de 10 × 2 en 4h: 87 reglas, ninguna candidata; la pestaña, el avance, el resultado y "Cargar en la pestaña Regla". No se probó en 1h ni en 1D, ni una búsqueda larga.
+- **Búsquedas anteriores arriba (20/11, pedido del usuario):** la lista estaba al final del panel, bajo el informe de la búsqueda abierta, y no la encontraba. Ahora va al principio de la pestaña, antes de "Búsqueda nueva". "Ver" abre la búsqueda y lleva el panel a su informe (`scrollIntoView`), y la fila de la búsqueda abierta dice "Abierta". Una búsqueda copiada a `tester/search` aparece en la lista sin reiniciar nada: `history()` lee la carpeta en cada pedido. Probado con una copia del frontend en el 9002 y el backend del usuario.
 
 ### Noche de búsquedas y fase 2 (20/11)
 

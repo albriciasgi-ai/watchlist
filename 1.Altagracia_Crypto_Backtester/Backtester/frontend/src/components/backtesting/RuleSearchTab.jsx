@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { API_BASE_URL } from '../../config.js';
 import { THEME, isNewTheme } from '../uiTheme.js';
 import { TF_LABEL, describeRule, fmtR } from './ruleTester.js';
@@ -98,6 +98,19 @@ export default function RuleSearchTab({ onLoadRule }) {
   }, [data?.state, data?.id, refresh]);
   useEffect(() => { if (data && data.state !== 'running') loadList(); }, [data?.state, loadList]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // "Ver" en la lista de arriba abre la búsqueda y lleva el panel a su informe, que queda debajo del formulario
+  const shownRef = useRef(null);
+  const scrollToShown = useRef(false);
+  useEffect(() => {
+    if (!scrollToShown.current || !data || data.id !== current) return;
+    scrollToShown.current = false;
+    shownRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }, [data, current]);
+  const view = (id) => {
+    scrollToShown.current = true;
+    setCurrent(id);
+  };
+
   const start = async (resume) => {
     setBusy(true);
     setMessage('');
@@ -138,6 +151,28 @@ export default function RuleSearchTab({ onLoadRule }) {
         en dos: elige con lo anterior a la fecha de corte y guarda lo posterior como <b>validación</b>, que no decide nada y solo se muestra al
         terminar. Corre en el backend, sin gastar tokens. Las fases 2 y 3 no se tocan.
       </div>
+
+      {list.length > 0 && (
+        <div className="rt-group">
+          <h4>Búsquedas anteriores</h4>
+          <table className="rt-table">
+            <thead><tr><th style={{ textAlign: 'left' }}>Búsqueda</th><th>Estado</th><th>Candidatas</th><th></th></tr></thead>
+            <tbody>
+              {list.map(s => (
+                <tr key={s.id}>
+                  <td style={{ whiteSpace: 'normal', textAlign: 'left' }}>{date(s.startedAt)}<br /><span className="rt-note">{s.config.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {elementLabels(s.config.codes, ', ')} · {s.tested} reglas</span></td>
+                  <td>{STATE[s.state] || s.state}</td><td>{s.state === 'done' ? s.candidates : '—'}</td>
+                  <td>
+                    <button type="button" className="rt-btn" disabled={s.id === data?.id} onClick={() => view(s.id)}>
+                      {s.id === data?.id ? 'Abierta' : 'Ver'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {!running && (
         <div className="rt-group">
@@ -211,7 +246,7 @@ export default function RuleSearchTab({ onLoadRule }) {
       {message && <div className="rt-warn">{message}</div>}
 
       {data && (
-        <div className="rt-group">
+        <div className="rt-group" ref={shownRef}>
           <h4>Búsqueda {data.id} · {STATE[data.state] || data.state}</h4>
           <div className="rt-note">
             {cfg.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {elementLabels(cfg.codes, ', ')} · hasta {cfg.maxElements} elementos · población {cfg.population} ·
@@ -319,24 +354,6 @@ export default function RuleSearchTab({ onLoadRule }) {
                   <td><R value={b.fitness} /></td><td>{b.train.n}</td><td><R value={b.train.edge} /></td>
                   {report && <td><R value={b.hold?.edge} /> ({b.hold?.n ?? 0})</td>}
                   <td><button type="button" className="rt-btn" onClick={() => onLoadRule(b.rule)} title="Cargar en la pestaña Regla">Regla</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {list.length > 0 && (
-        <div className="rt-group">
-          <h4>Búsquedas anteriores</h4>
-          <table className="rt-table">
-            <thead><tr><th style={{ textAlign: 'left' }}>Búsqueda</th><th>Estado</th><th>Candidatas</th><th></th></tr></thead>
-            <tbody>
-              {list.map(s => (
-                <tr key={s.id}>
-                  <td style={{ whiteSpace: 'normal', textAlign: 'left' }}>{date(s.startedAt)}<br /><span className="rt-note">{s.config.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {elementLabels(s.config.codes, ', ')} · {s.tested} reglas</span></td>
-                  <td>{STATE[s.state] || s.state}</td><td>{s.state === 'done' ? s.candidates : '—'}</td>
-                  <td><button type="button" className="rt-btn" onClick={() => setCurrent(s.id)}>Ver</button></td>
                 </tr>
               ))}
             </tbody>
