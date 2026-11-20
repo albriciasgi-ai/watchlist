@@ -1,7 +1,10 @@
 import IndicatorBase from './IndicatorBase.js';
 import { candleItemId } from './analysisLevels.js';
 import { THEME, isNewTheme } from '../uiTheme.js';
+import { alignY, crispWidth } from '../chartPixels.js';
+import { priceText } from '../backtesting/blindClock.js';
 import { PARAMS, runDetector, major, partsFromZones } from './regimeDetectors.js';
+import { RangeProfiles } from './rangeProfiles.js';
 
 /**
  * Rangos horizontales: los detectores de horizontalidad de la pestaña Régimen del backtesting global (19/11/2026),
@@ -17,6 +20,10 @@ import { PARAMS, runDetector, major, partsFromZones } from './regimeDetectors.js
  * detectores arranquen), con bordes en múltiplos de BLOCK velas, y la rehace solo si cambia la ventana, cierra una
  * vela nueva o cambian los ajustes. Un método lento (el VP progresivo) se repite a lo sumo cada THROTTLE_MS: mientras,
  * se dibuja el último cálculo, que solo usa velas ya cerradas.
+ *
+ * Perfil de volumen (20/11/2026, pedido del usuario): con la opción del modal, cada rango lleva el perfil de sus
+ * velas cerradas, desde su primera vela hasta la última, sobre las cajas o sobre el rango mayor (rangeProfiles.js).
+ * El de un rango vivo crece con cada vela que cierra. Volumen real del almacén si cubre el rango; si no, estimado.
  */
 
 const SETTINGS_KEY = 'horizontal_ranges_settings_';
@@ -29,6 +36,12 @@ const THROTTLE_MS = 400;
 const PURPLE = '123, 31, 162';    // Los colores de la pestaña Régimen
 const ORANGE = '239, 108, 0';
 const BAR = 6;
+// Perfil en el estilo Clásico: los colores de fábrica del VP de rango fijo. Con los estilos nuevos, los de THEME
+const CLASSIC_VA = '255, 152, 0';
+const CLASSIC_OUT = '33, 150, 243';
+const CLASSIC_POC = '#F44336';
+const CLASSIC_VA_LINE = 'rgba(33, 150, 243, 0.7)';
+const LABEL_MIN_PX = 90;          // La etiqueta del POC solo en un rango con este ancho en pantalla o más
 
 export function loadHorizontalRangesSettings(symbol) {
   try {
@@ -62,7 +75,15 @@ export function defaultHorizontalRangesConfig() {
     showBoxes: true,        // Cajas del método (si se arma el rango mayor, se pueden ocultar y dejar solo ese)
     showBefore: true,       // Tramo tenue y punteado antes de saberse
     showBar: true,          // Barra bajo las velas mientras dura el rango
-    opacity: 0.08
+    opacity: 0.08,
+    profile: false,         // Perfil de volumen de cada rango
+    profileOn: 'major',     // Con el rango mayor armado: sobre él ('major') o sobre las cajas ('boxes'). Sin él, sobre las cajas
+    profileRows: 50,        // Franjas de precio
+    profileVa: 70,          // Área de valor (%)
+    profileWidth: 30,       // La barra más larga, en % del ancho del rango
+    profilePoc: true,       // Línea del POC
+    profileVaLines: true,   // Líneas del VAH y el VAL
+    profileLabel: true      // Precio del POC (y "real") en los rangos anchos
   };
 }
 
@@ -113,8 +134,23 @@ export function cleanHorizontalRangesSettings(values) {
     showBoxes: !!values.showBoxes,
     showBefore: !!values.showBefore,
     showBar: !!values.showBar,
-    opacity: num(values.opacity, defaults.opacity, [0.02, 0.6])
+    opacity: num(values.opacity, defaults.opacity, [0.02, 0.6]),
+    profile: !!values.profile,
+    profileOn: values.profileOn === 'boxes' ? 'boxes' : 'major',
+    profileRows: num(values.profileRows, defaults.profileRows, [10, 400, true]),
+    profileVa: num(values.profileVa, defaults.profileVa, [20, 100, true]),
+    profileWidth: num(values.profileWidth, defaults.profileWidth, [5, 100, true]),
+    profilePoc: !!values.profilePoc,
+    profileVaLines: !!values.profileVaLines,
+    profileLabel: !!values.profileLabel
   };
+}
+
+/** Rangos que llevan perfil: el rango mayor si está armado y se eligió, si no las cajas, solo si se dibujan */
+export function profileTargets(config, zones, majors) {
+  if (!config.profile) return [];
+  if (config.major && config.profileOn !== 'boxes') return majors.map(zone => ({ zone, isMajor: true }));
+  return config.showBoxes ? zones.map(zone => ({ zone, isMajor: false })) : [];
 }
 
 /** Minutos de una vela a partir del marco del gráfico ("15m", "1h", "4h", "1D", "15", "240", "D"…) */
@@ -152,7 +188,7 @@ const now = () => (typeof performance !== 'undefined' ? performance.now() : Date
 /**
  * Zonas de un método y del rango mayor sobre velas cerradas, en horas (ms):
  * start (apertura de su primera vela), known (cierre de la vela en que se supo), end (cierre de su última vela),
- * low, high y live (sigue viva en la última vela).
+ * lastOpen (apertura de su última vela), low, high y live (sigue viva en la última vela).
  */
 export function computeRanges(candles, config, tfMinutes) {
   const n = candles.length;
@@ -172,7 +208,7 @@ export function computeRanges(candles, config, tfMinutes) {
   const params = { ...PARAMS[method].params, ...(config.params?.[method] || {}) };
   const out = runDetector(method, bars, tfMinutes || Math.round(step / 60000), params);
   const toTimes = (z) => ({
-    start: bars.t[z.start], known: bars.t[z.detected] + step, end: bars.t[z.end] + step,
+    start: bars.t[z.start], known: bars.t[z.detected] + step, end: bars.t[z.end] + step, lastOpen: bars.t[z.end],
     low: z.low, high: z.high, live: z.end === n - 1, ...(z.shape ? { shape: z.shape, d: z.d } : {})
   });
   const zones = out.zones.map(toTimes);
@@ -204,6 +240,8 @@ class HorizontalRangesIndicator extends IndicatorBase {
     this.lastRun = 0;
     this.lastCost = 0;
     this.shown = [];
+    this.shownProfiles = [];
+    this.rangeProfiles = new RangeProfiles(symbol);
   }
 
   async fetchData() {
@@ -211,6 +249,11 @@ class HorizontalRangesIndicator extends IndicatorBase {
   }
 
   render() {}
+
+  /** Detiene los pedidos del volumen real (IndicatorManager.destroy al cambiar de moneda o cerrar) */
+  dispose() {
+    this.rangeProfiles.dispose();
+  }
 
   updateConfig(config) {
     const params = { ...this.config.params, ...(config.params || {}) };
@@ -241,19 +284,111 @@ class HorizontalRangesIndicator extends IndicatorBase {
     return this.result;
   }
 
-  /** Techo, mitad y suelo de cada caja a la vista, para elegirlos como niveles */
+  /**
+   * Techo, mitad y suelo de cada caja a la vista, y el POC, el VAH y el VAL de cada perfil, para elegirlos como
+   * niveles. Los del perfil se saben al cierre de la última vela del rango; en un rango vivo cambian con cada vela,
+   * por eso su id lleva el precio
+   */
   selectableLevels() {
-    return this.shown.flatMap(zone => {
+    const boxes = this.shown.flatMap(zone => {
       const what = zone.isMajor ? 'Rango mayor' : `Rango (${PARAMS[this.config.method]?.label || this.config.method})`;
       return [['techo', zone.high], ['mitad', (zone.high + zone.low) / 2], ['suelo', zone.low]].map(([edge, price]) => {
         const kind = `${what}, ${edge}`;
         return { id: candleItemId('Rangos horizontales', kind, zone.start), source: 'Rangos horizontales', kind, price, start: zone.start, time: zone.known };
       });
     });
+    const profiles = this.shownProfiles.flatMap(({ zone, profile, isMajor }) => {
+      const what = isMajor ? 'Perfil del rango mayor' : 'Perfil del rango';
+      return [['POC', profile.poc.price], ['VAH', profile.valueArea.vahPrice], ['VAL', profile.valueArea.valPrice]].map(([edge, price]) => {
+        const kind = `${what}, ${edge}${profile.isReal ? ' (real)' : ''}`;
+        return {
+          id: candleItemId('Rangos horizontales', kind, zone.start, price), source: 'Rangos horizontales', kind, price,
+          start: zone.start, end: zone.end, time: zone.end
+        };
+      });
+    });
+    return [...boxes, ...profiles];
+  }
+
+  /**
+   * Perfil de un rango, dibujado desde su primera vela hacia la derecha: barras por franja de precio (área de valor en
+   * su color), y las líneas del POC, el VAH y el VAL hasta su última vela
+   */
+  _drawProfile(ctx, zone, isMajor, candles, priceContext, area) {
+    const { left, right, top, bottom, xOpen, xClose } = area;
+    const x0 = xOpen(zone.start);
+    const x1 = xClose(zone.end);
+    if (!Number.isFinite(x0) || !Number.isFinite(x1) || x1 < left || x0 > right) return;
+    const a = Math.max(left, x0);
+    const b = Math.min(right, x1);
+    if (b - a < 3) return;
+    const { profileRows, profileVa, profileWidth, profilePoc, profileVaLines, profileLabel } = this.config;
+    const profile = this.rangeProfiles.get(zone, candles, {
+      rows: profileRows, valueAreaShare: profileVa / 100, group: `${isMajor ? 'M' : 'C'}${zone.start}`,
+      requestRedraw: priceContext.requestRedraw
+    });
+    if (!profile || !(profile.maxVolume > 0)) return;
+    this.shownProfiles.push({ zone, profile, isMajor });
+
+    const nitido = isNewTheme();
+    const vaRgb = nitido ? THEME.vpValueAreaRgb : CLASSIC_VA;
+    const outRgb = nitido ? THEME.vpOutsideRgb : CLASSIC_OUT;
+    const longest = (b - a) * (profileWidth / 100);
+    ctx.save();
+    for (const level of profile.levels) {
+      if (!(level.volume > 0)) continue;
+      const yHigh = priceContext.priceToY(level.levelHigh);
+      const yLow = priceContext.priceToY(level.levelLow);
+      if (!Number.isFinite(yHigh) || !Number.isFinite(yLow) || yLow < top || yHigh > bottom) continue;
+      const share = level.volume / profile.maxVolume;
+      const tall = yLow - yHigh;
+      ctx.fillStyle = `rgba(${level.isValueArea ? vaRgb : outRgb}, ${nitido ? 0.22 + share * 0.4 : 0.2 + share * 0.6})`;
+      ctx.fillRect(a, yHigh, Math.max(1, longest * share), Math.max(1, tall > 3 ? tall - 1 : tall));
+    }
+
+    const line = (price, color, width, dash) => {
+      const y = priceContext.priceToY(price);
+      if (!Number.isFinite(y) || y < top || y > bottom) return null;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = crispWidth(width);
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      ctx.moveTo(a, alignY(y, width));
+      ctx.lineTo(b, alignY(y, width));
+      ctx.stroke();
+      ctx.setLineDash([]);
+      return y;
+    };
+    if (profileVaLines) {
+      const color = nitido ? THEME.vpVahVal : CLASSIC_VA_LINE;
+      line(profile.valueArea.vahPrice, color, 1, [3, 3]);
+      line(profile.valueArea.valPrice, color, 1, [3, 3]);
+    }
+    const pocY = profilePoc ? line(profile.poc.price, nitido ? THEME.vpPoc : CLASSIC_POC, nitido ? 1 : 1.5, nitido ? [] : [4, 3]) : null;
+
+    if (profileLabel && b - a >= LABEL_MIN_PX) {
+      const y = pocY ?? priceContext.priceToY(profile.poc.price);
+      if (Number.isFinite(y) && y - 13 >= top && y <= bottom) {
+        const text = `POC ${priceText(profile.poc.price, profile.digits ?? 2)}${profile.isReal ? ' · real' : ''}`;
+        ctx.font = nitido ? `10px ${THEME.font}` : '10px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        const width = ctx.measureText(text).width;
+        const x = Math.max(a + 2, b - 4 - width);
+        if (nitido) {
+          ctx.fillStyle = THEME.labelBg;
+          ctx.fillRect(x - 2, y - 13, width + 4, 12);
+        }
+        ctx.fillStyle = nitido ? THEME.textMuted : '#444';
+        ctx.fillText(text, x, y - 3);
+      }
+    }
+    ctx.restore();
   }
 
   renderOverlay(ctx, bounds, visibleCandles, allCandles, priceContext) {
     this.shown = [];
+    this.shownProfiles = [];
     if (!this.enabled || !priceContext || !visibleCandles?.length) return;
     if (visibleCandles.length > MAX_VISIBLE_CANDLES) return;
     const candles = priceContext.knownCandles || allCandles;
@@ -308,6 +443,12 @@ class HorizontalRangesIndicator extends IndicatorBase {
     const purple = isNewTheme() && THEME.vpClusterRgb ? THEME.vpClusterRgb : PURPLE;
     if (showBoxes) for (const zone of zones) draw(zone, purple, bottom - BAR, false);
     for (const zone of majors) draw(zone, ORANGE, bottom - BAR * (showBoxes && showBar ? 2 : 1) - (showBoxes && showBar ? 1 : 0), true);
+
+    // El perfil va encima de las cajas. Las velas del rango son cerradas: la vela en formación abre después de su última
+    const area = { left, right, top: bounds.y, bottom, xOpen, xClose };
+    for (const { zone, isMajor } of profileTargets(this.config, zones, majors)) {
+      this._drawProfile(ctx, zone, isMajor, candles, priceContext, area);
+    }
   }
 }
 
