@@ -42,6 +42,7 @@ COIN_R = 0.05             # Castigo por cada moneda que falta a favor
 FINALISTS = 5
 MIN_HOLD_TRADES = 30
 MIN_COIN_TRADES = 10      # Una moneda con menos trades no cuenta ni a favor ni en contra
+MIN_QUARTERS = 4          # Con aptitud por constancia, trimestres con trades suficientes que hacen falta
 
 STOPS = (("atr", 1.0), ("atr", 1.5), ("atr", 2.0), ("atr", 3.0), ("swing", 3), ("swing", 5), ("candle", None), ("zone", None))
 TARGETS = (1.0, 1.5, 2.0, 3.0, 5.0, None)
@@ -71,6 +72,8 @@ GENES = {
     "straddleOff": (0.2, 0.5, 1.0), "trailStart": (None, 1.0), "breakEven": (None, 1.5),
     "cvd": (None, 20, 50), "oi": (None, "noconf", "conf", "rise"),
     "regime": (None, "outside", "inside", "breakout"), "regimeMajor": (True, False),
+    # Desde el 19/11, segunda tanda: la multitud por el funding y el OI sostenido (también empiezan apagados)
+    "crowd": (None, "nocon", "contra"), "steady": (False, True),
 }
 
 _lock = threading.Lock()
@@ -121,6 +124,8 @@ def clean_config(raw):
         "trailing": raw.get("trailing") is not False, "straddle": raw.get("straddle") is not False,
         # Al terminar, las finalistas se corren también en las monedas nuevas (que nunca eligieron nada)
         "checkNew": raw.get("checkNew") is not False,
+        # Cómo se elige: "promedio" (ventaja media menos su error) o "constancia" (mediana de la ventaja de cada trimestre)
+        "fitness": raw.get("fitness") if raw.get("fitness") in ("promedio", "constancia") else "promedio",
         "seed": seed,
     }
 
@@ -136,7 +141,7 @@ def _options(cfg):
     if not cfg["invert"]:
         opts["invert"] = (False,)
     if not cfg.get("flow", True):
-        opts["cvd"], opts["oi"] = (None,), (None,)
+        opts["cvd"], opts["oi"], opts["crowd"], opts["steady"] = (None,), (None,), (None,), (False,)
     if not cfg.get("regime", True):
         opts["regime"] = (None,)
     if not cfg.get("trailing", True):
@@ -150,7 +155,7 @@ def random_genome(cfg, rng):
     opts = _options(cfg)
     genome = {name: rng.randrange(len(values)) for name, values in opts.items()}
     # Reglas simples primero: el segundo y el tercer elemento, y el filtro de línea, empiezan apagados más seguido
-    for name in ("e2", "e3", "line", "cvd", "oi", "regime"):
+    for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady"):
         if len(opts[name]) > 1 and rng.random() < 0.6:
             genome[name] = 0
     return genome
@@ -199,7 +204,7 @@ def decode(genome, cfg):
         "bx": {"maxHeight": pick["bxMax"]}, "be": {"pattern": pick["bePattern"]}, "cp": {"maxHeight": pick["cpMax"]},
         "fv": {"minAtr": pick["fvMin"]}, "sp": {"bars": pick["spBars"], "minZ": pick["spMinZ"]},
         "im": {"bars": pick["imBars"], "atr": pick["imAtr"]},
-        "flow": {"cvd": pick["cvd"], "oi": pick["oi"]},
+        "flow": {"cvd": pick["cvd"], "oi": pick["oi"], "crowd": pick["crowd"], "steady": pick["steady"]},
     }
     if pick["regime"]:
         raw["regime"] = {"mode": pick["regime"], "major": pick["regimeMajor"], "majorOut": 6, "after": 6}
@@ -218,7 +223,7 @@ def rule_key(rule):
 def complexity(rule):
     flow = rule.get("flow") or {}
     return (len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
-            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(rule.get("regime")))
+            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(rule.get("regime")))
 
 
 # ==================== EVALUACIÓN ====================
@@ -303,6 +308,7 @@ class Evaluator:
             fctx = {**item["ctx"], "bars": item["span"]["bars"]} if flow else None
             straddle = base_rule["entry"]["type"] == "straddle"
             taken = 0
+            by_quarter = {}
             for number in range(CTRL_TRADES * (6 if flow else 1)):
                 if flow and taken >= CTRL_TRADES:
                     break
@@ -323,19 +329,22 @@ class Evaluator:
                 if segment == "train" and trade["exit_t"] >= self.split:
                     continue
                 by_side[trade["dir"]].append(trade["r"])
+                by_quarter.setdefault((rt.quarter_of(trade["entry_t"]), trade["dir"]), []).append(trade["r"])
             found = {side: float(np.mean(rs)) if rs else None for side, rs in by_side.items()}
             found["all"] = float(np.mean(by_side[1] + by_side[-1])) if by_side[1] or by_side[-1] else None
+            found["q"] = {k: (float(np.mean(v)), len(v)) for k, v in by_quarter.items()}  # Azar de cada trimestre y lado
             self.controls[key] = found
         if kind == "leg":
             return {"avgR": found["all"]}
         if found[1] is None or found[-1] is None:
-            return {"avgR": found["all"]}
-        return {"avgR": longs * found[1] + (1 - longs) * found[-1]}
+            return {"avgR": found["all"], "q": found["q"]}
+        return {"avgR": longs * found[1] + (1 - longs) * found[-1], "q": found["q"]}
 
     def evaluate(self, rule):
         """Resultado de la regla en el tramo de búsqueda y en la validación interna, con las monedas juntas."""
         segments = {"train": [], "hold": []}
         raw_r = {"train": [], "hold": []}
+        quarters = {"train": {}, "hold": {}}  # Por trimestre: [trades, suma de R, suma de la ventaja contra el azar de ese trimestre]
         coins = []
         for symbol in self.symbols():
             item = self.load(symbol, rule["tf"], rule)
@@ -362,6 +371,14 @@ class Evaluator:
                                 "edge": round(float(np.mean(rs)) - ctrl, 4)}
                 segments[segment].extend(r - ctrl for r in rs)
                 raw_r[segment].extend(rs)
+                by_q = (controls[0] or {}).get("q") or {}
+                for t in picked:
+                    q = rt.quarter_of(t["entry_t"])
+                    mean, n = by_q.get((q, t["dir"]), (None, 0))
+                    cell = quarters[segment].setdefault(q, [0, 0.0, 0.0])
+                    cell[0] += 1
+                    cell[1] += t["r"]
+                    cell[2] += t["r"] - (mean if n >= rt.QUARTER_MIN_RANDOM else ctrl)
             coins.append(row)
         out = {"coins": coins}
         for segment, residuals in segments.items():
@@ -372,6 +389,7 @@ class Evaluator:
                 "se": round(float(np.std(residuals, ddof=1) / math.sqrt(n)), 4) if n > 1 else None,
                 "coinsUp": sum(1 for c in rows if c["edge"] > 0), "coinsWith": len(rows),
                 "avgR": round(float(np.mean(raw_r[segment])), 4) if n else None,
+                "consistency": {k: v for k, v in rt.consistency(quarters[segment]).items() if k != "rows"},
             }
         return out
 
@@ -392,7 +410,14 @@ def fitness(record, cfg):
     t = record["train"]
     if not t["n"] or t["n"] < cfg["minTrades"]:
         return round(-2.0 + (t["n"] or 0) / cfg["minTrades"], 4)
-    value = t["edge"] - (t["se"] or 0) - COMPLEXITY_R * (record["complexity"] - 1)
+    if cfg.get("fitness") == "constancia":
+        # La mediana de la ventaja por trimestre: no la mueven uno o dos trimestres excepcionales
+        cons = t.get("consistency") or {}
+        if cons.get("total", 0) < MIN_QUARTERS:
+            return round(-1.0 + cons.get("total", 0) / MIN_QUARTERS * 0.5, 4)
+        value = cons["median"] - COMPLEXITY_R * (record["complexity"] - 1)
+    else:
+        value = t["edge"] - (t["se"] or 0) - COMPLEXITY_R * (record["complexity"] - 1)
     value -= COIN_R * max(0, min(cfg["minCoins"], t["coinsWith"]) - t["coinsUp"])
     return round(value, 4)
 

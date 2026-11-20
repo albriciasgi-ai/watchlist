@@ -1124,6 +1124,31 @@ Pedido del usuario: un bot de cripto que vio entraba hacia donde el precio empez
   - Se probaron 11 reglas más sobre los mismos datos: ninguna pasa a la fase 2 solo por esto.
   - Pruebas: `tests/test_trailing_straddle.py` (6).
 
+### Multitud, OI sostenido y constancia por trimestre (20/11)
+
+Salió de entender por qué la Ruptura de caja con EMA 200 y CVD cayó en la fase 3 (análisis aparte, sin tocar la app):
+- su ventaja venía de 4 trimestres de 23;
+- pausar por resultados propios empeoraba todo;
+- el régimen de BTC, la volatilidad, la amplitud de la señal y el nivel del OI no separaban los episodios;
+- en 8 reglas y 50 monedas, **ir con la multitud** (funding) suele ser lo peor (contra − con, +0.10 R en la mediana, 11 de 14 casos);
+- que **el OI venga subiendo de forma sostenida** ayuda un poco (+0.05 R, también en la fase 3);
+- el Impulso era la regla más pareja por trimestre.
+
+El usuario pidió llevar a la app las tres piezas que se repitieron.
+
+- **Funding** (`funding_update.py`, `OrderFlowData/funding/{moneda}.json`; `TESTER_FUNDING` cambia la carpeta). Sin argumentos actualiza las que tienen archivo y las monedas del probador. `flow_filters.funding_3d()`: la suma de los 3 días anteriores al cierre ÷ 9, en equivalente por 8 horas aunque la moneda liquide cada 4 u 1 hora.
+- **Filtro de la multitud** (`flow.crowd`): contra la multitud es un corto con funding > 0.01% o un largo con funding < 0; con la multitud, al revés; entre medio, neutro (`flow_filters.crowd`). `nocon` deja todo menos con la multitud; `contra`, solo contra ella. Sin funding no pasa. Cada trade guarda `flow.funding` y `flow.crowd`.
+- **OI sostenido** (`flow.steady`, `steadyDays` 14, `steadyMin` 0.52): la parte de los pasos de 4 horas del OI de esos días en que subió (`flow_filters.oi_steady`), siempre con la serie de 4 horas (también en BTC, para que el umbral sea el mismo), y en cualquier marco de la regla. Con huecos (menos del 80% de los pasos) no pasa. 0.52 es el tercio alto medido en 50 monedas.
+- Los dos van en "Filtros de flujo", solo entran a la regla si se piden, y los controles al azar entran donde ellos dejan, como el CVD y el OI. En la búsqueda son los genes `crowd` y `steady`, que empiezan apagados.
+- **Constancia por trimestre:**
+  - **Azar por trimestre:** el azar de cada corrida guarda su reparto por trimestre y lado (`baseline.quarters`). Una corrida guardada antes lo recibe la primera vez que se pide (`with_quarter_baseline`), sin cambiar la regla ni su azar de la fase; las del Gaussian Channel se quedan con el azar de la fase. De paso, los controles que se rearman (también el del tramo) ya respetan el régimen y los filtros de flujo (`_control_context`).
+  - **Cálculo:** `quarter_rows()` mide cada trade contra el azar de su trimestre y lado; `consistency()` da los trimestres sobre el azar (solo los de 20 trades o más), la mediana de la ventaja por trade y qué parte de la ventaja ponen los 4 mejores.
+  - **Informe "Todas":** sección "Constancia por trimestre", con un aviso si los 4 mejores ponen el 80% o más.
+  - **Tablero:** columna "Trimestres +", un punto en la lectura y la cuenta en el porqué de "Las más sólidas" (`run_stats_v3`: la primera vez rearma el azar por trimestre de las corridas viejas, en segundo plano).
+  - **Búsqueda:** "Elegir por: constancia por trimestre" (`fitness`), que usa la mediana de la ventaja de cada trimestre del tramo de búsqueda (con 4 trimestres o más). Cada finalista muestra la constancia de los dos tramos.
+- **Ojo:** en la fase 1 de las monedas nuevas, la Ruptura de caja se veía bastante constante (9 de 11 trimestres, mediana +0.15, 4 mejores 78%); su dependencia de pocos episodios se veía recién con todas las fases. La constancia ayuda, no es infalible.
+- Pruebas: `tests/test_crowd_constancy.py` (6).
+
 ### Tablero de estrategias (19/11)
 
 Pedido del usuario: "no recuerdo cómo salieron las anteriores y dependo de Claude para saberlo", y que la app compare las métricas y diga cuál es más ganadora y por qué, como la lectura que se hacía con cada captura.

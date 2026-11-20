@@ -48,7 +48,8 @@ const Badge = ({ phase, group, cell, onClick }) => {
   const kind = cell.edge ? (cell.pass ? 'good' : fresh ? 'bad' : 'warn') : 'info';
   return (
     <button type="button" className="rt-chip" onClick={onClick} style={{ borderColor: color(kind), marginRight: 4, marginBottom: 3 }}
-      title={`Fase ${phase} en ${GROUP_NAME[group]}: ${cell.n} trades en ${cell.withTrades} monedas. Clic: abre el informe de todas esas monedas`}>
+      title={`Fase ${phase} en ${GROUP_NAME[group]}: ${cell.n} trades en ${cell.withTrades} monedas`
+        + `${cell.consistency?.total ? `; ${cell.consistency.positive} de ${cell.consistency.total} trimestres sobre el azar` : ''}. Clic: abre el informe de todas esas monedas`}>
       <b style={{ color: color(kind) }}>{mark}</b> F{phase} {GROUP[group]} <R value={cell.avgR} /> · {cell.n}
     </button>
   );
@@ -106,8 +107,9 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
     <>
       {data.preparing && (
         <div className="rt-warn">
-          Resumiendo las corridas guardadas: {data.preparing.done} de {data.preparing.total}. Las viejas reciben aquí el control del tramo, y eso tarda la primera vez.
-          Lo de abajo se completa solo.
+          Resumiendo las corridas guardadas: {data.preparing.done} de {data.preparing.total}, cerca de una por segundo
+          (faltan unos {Math.max(1, Math.round((data.preparing.total - data.preparing.done) / 60))} minutos). Solo pasa la primera vez:
+          las viejas reciben aquí el control del tramo. Mientras tanto la lista sale vacía o incompleta, y se actualiza sola cada 4 segundos.
         </div>
       )}
       {data.ranking?.length > 0 && (
@@ -166,7 +168,7 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
                   </div>
                 ))}
                 <table className="rt-table" style={{ marginTop: 6 }}>
-                  <thead><tr><th>Fase</th><th>Trades</th><th>R</th><th>Vs. azar</th><th>Vs. tramo</th><th>Largos</th><th>Cortos</th><th>Monedas +</th></tr></thead>
+                  <thead><tr><th>Fase</th><th>Trades</th><th>R</th><th>Vs. azar</th><th>Vs. tramo</th><th>Largos</th><th>Cortos</th><th>Monedas +</th><th title="Trimestres sobre el azar de su trimestre (de los que tienen 20 trades o más), y qué parte de la ventaja ponen los 4 mejores">Trimestres +</th></tr></thead>
                   <tbody>
                     {phases.flatMap(p => ['base', 'new'].filter(g => s.cells[p][g]?.n).map(g => {
                       const c = s.cells[p][g];
@@ -176,6 +178,8 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
                           <td title={c.edge ? `de ${fmtR(c.edge.low)} a ${fmtR(c.edge.high)}` : ''}>{c.edge ? <R value={c.edge.r} /> : '—'}</td>
                           <td title={c.legEdge ? `de ${fmtR(c.legEdge.low)} a ${fmtR(c.legEdge.high)}` : 'sin el control del tramo'}>{c.legEdge ? <R value={c.legEdge.r} /> : '—'}</td>
                           <td><R value={c.long?.avgR} /></td><td><R value={c.short?.avgR} /></td><td>{c.positive} de {c.withTrades}</td>
+                          <td title={c.consistency?.top4Share != null ? `Los 4 mejores ponen ${Math.round(c.consistency.top4Share * 100)}% de la ventaja; mediana ${fmtR(c.consistency.median)} R` : ''}>
+                            {c.consistency?.total ? `${c.consistency.positive} de ${c.consistency.total}` : '—'}</td>
                         </tr>
                       );
                     }))}
