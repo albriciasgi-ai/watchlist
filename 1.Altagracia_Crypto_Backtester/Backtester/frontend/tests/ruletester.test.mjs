@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {
   defaultRule, deleteRule, describeRule, fromBackendRule, isRuleTester, loadSavedRules, ruleTesterUrl, saveRule,
-  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals
+  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals, signalChecklist, checklistBand
 } from '../src/components/backtesting/ruleTester.js';
 
 const tests = [];
@@ -145,6 +145,36 @@ test('lo que usó la regla en el trade elegido pasa al gráfico: líneas, elemen
   assert.deepEqual(skippedSignals(context).map(s => s.what), ['filtro de CVD u OI']);
   assert.deepEqual(contextBands({ success: false }), []);
   assert.deepEqual(contextBands(null), []);
+});
+
+test('cada condición de la regla al cerrar la vela de la señal: elementos que dispararon y filtros con su valor', () => {
+  const H = 3600000;
+  const context = {
+    success: true, tf: 240, signal: 8 * H,
+    rows: [
+      { key: 'line1', label: 'EMA 50 a favor', items: [[4 * H, 0], [8 * H, 1]], note: 'EMA 50 en 11698.7, cierre en 11305.5' },
+      { key: 'oi', label: 'OI sube más de 2% en 6 velas', items: [[8 * H, 1]], note: 'OI +6.89% en 6 velas' }
+    ]
+  };
+  const recipe = { mode: 'threshold', min: 1, window: 1, slots: [{ codes: ['FV'] }, { codes: ['DJ'] }] };
+  const trade = { votes: ['FV'], entry_t: 12 * H, dir: -1 };
+  const check = signalChecklist(context, trade, recipe, { FV: 'FVG nuevo', DJ: 'Doji' });
+  assert.equal(check.all, true, 'un trade que se repite igual tiene todo en ✓');
+  assert.deepEqual(check.items.map(i => [i.ok, i.label]), [
+    [true, 'Elementos (al menos 1 de 2)'], [true, 'EMA 50 a favor'], [true, 'OI sube más de 2% en 6 velas']
+  ]);
+  assert.equal(check.items[0].note, '✓ FVG nuevo  ✗ Doji', 'qué elementos dispararon');
+  assert.equal(check.items[2].note, 'OI +6.89% en 6 velas');
+  // Un filtro que no pasa o sin dato en la señal se ve: algo no cuadra
+  const broken = signalChecklist({ ...context, signal: 4 * H }, trade, recipe);
+  assert.equal(broken.all, false);
+  assert.deepEqual(broken.items.slice(1).map(i => i.ok), [false, null]);
+  const band = checklistBand(check, context, 'Señal');
+  assert.deepEqual([band.kind, band.tf, band.rows, band.time, band.items.length], ['checklist', 4 * H, 2, 8 * H, 3]);
+  assert.equal(signalChecklist({ success: false }, trade, recipe), null);
+  assert.equal(checklistBand(null, context, 'x'), null);
+  const strict = signalChecklist(context, { votes: ['FV', 'DJ'] }, { mode: 'strict', min: 2, window: 3, slots: [{ codes: ['FV'] }, { codes: ['DJ'] }] });
+  assert.equal(strict.items[0].label, 'Elementos (todos, en 3 velas)');
 });
 
 let failed = 0;

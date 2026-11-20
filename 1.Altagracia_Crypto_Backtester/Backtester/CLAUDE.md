@@ -1117,17 +1117,27 @@ Pedido del usuario para depurar: al elegir un trade se veían la caja TP/SL y la
     - `ticks`: filas bajo las velas, verde pasa, rojo no pasa, gris sin dato;
     - `signal`: triángulo, relleno con trade y hueco sin entrar.
   - Van debajo de las de `tradeBands()`. Con las líneas enteras, se quita el tramo corto que marcaba su valor en la señal.
+  - **La vela de la señal, de un vistazo** (pedido del usuario tras verlo: no se notaba si al abrir el trade se cumplía todo). `signalChecklist()` arma cada condición al cerrar la vela de la señal, que es cuando la regla decidió:
+    - los elementos, con cuáles dispararon (✓ FVG nuevo ✗ Doji) y cómo se cumplía la receta (al menos 1 de 2, en 2 velas);
+    - cada filtro de las filas, con su valor.
+
+    En el gráfico (`checklistBand()`, clase `checklist`), encima de todo:
+    - la vela de la señal resaltada de arriba abajo;
+    - su casilla enmarcada en cada fila de filtros;
+    - al lado, un cuadro con cada condición en ✓, ✗ o – y su valor.
+
+    Un trade que se repite igual tiene todo en ✓: un ✗ dice que algo no cuadra.
   - **Detalle del trade:**
     - la casilla "Ver en el gráfico lo que usó la regla", de fábrica encendida, en `tester_view_v1`;
-    - cada filtro en la vela de la señal;
-    - las señales de la ventana que no entraron, con su motivo.
+    - una tabla con cada condición al cerrar la vela de la señal (✓, ✗ o –, la condición y su valor), y si se cumplía todo;
+    - las señales de la ventana que no entraron, con su motivo, en una lista plegable.
 - **Probado:**
   - con la corrida de la B5 en BTC 4h, fase 1: sus 119 trades se repiten iguales; EMA 50, OI subiendo 2% en 6 velas, FVG y doji, y señales;
   - con corridas del registro que usan régimen (TRX), CVD (ZEC) y VWAP (TRX);
   - con una corrida armada en TRX con canal gaussiano, VWAP con tope, funding, OI sostenido y horario: 61 trades iguales;
   - en pantalla, en el backtesting global con la B5 en BTC.
 
-  Pruebas: `tests/test_trade_context.py` (4) y una más en `ruletester.test.mjs`.
+  Pruebas: `tests/test_trade_context.py` (4) y dos más en `ruletester.test.mjs` (11). La vela de la señal resaltada, su cuadro y la tabla se vieron en pantalla con el trade 2 de la B5 en BTC: los tres en ✓ (FVG nuevo; EMA 50 en 11698.7 con cierre en 11305.5; OI +6.89% en 6 velas).
 
 ### Medido y probado
 

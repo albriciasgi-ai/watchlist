@@ -70,9 +70,10 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 2. **Gráfico:** las líneas con su nombre, los elementos tenues y, bajo las velas, una fila por filtro (verde pasa, rojo no pasa, gris sin dato). Los triángulos son las señales: rellenos los que dieron trade.
 3. **Detalle del trade:**
    - la casilla "Ver en el gráfico lo que usó la regla";
-   - cada filtro en la vela de la señal, con su valor (por ejemplo, "OI +2.84% en 6 velas");
-   - las señales que no entraron, con su motivo.
-4. **Pruebas:** `test_trade_context.py` (4) y una más en `ruletester.test.mjs`.
+   - una tabla con cada condición al cerrar la vela de la señal, que es cuando la regla decidió: ✓ o ✗, la condición y su valor (por ejemplo, "✓ OI sube más de 2% en 6 velas · OI +6.89% en 6 velas");
+   - las señales que no entraron, con su motivo, en una lista plegable.
+4. **La vela de la señal en el gráfico** (pedido tras verlo: no se notaba si al abrir el trade se cumplía todo): va resaltada de arriba abajo, con su casilla enmarcada en cada fila de filtros. Al lado lleva un cuadro con la misma lista de condiciones. Un trade que se repite igual tiene todo en ✓.
+5. **Pruebas:** `test_trade_context.py` (4) y dos más en `ruletester.test.mjs` (11).
 
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página.
