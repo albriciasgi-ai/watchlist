@@ -1355,7 +1355,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             leave = {side: {i - len(warm) for i in found if i >= len(warm)} for side, found in leave.items()}
         ctx["exitAt"] = {1: leave[-1], -1: leave[1]} if leave and rule["invert"] else leave
     if rule.get("regime"):
-        ctx["regimeOK"] = regime_mask(rule["regime"], bars)
+        ctx["regimeOK"] = regime_mask(rule["regime"], bars, is_stock(symbol))
     extra = _extra_events(symbol, rule, span, ctx, control, vp_shift)
     events = events + extra if extra else events
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
@@ -1736,13 +1736,26 @@ def _daily(a, step):
     return {k: np.array(v, dtype=np.int64 if k == "t" else float) for k, v in out.items()}
 
 
-def regime_mask(reg, bars):
+def _sessions(a):
+    """Las velas de una acción unidas por día de sesión: todos los días, porque cada uno es una sesión entera (la sesión
+    regular de Nueva York cae siempre dentro de un mismo día UTC). Da también el día de cada vela."""
+    day = a["t"] // DAY_MS
+    starts = np.flatnonzero(np.diff(day, prepend=day[0] - 1))
+    ends = np.append(starts[1:], len(day))
+    d = {"t": (day[starts] * DAY_MS).astype(np.int64), "o": a["o"][starts], "c": a["c"][ends - 1],
+         "h": np.maximum.reduceat(a["h"], starts), "l": np.minimum.reduceat(a["l"], starts), "v": np.add.reduceat(a["v"], starts)}
+    return d, np.searchsorted(starts, np.arange(len(day)), side="right") - 1
+
+
+def regime_mask(reg, bars, session=False):
     """
     Velas en que la regla puede operar según el régimen, conocido al cierre de cada vela (sin futuro). Con
     `reg["tf"]` = 1440 el régimen se mide en velas diarias (las de la regla unidas por día UTC), y cada vela de la
     regla usa el del último día ya cerrado; `after` cuenta entonces en días.
+    Con `session` (acciones: solo la sesión regular) un día no tiene 24 horas de velas: cuenta cada día de sesión, y
+    cada vela usa el día de sesión anterior al suyo. Así un día solo se usa cuando ya terminó, también el último.
     """
-    key = (_bars_key(bars), json.dumps(reg, sort_keys=True))
+    key = (_bars_key(bars), json.dumps(reg, sort_keys=True), session)
     with _lock:
         found = _regime_cache.get(key)
     if found is not None:
@@ -1750,7 +1763,13 @@ def regime_mask(reg, bars):
     a = {"t": np.array([b["t"] for b in bars], dtype=np.int64), **{k: np.array([b[src] for b in bars], dtype=float)
          for k, src in (("o", "o"), ("h", "h"), ("l", "l"), ("c", "c"), ("v", "vol"))}}
     step = int(np.median(np.diff(a["t"]))) if len(a["t"]) > 1 else DAY_MS
-    if reg.get("tf") == DAILY and step < DAY_MS:
+    if reg.get("tf") == DAILY and step < DAY_MS and session:
+        d, which = _sessions(a)
+        coarse = _regime_ok(d, reg) if len(d["t"]) > 30 else np.zeros(len(d["t"]), dtype=bool)
+        ok = np.zeros(len(a["t"]), dtype=bool)
+        seen = which >= 1
+        ok[seen] = coarse[which[seen] - 1]
+    elif reg.get("tf") == DAILY and step < DAY_MS:
         d = _daily(a, step)
         coarse = _regime_ok(d, reg) if len(d["t"]) > 30 else np.zeros(len(d["t"]), dtype=bool)
         # La vela de la regla que cierra en el instante c ve el último día que cerró en c o antes
@@ -1810,7 +1829,7 @@ def _control_context(symbol, rule, span):
     ctx = _context(symbol, rule["tf"], span["bars"])
     ctx["bars"] = span["bars"]
     if rule.get("regime"):
-        ctx["regimeOK"] = regime_mask(rule["regime"], span["bars"])
+        ctx["regimeOK"] = regime_mask(rule["regime"], span["bars"], is_stock(symbol))
     return ctx
 
 
@@ -1885,6 +1904,19 @@ def _runs_path():
     return tester_dir() / "runs.jsonl"
 
 
+# Versión del motor, anotada en cada corrida. 2 (20/11/2026): el régimen medido en 1D en las acciones, que antes
+# descartaba todas las señales (sus días no tienen 24 horas de velas). Las corridas que ese fallo tocó no se reusan,
+# no se cuentan y no se listan (_stale); siguen en el disco
+ENGINE = 2
+
+
+def _stale(record):
+    """Corrida que salió mal por un fallo ya corregido: una acción con el régimen medido en 1D, antes de la versión 2."""
+    reg = (record.get("rule") or {}).get("regime") or {}
+    return (record.get("engine", 1) < 2 and reg.get("tf") == DAILY and record.get("tf", DAILY) < DAILY
+            and is_stock(record.get("symbol", "")))
+
+
 def _run_path(run_id):
     return tester_dir() / "runs" / f"{run_id}.json.gz"
 
@@ -1895,12 +1927,12 @@ def history(symbol=None):
     if path.exists():
         with open(path, encoding="utf-8") as fh:
             rows = [json.loads(line) for line in fh if line.strip()]
-    return [r for r in rows if symbol is None or r.get("symbol") == symbol]
+    return [r for r in rows if (symbol is None or r.get("symbol") == symbol) and not _stale(r)]
 
 
 def _save(result, digest):
     run_id = f"{result['symbol']}_{result['rule']['tf']}_f{result['phase']}_{digest}_{int(time.time())}"
-    result["id"], result["hash"], result["at"] = run_id, digest, int(time.time() * 1000)
+    result["id"], result["hash"], result["at"], result["engine"] = run_id, digest, int(time.time() * 1000), ENGINE
     with _write_lock:
         path = _run_path(run_id)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -1909,7 +1941,7 @@ def _save(result, digest):
         record = {"id": run_id, "at": result["at"], "symbol": result["symbol"], "tf": result["rule"]["tf"],
                   "phase": result["phase"], "hash": digest, "name": result["rule"]["name"], "rule": result["rule"],
                   "from": result["from"], "to": result["to"], "summary": result["summary"],
-                  "baseline": result.get("baseline"), "edge": result.get("edge")}
+                  "baseline": result.get("baseline"), "edge": result.get("edge"), "engine": ENGINE}
         with open(_runs_path(), "a", encoding="utf-8") as fh:
             fh.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
     return run_id

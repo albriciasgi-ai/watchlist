@@ -1,6 +1,8 @@
-"""Acciones de Alpaca en el probador: velas con su hora, noches que no son huecos, costos y elementos. Uso: python -m pytest tests/test_stocks.py"""
+"""Acciones de Alpaca en el probador: velas con su hora, noches que no son huecos, costos, elementos y el régimen medido
+en 1D. Uso: python -m pytest tests/test_stocks.py"""
 import gzip
 import json
+import math
 
 import pytest
 
@@ -23,6 +25,22 @@ def session_bars(days, start_price=100.0, first=None):
             t = day + 14 * H + 30 * 60000 + h * H
             rows.append([t, price, price + 1, price - 1, price + 0.2, 1000.0, 10, price])
             price += 0.2
+    return rows
+
+
+def range_then_trend(days=300):
+    """Velas de 1 hora de la sesión: 180 días que van y vienen (un rango) y después una subida (una tendencia)."""
+    first, rows, prev, d, k = rt._ms("2017-01-02"), [], 100.0, 0, 0
+    while k < days:
+        day = first + d * DAY
+        d += 1
+        if (day // DAY + 3) % 7 >= 5:
+            continue
+        target = 100 + 4 * math.sin(2 * math.pi * k / 9) if k < 180 else prev + 1.5
+        for h in range(7):
+            o, c = prev + (target - prev) * h / 7, prev + (target - prev) * (h + 1) / 7
+            rows.append({"t": day + 14 * H + 30 * 60000 + h * H, "o": o, "h": max(o, c) + 0.3, "l": min(o, c) - 0.3, "c": c, "delta": 0.0, "vol": 1000.0})
+        prev, k = target, k + 1
     return rows
 
 
@@ -92,3 +110,35 @@ def test_el_tablero_pone_las_acciones_en_su_grupo_y_cuentan_como_comprobacion():
                                                           "base": {"avgR": 0.0, "seR": 0.01}, "leg": {"avgR": 0.0, "seR": 0.01}})])}}}
     cells = sb._cells(item)
     assert cells[0][1] == "stocks" and cells[0][3] is True
+
+
+def test_el_regimen_medido_en_1d_vale_en_acciones_y_cada_vela_usa_el_dia_de_sesion_anterior(stock):
+    # Una acción no tiene 24 horas de velas por día: antes ningún día contaba como completo y el filtro descartaba todo
+    bars = range_then_trend()
+    reg = {"mode": "inside", "major": False, "majorOut": 6, "after": 6, "tf": 1440}
+    mask = rt.regime_mask(reg, bars, session=True)
+    assert mask.any() and not mask.all()
+    days = [b["t"] // DAY for b in bars]
+    assert not mask[:7].any()  # El primer día no tiene un día anterior
+    assert all(mask[i] == mask[i - 1] for i in range(1, len(bars)) if days[i] == days[i - 1])  # Todo el día usa el anterior
+    # Sin futuro: cortar las velas a mitad de un día no cambia lo ya conocido
+    cut = 7 * 150 + 3
+    assert (rt.regime_mask(reg, bars[:cut], session=True) == mask[:cut]).all()
+    # La regla y sus controles lo usan en las acciones
+    rule = rt.clean_rule({"tf": 60, "recipe": {"slots": [{"codes": ["IM"]}]}, "regime": reg})
+    assert (rt._control_context("AAA", rule, {"bars": bars})["regimeOK"] == mask).all()
+
+
+def test_las_corridas_de_acciones_que_toco_el_fallo_del_regimen_no_se_reusan(stock):
+    path = rt._runs_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    daily = {"regime": {"mode": "outside", "tf": 1440}}
+    records = [
+        {"id": "antes", "symbol": "AAA", "tf": 240, "phase": 1, "hash": "h", "rule": daily},               # con el fallo: no cuenta
+        {"id": "despues", "symbol": "AAA", "tf": 240, "phase": 1, "hash": "h", "rule": daily, "engine": 2},
+        {"id": "moneda", "symbol": "BTCUSDT", "tf": 240, "phase": 1, "hash": "h", "rule": daily},          # en las monedas estaba bien
+        {"id": "sin", "symbol": "AAA", "tf": 240, "phase": 1, "hash": "g", "rule": {}},
+        {"id": "diaria", "symbol": "AAA", "tf": 1440, "phase": 1, "hash": "k", "rule": daily},            # una regla de 1 día no pasaba por ahí
+    ]
+    path.write_text("".join(json.dumps(r) + chr(10) for r in records), encoding="utf-8")
+    assert [r["id"] for r in rt.history()] == ["despues", "moneda", "sin", "diaria"]

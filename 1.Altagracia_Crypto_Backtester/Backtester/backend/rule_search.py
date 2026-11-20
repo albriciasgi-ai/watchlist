@@ -302,7 +302,7 @@ class Evaluator:
             # que el filtro deja entrar. Si no, la ventaja mezclaría el filtro con la señal
             allowed = None
             if rule.get("regime"):
-                mask = rt.regime_mask(rule["regime"], item["span"]["bars"])
+                mask = rt.regime_mask(rule["regime"], item["span"]["bars"], rt.is_stock(symbol))
                 allowed = [k for k in range(lo, hi - 2) if mask[k]]
                 if len(allowed) < 50:
                     return None
