@@ -193,6 +193,7 @@ def _own_trade(session, candidate, side, stop, target, limit=None, wait=None):
     own["stop"] = {**own["stop"], "type": "atr", "atr": risk / atr if atr > 0 else 1.0, "buffer": 0.0, "minAtr": 0.0, "maxAtr": 1e9}
     own["exit"] = {**own["exit"], "targetR": abs(target - entry) / risk if target is not None else None, "trail": "none", "opposite": False,
                    "horizon": own["exit"].get("horizon") or rt.DEFAULT_HORIZON}
+    own["exit"].pop("tpTrail", None)  # La caja propia sale en su objetivo, sin el trailing del objetivo de la regla
     own.pop("targetAt", None)
     wait = int(max(1, min(MAX_LIMIT_BARS, wait or LIMIT_BARS)))
     own["entry"] = {"type": "limit", "at": "near", "expiry": wait} if waits else {**own["entry"], "type": "market"}

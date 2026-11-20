@@ -17,7 +17,7 @@ import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, hasBox, reviewBoxes, s
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
-  contextBands, skippedSignals, signalChecklist, checklistBand
+  contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText
 } from './ruleTester.js';
 import { elementLabel, elementLabels } from './elementLabels.js';
 import '../../backtesting_styles.css';
@@ -1234,6 +1234,21 @@ const RuleTesterApp = () => {
           )}
           {!((usesProfile(rule) && rule.targetAt !== 'r') || (!usesProfile(rule) && rule.codes.includes('BE') && rule.targetAt === 'mid')) && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
         </div>
+        {targetInR(rule) && <div className="rt-row">
+          <Check checked={rule.tpTrailOn} onChange={(tpTrailOn) => patch({ tpTrailOn, ...(tpTrailOn && !(rule.tpTrailStart <= rule.targetR) ? { tpTrailStart: Math.max(0.25, rule.targetR - 0.5) } : {}) })}
+            title="Como un bot: el objetivo queda fijo hasta que el precio llega al arranque; desde ahí sigue al mejor precio y el trade se cierra cuando el precio vuelve hasta él">Arrastrar el objetivo desde</Check>
+          <Num value={rule.tpTrailStart} min={0.1} max={rule.targetR} step={0.25} disabled={!rule.tpTrailOn} onChange={(tpTrailStart) => patch({ tpTrailStart })} /><span>R, a</span>
+          <Num value={rule.tpTrailDist} min={0.01} max={rule.tpTrailUnit === 'pct' ? 50 : 20} step={rule.tpTrailUnit === 'pct' ? 0.1 : 0.25} disabled={!rule.tpTrailOn} onChange={(tpTrailDist) => patch({ tpTrailDist })} />
+          <select value={rule.tpTrailUnit} disabled={!rule.tpTrailOn} onChange={(e) => patch({ tpTrailUnit: e.target.value })} title="R: del riesgo del trade. ATR: el de la vela de la señal. %: del mejor precio, como el retroceso de un bot">
+            {TP_TRAIL_UNITS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+          <span>del mejor precio</span>
+        </div>}
+        {targetInR(rule) && rule.tpTrailOn && <div className="rt-note">
+          Al llegar a {Math.min(Number(rule.tpTrailStart) || 0, Number(rule.targetR) || 0)} R el objetivo de {rule.targetR} R deja de ser fijo: sigue al mejor precio
+          a {tpTrailText({ dist: rule.tpTrailDist, unit: rule.tpTrailUnit })} y el trade se cierra cuando el precio vuelve hasta él, aunque haya pasado el objetivo.
+          Se mira dentro de cada vela (minuto a minuto o, sin minutos, su recorrido supuesto), como una orden trailing del exchange. Las entradas al azar usan la misma salida.
+        </div>}
         <div className="rt-row">
           <span title="El stop se acerca solo a favor, con cada vela cerrada">Trailing</span>
           <select value={rule.trail ? 'swing' : rule.trailMode} onChange={(e) => patch({ trail: e.target.value === 'swing', trailMode: e.target.value === 'swing' ? 'off' : e.target.value })}>
@@ -1454,7 +1469,8 @@ const RuleTesterApp = () => {
             Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {elementLabels(selectedTrade.votes, ', ')} · presentes: {elementLabels(selectedTrade.present, ', ') || '—'} · en contra: {elementLabels(selectedTrade.against, ', ') || '—'}
-            {selectedTrade.vp && <><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
+            {'tp_on' in selectedTrade && <><br />Trailing del objetivo: {selectedTrade.tp_on != null ? `se activó el ${stamp(selectedTrade.tp_on)}; desde ahí el objetivo siguió al mejor precio` : 'el precio no llegó a su arranque'}</>}
+            {selectedTrade.vp &&<><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
             {selectedTrade.gc && <><br />Canal en la señal: banda superior {selectedTrade.gc.high}, línea central {selectedTrade.gc.mid}, banda inferior {selectedTrade.gc.low}</>}
             {selectedTrade.rv && <><br />{selectedTrade.rv.code === 'RF' ? `Flecha: ${selectedTrade.rv.times} veces el volumen de su hora` : `Rombo: extremo del tramo ${selectedTrade.rv.extreme}`} · tramo {selectedTrade.rv.leg > 0 ? 'alcista' : 'bajista'}</>}
             {selectedTrade.pat && <><br />Patrón: {selectedTrade.pat.type}{selectedTrade.pat.volumeZ != null && ` · volumen z ${selectedTrade.pat.volumeZ}`}</>}

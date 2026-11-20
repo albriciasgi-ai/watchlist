@@ -1851,10 +1851,11 @@ const MiniChart = forwardRef(({
             continue;
           }
           if (band.kind === 'steps') {
-            // El stop de cada vela del trade, en escalones: rojo el inicial, gris a la entrada, naranja arrastrado.
-            // Cada fase lleva su nombre donde empieza
+            // El stop de cada vela del trade, en escalones: rojo el inicial, gris a la entrada, naranja arrastrado; y el
+            // objetivo arrastrado (trailing del objetivo), verde. Cada fase lleva su nombre donde empieza, y la primera, el
+            // de la franja si lo trae
             const tf = band.tf || TF_MS[interval];
-            const tones = { inicial: '242, 54, 69', entrada: '96, 125, 139', arrastrado: '245, 124, 0' };
+            const tones = { inicial: '242, 54, 69', entrada: '96, 125, 139', arrastrado: '245, 124, 0', objetivo: '8, 153, 129' };
             const names = { entrada: 'stop a la entrada', arrastrado: 'stop arrastrado' };
             let previous = null;
             ctx.lineWidth = 2;
@@ -1874,9 +1875,10 @@ const MiniChart = forwardRef(({
               }
               ctx.lineTo(x2, y);
               ctx.stroke();
-              if (previous && previous.phase !== phase && names[phase] && x2 >= marginLeft && x1 <= marginLeft + chartWidth) {
+              const name = previous ? (previous.phase !== phase ? names[phase] : null) : band.label;
+              if (name && x2 >= marginLeft && x1 <= marginLeft + chartWidth) {
                 ctx.fillStyle = `rgb(${rgb})`;
-                ctx.fillText(names[phase], x1 + 2, y + (phase === 'entrada' ? -8 : 10));
+                ctx.fillText(name, x1 + 2, y + (phase === 'entrada' || (phase === 'objetivo' && band.labelAbove) ? -8 : 10));
               }
               previous = { x: x2, y, phase };
             }
@@ -1950,7 +1952,10 @@ const MiniChart = forwardRef(({
             let x = seen ? x2 + 10 : marginLeft + 8;
             if (x + width > marginLeft + chartWidth - 4) x = seen ? x1 - 10 - width : marginLeft + 8;
             x = Math.max(marginLeft + 4, x);
-            const y = marginTop + 24;
+            // Arriba, o abajo (sobre las filas de filtros) si el trade es largo: un largo sube por donde iría el cuadro,
+            // y lo tapaba con su objetivo arrastrado
+            const bottom = (band.rows ? rowsTop(band.rows) - 20 : marginTop + priceChartHeight - 8) - height;
+            const y = band.below ? Math.max(marginTop + 24, bottom) : marginTop + 24;
             ctx.fillStyle = isNewTheme() ? THEME.surface : '#FFFFFF';
             ctx.globalAlpha = 0.95;
             ctx.fillRect(x, y, width, height);
@@ -2057,7 +2062,7 @@ const MiniChart = forwardRef(({
             ctx.stroke();
             ctx.setLineDash([]);
             ctx.fillStyle = ink;
-            ctx.fillText(band.label, x1 + 4, y - 8);
+            ctx.fillText(band.label, x1 + 4, band.labelBelow ? y + 10 : y - 8);
             continue;
           }
           const rgb = colors[band.kind] || colors.element;
