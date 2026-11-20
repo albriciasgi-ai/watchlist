@@ -54,6 +54,31 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 20 Noviembre 2026: Perfil de Volumen sobre los Rangos Horizontales
+
+**Pedido:** que el indicador de rangos pueda dibujar el volume profile sobre cada rango detectado, y que el perfil crezca con el rango a medida que avanza el tiempo, en App 1 y en la suite.
+
+**Cambios:**
+1. **Opción "Perfil de volumen"** en el modal del indicador, apagada de fábrica:
+   - va sobre las cajas o sobre el rango mayor;
+   - se eligen las franjas (50), el área de valor (70%) y el largo de la barra mayor (30% del ancho del rango);
+   - dibuja las líneas del POC, el VAH y el VAL, y el precio del POC.
+2. **El perfil** es el de las velas cerradas del rango, de su primera vela a la última, con la regla de VP Periodic (`rangeProfiles.js`). El de un rango vivo crece con cada vela que cierra, y la vela en formación no entra.
+3. **Volumen real** del almacén si cubre el 99% del rango; la etiqueta dice «real». Se pide hasta el cierre de la última vela del rango, nunca después. En una reproducción rápida, el de un rango vivo se pide al pausar.
+4. **Para el análisis:** el POC, el VAH y el VAL de cada perfil se ofrecen en "Incluir en el análisis".
+5. **Pruebas:** `horizontalranges.test.mjs` suma 8 (16).
+
+**IMPORTANTE:**
+- Basta recargar App 1: no cambió el backend. La suite se reinicia sola al abrirla y arma la página nueva.
+- **Probado** en BTC 4h con una copia aislada:
+  - en el backtesting global, con volumen real, también sobre el rango mayor;
+  - en la simulación manual a 5000x: el rango vivo sumó una vela cada 3 segundos y su perfil creció con ella.
+- **Sin probar en pantalla:** la suite solo se armó; tampoco se vio el 2.º gráfico.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "RANGOS HORIZONTALES (20/11/2026)", "Perfil de volumen sobre cada rango (20/11)"
+
+---
+
 ### App 1 + Altagracia Trading Suite - 20 Noviembre 2026: Rangos Horizontales y Guía de Pruebas de las Reglas
 
 **Pedido:** primero, un tutorial como el de los Elementos OF (PDF y Excel con lista de chequeo) para depurar el backtesting global opción por opción. Después, un indicador de rangos horizontales con los métodos y parámetros de la pestaña Régimen, para la simulación manual, el backtesting global y la suite, con el método elegido en un modal.

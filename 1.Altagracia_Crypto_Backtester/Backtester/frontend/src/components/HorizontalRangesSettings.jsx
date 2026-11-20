@@ -138,6 +138,64 @@ const HorizontalRangesSettings = ({ symbol, indicator, onApply, onClose }) => {
             </div>
             <span className="hint">Solo se calcula con velas cerradas: la caja va punteada hasta la vela en que se supo y marcada desde ahí.</span>
           </div>
+
+          <div className="settings-section">
+            <h4>Perfil de volumen</h4>
+            <div className="setting-row" style={{ marginBottom: '8px' }}>
+              <label className="checkbox-label">
+                <input type="checkbox" checked={!!values.profile} onChange={(e) => set('profile', e.target.checked)} />
+                Dibujar el perfil de volumen de cada rango
+              </label>
+              <span className="hint">El de las velas cerradas del rango, desde su primera vela: el de un rango que sigue vivo crece con cada vela que cierra. Con trades en el almacén que cubren todo el rango, el volumen es real (la etiqueta dice «real»); si no, el de cada vela se reparte entre su mínimo y su máximo.</span>
+            </div>
+            {values.profile && (
+              <>
+                {values.major && (
+                  <div className="setting-row">
+                    <label>Sobre</label>
+                    <select value={values.profileOn} onChange={(e) => set('profileOn', e.target.value)}>
+                      <option value="major">El rango mayor</option>
+                      <option value="boxes">Las cajas del método</option>
+                    </select>
+                  </div>
+                )}
+                {(!values.major || values.profileOn === 'boxes') && !values.showBoxes && (
+                  <span className="hint">Las cajas del método están ocultas: no se verá ningún perfil.</span>
+                )}
+                <div className="setting-row">
+                  <label>Franjas de precio</label>
+                  <input type="number" min="10" max="400" step="1" value={values.profileRows ?? ''} onChange={(e) => set('profileRows', e.target.value)} />
+                </div>
+                <div className="setting-row">
+                  <label>Área de valor (%)</label>
+                  <input type="number" min="20" max="100" step="1" value={values.profileVa ?? ''} onChange={(e) => set('profileVa', e.target.value)} />
+                </div>
+                <div className="setting-row">
+                  <label>Largo de la barra mayor (% del ancho del rango)</label>
+                  <input type="number" min="5" max="100" step="1" value={values.profileWidth ?? ''} onChange={(e) => set('profileWidth', e.target.value)} />
+                </div>
+                <div className="setting-row" style={{ marginBottom: '8px' }}>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={!!values.profilePoc} onChange={(e) => set('profilePoc', e.target.checked)} />
+                    Línea del POC
+                  </label>
+                </div>
+                <div className="setting-row" style={{ marginBottom: '8px' }}>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={!!values.profileVaLines} onChange={(e) => set('profileVaLines', e.target.checked)} />
+                    Líneas del VAH y el VAL
+                  </label>
+                </div>
+                <div className="setting-row" style={{ marginBottom: '8px' }}>
+                  <label className="checkbox-label">
+                    <input type="checkbox" checked={!!values.profileLabel} onChange={(e) => set('profileLabel', e.target.checked)} />
+                    Precio del POC en los rangos anchos
+                  </label>
+                </div>
+                <span className="hint">Los colores salen del estilo elegido (modal Estilo, «Perfil de volumen»). Un clic en el POC, el VAH o el VAL los ofrece para el análisis del trade.</span>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="settings-footer">
