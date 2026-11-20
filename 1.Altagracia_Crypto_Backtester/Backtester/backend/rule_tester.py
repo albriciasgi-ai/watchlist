@@ -101,6 +101,8 @@ _candles = {}
 
 
 def has_store(symbol):
+    if is_stock(symbol):
+        return False  # Las acciones corren sobre sus velas (el almacén de Alpaca es de otra sesión y del gráfico)
     return fs.coverage(symbol).get("days", 0) >= MIN_STORE_DAYS
 
 
@@ -113,7 +115,14 @@ def _on_candles(symbol, tf):
 # elegir reglas: sirven para comprobar en todas sus fechas una regla elegida en las de App 1
 EXTRA_DIR = pathlib.Path(os.environ.get("TESTER_CANDLES", r"C:\Users\inven\OrderFlowData\candles"))
 EXTRA_KEYS = {60: ("60", 1), 240: ("240", 1), 1440: ("240", 6)}
-GROUPS = ("base", "new", "all")
+GROUPS = ("base", "new", "stocks", "all")
+# Acciones de EE. UU. (Alpaca), que baja alpaca_candles.py (otra sesión): velas de 15 minutos, 1 hora, 4 horas y 1 día
+# desde 2016, solo de la sesión regular. Las de 1h y 4h empiezan a las 09:30 de Nueva York y el día a la medianoche
+# de Nueva York: se leen tal como vienen, sin llevarlas a la hora en punto (eso adelantaría lo que se sabe de cada vela)
+STOCK_DIR = pathlib.Path(os.environ.get("ALPACA_CANDLES", "C:/Users/inven/OrderFlowData/alpaca/candles"))
+STOCK_KEYS = {15: "15", 60: "60", 240: "240", 1440: "1440"}
+STOCK_FEE = 0.0002            # Por lado: sin comisión, el spread. No cuenta el costo de pedir prestadas acciones para el corto
+STOCK_GAP_MS = 5 * 86400000   # Noches, fines de semana y feriados no son huecos: el trade sigue y una apertura más allá se llena ahí
 
 
 def base_symbols():
@@ -127,8 +136,20 @@ def new_symbols():
     return sorted(s for s in (p.name.split(".")[0] for p in EXTRA_DIR.glob("*.json.gz")) if s not in base)
 
 
+def stock_symbols():
+    """Acciones con velas de Alpaca."""
+    return sorted(s for s in (p.name.split(".")[0] for p in STOCK_DIR.glob("*.json.gz")) if not s.endswith("USDT"))
+
+
+def is_stock(symbol):
+    return not symbol.endswith("USDT") and (STOCK_DIR / f"{symbol}.json.gz").exists()
+
+
 def candle_symbols(group="base"):
-    """Monedas del grupo: base (las de App 1, las de siempre), new (las nuevas) o all."""
+    """Símbolos del grupo: base (las monedas de App 1, las de siempre), new (las monedas nuevas), all (todas las monedas)
+    o stocks (las acciones). "all" no incluye las acciones: son otro mercado."""
+    if group == "stocks":
+        return stock_symbols()
     if group == "new":
         return new_symbols()
     if group == "all":
@@ -137,6 +158,8 @@ def candle_symbols(group="base"):
 
 
 def _candle_path(symbol):
+    if is_stock(symbol):
+        return STOCK_DIR / f"{symbol}.json.gz"
     own = CANDLE_DIR / f"{symbol}_backtesting_data.json.gz"
     extra = EXTRA_DIR / f"{symbol}.json.gz"
     return own if own.exists() or not extra.exists() else extra
@@ -145,6 +168,8 @@ def _candle_path(symbol):
 def candle_bars(symbol, tf):
     """Velas cerradas del caché de App 1 en el marco de la regla, con la forma de las del almacén (sin delta)."""
     path = _candle_path(symbol)
+    if path.parent == STOCK_DIR:
+        return _stock_bars(symbol, tf, path)
     extra = path.parent == EXTRA_DIR
     keys = EXTRA_KEYS if extra else CANDLE_KEYS
     if tf not in keys or not path.exists():
@@ -183,6 +208,35 @@ def candle_bars(symbol, tf):
         while len(_candles) > 3:
             _candles.pop(next(iter(_candles)))
     return bars
+
+
+def _stock_bars(symbol, tf, path):
+    """Velas de una acción en el marco, con su hora de inicio tal como viene (09:30 de Nueva York en 1h y 4h)."""
+    if tf not in STOCK_KEYS or not path.exists():
+        return []
+    key = (symbol, tf, path.stat().st_mtime)
+    with _lock:
+        found = _candles.get(key)
+    if found is not None:
+        return found
+    with gzip.open(path, "rt", encoding="utf-8") as fh:
+        rows = json.load(fh).get(STOCK_KEYS[tf]) or []
+    now = time.time() * 1000
+    bars = [{"t": int(r[0]), "o": float(r[1]), "h": float(r[2]), "l": float(r[3]), "c": float(r[4]), "delta": 0.0, "vol": float(r[5])}
+            for r in rows if int(r[0]) + tf * 60000 <= now and r[2] >= r[3] > 0]  # La vela en curso no cuenta
+    with _lock:
+        _candles[key] = bars
+        while len(_candles) > 3:
+            _candles.pop(next(iter(_candles)))
+    return bars
+
+
+def codes_for(symbol, tf):
+    """Elementos que puede usar una regla en ese símbolo y marco: None si todos (almacén de trades). Las acciones, los
+    de velas menos el barrido de liquidaciones (no hay liquidaciones de acciones)."""
+    if is_stock(symbol):
+        return set(CANDLE_CODES) - {"LIQ"}
+    return set(CANDLE_CODES) if _on_candles(symbol, tf) else None
 
 
 def daily_bars(symbol):
@@ -374,6 +428,13 @@ def clean_rule(raw):
         if flow["oi"] in ("rise", "fall"):
             clean_flow["oiBars"] = int(_num(flow.get("oiBars"), 6, 1, 100))
             clean_flow["oiPct"] = _num(flow.get("oiPct"), 2.0, 0.0, 50.0)
+    if flow.get("crowd") in flow_filters.CROWD_MODES:
+        clean_flow["crowd"] = flow["crowd"]  # Multitud por el funding: nocon (no ir con ella) o contra (solo contra ella)
+    if flow.get("steady"):
+        # OI sostenido: la parte de los pasos de 4 h de los últimos `steadyDays` días en que subió el OI, al menos `steadyMin`
+        clean_flow["steady"] = True
+        clean_flow["steadyDays"] = int(_num(flow.get("steadyDays"), 14, 3, 60))
+        clean_flow["steadyMin"] = _num(flow.get("steadyMin"), 0.52, 0.3, 0.9)
     if clean_flow:
         extra["flow"] = clean_flow  # Solo entra si se pide: una regla sin él conserva su identidad
     lines = []
@@ -664,10 +725,11 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
     T, O, H, L, C, atr = ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["atr"]
     n, tf_ms = len(T), ctx["tf"] * 60000
     e = k + 1
-    if e >= n or T[e] - T[k] > max(GAP_MS, 2 * ctx["tf"] * 60000):
+    if e >= n or T[e] - T[k] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
         return None
     entry_rule, exit_rule = rule["entry"], rule["exit"]
-    entry, entry_i, fee_in, limit_fill, stop_fill = O[e], e, TAKER_FEE, False, False
+    taker, maker = ctx.get("taker", TAKER_FEE), ctx.get("maker", MAKER_FEE)
+    entry, entry_i, fee_in, limit_fill, stop_fill = O[e], e, taker, False, False
     if entry_rule["type"] == "straddle":
         filled = _straddle_fill(rule, ctx, k, e, zone, sides or (1, -1))
         if filled is None:
@@ -683,7 +745,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
             entry_i = None
             for j in range(e, min(n, e + entry_rule["expiry"])):
                 if (L[j] < price) if side > 0 else (H[j] > price):  # Se llena al cruzar, no al tocar
-                    entry, entry_i, fee_in, limit_fill = price, j, MAKER_FEE, True
+                    entry, entry_i, fee_in, limit_fill = price, j, maker, True
                     break
             if entry_i is None:
                 return {"skip": "limit sin llenar"}
@@ -720,7 +782,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
     mfe, mae = 0.0, 0.0
     j = entry_i
     while j < n:
-        if j > entry_i and T[j] - T[j - 1] > max(GAP_MS, 2 * ctx["tf"] * 60000):
+        if j > entry_i and T[j] - T[j - 1] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
             exit_price, exit_t, reason = C[j - 1], T[j - 1] + tf_ms, "hueco de datos"
             break
         low, high = L[j], H[j]
@@ -797,7 +859,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
     # Hasta dónde llegó antes del stop inicial, sin importar la salida elegida
     reach, reach_done = 0.0, False
     for i in range(entry_i + (1 if limit_fill or stop_fill else 0), min(n, entry_i + REACH_BARS)):
-        if i > entry_i and T[i] - T[i - 1] > max(GAP_MS, 2 * ctx["tf"] * 60000):
+        if i > entry_i and T[i] - T[i - 1] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
             reach_done = True
             break
         if (L[i] <= initial_stop) if side > 0 else (H[i] >= initial_stop):
@@ -816,7 +878,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
         trade["open"] = True
         return trade
     gross = (exit_price - entry) * side / risk
-    cost = (fee_in * entry + TAKER_FEE * exit_price) / risk
+    cost = (fee_in * entry + taker * exit_price) / risk
     trade.update(exit_t=exit_t, exit=exit_price, reason=reason, r=round(gross - cost, 4), gross=round(gross, 4),
                  mfe=round(mfe, 3), mae=round(mae, 3), bars=j - entry_i + 1, exit_i=j)
     return trade
@@ -917,8 +979,12 @@ def _breakdowns(trades, rule):
 
 def _context(symbol, tf, bars):
     _, atr, _ = os_._series(bars)
+    stock = is_stock(symbol)
     return {"symbol": symbol, "tf": tf, "T": [b["t"] for b in bars], "O": [b["o"] for b in bars], "H": [b["h"] for b in bars],
-            "L": [b["l"] for b in bars], "C": [b["c"] for b in bars], "V": [b["vol"] for b in bars], "atr": atr, "minutes": fs.minutes}
+            "L": [b["l"] for b in bars], "C": [b["c"] for b in bars], "V": [b["vol"] for b in bars], "atr": atr, "minutes": fs.minutes,
+            # Un salto mayor cierra el trade como hueco de datos; en acciones la noche y el fin de semana no lo son
+            "gap": STOCK_GAP_MS if stock else max(GAP_MS, 2 * tf * 60000),
+            "taker": STOCK_FEE if stock else TAKER_FEE, "maker": STOCK_FEE if stock else MAKER_FEE}
 
 
 LINE_SLOPE_BARS = 5
@@ -1176,6 +1242,18 @@ def _flow_ok(flow, ctx, k, side):
         oi, signed, z = cache["oi"]
         if not flow_filters.oi_ok(flow["oi"], oi, signed, k, side, flow.get("oiBars", 6), flow.get("oiPct", 2.0), z):
             return False
+    if flow.get("crowd"):
+        if "funding" not in cache:
+            cache["funding"] = flow_filters.funding_3d(ctx["symbol"], bars, ctx["tf"])
+        if not flow_filters.crowd_ok(flow["crowd"], cache["funding"][k], side):
+            return False
+    if flow.get("steady"):
+        key = ("steady", flow["steadyDays"])
+        if key not in cache:
+            cache[key] = flow_filters.oi_steady(ctx["symbol"], bars, ctx["tf"], flow["steadyDays"])
+        value = cache[key][k]
+        if not value == value or value < flow["steadyMin"]:
+            return False
     return True
 
 
@@ -1397,6 +1475,12 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                 trade["flow"]["cvd"] = round(float(flow_cache[("cvd", rule["flow"]["cvd"])][k]), 4)
             if flow_cache.get("oi") and flow_cache["oi"][0] is not None:
                 trade["flow"]["oi"] = float(flow_cache["oi"][0][k])
+            if "funding" in flow_cache and flow_cache["funding"][k] == flow_cache["funding"][k]:
+                trade["flow"]["funding"] = round(float(flow_cache["funding"][k]), 6)
+                trade["flow"]["crowd"] = flow_filters.crowd(float(flow_cache["funding"][k]), side)
+            steady = flow_cache.get(("steady", rule["flow"].get("steadyDays")))
+            if steady is not None and steady[k] == steady[k]:
+                trade["flow"]["steady"] = round(float(steady[k]), 3)
         if boxed is not None:
             trade["box"] = boxed  # La caja de la ruptura o del borde, para dibujarla con el trade
         elif ctx["vp"] is not None:
@@ -1525,7 +1609,60 @@ def _baseline(rule, ctx, trades, symbol):
         if trade and "skip" not in trade and not trade.get("open"):
             done.append(trade)
     stats = summary(done)
-    return {key: stats.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "reach", "medianReach")}
+    out = {key: stats.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "reach", "medianReach")}
+    out["quarters"] = _by_quarter(done)
+    return out
+
+
+def quarter_of(ms):
+    """Trimestre UTC de una hora en ms: "2025T3"."""
+    d = dt.datetime.fromtimestamp(ms / 1000, dt.timezone.utc)
+    return f"{d.year}T{(d.month - 1) // 3 + 1}"
+
+
+def _by_quarter(trades):
+    """{trimestre: {"1": [n, suma de R], "-1": [n, suma de R]}} de unos trades (por la hora de entrada)."""
+    out = {}
+    for t in trades:
+        cell = out.setdefault(quarter_of(t["entry_t"]), {}).setdefault(str(t["dir"]), [0, 0.0])
+        cell[0] += 1
+        cell[1] += t["r"]
+    return {q: {side: [n, round(total, 4)] for side, (n, total) in sides.items()} for q, sides in out.items()}
+
+
+QUARTER_MIN_RANDOM = 10   # Con menos entradas al azar en un trimestre y lado se usa el azar de toda la corrida
+QUARTER_MIN_TRADES = 20   # Un trimestre con menos trades de la regla no cuenta para la constancia
+
+
+def quarter_rows(result):
+    """Por trimestre: trades de la regla, suma de R y suma de la ventaja (cada trade contra el azar de su trimestre y lado).
+    {trimestre: [n, suma de R, suma de ventaja]}. Sin azar por trimestre, contra el azar de la corrida."""
+    base = result.get("baseline") or {}
+    quarters, fallback = base.get("quarters") or {}, base.get("avgR") or 0.0
+    out = {}
+    for t in result.get("trades") or []:
+        q = quarter_of(t["entry_t"])
+        n, total = (quarters.get(q) or {}).get(str(t["dir"]), [0, 0.0])
+        ctrl = total / n if n >= QUARTER_MIN_RANDOM else fallback
+        cell = out.setdefault(q, [0, 0.0, 0.0])
+        cell[0] += 1
+        cell[1] += t["r"]
+        cell[2] += t["r"] - ctrl
+    return out
+
+
+def consistency(quarters):
+    """Constancia de unos trimestres {q: [n, suma de R, suma de ventaja]}: cuántos quedan sobre el azar, la mediana de la
+    ventaja por trade de cada trimestre y qué parte de la ventaja total ponen los 4 mejores (None si el total no es positivo)."""
+    rows = [{"quarter": q, "n": n, "avgR": round(r / n, 3), "edge": round(e / n, 3), "edgeR": round(e, 2)}
+            for q, (n, r, e) in sorted(quarters.items()) if n >= QUARTER_MIN_TRADES]
+    if not rows:
+        return {"total": 0, "rows": []}
+    total = sum(r["edgeR"] for r in rows)
+    top4 = sum(sorted((r["edgeR"] for r in rows), reverse=True)[:4])
+    return {"rows": rows, "total": len(rows), "positive": sum(1 for r in rows if r["edgeR"] > 0),
+            "median": round(float(np.median([r["edge"] for r in rows])), 3),
+            "top4Share": round(top4 / total, 3) if total > 0 else None}
 
 
 def _leg_baseline(rule, ctx, trades, symbol):
@@ -1659,17 +1796,53 @@ def with_leg_baseline(result):
         return result  # Sin los elementos de la fase en disco habría que detectarlos de nuevo: no se hace solo por esto
     try:
         span = detect_span(symbol, rule["tf"], phase, rule)
-        result["legBaseline"] = _leg_baseline(rule, _context(symbol, rule["tf"], span["bars"]), result["trades"], symbol)
+        result["legBaseline"] = _leg_baseline(rule, _control_context(symbol, rule, span), result["trades"], symbol)
         result["legEdge"] = _edge(result["summary"], result["legBaseline"])
-        with _write_lock:
-            path = _run_path(result["id"])
-            partial = path.with_suffix(".tmp")
-            with gzip.open(partial, "wt", encoding="utf-8") as fh:
-                json.dump(result, fh, allow_nan=False, separators=(",", ":"))
-            partial.replace(path)
+        _resave(result)
     except Exception:  # Sin el control la corrida se muestra igual
         result.pop("legBaseline", None)
         result.pop("legEdge", None)
+    return result
+
+
+def _control_context(symbol, rule, span):
+    """El contexto de los controles como en run(): con las velas (filtros de flujo) y el régimen."""
+    ctx = _context(symbol, rule["tf"], span["bars"])
+    ctx["bars"] = span["bars"]
+    if rule.get("regime"):
+        ctx["regimeOK"] = regime_mask(rule["regime"], span["bars"])
+    return ctx
+
+
+def _resave(result):
+    with _write_lock:
+        path = _run_path(result["id"])
+        partial = path.with_suffix(".tmp")
+        with gzip.open(partial, "wt", encoding="utf-8") as fh:
+            json.dump(result, fh, allow_nan=False, separators=(",", ":"))
+        partial.replace(path)
+
+
+def with_quarter_baseline(result):
+    """Una corrida guardada antes de existir el azar por trimestre lo recibe la primera vez que se pide (para la
+    constancia). No recalcula la regla ni cambia su azar de la fase: solo suma el reparto por trimestre."""
+    base = (result or {}).get("baseline")
+    if result is None or not result.get("trades") or not base or "quarters" in base:
+        return result
+    symbol, rule = result["symbol"], result["rule"]
+    phase = next((p for p in phases(symbol) if p["phase"] == result["phase"]), None)
+    if phase is None or (not _on_candles(symbol, rule["tf"]) and not _span_path(symbol, rule["tf"], phase, rule).exists()):
+        return result
+    try:
+        span = detect_span(symbol, rule["tf"], phase, rule)
+        if rule.get("gc"):
+            return result  # La salida por el canal se arma dentro de run(): esas corridas quedan con el azar de la fase
+        again = _baseline(rule, _control_context(symbol, rule, span), result["trades"], symbol)
+        if again.get("quarters") is not None:
+            base["quarters"] = again["quarters"]
+            _resave(result)
+    except Exception:  # Sin el reparto la constancia usa el azar de la fase
+        pass
     return result
 
 
@@ -1794,12 +1967,14 @@ def start(symbol, raw_rule, phase_number, confirm=False):
     phase = next((p for p in phases(symbol) if p["phase"] == phase_number), None)
     if phase is None or not phase["available"]:
         return {"success": False, "message": "No hay datos de esa fase para este símbolo"}
-    if _on_candles(symbol, rule["tf"]):
+    allowed = codes_for(symbol, rule["tf"])
+    if allowed is not None:
         codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
-        if codes - set(CANDLE_CODES):
-            why = "En 1 día la regla corre sobre velas" if rule["tf"] == DAILY else f"{symbol} no tiene almacén de trades"
-            return {"success": False, "message": f"{why}: aquí solo se pueden usar {_labels(CANDLE_CODES)}. "
-                                                 f"Quita {_labels(sorted(codes - set(CANDLE_CODES)))} de la regla"}
+        if codes - allowed:
+            why = (f"{symbol} es una acción y corre sobre sus velas" if is_stock(symbol)
+                   else "En 1 día la regla corre sobre velas" if rule["tf"] == DAILY else f"{symbol} no tiene almacén de trades")
+            return {"success": False, "message": f"{why}: aquí solo se pueden usar {_labels(sorted(allowed))}. "
+                                                 f"Quita {_labels(sorted(codes - allowed))} de la regla"}
     info = gate(symbol, rule, phase_number)
     if info["blocked"]:
         return {"success": False, "message": info["blocked"], "gate": info}
@@ -1846,8 +2021,8 @@ def _plan(rule, phase_number, group="base"):
             row.update(action="stored", run=same[-1]["id"])  # La corrida es determinista: no se repite
         elif phase is None or not phase["available"]:
             row["reason"] = "sin datos de esa fase"
-        elif _on_candles(symbol, rule["tf"]) and codes - set(CANDLE_CODES):
-            row["reason"] = f"corre sobre velas: no puede usar {_labels(sorted(codes - set(CANDLE_CODES)))}"
+        elif codes_for(symbol, rule["tf"]) is not None and codes - codes_for(symbol, rule["tf"]):
+            row["reason"] = f"corre sobre velas: no puede usar {_labels(sorted(codes - codes_for(symbol, rule['tf'])))}"
         elif info["blocked"]:
             row["reason"] = "falta correr esta regla en la fase 2"
         else:
@@ -1915,10 +2090,16 @@ def consolidated(raw_rule, phase_number, group="base"):
         return {"success": False, "message": "La regla no tiene elementos conocidos"}
     plan = _plan(rule, phase_number, group)
     rows, pooled, weights, leg_weights = [], [], [], []
+    pooled_quarters = {}
     for row in plan:
-        result = with_leg_baseline(load_run(row["run"])) if row["run"] else None
+        result = with_quarter_baseline(with_leg_baseline(load_run(row["run"]))) if row["run"] else None
         if result is None:
             continue
+        for q, (n, r, e) in quarter_rows(result).items():
+            cell = pooled_quarters.setdefault(q, [0, 0.0, 0.0])
+            cell[0] += n
+            cell[1] += r
+            cell[2] += e
         s, b, trades = result["summary"], result.get("baseline") or {}, result["trades"]
         leg = result.get("legBaseline") or {}
         if s.get("n") and leg.get("n"):
@@ -1937,7 +2118,9 @@ def consolidated(raw_rule, phase_number, group="base"):
     ordered = sorted(pooled, key=lambda t: t["exit_t"])
     out = {"success": True, "rule": rule, "phase": phase_number, "group": group, "plan": plan, "symbols": rows, "summary": summary(ordered) if ordered else {"n": 0},
            "trades": [[t["entry_t"], t["exit_t"], t["r"]] for t in ordered],  # Para la vista "como cuenta" de la ventana
-           "equity": _equity(ordered), "positive": sum(1 for r in rows if (r["avgR"] or 0) > 0), "withTrades": sum(1 for r in rows if r["n"])}
+           "equity": _equity(ordered), "positive": sum(1 for r in rows if (r["avgR"] or 0) > 0), "withTrades": sum(1 for r in rows if r["n"]),
+           # Constancia: la ventaja de cada trimestre contra el azar de ese trimestre y lado, en cada moneda
+           "consistency": consistency(pooled_quarters)}
     if ordered:
         years = sorted({dt.datetime.fromtimestamp(t["entry_t"] / 1000, dt.timezone.utc).year for t in ordered})
         out["byYear"] = [_pooled_row(str(y), [t for t in ordered if dt.datetime.fromtimestamp(t["entry_t"] / 1000, dt.timezone.utc).year == y]) for y in years]

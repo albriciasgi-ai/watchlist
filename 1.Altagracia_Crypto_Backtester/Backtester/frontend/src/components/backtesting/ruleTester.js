@@ -48,6 +48,8 @@ export function defaultRule() {
     fvMinAtr: 0.3, spBars: 5, spVolume: false, spMinZ: 1,
     // Filtros de flujo: CVD de N velas a favor y OI (rise, fall, conf, noconf u off)
     cvdOn: false, cvdBars: 20, oiMode: 'off', oiBars: 6, oiPct: 2,
+    // Multitud por el funding (off, nocon, contra) y OI sostenido (parte de los pasos de 4 h con el OI al alza)
+    crowdMode: 'off', steadyOn: false, steadyDays: 14, steadyMin: 0.52,
     regimeMode: 'any', regimeMajor: true, regimeMajorOut: 6, regimeAfter: 6, regimeDaily: false,
     // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
@@ -126,9 +128,11 @@ export function toBackendRule(rule) {
     ...(codes.includes('IM') ? { im: { bars: number(rule.imBars, 3), atr: number(rule.imAtr, 2), range: rule.imRangeOn ? number(rule.imRange, 1.5) : null } } : {}),
     ...(codes.includes('FV') ? { fv: { minAtr: number(rule.fvMinAtr, 0.3) } } : {}),
     ...(codes.includes('SP') ? { sp: { bars: number(rule.spBars, 5), minZ: rule.spVolume ? number(rule.spMinZ, 1) : null } } : {}),
-    ...(rule.cvdOn || ['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode)
+    ...(rule.cvdOn || ['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode) || ['nocon', 'contra'].includes(rule.crowdMode) || rule.steadyOn
       ? { flow: { ...(rule.cvdOn ? { cvd: number(rule.cvdBars, 20) } : {}),
-        ...(['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode) ? { oi: rule.oiMode, oiBars: number(rule.oiBars, 6), oiPct: number(rule.oiPct, 2) } : {}) } } : {}),
+        ...(['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode) ? { oi: rule.oiMode, oiBars: number(rule.oiBars, 6), oiPct: number(rule.oiPct, 2) } : {}),
+        ...(['nocon', 'contra'].includes(rule.crowdMode) ? { crowd: rule.crowdMode } : {}),
+        ...(rule.steadyOn ? { steady: true, steadyDays: number(rule.steadyDays, 14), steadyMin: number(rule.steadyMin, 0.52) } : {}) } } : {}),
     ...(['inside', 'outside', 'breakout'].includes(rule.regimeMode)
       ? { regime: { mode: rule.regimeMode, major: !!rule.regimeMajor, majorOut: number(rule.regimeMajorOut, 6), after: number(rule.regimeAfter, 6),
         ...(rule.regimeDaily && number(rule.tf, 15) < DAILY_TF ? { tf: DAILY_TF } : {}) } } : {}),
@@ -221,6 +225,7 @@ export function fromBackendRule(saved) {
     beShare: saved.be?.share ?? 0.2, beMaxBody: saved.be?.maxBody ?? 1, beRejection: saved.be?.rejection ?? 0.6, bePattern: !!saved.be?.pattern,
     fvMinAtr: saved.fv?.minAtr ?? 0.3, spBars: saved.sp?.bars ?? 5, spVolume: saved.sp?.minZ != null, spMinZ: saved.sp?.minZ ?? 1,
     cvdOn: !!saved.flow?.cvd, cvdBars: saved.flow?.cvd ?? 20, oiMode: saved.flow?.oi || 'off', oiBars: saved.flow?.oiBars ?? 6, oiPct: saved.flow?.oiPct ?? 2,
+    crowdMode: saved.flow?.crowd || 'off', steadyOn: !!saved.flow?.steady, steadyDays: saved.flow?.steadyDays ?? 14, steadyMin: saved.flow?.steadyMin ?? 0.52,
     regimeMode: saved.regime?.mode || 'any', regimeMajor: saved.regime ? saved.regime.major !== false : true,
     regimeMajorOut: saved.regime?.majorOut ?? 6, regimeAfter: saved.regime?.after ?? 6, regimeDaily: saved.regime?.tf === DAILY_TF,
     vpShapes: saved.vp?.shapes || [], vpVeEntry: saved.vp?.veEntry || 'touch', vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
@@ -255,6 +260,8 @@ export function describeRule(saved) {
   return `${TF_LABEL[saved.tf] || saved.tf} · ${joined}${recipe.window > 1 ? ` @${recipe.window}` : ''}${saved.invert ? ' · invertida' : ''}`
     + `${saved.vaGap > 0 ? ` · hueco ≥ ${saved.vaGap} ATR` : ''}`
     + `${saved.flow?.cvd ? ` · CVD ${saved.flow.cvd} a favor` : ''}`
+    + `${saved.flow?.crowd ? ` · ${saved.flow.crowd === 'contra' ? 'solo contra la multitud' : 'sin ir con la multitud'}` : ''}`
+    + `${saved.flow?.steady ? ` · OI sostenido ≥ ${Math.round(saved.flow.steadyMin * 100)}% en ${saved.flow.steadyDays} d` : ''}`
     + `${saved.flow?.oi ? ` · ${{ rise: `OI sube > ${saved.flow.oiPct}% en ${saved.flow.oiBars}`, fall: `OI baja > ${saved.flow.oiPct}% en ${saved.flow.oiBars}`, conf: 'confluencia OI-vol a favor', noconf: 'sin confluencia OI-vol en contra' }[saved.flow.oi]}` : ''}`
     + `${saved.be?.pattern ? ' · borde con patrón' : ''}`
     + `${saved.regime ? ` · ${{ inside: 'solo en rango', outside: 'solo fuera de rango', breakout: `${saved.regime.after} velas tras romper` }[saved.regime.mode]}${saved.regime.major ? ' mayor' : ''}` : ''}`

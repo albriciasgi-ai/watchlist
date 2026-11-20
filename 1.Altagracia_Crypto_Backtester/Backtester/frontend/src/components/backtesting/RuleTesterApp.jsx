@@ -9,6 +9,7 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import RuleSearchTab from './RuleSearchTab';
 import RegimeTab from './RegimeTab';
+import StrategiesTab from './StrategiesTab';
 import { lastClosedIndex } from './replayClock';
 import { latestFreeBox } from './orderPlan.js';
 import { priceText, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
@@ -258,13 +259,37 @@ const RuleTesterApp = () => {
     }
   }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait]);
 
+  // Monedas nuevas y acciones no tienen caché de App 1: sus velas salen del probador (del disco). Pedirlas a
+  // /api/backtesting/bulk-data las bajaría de Bybit y las guardaría en ese caché, que está en git y decide cuáles
+  // son las monedas de siempre (y Bybit no tiene acciones). null mientras no se sabe el grupo del símbolo
+  const external = info?.baseSymbols ? !info.baseSymbols.includes(symbol) : null;
+
   // Velas: del caché del navegador que guardó la principal. Si no están, se pide al backend solo el marco
   // del gráfico: esta ventana no necesita los cinco marcos
   useEffect(() => {
     let active = true;
     const has = (data) => data?.timeframes?.[chartTf]?.main?.length > 0;
+    if (external === null) return undefined;
     (async () => {
       let data = marketRef.current;
+      if (external) {
+        if (has(data)) return;
+        setStatus(`Cargando las velas de ${chartTf} de ${symbol}…`);
+        try {
+          const found = await api(`/api/tester/chart-candles/${symbol}?tf=${TF_MINUTES[chartTf]}`);
+          if (!found.success) throw new Error(found.message || 'sin velas');
+          const main = found.t.map((t, i) => ({ timestamp: t, open: found.o[i], high: found.h[i], low: found.l[i], close: found.c[i], volume: found.v[i] }));
+          data = { ...(marketRef.current || {}), symbol, timeframes: { ...(marketRef.current?.timeframes || {}), [chartTf]: { main, extended: true } } };
+        } catch (error) {
+          if (active) setStatus(`No hay velas de ${chartTf} para ${symbol}. Las monedas nuevas tienen 1H y 4H; las acciones, 15M, 1H y 4H.`);
+          return;
+        }
+        marketRef.current = data;
+        if (!active) return;
+        setMarket(data);
+        setStatus(null);
+        return;
+      }
       if (has(data) && (TF_MINUTES[chartTf] < 5 || data.timeframes[chartTf].extended)) return;
       setStatus(`Cargando las velas de ${symbol}…`);
       if (!data) data = await cachedMarketData(symbol);
@@ -306,7 +331,7 @@ const RuleTesterApp = () => {
       setStatus(null);
     })();
     return () => { active = false; };
-  }, [symbol, chartTf]);
+  }, [symbol, chartTf, external]);
 
   // El trabajo en curso: avance cada segundo, y al terminar se lee la corrida
   const loadRun = useCallback(async (id) => {
@@ -1012,6 +1037,17 @@ const RuleTesterApp = () => {
             <Num value={rule.oiBars} min={1} max={100} onChange={(oiBars) => patch({ oiBars })} /><span>velas</span></>}
         </div>
         <div className="rt-row">
+          <span title="Funding de los 3 días anteriores de la moneda. Contra la multitud: vender cuando los cargados son los largos (funding sobre 0.01% por 8 h) o comprar cuando son los cortos (funding negativo). Medido en 8 reglas y 50 monedas: ir con la multitud suele ser lo peor (unos 0.10 R por trade menos que ir contra ella)">Multitud (funding)</span>
+          <select value={rule.crowdMode} onChange={(e) => patch({ crowdMode: e.target.value })}>
+            <option value="off">sin filtro</option>
+            <option value="nocon">no ir con la multitud</option>
+            <option value="contra">solo contra la multitud</option>
+          </select>
+          <Check checked={rule.steadyOn} onChange={(steadyOn) => patch({ steadyOn })} title="El interés abierto viene subiendo de forma pareja: en los últimos días, la parte de los pasos de 4 horas en que subió el OI llega a ese mínimo. Medido en 8 reglas: +0.05 R por trade en la mediana, también en la fase 3">OI sostenido: sube en</Check>
+          <Num value={Math.round(rule.steadyMin * 100)} min={30} max={90} disabled={!rule.steadyOn} onChange={(v) => patch({ steadyMin: (Number(v) || 52) / 100 })} /><span>% o más de los pasos en</span>
+          <Num value={rule.steadyDays} min={3} max={60} disabled={!rule.steadyOn} onChange={(steadyDays) => patch({ steadyDays })} /><span>días</span>
+        </div>
+        <div className="rt-row">
           <span title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">Régimen</span>
           <select value={rule.regimeMode} onChange={(e) => patch({ regimeMode: e.target.value })}>
             <option value="any">cualquiera</option>
@@ -1480,7 +1516,7 @@ const RuleTesterApp = () => {
   ) : (
     <>
       <div className="rt-group">
-        <b>{allReport.rule.name}</b> · Fase {allReport.phase} · {allReport.symbols.length} monedas{allReport.group === 'new' ? ' nuevas' : allReport.group === 'all' ? ' (las de siempre y las nuevas)' : ' de siempre'}
+        <b>{allReport.rule.name}</b> · Fase {allReport.phase} · {allReport.symbols.length} monedas{allReport.group === 'new' ? ' nuevas' : allReport.group === 'all' ? ' (las de siempre y las nuevas)' : allReport.group === 'stocks' ? ' (acciones)' : ' de siempre'}
         <div className="rt-note">{describeRule(allReport.rule)}</div>
       </div>
       {allReport.phase > 1 && <div className="rt-warn">Esta fase es de comprobación. Si cambias la regla por lo que veas aquí, la fase queda gastada para la regla nueva en todas las monedas.</div>}
@@ -1568,6 +1604,27 @@ const RuleTesterApp = () => {
           <div className="rt-note" style={{ marginTop: 4 }}>No entraron: {allReport.plan.filter(row => row.action === 'skip').map(row => `${row.symbol.replace('USDT', '')} (${row.reason})`).join('; ')}.</div>
         )}
       </div>
+      {allReport.consistency?.total > 0 && (
+        <div className="rt-group">
+          <h4>Constancia por trimestre</h4>
+          <div className="rt-note" style={{ marginBottom: 4 }}>
+            Cada trade contra el azar de su trimestre y su lado, en su moneda. <b>{allReport.consistency.positive} de {allReport.consistency.total}</b> trimestres
+            quedan sobre el azar; la mediana es <R value={allReport.consistency.median} digits={2} /> R por trade
+            {allReport.consistency.top4Share != null ? <>, y los 4 mejores ponen <b>{Math.round(allReport.consistency.top4Share * 100)}%</b> de la ventaja total</> : ', y la ventaja total no es positiva'}.
+            {allReport.consistency.top4Share != null && allReport.consistency.top4Share >= 0.8 && allReport.consistency.total > 5
+              && ' Depende de pocos trimestres: en un periodo sin ellos puede no ganar.'}
+            {' '}Solo cuentan los trimestres con 20 trades o más.
+          </div>
+          <table className="rt-table">
+            <thead><tr><th>Trimestre</th><th>Trades</th><th>R medio</th><th>Vs. azar</th><th>Ventaja total</th></tr></thead>
+            <tbody>
+              {allReport.consistency.rows.map(row => (
+                <tr key={row.quarter}><td>{row.quarter.replace('T', ' T')}</td><td>{row.n}</td><td><R value={row.avgR} digits={2} /></td><td><R value={row.edge} digits={2} /></td><td><R value={row.edgeR} /></td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       <BriefTable title="Por año" rows={allReport.byYear} first="Año" />
       <BriefTable title="Por lado" rows={allReport.bySide} first="Lado" />
     </>
@@ -1756,7 +1813,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['estrategias', 'Estrategias'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -1844,6 +1901,16 @@ const RuleTesterApp = () => {
             {tab === 'ordenes' && ordersTab}
             {tab === 'revision' && reviewTab}
             {tab === 'regimen' && <RegimeTab symbol={symbol} chartTf={chartTf} onBands={setRegimeBands} onFocus={(time, price) => { setPhase(1); focusLater(time, price); }} />}
+            {tab === 'estrategias' && (
+              <StrategiesTab onLoadRule={(saved) => { setRule(fromBackendRule(saved)); setPhase(1); setTab('regla'); }}
+                onOpenReport={(saved, phaseNumber, group) => {
+                  // El informe "Todas" de esas monedas y esa fase, con lo ya corrido: no se recalcula nada
+                  coinGroupRef.current = group;
+                  setCoinGroup(group);
+                  allRuleRef.current = saved;
+                  loadAll(saved, phaseNumber);
+                }} />
+            )}
             {tab === 'busqueda' && <RuleSearchTab onLoadRule={(saved) => { setRule(fromBackendRule(saved)); setPhase(1); setTab('regla'); }} />}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
@@ -1855,7 +1922,8 @@ const RuleTesterApp = () => {
               <select value={coinGroup} disabled={running || allStarting} onChange={(e) => { setCoinGroup(e.target.value); setAllReport(null); }}>
                 <option value="base">las de siempre ({info?.baseSymbols?.length ?? 7})</option>
                 <option value="new">las nuevas ({info?.newSymbols?.length ?? 0})</option>
-                <option value="all">todas ({(info?.baseSymbols?.length ?? 7) + (info?.newSymbols?.length ?? 0)})</option>
+                <option value="all">todas las monedas ({(info?.baseSymbols?.length ?? 7) + (info?.newSymbols?.length ?? 0)})</option>
+                <option value="stocks">las acciones ({info?.stockSymbols?.length ?? 0})</option>
               </select>
             </div>
             <button type="button" className="rt-btn" style={{ width: '100%', padding: '5px 0', marginTop: 4 }} disabled={running || allStarting} onClick={() => runAll(false)}

@@ -1124,6 +1124,58 @@ Pedido del usuario: un bot de cripto que vio entraba hacia donde el precio empez
   - Se probaron 11 reglas más sobre los mismos datos: ninguna pasa a la fase 2 solo por esto.
   - Pruebas: `tests/test_trailing_straddle.py` (6).
 
+### Acciones de Alpaca en el probador (20/11)
+
+Pedido del usuario: probar reglas en acciones, con más historia, y cruzar mercados (elegir en uno y comprobar en el otro). Las velas las baja otra sesión ("Acciones de Alpaca en App 1", `alpaca_candles.py`, rama `claude/app1-acciones-alpaca-43f491`) a `OrderFlowData/alpaca/candles/{acción}.json.gz` (`ALPACA_CANDLES` cambia la carpeta): 99 acciones, velas de 15 minutos, 1 hora, 4 horas y 1 día desde 2016 (o desde que salieron a bolsa), solo de la sesión regular, ajustadas por splits. Aquí solo se leen.
+
+- **Grupo "acciones"** (`candle_symbols("stocks")`, `stock_symbols`, `is_stock`). "Todas" sigue siendo todas las monedas: las acciones son otro mercado. Selector "Monedas: las acciones" en "Correr en todas las monedas", el grupo A en el tablero (comprobación en todas sus fases, como las monedas nuevas) y "y en las acciones" en la búsqueda (`checkStocks`: cada finalista se corre también en las acciones, en su fase 1).
+- **Velas con su hora** (`_stock_bars`): las de 1h y 4h empiezan a las 09:30 de Nueva York (la última de 1h dura 30 minutos y la segunda de 4h, 2.5 horas) y el día a la medianoche de Nueva York. Se leen tal como vienen; llevarlas a la hora en punto, como se hace con las monedas, adelantaría lo que se sabe de cada vela.
+- **Noches y fines de semana:** en acciones un salto de hasta 5 días no es un hueco de datos (`STOCK_GAP_MS`, por `ctx["gap"]`). El trade sigue abierto, y una apertura más allá del stop sale en la apertura.
+- **Costos:** 0.02% por lado (`STOCK_FEE`), sin comisión, solo el spread. No cuenta el costo de pedir prestadas acciones para el corto.
+- **Elementos:** solo los de velas, menos el barrido de liquidaciones (`codes_for`). El CVD se estima con cada vela; los filtros de OI y de funding no pasan, porque las acciones no tienen esos datos. `has_store` es falso para las acciones aunque exista su almacén de trades de Alpaca, que es del gráfico de la otra sesión.
+- **Fases** con los mismos cortes: la fase 1 va de 2016 a 2023.
+- **Gráfico de la ventana:** las monedas nuevas y las acciones piden sus velas a `/api/tester/chart-candles/{símbolo}`, que las lee del disco. Antes, una moneda nueva abierta en el gráfico se pedía a `/api/backtesting/bulk-data`, que la bajaba de Bybit y la guardaba en `backtesting_cache`: esa carpeta está en git y decide cuáles son las monedas de siempre. Las monedas nuevas tienen 1H y 4H; las acciones, 15M, 1H y 4H.
+- **Medido:** el Impulso (≥ 2 ATR en 3 velas, stop 1.5 ATR, 3R) en las 99 acciones, fase 1 en 4h: 12,102 trades y +0.004 R por trade, contra −0.027 del azar (ventaja +0.03 ±0.03), positivo en 50 de 99. La regla más constante de cripto no muestra ventaja en acciones. Las 99 corren en 79 s.
+- Pruebas: `tests/test_stocks.py` (4).
+
+### Multitud, OI sostenido y constancia por trimestre (20/11)
+
+Salió de entender por qué la Ruptura de caja con EMA 200 y CVD cayó en la fase 3 (análisis aparte, sin tocar la app):
+- su ventaja venía de 4 trimestres de 23;
+- pausar por resultados propios empeoraba todo;
+- el régimen de BTC, la volatilidad, la amplitud de la señal y el nivel del OI no separaban los episodios;
+- en 8 reglas y 50 monedas, **ir con la multitud** (funding) suele ser lo peor (contra − con, +0.10 R en la mediana, 11 de 14 casos);
+- que **el OI venga subiendo de forma sostenida** ayuda un poco (+0.05 R, también en la fase 3);
+- el Impulso era la regla más pareja por trimestre.
+
+El usuario pidió llevar a la app las tres piezas que se repitieron.
+
+- **Funding** (`funding_update.py`, `OrderFlowData/funding/{moneda}.json`; `TESTER_FUNDING` cambia la carpeta). Sin argumentos actualiza las que tienen archivo y las monedas del probador. `flow_filters.funding_3d()`: la suma de los 3 días anteriores al cierre ÷ 9, en equivalente por 8 horas aunque la moneda liquide cada 4 u 1 hora.
+- **Filtro de la multitud** (`flow.crowd`): contra la multitud es un corto con funding > 0.01% o un largo con funding < 0; con la multitud, al revés; entre medio, neutro (`flow_filters.crowd`). `nocon` deja todo menos con la multitud; `contra`, solo contra ella. Sin funding no pasa. Cada trade guarda `flow.funding` y `flow.crowd`.
+- **OI sostenido** (`flow.steady`, `steadyDays` 14, `steadyMin` 0.52): la parte de los pasos de 4 horas del OI de esos días en que subió (`flow_filters.oi_steady`), siempre con la serie de 4 horas (también en BTC, para que el umbral sea el mismo), y en cualquier marco de la regla. Con huecos (menos del 80% de los pasos) no pasa. 0.52 es el tercio alto medido en 50 monedas.
+- Los dos van en "Filtros de flujo", solo entran a la regla si se piden, y los controles al azar entran donde ellos dejan, como el CVD y el OI. En la búsqueda son los genes `crowd` y `steady`, que empiezan apagados.
+- **Constancia por trimestre:**
+  - **Azar por trimestre:** el azar de cada corrida guarda su reparto por trimestre y lado (`baseline.quarters`). Una corrida guardada antes lo recibe la primera vez que se pide (`with_quarter_baseline`), sin cambiar la regla ni su azar de la fase; las del Gaussian Channel se quedan con el azar de la fase. De paso, los controles que se rearman (también el del tramo) ya respetan el régimen y los filtros de flujo (`_control_context`).
+  - **Cálculo:** `quarter_rows()` mide cada trade contra el azar de su trimestre y lado; `consistency()` da los trimestres sobre el azar (solo los de 20 trades o más), la mediana de la ventaja por trade y qué parte de la ventaja ponen los 4 mejores.
+  - **Informe "Todas":** sección "Constancia por trimestre", con un aviso si los 4 mejores ponen el 80% o más.
+  - **Tablero:** columna "Trimestres +", un punto en la lectura y la cuenta en el porqué de "Las más sólidas" (`run_stats_v3`: la primera vez rearma el azar por trimestre de las corridas viejas, en segundo plano).
+  - **Búsqueda:** "Elegir por: constancia por trimestre" (`fitness`), que usa la mediana de la ventaja de cada trimestre del tramo de búsqueda (con 4 trimestres o más). Cada finalista muestra la constancia de los dos tramos.
+- **Ojo:** en la fase 1 de las monedas nuevas, la Ruptura de caja se veía bastante constante (9 de 11 trimestres, mediana +0.15, 4 mejores 78%); su dependencia de pocos episodios se veía recién con todas las fases. La constancia ayuda, no es infalible.
+- Pruebas: `tests/test_crowd_constancy.py` (6).
+
+### Tablero de estrategias (19/11)
+
+Pedido del usuario: "no recuerdo cómo salieron las anteriores y dependo de Claude para saberlo", y que la app compare las métricas y diga cuál es más ganadora y por qué, como la lectura que se hacía con cada captura.
+
+- **Pestaña "Estrategias"** del backtesting global (`StrategiesTab.jsx`) y `backend/strategy_board.py`, con `GET /api/tester/strategies` y `POST /api/tester/strategies/note`.
+- **Una estrategia** es una regla exacta sin contar su nombre (`rule_hash` con un símbolo fijo); la misma guardada con dos nombres es una, y lleva los dos. Cada celda fase × grupo (las de siempre, S; las nuevas, N) junta la última corrida de cada moneda igual que el informe "Todas": mismo R, mismo azar pesado por trades y el tramo solo si lo tienen todas las monedas con trades. Comprobado con la copia del registro: da los números de los informes (por ejemplo 1,566 trades, +0.247 y ventaja de +0.135 a +0.320).
+- **Pasa** (✓): ventaja sobre los dos controles con margen que no toca el cero, como se acordó, y además R medio positivo: perder menos que el azar no es ganar.
+- **Lectura** (`analyze`): cada fase con su veredicto; si la ventaja se achica al pasar a datos frescos; si la pone un lado (con la sugerencia de probar solo ese lado); si una moneda pone el 40% o más del R; cuántas monedas ganan; años que pierden; pocos trades. "Comprobación" es todo lo que no se usó para elegir la regla: las fases 2 y 3, y cualquier fase de las monedas nuevas. Veredicto: cayó en tal fase, pasa todas, pasa N y le falta la fase 3, solo explorada, o no pasa ni la exploración.
+- **"Las más sólidas"** (`rank`): solo reglas corridas en 2 monedas o más; primero las que no cayeron en ninguna comprobación, luego las que pasan más, y entre iguales la de peor margen inferior más alto, con el porqué en una línea.
+- **Estado y nota** del usuario por estrategia (`strategy_notes.json` junto al registro). Un clic en una fase abre su informe "Todas" (con el grupo de monedas), y "Cargar en la pestaña Regla" la deja lista.
+- **Resumen de cada corrida** en `cache/run_stats_v2.json` (con sus años). La primera vez se arma en segundo plano y la pestaña muestra el avance: con 430 corridas tardó unos 4 minutos, sobre todo por las viejas que reciben ahí el control del tramo. Después responde en décimas de segundo.
+- Pruebas: `tests/test_strategy_board.py` (4). Probado en la copia aislada con una copia del registro real: tabla, orden, detalle, ancho del panel (sin barra horizontal) y nota guardada.
+
 ### Monedas nuevas y búsqueda con todas las piezas (19/11)
 
 Pedido del usuario tras caer en la fase 3 la Ruptura de caja con EMA 200 y CVD: unas 50 monedas, para tener datos frescos, y que la búsqueda genética combine los elementos, el régimen, el trailing y las dos órdenes nuevas.

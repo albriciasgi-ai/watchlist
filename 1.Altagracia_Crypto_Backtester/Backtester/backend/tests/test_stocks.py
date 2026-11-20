@@ -1,0 +1,94 @@
+"""Acciones de Alpaca en el probador: velas con su hora, noches que no son huecos, costos y elementos. Uso: python -m pytest tests/test_stocks.py"""
+import gzip
+import json
+
+import pytest
+
+import rule_tester as rt
+import strategy_board as sb
+
+H, DAY = 3600000, 86400000
+
+
+def session_bars(days, start_price=100.0, first=None):
+    """Velas de 1 hora de 09:30 a 16:00 de Nueva York (14:30 a 21:00 UTC en invierno), de lunes a viernes."""
+    first = first or rt._ms("2017-01-02")
+    rows, price, d = [], start_price, 0
+    while len(rows) < days * 7:
+        day = first + d * DAY
+        d += 1
+        if (day // DAY + 3) % 7 >= 5:  # Sábado y domingo
+            continue
+        for h in range(7):
+            t = day + 14 * H + 30 * 60000 + h * H
+            rows.append([t, price, price + 1, price - 1, price + 0.2, 1000.0, 10, price])
+            price += 0.2
+    return rows
+
+
+@pytest.fixture
+def stock(tmp_path, monkeypatch):
+    stocks, base, extra = tmp_path / "acciones", tmp_path / "base", tmp_path / "extra"
+    for p in (stocks, base, extra):
+        p.mkdir()
+    rows = session_bars(800)
+    with gzip.open(stocks / "AAA.json.gz", "wt", encoding="utf-8") as fh:
+        json.dump({"symbol": "AAA", "15": rows, "60": rows, "240": rows[::4], "1440": rows[::7]}, fh)
+    monkeypatch.setattr(rt, "STOCK_DIR", stocks)
+    monkeypatch.setattr(rt, "CANDLE_DIR", base)
+    monkeypatch.setattr(rt, "EXTRA_DIR", extra)
+    monkeypatch.setattr(rt.fs, "coverage", lambda symbol: {"first": None, "last": None, "days": 0})
+    monkeypatch.setattr(rt.observer, "OBSERVER_DIR", tmp_path / "observer")
+    rt._candles.clear()
+    return rows
+
+
+def test_las_acciones_son_su_propio_grupo_y_sus_velas_conservan_la_hora(stock):
+    assert rt.candle_symbols("stocks") == ["AAA"] and rt.is_stock("AAA") and not rt.is_stock("BTCUSDT")
+    assert "AAA" not in rt.candle_symbols("all")  # "todas" son las monedas: las acciones son otro mercado
+    bars = rt.candle_bars("AAA", 60)
+    assert len(bars) == len(stock)
+    assert all(b["t"] % H == 30 * 60000 for b in bars)  # 09:30 de Nueva York: no se llevan a la hora en punto
+    assert rt.phases("AAA")[0]["available"]
+    assert not rt.has_store("AAA") and rt._on_candles("AAA", 60)
+    assert rt.codes_for("AAA", 60) == set(rt.CANDLE_CODES) - {"LIQ"}
+
+
+def test_la_noche_no_cierra_el_trade_y_una_apertura_mas_alla_se_llena_ahi(stock):
+    bars = rt.candle_bars("AAA", 60)[:60]
+    ctx = rt._context("AAA", 60, bars)
+    ctx["minutes"] = None
+    assert ctx["gap"] == rt.STOCK_GAP_MS and ctx["taker"] == rt.STOCK_FEE
+    rule = rt.clean_rule({"tf": 60, "recipe": {"slots": [{"codes": ["IM"]}]}, "stop": {"type": "atr", "atr": 2, "maxAtr": 50}, "exit": {"targetR": 50}})
+    # La señal en la última vela de un día: entra en la apertura del siguiente y sigue días después
+    k = 6
+    t = rt.simulate(rule, ctx, k, 1)
+    assert t["entry_t"] == bars[7]["t"] and t.get("reason") != "hueco de datos"
+    # Una apertura muy por debajo del stop: sale en la apertura, no en el stop
+    gapped = [dict(b) for b in bars]
+    for b in gapped[14:]:
+        for key in ("o", "h", "l", "c"):
+            b[key] -= 30
+    ctx2 = rt._context("AAA", 60, gapped)
+    ctx2["minutes"] = None
+    t2 = rt.simulate(rule, ctx2, k, 1)
+    assert t2["reason"] == "stop" and t2["exit"] == pytest.approx(gapped[14]["o"]) and t2["exit"] < t2["stop"]
+    # El costo es el de las acciones: con una regla que gana 0, el R neto solo pierde el spread de entrada y salida
+    assert rt.STOCK_FEE < rt.TAKER_FEE
+
+
+def test_una_regla_con_liquidaciones_no_corre_en_acciones(stock):
+    rule = {"tf": 60, "recipe": {"slots": [{"codes": ["LIQ"]}]}}
+    res = rt.start("AAA", rule, 1)
+    assert not res["success"] and "acción" in res["message"]
+    plan = rt._plan(rt.clean_rule(rule), 1, "stocks")
+    assert plan[0]["action"] == "skip" and "Barrido de liquidaciones" in plan[0]["reason"]
+
+
+def test_el_tablero_pone_las_acciones_en_su_grupo_y_cuentan_como_comprobacion():
+    item = {"key": "k", "name": "R", "names": ["R"], "rule": {}, "tf": 60, "lastAt": 0, "runs": 1,
+            "cells": {"1": {"stocks": sb._pool([("AAA", {"n": 40, "sum": 8.0, "sumsq": 40.0, "wins": 20, "longN": 40, "longSum": 8.0,
+                                                          "shortN": 0, "shortSum": 0.0, "years": {}, "quarters": {},
+                                                          "base": {"avgR": 0.0, "seR": 0.01}, "leg": {"avgR": 0.0, "seR": 0.01}})])}}}
+    cells = sb._cells(item)
+    assert cells[0][1] == "stocks" and cells[0][3] is True

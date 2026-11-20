@@ -12,9 +12,20 @@ Filtros de flujo del probador, sin futuro, sobre las velas de la regla:
   el filtro solo vale en 4h y 1D: en marcos menores el OI no cambia dentro de la vela y no se puede medir.
   Una vela sin OI no pasa el filtro.
 
-`oi_update.py` baja de Bybit el OI de 4 horas que falte.
+- OI sostenido (19/11): la parte de los pasos de 4 horas de los últimos `days` días en que subió el OI, con la serie de
+  4 horas de todas las monedas (también BTC, para que el umbral valga igual). Pasa con `min` o más (0.52 de fábrica, el
+  tercio alto medido en 50 monedas). No depende del marco de la regla. Con huecos (menos del 80% de los pasos) no pasa.
+  Medido en 8 reglas: subida sostenida del OI, +0.05 R por trade en la mediana, también en la fase 3.
+- Multitud (19/11): el funding de los 3 días anteriores de la moneda, en equivalente por 8 horas (la suma ÷ 9, así vale
+  igual si la moneda liquida cada 8, 4 o 1 hora). Contra la multitud: un corto con funding > 0.01% (los cargados son los
+  largos) o un largo con funding < 0; con la multitud, al revés; entre medio, neutro. `nocon` deja todo menos con la
+  multitud; `contra`, solo contra la multitud. Fuente: `OrderFlowData/funding/{moneda}.json`, de `funding_update.py`.
+  Medido en 8 reglas: contra − con la multitud, +0.10 R por trade en la mediana; con la multitud suele ser lo peor.
+
+`oi_update.py` baja de Bybit el OI de 4 horas que falte, y `funding_update.py`, el funding.
 """
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -22,6 +33,10 @@ import numpy as np
 import oi_store
 
 Z_BARS = 20
+DAY_MS = 86400000
+FUNDING_DIR = Path(os.environ.get("TESTER_FUNDING", "C:/Users/inven/OrderFlowData/funding"))
+NEUTRAL_FUNDING = 0.0001   # 0.01% por 8 horas: el funding normal de Bybit cuando nadie está cargado
+CROWD_MODES = ("nocon", "contra")
 
 
 def signed_volume(bars):
@@ -113,3 +128,62 @@ def oi_ok(mode, oi, signed, k, side, bars_back=6, pct=2.0, zcache=None):
 def z_pair(oi, signed):
     """z-score del volumen con signo y del cambio del OI, para la confluencia."""
     return _zscore(signed), _zscore(np.diff(oi, prepend=np.nan))
+
+
+def oi_steady(symbol, bars, tf, days=14):
+    """Parte de los pasos de 4 horas del OI en los `days` días anteriores al cierre de cada vela en que subió (NaN sin datos)."""
+    src = _json_series(symbol)
+    out = np.full(len(bars), np.nan)
+    if src is None or not len(bars):
+        return out
+    times, values = src[0], src[1]
+    up = np.r_[0, np.cumsum(np.diff(values) > 0)]  # up[i]: subidas entre los puntos 0..i
+    close = np.array([b["t"] for b in bars], dtype=np.int64) + tf * 60000
+    end = np.searchsorted(times, close, side="right") - 1               # Último punto conocido al cierre
+    start = np.searchsorted(times, close - days * DAY_MS, side="left")  # Primer punto dentro de la ventana
+    steps = end - start
+    ok = (end >= 0) & (steps >= int(days * 6 * 0.8))
+    out[ok] = (up[end[ok]] - up[start[ok]]) / steps[ok]
+    return out
+
+
+def funding_series(symbol):
+    path = FUNDING_DIR / f"{symbol}.json"
+    if not path.exists():
+        return None
+    rows = sorted(json.load(open(path, encoding="utf-8")))
+    if not rows:
+        return None
+    return np.array([r[0] for r in rows], dtype=np.int64), np.array([r[1] for r in rows], dtype=float)
+
+
+def funding_3d(symbol, bars, tf):
+    """Funding de los 3 días anteriores al cierre de cada vela, en equivalente por 8 horas (NaN con menos de 3 liquidaciones)."""
+    src = funding_series(symbol)
+    out = np.full(len(bars), np.nan)
+    if src is None or not len(bars):
+        return out
+    times, rates = src
+    cum = np.r_[0.0, np.cumsum(rates)]
+    close = np.array([b["t"] for b in bars], dtype=np.int64) + tf * 60000
+    hi = np.searchsorted(times, close, side="right")
+    lo = np.searchsorted(times, close - 3 * DAY_MS, side="right")
+    ok = hi - lo >= 3
+    out[ok] = (cum[hi[ok]] - cum[lo[ok]]) / 9
+    return out
+
+
+def crowd(funding, side):
+    """contra, neutro o con la multitud para un trade de ese lado; None sin funding."""
+    if funding is None or not funding == funding:
+        return None
+    if side < 0:
+        return "contra" if funding > NEUTRAL_FUNDING else ("con" if funding < 0 else "neutro")
+    return "contra" if funding < 0 else ("con" if funding > NEUTRAL_FUNDING else "neutro")
+
+
+def crowd_ok(mode, funding, side):
+    label = crowd(funding, side)
+    if label is None:
+        return False
+    return label == "contra" if mode == "contra" else label != "con"
