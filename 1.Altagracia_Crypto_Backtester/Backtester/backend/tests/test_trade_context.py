@@ -152,6 +152,23 @@ def test_el_recorrido_del_stop_inicial_a_la_entrada_y_arrastrado(tmp_path, monke
     assert trade["reason"] in ("tiempo", "stop arrastrado")
 
 
+def test_una_regla_en_secuencia_se_repite_desde_el_disco(tmp_path, monkeypatch):
+    """Del disco, los mínimos por grupo vuelven con llaves de texto: hasta el 20/11 repetirla fallaba (KeyError)"""
+    monkeypatch.setattr(rt.observer, "OBSERVER_DIR", tmp_path)
+    bars = rising()
+    span = {"bars": bars, "events": [ev("EX", 30), ev("SW", 31)]}
+    monkeypatch.setattr(rt, "detect_span", lambda *a, **k: span)
+    rt._replays.clear()
+    r = rule(recipe={"slots": [{"codes": ["EX"], "group": 0}, {"codes": ["SW"], "group": 1}], "mode": "sequence",
+                     "sameBar": True, "groupMins": {0: 1, 1: 1}, "window": 3})
+    result = rt.run("TEST", r, span, PHASE, None, base=False)
+    assert [t["signal"] // MS for t in result["trades"]] == [31]
+    run_id = rt._save(result, "secuencia")
+    assert set(rt.load_run(run_id)["rule"]["recipe"]["groupMins"]) == {"0", "1"}, "así vuelve del disco"
+    ctx = rt.trade_context(run_id, 1)
+    assert ctx["success"] and ctx["same"]
+
+
 def test_sin_corrida_o_sin_trade_no_hay_contexto(saved):
     run_id, _ = saved
     assert rt.trade_context(run_id, 99) is None

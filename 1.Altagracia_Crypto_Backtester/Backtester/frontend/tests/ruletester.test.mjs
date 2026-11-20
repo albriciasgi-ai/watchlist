@@ -3,7 +3,8 @@
 import assert from 'node:assert/strict';
 import {
   defaultRule, deleteRule, describeRule, fromBackendRule, isRuleTester, loadSavedRules, ruleTesterUrl, saveRule,
-  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals, signalChecklist, checklistBand, tradeBands
+  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals, signalChecklist, checklistBand, tradeBands,
+  targetInR
 } from '../src/components/backtesting/ruleTester.js';
 
 const tests = [];
@@ -190,6 +191,63 @@ test('cada condición de la regla al cerrar la vela de la señal: elementos que 
   assert.equal(checklistBand(null, context, 'x'), null);
   const strict = signalChecklist(context, { votes: ['FV', 'DJ'] }, { mode: 'strict', min: 2, window: 3, slots: [{ codes: ['FV'] }, { codes: ['DJ'] }] });
   assert.equal(strict.items[0].label, 'Elementos (todos, en 3 velas)');
+});
+
+test('el objetivo arrastrado: viaja solo si se pide y con el objetivo en R, y vuelve igual del historial', () => {
+  const plain = toBackendRule({ ...defaultRule(), targetR: 3 });
+  assert.equal('tpTrail' in plain.exit, false, 'sin pedirlo no cambia la identidad de la regla');
+  const rule = { ...defaultRule(), codes: ['FV'], targetR: 3, tpTrailOn: true, tpTrailStart: 2.5, tpTrailDist: 0.5, tpTrailUnit: 'r' };
+  const sent = toBackendRule(rule);
+  assert.deepEqual(sent.exit.tpTrail, { start: 2.5, dist: 0.5, unit: 'r' });
+  assert.equal(toBackendRule({ ...rule, tpTrailStart: 4 }).exit.tpTrail.start, 3, 'el arranque no pasa del objetivo');
+  assert.equal('tpTrail' in toBackendRule({ ...rule, useTarget: false }).exit, false, 'sin objetivo no hay qué arrastrar');
+  const profile = { ...rule, codes: ['VE'], targetAt: 'poc' };
+  assert.equal(targetInR(profile), false);
+  assert.equal('tpTrail' in toBackendRule(profile).exit, false, 'un objetivo en el perfil no se arrastra');
+  assert.equal(targetInR({ ...profile, targetAt: 'r' }), true);
+  const back = fromBackendRule(sent);
+  assert.deepEqual([back.tpTrailOn, back.tpTrailStart, back.tpTrailDist, back.tpTrailUnit], [true, 2.5, 0.5, 'r']);
+  assert.deepEqual(toBackendRule(back).exit, sent.exit);
+  assert.equal(fromBackendRule(plain).tpTrailOn, false);
+  assert.match(describeRule(sent), /3R arrastrado desde 2\.5R a 0\.5R/);
+  assert.match(describeRule(toBackendRule({ ...rule, tpTrailUnit: 'pct', tpTrailDist: 1 })), /a 1%/);
+});
+
+test('el trade elegido dibuja dónde se activa el trailing del objetivo y el objetivo arrastrado', () => {
+  const H = 3600000;
+  const context = {
+    success: true, tf: 240, side: 1, stopPath: [[0, 98, 'inicial'], [4 * H, 98, 'inicial'], [8 * H, 98, 'inicial']],
+    tpStart: { price: 105, r: 2.5, t: 4 * H + 2 }, tpPath: [[4 * H, 104.5], [8 * H, 106]]
+  };
+  const bands = contextBands(context);
+  const level = bands.find(b => b.kind === 'level');
+  assert.deepEqual([level.price, level.start, level.end], [105, 0, 4 * H + 2]);
+  assert.match(level.label, /Se activa el trailing · 2\.5R$/);
+  assert.equal(level.labelBelow, false, 'en un largo, arriba: ahí no hay velas mientras no se activa');
+  const steps = bands.filter(b => b.kind === 'steps');
+  assert.equal(steps.length, 2, 'el stop y el objetivo arrastrado');
+  assert.deepEqual(steps[1].points, [[4 * H, 104.5, 'objetivo'], [8 * H, 106, 'objetivo']]);
+  assert.equal(steps[1].label, 'objetivo arrastrado');
+  // Si el precio nunca llegó al arranque, la línea va hasta la salida y lo dice
+  const never = contextBands({ ...context, tpStart: { price: 105, r: 2.5, t: null }, tpPath: [] });
+  const line = never.find(b => b.kind === 'level');
+  assert.equal(line.end, 12 * H);
+  assert.match(line.label, /no llegó/);
+  assert.equal(never.filter(b => b.kind === 'steps').length, 1);
+  // Si se activa y sale en la misma vela, los escalones van sin rótulo: la salida ya lo dice
+  const quick = contextBands({ ...context, side: -1, tpPath: [[4 * H, 104.5]] });
+  assert.equal(quick.find(b => b.kind === 'level').labelBelow, true, 'en un corto, abajo');
+  assert.equal(quick.filter(b => b.kind === 'steps')[1].label, '');
+  // La salida dice su motivo
+  const trade = { dir: 1, entry_t: 0, exit_t: 12 * H, exit: 107, r: 3.44, reason: 'objetivo arrastrado', target: 106, signal: -4 * H };
+  const exit = tradeBands(trade, 240).find(b => b.kind === 'exit');
+  assert.equal(exit.label, 'Salida en el objetivo arrastrado · +3.44 R');
+  assert.equal(exit.atEdge, false, 'sale dentro de la vela, en su precio');
+  assert.equal(tradeBoxes([trade], 240)[0].noTarget, false, 'la caja lleva su objetivo fijo');
+  // El cuadro de la vela de la señal va abajo en un largo (el trade sube por donde iría) y arriba en un corto
+  const check = { time: 0, items: [] };
+  assert.equal(checklistBand(check, { tf: 240, rows: [], side: 1 }, 'x').below, true);
+  assert.equal(checklistBand(check, { tf: 240, rows: [], side: -1 }, 'x').below, false);
 });
 
 let failed = 0;

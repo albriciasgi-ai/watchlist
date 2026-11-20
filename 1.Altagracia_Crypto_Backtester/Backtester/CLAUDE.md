@@ -1149,6 +1149,57 @@ Pedido del usuario para depurar: al elegir un trade se veían la caja TP/SL y la
   - en pantalla, en el backtesting global con la B5 en BTC.
 
   Pruebas: `tests/test_trade_context.py` (5, una para el recorrido del stop) y tres más en `ruletester.test.mjs` (12; la de las cajas, al comportamiento nuevo). La vela de la señal resaltada, su cuadro y la tabla se vieron en pantalla con el trade 2 de la B5 en BTC: los tres en ✓ (FVG nuevo; EMA 50 en 11698.7 con cierre en 11305.5; OI +6.89% en 6 velas).
+- **Reglas en secuencia (20/11, después):** `trade_context` fallaba con ellas (KeyError): del disco, los mínimos por grupo de la receta vuelven con llaves de texto ("1") y `of_setups` las busca como números. `saved_rule(result)` las vuelve números antes de repetir la regla. Prueba en `test_trade_context.py` (6).
+
+### Objetivo arrastrado (20/11)
+
+Pedido del usuario al probar el trailing: «un trailing take profit como lo haría un trading bot: que tenga un take profit fijo, que se active el trailing antes de llegar a él y arrastre el take profit hasta que se devuelva y se cierre en el valor nuevo».
+
+- **Regla:** `exit.tpTrail` = `{start, dist, unit}` (`_tp_trail`), solo con el objetivo en R (`targetR`; con `targetAt` no entra) y solo si se pide: una regla sin él conserva su `rule_hash`.
+  - `start`: R a favor en que se activa, recortado al objetivo (antes de él o en él, como 3Commas).
+  - `dist` y `unit`: la distancia al mejor precio. `r`, del riesgo del trade; `atr`, el de la vela de la señal, fijo en todo el trade; `pct`, % del mejor precio, como el retroceso de un bot.
+- **Simulación** (`simulate`):
+  - Con `tpTrail` el objetivo fijo nunca cierra el trade (`goal` es None): el trailing se activa antes o en él y desde ahí lo arrastra. El trade guarda su objetivo fijo (`target`, para su caja) y `tp_on`, la vela en que se activó (None si nunca).
+  - Desde la vela que llega al arranque, se mira dentro de la vela como una orden trailing del exchange: minuto a minuto o, sin minutos, el recorrido supuesto (`_minute_path`).
+  - En cada minuto se mira primero si el precio toca el nivel más cercano (el stop vigente o el objetivo arrastrado) y después si el mejor precio sube el objetivo. Sale en ese nivel, o en la apertura si la vela abre más allá. En el minuto del llenado de una limit o stop solo cuenta el stop.
+  - Motivo de salida: «objetivo arrastrado».
+  - **Atajo:** si el extremo en contra de la vela no llega ni al nivel de antes ni al que deja su mejor precio, nada la puede cerrar, sea cual sea el orden de sus precios: se mueve el mejor precio sin leer sus minutos. Da lo mismo que mirar todo (40 variantes, 2,684 trades iguales, BTC con minutos y TRX sin ellos, a mercado y con limit, R, ATR y %).
+  - El trailing del stop (`trail`, `breakEven`) sigue igual, al cerrar cada vela, y puede ir junto.
+- **Minutos guardados** (`_minutes_of`): los minutos de cada vela quedan en el contexto de la corrida (`MINUTES_KEEP` = 1000, solo minuto, máximo y mínimo; se vacía si cambia el lector). En BTC 4h, fase 1, con el objetivo arrastrado, 3,202 lecturas eran de 852 velas a unos 5 ms cada una: la corrida con controles pasó de 20 a 10 s. Sirve también a las dos órdenes stop y a las limit.
+- **Azar y otros:** `_random_rule` conserva `tpTrail`: el azar y el tramo usan la misma salida. La caja propia de la Revisión (`candidate_review._own_trade`) lo quita: sale en su objetivo. La sensibilidad mueve el arranque (×0.5, ×0.75, ×1.25, con tope en el objetivo) y la distancia (×0.5, ×1.5, ×2) en vez del objetivo.
+- **Contexto del trade elegido:** el recorrido guarda por vela `[hora, stop, objetivo arrastrado al cerrarla o al salir]`. `trade_context` da `tpStart` (precio, R y vela en que se activó) y `tpPath`. `contextBands()` dibuja:
+  - la línea del arranque, desde la entrada hasta que se activa (o hasta la salida, «no llegó»), con su rótulo arriba en un largo y abajo en un corto (`labelBelow`), donde no hay velas antes de activarse;
+  - el objetivo arrastrado en escalones verdes (fase `objetivo` de la clase `steps`), con su rótulo solo si dura más de una vela: si no, la salida ya lo dice.
+
+  El cuadro de la vela de la señal (`checklist`) va abajo, sobre las filas de filtros, en un largo (`below`): arriba tapaba el objetivo arrastrado.
+- **Ventana:** "Arrastrar el objetivo desde [2.5] R, a [0.5] [R/ATR/%]" bajo "Objetivo" (solo con el objetivo en R), con una nota que explica cómo sale. El detalle del trade dice cuándo se activó. `describeRule`: «3R arrastrado desde 2.5R a 0.5R».
+- **Medido** con la B5 de 108 trades del usuario (BTC 4h, fase 1, stop a la entrada en 1.5R), R por trade y azar:
+
+| Salida | Trades | R | Azar |
+|---|---|---|---|
+| Trailing del stop a 3 ATR desde 1R (la del usuario) | 108 | +0.71 | +0.20 |
+| Objetivo fijo 3R | 115 | +0.44 | +0.01 (margen +0.09 a +0.76) |
+| 3R arrastrado desde 2.5R a 0.5R | 115 | +0.37 | +0.00 |
+| 3R arrastrado desde 2R a 1R | 115 | +0.27 | +0.03 |
+| 3R arrastrado desde 2.5R a 1.5 ATR | 112 | +0.48 | +0.10 |
+| 3R arrastrado desde 2.5R a 3 ATR | 109 | +0.75 | +0.18 |
+
+  Con 0.5R casi todos se cierran en la vela en que se activan: en 4h el precio se devuelve más que eso dentro de una vela. El arrastre amplio gana como el trailing del stop, y su azar también: es la tendencia de 4h. El margen de la ventaja solo deja de tocar el cero con el objetivo fijo. Es la fase 1 de una moneda.
+- **Pruebas:** `tests/test_tp_trail.py` (12):
+  - identidad;
+  - el fijo cierra y el arrastrado sigue;
+  - se devuelve antes del objetivo;
+  - no llega al arranque;
+  - se activa y sale en la misma vela;
+  - los minutos mandan;
+  - apertura más allá del nivel;
+  - corto;
+  - ATR y %;
+  - recorrido por vela;
+  - azar y Revisión;
+  - contexto.
+
+  Además, dos en `ruletester.test.mjs` (14). Probado en pantalla con una copia aislada: trades 3, 22 y 57 de dos corridas de la B5 (a 0.5R y a 1.5 ATR) y la sensibilidad. Seis corridas guardadas del usuario se repiten trade por trade con el motor nuevo.
 
 ### Medido y probado
 

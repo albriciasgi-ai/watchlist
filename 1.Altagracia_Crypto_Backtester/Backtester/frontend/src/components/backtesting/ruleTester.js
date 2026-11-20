@@ -33,6 +33,9 @@ export function defaultRule() {
     useTarget: true, targetR: 2, trail: false, trailBars: 5,
     // Trailing desde el mejor precio (atr o pct; trail sigue siendo el de swings), con arranque y stop a la entrada
     trailMode: 'off', trailAtr: 4, trailPct: 5, trailStartOn: false, trailStart: 1, breakEvenOn: false, breakEven: 1.5,
+    // Trailing del objetivo, como un bot: al llegar a tpTrailStart R (antes del objetivo) el objetivo sigue al mejor precio
+    // a tpTrailDist (en R, ATR o %) y el trade se cierra cuando el precio vuelve hasta él
+    tpTrailOn: false, tpTrailStart: 2.5, tpTrailDist: 0.5, tpTrailUnit: 'r',
     cpMaxHeightOn: false, cpMaxHeight: 5.5, imBars: 3, imAtr: 2, imRangeOn: false, imRange: 1.5, useHorizon: true, horizon: 200, opposite: false,
     oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05,
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
@@ -83,6 +86,10 @@ export const minuteOfDay = (text) => {
 };
 const clock = (minutes) => `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
 export const usesProfile = (rule) => (rule.codes || []).some(code => VP_CODES.includes(code));
+/** El objetivo va en R (no en un nivel del perfil ni en el centro de la caja): solo así se puede arrastrar */
+export const targetInR = (rule) => !!rule.useTarget
+  && !((usesProfile(rule) && rule.targetAt !== 'r') || (!usesProfile(rule) && (rule.codes || []).includes('BE') && rule.targetAt === 'mid'));
+export const TP_TRAIL_UNITS = [['r', 'R'], ['atr', 'ATR'], ['pct', '%']];
 
 /** En secuencia, qué elementos son el contexto y cuáles el gatillo. Sin uno de los dos no hay secuencia */
 export function sequenceParts(rule, codes = rule.codes || []) {
@@ -171,6 +178,12 @@ export function toBackendRule(rule) {
       ...(!rule.trail && rule.trailMode === 'pct' ? { trailPct: number(rule.trailPct, 5) } : {}),
       ...(!rule.trail && ['atr', 'pct'].includes(rule.trailMode) && rule.trailStartOn ? { trailStart: number(rule.trailStart, 1) } : {}),
       ...(rule.breakEvenOn ? { breakEven: number(rule.breakEven, 1.5) } : {}),
+      ...(rule.tpTrailOn && targetInR(rule) ? {
+        tpTrail: {
+          start: Math.min(number(rule.tpTrailStart, 2.5), number(rule.targetR, 2)), dist: number(rule.tpTrailDist, 0.5),
+          unit: ['r', 'atr', 'pct'].includes(rule.tpTrailUnit) ? rule.tpTrailUnit : 'r'
+        }
+      } : {}),
       horizon: rule.useHorizon ? number(rule.horizon, 200) : null,
       opposite: !!rule.opposite
     },
@@ -204,6 +217,8 @@ export function fromBackendRule(saved) {
     straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
     trailMode: ['atr', 'pct'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
     trailStartOn: saved.exit?.trailStart != null, trailStart: saved.exit?.trailStart ?? 1, breakEvenOn: saved.exit?.breakEven != null, breakEven: saved.exit?.breakEven ?? 1.5,
+    tpTrailOn: !!saved.exit?.tpTrail, tpTrailStart: saved.exit?.tpTrail?.start ?? 2.5, tpTrailDist: saved.exit?.tpTrail?.dist ?? 0.5,
+    tpTrailUnit: saved.exit?.tpTrail?.unit || 'r',
     cpMaxHeightOn: saved.cp?.maxHeight != null, cpMaxHeight: saved.cp?.maxHeight ?? 5.5,
     imBars: saved.im?.bars ?? 3, imAtr: saved.im?.atr ?? 2, imRangeOn: saved.im?.range != null, imRange: saved.im?.range ?? 1.5,
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
@@ -236,6 +251,9 @@ export function fromBackendRule(saved) {
   };
 }
 
+/** La distancia del objetivo arrastrado en palabras: «0.5R», «1 ATR», «1%» */
+export const tpTrailText = (tp) => (tp.unit === 'atr' ? `${tp.dist} ATR` : tp.unit === 'pct' ? `${tp.dist}%` : `${tp.dist}R`);
+
 /** La regla en una línea, para el historial y el encabezado del informe */
 export function describeRule(saved) {
   const L = (text) => elementLabels(String(text).split('+'));
@@ -249,6 +267,7 @@ export function describeRule(saved) {
   const stop = { swing: `swing ${saved.stop?.bars}`, candle: 'vela del elemento', zone: 'borde de la zona', atr: `${saved.stop?.atr} ATR` }[saved.stop?.type] || '';
   const exits = [];
   if (saved.targetAt) exits.push(saved.be && !saved.vp ? 'centro de la caja' : { poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
+  else if (saved.exit?.tpTrail) exits.push(`${saved.exit.targetR}R arrastrado desde ${saved.exit.tpTrail.start}R a ${tpTrailText(saved.exit.tpTrail)}`);
   else if (saved.exit?.targetR != null) exits.push(`${saved.exit.targetR}R`);
   if (saved.exit?.trail === 'swing') exits.push('stop arrastrado');
   if (saved.exit?.trail === 'atr') exits.push(`trailing a ${saved.exit.trailAtr} ATR${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
@@ -326,7 +345,7 @@ export function tradeBoxes(trades = [], tfMinutes = 15) {
 /** Motivos de salida, en palabras para la marca del trade elegido */
 const EXIT_TEXT = {
   tiempo: 'por tiempo', stop: 'en el stop inicial', 'stop en la entrada': 'en el stop a la entrada', 'stop arrastrado': 'en el stop arrastrado',
-  objetivo: 'en el objetivo', 'señal contraria': 'por la señal contraria', 'sale del canal': 'al salir del canal', 'hueco de datos': 'por un hueco de datos'
+  objetivo: 'en el objetivo', 'objetivo arrastrado': 'en el objetivo arrastrado', 'señal contraria': 'por la señal contraria', 'sale del canal': 'al salir del canal', 'hueco de datos': 'por un hueco de datos'
 };
 
 const usdShort = (usd) => (usd >= 1e6 ? `${(usd / 1e6).toFixed(1)}M` : `${Math.round(usd / 1e3)}K`);
@@ -438,6 +457,25 @@ export function contextBands(context, names = {}) {
   }
   // El stop de cada vela del trade: inicial, a la entrada y arrastrado, para revisar el trailing
   if (context.stopPath?.length) bands.push({ kind: 'steps', tf, points: context.stopPath });
+  // El trailing del objetivo: dónde se activa (hasta que se activó o, si nunca llegó, hasta la salida) y, desde ahí, el
+  // objetivo arrastrado al cerrar cada vela, en escalones verdes. El rótulo del arranque va del lado donde no hay velas
+  // mientras no se activa (arriba en un largo, abajo en un corto); el de los escalones, solo si duran más de una vela
+  // (si no, la salida ya lo dice y se pisarían)
+  const tpStart = context.tpStart;
+  if (tpStart && Number.isFinite(tpStart.price) && context.stopPath?.length) {
+    const first = context.stopPath[0][0];
+    const reached = Number.isFinite(tpStart.t);
+    bands.push({
+      kind: 'level', price: tpStart.price, start: first, end: reached ? Math.max(first + tf, tpStart.t) : context.stopPath[context.stopPath.length - 1][0] + tf,
+      label: `Se activa el trailing · ${tpStart.r}R${reached ? '' : ' (no llegó)'}`, labelBelow: context.side < 0
+    });
+  }
+  if (context.tpPath?.length) {
+    bands.push({
+      kind: 'steps', tf, points: context.tpPath.map(([t, price]) => [t, price, 'objetivo']),
+      label: context.tpPath.length > 1 ? 'objetivo arrastrado' : '', labelAbove: context.side < 0
+    });
+  }
   const rows = context.rows || [];
   rows.forEach((row, i) => bands.push({ kind: 'ticks', tf, row: i, rows: rows.length, label: row.label, items: row.items }));
   for (const s of context.signals || []) {
@@ -482,7 +520,8 @@ export function signalChecklist(context, trade, recipe, names = {}) {
 /** El cuadro de la señal para el gráfico: resalta su vela y lista cada condición */
 export function checklistBand(check, context, title) {
   if (!check) return null;
-  return { kind: 'checklist', tf: context.tf * 60000, rows: (context.rows || []).length, time: check.time, title, items: check.items };
+  // below: en un largo el cuadro va abajo, porque el trade sube (con su objetivo arrastrado) por donde iría arriba
+  return { kind: 'checklist', tf: context.tf * 60000, rows: (context.rows || []).length, time: check.time, title, items: check.items, below: context.side > 0 };
 }
 
 export const fmtR = (value, digits = 2) => (value === null || value === undefined ? '—' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}`);

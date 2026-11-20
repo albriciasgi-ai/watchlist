@@ -54,6 +54,50 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 20 Noviembre 2026: Objetivo Arrastrado (Trailing Take Profit) en el Backtesting Global
+
+**Pedido:** un trailing take profit como el de un bot: un objetivo fijo; antes de llegar a él se activa el trailing, que arrastra el objetivo hasta que el precio se devuelve, y el trade se cierra en el valor nuevo del objetivo.
+
+**Cambios:**
+1. **Salida nueva** en la pestaña Regla, bajo "Objetivo": "Arrastrar el objetivo desde N R, a N R, ATR o % del mejor precio".
+   - El objetivo queda fijo hasta que el precio llega al arranque, antes del objetivo o en él como máximo.
+   - Desde ahí deja de ser fijo: sigue al mejor precio a esa distancia, y el trade se cierra cuando el precio vuelve hasta él, aunque haya pasado el objetivo.
+   - La distancia en R es del riesgo del trade; en ATR, el de la vela de la señal; en %, del mejor precio, como el retroceso de un bot.
+   - Solo con el objetivo en R. Una regla sin él conserva su identidad: sus corridas guardadas siguen valiendo.
+2. **Dentro de la vela**, como una orden trailing del exchange: minuto a minuto o, sin minutos, el recorrido supuesto. Sale por el nivel que el precio toca primero: el stop vigente o el objetivo arrastrado.
+   - Las entradas al azar usan la misma salida.
+   - La caja propia de la Revisión, no: sale en su objetivo.
+3. **En el trade elegido:**
+   - la línea donde se activa: «Se activa el trailing · 2.5R»;
+   - el objetivo arrastrado en escalones verdes;
+   - la salida: «Salida en el objetivo arrastrado · +3.25 R»;
+   - el detalle dice cuándo se activó.
+
+   El cuadro de la vela de la señal va abajo en los largos: arriba tapaba el objetivo arrastrado.
+4. **Sensibilidad:** con el objetivo arrastrado, mueve el arranque y la distancia en vez del objetivo.
+5. **Más rápido:** los minutos ya leídos quedan en la corrida, hasta 1,000 velas: el azar volvía a leer las mismas velas. La B5 en BTC 4h con el objetivo arrastrado y sus controles pasó de 20 a 10 s.
+6. **Arreglado:** el contexto del trade elegido fallaba con las reglas en secuencia, como Compresión → Delta Breakout o Delta/Volumen: del disco, los mínimos por grupo vuelven con llaves de texto.
+7. **Pruebas:** `test_tp_trail.py` (12), una más en `test_trade_context.py` (6) y dos más en `ruletester.test.mjs` (14).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- **Medido** con la B5 de 108 trades (BTC 4h, fase 1, stop a la entrada en 1.5R):
+  - trailing del stop a 3 ATR desde 1R, la del usuario: +0.71 R por trade, azar +0.20;
+  - objetivo fijo en 3R: +0.44 R, azar +0.01, con margen;
+  - objetivo de 3R arrastrado desde 2.5R a 0.5R: +0.37 R, porque casi todos se cierran en la misma vela en que se activa;
+  - a 1.5 ATR: +0.48 R; a 3 ATR: +0.75 R, azar +0.18.
+
+  El arrastre amplio gana como el trailing del stop, pero también su azar: es la tendencia de 4h. Solo la fase 1 de una moneda.
+- **Probado:**
+  - 40 variantes repetidas igual con la versión rápida;
+  - 6 corridas guardadas del usuario repetidas trade por trade;
+  - en pantalla, en el backtesting global con una copia aislada: trades 3, 22 y 57.
+- `liquidations.test.mjs` falla en una prueba desde el 13/11: el mapa de liquidez quedó primero en IndicatorManager. No tiene que ver con este cambio.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Objetivo arrastrado (20/11)"
+
+---
+
 ### App 1 - 20 Noviembre 2026: Lo que Usó la Regla en el Trade Elegido (Backtesting Global)
 
 **Pedido:** al elegir un trade en el backtesting global se veían la caja TP/SL y la del elemento, pero no los indicadores de la regla, que solo se nombraban. Para depurar hace falta verlos como estaban, con los ajustes de la prueba.

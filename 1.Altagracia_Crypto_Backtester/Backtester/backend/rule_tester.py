@@ -13,6 +13,7 @@ sobre un tramo fijo del histórico, con cada trade contabilizado.
   medidas de measures.py al decidir, para buscar qué separa a los ganadores de los perdedores.
 """
 import bisect
+import collections
 import datetime as dt
 import os
 import pathlib
@@ -478,7 +479,8 @@ def clean_rule(raw):
                  "buffer": _num(stop.get("buffer"), 0.1, 0.0, 5.0), "minAtr": _num(stop.get("minAtr"), 0.1, 0.0, 10.0),
                  "maxAtr": _num(stop.get("maxAtr"), 6.0, 0.2, 100.0)},
         "exit": {"targetR": target_r, "trail": trail, "trailBars": int(_num(exit_.get("trailBars"), 5, 2, 20)),
-                 "horizon": horizon, "opposite": bool(exit_.get("opposite")), **_trail_extra(exit_, trail)},
+                 "horizon": horizon, "opposite": bool(exit_.get("opposite")), **_trail_extra(exit_, trail),
+                 **_tp_trail(exit_, target_r)},
         "oneAtATime": raw.get("oneAtATime") is not False,
         # Velas de espera tras cerrar un trade antes de tomar otra señal (solo con una posición a la vez)
         "cooldown": int(_num(raw.get("cooldown"), 0, 0, 500)),
@@ -508,6 +510,25 @@ def _trail_extra(exit_, trail):
     if exit_.get("breakEven") not in (None, "", 0, "0", False):
         out["breakEven"] = _num(exit_.get("breakEven"), 1.0, 0.1, 20.0)
     return out
+
+
+TP_TRAIL_UNITS = ("r", "atr", "pct")
+
+
+def _tp_trail(exit_, target_r):
+    """
+    Trailing del objetivo, como lo hace un bot (pedido del usuario, 20/11/2026): el objetivo está fijo en target_r R y,
+    al llegar el precio a `start` R a favor (antes del objetivo, o en él como máximo), deja de ser fijo: sigue al mejor
+    precio a `dist` R, ATR (los de la vela de la señal) o % del mejor precio, y el trade se cierra cuando el precio
+    vuelve hasta él. Solo con el objetivo en R, y solo entra a la regla si se pide: una regla sin él conserva su identidad.
+    """
+    raw = exit_.get("tpTrail")
+    if not isinstance(raw, dict) or raw.get("on") is False or target_r is None:
+        return {}
+    unit = raw.get("unit") if raw.get("unit") in TP_TRAIL_UNITS else "r"
+    start = _num(raw.get("start"), max(0.1, target_r - 0.5), 0.1, 50.0)
+    return {"tpTrail": {"start": round(min(start, target_r), 4), "dist": _num(raw.get("dist"), 0.5, 0.01, 50.0 if unit == "pct" else 20.0),
+                        "unit": unit}}
 
 
 def rule_hash(symbol, rule):
@@ -683,13 +704,35 @@ def _minute_path(ctx, j):
     erraba hasta 0.8 R por trade con dos órdenes stop y llegó a inventar una ventaja de +0.13 R."""
     reader = ctx.get("minutes")
     if reader is not None:
-        t0 = ctx["T"][j] // 60000
-        data = reader(ctx["symbol"], t0, t0 + ctx["tf"])
+        data = _minutes_of(ctx, reader, j)
         if data is not None and len(data["m"]):
             return list(zip((int(m) * 60000 for m in data["m"]), (float(x) for x in data["h"]), (float(x) for x in data["l"])))
     o, h, l, c = (float(ctx[key][j]) for key in ("O", "H", "L", "C"))
     points = (o, h, l, c) if h - o < o - l else (o, l, h, c)
     return [(ctx["T"][j] + step, p, p) for step, p in enumerate(points)]
+
+
+MINUTES_KEEP = 1000  # Velas cuyos minutos se guardan en el contexto de una corrida (en 4h, unos 6 MB)
+
+
+def _minutes_of(ctx, reader, j):
+    """Los minutos de la vela j, guardados en el contexto: el azar vuelve muchas veces a las mismas velas (en BTC 4h, fase 1,
+    con el objetivo arrastrado, 3,202 lecturas eran de 852 velas, a unos 5 ms cada una). Las últimas MINUTES_KEEP, solo
+    con lo que se usa (minuto, máximo y mínimo); si cambia el lector, se empieza de nuevo."""
+    if ctx.get("_minutes_reader") is not reader:
+        ctx["_minutes_reader"], ctx["_minutes"] = reader, collections.OrderedDict()
+    cache = ctx["_minutes"]
+    if j in cache:
+        cache.move_to_end(j)
+        return cache[j]
+    t0 = ctx["T"][j] // 60000
+    data = reader(ctx["symbol"], t0, t0 + ctx["tf"])
+    if data is not None:
+        data = {"m": data["m"], "h": data["h"], "l": data["l"]}
+    cache[j] = data
+    if len(cache) > MINUTES_KEEP:
+        cache.popitem(last=False)
+    return data
 
 
 def _straddle_fill(rule, ctx, k, e, zone, sides):
@@ -779,12 +822,26 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
         if (target - entry) * side < MIN_TARGET_R * risk:
             return {"skip": "objetivo del perfil muy cerca o ya pasado"}
     initial_stop = stop
+    # Trailing del objetivo (_tp_trail): al llegar a tp_start el objetivo deja de ser fijo y sigue al mejor precio a una
+    # distancia fijada en la entrada (con el ATR de la vela de la señal) o en % del mejor precio. El objetivo fijo nunca
+    # cierra el trade (goal): el trailing se activa antes o en él, y desde ahí lo arrastra
+    tp = exit_rule.get("tpTrail")
+    goal = None if tp else target
+    tp_start = tp_gap = None
+    if tp:
+        tp_start = entry + side * tp["start"] * risk
+        tp_gap = tp["dist"] * risk if tp["unit"] == "r" else (tp["dist"] * atr[k] if tp["unit"] == "atr" else None)
+    tp_on = tp_level = None  # Cuándo se activó y dónde va el objetivo arrastrado
+    tp_best = entry  # Mejor precio desde la entrada, mirado dentro de la vela
 
     def favorable(j):
         return ((H[j] if side > 0 else L[j]) - entry) * side / risk
 
     def adverse(j):
         return ((L[j] if side > 0 else H[j]) - entry) * side / risk
+
+    def stop_reason(level):
+        return "stop" if level == initial_stop else ("stop en la entrada" if level == entry else "stop arrastrado")
 
     exit_price = exit_t = reason = None
     mfe, mae = 0.0, 0.0
@@ -793,12 +850,72 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
         if j > entry_i and T[j] - T[j - 1] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
             exit_price, exit_t, reason = C[j - 1], T[j - 1] + tf_ms, "hueco de datos"
             break
+        row = None
         if path is not None:
-            path.append([T[j], stop])  # El stop que rige en esta vela: se mueve al cerrarla y vale desde la siguiente
+            # El stop que rige en esta vela (se mueve al cerrarla y vale desde la siguiente) y, con el trailing del
+            # objetivo activo, dónde quedó el objetivo arrastrado al cerrarla o al salir
+            row = [T[j], stop, None]
+            path.append(row)
         low, high = L[j], H[j]
-        hit_stop = low <= stop if side > 0 else high >= stop
-        hit_goal = target is not None and (high >= target if side > 0 else low <= target)
         first_bar = (limit_fill or stop_fill) and j == entry_i
+        walk = False
+        if tp and (tp_on is not None or ((high >= tp_start) if side > 0 else (low <= tp_start))):
+            # Con el objetivo arrastrado, o si se activa en esta vela. Si el extremo en contra de la vela no llega ni al
+            # nivel de antes ni al que deja su mejor precio, nada lo puede cerrar, sea cual sea el orden de sus precios:
+            # basta con mover el mejor precio y el objetivo (y es mucho más rápido que leer sus minutos)
+            peak, trough = (high, low) if side > 0 else (low, high)
+            top = peak if (peak - tp_best) * side > 0 else tp_best
+            after = top - side * (tp_gap if tp_gap is not None else abs(top) * tp["dist"] / 100)
+            now = tp_level if tp_on is not None and (tp_level - stop) * side > 0 else stop
+            if not first_bar and (trough - now) * side > 0 and (trough - after) * side > 0:
+                tp_best, tp_on = top, (T[j] if tp_on is None else tp_on)
+                if tp_level is None or (after - tp_level) * side > 0:
+                    tp_level = after
+                if row is not None:
+                    row[2] = tp_level
+            else:
+                walk = True
+        if walk:
+            # Si no, se mira dentro de la vela como una orden trailing del exchange: minuto a minuto o, sin minutos, el
+            # recorrido supuesto. Sale por el nivel que el precio toca primero, el stop vigente o el objetivo arrastrado.
+            # En cada minuto se mira primero si lo toca y después si el mejor precio sube el objetivo; en el minuto del
+            # llenado de una limit o stop solo cuenta el stop
+            filled = not first_bar
+            for step, (mt, mh, ml) in enumerate(_minute_path(ctx, j)):
+                if not filled:
+                    crossed = ((mh >= entry) if side > 0 else (ml <= entry)) if stop_fill else ((ml < entry) if side > 0 else (mh > entry))
+                    if crossed:
+                        filled = True
+                        if (ml <= stop) if side > 0 else (mh >= stop):
+                            exit_price, exit_t, reason = stop, mt, stop_reason(stop)
+                            break
+                    continue
+                cap, why = stop, stop_reason(stop)
+                if tp_on is not None and (tp_level - stop) * side > 0:
+                    cap, why = tp_level, "objetivo arrastrado"
+                if (ml <= cap) if side > 0 else (mh >= cap):
+                    gapped = step == 0 and not first_bar and ((O[j] < cap) if side > 0 else (O[j] > cap))
+                    exit_price, exit_t, reason = (O[j] if gapped else cap), mt, why  # Abrió más allá: sale en la apertura
+                    break
+                top = mh if side > 0 else ml
+                if (top - tp_best) * side > 0:
+                    tp_best = top
+                if tp_on is None and (tp_best - tp_start) * side >= 0:
+                    tp_on = T[j]  # La vela en que se activó
+                if tp_on is not None:
+                    cap = tp_best - side * (tp_gap if tp_gap is not None else abs(tp_best) * tp["dist"] / 100)
+                    if tp_level is None or (cap - tp_level) * side > 0:
+                        tp_level = cap
+            if row is not None:
+                row[2] = tp_level
+            if exit_price is not None:
+                mfe = max(mfe, (tp_best - entry) * side / risk)
+                mae = min(mae, (exit_price - entry) * side / risk)
+                break
+            hit_stop = hit_goal = False
+        else:
+            hit_stop = low <= stop if side > 0 else high >= stop
+            hit_goal = goal is not None and (high >= goal if side > 0 else low <= goal)
         if hit_stop and (hit_goal or first_bar):
             # Dudoso a nivel de vela: se mira minuto a minuto (sin minutos, el recorrido supuesto). En el minuto del
             # llenado no cuenta el objetivo
@@ -818,7 +935,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
                                 break
                         continue
                     s = ml <= stop if side > 0 else mh >= stop
-                    g = target is not None and (mh >= target if side > 0 else ml <= target)
+                    g = goal is not None and (mh >= goal if side > 0 else ml <= goal)
                     if s or g:
                         hit_stop, hit_goal, exit_t = s, g and not s, mt
                         break
@@ -827,13 +944,13 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
         if hit_stop:
             gapped = (O[j] < stop) if side > 0 else (O[j] > stop)
             exit_price = O[j] if gapped and not first_bar else stop
-            reason = "stop" if stop == initial_stop else ("stop en la entrada" if stop == entry else "stop arrastrado")
+            reason = stop_reason(stop)
             exit_t = exit_t or T[j]
             mae = min(mae, (exit_price - entry) * side / risk)
             break
         if hit_goal:
-            exit_price, reason, exit_t = target, "objetivo", exit_t or T[j]
-            mfe = max(mfe, (target - entry) * side / risk)
+            exit_price, reason, exit_t = goal, "objetivo", exit_t or T[j]
+            mfe = max(mfe, (goal - entry) * side / risk)
             break
         mfe, mae = max(mfe, favorable(j)), min(mae, adverse(j))
         # Con la vela cerrada: señal contraria, horizonte y stop arrastrado
@@ -885,6 +1002,8 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
              "order": "limit" if limit_fill else ("stop" if entry_rule["type"] == "straddle" else "market"), "reach": round(reach, 3) if reach_done else None}
     if entry_rule["type"] == "straddle":
         trade["trigger_atr"] = round(abs(entry - C[k]) / atr[k], 3) if atr[k] > 0 else 0.0
+    if tp:
+        trade["tp_on"] = tp_on  # Cuándo se activó el trailing del objetivo; None si el precio nunca llegó a su arranque
     if exit_price is None:
         trade["open"] = True
         return trade
@@ -2042,6 +2161,17 @@ OI_TEXT = {"conf": "Confluencia OI-volumen a favor", "noconf": "Sin confluencia 
 REGIME_TEXT = {"inside": "dentro", "outside": "fuera", "breakout": "tras romper"}
 
 
+def saved_rule(result):
+    """La regla de una corrida guardada, lista para correr otra vez. Del disco, los mínimos por grupo de una receta en
+    secuencia vuelven con las llaves como texto ("1") y la receta las busca como números: sin esto, repetir una regla en
+    secuencia (el contexto del trade elegido) fallaba."""
+    rule = result["rule"]
+    mins = rule["recipe"].get("groupMins")
+    if isinstance(mins, dict):
+        rule = {**rule, "recipe": {**rule["recipe"], "groupMins": {int(g): v for g, v in mins.items()}}}
+    return rule
+
+
 def _replay(result):
     """La regla de una corrida guardada, corrida otra vez sin controles y con `trace`: el contexto de sus velas, los
     elementos y qué pasó con cada señal. Las últimas 3 en memoria: elegir otro trade de la misma corrida no la repite."""
@@ -2050,7 +2180,7 @@ def _replay(result):
         found = _replays.get(run_id)
     if found is not None:
         return found
-    symbol, rule = result["symbol"], result["rule"]
+    symbol, rule = result["symbol"], saved_rule(result)
     # El tramo de la corrida, no el de hoy: la fase 3 crece con el almacén
     phase = {"phase": result["phase"], "from": result["from"], "to": result["to"],
              "start": _ms(result["from"]), "end": _ms(result["to"]) + oe.DAY_MS}
@@ -2257,7 +2387,12 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
     if path:
         initial, entry = trade["stop"], trade["entry"]
         out["stopPath"] = [[t, clean(level), "inicial" if level == initial else ("entrada" if level == entry else "arrastrado")]
-                           for t, level in path]
+                           for t, level, *_ in path]
+        # Con el trailing del objetivo: dónde se activa y dónde quedó el objetivo arrastrado al cerrar cada vela
+        tp = rule["exit"].get("tpTrail")
+        if tp:
+            out["tpStart"] = {"price": clean(entry + side * tp["start"] * trade["risk"]), "r": tp["start"], "t": trade.get("tp_on")}
+            out["tpPath"] = [[t, clean(rest[0])] for t, _, *rest in path if rest and rest[0] is not None]
     return out
 
 
@@ -2492,7 +2627,15 @@ def sensitivity(symbol, raw_rule):
 
     add("Regla actual", rule, True)
     target = rule["exit"]["targetR"]
-    if target:
+    tp = rule["exit"].get("tpTrail")
+    if tp:
+        # Con el trailing del objetivo, el objetivo fijo solo pone el tope del arranque: se mueven el arranque y la distancia
+        unit = {"r": "R", "atr": "ATR", "pct": "%"}[tp["unit"]]
+        for value in sorted({round(min(target, max(0.1, tp["start"] * f)), 2) for f in (0.5, 0.75, 1.25)} - {round(tp["start"], 2)}):
+            add(f"Trailing del objetivo desde {value:g} R", {**rule, "exit": {**rule["exit"], "tpTrail": {**tp, "start": value}}})
+        for value in sorted({round(tp["dist"] * f, 3) for f in (0.5, 1.5, 2.0)}):
+            add(f"Trailing del objetivo a {value:g} {unit}", {**rule, "exit": {**rule["exit"], "tpTrail": {**tp, "dist": value}}})
+    elif target:
         for value in sorted({round(target * f, 2) for f in (0.5, 0.75, 1.25, 1.5)}):
             add(f"Objetivo {value} R", {**rule, "exit": {**rule["exit"], "targetR": value}})
     for window in (rule["recipe"]["window"] - 1, rule["recipe"]["window"] + 1):
