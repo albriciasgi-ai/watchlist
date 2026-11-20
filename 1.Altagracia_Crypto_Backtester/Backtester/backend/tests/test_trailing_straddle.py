@@ -95,3 +95,51 @@ def test_compresion_con_dos_ordenes_por_la_ruta_del_probador():
         # La orden de arriba queda sobre la caja; la de abajo, debajo
         assert (t["entry"] > t["zone"][1]) if t["dir"] > 0 else (t["entry"] < t["zone"][0])
     assert res["baseline"]["n"] > 0
+
+
+def test_sin_minutos_la_vela_dudosa_sigue_su_recorrido_supuesto_y_los_minutos_mandan(monkeypatch):
+    # Dos órdenes a 1 ATR del cierre y stop de 1 ATR: el stop queda en la apertura de la vela que llena la de arriba.
+    # Sin minutos la vela sigue el recorrido supuesto (apertura, el extremo más cercano, el otro y cierre); con minutos,
+    # mandan ellos. Antes, sin minutos, siempre contaba el stop
+    import numpy as np
+    import rule_search as rs
+    rule = rule_of(entry={"type": "straddle", "from": "close", "offset": 1, "expiry": 5},
+                   stop={"type": "atr", "atr": 1, "maxAtr": 50}, exit={"horizon": 3})
+    after = [101.5, 103, 104, 105]
+    # Abre más cerca del mínimo: primero el mínimo (antes de llenarse) y después el máximo. No toca el stop
+    low_first = path([100] * 150 + after, wick=0.3)
+    t = rt.simulate(rule, ctx_of(low_first), 149, 1)
+    assert t["dir"] == 1 and t["exit_t"] > low_first[152]["t"] and t["r"] > 0
+    # Abre más cerca del máximo: se llena subiendo y el mínimo, después, toca el stop. Solo la orden de arriba (como
+    # con un filtro de flujo): si no, el mínimo llenaría también la de abajo
+    high_first = path([100] * 150 + after, wick=0.3)
+    high_first[150].update(h=101.2, l=98.5, c=101.0)
+    ctx = ctx_of(high_first)
+    t = rt.simulate(rule, ctx, 149, 1, sides=(1,))
+    assert t["reason"] == "stop" and t["exit_t"] // MS == high_first[150]["t"] // MS
+    # Los minutos de esa vela dicen que el mínimo fue antes de llenarse: mandan ellos
+    t0 = high_first[150]["t"] // 60000
+
+    def reader(symbol, start, end):
+        if start != t0:
+            return None
+        return {"m": np.array([t0, t0 + 1, t0 + 2]), "h": np.array([100.0, 101.2, 101.1]), "l": np.array([98.5, 100.4, 100.6])}
+
+    ctx["minutes"] = reader
+    seen = rt.simulate(rule, ctx, 149, 1, sides=(1,))
+    assert seen["exit_t"] > high_first[152]["t"] and seen["r"] > 0
+    # Los dos controles del probador y el de la búsqueda reciben los mismos minutos que la regla (hasta el 20/11 iban
+    # sin ellos, y la ventaja de las reglas con dos órdenes stop salía inflada)
+    calls = []
+    plain = rt.simulate
+
+    def spy(rule_, ctx_, *args, **kwargs):
+        calls.append(ctx_.get("minutes"))
+        return plain(rule_, ctx_, *args, **kwargs)
+
+    monkeypatch.setattr(rt, "simulate", spy)
+    rt._baseline(rule, ctx, [seen], "TEST")
+    rt._leg_baseline(rule, ctx, [seen], "TEST")
+    item = {"ctx": ctx, "span": {"bars": high_first}, "cut": 140, "n": len(high_first)}
+    rs.Evaluator(rs.clean_config({"tfs": [240]}))._control("TEST", 240, item, rule, [seen], "train", "random")
+    assert calls and all(m is reader for m in calls)

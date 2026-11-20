@@ -7,7 +7,8 @@ sobre un tramo fijo del histórico, con cada trade contabilizado.
 - Nada usa el futuro: la señal se conoce al cierre de su vela (of_setups.match_recipes), se entra en la
   apertura de la siguiente o con una limit que se llena al cruzar, y el stop sale de velas ya cerradas.
   Un trade que sigue abierto al final de la fase no cuenta: su salida está en la fase siguiente.
-- Cuando stop y objetivo caen en la misma vela se mira minuto a minuto; si siguen juntos, cuenta el stop.
+- Cuando stop y objetivo caen en la misma vela se mira minuto a minuto; si siguen juntos, cuenta el stop. Sin
+  minutos, con el recorrido supuesto de la vela (apertura, el extremo más cercano, el otro y cierre: _minute_path).
 - Cada trade guarda, además de lo que pide la regla, todos los elementos presentes en su ventana y las
   medidas de measures.py al decidir, para buscar qué separa a los ganadores de los perdedores.
 """
@@ -674,20 +675,25 @@ def _stop_price(rule, ctx, k, side, zone, entry_hint):
 
 
 def _minute_path(ctx, j):
-    """Minutos de la vela j: listas (t, h, l), o None sin almacén."""
+    """Minutos de la vela j: listas (t, h, l). Sin minutos de esa vela (moneda sin almacén, acción o día que falta), un
+    recorrido supuesto de cuatro puntos: apertura, el extremo más cerca de la apertura, el otro extremo y cierre (el
+    supuesto del emulador de TradingView). Medido el 20/11 contra los minutos reales, en las seis monedas que los tienen
+    (fase 1, 4h): la ventaja de cuatro reglas quedó a 0.03 R o menos de la real. Contar siempre el stop, lo de antes,
+    erraba hasta 0.8 R por trade con dos órdenes stop y llegó a inventar una ventaja de +0.13 R."""
     reader = ctx.get("minutes")
-    if reader is None:
-        return None
-    t0 = ctx["T"][j] // 60000
-    data = reader(ctx["symbol"], t0, t0 + ctx["tf"])
-    if data is None or not len(data["m"]):
-        return None
-    return list(zip((int(m) * 60000 for m in data["m"]), (float(x) for x in data["h"]), (float(x) for x in data["l"])))
+    if reader is not None:
+        t0 = ctx["T"][j] // 60000
+        data = reader(ctx["symbol"], t0, t0 + ctx["tf"])
+        if data is not None and len(data["m"]):
+            return list(zip((int(m) * 60000 for m in data["m"]), (float(x) for x in data["h"]), (float(x) for x in data["l"])))
+    o, h, l, c = (float(ctx[key][j]) for key in ("O", "H", "L", "C"))
+    points = (o, h, l, c) if h - o < o - l else (o, l, h, c)
+    return [(ctx["T"][j] + step, p, p) for step, p in enumerate(points)]
 
 
 def _straddle_fill(rule, ctx, k, e, zone, sides):
     """Las dos órdenes stop puestas al cierre de la vela k: (lado, precio, vela) de la que se llena primero, o None.
-    Si las dos se tocan en la misma vela decide el minuto a minuto; sin minutos, la que quedaba más cerca de la apertura."""
+    Si las dos se tocan en la misma vela decide el minuto a minuto (sin minutos, el recorrido supuesto de la vela)."""
     T, O, H, L, C, atr = ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["atr"]
     ent = rule["entry"]
     off = ent["offset"] * atr[k]
@@ -790,7 +796,8 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
         hit_goal = target is not None and (high >= target if side > 0 else low <= target)
         first_bar = (limit_fill or stop_fill) and j == entry_i
         if hit_stop and (hit_goal or first_bar):
-            # Dudoso a nivel de vela: se mira minuto a minuto. En el minuto del llenado no cuenta el objetivo
+            # Dudoso a nivel de vela: se mira minuto a minuto (sin minutos, el recorrido supuesto). En el minuto del
+            # llenado no cuenta el objetivo
             minutes = _minute_path(ctx, j)
             hit_stop = hit_goal = False
             if minutes is None:
@@ -1591,7 +1598,10 @@ def _baseline(rule, ctx, trades, symbol):
     longs = sum(1 for t in trades if t["dir"] > 0) / len(trades)
     rng = random.Random(int(hashlib.sha1(f"{symbol}{rule['tf']}{n}".encode()).hexdigest()[:8], 16))
     base_rule = _random_rule(rule, trades)
-    light = {**ctx, "minutes": None, "i0": None}  # Sin minuto a minuto: en la duda cuenta el stop, como en contra de la base no sesga a favor
+    # El azar se simula igual que la regla: con el minuto a minuto de la moneda si lo tiene (sin él, con el recorrido
+    # supuesto de la vela, para los dos). Hasta el 20/11 iba sin minutos aunque la regla los usara: con dos órdenes stop o
+    # una limit, cada vela dudosa del llenado era una pérdida del azar y no de la regla, y la ventaja salía inflada
+    light = {**ctx, "i0": None}
     done = []
     allowed = _allowed(ctx, n)
     if allowed is not None and not len(allowed):
@@ -1676,7 +1686,7 @@ def _leg_baseline(rule, ctx, trades, symbol):
     direction, _, _ = measures.zigzag(high, low, close, measures.atr(high, low, close), leg)
     rng = random.Random(int(hashlib.sha1(f"{symbol}{rule['tf']}{n}tramo".encode()).hexdigest()[:8], 16))
     base_rule = _random_rule(rule, trades)
-    light = {**ctx, "minutes": None, "i0": None}
+    light = {**ctx, "i0": None}  # Con el minuto a minuto, como la regla (ver _baseline)
     done = []
     allowed = _allowed(ctx, n)
     if allowed is not None and not len(allowed):
@@ -1906,8 +1916,11 @@ def _runs_path():
 
 # Versión del motor, anotada en cada corrida. 2 (20/11/2026): el régimen medido en 1D en las acciones, que antes
 # descartaba todas las señales (sus días no tienen 24 horas de velas). Las corridas que ese fallo tocó no se reusan,
-# no se cuentan y no se listan (_stale); siguen en el disco
-ENGINE = 2
+# no se cuentan y no se listan (_stale); siguen en el disco. 3 (20/11/2026): las entradas al azar se simulan con el
+# minuto a minuto de la moneda, como la regla (antes iban sin él y, con dos órdenes stop o una limit, la ventaja de las
+# monedas con almacén salía inflada), y una vela dudosa sin minutos se resuelve con su recorrido supuesto en vez de
+# contar siempre el stop (_minute_path). Las corridas anteriores conservan lo suyo: el número dice cómo se hicieron
+ENGINE = 3
 
 
 def _stale(record):

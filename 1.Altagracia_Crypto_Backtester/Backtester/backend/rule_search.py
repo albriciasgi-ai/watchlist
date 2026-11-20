@@ -291,7 +291,9 @@ class Evaluator:
         key = json.dumps([symbol, tf, segment, kind, core, None if kind == "random" else leg], sort_keys=True, default=str)
         found = self.controls.get(key)
         if found is None:
-            ctx = {**item["ctx"], "minutes": None, "i0": None}
+            # Con el minuto a minuto de la moneda, como la regla en run(). Hasta el 20/11 el azar iba sin él: con dos
+            # órdenes stop cerca de la apertura, cada llenado dudoso del azar era una pérdida, y las finalistas lo usaban
+            ctx = {**item["ctx"], "i0": None}
             exit_at = _exit_at(rule, item["span"])
             if exit_at is not None:
                 ctx["exitAt"] = exit_at
