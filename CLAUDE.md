@@ -54,6 +54,25 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 20 Noviembre 2026: Rangos Horizontales y Guía de Pruebas de las Reglas
+
+**Pedido:** primero, un tutorial como el de los Elementos OF (PDF y Excel con lista de chequeo) para depurar el backtesting global opción por opción. Después, un indicador de rangos horizontales con los métodos y parámetros de la pestaña Régimen, para la simulación manual, el backtesting global y la suite, con el método elegido en un modal.
+
+**Cambios:**
+1. **Guía de pruebas de las reglas:** `GUIA_PRUEBAS_REGLAS.pdf` (27 páginas) y `CHEQUEO_PRUEBAS_REGLAS.xlsx` en `1.Altagracia_Crypto_Backtester/Backtester/`, con el formato de la guía de los Elementos OF. El Excel trae 100 pasos de chequeo, los 104 controles de la pestaña Regla, los 50 elementos, 43 comportamientos que confunden al depurar (2 comprobados en el código, el resto "por comprobar") y un registro de corridas que calcula las ventajas y si pasa el criterio.
+2. **Indicador "Rangos horizontales"** (`HorizontalRangesIndicator.js`, modal `HorizontalRangesSettings.jsx`): los ocho detectores de la pestaña Régimen y el rango mayor, calculados en el navegador con `regimeDetectors.js`, que da lo mismo que `regime_detectors.py` al bit (26,960 zonas comparadas). Solo con velas cerradas: punteado hasta la vela en que se supo, marcado desde ahí. Está en la simulación manual, el 2.º gráfico, el backtesting global y el gráfico principal de la suite.
+3. **Hallado:** el Range Detection de la pestaña Régimen repinta (un cierre fuera que no termina el rango pasa a ser rango si el precio vuelve). Los otros siete detectores no.
+4. **Arreglado en el backtesting global:** cambiar el marco del gráfico durante su primera carga dejaba el aviso "Completando las velas de…" y el gráfico tapado.
+5. **Pruebas:** `horizontalranges.test.mjs` (8) y `regimedetectors.test.mjs` (35).
+
+**IMPORTANTE:**
+- Basta recargar App 1 (no cambió el backend). La suite se reinicia sola al abrirla y arma la página nueva.
+- Probado en el backtesting global con una copia aislada (BTC 4h, eficiencia con caja y TTM con rango mayor). No se probó en pantalla la simulación manual, el 2.º gráfico ni la suite en vivo; las dos páginas se arman.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "RANGOS HORIZONTALES (20/11/2026)"
+
+---
+
 ### App 1 - 19 y 20 Noviembre 2026: Acciones de Alpaca (Almacén de Order Flow y Velas Históricas)
 
 **Pedido:** llevar las acciones de EE. UU. de Alpaca a App 1, con footprints y Elementos OF de unos días recientes y, para el probador, velas históricas profundas de unas 100 acciones, sin la granularidad de los footprints.

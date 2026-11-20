@@ -18,6 +18,7 @@ import SwingDetectorSettings from '../SwingDetectorSettings';
 import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
 import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
+import HorizontalRangesSettings from '../HorizontalRangesSettings';
 import LiquidationsSettings from '../LiquidationsSettings';
 import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
 import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
@@ -48,7 +49,7 @@ const DAY_MS = 86400000;
 // Los mismos indicadores que ofrece la principal, apagados salvo el volumen
 const INDICATORS = [
   'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rejection Patterns',
+  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rangos horizontales', 'Rejection Patterns',
   'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector'
 ];
 const DEFAULT_ON = new Set(['Volume Delta']);
@@ -57,7 +58,7 @@ const DEFAULT_ON = new Set(['Volume Delta']);
 const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP',
   'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF'
+  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales'
 ]);
 
 /** Fondo y caja de los modales que no traen la suya */
@@ -470,6 +471,15 @@ const SecondaryChartApp = () => {
             symbol={symbol}
             indicator={current.getFVGIndicator()}
             onApply={(settings) => applyHere(m => m.getFVGIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'Rangos horizontales':
+        return (
+          <HorizontalRangesSettings
+            symbol={symbol}
+            indicator={current.getHorizontalRangesIndicator()}
+            onApply={(settings) => applyHere(m => m.getHorizontalRangesIndicator().updateConfig(settings))}
             onClose={closeSettings}
           />
         );

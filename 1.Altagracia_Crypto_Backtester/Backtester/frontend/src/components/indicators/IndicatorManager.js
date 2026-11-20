@@ -20,6 +20,7 @@ import SwingDetectorIndicator from "./SwingDetectorIndicator"; // 🎯 Swing Hig
 import OIVolumeConfluenceIndicator from "./OIVolumeConfluenceIndicator"; // 🎯 OI-Volume Confluence
 import OrderFlowIndicator from "./OrderFlowIndicator"; // 🎯 Order Flow (Footprints)
 import FVGIndicator from "./FVGIndicator";
+import HorizontalRangesIndicator from "./HorizontalRangesIndicator";
 import VolumeProfilePeriodicIndicator from "./VolumeProfilePeriodicIndicator";
 import ResponseVolumeIndicator from "./ResponseVolumeIndicator";
 import LiquidationsIndicator from "./LiquidationsIndicator";
@@ -87,6 +88,7 @@ class IndicatorManager {
     // 🎯 Crear indicador de Order Flow con fecha de inicio de simulación
     this.orderFlowIndicator = new OrderFlowIndicator(this.symbol, this.interval, this.days, backtestingMode, simulationStartTime);
     this.fvgIndicator = new FVGIndicator(this.symbol, this.interval, this.days);
+    this.horizontalRangesIndicator = new HorizontalRangesIndicator(this.symbol, this.interval, this.days);
     const sessionProfiles = new SessionProfiles(this.symbol);
     this.vpPeriodicIndicator = new VolumeProfilePeriodicIndicator(this.symbol, this.interval, this.days, sessionProfiles);
     this.responseVolumeIndicator = new ResponseVolumeIndicator(this.symbol, this.interval, this.days);
@@ -109,6 +111,7 @@ class IndicatorManager {
       this.sustainedLevelsIndicator, // También de fondo, encima del mapa y debajo de las velas
       this.zoneDefenseIndicator, // Marcas de las visitas a tus zonas, encima de las velas
       this.liquidationsIndicator, // Primero: sus franjas quedan debajo de los demás dibujos
+      this.horizontalRangesIndicator, // Cajas de rango horizontal, debajo de los elementos, perfiles y footprints
       this.ofElementsIndicator, // Franjas y marcas de order flow, debajo de los perfiles y footprints
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       volumeIndicator,
@@ -1334,6 +1337,10 @@ class IndicatorManager {
   /**
    * Obtiene el indicador de Order Flow
    */
+  getHorizontalRangesIndicator() {
+    return this.horizontalRangesIndicator;
+  }
+
   getFVGIndicator() {
     return this.fvgIndicator;
   }

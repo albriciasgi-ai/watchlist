@@ -14,6 +14,7 @@ import SwingDetectorSettings from '@app1/components/SwingDetectorSettings';
 import OIVolumeConfluenceSettings from '@app1/components/OIVolumeConfluenceSettings';
 import OrderFlowSettings from '@app1/components/OrderFlowSettings';
 import FVGSettings from '@app1/components/FVGSettings';
+import HorizontalRangesSettings from '@app1/components/HorizontalRangesSettings';
 import LiquidationsSettings from '@app1/components/LiquidationsSettings';
 import OrderFlowElementsSettings from '@app1/components/OrderFlowElementsSettings';
 import OrderFlowSetupsSettings from '@app1/components/OrderFlowSetupsSettings';
@@ -98,12 +99,13 @@ function closeFrame(start, end, preferred) {
 const DEFAULT_STATES = {
   'Volume Delta': true, 'Volume Profile': false, 'CVD': false, 'Open Interest': false, 'OI-Volume Confluence': false,
   'Order Flow': true, 'FVG': false, 'VP Periodic': false, 'Volumen de Respuesta': false, 'Liquidaciones': false,
-  'Elementos OF': false, 'VWAP': false, 'Range Detection': false, 'Rejection Patterns': false, 'Double Top/Bottom': false,
+  'Elementos OF': false, 'VWAP': false, 'Range Detection': false, 'Rangos horizontales': false, 'Rejection Patterns': false, 'Double Top/Bottom': false,
   'Support & Resistance': false, 'S&R v2': false, 'Swing Detector': false,
 };
 const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP', 'Double Top/Bottom',
   'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic', 'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF',
+  'Rangos horizontales',
 ]);
 const DEFAULT_VP_CONFIG = {
   mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true,
@@ -1000,6 +1002,15 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
             symbol={symbol}
             indicator={current.getFVGIndicator()}
             onApply={(settings) => applyToAll(m => m.getFVGIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'Rangos horizontales':
+        return (
+          <HorizontalRangesSettings
+            symbol={symbol}
+            indicator={current.getHorizontalRangesIndicator()}
+            onApply={(settings) => applyToAll(m => m.getHorizontalRangesIndicator().updateConfig(settings))}
             onClose={closeSettings}
           />
         );
