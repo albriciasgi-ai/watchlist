@@ -349,6 +349,18 @@ const RuleTesterApp = () => {
     setTab('resumen');
   }, []);
 
+  // Una moneda abierta desde "Todas" llega con su corrida en la dirección (&run=): se abre con sus trades. Solo una corrida
+  // de esta misma moneda, y el parámetro sale de la dirección para que recargar no la vuelva a abrir
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const runId = params.get('run');
+    if (!runId) return;
+    params.delete('run');
+    window.history.replaceState(null, '', `?${params.toString()}`);
+    if (!/^[A-Za-z0-9.-]+_\d+_f\d_[0-9a-f]+_\d+$/.test(runId) || !runId.startsWith(`${symbol}_`)) return;
+    loadRun(runId).catch(error => setMessage(error.message));
+  }, [loadRun, symbol]);
+
   // El informe de todas las monedas que ya corrieron esa regla exacta en esa fase
   const loadAll = useCallback(async (backendRule, phaseNumber) => {
     const report = await api('/api/tester/consolidated', { rule: backendRule, phase: phaseNumber, group: coinGroupRef.current });
@@ -1270,7 +1282,13 @@ const RuleTesterApp = () => {
   );
 
   const s = result?.summary;
-  const summaryTab = !result ? <div className="rt-note">Todavía no hay una corrida de esta fase. Arma la regla y córrela.</div> : (
+  // Tras "Correr en todas las monedas" no hay corrida de una moneda abierta: estas pestañas dicen dónde abrirla
+  const oneCoinHint = !result && allReport?.phase === phase ? (
+    <div className="rt-note">
+      Estas pestañas muestran una moneda a la vez. En "Todas", en la tabla "Por moneda", pulsa una moneda para abrir su corrida con sus trades en el gráfico.
+    </div>
+  ) : null;
+  const summaryTab = !result ? (oneCoinHint || <div className="rt-note">Todavía no hay una corrida de esta fase. Arma la regla y córrela.</div>) : (
     <>
       <div className="rt-group">
         <b>{result.rule.name}</b> · Fase {result.phase} · {result.from} a {result.to}
@@ -1405,7 +1423,7 @@ const RuleTesterApp = () => {
   );
 
   const selectedTrade = trades.find(t => t.n === selected);
-  const tradesTab = !result ? <div className="rt-note">Sin corrida en esta fase.</div> : (
+  const tradesTab = !result ? (oneCoinHint || <div className="rt-note">Sin corrida en esta fase.</div>) : (
     <>
       {selectedTrade && (
         <div className="rt-group">
@@ -1452,7 +1470,7 @@ const RuleTesterApp = () => {
 
   const b = result?.breakdowns;
   const wl = result?.winnersVsLosers;
-  const patternsTab = !result || !s?.n ? <div className="rt-note">Sin trades en esta fase.</div> : (
+  const patternsTab = !result || !s?.n ? (oneCoinHint || <div className="rt-note">Sin trades en esta fase.</div>) : (
     <>
       <BriefTable title="Por año" rows={b.year} />
       <BriefTable title="Por lado" rows={b.side} />
@@ -1593,7 +1611,7 @@ const RuleTesterApp = () => {
               <tr key={row.symbol} title={`${row.from} a ${row.to} · azar ${fmtR(row.baseR, 3)} R${row.legR != null ? ` · seguir el tramo al azar ${fmtR(row.legR, 3)} R` : ''}${row.edge ? ` · contra el azar, entre ${fmtR(row.edge.low, 3)} y ${fmtR(row.edge.high, 3)}` : ''}`}>
                 <td>{row.symbol === symbol
                   ? <button type="button" className="rt-btn" onClick={() => loadRun(row.run)} title="Ver esta corrida con sus trades en el gráfico">{row.symbol.replace('USDT', '')}</button>
-                  : <a className="rt-btn" style={{ textDecoration: 'none' }} href={`?${TESTER_PARAM}=1&symbol=${row.symbol}`} title="Abrir esta moneda; su corrida queda en el Historial">{row.symbol.replace('USDT', '')}</a>}</td>
+                  : <a className="rt-btn" style={{ textDecoration: 'none' }} href={`?${TESTER_PARAM}=1&symbol=${row.symbol}${row.run ? `&run=${row.run}` : ''}`} title="Abrir esta moneda con esta corrida y sus trades en el gráfico">{row.symbol.replace('USDT', '')}</a>}</td>
                 <td>{row.n}</td><td>{fmtPct(row.winRate)}</td><td><R value={row.avgR} digits={3} /></td><td><R value={row.totalR} /></td>
                 <td><R value={row.edge?.r} digits={3} /></td><td><R value={row.legEdge?.r} digits={3} /></td>
               </tr>
