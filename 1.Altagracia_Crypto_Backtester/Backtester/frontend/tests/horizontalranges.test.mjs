@@ -17,7 +17,7 @@ const {
   profileTargets
 } = await import('../src/components/indicators/HorizontalRangesIndicator.js');
 const { runDetector, toArrays } = await import('../src/components/indicators/regimeDetectors.js');
-const { RangeProfiles, rangeSpan } = await import('../src/components/indicators/rangeProfiles.js');
+const { RangeProfiles, rangeSpan, profileSpan } = await import('../src/components/indicators/rangeProfiles.js');
 const { buildProfile } = await import('../src/components/indicators/sessionProfile.js');
 
 const tests = [];
@@ -153,6 +153,14 @@ test('el marco del gráfico se lee en minutos, con la M mayúscula como mes', ()
 // ---------- Perfil de volumen sobre cada rango (20/11/2026) ----------
 const PROFILE = { rows: 50, valueAreaShare: 0.7, real: false };
 const inRange = (zone) => CANDLES.filter(c => c.timestamp >= zone.start && c.timestamp <= zone.lastOpen);
+// Las velas del perfil, calculadas aparte del código: las del rango sin las del final que cierran fuera de su caja
+function profileCandles(zone) {
+  const own = inRange(zone);
+  while (own.length > 1 && (own.at(-1).close > zone.high || own.at(-1).close < zone.low)) own.pop();
+  return own;
+}
+// Cierre de la última vela del perfil
+const profileUntil = (zone) => profileCandles(zone).at(-1).timestamp + STEP;
 const near = (a, b) => Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(a), Math.abs(b));
 const volumeOf = (candles) => candles.reduce((sum, c) => sum + c.volume, 0);
 
@@ -180,19 +188,21 @@ function view(visible, known) {
   return { bounds, priceContext };
 }
 
-test('el perfil de un rango es el de sus velas, de la primera a la última, con todo su volumen', () => {
+test('el perfil de un rango es el de sus velas, de la primera a la última que cerró dentro de su caja, con todo su volumen', () => {
   const profiles = new RangeProfiles('BTCUSDT');
   let checked = 0;
+  let trimmed = 0;
   for (const method of ['er_box', 'ttm', 'vp_prog']) {
     const { zones, majors } = computeRanges(CANDLES, cfg(method, { major: true }), 240);
-    for (const zone of [...zones.slice(0, 25), ...majors.slice(0, 10)]) {
-      const own = inRange(zone);
+    for (const zone of [...zones.slice(0, 25), ...majors.slice(0, 15)]) {
+      const span = inRange(zone);
       assert.equal(zone.end, zone.lastOpen + STEP, `${method}: el fin es el cierre de su última vela`);
-      assert.equal(own[0].timestamp, zone.start);
-      assert.equal(own[own.length - 1].timestamp, zone.lastOpen);
+      assert.equal(span[0].timestamp, zone.start);
+      assert.equal(span[span.length - 1].timestamp, zone.lastOpen);
       const [from, to] = rangeSpan(CANDLES, zone);
       assert.equal(CANDLES[from].timestamp, zone.start);
       assert.equal(CANDLES[to - 1].timestamp, zone.lastOpen);
+      const own = profileCandles(zone);
       const profile = profiles.get(zone, CANDLES, PROFILE);
       const expected = buildProfile(own, 50, 0.7);
       if (!expected) {
@@ -205,30 +215,69 @@ test('el perfil de un rango es el de sus velas, de la primera a la última, con 
       assert.equal(profile.minPrice, Math.min(...own.map(c => c.low)), 'del mínimo de sus velas');
       assert.equal(profile.maxPrice, Math.max(...own.map(c => c.high)), 'al máximo de sus velas');
       assert.ok(near(profile.totalVolume, volumeOf(own)), `${method}: todo el volumen de sus velas, ni más ni menos`);
+      assert.equal(profile.dropped, span.length - own.length, 'cuenta las velas de la ruptura');
+      assert.equal(profile.until, profileUntil(zone), 'termina al cierre de su última vela dentro');
       assert.equal(profile.isReal, false);
+      if (profile.dropped) trimmed += 1;
       checked += 1;
     }
   }
   assert.ok(checked >= 40, `rangos comparados: ${checked}`);
+  assert.ok(trimmed >= 3, `rangos con su ruptura fuera del perfil: ${trimmed}`);
 });
 
-test('el perfil de un rango vivo crece con cada vela que cierra y no usa las velas posteriores', () => {
+test('las velas del final que cierran fuera de la caja no cuentan, y cuentan si el precio vuelve a cerrar dentro', () => {
+  const t0 = 1700000000000;
+  const bar = (i, close) => ({ timestamp: t0 + i * STEP, open: close, high: close + 1, low: close - 1, close, volume: 10 + i });
+  const candles = [100, 104, 102, 106, 103, 105, 112, 114, 113, 104, 115].map((close, i) => bar(i, close));
+  const zoneAt = (last) => ({ start: t0, lastOpen: t0 + last * STEP, end: t0 + (last + 1) * STEP, low: 99, high: 107 });
+  // Hasta la vela 8: la 6, la 7 y la 8 cierran sobre la caja (la ruptura)
+  assert.deepEqual(profileSpan(candles, zoneAt(8)), [0, 6]);
+  const broken = new RangeProfiles('X').get(zoneAt(8), candles, PROFILE);
+  assert.equal(broken.dropped, 3);
+  assert.equal(broken.until, t0 + 6 * STEP, 'termina al cierre de la última vela dentro');
+  assert.ok(near(broken.totalVolume, 10 + 11 + 12 + 13 + 14 + 15), 'solo el volumen de las velas dentro');
+  assert.equal(broken.maxPrice, 107, 'sin los precios de la ruptura');
+  // La 9 vuelve a cerrar dentro: la salida fue falsa y esas velas son parte del rango
+  assert.deepEqual(profileSpan(candles, zoneAt(9)), [0, 10]);
+  const back = new RangeProfiles('X').get(zoneAt(9), candles, PROFILE);
+  assert.equal(back.dropped, 0);
+  assert.equal(back.until, zoneAt(9).end);
+  assert.equal(back.maxPrice, 115, 'con la salida falsa');
+  assert.deepEqual(profileSpan(candles, zoneAt(10)), [0, 10], 'la 10 cierra fuera otra vez');
+  assert.deepEqual(profileSpan(candles.map(c => ({ ...c, close: 50 })), zoneAt(5)), [0, 1], 'por debajo también, y al menos la primera vela');
+});
+
+test('el perfil de un rango vivo crece con cada vela que cierra dentro y no usa las velas posteriores', () => {
   let checked = 0;
-  for (let cut = 400; cut < CANDLES.length - 1 && checked < 12; cut += 1) {
-    const now = computeRanges(CANDLES.slice(0, cut), cfg('er_box'), 240).zones.find(z => z.live);
-    if (!now) continue;
-    const next = computeRanges(CANDLES.slice(0, cut + 1), cfg('er_box'), 240).zones.find(z => z.live && z.start === now.start);
-    if (!next) continue;
-    const before = new RangeProfiles('BTCUSDT').get(now, CANDLES, PROFILE); // Con todas las velas a mano
-    const alone = new RangeProfiles('BTCUSDT').get(now, CANDLES.slice(0, cut), PROFILE); // Solo con lo conocido entonces
-    assert.deepEqual(before, alone, 'lo posterior a su última vela no cuenta');
-    const after = new RangeProfiles('BTCUSDT').get(next, CANDLES, PROFILE);
-    assert.equal(next.lastOpen, now.lastOpen + STEP, 'el rango sumó la vela que cerró');
-    assert.ok(near(after.totalVolume, before.totalVolume + CANDLES[cut].volume), 'y el perfil, su volumen');
-    checked += 1;
-    cut += 20;
+  let grew = 0;
+  for (const major of [false, true]) {
+    for (let cut = 400; cut < CANDLES.length - 1 && checked < (major ? 24 : 12); cut += 1) {
+      const pick = (out) => (major ? out.majors : out.zones);
+      const now = pick(computeRanges(CANDLES.slice(0, cut), cfg('er_box', { major }), 240)).find(z => z.live);
+      if (!now) continue;
+      const next = pick(computeRanges(CANDLES.slice(0, cut + 1), cfg('er_box', { major }), 240)).find(z => z.live && z.start === now.start);
+      if (!next) continue;
+      const before = new RangeProfiles('BTCUSDT').get(now, CANDLES, PROFILE); // Con todas las velas a mano
+      const alone = new RangeProfiles('BTCUSDT').get(now, CANDLES.slice(0, cut), PROFILE); // Solo con lo conocido entonces
+      assert.deepEqual(before, alone, 'lo posterior a su última vela no cuenta');
+      const after = new RangeProfiles('BTCUSDT').get(next, CANDLES, PROFILE);
+      assert.equal(next.lastOpen, now.lastOpen + STEP, 'el rango sumó la vela que cerró');
+      assert.ok(near(after.totalVolume, volumeOf(profileCandles(next))), 'el perfil, sus velas hasta la última dentro');
+      if (CANDLES[cut].close >= next.low && CANDLES[cut].close <= next.high) {
+        assert.equal(after.dropped, 0);
+        assert.ok(near(after.totalVolume, volumeOf(inRange(next))), 'una vela que cierra dentro suma todo lo anterior');
+        assert.ok(after.totalVolume >= before.totalVolume + CANDLES[cut].volume * 0.999999);
+        grew += 1;
+      } else if (next.low === now.low && next.high === now.high) {
+        assert.ok(near(after.totalVolume, before.totalVolume), 'una que cierra fuera de la misma caja no cambia el perfil');
+      }
+      checked += 1;
+      cut += 20;
+    }
   }
-  assert.ok(checked >= 5, `rangos vivos que siguen en la vela siguiente: ${checked}`);
+  assert.ok(checked >= 10, `rangos vivos que siguen en la vela siguiente: ${checked}`);
+  assert.ok(grew >= 5, `veces que creció: ${grew}`);
 });
 
 test('la vela en formación no entra al perfil', () => {
@@ -238,8 +287,10 @@ test('la vela en formación no entra al perfil', () => {
   assert.deepEqual(new RangeProfiles('BTCUSDT').get(zone, [...CANDLES, forming], PROFILE), new RangeProfiles('BTCUSDT').get(zone, CANDLES, PROFILE));
 });
 
-test('el volumen real se pide hasta el cierre del rango, con su misma rejilla, y se usa solo si el almacén lo cubre', async () => {
-  const zones = computeRanges(CANDLES, cfg('er_box'), 240).zones.filter(z => !z.live);
+test('el volumen real se pide hasta el cierre de la última vela del perfil, con su misma rejilla, y se usa solo si el almacén lo cubre', async () => {
+  // Rangos mayores terminados con su ruptura al final: el pedido termina antes que el rango
+  const zones = computeRanges(CANDLES, cfg('er_box', { major: true }), 240).majors.filter(z => !z.live && profileCandles(z).length < inRange(z).length);
+  assert.ok(zones.length >= 2, `rangos mayores con ruptura: ${zones.length}`);
   const urls = [];
   const answer = (minutes) => async (url) => {
     const query = new URL(url).searchParams;
@@ -256,8 +307,9 @@ test('el volumen real se pide hasta el cierre del rango, con su misma rejilla, y
   await wait(40);
   assert.equal(urls.length, 1);
   assert.equal(Number(urls[0].get('start_timestamp')), zone.start);
-  assert.equal(Number(urls[0].get('end_timestamp')), zone.end);
-  assert.equal(Number(urls[0].get('known_until')), zone.end, 'nada posterior al cierre de su última vela');
+  assert.equal(Number(urls[0].get('end_timestamp')), profileUntil(zone), 'sin las velas de la ruptura');
+  assert.ok(profileUntil(zone) < zone.end);
+  assert.equal(Number(urls[0].get('known_until')), profileUntil(zone), 'nada posterior al cierre de su última vela');
   assert.equal(Number(urls[0].get('low')), first.minPrice);
   assert.equal(Number(urls[0].get('high')), first.maxPrice);
   assert.equal(Number(urls[0].get('rows')), 50);
@@ -298,7 +350,7 @@ test('de un rango vivo se pide solo su fin más reciente, cuando deja de cambiar
   for (const zone of ends) profiles.get(zone, CANDLES, { rows: 50, valueAreaShare: 0.7 }); // Cambia de fin antes de quedarse quieto
   await wait(400);
   assert.equal(urls.length, 1, 'un solo pedido');
-  assert.equal(Number(urls[0].get('end_timestamp')), ends.at(-1).end, 'el de su último fin');
+  assert.equal(Number(urls[0].get('end_timestamp')), profileUntil(ends.at(-1)), 'el de su último fin');
 
   const gone = new RangeProfiles('BTCUSDT', { settleMs: 0, gapMs: 0 });
   gone.get(ends[0], CANDLES, { rows: 40, valueAreaShare: 0.7 });
@@ -335,7 +387,7 @@ test('en el gráfico: un perfil por rango a la vista, sin la vela en formación,
   assert.ok(shown.length >= 2, `perfiles a la vista: ${shown.length}`);
   for (const { zone, profile, isMajor } of shown) {
     assert.equal(isMajor, false);
-    assert.equal(profile.poc.price, buildProfile(inRange(zone), 50, 0.7).poc.price);
+    assert.equal(profile.poc.price, buildProfile(profileCandles(zone), 50, 0.7).poc.price);
   }
   const levels = plain.indicator.selectableLevels().filter(l => l.kind.startsWith('Perfil del rango'));
   assert.equal(levels.length, shown.length * 3, 'POC, VAH y VAL de cada uno');

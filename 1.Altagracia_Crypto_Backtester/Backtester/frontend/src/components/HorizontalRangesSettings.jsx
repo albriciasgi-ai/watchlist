@@ -146,7 +146,7 @@ const HorizontalRangesSettings = ({ symbol, indicator, onApply, onClose }) => {
                 <input type="checkbox" checked={!!values.profile} onChange={(e) => set('profile', e.target.checked)} />
                 Dibujar el perfil de volumen de cada rango
               </label>
-              <span className="hint">El de las velas cerradas del rango, desde su primera vela: el de un rango que sigue vivo crece con cada vela que cierra. Con trades en el almacén que cubren todo el rango, el volumen es real (la etiqueta dice «real»); si no, el de cada vela se reparte entre su mínimo y su máximo.</span>
+              <span className="hint">El de las velas cerradas del rango, desde su primera vela hasta la última que cerró dentro de su caja: las de la ruptura del final no cuentan (si el precio vuelve a cerrar dentro, sí). El de un rango que sigue vivo crece con cada vela que cierra dentro. Con trades en el almacén que cubren todo el rango, el volumen es real (la etiqueta dice «real»); si no, el de cada vela se reparte entre su mínimo y su máximo.</span>
             </div>
             {values.profile && (
               <>

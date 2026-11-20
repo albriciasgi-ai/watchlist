@@ -22,8 +22,9 @@ import { RangeProfiles } from './rangeProfiles.js';
  * se dibuja el último cálculo, que solo usa velas ya cerradas.
  *
  * Perfil de volumen (20/11/2026, pedido del usuario): con la opción del modal, cada rango lleva el perfil de sus
- * velas cerradas, desde su primera vela hasta la última, sobre las cajas o sobre el rango mayor (rangeProfiles.js).
- * El de un rango vivo crece con cada vela que cierra. Volumen real del almacén si cubre el rango; si no, estimado.
+ * velas cerradas, desde su primera vela hasta la última que cerró dentro de su caja (sin las velas de la ruptura),
+ * sobre las cajas o sobre el rango mayor (rangeProfiles.js). El de un rango vivo crece con cada vela que cierra
+ * dentro. Volumen real del almacén si cubre el rango; si no, estimado.
  */
 
 const SETTINGS_KEY = 'horizontal_ranges_settings_';
