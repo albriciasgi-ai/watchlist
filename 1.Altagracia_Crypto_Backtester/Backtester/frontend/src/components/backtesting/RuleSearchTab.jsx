@@ -20,7 +20,7 @@ const NAMES = {
 const DEFAULT_CONFIG = {
   tfs: [240], codes: ['CC', 'VH', 'HM', 'EN', 'DJ', 'RF', 'RB', 'GC', 'BX', 'BE', 'CP', 'FV', 'SP', 'IM'], population: 60, generations: 25, maxElements: 2,
   minTrades: 150, minCoins: 4, split: '2023-01-01', lines: true, invert: true, mutation: 0.1,
-  flow: true, regime: true, trailing: true, straddle: true, checkNew: true
+  flow: true, regime: true, trailing: true, straddle: true, checkNew: true, fitness: 'promedio'
 };
 
 const api = async (path, body) => {
@@ -168,6 +168,13 @@ export default function RuleSearchTab({ onLoadRule }) {
             <Check checked={config.straddle !== false} onChange={(straddle) => patch({ straddle })} title="Dos órdenes stop, una arriba y otra abajo: entra la primera">dos órdenes stop</Check>
           </div>
           <div className="rt-row">
+            <span title="Promedio: la ventaja media sobre los controles, menos su error. Constancia: la mediana de la ventaja de cada trimestre del tramo de búsqueda (cada trade contra el azar de su trimestre); no la mueven uno o dos trimestres excepcionales, y premia las reglas que ganan un poco casi siempre">Elegir por</span>
+            <select value={config.fitness || 'promedio'} onChange={(e) => patch({ fitness: e.target.value })}>
+              <option value="promedio">promedio de la ventaja</option>
+              <option value="constancia">constancia por trimestre</option>
+            </select>
+          </div>
+          <div className="rt-row">
             <Check checked={config.checkNew !== false} onChange={(checkNew) => patch({ checkNew })}
               title="Al terminar, cada finalista se corre también en las monedas nuevas, en toda su fase 1. Nunca eligen nada: solo dicen si lo encontrado se repite en monedas que la búsqueda no vio">
               Al terminar, comprobar las finalistas en las monedas nuevas</Check>
@@ -259,6 +266,13 @@ export default function RuleSearchTab({ onLoadRule }) {
                 <tbody>
                   <tr><td>Búsqueda</td><td>{f.train.n}</td><td><R value={f.train.avgR} /></td><td><R value={f.train.edge} /> ±{f.train.se ? (1.96 * f.train.se).toFixed(2) : '—'}</td><td>{f.train.coinsUp} de {f.train.coinsWith}</td></tr>
                   <tr><td>Validación</td><td>{f.hold.n}</td><td><R value={f.hold.avgR} /></td><td><R value={f.hold.edge} /> ±{f.hold.se ? (1.96 * f.hold.se).toFixed(2) : '—'}</td><td>{f.hold.coinsUp} de {f.hold.coinsWith}</td></tr>
+                  {['train', 'hold'].filter(seg => f[seg]?.consistency?.total).map(seg => (
+                    <tr key={`c${seg}`} title="Trimestres sobre el azar de su trimestre, y la mediana de la ventaja por trimestre">
+                      <td>{seg === 'train' ? 'Búsqueda' : 'Validación'}, constancia</td><td colSpan={2}>{f[seg].consistency.positive} de {f[seg].consistency.total} trimestres</td>
+                      <td><R value={f[seg].consistency.median} /> mediana</td>
+                      <td>{f[seg].consistency.top4Share != null ? `4 mejores: ${Math.round(f[seg].consistency.top4Share * 100)}%` : '—'}</td>
+                    </tr>
+                  ))}
                   {f.newCoins && ['train', 'hold'].map(seg => (
                     <tr key={seg} title="Las monedas nuevas, que la búsqueda nunca vio, en el mismo tramo de su fase 1">
                       <td>Nuevas, {seg === 'train' ? 'búsqueda' : 'validación'}</td><td>{f.newCoins[seg].n}</td><td><R value={f.newCoins[seg].avgR} /></td>

@@ -34,7 +34,7 @@ _preparing = {"running": False, "done": 0, "total": 0}
 
 
 def _stats_path():
-    return rt.tester_dir() / "cache" / "run_stats_v2.json"
+    return rt.tester_dir() / "cache" / "run_stats_v3.json"  # v3: con la constancia por trimestre
 
 
 def _notes_path():
@@ -59,7 +59,7 @@ def _write(path, data):
 
 def _run_stats(run_id):
     """Sumas de una corrida guardada, con sus controles. None si el archivo no está."""
-    result = rt.with_leg_baseline(rt.load_run(run_id))
+    result = rt.with_quarter_baseline(rt.with_leg_baseline(rt.load_run(run_id)))
     if result is None:
         return None
     trades = result.get("trades") or []
@@ -73,6 +73,7 @@ def _run_stats(run_id):
         cell[0] += 1
         cell[1] += t["r"]
     return {"n": len(rs), "sum": sum(rs), "sumsq": sum(r * r for r in rs), "wins": sum(1 for r in rs if r > 0), "years": years,
+            "quarters": {q: [n, round(r, 4), round(e, 4)] for q, (n, r, e) in rt.quarter_rows(result).items()},
             "longN": len(side(1)), "longSum": sum(side(1)), "shortN": len(side(-1)), "shortSum": sum(side(-1)),
             "base": control(result.get("baseline")), "leg": control(result.get("legBaseline"))}
 
@@ -98,6 +99,14 @@ def _pool(items):
             cell[0] += k
             cell[1] += r
     out["years"] = [{"year": y, "n": k, "avgR": round(r / k, 3) if k else None} for y, (k, r) in sorted(years.items())]
+    quarters = {}
+    for _, st in items:
+        for q, (k, r, e) in (st.get("quarters") or {}).items():
+            cell = quarters.setdefault(q, [0, 0.0, 0.0])
+            cell[0] += k
+            cell[1] += r
+            cell[2] += e
+    out["consistency"] = rt.consistency(quarters)
     best = max(items, key=lambda it: it[1]["sum"])
     out["topCoin"] = {"symbol": best[0], "totalR": round(best[1]["sum"], 2), "share": round(best[1]["sum"] / total, 3) if total > 0 else None}
     for label, key_n, key_sum in (("long", "longN", "longSum"), ("short", "shortN", "shortSum")):
@@ -247,6 +256,16 @@ def analyze(item):
         points.append({"tone": "warn" if bad_years else "good",
                        "text": (f"Pierde en {', '.join(y['year'] for y in bad_years)} ({where})." if bad_years
                                 else f"Positiva en todos los años con 30 trades o más ({where}): " + ", ".join(f"{y['year']} {_fmt(y['avgR'])}" for y in good_years) + ".")})
+    cons = focus.get("consistency") or {}
+    if cons.get("total", 0) >= 4:
+        share = cons["positive"] / cons["total"]
+        top = cons.get("top4Share")
+        text = (f"Constancia ({where}): {cons['positive']} de {cons['total']} trimestres sobre el azar, mediana {_fmt(cons['median'])} R por trade"
+                + (f"; los 4 mejores ponen {top * 100:.0f}% de la ventaja" if top is not None else "; la ventaja total no es positiva"))
+        if top is not None and top >= 0.8 and cons["total"] > 5:
+            points.append({"tone": "warn", "text": text + ". Depende de pocos trimestres: en un periodo sin ellos puede no ganar."})
+        else:
+            points.append({"tone": "good" if share >= 0.65 and (cons["median"] or 0) > 0 else "warn", "text": text + "."})
     if focus["n"] < WIDE_TRADES:
         points.append({"tone": "warn", "text": f"Pocos trades ({focus['n']}): el margen es amplio y unos pocos trades grandes deciden."})
     # Veredicto
@@ -292,6 +311,10 @@ def rank(strategies, top=5):
             why = f"cayó en {failed} comprobaci{'ones' if failed > 1 else 'ón'}"
         elif passed:
             why = f"pasa {passed} comprobaci{'ones' if passed > 1 else 'ón'} con {trades:,} trades; en la peor, la ventaja no baja de {_fmt(floor)} R"
+            cons = [c.get("consistency") or {} for c in checks]
+            pos, tot = sum(c.get("positive", 0) for c in cons), sum(c.get("total", 0) for c in cons)
+            if tot:
+                why += f"; {pos} de {tot} trimestres a favor"
         else:
             why = f"solo explorada: el margen inferior de su ventaja es {_fmt(floor)} R"
         out.append({"key": item["key"], "name": item["name"], "why": why, "verdict": item["analysis"]["verdict"], "tone": item["analysis"]["tone"]})
