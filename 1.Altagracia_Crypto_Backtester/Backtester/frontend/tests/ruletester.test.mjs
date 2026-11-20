@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {
   defaultRule, deleteRule, describeRule, fromBackendRule, isRuleTester, loadSavedRules, ruleTesterUrl, saveRule,
-  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals, signalChecklist, checklistBand
+  accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals, signalChecklist, checklistBand, tradeBands
 } from '../src/components/backtesting/ruleTester.js';
 
 const tests = [];
@@ -71,13 +71,28 @@ test('la dirección de la ventana y su símbolo', () => {
   assert.equal(testerSymbol({ search: '?probador=1&symbol=../x' }), 'BTCUSDT');
 });
 
-test('cajas para el gráfico: sin objetivo llegan hasta la salida, y nunca miden menos de una vela', () => {
+test('cajas para el gráfico: sin objetivo no hay zona TP y la salida va aparte, y nunca miden menos de una vela', () => {
   const boxes = tradeBoxes([
     { dir: 1, entry: 100, stop: 99, target: 102, exit: 102, entry_t: 0, exit_t: 3600000 },
     { dir: -1, entry: 100, stop: 101, target: null, exit: 98.5, entry_t: 0, exit_t: 0 }
   ], 15);
-  assert.deepEqual(boxes[0], { side: 'long', entry: 100, stop: 99, target: 102, start: 0, end: 3600000 });
-  assert.deepEqual(boxes[1], { side: 'short', entry: 100, stop: 101, target: 98.5, start: 0, end: 900000 });
+  assert.deepEqual(boxes[0], { side: 'long', entry: 100, stop: 99, target: 102, noTarget: false, exit: 102, start: 0, end: 3600000 });
+  assert.deepEqual(boxes[1], { side: 'short', entry: 100, stop: 101, target: null, noTarget: true, exit: 98.5, start: 0, end: 900000 },
+    'su salida ya no se pinta como un TP');
+});
+
+test('el trade elegido lleva su salida con el motivo, y el stop de cada vela con su fase', () => {
+  const H = 3600000;
+  const trade = { dir: -1, entry: 64319, stop: 64589, target: null, exit: 58074, exit_t: 30 * H, entry_t: 2 * H, r: 22.87, reason: 'tiempo', marks: [] };
+  const exit = tradeBands(trade, 240).find(b => b.kind === 'exit');
+  assert.deepEqual([exit.time, exit.price, exit.good, exit.atEdge], [30 * H, 58074, true, true], 'por tiempo sale al cierre de la vela');
+  assert.equal(exit.label, 'Salida por tiempo · +22.87 R');
+  const stopped = tradeBands({ ...trade, reason: 'stop en la entrada', exit: 64319, r: -0.03 }, 240).find(b => b.kind === 'exit');
+  assert.deepEqual([stopped.good, stopped.atEdge, stopped.label], [false, false, 'Salida en el stop a la entrada · -0.03 R']);
+  const path = [[2 * H, 64589, 'inicial'], [6 * H, 64319, 'entrada'], [10 * H, 63000, 'arrastrado']];
+  const steps = contextBands({ success: true, tf: 240, stopPath: path, rows: [], lines: [], elements: [], signals: [] }).find(b => b.kind === 'steps');
+  assert.deepEqual([steps.tf, steps.points], [4 * H, path]);
+  assert.equal(contextBands({ success: true, tf: 240, rows: [] }).some(b => b.kind === 'steps'), false, 'sin recorrido, nada');
 });
 
 test('orden de la tabla: por R, con los vacíos al final', () => {

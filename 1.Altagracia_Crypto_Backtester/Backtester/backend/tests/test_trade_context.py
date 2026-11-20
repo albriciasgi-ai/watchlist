@@ -127,6 +127,31 @@ def test_dibuja_las_lineas_filtros_y_senales_de_la_regla(saved):
     assert len(ctx["elements"]) == 4
 
 
+def test_el_recorrido_del_stop_inicial_a_la_entrada_y_arrastrado(tmp_path, monkeypatch):
+    """Un largo que sube de a poco: el stop pasa a la entrada en 1.5R y después persigue al mejor precio a 3 ATR"""
+    monkeypatch.setattr(rt.observer, "OBSERVER_DIR", tmp_path)
+    bars = rising(400, step=0.5)
+    span = {"bars": bars, "events": [ev("EX", 60)]}
+    monkeypatch.setattr(rt, "detect_span", lambda *a, **k: span)
+    rt._replays.clear()
+    r = rule(stop={"type": "atr", "atr": 1.0, "minAtr": 0, "maxAtr": 100},
+             exit={"targetR": None, "horizon": 30, "trail": "atr", "trailAtr": 3, "trailStart": 1, "breakEven": 1.5})
+    result = rt.run("TEST", r, span, PHASE, None, base=False)
+    assert "_path" not in result["trades"][0], "el recorrido no queda en la corrida guardada"
+    run_id = rt._save(result, "camino")
+    trade = result["trades"][0]
+    ctx = rt.trade_context(run_id, trade["n"])
+    path = ctx["stopPath"]
+    assert len(path) == trade["bars"], "una vela por cada vela del trade"
+    assert path[0][0] == trade["entry_t"] and path[0][1] == pytest.approx(trade["stop"]) and path[0][2] == "inicial"
+    phases = [p[2] for p in path]
+    assert "entrada" in phases and "arrastrado" in phases, phases
+    assert phases.index("entrada") < phases.index("arrastrado"), "primero a la entrada y después arrastrado"
+    levels = [p[1] for p in path]
+    assert all(b >= a for a, b in zip(levels, levels[1:])), "en un largo el stop solo sube"
+    assert trade["reason"] in ("tiempo", "stop arrastrado")
+
+
 def test_sin_corrida_o_sin_trade_no_hay_contexto(saved):
     run_id, _ = saved
     assert rt.trade_context(run_id, 99) is None
