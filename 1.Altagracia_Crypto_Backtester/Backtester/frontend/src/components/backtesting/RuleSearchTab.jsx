@@ -20,7 +20,7 @@ const NAMES = {
 const DEFAULT_CONFIG = {
   tfs: [240], codes: ['CC', 'VH', 'HM', 'EN', 'DJ', 'RF', 'RB', 'GC', 'BX', 'BE', 'CP', 'FV', 'SP', 'IM'], population: 60, generations: 25, maxElements: 2,
   minTrades: 150, minCoins: 4, split: '2023-01-01', lines: true, invert: true, mutation: 0.1,
-  flow: true, regime: true, trailing: true, straddle: true, checkNew: true, fitness: 'promedio'
+  flow: true, regime: true, trailing: true, straddle: true, checkNew: true, checkStocks: true, fitness: 'promedio'
 };
 
 const api = async (path, body) => {
@@ -178,6 +178,8 @@ export default function RuleSearchTab({ onLoadRule }) {
             <Check checked={config.checkNew !== false} onChange={(checkNew) => patch({ checkNew })}
               title="Al terminar, cada finalista se corre también en las monedas nuevas, en toda su fase 1. Nunca eligen nada: solo dicen si lo encontrado se repite en monedas que la búsqueda no vio">
               Al terminar, comprobar las finalistas en las monedas nuevas</Check>
+            <Check checked={config.checkStocks !== false} onChange={(checkStocks) => patch({ checkStocks })}
+              title="Y en las acciones de Alpaca (otro mercado, desde 2016), en su fase 1 con los mismos dos tramos. Solo informa">y en las acciones</Check>
           </div>
           <div className="rt-note">
             La búsqueda elige siempre con las 7 monedas de siempre. Con más piezas hay más reglas posibles y más suerte: el umbral de suerte del informe lo tiene en cuenta.
@@ -271,6 +273,12 @@ export default function RuleSearchTab({ onLoadRule }) {
                       <td>{seg === 'train' ? 'Búsqueda' : 'Validación'}, constancia</td><td colSpan={2}>{f[seg].consistency.positive} de {f[seg].consistency.total} trimestres</td>
                       <td><R value={f[seg].consistency.median} /> mediana</td>
                       <td>{f[seg].consistency.top4Share != null ? `4 mejores: ${Math.round(f[seg].consistency.top4Share * 100)}%` : '—'}</td>
+                    </tr>
+                  ))}
+                  {f.stocks && ['train', 'hold'].map(seg => (
+                    <tr key={`a${seg}`} title="Las acciones, otro mercado que la búsqueda nunca vio, en el mismo tramo de su fase 1">
+                      <td>Acciones, {seg === 'train' ? 'búsqueda' : 'validación'}</td><td>{f.stocks[seg].n}</td><td><R value={f.stocks[seg].avgR} /></td>
+                      <td><R value={f.stocks[seg].edge} /> ±{f.stocks[seg].se ? (1.96 * f.stocks[seg].se).toFixed(2) : '—'}</td><td>{f.stocks[seg].coinsUp} de {f.stocks[seg].coinsWith}</td>
                     </tr>
                   ))}
                   {f.newCoins && ['train', 'hold'].map(seg => (

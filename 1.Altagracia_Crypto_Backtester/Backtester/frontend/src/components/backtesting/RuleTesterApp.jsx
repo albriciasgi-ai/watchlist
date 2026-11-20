@@ -259,13 +259,37 @@ const RuleTesterApp = () => {
     }
   }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait]);
 
+  // Monedas nuevas y acciones no tienen caché de App 1: sus velas salen del probador (del disco). Pedirlas a
+  // /api/backtesting/bulk-data las bajaría de Bybit y las guardaría en ese caché, que está en git y decide cuáles
+  // son las monedas de siempre (y Bybit no tiene acciones). null mientras no se sabe el grupo del símbolo
+  const external = info?.baseSymbols ? !info.baseSymbols.includes(symbol) : null;
+
   // Velas: del caché del navegador que guardó la principal. Si no están, se pide al backend solo el marco
   // del gráfico: esta ventana no necesita los cinco marcos
   useEffect(() => {
     let active = true;
     const has = (data) => data?.timeframes?.[chartTf]?.main?.length > 0;
+    if (external === null) return undefined;
     (async () => {
       let data = marketRef.current;
+      if (external) {
+        if (has(data)) return;
+        setStatus(`Cargando las velas de ${chartTf} de ${symbol}…`);
+        try {
+          const found = await api(`/api/tester/chart-candles/${symbol}?tf=${TF_MINUTES[chartTf]}`);
+          if (!found.success) throw new Error(found.message || 'sin velas');
+          const main = found.t.map((t, i) => ({ timestamp: t, open: found.o[i], high: found.h[i], low: found.l[i], close: found.c[i], volume: found.v[i] }));
+          data = { ...(marketRef.current || {}), symbol, timeframes: { ...(marketRef.current?.timeframes || {}), [chartTf]: { main, extended: true } } };
+        } catch (error) {
+          if (active) setStatus(`No hay velas de ${chartTf} para ${symbol}. Las monedas nuevas tienen 1H y 4H; las acciones, 15M, 1H y 4H.`);
+          return;
+        }
+        marketRef.current = data;
+        if (!active) return;
+        setMarket(data);
+        setStatus(null);
+        return;
+      }
       if (has(data) && (TF_MINUTES[chartTf] < 5 || data.timeframes[chartTf].extended)) return;
       setStatus(`Cargando las velas de ${symbol}…`);
       if (!data) data = await cachedMarketData(symbol);
@@ -307,7 +331,7 @@ const RuleTesterApp = () => {
       setStatus(null);
     })();
     return () => { active = false; };
-  }, [symbol, chartTf]);
+  }, [symbol, chartTf, external]);
 
   // El trabajo en curso: avance cada segundo, y al terminar se lee la corrida
   const loadRun = useCallback(async (id) => {
@@ -1492,7 +1516,7 @@ const RuleTesterApp = () => {
   ) : (
     <>
       <div className="rt-group">
-        <b>{allReport.rule.name}</b> · Fase {allReport.phase} · {allReport.symbols.length} monedas{allReport.group === 'new' ? ' nuevas' : allReport.group === 'all' ? ' (las de siempre y las nuevas)' : ' de siempre'}
+        <b>{allReport.rule.name}</b> · Fase {allReport.phase} · {allReport.symbols.length} monedas{allReport.group === 'new' ? ' nuevas' : allReport.group === 'all' ? ' (las de siempre y las nuevas)' : allReport.group === 'stocks' ? ' (acciones)' : ' de siempre'}
         <div className="rt-note">{describeRule(allReport.rule)}</div>
       </div>
       {allReport.phase > 1 && <div className="rt-warn">Esta fase es de comprobación. Si cambias la regla por lo que veas aquí, la fase queda gastada para la regla nueva en todas las monedas.</div>}
@@ -1898,7 +1922,8 @@ const RuleTesterApp = () => {
               <select value={coinGroup} disabled={running || allStarting} onChange={(e) => { setCoinGroup(e.target.value); setAllReport(null); }}>
                 <option value="base">las de siempre ({info?.baseSymbols?.length ?? 7})</option>
                 <option value="new">las nuevas ({info?.newSymbols?.length ?? 0})</option>
-                <option value="all">todas ({(info?.baseSymbols?.length ?? 7) + (info?.newSymbols?.length ?? 0)})</option>
+                <option value="all">todas las monedas ({(info?.baseSymbols?.length ?? 7) + (info?.newSymbols?.length ?? 0)})</option>
+                <option value="stocks">las acciones ({info?.stockSymbols?.length ?? 0})</option>
               </select>
             </div>
             <button type="button" className="rt-btn" style={{ width: '100%', padding: '5px 0', marginTop: 4 }} disabled={running || allStarting} onClick={() => runAll(false)}

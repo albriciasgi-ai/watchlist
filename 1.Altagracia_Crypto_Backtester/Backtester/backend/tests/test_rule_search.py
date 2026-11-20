@@ -29,6 +29,7 @@ def fake_market(monkeypatch, coins=("AAAUSDT", "BBBUSDT")):
              "days": (end - START) // 86400000, "available": True}
     monkeypatch.setattr(rt, "candle_symbols", lambda group="base": list(coins) if group == "base" else [])
     monkeypatch.setattr(rt, "new_symbols", lambda: [])
+    monkeypatch.setattr(rt, "stock_symbols", lambda: [])
     monkeypatch.setattr(rt, "phases", lambda symbol: [phase])
     monkeypatch.setattr(rt, "detect_span", lambda symbol, tf, ph, rule, progress=None: spans[symbol])
     monkeypatch.setattr(rt, "has_store", lambda symbol: False)

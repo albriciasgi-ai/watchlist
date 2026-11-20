@@ -124,6 +124,8 @@ def clean_config(raw):
         "trailing": raw.get("trailing") is not False, "straddle": raw.get("straddle") is not False,
         # Al terminar, las finalistas se corren también en las monedas nuevas (que nunca eligieron nada)
         "checkNew": raw.get("checkNew") is not False,
+        # Y en las acciones (otro mercado): una regla de cripto que también gana ahí difícilmente es suerte
+        "checkStocks": raw.get("checkStocks") is not False,
         # Cómo se elige: "promedio" (ventaja media menos su error) o "constancia" (mediana de la ventaja de cada trimestre)
         "fitness": raw.get("fitness") if raw.get("fitness") in ("promedio", "constancia") else "promedio",
         "seed": seed,
@@ -346,7 +348,11 @@ class Evaluator:
         raw_r = {"train": [], "hold": []}
         quarters = {"train": {}, "hold": {}}  # Por trimestre: [trades, suma de R, suma de la ventaja contra el azar de ese trimestre]
         coins = []
+        codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
         for symbol in self.symbols():
+            allowed = rt.codes_for(symbol, rule["tf"])
+            if allowed is not None and codes - allowed:
+                continue  # Un elemento que ese símbolo no tiene (el barrido de liquidaciones en una acción)
             item = self.load(symbol, rule["tf"], rule)
             if item is None:
                 continue
@@ -547,6 +553,12 @@ def _finish(state, evaluator, job):
             result = fresh.evaluate(item["rule"])
             item["newCoins"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"],
                                 "all": _pooled(result)}
+    if cfg.get("checkStocks", True) and rt.stock_symbols():
+        stocks = Evaluator(cfg, lambda text: job.update(stage=f"Acciones: {text}"), group="stocks")
+        for number, item in enumerate(out, 1):
+            job.update(stage=f"Acciones: finalista {number} de {len(out)}")
+            result = stocks.evaluate(item["rule"])
+            item["stocks"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"], "all": _pooled(result)}
     # El umbral de suerte cuenta todas las reglas probadas, vecinas incluidas; la comparación de la validación, solo las
     # que eligió la búsqueda: dice si elegir por aptitud sirvió de algo
     every = [r for r in state["evaluated"].values() if r["train"]["n"] >= cfg["minTrades"]]

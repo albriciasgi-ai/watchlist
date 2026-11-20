@@ -16,8 +16,9 @@ monedas (las de siempre y las nuevas), para compararlas sin depender de la memor
 - Lectura automática (`analyze`) y orden (`rank`): lo que el usuario pidió que la app dijera sola, con las mismas
   comprobaciones que se hacían a mano con cada captura: si pasa cada fase, si la ventaja se achica al pasar a datos
   frescos, si depende de un lado, de una moneda o de un año, y si tiene pocos trades. "Comprobación" es todo lo que no
-  se usó para elegir la regla: las fases 2 y 3, y cualquier fase de las monedas nuevas. La fase 1 de las monedas de
-  siempre es exploración.
+  se usó para elegir la regla: las fases 2 y 3, y cualquier fase de las monedas nuevas y de las acciones. La fase 1 de
+  las monedas de siempre es exploración. (Si algún día se eligen reglas mirando las acciones, su fase 1 pasa a ser
+  exploración también: el tablero no lo sabe solo.)
 """
 import datetime as dt
 import json
@@ -169,7 +170,7 @@ def board():
             item["names"].append(name)
         item.update(name=name, rule=row["rule"], tf=row["rule"]["tf"], lastAt=row["at"])
         item["runs"] += 1
-        group = "base" if row["symbol"] in base else "new"
+        group = "base" if row["symbol"] in base else ("stocks" if rt.is_stock(row["symbol"]) else "new")
         item["cells"].setdefault(str(row["phase"]), {}).setdefault(group, {})[row["symbol"]] = stats[row["id"]]
     out = []
     for item in strategies.values():
@@ -180,12 +181,13 @@ def board():
         out.append(item)
     out.sort(key=lambda s: -s["lastAt"])
     return {"success": True, "strategies": out, "ranking": rank(out), "baseSymbols": sorted(base), "newSymbols": rt.new_symbols(),
+            "stockSymbols": rt.stock_symbols(),
             "preparing": preparing}
 
 
 # ==================== LECTURA ====================
 
-GROUP_NAME = {"base": "las de siempre", "new": "las nuevas"}
+GROUP_NAME = {"base": "las de siempre", "new": "las nuevas", "stocks": "las acciones"}
 WIDE_TRADES = 100   # Con menos, el margen es amplio
 SIDE_R = 0.1        # Un lado "pone la ventaja" si gana esto más que el otro
 
@@ -194,10 +196,10 @@ def _cells(item):
     """(fase, grupo, celda, es comprobación) de las celdas con trades, en orden."""
     out = []
     for phase in sorted(item["cells"], key=int):
-        for group in ("base", "new"):
+        for group in ("base", "new", "stocks"):
             cell = item["cells"][phase].get(group)
             if cell and cell["n"]:
-                out.append((int(phase), group, cell, int(phase) > 1 or group == "new"))
+                out.append((int(phase), group, cell, int(phase) > 1 or group != "base"))
     return out
 
 

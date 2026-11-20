@@ -3856,11 +3856,28 @@ async def tester_info(request: Request, symbol: str):
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True, "box": True} for code, name in box_elements.CODES.items()]
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True} for code, name in fvg_swing.CODES.items()],
             # Sin almacén de trades la moneda corre sobre las velas: solo valen los elementos de candleCodes
-            "storeless": not rule_tester.has_store(safe), "candleCodes": list(rule_tester.CANDLE_CODES),
-            "symbols": rule_tester.candle_symbols("all"), "baseSymbols": rule_tester.base_symbols(), "newSymbols": rule_tester.new_symbols(),
+            "storeless": not rule_tester.has_store(safe),
+            "candleCodes": sorted(rule_tester.codes_for(safe, 240) or rule_tester.CANDLE_CODES),
+            "stock": rule_tester.is_stock(safe),
+            "symbols": rule_tester.candle_symbols("all") + rule_tester.stock_symbols(),
+            "baseSymbols": rule_tester.base_symbols(), "newSymbols": rule_tester.new_symbols(), "stockSymbols": rule_tester.stock_symbols(),
             "liqFrom": await run_in_threadpool(liq_sweeps.first_day, safe),
             "measures": measures.catalog(), "runs": runs[::-1][:200],
             "variantsPhase1": len({r["hash"] for r in runs if r["phase"] == 1})}
+
+
+@app.get("/api/tester/chart-candles/{symbol}")
+@limiter.limit("60/minute")
+async def tester_chart_candles(request: Request, symbol: str, tf: int = 60):
+    """Velas para el gráfico de la ventana de una moneda nueva o una acción, leídas del disco (las del probador). Nunca se
+    piden a Bybit: así el caché de App 1, que está en git y decide cuáles son las monedas de siempre, no cambia."""
+    safe = sanitize_filename(symbol)
+    if safe in rule_tester.base_symbols():
+        return {"success": False, "message": "Esa moneda usa el caché de App 1"}
+    bars = await run_in_threadpool(rule_tester.candle_bars, safe, int(tf))
+    return _json_response({"success": bool(bars), "t": [b["t"] for b in bars], "o": [b["o"] for b in bars], "h": [b["h"] for b in bars],
+                           "l": [b["l"] for b in bars], "c": [b["c"] for b in bars], "v": [b["vol"] for b in bars],
+                           "message": None if bars else "No hay velas de ese marco para ese símbolo"})
 
 
 @app.get("/api/tester/candles/{symbol}")

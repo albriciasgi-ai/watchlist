@@ -12,8 +12,8 @@ import { describeRule, fmtR } from './ruleTester.js';
 
 const VIEW_KEY = 'tester_strategies_v1';
 const STATUS = [['', 'sin estado'], ['candidata', 'candidata'], ['en prueba', 'en prueba'], ['descartada', 'descartada']];
-const GROUP = { base: 'S', new: 'N' };
-const GROUP_NAME = { base: 'las de siempre', new: 'las nuevas' };
+const GROUP = { base: 'S', new: 'N', stocks: 'A' };
+const GROUP_NAME = { base: 'las de siempre', new: 'las nuevas', stocks: 'las acciones' };
 
 const api = async (path, body) => {
   const response = await fetch(`${API_BASE_URL}${path}`, body === undefined ? undefined : {
@@ -139,7 +139,7 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
         <button type="button" className="rt-btn" onClick={refresh}>Actualizar</button>
       </div>
       <div className="rt-note" style={{ marginBottom: 6 }}>
-        {shown.length} de {data.strategies.length} estrategias. Cada etiqueta es una fase (F1 a F3) en las de siempre (S) o en las nuevas (N), con el R por trade y los trades:
+        {shown.length} de {data.strategies.length} estrategias. Cada etiqueta es una fase (F1 a F3) en las monedas de siempre (S), las monedas nuevas (N) o las acciones (A), con el R por trade y los trades:
         ✓ pasa (ventaja sobre los dos controles con margen que no toca el cero), ✗ no pasa.
       </div>
       {shown.map(s => {
@@ -153,7 +153,7 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
               <div style={{ color: color(s.analysis.tone), fontSize: 11 }}>{s.analysis.verdict}</div>
             </div>
             <div style={{ marginTop: 3 }}>
-              {phases.flatMap(p => ['base', 'new'].map(g => (
+              {phases.flatMap(p => ['base', 'new', 'stocks'].map(g => (
                 <Badge key={`${p}${g}`} phase={Number(p)} group={g} cell={s.cells[p][g]} onClick={() => onOpenReport(s.rule, Number(p), g)} />
               )))}
             </div>
@@ -170,7 +170,7 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
                 <table className="rt-table" style={{ marginTop: 6 }}>
                   <thead><tr><th>Fase</th><th>Trades</th><th>R</th><th>Vs. azar</th><th>Vs. tramo</th><th>Largos</th><th>Cortos</th><th>Monedas +</th><th title="Trimestres sobre el azar de su trimestre (de los que tienen 20 trades o más), y qué parte de la ventaja ponen los 4 mejores">Trimestres +</th></tr></thead>
                   <tbody>
-                    {phases.flatMap(p => ['base', 'new'].filter(g => s.cells[p][g]?.n).map(g => {
+                    {phases.flatMap(p => ['base', 'new', 'stocks'].filter(g => s.cells[p][g]?.n).map(g => {
                       const c = s.cells[p][g];
                       return (
                         <tr key={`${p}${g}`} className="pick" onClick={() => onOpenReport(s.rule, Number(p), g)} title="Abre el informe de esas monedas">
