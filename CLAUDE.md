@@ -64,15 +64,21 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    - se eligen las franjas (50), el área de valor (70%) y el largo de la barra mayor (30% del ancho del rango);
    - dibuja las líneas del POC, el VAH y el VAL, y el precio del POC.
 2. **El perfil** es el de las velas cerradas del rango, de su primera vela a la última, con la regla de VP Periodic (`rangeProfiles.js`). El de un rango vivo crece con cada vela que cierra, y la vela en formación no entra.
-3. **Volumen real** del almacén si cubre el 99% del rango; la etiqueta dice «real». Se pide hasta el cierre de la última vela del rango, nunca después. En una reproducción rápida, el de un rango vivo se pide al pausar.
-4. **Para el análisis:** el POC, el VAH y el VAL de cada perfil se ofrecen en "Incluir en el análisis".
-5. **Pruebas:** `horizontalranges.test.mjs` suma 8 (16).
+3. **Sin la ruptura** (pedido tras verlo):
+   - las velas del final que cierran fuera de la caja no cuentan;
+   - el rango mayor sigue vivo hasta N cierres fuera, y esas velas le daban al perfil otra forma que la D;
+   - si el precio vuelve a cerrar dentro, cuentan;
+   - en 5 años de BTC 4h, con 6 cierres, el volumen del perfil fuera de la caja bajó de 14.6% a 3.0%.
+4. **Volumen real** del almacén si cubre el 99% del rango; la etiqueta dice «real». Se pide hasta el cierre de la última vela del perfil, nunca después. En una reproducción rápida, el de un rango vivo se pide al pausar.
+5. **Para el análisis:** el POC, el VAH y el VAL de cada perfil se ofrecen en "Incluir en el análisis".
+6. **Pruebas:** `horizontalranges.test.mjs` suma 9 (17).
 
 **IMPORTANTE:**
 - Basta recargar App 1: no cambió el backend. La suite se reinicia sola al abrirla y arma la página nueva.
 - **Probado** en BTC 4h con una copia aislada:
   - en el backtesting global, con volumen real, también sobre el rango mayor;
-  - en la simulación manual a 5000x: el rango vivo sumó una vela cada 3 segundos y su perfil creció con ella.
+  - en la simulación manual a 5000x: el rango vivo sumó una vela cada 3 segundos y su perfil creció con ella;
+  - sin la ruptura: los rangos mayores de noviembre de 2023 dejaron fuera sus 5 velas de ruptura.
 - **Sin probar en pantalla:** la suite solo se armó; tampoco se vio el 2.º gráfico.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "RANGOS HORIZONTALES (20/11/2026)", "Perfil de volumen sobre cada rango (20/11)"

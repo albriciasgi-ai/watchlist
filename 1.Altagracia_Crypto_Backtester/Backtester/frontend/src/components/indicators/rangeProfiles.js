@@ -4,12 +4,18 @@ import { buildProfile } from './sessionProfile.js';
 
 /**
  * Perfil de volumen de cada rango del indicador "Rangos horizontales" (20/11/2026, pedido del usuario): el de las
- * velas cerradas del rango, desde su primera vela hasta la última. El de un rango que sigue vivo crece con cada vela
- * que cierra. Es la regla del perfil de VP Periodic (`buildProfile`): franjas iguales entre el mínimo y el máximo de
- * esas velas, POC en la de más volumen y área de valor creciendo desde el POC hacia la vecina con más volumen.
+ * velas cerradas del rango, desde su primera vela hasta la última que cerró dentro de su caja (`profileSpan`). El de
+ * un rango que sigue vivo crece con cada vela que cierra dentro. Es la regla del perfil de VP Periodic
+ * (`buildProfile`): franjas iguales entre el mínimo y el máximo de esas velas, POC en la de más volumen y área de valor
+ * creciendo desde el POC hacia la vecina con más volumen.
  *
- * Volumen real: el del almacén de trades (`/api/orderflow/profile`) si cubre el 99% de los minutos del rango, como
- * VP Fixed Range y VP Periodic. Se pide con el cierre de la última vela del rango como hora conocida, así nunca trae
+ * Las velas del final que cierran fuera de la caja no cuentan (pedido del usuario tras verlo): son la ruptura que
+ * termina el rango, porque el rango mayor sigue hasta N cierres seguidos fuera y la eficiencia con caja aguanta los
+ * cierres dentro de su margen, o la que todavía puede terminarlo. Con ellas el perfil dejaba de tener la forma del
+ * rango. Si el precio vuelve a cerrar dentro, esas velas pasan a ser parte del rango y cuentan.
+ *
+ * Volumen real: el del almacén de trades (`/api/orderflow/profile`) si cubre el 99% de los minutos del perfil, como
+ * VP Fixed Range y VP Periodic. Se pide con el cierre de la última vela del perfil como hora conocida, así nunca trae
  * lo posterior. Mientras no llega, o sin almacén, el volumen de cada vela se reparte entre su mínimo y su máximo.
  *
  * Un rango vivo cambia de fin con cada vela que cierra: su volumen real se pide cuando ese fin queda quieto SETTLE_MS
@@ -40,6 +46,19 @@ export function rangeSpan(candles, zone) {
   return [lowerBound(candles, zone.start), lowerBound(candles, zone.lastOpen + 1)];
 }
 
+/**
+ * Índices [desde, hasta) de las velas del perfil de un rango: de su primera vela a la última que cerró dentro de su
+ * caja (entre `low` y `high`). Las del final que cierran fuera, la ruptura, quedan fuera; al menos va su primera vela
+ */
+export function profileSpan(candles, zone) {
+  const [from, to] = rangeSpan(candles, zone);
+  let end = to;
+  if (Number.isFinite(zone.low) && Number.isFinite(zone.high)) {
+    while (end - 1 > from && (candles[end - 1].close > zone.high || candles[end - 1].close < zone.low)) end -= 1;
+  }
+  return [from, end];
+}
+
 export class RangeProfiles {
   constructor(symbol, { settleMs = SETTLE_MS, gapMs = REQUEST_GAP_MS } = {}) {
     this.symbol = symbol;
@@ -58,26 +77,37 @@ export class RangeProfiles {
   /**
    * Perfil de un rango con las velas cerradas `candles` (en orden). La vela en formación queda fuera sola: abre
    * después de la última vela del rango. Con `real` devuelve el volumen real si ya llegó; si no, lo pide y devuelve
-   * el estimado.
+   * el estimado. El perfil lleva `until`, el cierre de su última vela, y `dropped`, las velas de la ruptura que no cuentan
    */
   get(zone, candles, { rows, valueAreaShare, group = String(zone.start), real = true, requestRedraw = null }) {
     if (!candles?.length || !Number.isFinite(zone?.lastOpen)) return null;
-    const [from, to] = rangeSpan(candles, zone);
+    const [from, to] = profileSpan(candles, zone);
     if (to - from < 1) return null;
+    const all = rangeSpan(candles, zone)[1];
+    // Cierre de la última vela del perfil: la apertura de la primera que quedó fuera, o el fin del rango
+    const until = to < all ? candles[to].timestamp : zone.end;
+    const first = candles[from];
     const last = candles[to - 1];
-    const base = `${zone.start}|${zone.lastOpen}|${rows}|${valueAreaShare}|${to - from}|${last.high}|${last.low}|${last.close}|${last.volume}`;
-    const estimate = this._profile(`${base}|e`, () => buildProfile(candles.slice(from, to), rows, valueAreaShare));
+    const base = `${first.timestamp}|${last.timestamp}|${rows}|${valueAreaShare}|${to - from}|${all - to}|${last.high}|${last.low}|${last.close}|${last.volume}`;
+    const mark = (profile) => {
+      if (profile) {
+        profile.until = until;
+        profile.dropped = all - to;
+      }
+      return profile;
+    };
+    const estimate = this._profile(`${base}|e`, () => mark(buildProfile(candles.slice(from, to), rows, valueAreaShare)));
     if (!estimate || !real) return estimate;
 
-    const realKey = `${zone.start}|${zone.end}|${rows}|${estimate.minPrice}|${estimate.maxPrice}`;
+    const realKey = `${first.timestamp}|${until}|${rows}|${estimate.minPrice}|${estimate.maxPrice}`;
     const volumes = this.real.get(realKey);
     if (volumes) {
       this.real.delete(realKey);
       this.real.set(realKey, volumes);
-      return this._profile(`${base}|r`, () => buildProfile(candles.slice(from, to), rows, valueAreaShare, volumes));
+      return this._profile(`${base}|r`, () => mark(buildProfile(candles.slice(from, to), rows, valueAreaShare, volumes)));
     }
     if (volumes === undefined) {
-      this._want(realKey, { group, start: zone.start, end: zone.end, low: estimate.minPrice, high: estimate.maxPrice, rows, requestRedraw });
+      this._want(realKey, { group, start: first.timestamp, end: until, low: estimate.minPrice, high: estimate.maxPrice, rows, requestRedraw });
     }
     return estimate;
   }
