@@ -59,7 +59,7 @@ GROUPS = {
              "CMCSA", "TMUS", "AMGN", "ISRG"),
     "consumo": ("JPM", "BAC", "XOM", "UNH", "COST", "WMT",
                 "NKE", "KO", "PEP", "MCD", "SBUX", "DIS", "HD", "LOW", "TGT", "PG", "JNJ", "PFE", "MRK", "LLY",
-                "V", "MA", "GS", "WFC", "C", "BA", "CAT", "GE", "F", "GM", "CVX"),
+                "V", "MA", "GS", "WFC", "C", "BA", "CAT", "F", "GM", "CVX"),  # Sin GE: sus spin-offs (2023 y 2024) dejan caídas que el ajuste por splits no corrige
     "volatiles": ("TSLA", "MSTR", "COIN", "MARA", "RIOT", "PLTR", "ROKU", "XYZ", "SNAP", "UPST", "AFRM", "HOOD",
                   "SOFI", "RIVN", "NIO", "CVNA", "GME", "AMC", "ENPH", "PLUG", "DKNG", "CRWD", "NET", "TTD", "BABA"),
 }
