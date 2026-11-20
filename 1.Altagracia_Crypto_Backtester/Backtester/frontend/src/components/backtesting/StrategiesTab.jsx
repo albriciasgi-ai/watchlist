@@ -106,8 +106,9 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
     <>
       {data.preparing && (
         <div className="rt-warn">
-          Resumiendo las corridas guardadas: {data.preparing.done} de {data.preparing.total}. Las viejas reciben aquí el control del tramo, y eso tarda la primera vez.
-          Lo de abajo se completa solo.
+          Resumiendo las corridas guardadas: {data.preparing.done} de {data.preparing.total}, cerca de una por segundo
+          (faltan unos {Math.max(1, Math.round((data.preparing.total - data.preparing.done) / 60))} minutos). Solo pasa la primera vez:
+          las viejas reciben aquí el control del tramo. Mientras tanto la lista sale vacía o incompleta, y se actualiza sola cada 4 segundos.
         </div>
       )}
       {data.ranking?.length > 0 && (
