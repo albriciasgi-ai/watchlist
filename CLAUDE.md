@@ -73,7 +73,13 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
    - una tabla con cada condición al cerrar la vela de la señal, que es cuando la regla decidió: ✓ o ✗, la condición y su valor (por ejemplo, "✓ OI sube más de 2% en 6 velas · OI +6.89% en 6 velas");
    - las señales que no entraron, con su motivo, en una lista plegable.
 4. **La vela de la señal en el gráfico** (pedido tras verlo: no se notaba si al abrir el trade se cumplía todo): va resaltada de arriba abajo, con su casilla enmarcada en cada fila de filtros. Al lado lleva un cuadro con la misma lista de condiciones. Un trade que se repite igual tiene todo en ✓.
-5. **Pruebas:** `test_trade_context.py` (4) y dos más en `ruletester.test.mjs` (11).
+5. **El stop y la salida** (pedido al probar el trailing):
+   - el trade elegido dibuja su stop vela a vela en escalones: rojo el inicial, gris a la entrada y naranja arrastrado;
+   - su salida va con una cruz y su motivo: «Salida por tiempo · +22.87 R»;
+   - un trade sin objetivo ya no pinta su salida como un TP: su caja es la del riesgo y la salida va como una marca al final.
+
+   Antes, un ganador salía con su zona verde y uno que salió en la entrada o perdiendo, solo con la roja.
+6. **Pruebas:** `test_trade_context.py` (5) y tres más en `ruletester.test.mjs` (12).
 
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página.

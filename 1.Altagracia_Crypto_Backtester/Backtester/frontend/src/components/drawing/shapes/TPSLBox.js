@@ -237,14 +237,20 @@ class TPSLBox {
 
     ctx.save();
 
-    // 1. ZONA TP (verde, arriba del entry)
-    ctx.fillStyle = isPreview ? `${this.style.tpBgColor}80` : this.style.tpBgColor;
-    ctx.fillRect(xStart, yTp, boxWidth, yEntry - yTp);
+    // hideTarget (probador de reglas, 20/11/2026): un trade sin objetivo no tiene zona TP; su salida la marca quien dibuja.
+    // Los dibujos del usuario no lo usan y se ven igual
+    const showTarget = !this.hideTarget;
 
-    // Borde de zona TP
-    ctx.strokeStyle = isSelected ? '#3B82F6' : this.style.tpColor;
-    ctx.lineWidth = isSelected ? 3 : this.style.lineWidth;
-    ctx.strokeRect(xStart, yTp, boxWidth, yEntry - yTp);
+    // 1. ZONA TP (verde, arriba del entry)
+    if (showTarget) {
+      ctx.fillStyle = isPreview ? `${this.style.tpBgColor}80` : this.style.tpBgColor;
+      ctx.fillRect(xStart, yTp, boxWidth, yEntry - yTp);
+
+      // Borde de zona TP
+      ctx.strokeStyle = isSelected ? '#3B82F6' : this.style.tpColor;
+      ctx.lineWidth = isSelected ? 3 : this.style.lineWidth;
+      ctx.strokeRect(xStart, yTp, boxWidth, yEntry - yTp);
+    }
 
     // 2. ZONA SL (roja, abajo del entry)
     ctx.fillStyle = isPreview ? `${this.style.slBgColor}80` : this.style.slBgColor;
@@ -260,11 +266,13 @@ class TPSLBox {
     ctx.textBaseline = 'middle';
 
     // TP Label
-    ctx.fillStyle = this.style.tpColor;
-    ctx.font = 'bold 12px Arial';
-    ctx.fillText('TP', xCenter, yTp - 15);
-    ctx.font = '11px Arial';
-    ctx.fillText(priceText(this.tpPrice, boxPriceDigits(this.tpPrice)), xCenter, yTp - 2);
+    if (showTarget) {
+      ctx.fillStyle = this.style.tpColor;
+      ctx.font = 'bold 12px Arial';
+      ctx.fillText('TP', xCenter, yTp - 15);
+      ctx.font = '11px Arial';
+      ctx.fillText(priceText(this.tpPrice, boxPriceDigits(this.tpPrice)), xCenter, yTp - 2);
+    }
 
     // Entry Label
     ctx.fillStyle = this.style.entryColor;
@@ -281,10 +289,12 @@ class TPSLBox {
     ctx.fillText(priceText(this.slPrice, boxPriceDigits(this.slPrice)), xCenter, ySl + 2);
 
     // Risk/Reward Ratio
-    ctx.fillStyle = '#64748B';
-    ctx.font = 'bold 11px Arial';
-    const rr = this.getRiskRewardRatio();
-    ctx.fillText(`R/R: ${rr}`, xCenter, yEntry - 18);
+    if (showTarget) {
+      ctx.fillStyle = '#64748B';
+      ctx.font = 'bold 11px Arial';
+      const rr = this.getRiskRewardRatio();
+      ctx.fillText(`R/R: ${rr}`, xCenter, yEntry - 18);
+    }
 
     // 4. HANDLES (si está seleccionado)
     if (isSelected && !isPreview) {

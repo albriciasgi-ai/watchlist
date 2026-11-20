@@ -310,13 +310,24 @@ export function deleteRule(name, storage = globalThis.localStorage) {
 }
 
 /** Cajas que dibuja MiniChart (getTradeBoxes) con los trades de una corrida */
+/**
+ * Las cajas de los trades. Un trade sin objetivo (trailing, tiempo, señal contraria) no tiene zona TP: su caja es la del
+ * riesgo, y su salida va como una marca al final (noTarget, exit). Hasta el 20/11/2026 la salida se pintaba como TP: un
+ * ganador salía con su zona verde y uno que salió en la entrada o perdiendo, solo con la roja
+ */
 export function tradeBoxes(trades = [], tfMinutes = 15) {
   return trades.map(trade => ({
     side: trade.dir > 0 ? 'long' : 'short', entry: trade.entry, stop: trade.stop,
-    target: trade.target ?? trade.exit, start: trade.entry_t,
+    target: trade.target ?? null, noTarget: trade.target == null, exit: trade.exit, start: trade.entry_t,
     end: Math.max(trade.exit_t, trade.entry_t + tfMinutes * 60000)
   }));
 }
+
+/** Motivos de salida, en palabras para la marca del trade elegido */
+const EXIT_TEXT = {
+  tiempo: 'por tiempo', stop: 'en el stop inicial', 'stop en la entrada': 'en el stop a la entrada', 'stop arrastrado': 'en el stop arrastrado',
+  objetivo: 'en el objetivo', 'señal contraria': 'por la señal contraria', 'sale del canal': 'al salir del canal', 'hueco de datos': 'por un hueco de datos'
+};
 
 const usdShort = (usd) => (usd >= 1e6 ? `${(usd / 1e6).toFixed(1)}M` : `${Math.round(usd / 1e3)}K`);
 
@@ -383,6 +394,12 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     if (mark.code === 'LIQ' || mark.code === 'CC' || mark.code === 'GC' || VP_CODES.includes(mark.code)) continue;
     bands.push({ kind: 'element', low: mark.lo, high: mark.hi, start: mark.t, end, strong: false, label: elementLabel(mark.code, names[mark.code]) });
   }
+  if (Number.isFinite(trade.exit) && Number.isFinite(trade.exit_t)) {
+    // Dónde y por qué salió, con su resultado: sin objetivo, la caja ya no lo pinta como TP
+    // Por tiempo sale al cierre de la vela; por señal contraria o el canal, en la apertura de la siguiente: en el borde
+    const atEdge = ['tiempo', 'señal contraria', 'sale del canal', 'hueco de datos'].includes(trade.reason);
+    bands.push({ kind: 'exit', time: trade.exit_t, price: trade.exit, good: trade.r > 0, atEdge, label: `Salida ${EXIT_TEXT[trade.reason] || trade.reason} · ${fmtR(trade.r)} R` });
+  }
   return bands;
 }
 
@@ -419,6 +436,8 @@ export function contextBands(context, names = {}) {
     bands.push({ kind: 'line', tf, tone: 'channel', points: high, label: 'Banda superior', dash: true });
     bands.push({ kind: 'line', tf, tone: 'channel', points: low, label: 'Banda inferior', dash: true });
   }
+  // El stop de cada vela del trade: inicial, a la entrada y arrastrado, para revisar el trailing
+  if (context.stopPath?.length) bands.push({ kind: 'steps', tf, points: context.stopPath });
   const rows = context.rows || [];
   rows.forEach((row, i) => bands.push({ kind: 'ticks', tf, row: i, rows: rows.length, label: row.label, items: row.items }));
   for (const s of context.signals || []) {

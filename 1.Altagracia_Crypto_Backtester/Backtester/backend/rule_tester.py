@@ -724,10 +724,11 @@ def _straddle_fill(rule, ctx, k, e, zone, sides):
     return None
 
 
-def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
+def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None):
     """
     Un trade con la señal conocida al cierre de la vela k. Devuelve None si no hay vela siguiente,
     {"skip": motivo} si la orden no entra, o el trade con "open": True si la fase termina antes de su salida.
+    path (una lista): guarda ahí [hora de la vela, stop vigente en ella] de cada vela del trade, para dibujarlo.
     """
     T, O, H, L, C, atr = ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["atr"]
     n, tf_ms = len(T), ctx["tf"] * 60000
@@ -792,6 +793,8 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None):
         if j > entry_i and T[j] - T[j - 1] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
             exit_price, exit_t, reason = C[j - 1], T[j - 1] + tf_ms, "hueco de datos"
             break
+        if path is not None:
+            path.append([T[j], stop])  # El stop que rige en esta vela: se mueve al cerrarla y vale desde la siguiente
         low, high = L[j], H[j]
         hit_stop = low <= stop if side > 0 else high >= stop
         hit_goal = target is not None and (high >= target if side > 0 else low <= target)
@@ -1461,7 +1464,10 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         if ctx["vp"] is None and boxed is not None:
             # El objetivo "centro" de un borde de caja: el centro de la caja
             ctx["vp"] = {"high": boxed["high"], "low": boxed["low"], "poc": (boxed["high"] + boxed["low"]) / 2, "vah": boxed["high"], "val": boxed["low"]}
-        trade = simulate(rule, ctx, k, side, zone, known_at if straddle else known_at[-side], sides=sides)
+        steps = [] if trace is not None else None
+        trade = simulate(rule, ctx, k, side, zone, known_at if straddle else known_at[-side], sides=sides, path=steps)
+        if steps is not None and trade is not None and "skip" not in trade:
+            trade["_path"] = steps
         if trade is None:
             if note is not None:
                 note({"k": k, "dir": side, "what": "sin vela siguiente"})
@@ -1557,6 +1563,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         trade.pop("k", None)
         trade.pop("entry_i", None)
     if trace is not None:
+        # El stop de cada vela de cada trade que quedó, por su número (los demás se descartan con su trade)
+        trace["paths"] = {trade["n"]: trade.pop("_path") for trade in trades if "_path" in trade}
         # Cada señal con lo que pasó: el número de su trade o por qué no entró. Los que no quedaron no salen en la corrida
         for item in trace["signals"]:
             trade = item.pop("trade", None)
@@ -2243,6 +2251,13 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
         if lo <= s["k"] < hi:
             out["signals"].append({"t": T[s["k"]], "known": T[s["k"]] + tf_ms, "dir": s["dir"], "what": s["what"], **({"n": s["n"]} if "n" in s else {})})
     out["same"] = any(s["k"] == k and s.get("n") == number for s in trace["signals"])
+    # El stop de cada vela del trade, con su fase: el inicial, a la entrada o arrastrado (pedido del usuario para revisar
+    # el trailing). Sale de la corrida repetida: solo si da el mismo trade
+    path = (trace.get("paths") or {}).get(number) if out["same"] else None
+    if path:
+        initial, entry = trade["stop"], trade["entry"]
+        out["stopPath"] = [[t, clean(level), "inicial" if level == initial else ("entrada" if level == entry else "arrastrado")]
+                           for t, level in path]
     return out
 
 

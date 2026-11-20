@@ -1127,6 +1127,17 @@ Pedido del usuario para depurar: al elegir un trade se veían la caja TP/SL y la
     - al lado, un cuadro con cada condición en ✓, ✗ o – y su valor.
 
     Un trade que se repite igual tiene todo en ✓: un ✗ dice que algo no cuadra.
+  - **El recorrido del stop y la salida** (pedido del usuario al probar el trailing):
+    - `simulate(..., path)` guarda el stop que rige en cada vela del trade. Se mueve al cerrar la vela y vale desde la siguiente.
+    - `run(trace)` lo guarda por número de trade, y `trade_context` da `stopPath`, cada vela con su fase: inicial, entrada o arrastrado. Solo si la corrida repetida da el mismo trade. El recorrido no queda en la corrida guardada.
+    - El gráfico lo dibuja en escalones (clase `steps`): rojo el inicial, gris a la entrada y naranja arrastrado. Cada fase lleva su nombre donde empieza.
+    - La salida del trade elegido (clase `exit`, de `tradeBands()`) es una cruz verde o roja en su precio, con su motivo y su resultado: «Salida por tiempo · +22.87 R». La salida por tiempo, por señal contraria o por el canal va en el borde de la vela.
+  - **Trades sin objetivo:** `tradeBoxes()` ya no usa la salida como TP.
+    - Hasta el 20/11 la caja de un ganador salía con su zona verde hasta la salida y con el rótulo «TP», y la de uno que salió en la entrada o perdiendo, solo con la roja.
+    - Ahora `noTarget` le dice a `MiniChart` que dibuje solo el riesgo (`TPSLBox.hideTarget`; los dibujos del usuario no lo usan), y la salida va como una marca al final de la caja.
+  - Visto con la corrida del usuario con trailing (BTC 4h, fase 1, 114 trades, trailing a 3 ATR desde 1R, stop a la entrada en 1,5R y 24 velas):
+    - trade 49: el stop pasó por las tres fases y estaba en 60,089 cuando salió por tiempo con +22.87R;
+    - trade 25: el stop subió de 37,538 a 37,867 al llegar a +1R, pasó a la entrada en +1,5R y salió ahí con −0.03R.
   - **Detalle del trade:**
     - la casilla "Ver en el gráfico lo que usó la regla", de fábrica encendida, en `tester_view_v1`;
     - una tabla con cada condición al cerrar la vela de la señal (✓, ✗ o –, la condición y su valor), y si se cumplía todo;
@@ -1137,7 +1148,7 @@ Pedido del usuario para depurar: al elegir un trade se veían la caja TP/SL y la
   - con una corrida armada en TRX con canal gaussiano, VWAP con tope, funding, OI sostenido y horario: 61 trades iguales;
   - en pantalla, en el backtesting global con la B5 en BTC.
 
-  Pruebas: `tests/test_trade_context.py` (4) y dos más en `ruletester.test.mjs` (11). La vela de la señal resaltada, su cuadro y la tabla se vieron en pantalla con el trade 2 de la B5 en BTC: los tres en ✓ (FVG nuevo; EMA 50 en 11698.7 con cierre en 11305.5; OI +6.89% en 6 velas).
+  Pruebas: `tests/test_trade_context.py` (5, una para el recorrido del stop) y tres más en `ruletester.test.mjs` (12; la de las cajas, al comportamiento nuevo). La vela de la señal resaltada, su cuadro y la tabla se vieron en pantalla con el trade 2 de la B5 en BTC: los tres en ✓ (FVG nuevo; EMA 50 en 11698.7 con cierre en 11305.5; OI +6.89% en 6 velas).
 
 ### Medido y probado
 

@@ -1850,6 +1850,61 @@ const MiniChart = forwardRef(({
             ctx.fillText(band.label, marginLeft + 6, y + ROW / 2);
             continue;
           }
+          if (band.kind === 'steps') {
+            // El stop de cada vela del trade, en escalones: rojo el inicial, gris a la entrada, naranja arrastrado.
+            // Cada fase lleva su nombre donde empieza
+            const tf = band.tf || TF_MS[interval];
+            const tones = { inicial: '242, 54, 69', entrada: '96, 125, 139', arrastrado: '245, 124, 0' };
+            const names = { entrada: 'stop a la entrada', arrastrado: 'stop arrastrado' };
+            let previous = null;
+            ctx.lineWidth = 2;
+            for (const [t, price, phase] of band.points || []) {
+              if (!Number.isFinite(price)) continue;
+              const x1 = edge(t);
+              const x2 = edge(t + tf);
+              const y = Math.round(priceToY(price)) + 0.5;
+              const rgb = tones[phase] || tones.inicial;
+              ctx.strokeStyle = `rgb(${rgb})`;
+              ctx.beginPath();
+              if (previous && previous.y !== y) {
+                ctx.moveTo(previous.x, previous.y);
+                ctx.lineTo(x1, y);
+              } else {
+                ctx.moveTo(x1, y);
+              }
+              ctx.lineTo(x2, y);
+              ctx.stroke();
+              if (previous && previous.phase !== phase && names[phase] && x2 >= marginLeft && x1 <= marginLeft + chartWidth) {
+                ctx.fillStyle = `rgb(${rgb})`;
+                ctx.fillText(names[phase], x1 + 2, y + (phase === 'entrada' ? -8 : 10));
+              }
+              previous = { x: x2, y, phase };
+            }
+            continue;
+          }
+          if (band.kind === 'exit') {
+            // La salida del trade elegido: una cruz en su precio y su motivo con el resultado
+            if (band.time < viewStart - TF_MS[interval] || band.time > viewEnd + TF_MS[interval]) continue;
+            const x = band.atEdge ? edge(band.time) : timeToX(band.time);
+            const y = priceToY(band.price);
+            if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+            const rgb = band.good ? '8, 153, 129' : '242, 54, 69';
+            ctx.strokeStyle = `rgb(${rgb})`;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(x - 5, y - 5);
+            ctx.lineTo(x + 5, y + 5);
+            ctx.moveTo(x + 5, y - 5);
+            ctx.lineTo(x - 5, y + 5);
+            ctx.stroke();
+            const width = ctx.measureText(band.label).width;
+            const lx = x + 10 + width + 6 > marginLeft + chartWidth ? x - 10 - width - 6 : x + 10;
+            ctx.fillStyle = isNewTheme() ? THEME.labelBg : 'rgba(255, 255, 255, 0.85)';
+            ctx.fillRect(lx - 3, y - 8, width + 6, 16);
+            ctx.fillStyle = `rgb(${rgb})`;
+            ctx.fillText(band.label, lx, y);
+            continue;
+          }
           if (band.kind === 'checklist') {
             // La vela de la señal resaltada de arriba abajo, con su casilla en cada fila de filtros, y un cuadro con
             // cada condición de la regla al cerrar esa vela: ✓ se cumple, ✗ no, – sin dato
@@ -2042,8 +2097,28 @@ const MiniChart = forwardRef(({
         const box = new TPSLBox(trade.entry, trade.start, trade.side === 'short' ? 'short' : 'long', { timeStart: trade.start, timeEnd });
         box.slPrice = Number.isFinite(trade.stop) ? trade.stop : trade.entry;
         box.tpPrice = Number.isFinite(trade.target) ? trade.target : trade.entry;
+        box.hideTarget = !!trade.noTarget; // Un trade del probador sin objetivo: su salida no es un TP
         try {
           box.render(ctx, scaleConverterRef.current);
+          if (trade.noTarget && Number.isFinite(trade.exit)) {
+            // Su salida: una marca en el precio en que salió, al final de la caja, verde si ganó y roja si no
+            const { timeToX: toX, priceToY: toY } = scaleConverterRef.current;
+            const x = toX(timeEnd);
+            const y = Math.round(toY(trade.exit)) + 0.5;
+            const won = (trade.exit - trade.entry) * (trade.side === 'short' ? -1 : 1) > 0;
+            if (Number.isFinite(x) && Number.isFinite(y)) {
+              ctx.strokeStyle = won ? 'rgb(8, 153, 129)' : 'rgb(242, 54, 69)';
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(x - 12, y);
+              ctx.lineTo(x, y);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.arc(x, y, 3, 0, Math.PI * 2);
+              ctx.fillStyle = ctx.strokeStyle;
+              ctx.fill();
+            }
+          }
         } catch (error) {
           // Una caja que no se puede ubicar en este marco no detiene el dibujo
         }
