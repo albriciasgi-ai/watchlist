@@ -25,7 +25,7 @@ Al actualizar se vuelven a pedir los últimos días: si cambiaron (un split nuev
 acción se baja entera otra vez.
 
 Uso (claves de Alpaca en el config/suite.json de la suite, o SUITE_CONFIG con su ruta):
-  python -B alpaca_candles.py                         las 20 de fábrica (STOCKS)
+  python -B alpaca_candles.py                         las 100 de fábrica (STOCKS); las que ya están se actualizan
   python -B alpaca_candles.py AAPL,MSFT [--rebuild]   las nombradas
 """
 import asyncio
@@ -48,9 +48,27 @@ TFS = (60, 240, 1440)
 OVERLAP_DAYS = 7              # Lo que se vuelve a pedir al actualizar, para notar un split nuevo
 ADJUSTMENT = "split"
 MIN_DAY_SHARE = 0.5           # Un día con menos de la mitad de sus velas queda fuera
-# Las 20 de fábrica: los cuatro índices y las de más volumen en dólares que cotizan desde antes de 2016
-STOCKS = ("SPY", "QQQ", "IWM", "DIA", "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META",
-          "TSLA", "AMD", "AVGO", "NFLX", "JPM", "BAC", "XOM", "UNH", "COST", "WMT")
+# Las 100 de fábrica, por grupo. Las primeras 20 (19/11) eran los índices y las de más volumen en dólares que cotizan
+# desde antes de 2016; las otras 80 (20/11, pedido del usuario) suman tecnológicas y del Nasdaq, marcas de consumo y
+# acciones volátiles, parecidas a las cripto. Varias volátiles salieron a bolsa después de 2016 y tienen menos historia.
+GROUPS = {
+    "indices": ("SPY", "QQQ", "IWM", "DIA", "TQQQ", "SOXL"),  # TQQQ y SOXL: apalancados x3
+    "tech": ("AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "AVGO", "NFLX", "AMD",
+             "ORCL", "CRM", "ADBE", "INTC", "CSCO", "QCOM", "TXN", "MU", "AMAT", "LRCX", "KLAC", "ADI", "MRVL",
+             "IBM", "NOW", "INTU", "PYPL", "SHOP", "PANW", "ANET", "SNPS", "ADSK", "EBAY", "BKNG", "SMCI",
+             "CMCSA", "TMUS", "AMGN", "ISRG"),
+    "consumo": ("JPM", "BAC", "XOM", "UNH", "COST", "WMT",
+                "NKE", "KO", "PEP", "MCD", "SBUX", "DIS", "HD", "LOW", "TGT", "PG", "JNJ", "PFE", "MRK", "LLY",
+                "V", "MA", "GS", "WFC", "C", "BA", "CAT", "GE", "F", "GM", "CVX"),
+    "volatiles": ("TSLA", "MSTR", "COIN", "MARA", "RIOT", "PLTR", "ROKU", "XYZ", "SNAP", "UPST", "AFRM", "HOOD",
+                  "SOFI", "RIVN", "NIO", "CVNA", "GME", "AMC", "ENPH", "PLUG", "DKNG", "CRWD", "NET", "TTD", "BABA"),
+}
+# Desde cuándo vale cada una, si el ticker fue antes de otra empresa: NIO salió a bolsa el 12/09/2018 (antes el ticker
+# era de otra y el precio cae 80% en el cambio), DKNG era la SPAC con que se fusionó hasta el 24/04/2020 y RIOT se
+# llamaba Bioptix hasta el 04/10/2017, casi sin negociarse
+START = {"NIO": "2018-09-12", "DKNG": "2020-04-24", "RIOT": "2017-10-04"}
+STOCKS = tuple(s for g in GROUPS.values() for s in g)
+GROUP_OF = {s: g for g, syms in GROUPS.items() for s in syms}
 
 
 def path_of(symbol):
@@ -171,8 +189,10 @@ async def update(symbol, ad, rebuild=False, cal=None):
             mode = "actualizada"
         else:
             old, mode = [], "rehecha (cambió el ajuste)"
+    first_ms = ad.day_ms(max(FIRST, START.get(symbol, FIRST)))
     if not old:
-        base = await fetch(symbol, ad.day_ms(FIRST), end_ms, ad, cal)
+        base = await fetch(symbol, first_ms, end_ms, ad, cal)
+    base = [r for r in base if r[0] >= first_ms]
     if cal and base:  # También limpia lo bajado antes sin calendario
         base = [r for r, k in zip(base, in_session([r[0] for r in base], ad, cal).tolist()) if k]
     base, thin = drop_thin_days(base, ad, cal)

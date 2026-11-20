@@ -110,3 +110,11 @@ def test_dias_casi_vacios_quedan_como_hueco():
     kept, gone = ac.drop_thin_days(full + thin, ad, cal)
     assert kept == full and gone == ["2026-10-14"]
     assert len(ac.aggregate(kept, 1440, ad)) == 1
+
+
+def test_ticker_que_fue_de_otra_empresa_empieza_en_su_fecha(tmp_path, monkeypatch):
+    monkeypatch.setattr(ac, "DIR", tmp_path)
+    monkeypatch.setitem(ac.START, "ZZZZ", "2026-10-14")
+    FakeAlpaca({d: day_rows(2026, 10, d, 13, d) for d in (13, 14, 15)}).install(monkeypatch)
+    data = asyncio.run(ac.update("ZZZZ", ad))
+    assert [ad.day_str(r[0] + 6 * 3600 * 1000) for r in data["1440"]] == ["2026-10-14", "2026-10-15"]
