@@ -12,6 +12,7 @@ sobre un tramo fijo del histórico, con cada trade contabilizado.
 - Cada trade guarda, además de lo que pide la regla, todos los elementos presentes en su ventana y las
   medidas de measures.py al decidir, para buscar qué separa a los ganadores de los perdedores.
 """
+import bisect
 import datetime as dt
 import os
 import pathlib
@@ -1345,8 +1346,9 @@ def _vp_events(symbol, rule, span, shift=None):
     return [e for e in found if e["info"].get("shape") in shapes] if shapes else found
 
 
-def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shift=None):
-    """La regla sobre las velas y elementos de la fase. Devuelve resumen, cortes y cada trade."""
+def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shift=None, trace=None):
+    """La regla sobre las velas y elementos de la fase. Devuelve resumen, cortes y cada trade.
+    trace (un dict): guarda ahí el contexto de las velas, los elementos y qué pasó con cada señal (trade_context)."""
     bars, events, tf = span["bars"], span["events"], rule["tf"]
     tf_ms = tf * 60000
     if len(bars) < 100:
@@ -1365,6 +1367,10 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         ctx["regimeOK"] = regime_mask(rule["regime"], bars, is_stock(symbol))
     extra = _extra_events(symbol, rule, span, ctx, control, vp_shift)
     events = events + extra if extra else events
+    note = None
+    if trace is not None:
+        trace.update(ctx=ctx, events=events, signals=[])
+        note = trace["signals"].append
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
     vp_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in VP_CODES}
     cc_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "CC"}
@@ -1388,6 +1394,12 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             known_at[m["dir"] * flip].add(k)
 
     trades, skipped, open_count, busy_until, busy = [], {}, 0, -1, 0
+
+    def skip(reason, k, side):
+        skipped[reason] = skipped.get(reason, 0) + 1
+        if note is not None:
+            note({"k": k, "dir": side, "what": reason})
+
     window = rule["recipe"]["window"]
     # Con órdenes limit, una señal posterior puede llenarse antes que una anterior (o las dos órdenes de un rango,
     # la de arriba y la de abajo): se simulan todas y se toman por orden de llenado, no de señal
@@ -1405,30 +1417,32 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             placed.add(k)
         if rule["oneAtATime"] and not defer and k < busy_until:
             busy += 1
+            if note is not None:
+                note({"k": k, "dir": side, "what": "posición abierta"})
             continue
         if rule["oneAtATime"] and not defer and k < busy_until + rule["cooldown"]:
-            skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
+            skip("enfriamiento", k, side)
             continue
         # Con dos órdenes, cada filtro que mira el lado decide si se pone la orden de ese lado
         sides = (1, -1) if straddle else (side,)
         if rule.get("lines"):
             sides = tuple(sd for sd in sides if _lines_ok(rule["lines"], ctx, k, sd))
             if not sides:
-                skipped["filtro de VWAP o EMA"] = skipped.get("filtro de VWAP o EMA", 0) + 1
+                skip("filtro de VWAP o EMA", k, side)
                 continue
         if rule.get("flow"):
             sides = tuple(sd for sd in sides if _flow_ok(rule["flow"], ctx, k, sd))
             if not sides:
-                skipped["filtro de CVD u OI"] = skipped.get("filtro de CVD u OI", 0) + 1
+                skip("filtro de CVD u OI", k, side)
                 continue
         if rule.get("regime") and not ctx["regimeOK"][k]:
-            skipped["filtro de régimen"] = skipped.get("filtro de régimen", 0) + 1
+            skip("filtro de régimen", k, side)
             continue
         if rule.get("hours") and not _in_hours(rule["hours"], m["known"]):
-            skipped["fuera de horario"] = skipped.get("fuera de horario", 0) + 1
+            skip("fuera de horario", k, side)
             continue
         if rule["vaGap"] > 0 and not _va_gap_ok(rule["vaGap"], m, zones, index, ctx, tf_ms):
-            skipped["VA con hueco pequeño"] = skipped.get("VA con hueco pequeño", 0) + 1
+            skip("VA con hueco pequeño", k, side)
             continue
         measured = None
         if table is not None:
@@ -1437,7 +1451,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                 sides = tuple(sd for sd in sides if _passes(rule["filters"], measures.read_row(table, row, sd)))
             measured = measures.read_row(table, row, sides[0] if sides else side) if row is not None else None
         if rule["filters"] and (not sides or (table is None and not _passes(rule["filters"], None))):
-            skipped["filtro de contexto"] = skipped.get("filtro de contexto", 0) + 1
+            skip("filtro de contexto", k, side)
             continue
         found = [z for code, t in m["votes"] for z in zones.get((code, m["dir"], t + tf_ms), [])]
         zone = (min(z[0] for z in found), max(z[1] for z in found)) if found else None
@@ -1449,16 +1463,21 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             ctx["vp"] = {"high": boxed["high"], "low": boxed["low"], "poc": (boxed["high"] + boxed["low"]) / 2, "vah": boxed["high"], "val": boxed["low"]}
         trade = simulate(rule, ctx, k, side, zone, known_at if straddle else known_at[-side], sides=sides)
         if trade is None:
+            if note is not None:
+                note({"k": k, "dir": side, "what": "sin vela siguiente"})
             continue
         if "skip" in trade:
-            skipped[trade["skip"]] = skipped.get(trade["skip"], 0) + 1
+            skip(trade["skip"], k, side)
             continue
+        if note is not None:
+            note({"k": k, "dir": trade["dir"], "trade": trade})  # Qué fue de él se sabe al final: trade, ocupado o abierto
         if trade.get("open"):
             if defer:
                 pending.append(trade)
             else:
                 open_count += 1
                 busy_until = len(bars)
+                trade["_fate"] = "abierta al final de la fase"
             continue
         lo = max(0, k - window + 1)
         trade["votes"] = sorted({code for code, _ in m["votes"]})
@@ -1522,11 +1541,14 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     for trade in sorted(pending, key=lambda t: (t["entry_i"], t["k"])):
         if trade["entry_i"] < busy_until:
             busy += 1
+            trade["_fate"] = "posición abierta"
         elif trade["entry_i"] < busy_until + rule["cooldown"]:
             skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
+            trade["_fate"] = "enfriamiento"
         elif trade.get("open"):
             open_count += 1
             busy_until = len(bars)
+            trade["_fate"] = "abierta al final de la fase"
         else:
             trades.append(trade)
             busy_until = trade.pop("exit_i") + 1
@@ -1534,6 +1556,16 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         trade["n"] = number
         trade.pop("k", None)
         trade.pop("entry_i", None)
+    if trace is not None:
+        # Cada señal con lo que pasó: el número de su trade o por qué no entró. Los que no quedaron no salen en la corrida
+        for item in trace["signals"]:
+            trade = item.pop("trade", None)
+            if trade is not None:
+                fate = trade.pop("_fate", None)
+                if fate is None and "n" in trade:
+                    item.update(what="trade", n=trade["n"])
+                else:
+                    item["what"] = fate or "posición abierta"
 
     ordered = sorted(trades, key=lambda t: t["exit_t"])
     result = {
@@ -1988,6 +2020,230 @@ def trade_detail(run_id, number):
                     for k, v in (t.get("measures") or {}).items() if k in labels]
             return {"trade": {k: v for k, v in t.items() if k != "measures"}, "measures": rows}
     return None
+
+
+# ==================== LO QUE USÓ LA REGLA EN UN TRADE ====================
+# Pedido del usuario (20/11/2026) para depurar en el backtesting global: al elegir un trade, ver en el gráfico los
+# indicadores de la regla con los ajustes de la prueba. La regla de la corrida se vuelve a correr (sin los controles)
+# con `trace`, y de ahí salen las mismas líneas, filtros y elementos que usó, en una ventana alrededor del trade.
+
+CONTEXT_BEFORE = 150   # Velas de la regla antes de la señal
+CONTEXT_AFTER = 60     # Y después de la salida
+_replays = {}
+OI_TEXT = {"conf": "Confluencia OI-volumen a favor", "noconf": "Sin confluencia OI-volumen en contra"}
+REGIME_TEXT = {"inside": "dentro", "outside": "fuera", "breakout": "tras romper"}
+
+
+def _replay(result):
+    """La regla de una corrida guardada, corrida otra vez sin controles y con `trace`: el contexto de sus velas, los
+    elementos y qué pasó con cada señal. Las últimas 3 en memoria: elegir otro trade de la misma corrida no la repite."""
+    run_id = result.get("id")
+    with _lock:
+        found = _replays.get(run_id)
+    if found is not None:
+        return found
+    symbol, rule = result["symbol"], result["rule"]
+    # El tramo de la corrida, no el de hoy: la fase 3 crece con el almacén
+    phase = {"phase": result["phase"], "from": result["from"], "to": result["to"],
+             "start": _ms(result["from"]), "end": _ms(result["to"]) + oe.DAY_MS}
+    span = detect_span(symbol, rule["tf"], phase, rule)
+    table = measures.table_for(symbol) if rule.get("filters") else None
+    trace = {}
+    if not run(symbol, rule, span, phase, table, base=False, trace=trace).get("success"):
+        return None
+    trace["span"], trace["table"] = span, table
+    with _lock:
+        _replays[run_id] = trace
+        while len(_replays) > 3:
+            _replays.pop(next(iter(_replays)))
+    return trace
+
+
+def _regime_boxes(reg, bars, session=False):
+    """Las cajas del detector que usa el filtro de régimen, en el marco en que se mide (el de la regla o el día), en
+    horas: start (apertura de su primera vela), known (cierre de la vela en que se supo), end (cierre de la última)."""
+    import regime_detectors as rd
+    a = {"t": np.array([b["t"] for b in bars], dtype=np.int64), **{k: np.array([b[src] for b in bars], dtype=float)
+         for k, src in (("o", "o"), ("h", "h"), ("l", "l"), ("c", "c"), ("v", "vol"))}}
+    step = int(np.median(np.diff(a["t"]))) if len(a["t"]) > 1 else DAY_MS
+    if reg.get("tf") == DAILY and step < DAY_MS:
+        a = _sessions(a)[0] if session else _daily(a, step)
+        step = DAY_MS
+    if len(a["t"]) <= 30:
+        return []
+    params = rd.PARAMS["er_box"]["params"]
+    boxes = rd.er_box(a, **params)
+    zones = rd.major(a, [{"i": z["detected"], "low": z["low"], "high": z["high"]} for z in boxes["zones"]], 8.0, 0.5, reg["majorOut"]) if reg["major"] else boxes
+    return [{"start": int(a["t"][z["start"]]), "known": int(a["t"][z["detected"]]) + step, "end": int(a["t"][z["end"]]) + step,
+             "low": float(z["low"]), "high": float(z["high"]), "major": bool(reg["major"])} for z in zones["zones"]]
+
+
+def _line_text(item):
+    """Lo que pide un filtro de línea, en palabras"""
+    name = f"{'VWAP' if item['type'] == 'vwap' else 'EMA'} {item['period']}"
+    text = f"{name} {'tocando' if item['mode'] == 'touch' else 'a favor'}"
+    if item.get("slope"):
+        text += f", con pendiente en {LINE_SLOPE_BARS} velas"
+    if item.get("maxDev"):
+        text += f", abre a no más de {item['maxDev']:g} desv."
+    return name, text
+
+
+def _num_text(value, digits=6):
+    return "—" if value is None or not value == value else f"{float(value):.{digits}g}"
+
+
+def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
+    """
+    Lo que usó la regla alrededor de un trade, para dibujarlo: sus líneas (EMA, VWAP móvil con su tope, canal gaussiano)
+    enteras en la ventana; todas las apariciones de sus elementos; las cajas del régimen; una fila por filtro con si
+    pasa en cada vela, para el lado del trade, y su valor en la vela de la señal; y cada señal de la regla con lo que
+    pasó (su trade o por qué no entró). Todo con las funciones y los ajustes de la prueba, y sin nada posterior a lo
+    que la regla podía saber en cada vela. `same` dice si al repetirla hoy la señal da el mismo trade.
+    """
+    result = load_run(run_id)
+    if result is None:
+        return None
+    trade = next((t for t in result["trades"] if t["n"] == number), None)
+    if trade is None:
+        return None
+    trace = _replay(result)
+    if trace is None:
+        return {"success": False, "message": "No se pudo repetir la regla de esta corrida"}
+    rule, symbol = result["rule"], result["symbol"]
+    tf_ms = rule["tf"] * 60000
+    ctx, bars = trace["ctx"], trace["span"]["bars"]
+    T = ctx["T"]
+    n = len(T)
+    k = bisect.bisect_left(T, trade["signal"])
+    if k >= n or T[k] != trade["signal"]:
+        return {"success": False, "message": "La vela de la señal no está en las velas de la fase"}
+    e = min(n - 1, bisect.bisect_left(T, trade["exit_t"]))
+    lo, hi = max(0, k - before), min(n, e + after + 1)
+    side = trade["dir"]
+
+    def clean(value):
+        return None if value is None or not value == value else round(float(value), 8)
+
+    def series(values, offset=0, start=0):
+        return [[T[i], clean(values[offset + i])] for i in range(lo, hi) if offset + i >= start and clean(values[offset + i]) is not None]
+
+    def row(key, label, state, note):
+        items = []
+        for i in range(lo, hi):
+            value = state(i)
+            items.append([T[i], None if value is None else (1 if value else 0)])
+        return {"key": key, "label": label, "items": items, "note": note}
+
+    out = {"success": True, "tf": rule["tf"], "from": T[lo], "to": T[hi - 1] + tf_ms, "side": side, "signal": T[k],
+           "engine": result.get("engine", 1), "engineNow": ENGINE, "lines": [], "channel": None, "elements": [], "regime": None,
+           "rows": [], "signals": []}
+
+    for item in rule.get("lines") or []:
+        values = _line(ctx, item["type"], item["period"])
+        name, text = _line_text(item)
+        entry = {"label": name, "type": item["type"], "points": series(values)}
+        if item.get("maxDev"):
+            dev = _vwap_dev(ctx, item["period"])
+            entry["limit"] = series([v + side * item["maxDev"] * d for v, d in zip(values, dev)])
+            entry["limitLabel"] = f"{name} {'+' if side > 0 else '−'}{item['maxDev']:g} desv."
+        out["lines"].append(entry)
+        out["rows"].append(row(f"line{len(out['lines'])}", text,
+                               lambda i, item=item, values=values: None if not values[i] == values[i] else _lines_ok([item], ctx, i, side),
+                               f"{name} en {_num_text(values[k])}, cierre en {_num_text(ctx['C'][k])}"))
+
+    if rule.get("gc"):
+        gc = rule["gc"]
+        warm = trace["span"].get("warm") or []
+        mid, up, down = gaussian_channel.channel(warm + bars, gc["period"], gc["poles"], gc["mult"])
+        off, start = len(warm), 2 * gc["period"]  # Antes, el canal todavía no da señales: no se dibuja
+        out["channel"] = {"label": f"Canal gaussiano {gc['period']}, {gc['poles']} polos, ×{gc['mult']:g}",
+                          "mid": series(mid, off, start), "high": series(up, off, start), "low": series(down, off, start)}
+
+    flow = rule.get("flow") or {}
+    cache = ctx.setdefault("flow", {})
+    if flow.get("cvd"):
+        key = ("cvd", flow["cvd"])
+        if key not in cache:
+            cache[key] = flow_filters.cvd(bars, flow["cvd"])[0]
+        values = cache[key]
+        out["rows"].append(row("cvd", f"CVD de {flow['cvd']} velas a favor",
+                               lambda i: None if not values[i] == values[i] else values[i] * side > 0,
+                               f"CVD {values[k] * 100:+.1f}% del volumen" if values[k] == values[k] else "CVD sin dato"))
+    if flow.get("oi"):
+        if "oi" not in cache:
+            oi = flow_filters.oi_at_close(symbol, bars, rule["tf"])
+            signed = flow_filters.signed_volume(bars)[0]
+            cache["oi"] = (oi, signed, None if oi is None else flow_filters.z_pair(oi, signed))
+        oi, signed, z = cache["oi"]
+        mode, back, pct = flow["oi"], flow.get("oiBars", 6), flow.get("oiPct", 2.0)
+        label = (f"OI {'sube' if mode == 'rise' else 'baja'} más de {pct:g}% en {back} velas" if mode in ("rise", "fall") else OI_TEXT[mode])
+        if oi is None:
+            note = "sin OI de esta moneda en este marco"
+        elif mode in ("rise", "fall") and k >= back and oi[k] == oi[k] and oi[k - back] == oi[k - back] and oi[k - back] > 0:
+            note = f"OI {(oi[k] / oi[k - back] - 1) * 100:+.2f}% en {back} velas"
+        else:
+            note = f"OI {_num_text(oi[k])}"
+        out["rows"].append(row("oi", label, lambda i: None if oi is None or not np.isfinite(oi[i])
+                               else flow_filters.oi_ok(mode, oi, signed, i, side, back, pct, z), note))
+    if flow.get("crowd"):
+        if "funding" not in cache:
+            cache["funding"] = flow_filters.funding_3d(symbol, bars, rule["tf"])
+        funding = cache["funding"]
+        label = "No ir con la multitud (funding)" if flow["crowd"] == "nocon" else "Solo contra la multitud (funding)"
+        note = (f"funding {funding[k] * 100:.4f}% por 8 h: {flow_filters.crowd(float(funding[k]), side)} la multitud"
+                if funding[k] == funding[k] else "sin funding")
+        out["rows"].append(row("crowd", label, lambda i: None if not funding[i] == funding[i] else flow_filters.crowd_ok(flow["crowd"], funding[i], side), note))
+    if flow.get("steady"):
+        key = ("steady", flow["steadyDays"])
+        if key not in cache:
+            cache[key] = flow_filters.oi_steady(symbol, bars, rule["tf"], flow["steadyDays"])
+        values = cache[key]
+        out["rows"].append(row("steady", f"OI sostenido: sube en {flow['steadyMin'] * 100:.0f}% o más de los pasos de {flow['steadyDays']} días",
+                               lambda i: None if not values[i] == values[i] else values[i] >= flow["steadyMin"],
+                               f"sube en {values[k] * 100:.0f}% de los pasos" if values[k] == values[k] else "OI sin datos suficientes"))
+
+    if rule.get("regime"):
+        reg = rule["regime"]
+        ok = ctx.get("regimeOK")
+        if ok is None:
+            ok = regime_mask(reg, bars, is_stock(symbol))
+        where = f"{'del rango mayor' if reg['major'] else 'de las cajas'}{' medido en 1D' if reg.get('tf') == DAILY else ''}"
+        label = f"Régimen: {REGIME_TEXT.get(reg['mode'], reg['mode'])} {where}"
+        if reg["mode"] == "breakout":
+            label += f", {reg['after']} velas"
+        t0, t1 = out["from"], out["to"]
+        boxes = [b for b in _regime_boxes(reg, bars, is_stock(symbol)) if b["end"] >= t0 and b["start"] <= t1]
+        out["regime"] = {"label": label, "boxes": boxes}
+        out["rows"].append(row("regime", label, lambda i: bool(ok[i]), "en la señal: " + ("permitido" if ok[k] else "no permitido")))
+
+    if rule.get("hours"):
+        hours = rule["hours"]
+        clock = lambda minute: f"{minute // 60:02d}:{minute % 60:02d}"
+        label = f"Horario {clock(hours['from'])}–{clock(hours['to'])} UTC{', lunes a viernes' if hours['weekdays'] else ''}"
+        out["rows"].append(row("hours", label, lambda i: _in_hours(hours, T[i] + tf_ms), f"la señal se supo a las {clock(((T[k] + tf_ms) // 60000) % 1440)} UTC"))
+
+    if rule.get("filters"):
+        table = trace.get("table")
+        labels = patterns._labels()
+        text = " y ".join(f"{labels.get(f['key'], (f['key'],))[0]} {'≥' if f['op'] == '>=' else '≤'} {f['value']:g}" for f in rule["filters"])
+
+        def measured(i):
+            if table is None:
+                return None
+            at = measures.row_at(table, T[i] + tf_ms)
+            return None if at is None else _passes(rule["filters"], measures.read_row(table, at, side))
+        out["rows"].append(row("filters", f"Medidas: {text}", measured, "sin la tabla de medidas" if table is None else ""))
+
+    codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
+    t0, t1 = out["from"], out["to"]
+    out["elements"] = [{"code": ev["code"], "dir": ev["dir"], "t": ev["t"], "known": ev["known"], "lo": clean(ev["lo"]), "hi": clean(ev["hi"])}
+                       for ev in trace["events"] if ev["code"] in codes and t0 <= ev["t"] < t1][:400]
+    for s in trace["signals"]:
+        if lo <= s["k"] < hi:
+            out["signals"].append({"t": T[s["k"]], "known": T[s["k"]] + tf_ms, "dir": s["dir"], "what": s["what"], **({"n": s["n"]} if "n" in s else {})})
+    out["same"] = any(s["k"] == k and s.get("n") == number for s in trace["signals"])
+    return out
 
 
 def gate(symbol, rule, phase_number):

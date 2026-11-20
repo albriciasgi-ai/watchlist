@@ -4062,6 +4062,16 @@ async def tester_trade(request: Request, run_id: str, number: int):
     return {"success": detail is not None, **(detail or {})}
 
 
+@app.get("/api/tester/result/{run_id}/trade/{number}/context")
+@limiter.limit("120/minute")
+async def tester_trade_context(request: Request, run_id: str, number: int):
+    """Lo que usó la regla alrededor del trade (líneas, elementos, filtros vela a vela y señales), para dibujarlo"""
+    context = await run_in_threadpool(rule_tester.trade_context, sanitize_filename(run_id), number)
+    if context is None:
+        return {"success": False, "message": "No existe esa corrida o ese trade"}
+    return context
+
+
 @app.get("/api/tester/result/{run_id}/csv")
 @limiter.limit("30/minute")
 async def tester_csv(request: Request, run_id: str):

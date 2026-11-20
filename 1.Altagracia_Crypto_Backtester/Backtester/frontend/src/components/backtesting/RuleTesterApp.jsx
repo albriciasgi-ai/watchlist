@@ -16,7 +16,8 @@ import { priceText, scaleFromCandles, setBlindAnchor, setBlindScale } from './bl
 import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, hasBox, reviewBoxes, statText } from './candidateReview.js';
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
-  accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes
+  accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
+  contextBands, skippedSignals
 } from './ruleTester.js';
 import { elementLabel, elementLabels } from './elementLabels.js';
 import '../../backtesting_styles.css';
@@ -187,6 +188,9 @@ const RuleTesterApp = () => {
   const [results, setResults] = useState({});       // Corrida a la vista de cada fase
   const [revealed, setRevealed] = useState({});     // Fases 2 y 3 cuyo gráfico ya se pidió ver
   const [selected, setSelected] = useState(null);   // Número del trade elegido
+  // Lo que usó la regla alrededor del trade elegido (líneas, elementos, filtros y señales), y si se dibuja
+  const [tradeContext, setTradeContext] = useState(null);
+  const [showContext, setShowContext] = useState(() => view.showContext !== false);
   const [regimeBands, setRegimeBands] = useState(null); // Zonas de la pestaña Régimen, para el gráfico
   const [detail, setDetail] = useState(null);
   const [sens, setSens] = useState(null);
@@ -253,11 +257,11 @@ const RuleTesterApp = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait }));
+      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext }));
     } catch {
       // Sin almacenamiento la vista dura hasta cerrar la ventana
     }
-  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait]);
+  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext]);
 
   // Monedas nuevas y acciones no tienen caché de App 1: sus velas salen del probador (del disco). Pedirlas a
   // /api/backtesting/bulk-data las bajaría de Bybit y las guardaría en ese caché, que está en git y decide cuáles
@@ -638,11 +642,17 @@ const RuleTesterApp = () => {
       boxesRef.current = chartOpen && result ? tradeBoxes(trades, result.rule.tf) : [];
       const trade = trades.find(t => t.n === selected);
       linesRef.current = chartOpen && trade ? [{ entryTime: trade.entry_t, exitTime: trade.exit_t, tradeNumber: trade.n }] : [];
-      // Lo que la regla vio en el trade elegido: zonas de liquidaciones de ese momento y dónde estaba cada elemento
-      bandsRef.current = chartOpen && trade ? tradeBands(trade, result.rule.tf, names) : [];
+      // Lo que la regla vio en el trade elegido: zonas de liquidaciones de ese momento y dónde estaba cada elemento.
+      // Debajo, lo que usó alrededor: sus líneas, sus elementos, sus filtros vela a vela y sus señales
+      const used = showContext && trade && tradeContext?.runId === result?.id && tradeContext?.n === trade.n ? contextBands(tradeContext, names) : [];
+      // Con las líneas enteras, sobra el tramo corto que marca su valor en la señal
+      const drawn = new Set(used.filter(b => b.kind === 'line').map(b => b.label));
+      const own = chartOpen && trade ? tradeBands(trade, result.rule.tf, names)
+        .filter(b => !(b.kind === 'level' && drawn.size && (drawn.has(b.label) || / desv\.$/.test(b.label)))) : [];
+      bandsRef.current = chartOpen && trade ? [...used, ...own] : [];
     }
     chartRef.current?.redraw?.();
-  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder, review, reviewPick, tab, regimeBands]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder, review, reviewPick, tab, regimeBands, tradeContext, showContext]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pick = useCallback((trade) => {
     setSelected(trade.n);
@@ -650,6 +660,12 @@ const RuleTesterApp = () => {
     setOrdersView(false);
     if (phase === 1 || revealed[phase]) focusLater(trade.entry_t, trade.entry);
     api(`/api/tester/result/${result.id}/trade/${trade.n}`).then(d => d.success && setDetail(d)).catch(noop);
+    // La primera vez de cada corrida el backend repite la regla (unos segundos); después responde al instante
+    const runId = result.id;
+    setTradeContext({ runId, n: trade.n, loading: true });
+    api(`/api/tester/result/${runId}/trade/${trade.n}/context`)
+      .then(d => setTradeContext(current => (current?.runId === runId && current?.n === trade.n ? { ...d, runId, n: trade.n } : current)))
+      .catch(error => setTradeContext(current => (current?.runId === runId && current?.n === trade.n ? { success: false, message: error.message, runId, n: trade.n } : current)));
   }, [result, phase, revealed, focusLater]);
 
   const pickOrder = useCallback(({ order, view }) => {
@@ -1442,6 +1458,32 @@ const RuleTesterApp = () => {
             {selectedTrade.cc && <><br />Cambio de carácter: swing roto en {selectedTrade.cc.level}, extremo de la tendencia en {selectedTrade.cc.extreme}, estructura en velas de {selectedTrade.cc.structTf >= 60 ? `${selectedTrade.cc.structTf / 60} h` : `${selectedTrade.cc.structTf} m`}</>}
             {selectedTrade.liq && <><br />Barrido: {selectedTrade.liq.what === 'zone' ? `zona ${selectedTrade.liq.zoneLow}–${selectedTrade.liq.zoneHigh}` : `swing en ${selectedTrade.liq.swing} de hace ${selectedTrade.liq.swingAgeBars} velas`}, pasado hasta {selectedTrade.liq.extreme}{selectedTrade.liq.depthAtr != null && ` (${selectedTrade.liq.depthAtr} ATR)`} · zona de {Math.round((selectedTrade.liq.usd || 0) / 1000).toLocaleString('es-CO')}K USD ({selectedTrade.liq.zoneSide === 'long' ? 'largos' : 'cortos'} liquidados), última liquidación {selectedTrade.liq.zoneAgeDays} días antes · {selectedTrade.liq.source}</>}
           </div>
+          {(() => {
+            const used = tradeContext?.runId === result.id && tradeContext?.n === selectedTrade.n ? tradeContext : null;
+            const skipped = skippedSignals(used);
+            const taken = (used?.signals || []).length - skipped.length;
+            const atSignal = (row) => {
+              const state = row.items.find(([t]) => t === used.signal)?.[1];
+              return state === 1 ? 'pasa' : state === 0 ? 'no pasa' : 'sin dato';
+            };
+            return (
+              <div className="rt-note" style={{ marginTop: 4 }}>
+                <label style={{ cursor: 'pointer' }}>
+                  <input type="checkbox" checked={showContext} onChange={(e) => setShowContext(e.target.checked)} /> Ver en el gráfico lo que usó la regla
+                </label>
+                {used?.loading && <> · repitiendo la regla para dibujarlo…</>}
+                {used && used.success === false && !used.loading && <> · no se pudo: {used.message || 'sin respuesta'}</>}
+                {used?.success && (
+                  <>
+                    {used.same === false && <><br /><b>Ojo:</b> al repetir hoy la regla, esta señal no da el mismo trade (la corrida es del motor {used.engine}; hoy, el {used.engineNow}). Lo dibujado es lo de hoy.</>}
+                    <br />Sus líneas enteras, todas las apariciones de sus elementos (tenues) y, bajo las velas, una fila por filtro: verde pasa, rojo no pasa, gris sin dato, para el lado del trade. Triángulos: las señales de la regla, rellenos los que dieron trade.
+                    {used.rows.length > 0 && <><br />En la vela de la señal: {used.rows.map(row => `${row.label}: ${atSignal(row)}${row.note ? ` (${row.note})` : ''}`).join(' · ')}</>}
+                    <br />Señales en la ventana: {taken} con trade y {skipped.length} sin entrar{skipped.length > 0 && <>: {skipped.slice(0, 12).map(s => `${stamp(s.t)} ${s.dir > 0 ? 'largo' : 'corto'}, ${s.what}`).join(' · ')}{skipped.length > 12 && ` y ${skipped.length - 12} más`}</>}
+                  </>
+                )}
+              </div>
+            );
+          })()}
           {detail?.trade?.n === selectedTrade.n && detail.measures.length > 0 && (
             <details style={{ marginTop: 4 }}>
               <summary style={{ cursor: 'pointer' }}>Medidas al decidir ({detail.measures.length})</summary>
