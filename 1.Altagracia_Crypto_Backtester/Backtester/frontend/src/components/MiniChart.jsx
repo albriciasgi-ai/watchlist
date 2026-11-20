@@ -1784,7 +1784,7 @@ const MiniChart = forwardRef(({
       // Borde izquierdo de la vela de este gráfico que abre en t: las velas de la regla pueden ser de otro marco
       const half = (timeToX(viewStart + TF_MS[interval]) - timeToX(viewStart)) / 2;
       const edge = (t) => timeToX(t) - half;
-      const ROW = 12; // Filas de los filtros de la regla, bajo las velas
+      const ROW = 14; // Filas de los filtros de la regla, bajo las velas
       const rowsTop = (rows) => marginTop + priceChartHeight - 4 - rows * ROW;
       ctx.save();
       ctx.beginPath();
@@ -1848,6 +1848,74 @@ const MiniChart = forwardRef(({
             ctx.fillRect(marginLeft + 2, y, width + 8, ROW - 1);
             ctx.fillStyle = ink;
             ctx.fillText(band.label, marginLeft + 6, y + ROW / 2);
+            continue;
+          }
+          if (band.kind === 'checklist') {
+            // La vela de la señal resaltada de arriba abajo, con su casilla en cada fila de filtros, y un cuadro con
+            // cada condición de la regla al cerrar esa vela: ✓ se cumple, ✗ no, – sin dato
+            const tf = band.tf || TF_MS[interval];
+            const seen = band.time + tf >= viewStart && band.time <= viewEnd;
+            const x1 = edge(band.time);
+            const x2 = edge(band.time + tf);
+            if (seen) {
+              ctx.fillStyle = 'rgba(41, 98, 255, 0.08)';
+              ctx.fillRect(x1, marginTop, x2 - x1, priceChartHeight);
+              ctx.strokeStyle = 'rgba(41, 98, 255, 0.7)';
+              ctx.lineWidth = 1;
+              ctx.setLineDash([4, 3]);
+              ctx.beginPath();
+              ctx.moveTo(Math.round(x1) + 0.5, marginTop);
+              ctx.lineTo(Math.round(x1) + 0.5, marginTop + priceChartHeight);
+              ctx.moveTo(Math.round(x2) + 0.5, marginTop);
+              ctx.lineTo(Math.round(x2) + 0.5, marginTop + priceChartHeight);
+              ctx.stroke();
+              ctx.setLineDash([]);
+              if (band.rows) {
+                ctx.strokeStyle = ink;
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(Math.round(x1) - 0.5, Math.round(rowsTop(band.rows)) - 0.5, Math.max(3, Math.round(x2 - x1) + 1), band.rows * ROW + 1);
+              }
+            }
+            const glyph = (ok) => (ok === true ? '✓' : ok === false ? '✗' : '–');
+            const lines = band.items.map(item => `${item.label}${item.note ? ` · ${item.note}` : ''}`);
+            ctx.font = 'bold 11px "Segoe UI", Arial, sans-serif';
+            const titleWidth = ctx.measureText(band.title || '').width;
+            ctx.font = '11px "Segoe UI", Arial, sans-serif';
+            const maxText = Math.max(120, chartWidth - 40);
+            const fit = (text) => {
+              if (ctx.measureText(text).width <= maxText) return text;
+              let cut = text;
+              while (cut.length > 4 && ctx.measureText(`${cut}…`).width > maxText) cut = cut.slice(0, -1);
+              return `${cut}…`;
+            };
+            const shown = lines.map(fit);
+            const width = Math.min(chartWidth - 8, Math.max(titleWidth, ...shown.map(text => ctx.measureText(text).width + 16)) + 16);
+            const LINE = 15;
+            const height = (shown.length + 1) * LINE + 8;
+            let x = seen ? x2 + 10 : marginLeft + 8;
+            if (x + width > marginLeft + chartWidth - 4) x = seen ? x1 - 10 - width : marginLeft + 8;
+            x = Math.max(marginLeft + 4, x);
+            const y = marginTop + 24;
+            ctx.fillStyle = isNewTheme() ? THEME.surface : '#FFFFFF';
+            ctx.globalAlpha = 0.95;
+            ctx.fillRect(x, y, width, height);
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = 'rgba(41, 98, 255, 0.7)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(Math.round(x) + 0.5, Math.round(y) + 0.5, Math.round(width), Math.round(height));
+            ctx.fillStyle = ink;
+            ctx.font = 'bold 11px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(band.title || '', x + 8, y + 4 + LINE / 2);
+            ctx.font = '11px "Segoe UI", Arial, sans-serif';
+            band.items.forEach((item, i) => {
+              const lineY = y + 4 + (i + 1.5) * LINE;
+              ctx.fillStyle = item.ok === true ? 'rgb(8, 153, 129)' : item.ok === false ? 'rgb(242, 54, 69)' : 'rgb(128, 128, 128)';
+              ctx.font = 'bold 12px "Segoe UI", Arial, sans-serif';
+              ctx.fillText(glyph(item.ok), x + 8, lineY);
+              ctx.font = '11px "Segoe UI", Arial, sans-serif';
+              ctx.fillStyle = ink;
+              ctx.fillText(shown[i], x + 24, lineY);
+            });
             continue;
           }
           if (band.kind === 'signal') {

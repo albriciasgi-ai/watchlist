@@ -17,7 +17,7 @@ import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, hasBox, reviewBoxes, s
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
-  contextBands, skippedSignals
+  contextBands, skippedSignals, signalChecklist, checklistBand
 } from './ruleTester.js';
 import { elementLabel, elementLabels } from './elementLabels.js';
 import '../../backtesting_styles.css';
@@ -644,12 +644,16 @@ const RuleTesterApp = () => {
       linesRef.current = chartOpen && trade ? [{ entryTime: trade.entry_t, exitTime: trade.exit_t, tradeNumber: trade.n }] : [];
       // Lo que la regla vio en el trade elegido: zonas de liquidaciones de ese momento y dónde estaba cada elemento.
       // Debajo, lo que usó alrededor: sus líneas, sus elementos, sus filtros vela a vela y sus señales
-      const used = showContext && trade && tradeContext?.runId === result?.id && tradeContext?.n === trade.n ? contextBands(tradeContext, names) : [];
+      const context = showContext && trade && tradeContext?.runId === result?.id && tradeContext?.n === trade.n ? tradeContext : null;
+      const used = context ? contextBands(context, names) : [];
       // Con las líneas enteras, sobra el tramo corto que marca su valor en la señal
       const drawn = new Set(used.filter(b => b.kind === 'line').map(b => b.label));
       const own = chartOpen && trade ? tradeBands(trade, result.rule.tf, names)
         .filter(b => !(b.kind === 'level' && drawn.size && (drawn.has(b.label) || / desv\.$/.test(b.label)))) : [];
-      bandsRef.current = chartOpen && trade ? [...used, ...own] : [];
+      // Encima de todo, la vela de la señal resaltada y el cuadro con cada condición en ese momento
+      const check = context ? signalChecklist(context, trade, result.rule.recipe, names) : null;
+      const card = check ? checklistBand(check, context, `Señal ${stamp(check.time)} · ${trade.dir > 0 ? 'largo' : 'corto'} · ${check.all ? 'todo se cumplía' : 'no todo se cumplía'}`) : null;
+      bandsRef.current = chartOpen && trade ? [...used, ...own, ...(card ? [card] : [])] : [];
     }
     chartRef.current?.redraw?.();
   }, [result, selected, chartOpen, ordersView, orderViews, pickedOrder, review, reviewPick, tab, regimeBands, tradeContext, showContext]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1462,23 +1466,44 @@ const RuleTesterApp = () => {
             const used = tradeContext?.runId === result.id && tradeContext?.n === selectedTrade.n ? tradeContext : null;
             const skipped = skippedSignals(used);
             const taken = (used?.signals || []).length - skipped.length;
-            const atSignal = (row) => {
-              const state = row.items.find(([t]) => t === used.signal)?.[1];
-              return state === 1 ? 'pasa' : state === 0 ? 'no pasa' : 'sin dato';
-            };
+            const check = signalChecklist(used, selectedTrade, result.rule.recipe, names);
+            const mark = (ok) => (ok === true ? '✓' : ok === false ? '✗' : '–');
+            const markColor = (ok) => (ok === true ? tone(1) : ok === false ? tone(-1) : undefined);
             return (
               <div className="rt-note" style={{ marginTop: 4 }}>
-                <label style={{ cursor: 'pointer' }}>
+                <label style={{ cursor: 'pointer' }} title="Sus líneas enteras, todas las apariciones de sus elementos (tenues), una fila por filtro bajo las velas y las señales de la regla">
                   <input type="checkbox" checked={showContext} onChange={(e) => setShowContext(e.target.checked)} /> Ver en el gráfico lo que usó la regla
                 </label>
                 {used?.loading && <> · repitiendo la regla para dibujarlo…</>}
                 {used && used.success === false && !used.loading && <> · no se pudo: {used.message || 'sin respuesta'}</>}
-                {used?.success && (
+                {used?.same === false && <><br /><b>Ojo:</b> al repetir hoy la regla, esta señal no da el mismo trade (la corrida es del motor {used.engine}; hoy, el {used.engineNow}). Lo dibujado es lo de hoy.</>}
+                {check && (
                   <>
-                    {used.same === false && <><br /><b>Ojo:</b> al repetir hoy la regla, esta señal no da el mismo trade (la corrida es del motor {used.engine}; hoy, el {used.engineNow}). Lo dibujado es lo de hoy.</>}
-                    <br />Sus líneas enteras, todas las apariciones de sus elementos (tenues) y, bajo las velas, una fila por filtro: verde pasa, rojo no pasa, gris sin dato, para el lado del trade. Triángulos: las señales de la regla, rellenos los que dieron trade.
-                    {used.rows.length > 0 && <><br />En la vela de la señal: {used.rows.map(row => `${row.label}: ${atSignal(row)}${row.note ? ` (${row.note})` : ''}`).join(' · ')}</>}
-                    <br />Señales en la ventana: {taken} con trade y {skipped.length} sin entrar{skipped.length > 0 && <>: {skipped.slice(0, 12).map(s => `${stamp(s.t)} ${s.dir > 0 ? 'largo' : 'corto'}, ${s.what}`).join(' · ')}{skipped.length > 12 && ` y ${skipped.length - 12} más`}</>}
+                    <div style={{ marginTop: 6 }}>
+                      <b>{check.all ? 'Al cerrar la vela de la señal se cumplía todo' : 'Al cerrar la vela de la señal no se cumplía todo'}</b> ({stamp(check.time)}; entró en la apertura siguiente, {stamp(selectedTrade.entry_t)}):
+                    </div>
+                    <table className="rt-table">
+                      <tbody>
+                        {check.items.map((item) => (
+                          <tr key={item.label}>
+                            <td style={{ color: markColor(item.ok), fontWeight: 700, width: 14 }}>{mark(item.ok)}</td>
+                            <td>{item.label}</td>
+                            <td>{item.note}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div>En el gráfico, la vela de la señal va resaltada con este mismo cuadro y su casilla en cada fila de filtros (verde pasa, rojo no pasa, gris sin dato). Los triángulos son las señales de la regla: rellenos los que dieron trade.</div>
+                    <details style={{ marginTop: 4 }}>
+                      <summary style={{ cursor: 'pointer' }}>Señales en la ventana: {taken} con trade y {skipped.length} sin entrar</summary>
+                      {skipped.length > 0 ? (
+                        <table className="rt-table">
+                          <tbody>
+                            {skipped.map((s, i) => <tr key={`${s.t}-${s.dir}-${i}`}><td>{stamp(s.t)}</td><td>{s.dir > 0 ? 'largo' : 'corto'}</td><td>{s.what}</td></tr>)}
+                          </tbody>
+                        </table>
+                      ) : <div>Todas las señales de la ventana dieron trade.</div>}
+                    </details>
                   </>
                 )}
               </div>

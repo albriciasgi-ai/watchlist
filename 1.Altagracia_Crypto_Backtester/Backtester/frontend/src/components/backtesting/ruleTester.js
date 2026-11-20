@@ -432,6 +432,40 @@ export function skippedSignals(context) {
   return (context?.signals || []).filter(s => s.what !== 'trade');
 }
 
+/**
+ * Cada condición de la regla al cerrar la vela de la señal, que es cuando decidió (pedido del usuario: ver de un
+ * vistazo si al abrir el trade se cumplía todo). Primero los elementos (los que dispararon con ✓), después cada filtro
+ * de las filas con su valor. ok: true se cumple, false no, null sin dato. Un trade que se repite igual tiene todo en ✓:
+ * un ✗ dice que algo no cuadra. null si el contexto no llegó.
+ */
+export function signalChecklist(context, trade, recipe, names = {}) {
+  if (!context?.success || !trade) return null;
+  const items = [];
+  if (recipe?.slots?.length) {
+    const codes = [...new Set(recipe.slots.flatMap(slot => slot.codes))];
+    const votes = new Set(trade.votes || []);
+    const how = recipe.mode === 'threshold' && recipe.min < codes.length ? `al menos ${recipe.min} de ${codes.length}`
+      : recipe.mode === 'sequence' ? 'en secuencia' : recipe.mode === 'groups' ? 'por grupos' : codes.length > 1 ? 'todos' : '';
+    const within = recipe.window > 1 ? `en ${recipe.window} velas` : '';
+    const detail = [how, within].filter(Boolean).join(', ');
+    items.push({
+      ok: codes.some(code => votes.has(code)), label: `Elementos${detail ? ` (${detail})` : ''}`,
+      note: codes.map(code => `${votes.has(code) ? '✓' : '✗'} ${elementLabel(code, names[code])}`).join('  ')
+    });
+  }
+  for (const row of context.rows || []) {
+    const state = row.items.find(([t]) => t === context.signal)?.[1];
+    items.push({ ok: state === 1 ? true : state === 0 ? false : null, label: row.label, note: row.note || '' });
+  }
+  return { time: context.signal, entry: trade.entry_t, dir: trade.dir, items, all: items.length > 0 && items.every(item => item.ok === true) };
+}
+
+/** El cuadro de la señal para el gráfico: resalta su vela y lista cada condición */
+export function checklistBand(check, context, title) {
+  if (!check) return null;
+  return { kind: 'checklist', tf: context.tf * 60000, rows: (context.rows || []).length, time: check.time, title, items: check.items };
+}
+
 export const fmtR = (value, digits = 2) => (value === null || value === undefined ? '—' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}`);
 export const fmtPct = (value) => (value === null || value === undefined ? '—' : `${Number(value).toFixed(1)}%`);
 
