@@ -1348,6 +1348,8 @@ const MiniChart = forwardRef(({
     // 🎯 DIBUJAR VELAS PRIMERO (para que los overlays se vean encima)
     ctx.lineWidth = 1;
     const crispCandles = barWidth * pixelRatio() >= 1;
+    // Velas con ancho por volumen (Lector VPA): una parte del lugar de cada vela; sin ella, el 70% de siempre
+    const widthFactors = orderFlowReplacesCandles ? null : indicatorManagerRef.current?.candleWidthFactors?.(visibleCandles, displayCandles);
     if (!orderFlowReplacesCandles) visibleCandles.forEach((d, i) => {
       const x = marginLeft + (i * barWidth);
       const yOpen = marginTop + priceChartHeight - (d.open - minPrice) * yScale + verticalOffset;
@@ -1361,7 +1363,8 @@ const MiniChart = forwardRef(({
 
       // Mecha y cuerpo en píxeles reales enteros, con la mecha al centro del cuerpo.
       // Con velas más angostas que un píxel real se dibujan como siempre: miles caen en cada columna
-      const columns = crispCandles ? candleColumns(x + barWidth / 2, Math.max(barWidth * 0.7, 2)) : null;
+      const bodyShare = widthFactors?.[i] ?? 0.7;
+      const columns = crispCandles ? candleColumns(x + barWidth / 2, Math.max(barWidth * bodyShare, 2)) : null;
       if (columns) {
         const openCloseHeight = Math.abs(yClose - yOpen);
         const bodyTop = openCloseHeight < 2 ? (yOpen + yClose) / 2 - 1.5 : Math.min(yOpen, yClose);
@@ -1378,7 +1381,7 @@ const MiniChart = forwardRef(({
       ctx.stroke();
 
       const bodyHeight = Math.abs(yClose - yOpen);
-      const bodyWidth = Math.max(barWidth * 0.7, 2);
+      const bodyWidth = Math.max(barWidth * bodyShare, 2);
 
       if (bodyHeight < 2) {
         const y = (yOpen + yClose) / 2;

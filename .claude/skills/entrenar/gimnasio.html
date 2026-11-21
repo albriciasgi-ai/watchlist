@@ -1,4 +1,4 @@
-<title>Gimnasio de Order Flow</title>
+<title>Gimnasio Trading</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -135,7 +135,7 @@ summary { cursor: pointer; font-family: var(--display); font-weight: 700 }
   <header>
     <div>
       <div class="eyebrow">Tu práctica diaria · 10 a 15 minutos</div>
-      <h1>Gimnasio de Order Flow</h1>
+      <h1>Gimnasio Trading</h1>
       <p>Una habilidad pequeña a la vez, practicada en tu propia herramienta: predices, revelas y anotas. La teoría llega cuando la necesitas.</p>
     </div>
     <div class="stats" aria-label="Resumen">
@@ -304,6 +304,38 @@ const STAGES = [
               'Acierto si coincide. Repite con la vela siguiente.'],
       trap: 'XD y SM usan el delta exacto de cada trade; sin el almacén de flujo de esa fecha quedan vacíos.' },
   ]},
+  { id: 'sv', name: 'Leer el VPA', tool: APP1 + ', Lector VPA encendido (y, si quieres, «Velas con ancho por volumen»)', skills: [
+    { id: 'v1', kind: 'reconocer', name: 'Esfuerzo y resultado',
+      where: 'BTC 4h o 1h. Mira el volumen de la vela contra lo normal y su rango; no mires el cuadro del panel al predecir.',
+      steps: ['Elige una vela cerrada y di qué es: "esfuerzo sin resultado" (mucho volumen, poco rango), "resultado sin esfuerzo" (mucho rango, poco volumen), "validada" (rango ancho con volumen alto) o "normal".',
+              'Pasa el mouse por su columna en el panel del Lector VPA: el cuadro dice lo que leyó, con su grado.',
+              'Acierto si coincide la lectura principal (la de más grado, desde 50%). Repite con la siguiente.'],
+      trap: 'Lo normal es el de su misma hora, no el de las velas vecinas: una vela de la madrugada con volumen "chico" puede ser alta para su hora.' },
+    { id: 'v2', kind: 'reconocer', name: 'VPA: encuentra el elemento', codes: ['QA', 'QB', 'QF', 'QR', 'QS', 'QC'],
+      where: 'Lector VPA con las marcas de todos los elementos apagadas en el modal. El código de hoy cambia en cada sesión.',
+      steps: ['Lee qué es el código de hoy. En 30 velas, señala dónde crees que aparece.',
+              'Enciende solo ese elemento en el modal y mira dónde marca (más opaco, más grado).',
+              'Acierto: marca que señalaste. Una marca que no viste es un fallo.'],
+      trap: 'Todos se conocen al cerrar su vela; el retroceso sin volumen, además, solo existe después de una ruptura con volumen.' },
+    { id: 'v3', kind: 'anticipar', name: 'Ruptura: ¿con volumen sigue?',
+      where: 'Lector VPA con la ruptura con volumen (▲) y sin volumen (✕) encendidas. BTC 4h.',
+      steps: ['Al cerrar la primera vela fuera del rango de las 20 anteriores, antes de mirar la marca, di si es con volumen o sin él y si el precio seguirá en esa dirección 6 velas.',
+              'Mira la marca y reproduce 6 velas.',
+              'Anota las dos cosas: si leíste bien el volumen y si siguió.'],
+      trap: 'Es la única lectura con ventaja medida (4h, fases 1 y 2): aun así acierta 3 de cada 10 y gana grande cuando sigue. No es una señal.' },
+    { id: 'v4', kind: 'reconocer', name: 'El medidor: ¿fuerza o debilidad?',
+      where: 'Lector VPA con el medidor oculto (tápalo o desmarca «Medidor en el panel»). Mira las últimas 5 a 10 velas.',
+      steps: ['Di si el medidor está en fuerza, en debilidad o cerca de cero, sumando lo que leíste en las últimas velas.',
+              'Muestra el medidor.',
+              'Acierto si coincide el signo, y "cerca de cero" si queda entre −0.5 y +0.5.'],
+      trap: 'La evidencia se desvanece: lo de hace 5 velas pesa menos de un cuarto. La última anomalía manda más que el color de la tendencia.' },
+    { id: 'v5', kind: 'anticipar', name: 'Clímax o frenado: ¿se acaba el tramo?',
+      where: 'Lector VPA con el clímax (C) y el frenado (S) encendidos. BTC 4h o 1h.',
+      steps: ['Cuando salga una C o una S, di si el tramo ya hizo su extremo o si el precio lo superará en las 10 velas siguientes.',
+              'Reproduce 10 velas.',
+              'Anota y fíjate si la marca salió tras un tramo largo o corto.'],
+      trap: 'En la fase 1, como salida, el clímax rindió como un objetivo fijo: avisa que el tramo se cansa, no que gira.' },
+  ]},
   { id: 's3', name: 'El libro en vivo', tool: 'Suite · pestaña "Mapa" con Ladder y Cinta. Solo mirar, sin operar', skills: [
     { id: 'b1', kind: 'anticipar', name: 'Mapa: ¿rebota o cruza?',
       where: 'Capas: "Compra y venta", "Solo la sostenida" 30 min, filtro "Solo lo grande" en 60.',
@@ -404,6 +436,12 @@ const CODES = {
   AB: 'Absorción en el libro: se negoció contra un lado el doble de lo que esperaba, se quedó y el precio no pasó.',
   BL: 'Barrido del libro: un nivel sostenido de 15 minutos o más que el precio se comió.',
   LD: 'Libro delgado: poca liquidez a 0.25% del precio, comparado con el último día.',
+  QA: 'Esfuerzo sin resultado (VPA): mucho volumen para su hora y poco rango; avisa contra el color de la vela.',
+  QB: 'Ruptura con volumen (VPA): el primer cierre fuera del rango de 20 velas, con volumen alto.',
+  QF: 'Ruptura sin volumen (VPA): la misma ruptura con poco volumen; probable trampa.',
+  QR: 'Retroceso sin volumen (VPA): tras una ruptura con volumen, el precio vuelve al nivel con poco volumen y cierra a favor.',
+  QS: 'Frenado o techo (VPA): dos velas con mecha contra el tramo y volumen alto.',
+  QC: 'Clímax (VPA): dos o más velas de volumen ultra alto al mismo precio, al final de un tramo.',
 };
 /** El código que toca hoy en una habilidad con varios: rota con cada sesión anotada */
 const codeOfDay = (k, st) => (k.codes ? k.codes[st.list.length % k.codes.length] : null);
@@ -643,7 +681,7 @@ $('coachBtn').addEventListener('click', async () => {
   const recent = [...sessions].sort((a, b) => b.at - a.at).slice(0, 6).map(s => `${BYID[s.skill]?.name || s.skill}${s.code ? ' (' + s.code + ')' : ''}: ${s.hits}/${s.reps}${s.note ? ' — ' + s.note : ''}`).join('\n');
   const prompt = `Eres el entrenador de un trader que está aprendiendo order flow en cripto (Bybit). Aprende practicando, no le gusta leer teoría. Responde en español, en 6 líneas o menos, directo y concreto, sin listas largas ni jerga sin explicar. Si algo no se sabe o no está validado, dilo. Termina siempre con una sola tarea de 5 minutos que pueda hacer en su herramienta.
 
-Su herramienta: App 1 (reproducción histórica con fecha oculta; indicador Order Flow con footprints, imbalances y stacked; "Elementos OF" con códigos como EX Exhaustion Print, DT Delta Tail, DD Delta Divergence, AD Acumulación/Distribución, SW Market Sweep, BR barrido real, GR orden grande; Observador que registra cada orden y compara ganadoras con perdedoras). La suite en vivo: pestaña Mapa con el mapa de liquidez del libro (compra azul, venta naranja), Niveles sostenidos, Defensa de zona (letras D defensa, A absorción, B barrido, R retiro y rebote, X retiro y cruce, C consumida), Ladder con agregado/retirado en 5 s, Cinta de órdenes grandes, y en Elementos OF los eventos del libro AB absorción, BL barrido de un nivel sostenido y LD libro delgado (poca liquidez a 0.25% del precio).
+Su herramienta: App 1 (reproducción histórica con fecha oculta; indicador Order Flow con footprints, imbalances y stacked; "Elementos OF" con códigos como EX Exhaustion Print, DT Delta Tail, DD Delta Divergence, AD Acumulación/Distribución, SW Market Sweep, BR barrido real, GR orden grande; Observador que registra cada orden y compara ganadoras con perdedoras). La suite en vivo: pestaña Mapa con el mapa de liquidez del libro (compra azul, venta naranja), Niveles sostenidos, Defensa de zona (letras D defensa, A absorción, B barrido, R retiro y rebote, X retiro y cruce, C consumida), Ladder con agregado/retirado en 5 s, Cinta de órdenes grandes, y en Elementos OF los eventos del libro AB absorción, BL barrido de un nivel sostenido y LD libro delgado (poca liquidez a 0.25% del precio). En App 1 también el Lector VPA (Volume Price Analysis de Anna Coulling): volumen y rango de cada vela contra lo normal de su misma hora, por grados; esfuerzo sin resultado QA, ruptura con volumen QB y sin volumen QF, retroceso sin volumen QR, frenado QS, clímax QC, un medidor de fuerza y debilidad que se desvanece, y velas con ancho por volumen. De todo eso, solo la ruptura con volumen mostró ventaja medida (4h, fases 1 y 2).
 
 Habilidad que practica ahora: "${k.name}" (${KIND[k.kind]})${codeOfDay(k, st) ? `, código de hoy ${codeOfDay(k, st)}: ${CODES[codeOfDay(k, st)]}` : ""}. Lleva ${st.reps} repeticiones, ${pct(st.hits, st.reps)}% de acierto.
 Últimas sesiones:

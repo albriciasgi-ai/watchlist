@@ -1901,9 +1901,49 @@ La idea del libro: seguir en el trade mientras los retrocesos vienen con poco vo
   - Son 36 combinaciones sobre los mismos datos: no hay una salida VPA candidata.
 - Pruebas: una más en `test_vpa.py` (8), `rulefacets.test.mjs` (12) y `ruletester.test.mjs` (15). Probado en pantalla con una copia aislada: la ruptura con volumen en BTC 4h, fase 1, sin objetivo: 162 trades, el trade 10 con su salida por el VPA.
 
+### Fase 2 de la ruptura con volumen (21/11)
+
+La candidata de la fase 1: QB, 4h, a mercado, stop 1.5 ATR (máximo 8), objetivo 3R. Corrida con `start_all` (`OrderFlowData/research/vpa/fase2_qb.py`, `FASE2_QB.md`), así sus corridas quedan en el registro, el tablero y el candado de fases como las del botón.
+
+| Monedas | Fase | Trades | R por trade | Sobre el azar | Sobre el tramo | Monedas + | Trimestres + |
+|---|---|---|---|---|---|---|---|
+| De siempre (7) | 1 | 722 | +0.14 ±0.13 | +0.13 (−0.00 a +0.27) | +0.12 (−0.01 a +0.26) | 6 de 7 | 7 de 13 |
+| De siempre (7) | 2 | 520 | +0.16 ±0.16 | +0.17 (+0.01 a +0.33) | +0.13 (−0.03 a +0.29) | 6 de 7 | 4 de 6 |
+| Nuevas (43) | 1 | 4,407 | +0.06 ±0.05 | +0.10 (+0.05 a +0.16) | +0.08 (+0.02 a +0.13) | 29 de 43 | 7 de 12 |
+| Nuevas (43) | 2 | 2,985 | +0.21 ±0.07 | +0.22 (+0.16 a +0.29) | +0.18 (+0.11 a +0.24) | 35 de 43 | 5 de 6 |
+
+- En las monedas nuevas pasa el criterio en las dos fases (los dos controles con margen y R positivo). En las de siempre, la fase 2 supera al azar con margen y al tramo sin él.
+- Los cortos rinden más: en la fase 2 de las nuevas, +0.31 R contra +0.12 de los largos.
+- Es la primera regla del VPA que pasa la fase 2. La fase 3 no se corrió.
+
+### Velas con ancho por volumen (21/11)
+
+- Opción del modal del Lector VPA, `show.widthByVolume`, apagada de fábrica. El cuerpo de cada vela cerrada es `volumeWidthFactor(rv)` de su lugar: 0.7 × √(volumen relativo a su hora), entre 0.25 y 1. Con el volumen normal queda el 70% de siempre, y con el doble llena el lugar.
+- Las velas siguen en su lugar del tiempo: los indicadores, los dibujos y los footprints no se mueven.
+- `VPAIndicator.candleWidths()`, `IndicatorManager.candleWidthFactors()` y `MiniChart`, que lo pide antes de dibujar las velas. La vela en formación y la que todavía no tiene volumen normal de su hora quedan con el ancho de siempre.
+- Vale en la simulación manual, el 2.º gráfico, el backtesting global y la suite, porque usan el mismo `MiniChart`.
+- Prueba en `vpa.parity.test.mjs` (8).
+- **Probado en pantalla** con una copia aislada en BTC 4h, midiendo los cuerpos en el lienzo: apagada, 91 de 105 miden 5 px; encendida, 3, 5 o 7 px según el volumen.
+
+### Etapa VPA del Gimnasio (21/11)
+
+La etapa «Leer el VPA» en `.claude/skills/entrenar/gimnasio.html`, publicada en el Gimnasio, después de «Elementos del footprint». Tiene cinco habilidades:
+- v1, esfuerzo y resultado;
+- v2, encontrar el elemento (con código del día: QA, QB, QF, QR, QS y QC);
+- v3, si la ruptura con volumen sigue;
+- v4, leer el medidor;
+- v5, si un clímax o un frenado acaba el tramo.
+
+Lo demás:
+- **Fichas** en `fichas.md`.
+- **El entrenador de la página** ya conoce el lector.
+- **`verificar.py`** suma la lectura del Lector VPA de la vela: grados, medidor, tramo y elementos Q, con las velas hasta ella.
+
 ### Falta
 
-La fase 5 de la propuesta (el "ripple" entre marcos, la etapa del Gimnasio y el Observador contra el lector). La fase 2 de QB no se corrió.
+- El "ripple" entre marcos.
+- Que el Observador compare las lecturas del usuario con las del lector.
+- La fase 3 de la ruptura con volumen.
 
 ## RANGOS HORIZONTALES (20/11/2026)
 

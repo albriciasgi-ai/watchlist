@@ -585,6 +585,21 @@ class IndicatorManager {
     return this.indicators.reduce((sum, indicator) => sum + this.getPanelHeight(indicator), 0);
   }
 
+  // Ancho del cuerpo de cada vela a la vista (21/11): hoy solo el Lector VPA, con «Velas con ancho por volumen».
+  // Un arreglo con una parte del lugar de cada vela (o null para el ancho de siempre), o null si nadie lo pide
+  candleWidthFactors(visibleCandles, knownCandles) {
+    for (const indicator of this.indicators) {
+      if (!indicator.enabled || typeof indicator.candleWidths !== 'function') continue;
+      try {
+        const widths = indicator.candleWidths(visibleCandles, knownCandles);
+        if (widths) return widths;
+      } catch (error) {
+        console.error(`[${this.symbol}] Error en el ancho de las velas de ${indicator.name}:`, error);
+      }
+    }
+    return null;
+  }
+
   // Detrás de las velas (13/11): lo que un indicador dibuja como fondo. Hoy solo el mapa de liquidez de la suite
   hasBackgrounds() {
     return this.indicators.some(indicator => indicator.enabled && typeof indicator.renderBackground === 'function');

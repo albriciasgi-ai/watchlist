@@ -4,7 +4,7 @@ Una ficha por habilidad del gimnasio (mismo id que en `STAGES` de `gimnasio.html
 
 Cada ficha: **Qué es** (una frase), **En tu herramienta** (la regla real y dónde se ve), **Mira** (qué hay en la imagen), **Errores típicos**, **Tus datos** (lo medido; lo que no está medido se dice).
 
-Fuentes: `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` ("ORDER FLOW SOBRE LAS VELAS", "ELEMENTOS DE ORDER FLOW"), `12.AltagraciaTradingSuite/CLAUDE.md` (mapa, ladder, cinta, niveles, defensa, libro), `C:\Users\inven\OrderFlowData\research\orderflows_unlocked\` (`LEEME.md`, `CALIBRACION.md`) y los informes del price ladder en `reports/` del worktree `price-ladder-orderflow`.
+Fuentes: `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` ("ORDER FLOW SOBRE LAS VELAS", "ELEMENTOS DE ORDER FLOW", "LECTOR VPA"), la guía `1.Altagracia_Crypto_Backtester/Backtester/GUIA_VPA.pdf`, `12.AltagraciaTradingSuite/CLAUDE.md` (mapa, ladder, cinta, niveles, defensa, libro), `C:\Users\inven\OrderFlowData\research\orderflows_unlocked\` (`LEEME.md`, `CALIBRACION.md`) y los informes del price ladder en `reports/` del worktree `price-ladder-orderflow`.
 
 ## Lo que vale para todas
 
@@ -102,6 +102,54 @@ Desde el 16/11 la etapa 2 va por familias, como las agrupa el modal de Elementos
 - **En tu herramienta:** AB = se negoció contra un lado al menos el doble de lo que esperaba, se quedó y el precio no pasó (sobre el p90 de 24 h). BL = un nivel sostenido de 15 minutos o más consumido en la vela. LD = poca liquidez a 0.25% del precio (bajo el p5 de 24 h). Solo desde el 13/11/2026 y solo en la suite.
 - **Mira:** el mapa y la cinta: AB suele coincidir con un muro que no se va; BL con un nivel de "Niveles" que termina "consumido".
 - **Tus datos:** en BTC 5m, 12 horas: AB en 12 de 144 velas, BL 19; LD 31 de 288 en un día. Nada validado contra el azar.
+
+## El VPA (v1 a v5)
+
+- **La idea de Coulling:** el volumen es el esfuerzo y el rango de la vela el resultado. Si cuadran, el movimiento es genuino; si no, hay una anomalía. El libro no trae números: las reglas son propias, por grados de 0 a 100%.
+- **Lo normal es de su hora:** cada vela se compara con la mediana de su misma hora en los 30 días anteriores (volumen y rango). Así una vela de la madrugada no se juzga contra la apertura de Nueva York.
+- **El medidor** suma la evidencia de cada vela con signo (arriba fuerza, abajo debilidad) y cada vela se queda con el 75% de lo anterior.
+- **Velas con ancho por volumen** (opción del modal): el cuerpo es más ancho con más volumen frente a lo normal de su hora; el ancho de siempre es el volumen normal y el doble llena el lugar.
+- **Lo medido** (fase 1, 4h, siete monedas): solo la ruptura con volumen supera al azar (+0.12 a +0.14 R por trade, en el borde del margen); el esfuerzo sin resultado sirve para leer quién absorbe pero no anticipa el giro; la prueba de poco volumen y el cruce del medidor pierden; como salida, ninguna lectura supera al trailing.
+
+## v1 · Esfuerzo y resultado
+
+- **Qué es:** decir si una vela es esfuerzo sin resultado, resultado sin esfuerzo, validada o normal, antes de ver la lectura del lector.
+- **En tu herramienta:** volumen relativo = volumen ÷ mediana de su hora; rango relativo igual. Esfuerzo sin resultado = volumen alto (desde 1.2 veces, del todo en 1.8) con un rango menor que el que pide ese volumen; resultado sin esfuerzo = rango ancho con volumen bajo (bajo de 0.95 veces); validada = rango ancho, volumen alto y proporcionados. El cuadro del panel dice cada grado.
+- **Mira:** la barra de volumen contra las de la misma hora de días anteriores (no contra las vecinas) y el tamaño de la vela contra su ATR. Con «Velas con ancho por volumen», una vela ancha y corta es la imagen del esfuerzo sin resultado.
+- **Errores típicos:** comparar con las velas de al lado; llamar esfuerzo sin resultado a una vela grande con mucho volumen (esa es validada); olvidar que en 1D se compara con los días anteriores.
+- **Tus datos:** con el delta real de seis monedas, en las velas de esfuerzo sin resultado el lado contrario al color pesa más que en velas parecidas (15m: −0.042 en las verdes y +0.051 en las rojas). La lectura de Coulling se confirma en cripto.
+
+## v2 · VPA: encuentra el elemento
+
+- **Qué es:** encontrar los elementos del lector (QA, QB, QF, QR, QS, QC) antes de encender sus marcas.
+- **En tu herramienta:** cada uno cuenta desde el grado 0.5. Ruptura: el primer cierre a más de 0.1 ATR fuera del máximo o el mínimo de las 20 velas anteriores, con ese rango de hasta 6 ATR. Retroceso: en 8 velas vuelve a ½ ATR del nivel con volumen bajo y cierra a favor. Frenado: 2 de las 3 últimas velas con mecha contra el tramo, cierre en su mitad de ese lado y volumen alto, en un tramo de 2 ATR o más. Clímax: 2 o más velas de volumen ultra alto (2 a 3 veces) con mecha contra el tramo, a menos de 1 ATR entre sí. Frenado y clímax salen una vez por tramo.
+- **Mira:** dónde está el tramo (el zigzag de 2 ATR) y en qué parte de él cae la vela. Los elementos de giro salen al final de un tramo, no en el medio.
+- **Errores típicos:** buscar el clímax en una sola vela (pide dos); marcar como ruptura un cierre dentro del margen de 0.1 ATR; olvidar que el retroceso necesita antes una ruptura con volumen.
+- **Tus datos:** qué es cada código, en la tabla «Códigos».
+
+## v3 · Ruptura: ¿con volumen sigue?
+
+- **Qué es:** leer si la ruptura de un rango trae volumen y anticipar si el precio sigue.
+- **En tu herramienta:** QB (▲) con volumen alto, QF (✕) con volumen bajo. La marca sale al cerrar la vela de la ruptura.
+- **Mira:** el volumen de la vela de ruptura contra lo normal de su hora y si cierra lejos del nivel roto.
+- **Errores típicos:** juzgar la ruptura por el tamaño de la vela y no por su volumen; esperar que siga siempre: gana pocas veces y gana grande.
+- **Tus datos:** fase 1, 4h, siete monedas, a mercado con stop de 1.5 ATR y 3R: +0.14 R por trade (±0.13), +0.12 sobre los controles al azar, 6 de 7 monedas. Fase 2 (2024 a mediados de 2025), corrida el 21/11: en las monedas de siempre +0.16 R por trade (520 trades, +0.17 sobre el azar con margen, sobre seguir el tramo sin margen); en las 43 nuevas +0.21 R (2,985 trades, +0.22 y +0.18 sobre los dos controles con margen, 35 de 43 monedas). Pasa a la fase 3, que no se ha corrido. Detalle: `C:\Users\inven\OrderFlowData\research\vpa\FASE2_QB.md`. La ruptura sin volumen, operada en contra, no ganó.
+
+## v4 · El medidor: ¿fuerza o debilidad?
+
+- **Qué es:** sumar de cabeza la evidencia de las últimas velas y decir hacia dónde está el medidor.
+- **En tu herramienta:** cada vela aporta con signo: esfuerzo sin resultado y resultado sin esfuerzo, contra el color; validada, a favor; estrella, martillo, hanging man, doji y esfuerzo que se agota, según el tramo. Lo anterior se multiplica por 0.75 en cada vela. El umbral de fábrica es ±1 (las líneas punteadas).
+- **Mira:** la última anomalía fuerte y cuántas velas hace que fue.
+- **Errores típicos:** leer el medidor como la tendencia; olvidar que se desvanece rápido (a las 5 velas queda menos de un cuarto).
+- **Tus datos:** como filtro de entrada no mejoró al FVG nuevo ni a la ruptura de caja, y el cruce del umbral como señal perdió en las siete monedas. Es una ayuda de lectura.
+
+## v5 · Clímax o frenado: ¿se acaba el tramo?
+
+- **Qué es:** cuando sale un clímax (C) o un frenado (S), anticipar si el tramo ya hizo su extremo.
+- **En tu herramienta:** los dos van contra el tramo, una vez por tramo, y se conocen al cerrar su última vela.
+- **Mira:** cuánto llevaba el tramo (un clímax tras 1 ATR no es lo mismo que tras 6) y si las velas siguientes vienen con poco volumen.
+- **Errores típicos:** tomarlo como señal de giro: avisa cansancio, no dirección.
+- **Tus datos:** como entrada, el frenado dio +0.07 R y el clímax +0.04, dentro del margen. Como salida (fase 4), «clímax o frenado» rindió como un objetivo fijo de 3R y no superó al trailing de 4 ATR. No se midió si el tramo termina.
 
 ## b1 · Mapa: ¿rebota o cruza?
 
@@ -205,3 +253,7 @@ Desde el 16/11 la etapa 2 va por familias, como las agrupa el modal de Elementos
 | BR / GR | Barrido real (orden que cruzó 3 precios o más) / Orden grande |
 | DV / XD / SM | Tabla: Δ/Vol extremo / delta en su extremo / Small Min/Max Delta |
 | AB / BL / LD | Libro (solo la suite): absorción / barrido de un nivel sostenido / libro delgado |
+| QA | VPA: esfuerzo sin resultado (mucho volumen para su hora, poco rango), contra el color |
+| QB / QF | VPA: ruptura del rango de 20 velas con volumen / sin volumen (probable trampa) |
+| QR | VPA: retroceso sin volumen tras una ruptura con volumen |
+| QS / QC | VPA: frenado o techo / clímax, contra el tramo |

@@ -40,11 +40,22 @@ export function defaultVpaParams() {
 }
 
 /** Ajustes del indicador: los parámetros de la regla y lo que se dibuja */
+/**
+ * Ancho del cuerpo de una vela, en parte de su lugar, según su volumen relativo a su hora (rv): 0.7 con el volumen
+ * normal (el ancho de siempre), lo doble de volumen llena el lugar y poco volumen la angosta hasta 0.25. Raíz cuadrada:
+ * el contraste se ve sin que las velas de poco volumen desaparezcan. Sin volumen relativo todavía, null (ancho de siempre).
+ */
+export function volumeWidthFactor(rv) {
+  if (!Number.isFinite(rv) || rv < 0) return null;
+  return Math.max(0.25, Math.min(1, 0.7 * Math.sqrt(rv)));
+}
+
 export function defaultVpaConfig() {
   return {
     params: defaultVpaParams(),
     // La prueba de poco volumen sale muy seguido y en la fase 1 perdió: apagada de fábrica, como el cruce del medidor
-    show: { meter: true, marks: true, QA: true, QB: true, QF: true, QR: true, QT: false, QS: true, QC: true, QE: false },
+    // widthByVolume: el cuerpo de cada vela, más ancho cuanto más volumen tuvo frente a lo normal de su hora (apagado)
+    show: { meter: true, marks: true, widthByVolume: false, QA: true, QB: true, QF: true, QR: true, QT: false, QS: true, QC: true, QE: false },
     minPx: 3
   };
 }
