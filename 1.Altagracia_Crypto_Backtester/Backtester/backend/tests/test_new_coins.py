@@ -63,6 +63,8 @@ def test_la_busqueda_arma_reglas_con_las_piezas_nuevas():
     rule = rs.decode(old, cfg)
     assert rule["entry"]["type"] == "market" and rule["exit"]["trail"] == "none"
     assert "flow" not in rule and "regime" not in rule and "breakEven" not in rule["exit"]
-    off = rs.clean_config({"tfs": [240], "codes": ["IM"], "flow": False, "regime": False, "trailing": False, "straddle": False})
+    off = rs.clean_config({"tfs": [240], "codes": ["IM"], "flow": False, "regime": False, "trailing": False, "straddle": False,
+                           "stopEntry": False, "williams": False})  # 20/11: la orden stop a favor y los filtros de Williams y SMC
     opts = rs._options(off)
     assert opts["cvd"] == (None,) and opts["regime"] == (None,) and len(opts["trail"]) == 2 and len(opts["entry"]) == 3
+    assert opts["bwf"] == (None,) and opts["targetWeak"] == (False,)

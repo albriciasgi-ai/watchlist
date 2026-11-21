@@ -640,6 +640,10 @@ node tests/zonedefense.test.mjs
 node tests/ruletester.test.mjs
 node tests/horizontalranges.test.mjs
 node tests/regimedetectors.test.mjs
+node tests/williams.test.mjs
+node tests/smc.test.mjs
+node tests/williamssmc.parity.test.mjs
+node tests/rulefacets.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -1563,6 +1567,100 @@ regime.py (referencia y velas de la fase 1) + regime_detectors.py (detectores, c
 - **Pruebas:** `tests/test_regime.py` (20) y `tests/test_flow_elements.py` (5: FV y SP sin futuro, CVD real y estimado, OI conocido al cierre, identidad de la regla con la ida y vuelta por la ventana, y que el filtro de CVD vale para la regla y los controles). Probado en la copia aislada con BTC 4h: la pestaña, el dibujo y la lista. No se probó en 15m ni en otras monedas en pantalla.
 - **Falta:** valores afinados por marco en la ventana (hoy son los de 4h), y decidir con el usuario si las pausas dentro de una tendencia son rango.
 - **El Range Detection (atr_range) repinta** (hallado el 20/11 al pasarlo a JS): los cierres fuera de la caja que no alcanzan a terminar el rango (hasta `max_out` seguidos) no son rango en ese momento, pero si el precio vuelve, `z.end` los pasa y quedan como rango hacia atrás. En BTC 4h y 15m, cortando cada 7 velas, solo él cambia velas ya cerradas (16 y 32 con los afinados): su J de 0.19 mira un poco el futuro. Los otros siete y el rango mayor no cambian nada ya cerrado. No se corrigió en Python.
+
+## SMART MONEY CONCEPTS E INDICADORES DE BILL WILLIAMS (20/11/2026)
+
+Pedido del usuario: un indicador de Smart Money Concepts, con el gratuito de LuxAlgo para TradingView (`SMC_LUXALGO.txt`) como referencia, y los indicadores de Bill Williams de *Trading Chaos* (2.ª ed., el PDF de esta carpeta), en App 1 y en la suite. Tras el análisis eligió "todo, por fases" y pidió sumar los demás de Williams de conocimiento general (AC, zonas, Gator y MFI). Tres fases: los indicadores, las piezas del probador con una corrida contra el azar, y la detección en vivo en la suite.
+
+**El código de LuxAlgo no se copió:** su licencia es CC BY-NC-SA 4.0 (no comercial) y la suite puede venderse. Las reglas son propias, escritas a partir de las ideas.
+
+### Fase 1: los indicadores
+
+- **Lógica pura, sin dibujo** (`components/indicators/`):
+  - `williams.js`: Alligator, AO, AC, Gator, MFI, zonas, fractales y los tres sabios. Las reglas están en su encabezado. Ajustes en `williams_settings_{símbolo}`, un objeto por indicador (`defaultWilliamsConfig`).
+  - `smcStructure.js`: pivotes de tramo, estructura interna (5 velas) y mayor (50), BOS y CHoCH, order blocks con su vida, breakers, máximos y mínimos iguales con su barrido, rango premium/discount con extremo fuerte y débil, y niveles del día, la semana y el mes anteriores. Ajustes en `smc_settings_{símbolo}` (`defaultSmcConfig`).
+  - `smcExtras.js`: el POC y el delta reales de la vela de cada order block, del almacén de trades (`ObVolume`), y lo liquidado cerca de cada nivel de iguales, a 0.15% o menos (`EqLiquidations`, del indicador Liquidaciones).
+- **Indicadores** (`WilliamsIndicators.js` y `SMCIndicator.js`): Alligator (líneas, su proyección a la derecha y una tira de estado), Fractales, Tres sabios (numerados, con su entrada y su stop), Zonas de Williams (colorean las velas o una tira), AO, AC, Gator y MFI (paneles; el squat del MFI también sobre el precio) y "Estructura SMC".
+  - Todo sale de velas cerradas. Lo que se sabe después de su vela (un fractal, un pivote, un order block) va punteado hasta la vela en que se supo (`showBefore`).
+  - Se calculan por ventanas, como Rangos horizontales: velas de calentamiento antes de la vista, bordes en bloques de 200 y caché por clave (`WilliamsHub`).
+- **Modales:** `WilliamsSettings.jsx` (uno por indicador) y `SMCSettings.jsx`. Están en la simulación manual, el 2.º gráfico (con ajustes propios: `secondaryStorage.js`), el backtesting global (`ChartIndicatorSettings.jsx`) y la suite.
+- **Diferencias con LuxAlgo:**
+  - un pivote de 50 velas se sabe 50 velas después: aquí se dibuja punteado hasta entonces;
+  - el order block lleva su volumen real (POC · Δ) cuando la moneda tiene almacén;
+  - los iguales dicen lo liquidado cerca;
+  - premium/discount viene apagado de fábrica;
+  - cada pieza se puede elegir para el análisis del trade.
+- **Probado en pantalla** con una copia aislada en BTC 4h:
+  - el Alligator con su tira y su proyección, los fractales y los sabios numerados;
+  - los order blocks, BOS y CHoCH, un EQH con sus liquidaciones, POC · Δ real, PDH/PDL y premium/discount;
+  - los paneles AO, AC, Gator y MFI, y las zonas coloreando las velas;
+  - los modales aplican: apagar el 2.º sabio lo quitó.
+
+### Fase 2: el probador de reglas
+
+- **Python con paridad:** `backend/williams.py` y `backend/smc.py` repiten `williams.js` y `smcStructure.js`, con las mismas operaciones en el mismo orden. `tests/williamssmc.parity.test.mjs` los compara bit a bit con 1,500 y 3,000 velas al azar: 1,493 señales de los sabios, 229 rupturas, 229 order blocks y 59 iguales.
+- **Elementos nuevos** (en `CANDLE_CODES`: valen en todas las monedas, en 1D y en las acciones):
+  - **WD**, barra divergente (1.er sabio), y **WA**, tres barras del AO (2.º sabio): la zona es su vela;
+  - **WF**, ruptura de fractal (3.er sabio): el evento cae en la vela en que se supo el fractal, con la orden esperando hasta que el precio lo pasa (`info.expiry`). Solo los fractales que el precio pasa del lado correcto de los dientes;
+  - **BS**, ruptura de estructura: zona del nivel roto al cierre; `smc.break` elige BOS, CHoCH o los dos;
+  - **OB**, order block: nace con la ruptura y su zona es el OB (con entrada limit espera el regreso);
+  - **BK**, breaker: el OB roto, del lado contrario;
+  - **EQ**, barrido de iguales: contra el lado barrido; con `reclaim` la vela cierra de vuelta.
+
+  Parámetros: `wise` {lookback, angBars, minGapAtr, requireAo, teeth} y `smc` {scope (mayor o interna), swing, internal, break, pick, area, mitigation, eqLength, eqThreshold, reclaim}. Solo entran a la regla si están sus elementos.
+- **Entrada "Orden stop a favor"** (`entry.type: "stop"`, `{offset, expiry, cancel}`): una compra stop en el borde de arriba de la zona del elemento más `offset` ATR (una venta, en el de abajo). Espera `expiry` velas (WF: hasta que el precio pasa su fractal). Con `cancel`, se cancela si antes el precio pasa el otro borde. Se llena al cruzar, o en la apertura si salta. Si una vela toca los dos bordes decide el minuto a minuto (o el recorrido supuesto). Las limit y las stop se toman en el orden en que se llenan. El azar pone la orden stop en velas al azar, a la distancia mediana del cierre que tuvieron las de la regla.
+- **Salida "bajo el mínimo de las últimas N velas"** (`exit.trail: "bars"`, `trailBars`): la del libro, de 3 a 5 velas; solo se acerca.
+- **Objetivo en el rango SMC** (`targetAt: "weak"`): el máximo (largo) o el mínimo (corto) del rango mayor en la vela de la señal, donde espera la liquidez del lado débil. A menos de 0.3 R o ya pasado, no se opera. El azar usa en R el objetivo mediano de los trades.
+- **Filtros nuevos**, para cualquier regla, en el grupo "Williams y SMC" de la sección Filtros:
+  - `bwf.alligator`: `awake` (despierto a favor), `side` (el cierre del lado de los dientes) o `sleeping` (dormido, para operar rangos);
+  - `bwf.zone`: la zona de Williams a favor;
+  - `smcf.pd`: un largo solo en discount y un corto solo en premium;
+  - `smcf.bias`: a favor de la estructura mayor (de `smcf.swing` velas).
+
+  **Los controles al azar entran solo donde estos filtros dejan** (`_sided`, `_side_ok`), como con el CVD y el OI. El azar del tramo, también.
+- **Arreglos de paso:**
+  - `clean_rule()` perdía un objetivo de nivel (POC, borde, centro o rango SMC) al limpiar una regla ya limpia, que lo lleva arriba: quedaba con el cierre a las 96 velas. Pasaba al correr en todas las monedas una regla de la búsqueda. Ahora limpiar dos veces da lo mismo.
+  - El rango SMC se guarda por configuración (`_smc_range`): un contexto compartido entre reglas no devuelve el de otra.
+- **Ventana:** parámetros de los sabios y de la estructura, la orden stop, el objetivo en el rango y la salida de Williams en la pestaña Regla. Nombres cortos en `elementLabels.js` y `rule_tester.LABELS`. Piezas en `ruleFacets.js` (`wise`, `smc`, `alligator`, `zonaWilliams`, `premium`, `sesgo`) y textos en `describeRule`.
+- **Búsqueda genética** (`rule_search.py`, pestaña Búsqueda):
+  - los siete elementos;
+  - la orden stop (al final de `ENTRIES`) y la salida de Williams (al final de `TRAILS`, con `trailBars` 5 o 3);
+  - los parámetros de los sabios y de la estructura;
+  - los cuatro filtros y el objetivo en el rango. Empiezan apagados: un genoma guardado antes da la misma regla.
+
+  Casillas "orden stop a favor" y "filtros de Williams y SMC" (`stopEntry`, `williams`). La complejidad cuenta los cuatro filtros, y los controles de la búsqueda también respetan los filtros nuevos.
+- **Medido: fase 1, 4h, las siete monedas de siempre** (corridas en una copia del registro, no en el del usuario). Ninguna regla supera a los dos controles con margen:
+
+| Regla | Trades | Acierto | R | Azar | Ventaja (IC 95%) | Vs. tramo | Monedas + |
+|---|---|---|---|---|---|---|---|
+| Barra divergente como el libro: orden stop, stop en su extremo, bajo el mínimo de 5 velas | 1,669 | 30.3% | −0.06 | +0.01 | −0.07 (−0.16 a +0.02) | −0.09 | 1 de 7 |
+| Barra divergente con 2R | 1,426 | 29.5% | −0.17 | −0.05 | −0.11 (−0.19 a −0.04), peor que el azar | −0.10 | 0 de 7 |
+| AO tres barras como el libro | 1,607 | 25.1% | −0.02 | +0.03 | −0.04 (−0.18 a +0.09) | −0.06 | 3 de 7 |
+| Ruptura de fractal como el libro | 2,101 | 31.8% | +0.08 | +0.02 | +0.06 (−0.05 a +0.16) | −0.02 | 5 de 7 |
+| Los tres sabios juntos, como el libro | 2,694 | 28.2% | −0.04 | +0.01 | −0.05 (−0.13 a +0.04) | −0.11 | 2 de 7 |
+| Ruptura de fractal con el Alligator despierto a favor, 1.5 ATR y 3R | 757 | 27.7% | +0.07 | +0.07 | +0.01 (−0.13 a +0.14) | −0.00 | 4 de 7 |
+| Order block interno, limit, 2R | 775 | 31.4% | −0.09 | −0.03 | −0.06 (−0.16 a +0.04) | −0.04 | 1 de 7 |
+| Order block mayor de 20 velas, limit, 2R | 193 | 28.0% | −0.19 | −0.03 | −0.16 (−0.36 a +0.03) | −0.18 | 1 de 7 |
+| Order block interno en discount o premium, objetivo en el rango | 225 | 15.6% | −0.02 | −0.12 | +0.09 (−0.24 a +0.43) | +0.10 | 2 de 7 |
+| Ruptura de estructura mayor de 20, 1.5 ATR y 2R | 478 | 34.5% | −0.01 | −0.02 | +0.02 (−0.12 a +0.14) | +0.02 | 2 de 7 |
+| Breaker interno, limit, 2R | 728 | 34.8% | +0.01 | −0.04 | +0.05 (−0.06 a +0.16) | +0.06 | 4 de 7 |
+| Barrido de iguales con regreso, 2R | 197 | 33.5% | −0.08 | −0.06 | −0.02 (−0.22 a +0.18) | +0.00 | 1 de 7 |
+
+  Las dos con filtros de Williams o SMC van con el azar que respeta esos filtros. Con el azar sin filtrar, la del Alligator daba +0.03 sobre un azar de +0.05, y la del order block −0.01 sobre uno de −0.01: el filtro solo movía al azar.
+
+  La ruptura de fractal es lo único sobre el azar, y queda bajo seguir el tramo al azar: su ventaja es la tendencia. El breaker es lo más cercano a algo, sin margen. Son 12 reglas sobre los mismos datos: el umbral de suerte sube.
+- **Pruebas:** `tests/williams.test.mjs` (12), `tests/smc.test.mjs` (11), `tests/williamssmc.parity.test.mjs` (2), `tests/rulefacets.test.mjs` (9) y `backend/tests/test_williams_smc.py` (9). `test_new_coins.py` apaga también las casillas nuevas, y la búsqueda de `test_rule_search.py` corre sin ellas, con hasta 300 s de espera: en este PC tarda de 100 a 130 s, casi todo en los controles de las vecinas.
+  - **Todas las del backend** (20/11): 497 pasan. Fallan 2 que ya fallaban antes: `test_endpoints.py` espera la versión 2.7.0 y el servidor dice 2.6.0, y `test_lru_cache.py::test_clear` cuenta los fallos del caché que la propia prueba provoca.
+  - **Las de la página:** de 44 archivos, solo falla `liquidations.test.mjs`, como desde el 13/11. Pide que Liquidaciones sea el primer indicador; desde el 13/11 el primero es el mapa de liquidez, y ahora además van antes las Zonas de Williams, que repintan las velas.
+
+### Fase 3: en la suite
+
+La detección en el servidor al cierre de cada vela (sin enviar nada), su panel en la Watchlist, los order blocks en la defensa de zona y las medidas en el journal: ver `12.AltagraciaTradingSuite/CLAUDE.md`, "Sabios de Williams y estructura SMC".
+
+### Falta
+
+- Un control con order blocks desplazados, como el del perfil por sesión, para medir si la zona del OB importa.
+- Un detector de régimen "Alligator dormido" en la pestaña Régimen (hoy está como filtro).
 
 ## RANGOS HORIZONTALES (20/11/2026)
 

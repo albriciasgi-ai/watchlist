@@ -90,7 +90,7 @@ test('cada × de «Vas a correr» apaga solo su pieza', () => {
   const on = {
     ...user(), vwapMode: 'touch', regimeMode: 'outside', cvdOn: true, crowdMode: 'nocon', steadyOn: true, swing: true, momentum: true, confirm: true,
     useHours: true, filters: [{ key: 'x', op: '>=', value: 1 }], tpTrailOn: true, targetR: 3, breakEvenOn: true, useHorizon: true, opposite: true,
-    codes: [...user().codes, 'GC'], gcExit: 'band'
+    codes: [...user().codes, 'GC'], gcExit: 'band', bwAlligator: 'awake', bwZone: true, smcPd: true, smcBias: true
   };
   const before = keys(on);
   for (const [key, patch] of Object.entries(OFF_PATCH)) {
@@ -120,6 +120,31 @@ test('la escala en R de la salida: stop, entrada y lo que haya de salidas', () =
   const marks = exitScale({ ...defaultRule(), targetR: 3, tpTrailOn: true, tpTrailStart: 2.5, breakEvenOn: true, breakEven: 1.5, trailMode: 'atr', trailStartOn: true, trailStart: 1 });
   assert.deepEqual(marks.map(m => [m.r, m.kind]), [[-1, 'stop'], [0, 'entry'], [1, 'trail'], [1.5, 'even'], [2.5, 'drag'], [3, 'target']]);
   assert.deepEqual(exitScale({ ...defaultRule(), useTarget: false }).map(m => m.kind), ['stop', 'entry']);
+});
+
+test('los sabios de Williams y la estructura SMC en palabras, ida y vuelta por el backend', () => {
+  const rule = {
+    ...defaultRule(), name: 'sabios', tf: 240, codes: ['WD', 'WF', 'OB'], mode: 'atLeast', min: 1, window: 1, entryType: 'stop', entryExpiry: 6,
+    entryStopOffset: 0.1, wiseAngBars: 8, smcScope: 'internal', smcInternal: 7, bwAlligator: 'side', smcPd: true, trailMode: 'bars', trailBars: 4,
+    useTarget: true, targetAt: 'weak'
+  };
+  const back = toBackendRule(rule);
+  assert.deepEqual(back.entry, { type: 'stop', offset: 0.1, expiry: 6, cancel: true });
+  assert.deepEqual(back.bwf, { alligator: 'side' });
+  assert.deepEqual(back.smcf, { pd: true, swing: 50 });
+  assert.equal(back.exit.trail, 'bars');
+  assert.equal(back.exit.targetAt, 'weak');
+  const facets = Object.fromEntries(ruleFacets(back).map(f => [f.key, f.text]));
+  assert.match(facets.entrada, /^orden stop en el borde de la zona \+ 0.1 ATR, espera 6 velas/);
+  assert.equal(facets.alligator, 'cierre del lado de los dientes');
+  assert.match(facets.premium, /^largos en discount y cortos en premium/);
+  assert.match(facets.smc, /^estructura interna de 7 velas/);
+  assert.match(facets.wise, /angulación de 8/);
+  assert.equal(facets.objetivo, 'el máximo (largo) o el mínimo (corto) del rango mayor SMC');
+  assert.match(facets.trailing, /últimas 4 velas/);
+  // Cargar la regla de la corrida deja el formulario igual a ella
+  assert.deepEqual(ruleDifferences(toBackendRule(fromBackendRule(back)), back), []);
+  assert.match(describeRule(back), /orden stop en el borde de la zona/);
 });
 
 let failed = 0;

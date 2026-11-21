@@ -54,6 +54,48 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 20 Noviembre 2026: Smart Money Concepts e Indicadores de Bill Williams
+
+**Pedido:** un indicador de Smart Money Concepts, con el de LuxAlgo para TradingView como referencia, y los indicadores de Bill Williams de *Trading Chaos*, en App 1 y en la suite. Tras el análisis, el usuario eligió "todo, por fases" y pidió sumar los demás de Williams (AC, zonas, Gator y MFI).
+
+**Cambios:**
+1. **Nueve indicadores** en App 1 (simulación manual, 2.º gráfico y backtesting global) y en la suite, con sus modales: Alligator, Fractales, Tres sabios, Zonas de Williams, AO, AC, Gator, MFI y Estructura SMC.
+   - **Estructura SMC:** estructura interna y mayor con BOS y CHoCH, order blocks con su vida y breakers, máximos y mínimos iguales con su barrido, premium/discount con extremo fuerte y débil, y niveles del día, la semana y el mes anteriores.
+   - **Reglas propias:** el código de LuxAlgo tiene licencia no comercial y no se copió.
+   - **Sin futuro:** lo que se sabe después de su vela (un pivote de 50 velas, un fractal) va punteado hasta la vela en que se supo.
+   - El order block lleva el POC y el delta reales de su vela, y los iguales lo liquidado cerca.
+2. **Probador de reglas:**
+   - siete elementos: barra divergente, AO tres barras, ruptura de fractal, ruptura de estructura, order block, breaker y barrido de iguales;
+   - la entrada con orden stop a favor, la salida bajo el mínimo de N velas y el objetivo en el rango SMC;
+   - cuatro filtros: Alligator, zona de Williams, premium/discount y estructura a favor. Los controles al azar entran solo donde ellos dejan;
+   - la búsqueda genética usa todo eso, apagado de fábrica.
+3. **Fase 1 contra el azar** (4h, siete monedas, 12 reglas): ninguna supera a los dos controles con margen.
+   - La ruptura de fractal del libro da +0.08 R por trade, sobre el azar (+0.02) pero bajo seguir el tramo al azar.
+   - La barra divergente con 2R pierde más que el azar, con margen.
+   - Los order blocks no se distinguen del azar.
+4. **Suite:**
+   - el servidor detecta las siete señales al cierre de cada vela (de fábrica en 4h, con todas las monedas) y las anota en `data/wsmc`, sin enviar nada; panel en la Watchlist;
+   - los order blocks de 1h entran a la defensa de zona;
+   - doce medidas nuevas en el journal, en el grupo "Williams y SMC".
+5. **Arreglado:** `clean_rule()` perdía el objetivo de nivel (POC, borde o rango SMC) al limpiar otra vez una regla ya limpia, como al correr en todas las monedas una regla de la búsqueda. Quedaba con el cierre a las 96 velas.
+6. **Pruebas:**
+   - App 1: `williams.test.mjs` (12), `smc.test.mjs` (11), `williamssmc.parity.test.mjs` (2, Python igual a JavaScript bit a bit), `rulefacets.test.mjs` (9) y `test_williams_smc.py` (9);
+   - suite: `wise_smc_checks.py` (40) y `book_defense_checks.py` (21).
+   - todas las del backend de App 1: 497 pasan y fallan 2 que ya fallaban (`test_endpoints` por la versión y `test_lru_cache::test_clear`). En la página, `liquidations.test.mjs` sigue fallando en la prueba del orden de los indicadores, como desde el 13/11. Las de la suite pasan todas.
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. La suite se reinicia sola al abrirla y arma la página nueva.
+- Las medidas del journal pasan a la versión 3: las guardadas se vuelven a calcular, de a 8 por pedido.
+- **Probado:**
+  - en pantalla en App 1, con una copia aislada en BTC 4h: los nueve indicadores y sus modales;
+  - en la suite, en una copia aislada del servidor con velas reales de Bybit: las 20 monedas revisadas en 3.4 s, las señales de los dos últimos días en el panel, y el clic que abre la moneda en 4h.
+
+  Los order blocks de la defensa y las medidas del journal, solo con las pruebas. No se probó en Electron.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SMART MONEY CONCEPTS E INDICADORES DE BILL WILLIAMS (20/11/2026)" y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Sabios de Williams y estructura SMC (20/11)"
+
+---
+
 ### App 1 - 20 Noviembre 2026: Panel de la Regla más Claro (Backtesting Global)
 
 **Pedido:** una corrida de 7 trades parecía tener trailing y filtros que no eran. Los tenía, heredados de la B5, pero en el formulario no se notaba que estaban encendidos. El usuario pidió ideas para un panel más claro (las fichas de los elementos están bien) y eligió las ocho.

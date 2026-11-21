@@ -20,6 +20,8 @@ const REMOVED = '\u0000borrado'; // Quitado aquí: no vuelve a leer lo de la pri
 export const OWN_KEYS = [
   'orderflow_settings_',
   'fvg_settings_',
+  'williams_settings_',
+  'smc_settings_',
   'horizontal_ranges_settings_',
   'vp_periodic_settings_',
   'response_balance_settings_',

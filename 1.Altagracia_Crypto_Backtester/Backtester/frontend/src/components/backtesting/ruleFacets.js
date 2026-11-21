@@ -35,6 +35,8 @@ export const FACETS = {
   im: ['elementos', 'Impulso'],
   fv: ['elementos', 'FVG nuevo'],
   sp: ['elementos', 'Swing'],
+  wise: ['elementos', 'Tres sabios'],
+  smc: ['elementos', 'Estructura SMC'],
   vp: ['elementos', 'Perfil por sesión'],
   vaGap: ['elementos', 'Área de valor abandonada', 'sin hueco mínimo'],
   vwap: ['filtros', 'VWAP', 'sin filtro'],
@@ -44,6 +46,10 @@ export const FACETS = {
   oi: ['filtros', 'Interés abierto', 'sin filtro'],
   multitud: ['filtros', 'Multitud', 'sin filtro'],
   oiSostenido: ['filtros', 'OI sostenido', 'sin filtro'],
+  alligator: ['filtros', 'Alligator', 'sin filtro'],
+  zonaWilliams: ['filtros', 'Zona de Williams', 'sin filtro'],
+  premium: ['filtros', 'Premium y discount', 'sin filtro'],
+  sesgo: ['filtros', 'Tendencia de la estructura', 'sin filtro'],
   extremo: ['filtros', 'En un extremo', 'no'],
   momentum: ['filtros', 'Momentum', 'no'],
   confirmacion: ['filtros', 'Confirmación', 'no'],
@@ -144,6 +150,20 @@ export function ruleFacets(rule, labels = {}) {
   if (rule.cp && has('CP')) add('cp', rule.cp.maxHeight !== null && rule.cp.maxHeight !== undefined ? `cajas de hasta ${n(rule.cp.maxHeight)} ATR` : 'todas las cajas');
   if (rule.im && has('IM')) add('im', `${n(rule.im.atr)} ATR en ${rule.im.bars} velas${rule.im.range !== null && rule.im.range !== undefined ? `, vela ≥ ${n(rule.im.range)} ATR` : ''}`);
   if (rule.fv && has('FV')) add('fv', `hueco ≥ ${n(rule.fv.minAtr)} ATR`);
+  if (rule.wise && codes.some(code => ['WD', 'WA', 'WF'].includes(code))) {
+    const w = rule.wise;
+    add('wise', `${has('WD') ? `divergente bajo ${w.lookback} vela${w.lookback > 1 ? 's' : ''}, angulación de ${w.angBars}${n(w.minGapAtr) > 0 ? `, hueco ≥ ${n(w.minGapAtr)} ATR` : ''}${w.requireAo !== false ? ', AO en contra' : ''}` : ''}`
+      + `${has('WF') ? `${has('WD') ? '; ' : ''}fractal ${w.teeth !== false ? 'del lado correcto de los dientes' : 'sin mirar los dientes'}` : ''}` || 'como el libro');
+  }
+  if (rule.smc && codes.some(code => ['BS', 'OB', 'BK', 'EQ'].includes(code))) {
+    const m = rule.smc;
+    const scope = m.scope === 'internal' ? `interna de ${m.internal} velas` : `mayor de ${m.swing} velas`;
+    const parts = [`estructura ${scope}`];
+    if (has('BS') && m.break !== 'any') parts.push(`solo ${m.break === 'bos' ? 'BOS' : 'CHoCH'}`);
+    if (has('OB') || has('BK')) parts.push(`OB ${m.pick === 'opposite' ? 'la última vela contraria' : 'la vela del extremo'}${m.area === 'body' ? ', su cuerpo' : ''}, lo rompe ${m.mitigation === 'wick' ? 'una mecha' : 'un cierre'}`);
+    if (has('EQ')) parts.push(`iguales de ${m.eqLength} velas a ${n(m.eqThreshold)} ATR${m.reclaim !== false ? ', con regreso' : ''}`);
+    add('smc', parts.join(', '));
+  }
   if (rule.sp && has('SP')) add('sp', `${rule.sp.bars} velas por lado${rule.sp.minZ !== null && rule.sp.minZ !== undefined ? `, volumen z ≥ ${n(rule.sp.minZ)}` : ''}`);
   const resting = !!rule.vp && has('VE') && rule.vp.veEntry === 'resting';
   if (rule.vp && codes.some(code => VP_CODES.includes(code))) {
@@ -170,6 +190,10 @@ export function ruleFacets(rule, labels = {}) {
       conf: 'confluencia OI-volumen a favor', noconf: 'sin confluencia OI-volumen en contra' }[flow.oi]);
   }
   if (flow.crowd) add('multitud', flow.crowd === 'contra' ? 'solo contra la multitud' : 'sin ir con la multitud');
+  if (rule.bwf?.alligator) add('alligator', { awake: 'despierto a favor', side: 'cierre del lado de los dientes', sleeping: 'dormido' }[rule.bwf.alligator]);
+  if (rule.bwf?.zone) add('zonaWilliams', 'a favor (verde en un largo, roja en un corto)');
+  if (rule.smcf?.pd) add('premium', `largos en discount y cortos en premium (rango mayor de ${rule.smcf.swing} velas)`);
+  if (rule.smcf?.bias) add('sesgo', `a favor de la estructura mayor de ${rule.smcf.swing} velas`);
   if (flow.steady) add('oiSostenido', `OI sube en ${Math.round(Number(flow.steadyMin) * 100)}% o más de los pasos de ${flow.steadyDays} días`);
   if (recipe.swing?.on) add('extremo', `en un extremo de ${recipe.swing.bars} velas`);
   if (recipe.momentum) add('momentum', 'EMA 14 con pendiente a favor');
@@ -182,6 +206,7 @@ export function ruleFacets(rule, labels = {}) {
   const entry = rule.entry || {};
   if (resting) add('entrada', 'limit esperando en el borde del valor toda la sesión');
   else if (entry.type === 'limit') add('entrada', `limit en ${{ near: 'el borde cercano', mid: 'la mitad', far: 'el borde lejano' }[entry.at] || 'la zona'} de la zona, vence en ${entry.expiry} velas`);
+  else if (entry.type === 'stop') add('entrada', `orden stop en el borde de la zona${n(entry.offset) > 0 ? ` + ${n(entry.offset)} ATR` : ''}, espera ${entry.expiry} velas${entry.cancel !== false ? ', se cancela si antes pasa el otro borde' : ''}`);
   else if (entry.type === 'straddle') add('entrada', `dos órdenes stop a ${n(entry.offset)} ATR ${entry.from === 'zone' ? 'por fuera de la zona' : 'del cierre'}, vencen en ${entry.expiry} velas`);
   else add('entrada', 'a mercado, en la apertura siguiente');
 
@@ -189,7 +214,9 @@ export function ruleFacets(rule, labels = {}) {
   const stopBase = { swing: `swing anterior de ${stop.bars} velas`, candle: 'extremo de la vela del elemento', zone: 'borde lejano de la zona', atr: `${n(stop.atr)} ATR` }[stop.type] || stop.type;
   add('stop', `${stopBase}${stop.type !== 'atr' ? ` (margen ${n(stop.buffer)} ATR)` : ''} · máximo ${n(stop.maxAtr)} ATR`);
 
-  if (targetAt) {
+  if (targetAt === 'weak') {
+    add('objetivo', 'el máximo (largo) o el mínimo (corto) del rango mayor SMC');
+  } else if (targetAt) {
     add('objetivo', targetAt === 'mid' && rule.be && !rule.vp ? 'el centro de la caja'
       : { poc: 'el POC anterior', edge: 'el borde contrario del valor', mid: 'el centro del rango anterior' }[targetAt]);
   } else if (exit.targetR !== null && exit.targetR !== undefined) {
@@ -197,6 +224,7 @@ export function ruleFacets(rule, labels = {}) {
     if (exit.tpTrail) add('arrastre', `desde ${n(exit.tpTrail.start)}R, a ${tpTrailText({ dist: n(exit.tpTrail.dist), unit: exit.tpTrail.unit })} del mejor precio`);
   }
   if (exit.trail === 'swing') add('trailing', `al último swing confirmado de ${exit.trailBars} velas`);
+  if (exit.trail === 'bars') add('trailing', `bajo el mínimo (sobre el máximo) de las últimas ${exit.trailBars} velas`);
   if (exit.trail === 'atr' || exit.trail === 'pct') {
     const gap = exit.trail === 'atr' ? `${n(exit.trailAtr)} ATR` : `${n(exit.trailPct)}%`;
     add('trailing', `a ${gap} del mejor precio, ${exit.trailStart ? `desde ${n(exit.trailStart)}R` : 'desde la entrada'}`);
@@ -275,7 +303,8 @@ export function loadedSummary(rule, labels = {}) {
 /** Cómo se apaga cada pieza en el formulario (las fichas de «Vas a correr» con su ×). null: no se apaga así */
 export const OFF_PATCH = {
   vwap: { vwapMode: 'off' }, ema: { emaMode: 'off' }, regimen: { regimeMode: 'any' }, cvd: { cvdOn: false }, oi: { oiMode: 'off' },
-  multitud: { crowdMode: 'off' }, oiSostenido: { steadyOn: false }, extremo: { swing: false }, momentum: { momentum: false },
+  multitud: { crowdMode: 'off' }, oiSostenido: { steadyOn: false }, alligator: { bwAlligator: 'off' }, zonaWilliams: { bwZone: false },
+  premium: { smcPd: false }, sesgo: { smcBias: false }, extremo: { swing: false }, momentum: { momentum: false },
   confirmacion: { confirm: false }, horario: { useHours: false }, medidas: { filters: [] },
   objetivo: { useTarget: false }, arrastre: { tpTrailOn: false }, trailing: { trail: false, trailMode: 'off' }, aLaEntrada: { breakEvenOn: false },
   tiempo: { useHorizon: false }, contraria: { opposite: false }, canal: { gcExit: 'none' }

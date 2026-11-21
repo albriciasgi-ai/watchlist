@@ -20,6 +20,9 @@ import OrderFlowElementsSettings from '@app1/components/OrderFlowElementsSetting
 import OrderFlowSetupsSettings from '@app1/components/OrderFlowSetupsSettings';
 import VPPeriodicSettings from '@app1/components/VPPeriodicSettings';
 import ResponseVolumeSettings from '@app1/components/ResponseVolumeSettings';
+import WilliamsSettings from '@app1/components/WilliamsSettings';
+import SMCSettings from '@app1/components/SMCSettings';
+import { WILLIAMS_NAMES } from '@app1/components/indicators/williams.js';
 import { isNewTheme } from '@app1/components/uiTheme.js';
 import { Icon } from '@app1/components/uiIcons.jsx';
 import '@app1/components/drawing/DrawingToolbar.css';
@@ -101,11 +104,13 @@ const DEFAULT_STATES = {
   'Order Flow': true, 'FVG': false, 'VP Periodic': false, 'Volumen de Respuesta': false, 'Liquidaciones': false,
   'Elementos OF': false, 'VWAP': false, 'Range Detection': false, 'Rangos horizontales': false, 'Rejection Patterns': false, 'Double Top/Bottom': false,
   'Support & Resistance': false, 'S&R v2': false, 'Swing Detector': false,
+  'Estructura SMC': false, 'Alligator': false, 'Fractales': false, 'Tres sabios': false, 'Zonas de Williams': false,
+  'AO': false, 'AC': false, 'Gator': false, 'MFI': false,
 };
 const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP', 'Double Top/Bottom',
   'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic', 'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF',
-  'Rangos horizontales',
+  'Rangos horizontales', 'Estructura SMC', ...WILLIAMS_NAMES,
 ]);
 const DEFAULT_VP_CONFIG = {
   mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true,
@@ -865,6 +870,27 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
     const current = settingsFor ? manager() : null;
     if (!current) return null;
     const state = tabStates[activeTimeframe];
+    if (WILLIAMS_NAMES.includes(settingsFor)) {
+      return (
+        <WilliamsSettings
+          symbol={symbol}
+          which={settingsFor}
+          indicator={current.getWilliamsHub()}
+          onApply={(settings) => applyToAll(m => m.getWilliamsHub().setConfig(settings))}
+          onClose={closeSettings}
+        />
+      );
+    }
+    if (settingsFor === 'Estructura SMC') {
+      return (
+        <SMCSettings
+          symbol={symbol}
+          indicator={current.getSMCIndicator()}
+          onApply={(settings) => applyToAll(m => m.getSMCIndicator().updateConfig(settings))}
+          onClose={closeSettings}
+        />
+      );
+    }
     switch (settingsFor) {
       case 'Volume Profile':
         return (

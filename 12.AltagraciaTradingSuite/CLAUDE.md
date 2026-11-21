@@ -23,6 +23,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - el apalancamiento se cambia desde la suite (ver "Configuración del bot");
   - un día completo de la nube comparado con el archivo oficial (ver "Nube contra el archivo oficial");
   - "Exportar a Excel" en el dashboard (ver "Journal").
+- **Sabios de Williams y estructura SMC (20/11):** los indicadores de App 1 en el gráfico, la detección en el servidor (sin enviar nada), los order blocks en la defensa de zona y sus medidas en el journal. Ver "Sabios de Williams y estructura SMC".
 - **Falta:**
   - las alertas del Swing quedan para la central de alertas de confluencia;
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
@@ -61,10 +62,12 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── official.py        Baja los días oficiales que faltan (ingest.py y build_store.py del panel)
 │   ├── swing_rules.py     La regla del indicador Swing de App 1, en Python (sin red ni archivos)
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
+│   ├── wise_smc_watch.py  Sabios de Williams y estructura SMC del servidor (williams.py y smc.py de App 1): anota en data/wsmc; nunca envía
+│   ├── wise_smc_measures.py   Medidas de Williams y SMC de cada trade del journal (grupo "Williams y SMC")
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
 │   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (15) y book_events_checks.py (18), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18) y wise_smc_checks.py (40), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -129,6 +132,7 @@ Las rutas del mercado responden igual que las del backend de App 1, para que el 
 | `POST /api/bot/pause` | Pausa o reanuda todo el trading. Exige `{"paused": bool, "confirm": "CAMBIAR_PAUSA"}` |
 | `GET /api/suite/status` | Último día oficial, días en vivo, grabación (de la suite o del 11000), días oficiales, estado del bot y del Swing del servidor |
 | `GET /api/swing/status`, `/config`, `/signals/{symbol}`, `/log`; `POST /api/swing/config`, `/profile-rects/{symbol}` | Swing del servidor: ver "Swing del servidor" |
+| `GET /api/wsmc/status`, `/config`, `/log`; `POST /api/wsmc/config` | Sabios de Williams y estructura SMC del servidor: ver "Sabios de Williams y estructura SMC" |
 | `GET/POST /api/suite/symbols`, `DELETE /api/suite/symbols/{symbol}` | Monedas de la suite. Una nueva se comprueba en Bybit (perpetuo USDT que cotiza) y empieza a grabarse |
 | `GET /api/ticker/{symbol}` | Último precio de Bybit (caché de 1 s), para el panel de trading |
 | `GET /api/bot/config`, `/settings`, `/directions`, `/credentials/check`, `/position/{symbol}`, `/logs` | Lectura del bot |
@@ -930,6 +934,23 @@ Pedido del usuario. En el gráfico principal y en la Watchlist, después de 4h: 
 - **No en la pestaña "Mapa":** el libro existe desde el 13/11, así que sigue con los cinco marcos de siempre.
 - **Probado** en la copia aislada con velas reales de BTC: los tres marcos se dibujan, la vela en curso queda marcada, footprints de 1D con step 250 y Swing de 1D con 249 señales. Ningún pedido de los marcos nuevos falló. No se probó en Electron.
 
+## Sabios de Williams y estructura SMC (20/11)
+
+Pedido del usuario: un indicador de Smart Money Concepts (con el de LuxAlgo como referencia) y los indicadores de Bill Williams de *Trading Chaos* y los demás conocidos, en App 1 y en la suite, "todo, por fases". Las reglas, los indicadores y el probador están en App 1: `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, "SMART MONEY CONCEPTS E INDICADORES DE BILL WILLIAMS". Aquí, lo de la suite.
+
+- **En el gráfico:** los nueve indicadores de App 1, importados sin copiarlos, con sus modales: Alligator, Fractales, Tres sabios, Zonas de Williams, AO, AC, Gator, MFI y Estructura SMC (`ChartView.jsx`: `DEFAULT_STATES` y `WITH_SETTINGS`). La Watchlist ofrece los livianos: Estructura SMC, Alligator, Fractales, Tres sabios, Zonas de Williams y AO.
+- **Detección en el servidor** (`server/wise_smc_watch.py`, como el Swing del servidor): 4 s después del cierre de cada vela del marco pide a Bybit las últimas 1,000 velas de cada moneda (REST, solo lectura), deja fuera la vela en curso y anota las señales que se supieron desde la revisión anterior. Usa `williams.events` y `smc.events` de App 1, las mismas del probador.
+  - **Cuándo se sabe cada una:** barra divergente y tres barras del AO, al cerrar su vela (la entrada es una orden stop en su extremo); ruptura de fractal, al cerrar la vela que pasa el fractal del lado correcto de los dientes (el probador la pone donde se supo el fractal, con la orden esperando; en vivo solo se sabe que valió cuando el precio lo pasa); ruptura de estructura, order block nuevo, breaker y barrido de iguales, al cerrar la vela que los da. Se anotan las dos estructuras, la mayor (50 velas) y la interna (5), con `scope`.
+  - **De fábrica:** encendida, en 4h y con todas las monedas de la suite (`symbols: "all"`: una moneda agregada entra sola). Las siete señales y los parámetros de fábrica del probador.
+  - **Registro:** `data/wsmc/signals/AAAA-MM-DD.jsonl` por día UTC en que se supo: moneda, marco, código, nombre, dirección, vela, `known_at`, `detected_at`, `delay_ms`, zona (`lo`, `hi`), `info` y el texto ("BOS bajista de la estructura mayor en 0.3003"). Configuración en `data/wsmc/config.json` (con temporal y reemplazo; un archivo dañado no se pisa y la detección queda apagada). Un solo proceso detecta por carpeta (`detector.lock`); el que toma el relevo lee los dos últimos días y no repite. Una pausa del PC se recupera al volver, con su demora. Una moneda agregada a la suite, o un marco o una moneda que se vuelven a vigilar, anotan desde ese momento: lo de antes no se anota tarde. Al guardar sobre un archivo dañado, este queda copiado en `config.danado-<fecha>.json`. `SUITE_WSMC=0` la apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
+  - **Rutas:** `GET /api/wsmc/status` (si detecta, marco, monedas, señales de hoy y, por moneda, última revisión, señales y error; `sends: false`), `GET /api/wsmc/config`, `POST /api/wsmc/config` (`enabled`, `interval` 15m, 1h, 4h o 1D, `symbols` "all" o una lista, `codes`, `wise` y `smc`; un valor inválido responde 400 y nada cambia) y `GET /api/wsmc/log?symbol&limit&day`.
+  - **No envía nada**, ni al bot ni a otro lado: queda para la central de alertas de confluencia. Ninguna de estas señales superó al azar en el probador.
+- **Panel** (`WatchlistView.jsx`): en el panel del Swing, debajo, "Sabios de Williams y estructura SMC": si detecta, encenderla o apagarla, el marco que vigila y las últimas 30 señales (hora de Colombia, moneda y señal; el texto completo al pasar el mouse). Un clic abre la moneda en el gráfico, en el marco de la señal. Se lee cada 30 s mientras se ve el panel.
+- **Defensa de zona** (`book_defense.py`): suma a las zonas automáticas los order blocks de 1 hora (`ob_zones`), con `smc.compute` de App 1 (interna de 5 y mayor de 50) sobre las velas del almacén de trades de 12 días: cada uno desde el cierre de la vela que rompe la estructura hasta el cierre de la vela que lo rompe (así se ve la visita que lo rompió). Los 8 más recientes vivos en las horas pedidas, de hasta 1.5% de alto, con el nombre "OB 1h alcista interno" o "mayor". `book_study` (la medición de semanas) no los usa.
+- **Journal** (`wise_smc_measures.py`, medidas versión 3: las guardadas se vuelven a calcular): doce medidas en el grupo "Williams y SMC", en 4h y 1h, con las velas que ya pide `journal_measures` cortadas en la última cerrada antes de decidir y leídas desde el lado del trade: Alligator (1 despierto a favor, −1 en contra, 0 dormido), zona de Williams, AO a favor en ATR, estructura mayor SMC a favor, lugar en el rango mayor (0 en el extremo a favor: discount en un largo) y distancia al order block vivo más cercano del lado del trade, en ATR. Van en el detalle y en el informe de ganadoras contra perdedoras.
+- **Pruebas:** `server/tests/wise_smc_checks.py` (40): `detect()` igual a los eventos de App 1, lo sabido hasta una vela no cambia con las siguientes, cada señal anotada una vez y solo desde el arranque, sin repetir al reiniciar, la pausa, la moneda agregada, el marco retomado, la configuración (también la dañada), las rutas y las medidas del journal. `book_defense_checks.py` suma 6 (21): los order blocks son los de `smc.compute` y los ya sabidos no cambian con menos velas.
+- **Probado** (20/11) en una copia aislada del servidor (13300, datos en una carpeta temporal, sin grabar ni bot) con velas reales de Bybit: las 20 monedas de fábrica en 4h, revisadas en 3.4 s, anotaron las señales de los dos últimos días (por ejemplo un BOS bajista de TRX en 0.3003 y su order block nuevo de 0.3225 a 0.3242). El panel se vio en la Watchlist a 1366 px y un clic en la señal abrió TRX en 4h. Los order blocks de la defensa y las medidas del journal solo con las pruebas. No se probó en Electron.
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -975,6 +996,7 @@ C:\Python314\python.exe -B tests\ladder_checks.py
 C:\Python314\python.exe -B tests\book_levels_checks.py
 C:\Python314\python.exe -B tests\book_defense_checks.py
 C:\Python314\python.exe -B tests\book_events_checks.py
+C:\Python314\python.exe -B tests\wise_smc_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.

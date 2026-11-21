@@ -18,7 +18,10 @@ export const ELEMENT_LABELS = {
   LIQ: 'Barrido de liquidaciones', VH: 'Volumen alto', VR: 'Regreso al valor', VF: 'Fallo fuera del valor',
   VX: 'Aceptación fuera del valor', VE: 'Borde del valor', CC: 'Cambio de carácter', HM: 'Martillo o estrella',
   EN: 'Envolvente', DJ: 'Doji', RF: 'Flecha de volumen', RB: 'Rombo de volumen', GC: 'Canal gaussiano',
-  BX: 'Ruptura de caja', BE: 'Borde de caja', CP: 'Compresión', FV: 'FVG nuevo', SP: 'Swing', IM: 'Impulso'
+  BX: 'Ruptura de caja', BE: 'Borde de caja', CP: 'Compresión', FV: 'FVG nuevo', SP: 'Swing', IM: 'Impulso',
+  // Bill Williams (los tres sabios) y estructura SMC (20/11)
+  WD: 'Barra divergente', WA: 'AO tres barras', WF: 'Ruptura de fractal',
+  BS: 'Ruptura de estructura', OB: 'Order block', BK: 'Breaker', EQ: 'Barrido de iguales'
 };
 
 /** Nombre corto de un código; sin nombre conocido, el código o el nombre que se pase. */

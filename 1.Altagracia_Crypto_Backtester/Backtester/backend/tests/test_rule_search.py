@@ -99,10 +99,13 @@ def test_busqueda_y_validacion_no_se_mezclan(monkeypatch):
 def test_la_busqueda_corre_guarda_y_la_validacion_sale_solo_al_terminar(monkeypatch, tmp_path):
     fake_market(monkeypatch)
     monkeypatch.setattr(rs, "search_dir", lambda: tmp_path)
+    # Sin la orden stop a favor ni los filtros de Williams y SMC (20/11): la misma busqueda de antes; esas piezas se prueban
+    # en test_williams_smc.py. Casi todo el tiempo son los controles de las vecinas de cada finalista: en este PC tarda de
+    # 100 a 130 s, y la espera es de hasta 300 s
     answer = rs.start({"tfs": [TF], "codes": ["RF", "HM", "EN"], "split": SPLIT, "seed": 5, "population": 6, "generations": 2,
-                       "minTrades": 10, "minCoins": 1})
+                       "minTrades": 10, "minCoins": 1, "stopEntry": False, "williams": False})
     assert answer["success"]
-    for _ in range(600):
+    for _ in range(1500):
         if rs.job_status(answer["job"])["state"] != "running":
             break
         time.sleep(0.2)

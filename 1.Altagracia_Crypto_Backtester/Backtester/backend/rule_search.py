@@ -49,8 +49,9 @@ TARGETS = (1.0, 1.5, 2.0, 3.0, 5.0, None)
 HORIZONS = (None, 24, 96)
 WINDOWS = (1, 2, 3, 5)
 # Las opciones nuevas van al final de cada lista: una búsqueda guardada antes conserva el sentido de sus genes
-ENTRIES = (("market", "near"), ("limit", "near"), ("limit", "mid"), ("straddle", "zone"), ("straddle", "close"))
-TRAILS = ("none", "swing", ("atr", 3.0), ("atr", 4.0), ("pct", 5.0))
+ENTRIES = (("market", "near"), ("limit", "near"), ("limit", "mid"), ("straddle", "zone"), ("straddle", "close"),
+           ("stop", "zone"))   # 20/11: una orden stop a favor en el borde de la zona (los sabios de Williams)
+TRAILS = ("none", "swing", ("atr", 3.0), ("atr", 4.0), ("pct", 5.0), "bars")  # bars: bajo el mínimo de N velas (Williams)
 LINES = (None, ("vwap", 50, "side"), ("vwap", 200, "side"), ("ema", 14, "touch"), ("ema", 50, "side"), ("ema", 200, "side"))
 
 # Nombre del gen → opciones. Los genes de un elemento solo pesan si el elemento está en la regla: un cambio en uno
@@ -74,6 +75,14 @@ GENES = {
     "regime": (None, "outside", "inside", "breakout"), "regimeMajor": (True, False),
     # Desde el 19/11, segunda tanda: la multitud por el funding y el OI sostenido (también empiezan apagados)
     "crowd": (None, "nocon", "contra"), "steady": (False, True),
+    # Desde el 20/11: los tres sabios de Williams, la estructura SMC y sus filtros (también empiezan apagados)
+    "trailBars": (5, 3),
+    "wiseLookback": (1, 3), "wiseAng": (5, 3, 10), "wiseAo": (True, False), "wiseTeeth": (True, False),
+    "smcScope": ("swing", "internal"), "smcSwing": (50, 20, 100), "smcInternal": (5, 3, 10), "smcBreak": ("any", "bos", "choch"),
+    "smcPick": ("extreme", "opposite"), "smcArea": ("full", "body"), "smcMitigation": ("close", "wick"),
+    "smcEq": (0.1, 0.25), "smcReclaim": (True, False),
+    "bwf": (None, "awake", "side", "sleeping"), "bwZone": (False, True), "smcPd": (False, True), "smcBias": (False, True),
+    "targetWeak": (False, True),
 }
 
 _lock = threading.Lock()
@@ -122,6 +131,8 @@ def clean_config(raw):
         # Piezas que la búsqueda puede usar además de los elementos (todas de fábrica)
         "flow": raw.get("flow") is not False, "regime": raw.get("regime") is not False,
         "trailing": raw.get("trailing") is not False, "straddle": raw.get("straddle") is not False,
+        # Desde el 20/11: la orden stop a favor y los filtros de Williams y SMC (con el objetivo en el rango SMC)
+        "stopEntry": raw.get("stopEntry") is not False, "williams": raw.get("williams") is not False,
         # Al terminar, las finalistas se corren también en las monedas nuevas (que nunca eligieron nada)
         "checkNew": raw.get("checkNew") is not False,
         # Y en las acciones (otro mercado): una regla de cripto que también gana ahí difícilmente es suerte
@@ -148,8 +159,13 @@ def _options(cfg):
         opts["regime"] = (None,)
     if not cfg.get("trailing", True):
         opts["trail"] = TRAILS[:2]
+    # Sin las dos órdenes stop o sin la orden stop a favor, esas entradas salen de la lista; las demás conservan su lugar
     if not cfg.get("straddle", True):
-        opts["entry"] = ENTRIES[:3]
+        opts["entry"] = tuple(e for e in opts["entry"] if e[0] != "straddle")
+    if not cfg.get("stopEntry", True):
+        opts["entry"] = tuple(e for e in opts["entry"] if e[0] != "stop")
+    if not cfg.get("williams", True):
+        opts["bwf"], opts["bwZone"], opts["smcPd"], opts["smcBias"], opts["targetWeak"] = (None,), (False,), (False,), (False,), (False,)
     return opts
 
 
@@ -157,7 +173,7 @@ def random_genome(cfg, rng):
     opts = _options(cfg)
     genome = {name: rng.randrange(len(values)) for name, values in opts.items()}
     # Reglas simples primero: el segundo y el tercer elemento, y el filtro de línea, empiezan apagados más seguido
-    for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady"):
+    for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady", "bwf", "bwZone", "smcPd", "smcBias", "targetWeak"):
         if len(opts[name]) > 1 and rng.random() < 0.6:
             genome[name] = 0
     return genome
@@ -181,6 +197,9 @@ def decode(genome, cfg):
         entry_type, entry_at = "straddle", "zone"  # La compresión no tiene dirección: solo va con las dos órdenes
     if entry_type == "straddle":
         entry = {"type": "straddle", "from": entry_at, "offset": pick["straddleOff"], "expiry": 12}
+    elif entry_type == "stop":
+        # En el borde de la zona del elemento, como el libro: espera 5 velas y se cancela si antes pasa el otro borde
+        entry = {"type": "stop", "offset": 0.0, "expiry": 5, "cancel": True}
     else:
         entry = {"type": entry_type, "at": entry_at, "expiry": 3}
     trail = pick["trail"]
@@ -189,6 +208,10 @@ def decode(genome, cfg):
     if not isinstance(trail, str):
         exit_["trailAtr" if trail[0] == "atr" else "trailPct"] = trail[1]
         exit_["trailStart"] = pick["trailStart"]
+    elif trail in ("swing", "bars"):
+        exit_["trailBars"] = pick["trailBars"]  # Solo pesa con esas salidas: en las demás la regla queda igual
+    if pick["targetWeak"]:
+        exit_["targetAt"] = "weak"  # El máximo o el mínimo del rango mayor SMC en vez de un múltiplo del riesgo
     raw = {
         "name": "Búsqueda", "tf": tf, "invert": pick["invert"],
         "recipe": {"slots": [{"codes": [c]} for c in codes], "mode": "strict" if need >= len(codes) else "threshold",
@@ -207,6 +230,13 @@ def decode(genome, cfg):
         "fv": {"minAtr": pick["fvMin"]}, "sp": {"bars": pick["spBars"], "minZ": pick["spMinZ"]},
         "im": {"bars": pick["imBars"], "atr": pick["imAtr"]},
         "flow": {"cvd": pick["cvd"], "oi": pick["oi"], "crowd": pick["crowd"], "steady": pick["steady"]},
+        # Solo entran a la regla si están sus elementos (clean_rule): con otros, cambiarlos no cambia la regla
+        "wise": {"lookback": pick["wiseLookback"], "angBars": pick["wiseAng"], "requireAo": pick["wiseAo"], "teeth": pick["wiseTeeth"]},
+        "smc": {"scope": pick["smcScope"], "swing": pick["smcSwing"], "internal": pick["smcInternal"], "break": pick["smcBreak"],
+                "pick": pick["smcPick"], "area": pick["smcArea"], "mitigation": pick["smcMitigation"],
+                "eqThreshold": pick["smcEq"], "reclaim": pick["smcReclaim"]},
+        "bwf": {"alligator": pick["bwf"], "zone": pick["bwZone"]},
+        "smcf": {"pd": pick["smcPd"], "bias": pick["smcBias"], "swing": pick["smcSwing"]},
     }
     if pick["regime"]:
         raw["regime"] = {"mode": pick["regime"], "major": pick["regimeMajor"], "majorOut": 6, "after": 6}
@@ -223,9 +253,10 @@ def rule_key(rule):
 
 
 def complexity(rule):
-    flow = rule.get("flow") or {}
+    flow, bwf, smcf = rule.get("flow") or {}, rule.get("bwf") or {}, rule.get("smcf") or {}
     return (len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
-            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(rule.get("regime")))
+            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(rule.get("regime"))
+            + bool(bwf.get("alligator")) + bool(bwf.get("zone")) + bool(smcf.get("pd")) + bool(smcf.get("bias")))
 
 
 # ==================== EVALUACIÓN ====================
@@ -286,6 +317,11 @@ class Evaluator:
         core = {"stop": base_rule["stop"], "exit": {**base_rule["exit"], "opposite": False}, "gc": rule.get("gc"),
                 "invert": rule["invert"] if rule.get("gc") else False, "entry": base_rule["entry"],
                 "regime": rule.get("regime"), "flow": rule.get("flow")}
+        for name in ("bwf", "smcf"):
+            if rule.get(name):
+                core[name] = rule[name]
+        if rule.get("smcf"):
+            core["smc"] = rule.get("smc")  # El rango de los filtros SMC sale con la estructura de la regla
         # El control al azar se guarda por lado (largos y cortos aparte) y se mezcla con la proporción de cada regla:
         # así lo comparten todas las reglas con el mismo stop y la misma salida
         key = json.dumps([symbol, tf, segment, kind, core, None if kind == "random" else leg], sort_keys=True, default=str)
@@ -308,21 +344,21 @@ class Evaluator:
                 allowed = [k for k in range(lo, hi - 2) if mask[k]]
                 if len(allowed) < 50:
                     return None
-            flow = rule.get("flow")
-            fctx = {**item["ctx"], "bars": item["span"]["bars"]} if flow else None
+            sided = rt._sided(rule)
+            fctx = {**item["ctx"], "bars": item["span"]["bars"]} if sided else None
             straddle = base_rule["entry"]["type"] == "straddle"
             taken = 0
             by_quarter = {}
-            for number in range(CTRL_TRADES * (6 if flow else 1)):
-                if flow and taken >= CTRL_TRADES:
+            for number in range(CTRL_TRADES * (6 if sided else 1)):
+                if sided and taken >= CTRL_TRADES:
                     break
                 k = allowed[rng.randrange(len(allowed))] if allowed is not None else rng.randrange(lo, hi - 2)
                 side = int(direction[k]) if kind == "leg" else (1 if number % 2 == 0 else -1)
                 if side == 0:
                     continue
                 sides = (side,) if kind == "leg" or not straddle else (1, -1)
-                if flow:
-                    sides = tuple(sd for sd in sides if rt._flow_ok(flow, fctx, k, sd))
+                if sided:
+                    sides = tuple(sd for sd in sides if rt._side_ok(rule, fctx, k, sd))
                     if not sides:
                         continue
                 taken += 1

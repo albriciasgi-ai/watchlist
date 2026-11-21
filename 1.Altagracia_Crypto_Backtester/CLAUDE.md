@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Smart Money Concepts e Indicadores de Bill Williams
+
+Nueve indicadores con reglas propias: Alligator, Fractales, Tres sabios, Zonas de Williams, AO, AC, Gator, MFI y Estructura SMC (estructura interna y mayor, order blocks, breakers, iguales, premium/discount y niveles anteriores), sin futuro. En el probador, siete elementos, la orden stop a favor, la salida de Williams, el objetivo en el rango SMC y cuatro filtros; en la fase 1 de 4h ninguna regla superó a los controles. Detalle en `Backtester/CLAUDE.md`, "SMART MONEY CONCEPTS E INDICADORES DE BILL WILLIAMS (20/11/2026)".
+
 ### Noviembre 2026: Probador de Reglas del Observador
 
 Ventana aparte (`?probador=1`) que corre una regla de elementos de order flow, con entrada, stop y salida, sobre tres fases fijas del histórico: explorar, validar y comprobar. Muestra la fase completa con la caja de cada trade, sin reproducción, y da el informe de todos los trades contra entradas al azar. Detalle en `Backtester/CLAUDE.md`, "PROBADOR DE REGLAS DEL OBSERVADOR (17/11/2026)".
