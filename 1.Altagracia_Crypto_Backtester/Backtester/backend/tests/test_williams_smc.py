@@ -112,6 +112,30 @@ def test_el_tercer_sabio_espera_hasta_que_el_precio_pasa_su_fractal():
             assert (bars[j]["h"] <= e["hi"]) if side > 0 else (bars[j]["l"] >= e["lo"])
 
 
+def test_sin_orden_stop_la_ruptura_de_fractal_se_sabe_al_romperlo():
+    # 21/11: con entrada a mercado, el evento iba en la vela en que se supo el fractal y la regla entraba antes de que
+    # el precio lo rompiera, sabiendo que lo haría. Sin la orden stop, el evento va en la vela que lo rompe
+    bars = walk(1500, seed=21)
+    waiting = williams.events(bars, 240, None, ("WF",))
+    broken = williams.events(bars, 240, None, ("WF",), at_hit=True)
+    assert len(waiting) == len(broken) > 0
+    for w, b in zip(sorted(waiting, key=lambda e: (e["info"]["fractal"], e["dir"])),
+                    sorted(broken, key=lambda e: (e["info"]["fractal"], e["dir"]))):
+        assert b["t"] == w["t"] + w["info"]["expiry"] * MS
+        k = next(i for i, bar in enumerate(bars) if bar["t"] == b["t"])
+        assert (bars[k]["h"] > b["hi"]) if b["dir"] > 0 else (bars[k]["l"] < b["lo"])
+    # El probador elige según la entrada
+    span = {"bars": bars}
+    market = rt._williams_events(rule_of(("WF",)), span)
+    stop = rt._williams_events(rule_of(("WF",), entry={"type": "stop"}), span)
+    assert all(e["info"].get("atHit") for e in market) and not any(e["info"].get("atHit") for e in stop)
+    # Una corrida guardada antes del arreglo con la ruptura de fractal a mercado no se reusa; con la orden stop, sí
+    old = {"engine": 3, "rule": {"recipe": {"slots": [{"codes": ["WF"]}]}, "entry": {"type": "market"}}}
+    assert rt._stale(old)
+    assert not rt._stale({**old, "rule": {**old["rule"], "entry": {"type": "stop"}}})
+    assert not rt._stale({**old, "engine": rt.ENGINE})
+
+
 def test_los_elementos_smc_y_sus_zonas():
     bars = walk(3000, seed=4)
     found = smc.events(bars, 240, {"swing": 20, "internal": 5}, ("BS", "OB", "BK", "EQ"))

@@ -119,7 +119,8 @@ def _on_candles(symbol, tf):
 # Monedas nuevas: velas de 1h y 4h de Bybit que baja candles_update.py, fuera del repositorio. Nunca se usaron para
 # elegir reglas: sirven para comprobar en todas sus fechas una regla elegida en las de App 1
 EXTRA_DIR = pathlib.Path(os.environ.get("TESTER_CANDLES", r"C:\Users\inven\OrderFlowData\candles"))
-EXTRA_KEYS = {60: ("60", 1), 240: ("240", 1), 1440: ("240", 6)}
+EXTRA_KEYS = {5: ("5", 1), 15: ("15", 1), 30: ("15", 2), 60: ("60", 1), 240: ("240", 1), 1440: ("240", 6)}
+EXTRA_FINE = ("5", "15")  # Desde el 21/11, cada uno en su carpeta (candles/15/{moneda}.json.gz), para no cargarlos con 1h y 4h
 GROUPS = ("base", "new", "stocks", "all")
 # Acciones de EE. UU. (Alpaca), que baja alpaca_candles.py (otra sesión): velas de 15 minutos, 1 hora, 4 horas y 1 día
 # desde 2016, solo de la sesión regular. Las de 1h y 4h empiezan a las 09:30 de Nueva York y el día a la medianoche
@@ -170,6 +171,17 @@ def _candle_path(symbol):
     return own if own.exists() or not extra.exists() else extra
 
 
+def has_candles(symbol, tf):
+    """Si una moneda nueva tiene el archivo de velas de ese marco (sin abrirlo). Las demás, siempre."""
+    path = _candle_path(symbol)
+    if path.parent != EXTRA_DIR:
+        return True
+    name = EXTRA_KEYS.get(tf, (None,))[0]
+    if name is None:
+        return False
+    return (EXTRA_DIR / name / f"{symbol}.json.gz").exists() if name in EXTRA_FINE else path.exists()
+
+
 def candle_bars(symbol, tf):
     """Velas cerradas del caché de App 1 en el marco de la regla, con la forma de las del almacén (sin delta)."""
     path = _candle_path(symbol)
@@ -177,6 +189,8 @@ def candle_bars(symbol, tf):
         return _stock_bars(symbol, tf, path)
     extra = path.parent == EXTRA_DIR
     keys = EXTRA_KEYS if extra else CANDLE_KEYS
+    if extra and tf in keys and keys[tf][0] in EXTRA_FINE:
+        path = EXTRA_DIR / keys[tf][0] / f"{symbol}.json.gz"
     if tf not in keys or not path.exists():
         return []
     key = (symbol, tf, path.stat().st_mtime)
@@ -1451,13 +1465,15 @@ def _williams_events(rule, span):
     if not wise or not bars:
         return []
     codes = tuple(c for slot in rule["recipe"]["slots"] for c in slot["codes"] if c in williams.CODES)
-    key = (_bars_key(bars), rule["tf"], "wise", json.dumps(wise, sort_keys=True), codes)
+    # La ruptura de fractal se sabe al pasar el precio por él: solo la orden stop puede esperar en el fractal desde antes
+    at_hit = rule["entry"]["type"] != "stop"
+    key = (_bars_key(bars), rule["tf"], "wise", json.dumps(wise, sort_keys=True), codes, at_hit)
     with _lock:
         found = _extra.get(key)
     if found is None:
         cfg = {"lookback": wise["lookback"], "angBars": wise["angBars"], "minGapAtr": wise["minGapAtr"], "requireAo": wise["requireAo"],
                "alligatorFilter": wise["teeth"]}
-        found = williams.events(bars, rule["tf"], cfg, codes)
+        found = williams.events(bars, rule["tf"], cfg, codes, at_hit=at_hit)
         with _lock:
             _extra[key] = found
             while len(_extra) > 6:
@@ -2300,14 +2316,19 @@ def _runs_path():
 # minuto a minuto de la moneda, como la regla (antes iban sin él y, con dos órdenes stop o una limit, la ventaja de las
 # monedas con almacén salía inflada), y una vela dudosa sin minutos se resuelve con su recorrido supuesto en vez de
 # contar siempre el stop (_minute_path). Las corridas anteriores conservan lo suyo: el número dice cómo se hicieron
-ENGINE = 3
+ENGINE = 4
 
 
 def _stale(record):
-    """Corrida que salió mal por un fallo ya corregido: una acción con el régimen medido en 1D, antes de la versión 2."""
-    reg = (record.get("rule") or {}).get("regime") or {}
-    return (record.get("engine", 1) < 2 and reg.get("tf") == DAILY and record.get("tf", DAILY) < DAILY
-            and is_stock(record.get("symbol", "")))
+    """Corrida que salió mal por un fallo ya corregido: una acción con el régimen medido en 1D, antes de la versión 2, o
+    una regla con la ruptura de fractal sin la orden stop, antes de la 4 (entraba sabiendo que el precio lo rompería)."""
+    rule = record.get("rule") or {}
+    reg = rule.get("regime") or {}
+    if (record.get("engine", 1) < 2 and reg.get("tf") == DAILY and record.get("tf", DAILY) < DAILY
+            and is_stock(record.get("symbol", ""))):
+        return True
+    codes = {c for slot in (rule.get("recipe") or {}).get("slots") or [] for c in slot.get("codes") or []}
+    return record.get("engine", 1) < 4 and "WF" in codes and (rule.get("entry") or {}).get("type") != "stop"
 
 
 def _run_path(run_id):
@@ -2748,6 +2769,8 @@ def _plan(rule, phase_number, group="base"):
             row.update(action="stored", run=same[-1]["id"])  # La corrida es determinista: no se repite
         elif phase is None or not phase["available"]:
             row["reason"] = "sin datos de esa fase"
+        elif _on_candles(symbol, rule["tf"]) and not has_candles(symbol, rule["tf"]):
+            row["reason"] = "sin velas de ese marco (candles_update.py --tf 15,5)"
         elif codes_for(symbol, rule["tf"]) is not None and codes - codes_for(symbol, rule["tf"]):
             row["reason"] = f"corre sobre velas: no puede usar {_labels(sorted(codes - codes_for(symbol, rule['tf'])))}"
         elif info["blocked"]:

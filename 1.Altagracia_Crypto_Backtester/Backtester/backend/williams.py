@@ -237,8 +237,11 @@ def wise_men(o, h, l, c, series, cfg=None):
     return out
 
 
-def events(bars, tf, cfg=None, codes=("WD", "WA", "WF")):
-    """Eventos del probador: {code, dir, t, known, lo, hi, info} con la forma de los de of_elements."""
+def events(bars, tf, cfg=None, codes=("WD", "WA", "WF"), at_hit=False):
+    """Eventos del probador: {code, dir, t, known, lo, hi, info} con la forma de los de of_elements.
+    El 3.er sabio va en la vela en que se supo su fractal, para la orden stop que espera en él (info["expiry"]: las velas
+    hasta que el precio lo pasa). Con at_hit va en la vela que lo pasa: para cualquier otra entrada, porque antes de esa
+    vela no se sabe si el precio lo pasará (21/11: con entrada a mercado, la regla entraba sabiendo que lo rompería)."""
     tf_ms = int(tf) * 60000
     o, h, l, c = [b["o"] for b in bars], [b["h"] for b in bars], [b["l"] for b in bars], [b["c"] for b in bars]
     series = compute(h, l, c, cfg)
@@ -248,10 +251,12 @@ def events(bars, tf, cfg=None, codes=("WD", "WA", "WF")):
         code = code_of[s["wise"]]
         if code not in codes:
             continue
-        i = s["index"]
+        i = s["hit"] if s["wise"] == 3 and at_hit else s["index"]
         t = bars[i]["t"]
         if s["wise"] == 3:
-            info = {"wise": 3, "fractal": bars[s["fractal"]]["t"], "level": s["entry"], "expiry": s["hit"] - i}
+            info = {"wise": 3, "fractal": bars[s["fractal"]]["t"], "level": s["entry"], "expiry": s["hit"] - s["index"]}
+            if at_hit:
+                info["atHit"] = True
             out.append({"code": code, "dir": s["dir"], "t": t, "known": t + tf_ms, "lo": s["entry"], "hi": s["entry"], "info": info})
         else:
             out.append({"code": code, "dir": s["dir"], "t": t, "known": t + tf_ms, "lo": l[i], "hi": h[i],

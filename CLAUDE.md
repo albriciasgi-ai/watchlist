@@ -54,6 +54,33 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 21 Noviembre 2026: Ruptura de Fractal sin Futuro y Monedas Nuevas en 15m y 5m (Backtesting Global)
+
+**Pedido:** una corrida de los sabios de Williams en 15m, fase 1, en todas las monedas, tomó solo 8 y daba cifras prometedoras (684 trades, +0.21 R por trade, 8 de 8 monedas positivas). El usuario pidió revisarla, y después bajar las velas de las monedas nuevas en los demás marcos.
+
+**Cambios:**
+1. **La ruptura de fractal miraba el futuro:**
+   - con entrada a mercado, el evento iba en la vela en que se supo el fractal, pero solo existía si el precio lo rompía después;
+   - en los 684 trades la regla decidió antes de la ruptura.
+
+   Ahora, salvo con la orden stop (que espera en el fractal, como en el libro), va en la vela que lo rompe. La suite ya lo hacía bien.
+2. **Motor 4:** las corridas anteriores con la ruptura de fractal y otra entrada no se reusan ni se cuentan.
+3. **La regla corregida:** 1,531 trades, 41.4% y −0.105 R por trade, igual que el azar en cada moneda.
+4. **Monedas nuevas en 15m, 30m y 5m:**
+   - `candles_update.py --tf 15,5` baja esos marcos desde 2020, cada uno en su carpeta (`OrderFlowData/candles/15/` y `/5/`);
+   - el probador las lee, y 30m sale de dos velas de 15m;
+   - el plan de «todas las monedas» salta con su motivo la moneda sin velas de ese marco: antes quedaba para correr y daba 0 trades.
+5. **Pruebas:** una nueva en `test_williams_smc.py` y otra ampliada en `test_new_coins.py`. Todas las del backend: 503 pasan y fallan las 2 de siempre.
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- La corrida de 684 trades sigue en el disco, pero queda fuera del tablero y de «Todas»: hay que volver a correr la regla.
+- Sin almacén de trades, en 15m y 5m las monedas nuevas corren solo con los elementos de velas.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Ruptura de fractal sin futuro y monedas nuevas en 15m y 5m (21/11)"
+
+---
+
 ### App 1 - 21 Noviembre 2026: Los Indicadores de la Regla en el Trade Elegido (Backtesting Global)
 
 **Pedido:** al hacer clic en un trade no se pintaban en el gráfico los indicadores que usó la regla. Se veían las marcas de sus elementos y las filas de sus filtros, pero no el Alligator, los fractales ni el AO, por ejemplo. El usuario lo probó en la fase 1 y no sabía si pasaba en las otras.

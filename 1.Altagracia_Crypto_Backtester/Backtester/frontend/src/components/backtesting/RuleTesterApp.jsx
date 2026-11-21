@@ -392,7 +392,7 @@ const RuleTesterApp = () => {
           const main = found.t.map((t, i) => ({ timestamp: t, open: found.o[i], high: found.h[i], low: found.l[i], close: found.c[i], volume: found.v[i] }));
           data = { ...(marketRef.current || {}), symbol, timeframes: { ...(marketRef.current?.timeframes || {}), [chartTf]: { main, extended: true } } };
         } catch (error) {
-          if (active) setStatus(`No hay velas de ${chartTf} para ${symbol}. Las monedas nuevas tienen 1H y 4H; las acciones, 15M, 1H y 4H.`);
+          if (active) setStatus(`No hay velas de ${chartTf} para ${symbol}. Las monedas nuevas tienen 1H y 4H, y 5M y 15M si se bajaron (candles_update.py --tf 15,5); las acciones, 15M, 1H y 4H.`);
           return;
         }
         marketRef.current = data;
