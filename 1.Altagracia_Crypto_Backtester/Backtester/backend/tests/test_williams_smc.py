@@ -209,3 +209,125 @@ def test_la_busqueda_usa_las_piezas_nuevas_y_un_genoma_de_antes_da_la_misma_regl
     off = rs._options(rs.clean_config({"tfs": [240], "codes": ["WD"], "stopEntry": False, "williams": False, "straddle": False}))
     assert all(e[0] not in ("stop", "straddle") for e in off["entry"]) and off["entry"][:3] == rs.ENTRIES[:3]
     assert off["bwf"] == (None,) and off["smcPd"] == (False,) and off["targetWeak"] == (False,)
+
+
+# ==================== AO, AC, GATOR Y MFI COMO FILTROS (21/11) ====================
+
+def test_los_filtros_nuevos_de_williams_solo_entran_si_se_piden():
+    old = rule_of(("WA",), bwf={"alligator": "awake"})
+    assert old["bwf"] == {"alligator": "awake"}, "una regla de antes queda igual"
+    junk = rule_of(("WA",), bwf={"alligator": "awake", "ao": None, "ac": "", "gator": "despierto", "mfi": "verde"})
+    assert rt.rule_hash("X", junk) == rt.rule_hash("X", old), "lo que no es un modo no entra"
+    full = rule_of(("WA",), bwf={"ao": "both", "ac": "zero", "gator": "eating", "mfi": "volume"})
+    assert full["bwf"] == {"ao": "both", "ac": "zero", "gator": "eating", "mfi": "volume"}
+    assert full == rt.clean_rule(full), "limpiarla otra vez la deja igual"
+    assert "bwf" not in rule_of(("WA",), bwf={"ao": "x", "gator": "awake"})
+
+
+def test_gator_y_mfi_como_el_grafico_y_los_filtros_del_ao_el_ac_el_gator_y_el_mfi():
+    bars = walk(900, seed=11)
+    h, l, c, v = ([b[key] for b in bars] for key in ("h", "l", "c", "vol"))
+    s = williams.compute(h, l, c, v=v)
+    n = len(bars)
+    # Gator: arriba |mandíbula − dientes| y abajo |dientes − labios|; MFI: rango ÷ volumen (como williams.js)
+    for i in range(n):
+        if s["jaw"][i] == s["jaw"][i] and s["teeth"][i] == s["teeth"][i]:
+            assert s["gUp"][i] == abs(s["jaw"][i] - s["teeth"][i])
+        if s["teeth"][i] == s["teeth"][i] and s["lips"][i] == s["lips"][i]:
+            assert s["gDown"][i] == abs(s["teeth"][i] - s["lips"][i])
+        assert s["mfi"][i] == (h[i] - l[i]) / v[i]
+    for i in range(1, n):
+        mfi_up, vol_up = s["mfi"][i] > s["mfi"][i - 1], v[i] > v[i - 1]  # Velas al azar: sin empates
+        assert s["mfiType"][i] == ((1 if vol_up else 3) if mfi_up else (4 if vol_up else 2))
+    assert {1, 2, 3, 4} <= set(s["mfiType"])
+    for k in range(60, n, 7):
+        up, down = s["gUpDir"][k], s["gDownDir"][k]
+        for side in (1, -1):
+            ok = lambda piece: williams.filter_ok(piece, s, k, side)
+            for key in ("ao", "ac"):
+                color, zero = s[key + "Dir"][k] == side, s[key][k] * side > 0
+                assert ok({key: "color"}) == color and ok({key: "zero"}) == zero and ok({key: "both"}) == (color and zero)
+            assert ok({"gator": "eating"}) == (up == 1 and down == 1)
+            assert ok({"gator": "open"}) == (up == 1 or down == 1)
+            assert ok({"gator": "sleeping"}) == (up == -1 and down == -1)
+            for mode, kinds in williams.MFI_MODES.items():
+                assert ok({"mfi": mode}) == (s["mfiType"][k] in kinds)
+            assert ok({"ao": "zero", "gator": "open"}) == (ok({"ao": "zero"}) and ok({"gator": "open"})), "juntos, todos a la vez"
+    # Lo que todavía no se sabe no pasa: el AO pide 34 velas y el MFI, el volumen
+    assert not williams.filter_ok({"ao": "color"}, s, 10, 1) and not williams.filter_ok({"ao": "color"}, s, 10, -1)
+    assert not williams.filter_known({"ao": "color"}, s, 10) and williams.filter_known({"ao": "color"}, s, 100)
+    plain = williams.compute(h, l, c)
+    assert "mfiType" not in plain and not williams.filter_ok({"mfi": "green"}, plain, 100, 1)
+
+
+def test_la_corrida_y_el_azar_con_el_ao_de_tres_barras_y_los_filtros_nuevos(monkeypatch):
+    bars = walk(2500, seed=9)
+    piece = {"ao": "zero", "gator": "open", "mfi": "volume"}
+    base = dict(entry={"type": "stop", "expiry": 5}, stop={"type": "candle", "maxAtr": 20}, exit={"targetR": 2})
+    plain = rt.run("TEST", rule_of(("WA",), **base), {"bars": bars, "events": []}, PHASE)
+    result = rt.run("TEST", rule_of(("WA",), bwf=piece, **base), {"bars": bars, "events": []}, PHASE)
+    assert 0 < result["summary"]["n"] < plain["summary"]["n"], "el filtro quita trades"
+    assert result["skipped"].get("filtro de Williams", 0) > 0
+    s = williams.compute(*([b[key] for b in bars] for key in ("h", "l", "c")), v=[b["vol"] for b in bars])
+    index = {b["t"]: i for i, b in enumerate(bars)}
+    assert all(williams.filter_ok(piece, s, index[t["signal"]], t["dir"]) for t in result["trades"]), "cada trade pasó en su señal"
+    # Los controles al azar entran solo donde los filtros dejan
+    ctx = rt._context("TEST", 240, bars)
+    ctx["minutes"], ctx["bars"] = None, bars
+    seen = []
+    monkeypatch.setattr(rt, "simulate", lambda rule, c, k, side, **kw: seen.append((k, side)))
+    rt._baseline(rule_of(("WA",), bwf=piece, stop={"type": "atr", "atr": 1.5, "maxAtr": 20}, exit={"targetR": 2}), ctx,
+                 [{"dir": 1, "stop_atr": 1.5}, {"dir": -1, "stop_atr": 1.5}], "TEST")
+    assert len(seen) > 200 and all(williams.filter_ok(piece, s, k, side) for k, side in seen)
+
+
+def test_el_trade_elegido_muestra_una_fila_por_filtro_de_williams_y_smc(tmp_path, monkeypatch):
+    monkeypatch.setattr(rt.observer, "OBSERVER_DIR", tmp_path)
+    monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
+    bars = walk(2500, seed=9)
+    span = {"bars": bars, "events": []}
+    monkeypatch.setattr(rt, "detect_span", lambda *a, **k: span)
+    rt._replays.clear()
+    rule = rule_of(("WA",), bwf={"alligator": "side", "zone": True, "ao": "color", "ac": "both", "gator": "open", "mfi": "notFake"},
+                   smcf={"bias": True, "swing": 20}, smc={"swing": 20}, stop={"type": "atr", "atr": 1.5, "maxAtr": 20}, exit={"targetR": 2})
+    result = rt.run("TEST", rule, span, PHASE, None, base=False)
+    assert result["trades"], "con todos los filtros quedan trades"
+    run_id = rt._save(result, "sabios")
+    s = williams.compute(*([b[key] for b in bars] for key in ("h", "l", "c")), v=[b["vol"] for b in bars])
+    index = {b["t"]: i for i, b in enumerate(bars)}
+    # Cada vela de la fila del AC dice lo mismo que el filtro, y en gris las que todavía no tienen el dato
+    first = rt.trade_context(run_id, result["trades"][0]["n"])
+    ac_row = next(row for row in first["rows"] if row["key"] == "bwAC")
+    for t, state in ac_row["items"]:
+        i = index[t]
+        expected = williams.filter_ok({"ac": "both"}, s, i, first["side"]) if williams.filter_known({"ac": "both"}, s, i) else None
+        assert state == (None if expected is None else int(expected))
+    for trade in result["trades"][:5]:
+        ctx = rt.trade_context(run_id, trade["n"])
+        assert ctx["success"] and ctx["same"]
+        rows = {row["key"]: row for row in ctx["rows"]}
+        assert set(rows) == {"bwAlligator", "bwZone", "bwAO", "bwAC", "bwGator", "bwMfi", "smcBias"}
+        for key, row in rows.items():
+            state = dict((t, s) for t, s in row["items"])
+            assert state[trade["signal"]] == 1, f"{key} pasa en la vela de la señal: {row['note']}"
+            assert row["note"], key
+        assert rows["bwMfi"]["label"].startswith("MFI") and "vela" in rows["bwMfi"]["note"]
+        assert ("tendencia alcista" if trade["dir"] > 0 else "tendencia bajista") in rows["smcBias"]["note"]
+
+
+def test_la_busqueda_suma_el_ao_el_ac_el_gator_y_el_mfi_apagados_de_fabrica():
+    import rule_search as rs
+    cfg = rs.clean_config({"tfs": [240], "codes": ["WA", "FV"], "seed": 4})
+    opts = rs._options(cfg)
+    new_genes = ("bwAo", "bwAc", "bwGator", "bwMfi")
+    assert all(opts[name][0] is None for name in new_genes), "empiezan apagados"
+    old = {name: 0 for name in opts if name not in new_genes}
+    old["e1"] = opts["e1"].index("WA")
+    plain = rs.decode(old, cfg)
+    assert plain == rs.decode({**old, **{name: 0 for name in new_genes}}, cfg), "un genoma de antes da la misma regla"
+    assert "bwf" not in plain
+    full = rs.decode({**old, "bwAo": 1, "bwAc": 2, "bwGator": 1, "bwMfi": 3}, cfg)
+    assert full["bwf"] == {"ao": "color", "ac": "zero", "gator": "eating", "mfi": "volume"}
+    assert rs.complexity(full) == rs.complexity(plain) + 4
+    off = rs._options(rs.clean_config({"tfs": [240], "codes": ["WA"], "williams": False}))
+    assert all(off[name] == (None,) for name in new_genes)

@@ -1657,6 +1657,33 @@ Pedido del usuario: un indicador de Smart Money Concepts, con el gratuito de Lux
 
 La detección en el servidor al cierre de cada vela (sin enviar nada), su panel en la Watchlist, los order blocks en la defensa de zona y las medidas en el journal: ver `12.AltagraciaTradingSuite/CLAUDE.md`, "Sabios de Williams y estructura SMC".
 
+### Después (21/11): AO, AC, Gator y MFI como filtros, y menús en dos columnas
+
+Pedidos del usuario tras probarlo:
+- el menú desplegable de los indicadores era largo y parte no se veía;
+- en el backtesting global no aparecían los sabios, el AO ni el AC para armar reglas: de Williams solo estaban el Alligator y las zonas. Quería probar el AO de tres barras.
+
+- **Por qué no aparecían los sabios:** la lista de elementos de la regla la da el backend (`/api/tester/info`); los filtros del Alligator y la zona están en la página. En el 9000 respondía un backend viejo, de antes de la actualización, que seguía vivo sin ventana a la vista junto al que el usuario abrió después; su consola de `1.start_backtester.bat` quedaba abierta, y con ella otras cuatro vacías de días anteriores. Con el backend nuevo salen «Barra divergente», «AO tres barras» y «Ruptura de fractal». Para verlo: `Get-NetTCPConnection -LocalPort 9000` y los procesos `uvicorn` y `spawn_main` con su hora de inicio.
+- **Filtros nuevos** en `bwf`, en el grupo "Williams y SMC". Se miran en la vela de la señal y solo entran a la regla si se piden: una regla de antes conserva su identidad.
+  - `ao` y `ac`: `color` (su barra a favor: verde, sube, en un largo; roja en un corto), `zero` (del lado del cero a favor) o `both`;
+  - `gator`: `eating` (sus dos barras crecen: la boca se abre), `open` (al menos una crece) o `sleeping` (las dos se achican). No mira el lado: va bien junto al Alligator despierto a favor;
+  - `mfi`: el tipo de vela del MFI, `green` (verde), `squat`, `volume` (verde o squat: sube el volumen) o `notFake` (todo menos fake). No mira el lado.
+
+  Una vela sin el dato que pide el filtro no pasa (`williams.filter_ok`). Los controles al azar entran solo donde dejan.
+- **Gator y MFI en el backend:** `williams.compute(..., v=)` da las dos barras del Gator con su dirección y, con el volumen, el MFI y su tipo de vela, como `williams.js` (paridad bit a bit en `williamssmc.parity.test.mjs`).
+- **Trade elegido:** una fila por cada filtro de Williams y SMC bajo las velas y en el cuadro de la vela de la señal, con su valor en la señal: «AO en 1853.29, sube», «barra de arriba crece, la de abajo se achica», «vela verde», «tendencia alcista» (`_bw_rows`, `williams.filter_known` para el gris). Hasta el 21/11 el Alligator, la zona y los filtros SMC no tenían la suya.
+- **Búsqueda:** genes `bwAo`, `bwAc`, `bwGator` y `bwMfi`, apagados de fábrica (un genoma de antes da la misma regla), con la casilla "filtros de Williams y SMC". La complejidad los cuenta.
+- **Textos:** las fichas de «Vas a correr» dicen el nombre de cada filtro de Williams («AO del lado del cero a favor»; antes el Alligator decía solo «despierto a favor»). El resumen de la regla (`describeRule`) dice la angulación y el AO en contra solo si está la barra divergente: con el AO de tres barras confundían. Además, los detalles de la flecha y el rombo de volumen nunca salían: el resumen buscaba sus códigos entre los nombres.
+- **Menús de indicadores en dos columnas**, leídos de arriba abajo, en la simulación manual (`BacktestingApp.jsx`), el 2.º gráfico, el backtesting global y el gráfico de la suite. Si la ventana es más baja, el menú se desplaza.
+  - El ícono de ajustes va en la línea del nombre: es un bloque (`uiIcons.jsx`) y bajaba a una línea propia, que alargaba la lista.
+  - Con Oscuro, el selector del modo del interés abierto salía negro sobre negro (el panel se invierte); ahora lleva su color.
+  - A 1366×768 los cuatro caben enteros.
+- **Probado en pantalla** con una copia aislada, a 1366×768, en Nítido y en Oscuro:
+  - los cuatro menús;
+  - en el backtesting global, la regla «AO tres barras» en BTC 4h, fase 1, con orden stop, stop en la vela, 2R y los filtros AO del lado del cero, Gator despierto y MFI verde o squat. Dio 951 señales; el filtro de Williams quitó 846 y quedaron 52 trades, con 23.1% de acierto y −0.37 R. Es una prueba de pantalla, no un estudio;
+  - el trade 39 con sus tres filas bajo las velas y su cuadro en ✓.
+- **Pruebas:** `test_williams_smc.py` suma 5 (14), `rulefacets.test.mjs` suma 1 (10) y la paridad compara el Gator y el MFI. Todas las del backend: 502 pasan y fallan las 2 de siempre. En la página solo falla `liquidations.test.mjs`, como desde el 13/11. En la suite pasan `wise_smc_checks.py` (40), `book_defense_checks.py` (21) y `journal_checks.py` (89), que usan `williams.py`.
+
 ### Falta
 
 - Un control con order blocks desplazados, como el del perfil por sesión, para medir si la zona del OB importa.

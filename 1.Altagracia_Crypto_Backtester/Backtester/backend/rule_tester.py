@@ -471,11 +471,24 @@ def clean_rule(raw):
     if clean_flow:
         extra["flow"] = clean_flow  # Solo entra si se pide: una regla sin él conserva su identidad
     bwf = raw.get("bwf") or {}
-    if bwf.get("alligator") in ("awake", "side", "sleeping") or bwf.get("zone"):
-        # Filtros de Williams en la vela de la señal: el Alligator despierto a favor, el cierre del lado de los dientes o
-        # dormido; zone, la zona de Williams a favor. Solo entran a la regla si se piden
-        extra["bwf"] = {**({"alligator": bwf["alligator"]} if bwf.get("alligator") in ("awake", "side", "sleeping") else {}),
-                        **({"zone": True} if bwf.get("zone") else {})}
+    # Filtros de Williams en la vela de la señal: el Alligator despierto a favor, el cierre del lado de los dientes o
+    # dormido; zone, la zona de Williams a favor; desde el 21/11, el AO y el AC (su barra a favor, del lado del cero o las
+    # dos), el Gator y el tipo de vela del MFI. Cada uno solo entra a la regla si se pide: una regla de antes conserva su
+    # identidad
+    clean_bwf = {}
+    if bwf.get("alligator") in ("awake", "side", "sleeping"):
+        clean_bwf["alligator"] = bwf["alligator"]
+    if bwf.get("zone"):
+        clean_bwf["zone"] = True
+    for key in ("ao", "ac"):
+        if bwf.get(key) in williams.MOMENTUM_MODES:
+            clean_bwf[key] = bwf[key]
+    if bwf.get("gator") in williams.GATOR_MODES:
+        clean_bwf["gator"] = bwf["gator"]
+    if bwf.get("mfi") in williams.MFI_MODES:
+        clean_bwf["mfi"] = bwf["mfi"]
+    if clean_bwf:
+        extra["bwf"] = clean_bwf
     smcf = raw.get("smcf") or {}
     if smcf.get("pd") or smcf.get("bias"):
         # Filtros SMC: pd, un largo solo en discount y un corto solo en premium (del rango mayor); bias, a favor de la
@@ -1474,7 +1487,7 @@ def _smc_events(rule, span):
 def _bw_series(ctx):
     """Series de Williams de las velas de la corrida, una vez por corrida (filtros)."""
     if "bwSeries" not in ctx:
-        ctx["bwSeries"] = williams.compute(ctx["H"], ctx["L"], ctx["C"])
+        ctx["bwSeries"] = williams.compute(ctx["H"], ctx["L"], ctx["C"], v=ctx.get("V"))  # Con el volumen, para el MFI
     return ctx["bwSeries"]
 
 
@@ -2439,6 +2452,42 @@ def _num_text(value, digits=6):
     return "—" if value is None or not value == value else f"{float(value):.{digits}g}"
 
 
+# Los filtros de Williams en palabras, para las filas del trade elegido (los mismos de ruleFacets.js en la ventana)
+BW_ALLIGATOR_TEXT = {"awake": "Alligator despierto a favor", "side": "Cierre del lado de los dientes del Alligator", "sleeping": "Alligator dormido"}
+BW_MOMENTUM_TEXT = {"color": "con la barra a favor", "zero": "del lado del cero a favor", "both": "con la barra a favor y del lado del cero"}
+BW_GATOR_TEXT = {"eating": "Gator comiendo: sus dos barras crecen", "open": "Gator despierto: al menos una barra crece",
+                 "sleeping": "Gator dormido: sus dos barras se achican"}
+BW_MFI_TEXT = {"green": "MFI: vela verde (suben el MFI y el volumen)", "squat": "MFI: vela squat (baja el MFI y sube el volumen)",
+               "volume": "MFI: vela verde o squat (sube el volumen)", "notFake": "MFI: la vela no es fake"}
+
+
+def _bw_rows(bwf, ws, k, close):
+    """Una fila por filtro de Williams de la regla: (clave, ese filtro solo, su nombre, su valor en la vela de la señal)."""
+    rows = []
+    moves = lambda d: "sube" if d > 0 else ("baja" if d < 0 else "sin dato")
+    grows = lambda d: "crece" if d > 0 else ("se achica" if d < 0 else "sin dato")
+    if bwf.get("alligator"):
+        state = ws["state"][k]
+        rows.append(("bwAlligator", {"alligator": bwf["alligator"]}, BW_ALLIGATOR_TEXT[bwf["alligator"]],
+                     f"{'despierto al alza' if state > 0 else 'despierto a la baja' if state < 0 else 'dormido'}; "
+                     f"cierre en {_num_text(close[k])}, dientes en {_num_text(ws['teeth'][k])}"))
+    if bwf.get("zone"):
+        zone = ws["zone"][k]
+        rows.append(("bwZone", {"zone": True}, "Zona de Williams a favor",
+                     "zona " + ("verde" if zone == 1 else "roja" if zone == -1 else "gris" if zone == 0 else "sin dato")))
+    for key, name in (("ao", "AO"), ("ac", "AC")):
+        if bwf.get(key):
+            rows.append((f"bw{name}", {key: bwf[key]}, f"{name} {BW_MOMENTUM_TEXT[bwf[key]]}",
+                         f"{name} en {_num_text(ws[key][k])}, {moves(ws[key + 'Dir'][k])}"))
+    if bwf.get("gator"):
+        rows.append(("bwGator", {"gator": bwf["gator"]}, BW_GATOR_TEXT[bwf["gator"]],
+                     f"barra de arriba {grows(ws['gUpDir'][k])}, la de abajo {grows(ws['gDownDir'][k])}"))
+    if bwf.get("mfi"):
+        kind = ws["mfiType"][k] if ws.get("mfiType") else 0
+        rows.append(("bwMfi", {"mfi": bwf["mfi"]}, BW_MFI_TEXT[bwf["mfi"]], f"vela {williams.MFI_TYPES.get(kind, 'sin dato')}"))
+    return rows
+
+
 def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
     """
     Lo que usó la regla alrededor de un trade, para dibujarlo: sus líneas (EMA, VWAP móvil con su tope, canal gaussiano)
@@ -2562,6 +2611,25 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
         boxes = [b for b in _regime_boxes(reg, bars, is_stock(symbol)) if b["end"] >= t0 and b["start"] <= t1]
         out["regime"] = {"label": label, "boxes": boxes}
         out["rows"].append(row("regime", label, lambda i: bool(ok[i]), "en la señal: " + ("permitido" if ok[k] else "no permitido")))
+
+    # Los filtros de Williams y SMC, uno por fila (21/11: no tenían la suya). En gris las velas sin el dato del filtro
+    if rule.get("bwf"):
+        ws = _bw_series(ctx)
+        for key, piece, label, note in _bw_rows(rule["bwf"], ws, k, ctx["C"]):
+            out["rows"].append(row(key, label, lambda i, piece=piece: williams.filter_ok(piece, ws, i, side) if williams.filter_known(piece, ws, i) else None, note))
+    if rule.get("smcf"):
+        smcf, rng, close = rule["smcf"], _smc_range(rule, ctx), ctx["C"]
+        if smcf.get("pd"):
+            top, bottom = rng["top"][k], rng["bottom"][k]
+            known = lambda i: rng["top"][i] == rng["top"][i] and rng["bottom"][i] == rng["bottom"][i] and rng["top"][i] > rng["bottom"][i]
+            out["rows"].append(row("smcPd", f"Largos en discount y cortos en premium (rango mayor de {smcf['swing']} velas)",
+                                   lambda i: smc.filter_ok({"pd": True}, rng, close, i, side) if known(i) else None,
+                                   f"cierre en {_num_text(close[k])}, mitad del rango en {_num_text((top + bottom) / 2)}" if known(k) else "sin rango mayor todavía"))
+        if smcf.get("bias"):
+            trend = rng["bias"][k]
+            out["rows"].append(row("smcBias", f"A favor de la estructura mayor de {smcf['swing']} velas",
+                                   lambda i: (rng["bias"][i] == side) if rng["bias"][i] else None,
+                                   "tendencia " + ("alcista" if trend == 1 else "bajista" if trend == -1 else "sin ruptura todavía")))
 
     if rule.get("hours"):
         hours = rule["hours"]

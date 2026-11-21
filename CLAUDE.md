@@ -54,6 +54,43 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 21 Noviembre 2026: Menús de Indicadores en Dos Columnas y Filtros del AO, el AC, el Gator y el MFI
+
+**Pedido:** tras probar los indicadores de Williams y SMC, dos cosas:
+- el menú desplegable de los indicadores era largo y parte no se veía;
+- en el backtesting global no aparecían los sabios, el AO ni el AC para armar reglas: de Williams solo estaban el Alligator y las zonas. El usuario quiere probar el AO de tres barras.
+
+**Cambios:**
+1. **Menús de indicadores en dos columnas**, leídos de arriba abajo: simulación manual, 2.º gráfico, backtesting global y gráfico de la suite. Si la ventana es más baja, se desplazan.
+   - El ícono de ajustes va junto al nombre: bajaba a una línea propia.
+   - Con Oscuro, el selector del modo del interés abierto se lee: salía negro sobre negro.
+2. **Por qué no aparecían los sabios:** no faltaba en el código. En el 9000 respondía un backend de App 1 de antes de la actualización, que seguía vivo sin ventana a la vista junto al nuevo. La lista de elementos de la regla la da el backend; los filtros del Alligator y la zona, la página. Con el backend nuevo salen «Barra divergente», «AO tres barras» y «Ruptura de fractal».
+3. **Filtros nuevos de Williams** en la regla, en la vela de la señal:
+   - AO y AC: su barra a favor, del lado del cero a favor o las dos;
+   - Gator: comiendo, despierto o dormido;
+   - MFI: vela verde, squat, verde o squat, o todo menos fake.
+
+   Los controles al azar entran solo donde dejan, y la búsqueda genética los suma apagados de fábrica.
+4. **Trade elegido:** cada filtro de Williams y SMC tiene su fila bajo las velas y su línea en el cuadro de la vela de la señal, con su valor. Hasta hoy ninguno la tenía.
+5. **Textos:**
+   - las fichas de «Vas a correr» dicen el nombre de cada filtro de Williams;
+   - el resumen de una regla con solo el AO de tres barras ya no menciona la angulación ni el «AO en contra», que son de la barra divergente;
+   - el resumen de la flecha y el rombo de volumen dice sus detalles, que nunca salían.
+6. **Pruebas:** `test_williams_smc.py` suma 5 (14) y `rulefacets.test.mjs` suma 1 (10); la paridad Python contra JavaScript compara también el Gator y el MFI.
+
+**IMPORTANTE:**
+- **El backend viejo:** hay que cerrar el backend de App 1 que quedó corriendo y abrirlo de nuevo con `1.start_backtester.bat`. Sus procesos se cierran desde PowerShell con `Stop-Process` y sus números (ver `Get-NetTCPConnection -LocalPort 9000`). Claude no tiene permiso para detener procesos.
+- Reiniciar el backend de App 1 (9000) y recargar su página. La suite se reinicia sola al abrirla y arma la página nueva.
+- **Probado en pantalla** con una copia aislada a 1366×768, en Nítido y en Oscuro:
+  - los cuatro menús;
+  - la regla «AO tres barras» con los filtros AO del lado del cero, Gator despierto y MFI verde o squat, en BTC 4h, fase 1: 52 trades (prueba de pantalla, no un estudio);
+  - el trade elegido con sus filas.
+- Todas las del backend de App 1: 502 pasan y fallan las 2 de siempre. En la página solo falla `liquidations.test.mjs`, como desde el 13/11. Las de la suite que usan `williams.py` pasan.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "SMART MONEY CONCEPTS E INDICADORES DE BILL WILLIAMS (20/11/2026)", "Después (21/11)"
+
+---
+
 ### App 1 + Altagracia Trading Suite - 20 Noviembre 2026: Smart Money Concepts e Indicadores de Bill Williams
 
 **Pedido:** un indicador de Smart Money Concepts, con el de LuxAlgo para TradingView como referencia, y los indicadores de Bill Williams de *Trading Chaos*, en App 1 y en la suite. Tras el análisis, el usuario eligió "todo, por fases" y pidió sumar los demás de Williams (AC, zonas, Gator y MFI).

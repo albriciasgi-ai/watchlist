@@ -68,9 +68,32 @@ export function defaultRule() {
     // Estructura SMC: de qué estructura (interna o mayor) y sus velas, qué ruptura, cómo es el order block, iguales y su barrido
     smcScope: 'swing', smcSwing: 50, smcInternal: 5, smcBreak: 'any', smcPick: 'extreme', smcArea: 'full', smcMitigation: 'close',
     smcEqLength: 3, smcEqThreshold: 0.1, smcReclaim: true,
-    // Filtros de Williams (Alligator: off, awake, side, sleeping; zona a favor) y SMC (premium/discount y tendencia mayor)
-    bwAlligator: 'off', bwZone: false, smcPd: false, smcBias: false
+    // Filtros de Williams (Alligator: off, awake, side, sleeping; zona a favor) y SMC (premium/discount y tendencia mayor).
+    // Desde el 21/11, AO y AC (off, color, zero, both), Gator (off, eating, open, sleeping) y MFI (off, green, squat, volume, notFake)
+    bwAlligator: 'off', bwZone: false, smcPd: false, smcBias: false, bwAo: 'off', bwAc: 'off', bwGator: 'off', bwMfi: 'off'
   };
+}
+
+/** Los filtros de Williams en palabras (los mismos de rule_tester.BW_*_TEXT en el backend) */
+export const BW_ALLIGATOR_TEXT = { awake: 'Alligator despierto a favor', side: 'cierre del lado de los dientes del Alligator', sleeping: 'Alligator dormido' };
+export const BW_MOMENTUM_TEXT = { color: 'con la barra a favor', zero: 'del lado del cero a favor', both: 'con la barra a favor y del lado del cero' };
+export const BW_GATOR_TEXT = { eating: 'comiendo (sus dos barras crecen)', open: 'despierto (al menos una barra crece)', sleeping: 'dormido (sus dos barras se achican)' };
+export const BW_MFI_TEXT = {
+  green: 'vela verde (suben el MFI y el volumen)', squat: 'vela squat (baja el MFI y sube el volumen)',
+  volume: 'vela verde o squat (sube el volumen)', notFake: 'la vela no es fake'
+};
+
+/** Los filtros de Williams del formulario en la forma del backend, o null si no hay ninguno */
+export function williamsFilter(rule) {
+  const bwf = {
+    ...(BW_ALLIGATOR_TEXT[rule.bwAlligator] ? { alligator: rule.bwAlligator } : {}),
+    ...(rule.bwZone ? { zone: true } : {}),
+    ...(BW_MOMENTUM_TEXT[rule.bwAo] ? { ao: rule.bwAo } : {}),
+    ...(BW_MOMENTUM_TEXT[rule.bwAc] ? { ac: rule.bwAc } : {}),
+    ...(BW_GATOR_TEXT[rule.bwGator] ? { gator: rule.bwGator } : {}),
+    ...(BW_MFI_TEXT[rule.bwMfi] ? { mfi: rule.bwMfi } : {})
+  };
+  return Object.keys(bwf).length ? bwf : null;
 }
 
 const number = (value, fallback) => (Number.isFinite(Number(value)) && value !== '' && value !== null ? Number(value) : fallback);
@@ -165,8 +188,7 @@ export function toBackendRule(rule) {
         area: rule.smcArea === 'body' ? 'body' : 'full', mitigation: rule.smcMitigation === 'wick' ? 'wick' : 'close',
         eqLength: number(rule.smcEqLength, 3), eqThreshold: number(rule.smcEqThreshold, 0.1), reclaim: rule.smcReclaim !== false }
     } : {}),
-    ...(['awake', 'side', 'sleeping'].includes(rule.bwAlligator) || rule.bwZone
-      ? { bwf: { ...(['awake', 'side', 'sleeping'].includes(rule.bwAlligator) ? { alligator: rule.bwAlligator } : {}), ...(rule.bwZone ? { zone: true } : {}) } } : {}),
+    ...(williamsFilter(rule) ? { bwf: williamsFilter(rule) } : {}),
     ...(rule.smcPd || rule.smcBias ? { smcf: { ...(rule.smcPd ? { pd: true } : {}), ...(rule.smcBias ? { bias: true } : {}), swing: number(rule.smcSwing, 50) } } : {}),
     ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [], veEntry: rule.vpVeEntry === 'resting' ? 'resting' : 'touch' } } : {}),
     recipe: {
@@ -251,6 +273,7 @@ export function fromBackendRule(saved) {
     smcMitigation: saved.smc?.mitigation || 'close', smcEqLength: saved.smc?.eqLength ?? 3, smcEqThreshold: saved.smc?.eqThreshold ?? 0.1,
     smcReclaim: saved.smc ? saved.smc.reclaim !== false : true,
     bwAlligator: saved.bwf?.alligator || 'off', bwZone: !!saved.bwf?.zone, smcPd: !!saved.smcf?.pd, smcBias: !!saved.smcf?.bias,
+    bwAo: saved.bwf?.ao || 'off', bwAc: saved.bwf?.ac || 'off', bwGator: saved.bwf?.gator || 'off', bwMfi: saved.bwf?.mfi || 'off',
     straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
     trailMode: ['atr', 'pct', 'bars'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
     trailStartOn: saved.exit?.trailStart != null, trailStart: saved.exit?.trailStart ?? 1, breakEvenOn: saved.exit?.breakEven != null, breakEven: saved.exit?.breakEven ?? 1.5,
@@ -299,6 +322,7 @@ export function describeRule(saved) {
   if (!saved?.recipe) return '';
   const recipe = saved.recipe;
   const codes = (recipe.slots || []).map(slot => L((slot.codes || []).join('|')));
+  const raw = (recipe.slots || []).flatMap(slot => slot.codes || []); // Los códigos: `codes` son sus nombres
   const part = (group) => (recipe.slots || []).filter(slot => (slot.group || 0) === group).map(slot => L((slot.codes || []).join('|')));
   const liq = saved.liq ? ` (${saved.liq.what === 'zone' ? 'zona' : `swing ${saved.liq.swingBars}`}, ${saved.liq.variant === 'reclaim' ? 'recupera' : 'perfora'})` : '';
   // El gatillo de una secuencia pide al menos groupMins[1] de sus elementos: «2 de A, B, C»; todos van con «+» y uno, con «o»
@@ -331,15 +355,18 @@ export function describeRule(saved) {
     + `${saved.regime ? ` · ${{ inside: 'solo en rango', outside: 'solo fuera de rango', breakout: `${saved.regime.after} velas tras romper` }[saved.regime.mode]}${saved.regime.major ? ' mayor' : ''}` : ''}`
     + `${saved.cc ? ` · estructura ${saved.cc.tf >= 60 ? `${saved.cc.tf / 60} h` : `${saved.cc.tf} m`}, swing ${saved.cc.swing}` : ''}`
     + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`
-    + `${saved.rv ? ` · tramo ${saved.rv.leg} ATR${codes.includes('RF') ? `, flecha ≥ ${saved.rv.spike}x ${{ with: 'a favor del tramo', against: 'contra el tramo', any: 'de cualquier lado' }[saved.rv.arrow]}` : ''}${codes.includes('RB') ? `, rombo ${saved.rv.rombo === 'follow' ? 'siguiendo el tramo' : 'como giro'}` : ''}` : ''}`
+    + `${saved.rv ? ` · tramo ${saved.rv.leg} ATR${raw.includes('RF') ? `, flecha ≥ ${saved.rv.spike}x ${{ with: 'a favor del tramo', against: 'contra el tramo', any: 'de cualquier lado' }[saved.rv.arrow]}` : ''}${raw.includes('RB') ? `, rombo ${saved.rv.rombo === 'follow' ? 'siguiendo el tramo' : 'como giro'}` : ''}` : ''}`
     + `${saved.gc ? ` · canal ${saved.gc.period}, ${saved.gc.poles} polos, ×${saved.gc.mult}${saved.gc.trend ? ', a favor' : ''}` : ''}`
     + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
-    + `${saved.wise ? ` · angulación de ${saved.wise.angBars} velas${saved.wise.requireAo ? ', AO en contra' : ''}` : ''}`
+    // La angulación y el AO en contra son de la barra divergente: con solo el AO de tres barras o el fractal confundían
+    + `${saved.wise && raw.includes('WD') ? ` · angulación de ${saved.wise.angBars} velas${saved.wise.requireAo ? ', AO en contra' : ''}` : ''}`
     + `${saved.smc ? ` · estructura ${saved.smc.scope === 'internal' ? `interna de ${saved.smc.internal}` : `mayor de ${saved.smc.swing}`} velas${saved.smc.break !== 'any' ? `, solo ${saved.smc.break === 'bos' ? 'BOS' : 'CHoCH'}` : ''}` : ''}`
     + `${saved.bwf?.alligator ? ` · ${{ awake: 'Alligator despierto a favor', side: 'cierre del lado de los dientes', sleeping: 'Alligator dormido' }[saved.bwf.alligator]}` : ''}`
     + `${saved.bwf?.zone ? ' · zona de Williams a favor' : ''}`
+    + `${saved.bwf?.ao ? ` · AO ${BW_MOMENTUM_TEXT[saved.bwf.ao]}` : ''}${saved.bwf?.ac ? ` · AC ${BW_MOMENTUM_TEXT[saved.bwf.ac]}` : ''}`
+    + `${saved.bwf?.gator ? ` · Gator ${BW_GATOR_TEXT[saved.bwf.gator]?.split(' (')[0]}` : ''}${saved.bwf?.mfi ? ` · MFI ${BW_MFI_TEXT[saved.bwf.mfi]?.split(' (')[0]}` : ''}`
     + `${saved.smcf?.pd ? ' · largos en discount, cortos en premium' : ''}${saved.smcf?.bias ? ' · a favor de la estructura mayor' : ''}`
     + ` · ${saved.entry?.type === 'limit' ? 'limit' : saved.entry?.type === 'straddle' ? `dos órdenes stop a ${saved.entry.offset} ATR ${saved.entry.from === 'zone' ? 'fuera de la zona' : 'del cierre'}`
       : saved.entry?.type === 'stop' ? `orden stop en el borde de la zona${saved.entry.offset ? ` + ${saved.entry.offset} ATR` : ''}` : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`

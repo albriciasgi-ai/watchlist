@@ -1434,6 +1434,43 @@ const RuleTesterApp = () => {
           </div>
         </Opt>
         <Opt id="zonaWilliams" label="Zona de Williams a favor" on={rule.bwZone} onToggle={(bwZone) => patch({ bwZone })} title="El AO y el AC suben (verde) para un largo, o bajan los dos (roja) para un corto" />
+        <Opt id="ao" label="AO de Williams" on={rule.bwAo !== 'off'} onToggle={toggleMode('bwAo', 'off', 'color')} title="El Awesome Oscillator (media de 5 menos media de 34 del precio medio) en la vela de la señal, a favor del trade. Vale para cualquier regla. La señal del AO de tres barras es el elemento «AO tres barras»">
+          <div className="rt-row">
+            <select value={rule.bwAo} onChange={(e) => patch({ bwAo: e.target.value })}>
+              <option value="color">su barra a favor (verde en un largo, roja en un corto)</option>
+              <option value="zero">del lado del cero a favor (sobre el cero en un largo)</option>
+              <option value="both">las dos: barra a favor y del lado del cero</option>
+            </select>
+          </div>
+        </Opt>
+        <Opt id="ac" label="AC de Williams" on={rule.bwAc !== 'off'} onToggle={toggleMode('bwAc', 'off', 'color')} title="El Accelerator Oscillator (el AO menos su media de 5) en la vela de la señal, a favor del trade. Vale para cualquier regla">
+          <div className="rt-row">
+            <select value={rule.bwAc} onChange={(e) => patch({ bwAc: e.target.value })}>
+              <option value="color">su barra a favor (verde en un largo, roja en un corto)</option>
+              <option value="zero">del lado del cero a favor (sobre el cero en un largo)</option>
+              <option value="both">las dos: barra a favor y del lado del cero</option>
+            </select>
+          </div>
+        </Opt>
+        <Opt id="gator" label="Gator de Williams" on={rule.bwGator !== 'off'} onToggle={toggleMode('bwGator', 'off', 'eating')} title="Las dos barras del Gator en la vela de la señal: arriba la distancia entre la mandíbula y los dientes, abajo entre los dientes y los labios. No mira el lado del trade: va bien junto al Alligator despierto a favor">
+          <div className="rt-row">
+            <select value={rule.bwGator} onChange={(e) => patch({ bwGator: e.target.value })}>
+              <option value="eating">comiendo: sus dos barras crecen (la boca se abre)</option>
+              <option value="open">despierto: al menos una barra crece</option>
+              <option value="sleeping">dormido: sus dos barras se achican (para operar rangos)</option>
+            </select>
+          </div>
+        </Opt>
+        <Opt id="mfi" label="MFI de Williams" on={rule.bwMfi !== 'off'} onToggle={toggleMode('bwMfi', 'off', 'green')} title="El tipo de la vela de la señal por el Market Facilitation Index (rango ÷ volumen) y su volumen, contra la vela anterior. No mira el lado del trade">
+          <div className="rt-row">
+            <select value={rule.bwMfi} onChange={(e) => patch({ bwMfi: e.target.value })}>
+              <option value="green">vela verde: suben el MFI y el volumen</option>
+              <option value="squat">vela squat: baja el MFI y sube el volumen</option>
+              <option value="volume">verde o squat: sube el volumen</option>
+              <option value="notFake">todo menos fake (sube el MFI y baja el volumen)</option>
+            </select>
+          </div>
+        </Opt>
         <Opt id="premium" label="Premium y discount (SMC)" on={rule.smcPd} onToggle={(smcPd) => patch({ smcPd })} title="Un largo solo bajo la mitad del rango mayor (discount) y un corto solo sobre ella (premium). El rango va entre el último máximo y el último mínimo de la estructura mayor">
           <div className="rt-row"><span>rango de la estructura mayor de</span><Num value={rule.smcSwing} min={5} max={300} onChange={(smcSwing) => patch({ smcSwing })} /><span>velas</span></div>
         </Opt>
@@ -2331,9 +2368,11 @@ const RuleTesterApp = () => {
         <div style={{ position: 'relative' }}>
           <button type="button" className="rt-btn" onClick={() => { setShowList(open => !open); setShowDraw(false); }}>Indicadores {enabledCount}</button>
           {showList && (
-            <div className="rt-menu" style={{ left: 'auto', right: 0 }}>
+            <div className="rt-menu" style={{ left: 'auto', right: 0, width: 'min(460px, calc(100vw - 24px))' }}>
+              {/* Dos columnas (21/11/2026): con los indicadores de Williams y SMC la lista era muy larga */}
+              <div style={{ columnCount: 2, columnGap: 16 }}>
               {INDICATORS.map(name => (
-                <div key={name} style={{ display: 'flex', alignItems: 'center', padding: '3px 0' }}>
+                <div key={name} style={{ display: 'flex', alignItems: 'center', padding: '3px 0', breakInside: 'avoid' }}>
                   <label style={{ flex: 1, cursor: 'pointer' }}>
                     <input type="checkbox" checked={!!indicatorStates[name]} onChange={() => setIndicatorStates(previous => ({ ...previous, [name]: !previous[name] }))} style={{ marginRight: 8 }} />{name}
                   </label>
@@ -2350,6 +2389,7 @@ const RuleTesterApp = () => {
                   )}
                 </div>
               ))}
+              </div>
               <div className="rt-note" style={{ marginTop: 6 }}>⚙️ abre los ajustes de cada indicador. Son los mismos de la simulación manual: lo que cambies aquí vale también allá.</div>
             </div>
           )}

@@ -90,7 +90,8 @@ test('cada × de «Vas a correr» apaga solo su pieza', () => {
   const on = {
     ...user(), vwapMode: 'touch', regimeMode: 'outside', cvdOn: true, crowdMode: 'nocon', steadyOn: true, swing: true, momentum: true, confirm: true,
     useHours: true, filters: [{ key: 'x', op: '>=', value: 1 }], tpTrailOn: true, targetR: 3, breakEvenOn: true, useHorizon: true, opposite: true,
-    codes: [...user().codes, 'GC'], gcExit: 'band', bwAlligator: 'awake', bwZone: true, smcPd: true, smcBias: true
+    codes: [...user().codes, 'GC'], gcExit: 'band', bwAlligator: 'awake', bwZone: true, smcPd: true, smcBias: true,
+    bwAo: 'color', bwAc: 'zero', bwGator: 'eating', bwMfi: 'squat'
   };
   const before = keys(on);
   for (const [key, patch] of Object.entries(OFF_PATCH)) {
@@ -136,7 +137,7 @@ test('los sabios de Williams y la estructura SMC en palabras, ida y vuelta por e
   assert.equal(back.exit.targetAt, 'weak');
   const facets = Object.fromEntries(ruleFacets(back).map(f => [f.key, f.text]));
   assert.match(facets.entrada, /^orden stop en el borde de la zona \+ 0.1 ATR, espera 6 velas/);
-  assert.equal(facets.alligator, 'cierre del lado de los dientes');
+  assert.equal(facets.alligator, 'cierre del lado de los dientes del Alligator');
   assert.match(facets.premium, /^largos en discount y cortos en premium/);
   assert.match(facets.smc, /^estructura interna de 7 velas/);
   assert.match(facets.wise, /angulación de 8/);
@@ -145,6 +146,34 @@ test('los sabios de Williams y la estructura SMC en palabras, ida y vuelta por e
   // Cargar la regla de la corrida deja el formulario igual a ella
   assert.deepEqual(ruleDifferences(toBackendRule(fromBackendRule(back)), back), []);
   assert.match(describeRule(back), /orden stop en el borde de la zona/);
+});
+
+test('el AO, el AC, el Gator y el MFI como filtros: en palabras, ida y vuelta, y cada uno con su ×', () => {
+  const rule = { ...defaultRule(), name: 'ao', tf: 240, codes: ['WA'], bwAo: 'both', bwAc: 'color', bwGator: 'open', bwMfi: 'volume', bwZone: true };
+  const back = toBackendRule(rule);
+  assert.deepEqual(back.bwf, { zone: true, ao: 'both', ac: 'color', gator: 'open', mfi: 'volume' });
+  assert.equal(toBackendRule({ ...defaultRule(), codes: ['WA'] }).bwf, undefined, 'sin filtros no hay bwf: la regla conserva su identidad');
+  const facets = Object.fromEntries(ruleFacets(back).map(f => [f.key, f.text]));
+  assert.equal(facets.ao, 'AO con la barra a favor y del lado del cero');
+  assert.equal(facets.ac, 'AC con la barra a favor');
+  assert.equal(facets.gator, 'Gator despierto (al menos una barra crece)');
+  assert.equal(facets.mfi, 'MFI: vela verde o squat (sube el volumen)');
+  assert.equal(facets.zonaWilliams, 'zona de Williams a favor (verde en un largo, roja en un corto)');
+  // Las fichas de «Vas a correr» dicen el nombre del filtro
+  for (const [key, name] of [['ao', 'AO'], ['ac', 'AC'], ['gator', 'Gator'], ['mfi', 'MFI']]) {
+    assert.ok(facetPhrase(ruleFacets(back).find(f => f.key === key)).startsWith(name), key);
+  }
+  assert.equal(sectionCounts(ruleFacets(back)).filtros, 5);
+  assert.deepEqual(ruleDifferences(toBackendRule(fromBackendRule(back)), back), [], 'cargarla deja el formulario igual');
+  assert.match(describeRule(back), /AO con la barra a favor y del lado del cero · AC con la barra a favor · Gator despierto · MFI vela verde o squat/);
+  // La angulación y el AO en contra son de la barra divergente: con solo el AO de tres barras no se nombran
+  assert.doesNotMatch(describeRule(back), /angulación|AO en contra/);
+  assert.match(describeRule(toBackendRule({ ...rule, codes: ['WD', 'WA'] })), /angulación de 5 velas, AO en contra/);
+  // Los detalles de la flecha de volumen salen en el resumen (hasta el 21/11 nunca salían)
+  assert.match(describeRule(toBackendRule({ ...defaultRule(), codes: ['RF'] })), /flecha ≥ 2x a favor del tramo/);
+  // La corrida con otro modo lo avisa con su nombre
+  const diffs = ruleDifferences(toBackendRule({ ...rule, bwGator: 'eating', bwMfi: 'off' }), back);
+  assert.deepEqual(diffs.map(d => [d.key, d.form]), [['gator', 'Gator comiendo (sus dos barras crecen)'], ['mfi', 'sin filtro']]);
 });
 
 let failed = 0;

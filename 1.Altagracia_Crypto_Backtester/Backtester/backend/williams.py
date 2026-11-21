@@ -12,6 +12,10 @@ Elementos del probador (solo necesitan velas: valen en todas las monedas, en las
   son las velas hasta que el precio lo pasó: la orden stop espera hasta ahí.
 
 Todo se sabe al cerrar la vela del evento (`known`). Nada mira el futuro.
+
+Filtros (filter_ok), en la vela de la señal y a favor del trade: el Alligator (despierto, del lado de los dientes o
+dormido), la zona, y desde el 21/11 (pedido del usuario: faltaban el AO, el AC y los demás) el AO y el AC (su barra a
+favor, del lado del cero a favor, o las dos), el Gator (comiendo, despierto o dormido) y el tipo de vela del MFI.
 """
 import math
 
@@ -28,6 +32,16 @@ DEFAULTS = {
     "fast": 5, "slow": 34, "signal": 5, "maxRight": 20,
     "lookback": 1, "angBars": 5, "minGapAtr": 0.0, "requireAo": True, "pendingBars": 5, "alligatorFilter": True,
 }
+
+# Filtros del AO y el AC: color, su barra va a favor (verde, sube, en un largo; roja en un corto); zero, del lado del
+# cero a favor (sobre el cero en un largo); both, las dos
+MOMENTUM_MODES = ("color", "zero", "both")
+# Gator: eating, las dos barras crecen (la boca se abre); open, al menos una crece (no duerme); sleeping, las dos se achican
+GATOR_MODES = ("eating", "open", "sleeping")
+# Tipo de vela del MFI (1 verde: suben el MFI y el volumen; 2 fade: bajan los dos; 3 fake: sube el MFI y baja el
+# volumen; 4 squat: baja el MFI y sube el volumen) que deja pasar cada modo del filtro
+MFI_TYPES = {1: "verde", 2: "fade", 3: "fake", 4: "squat"}
+MFI_MODES = {"green": (1,), "squat": (4,), "volume": (1, 4), "notFake": (1, 2, 4)}
 
 
 def _finite(x):
@@ -137,8 +151,9 @@ def alligator_state(jaw, teeth, lips, atr, sleep_atr):
     return out
 
 
-def compute(h, l, c, cfg=None):
-    """Las series de Williams de velas cerradas (listas). cfg: los parámetros de DEFAULTS que cambian."""
+def compute(h, l, c, cfg=None, v=None):
+    """Las series de Williams de velas cerradas (listas). cfg: los parámetros de DEFAULTS que cambian. Con el volumen
+    (v), también el MFI y su tipo de vela."""
     cfg = {**DEFAULTS, **(cfg or {})}
     n = len(h)
     med = [(h[i] + l[i]) / 2 for i in range(n)]
@@ -155,8 +170,23 @@ def compute(h, l, c, cfg=None):
     for i in range(n):
         if ao_dir[i] and ac_dir[i]:
             zone[i] = 1 if ao_dir[i] == 1 and ac_dir[i] == 1 else (-1 if ao_dir[i] == -1 and ac_dir[i] == -1 else 0)
-    return {"med": med, "close": list(c), "jaw": jaw, "teeth": teeth, "lips": lips, "atr": atr, "ao": ao, "aoDir": ao_dir, "ac": ac, "acDir": ac_dir,
-            "zone": zone, "state": alligator_state(jaw, teeth, lips, atr, cfg["sleepAtr"]), "fractals": fractals(h, l, cfg["maxRight"])}
+    # Gator: arriba |mandíbula − dientes| y abajo |dientes − labios| (el gráfico lo dibuja negativo), con las líneas como
+    # se dibujan en la vela; cada barra crece (verde) o se achica (roja)
+    g_up = [abs(jaw[i] - teeth[i]) if _finite(jaw[i]) and _finite(teeth[i]) else NAN for i in range(n)]
+    g_down = [abs(teeth[i] - lips[i]) if _finite(teeth[i]) and _finite(lips[i]) else NAN for i in range(n)]
+    out = {"med": med, "close": list(c), "jaw": jaw, "teeth": teeth, "lips": lips, "atr": atr, "ao": ao, "aoDir": ao_dir, "ac": ac, "acDir": ac_dir,
+           "zone": zone, "state": alligator_state(jaw, teeth, lips, atr, cfg["sleepAtr"]), "fractals": fractals(h, l, cfg["maxRight"]),
+           "gUp": g_up, "gDown": g_down, "gUpDir": directions(g_up), "gDownDir": directions(g_down)}
+    if v is not None:
+        # MFI: (máximo − mínimo) ÷ volumen; su tipo sale de la dirección del MFI y la del volumen (0: sin dato)
+        mfi = [(h[i] - l[i]) / v[i] if v[i] > 0 else NAN for i in range(n)]
+        mfi_dir, vol_dir = directions(mfi), directions([float(x) for x in v])
+        kinds = [0] * n
+        for i in range(n):
+            if mfi_dir[i] and vol_dir[i]:
+                kinds[i] = (1 if vol_dir[i] > 0 else 3) if mfi_dir[i] > 0 else (4 if vol_dir[i] > 0 else 2)
+        out["mfi"], out["mfiType"] = mfi, kinds
+    return out
 
 
 def wise_men(o, h, l, c, series, cfg=None):
@@ -229,9 +259,20 @@ def events(bars, tf, cfg=None, codes=("WD", "WA", "WF")):
     return out
 
 
+def _momentum_ok(mode, values, dirs, k, side):
+    """El AO o el AC a favor del trade en la vela k: color, su barra va a favor; zero, del lado del cero a favor; both."""
+    if mode in ("color", "both") and dirs[k] != side:
+        return False
+    if mode in ("zero", "both") and not (_finite(values[k]) and values[k] * side > 0):
+        return False
+    return True
+
+
 def filter_ok(bw, series, k, side):
     """Filtros de Williams en la vela k a favor del trade. alligator: awake (despierto a su favor), side (el cierre del
-    lado de los dientes) o sleeping (dormido). zone: la zona de la vela a favor (verde en un largo)."""
+    lado de los dientes) o sleeping (dormido). zone: la zona de la vela a favor (verde en un largo). ao y ac: ver
+    MOMENTUM_MODES. gator: ver GATOR_MODES (no mira el lado). mfi: el tipo de vela del MFI (MFI_MODES; no mira el lado).
+    Una vela sin el dato que pide un filtro no pasa."""
     mode = bw.get("alligator")
     if mode == "awake" and series["state"][k] != side:
         return False
@@ -242,5 +283,41 @@ def filter_ok(bw, series, k, side):
         if not _finite(teeth) or (series["close"][k] - teeth) * side <= 0:
             return False
     if bw.get("zone") and series["zone"][k] != side:
+        return False
+    if bw.get("ao") and not _momentum_ok(bw["ao"], series["ao"], series["aoDir"], k, side):
+        return False
+    if bw.get("ac") and not _momentum_ok(bw["ac"], series["ac"], series["acDir"], k, side):
+        return False
+    gator = bw.get("gator")
+    if gator:
+        up, down = series["gUpDir"][k], series["gDownDir"][k]
+        if not up or not down:
+            return False
+        if gator == "eating" and not (up > 0 and down > 0):
+            return False
+        if gator == "open" and not (up > 0 or down > 0):
+            return False
+        if gator == "sleeping" and not (up < 0 and down < 0):
+            return False
+    if bw.get("mfi"):
+        kinds = series.get("mfiType")
+        if kinds is None or kinds[k] not in MFI_MODES.get(bw["mfi"], ()):
+            return False
+    return True
+
+
+def filter_known(bw, series, k):
+    """Si la vela k tiene los datos que miran los filtros de bw (para dibujar en gris lo que todavía no se sabe)."""
+    if bw.get("alligator") and not all(_finite(series[key][k]) for key in ("jaw", "teeth", "lips")):
+        return False
+    if bw.get("zone") and not _finite(series["zone"][k]):
+        return False
+    if bw.get("ao") and not (_finite(series["ao"][k]) and series["aoDir"][k]):
+        return False
+    if bw.get("ac") and not (_finite(series["ac"][k]) and series["acDir"][k]):
+        return False
+    if bw.get("gator") and not (series["gUpDir"][k] and series["gDownDir"][k]):
+        return False
+    if bw.get("mfi") and not (series.get("mfiType") and series["mfiType"][k]):
         return False
     return True

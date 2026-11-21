@@ -1194,7 +1194,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                 className="indicator-list-panel"
                 style={{
                   position: 'absolute', top: '100%', right: 0, marginTop: 5, background: 'white', border: '1px solid #ccc',
-                  borderRadius: 4, padding: 10, minWidth: 250, maxHeight: '80vh', overflowY: 'auto', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000,
+                  borderRadius: 4, padding: 10, minWidth: 250, width: 'min(520px, calc(100vw - 24px))', maxHeight: 'calc(100vh - 56px)', overflowY: 'auto', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 1000,
                 }}
               >
                 <h4 style={{ margin: '0 0 6px 0', fontSize: 14, color: '#333' }}>Indicadores ({view.mode === 'coin' ? symbol : 'todas las monedas'})</h4>
@@ -1222,8 +1222,10 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                 <div style={{ fontSize: 11, color: '#666', marginBottom: 6 }}>
                   Valen para los cinco marcos.{view.mode === 'coin' && !view.coin[symbol] ? ' Esta moneda usa los comunes hasta que cambies uno.' : ''}
                 </div>
+                {/* Dos columnas (21/11/2026): con los indicadores de Williams y SMC la lista era muy larga */}
+                <div style={{ columnCount: 2, columnGap: 16 }}>
                 {Object.entries(states).map(([name, enabled]) => (
-                  <label key={name} style={{ display: 'block', padding: '6px 0', cursor: 'pointer', fontSize: 13, color: '#333' }}>
+                  <label key={name} style={{ display: 'block', padding: '6px 0', cursor: 'pointer', fontSize: 13, color: '#333', breakInside: 'avoid' }}>
                     <input type="checkbox" checked={enabled} onChange={(e) => toggle(name, e.target.checked)} style={{ marginRight: 8 }} />
                     {name}
                     {name === 'Open Interest' && enabled && (
@@ -1231,7 +1233,7 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                         value={tabStates[activeTimeframe].oiMode}
                         onChange={(e) => setTab(activeTimeframe, () => ({ oiMode: e.target.value }))}
                         onClick={(e) => e.stopPropagation()}
-                        style={{ marginLeft: 8, padding: '2px 4px', fontSize: 11, border: '1px solid #ccc', borderRadius: 3, background: '#f5f5f5' }}
+                        style={{ marginLeft: 8, padding: '2px 4px', fontSize: 11, border: '1px solid #ccc', borderRadius: 3, background: '#f5f5f5', color: '#333' }}
                       >
                         <option value="histogram">Histogram</option>
                         <option value="cumulative">Cumulative</option>
@@ -1244,11 +1246,13 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
                         style={{ marginLeft: 8, cursor: 'pointer', fontSize: 12, opacity: 0.7 }}
                         title={`Configurar ${name}`}
                       >
-                        {newTheme ? <Icon name="sliders" size={13} /> : '⚙️'}
+                        {/* En línea con el nombre: el ícono es un bloque y bajaba a una línea propia */}
+                        {newTheme ? <Icon name="sliders" size={13} style={{ display: 'inline-block', verticalAlign: '-2px' }} /> : '⚙️'}
                       </span>
                     )}
                   </label>
                 ))}
+                </div>
                 <button
                   type="button"
                   onClick={() => TIMEFRAMES.forEach(tf => chartRefs.current[tf]?.resetPanels?.())}
