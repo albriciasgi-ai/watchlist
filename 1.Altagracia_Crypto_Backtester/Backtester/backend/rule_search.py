@@ -86,6 +86,8 @@ GENES = {
     # Desde el 21/11: los filtros del AO, el AC, el Gator y el MFI (también empiezan apagados)
     "bwAo": (None, "color", "zero"), "bwAc": (None, "color", "zero"), "bwGator": (None, "eating", "open"),
     "bwMfi": (None, "green", "squat", "volume"),
+    # Desde el 21/11: el filtro del medidor del lector VPA y el grado desde el que cuentan sus elementos (apagado de fábrica)
+    "vpaf": (None, "favor", "notAgainst"), "vpaFire": (0.5, 0.35, 0.7),
 }
 
 _lock = threading.Lock()
@@ -136,6 +138,8 @@ def clean_config(raw):
         "trailing": raw.get("trailing") is not False, "straddle": raw.get("straddle") is not False,
         # Desde el 20/11: la orden stop a favor y los filtros de Williams y SMC (con el objetivo en el rango SMC)
         "stopEntry": raw.get("stopEntry") is not False, "williams": raw.get("williams") is not False,
+        # Desde el 21/11: el filtro del medidor del lector VPA
+        "vpa": raw.get("vpa") is not False,
         # Al terminar, las finalistas se corren también en las monedas nuevas (que nunca eligieron nada)
         "checkNew": raw.get("checkNew") is not False,
         # Y en las acciones (otro mercado): una regla de cripto que también gana ahí difícilmente es suerte
@@ -170,6 +174,8 @@ def _options(cfg):
     if not cfg.get("williams", True):
         opts["bwf"], opts["bwZone"], opts["smcPd"], opts["smcBias"], opts["targetWeak"] = (None,), (False,), (False,), (False,), (False,)
         opts["bwAo"], opts["bwAc"], opts["bwGator"], opts["bwMfi"] = (None,), (None,), (None,), (None,)
+    if not cfg.get("vpa", True):
+        opts["vpaf"] = (None,)
     return opts
 
 
@@ -178,7 +184,7 @@ def random_genome(cfg, rng):
     genome = {name: rng.randrange(len(values)) for name, values in opts.items()}
     # Reglas simples primero: el segundo y el tercer elemento, y el filtro de línea, empiezan apagados más seguido
     for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady", "bwf", "bwZone", "smcPd", "smcBias", "targetWeak",
-                 "bwAo", "bwAc", "bwGator", "bwMfi"):
+                 "bwAo", "bwAc", "bwGator", "bwMfi", "vpaf"):
         if len(opts[name]) > 1 and rng.random() < 0.6:
             genome[name] = 0
     return genome
@@ -243,6 +249,8 @@ def decode(genome, cfg):
         "bwf": {"alligator": pick["bwf"], "zone": pick["bwZone"], "ao": pick["bwAo"], "ac": pick["bwAc"], "gator": pick["bwGator"],
                 "mfi": pick["bwMfi"]},
         "smcf": {"pd": pick["smcPd"], "bias": pick["smcBias"], "swing": pick["smcSwing"]},
+        "vpa": {"fire": pick["vpaFire"]},
+        "vpaf": {"mode": pick["vpaf"]},
     }
     if pick["regime"]:
         raw["regime"] = {"mode": pick["regime"], "major": pick["regimeMajor"], "majorOut": 6, "after": 6}
@@ -263,7 +271,7 @@ def complexity(rule):
     return (len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
             + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(rule.get("regime"))
             + bool(bwf.get("alligator")) + bool(bwf.get("zone")) + bool(smcf.get("pd")) + bool(smcf.get("bias"))
-            + bool(bwf.get("ao")) + bool(bwf.get("ac")) + bool(bwf.get("gator")) + bool(bwf.get("mfi")))
+            + bool(bwf.get("ao")) + bool(bwf.get("ac")) + bool(bwf.get("gator")) + bool(bwf.get("mfi")) + bool(rule.get("vpaf")))
 
 
 # ==================== EVALUACIÓN ====================
@@ -324,9 +332,11 @@ class Evaluator:
         core = {"stop": base_rule["stop"], "exit": {**base_rule["exit"], "opposite": False}, "gc": rule.get("gc"),
                 "invert": rule["invert"] if rule.get("gc") else False, "entry": base_rule["entry"],
                 "regime": rule.get("regime"), "flow": rule.get("flow")}
-        for name in ("bwf", "smcf"):
+        for name in ("bwf", "smcf", "vpaf"):
             if rule.get(name):
                 core[name] = rule[name]
+        if rule.get("vpaf"):
+            core["vpa"] = rule.get("vpa")  # El medidor del filtro sale con los parámetros del lector de la regla
         if rule.get("smcf"):
             core["smc"] = rule.get("smc")  # El rango de los filtros SMC sale con la estructura de la regla
         # El control al azar se guarda por lado (largos y cortos aparte) y se mezcla con la proporción de cada regla:

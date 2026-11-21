@@ -16,6 +16,7 @@ import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
 import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
 import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
+import VPASettings from '../VPASettings';
 import WilliamsSettings from '../WilliamsSettings';
 import SMCSettings from '../SMCSettings';
 import { WILLIAMS_NAMES } from '../indicators/williams.js';
@@ -29,7 +30,7 @@ import { WILLIAMS_NAMES } from '../indicators/williams.js';
 export const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP',
   'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
+  'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ]);
 
 /** Fondo y caja de los modales que no traen la suya */
@@ -81,6 +82,16 @@ const ChartIndicatorSettings = ({
         which={name}
         indicator={current.getWilliamsHub()}
         onApply={(settings) => applyHere(m => m.getWilliamsHub().setConfig(settings))}
+        onClose={close}
+      />
+    );
+  }
+  if (name === 'Lector VPA') {
+    return (
+      <VPASettings
+        symbol={symbol}
+        indicator={current.getVPAIndicator()}
+        onApply={(settings) => applyHere(m => m.getVPAIndicator().updateConfig(settings))}
         onClose={close}
       />
     );

@@ -54,6 +54,39 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 21 Noviembre 2026: Lector VPA (Volume Price Analysis de Anna Coulling)
+
+**Pedido:** leer *A Complete Guide To Volume Price Analysis* de Anna Coulling y proponer qué aprovechar. La autora dice que VPA "es un arte" y no se automatiza; el usuario cree que sí, con algo difuso que se adapte. Eligió las fases 1 y 2 de la propuesta.
+
+**Cambios:**
+1. **Lector VPA** (`vpa.js` y `backend/vpa.py`, iguales al bit), con reglas propias: el libro no trae números.
+   - Volumen y rango de cada vela contra la mediana de su misma hora en 30 días.
+   - Cada lectura es un grado de 0 a 100%: esfuerzo sin resultado, resultado sin esfuerzo, validado, estrella, martillo, hanging man, doji y esfuerzo que se agota.
+   - El tramo y lo que lleva recorrido pesan las lecturas de giro.
+   - Un medidor de fuerza y debilidad suma la evidencia de cada vela y se desvanece: ninguna vela decide sola, como pide el libro.
+2. **Indicador "Lector VPA"** en la simulación manual, el 2.º gráfico, el backtesting global y la suite (gráfico y Watchlist), con su modal: panel con el medidor, los elementos sobre las velas con su grado y el cuadro de cada vela para "Incluir en el análisis".
+3. **Probador:**
+   - ocho elementos: esfuerzo sin resultado, ruptura con volumen, ruptura sin volumen, retroceso sin volumen, prueba de poco volumen, frenado o techo, clímax y cruce del medidor;
+   - el filtro del medidor (a favor, o que no esté en contra), con los controles al azar filtrados igual y su fila en el trade elegido;
+   - la búsqueda genética lo suma apagado de fábrica.
+4. **Estudio con el delta real** (fase 1, seis monedas): en las velas de esfuerzo sin resultado el lado contrario al color pesa más, como dice el libro. En la estrella con volumen alto pesan más los compradores agresivos: son los atrapados.
+5. **Fase 1 por el probador** (4h, siete monedas):
+   - la ruptura con volumen da +0.12 a +0.14 R por trade, +0.12 sobre los controles, 6 de 7 monedas, en el borde de su margen;
+   - el esfuerzo sin resultado no anticipa el giro: seguir el color de la vela da +0.14;
+   - la prueba de poco volumen (−0.23) y el cruce del medidor (−0.11) pierden en todas las monedas;
+   - como filtro, el medidor no mejora al FVG nuevo ni a la ruptura de caja.
+6. **Pruebas:** `test_vpa.py` (7), `vpa.parity.test.mjs` (7) y una más en `rulefacets.test.mjs` (11).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. La suite se reinicia sola al abrirla y arma la página nueva.
+- Son 16 reglas probadas sobre los mismos datos: la ruptura con volumen es candidata a la fase 2, no un resultado.
+- **Probado en pantalla** con una copia aislada, en el backtesting global con BTC 4h: el panel, las marcas, el modal y una corrida con su trade elegido. No se vio la simulación manual, el 2.º gráfico ni la suite.
+- Todas las del backend de App 1: 509 pasan y fallan las 2 de siempre. En la página solo falla `liquidations.test.mjs`, como desde el 13/11.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA: VOLUME PRICE ANALYSIS DE COULLING (21/11/2026)" y `OrderFlowData/research/vpa/`
+
+---
+
 ### App 1 - 21 Noviembre 2026: Ruptura de Fractal sin Futuro y Monedas Nuevas en 15m y 5m (Backtesting Global)
 
 **Pedido:** una corrida de los sabios de Williams en 15m, fase 1, en todas las monedas, tomó solo 8 y daba cifras prometedoras (684 trades, +0.21 R por trade, 8 de 8 monedas positivas). El usuario pidió revisarla, y después bajar las velas de las monedas nuevas en los demás marcos.

@@ -3856,7 +3856,8 @@ async def tester_info(request: Request, symbol: str):
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True, "box": True} for code, name in box_elements.CODES.items()]
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True} for code, name in fvg_swing.CODES.items()]
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True, "williams": True} for code, name in rule_tester.williams.CODES.items()]
-            + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True, "smc": True} for code, name in rule_tester.smc.CODES.items()],
+            + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True, "smc": True} for code, name in rule_tester.smc.CODES.items()]
+            + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True, "vpa": True} for code, name in rule_tester.vpa.CODES.items()],
             # Sin almacén de trades la moneda corre sobre las velas: solo valen los elementos de candleCodes
             "storeless": not rule_tester.has_store(safe),
             "candleCodes": sorted(rule_tester.codes_for(safe, 240) or rule_tester.CANDLE_CODES),

@@ -91,7 +91,7 @@ test('cada × de «Vas a correr» apaga solo su pieza', () => {
     ...user(), vwapMode: 'touch', regimeMode: 'outside', cvdOn: true, crowdMode: 'nocon', steadyOn: true, swing: true, momentum: true, confirm: true,
     useHours: true, filters: [{ key: 'x', op: '>=', value: 1 }], tpTrailOn: true, targetR: 3, breakEvenOn: true, useHorizon: true, opposite: true,
     codes: [...user().codes, 'GC'], gcExit: 'band', bwAlligator: 'awake', bwZone: true, smcPd: true, smcBias: true,
-    bwAo: 'color', bwAc: 'zero', bwGator: 'eating', bwMfi: 'squat'
+    bwAo: 'color', bwAc: 'zero', bwGator: 'eating', bwMfi: 'squat', vpaMode: 'favor', vpaThr: 0.5
   };
   const before = keys(on);
   for (const [key, patch] of Object.entries(OFF_PATCH)) {
@@ -174,6 +174,20 @@ test('el AO, el AC, el Gator y el MFI como filtros: en palabras, ida y vuelta, y
   // La corrida con otro modo lo avisa con su nombre
   const diffs = ruleDifferences(toBackendRule({ ...rule, bwGator: 'eating', bwMfi: 'off' }), back);
   assert.deepEqual(diffs.map(d => [d.key, d.form]), [['gator', 'Gator comiendo (sus dos barras crecen)'], ['mfi', 'sin filtro']]);
+});
+
+
+test('el lector VPA en palabras, ida y vuelta por el formulario', () => {
+  const form = { ...defaultRule(), codes: ['QB', 'QR'], vpaFire: 0.6, vpaRangeBars: 30, vpaMode: 'notAgainst', vpaThr: 0.8 };
+  const rule = toBackendRule(form);
+  assert.deepEqual(rule.vpaf, { mode: 'notAgainst', thr: 0.8 });
+  assert.equal(rule.vpa.fire, 0.6);
+  assert.equal(text(form, 'vpaMedidor'), 'medidor VPA que no esté en contra (> −0.8)');
+  assert.match(text(form, 'vpa'), /cuenta desde 60%.*rango de 30 velas.*retroceso en 8 velas/);
+  assert.deepEqual(ruleDifferences(toBackendRule(fromBackendRule(rule)), rule), []);
+  // Sin sus elementos ni su filtro, la regla no lleva nada del lector: conserva su identidad
+  const plain = toBackendRule({ ...defaultRule(), codes: ['FV'], vpaFire: 0.9 });
+  assert.ok(!('vpa' in plain) && !('vpaf' in plain));
 });
 
 let failed = 0;

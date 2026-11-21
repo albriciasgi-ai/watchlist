@@ -37,6 +37,7 @@ export const FACETS = {
   sp: ['elementos', 'Swing'],
   wise: ['elementos', 'Tres sabios'],
   smc: ['elementos', 'Estructura SMC'],
+  vpa: ['elementos', 'Lector VPA'],
   vp: ['elementos', 'Perfil por sesión'],
   vaGap: ['elementos', 'Área de valor abandonada', 'sin hueco mínimo'],
   vwap: ['filtros', 'VWAP', 'sin filtro'],
@@ -52,6 +53,7 @@ export const FACETS = {
   ac: ['filtros', 'AC', 'sin filtro'],
   gator: ['filtros', 'Gator', 'sin filtro'],
   mfi: ['filtros', 'MFI', 'sin filtro'],
+  vpaMedidor: ['filtros', 'Medidor VPA', 'sin filtro'],
   premium: ['filtros', 'Premium y discount', 'sin filtro'],
   sesgo: ['filtros', 'Tendencia de la estructura', 'sin filtro'],
   extremo: ['filtros', 'En un extremo', 'no'],
@@ -159,6 +161,14 @@ export function ruleFacets(rule, labels = {}) {
     add('wise', `${has('WD') ? `divergente bajo ${w.lookback} vela${w.lookback > 1 ? 's' : ''}, angulación de ${w.angBars}${n(w.minGapAtr) > 0 ? `, hueco ≥ ${n(w.minGapAtr)} ATR` : ''}${w.requireAo !== false ? ', AO en contra' : ''}` : ''}`
       + `${has('WF') ? `${has('WD') ? '; ' : ''}fractal ${w.teeth !== false ? 'del lado correcto de los dientes' : 'sin mirar los dientes'}` : ''}` || 'como el libro');
   }
+  if (rule.vpa && codes.some(code => code.length === 2 && code[0] === 'Q')) {
+    const q = rule.vpa;
+    const parts = [`cuenta desde ${Math.round(Number(q.fire) * 100)}%`, `tramo de ${n(q.legAtr)} ATR`];
+    if (has('QE')) parts.push(`medidor ±${n(q.meter)}, memoria ${n(q.decay)}`);
+    if (has('QB') || has('QF') || has('QR')) parts.push(`rango de ${q.rangeBars} velas de hasta ${n(q.maxRangeAtr)} ATR`);
+    if (has('QR')) parts.push(`retroceso en ${q.pullBars} velas`);
+    add('vpa', parts.join(', '));
+  }
   if (rule.smc && codes.some(code => ['BS', 'OB', 'BK', 'EQ'].includes(code))) {
     const m = rule.smc;
     const scope = m.scope === 'internal' ? `interna de ${m.internal} velas` : `mayor de ${m.swing} velas`;
@@ -201,6 +211,7 @@ export function ruleFacets(rule, labels = {}) {
   if (rule.bwf?.ac) add('ac', `AC ${BW_MOMENTUM_TEXT[rule.bwf.ac]}`);
   if (rule.bwf?.gator) add('gator', `Gator ${BW_GATOR_TEXT[rule.bwf.gator]}`);
   if (rule.bwf?.mfi) add('mfi', `MFI: ${BW_MFI_TEXT[rule.bwf.mfi]}`);
+  if (rule.vpaf?.mode) add('vpaMedidor', rule.vpaf.mode === 'favor' ? `medidor VPA a favor (≥ ${n(rule.vpaf.thr)})` : `medidor VPA que no esté en contra (> −${n(rule.vpaf.thr)})`);
   if (rule.smcf?.pd) add('premium', `largos en discount y cortos en premium (rango mayor de ${rule.smcf.swing} velas)`);
   if (rule.smcf?.bias) add('sesgo', `a favor de la estructura mayor de ${rule.smcf.swing} velas`);
   if (flow.steady) add('oiSostenido', `OI sube en ${Math.round(Number(flow.steadyMin) * 100)}% o más de los pasos de ${flow.steadyDays} días`);
@@ -313,7 +324,7 @@ export function loadedSummary(rule, labels = {}) {
 export const OFF_PATCH = {
   vwap: { vwapMode: 'off' }, ema: { emaMode: 'off' }, regimen: { regimeMode: 'any' }, cvd: { cvdOn: false }, oi: { oiMode: 'off' },
   multitud: { crowdMode: 'off' }, oiSostenido: { steadyOn: false }, alligator: { bwAlligator: 'off' }, zonaWilliams: { bwZone: false },
-  ao: { bwAo: 'off' }, ac: { bwAc: 'off' }, gator: { bwGator: 'off' }, mfi: { bwMfi: 'off' },
+  ao: { bwAo: 'off' }, ac: { bwAc: 'off' }, gator: { bwGator: 'off' }, mfi: { bwMfi: 'off' }, vpaMedidor: { vpaMode: 'off' },
   premium: { smcPd: false }, sesgo: { smcBias: false }, extremo: { swing: false }, momentum: { momentum: false },
   confirmacion: { confirm: false }, horario: { useHours: false }, medidas: { filters: [] },
   objetivo: { useTarget: false }, arrastre: { tpTrailOn: false }, trailing: { trail: false, trailMode: 'off' }, aLaEntrada: { breakEvenOn: false },

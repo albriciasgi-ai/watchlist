@@ -38,14 +38,14 @@ const DEFAULT_DAYS = { '1m': 1, '5m': 3, '15m': 5, '1h': 14, '4h': 60, '1D': 180
 // Indicadores livianos: se calculan en la página o los da el servidor sin pedir más a Bybit
 const LIGHT = [
   ['Swing Detector', 'Swing (del servidor)'], ['Volume Delta', 'Delta de volumen'], ['CVD', 'CVD'], ['FVG', 'FVG'],
-  ['S&R v2', 'S&R v2'], ['Volume Profile', 'Perfil de volumen'], ['Volumen de Respuesta', 'Volumen de Respuesta'],
+  ['S&R v2', 'S&R v2'], ['Volume Profile', 'Perfil de volumen'], ['Volumen de Respuesta', 'Volumen de Respuesta'], ['Lector VPA', 'Lector VPA'],
   ['Estructura SMC', 'Estructura SMC'], ['Alligator', 'Alligator'], ['Fractales', 'Fractales'], ['Tres sabios', 'Tres sabios'],
   ['Zonas de Williams', 'Zonas de Williams'], ['AO', 'AO (Williams)'],
 ];
 const LIGHT_NAMES = new Set(LIGHT.map(([name]) => name));
 const ALL_OFF = Object.fromEntries([
   'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rejection Patterns',
+  'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rejection Patterns',
   'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios',
   'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI',
 ].map(name => [name, false]));
