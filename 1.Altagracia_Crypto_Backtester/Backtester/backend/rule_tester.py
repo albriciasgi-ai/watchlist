@@ -34,6 +34,7 @@ import fvg_swing
 import footprint_store as fs
 import gaussian_channel
 import liq_sweeps
+import onchain_flows
 import measures
 import observer
 import of_elements as oe
@@ -495,6 +496,14 @@ def clean_rule(raw):
         clean_flow["steady"] = True
         clean_flow["steadyDays"] = int(_num(flow.get("steadyDays"), 14, 3, 60))
         clean_flow["steadyMin"] = _num(flow.get("steadyMin"), 0.52, 0.3, 0.9)
+    chain = flow.get("chain") or {}
+    if chain.get("metric") in onchain_flows.METRICS:
+        # Flujos on-chain diarios de Coin Metrics (21/11): flujo neto de BTC o ETH a los exchanges, o emisión de stablecoins
+        clean_flow["chain"] = {"metric": chain["metric"], "days": int(_num(chain.get("days"), 7, 1, 90)),
+                               "z": _num(chain.get("z"), 0.5, 0.0, 3.0),
+                               "mode": chain.get("mode") if chain.get("mode") in onchain_flows.MODES else "favor"}
+        if chain["metric"] == "net":
+            clean_flow["chain"]["asset"] = chain.get("asset") if chain.get("asset") in onchain_flows.ASSETS else "auto"
     if clean_flow:
         extra["flow"] = clean_flow  # Solo entra si se pide: una regla sin él conserva su identidad
     bwf = raw.get("bwf") or {}
@@ -1646,7 +1655,19 @@ def _flow_ok(flow, ctx, k, side):
         value = cache[key][k]
         if not value == value or value < flow["steadyMin"]:
             return False
+    if flow.get("chain"):
+        if not onchain_flows.chain_ok(flow["chain"], _chain_series(flow["chain"], ctx)[1][k], side):
+            return False
     return True
+
+
+def _chain_series(chain, ctx, symbol=None, tf=None):
+    """Medida y z de los flujos on-chain al cierre de cada vela, en el caché de la corrida."""
+    cache = ctx.setdefault("flow", {})
+    key = ("chain", chain["metric"], chain.get("asset"), chain["days"])
+    if key not in cache:
+        cache[key] = onchain_flows.at_close(chain, symbol or ctx["symbol"], ctx["bars"], tf or ctx["tf"])
+    return cache[key]
 
 
 def _box_events(rule, span):
@@ -1919,6 +1940,11 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             steady = flow_cache.get(("steady", rule["flow"].get("steadyDays")))
             if steady is not None and steady[k] == steady[k]:
                 trade["flow"]["steady"] = round(float(steady[k]), 3)
+            chain = rule["flow"].get("chain")
+            found = chain and flow_cache.get(("chain", chain["metric"], chain.get("asset"), chain["days"]))
+            if found and found[1][k] == found[1][k]:
+                trade["flow"]["chain"] = round(float(found[0][k]), 4)   # La medida en %, a favor de un largo
+                trade["flow"]["chainZ"] = round(float(found[1][k]), 3)
         if boxed is not None:
             trade["box"] = boxed  # La caja de la ruptura o del borde, para dibujarla con el trade
         elif ctx["vp"] is not None:
@@ -2673,6 +2699,12 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
         out["rows"].append(row("steady", f"OI sostenido: sube en {flow['steadyMin'] * 100:.0f}% o más de los pasos de {flow['steadyDays']} días",
                                lambda i: None if not values[i] == values[i] else values[i] >= flow["steadyMin"],
                                f"sube en {values[k] * 100:.0f}% de los pasos" if values[k] == values[k] else "OI sin datos suficientes"))
+    if flow.get("chain"):
+        chain = flow["chain"]
+        value, cz = _chain_series(chain, ctx, symbol, rule["tf"])
+        out["rows"].append(row("chain", onchain_flows.describe(chain, symbol),
+                               lambda i: None if not cz[i] == cz[i] else onchain_flows.chain_ok(chain, cz[i], side),
+                               f"{value[k]:+.2f}% a favor de un largo, z {cz[k]:+.2f}" if cz[k] == cz[k] else "sin dato on-chain"))
 
     if rule.get("regime"):
         reg = rule["regime"]

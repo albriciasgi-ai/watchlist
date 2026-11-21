@@ -11,7 +11,7 @@
  * Lógica pura: se prueba en Node.
  */
 import { elementLabels } from './elementLabels.js';
-import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, tpTrailText } from './ruleTester.js';
+import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, chainText, tpTrailText } from './ruleTester.js';
 
 /** Secciones del formulario, en orden */
 export const SECTIONS = [
@@ -47,6 +47,7 @@ export const FACETS = {
   oi: ['filtros', 'Interés abierto', 'sin filtro'],
   multitud: ['filtros', 'Multitud', 'sin filtro'],
   oiSostenido: ['filtros', 'OI sostenido', 'sin filtro'],
+  onchain: ['filtros', 'Flujos on-chain', 'sin filtro'],
   alligator: ['filtros', 'Alligator', 'sin filtro'],
   zonaWilliams: ['filtros', 'Zona de Williams', 'sin filtro'],
   ao: ['filtros', 'AO', 'sin filtro'],
@@ -215,6 +216,7 @@ export function ruleFacets(rule, labels = {}) {
   if (rule.smcf?.pd) add('premium', `largos en discount y cortos en premium (rango mayor de ${rule.smcf.swing} velas)`);
   if (rule.smcf?.bias) add('sesgo', `a favor de la estructura mayor de ${rule.smcf.swing} velas`);
   if (flow.steady) add('oiSostenido', `OI sube en ${Math.round(Number(flow.steadyMin) * 100)}% o más de los pasos de ${flow.steadyDays} días`);
+  if (flow.chain) add('onchain', chainText(flow.chain));
   if (recipe.swing?.on) add('extremo', `en un extremo de ${recipe.swing.bars} velas`);
   if (recipe.momentum) add('momentum', 'EMA 14 con pendiente a favor');
   if (recipe.entry?.on) add('confirmacion', `${n(recipe.entry.atr)} ATR a favor en ${recipe.entry.bars} velas`);
@@ -323,7 +325,7 @@ export function loadedSummary(rule, labels = {}) {
 /** Cómo se apaga cada pieza en el formulario (las fichas de «Vas a correr» con su ×). null: no se apaga así */
 export const OFF_PATCH = {
   vwap: { vwapMode: 'off' }, ema: { emaMode: 'off' }, regimen: { regimeMode: 'any' }, cvd: { cvdOn: false }, oi: { oiMode: 'off' },
-  multitud: { crowdMode: 'off' }, oiSostenido: { steadyOn: false }, alligator: { bwAlligator: 'off' }, zonaWilliams: { bwZone: false },
+  multitud: { crowdMode: 'off' }, oiSostenido: { steadyOn: false }, onchain: { chainMetric: 'off' }, alligator: { bwAlligator: 'off' }, zonaWilliams: { bwZone: false },
   ao: { bwAo: 'off' }, ac: { bwAc: 'off' }, gator: { bwGator: 'off' }, mfi: { bwMfi: 'off' }, vpaMedidor: { vpaMode: 'off' },
   premium: { smcPd: false }, sesgo: { smcBias: false }, extremo: { swing: false }, momentum: { momentum: false },
   confirmacion: { confirm: false }, horario: { useHours: false }, medidas: { filters: [] },
