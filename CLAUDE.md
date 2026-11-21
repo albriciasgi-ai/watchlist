@@ -131,6 +131,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - Reiniciar el backend de App 1 (9000) y recargar su página.
 - La corrida de 684 trades sigue en el disco, pero queda fuera del tablero y de «Todas»: hay que volver a correr la regla.
 - Sin almacén de trades, en 15m y 5m las monedas nuevas corren solo con los elementos de velas.
+- **Después, automático:** al arrancar, el backend lanza en segundo plano `market_update.py`, que pone al día las velas de las monedas nuevas, el OI y el funding, como mucho cada 2 horas. Registro en `OrderFlowData/candles/actualizacion.log`.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Ruptura de fractal sin futuro y monedas nuevas en 15m y 5m (21/11)"
 
