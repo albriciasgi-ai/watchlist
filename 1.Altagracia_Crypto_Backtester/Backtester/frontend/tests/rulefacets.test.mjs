@@ -92,7 +92,7 @@ test('cada × de «Vas a correr» apaga solo su pieza', () => {
     useHours: true, filters: [{ key: 'x', op: '>=', value: 1 }], tpTrailOn: true, targetR: 3, breakEvenOn: true, useHorizon: true, opposite: true,
     codes: [...user().codes, 'GC'], gcExit: 'band', bwAlligator: 'awake', bwZone: true, smcPd: true, smcBias: true,
     bwAo: 'color', bwAc: 'zero', bwGator: 'eating', bwMfi: 'squat', vpaMode: 'favor', vpaThr: 0.5,
-    vpaExitOn: true, vpaExit: ['absorb', 'meter'], vpaExitThr: 0.8
+    vpaExitOn: true, vpaExit: ['absorb', 'meter'], vpaExitThr: 0.8, chainMetric: 'net', chainDays: 7
   };
   const before = keys(on);
   for (const [key, patch] of Object.entries(OFF_PATCH)) {

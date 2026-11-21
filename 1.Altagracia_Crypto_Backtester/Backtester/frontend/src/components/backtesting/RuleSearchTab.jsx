@@ -25,7 +25,7 @@ const DEFAULT_CONFIG = {
   tfs: [240], codes: ['CC', 'VH', 'HM', 'EN', 'DJ', 'RF', 'RB', 'GC', 'BX', 'BE', 'CP', 'FV', 'SP', 'IM', 'WD', 'WA', 'WF', 'BS', 'OB', 'BK', 'EQ'],
   population: 60, generations: 25, maxElements: 2,
   minTrades: 150, minCoins: 4, split: '2023-01-01', lines: true, invert: true, mutation: 0.1,
-  flow: true, regime: true, trailing: true, straddle: true, stopEntry: true, williams: true, vpa: true, checkNew: true, checkStocks: true, fitness: 'promedio'
+  flow: true, regime: true, trailing: true, straddle: true, stopEntry: true, williams: true, vpa: true, chain: true, checkNew: true, checkStocks: true, fitness: 'promedio'
 };
 
 const api = async (path, body) => {
@@ -209,6 +209,7 @@ export default function RuleSearchTab({ onLoadRule }) {
             <Check checked={config.stopEntry !== false} onChange={(stopEntry) => patch({ stopEntry })} title="Una orden stop a favor en el borde de la zona del elemento, como los sabios de Williams, y la salida bajo el mínimo de las últimas 3 o 5 velas (con el trailing)">orden stop a favor</Check>
             <Check checked={config.williams !== false} onChange={(williams) => patch({ williams })} title="Alligator despierto, del lado de los dientes o dormido; zona de Williams a favor; AO y AC a favor; Gator comiendo o despierto; vela verde o squat del MFI; premium y discount, y a favor de la estructura mayor SMC; objetivo en el máximo o mínimo del rango SMC">filtros de Williams y SMC</Check>
             <Check checked={config.vpa !== false} onChange={(vpa) => patch({ vpa })} title="El medidor del Lector VPA en la vela de la señal: a favor del trade, o que no esté en contra">medidor VPA</Check>
+            <Check checked={config.chain !== false} onChange={(chain) => patch({ chain })} title="Flujos on-chain diarios de Coin Metrics: flujo neto de BTC o ETH a los exchanges, o emisión de USDT y USDC, en 7 o 30 días, a favor del trade o que no vaya en contra">flujos on-chain</Check>
           </div>
           <div className="rt-row">
             <span title="Promedio: la ventaja media sobre los controles, menos su error. Constancia: la mediana de la ventaja de cada trimestre del tramo de búsqueda (cada trade contra el azar de su trimestre); no la mueven uno o dos trimestres excepcionales, y premia las reglas que ganan un poco casi siempre">Elegir por</span>

@@ -1432,6 +1432,86 @@ Pedido del usuario: las iniciales costaban. La ventana muestra un nombre corto e
 - Abrir la reproducción de la principal unas velas antes de una señal, con fecha oculta.
 - Guardar por trade lo que marcan los indicadores del navegador.
 
+## FLUJOS ON-CHAIN (21/11/2026)
+
+Paso 1 del plan de indicadores on-chain (`docs/PLAN_INDICADORES_ONCHAIN.md` en la raíz del repositorio).
+
+**Pedido del usuario:** saber si la actividad de las blockchains avisa un movimiento del precio, con datos que sirvan en el backtesting global. Tras revisar lo publicado:
+- el MEV y el flujo privado quedaron descartados: son efectos de segundos en los DEX;
+- lo único gratis con años de historia son los datos diarios de Coin Metrics.
+
+### Datos
+
+- **`backend/onchain_flows.py`** baja de la API comunitaria de Coin Metrics, gratis y sin clave, a `OrderFlowData/onchain/coinmetrics.json` (`TESTER_ONCHAIN` cambia la carpeta). Se baja todo de nuevo cada vez: son pocos datos y así entran las revisiones.
+  - **BTC y ETH:** flujos de entrada y salida de exchanges y saldo en exchanges, desde 2011 y 2015.
+  - **USDT y USDC:** su emisión total, desde 2014 y 2018.
+- **Licencia:** CC BY-NC 4.0, no comercial.
+- **No están:** los flujos de stablecoins a exchanges y los datos por hora; son de pago.
+- **`market_update.py`** lo actualiza al arrancar el backend, como mucho cada 2 horas. A mano: `python -B onchain_flows.py`.
+- **Sin futuro:** el dato del día D se usa desde D + 1 día + 6 horas (`LAG_MS`). Coin Metrics lo publica entre la 01:00 y las 04:00 UTC: se vio en su `status-time`.
+  - Sin datos nuevos en 3 días, la vela no pasa.
+  - Los valores recientes son "flash" y pueden corregirse un poco al revisarse. Lo viejo ya viene revisado: es una fuga mínima, no se corrige.
+
+### Filtro "Flujos on-chain (diarios)"
+
+En la sección Filtros del probador, grupo Flujo. `flow.chain` = `{metric, days, z, mode, asset}`, y solo entra a la regla si se pide.
+
+**Medidas**, en "a favor de un largo" (positivo = alcista):
+- `net`: el flujo neto a los exchanges en `days` días, en % del saldo en exchanges al empezar, con el signo cambiado: salir de los exchanges es positivo. El activo lo da `asset`:
+  - `auto`: ETH para las monedas de ETH y BTC para las demás;
+  - o `btc`, o `eth`.
+- `stable`: el crecimiento de USDT + USDC en `days` días. Cada stablecoin cuenta desde que tiene dato, así la llegada de USDC en 2018 no parece emisión.
+
+**Cómo filtra:**
+- Cada medida va en z-score contra los 365 días anteriores, con al menos 180.
+- `favor`: z × lado ≥ `z`.
+- `nocontra`: z × lado > −`z`.
+
+**En el probador:**
+- Los controles al azar entran donde el filtro deja (`_side_ok`).
+- Cada trade guarda `flow.chain` (la medida) y `flow.chainZ`.
+- El trade elegido tiene su fila y su línea en el cuadro de la vela de la señal.
+- Vale en cualquier marco, pero el valor cambia una vez por día: tiene sentido en 4h y 1D.
+- En las acciones se puede usar igual, aunque es un dato de cripto.
+
+**En la búsqueda genética:** genes `chain` (neto o emisión, 7 o 30 días), `chainMode` y `chainZ`, apagados de fábrica, y la casilla "flujos on-chain".
+
+**En la página:** `ruleTester.js` (`chainMetric`, `chainAsset`, `chainDays`, `chainZ`, `chainMode`, `chainText`), `ruleFacets.js` (pieza `onchain`), `RuleTesterApp.jsx` y `RuleSearchTab.jsx`.
+
+### Primer estudio (fase 1, 4h, siete monedas de siempre)
+
+Con Impulso (≥ 2 ATR en 3 velas) y FVG nuevo (≥ 0.3 ATR), los dos con stop 1.5 ATR y 3R. Lo corrió un script aparte, sin guardar corridas. R por trade, con el azar y el tramo filtrados igual:
+
+| Regla | Filtro | Trades | R | Azar | Tramo | Monedas + |
+|---|---|---|---|---|---|---|
+| Impulso | sin filtro | 707 | +0.16 | +0.01 | +0.03 | 6/7 |
+| Impulso | neto 7 d a favor | 241 | +0.16 | +0.19 | +0.20 | 5/7 |
+| Impulso | neto 7 d que no vaya en contra | 628 | +0.11 | +0.04 | +0.06 | 5/7 |
+| Impulso | emisión 7 d a favor | 233 | +0.38 | +0.09 | +0.14 | 7/7 |
+| Impulso | emisión 30 d a favor | 306 | +0.34 | +0.17 | +0.22 | 7/7 |
+| FVG nuevo | sin filtro | 1016 | +0.26 | +0.01 | +0.02 | 5/7 |
+| FVG nuevo | neto 7 d a favor | 386 | +0.26 | +0.19 | +0.20 | 6/7 |
+| FVG nuevo | emisión 7 d a favor | 416 | +0.33 | +0.10 | +0.15 | 7/7 |
+| FVG nuevo | emisión 30 d a favor | 467 | +0.35 | +0.16 | +0.22 | 7/7 |
+
+**Qué se lee:**
+- **El filtro solo ya sirve:** entrar al azar del lado del flujo neto de 7 días da +0.19 R contra +0.01 sin él. Pero las reglas no le suman nada encima: su ventaja sobre los controles baja a cero o menos.
+- **La emisión de stablecoins sube el R de las dos reglas** (Impulso de +0.16 a +0.38) y su ventaja sobre los dos controles, en las 7 monedas.
+- **Por qué no es un resultado todavía:**
+  - Impulso con emisión de 7 días son 233 trades, pero en solo 137 días distintos: es una serie del mercado entero, y los trades de las monedas caen en los mismos días;
+  - casi todo lo ponen los cortos de 2022 (99 trades, +0.31 R) y los largos de 2023 (61, +0.60): es el ciclo de emisión de ese periodo;
+  - los márgenes del informe suponen trades independientes: con estos filtros quedan cortos.
+- Se probaron 14 variantes sobre los mismos datos.
+
+**Siguiente:** la emisión a favor, 7 y 30 días, con Impulso, FVG nuevo y la B5, en "todas las monedas", también las nuevas. Recién después la fase 2.
+
+### Pruebas
+
+- `tests/test_onchain_flows.py` (6): el signo y el z, la hora de publicación, la llegada de USDC, el lado, la identidad de la regla, el gen apagado y el filtro sobre velas.
+- `rulefacets.test.mjs` suma la pieza al × de «Vas a correr» (11).
+- Pasan `test_rule_tester`, `test_rule_search`, `test_trade_context`, `test_crowd_constancy` y `test_market_update` (42 con las nuevas), y `ruletester.test.mjs` (15). La página se arma.
+- **No se vio en pantalla.**
+
 ## REVISIÓN DE CANDIDATOS POR SESIONES (18/11/2026)
 
 Pedido del usuario: sus trades manuales (24 cerrados, 42% de acierto y +0.26 R ±0.71 al 18/11) rinden más que las reglas del probador, y cree que es por intuición que una regla rígida no recoge. Esto lo mide: una regla floja propone y él decide. Además notó que en una corrida de trades seguidos los primeros le salen peor, porque va leyendo el mercado: por eso las sesiones son un tramo seguido y en orden, no momentos sueltos.
