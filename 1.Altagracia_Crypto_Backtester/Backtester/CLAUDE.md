@@ -1154,6 +1154,27 @@ Pedido del usuario para depurar: al elegir un trade se veían la caja TP/SL y la
 
   Pruebas: `tests/test_trade_context.py` (5, una para el recorrido del stop) y tres más en `ruletester.test.mjs` (12; la de las cajas, al comportamiento nuevo). La vela de la señal resaltada, su cuadro y la tabla se vieron en pantalla con el trade 2 de la B5 en BTC: los tres en ✓ (FVG nuevo; EMA 50 en 11698.7 con cierre en 11305.5; OI +6.89% en 6 velas).
 - **Reglas en secuencia (20/11, después):** `trade_context` fallaba con ellas (KeyError): del disco, los mínimos por grupo de la receta vuelven con llaves de texto ("1") y `of_setups` las busca como números. `saved_rule(result)` las vuelve números antes de repetir la regla. Prueba en `test_trade_context.py` (6).
+- **Los indicadores de la regla (21/11, pedido del usuario):** al elegir un trade se veían las marcas de sus elementos y las filas de sus filtros, pero no los indicadores. Con «Ver en el gráfico lo que usó la regla» marcado, el gráfico los enciende un rato, sin tocar la lista guardada.
+  - **Cuáles** (`ruleIndicators()` de `ruleTester.js`):
+    - de Williams: los sabios encienden «Tres sabios»; la barra divergente, el Alligator y el AO; el AO de tres barras, el AO; la ruptura de fractal, «Fractales» y el Alligator (si mira los dientes). Además, cada filtro el suyo: Alligator, zona, AO, AC, Gator y MFI;
+    - la estructura SMC, con sus elementos, sus filtros o el objetivo en el rango;
+    - los paneles de los datos que leen los filtros de flujo: CVD, «Open Interest» y «OI-Volume Confluence».
+
+    Las líneas (EMA, VWAP, canal), las cajas y las demás marcas las sigue dibujando el contexto.
+  - **Con los ajustes de la regla:** los de Williams y la estructura SMC calculan como el backend (`ruleWilliamsConfig`, `ruleSmcConfig`).
+    - Williams: el Alligator, el AO y el AC con los de fábrica (los de `williams.py`), y los sabios con los de la regla. «Tres sabios» muestra solo los de la regla, y la entrada stop espera lo de la regla.
+    - SMC: las longitudes de la estructura, el order block y los iguales de la regla, con premium/discount a la vista si la regla lo usa.
+
+    Los colores y lo que se muestra siguen siendo los del gráfico. `MiniChart` recibe `indicatorOverrides` y los aplica a su `IndicatorManager` cada vez que lo crea; al quitarlos vuelven los guardados.
+  - **En el marco de la regla:** al elegir el trade, el gráfico pasa a ese marco, porque en otro serían otros indicadores.
+    - En otro marco, el detalle avisa y ofrece «Ver en 4H».
+    - Una regla de 30m o 1D no tiene marco en el gráfico, y el detalle lo dice.
+  - **Probado en pantalla** con una copia aislada y la regla de las corridas del usuario (los tres sabios, al menos 1, cierre del lado de los dientes) en BTC 4h, desde el gráfico en 15M o 1H:
+    - fase 1, trade 215; fase 2, trade 6; fase 3, trade 2;
+    - las líneas del Alligator, los sabios, los fractales y el panel del AO;
+    - desmarcar la casilla vuelve a los indicadores de siempre.
+
+    Prueba en `ruletester.test.mjs` (15).
 
 ### Objetivo arrastrado (20/11)
 
