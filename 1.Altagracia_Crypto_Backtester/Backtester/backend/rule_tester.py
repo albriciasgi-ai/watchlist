@@ -574,7 +574,7 @@ def clean_rule(raw):
                  "maxAtr": _num(stop.get("maxAtr"), 6.0, 0.2, 100.0)},
         "exit": {"targetR": target_r, "trail": trail, "trailBars": int(_num(exit_.get("trailBars"), 5, 2, 20)),
                  "horizon": horizon, "opposite": bool(exit_.get("opposite")), **_trail_extra(exit_, trail),
-                 **_tp_trail(exit_, target_r), **vexit},
+                 **_tp_trail(exit_, target_r), **_chain_target(exit_, target_r, "targetAt" in extra or bool(_tp_trail(exit_, target_r))), **vexit},
         "oneAtATime": raw.get("oneAtATime") is not False,
         # Velas de espera tras cerrar un trade antes de tomar otra señal (solo con una posición a la vez)
         "cooldown": int(_num(raw.get("cooldown"), 0, 0, 500)),
@@ -663,6 +663,25 @@ def _vpa_exit_bars(rule, ctx):
         if "fade" in on and leg and finite(series["fade"][i]) and series["fade"][i] >= fire:
             out[leg].setdefault(i, "VPA: " + VPA_EXITS["fade"])
     return out
+
+
+def _chain_target(exit_, target_r, level_target):
+    """
+    Objetivo distinto cuando los flujos on-chain van a favor del trade (pedido del usuario, 21/11/2026): en los días en que
+    la emisión de stablecoins (u otra medida de onchain_flows) va a favor, el mercado da más, así que el objetivo es `r` R;
+    los demás días, el objetivo de siempre (target_r). Se mira en la vela de la señal, con el dato ya publicado.
+    Solo con el objetivo en R, y solo entra a la regla si se pide: una regla sin él conserva su identidad.
+    """
+    raw = exit_.get("chainTarget")
+    if not isinstance(raw, dict) or raw.get("on") is False or target_r is None or level_target:
+        return {}
+    if raw.get("metric") not in onchain_flows.METRICS:
+        return {}
+    out = {"r": _num(raw.get("r"), 5.0, 0.2, 50.0), "metric": raw["metric"], "days": int(_num(raw.get("days"), 30, 1, 90)),
+           "z": _num(raw.get("z"), 0.5, 0.0, 3.0), "mode": "favor"}
+    if raw["metric"] == "net":
+        out["asset"] = raw.get("asset") if raw.get("asset") in onchain_flows.ASSETS else "auto"
+    return {"chainTarget": out}
 
 
 def _tp_trail(exit_, target_r):
@@ -1003,7 +1022,14 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
         return {"skip": "stop muy corto"}
     if stop_atr > rule["stop"]["maxAtr"]:
         return {"skip": "stop muy largo"}
-    target = entry + side * risk * exit_rule["targetR"] if exit_rule["targetR"] else None
+    target_r, chain_on = exit_rule["targetR"], None
+    if target_r and exit_rule.get("chainTarget") and "bars" in ctx:
+        # Objetivo mixto: con los flujos on-chain a favor en la vela de la señal, el objetivo de los días que dan más
+        ct = exit_rule["chainTarget"]
+        chain_on = bool(onchain_flows.chain_ok(ct, _chain_series(ct, ctx)[1][k], side))
+        if chain_on:
+            target_r = ct["r"]
+    target = entry + side * risk * target_r if target_r else None
     if rule.get("targetAt") == "weak":
         # El máximo (largo) o el mínimo (corto) del rango mayor SMC en la vela de la señal: la liquidez del lado débil
         rng = _smc_range(rule, ctx) if "bars" in ctx else None
@@ -1217,6 +1243,8 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
              "order": "limit" if limit_fill else ("stop" if entry_rule["type"] in ("straddle", "stop") else "market"), "reach": round(reach, 3) if reach_done else None}
     if entry_rule["type"] in ("straddle", "stop"):
         trade["trigger_atr"] = round(abs(entry - C[k]) / atr[k], 3) if atr[k] > 0 else 0.0
+    if chain_on is not None:
+        trade["chain_on"] = chain_on  # Si el objetivo fue el de los días con los flujos on-chain a favor
     if tp:
         trade["tp_on"] = tp_on  # Cuándo se activó el trailing del objetivo; None si el precio nunca llegó a su arranque
     if exit_price is None:

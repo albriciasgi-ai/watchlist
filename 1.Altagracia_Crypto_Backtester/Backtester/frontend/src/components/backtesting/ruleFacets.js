@@ -11,7 +11,7 @@
  * Lógica pura: se prueba en Node.
  */
 import { elementLabels } from './elementLabels.js';
-import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, chainText, tpTrailText, vpaExitText } from './ruleTester.js';
+import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, chainTargetText, chainText, tpTrailText, vpaExitText } from './ruleTester.js';
 
 /** Secciones del formulario, en orden */
 export const SECTIONS = [
@@ -66,6 +66,7 @@ export const FACETS = {
   stop: ['stop', 'Stop'],
   objetivo: ['salida', 'Objetivo', 'sin objetivo'],
   arrastre: ['salida', 'Arrastre del objetivo', 'no'],
+  objetivoOnchain: ['salida', 'Objetivo con flujos on-chain', 'no'],
   trailing: ['salida', 'Trailing del stop', 'sin trailing'],
   aLaEntrada: ['salida', 'Stop a la entrada', 'no'],
   tiempo: ['salida', 'Cierre por tiempo', 'no'],
@@ -244,6 +245,7 @@ export function ruleFacets(rule, labels = {}) {
       : { poc: 'el POC anterior', edge: 'el borde contrario del valor', mid: 'el centro del rango anterior' }[targetAt]);
   } else if (exit.targetR !== null && exit.targetR !== undefined) {
     add('objetivo', `${n(exit.targetR)}R`);
+    if (exit.chainTarget) add('objetivoOnchain', `${n(exit.chainTarget.r)}R con ${chainTargetText(exit.chainTarget)}`);
     if (exit.tpTrail) add('arrastre', `desde ${n(exit.tpTrail.start)}R, a ${tpTrailText({ dist: n(exit.tpTrail.dist), unit: exit.tpTrail.unit })} del mejor precio`);
   }
   if (exit.trail === 'swing') add('trailing', `al último swing confirmado de ${exit.trailBars} velas`);
@@ -332,7 +334,7 @@ export const OFF_PATCH = {
   ao: { bwAo: 'off' }, ac: { bwAc: 'off' }, gator: { bwGator: 'off' }, mfi: { bwMfi: 'off' }, vpaMedidor: { vpaMode: 'off' },
   premium: { smcPd: false }, sesgo: { smcBias: false }, extremo: { swing: false }, momentum: { momentum: false },
   confirmacion: { confirm: false }, horario: { useHours: false }, medidas: { filters: [] },
-  objetivo: { useTarget: false }, arrastre: { tpTrailOn: false }, trailing: { trail: false, trailMode: 'off' }, aLaEntrada: { breakEvenOn: false },
+  objetivo: { useTarget: false }, arrastre: { tpTrailOn: false }, objetivoOnchain: { chainTargetOn: false }, trailing: { trail: false, trailMode: 'off' }, aLaEntrada: { breakEvenOn: false },
   tiempo: { useHorizon: false }, contraria: { opposite: false }, canal: { gcExit: 'none' }, salidaVpa: { vpaExitOn: false }
 };
 

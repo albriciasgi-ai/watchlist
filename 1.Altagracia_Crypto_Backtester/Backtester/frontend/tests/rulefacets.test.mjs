@@ -96,6 +96,7 @@ test('cada × de «Vas a correr» apaga solo su pieza', () => {
   };
   const before = keys(on);
   for (const [key, patch] of Object.entries(OFF_PATCH)) {
+    if (key === 'objetivoOnchain') continue;  // Va sin el arrastre: tiene su propia prueba
     assert.ok(before.includes(key), `${key} está en la regla de prueba`);
     const after = keys({ ...on, ...patch });
     assert.ok(!after.includes(key), `${key} se apaga`);
@@ -206,6 +207,16 @@ test('la salida VPA en palabras, ida y vuelta, y sin el cierre a las 96 velas', 
   assert.ok(!('vpa' in toBackendRule({ ...defaultRule(), codes: ['FV'] }).exit));
 });
 
+test('el objetivo con los flujos on-chain: su ficha, su × y sin arrastre', () => {
+  const on = { ...user(), useTarget: true, targetR: 3, tpTrailOn: false, chainTargetOn: true, chainTargetR: 5, chainTargetMetric: 'stable', chainTargetDays: 30 };
+  const rule = toBackendRule(on);
+  assert.deepEqual(rule.exit.chainTarget, { r: 5, metric: 'stable', days: 30, z: 0.5, mode: 'favor' });
+  assert.ok(keys(on).includes('objetivoOnchain'));
+  assert.ok(!keys({ ...on, ...OFF_PATCH.objetivoOnchain }).includes('objetivoOnchain'));
+  assert.equal(toBackendRule({ ...on, tpTrailOn: true }).exit.chainTarget, undefined, 'con el arrastre no va');
+  assert.deepEqual(ruleDifferences(toBackendRule(fromBackendRule(rule)), rule), [], 'cargarla deja el formulario igual');
+});
+
 let failed = 0;
 for (const [name, run] of tests) {
   try {
@@ -218,3 +229,4 @@ for (const [name, run] of tests) {
 }
 console.log(`\n${tests.length - failed} de ${tests.length} pruebas pasaron`);
 process.exit(failed ? 1 : 0);
+
