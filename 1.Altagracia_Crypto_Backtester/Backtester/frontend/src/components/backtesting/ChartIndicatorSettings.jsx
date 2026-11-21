@@ -16,6 +16,9 @@ import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
 import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
 import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
+import WilliamsSettings from '../WilliamsSettings';
+import SMCSettings from '../SMCSettings';
+import { WILLIAMS_NAMES } from '../indicators/williams.js';
 
 /**
  * Los modales de ajustes de los indicadores (los mismos de la principal) para una ventana con un solo gráfico:
@@ -26,7 +29,7 @@ import ResponseVolumeSettings from '../ResponseVolumeSettings';
 export const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP',
   'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales'
+  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ]);
 
 /** Fondo y caja de los modales que no traen la suya */
@@ -71,6 +74,27 @@ const ChartIndicatorSettings = ({
     change(manager);
     chartRef.current?.forceRedraw?.();
   };
+  if (WILLIAMS_NAMES.includes(name)) {
+    return (
+      <WilliamsSettings
+        symbol={symbol}
+        which={name}
+        indicator={current.getWilliamsHub()}
+        onApply={(settings) => applyHere(m => m.getWilliamsHub().setConfig(settings))}
+        onClose={close}
+      />
+    );
+  }
+  if (name === 'Estructura SMC') {
+    return (
+      <SMCSettings
+        symbol={symbol}
+        indicator={current.getSMCIndicator()}
+        onApply={(settings) => applyHere(m => m.getSMCIndicator().updateConfig(settings))}
+        onClose={close}
+      />
+    );
+  }
   switch (name) {
     case 'Volume Profile':
       return (

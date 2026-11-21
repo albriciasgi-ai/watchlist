@@ -6,6 +6,7 @@
 # Desde el 13/11/2026 (version 2) el delta lee tambien los dias de la nube y el PC donde falta el oficial, y el interes
 # abierto es la serie local de App 1 mas lo que le falta de Bybit (journal_reading.oi_series). Antes, en los dias
 # recientes ambos quedaban vacios. Las medidas guardadas de la version anterior se vuelven a calcular.
+# Desde el 20/11/2026 (version 3) suma las de Williams y la estructura SMC (wise_smc_measures.py), con las mismas velas.
 import asyncio
 import math
 import time
@@ -18,8 +19,9 @@ import book_measures  # medidas del libro grabado por la suite (13/11/2026)
 import candles
 import journal_reading
 import measures  # App 1 (su backend esta en sys.path)
+import wise_smc_measures  # Williams y estructura SMC con williams.py y smc.py de App 1 (20/11/2026)
 
-MEASURES_VERSION = 2
+MEASURES_VERSION = 3
 MINUTE = 60000
 DAY = 86400000
 INTERVALS = {"5m": "5", "15m": "15", "1h": "60", "4h": "240"}
@@ -94,6 +96,12 @@ async def trade_measures(trade: Dict[str, Any]) -> Dict[str, Any]:
             "available": True, "version": MEASURES_VERSION, "decision_at": int(at), "decision_candle": int(table["close_time"][row]),
             "decision": measures.read_row(table, row, side), "complete": trade.get("status") == "closed",
         }
+        # Williams y SMC en 1h y 4h, con la entrada planeada en el panel (o la del trade)
+        planned = (decision.get("order") or {}).get("entry") or trade.get("entry")
+        try:
+            result["decision"].update(await run_in_threadpool(wise_smc_measures.compute, frames, int(at), side, planned))
+        except Exception as e:  # nunca impiden las demas medidas
+            result["wsmc_error"] = str(e)[:200]
         entry, stop, opened = trade.get("entry"), trade.get("initial_stop_loss"), trade.get("opened_at")
         if entry and stop and opened and not trade.get("pre_existing"):
             days5 = int(min(MAX_DAYS["5m"], math.ceil((now - opened) / DAY) + 1))
@@ -108,4 +116,4 @@ async def trade_measures(trade: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def catalog() -> List[Dict[str, str]]:
-    return measures.catalog() + book_measures.catalog()
+    return measures.catalog() + book_measures.catalog() + wise_smc_measures.catalog()

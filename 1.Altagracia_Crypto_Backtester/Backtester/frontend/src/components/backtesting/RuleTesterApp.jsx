@@ -41,7 +41,7 @@ const PAGE = 300;
 const INDICATORS = [
   'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
   'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Rangos horizontales', 'Rejection Patterns', 'Support & Resistance',
-  'S&R v2', 'Swing Detector'
+  'S&R v2', 'Swing Detector', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ];
 const DEFAULT_ON = new Set(['Volume Delta', 'Order Flow', 'Elementos OF']);
 const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true };
@@ -1162,6 +1162,91 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {rule.codes.some(code => ['WD', 'WA', 'WF'].includes(code)) && (
+          <>
+            {rule.codes.includes('WD') && (
+              <>
+                <div className="rt-row">
+                  <span title="La barra divergente alcista hace un mínimo más bajo que tantas velas anteriores y cierra en su mitad de arriba (la bajista, al revés). El libro compara con la anterior">Barra divergente: mínimo más bajo que</span>
+                  <Num value={rule.wiseLookback} min={1} max={20} onChange={(wiseLookback) => patch({ wiseLookback })} /><span>velas</span>
+                </div>
+                <div className="rt-row">
+                  <span title="El hueco entre la mandíbula del Alligator y la vela tiene que haber crecido en esas velas: el precio se aleja más rápido que la mandíbula">angulación en</span>
+                  <Num value={rule.wiseAngBars} min={1} max={50} onChange={(wiseAngBars) => patch({ wiseAngBars })} /><span>velas, hueco ≥</span>
+                  <Num value={rule.wiseMinGapAtr} min={0} max={10} step={0.1} onChange={(wiseMinGapAtr) => patch({ wiseMinGapAtr })} /><span>ATR</span>
+                  <Check checked={rule.wiseRequireAo} onChange={(wiseRequireAo) => patch({ wiseRequireAo })} title="El AO rojo en la barra alcista y verde en la bajista: es una entrada contra la tendencia">AO en contra</Check>
+                </div>
+              </>
+            )}
+            {rule.codes.includes('WF') && (
+              <div className="rt-row">
+                <Check checked={rule.wiseTeeth} onChange={(wiseTeeth) => patch({ wiseTeeth })} title="El libro no toma un fractal que el precio pasa del lado equivocado de los dientes del Alligator (la línea roja)">Fractal solo del lado correcto de los dientes</Check>
+              </div>
+            )}
+            <div className="rt-note">
+              Los tres sabios de Bill Williams (Trading Chaos), con las medias del libro. <b>Barra divergente</b> y <b>AO tres barras</b> van con la entrada
+              "Orden stop" en la vela de la señal y el stop "Extremo de la vela del elemento", como el libro. <b>Ruptura de fractal</b>: la orden stop espera en el
+              fractal hasta que el precio lo pasa o llega otro; su stop, el swing anterior. La salida del libro: bajo el mínimo de las últimas 3 a 5 velas.
+            </div>
+          </>
+        )}
+        {rule.codes.some(code => ['BS', 'OB', 'BK', 'EQ'].includes(code)) && (
+          <>
+            <div className="rt-row">
+              <span title="Pivotes de tramo: una vela es el extremo de su tramo cuando las velas siguientes no la pasan; se sabe esas velas después">Estructura</span>
+              <select value={rule.smcScope} onChange={(e) => patch({ smcScope: e.target.value })}>
+                <option value="swing">mayor</option>
+                <option value="internal">interna</option>
+              </select>
+              <span>de</span>
+              {rule.smcScope === 'internal'
+                ? <Num value={rule.smcInternal} min={2} max={50} onChange={(smcInternal) => patch({ smcInternal })} />
+                : <Num value={rule.smcSwing} min={5} max={300} onChange={(smcSwing) => patch({ smcSwing })} />}
+              <span>velas</span>
+            </div>
+            {rule.codes.includes('BS') && (
+              <div className="rt-row">
+                <span>Ruptura:</span>
+                <select value={rule.smcBreak} onChange={(e) => patch({ smcBreak: e.target.value })}>
+                  <option value="any">BOS o CHoCH</option>
+                  <option value="bos">solo BOS (sigue la tendencia)</option>
+                  <option value="choch">solo CHoCH (la da vuelta)</option>
+                </select>
+              </div>
+            )}
+            {(rule.codes.includes('OB') || rule.codes.includes('BK')) && (
+              <div className="rt-row">
+                <span>OB:</span>
+                <select value={rule.smcPick} onChange={(e) => patch({ smcPick: e.target.value })}>
+                  <option value="extreme">la vela del extremo</option>
+                  <option value="opposite">la última vela contraria</option>
+                </select>
+                <select value={rule.smcArea} onChange={(e) => patch({ smcArea: e.target.value })}>
+                  <option value="full">entera</option>
+                  <option value="body">su cuerpo</option>
+                </select>
+                <span>lo rompe</span>
+                <select value={rule.smcMitigation} onChange={(e) => patch({ smcMitigation: e.target.value })}>
+                  <option value="close">un cierre</option>
+                  <option value="wick">una mecha</option>
+                </select>
+              </div>
+            )}
+            {rule.codes.includes('EQ') && (
+              <div className="rt-row">
+                <span title="Dos pivotes cortos seguidos del mismo lado casi al mismo precio: liquidez esperando del otro lado">Iguales de</span>
+                <Num value={rule.smcEqLength} min={2} max={20} onChange={(smcEqLength) => patch({ smcEqLength })} /><span>velas a menos de</span>
+                <Num value={rule.smcEqThreshold} min={0.01} max={2} step={0.05} onChange={(smcEqThreshold) => patch({ smcEqThreshold })} /><span>ATR</span>
+                <Check checked={rule.smcReclaim} onChange={(smcReclaim) => patch({ smcReclaim })} title="La vela que barre el nivel cierra de vuelta del otro lado">con regreso</Check>
+              </div>
+            )}
+            <div className="rt-note">
+              Estructura SMC con reglas propias. <b>Ruptura de estructura</b> entra al cierre que pasa el pivote; el stop "Borde lejano de la zona" queda detrás del nivel roto.
+              <b> Order block</b> nace con la ruptura: con entrada limit en la zona espera que el precio vuelva a él, y el borde lejano es el stop. <b>Breaker</b>: el OB roto, del lado contrario.
+              <b> Barrido de iguales</b> va contra el lado barrido; el borde lejano queda detrás del barrido. El objetivo puede ir en el máximo o mínimo del rango mayor (en "Salida").
+            </div>
+          </>
+        )}
         {(rule.codes.includes('BX') || rule.codes.includes('BE')) && (
           <>
             {rule.codes.includes('BX') && (
@@ -1338,6 +1423,23 @@ const RuleTesterApp = () => {
             <Num value={rule.steadyDays} min={3} max={60} onChange={(steadyDays) => patch({ steadyDays })} /><span>días</span>
           </div>
         </Opt>
+        <div className="rt-sub">Williams y SMC</div>
+        <Opt id="alligator" label="Alligator de Williams" on={rule.bwAlligator !== 'off'} onToggle={toggleMode('bwAlligator', 'off', 'awake')} title="El Alligator (13/8, 8/5 y 5/3 del precio medio) en la vela de la señal. Vale para cualquier regla">
+          <div className="rt-row">
+            <select value={rule.bwAlligator} onChange={(e) => patch({ bwAlligator: e.target.value })}>
+              <option value="awake">despierto a favor (labios, dientes y mandíbula en orden y abiertos)</option>
+              <option value="side">el cierre del lado de los dientes</option>
+              <option value="sleeping">dormido (para operar rangos)</option>
+            </select>
+          </div>
+        </Opt>
+        <Opt id="zonaWilliams" label="Zona de Williams a favor" on={rule.bwZone} onToggle={(bwZone) => patch({ bwZone })} title="El AO y el AC suben (verde) para un largo, o bajan los dos (roja) para un corto" />
+        <Opt id="premium" label="Premium y discount (SMC)" on={rule.smcPd} onToggle={(smcPd) => patch({ smcPd })} title="Un largo solo bajo la mitad del rango mayor (discount) y un corto solo sobre ella (premium). El rango va entre el último máximo y el último mínimo de la estructura mayor">
+          <div className="rt-row"><span>rango de la estructura mayor de</span><Num value={rule.smcSwing} min={5} max={300} onChange={(smcSwing) => patch({ smcSwing })} /><span>velas</span></div>
+        </Opt>
+        <Opt id="sesgo" label="A favor de la estructura mayor (SMC)" on={rule.smcBias} onToggle={(smcBias) => patch({ smcBias })} title="La tendencia de la última ruptura de la estructura mayor va del lado del trade">
+          <div className="rt-row"><span>estructura de</span><Num value={rule.smcSwing} min={5} max={300} onChange={(smcSwing) => patch({ smcSwing })} /><span>velas</span></div>
+        </Opt>
         <div className="rt-sub">Forma de la señal</div>
         <Opt id="extremo" label="En un extremo (mínimo o máximo)" on={rule.swing} onToggle={(swing) => patch({ swing })} title="La señal debe darse en un mínimo (alcista) o máximo (bajista) de N velas">
           <div className="rt-row"><span>de</span><Num value={rule.swingBars} min={2} max={20} onChange={(swingBars) => patch({ swingBars })} /><span>velas</span></div>
@@ -1386,8 +1488,23 @@ const RuleTesterApp = () => {
             <option value="market">A mercado, en la apertura de la vela siguiente</option>
             <option value="limit">Limit en la zona del elemento</option>
             <option value="straddle">Dos órdenes stop, una arriba y otra abajo: entra la primera que se llena</option>
+            <option value="stop">Orden stop a favor, en el borde de la zona (los sabios de Williams)</option>
           </select>
         </div>
+        {rule.entryType === 'stop' && (
+          <>
+            <div className="rt-row">
+              <span>más</span><Num value={rule.entryStopOffset} min={0} max={10} step={0.05} onChange={(entryStopOffset) => patch({ entryStopOffset })} /><span>ATR · espera</span>
+              <Num value={rule.entryExpiry} min={1} max={500} onChange={(entryExpiry) => patch({ entryExpiry })} /><span>velas</span>
+              <Check checked={rule.entryStopCancel} onChange={(entryStopCancel) => patch({ entryStopCancel })} title="Si antes de llenarse el precio pasa el otro borde de la zona (el mínimo de la barra divergente en un largo), la orden se cancela">se cancela si antes pasa el otro borde</Check>
+            </div>
+            <div className="rt-note">
+              Una compra stop en el máximo de la zona del elemento (una venta, en su mínimo): se llena al cruzarlo, o en la apertura si salta por encima.
+              Con la barra divergente y las tres barras del AO la zona es la vela de la señal; con el fractal, su nivel, y espera hasta que el precio lo pasa.
+              Los controles al azar ponen la orden en velas al azar a la distancia mediana del cierre.
+            </div>
+          </>
+        )}
         {rule.entryType === 'straddle' && (
           <>
             <div className="rt-row">
@@ -1457,8 +1574,17 @@ const RuleTesterApp = () => {
                 <option value="mid">en el centro del rango anterior</option>
               </select>
             )}
+            {!usesProfile(rule) && !rule.codes.includes('BE') && (
+              <select value={rule.targetAt === 'weak' ? 'weak' : 'r'} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
+                <option value="r">en R</option>
+                <option value="weak">en el máximo o mínimo del rango SMC</option>
+              </select>
+            )}
             {targetInR(rule) && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
           </div>
+          {rule.targetAt === 'weak' && !usesProfile(rule) && !rule.codes.includes('BE') && (
+            <div className="rt-note">El máximo (en un largo) o el mínimo (en un corto) del rango mayor SMC en la vela de la señal, donde espera la liquidez del lado débil. Con el objetivo a menos de 0.3 R o ya pasado no se opera.</div>
+          )}
           {targetInR(rule) && (
             <Opt sub id="arrastre" label="Arrastrarlo (trailing take profit)" on={rule.tpTrailOn}
               onToggle={(tpTrailOn) => patch({ tpTrailOn, ...(tpTrailOn && !(rule.tpTrailStart <= rule.targetR) ? { tpTrailStart: Math.max(0.25, rule.targetR - 0.5) } : {}) })}
@@ -1484,12 +1610,13 @@ const RuleTesterApp = () => {
               <option value="atr">a N ATR del mejor precio</option>
               <option value="pct">a un % del mejor precio</option>
               <option value="swing">al último swing confirmado de</option>
+              <option value="bars">bajo el mínimo de las últimas (Williams)</option>
             </select>
-            {rule.trail && <><Num value={rule.trailBars} min={2} max={20} onChange={(trailBars) => patch({ trailBars })} /><span>velas</span></>}
+            {(rule.trail || rule.trailMode === 'bars') && <><Num value={rule.trailBars} min={2} max={20} onChange={(trailBars) => patch({ trailBars })} /><span>velas</span></>}
             {!rule.trail && rule.trailMode === 'atr' && <><Num value={rule.trailAtr} min={0.2} max={20} step={0.5} onChange={(trailAtr) => patch({ trailAtr })} /><span>ATR</span></>}
             {!rule.trail && rule.trailMode === 'pct' && <><Num value={rule.trailPct} min={0.05} max={50} step={0.5} onChange={(trailPct) => patch({ trailPct })} /><span>%</span></>}
           </div>
-          {!rule.trail && (
+          {!rule.trail && rule.trailMode !== 'bars' && (
             <>
               <Opt sub id="trailStart" label="Empezar al llegar a una ganancia" on={rule.trailStartOn} onToggle={(trailStartOn) => patch({ trailStartOn })}
                 title="Hasta llegar a esos R a favor el stop queda en el inicial. Apagado, el trailing corre desde la entrada">

@@ -14,6 +14,9 @@
 # Zonas automaticas (14/11, tras la primera prueba: BTC no tenia dibujos y no se veia nada): ademas de los dibujos,
 # POC, VAH y VAL del perfil del dia anterior, los FVG de 1h abiertos y los niveles elegidos en el journal, con las
 # funciones de book_study.
+# Order blocks (20/11): los de la estructura SMC de App 1 (smc.py, interna de 5 velas y mayor de 50) en velas de 1 hora
+# del almacen de trades, desde el cierre de la vela que rompe la estructura hasta que un cierre lo rompe. Los OB_MAX mas
+# recientes que siguen vivos en las horas pedidas. book_study (la medicion de semanas) no los usa.
 # No es una senal ni esta validado contra el azar: eso lo mide book_study con semanas de libro.
 import asyncio
 import json
@@ -36,6 +39,10 @@ NEAR_ATR = 2.0                  # estado de las zonas a 2 ATR o menos del precio
 BEFORE_MIN = 30
 CACHE_SECONDS = 50
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}$")
+OB_FRAME_MIN = 60               # order blocks en velas de 1 hora
+OB_DAYS = 12                    # dias de velas: la estructura mayor de 50 velas necesita historia
+OB_MAX = 8
+OB_MAX_PCT = 1.5                # un order block de mas alto que esto no cuenta (como un rectangulo)
 _cache: Dict[tuple, Tuple[float, dict]] = {}
 _trades: Dict[str, book_study.Trades] = {}
 
@@ -139,8 +146,48 @@ def _r(x):
     return None if x is None else round(float(x))
 
 
+def ob_zones(fs, symbol: str, start: int, end: int, frame_min: int = OB_FRAME_MIN, cfg: dict = None) -> List[dict]:
+    """Order blocks de la estructura SMC de App 1 en velas del almacen de trades (de `frame_min` minutos): cada uno desde
+    el cierre de la vela que rompe la estructura (cuando se sabe) hasta que un cierre lo rompe. Solo los que
+    siguen vivos en algun momento de [start, end), los OB_MAX mas recientes. Termina al cierre de la vela que lo rompe: la
+    defensa ve esa visita."""
+    import sys
+    if CONFIG["app1_backend"] not in sys.path:
+        sys.path.insert(0, CONFIG["app1_backend"])
+    import smc  # App 1
+    m = fs.minutes(symbol, (start - OB_DAYS * book_study.DAY) // MINUTE, end // MINUTE, live=True)
+    if m is None or not len(m["m"]) or any(k not in m for k in ("o", "c")):
+        return []
+    bucket = np.asarray(m["m"]) // frame_min
+    starts, idx = np.unique(bucket, return_index=True)
+    ends = np.r_[idx[1:], len(bucket)]
+    o = [float(m["o"][a]) for a in idx]
+    c = [float(m["c"][b - 1]) for b in ends]
+    h = [float(np.max(m["h"][a:b])) for a, b in zip(idx, ends)]
+    l = [float(np.min(m["l"][a:b])) for a, b in zip(idx, ends)]
+    t = [int(x) * frame_min * MINUTE for x in starts]
+    step = frame_min * MINUTE
+    # La ultima vela puede estar en curso: no cuenta
+    n = len(t) - 1 if t and t[-1] + step > end else len(t)
+    if n < 60:
+        return []
+    r = smc.compute(o[:n], h[:n], l[:n], c[:n], cfg or {"internal": 5, "swing": 50})
+    out = []
+    for ob in r["obs"]:
+        known = t[ob["known"]] + step
+        stop = t[ob["broken"]] + step if ob["broken"] is not None else known + OB_DAYS * book_study.DAY  # con la visita que lo rompe
+        if known >= end or stop <= start or ob["top"] <= ob["bottom"] or (ob["top"] - ob["bottom"]) / ob["top"] * 100 > OB_MAX_PCT:
+            continue
+        scope = "mayor" if ob["scope"] == "swing" else "interno"
+        out.append({"kind": "ob", "label": f"{'alcista' if ob['dir'] > 0 else 'bajista'} {scope}", "lo": float(ob["bottom"]),
+                    "hi": float(ob["top"]), "from": known, "to": stop})
+    out.sort(key=lambda z: z["from"])
+    return out[-OB_MAX:]
+
+
 def auto_zones(symbol: str, start: int, end: int, fs=None) -> List[dict]:
-    """POC, VAH y VAL del dia anterior (de cada dia del rango), FVG de 1h y niveles del journal, como en book_study."""
+    """POC, VAH y VAL del dia anterior (de cada dia del rango), FVG de 1h y niveles del journal, como en book_study, y
+    los order blocks de 1h de la estructura SMC (20/11)."""
     out = []
     try:
         fs = fs or book_study._app1()
@@ -151,6 +198,11 @@ def auto_zones(symbol: str, start: int, end: int, fs=None) -> List[dict]:
             day += book_study.DAY
         for k, z in enumerate(book_study.fvg_zones(fs, symbol, start, end, 60)):
             out.append(dict(z, label=f"FVG 1h {z['label']}", id=f"fvg60:{z['from']}:{k}"))
+    except Exception:
+        pass
+    try:
+        for z in ob_zones(fs, symbol, start, end):
+            out.append(dict(z, label=f"OB 1h {z['label']}", id=f"ob60:{z['from']}:{z['lo']}"))
     except Exception:
         pass
     for k, z in enumerate(book_study.journal_zones(symbol, start, end)):

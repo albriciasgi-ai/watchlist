@@ -22,6 +22,7 @@ import { INTERVAL_CODE, SWING, attachSwing, feedSwing, frameName, onSwingChanged
  *   que no se ven cada 30 s (liveRedrawMs de MiniChart). Al volver a verse se dibujan en el acto.
  * - Los gráficos se arman de a uno, porque Bybit cuenta los pedidos por segundo.
  * - Panel del Swing del servidor: si detecta, su marco, las monedas que vigila y las últimas señales. No envía alertas.
+ *   Debajo, los tres sabios de Williams y la estructura SMC del servidor (20/11), igual: tampoco envían nada.
  */
 
 // 1D, 1W y 1M (16/11): la semana empieza el lunes y el mes el día 1; el mes no tiene Swing
@@ -38,12 +39,15 @@ const DEFAULT_DAYS = { '1m': 1, '5m': 3, '15m': 5, '1h': 14, '4h': 60, '1D': 180
 const LIGHT = [
   ['Swing Detector', 'Swing (del servidor)'], ['Volume Delta', 'Delta de volumen'], ['CVD', 'CVD'], ['FVG', 'FVG'],
   ['S&R v2', 'S&R v2'], ['Volume Profile', 'Perfil de volumen'], ['Volumen de Respuesta', 'Volumen de Respuesta'],
+  ['Estructura SMC', 'Estructura SMC'], ['Alligator', 'Alligator'], ['Fractales', 'Fractales'], ['Tres sabios', 'Tres sabios'],
+  ['Zonas de Williams', 'Zonas de Williams'], ['AO', 'AO (Williams)'],
 ];
 const LIGHT_NAMES = new Set(LIGHT.map(([name]) => name));
 const ALL_OFF = Object.fromEntries([
   'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
   'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rejection Patterns',
-  'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector',
+  'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios',
+  'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI',
 ].map(name => [name, false]));
 const DEFAULT_ON = { 'Swing Detector': true };
 const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true };
@@ -159,13 +163,83 @@ function PanelTitle({ onHide }) {
   );
 }
 
-function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide }) {
+// Marcos que vigilan los sabios y la estructura SMC del servidor (wise_smc_watch.py)
+const WSMC_TFS = [['15', '15m'], ['60', '1h'], ['240', '4h'], ['D', '1D']];
+const WSMC_NAME = Object.fromEntries(WSMC_TFS);
+
+/** Los tres sabios de Williams y la estructura SMC del servidor: si detecta, su marco y lo último que anotó. Nada se envía */
+function WiseSmcSections({ wsmc, onChange, onOpenChart }) {
+  const status = wsmc.status;
+  if (!status) {
+    return (
+      <div className="bot-section">
+        <h3>Sabios de Williams y estructura SMC</h3>
+        <div className="bot-empty">{wsmc.error ? `Sin respuesta del servidor: ${wsmc.error}` : 'Cargando…'}</div>
+      </div>
+    );
+  }
+  const state = status.detecting ? 'Detecta en vivo'
+    : !status.enabled ? 'Apagado'
+      : status.env_off ? 'Apagado en este servidor (SUITE_WSMC=0)'
+        : status.other_process ? 'Otro proceso detecta con esta carpeta de datos' : 'Encendido; empieza en el próximo cierre';
+  const coins = status.allSymbols ? `Todas las monedas de la suite (${status.symbols.length})` : `${status.symbols.length} monedas`;
+  return (
+    <>
+      <div className="bot-section">
+        <h3>Sabios de Williams y estructura SMC</h3>
+        <div className="wl-row">
+          <span className={`suite-dot ${status.detecting ? 'ok' : 'bad'}`} />
+          <span>{state}</span>
+        </div>
+        <div className="wl-row">
+          <button type="button" className="suite-btn" disabled={wsmc.saving} onClick={() => onChange({ enabled: !status.enabled })}>
+            {status.enabled ? 'Apagar la detección' : 'Encender la detección'}
+          </button>
+        </div>
+        <div className="wl-row">
+          <span>Marco que vigila</span>
+          <select className="suite-select" value={status.interval} disabled={wsmc.saving} onChange={(e) => onChange({ interval: e.target.value })}>
+            {WSMC_TFS.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
+          </select>
+        </div>
+        <div className="wl-row wl-muted">{coins}. Hoy: {status.today ?? 0} señales. No envía alertas: quedan para la central de confluencia.</div>
+        <div className="wl-row wl-muted" title="Medido en el probador de App 1, fase 1 en 4h, con las siete monedas de siempre (20/11)">
+          Barra divergente, AO tres barras, ruptura de fractal, ruptura de estructura, order block, breaker y barrido de iguales.
+          Ninguna superó al azar en el probador: son ayudas de lectura, no señales.
+        </div>
+        {wsmc.error && <div className="suite-result bad">{wsmc.error}</div>}
+      </div>
+      <div className="bot-section">
+        <h3>Últimas de los sabios y SMC</h3>
+        {wsmc.log.length === 0 ? <div className="bot-empty">Todavía ninguna.</div> : (
+          <table className="bot-table">
+            <thead><tr><th>Hora</th><th>Moneda</th><th>Señal</th></tr></thead>
+            <tbody>
+              {wsmc.log.map(e => (
+                <tr key={`${e.symbol}-${e.code}-${e.dir}-${e.t}-${e.info?.scope || ''}`} className="wl-signal"
+                    onClick={() => onOpenChart(e.symbol, WSMC_NAME[e.interval] || '4h')}
+                    title={`${e.text} · vela de las ${colombiaTime(e.t)} en ${WSMC_NAME[e.interval] || e.interval}, anotada a ${(e.delay_ms / 1000).toFixed(1)} s de saberse`}>
+                  <td>{colombiaTime(e.known_at)}</td>
+                  <td>{e.symbol.replace(/USDT$/, '')}</td>
+                  <td className={e.dir > 0 ? 'pos' : 'neg'}>{e.code === 'BS' && e.info?.tag ? e.info.tag : e.name}{e.info?.scope === 'internal' ? ' (interna)' : ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
+function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide, extra = null }) {
   const status = swing.status;
   if (!status) {
     return (
       <div className="wl-panel">
         <div className="bot-section"><PanelTitle onHide={onHide} /></div>
         <div className="bot-empty">{swing.error ? `Sin respuesta del servidor: ${swing.error}` : 'Cargando…'}</div>
+        {extra}
       </div>
     );
   }
@@ -238,6 +312,7 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide }) {
           </table>
         )}
       </div>
+      {extra}
     </div>
   );
 }
@@ -263,6 +338,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
   const [dragging, setDragging] = useState(null);
   const [dragOver, setDragOver] = useState(null);
   const [swing, setSwing] = useState({ status: null, log: [], error: null, saving: false });
+  const [wsmc, setWsmc] = useState({ status: null, log: [], error: null, saving: false });
   const days = clampDays(tf, daysByTf[tf]);
 
   const wrapRef = useRef(null);
@@ -436,6 +512,32 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
     const timer = setInterval(readSwing, 30000);
     return () => clearInterval(timer);
   }, [active, readSwing]);
+  // Los sabios y la estructura SMC del servidor, con el mismo ritmo
+  const readWsmc = useCallback(async () => {
+    try {
+      const [status, log] = await Promise.all([getJson('/api/wsmc/status'), getJson('/api/wsmc/log?limit=30')]);
+      setWsmc(s => ({ ...s, status, log: log.signals || [], error: null }));
+    } catch (e) {
+      setWsmc(s => ({ ...s, error: e.message }));
+    }
+  }, []);
+  useEffect(() => {
+    if (!active || !showPanel) return undefined;
+    readWsmc();
+    const timer = setInterval(readWsmc, 30000);
+    return () => clearInterval(timer);
+  }, [active, showPanel, readWsmc]);
+  const changeWsmc = async (body) => {
+    setWsmc(s => ({ ...s, saving: true, error: null }));
+    try {
+      await postJson('/api/wsmc/config', body);
+      await readWsmc();
+    } catch (e) {
+      setWsmc(s => ({ ...s, error: e.message }));
+    } finally {
+      setWsmc(s => ({ ...s, saving: false }));
+    }
+  };
   const changeSwing = async (body) => {
     setSwing(s => ({ ...s, saving: true, error: null }));
     try {
@@ -582,7 +684,8 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
             </div>
           </div>
           {showPanel && (
-            <SwingPanel swing={swing} symbols={ordered} gridTf={tf} onChange={changeSwing} onOpenChart={onOpenChart} onHide={() => setShowPanel(false)} />
+            <SwingPanel swing={swing} symbols={ordered} gridTf={tf} onChange={changeSwing} onOpenChart={onOpenChart} onHide={() => setShowPanel(false)}
+              extra={<WiseSmcSections wsmc={wsmc} onChange={changeWsmc} onOpenChart={onOpenChart} />} />
           )}
         </div>
       </div>

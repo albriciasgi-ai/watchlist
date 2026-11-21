@@ -24,6 +24,9 @@ import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
 import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
 import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
+import WilliamsSettings from '../WilliamsSettings';
+import SMCSettings from '../SMCSettings';
+import { WILLIAMS_NAMES } from '../indicators/williams.js';
 import '../../backtesting_styles.css'; // El gráfico llena su panel, como en la principal
 
 /**
@@ -50,7 +53,7 @@ const DAY_MS = 86400000;
 const INDICATORS = [
   'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
   'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rangos horizontales', 'Rejection Patterns',
-  'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector'
+  'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ];
 const DEFAULT_ON = new Set(['Volume Delta']);
 
@@ -58,7 +61,7 @@ const DEFAULT_ON = new Set(['Volume Delta']);
 const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP',
   'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales'
+  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ]);
 
 /** Fondo y caja de los modales que no traen la suya */
@@ -346,6 +349,27 @@ const SecondaryChartApp = () => {
     const current = settingsFor ? manager() : null;
     if (!current || !replay) return null;
     const symbol = replay.symbol;
+    if (WILLIAMS_NAMES.includes(settingsFor)) {
+      return (
+        <WilliamsSettings
+          symbol={symbol}
+          which={settingsFor}
+          indicator={current.getWilliamsHub()}
+          onApply={(settings) => applyHere(m => m.getWilliamsHub().setConfig(settings))}
+          onClose={closeSettings}
+        />
+      );
+    }
+    if (settingsFor === 'Estructura SMC') {
+      return (
+        <SMCSettings
+          symbol={symbol}
+          indicator={current.getSMCIndicator()}
+          onApply={(settings) => applyHere(m => m.getSMCIndicator().updateConfig(settings))}
+          onClose={closeSettings}
+        />
+      );
+    }
     switch (settingsFor) {
       case 'Volume Profile':
         return (

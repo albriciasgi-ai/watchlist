@@ -28,6 +28,11 @@ import OrderFlowElementsIndicator from "./OrderFlowElementsIndicator";
 import LiquidityMapIndicator from "./LiquidityMapIndicator"; // Mapa de liquidez del libro grabado (solo la suite)
 import SustainedLevelsIndicator from "./SustainedLevelsIndicator"; // Niveles de liquidez sostenida (solo la suite)
 import ZoneDefenseIndicator from "./ZoneDefenseIndicator"; // Defensa de las zonas dibujadas (solo la suite)
+import { WilliamsHub } from "./williams.js"; // Bill Williams (20/11): un cálculo compartido por sus ocho indicadores
+import {
+  ACIndicator, AlligatorIndicator, AOIndicator, FractalsIndicator, GatorIndicator, MFIIndicator, WilliamsZonesIndicator, WiseMenIndicator
+} from "./WilliamsIndicators.js";
+import SMCIndicator from "./SMCIndicator.js"; // Estructura SMC con reglas propias (20/11)
 import { SessionProfiles } from "./sessionProfile.js";
 import { MIN_PANEL_HEIGHT, clearPanelLayout, movePanel, orderPanels, panelLayout, savePanelLayout } from "./panelLayout.js";
 
@@ -105,13 +110,29 @@ class IndicatorManager {
     this.sustainedLevelsIndicator.requestRedraw = () => this.requestRedraw?.();
     this.zoneDefenseIndicator = new ZoneDefenseIndicator(this.symbol, this.interval, this.days);
     this.zoneDefenseIndicator.requestRedraw = () => this.requestRedraw?.();
+    // Bill Williams (20/11): los ocho leen un solo cálculo de la ventana a la vista
+    this.williamsHub = new WilliamsHub(this.symbol, this.interval);
+    const hub = this.williamsHub;
+    this.williamsIndicators = {
+      zones: new WilliamsZonesIndicator(this.symbol, this.interval, this.days, hub, () => !!this.orderFlowIndicator?.enabled),
+      alligator: new AlligatorIndicator(this.symbol, this.interval, this.days, hub),
+      fractals: new FractalsIndicator(this.symbol, this.interval, this.days, hub),
+      wise: new WiseMenIndicator(this.symbol, this.interval, this.days, hub),
+      ao: new AOIndicator(this.symbol, this.interval, this.days, hub),
+      ac: new ACIndicator(this.symbol, this.interval, this.days, hub),
+      gator: new GatorIndicator(this.symbol, this.interval, this.days, hub),
+      mfi: new MFIIndicator(this.symbol, this.interval, this.days, hub)
+    };
+    this.smcIndicator = new SMCIndicator(this.symbol, this.interval, this.days);
 
     this.indicators = [
+      this.williamsIndicators.zones, // Repinta las velas: antes que cualquier otro dibujo encima de ellas
       this.liquidityMapIndicator, // Su dibujo es el fondo (renderBackground), antes de las velas
       this.sustainedLevelsIndicator, // También de fondo, encima del mapa y debajo de las velas
       this.zoneDefenseIndicator, // Marcas de las visitas a tus zonas, encima de las velas
       this.liquidationsIndicator, // Primero: sus franjas quedan debajo de los demás dibujos
       this.horizontalRangesIndicator, // Cajas de rango horizontal, debajo de los elementos, perfiles y footprints
+      this.smcIndicator, // Estructura SMC: order blocks, rupturas, iguales y rango
       this.ofElementsIndicator, // Franjas y marcas de order flow, debajo de los perfiles y footprints
       new VolumeProfileIndicator(this.symbol, this.interval, this.days),
       volumeIndicator,
@@ -127,7 +148,14 @@ class IndicatorManager {
       this.orderFlowIndicator, // 🎯 Order Flow (Footprints)
       this.fvgIndicator,
       this.vpPeriodicIndicator,
-      this.responseVolumeIndicator
+      this.responseVolumeIndicator,
+      this.williamsIndicators.alligator,
+      this.williamsIndicators.fractals,
+      this.williamsIndicators.wise,
+      this.williamsIndicators.ao,
+      this.williamsIndicators.ac,
+      this.williamsIndicators.gator,
+      this.williamsIndicators.mfi
     ];
 
     // Habilitar el indicador de patrones por defecto
@@ -1339,6 +1367,19 @@ class IndicatorManager {
    */
   getHorizontalRangesIndicator() {
     return this.horizontalRangesIndicator;
+  }
+
+  /** El cálculo compartido de los indicadores de Bill Williams: su configuración vale para los ocho */
+  getWilliamsHub() {
+    return this.williamsHub;
+  }
+
+  getWilliamsIndicator(name) {
+    return Object.values(this.williamsIndicators || {}).find(indicator => indicator.name === name) || null;
+  }
+
+  getSMCIndicator() {
+    return this.smcIndicator;
   }
 
   getFVGIndicator() {

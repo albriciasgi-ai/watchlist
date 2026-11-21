@@ -21,6 +21,9 @@ import SwingDetectorSettings from '../SwingDetectorSettings';
 import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
 import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
+import WilliamsSettings from '../WilliamsSettings';
+import SMCSettings from '../SMCSettings';
+import { WILLIAMS_NAMES } from '../indicators/williams.js';
 import HorizontalRangesSettings from '../HorizontalRangesSettings';
 import LiquidationsSettings from '../LiquidationsSettings';
 import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
@@ -107,7 +110,16 @@ const BacktestingApp = () => {
       "Double Top/Bottom": false,         // Siempre deshabilitado por defecto
       "Support & Resistance": false,
       "S&R v2": false,
-      "Swing Detector": false
+      "Swing Detector": false,
+      "Estructura SMC": false, // BOS, CHoCH, order blocks, iguales y rango (reglas propias)
+      "Alligator": false, // Bill Williams: las tres líneas, su estado y su proyección
+      "Fractales": false,
+      "Tres sabios": false, // Barra divergente, tres barras del AO y ruptura de fractal
+      "Zonas de Williams": false, // Velas verdes, rojas o grises con el AO y el AC
+      "AO": false,
+      "AC": false,
+      "Gator": false,
+      "MFI": false
     };
   };
 
@@ -202,6 +214,8 @@ const BacktestingApp = () => {
   const [showOIVolumeConfluenceSettings, setShowOIVolumeConfluenceSettings] = useState(false);
   const [showOrderFlowSettings, setShowOrderFlowSettings] = useState(false);
   const [showFVGSettings, setShowFVGSettings] = useState(false);
+  const [williamsSettingsFor, setWilliamsSettingsFor] = useState(null); // Nombre del indicador de Williams cuyo modal está abierto
+  const [showSMCSettings, setShowSMCSettings] = useState(false);
   const [showHorizontalRangesSettings, setShowHorizontalRangesSettings] = useState(false);
   const [showVPPeriodicSettings, setShowVPPeriodicSettings] = useState(false);
   const [showResponseVolumeSettings, setShowResponseVolumeSettings] = useState(false);
@@ -1981,6 +1995,8 @@ const BacktestingApp = () => {
     setShowOIVolumeConfluenceSettings(false);
     setShowOrderFlowSettings(false);
     setShowFVGSettings(false);
+    setWilliamsSettingsFor(null);
+    setShowSMCSettings(false);
     setShowHorizontalRangesSettings(false);
     setShowVPPeriodicSettings(false);
     setShowResponseVolumeSettings(false);
@@ -2822,7 +2838,9 @@ const BacktestingApp = () => {
                     'VP Periodic': () => setShowVPPeriodicSettings(true),
                     'Volumen de Respuesta': () => setShowResponseVolumeSettings(true),
                     'Liquidaciones': () => setShowLiquidationsSettings(true),
-                    'Elementos OF': () => setShowOFElementsSettings(true)
+                    'Elementos OF': () => setShowOFElementsSettings(true),
+                    'Estructura SMC': () => setShowSMCSettings(true),
+                    ...Object.fromEntries(WILLIAMS_NAMES.map(item => [item, () => setWilliamsSettingsFor(item)]))
                   };
 
                   const hasSettings = name in settingsMap;
@@ -3515,6 +3533,25 @@ const BacktestingApp = () => {
           indicator={indicatorManagerRef.current.getHorizontalRangesIndicator()}
           onApply={(settings) => applyToAllTimeframes(manager => manager.getHorizontalRangesIndicator().updateConfig(settings))}
           onClose={() => setShowHorizontalRangesSettings(false)}
+        />
+      )}
+
+      {williamsSettingsFor && indicatorManagerRef.current?.getWilliamsHub?.() && (
+        <WilliamsSettings
+          symbol={symbol}
+          which={williamsSettingsFor}
+          indicator={indicatorManagerRef.current.getWilliamsHub()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getWilliamsHub().setConfig(settings))}
+          onClose={() => setWilliamsSettingsFor(null)}
+        />
+      )}
+
+      {showSMCSettings && indicatorManagerRef.current?.getSMCIndicator?.() && (
+        <SMCSettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getSMCIndicator()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getSMCIndicator().updateConfig(settings))}
+          onClose={() => setShowSMCSettings(false)}
         />
       )}
 

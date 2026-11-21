@@ -61,7 +61,15 @@ export function defaultRule() {
     // Volumen de Respuesta: ATR con que gira el tramo, veces el volumen de su hora, flecha a favor o en contra del tramo, y rombo como giro o para seguir
     rvLeg: 2, rvSpike: 2, rvArrow: 'with', rvRombo: 'turn',
     // Gaussian Channel: periodo y polos del filtro, ancho de las bandas, canal a favor y cómo sale por el canal
-    gcPeriod: 144, gcPoles: 4, gcMult: 1.414, gcTrend: true, gcExit: 'band'
+    gcPeriod: 144, gcPoles: 4, gcMult: 1.414, gcTrend: true, gcExit: 'band',
+    // Tres sabios de Williams: mínimo más bajo que N velas, angulación en N velas, hueco mínimo con la mandíbula, AO en contra y
+    // el 3.º solo del lado correcto de los dientes. Entrada con una orden stop: offset en ATR y si se cancela al pasar el otro borde
+    wiseLookback: 1, wiseAngBars: 5, wiseMinGapAtr: 0, wiseRequireAo: true, wiseTeeth: true, entryStopOffset: 0, entryStopCancel: true,
+    // Estructura SMC: de qué estructura (interna o mayor) y sus velas, qué ruptura, cómo es el order block, iguales y su barrido
+    smcScope: 'swing', smcSwing: 50, smcInternal: 5, smcBreak: 'any', smcPick: 'extreme', smcArea: 'full', smcMitigation: 'close',
+    smcEqLength: 3, smcEqThreshold: 0.1, smcReclaim: true,
+    // Filtros de Williams (Alligator: off, awake, side, sleeping; zona a favor) y SMC (premium/discount y tendencia mayor)
+    bwAlligator: 'off', bwZone: false, smcPd: false, smcBias: false
   };
 }
 
@@ -73,6 +81,10 @@ export const VP_CODES = ['VR', 'VF', 'VX', 'VE'];
 export const VP_SHAPES = [['D', 'D · volumen en el medio'], ['P', 'P · volumen arriba, cola abajo'], ['b', 'b · volumen abajo, cola arriba'], ['B', 'B · dos distribuciones']];
 export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24, '1 día'], [168, '1 semana']];
 export const PATTERN_CODES = ['HM', 'EN', 'DJ'];
+export const WISE_CODES = ['WD', 'WA', 'WF'];
+export const SMC_CODES = ['BS', 'OB', 'BK', 'EQ'];
+export const usesWise = (rule) => (rule.codes || []).some(code => WISE_CODES.includes(code));
+export const usesSmc = (rule) => (rule.codes || []).some(code => SMC_CODES.includes(code));
 export const RV_CODES = ['RF', 'RB'];
 export const usesResponse = (rule) => (rule.codes || []).some(code => RV_CODES.includes(code));
 export const usesPatterns = (rule) => (rule.codes || []).some(code => PATTERN_CODES.includes(code));
@@ -87,7 +99,7 @@ export const minuteOfDay = (text) => {
 const clock = (minutes) => `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
 export const usesProfile = (rule) => (rule.codes || []).some(code => VP_CODES.includes(code));
 /** El objetivo va en R (no en un nivel del perfil ni en el centro de la caja): solo así se puede arrastrar */
-export const targetInR = (rule) => !!rule.useTarget
+export const targetInR = (rule) => !!rule.useTarget && rule.targetAt !== 'weak'
   && !((usesProfile(rule) && rule.targetAt !== 'r') || (!usesProfile(rule) && (rule.codes || []).includes('BE') && rule.targetAt === 'mid'));
 export const TP_TRAIL_UNITS = [['r', 'R'], ['atr', 'ATR'], ['pct', '%']];
 
@@ -143,6 +155,19 @@ export function toBackendRule(rule) {
     ...(['inside', 'outside', 'breakout'].includes(rule.regimeMode)
       ? { regime: { mode: rule.regimeMode, major: !!rule.regimeMajor, majorOut: number(rule.regimeMajorOut, 6), after: number(rule.regimeAfter, 6),
         ...(rule.regimeDaily && number(rule.tf, 15) < DAILY_TF ? { tf: DAILY_TF } : {}) } } : {}),
+    ...(usesWise(rule) ? {
+      wise: { lookback: number(rule.wiseLookback, 1), angBars: number(rule.wiseAngBars, 5), minGapAtr: number(rule.wiseMinGapAtr, 0),
+        requireAo: rule.wiseRequireAo !== false, teeth: rule.wiseTeeth !== false }
+    } : {}),
+    ...(usesSmc(rule) ? {
+      smc: { scope: rule.smcScope === 'internal' ? 'internal' : 'swing', swing: number(rule.smcSwing, 50), internal: number(rule.smcInternal, 5),
+        break: ['any', 'bos', 'choch'].includes(rule.smcBreak) ? rule.smcBreak : 'any', pick: rule.smcPick === 'opposite' ? 'opposite' : 'extreme',
+        area: rule.smcArea === 'body' ? 'body' : 'full', mitigation: rule.smcMitigation === 'wick' ? 'wick' : 'close',
+        eqLength: number(rule.smcEqLength, 3), eqThreshold: number(rule.smcEqThreshold, 0.1), reclaim: rule.smcReclaim !== false }
+    } : {}),
+    ...(['awake', 'side', 'sleeping'].includes(rule.bwAlligator) || rule.bwZone
+      ? { bwf: { ...(['awake', 'side', 'sleeping'].includes(rule.bwAlligator) ? { alligator: rule.bwAlligator } : {}), ...(rule.bwZone ? { zone: true } : {}) } } : {}),
+    ...(rule.smcPd || rule.smcBias ? { smcf: { ...(rule.smcPd ? { pd: true } : {}), ...(rule.smcBias ? { bias: true } : {}), swing: number(rule.smcSwing, 50) } } : {}),
     ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [], veEntry: rule.vpVeEntry === 'resting' ? 'resting' : 'touch' } } : {}),
     recipe: {
       // En secuencia: todo el contexto primero y, en la misma vela o después, al menos `min` del gatillo
@@ -162,7 +187,9 @@ export function toBackendRule(rule) {
     invert: !!rule.invert,
     entry: rule.entryType === 'straddle'
       ? { type: 'straddle', from: rule.straddleFrom === 'close' ? 'close' : 'zone', offset: number(rule.straddleOffset, 0.2), expiry: number(rule.entryExpiry, 8) }
-      : { type: rule.entryType === 'limit' ? 'limit' : 'market', at: rule.entryAt || 'near', expiry: number(rule.entryExpiry, 8) },
+      : rule.entryType === 'stop'
+        ? { type: 'stop', offset: number(rule.entryStopOffset, 0), expiry: number(rule.entryExpiry, 5), cancel: rule.entryStopCancel !== false }
+        : { type: rule.entryType === 'limit' ? 'limit' : 'market', at: rule.entryAt || 'near', expiry: number(rule.entryExpiry, 8) },
     stop: {
       type: rule.stopType || 'swing', bars: number(rule.stopBars, 5), atr: number(rule.stopAtr, 1.5),
       buffer: number(rule.stopBuffer, 0.1), maxAtr: number(rule.stopMaxAtr, 6)
@@ -173,7 +200,9 @@ export function toBackendRule(rule) {
       ...(rule.useTarget && usesProfile(rule) && ['poc', 'edge', 'mid'].includes(rule.targetAt) ? { targetAt: rule.targetAt } : {}),
       // Un borde de caja puede apuntar al centro de su caja
       ...(rule.useTarget && !usesProfile(rule) && (rule.codes || []).includes('BE') && rule.targetAt === 'mid' ? { targetAt: 'mid' } : {}),
-      trail: rule.trail ? 'swing' : (['atr', 'pct'].includes(rule.trailMode) ? rule.trailMode : 'none'), trailBars: number(rule.trailBars, 5),
+      // El máximo (largo) o el mínimo (corto) del rango mayor SMC: el lado débil
+      ...(rule.useTarget && rule.targetAt === 'weak' ? { targetAt: 'weak' } : {}),
+      trail: rule.trail ? 'swing' : (['atr', 'pct', 'bars'].includes(rule.trailMode) ? rule.trailMode : 'none'), trailBars: number(rule.trailBars, 5),
       ...(!rule.trail && rule.trailMode === 'atr' ? { trailAtr: number(rule.trailAtr, 4) } : {}),
       ...(!rule.trail && rule.trailMode === 'pct' ? { trailPct: number(rule.trailPct, 5) } : {}),
       ...(!rule.trail && ['atr', 'pct'].includes(rule.trailMode) && rule.trailStartOn ? { trailStart: number(rule.trailStart, 1) } : {}),
@@ -214,8 +243,16 @@ export function fromBackendRule(saved) {
     swing: !!recipe.swing?.on, swingBars: recipe.swing?.bars ?? 5, momentum: !!recipe.momentum,
     confirm: !!recipe.entry?.on, confirmAtr: recipe.entry?.atr ?? 0.25, confirmBars: recipe.entry?.bars ?? 2,
     entryType: saved.entry?.type || 'market', entryAt: saved.entry?.at || 'near', entryExpiry: saved.entry?.expiry ?? 8,
+    entryStopOffset: saved.entry?.type === 'stop' ? (saved.entry.offset ?? 0) : 0, entryStopCancel: saved.entry?.type === 'stop' ? saved.entry.cancel !== false : true,
+    wiseLookback: saved.wise?.lookback ?? 1, wiseAngBars: saved.wise?.angBars ?? 5, wiseMinGapAtr: saved.wise?.minGapAtr ?? 0,
+    wiseRequireAo: saved.wise ? saved.wise.requireAo !== false : true, wiseTeeth: saved.wise ? saved.wise.teeth !== false : true,
+    smcScope: saved.smc?.scope || 'swing', smcSwing: saved.smc?.swing ?? saved.smcf?.swing ?? 50, smcInternal: saved.smc?.internal ?? 5,
+    smcBreak: saved.smc?.break || 'any', smcPick: saved.smc?.pick || 'extreme', smcArea: saved.smc?.area || 'full',
+    smcMitigation: saved.smc?.mitigation || 'close', smcEqLength: saved.smc?.eqLength ?? 3, smcEqThreshold: saved.smc?.eqThreshold ?? 0.1,
+    smcReclaim: saved.smc ? saved.smc.reclaim !== false : true,
+    bwAlligator: saved.bwf?.alligator || 'off', bwZone: !!saved.bwf?.zone, smcPd: !!saved.smcf?.pd, smcBias: !!saved.smcf?.bias,
     straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
-    trailMode: ['atr', 'pct'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
+    trailMode: ['atr', 'pct', 'bars'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
     trailStartOn: saved.exit?.trailStart != null, trailStart: saved.exit?.trailStart ?? 1, breakEvenOn: saved.exit?.breakEven != null, breakEven: saved.exit?.breakEven ?? 1.5,
     tpTrailOn: !!saved.exit?.tpTrail, tpTrailStart: saved.exit?.tpTrail?.start ?? 2.5, tpTrailDist: saved.exit?.tpTrail?.dist ?? 0.5,
     tpTrailUnit: saved.exit?.tpTrail?.unit || 'r',
@@ -223,7 +260,9 @@ export function fromBackendRule(saved) {
     imBars: saved.im?.bars ?? 3, imAtr: saved.im?.atr ?? 2, imRangeOn: saved.im?.range != null, imRange: saved.im?.range ?? 1.5,
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
     stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6,
-    useTarget: saved.exit?.targetR != null || !!saved.targetAt, targetR: saved.exit?.targetR ?? 2, targetAt: saved.targetAt || 'r',
+    // El objetivo en un nivel va arriba en la regla limpia del backend y en exit en la que arma la ventana: vale de las dos
+    useTarget: saved.exit?.targetR != null || !!(saved.targetAt ?? saved.exit?.targetAt), targetR: saved.exit?.targetR ?? 2,
+    targetAt: saved.targetAt ?? saved.exit?.targetAt ?? 'r',
     ccTf: saved.cc && saved.cc.tf !== saved.tf ? saved.cc.tf : 0, ccOffset: saved.cc?.offset ?? 0, ccSwing: saved.cc?.swing ?? 3, ccLegs: saved.cc?.legs ?? 2,
     patTrend: saved.pat ? saved.pat.trend !== false : true, patTrendBars: saved.pat?.trendBars ?? 5,
     rvLeg: saved.rv?.leg ?? 2, rvSpike: saved.rv?.spike ?? 2, rvArrow: saved.rv?.arrow || 'with', rvRombo: saved.rv?.rombo || 'turn',
@@ -270,10 +309,12 @@ export function describeRule(saved) {
     : recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ')) + liq;
   const stop = { swing: `swing ${saved.stop?.bars}`, candle: 'vela del elemento', zone: 'borde de la zona', atr: `${saved.stop?.atr} ATR` }[saved.stop?.type] || '';
   const exits = [];
-  if (saved.targetAt) exits.push(saved.be && !saved.vp ? 'centro de la caja' : { poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
+  if (saved.targetAt === 'weak') exits.push('máximo o mínimo del rango SMC');
+  else if (saved.targetAt) exits.push(saved.be && !saved.vp ? 'centro de la caja' : { poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
   else if (saved.exit?.tpTrail) exits.push(`${saved.exit.targetR}R arrastrado desde ${saved.exit.tpTrail.start}R a ${tpTrailText(saved.exit.tpTrail)}`);
   else if (saved.exit?.targetR != null) exits.push(`${saved.exit.targetR}R`);
   if (saved.exit?.trail === 'swing') exits.push('stop arrastrado');
+  if (saved.exit?.trail === 'bars') exits.push(`stop bajo el mínimo de ${saved.exit.trailBars} velas`);
   if (saved.exit?.trail === 'atr') exits.push(`trailing a ${saved.exit.trailAtr} ATR${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
   if (saved.exit?.trail === 'pct') exits.push(`trailing a ${saved.exit.trailPct}%${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
   if (saved.exit?.breakEven) exits.push(`stop a la entrada en ${saved.exit.breakEven}R`);
@@ -295,7 +336,13 @@ export function describeRule(saved) {
     + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
-    + ` · ${saved.entry?.type === 'limit' ? 'limit' : saved.entry?.type === 'straddle' ? `dos órdenes stop a ${saved.entry.offset} ATR ${saved.entry.from === 'zone' ? 'fuera de la zona' : 'del cierre'}` : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
+    + `${saved.wise ? ` · angulación de ${saved.wise.angBars} velas${saved.wise.requireAo ? ', AO en contra' : ''}` : ''}`
+    + `${saved.smc ? ` · estructura ${saved.smc.scope === 'internal' ? `interna de ${saved.smc.internal}` : `mayor de ${saved.smc.swing}`} velas${saved.smc.break !== 'any' ? `, solo ${saved.smc.break === 'bos' ? 'BOS' : 'CHoCH'}` : ''}` : ''}`
+    + `${saved.bwf?.alligator ? ` · ${{ awake: 'Alligator despierto a favor', side: 'cierre del lado de los dientes', sleeping: 'Alligator dormido' }[saved.bwf.alligator]}` : ''}`
+    + `${saved.bwf?.zone ? ' · zona de Williams a favor' : ''}`
+    + `${saved.smcf?.pd ? ' · largos en discount, cortos en premium' : ''}${saved.smcf?.bias ? ' · a favor de la estructura mayor' : ''}`
+    + ` · ${saved.entry?.type === 'limit' ? 'limit' : saved.entry?.type === 'straddle' ? `dos órdenes stop a ${saved.entry.offset} ATR ${saved.entry.from === 'zone' ? 'fuera de la zona' : 'del cierre'}`
+      : saved.entry?.type === 'stop' ? `orden stop en el borde de la zona${saved.entry.offset ? ` + ${saved.entry.offset} ATR` : ''}` : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
     + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;
 }
 

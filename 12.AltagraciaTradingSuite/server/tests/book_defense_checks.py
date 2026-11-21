@@ -108,6 +108,56 @@ check("zonas automaticas: POC, VAH y VAL del dia anterior", labels == ["POC ayer
 check("el POC en su precio, dentro del rango pedido", poc and abs((poc[0]["lo"] + poc[0]["hi"]) / 2 - 1000) < 0.2
       and poc[0]["from"] == D0 + 3600000 and poc[0]["to"] == D0 + 7200000, str(poc))
 
+# ---------- zonas automaticas: order blocks de 1 hora (estructura SMC de App 1) ----------
+from settings import CONFIG  # noqa: E402
+sys.path.insert(0, CONFIG["app1_backend"])
+import smc  # noqa: E402  App 1
+
+
+class TrendStore:
+    """Doce dias y medio de minutos con tramos que suben y bajan: hay estructura y order blocks."""
+    def __init__(self, a0):
+        rng = np.random.default_rng(4)
+        n = 18000
+        step = np.where((np.arange(n) // 1500) % 2 == 0, 0.02, -0.02) + rng.normal(0, 0.35, n)
+        close = 1000 + np.cumsum(step)
+        open_ = np.r_[close[0], close[:-1]]
+        self.data = {"m": np.arange(a0, a0 + n), "o": open_, "c": close,
+                     "h": np.maximum(open_, close) + np.abs(rng.normal(0, 0.15, n)),
+                     "l": np.minimum(open_, close) - np.abs(rng.normal(0, 0.15, n))}
+
+    def minutes(self, symbol, a, b, live=None):
+        keep = (self.data["m"] >= a) & (self.data["m"] < b)
+        return {k: v[keep] for k, v in self.data.items()}
+
+
+H = 3600000
+A0 = (D0 - 13 * DAY) // MIN
+ts = TrendStore(A0)
+end = (A0 + 18000) * MIN - 30 * MIN           # la ultima hora va en curso
+start = end - 12 * H
+obs = book_defense.ob_zones(ts, "XUSDT", start, end)
+check("order blocks de 1 hora en las zonas automaticas", 0 < len(obs) <= book_defense.OB_MAX, str(len(obs)))
+check("cada uno desde el cierre de la vela que rompe, vivo en las horas pedidas", all(
+    z["from"] % H == 0 and z["from"] < end and z["to"] > start and z["lo"] < z["hi"] for z in obs), str(obs[:2]))
+# Los mismos de smc.compute con esas velas de 1 hora
+m = ts.minutes("XUSDT", (start - book_defense.OB_DAYS * DAY) // MIN, end // MIN)
+hours = np.unique(m["m"] // 60)
+hours = hours[:-1]  # sin la vela en curso
+o = [float(m["o"][m["m"] // 60 == x][0]) for x in hours]
+c = [float(m["c"][m["m"] // 60 == x][-1]) for x in hours]
+hh = [float(m["h"][m["m"] // 60 == x].max()) for x in hours]
+ll = [float(m["l"][m["m"] // 60 == x].min()) for x in hours]
+ref = smc.compute(o, hh, ll, c, {"internal": 5, "swing": 50})
+starts_ok = {(int(hours[ob["known"]]) * 60 * MIN + H, round(ob["bottom"], 6), round(ob["top"], 6)) for ob in ref["obs"]}
+check("son los order blocks de smc.compute de App 1", all((z["from"], round(z["lo"], 6), round(z["hi"], 6)) in starts_ok for z in obs))
+# Sin futuro: con menos velas, los ya sabidos son los mismos (solo puede cambiar cuando se rompen)
+earlier = book_defense.ob_zones(ts, "XUSDT", start, end - 3 * H)
+later_known = {(z["from"], z["lo"], z["hi"]) for z in book_defense.ob_zones(ts, "XUSDT", start, end - 3 * H + 0) if z["from"] < end - 3 * H}
+check("con menos velas, los sabidos no cambian", {(z["from"], z["lo"], z["hi"]) for z in earlier} == later_known)
+check("los suma auto_zones con su nombre", any(z["kind"] == "ob" and z["label"].startswith("OB 1h ") for z in book_defense.auto_zones("XUSDT", start, end, fs=ts)))
+check("sin precios de apertura y cierre en los minutos, sin order blocks", book_defense.ob_zones(FakeStore(), "XUSDT", start, end) == [])
+
 # ---------- la ruta ----------
 import json  # noqa: E402
 import tempfile  # noqa: E402
