@@ -55,6 +55,8 @@ export function defaultRule() {
     cvdOn: false, cvdBars: 20, oiMode: 'off', oiBars: 6, oiPct: 2,
     // Multitud por el funding (off, nocon, contra) y OI sostenido (parte de los pasos de 4 h con el OI al alza)
     crowdMode: 'off', steadyOn: false, steadyDays: 14, steadyMin: 0.52,
+    // Flujos on-chain diarios de Coin Metrics (21/11): off, net (flujo neto de BTC o ETH a los exchanges) o stable (emisión de stablecoins)
+    chainMetric: 'off', chainAsset: 'auto', chainDays: 7, chainZ: 0.5, chainMode: 'favor',
     regimeMode: 'any', regimeMajor: true, regimeMajorOut: 6, regimeAfter: 6, regimeDaily: false,
     // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
@@ -198,10 +200,13 @@ export function toBackendRule(rule) {
     ...(codes.includes('FV') ? { fv: { minAtr: number(rule.fvMinAtr, 0.3) } } : {}),
     ...(codes.includes('SP') ? { sp: { bars: number(rule.spBars, 5), minZ: rule.spVolume ? number(rule.spMinZ, 1) : null } } : {}),
     ...(rule.cvdOn || ['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode) || ['nocon', 'contra'].includes(rule.crowdMode) || rule.steadyOn
+      || CHAIN_METRICS.includes(rule.chainMetric)
       ? { flow: { ...(rule.cvdOn ? { cvd: number(rule.cvdBars, 20) } : {}),
         ...(['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode) ? { oi: rule.oiMode, oiBars: number(rule.oiBars, 6), oiPct: number(rule.oiPct, 2) } : {}),
         ...(['nocon', 'contra'].includes(rule.crowdMode) ? { crowd: rule.crowdMode } : {}),
-        ...(rule.steadyOn ? { steady: true, steadyDays: number(rule.steadyDays, 14), steadyMin: number(rule.steadyMin, 0.52) } : {}) } } : {}),
+        ...(rule.steadyOn ? { steady: true, steadyDays: number(rule.steadyDays, 14), steadyMin: number(rule.steadyMin, 0.52) } : {}),
+        ...(CHAIN_METRICS.includes(rule.chainMetric) ? { chain: { metric: rule.chainMetric, days: number(rule.chainDays, 7), z: number(rule.chainZ, 0.5),
+          mode: rule.chainMode === 'nocontra' ? 'nocontra' : 'favor', ...(rule.chainMetric === 'net' ? { asset: ['btc', 'eth'].includes(rule.chainAsset) ? rule.chainAsset : 'auto' } : {}) } } : {}) } } : {}),
     ...(['inside', 'outside', 'breakout'].includes(rule.regimeMode)
       ? { regime: { mode: rule.regimeMode, major: !!rule.regimeMajor, majorOut: number(rule.regimeMajorOut, 6), after: number(rule.regimeAfter, 6),
         ...(rule.regimeDaily && number(rule.tf, 15) < DAILY_TF ? { tf: DAILY_TF } : {}) } } : {}),
@@ -340,6 +345,8 @@ export function fromBackendRule(saved) {
     fvMinAtr: saved.fv?.minAtr ?? 0.3, spBars: saved.sp?.bars ?? 5, spVolume: saved.sp?.minZ != null, spMinZ: saved.sp?.minZ ?? 1,
     cvdOn: !!saved.flow?.cvd, cvdBars: saved.flow?.cvd ?? 20, oiMode: saved.flow?.oi || 'off', oiBars: saved.flow?.oiBars ?? 6, oiPct: saved.flow?.oiPct ?? 2,
     crowdMode: saved.flow?.crowd || 'off', steadyOn: !!saved.flow?.steady, steadyDays: saved.flow?.steadyDays ?? 14, steadyMin: saved.flow?.steadyMin ?? 0.52,
+    chainMetric: saved.flow?.chain?.metric || 'off', chainAsset: saved.flow?.chain?.asset || 'auto', chainDays: saved.flow?.chain?.days ?? 7,
+    chainZ: saved.flow?.chain?.z ?? 0.5, chainMode: saved.flow?.chain?.mode || 'favor',
     regimeMode: saved.regime?.mode || 'any', regimeMajor: saved.regime ? saved.regime.major !== false : true,
     regimeMajorOut: saved.regime?.majorOut ?? 6, regimeAfter: saved.regime?.after ?? 6, regimeDaily: saved.regime?.tf === DAILY_TF,
     vpShapes: saved.vp?.shapes || [], vpVeEntry: saved.vp?.veEntry || 'touch', vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
@@ -348,6 +355,18 @@ export function fromBackendRule(saved) {
     oneAtATime: saved.oneAtATime !== false, cooldown: saved.cooldown ?? 0, vaGap: saved.vaGap ?? 0, filters: saved.filters || [],
     volFilter: saved.volFilter ?? 2, target: saved.target ?? 0.05
   };
+}
+
+/** Medidas del filtro de flujos on-chain (onchain_flows.py) */
+export const CHAIN_METRICS = ['net', 'stable'];
+
+/** El filtro de flujos on-chain en palabras: «flujo neto de BTC a exchanges en 7 d a favor (z ≥ 0.5)» */
+export function chainText(chain) {
+  if (!chain) return '';
+  const asset = chain.metric === 'net' ? (chain.asset && chain.asset !== 'auto' ? ` de ${chain.asset.toUpperCase()}` : ' de BTC o ETH') : '';
+  const what = chain.metric === 'net' ? `flujo neto${asset} a exchanges` : 'emisión de USDT y USDC';
+  const how = chain.mode === 'nocontra' ? `no en contra (z > −${chain.z})` : `a favor (z ≥ ${chain.z})`;
+  return `${what} en ${chain.days} d ${how}`;
 }
 
 /** La distancia del objetivo arrastrado en palabras: «0.5R», «1 ATR», «1%» */
@@ -388,6 +407,7 @@ export function describeRule(saved) {
     + `${saved.flow?.cvd ? ` · CVD ${saved.flow.cvd} a favor` : ''}`
     + `${saved.flow?.crowd ? ` · ${saved.flow.crowd === 'contra' ? 'solo contra la multitud' : 'sin ir con la multitud'}` : ''}`
     + `${saved.flow?.steady ? ` · OI sostenido ≥ ${Math.round(saved.flow.steadyMin * 100)}% en ${saved.flow.steadyDays} d` : ''}`
+    + `${saved.flow?.chain ? ` · ${chainText(saved.flow.chain)}` : ''}`
     + `${saved.flow?.oi ? ` · ${{ rise: `OI sube > ${saved.flow.oiPct}% en ${saved.flow.oiBars}`, fall: `OI baja > ${saved.flow.oiPct}% en ${saved.flow.oiBars}`, conf: 'confluencia OI-vol a favor', noconf: 'sin confluencia OI-vol en contra' }[saved.flow.oi]}` : ''}`
     + `${saved.be?.pattern ? ' · borde con patrón' : ''}`
     + `${saved.regime ? ` · ${{ inside: 'solo en rango', outside: 'solo fuera de rango', breakout: `${saved.regime.after} velas tras romper` }[saved.regime.mode]}${saved.regime.major ? ' mayor' : ''}` : ''}`

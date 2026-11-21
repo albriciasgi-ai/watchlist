@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Flujos On-Chain en el Probador
+
+Datos diarios gratis de Coin Metrics: flujos de BTC y ETH a los exchanges desde 2011 y 2015, y emisión de USDT y USDC. Con ellos, el filtro "Flujos on-chain (diarios)" del probador y de la búsqueda genética, sin futuro: cada dato se usa desde las 06:00 UTC del día siguiente. En la fase 1 de 4h, la emisión a favor sube el R del Impulso y del FVG nuevo sobre los controles; con pocos días distintos, es candidata. Detalle en `Backtester/CLAUDE.md`, "FLUJOS ON-CHAIN (21/11/2026)", y el plan en `docs/PLAN_INDICADORES_ONCHAIN.md`.
+
 ### Noviembre 2026: Lector VPA (Volume Price Analysis de Coulling)
 
 El VPA de Anna Coulling con reglas propias, en grados y sin futuro: volumen y rango de cada vela contra lo normal de su hora, esfuerzo contra resultado, formas de vela según el tramo y un medidor de fuerza y debilidad que se desvanece. Indicador "Lector VPA" en App 1 y la suite; en el probador, ocho elementos (QA, QB, QF, QR, QT, QS, QC, QE) y el filtro del medidor. En la fase 1 de 4h solo la ruptura con volumen se separa del azar, en el borde de su margen. Detalle en `Backtester/CLAUDE.md`, "LECTOR VPA: VOLUME PRICE ANALYSIS DE COULLING (21/11/2026)".

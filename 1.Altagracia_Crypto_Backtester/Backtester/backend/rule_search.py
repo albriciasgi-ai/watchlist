@@ -88,6 +88,9 @@ GENES = {
     "bwMfi": (None, "green", "squat", "volume"),
     # Desde el 21/11: el filtro del medidor del lector VPA y el grado desde el que cuentan sus elementos (apagado de fábrica)
     "vpaf": (None, "favor", "notAgainst"), "vpaFire": (0.5, 0.35, 0.7),
+    # Desde el 21/11: los flujos on-chain diarios de Coin Metrics (apagado de fábrica): medida y días, modo y umbral del z
+    "chain": (None, ("net", 7), ("net", 30), ("stable", 7), ("stable", 30)), "chainMode": ("favor", "nocontra"),
+    "chainZ": (0.5, 0.0, 1.0),
 }
 
 _lock = threading.Lock()
@@ -140,6 +143,8 @@ def clean_config(raw):
         "stopEntry": raw.get("stopEntry") is not False, "williams": raw.get("williams") is not False,
         # Desde el 21/11: el filtro del medidor del lector VPA
         "vpa": raw.get("vpa") is not False,
+        # Desde el 21/11: el filtro de flujos on-chain (Coin Metrics)
+        "chain": raw.get("chain") is not False,
         # Al terminar, las finalistas se corren también en las monedas nuevas (que nunca eligieron nada)
         "checkNew": raw.get("checkNew") is not False,
         # Y en las acciones (otro mercado): una regla de cripto que también gana ahí difícilmente es suerte
@@ -176,6 +181,8 @@ def _options(cfg):
         opts["bwAo"], opts["bwAc"], opts["bwGator"], opts["bwMfi"] = (None,), (None,), (None,), (None,)
     if not cfg.get("vpa", True):
         opts["vpaf"] = (None,)
+    if not cfg.get("chain", True):
+        opts["chain"] = (None,)
     return opts
 
 
@@ -184,7 +191,7 @@ def random_genome(cfg, rng):
     genome = {name: rng.randrange(len(values)) for name, values in opts.items()}
     # Reglas simples primero: el segundo y el tercer elemento, y el filtro de línea, empiezan apagados más seguido
     for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady", "bwf", "bwZone", "smcPd", "smcBias", "targetWeak",
-                 "bwAo", "bwAc", "bwGator", "bwMfi", "vpaf"):
+                 "bwAo", "bwAc", "bwGator", "bwMfi", "vpaf", "chain"):
         if len(opts[name]) > 1 and rng.random() < 0.6:
             genome[name] = 0
     return genome
@@ -240,7 +247,9 @@ def decode(genome, cfg):
         "bx": {"maxHeight": pick["bxMax"]}, "be": {"pattern": pick["bePattern"]}, "cp": {"maxHeight": pick["cpMax"]},
         "fv": {"minAtr": pick["fvMin"]}, "sp": {"bars": pick["spBars"], "minZ": pick["spMinZ"]},
         "im": {"bars": pick["imBars"], "atr": pick["imAtr"]},
-        "flow": {"cvd": pick["cvd"], "oi": pick["oi"], "crowd": pick["crowd"], "steady": pick["steady"]},
+        "flow": {"cvd": pick["cvd"], "oi": pick["oi"], "crowd": pick["crowd"], "steady": pick["steady"],
+                 "chain": {"metric": pick["chain"][0], "days": pick["chain"][1], "mode": pick["chainMode"], "z": pick["chainZ"],
+                           "asset": "auto"} if pick["chain"] else None},
         # Solo entran a la regla si están sus elementos (clean_rule): con otros, cambiarlos no cambia la regla
         "wise": {"lookback": pick["wiseLookback"], "angBars": pick["wiseAng"], "requireAo": pick["wiseAo"], "teeth": pick["wiseTeeth"]},
         "smc": {"scope": pick["smcScope"], "swing": pick["smcSwing"], "internal": pick["smcInternal"], "break": pick["smcBreak"],
@@ -269,7 +278,7 @@ def rule_key(rule):
 def complexity(rule):
     flow, bwf, smcf = rule.get("flow") or {}, rule.get("bwf") or {}, rule.get("smcf") or {}
     return (len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
-            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(rule.get("regime"))
+            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(flow.get("chain")) + bool(rule.get("regime"))
             + bool(bwf.get("alligator")) + bool(bwf.get("zone")) + bool(smcf.get("pd")) + bool(smcf.get("bias"))
             + bool(bwf.get("ao")) + bool(bwf.get("ac")) + bool(bwf.get("gator")) + bool(bwf.get("mfi")) + bool(rule.get("vpaf")))
 

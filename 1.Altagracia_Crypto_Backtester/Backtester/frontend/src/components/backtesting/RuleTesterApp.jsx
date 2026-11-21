@@ -1483,6 +1483,27 @@ const RuleTesterApp = () => {
             <Num value={rule.steadyDays} min={3} max={60} onChange={(steadyDays) => patch({ steadyDays })} /><span>días</span>
           </div>
         </Opt>
+        <Opt id="onchain" label="Flujos on-chain (diarios)" on={rule.chainMetric !== 'off'} onToggle={toggleMode('chainMetric', 'off', 'net')} title="Datos diarios gratis de Coin Metrics, desde 2011 (BTC) y 2015 (ETH). Flujo neto: lo que entra menos lo que sale de los exchanges en N días, en % del saldo en exchanges; salir de los exchanges se lee alcista. Emisión: cuánto crecieron USDT y USDC en N días; más dólares digitales se lee alcista. Cada medida va en z-score contra el año anterior. El dato de un día se usa desde las 06:00 UTC del día siguiente, cuando ya está publicado. Para reglas de 4h y 1D: en marcos menores el valor no cambia en todo el día">
+          <div className="rt-row">
+            <select value={rule.chainMetric} onChange={(e) => patch({ chainMetric: e.target.value })}>
+              <option value="net">flujo neto a los exchanges</option>
+              <option value="stable">emisión de USDT y USDC</option>
+            </select>
+            {rule.chainMetric === 'net' && <select value={rule.chainAsset} onChange={(e) => patch({ chainAsset: e.target.value })}>
+              <option value="auto">de ETH en ETH, de BTC en las demás</option>
+              <option value="btc">de BTC</option>
+              <option value="eth">de ETH</option>
+            </select>}
+            <span>en</span><Num value={rule.chainDays} min={1} max={90} onChange={(chainDays) => patch({ chainDays })} /><span>días</span>
+          </div>
+          <div className="rt-row">
+            <select value={rule.chainMode} onChange={(e) => patch({ chainMode: e.target.value })}>
+              <option value="favor">a favor del trade, z de al menos</option>
+              <option value="nocontra">que no vaya en contra más de z</option>
+            </select>
+            <Num value={rule.chainZ} min={0} max={3} step={0.25} onChange={(chainZ) => patch({ chainZ })} />
+          </div>
+        </Opt>
         <div className="rt-sub">Williams y SMC</div>
         <Opt id="alligator" label="Alligator de Williams" on={rule.bwAlligator !== 'off'} onToggle={toggleMode('bwAlligator', 'off', 'awake')} title="El Alligator (13/8, 8/5 y 5/3 del precio medio) en la vela de la señal. Vale para cualquier regla">
           <div className="rt-row">

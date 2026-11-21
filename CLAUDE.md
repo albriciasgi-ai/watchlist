@@ -81,6 +81,46 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### App 1 - 21 Noviembre 2026: Flujos On-Chain en el Backtesting Global (paso 1 del plan on-chain)
+
+**Pedido:** evaluar indicadores de la actividad de las blockchains (como el flujo privado y el MEV) que avisen un movimiento del precio, y usarlos en el backtesting global con datos gratis de varios años. Después, dejar un plan con el paso a paso.
+
+**Lo que se encontró:**
+- el MEV y el flujo privado quedaron descartados: son efectos de segundos en los DEX;
+- lo único gratis con años de historia son los datos diarios de Coin Metrics;
+- Dune ya no es gratis para correr consultas;
+- Hyperliquid solo tiene historia desde 2025, así que hay que grabarlo.
+
+**Cambios:**
+1. **Datos:** `backend/onchain_flows.py` baja de Coin Metrics a `OrderFlowData/onchain/`:
+   - flujos de BTC y ETH a los exchanges y su saldo, desde 2011 y 2015;
+   - la emisión de USDT y USDC;
+   - `market_update.py` los pone al día al arrancar el backend.
+2. **Filtro "Flujos on-chain (diarios)"** en el probador, con gen en la búsqueda genética, apagado de fábrica. Dos medidas en z-score contra el año anterior:
+   - el flujo neto a los exchanges;
+   - la emisión de stablecoins.
+   Cada dato se usa desde las 06:00 UTC del día siguiente.
+3. **Plan:** `docs/PLAN_INDICADORES_ONCHAIN.md`, con cinco pasos:
+   - flujos diarios (hecho);
+   - grabar Hyperliquid;
+   - mempool de BTC;
+   - stablecoins por hora, de pago, solo si algo muestra ventaja;
+   - en vivo en la suite.
+4. **Pruebas:** `test_onchain_flows.py` (6). `rulefacets.test.mjs` suma la pieza nueva (11).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- **Primer estudio** (fase 1, 4h, siete monedas):
+  - la emisión de stablecoins a favor sube el Impulso de +0.16 a +0.38 R por trade, sobre los dos controles, en las 7 monedas;
+  - pero son 137 días distintos, casi todo de 2022 y 2023: es candidata, no resultado.
+- **Flujo neto:** mejora hasta las entradas al azar, pero no les suma a las reglas.
+- **Licencia:** Coin Metrics es no comercial (CC BY-NC 4.0).
+- **No se probó en pantalla.**
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "FLUJOS ON-CHAIN (21/11/2026)" y `docs/PLAN_INDICADORES_ONCHAIN.md`
+
+---
+
 ### App 1 - 21 Noviembre 2026: VPA, Causa y Efecto y Salida VPA (Fases 3 y 4)
 
 **Pedido:** seguir con las fases 3 y 4 de la propuesta del VPA, y una guía en PDF para usarlo.

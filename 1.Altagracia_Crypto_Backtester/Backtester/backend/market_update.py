@@ -1,7 +1,7 @@
 """
 Pone al día, en segundo plano, los datos del probador que no salen del caché de App 1 (21/11):
-velas de las monedas nuevas (1h, 4h, 15m y 5m, candles_update.py), OI de 4 horas (oi_update.py) y funding
-(funding_update.py). Lo lanza el backend al arrancar (main.py, start_in_background) en un proceso aparte.
+velas de las monedas nuevas (1h, 4h, 15m y 5m, candles_update.py), OI de 4 horas (oi_update.py), funding
+(funding_update.py) y, desde el 21/11, los flujos on-chain diarios de Coin Metrics (onchain_flows.py). Lo lanza el backend al arrancar (main.py, start_in_background) en un proceso aparte.
 
 - Una vez cada MIN_HOURS horas: con uvicorn --reload el backend arranca otra vez con cada cambio de código.
 - Una a la vez: candado en OrderFlowData/candles/actualizacion.lock (vence a las LOCK_HOURS horas, por si se cortó).
@@ -105,6 +105,8 @@ def run():
     funding = sorted(have | set(rule_tester.candle_symbols("all")))
     with funding_update.httpx.Client(timeout=30, headers={"User-Agent": "app1-funding"}) as client:
         failed += _step("Funding", funding, lambda s: funding_update.update(s, client))
+    import onchain_flows
+    failed += _step("Flujos on-chain (Coin Metrics)", ["coinmetrics"], lambda _: onchain_flows.update())
     return failed
 
 
