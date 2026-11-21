@@ -11,7 +11,7 @@
  * Lógica pura: se prueba en Node.
  */
 import { elementLabels } from './elementLabels.js';
-import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, tpTrailText } from './ruleTester.js';
+import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, tpTrailText, vpaExitText } from './ruleTester.js';
 
 /** Secciones del formulario, en orden */
 export const SECTIONS = [
@@ -70,6 +70,7 @@ export const FACETS = {
   tiempo: ['salida', 'Cierre por tiempo', 'no'],
   contraria: ['salida', 'Señal contraria', 'no'],
   canal: ['salida', 'Salida por el canal', 'no'],
+  salidaVpa: ['salida', 'Salida VPA', 'no'],
   unaAlaVez: ['salida', 'Posiciones'],
   deteccion: ['deteccion', 'Detección']
 };
@@ -252,10 +253,11 @@ export function ruleFacets(rule, labels = {}) {
   if (exit.breakEven) add('aLaEntrada', `al llegar a ${n(exit.breakEven)}R`);
   const channel = !!rule.gc && has('GC') && ['band', 'mid'].includes(rule.gc.exit);
   if (exit.horizon) add('tiempo', `a las ${exit.horizon} velas`);
-  else if (!targetAt && (exit.targetR === null || exit.targetR === undefined) && (!exit.trail || exit.trail === 'none') && !channel) {
+  else if (!targetAt && (exit.targetR === null || exit.targetR === undefined) && (!exit.trail || exit.trail === 'none') && !channel && !exit.vpa) {
     add('tiempo', `a las ${DEFAULT_HORIZON} velas`, true); // Lo que hace el backend con una regla sin otra salida
   }
   if (exit.opposite) add('contraria', 'sí');
+  if (exit.vpa) add('salidaVpa', `con ${vpaExitText(exit.vpa)}`);
   if (channel) add('canal', rule.gc.exit === 'mid' ? 'al cerrar al otro lado de la línea central' : 'al cerrar de vuelta dentro de la banda');
   const cooldown = Number(rule.cooldown) || 0;
   add('unaAlaVez', rule.oneAtATime !== false ? `una a la vez${cooldown > 0 ? `, espera ${cooldown} velas tras cerrar` : ''}` : 'todas las señales');
@@ -294,6 +296,7 @@ export function sectionCounts(facets) {
  */
 export function facetPhrase(facet) {
   if (facet.key === 'contraria') return 'cierre con la señal contraria';
+  if (facet.key === 'salidaVpa') return `salida VPA ${facet.text}`;
   if (facet.key === 'deteccion') return `detección: ${facet.text}`;
   if (facet.section === 'filtros' || ['tf', 'elementos', 'lado', 'unaAlaVez'].includes(facet.key)) return facet.text;
   if (facet.section === 'elementos') return `${facet.label}: ${facet.text}`;
@@ -328,7 +331,7 @@ export const OFF_PATCH = {
   premium: { smcPd: false }, sesgo: { smcBias: false }, extremo: { swing: false }, momentum: { momentum: false },
   confirmacion: { confirm: false }, horario: { useHours: false }, medidas: { filters: [] },
   objetivo: { useTarget: false }, arrastre: { tpTrailOn: false }, trailing: { trail: false, trailMode: 'off' }, aLaEntrada: { breakEvenOn: false },
-  tiempo: { useHorizon: false }, contraria: { opposite: false }, canal: { gcExit: 'none' }
+  tiempo: { useHorizon: false }, contraria: { opposite: false }, canal: { gcExit: 'none' }, salidaVpa: { vpaExitOn: false }
 };
 
 /**
@@ -365,6 +368,7 @@ export function exitScale(formRule) {
   if (formRule.breakEvenOn && num(formRule.breakEven) > 0) marks.push({ r: num(formRule.breakEven), label: 'a la entrada', kind: 'even' });
   const trailOn = formRule.trail || ['atr', 'pct'].includes(formRule.trailMode);
   if (trailOn && !formRule.trail && formRule.trailStartOn && num(formRule.trailStart) > 0) marks.push({ r: num(formRule.trailStart), label: 'trailing', kind: 'trail' });
+  if (formRule.vpaExitOn && num(formRule.vpaExitFrom) > 0) marks.push({ r: num(formRule.vpaExitFrom), label: 'salida VPA', kind: 'trail' });
   if (inR && num(formRule.targetR) > 0) {
     if (formRule.tpTrailOn) marks.push({ r: Math.min(num(formRule.tpTrailStart) ?? 0, num(formRule.targetR)), label: 'arrastre', kind: 'drag' });
     marks.push({ r: num(formRule.targetR), label: 'objetivo', kind: 'target' });

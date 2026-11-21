@@ -147,3 +147,45 @@ def test_la_busqueda_suma_el_filtro_vpa_apagado_de_fabrica():
     qb = rs.decode({**old, "e1": opts["e1"].index("QB"), "vpaFire": 2}, cfg)
     assert qb["vpa"]["fire"] == 0.7
     assert rs._options(rs.clean_config({"tfs": [240], "codes": ["QB"], "vpa": False}))["vpaf"] == (None,)
+
+
+def test_la_salida_vpa_sale_al_primer_aviso_en_contra_y_solo_entra_si_se_pide():
+    plain = rule_of(("QB",), exit={"targetR": 2})
+    assert "vpa" not in plain["exit"]
+    junk = rule_of(("QB",), exit={"targetR": 2, "vpa": {"on": ["nada"]}})
+    assert rt.rule_hash("X", junk) == rt.rule_hash("X", plain), "sin lecturas válidas no hay salida VPA"
+    full = rt.clean_rule({"tf": 240, "recipe": {"slots": [{"codes": ["FV"]}]}, "exit": {"vpa": {"on": ["meter", "absorb", "climax", "push", "fade"], "thr": 0.8}}})
+    assert full["exit"]["vpa"] == {"on": ["climax", "absorb", "push", "meter", "fade"], "fromR": 0.0, "thr": 0.8}
+    assert "vpa" in full, "la salida necesita la configuración del lector"
+    assert full["exit"]["horizon"] is None, "la salida VPA cuenta como salida: no se impone el cierre a las 96 velas"
+    assert full == rt.clean_rule(full)
+
+    bars = walk(3000, seed=13)
+    rule = rule_of(("QB",), stop={"type": "atr", "atr": 2, "maxAtr": 20}, exit={"vpa": {"on": list(rt.VPA_EXITS), "thr": 1}})
+    result = rt.run("TEST", rule, {"bars": bars, "events": []}, PHASE)
+    ctx = rt._context("TEST", 240, bars)
+    ctx["bars"] = bars
+    warns = rt._vpa_exit_bars(result["rule"], ctx)
+    index = {b["t"]: i for i, b in enumerate(bars)}
+    vpa_out = [t for t in result["trades"] if t["reason"].startswith("VPA: ")]
+    assert len(vpa_out) > 10 and {t["reason"] for t in vpa_out} <= {"VPA: " + v for v in rt.VPA_EXITS.values()}
+    for t in result["trades"]:
+        k, e, x = index[t["signal"]], index[t["entry_t"]], index[t["exit_t"]]
+        first = min((j for j in warns[t["dir"]] if j >= e and j > k), default=None)
+        if t["reason"].startswith("VPA: "):
+            assert first == x - 1 and warns[t["dir"]][first] == t["reason"], "sale en la apertura siguiente al primer aviso"
+            assert t["exit"] == bars[x]["o"]
+        else:
+            assert first is None or first >= x - 1, "ningún aviso antes de otra salida"
+
+    # Sin futuro: los avisos de las primeras velas no cambian con velas posteriores
+    short = rt._context("TEST", 240, bars[:1800])
+    short["bars"] = bars[:1800]
+    early = rt._vpa_exit_bars(result["rule"], short)
+    for side in (1, -1):
+        assert early[side] == {j: why for j, why in warns[side].items() if j < 1800}
+
+    # Armada desde 1R: solo sale por el VPA un trade que ya llegó a 1R a favor
+    armed = rule_of(("QB",), stop={"type": "atr", "atr": 2, "maxAtr": 20}, exit={"vpa": {"on": list(rt.VPA_EXITS), "fromR": 1}})
+    later = rt.run("TEST", armed, {"bars": bars, "events": []}, PHASE)
+    assert all(t["mfe"] >= 1 for t in later["trades"] if t["reason"].startswith("VPA: "))
