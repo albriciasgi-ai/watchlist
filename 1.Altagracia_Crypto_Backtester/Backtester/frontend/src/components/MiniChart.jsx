@@ -34,6 +34,8 @@ import { isBlind, maskDate, maskPrice, maskVolume, priceText, pricesHidden, unma
 import { drawPositionLines, hitPositionTarget, positionPrices } from './positionLines.js';
 import { applyKline, mergeHistory, withForming } from './liveCandles.js';
 import { createRedrawPacer } from './redrawPacer.js';
+import { loadWilliamsSettings, mergeWilliamsConfig } from './indicators/williams.js';
+import { loadSmcSettings, mergeSmcConfig } from './indicators/smcStructure.js';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
@@ -219,6 +221,7 @@ const MiniChart = forwardRef(({
   captureChosenStyle = null, // En las imágenes de las órdenes: el mismo de chosenStyle, o 'lines' (solo sus líneas y aros: App 1, cuyo visor pone los números)
   chosenItems = null, // Lo elegido que se muestra en lugar de la lista del panel (suite, 13/11: lo de un trade en su análisis post-trade). Mientras está, un clic no abre el menú de niveles. App 1 no lo pasa
   drawingsSource = null, // Otra capa de dibujos en lugar de los de la moneda (suite, 13/11: el análisis post-trade de un trade): { key, load(), save(shapes) }. Sin ella, /api/drawings/{símbolo} como siempre
+  indicatorOverrides = null, // Ajustes de cálculo que reemplazan por un rato los guardados (probador, 21/11: los de la regla del trade elegido): { williams, smc }, configuraciones completas. Al quitarlos vuelven los guardados. Nadie más lo pasa
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -3597,6 +3600,31 @@ const MiniChart = forwardRef(({
     });
   }, [backtestingMode, backtestingData, currentTime, interval, isActive]);
 
+  // Ajustes de la regla del trade elegido en el probador (indicatorOverrides): el cálculo de Williams y el de la estructura
+  // SMC los usan mientras vienen; al dejar de venir vuelven los guardados. Se aplican también a un IndicatorManager nuevo
+  const overridesRef = useRef(indicatorOverrides);
+  overridesRef.current = indicatorOverrides;
+  const applyIndicatorOverrides = (manager, overrides) => {
+    if (!manager) return;
+    const hub = manager.getWilliamsHub?.();
+    const smcIndicator = manager.getSMCIndicator?.();
+    if (overrides) {
+      if (overrides.williams) hub?.setConfig(overrides.williams);
+      if (overrides.smc) smcIndicator?.updateConfig(overrides.smc);
+      manager.configOverridden = true;
+    } else if (manager.configOverridden) {
+      hub?.setConfig(mergeWilliamsConfig(loadWilliamsSettings(symbol)));
+      smcIndicator?.updateConfig(mergeSmcConfig(loadSmcSettings(symbol)));
+      manager.configOverridden = false;
+    }
+  };
+  useEffect(() => {
+    applyIndicatorOverrides(indicatorManagerRef.current, indicatorOverrides);
+    if (candlesRef.current && candlesRef.current.length > 0) {
+      drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+    }
+  }, [indicatorOverrides]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // ==================== MAIN EFFECT ====================
 
   useEffect(() => {
@@ -3608,6 +3636,7 @@ const MiniChart = forwardRef(({
       indicatorManagerRef.current = new IndicatorManager(symbol, interval, parseInt(days));
       // El Swing toma de aquí los rectángulos del gráfico para su filtro VWAP
       indicatorManagerRef.current.getDrawingManager = () => drawingManagerRef.current;
+      applyIndicatorOverrides(indicatorManagerRef.current, overridesRef.current); // Los de la regla del trade elegido, si vienen
 
       // 🎯 NUEVO: En modo backtesting, PRE-cargar Open Interest ANTES de initialize()
       if (backtestingMode && backtestingData) {

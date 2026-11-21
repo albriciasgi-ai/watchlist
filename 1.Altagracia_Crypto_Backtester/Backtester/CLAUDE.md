@@ -1154,6 +1154,27 @@ Pedido del usuario para depurar: al elegir un trade se veían la caja TP/SL y la
 
   Pruebas: `tests/test_trade_context.py` (5, una para el recorrido del stop) y tres más en `ruletester.test.mjs` (12; la de las cajas, al comportamiento nuevo). La vela de la señal resaltada, su cuadro y la tabla se vieron en pantalla con el trade 2 de la B5 en BTC: los tres en ✓ (FVG nuevo; EMA 50 en 11698.7 con cierre en 11305.5; OI +6.89% en 6 velas).
 - **Reglas en secuencia (20/11, después):** `trade_context` fallaba con ellas (KeyError): del disco, los mínimos por grupo de la receta vuelven con llaves de texto ("1") y `of_setups` las busca como números. `saved_rule(result)` las vuelve números antes de repetir la regla. Prueba en `test_trade_context.py` (6).
+- **Los indicadores de la regla (21/11, pedido del usuario):** al elegir un trade se veían las marcas de sus elementos y las filas de sus filtros, pero no los indicadores. Con «Ver en el gráfico lo que usó la regla» marcado, el gráfico los enciende un rato, sin tocar la lista guardada.
+  - **Cuáles** (`ruleIndicators()` de `ruleTester.js`):
+    - de Williams: los sabios encienden «Tres sabios»; la barra divergente, el Alligator y el AO; el AO de tres barras, el AO; la ruptura de fractal, «Fractales» y el Alligator (si mira los dientes). Además, cada filtro el suyo: Alligator, zona, AO, AC, Gator y MFI;
+    - la estructura SMC, con sus elementos, sus filtros o el objetivo en el rango;
+    - los paneles de los datos que leen los filtros de flujo: CVD, «Open Interest» y «OI-Volume Confluence».
+
+    Las líneas (EMA, VWAP, canal), las cajas y las demás marcas las sigue dibujando el contexto.
+  - **Con los ajustes de la regla:** los de Williams y la estructura SMC calculan como el backend (`ruleWilliamsConfig`, `ruleSmcConfig`).
+    - Williams: el Alligator, el AO y el AC con los de fábrica (los de `williams.py`), y los sabios con los de la regla. «Tres sabios» muestra solo los de la regla, y la entrada stop espera lo de la regla.
+    - SMC: las longitudes de la estructura, el order block y los iguales de la regla, con premium/discount a la vista si la regla lo usa.
+
+    Los colores y lo que se muestra siguen siendo los del gráfico. `MiniChart` recibe `indicatorOverrides` y los aplica a su `IndicatorManager` cada vez que lo crea; al quitarlos vuelven los guardados.
+  - **En el marco de la regla:** al elegir el trade, el gráfico pasa a ese marco, porque en otro serían otros indicadores.
+    - En otro marco, el detalle avisa y ofrece «Ver en 4H».
+    - Una regla de 30m o 1D no tiene marco en el gráfico, y el detalle lo dice.
+  - **Probado en pantalla** con una copia aislada y la regla de las corridas del usuario (los tres sabios, al menos 1, cierre del lado de los dientes) en BTC 4h, desde el gráfico en 15M o 1H:
+    - fase 1, trade 215; fase 2, trade 6; fase 3, trade 2;
+    - las líneas del Alligator, los sabios, los fractales y el panel del AO;
+    - desmarcar la casilla vuelve a los indicadores de siempre.
+
+    Prueba en `ruletester.test.mjs` (15).
 
 ### Objetivo arrastrado (20/11)
 
@@ -1379,6 +1400,22 @@ Pedido del usuario tras caer en la fase 3 la Ruptura de caja con EMA 200 y CVD: 
 - **Búsqueda:** suma a los genes los elementos Ruptura y Borde de caja, Compresión, FVG nuevo, Swing e Impulso con sus parámetros; la entrada con dos órdenes stop (por fuera de la zona o a 0.2, 0.5 o 1 ATR del cierre; la Compresión siempre va con ellas); el trailing a 3 o 4 ATR o al 5%, con arranque en 1R y stop a la entrada en 1.5R; los filtros de CVD (20 o 50 velas) y OI (sube, confluencia o sin confluencia en contra), y el régimen (dentro, fuera o tras romper, con o sin el rango mayor). Cada pieza nueva empieza "apagada" y las opciones nuevas van al final de cada lista: un genoma guardado antes da la misma regla. Casillas para quitar cada grupo de piezas. **Los controles de la búsqueda entran en las mismas velas que deja el régimen y del lado que deja el filtro de flujo**, como los del probador. La complejidad cuenta también los filtros de flujo y el régimen.
 - **Monedas nuevas al terminar** (`checkNew`, de fábrica): cada finalista se corre también en las monedas nuevas, en su fase 1, con los mismos dos tramos; no elige nada y solo se muestra al final.
 - Pruebas: `tests/test_new_coins.py` (2).
+
+### Ruptura de fractal sin futuro y monedas nuevas en 15m y 5m (21/11)
+
+Pedido del usuario: una corrida de los sabios en 15m, fase 1, «en todas las monedas» tomó solo 8 y daba cifras prometedoras (684 trades, 52.9%, +0.21 R, 8 de 8 monedas positivas). Regla: Barra divergente → AO tres barras + Ruptura de fractal en 10 velas, a mercado, stop 2 ATR y 2.2R arrastrado desde 1.5R a 0.5R.
+
+- **La ruptura de fractal miraba el futuro.** `williams.events()` fecha el 3.er sabio en la vela en que se supo el fractal y solo lo da si el precio lo pasa después. Eso sirve para la orden stop, que espera en el fractal (`info["expiry"]`) y se cancela si llega otro, como en el libro. Con entrada a mercado, limit o dos órdenes stop, la regla entraba antes de la ruptura sabiendo que ocurriría: en los 684 trades decidió antes de romperse el fractal y en 682 entró del lado de antes.
+  - Ahora `events(..., at_hit=True)` lo fecha en la vela que pasa el fractal (`info["atHit"]`), y `_williams_events()` lo pide así salvo con la orden stop. La suite ya lo hacía bien (`wise_smc_watch.py`, `known_at` en la ruptura).
+  - **Motor 4** (`ENGINE`): `_stale()` deja fuera las corridas anteriores con la ruptura de fractal y otra entrada que no sea la orden stop. Siguen en el disco, pero no se reusan ni se cuentan en "Todas" ni en el tablero.
+  - La misma regla corregida, fase 1 en 15m, las mismas 8 monedas: 1,531 trades, 41.4% y −0.105 R, como el azar en cada moneda (ventajas de −0.18 a +0.03).
+  - Prueba: `test_sin_orden_stop_la_ruptura_de_fractal_se_sabe_al_romperlo` en `test_williams_smc.py`.
+- **Las monedas nuevas no tenían 15m.** `candles_update.py` bajaba solo 1h y 4h, y "Correr en todas las monedas" en 15m corría las 7 de siempre más XRP (que tiene almacén). Las otras 42 quedaban "para correr" en el plan y daban 0 trades sin decir por qué.
+  - `candles_update.py --tf 15,5` baja también 15m y 5m desde 2020, cada marco en su carpeta (`OrderFlowData/candles/15/{moneda}.json.gz` y `.../5/`), para no hacer más lenta la lectura de 1h y 4h. Sin `--tf` actualiza los marcos finos que la moneda ya tenga. Reintenta un pedido que falla hasta 4 veces.
+  - `candle_bars()` lee 5m, 15m y 30m (dos de 15m) de esas carpetas (`EXTRA_KEYS`, `EXTRA_FINE`). `has_candles()` dice sin abrir el archivo si una moneda nueva tiene ese marco, y `_plan()` salta la que no lo tiene con su motivo.
+  - Sin almacén de trades, en esos marcos corren solo los elementos de velas, y una vela dudosa sigue su recorrido supuesto (sin minuto a minuto).
+  - DOGE en 15m: 191,604 velas desde el 02/06/2021, 3 MB, 2:46 min.
+  - Prueba: `test_las_monedas_nuevas_se_leen_aparte_de_las_de_siempre` en `test_new_coins.py`.
 
 ### Nombres de los elementos (19/11)
 

@@ -4,8 +4,10 @@ import assert from 'node:assert/strict';
 import {
   defaultRule, deleteRule, describeRule, fromBackendRule, isRuleTester, loadSavedRules, ruleTesterUrl, saveRule,
   accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals, signalChecklist, checklistBand, tradeBands,
-  targetInR
+  targetInR, chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText
 } from '../src/components/backtesting/ruleTester.js';
+import { defaultWilliamsConfig } from '../src/components/indicators/williams.js';
+import { defaultSmcConfig } from '../src/components/indicators/smcStructure.js';
 
 const tests = [];
 const test = (name, run) => tests.push([name, run]);
@@ -248,6 +250,59 @@ test('el trade elegido dibuja dónde se activa el trailing del objetivo y el obj
   const check = { time: 0, items: [] };
   assert.equal(checklistBand(check, { tf: 240, rows: [], side: 1 }, 'x').below, true);
   assert.equal(checklistBand(check, { tf: 240, rows: [], side: -1 }, 'x').below, false);
+});
+
+test('al elegir un trade, los indicadores de la regla: cuáles, en qué marco y con qué ajustes (21/11)', () => {
+  const back = (change) => toBackendRule({ ...defaultRule(), tf: 240, ...change });
+  // La regla del usuario: los tres sabios con el cierre del lado de los dientes
+  const sabios = back({ codes: ['WD', 'WA', 'WF'], mode: 'atLeast', min: 1, bwAlligator: 'side' });
+  assert.deepEqual(ruleIndicators(sabios), ['Alligator', 'Fractales', 'Tres sabios', 'AO']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['WA'], bwAo: 'zero', bwGator: 'open', bwMfi: 'volume', bwAc: 'color', bwZone: true })),
+    ['Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['WF'], wiseTeeth: false })), ['Fractales', 'Tres sabios'], 'sin mirar los dientes, sin Alligator');
+  assert.deepEqual(ruleIndicators(back({ codes: ['WD'], wiseRequireAo: false })), ['Alligator', 'Tres sabios']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['OB'] })), ['Estructura SMC']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['FV'], smcPd: true })), ['Estructura SMC']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['FV'], cvdOn: true, oiMode: 'rise' })), ['CVD', 'Open Interest']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['FV'], oiMode: 'conf' })), ['OI-Volume Confluence']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['FV'], emaMode: 'side' })), [], 'la EMA la dibuja el contexto del trade');
+  assert.deepEqual(ruleIndicators(null), []);
+  // El marco del gráfico de la regla: 30m y 1D no están en el gráfico
+  assert.equal(chartTfOf(240), '4h');
+  assert.equal(chartTfOf(15), '15m');
+  assert.equal(chartTfOf(30), null);
+  assert.equal(chartTfOf(1440), null);
+  // Williams: el cálculo con los de fábrica (los de williams.py) y los sabios de la regla; el gráfico conserva lo suyo
+  const mine = defaultWilliamsConfig();
+  mine.alligator = { ...mine.alligator, jawLen: 21, jawColor: '#000000' };
+  mine.ao = { ...mine.ao, slow: 55 };
+  mine.wise = { ...mine.wise, angBars: 9 };
+  const solo2 = back({ codes: ['WA'], entryType: 'stop', entryExpiry: 6, wiseAngBars: 7, wiseRequireAo: false });
+  const cfg = ruleWilliamsConfig(solo2, mine);
+  assert.equal(cfg.alligator.jawLen, 13);
+  assert.equal(cfg.alligator.jawColor, '#000000', 'los colores siguen siendo los del gráfico');
+  assert.equal(cfg.ao.slow, 34);
+  assert.deepEqual([cfg.wise.first, cfg.wise.second, cfg.wise.third], [false, true, false], 'solo el 2.º sabio');
+  assert.equal(cfg.wise.angBars, 7);
+  assert.equal(cfg.wise.requireAo, false);
+  assert.equal(cfg.wise.pendingBars, 6, 'lo que espera la orden stop de la regla');
+  assert.equal(ruleWilliamsConfig(back({ codes: ['WA'] }), mine).wise.pendingBars, defaultWilliamsConfig().wise.pendingBars, 'a mercado, lo de fábrica');
+  assert.deepEqual(ruleWilliamsConfig(back({ codes: ['FV'], bwAo: 'color' }), mine).wise, mine.wise, 'sin sabios en la regla, los del gráfico quedan');
+  // SMC: las longitudes y el order block de la regla, y el rango de sus filtros
+  const smcRule = back({ codes: ['OB', 'EQ'], smcScope: 'internal', smcSwing: 20, smcInternal: 7, smcPick: 'opposite', smcArea: 'body', smcMitigation: 'wick',
+    smcEqLength: 4, smcEqThreshold: 0.25, smcPd: true, useTarget: true, targetAt: 'weak' });
+  const mineSmc = defaultSmcConfig();
+  mineSmc.bullColor = '#123456';
+  const smc = ruleSmcConfig(smcRule, mineSmc);
+  assert.equal(smc.swing.length, 20);
+  assert.equal(smc.internal.length, 7);
+  assert.deepEqual([smc.ob.pick, smc.ob.area, smc.ob.mitigation], ['opposite', 'body', 'wick']);
+  assert.deepEqual([smc.equal.length, smc.equal.threshold], [4, 0.25]);
+  assert.equal(smc.zones.show, true, 'con premium y discount en la regla, sus zonas a la vista');
+  assert.equal(smc.strongWeak.show, true);
+  assert.equal(smc.bullColor, '#123456');
+  assert.equal(listText(['Alligator', 'Fractales', 'AO']), 'Alligator, Fractales y AO');
+  assert.equal(listText(['AO']), 'AO');
 });
 
 let failed = 0;

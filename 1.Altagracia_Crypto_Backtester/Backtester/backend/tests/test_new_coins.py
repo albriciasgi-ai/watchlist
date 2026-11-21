@@ -34,10 +34,21 @@ def test_las_monedas_nuevas_se_leen_aparte_de_las_de_siempre(tmp_path, monkeypat
     assert len(rt.candle_bars("NEWUSDT", 60)) == 24 * 400 and len(rt.candle_bars("NEWUSDT", 240)) == 6 * 400
     days = rt.candle_bars("NEWUSDT", 1440)
     assert len(days) == 400 and days[0]["vol"] == 6 * 40.0
-    assert rt.candle_bars("NEWUSDT", 15) == []  # Las nuevas solo tienen 1h, 4h y 1D
+    assert rt.candle_bars("NEWUSDT", 15) == []  # Sin bajar 15m, solo 1h, 4h y 1D
     assert rt.phases("NEWUSDT")[0]["available"]
     plan = rt._plan(rt.clean_rule({"tf": 240, "recipe": {"slots": [{"codes": ["FV"]}]}}), 1, "new")
     assert [row["symbol"] for row in plan] == ["NEWUSDT"] and plan[0]["action"] == "run"
+    # 15m sin su archivo: el plan la salta con su motivo (antes quedaba "para correr" y daba 0 trades)
+    plan = rt._plan(rt.clean_rule({"tf": 15, "recipe": {"slots": [{"codes": ["FV"]}]}}), 1, "new")
+    assert plan[0]["action"] == "skip" and "15,5" in plan[0]["reason"]
+    # Con candles/15/ (21/11) se leen 15m y 30m
+    (extra / "15").mkdir()
+    with gzip.open(extra / "15" / "NEWUSDT.json.gz", "wt", encoding="utf-8") as fh:
+        json.dump({"15": [[start + k * H // 4, 100.0, 100.5, 99.5, 100.0, 2.5] for k in range(4 * 24 * 400)]}, fh)
+    assert len(rt.candle_bars("NEWUSDT", 15)) == 4 * 24 * 400 and len(rt.candle_bars("NEWUSDT", 30)) == 2 * 24 * 400
+    assert rt.candle_bars("NEWUSDT", 5) == [] and rt.has_candles("NEWUSDT", 30) and not rt.has_candles("NEWUSDT", 5)
+    plan = rt._plan(rt.clean_rule({"tf": 15, "recipe": {"slots": [{"codes": ["FV"]}]}}), 1, "new")
+    assert plan[0]["action"] == "run"
 
 
 def test_la_busqueda_arma_reglas_con_las_piezas_nuevas():
