@@ -54,6 +54,34 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 21 Noviembre 2026: Los Indicadores de la Regla en el Trade Elegido (Backtesting Global)
+
+**Pedido:** al hacer clic en un trade no se pintaban en el gráfico los indicadores que usó la regla. Se veían las marcas de sus elementos y las filas de sus filtros, pero no el Alligator, los fractales ni el AO, por ejemplo. El usuario lo probó en la fase 1 y no sabía si pasaba en las otras.
+
+**Cambios:**
+1. **Con «Ver en el gráfico lo que usó la regla» marcado,** el gráfico enciende un rato los indicadores de la regla, sin tocar la lista guardada:
+   - los de Williams de sus elementos y filtros (Tres sabios, Alligator, Fractales, Zonas, AO, AC, Gator y MFI);
+   - la estructura SMC;
+   - los paneles de CVD e interés abierto de sus filtros de flujo.
+
+   Al desmarcarla vuelven los de siempre.
+2. **Con los ajustes de la regla:** los de Williams y SMC calculan como el backend, y «Tres sabios» muestra solo los de la regla. Los colores son los del gráfico. `MiniChart` recibe `indicatorOverrides`, que reemplazan los ajustes guardados mientras vienen.
+3. **En el marco de la regla:** al elegir el trade, el gráfico pasa al marco de la regla, porque en otro serían otros indicadores.
+   - En otro marco, el detalle avisa y ofrece volver.
+   - Las reglas de 30m y 1D no tienen marco en el gráfico, y el detalle lo dice.
+4. **Pruebas:** `ruletester.test.mjs` suma 1 (15).
+
+**IMPORTANTE:**
+- Basta recargar la página de App 1: no cambió el backend.
+- **Probado en pantalla** con una copia aislada y la regla de las corridas del usuario (los tres sabios, con el cierre del lado de los dientes) en BTC 4h:
+  - en las fases 1, 2 y 3, desde el gráfico en 15M o 1H, pasó a 4H con el Alligator, los sabios, los fractales y el panel del AO;
+  - desmarcar la casilla los apagó.
+- En la página solo falla `liquidations.test.mjs`, como desde el 13/11.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Lo que usó la regla en el trade elegido (20/11)"
+
+---
+
 ### App 1 + Altagracia Trading Suite - 21 Noviembre 2026: Menús de Indicadores en Dos Columnas y Filtros del AO, el AC, el Gator y el MFI
 
 **Pedido:** tras probar los indicadores de Williams y SMC, dos cosas:

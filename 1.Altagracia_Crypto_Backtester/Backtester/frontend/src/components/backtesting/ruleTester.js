@@ -3,6 +3,8 @@
  * el backend (backend/rule_tester.py), las reglas guardadas y los textos del informe.
  */
 import { elementLabel, elementLabels } from './elementLabels.js';
+import { defaultWilliamsConfig } from '../indicators/williams.js';
+import { defaultSmcConfig } from '../indicators/smcStructure.js';
 
 export const TESTER_PARAM = 'probador';
 export const RULE_TIMEFRAMES = [5, 15, 30, 60, 240, 1440];
@@ -602,7 +604,105 @@ export function checklistBand(check, context, title) {
   return { kind: 'checklist', tf: context.tf * 60000, rows: (context.rows || []).length, time: check.time, title, items: check.items, below: context.side > 0 };
 }
 
-export const fmtR = (value, digits = 2) => (value === null || value === undefined ? '—' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}`);
+// ==================== LOS INDICADORES DE LA REGLA EN EL TRADE ELEGIDO (21/11) ====================
+// Pedido del usuario: al elegir un trade no se veían los indicadores que usó la regla (solo sus marcas y sus filas).
+// Ahora el gráfico los enciende mientras se ve lo que usó la regla, en su marco, y los de Williams y SMC con los ajustes
+// con que calculó el backend. Las líneas (EMA, VWAP, canal), las cajas y las marcas de los elementos las sigue dibujando
+// el contexto del trade
+
+// En el orden de la lista de indicadores del gráfico (WISE_CODES y SMC_CODES, arriba)
+const RULE_INDICATOR_ORDER = ['CVD', 'Open Interest', 'OI-Volume Confluence', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios',
+  'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'];
+const CHART_TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
+
+const ruleCodes = (rule) => new Set((rule?.recipe?.slots || []).flatMap(slot => slot.codes || []));
+
+/** El marco del gráfico con las velas de la regla ('4h' para una de 240 minutos), o null si el gráfico no lo tiene (30m, 1D) */
+export function chartTfOf(ruleTf) {
+  return CHART_TIMEFRAMES.find(tf => CHART_TF_MINUTES[tf] === Number(ruleTf)) || null;
+}
+
+/**
+ * Los indicadores del gráfico que usa una regla (en la forma del backend): los de Williams y la estructura SMC de sus
+ * elementos y filtros, y los paneles de los datos que leen sus filtros de flujo (CVD e interés abierto)
+ */
+export function ruleIndicators(rule) {
+  if (!rule?.recipe) return [];
+  const codes = ruleCodes(rule);
+  const bwf = rule.bwf || {};
+  const flow = rule.flow || {};
+  const wise = rule.wise || {};
+  const names = new Set();
+  if (WISE_CODES.some(code => codes.has(code))) names.add('Tres sabios');
+  // La barra divergente se mide contra la boca, y la ruptura de fractal (por omisión) del lado de los dientes
+  if (codes.has('WD') || (codes.has('WF') && wise.teeth !== false) || bwf.alligator) names.add('Alligator');
+  if (codes.has('WF')) names.add('Fractales');
+  if (codes.has('WA') || (codes.has('WD') && wise.requireAo !== false) || bwf.ao) names.add('AO');
+  if (bwf.ac) names.add('AC');
+  if (bwf.zone) names.add('Zonas de Williams');
+  if (bwf.gator) names.add('Gator');
+  if (bwf.mfi) names.add('MFI');
+  if (SMC_CODES.some(code => codes.has(code)) || rule.smcf?.pd || rule.smcf?.bias || rule.targetAt === 'weak') names.add('Estructura SMC');
+  if (flow.cvd) names.add('CVD');
+  if (['rise', 'fall'].includes(flow.oi) || flow.steady) names.add('Open Interest');
+  if (['conf', 'noconf'].includes(flow.oi)) names.add('OI-Volume Confluence');
+  return RULE_INDICATOR_ORDER.filter(name => names.has(name));
+}
+
+/**
+ * Los ajustes de Williams con que calculó la regla (backend/williams.py: los de fábrica, y los de sus sabios) sobre los
+ * del gráfico: cambia solo lo que mueve el cálculo, y el gráfico conserva sus colores y lo que muestra. Sin sabios en la
+ * regla, los del gráfico quedan como estaban
+ */
+export function ruleWilliamsConfig(rule, current = defaultWilliamsConfig()) {
+  const base = defaultWilliamsConfig();
+  const codes = ruleCodes(rule);
+  const take = (from, keys) => Object.fromEntries(keys.map(key => [key, from[key]]));
+  const out = {
+    ...current,
+    alligator: { ...current.alligator, ...take(base.alligator, ['jawLen', 'jawShift', 'teethLen', 'teethShift', 'lipsLen', 'lipsShift', 'sleepAtr']) },
+    fractals: { ...current.fractals, maxRight: base.fractals.maxRight },
+    ao: { ...current.ao, fast: base.ao.fast, slow: base.ao.slow },
+    ac: { ...current.ac, signal: base.ac.signal }
+  };
+  if (WISE_CODES.some(code => codes.has(code))) {
+    const wise = rule.wise || {};
+    const entry = rule.entry || {};
+    const expiry = Number(entry.expiry);
+    out.wise = {
+      ...current.wise,
+      first: codes.has('WD'), second: codes.has('WA'), third: codes.has('WF'), // Solo los sabios de la regla
+      lookback: wise.lookback ?? base.wise.lookback, angBars: wise.angBars ?? base.wise.angBars,
+      minGapAtr: wise.minGapAtr ?? base.wise.minGapAtr, requireAo: wise.requireAo !== false, alligatorFilter: wise.teeth !== false,
+      // Lo que espera la orden stop de la regla; a mercado, lo de fábrica
+      pendingBars: entry.type === 'stop' && expiry > 0 ? expiry : base.wise.pendingBars
+    };
+  }
+  return out;
+}
+
+/**
+ * Los ajustes de la estructura SMC con que calculó la regla (backend/smc.py: los de sus elementos y sus filtros) sobre
+ * los del gráfico, con las zonas premium/discount a la vista si la regla las usa y el extremo débil si su objetivo es él
+ */
+export function ruleSmcConfig(rule, current = defaultSmcConfig()) {
+  const smc = rule?.smc || {};
+  const smcf = rule?.smcf || {};
+  return {
+    ...current,
+    internal: { ...current.internal, length: smc.internal ?? current.internal.length },
+    swing: { ...current.swing, length: smcf.swing ?? smc.swing ?? current.swing.length },
+    ob: { ...current.ob, pick: smc.pick ?? current.ob.pick, area: smc.area ?? current.ob.area, mitigation: smc.mitigation ?? current.ob.mitigation },
+    equal: { ...current.equal, length: smc.eqLength ?? current.equal.length, threshold: smc.eqThreshold ?? current.equal.threshold },
+    zones: smcf.pd ? { ...current.zones, show: true } : current.zones,
+    strongWeak: rule?.targetAt === 'weak' ? { ...current.strongWeak, show: true } : current.strongWeak
+  };
+}
+
+/** Los nombres en una lista: «Alligator, Fractales y AO» */
+export const listText = (names) => (names.length > 1 ? `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}` : names[0] || '');
+
+export const fmtR =(value, digits = 2) => (value === null || value === undefined ? '—' : `${value > 0 ? '+' : ''}${Number(value).toFixed(digits)}`);
 export const fmtPct = (value) => (value === null || value === undefined ? '—' : `${Number(value).toFixed(1)}%`);
 
 /** Orden de la tabla de trades */

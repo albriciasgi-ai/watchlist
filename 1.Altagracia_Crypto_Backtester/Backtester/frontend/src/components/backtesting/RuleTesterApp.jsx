@@ -17,8 +17,11 @@ import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, hasBox, reviewBoxes, s
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
-  contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText
+  contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText,
+  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText
 } from './ruleTester.js';
+import { loadWilliamsSettings, mergeWilliamsConfig } from '../indicators/williams.js';
+import { loadSmcSettings, mergeSmcConfig } from '../indicators/smcStructure.js';
 import { elementLabel, elementLabels } from './elementLabels.js';
 import {
   FACETS, OFF_PATCH, SECTIONS, exitScale, facetPhrase, loadedSummary, ruleDifferences, ruleFacets, sectionCounts, sectionSummary, signalFunnel
@@ -44,6 +47,8 @@ const INDICATORS = [
   'S&R v2', 'Swing Detector', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ];
 const DEFAULT_ON = new Set(['Volume Delta', 'Order Flow', 'Elementos OF']);
+// Los indicadores que el gráfico calcula con los ajustes de la regla cuando son de ella (ver ruleWilliamsConfig y ruleSmcConfig)
+const WILLIAMS_SMC = new Set(['Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI']);
 const VP_CONFIG = { mode: 'dynamic', rowCount: 100, valueAreaPercent: 70, hideWhenFixedRanges: false, showPOC: true, showVAH: true, showVAL: true };
 const TIME = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 const stamp = (ms) => TIME.format(new Date(ms));
@@ -705,12 +710,13 @@ const RuleTesterApp = () => {
 
   // El gráfico se vuelve a montar al cambiar de marco o de vista: se insiste hasta que pueda ir al punto
   const focusTimer = useRef(null);
-  const focusLater = useCallback((time, price) => {
+  // patience: intentos cada 150 ms mientras el gráfico se arma (al cambiar de marco, la primera vez tarda más)
+  const focusLater = useCallback((time, price, patience = 40) => {
     clearTimeout(focusTimer.current);
     let tries = 0;
     const attempt = () => {
       if (chartRef.current?.focusOn?.(time, price)) return;
-      if (tries++ < 40) focusTimer.current = setTimeout(attempt, 150);
+      if (tries++ < patience) focusTimer.current = setTimeout(attempt, 150);
     };
     focusTimer.current = setTimeout(attempt, 0);
   }, []);
@@ -719,6 +725,24 @@ const RuleTesterApp = () => {
   // Cajas de los trades y línea del trade elegido, para el gráfico
   const trades = result?.trades || [];
   const chartOpen = ordersView || phase === 1 || !!revealed[phase];
+  // Los indicadores de la regla del trade elegido (21/11): mientras se ve lo que usó la regla, el gráfico los enciende,
+  // los de Williams y SMC con los ajustes de la regla. Solo en su marco: en otro serían otros indicadores
+  const ruleIndicatorNames = useMemo(() => (result ? ruleIndicators(result.rule) : []), [result]);
+  const ruleTfChart = result ? chartTfOf(result.rule.tf) : null;
+  const contextTrade = showContext && chartOpen && !ordersView && !review?.session && !(tab === 'regimen' && regimeBands)
+    ? trades.find(t => t.n === selected) || null : null;
+  const ruleIndicatorsOn = !!contextTrade && ruleIndicatorNames.length > 0 && ruleTfChart === chartTf;
+  const chartIndicators = useMemo(() => (ruleIndicatorsOn
+    ? { ...indicatorStates, ...Object.fromEntries(ruleIndicatorNames.map(name => [name, true])) } : indicatorStates),
+  [ruleIndicatorsOn, ruleIndicatorNames, indicatorStates]);
+  // Solo los cálculos que la regla usa: con solo CVD u OI, los de Williams y SMC del gráfico quedan como están
+  const indicatorOverrides = useMemo(() => {
+    if (!ruleIndicatorsOn) return null;
+    const williams = ruleIndicatorNames.some(name => WILLIAMS_SMC.has(name) && name !== 'Estructura SMC')
+      ? ruleWilliamsConfig(result.rule, mergeWilliamsConfig(loadWilliamsSettings(symbol))) : null;
+    const smc = ruleIndicatorNames.includes('Estructura SMC') ? ruleSmcConfig(result.rule, mergeSmcConfig(loadSmcSettings(symbol))) : null;
+    return williams || smc ? { williams, smc } : null;
+  }, [ruleIndicatorsOn, ruleIndicatorNames, result, symbol]);
   useEffect(() => {
     if (tab === 'regimen' && regimeBands) {
       // Régimen: solo la referencia y las zonas del detector, sin trades encima
@@ -762,7 +786,13 @@ const RuleTesterApp = () => {
     setSelected(trade.n);
     setDetail(null);
     setOrdersView(false);
-    if (phase === 1 || revealed[phase]) focusLater(trade.entry_t, trade.entry);
+    if (phase === 1 || revealed[phase]) {
+      // Con lo que usó la regla a la vista, el gráfico pasa al marco de la regla: sus indicadores se calculan con esas velas
+      const ruleTf = showContext && ruleIndicators(result.rule).length ? chartTfOf(result.rule.tf) : null;
+      const switching = !!ruleTf && ruleTf !== chartTf;
+      if (switching) setChartTf(ruleTf);
+      focusLater(trade.entry_t, trade.entry, switching ? 200 : 40);
+    }
     api(`/api/tester/result/${result.id}/trade/${trade.n}`).then(d => d.success && setDetail(d)).catch(noop);
     // La primera vez de cada corrida el backend repite la regla (unos segundos); después responde al instante
     const runId = result.id;
@@ -770,7 +800,7 @@ const RuleTesterApp = () => {
     api(`/api/tester/result/${runId}/trade/${trade.n}/context`)
       .then(d => setTradeContext(current => (current?.runId === runId && current?.n === trade.n ? { ...d, runId, n: trade.n } : current)))
       .catch(error => setTradeContext(current => (current?.runId === runId && current?.n === trade.n ? { success: false, message: error.message, runId, n: trade.n } : current)));
-  }, [result, phase, revealed, focusLater]);
+  }, [result, phase, revealed, focusLater, showContext, chartTf]);
 
   const pickOrder = useCallback(({ order, view }) => {
     setPickedOrder(order.id);
@@ -1897,6 +1927,15 @@ const RuleTesterApp = () => {
                 </label>
                 {used?.loading && <> · repitiendo la regla para dibujarlo…</>}
                 {used && used.success === false && !used.loading && <> · no se pudo: {used.message || 'sin respuesta'}</>}
+                {showContext && ruleIndicatorNames.length > 0 && (
+                  <div style={{ marginTop: 4 }}>
+                    {ruleIndicatorsOn
+                      ? <>En el gráfico, los indicadores de la regla: {listText(ruleIndicatorNames)}{ruleIndicatorNames.some(n => WILLIAMS_SMC.has(n)) ? ', los de Williams y SMC con los ajustes de la regla' : ''}. Se apagan al desmarcar la casilla.</>
+                      : ruleTfChart
+                        ? <>Los indicadores de la regla ({listText(ruleIndicatorNames)}) se ven con el gráfico en {ruleTfChart.toUpperCase()}, el marco de la regla. <button type="button" className="rt-link" onClick={() => { setChartTf(ruleTfChart); focusLater(selectedTrade.entry_t, selectedTrade.entry, 200); }}>Ver en {ruleTfChart.toUpperCase()}</button></>
+                        : <>La regla es de {TF_LABEL[result.rule.tf] || `${result.rule.tf}m`} y el gráfico no tiene ese marco: sus indicadores ({listText(ruleIndicatorNames)}) no se pueden mostrar con sus velas. Siguen sus marcas y sus filas.</>}
+                  </div>
+                )}
                 {used?.same === false && <><br /><b>Ojo:</b> al repetir hoy la regla, esta señal no da el mismo trade (la corrida es del motor {used.engine}; hoy, el {used.engineNow}). Lo dibujado es lo de hoy.</>}
                 {check && (
                   <>
@@ -2495,7 +2534,8 @@ const RuleTesterApp = () => {
                 interval={chartTf}
                 days={days}
                 isActive={true}
-                indicatorStates={indicatorStates}
+                indicatorStates={chartIndicators}
+                indicatorOverrides={indicatorOverrides}
                 backtestingMode={true}
                 backtestingData={market}
                 currentTime={chartTime}
