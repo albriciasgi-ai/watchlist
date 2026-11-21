@@ -83,6 +83,9 @@ GENES = {
     "smcEq": (0.1, 0.25), "smcReclaim": (True, False),
     "bwf": (None, "awake", "side", "sleeping"), "bwZone": (False, True), "smcPd": (False, True), "smcBias": (False, True),
     "targetWeak": (False, True),
+    # Desde el 21/11: los filtros del AO, el AC, el Gator y el MFI (también empiezan apagados)
+    "bwAo": (None, "color", "zero"), "bwAc": (None, "color", "zero"), "bwGator": (None, "eating", "open"),
+    "bwMfi": (None, "green", "squat", "volume"),
 }
 
 _lock = threading.Lock()
@@ -166,6 +169,7 @@ def _options(cfg):
         opts["entry"] = tuple(e for e in opts["entry"] if e[0] != "stop")
     if not cfg.get("williams", True):
         opts["bwf"], opts["bwZone"], opts["smcPd"], opts["smcBias"], opts["targetWeak"] = (None,), (False,), (False,), (False,), (False,)
+        opts["bwAo"], opts["bwAc"], opts["bwGator"], opts["bwMfi"] = (None,), (None,), (None,), (None,)
     return opts
 
 
@@ -173,7 +177,8 @@ def random_genome(cfg, rng):
     opts = _options(cfg)
     genome = {name: rng.randrange(len(values)) for name, values in opts.items()}
     # Reglas simples primero: el segundo y el tercer elemento, y el filtro de línea, empiezan apagados más seguido
-    for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady", "bwf", "bwZone", "smcPd", "smcBias", "targetWeak"):
+    for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady", "bwf", "bwZone", "smcPd", "smcBias", "targetWeak",
+                 "bwAo", "bwAc", "bwGator", "bwMfi"):
         if len(opts[name]) > 1 and rng.random() < 0.6:
             genome[name] = 0
     return genome
@@ -235,7 +240,8 @@ def decode(genome, cfg):
         "smc": {"scope": pick["smcScope"], "swing": pick["smcSwing"], "internal": pick["smcInternal"], "break": pick["smcBreak"],
                 "pick": pick["smcPick"], "area": pick["smcArea"], "mitigation": pick["smcMitigation"],
                 "eqThreshold": pick["smcEq"], "reclaim": pick["smcReclaim"]},
-        "bwf": {"alligator": pick["bwf"], "zone": pick["bwZone"]},
+        "bwf": {"alligator": pick["bwf"], "zone": pick["bwZone"], "ao": pick["bwAo"], "ac": pick["bwAc"], "gator": pick["bwGator"],
+                "mfi": pick["bwMfi"]},
         "smcf": {"pd": pick["smcPd"], "bias": pick["smcBias"], "swing": pick["smcSwing"]},
     }
     if pick["regime"]:
@@ -256,7 +262,8 @@ def complexity(rule):
     flow, bwf, smcf = rule.get("flow") or {}, rule.get("bwf") or {}, rule.get("smcf") or {}
     return (len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
             + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(rule.get("regime"))
-            + bool(bwf.get("alligator")) + bool(bwf.get("zone")) + bool(smcf.get("pd")) + bool(smcf.get("bias")))
+            + bool(bwf.get("alligator")) + bool(bwf.get("zone")) + bool(smcf.get("pd")) + bool(smcf.get("bias"))
+            + bool(bwf.get("ao")) + bool(bwf.get("ac")) + bool(bwf.get("gator")) + bool(bwf.get("mfi")))
 
 
 # ==================== EVALUACIÓN ====================

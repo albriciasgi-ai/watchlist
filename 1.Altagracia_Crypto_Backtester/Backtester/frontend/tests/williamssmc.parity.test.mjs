@@ -44,16 +44,16 @@ import json, math, sys
 sys.path.insert(0, sys.argv[1])
 import williams, smc
 candles = json.load(open(sys.argv[2], encoding="utf-8"))
-o = [k["open"] for k in candles]; h = [k["high"] for k in candles]; l = [k["low"] for k in candles]; c = [k["close"] for k in candles]
+o = [k["open"] for k in candles]; h = [k["high"] for k in candles]; l = [k["low"] for k in candles]; c = [k["close"] for k in candles]; v = [k["volume"] for k in candles]
 def clean(x):
     if isinstance(x, float) and x != x: return None
     if isinstance(x, list): return [clean(v) for v in x]
     if isinstance(x, dict): return {k: clean(v) for k, v in x.items()}
     return x
-w = williams.compute(h, l, c)
+w = williams.compute(h, l, c, v=v)
 wise = williams.wise_men(o, h, l, c, w)
 s = smc.compute(o, h, l, c)
-out = {"w": {k: w[k] for k in ("jaw", "teeth", "lips", "ao", "ac", "zone", "aoDir", "acDir", "state", "fractals")}, "wise": wise, "smc": s}
+out = {"w": {k: w[k] for k in ("jaw", "teeth", "lips", "ao", "ac", "zone", "aoDir", "acDir", "state", "fractals", "gUp", "gDown", "gUpDir", "gDownDir", "mfi", "mfiType")}, "wise": wise, "smc": s}
 print(json.dumps(clean(out)))
 `;
 
@@ -80,6 +80,11 @@ for (const [seed, n] of [[3, 1500], [17, 3000]]) {
       assert.deepEqual(a, py.w[key], `${key}`);
     }
     for (const key of ['aoDir', 'acDir', 'state']) assert.deepEqual([...js[key]], py.w[key], key);
+    // Gator y MFI (21/11, filtros del probador): el gráfico dibuja la barra de abajo negativa, el probador la guarda positiva
+    assert.deepEqual([...js.gUp].map(num), py.w.gUp, 'gUp');
+    assert.deepEqual([...js.gDown].map(x => num(-x)), py.w.gDown, 'gDown');
+    assert.deepEqual([...js.mfi].map(num), py.w.mfi, 'mfi');
+    for (const key of ['gUpDir', 'gDownDir', 'mfiType']) assert.deepEqual([...js[key]], py.w[key], key);
     assert.deepEqual(js.fractals, py.w.fractals, 'fractales');
     // Sabios 1 y 2: la vela de la señal, la entrada y el stop. El 3.º: el fractal, su nivel y la vela que lo pasa
     const core12 = (s) => [s.wise, s.dir, s.index, s.entry, s.stop];

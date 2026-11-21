@@ -2814,6 +2814,11 @@ const BacktestingApp = () => {
                   borderRadius: '4px',
                   padding: '10px',
                   minWidth: '250px',
+                  // Dos columnas (21/11/2026): con los indicadores de Williams y SMC la lista no cabía bajo el
+                  // encabezado en 768 px. Si aun así no cabe, la lista se desplaza
+                  width: 'min(520px, calc(100vw - 24px))',
+                  maxHeight: 'calc(100vh - 56px)',
+                  overflowY: 'auto',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                   zIndex: 1000
                 }}
@@ -2821,6 +2826,7 @@ const BacktestingApp = () => {
                 <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>
                   Indicadores ({activeTimeframe})
                 </h4>
+                <div style={{ columnCount: 2, columnGap: '16px' }}>
                 {Object.entries(tabStates[activeTimeframe]?.indicatorStates || {}).map(([name, enabled]) => {
                   const settingsMap = {
                     'Volume Profile': () => setShowVpSettings(true),
@@ -2853,7 +2859,8 @@ const BacktestingApp = () => {
                         padding: '6px 0',
                         cursor: 'pointer',
                         fontSize: '13px',
-                        color: '#333'
+                        color: '#333',
+                        breakInside: 'avoid'
                       }}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -2900,7 +2907,8 @@ const BacktestingApp = () => {
                             border: '1px solid #ccc',
                             borderRadius: '3px',
                             cursor: 'pointer',
-                            background: '#f5f5f5'
+                            background: '#f5f5f5',
+                            color: '#333' // Con Oscuro el panel se invierte: sin color propio el texto salía negro sobre negro
                           }}
                         >
                           <option value="histogram">Histogram</option>
@@ -2947,12 +2955,14 @@ const BacktestingApp = () => {
                           onMouseLeave={(e) => e.target.style.opacity = '0.7'}
                           title={`Configurar ${name}`}
                         >
-                          {isNewTheme() ? <Icon name="sliders" size={13} /> : '⚙️'}
+                          {/* En línea con el nombre: el ícono es un bloque y bajaba a una línea propia */}
+                          {isNewTheme() ? <Icon name="sliders" size={13} style={{ display: 'inline-block', verticalAlign: '-2px' }} /> : '⚙️'}
                         </span>
                       )}
                     </label>
                   );
                 })}
+                </div>
                 <button
                   type="button"
                   onClick={() => AVAILABLE_TIMEFRAMES.forEach(tf => miniChartRefs.current[tf]?.resetPanels?.())}

@@ -11,7 +11,7 @@
  * Lógica pura: se prueba en Node.
  */
 import { elementLabels } from './elementLabels.js';
-import { DAILY_TF, TF_LABEL, VP_CODES, tpTrailText } from './ruleTester.js';
+import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, tpTrailText } from './ruleTester.js';
 
 /** Secciones del formulario, en orden */
 export const SECTIONS = [
@@ -48,6 +48,10 @@ export const FACETS = {
   oiSostenido: ['filtros', 'OI sostenido', 'sin filtro'],
   alligator: ['filtros', 'Alligator', 'sin filtro'],
   zonaWilliams: ['filtros', 'Zona de Williams', 'sin filtro'],
+  ao: ['filtros', 'AO', 'sin filtro'],
+  ac: ['filtros', 'AC', 'sin filtro'],
+  gator: ['filtros', 'Gator', 'sin filtro'],
+  mfi: ['filtros', 'MFI', 'sin filtro'],
   premium: ['filtros', 'Premium y discount', 'sin filtro'],
   sesgo: ['filtros', 'Tendencia de la estructura', 'sin filtro'],
   extremo: ['filtros', 'En un extremo', 'no'],
@@ -190,8 +194,13 @@ export function ruleFacets(rule, labels = {}) {
       conf: 'confluencia OI-volumen a favor', noconf: 'sin confluencia OI-volumen en contra' }[flow.oi]);
   }
   if (flow.crowd) add('multitud', flow.crowd === 'contra' ? 'solo contra la multitud' : 'sin ir con la multitud');
-  if (rule.bwf?.alligator) add('alligator', { awake: 'despierto a favor', side: 'cierre del lado de los dientes', sleeping: 'dormido' }[rule.bwf.alligator]);
-  if (rule.bwf?.zone) add('zonaWilliams', 'a favor (verde en un largo, roja en un corto)');
+  // Cada filtro de Williams dice su nombre: en las fichas de «Vas a correr» va solo su texto
+  if (rule.bwf?.alligator) add('alligator', BW_ALLIGATOR_TEXT[rule.bwf.alligator]);
+  if (rule.bwf?.zone) add('zonaWilliams', 'zona de Williams a favor (verde en un largo, roja en un corto)');
+  if (rule.bwf?.ao) add('ao', `AO ${BW_MOMENTUM_TEXT[rule.bwf.ao]}`);
+  if (rule.bwf?.ac) add('ac', `AC ${BW_MOMENTUM_TEXT[rule.bwf.ac]}`);
+  if (rule.bwf?.gator) add('gator', `Gator ${BW_GATOR_TEXT[rule.bwf.gator]}`);
+  if (rule.bwf?.mfi) add('mfi', `MFI: ${BW_MFI_TEXT[rule.bwf.mfi]}`);
   if (rule.smcf?.pd) add('premium', `largos en discount y cortos en premium (rango mayor de ${rule.smcf.swing} velas)`);
   if (rule.smcf?.bias) add('sesgo', `a favor de la estructura mayor de ${rule.smcf.swing} velas`);
   if (flow.steady) add('oiSostenido', `OI sube en ${Math.round(Number(flow.steadyMin) * 100)}% o más de los pasos de ${flow.steadyDays} días`);
@@ -304,6 +313,7 @@ export function loadedSummary(rule, labels = {}) {
 export const OFF_PATCH = {
   vwap: { vwapMode: 'off' }, ema: { emaMode: 'off' }, regimen: { regimeMode: 'any' }, cvd: { cvdOn: false }, oi: { oiMode: 'off' },
   multitud: { crowdMode: 'off' }, oiSostenido: { steadyOn: false }, alligator: { bwAlligator: 'off' }, zonaWilliams: { bwZone: false },
+  ao: { bwAo: 'off' }, ac: { bwAc: 'off' }, gator: { bwGator: 'off' }, mfi: { bwMfi: 'off' },
   premium: { smcPd: false }, sesgo: { smcBias: false }, extremo: { swing: false }, momentum: { momentum: false },
   confirmacion: { confirm: false }, horario: { useHours: false }, medidas: { filters: [] },
   objetivo: { useTarget: false }, arrastre: { tpTrailOn: false }, trailing: { trail: false, trailMode: 'off' }, aLaEntrada: { breakEvenOn: false },

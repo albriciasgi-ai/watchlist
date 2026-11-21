@@ -617,9 +617,11 @@ const SecondaryChartApp = () => {
             Indicadores {enabledCount}
           </button>
           {showList && (
-            <div style={{ position: 'absolute', top: 30, left: 0, zIndex: 2000, background: 'var(--t-surface, #fff)', border: '1px solid var(--t-line, #ccc)', borderRadius: 4, padding: 8, width: 240, maxHeight: '70vh', overflowY: 'auto', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
+            <div style={{ position: 'absolute', top: 30, left: 0, zIndex: 2000, background: 'var(--t-surface, #fff)', border: '1px solid var(--t-line, #ccc)', borderRadius: 4, padding: 8, width: 'min(480px, calc(100vw - 24px))', maxHeight: '70vh', overflowY: 'auto', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
+              {/* Dos columnas (21/11/2026): con los indicadores de Williams y SMC la lista era muy larga */}
+              <div style={{ columnCount: 2, columnGap: 16 }}>
               {INDICATORS.map(name => (
-                <div key={name} style={{ display: 'flex', alignItems: 'center', padding: '4px 0', fontSize: 13 }}>
+                <div key={name} style={{ display: 'flex', alignItems: 'center', padding: '4px 0', fontSize: 13, breakInside: 'avoid' }}>
                   <label style={{ flex: 1, cursor: 'pointer' }}>
                     <input type="checkbox" checked={!!indicatorStates[name]} onChange={() => toggle(name)} style={{ marginRight: 8 }} />
                     {name}
@@ -636,6 +638,7 @@ const SecondaryChartApp = () => {
                   )}
                 </div>
               ))}
+              </div>
               <div style={{ fontSize: 11, opacity: 0.7, marginTop: 6 }}>⚙️ cambia los ajustes solo en este gráfico. Mientras no los cambies, usa los de la pestaña principal.</div>
             </div>
           )}
