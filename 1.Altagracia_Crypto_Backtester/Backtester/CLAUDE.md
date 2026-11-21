@@ -1401,6 +1401,22 @@ Pedido del usuario tras caer en la fase 3 la Ruptura de caja con EMA 200 y CVD: 
 - **Monedas nuevas al terminar** (`checkNew`, de fábrica): cada finalista se corre también en las monedas nuevas, en su fase 1, con los mismos dos tramos; no elige nada y solo se muestra al final.
 - Pruebas: `tests/test_new_coins.py` (2).
 
+### Ruptura de fractal sin futuro y monedas nuevas en 15m y 5m (21/11)
+
+Pedido del usuario: una corrida de los sabios en 15m, fase 1, «en todas las monedas» tomó solo 8 y daba cifras prometedoras (684 trades, 52.9%, +0.21 R, 8 de 8 monedas positivas). Regla: Barra divergente → AO tres barras + Ruptura de fractal en 10 velas, a mercado, stop 2 ATR y 2.2R arrastrado desde 1.5R a 0.5R.
+
+- **La ruptura de fractal miraba el futuro.** `williams.events()` fecha el 3.er sabio en la vela en que se supo el fractal y solo lo da si el precio lo pasa después. Eso sirve para la orden stop, que espera en el fractal (`info["expiry"]`) y se cancela si llega otro, como en el libro. Con entrada a mercado, limit o dos órdenes stop, la regla entraba antes de la ruptura sabiendo que ocurriría: en los 684 trades decidió antes de romperse el fractal y en 682 entró del lado de antes.
+  - Ahora `events(..., at_hit=True)` lo fecha en la vela que pasa el fractal (`info["atHit"]`), y `_williams_events()` lo pide así salvo con la orden stop. La suite ya lo hacía bien (`wise_smc_watch.py`, `known_at` en la ruptura).
+  - **Motor 4** (`ENGINE`): `_stale()` deja fuera las corridas anteriores con la ruptura de fractal y otra entrada que no sea la orden stop. Siguen en el disco, pero no se reusan ni se cuentan en "Todas" ni en el tablero.
+  - La misma regla corregida, fase 1 en 15m, las mismas 8 monedas: 1,531 trades, 41.4% y −0.105 R, como el azar en cada moneda (ventajas de −0.18 a +0.03).
+  - Prueba: `test_sin_orden_stop_la_ruptura_de_fractal_se_sabe_al_romperlo` en `test_williams_smc.py`.
+- **Las monedas nuevas no tenían 15m.** `candles_update.py` bajaba solo 1h y 4h, y "Correr en todas las monedas" en 15m corría las 7 de siempre más XRP (que tiene almacén). Las otras 42 quedaban "para correr" en el plan y daban 0 trades sin decir por qué.
+  - `candles_update.py --tf 15,5` baja también 15m y 5m desde 2020, cada marco en su carpeta (`OrderFlowData/candles/15/{moneda}.json.gz` y `.../5/`), para no hacer más lenta la lectura de 1h y 4h. Sin `--tf` actualiza los marcos finos que la moneda ya tenga. Reintenta un pedido que falla hasta 4 veces.
+  - `candle_bars()` lee 5m, 15m y 30m (dos de 15m) de esas carpetas (`EXTRA_KEYS`, `EXTRA_FINE`). `has_candles()` dice sin abrir el archivo si una moneda nueva tiene ese marco, y `_plan()` salta la que no lo tiene con su motivo.
+  - Sin almacén de trades, en esos marcos corren solo los elementos de velas, y una vela dudosa sigue su recorrido supuesto (sin minuto a minuto).
+  - DOGE en 15m: 191,604 velas desde el 02/06/2021, 3 MB, 2:46 min.
+  - Prueba: `test_las_monedas_nuevas_se_leen_aparte_de_las_de_siempre` en `test_new_coins.py`.
+
 ### Nombres de los elementos (19/11)
 
 Pedido del usuario: las iniciales costaban. La ventana muestra un nombre corto en español en las casillas, la descripción de la regla (historial, "Todas", búsqueda), la lista y el detalle de los trades, los cortes por elemento y por combinación, la revisión y las notas: "Ruptura de caja", "FVG nuevo", "Desequilibrios apilados". El código y el nombre largo (el del libro) salen al pasar el mouse. Los nombres viven en `elementLabels.js`; los mensajes del backend usan los mismos (`rule_tester.LABELS`, que hay que cambiar junto con ese archivo). **Los códigos no cambian:** siguen siendo la identidad de las reglas y corridas guardadas. El indicador Elementos OF del gráfico principal sigue con sus códigos en los triángulos.
