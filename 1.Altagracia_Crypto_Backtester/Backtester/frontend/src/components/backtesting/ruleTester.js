@@ -77,7 +77,9 @@ export function defaultRule() {
     bwAlligator: 'off', bwZone: false, smcPd: false, smcBias: false, bwAo: 'off', bwAc: 'off', bwGator: 'off', bwMfi: 'off',
     // Lector VPA (21/11): grado desde el que cuenta un elemento, umbral y memoria del medidor, rango que se rompe y retroceso;
     // filtro del medidor (off, favor, notAgainst) con su umbral
-    vpaFire: 0.5, vpaMeter: 1, vpaDecay: 0.75, vpaLeg: 2, vpaRangeBars: 20, vpaMaxRangeAtr: 6, vpaPullBars: 8, vpaMode: 'off', vpaThr: 1
+    vpaFire: 0.5, vpaMeter: 1, vpaDecay: 0.75, vpaLeg: 2, vpaRangeBars: 20, vpaMaxRangeAtr: 6, vpaPullBars: 8, vpaMode: 'off', vpaThr: 1,
+    // Salida VPA (fase 4): sale con la primera lectura en contra; vpaExitFrom = R a favor desde los que se arma (0 = desde la entrada)
+    vpaExitOn: false, vpaExit: ['climax'], vpaExitThr: 1, vpaExitFrom: 0
   };
 }
 
@@ -117,6 +119,22 @@ export const VPA_CODES = ['QA', 'QB', 'QF', 'QR', 'QT', 'QS', 'QC', 'QE'];
 export const usesVpa = (rule) => (rule.codes || []).some(code => VPA_CODES.includes(code));
 /** El filtro del medidor VPA en palabras (el mismo de rule_tester en el backend) */
 export const VPA_FILTER_TEXT = { favor: 'medidor VPA a favor', notAgainst: 'medidor VPA que no esté en contra' };
+/** Las lecturas de la salida VPA, en el orden del backend (rule_tester.VPA_EXITS) */
+export const VPA_EXITS = [
+  ['climax', 'clímax o frenado', 'Clímax o volumen de frenado (QC, QS) en contra del trade: el movimiento se agota'],
+  ['absorb', 'esfuerzo en contra', 'Esfuerzo sin resultado en contra: una vela de tu color con mucho volumen y poco rango (alguien absorbe tu lado)'],
+  ['push', 'retroceso con volumen', 'Una vela del color contrario validada (rango ancho con volumen alto): el retroceso ya no viene con poco volumen'],
+  ['meter', 'medidor en contra', 'El medidor del lector en contra del trade, al umbral o más allá'],
+  ['fade', 'esfuerzo que se agota', 'El tramo de tu lado sigue avanzando con cada vez menos volumen']
+];
+/** La salida VPA del formulario para el backend, o null si está apagada */
+export const vpaExitRule = (rule) => {
+  const on = VPA_EXITS.map(([key]) => key).filter(key => (rule.vpaExit || []).includes(key));
+  if (!rule.vpaExitOn || !on.length) return null;
+  return { on, fromR: Math.max(0, Number(rule.vpaExitFrom) || 0), ...(on.includes('meter') ? { thr: Number(rule.vpaExitThr) || 1 } : {}) };
+};
+/** La salida VPA de una regla del backend en palabras */
+export const vpaExitText = (vx) => `${vx.on.map(key => (VPA_EXITS.find(([k]) => k === key) || [key, key])[1]).join(', ')}${vx.on.includes('meter') && vx.thr != null ? ` (medidor ±${vx.thr})` : ''}${vx.fromR ? `, desde ${vx.fromR}R` : ''}`;
 export const usesWise = (rule) => (rule.codes || []).some(code => WISE_CODES.includes(code));
 export const usesSmc = (rule) => (rule.codes || []).some(code => SMC_CODES.includes(code));
 export const RV_CODES = ['RF', 'RB'];
@@ -203,7 +221,7 @@ export function toBackendRule(rule) {
         eqLength: number(rule.smcEqLength, 3), eqThreshold: number(rule.smcEqThreshold, 0.1), reclaim: rule.smcReclaim !== false }
     } : {}),
     ...(williamsFilter(rule) ? { bwf: williamsFilter(rule) } : {}),
-    ...(usesVpa(rule) || VPA_FILTER_TEXT[rule.vpaMode] ? {
+    ...(usesVpa(rule) || VPA_FILTER_TEXT[rule.vpaMode] || vpaExitRule(rule) ? {
       vpa: { fire: number(rule.vpaFire, 0.5), meter: number(rule.vpaMeter, 1), decay: number(rule.vpaDecay, 0.75), legAtr: number(rule.vpaLeg, 2),
         rangeBars: number(rule.vpaRangeBars, 20), maxRangeAtr: number(rule.vpaMaxRangeAtr, 6), pullBars: number(rule.vpaPullBars, 8) }
     } : {}),
@@ -255,7 +273,8 @@ export function toBackendRule(rule) {
         }
       } : {}),
       horizon: rule.useHorizon ? number(rule.horizon, 200) : null,
-      opposite: !!rule.opposite
+      opposite: !!rule.opposite,
+      ...(vpaExitRule(rule) ? { vpa: vpaExitRule(rule) } : {})
     },
     oneAtATime: rule.oneAtATime !== false,
     cooldown: rule.oneAtATime !== false ? Math.max(0, Math.round(number(rule.cooldown, 0))) : 0,
@@ -296,6 +315,7 @@ export function fromBackendRule(saved) {
     vpaFire: saved.vpa?.fire ?? 0.5, vpaMeter: saved.vpa?.meter ?? 1, vpaDecay: saved.vpa?.decay ?? 0.75, vpaLeg: saved.vpa?.legAtr ?? 2,
     vpaRangeBars: saved.vpa?.rangeBars ?? 20, vpaMaxRangeAtr: saved.vpa?.maxRangeAtr ?? 6, vpaPullBars: saved.vpa?.pullBars ?? 8,
     vpaMode: saved.vpaf?.mode || 'off', vpaThr: saved.vpaf?.thr ?? 1,
+    vpaExitOn: !!saved.exit?.vpa, vpaExit: saved.exit?.vpa?.on || ['climax'], vpaExitThr: saved.exit?.vpa?.thr ?? 1, vpaExitFrom: saved.exit?.vpa?.fromR ?? 0,
     straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
     trailMode: ['atr', 'pct', 'bars'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
     trailStartOn: saved.exit?.trailStart != null, trailStart: saved.exit?.trailStart ?? 1, breakEvenOn: saved.exit?.breakEven != null, breakEven: saved.exit?.breakEven ?? 1.5,
@@ -378,6 +398,7 @@ export function describeRule(saved) {
   if (saved.exit?.trail === 'atr') exits.push(`trailing a ${saved.exit.trailAtr} ATR${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
   if (saved.exit?.trail === 'pct') exits.push(`trailing a ${saved.exit.trailPct}%${saved.exit.trailStart ? ` desde ${saved.exit.trailStart}R` : ''}`);
   if (saved.exit?.breakEven) exits.push(`stop a la entrada en ${saved.exit.breakEven}R`);
+  if (saved.exit?.vpa) exits.push(`salida VPA: ${vpaExitText(saved.exit.vpa)}`);
   if (saved.exit?.horizon != null) exits.push(`${saved.exit.horizon} velas`);
   if (saved.exit?.opposite) exits.push('señal contraria');
   if (saved.gc && saved.gc.exit !== 'none') exits.push(saved.gc.exit === 'mid' ? 'cierre al otro lado de la línea central' : 'cierre de vuelta dentro de la banda');
@@ -533,8 +554,10 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
   if (Number.isFinite(trade.exit) && Number.isFinite(trade.exit_t)) {
     // Dónde y por qué salió, con su resultado: sin objetivo, la caja ya no lo pinta como TP
     // Por tiempo sale al cierre de la vela; por señal contraria o el canal, en la apertura de la siguiente: en el borde
-    const atEdge = ['tiempo', 'señal contraria', 'sale del canal', 'hueco de datos'].includes(trade.reason);
-    bands.push({ kind: 'exit', time: trade.exit_t, price: trade.exit, good: trade.r > 0, atEdge, label: `Salida ${EXIT_TEXT[trade.reason] || trade.reason} · ${fmtR(trade.r)} R` });
+    const byVpa = String(trade.reason || '').startsWith('VPA: ');
+    const atEdge = byVpa || ['tiempo', 'señal contraria', 'sale del canal', 'hueco de datos'].includes(trade.reason);
+    const why = byVpa ? `por el VPA (${trade.reason.slice(5)})` : (EXIT_TEXT[trade.reason] || trade.reason);
+    bands.push({ kind: 'exit', time: trade.exit_t, price: trade.exit, good: trade.r > 0, atEdge, label: `Salida ${why} · ${fmtR(trade.r)} R` });
   }
   return bands;
 }

@@ -94,6 +94,28 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### App 1 - 21 Noviembre 2026: VPA, Causa y Efecto y Salida VPA (Fases 3 y 4)
+
+**Pedido:** seguir con las fases 3 y 4 de la propuesta del VPA, y una guía en PDF para usarlo.
+
+**Cambios:**
+1. **Fase 3, causa y efecto (solo estudio):** el largo y el alto de una congestión no predicen lo que recorre su ruptura (ρ de −0.08 a +0.08, 4h y 1h, en las monedas de siempre y en las nuevas). El objetivo medido no gana a uno fijo. No se agregó un objetivo por la congestión.
+2. **Fase 4, salida VPA** en el probador: sale en la apertura siguiente al primer aviso en contra, con las lecturas que se marquen (clímax o frenado, esfuerzo en contra, retroceso con volumen, medidor en contra, esfuerzo que se agota) y armada desde N R. Los controles al azar usan la misma salida.
+3. **Medido** (fase 1, 4h, tres entradas):
+   - con todas las lecturas sale a las 2 o 3 velas y la ventaja casi desaparece;
+   - con una sola queda como un objetivo de 3R;
+   - ninguna supera al trailing de 4 ATR.
+4. **Guía** `1.Altagracia_Crypto_Backtester/Backtester/GUIA_VPA.pdf`.
+5. **Pruebas:** `test_vpa.py` suma 1 (8), `rulefacets.test.mjs` 1 (12) y `ruletester.test.mjs` una comprobación (15).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- **Probado en pantalla** con una copia aislada, en el backtesting global con BTC 4h: la salida VPA encendida, la corrida y un trade con su salida. Las del probador en el backend (76) pasan.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA", "Fase 3" y "Fase 4"
+
+---
+
 ### App 1 + Altagracia Trading Suite - 21 Noviembre 2026: Lector VPA (Volume Price Analysis de Anna Coulling)
 
 **Pedido:** leer *A Complete Guide To Volume Price Analysis* de Anna Coulling y proponer qué aprovechar. La autora dice que VPA "es un arte" y no se automatiza; el usuario cree que sí, con algo difuso que se adapte. Eligió las fases 1 y 2 de la propuesta.
