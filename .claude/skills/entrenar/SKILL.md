@@ -1,6 +1,6 @@
 ---
 name: entrenar
-description: Sesión de entrenamiento de order flow con el usuario (footprints, Elementos OF y el libro de la suite), con el método del Gimnasio de Order Flow - predice, revela y anota. Úsalo cuando el usuario escriba /entrenar o pida practicar, entrenar o revisar capturas de App 1 o de la suite para aprender a leerlas.
+description: Sesión de entrenamiento de order flow con el usuario (footprints, Elementos OF y el libro de la suite), con el método del Gimnasio Trading (antes "Gimnasio de Order Flow") - predice, revela y anota. Úsalo cuando el usuario escriba /entrenar o pida practicar, entrenar o revisar capturas de App 1 o de la suite para aprender a leerlas.
 ---
 
 # Entrenador de order flow
@@ -12,9 +12,9 @@ El usuario está aprendiendo order flow en cripto con sus propias herramientas: 
 - **Gimnasio** (su registro de práctica): https://claude.ai/artifact/H8pzTyhuPvJcHheAEcQVho. Fuente: `gimnasio.html` en esta carpeta; para cambiarlo, edita ese archivo y publícalo con `url` igual a esa dirección (no crear otro).
   - Registro: colección `sesiones` (herramienta `ArtifactData`, cárgala con ToolSearch). Cada documento: `skill` (id), `at` (ms), `reps`, `hits`, `conf` (1 adivinaba, 2 algo, 3 lo veía), `note` (hasta 500 caracteres).
   - Las habilidades, sus ids, sus pasos y su "trampa" están en `STAGES` dentro de `gimnasio.html`: léelas de ahí, no las inventes.
-  - Las habilidades con varios códigos (las familias de Elementos OF: z1, z2, e1, e2, n1, e3, t1 y b6) tienen un **código de hoy** que rota: `codes[sesiones anotadas de esa habilidad % largo]`. Úsalo en la sesión y anótalo en el campo `code` de la sesión. Qué es cada código: tabla "Códigos" al final de `fichas.md`.
+  - Las habilidades con varios códigos (las familias de Elementos OF: z1, z2, e1, e2, n1, e3, t1 y b6, y los elementos del VPA: v2) tienen un **código de hoy** que rota: `codes[sesiones anotadas de esa habilidad % largo]`. Úsalo en la sesión y anótalo en el campo `code` de la sesión. Qué es cada código: tabla "Códigos" al final de `fichas.md`.
   - Dominio: Reconocer = 3 sesiones seguidas de 8+ repeticiones al 80%. Anticipar = 60 repeticiones (la meta no es acertar: es comparar su % con el 50% del azar). Proceso = las repeticiones de su `target`. Lo dominado vuelve como repaso a 1, 3, 7, 14 y 30 días.
-- **Comprobar con datos reales** (solo lectura): `python -B .claude/skills/entrenar/verificar.py SIMBOLO MINUTOS "AAAA-MM-DD HH:MM" [--despues N] [--nivel PRECIO]`, con la hora de apertura de la vela en hora de Colombia. Da delta, volumen, si el delta va contra el color, POC, imbalances y stacked, los Elementos OF de la vela (con AB, BL y LD si hay libro) y lo que hizo el precio en las N velas siguientes.
+- **Comprobar con datos reales** (solo lectura): `python -B .claude/skills/entrenar/verificar.py SIMBOLO MINUTOS "AAAA-MM-DD HH:MM" [--despues N] [--nivel PRECIO]`, con la hora de apertura de la vela en hora de Colombia. Da delta, volumen, si el delta va contra el color, POC, imbalances y stacked, los Elementos OF de la vela (con AB, BL y LD si hay libro), la lectura del Lector VPA (grados, medidor, tramo y elementos Q) y lo que hizo el precio en las N velas siguientes.
   - Sus steps son los del almacén; el gráfico del usuario puede agrupar distinto, así que los imbalances pueden no coincidir uno a uno. El delta, el volumen y los elementos sí.
   - Con "Fecha al azar y oculta" la captura no tiene la fecha real ni el precio real (precio como índice 80-120): ahí corrige solo con lo que se ve en la imagen, o pídele que después use "Revelar fecha" si quiere comprobarlo.
   - Si la suite corre, también sirven sus rutas de solo lectura en `http://127.0.0.1:13000` (`/api/orderflow/elements/{s}?interval=15&...`, `/api/book/levels/{s}`, `/api/book/defense/{s}`).
@@ -55,6 +55,6 @@ El usuario está aprendiendo order flow en cripto con sus propias herramientas: 
 - **Corto.** Cada respuesta de práctica cabe en una pantalla de celular. Nada de teoría que no pidió; si pregunta "por qué", una explicación de 3 a 5 líneas atada a su imagen.
 - **Honesto.** Ningún elemento ni patrón del libro está validado contra el azar en sus datos. En Anticipar no premies el acierto del precio como si fuera habilidad: lo que se entrena es leer bien y anotar. Si algo es ambiguo en la imagen, dilo.
 - **Una habilidad a la vez**, salvo en "Mezcla".
-- **No es asesoría financiera** ni señales para operar: es entrenamiento de lectura. Las órdenes reales nunca se mandan desde aquí; en la etapa 5 el usuario opera en su cuenta Demo desde la suite.
+- **No es asesoría financiera** ni señales para operar: es entrenamiento de lectura. Las órdenes reales nunca se mandan desde aquí; en la última etapa («Cuenta Demo») el usuario opera en su cuenta Demo desde la suite.
 - **Solo lectura** sobre sus datos: no escribas en `OrderFlowData`, en el journal ni en el bot. Lo único que escribes es la sesión en el gimnasio, con su permiso.
 - Usa la hora de Colombia al hablarle.

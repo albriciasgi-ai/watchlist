@@ -7,7 +7,8 @@ import { existsSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { VpaReader, computeVpa, cleanVpaParams, defaultVpaParams, describeVpa, up, down } from '../src/components/indicators/vpa.js';
+import { VpaReader, computeVpa, cleanVpaParams, cleanVpaConfig, defaultVpaParams, describeVpa, up, down, volumeWidthFactor } from '../src/components/indicators/vpa.js';
+import VPAIndicator from '../src/components/indicators/VPAIndicator.js';
 
 const MAIN_PYTHON = 'C:\\Users\\inven\\OneDrive\\Documentos\\GitHub\\watchlist\\1.Altagracia_Crypto_Backtester\\Backtester\\backend\\.venv\\Scripts\\python.exe';
 const LOCAL_PYTHON = fileURLToPath(new URL(process.platform === 'win32' ? '../../backend/.venv/Scripts/python.exe' : '../../backend/.venv/bin/python', import.meta.url));
@@ -128,6 +129,33 @@ test('el cuadro de la vela dice lo que leyó', () => {
   assert.ok(lines.length >= 2);
   assert.ok(lines.at(-1).startsWith('Tramo'));
   assert.deepEqual(describeVpa(reader, 0), ['Sin volumen normal de esta hora todavía (primeros días)']);
+});
+
+test('velas con ancho por volumen: el volumen normal da el ancho de siempre, solo velas cerradas', () => {
+  assert.equal(volumeWidthFactor(1), 0.7);
+  assert.equal(volumeWidthFactor(4), 1);
+  assert.equal(volumeWidthFactor(0.01), 0.25);
+  assert.equal(volumeWidthFactor(NaN), null);
+  assert.ok(volumeWidthFactor(0.5) < 0.7 && volumeWidthFactor(1.5) > 0.7);
+  assert.equal(cleanVpaConfig({}).show.widthByVolume, false, 'apagado de fábrica');
+  const candles = randomBars(400, 9, 14400000).map(b => ({ timestamp: b.t, open: b.o, high: b.h, low: b.l, close: b.c, volume: b.v }));
+  const forming = [...candles.slice(0, 300), { ...candles[300], in_progress: true }];
+  const indicator = new VPAIndicator('TEST', '4h', 30);
+  indicator.enabled = true;
+  indicator.config = cleanVpaConfig({ show: { widthByVolume: false } });
+  assert.equal(indicator.candleWidths(forming.slice(-50), forming), null, 'apagado, el ancho de siempre');
+  indicator.config = cleanVpaConfig({ show: { widthByVolume: true } });
+  const widths = indicator.candleWidths(forming.slice(-50), forming);
+  assert.equal(widths.length, 50);
+  assert.equal(widths.at(-1), null, 'la vela en formación no se mide');
+  assert.equal(widths[0], volumeWidthFactor(indicator.reader.s.rv[251]));
+  // Con más velas, lo ya medido no cambia
+  const later = new VPAIndicator('TEST', '4h', 30);
+  later.enabled = true;
+  later.config = indicator.config;
+  assert.deepEqual(later.candleWidths(candles.slice(251, 301), candles).slice(0, 49), widths.slice(0, 49));
+  indicator.enabled = false;
+  assert.equal(indicator.candleWidths(forming.slice(-50), forming), null);
 });
 
 let failed = 0;

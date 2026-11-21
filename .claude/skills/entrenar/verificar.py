@@ -48,6 +48,35 @@ def book_events(symbol, frame, start, end, known):
         return [{"code": "?", "error": str(e)[:120]}]
 
 
+def vpa_reading(symbol, interval, t):
+    """La lectura del Lector VPA de esa vela, con las velas guardadas hasta ella (nada posterior)."""
+    try:
+        import rule_tester
+        import vpa
+    except Exception as e:  # noqa: BLE001
+        print(f"  Lector VPA: no disponible ({str(e)[:80]})")
+        return
+    bars = [b for b in rule_tester.candle_bars(symbol, interval) if b["t"] <= t]
+    if not bars or bars[-1]["t"] != t:
+        print("  Lector VPA: sin la vela en las velas guardadas de ese marco")
+        return
+    cols = [[b[k] for b in bars] for k in ("t", "o", "h", "l", "c", "vol")]
+    s = vpa.compute(*cols, interval)
+    i = len(bars) - 1
+    if not vpa._finite(s["rv"][i]):
+        print("  Lector VPA: sin volumen normal de su hora todavía (primeros días)")
+        return
+    names = (("absorb", "esfuerzo sin resultado"), ("trap", "resultado sin esfuerzo"), ("valid", "validada"), ("star", "estrella"),
+             ("hammer", "martillo"), ("hang", "hanging man"), ("doji", "doji"), ("fade", "esfuerzo que se agota"))
+    grades = [f"{label} {100 * s[k][i]:.0f}%" for k, label in names if vpa._finite(s[k][i]) and s[k][i] >= 0.2]
+    print(f"  Lector VPA: volumen {s['rv'][i]:.2f} y rango {s['rr'][i]:.2f} veces lo normal de su hora · "
+          + (", ".join(grades) if grades else "sin lectura de 20% o más"))
+    print(f"    medidor {s['meter'][i]:+.2f} ({'fuerza' if s['meter'][i] >= 0 else 'debilidad'}) · tramo {'alcista' if s['leg'][i] > 0 else 'bajista'}")
+    for e in vpa.detect(*cols, interval, series=s):
+        if e["index"] == i:
+            print(f"    {e['code']} {vpa.CODES.get(e['code'], '')} {'alcista' if e['dir'] > 0 else 'bajista'} · grado {100 * e['grade']:.0f}%")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("symbol")
@@ -102,6 +131,8 @@ def main():
             print(f"    {e['code']} {name} {d}{zone}")
     else:
         print("  Elementos OF en esta vela: ninguno")
+
+    vpa_reading(a.symbol.upper(), a.interval, t)
 
     if a.despues:
         print(f"  Después ({a.despues} velas):")

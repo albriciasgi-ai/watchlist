@@ -54,6 +54,33 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite + Entrenamiento - 21 Noviembre 2026: Fase 2 de la Ruptura con Volumen, Velas con Ancho por Volumen y Etapa VPA del Gimnasio
+
+**Pedido:** tres cosas: correr la fase 2 de la ruptura con volumen, las velas con ancho por volumen y una etapa del VPA en el Gimnasio.
+
+**Cambios:**
+1. **Fase 2 de la ruptura con volumen** (4h, a mercado, stop 1.5 ATR, 3R):
+   - en las 43 monedas nuevas pasa en las dos fases: en la fase 2 da +0.21 R por trade, con 2,985 trades, +0.22 sobre el azar y +0.18 sobre el tramo, con margen, en 35 de 43 monedas;
+   - en las 7 de siempre la fase 2 da +0.16 R: supera al azar con margen y al tramo sin él.
+
+   Es la primera regla del VPA que pasa la fase 2. Las corridas quedaron en el registro y en el tablero.
+2. **Velas con ancho por volumen**, una opción del Lector VPA:
+   - el cuerpo es más ancho con más volumen frente a lo normal de su hora; con el volumen normal queda el ancho de siempre;
+   - las velas no se mueven en el tiempo;
+   - vale en la simulación manual, el 2.º gráfico, el backtesting global y la suite.
+3. **Etapa «Leer el VPA»** del Gimnasio, que pasa a llamarse **Gimnasio Trading**, con cinco habilidades y sus fichas para `/entrenar`. El entrenador de la página ya conoce el lector, y `verificar.py` da la lectura VPA de la vela.
+4. **Pruebas:** `vpa.parity.test.mjs` suma 1 (8).
+
+**IMPORTANTE:**
+- Basta recargar la página de App 1: el backend no cambió en esta entrada. La suite se reinicia sola al abrirla y arma la página nueva.
+- El Gimnasio publicado ya tiene la etapa nueva. Las sesiones anotadas antes siguen igual.
+- **Probado en pantalla** con una copia aislada en BTC 4h, midiendo los cuerpos de las velas con la opción apagada y encendida. App 1 y la suite compilan. La etapa del Gimnasio no se vio en pantalla: su código es válido.
+- La fase 3 de la ruptura con volumen no se corrió.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA" y `OrderFlowData/research/vpa/FASE2_QB.md`
+
+---
+
 ### App 1 - 21 Noviembre 2026: VPA, Causa y Efecto y Salida VPA (Fases 3 y 4)
 
 **Pedido:** seguir con las fases 3 y 4 de la propuesta del VPA, y una guía en PDF para usarlo.
@@ -609,7 +636,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 **Pedido:** un plan para aprender order flow (footprints, Elementos OF y el libro) practicando con las herramientas que ya hay, a pasos pequeños y sin mucha teoría.
 
 **Cambios:**
-1. **Gimnasio de Order Flow** (artefacto privado, https://claude.ai/artifact/H8pzTyhuPvJcHheAEcQVho): 5 etapas y 21 habilidades (16/11: los Elementos OF por familias, zonas, giro, continuación, tabla y libro, con un código del día que rota y se anota en la sesión), cada una con su ejercicio "predice, revela y anota" en App 1 o en la suite, registro de sesiones, repasos a 1, 3, 7, 14 y 30 días y un entrenador. Fuente: `.claude/skills/entrenar/gimnasio.html`.
+1. **Gimnasio de Order Flow** (desde el 21/11 se llama **Gimnasio Trading**; artefacto privado, https://claude.ai/artifact/H8pzTyhuPvJcHheAEcQVho): 5 etapas y 21 habilidades (16/11: los Elementos OF por familias, zonas, giro, continuación, tabla y libro, con un código del día que rota y se anota en la sesión), cada una con su ejercicio "predice, revela y anota" en App 1 o en la suite, registro de sesiones, repasos a 1, 3, 7, 14 y 30 días y un entrenador. Fuente: `.claude/skills/entrenar/gimnasio.html`.
 2. **Skill `/entrenar`** (`.claude/skills/entrenar/SKILL.md`): sesión de práctica con Claude Code sobre las capturas del usuario. Con una ficha por habilidad (`fichas.md`): qué es, cómo lo hace la herramienta, qué mirar, errores típicos y lo medido en sus datos. Se lee solo la del día; `/entrenar ficha LD` muestra una. Lee y anota el registro del gimnasio, y comprueba cada lectura con `verificar.py` (solo lectura: delta, volumen, POC, imbalances, Elementos OF con AB, BL y LD, y lo que hizo el precio después).
 
 **IMPORTANTE:**

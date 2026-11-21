@@ -99,6 +99,7 @@ const VPASettings = ({ symbol, indicator, onApply, onClose }) => {
             <h4>Qué se dibuja</h4>
             {check('meter', 'Medidor en el panel')}
             {check('marks', 'Elementos sobre las velas (verde: fuerza, rojo: debilidad; más opaco, más grado)')}
+            {check('widthByVolume', 'Velas con ancho por volumen (más ancha, más volumen frente a lo normal de su hora; la de siempre es el volumen normal)')}
             <div style={{ columns: 2 }}>
               {Object.entries(VPA_CODES).map(([code, name]) => <div key={code}>{check(code, name)}</div>)}
             </div>

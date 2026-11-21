@@ -1,6 +1,6 @@
 import IndicatorBase from './IndicatorBase.js';
 import { candleItemId } from './analysisLevels.js';
-import { VpaReader, VPA_CODES, VPA_NAME, describeVpa, loadVpaSettings, vpaBar } from './vpa.js';
+import { VpaReader, VPA_CODES, VPA_NAME, describeVpa, loadVpaSettings, volumeWidthFactor, vpaBar } from './vpa.js';
 import { alignY, crispWidth } from '../chartPixels.js';
 import { THEME, isNewTheme } from '../uiTheme.js';
 
@@ -60,6 +60,20 @@ class VPAIndicator extends IndicatorBase {
       this.reader.push(vpaBar(candles[i]));
     }
     this.known = closed;
+  }
+
+  /**
+   * Ancho de cada vela a la vista según su volumen (opción «Velas con ancho por volumen»): una parte de su lugar, o null
+   * para el ancho de siempre (la vela en formación, o sin volumen normal de su hora todavía). Solo velas cerradas
+   */
+  candleWidths(visibleCandles, knownCandles) {
+    if (!this.enabled || !this.config.show.widthByVolume || !visibleCandles?.length) return null;
+    this.update(knownCandles);
+    if (!this.reader) return null;
+    return visibleCandles.map(candle => {
+      const i = this.indexOf(candle.timestamp);
+      return i >= 0 ? volumeWidthFactor(this.reader.s.rv[i]) : null;
+    });
   }
 
   indexOf(timestamp) {
