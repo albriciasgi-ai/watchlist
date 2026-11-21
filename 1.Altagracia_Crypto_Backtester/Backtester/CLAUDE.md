@@ -1415,6 +1415,11 @@ Pedido del usuario: una corrida de los sabios en 15m, fase 1, «en todas las mon
   - `candle_bars()` lee 5m, 15m y 30m (dos de 15m) de esas carpetas (`EXTRA_KEYS`, `EXTRA_FINE`). `has_candles()` dice sin abrir el archivo si una moneda nueva tiene ese marco, y `_plan()` salta la que no lo tiene con su motivo.
   - Sin almacén de trades, en esos marcos corren solo los elementos de velas, y una vela dudosa sigue su recorrido supuesto (sin minuto a minuto).
   - DOGE en 15m: 191,604 velas desde el 02/06/2021, 3 MB, 2:46 min.
+- **Actualización automática al arrancar (21/11, pedido del usuario):** `market_update.py` pone al día las velas de las monedas nuevas (1h, 4h, 15m y 5m), el OI de 4 horas y el funding. El backend lo lanza al arrancar (`lifespan` de `main.py`, `start_in_background()`) en un proceso aparte sin ventana, así no frena nada.
+  - Corre como mucho cada 2 horas (`MIN_HOURS`): con `--reload` el backend arranca otra vez con cada cambio de código. Una a la vez, con el candado `OrderFlowData/candles/actualizacion.lock`, que vence a las 3 horas si una vuelta se cortó.
+  - Registro en `OrderFlowData/candles/actualizacion.log`, y la hora de la última vuelta en `ultima_actualizacion.txt`. `TESTER_AUTO_UPDATE=0` lo apaga; `python -B market_update.py --force` corre ya.
+  - El probador lee las velas nuevas desde el siguiente arranque del backend. Una moneda que falla no detiene a las demás.
+  - Prueba: `tests/test_market_update.py` (2).
   - Prueba: `test_las_monedas_nuevas_se_leen_aparte_de_las_de_siempre` en `test_new_coins.py`.
 
 ### Nombres de los elementos (19/11)
