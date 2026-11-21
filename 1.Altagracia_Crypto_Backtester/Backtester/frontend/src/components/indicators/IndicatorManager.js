@@ -23,6 +23,7 @@ import FVGIndicator from "./FVGIndicator";
 import HorizontalRangesIndicator from "./HorizontalRangesIndicator";
 import VolumeProfilePeriodicIndicator from "./VolumeProfilePeriodicIndicator";
 import ResponseVolumeIndicator from "./ResponseVolumeIndicator";
+import VPAIndicator from "./VPAIndicator.js"; // Lector VPA de Coulling (21/11)
 import LiquidationsIndicator from "./LiquidationsIndicator";
 import OrderFlowElementsIndicator from "./OrderFlowElementsIndicator";
 import LiquidityMapIndicator from "./LiquidityMapIndicator"; // Mapa de liquidez del libro grabado (solo la suite)
@@ -97,6 +98,7 @@ class IndicatorManager {
     const sessionProfiles = new SessionProfiles(this.symbol);
     this.vpPeriodicIndicator = new VolumeProfilePeriodicIndicator(this.symbol, this.interval, this.days, sessionProfiles);
     this.responseVolumeIndicator = new ResponseVolumeIndicator(this.symbol, this.interval, this.days);
+    this.vpaIndicator = new VPAIndicator(this.symbol, this.interval, this.days);
     this.liquidationsIndicator = new LiquidationsIndicator(this.symbol, this.interval, this.days);
     this.liquidationsIndicator.requestRedraw = () => this.requestRedraw?.();
     this.ofElementsIndicator = new OrderFlowElementsIndicator(this.symbol, this.interval, this.days);
@@ -149,6 +151,7 @@ class IndicatorManager {
       this.fvgIndicator,
       this.vpPeriodicIndicator,
       this.responseVolumeIndicator,
+      this.vpaIndicator,
       this.williamsIndicators.alligator,
       this.williamsIndicators.fractals,
       this.williamsIndicators.wise,
@@ -1400,6 +1403,10 @@ class IndicatorManager {
 
   getResponseVolumeIndicator() {
     return this.responseVolumeIndicator;
+  }
+
+  getVPAIndicator() {
+    return this.vpaIndicator;
   }
 
   getOrderFlowIndicator() {

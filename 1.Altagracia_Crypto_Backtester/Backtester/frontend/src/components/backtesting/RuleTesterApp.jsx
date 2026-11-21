@@ -17,7 +17,7 @@ import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, hasBox, reviewBoxes, s
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
-  contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText
+  contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa
 } from './ruleTester.js';
 import { elementLabel, elementLabels } from './elementLabels.js';
 import {
@@ -40,7 +40,7 @@ const VIEW_KEY = 'tester_view_v1';
 const PAGE = 300;
 const INDICATORS = [
   'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Rangos horizontales', 'Rejection Patterns', 'Support & Resistance',
+  'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Rangos horizontales', 'Rejection Patterns', 'Support & Resistance',
   'S&R v2', 'Swing Detector', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ];
 const DEFAULT_ON = new Set(['Volume Delta', 'Order Flow', 'Elementos OF']);
@@ -1190,6 +1190,36 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {usesVpa(rule) && (
+          <>
+            <div className="rt-row">
+              <span title="Cada lectura del lector es un grado de 0 a 100%: un elemento cuenta desde este grado">Lector VPA: cuenta desde</span>
+              <Num value={Math.round(rule.vpaFire * 100)} min={10} max={100} onChange={(v) => patch({ vpaFire: (Number(v) || 50) / 100 })} /><span>% · tramo de</span>
+              <Num value={rule.vpaLeg} min={0.5} max={10} step={0.5} onChange={(vpaLeg) => patch({ vpaLeg })} /><span>ATR</span>
+            </div>
+            {rule.codes.includes('QE') && (
+              <div className="rt-row">
+                <span title="El medidor suma la evidencia de cada vela y la deja desvanecerse: la memoria es lo que queda en la vela siguiente">Medidor: umbral ±</span>
+                <Num value={rule.vpaMeter} min={0.2} max={5} step={0.1} onChange={(vpaMeter) => patch({ vpaMeter })} /><span>memoria</span>
+                <Num value={rule.vpaDecay} min={0} max={0.98} step={0.05} onChange={(vpaDecay) => patch({ vpaDecay })} />
+              </div>
+            )}
+            {rule.codes.some(code => ['QB', 'QF', 'QR'].includes(code)) && (
+              <div className="rt-row">
+                <span title="La ruptura es el primer cierre fuera del máximo o el mínimo de estas velas; un rango más alto no cuenta como congestión">Ruptura del rango de</span>
+                <Num value={rule.vpaRangeBars} min={5} max={200} onChange={(vpaRangeBars) => patch({ vpaRangeBars })} /><span>velas de hasta</span>
+                <Num value={rule.vpaMaxRangeAtr} min={1} max={50} step={0.5} onChange={(vpaMaxRangeAtr) => patch({ vpaMaxRangeAtr })} /><span>ATR</span>
+                {rule.codes.includes('QR') && <><span>· retroceso en</span><Num value={rule.vpaPullBars} min={1} max={50} onChange={(vpaPullBars) => patch({ vpaPullBars })} /><span>velas</span></>}
+              </div>
+            )}
+            <div className="rt-note">
+              El Lector VPA (Coulling) con reglas propias: el volumen y el rango de cada vela contra lo normal de su hora. <b>Esfuerzo sin resultado</b> va contra
+              el color de la vela; <b>ruptura con volumen</b> sigue la ruptura y <b>sin volumen</b> va en contra (trampa); <b>retroceso sin volumen</b> entra al volver
+              al nivel roto; <b>prueba de poco volumen</b>, <b>frenado o techo</b> y <b>clímax</b> van contra el tramo. Con el stop "Borde lejano de la zona", el stop
+              queda detrás del elemento (detrás del nivel roto en las rupturas).
+            </div>
+          </>
+        )}
         {rule.codes.some(code => ['BS', 'OB', 'BK', 'EQ'].includes(code)) && (
           <>
             <div className="rt-row">
@@ -1469,6 +1499,16 @@ const RuleTesterApp = () => {
               <option value="volume">verde o squat: sube el volumen</option>
               <option value="notFake">todo menos fake (sube el MFI y baja el volumen)</option>
             </select>
+          </div>
+        </Opt>
+        <div className="rt-sub">Lector VPA</div>
+        <Opt id="vpaMedidor" label="Medidor VPA" on={rule.vpaMode !== 'off'} onToggle={toggleMode('vpaMode', 'off', 'favor')} title="El medidor del Lector VPA en la vela de la señal: la evidencia de fuerza (positiva) o debilidad (negativa) que suman las velas, en grados. Vale para cualquier regla">
+          <div className="rt-row">
+            <select value={rule.vpaMode} onChange={(e) => patch({ vpaMode: e.target.value })}>
+              <option value="favor">a favor del trade, desde</option>
+              <option value="notAgainst">que no esté en contra más de</option>
+            </select>
+            <Num value={rule.vpaThr} min={0} max={5} step={0.1} onChange={(vpaThr) => patch({ vpaThr })} />
           </div>
         </Opt>
         <Opt id="premium" label="Premium y discount (SMC)" on={rule.smcPd} onToggle={(smcPd) => patch({ smcPd })} title="Un largo solo bajo la mitad del rango mayor (discount) y un corto solo sobre ella (premium). El rango va entre el último máximo y el último mínimo de la estructura mayor">

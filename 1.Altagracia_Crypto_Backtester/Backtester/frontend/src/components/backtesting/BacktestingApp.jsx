@@ -30,6 +30,7 @@ import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
 import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
 import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
+import VPASettings from '../VPASettings';
 import DrawingToolbar from '../drawing/DrawingToolbar';
 import DrawingSidebar from '../drawing/DrawingSidebar'; // 🎯 OPTIMIZACIÓN UI: Sidebar vertical
 import { useUiTheme } from '../useUiTheme.js'; // Estilo Nítido
@@ -102,6 +103,7 @@ const BacktestingApp = () => {
       "Rangos horizontales": false, // Cajas de rango con los detectores de la pestaña Régimen
       "VP Periodic": false, // Un perfil por sesión
       "Volumen de Respuesta": false, // Velas principales de la tendencia contra las de la retracción
+      "Lector VPA": false, // Volume Price Analysis de Coulling: esfuerzo contra resultado, en grados (21/11)
       "Liquidaciones": false, // Zonas donde se liquidó mucho dinero, cerca del precio
       "Elementos OF": false, // Elementos de Orderflows Unlocked con los trades reales
       "VWAP": false,
@@ -219,6 +221,7 @@ const BacktestingApp = () => {
   const [showHorizontalRangesSettings, setShowHorizontalRangesSettings] = useState(false);
   const [showVPPeriodicSettings, setShowVPPeriodicSettings] = useState(false);
   const [showResponseVolumeSettings, setShowResponseVolumeSettings] = useState(false);
+  const [showVPASettings, setShowVPASettings] = useState(false);
   const [showLiquidationsSettings, setShowLiquidationsSettings] = useState(false);
   const [showOFElementsSettings, setShowOFElementsSettings] = useState(false);
   const [showOFSetupsSettings, setShowOFSetupsSettings] = useState(false);
@@ -2000,6 +2003,7 @@ const BacktestingApp = () => {
     setShowHorizontalRangesSettings(false);
     setShowVPPeriodicSettings(false);
     setShowResponseVolumeSettings(false);
+    setShowVPASettings(false);
     setShowLiquidationsSettings(false);
     setShowOFElementsSettings(false);
     setShowOFSetupsSettings(false);
@@ -2843,6 +2847,7 @@ const BacktestingApp = () => {
                     'Rangos horizontales': () => setShowHorizontalRangesSettings(true),
                     'VP Periodic': () => setShowVPPeriodicSettings(true),
                     'Volumen de Respuesta': () => setShowResponseVolumeSettings(true),
+                    'Lector VPA': () => setShowVPASettings(true),
                     'Liquidaciones': () => setShowLiquidationsSettings(true),
                     'Elementos OF': () => setShowOFElementsSettings(true),
                     'Estructura SMC': () => setShowSMCSettings(true),
@@ -3571,6 +3576,15 @@ const BacktestingApp = () => {
           indicator={indicatorManagerRef.current.getVPPeriodicIndicator()}
           onApply={(settings) => applyToAllTimeframes(manager => manager.getVPPeriodicIndicator().updateConfig(settings))}
           onClose={() => setShowVPPeriodicSettings(false)}
+        />
+      )}
+
+      {showVPASettings && indicatorManagerRef.current?.getVPAIndicator?.() && (
+        <VPASettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getVPAIndicator()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getVPAIndicator().updateConfig(settings))}
+          onClose={() => setShowVPASettings(false)}
         />
       )}
 

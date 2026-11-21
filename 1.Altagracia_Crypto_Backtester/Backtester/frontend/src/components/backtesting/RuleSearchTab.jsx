@@ -17,13 +17,15 @@ const NAMES = {
   BX: 'Ruptura de caja', BE: 'Borde de caja, hacia el centro', CP: 'Compresión (va con las dos órdenes stop)', FV: 'FVG nuevo',
   SP: 'Swing del detector', IM: 'Impulso',
   WD: 'Barra divergente (1.er sabio de Williams)', WA: 'AO tres barras (2.º sabio)', WF: 'Ruptura de fractal (3.er sabio)',
-  BS: 'Ruptura de estructura (SMC)', OB: 'Order block (SMC)', BK: 'Breaker (SMC)', EQ: 'Barrido de iguales (SMC)'
+  BS: 'Ruptura de estructura (SMC)', OB: 'Order block (SMC)', BK: 'Breaker (SMC)', EQ: 'Barrido de iguales (SMC)',
+  QA: 'Esfuerzo sin resultado (VPA)', QB: 'Ruptura con volumen (VPA)', QF: 'Ruptura sin volumen (VPA)', QR: 'Retroceso sin volumen (VPA)',
+  QT: 'Prueba de poco volumen (VPA)', QS: 'Volumen de frenado o de techo (VPA)', QC: 'Clímax de volumen (VPA)', QE: 'Medidor VPA cruza el umbral'
 };
 const DEFAULT_CONFIG = {
   tfs: [240], codes: ['CC', 'VH', 'HM', 'EN', 'DJ', 'RF', 'RB', 'GC', 'BX', 'BE', 'CP', 'FV', 'SP', 'IM', 'WD', 'WA', 'WF', 'BS', 'OB', 'BK', 'EQ'],
   population: 60, generations: 25, maxElements: 2,
   minTrades: 150, minCoins: 4, split: '2023-01-01', lines: true, invert: true, mutation: 0.1,
-  flow: true, regime: true, trailing: true, straddle: true, stopEntry: true, williams: true, checkNew: true, checkStocks: true, fitness: 'promedio'
+  flow: true, regime: true, trailing: true, straddle: true, stopEntry: true, williams: true, vpa: true, checkNew: true, checkStocks: true, fitness: 'promedio'
 };
 
 const api = async (path, body) => {
@@ -206,6 +208,7 @@ export default function RuleSearchTab({ onLoadRule }) {
             <Check checked={config.straddle !== false} onChange={(straddle) => patch({ straddle })} title="Dos órdenes stop, una arriba y otra abajo: entra la primera">dos órdenes stop</Check>
             <Check checked={config.stopEntry !== false} onChange={(stopEntry) => patch({ stopEntry })} title="Una orden stop a favor en el borde de la zona del elemento, como los sabios de Williams, y la salida bajo el mínimo de las últimas 3 o 5 velas (con el trailing)">orden stop a favor</Check>
             <Check checked={config.williams !== false} onChange={(williams) => patch({ williams })} title="Alligator despierto, del lado de los dientes o dormido; zona de Williams a favor; AO y AC a favor; Gator comiendo o despierto; vela verde o squat del MFI; premium y discount, y a favor de la estructura mayor SMC; objetivo en el máximo o mínimo del rango SMC">filtros de Williams y SMC</Check>
+            <Check checked={config.vpa !== false} onChange={(vpa) => patch({ vpa })} title="El medidor del Lector VPA en la vela de la señal: a favor del trade, o que no esté en contra">medidor VPA</Check>
           </div>
           <div className="rt-row">
             <span title="Promedio: la ventaja media sobre los controles, menos su error. Constancia: la mediana de la ventaja de cada trimestre del tramo de búsqueda (cada trade contra el azar de su trimestre); no la mueven uno o dos trimestres excepcionales, y premia las reglas que ganan un poco casi siempre">Elegir por</span>

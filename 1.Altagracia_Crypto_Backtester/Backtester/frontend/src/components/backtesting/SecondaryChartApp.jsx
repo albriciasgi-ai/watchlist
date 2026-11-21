@@ -24,6 +24,7 @@ import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
 import OrderFlowSetupsSettings from '../OrderFlowSetupsSettings';
 import VPPeriodicSettings from '../VPPeriodicSettings';
 import ResponseVolumeSettings from '../ResponseVolumeSettings';
+import VPASettings from '../VPASettings';
 import WilliamsSettings from '../WilliamsSettings';
 import SMCSettings from '../SMCSettings';
 import { WILLIAMS_NAMES } from '../indicators/williams.js';
@@ -52,7 +53,7 @@ const DAY_MS = 86400000;
 // Los mismos indicadores que ofrece la principal, apagados salvo el volumen
 const INDICATORS = [
   'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rangos horizontales', 'Rejection Patterns',
+  'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rangos horizontales', 'Rejection Patterns',
   'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ];
 const DEFAULT_ON = new Set(['Volume Delta']);
@@ -61,7 +62,7 @@ const DEFAULT_ON = new Set(['Volume Delta']);
 const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP',
   'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
-  'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
+  'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ]);
 
 /** Fondo y caja de los modales que no traen la suya */
@@ -522,6 +523,15 @@ const SecondaryChartApp = () => {
             symbol={symbol}
             indicator={current.getResponseVolumeIndicator()}
             onApply={(settings) => applyHere(m => m.getResponseVolumeIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'Lector VPA':
+        return (
+          <VPASettings
+            symbol={symbol}
+            indicator={current.getVPAIndicator()}
+            onApply={(settings) => applyHere(m => m.getVPAIndicator().updateConfig(settings))}
             onClose={closeSettings}
           />
         );

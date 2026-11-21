@@ -70,7 +70,10 @@ export function defaultRule() {
     smcEqLength: 3, smcEqThreshold: 0.1, smcReclaim: true,
     // Filtros de Williams (Alligator: off, awake, side, sleeping; zona a favor) y SMC (premium/discount y tendencia mayor).
     // Desde el 21/11, AO y AC (off, color, zero, both), Gator (off, eating, open, sleeping) y MFI (off, green, squat, volume, notFake)
-    bwAlligator: 'off', bwZone: false, smcPd: false, smcBias: false, bwAo: 'off', bwAc: 'off', bwGator: 'off', bwMfi: 'off'
+    bwAlligator: 'off', bwZone: false, smcPd: false, smcBias: false, bwAo: 'off', bwAc: 'off', bwGator: 'off', bwMfi: 'off',
+    // Lector VPA (21/11): grado desde el que cuenta un elemento, umbral y memoria del medidor, rango que se rompe y retroceso;
+    // filtro del medidor (off, favor, notAgainst) con su umbral
+    vpaFire: 0.5, vpaMeter: 1, vpaDecay: 0.75, vpaLeg: 2, vpaRangeBars: 20, vpaMaxRangeAtr: 6, vpaPullBars: 8, vpaMode: 'off', vpaThr: 1
   };
 }
 
@@ -106,6 +109,10 @@ export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24
 export const PATTERN_CODES = ['HM', 'EN', 'DJ'];
 export const WISE_CODES = ['WD', 'WA', 'WF'];
 export const SMC_CODES = ['BS', 'OB', 'BK', 'EQ'];
+export const VPA_CODES = ['QA', 'QB', 'QF', 'QR', 'QT', 'QS', 'QC', 'QE'];
+export const usesVpa = (rule) => (rule.codes || []).some(code => VPA_CODES.includes(code));
+/** El filtro del medidor VPA en palabras (el mismo de rule_tester en el backend) */
+export const VPA_FILTER_TEXT = { favor: 'medidor VPA a favor', notAgainst: 'medidor VPA que no esté en contra' };
 export const usesWise = (rule) => (rule.codes || []).some(code => WISE_CODES.includes(code));
 export const usesSmc = (rule) => (rule.codes || []).some(code => SMC_CODES.includes(code));
 export const RV_CODES = ['RF', 'RB'];
@@ -189,6 +196,11 @@ export function toBackendRule(rule) {
         eqLength: number(rule.smcEqLength, 3), eqThreshold: number(rule.smcEqThreshold, 0.1), reclaim: rule.smcReclaim !== false }
     } : {}),
     ...(williamsFilter(rule) ? { bwf: williamsFilter(rule) } : {}),
+    ...(usesVpa(rule) || VPA_FILTER_TEXT[rule.vpaMode] ? {
+      vpa: { fire: number(rule.vpaFire, 0.5), meter: number(rule.vpaMeter, 1), decay: number(rule.vpaDecay, 0.75), legAtr: number(rule.vpaLeg, 2),
+        rangeBars: number(rule.vpaRangeBars, 20), maxRangeAtr: number(rule.vpaMaxRangeAtr, 6), pullBars: number(rule.vpaPullBars, 8) }
+    } : {}),
+    ...(VPA_FILTER_TEXT[rule.vpaMode] ? { vpaf: { mode: rule.vpaMode, thr: number(rule.vpaThr, 1) } } : {}),
     ...(rule.smcPd || rule.smcBias ? { smcf: { ...(rule.smcPd ? { pd: true } : {}), ...(rule.smcBias ? { bias: true } : {}), swing: number(rule.smcSwing, 50) } } : {}),
     ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [], veEntry: rule.vpVeEntry === 'resting' ? 'resting' : 'touch' } } : {}),
     recipe: {
@@ -274,6 +286,9 @@ export function fromBackendRule(saved) {
     smcReclaim: saved.smc ? saved.smc.reclaim !== false : true,
     bwAlligator: saved.bwf?.alligator || 'off', bwZone: !!saved.bwf?.zone, smcPd: !!saved.smcf?.pd, smcBias: !!saved.smcf?.bias,
     bwAo: saved.bwf?.ao || 'off', bwAc: saved.bwf?.ac || 'off', bwGator: saved.bwf?.gator || 'off', bwMfi: saved.bwf?.mfi || 'off',
+    vpaFire: saved.vpa?.fire ?? 0.5, vpaMeter: saved.vpa?.meter ?? 1, vpaDecay: saved.vpa?.decay ?? 0.75, vpaLeg: saved.vpa?.legAtr ?? 2,
+    vpaRangeBars: saved.vpa?.rangeBars ?? 20, vpaMaxRangeAtr: saved.vpa?.maxRangeAtr ?? 6, vpaPullBars: saved.vpa?.pullBars ?? 8,
+    vpaMode: saved.vpaf?.mode || 'off', vpaThr: saved.vpaf?.thr ?? 1,
     straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
     trailMode: ['atr', 'pct', 'bars'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
     trailStartOn: saved.exit?.trailStart != null, trailStart: saved.exit?.trailStart ?? 1, breakEvenOn: saved.exit?.breakEven != null, breakEven: saved.exit?.breakEven ?? 1.5,
@@ -368,6 +383,8 @@ export function describeRule(saved) {
     + `${saved.bwf?.ao ? ` · AO ${BW_MOMENTUM_TEXT[saved.bwf.ao]}` : ''}${saved.bwf?.ac ? ` · AC ${BW_MOMENTUM_TEXT[saved.bwf.ac]}` : ''}`
     + `${saved.bwf?.gator ? ` · Gator ${BW_GATOR_TEXT[saved.bwf.gator]?.split(' (')[0]}` : ''}${saved.bwf?.mfi ? ` · MFI ${BW_MFI_TEXT[saved.bwf.mfi]?.split(' (')[0]}` : ''}`
     + `${saved.smcf?.pd ? ' · largos en discount, cortos en premium' : ''}${saved.smcf?.bias ? ' · a favor de la estructura mayor' : ''}`
+    + `${saved.vpa && raw.some(code => VPA_CODES.includes(code)) ? ` · VPA desde ${Math.round(saved.vpa.fire * 100)}%` : ''}`
+    + `${saved.vpaf ? ` · ${VPA_FILTER_TEXT[saved.vpaf.mode]} (${saved.vpaf.mode === 'favor' ? '≥' : '> −'}${saved.vpaf.thr})` : ''}`
     + ` · ${saved.entry?.type === 'limit' ? 'limit' : saved.entry?.type === 'straddle' ? `dos órdenes stop a ${saved.entry.offset} ATR ${saved.entry.from === 'zone' ? 'fuera de la zona' : 'del cierre'}`
       : saved.entry?.type === 'stop' ? `orden stop en el borde de la zona${saved.entry.offset ? ` + ${saved.entry.offset} ATR` : ''}` : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
     + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;

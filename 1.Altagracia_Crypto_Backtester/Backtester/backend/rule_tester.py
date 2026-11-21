@@ -44,6 +44,7 @@ import candle_patterns
 import smc
 import structure
 import vp_sessions
+import vpa
 import williams
 
 TFS = (5, 15, 30, 60, 240, 1440)
@@ -72,7 +73,7 @@ PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", 
               "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
 LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
 RV_CODES = tuple(response_volume.CODES)  # Flecha y rombo del Volumen de Respuesta
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES) + tuple(fvg_swing.CODES) + tuple(williams.CODES) + tuple(smc.CODES)  # Elementos del probador que no son de of_elements
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES) + tuple(fvg_swing.CODES) + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -99,7 +100,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM") + tuple(williams.CODES) + tuple(smc.CODES)
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM") + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES)
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -424,6 +425,18 @@ def clean_rule(raw):
                         "eqThreshold": _num(sm.get("eqThreshold"), 0.1, 0.01, 2.0), "reclaim": sm.get("reclaim") is not False}
         if extra["smc"]["internal"] >= extra["smc"]["swing"]:
             extra["smc"]["internal"] = max(2, extra["smc"]["swing"] - 1)
+    vpf = raw.get("vpaf") or {}
+    if codes_used & set(vpa.CODES) or vpf.get("mode") in vpa.FILTER_MODES:
+        q = raw.get("vpa") or {}
+        # El lector VPA (vpa.py): tramo en ATR, grado desde el que cuenta un elemento, umbral y memoria del medidor, y
+        # velas del rango que se rompe, su alto máximo y las del retroceso. Solo entra si la regla usa sus elementos o su filtro
+        extra["vpa"] = {"legAtr": _num(q.get("legAtr"), 2.0, 0.5, 10.0), "fire": _num(q.get("fire"), 0.5, 0.1, 1.0),
+                        "meter": _num(q.get("meter"), 1.0, 0.2, 5.0), "decay": _num(q.get("decay"), 0.75, 0.0, 0.98),
+                        "rangeBars": int(_num(q.get("rangeBars"), 20, 5, 200)), "maxRangeAtr": _num(q.get("maxRangeAtr"), 6.0, 1.0, 50.0),
+                        "pullBars": int(_num(q.get("pullBars"), 8, 1, 50))}
+    if vpf.get("mode") in vpa.FILTER_MODES:
+        # Filtro del medidor VPA en la vela de la señal: a favor (favor) o que no esté en contra (notAgainst), con su umbral
+        extra["vpaf"] = {"mode": vpf["mode"], "thr": _num(vpf.get("thr"), 1.0, 0.0, 5.0)}
     if "BX" in codes_used:
         bx = raw.get("bx") or {}
         # maxHeight: solo rupturas de cajas de hasta tantos ATR de alto (None = todas)
@@ -1441,7 +1454,39 @@ def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
     return (_liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span)
             + _rv_events(rule, span) + _gc_events(rule, span) + _box_events(rule, span) + _fs_events(rule, span)
-            + _williams_events(rule, span) + _smc_events(rule, span))
+            + _williams_events(rule, span) + _smc_events(rule, span) + _vpa_events(rule, span))
+
+
+def _vpa_cfg(rule):
+    return {**(rule.get("vpa") or {})}
+
+
+def _vpa_events(rule, span):
+    """Los elementos del lector VPA (vpa.py) sobre las velas de la fase."""
+    q = rule.get("vpa")
+    bars = span["bars"]
+    codes = tuple(c for slot in rule["recipe"]["slots"] for c in slot["codes"] if c in vpa.CODES)
+    if not q or not bars or not codes:
+        return []
+    key = (_bars_key(bars), rule["tf"], "vpa", json.dumps(q, sort_keys=True), codes)
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = vpa.events(bars, rule["tf"], _vpa_cfg(rule), codes)
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
+
+
+def _vpa_series(rule, ctx):
+    """Las lecturas del lector VPA de las velas de la corrida (filtro del medidor), por configuración."""
+    cache = ctx.setdefault("vpaSeries", {})
+    key = json.dumps(rule.get("vpa") or {}, sort_keys=True)
+    if key not in cache:
+        cache[key] = vpa.compute(ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["V"], ctx["tf"], _vpa_cfg(rule))
+    return cache[key]
 
 
 def _williams_events(rule, span):
@@ -1510,7 +1555,9 @@ LABELS = {"WD": "Barra divergente", "WA": "AO tres barras", "WF": "Ruptura de fr
           "OB": "Order block", "BK": "Breaker", "EQ": "Barrido de iguales", "CP": "Compresión", "IM": "Impulso", "LIQ": "Barrido de liquidaciones", "VH": "Volumen alto", "VR": "Regreso al valor", "VF": "Fallo fuera del valor",
           "VX": "Aceptación fuera del valor", "VE": "Borde del valor", "CC": "Cambio de carácter", "HM": "Martillo o estrella",
           "EN": "Envolvente", "DJ": "Doji", "RF": "Flecha de volumen", "RB": "Rombo de volumen", "GC": "Canal gaussiano",
-          "BX": "Ruptura de caja", "BE": "Borde de caja", "FV": "FVG nuevo", "SP": "Swing"}
+          "BX": "Ruptura de caja", "BE": "Borde de caja", "FV": "FVG nuevo", "SP": "Swing",
+          "QA": "Esfuerzo sin resultado", "QB": "Ruptura con volumen", "QF": "Ruptura sin volumen", "QR": "Retroceso sin volumen",
+          "QT": "Prueba de poco volumen", "QS": "Frenado o techo", "QC": "Clímax de volumen", "QE": "Medidor VPA"}
 
 
 def _labels(codes):
@@ -1538,7 +1585,7 @@ def _fs_events(rule, span):
 
 def _sided(rule):
     """La regla tiene filtros que miran el lado del trade: CVD, OI, funding, Williams o SMC."""
-    return bool(rule.get("flow") or rule.get("bwf") or rule.get("smcf"))
+    return bool(rule.get("flow") or rule.get("bwf") or rule.get("smcf") or rule.get("vpaf"))
 
 
 def _side_ok(rule, ctx, k, side):
@@ -1548,6 +1595,8 @@ def _side_ok(rule, ctx, k, side):
     if rule.get("bwf") and not williams.filter_ok(rule["bwf"], _bw_series(ctx), k, side):
         return False
     if rule.get("smcf") and not smc.filter_ok(rule["smcf"], _smc_range(rule, ctx), ctx["C"], k, side):
+        return False
+    if rule.get("vpaf") and not vpa.filter_ok(rule["vpaf"], _vpa_series(rule, ctx), k, side):
         return False
     return True
 
@@ -1702,6 +1751,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     fs_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in fvg_swing.CODES}
     wise_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in williams.CODES}
     smc_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in smc.CODES}
+    vpa_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in vpa.CODES}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -1771,6 +1821,11 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             if not sides:
                 skip("filtro SMC", k, side)
                 continue
+        if rule.get("vpaf"):
+            sides = tuple(sd for sd in sides if vpa.filter_ok(rule["vpaf"], _vpa_series(rule, ctx), k, sd))
+            if not sides:
+                skip("filtro VPA", k, side)
+                continue
         if rule.get("hours") and not _in_hours(rule["hours"], m["known"]):
             skip("fuera de horario", k, side)
             continue
@@ -1829,9 +1884,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                       if code == "LIQ" and (m["dir"], t + tf_ms) in liq_info), None)
         if swept is not None:
             trade["liq"] = swept  # La zona barrida: dinero, antigüedad y hasta dónde pasó el precio
-        found_more = [info[(code, m["dir"], t + tf_ms)] for info in (wise_info, smc_info) for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in info]
+        found_more = [info[(code, m["dir"], t + tf_ms)] for info in (wise_info, smc_info, vpa_info) for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in info]
         if found_more:
-            trade["elements"] = found_more  # Lo de los sabios y la estructura SMC que dio la señal
+            trade["elements"] = found_more  # Lo de los sabios, la estructura SMC o el lector VPA que dio la señal
         found_fs = [fs_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in fs_info]
         if found_fs:
             trade["fs"] = found_fs  # El hueco del FVG o el swing que dispararon
@@ -2630,6 +2685,13 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
             out["rows"].append(row("smcBias", f"A favor de la estructura mayor de {smcf['swing']} velas",
                                    lambda i: (rng["bias"][i] == side) if rng["bias"][i] else None,
                                    "tendencia " + ("alcista" if trend == 1 else "bajista" if trend == -1 else "sin ruptura todavía")))
+
+    if rule.get("vpaf"):
+        vs, vf = _vpa_series(rule, ctx), rule["vpaf"]
+        label = (f"Medidor VPA a favor (≥ {vf['thr']:g})" if vf["mode"] == "favor" else f"Medidor VPA no en contra (> −{vf['thr']:g})")
+        meter = vs["meter"][k]
+        out["rows"].append(row("vpaf", label, lambda i: vpa.filter_ok(vf, vs, i, side) if vpa.filter_known(vs, i) else None,
+                               f"medidor {meter:+.2f} ({'fuerza' if meter >= 0 else 'debilidad'})" if vpa.filter_known(vs, k) else "sin volumen normal de su hora todavía"))
 
     if rule.get("hours"):
         hours = rule["hours"]

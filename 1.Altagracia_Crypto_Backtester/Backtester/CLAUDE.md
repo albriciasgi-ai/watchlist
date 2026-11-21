@@ -1689,6 +1689,64 @@ Pedidos del usuario tras probarlo:
 - Un control con order blocks desplazados, como el del perfil por sesión, para medir si la zona del OB importa.
 - Un detector de régimen "Alligator dormido" en la pestaña Régimen (hoy está como filtro).
 
+## LECTOR VPA: VOLUME PRICE ANALYSIS DE COULLING (21/11/2026)
+
+Pedido del usuario: aprovechar *A Complete Guide To Volume Price Analysis* (Anna Coulling, 2013; el PDF de esta carpeta). La autora dice que VPA "es un arte" y no se automatiza; el usuario cree que sí, siempre que lo construido sea difuso y se adapte. Tras la propuesta eligió las fases 1 y 2: el lector como indicador y sus piezas en el probador. Reglas propias: el libro no trae números.
+
+```
+vpa.js (VpaReader, vela cerrada por vela)  ──  backend/vpa.py (compute, detect, events, filter_ok): mismos números al bit
+        │                                              │
+VPAIndicator.js + VPASettings.jsx               rule_tester (elementos Q*, filtro vpaf) y rule_search (gen vpaf)
+```
+
+### Regla
+
+- **Relativo:** volumen y rango de cada vela contra la mediana de esa misma hora en los `days` (30) días anteriores; en 1D, de los días anteriores. Antes de `minDays` (5) la vela no se lee.
+- **Por grados:** rampas de 0 a 1, no un sí o no: volumen bajo (`volLow` 0.6 → 0.95, baja), alto (`volHigh` 1.2 → 1.8), ultra alto (`volUltra` 2 → 3), rango ancho (`spreadWide` 1.2 → 1.8).
+- **Esfuerzo contra resultado:** q = rango relativo ÷ volumen relativo. Esfuerzo sin resultado = mín(volumen alto, q bajo); resultado sin esfuerzo = mín(volumen bajo, q alto, rango ancho); validado = mín(rango ancho, volumen alto, q normal).
+- **Forma:** estrella, martillo y doji de patas largas por las mechas, en grados. Un martillo a ½ ATR o menos del extremo de un tramo alcista es un hanging man: resta (debilidad por confirmar).
+- **El lugar:** el tramo es el zigzag de `legAtr` (2) ATR del Volumen de Respuesta; la madurez (de 1 a 3 veces `legAtr` recorridos) pesa las lecturas de giro. "El esfuerzo se agota": el precio avanza a favor del tramo en 4 velas y el volumen de las 2 últimas cae frente a las 2 primeras.
+- **Medidor (la paciencia del libro):** cada vela suma su evidencia con signo (+ fuerza, − debilidad) y lo anterior se multiplica por `decay` (0.75). Esfuerzo sin resultado y trampa van contra el color de la vela (contra el tramo en un doji); validado, a favor. Pesos en `W_*`.
+- `sum()` de Python 3.12 suma con compensación: vpa.py suma en un bucle, como vpa.js, para dar el mismo último bit.
+
+### Elementos del probador (en `CANDLE_CODES`: todas las monedas, acciones y 1D)
+
+| Código | Nombre | Lado | Zona |
+|---|---|---|---|
+| QA | Esfuerzo sin resultado | contra el color | la vela |
+| QB | Ruptura con volumen | con la ruptura | del nivel roto a la vela (el stop "borde lejano" queda tras la vela) |
+| QF | Ruptura sin volumen | contra la ruptura | del nivel al extremo |
+| QR | Retroceso sin volumen | con la ruptura | del mínimo del retroceso al nivel |
+| QT | Prueba de poco volumen | el de la mecha (oferta alcista, demanda bajista) | la vela |
+| QS | Frenado o techo | contra el tramo | las velas |
+| QC | Clímax | contra el tramo | las velas del clímax |
+| QE | Medidor cruza ±`meter` | el del cruce | la vela |
+
+- Ruptura: el primer cierre a más de 0.1 ATR fuera del máximo o mínimo de las `rangeBars` (20) velas anteriores, con ese rango de hasta `maxRangeAtr` (6) ATR. Retroceso: en `pullBars` (8) velas vuelve a ½ ATR del nivel con volumen medio bajo y cierra a favor.
+- Prueba: entra al precio de una vela de las `testLook` (20) anteriores con volumen alto entero y del color contrario.
+- Frenado: 2 de las `stopBars` (3) últimas con mecha contra el tramo, cierre en su mitad de ese lado y volumen alto, en un tramo de al menos `legAtr` ATR; una vez por tramo. Clímax: 2 o más con volumen ultra alto y mecha contra el tramo en `climaxBars` (6) velas, a menos de 1 ATR entre sí; una vez por tramo.
+- Cada elemento cuenta desde el grado `fire` (0.5) y cada trade guarda su `grade` en `elements`.
+- **Regla:** `vpa` (fire, meter, decay, legAtr, rangeBars, maxRangeAtr, pullBars) solo entra si la regla usa un Q o el filtro; `vpaf` = `{mode: favor|notAgainst, thr}`. Una regla de antes conserva su identidad. Los controles al azar entran solo donde el filtro deja (`_side_ok`) y el trade elegido tiene su fila "vpaf" con el medidor.
+- **Búsqueda:** genes `vpaf` (apagado de fábrica) y `vpaFire`; casilla "medidor VPA". Los Q no están en la lista de elementos de fábrica de la pestaña Búsqueda.
+
+### Indicador
+
+"Lector VPA" en la simulación manual, el 2.º gráfico, el backtesting global y la suite (gráfico y Watchlist). Panel con el medidor (opaco al pasar el umbral) y, sobre las velas, los elementos con un signo por código (◆ ▲ ✕ ↺ T S C E): verdes los alcistas, rojos los bajistas, más opacos con más grado. La prueba y el cruce del medidor vienen apagados. El cuadro de cada vela del panel dice lo leído (`describeVpa`) y entra a "Incluir en el análisis"; los elementos son marcas elegibles. Ajustes en `vpa_settings_{símbolo}` (también propios del 2.º gráfico y de las pestañas de la suite).
+
+### Medido (solo fase 1)
+
+- **Delta real** (`OrderFlowData/research/vpa/estudio_delta.py`, `INFORME_DELTA.md`; BTC, ETH, SOL, XRP, GALA y ARB): en las velas de esfuerzo sin resultado el Δ/Vol va contra el color frente a velas del mismo color y volumen (15m: −0.042 en las verdes y +0.051 en las rojas, márgenes ±0.005; igual signo en 1h y 4h): la lectura de Coulling se confirma. En la estrella con volumen alto el Δ/Vol es más comprador (+0.067 en 15m): los atrapados son los compradores agresivos; en el martillo, al revés. La validación va con el color. La trampa no tiene un signo estable.
+- **Lo que sigue** (avance a 6 y 12 velas, sin costos): solo la ruptura con volumen en 4h se separa (+0.22 y +0.39 ATR; azar −0.02). Las lecturas de giro no anticipan el giro.
+- **Probador** (`fase1_probador.py`, `FASE1_PROBADOR_240.md`; 4h, siete monedas, R neto): QB a 3R +0.14 ±0.13 (+0.12 sobre el mejor control, 6 de 7 monedas); QB con stop tras el nivel y 2R +0.12 ±0.11 (+0.12, 6 de 7); QA invertida (seguir el color) +0.14 ±0.13; QA como giro 0.00; QT −0.23 (0 de 7); QE −0.11 (0 de 7); QS +0.07 y QC +0.04, dentro del margen. Como filtro, el medidor no mejora al FVG nuevo (+0.26 → +0.25 o +0.28) ni a la ruptura de caja (+0.23 → +0.25). Se probaron 16 reglas sobre los mismos datos: la ruptura con volumen es candidata a la fase 2, no un resultado.
+
+### Pruebas
+
+`tests/test_vpa.py` (7), `frontend/tests/vpa.parity.test.mjs` (7: paridad al bit en 4h, 15m y 1D, sin futuro, parámetros acotados y el cuadro) y una más en `rulefacets.test.mjs` (11). Probado en pantalla con una copia aislada, en el backtesting global con BTC 4h: el panel, las marcas, el modal y una corrida de QB con su trade elegido. No se vio en pantalla la simulación manual, el 2.º gráfico ni la suite (usan el mismo indicador).
+
+### Falta
+
+Las fases 3 a 5 de la propuesta: causa y efecto (el largo de la congestión contra lo que recorre la ruptura), salir con VPA, el "ripple" entre marcos y la etapa del Gimnasio. La fase 2 de QB no se corrió.
+
 ## RANGOS HORIZONTALES (20/11/2026)
 
 Pedido del usuario: un indicador con los métodos y parámetros de la pestaña Régimen, para la simulación manual, el backtesting global y la suite, con el método elegido en un modal.

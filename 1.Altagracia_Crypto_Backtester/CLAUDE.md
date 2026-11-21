@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Lector VPA (Volume Price Analysis de Coulling)
+
+El VPA de Anna Coulling con reglas propias, en grados y sin futuro: volumen y rango de cada vela contra lo normal de su hora, esfuerzo contra resultado, formas de vela según el tramo y un medidor de fuerza y debilidad que se desvanece. Indicador "Lector VPA" en App 1 y la suite; en el probador, ocho elementos (QA, QB, QF, QR, QT, QS, QC, QE) y el filtro del medidor. En la fase 1 de 4h solo la ruptura con volumen se separa del azar, en el borde de su margen. Detalle en `Backtester/CLAUDE.md`, "LECTOR VPA: VOLUME PRICE ANALYSIS DE COULLING (21/11/2026)".
+
 ### Noviembre 2026: Smart Money Concepts e Indicadores de Bill Williams
 
 Nueve indicadores con reglas propias: Alligator, Fractales, Tres sabios, Zonas de Williams, AO, AC, Gator, MFI y Estructura SMC (estructura interna y mayor, order blocks, breakers, iguales, premium/discount y niveles anteriores), sin futuro. En el probador, siete elementos, la orden stop a favor, la salida de Williams, el objetivo en el rango SMC y cuatro filtros; en la fase 1 de 4h ninguna regla superó a los controles. El 21/11 se sumaron los filtros del AO, el AC, el Gator y el MFI, y los menús de indicadores pasaron a dos columnas. Detalle en `Backtester/CLAUDE.md`, "SMART MONEY CONCEPTS E INDICADORES DE BILL WILLIAMS (20/11/2026)".

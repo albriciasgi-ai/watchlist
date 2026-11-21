@@ -25,6 +25,7 @@ export const OWN_KEYS = [
   'horizontal_ranges_settings_',
   'vp_periodic_settings_',
   'response_balance_settings_',
+  'vpa_settings_',
   'liquidations_settings_',
   'of_elements_settings_',
   'support_resistance_2_config_',

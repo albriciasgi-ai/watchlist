@@ -24,6 +24,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - un día completo de la nube comparado con el archivo oficial (ver "Nube contra el archivo oficial");
   - "Exportar a Excel" en el dashboard (ver "Journal").
 - **Sabios de Williams y estructura SMC (20/11):** los indicadores de App 1 en el gráfico, la detección en el servidor (sin enviar nada), los order blocks en la defensa de zona y sus medidas en el journal. Ver "Sabios de Williams y estructura SMC".
+- **Lector VPA (21/11):** el indicador de App 1 en el gráfico y en la Watchlist (lista de livianos), con su modal. Ver `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, "LECTOR VPA". El servidor no lo detecta.
 - **Falta:**
   - las alertas del Swing quedan para la central de alertas de confluencia;
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.

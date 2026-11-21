@@ -21,7 +21,10 @@ export const ELEMENT_LABELS = {
   BX: 'Ruptura de caja', BE: 'Borde de caja', CP: 'Compresión', FV: 'FVG nuevo', SP: 'Swing', IM: 'Impulso',
   // Bill Williams (los tres sabios) y estructura SMC (20/11)
   WD: 'Barra divergente', WA: 'AO tres barras', WF: 'Ruptura de fractal',
-  BS: 'Ruptura de estructura', OB: 'Order block', BK: 'Breaker', EQ: 'Barrido de iguales'
+  BS: 'Ruptura de estructura', OB: 'Order block', BK: 'Breaker', EQ: 'Barrido de iguales',
+  // Lector VPA de Coulling (21/11)
+  QA: 'Esfuerzo sin resultado', QB: 'Ruptura con volumen', QF: 'Ruptura sin volumen', QR: 'Retroceso sin volumen',
+  QT: 'Prueba de poco volumen', QS: 'Frenado o techo', QC: 'Clímax de volumen', QE: 'Medidor VPA'
 };
 
 /** Nombre corto de un código; sin nombre conocido, el código o el nombre que se pase. */

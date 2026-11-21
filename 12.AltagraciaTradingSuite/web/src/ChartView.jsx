@@ -20,6 +20,7 @@ import OrderFlowElementsSettings from '@app1/components/OrderFlowElementsSetting
 import OrderFlowSetupsSettings from '@app1/components/OrderFlowSetupsSettings';
 import VPPeriodicSettings from '@app1/components/VPPeriodicSettings';
 import ResponseVolumeSettings from '@app1/components/ResponseVolumeSettings';
+import VPASettings from '@app1/components/VPASettings';
 import WilliamsSettings from '@app1/components/WilliamsSettings';
 import SMCSettings from '@app1/components/SMCSettings';
 import { WILLIAMS_NAMES } from '@app1/components/indicators/williams.js';
@@ -101,7 +102,7 @@ function closeFrame(start, end, preferred) {
 
 const DEFAULT_STATES = {
   'Volume Delta': true, 'Volume Profile': false, 'CVD': false, 'Open Interest': false, 'OI-Volume Confluence': false,
-  'Order Flow': true, 'FVG': false, 'VP Periodic': false, 'Volumen de Respuesta': false, 'Liquidaciones': false,
+  'Order Flow': true, 'FVG': false, 'VP Periodic': false, 'Volumen de Respuesta': false, 'Lector VPA': false, 'Liquidaciones': false,
   'Elementos OF': false, 'VWAP': false, 'Range Detection': false, 'Rangos horizontales': false, 'Rejection Patterns': false, 'Double Top/Bottom': false,
   'Support & Resistance': false, 'S&R v2': false, 'Swing Detector': false,
   'Estructura SMC': false, 'Alligator': false, 'Fractales': false, 'Tres sabios': false, 'Zonas de Williams': false,
@@ -109,7 +110,7 @@ const DEFAULT_STATES = {
 };
 const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP', 'Double Top/Bottom',
-  'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic', 'Volumen de Respuesta', 'Liquidaciones', 'Elementos OF',
+  'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic', 'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF',
   'Rangos horizontales', 'Estructura SMC', ...WILLIAMS_NAMES,
 ]);
 const DEFAULT_VP_CONFIG = {
@@ -1055,6 +1056,15 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
             symbol={symbol}
             indicator={current.getResponseVolumeIndicator()}
             onApply={(settings) => applyToAll(m => m.getResponseVolumeIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'Lector VPA':
+        return (
+          <VPASettings
+            symbol={symbol}
+            indicator={current.getVPAIndicator()}
+            onApply={(settings) => applyToAll(m => m.getVPAIndicator().updateConfig(settings))}
             onClose={closeSettings}
           />
         );
