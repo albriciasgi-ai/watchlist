@@ -38,6 +38,8 @@ export function defaultRule() {
     // Trailing del objetivo, como un bot: al llegar a tpTrailStart R (antes del objetivo) el objetivo sigue al mejor precio
     // a tpTrailDist (en R, ATR o %) y el trade se cierra cuando el precio vuelve hasta él
     tpTrailOn: false, tpTrailStart: 2.5, tpTrailDist: 0.5, tpTrailUnit: 'r',
+    // Objetivo distinto cuando los flujos on-chain van a favor del trade (21/11): esos días el mercado da más
+    chainTargetOn: false, chainTargetR: 5, chainTargetMetric: 'stable', chainTargetAsset: 'auto', chainTargetDays: 30, chainTargetZ: 0.5,
     cpMaxHeightOn: false, cpMaxHeight: 5.5, imBars: 3, imAtr: 2, imRangeOn: false, imRange: 1.5, useHorizon: true, horizon: 200, opposite: false,
     oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05,
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
@@ -272,6 +274,10 @@ export function toBackendRule(rule) {
           unit: ['r', 'atr', 'pct'].includes(rule.tpTrailUnit) ? rule.tpTrailUnit : 'r'
         }
       } : {}),
+      ...(rule.chainTargetOn && targetInR(rule) && !rule.tpTrailOn && CHAIN_METRICS.includes(rule.chainTargetMetric) ? {
+        chainTarget: { r: number(rule.chainTargetR, 5), metric: rule.chainTargetMetric, days: number(rule.chainTargetDays, 30), z: number(rule.chainTargetZ, 0.5),
+          mode: 'favor', ...(rule.chainTargetMetric === 'net' ? { asset: ['btc', 'eth'].includes(rule.chainTargetAsset) ? rule.chainTargetAsset : 'auto' } : {}) }
+      } : {}),
       horizon: rule.useHorizon ? number(rule.horizon, 200) : null,
       opposite: !!rule.opposite,
       ...(vpaExitRule(rule) ? { vpa: vpaExitRule(rule) } : {})
@@ -321,6 +327,8 @@ export function fromBackendRule(saved) {
     trailStartOn: saved.exit?.trailStart != null, trailStart: saved.exit?.trailStart ?? 1, breakEvenOn: saved.exit?.breakEven != null, breakEven: saved.exit?.breakEven ?? 1.5,
     tpTrailOn: !!saved.exit?.tpTrail, tpTrailStart: saved.exit?.tpTrail?.start ?? 2.5, tpTrailDist: saved.exit?.tpTrail?.dist ?? 0.5,
     tpTrailUnit: saved.exit?.tpTrail?.unit || 'r',
+    chainTargetOn: !!saved.exit?.chainTarget, chainTargetR: saved.exit?.chainTarget?.r ?? 5, chainTargetMetric: saved.exit?.chainTarget?.metric || 'stable',
+    chainTargetAsset: saved.exit?.chainTarget?.asset || 'auto', chainTargetDays: saved.exit?.chainTarget?.days ?? 30, chainTargetZ: saved.exit?.chainTarget?.z ?? 0.5,
     cpMaxHeightOn: saved.cp?.maxHeight != null, cpMaxHeight: saved.cp?.maxHeight ?? 5.5,
     imBars: saved.im?.bars ?? 3, imAtr: saved.im?.atr ?? 2, imRangeOn: saved.im?.range != null, imRange: saved.im?.range ?? 1.5,
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
@@ -360,6 +368,9 @@ export function fromBackendRule(saved) {
 /** Medidas del filtro de flujos on-chain (onchain_flows.py) */
 export const CHAIN_METRICS = ['net', 'stable'];
 
+/** La medida del objetivo mixto en palabras: «la emisión de USDT y USDC de 30 d a favor» */
+export const chainTargetText = (ct) => `${ct.metric === 'net' ? `el flujo neto${ct.asset && ct.asset !== 'auto' ? ` de ${ct.asset.toUpperCase()}` : ''} a exchanges` : 'la emisión de USDT y USDC'} de ${ct.days} d a favor (z ≥ ${ct.z})`;
+
 /** El filtro de flujos on-chain en palabras: «flujo neto de BTC a exchanges en 7 d a favor (z ≥ 0.5)» */
 export function chainText(chain) {
   if (!chain) return '';
@@ -392,6 +403,7 @@ export function describeRule(saved) {
   if (saved.targetAt === 'weak') exits.push('máximo o mínimo del rango SMC');
   else if (saved.targetAt) exits.push(saved.be && !saved.vp ? 'centro de la caja' : { poc: 'POC anterior', edge: 'borde contrario del valor', mid: 'centro del rango anterior' }[saved.targetAt]);
   else if (saved.exit?.tpTrail) exits.push(`${saved.exit.targetR}R arrastrado desde ${saved.exit.tpTrail.start}R a ${tpTrailText(saved.exit.tpTrail)}`);
+  else if (saved.exit?.chainTarget) exits.push(`${saved.exit.targetR}R (${saved.exit.chainTarget.r}R con ${chainTargetText(saved.exit.chainTarget)})`);
   else if (saved.exit?.targetR != null) exits.push(`${saved.exit.targetR}R`);
   if (saved.exit?.trail === 'swing') exits.push('stop arrastrado');
   if (saved.exit?.trail === 'bars') exits.push(`stop bajo el mínimo de ${saved.exit.trailBars} velas`);

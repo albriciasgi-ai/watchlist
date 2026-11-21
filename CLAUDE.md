@@ -54,6 +54,31 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 21 Noviembre 2026: Objetivo Mixto con los Flujos On-Chain
+
+**Pedido:** tras ver que el filtro de emisión de stablecoins no mejora la ventaja de las reglas, el usuario propuso usarlo para el objetivo: en los días que pasa, buscar un objetivo más alto porque el mercado da más, y en los demás dejar el de siempre. Después pidió confirmarlo con la regla mixta en la fase 1 y llevarlo a la app.
+
+**Lo medido** (fase 1, 4h, Impulso, FVG nuevo y Ruptura de caja, las 7 monedas de siempre y las 43 nuevas):
+1. **Con el filtro, los trades llegan más lejos.** De 3R a 5R el R por trade sube en las tres reglas. Sin el filtro, subir el objetivo empeora.
+2. **La regla mixta** (5R con la emisión de 30 días a favor, 3R sin ella) en una corrida, con los controles usando la misma salida:
+   - da el mayor R total en 5 de 6 casos. Impulso en las monedas nuevas: +623 R, contra +376 con 3R siempre y +548 con 5R siempre;
+   - sube en 2021, 2022 y 2023.
+   - Mejora la salida, no la entrada.
+
+**Cambios:**
+1. **Salida "Otro objetivo con los flujos on-chain a favor"** en el probador (`exit.chainTarget`). Solo va con el objetivo en R y sin arrastre. Los controles al azar y del tramo usan la misma salida. Cada trade guarda `chain_on`.
+2. **Comprobado:** da los mismos números que el script del estudio.
+3. **Pruebas:** `test_onchain_flows.py` suma 1 (7). `rulefacets.test.mjs` suma 1 (13).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- Es un hallazgo de la fase 1, que ya se miró. La prueba de la fase 2 quedó definida antes de mirar en `docs/PLAN_INDICADORES_ONCHAIN.md`.
+- No se vio en pantalla.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "FLUJOS ON-CHAIN (21/11/2026)" y `OrderFlowData/research/onchain/2026-11-21/`
+
+---
+
 ### App 1 + Altagracia Trading Suite + Entrenamiento - 21 Noviembre 2026: Fase 2 de la Ruptura con Volumen, Velas con Ancho por Volumen y Etapa VPA del Gimnasio
 
 **Pedido:** tres cosas: correr la fase 2 de la ruptura con volumen, las velas con ancho por volumen y una etapa del VPA en el Gimnasio.

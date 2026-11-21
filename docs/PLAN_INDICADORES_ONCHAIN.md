@@ -51,11 +51,21 @@ como cualquier regla.
   - la emisión de USDT y USDC a favor sube el R de las dos reglas (Impulso de +0.16 a +0.38) y su ventaja sobre los controles, en las 7 monedas;
   - es candidata, no resultado: son pocos días distintos (137) y lo ponen los cortos de 2022 y los largos de 2023.
 
+- **Segundo estudio** (21/11: fase 1, 4 reglas, las 7 de siempre y las 43 nuevas):
+  - la emisión a favor no aumenta la ventaja de ninguna regla sobre sus controles;
+  - sí sube el R de toda entrada, también la del azar (de −0.04 a +0.12/+0.16 R en las monedas nuevas);
+  - se apoya en 2022 y en pocos días distintos.
+
 **Cómo seguir con el paso 1, en orden:**
-1. **Emisión a favor, 7 y 30 días,** con Impulso, FVG nuevo, la B5 y la Ruptura de caja con EMA 200: en la fase 1, en "todas las monedas", también en el grupo de las nuevas.
-2. **Mirar el informe por año y por lado.** Si todo sale de 2022, no es un filtro: es ese año.
-3. **Fase 2:** una variante que siga separándose de los dos controles pasa a la fase 2. Si no, el filtro queda como dato del trade y no se insiste.
-4. **Búsqueda genética** con la casilla "flujos on-chain": ver si alguna finalista lo usa.
+1. ~~Emisión a favor con las cuatro reglas en la fase 1, en las monedas de siempre y las nuevas.~~ Hecho: no suma ventaja a las reglas.
+2. ~~Una prueba del efecto propio del filtro sobre entradas al azar.~~ Reemplazada por la idea del usuario: usarlo para el objetivo, no para entrar.
+3. **Objetivo mixto en la fase 1** (21/11): 5R con la emisión de 30 días a favor y 3R sin ella, en una corrida y con sus controles.
+   - Da el mayor R total en 5 de 6 casos (tres reglas × dos grupos de monedas).
+   - Sube en 2021, 2022 y 2023.
+   - Mejora la salida, no la entrada.
+   - Ya está en el probador como salida "Otro objetivo con los flujos on-chain a favor".
+4. **Fase 2, decidida antes de mirar:** la mixta contra 3R siempre, en Impulso, FVG nuevo y Ruptura de caja, en las monedas de siempre y las nuevas. Pasa si da más R total y no pierde ventaja sobre los controles en las tres.
+5. **Si no pasa:** el filtro queda como dato del trade y el plan sigue con el paso 2 (Hyperliquid).
 
 ### Paso 2 — Grabar Hyperliquid desde ya (pendiente)
 

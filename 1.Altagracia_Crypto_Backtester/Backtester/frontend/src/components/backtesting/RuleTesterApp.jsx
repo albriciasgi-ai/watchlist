@@ -1731,6 +1731,30 @@ const RuleTesterApp = () => {
               </div>
             </Opt>
           )}
+          {targetInR(rule) && !rule.tpTrailOn && (
+            <Opt sub id="objetivoOnchain" label="Otro objetivo con los flujos on-chain a favor" on={rule.chainTargetOn} onToggle={(chainTargetOn) => patch({ chainTargetOn })}
+              title="En los días en que los flujos on-chain van a favor del trade el mercado da más: ahí el objetivo es otro. Medido en la fase 1 (21/11): 5R con la emisión de 30 días a favor y 3R los demás días dio más R total que 3R o 5R siempre">
+              <div className="rt-row">
+                <span>objetivo de</span><Num value={rule.chainTargetR} min={0.2} max={50} step={0.25} onChange={(chainTargetR) => patch({ chainTargetR })} /><span>R cuando</span>
+                <select value={rule.chainTargetMetric} onChange={(e) => patch({ chainTargetMetric: e.target.value })}>
+                  <option value="stable">la emisión de USDT y USDC</option>
+                  <option value="net">el flujo neto a los exchanges</option>
+                </select>
+                {rule.chainTargetMetric === 'net' && <select value={rule.chainTargetAsset} onChange={(e) => patch({ chainTargetAsset: e.target.value })}>
+                  <option value="auto">de ETH en ETH, de BTC en las demás</option>
+                  <option value="btc">de BTC</option>
+                  <option value="eth">de ETH</option>
+                </select>}
+              </div>
+              <div className="rt-row">
+                <span>de</span><Num value={rule.chainTargetDays} min={1} max={90} onChange={(chainTargetDays) => patch({ chainTargetDays })} /><span>días va a favor con z de al menos</span>
+                <Num value={rule.chainTargetZ} min={0} max={3} step={0.25} onChange={(chainTargetZ) => patch({ chainTargetZ })} />
+              </div>
+              <div className="rt-note">
+                Se mira en la vela de la señal, con el dato del día ya publicado (desde las 06:00 UTC del día siguiente). Los demás días el objetivo es de {rule.targetR} R. Las entradas al azar y las de seguir el tramo usan la misma salida, cada una con su vela.
+              </div>
+            </Opt>
+          )}
         </Opt>
         <Opt id="trailing" label="Trailing del stop" on={trailingMode !== 'off'} onToggle={toggleTrailing} title="El stop se acerca solo a favor, con cada vela cerrada">
           <div className="rt-row">
@@ -1997,6 +2021,7 @@ const RuleTesterApp = () => {
             Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
             Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {elementLabels(selectedTrade.votes, ', ')} · presentes: {elementLabels(selectedTrade.present, ', ') || '—'} · en contra: {elementLabels(selectedTrade.against, ', ') || '—'}
+            {'chain_on' in selectedTrade && <><br />Objetivo: {selectedTrade.chain_on ? `el de los flujos on-chain a favor (${result?.rule?.exit?.chainTarget?.r ?? '?'} R)` : `el de siempre (${result?.rule?.exit?.targetR ?? '?'} R): los flujos on-chain no iban a favor`}</>}
             {'tp_on' in selectedTrade && <><br />Trailing del objetivo: {selectedTrade.tp_on != null ? `se activó el ${stamp(selectedTrade.tp_on)}; desde ahí el objetivo siguió al mejor precio` : 'el precio no llegó a su arranque'}</>}
             {selectedTrade.vp &&<><br />Sesión anterior ({selectedTrade.vp.hours} h): VAH {selectedTrade.vp.vah} · POC {selectedTrade.vp.poc} · VAL {selectedTrade.vp.val} · perfil {selectedTrade.vp.shape || '—'} · la sesión abrió {selectedTrade.vp.open > 0 ? 'encima del valor' : selectedTrade.vp.open < 0 ? 'debajo del valor' : 'dentro del valor'}</>}
             {selectedTrade.gc && <><br />Canal en la señal: banda superior {selectedTrade.gc.high}, línea central {selectedTrade.gc.mid}, banda inferior {selectedTrade.gc.low}</>}
