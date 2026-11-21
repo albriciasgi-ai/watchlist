@@ -1201,6 +1201,58 @@ Pedido del usuario al probar el trailing: «un trailing take profit como lo har�
 
   Además, dos en `ruletester.test.mjs` (14). Probado en pantalla con una copia aislada: trades 3, 22 y 57 de dos corridas de la B5 (a 0.5R y a 1.5 ATR) y la sensibilidad. Seis corridas guardadas del usuario se repiten trade por trade con el motor nuevo.
 
+### Panel de la regla más claro (20/11)
+
+Pedido del usuario tras una corrida de 7 trades que parecía tener trailing y filtros que no eran. Los tenía, heredados de la B5 (EMA 50, OI subiendo 2% en 6 velas y trailing a 3 ATR), y en el formulario no se notaba. Eligió las ocho ideas que se le propusieron; las fichas de los elementos quedan como estaban.
+
+- **`ruleFacets.js`** (lógica pura). `ruleFacets()` da las piezas activas de una regla en palabras, por sección (`FACETS`). Lee igual la regla del formulario (`toBackendRule`) que la de una corrida guardada (que pasó por `clean_rule`), y de ella salen:
+  - `sectionSummary`: el resumen de cada sección plegada;
+  - `facetPhrase`: las fichas de «Vas a correr»;
+  - `ruleDifferences`: lo que cambió entre el formulario y la corrida (el nombre no cuenta);
+  - `loadedSummary`: lo que trae una regla al cargarla;
+  - `OFF_PATCH`: cómo apaga cada × su pieza;
+  - `signalFunnel`: el embudo de señales;
+  - `exitScale`: la escala en R de la salida.
+
+  El cierre a las 96 velas que pone el backend sin otra salida (`DEFAULT_HORIZON`, también con solo la señal contraria) sale marcado `implicit`.
+- **Formulario** (`RuleTesterApp.jsx`):
+  - **Componentes:**
+    - `Switch`;
+    - `Opt`: una opción con su interruptor. Encendida resalta y muestra sus valores; apagada es una línea gris. Su ancla es `rt-opt-<pieza>`;
+    - `Section`: plegable, con su cuenta y, plegada, su resumen. Su ancla es `rt-sec-<sección>`;
+    - `ExitScale` y `Funnel`.
+
+    Las secciones abiertas y «Vas a correr» quedan en `tester_view_v1` (`sections`, `planOpen`).
+  - **Filtros:**
+    - Tendencia: VWAP móvil, EMA y régimen;
+    - Flujo: CVD, OI, multitud y OI sostenido;
+    - Forma de la señal: extremo, momentum y confirmación;
+    - Horario y medidas.
+  - **Salida:**
+    - el stop inicial, siempre;
+    - el objetivo, con su arrastre colgando;
+    - el trailing del stop, con su arranque;
+    - el stop a la entrada, el cierre por tiempo y la señal contraria;
+    - la salida por el canal del Gaussian Channel, que estaba junto a sus parámetros;
+    - la escala en R;
+    - en "Operación", una posición a la vez.
+  - **Memoria de los interruptores:** un interruptor con modo recuerda el que tenía al apagarse (`lastModes`). Valen así VWAP, EMA, OI, multitud, régimen, canal, trailing y las medidas.
+- **«Vas a correr»**, sobre el botón de correr, solo en la pestaña Regla.
+  - La regla va en una línea. Debajo, una ficha por filtro, entrada, stop y salida. También salen la detección, si no es la de fábrica, y "todas las señales", si no va una a la vez.
+  - La × apaga la pieza (`turnOff`).
+  - Un clic lleva a su control (`goTo`): abre su sección, salta sin animación y lo resalta con `rt-flash`. Con animación no avanzaba con la ventana en segundo plano.
+  - Plegado, queda una línea con la cuenta de filtros y salidas.
+- **Aviso de la corrida** en Resumen y Trades: si el formulario ya no es la regla de la corrida a la vista, «Esta corrida usó: …». Cada diferencia lleva un enlace a su control, y el botón «Cargar la de la corrida» la pone en el formulario.
+- **Embudo** en el Resumen (`Funnel`): las señales, las que se saltaron con una posición abierta, lo que quitó cada motivo de `skipped`, las abiertas al final de la fase y los trades cerrados.
+- **«Regla nueva»**, tras confirmar: lo de fábrica, sin elementos ni filtros, con el mismo marco.
+- **Al cargar una regla** (guardada, del Historial, del tablero o de la búsqueda; `loadBackendRule` y `loadFormRule`), un aviso con lo que trae.
+- `describeRule` en secuencia: «A → 2 de B, C, D» en vez de «A → B + C + D».
+- **Comprobado con el registro del usuario:**
+  - de 887 reglas distintas, 848 cargadas en el formulario dan las mismas palabras que su corrida. Las otras 39 son reglas viejas de un elemento con ventana 10, que el formulario ya no permite: el aviso lo muestra;
+  - la regla del formulario dice lo mismo antes y después de `clean_rule` en 915 reglas: las 887 y 28 variantes.
+- **Pruebas:** `tests/rulefacets.test.mjs` (8).
+- **En pantalla,** con una copia aislada, a 1366×700 y 840×700 y en Nítido y Oscuro.
+
 ### Medido y probado
 
 - BTC 15m, fase 1 (1,346 días, 129,214 velas): 179 s la primera vez; después la corrida tarda segundos y la sensibilidad (8 variantes) 26 s. Fase 2, cerca de 90 s la primera vez.
