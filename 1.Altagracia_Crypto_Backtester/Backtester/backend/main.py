@@ -174,6 +174,10 @@ async def lifespan(app: FastAPI):
     print("[STARTUP] Backend started successfully")
     print("[STARTUP] Alert sender initialized")
     print(f"[STARTUP] Backtesting cache directory: {BACKTESTING_CACHE_DIR.absolute()}")
+    # Velas de las monedas nuevas, OI y funding del probador, en otro proceso (cada 2 horas como mucho)
+    import market_update
+    if market_update.start_in_background():
+        print(f"[STARTUP] Actualizando velas, OI y funding del probador en segundo plano: {market_update.LOG}")
 
     # 🔍 DIAGNÓSTICO: Listar TODAS las rutas registradas al startup
     print("\n" + "="*80)
