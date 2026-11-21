@@ -262,7 +262,11 @@ export function describeRule(saved) {
   const codes = (recipe.slots || []).map(slot => L((slot.codes || []).join('|')));
   const part = (group) => (recipe.slots || []).filter(slot => (slot.group || 0) === group).map(slot => L((slot.codes || []).join('|')));
   const liq = saved.liq ? ` (${saved.liq.what === 'zone' ? 'zona' : `swing ${saved.liq.swingBars}`}, ${saved.liq.variant === 'reclaim' ? 'recupera' : 'perfora'})` : '';
-  const joined = (recipe.mode === 'sequence' ? `${part(0).join(' + ')} → ${part(1).join(recipe.groupMins?.[1] > 1 ? ' + ' : ' o ')}`
+  // El gatillo de una secuencia pide al menos groupMins[1] de sus elementos: «2 de A, B, C»; todos van con «+» y uno, con «o»
+  const triggers = part(1);
+  const need = Number(recipe.groupMins?.[1] ?? 1);
+  const triggerText = triggers.length > 1 && need > 1 && need < triggers.length ? `${need} de ${triggers.join(', ')}` : triggers.join(need >= triggers.length ? ' + ' : ' o ');
+  const joined = (recipe.mode === 'sequence' ? `${part(0).join(' + ')} → ${triggerText}`
     : recipe.mode === 'threshold' && recipe.min < codes.length ? `${recipe.min} de ${codes.join(', ')}` : codes.join(' + ')) + liq;
   const stop = { swing: `swing ${saved.stop?.bars}`, candle: 'vela del elemento', zone: 'borde de la zona', atr: `${saved.stop?.atr} ATR` }[saved.stop?.type] || '';
   const exits = [];

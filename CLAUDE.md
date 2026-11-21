@@ -54,6 +54,56 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 20 Noviembre 2026: Panel de la Regla más Claro (Backtesting Global)
+
+**Pedido:** una corrida de 7 trades parecía tener trailing y filtros que no eran. Los tenía, heredados de la B5, pero en el formulario no se notaba que estaban encendidos. El usuario pidió ideas para un panel más claro (las fichas de los elementos están bien) y eligió las ocho.
+
+**Cambios:**
+1. **Interruptores:** cada filtro y cada salida tiene el suyo.
+   - Encendido, resalta y muestra sus valores; apagado, es una línea gris sin números.
+   - Al volver a encenderlo recuerda su modo: el OI vuelve con la confluencia, si la tenía.
+2. **Sección "Filtros"** con todo junto y la cuenta de los activos, en cuatro grupos:
+   - Tendencia: VWAP, EMA y régimen;
+   - Flujo: CVD, OI, multitud y OI sostenido;
+   - Forma de la señal: extremo, momentum y confirmación;
+   - Horario y medidas del Observador.
+
+   Antes estaban mezclados con los elementos.
+3. **Secciones plegables:** Elementos, Filtros, Entrada, Stop, Salida y Detección. Plegadas, dicen en una línea lo que tienen.
+4. **«Vas a correr»**, sobre el botón de correr:
+   - la regla en una línea: «Cambio de carácter → 2 de …, en 10 velas»;
+   - una ficha por filtro, entrada, stop y salida. La × quita esa pieza, y un clic lleva a su control, resaltado;
+   - punteado, el cierre a las 96 velas que pone el backend cuando no hay otra salida;
+   - se pliega en una línea con la cuenta de filtros y salidas.
+5. **Salida como carrera:** el trade sale por lo primero que ocurra entre lo encendido.
+   - Opciones: el stop inicial, el objetivo (con su arrastre colgando), el trailing del stop (con su arranque), el stop a la entrada, el cierre por tiempo, la señal contraria y la salida por el canal del Gaussian Channel, que estaba entre los elementos.
+   - Debajo, una escala en R.
+   - «Una posición a la vez» pasa a "Operación".
+6. **Aviso en Resumen y Trades** cuando el formulario ya no es la regla de la corrida a la vista:
+   - «Esta corrida usó: EMA 50 a favor (en el formulario: sin filtro)»;
+   - un enlace a cada control;
+   - el botón «Cargar la de la corrida».
+7. **Embudo de señales** en el Resumen: lo que quitó cada filtro o motivo. La corrida del usuario: 14 señales, el filtro de CVD u OI quitó 7 y quedaron 7 trades.
+8. **«Regla nueva»** y, al cargar una regla (guardada, del Historial, del tablero o de la búsqueda), un aviso con lo que trae: «Trae: EMA 50 a favor · OI sube más de 2% en 6 velas · … · trailing del stop a 3 ATR del mejor precio, desde la entrada».
+9. **Resumen de la regla:** en secuencia dice «2 de A, B, C». Con «A + B + C» se leía como "los tres".
+10. **Pruebas:** `ruleFacets.js` (las piezas de una regla en palabras) con `rulefacets.test.mjs` (8).
+
+**IMPORTANTE:**
+- Basta recargar la página de App 1: no cambió el backend, y ninguna regla cambia su identidad.
+- **Comparado con el registro del usuario:** de 887 reglas distintas, 848 cargadas en el formulario dicen lo mismo que su corrida. Las otras 39 son reglas viejas de un elemento con ventana 10, que el formulario ya no permite: el aviso lo muestra.
+- **Probado en pantalla** con una copia aislada y la corrida de 7 trades del usuario, a 1366×700 y 840×700, en Nítido y Oscuro:
+  - cargar desde el Historial;
+  - las ×, volver a encender y el clic que lleva al control;
+  - las secciones plegadas;
+  - el aviso y «Cargar la de la corrida»;
+  - el embudo y «Regla nueva»;
+  - el cierre a las 96 velas y la salida por el canal.
+- `liquidations.test.mjs` sigue fallando en una prueba desde el 13/11, sin relación con esto.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Panel de la regla más claro (20/11)"
+
+---
+
 ### App 1 - 20 Noviembre 2026: Objetivo Arrastrado (Trailing Take Profit) en el Backtesting Global
 
 **Pedido:** un trailing take profit como el de un bot: un objetivo fijo; antes de llegar a él se activa el trailing, que arrastra el objetivo hasta que el precio se devuelve, y el trade se cierra en el valor nuevo del objetivo.

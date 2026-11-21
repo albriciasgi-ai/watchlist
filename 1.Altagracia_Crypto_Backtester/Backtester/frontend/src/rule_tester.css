@@ -40,3 +40,63 @@
 .rt-menu { position: absolute; top: 30px; left: 0; z-index: 2000; background: var(--t-surface, #fff); border: 1px solid var(--t-line, #ccc); border-radius: 4px; padding: 8px; width: 230px; max-height: 70vh; overflow-y: auto; box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
 .rt-progress { height: 4px; background: var(--t-faint, #eee); border-radius: 2px; overflow: hidden; margin-top: 6px; }
 .rt-progress > div { height: 100%; background: var(--t-accent, #2962FF); transition: width 0.4s; }
+
+/* Pestaña Regla (20/11): secciones plegables, interruptores, «Vas a correr», escala de la salida, embudo de señales y avisos */
+.rt-sec { border: 1px solid var(--t-line, #ddd); border-radius: 4px; margin-bottom: 8px; background: var(--t-surface, #fff); }
+.rt-sec-head { display: flex; align-items: center; gap: 6px; width: 100%; padding: 6px 8px; border: none; background: transparent; color: inherit; cursor: pointer; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; border-radius: 4px; }
+.rt-sec-head:hover { background: var(--t-hover, #f5f5f5); }
+.rt-sec-caret { width: 10px; color: var(--t-muted, #666); }
+.rt-sec-title { flex: 1; color: var(--t-muted, #666); }
+.rt-sec.open .rt-sec-title { color: var(--t-text, #222); }
+.rt-sec-badge { font-size: 10.5px; font-weight: 600; text-transform: none; letter-spacing: 0; padding: 1px 7px; border-radius: 9px; border: 1px solid var(--t-line, #ccc); color: var(--t-muted, #666); white-space: nowrap; }
+.rt-sec-badge.hot { background: var(--t-accent, #2962FF); border-color: var(--t-accent, #2962FF); color: #fff; }
+.rt-sec-sum { padding: 0 8px 7px 24px; font-size: 11px; color: var(--t-muted, #666); line-height: 1.4; cursor: pointer; }
+.rt-sec-body { padding: 6px 8px 4px; border-top: 1px solid var(--t-faint, #f0f0f0); }
+.rt-sec-body select { max-width: 100%; min-width: 0; }
+.rt-sub { margin: 8px 0 3px; font-size: 10.5px; font-weight: 600; color: var(--t-muted, #666); text-transform: uppercase; letter-spacing: 0.04em; }
+.rt-opt { border-left: 3px solid transparent; border-radius: 3px; padding: 1px 6px; margin: 0 -6px 2px; }
+.rt-opt.on { background: var(--t-accent-soft, #e3ecff); border-left-color: var(--t-accent, #2962FF); padding-bottom: 3px; }
+.rt-opt.sub { margin: 3px 0 2px 0; }
+.rt-opt.sub.on { background: transparent; }
+.rt-opt.fixed { display: flex; align-items: center; gap: 8px; }
+.rt-opt-body { padding: 2px 0 0 34px; }
+.rt-opt-body > .rt-row:last-child { margin-bottom: 2px; }
+.rt-switch { display: inline-flex; align-items: center; gap: 8px; min-height: 22px; border: none; background: transparent; color: var(--t-muted, #777); cursor: pointer; padding: 1px 0; font-size: 12px; text-align: left; }
+.rt-switch.on { color: var(--t-text, #222); font-weight: 600; }
+.rt-switch.locked { cursor: default; opacity: 0.75; }
+.rt-switch:disabled { color: var(--t-text, #222); }
+.rt-switch:focus-visible { outline: 2px solid var(--t-accent, #2962FF); outline-offset: 2px; border-radius: 3px; }
+.rt-switch-track { position: relative; width: 26px; height: 14px; border-radius: 7px; background: var(--t-line, #ccc); flex-shrink: 0; transition: background 0.15s; }
+.rt-switch.on .rt-switch-track { background: var(--t-accent, #2962FF); }
+.rt-switch-knob { position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: #fff; transition: left 0.15s; }
+.rt-switch.on .rt-switch-knob { left: 14px; }
+@keyframes rt-flash { 0%, 55% { box-shadow: 0 0 0 2px var(--t-accent, #2962FF); } 100% { box-shadow: 0 0 0 2px transparent; } }
+.rt-flash { animation: rt-flash 1.6s ease-out; }
+.rt-scale { display: block; width: 100%; height: 48px; margin: 6px 0 2px; color: var(--t-muted, #666); }
+.rt-plan { margin-bottom: 8px; padding: 6px 8px; border: 1px solid var(--t-line, #ddd); border-radius: 4px; background: var(--t-page, #fff); max-height: 22vh; overflow-y: auto; }
+.rt-plan-head { display: flex; align-items: baseline; gap: 4px; width: 100%; border: none; background: transparent; padding: 0; margin: 0 0 3px; color: var(--t-muted, #666); cursor: pointer; text-align: left; font: inherit; font-size: 11px; }
+.rt-plan.closed .rt-plan-head { margin-bottom: 0; }
+.rt-plan-head b { color: var(--t-text, #222); text-transform: uppercase; letter-spacing: 0.04em; font-size: 10.5px; }
+.rt-plan-recipe { display: block; width: 100%; text-align: left; border: none; background: transparent; color: inherit; padding: 0; margin: 0 0 5px; font: inherit; font-weight: 600; line-height: 1.35; cursor: pointer; }
+.rt-plan-recipe:hover { text-decoration: underline; }
+.rt-plan-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.rt-pchip { display: inline-flex; align-items: center; max-width: 100%; border: 1px solid var(--t-accent, #2962FF); background: var(--t-accent-soft, #e3ecff); border-radius: 10px; font-size: 11px; }
+.rt-pchip.base { border-color: var(--t-line, #ccc); background: transparent; }
+.rt-pchip.implicit { border-style: dashed; border-color: #d9822b; background: transparent; }
+.rt-pchip button { border: none; background: transparent; color: inherit; cursor: pointer; font-size: 11px; line-height: 1.3; }
+.rt-pchip-go { padding: 2px 7px; text-align: left; }
+.rt-pchip-x { padding: 2px 7px 2px 1px; color: var(--t-muted, #666); font-weight: 700; }
+.rt-pchip .rt-pchip-x:hover { color: #F23645; }
+.rt-funnel { margin: 2px 0 6px; }
+.rt-funnel-row { display: grid; grid-template-columns: minmax(0, 1fr) 80px 78px; align-items: center; gap: 6px; font-size: 11.5px; padding: 1px 0; }
+.rt-funnel-row.edge { font-weight: 600; }
+.rt-funnel-row:not(.edge) .rt-funnel-label { color: var(--t-muted, #666); padding-left: 8px; }
+.rt-funnel-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rt-funnel-bar { height: 8px; background: var(--t-faint, #eee); border-radius: 2px; overflow: hidden; }
+.rt-funnel-bar > span { display: block; height: 100%; background: var(--t-accent, #2962FF); }
+.rt-funnel-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rt-loaded { position: relative; margin-top: 4px; border: 1px solid var(--t-line, #ddd); border-left: 3px solid var(--t-accent, #2962FF); border-radius: 3px; padding: 6px 22px 6px 8px; line-height: 1.4; font-size: 11.5px; }
+.rt-x { position: absolute; top: 2px; right: 4px; border: none; background: transparent; color: var(--t-muted, #666); cursor: pointer; font-size: 14px; line-height: 1; padding: 2px; }
+.rt-diffs { margin: 4px 0 6px; padding-left: 16px; }
+.rt-diffs li { margin-bottom: 2px; }
+.rt-link { border: none; background: transparent; padding: 0; color: var(--t-accent, #2962FF); cursor: pointer; font: inherit; text-decoration: underline; }

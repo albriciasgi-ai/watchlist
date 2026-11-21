@@ -20,6 +20,9 @@ import {
   contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText
 } from './ruleTester.js';
 import { elementLabel, elementLabels } from './elementLabels.js';
+import {
+  FACETS, OFF_PATCH, SECTIONS, exitScale, facetPhrase, loadedSummary, ruleDifferences, ruleFacets, sectionCounts, sectionSummary, signalFunnel
+} from './ruleFacets.js';
 import '../../backtesting_styles.css';
 import '../../rule_tester.css';
 
@@ -81,6 +84,84 @@ const Num = ({ value, onChange, min, max, step = 1, disabled }) => (
 const Check = ({ checked, onChange, children, title }) => (
   <label title={title}><input type="checkbox" checked={!!checked} onChange={(e) => onChange(e.target.checked)} />{children}</label>
 );
+
+/** Interruptor de una opción de la regla: encendido toma el color de acento; apagado queda gris */
+const Switch = ({ on, onChange, children, title, locked }) => (
+  <button type="button" role="switch" aria-checked={!!on} className={`rt-switch${on ? ' on' : ''}${locked ? ' locked' : ''}`}
+    onClick={locked ? undefined : () => onChange(!on)} title={title} disabled={locked}>
+    <span className="rt-switch-track"><span className="rt-switch-knob" /></span>
+    <span>{children}</span>
+  </button>
+);
+
+/**
+ * Una opción de la regla con su interruptor (pedido del usuario, 20/11: había opciones encendidas que no se notaban).
+ * Encendida resalta y muestra sus valores debajo; apagada es una sola línea gris, sin números. `id` es su ancla para
+ * «Vas a correr» (rt-opt-<id>); `sub` la cuelga de la opción de arriba
+ */
+const Opt = ({ id, label, on, onToggle, title, sub, children }) => (
+  <div id={id ? `rt-opt-${id}` : undefined} className={`rt-opt${on ? ' on' : ''}${sub ? ' sub' : ''}`}>
+    <Switch on={on} onChange={onToggle} title={title}>{label}</Switch>
+    {on && children && <div className="rt-opt-body">{children}</div>}
+  </div>
+);
+
+/** Sección plegable de la regla: su encabezado dice cuántas piezas activas tiene y, plegada, cuáles son */
+const Section = ({ id, title, badge, hot, summary, open, onToggle, children }) => (
+  <div id={`rt-sec-${id}`} className={`rt-sec${open ? ' open' : ''}`}>
+    <button type="button" className="rt-sec-head" aria-expanded={!!open} onClick={() => onToggle(id)} title={open ? 'Plegar la sección' : 'Abrir la sección'}>
+      <span className="rt-sec-caret">{open ? '▾' : '▸'}</span>
+      <span className="rt-sec-title">{title}</span>
+      {badge && <span className={`rt-sec-badge${hot ? ' hot' : ''}`}>{badge}</span>}
+    </button>
+    {!open && summary && <div className="rt-sec-sum" onClick={() => onToggle(id)}>{summary}</div>}
+    {open && <div className="rt-sec-body">{children}</div>}
+  </div>
+);
+
+// La salida en R desde la entrada: el stop en −1 y cada salida en su lugar (stop a la entrada, arranques y objetivo)
+const SCALE_COLOR = { stop: '#F23645', entry: '#787B86', even: '#787B86', trail: '#F57C00', drag: '#089981', target: '#089981' };
+const ExitScale = ({ marks }) => {
+  if (!marks || marks.length <= 2) return null; // Solo el stop y la entrada: nada que ubicar
+  const width = 380;
+  const low = -1;
+  const high = Math.max(2, ...marks.map(m => m.r));
+  const x = (r) => 14 + ((r - low) / (high - low)) * (width - 28);
+  const rText = (r) => `${r < 0 ? '−' : ''}${Math.abs(r)}R`;
+  return (
+    <svg className="rt-scale" viewBox={`0 0 ${width} 48`} role="img" aria-label="La salida en R desde la entrada">
+      <line x1={x(low)} x2={x(high)} y1="24" y2="24" stroke="currentColor" strokeOpacity="0.25" />
+      {marks.map((m, i) => (
+        <g key={m.kind}>
+          <line x1={x(m.r)} x2={x(m.r)} y1="17" y2="31" stroke={SCALE_COLOR[m.kind]} strokeWidth="2" />
+          <text x={x(m.r)} y={i % 2 ? 44 : 11} fontSize="10" fill={SCALE_COLOR[m.kind]}
+            textAnchor={i === 0 ? 'start' : i === marks.length - 1 ? 'end' : 'middle'}>{m.kind === 'entry' ? m.label : `${m.label} ${rText(m.r)}`}</text>
+        </g>
+      ))}
+    </svg>
+  );
+};
+
+/** El embudo de las señales de una corrida: cuántas dio la regla, cuántas quitó cada motivo y cuántos trades quedaron */
+const Funnel = ({ steps }) => {
+  if (!steps?.length) return null;
+  const top = Math.max(1, steps[0].count);
+  const num = (value) => Number(value || 0).toLocaleString('es-CO');
+  return (
+    <div className="rt-funnel">
+      {steps.map((step, i) => {
+        const edge = i === 0 || step.last;
+        return (
+          <div key={`${step.label}-${i}`} className={`rt-funnel-row${edge ? ' edge' : ''}`}>
+            <span className="rt-funnel-label">{edge ? step.label : `− ${step.label}`}</span>
+            <span className="rt-funnel-bar"><span style={{ width: `${(100 * step.left) / top}%` }} /></span>
+            <span className="rt-funnel-num">{edge ? num(step.count) : `−${num(step.count)} → ${num(step.left)}`}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 /** Curva de R acumulado, en orden de salida */
 const Equity = ({ points }) => {
@@ -245,6 +326,25 @@ const RuleTesterApp = () => {
   const phaseInfo = info?.phases?.find(p => p.phase === phase) || null;
   const names = useMemo(() => Object.fromEntries((info?.elements || []).map(e => [e.code, e.name])), [info]);
   const patch = (change) => setRule(previous => ({ ...previous, ...change }));
+  // La regla del formulario en palabras, por sección (pedido del usuario, 20/11): el resumen de cada sección plegada,
+  // «Vas a correr» sobre el botón de correr y lo que cambió contra la corrida a la vista
+  const measureLabels = useMemo(() => Object.fromEntries((info?.measures || []).map(m => [m.key, m.label])), [info]);
+  const backendRule = useMemo(() => {
+    try {
+      return toBackendRule(rule);
+    } catch {
+      return null; // Un campo a medio escribir: el resumen espera al siguiente cambio
+    }
+  }, [rule]);
+  const planFacets = useMemo(() => ruleFacets(backendRule, { measures: measureLabels }), [backendRule, measureLabels]);
+  const counts = useMemo(() => sectionCounts(planFacets), [planFacets]);
+  const summaries = useMemo(() => Object.fromEntries(SECTIONS.map(([id]) => [id, sectionSummary(planFacets, id)])), [planFacets]);
+  const runDiffs = useMemo(() => (result?.rule && backendRule ? ruleDifferences(backendRule, result.rule, { measures: measureLabels }) : []),
+    [backendRule, result, measureLabels]);
+  const [openSections, setOpenSections] = useState(() => ({ elementos: true, filtros: true, entrada: true, stop: true, salida: true, deteccion: false, ...(view.sections || {}) }));
+  const toggleSection = (id) => setOpenSections(previous => ({ ...previous, [id]: !previous[id] }));
+  const [loaded, setLoaded] = useState(null); // Lo que trajo la última regla cargada, para revisarlo antes de correrla
+  const [planOpen, setPlanOpen] = useState(() => view.planOpen !== false); // «Vas a correr» abierto o en una línea
   // Sin almacén de trades, o con la regla en 1 día, corre sobre velas: solo valen los elementos de candleCodes
   const candleOnly = !!info && (!!info.storeless || rule.tf === DAILY_TF);
 
@@ -257,11 +357,11 @@ const RuleTesterApp = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext }));
+      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, sections: openSections, planOpen }));
     } catch {
       // Sin almacenamiento la vista dura hasta cerrar la ventana
     }
-  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext]);
+  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, openSections, planOpen]);
 
   // Monedas nuevas y acciones no tienen caché de App 1: sus velas salen del probador (del disco). Pedirlas a
   // /api/backtesting/bulk-data las bajaría de Bybit y las guardaría en ese caché, que está en git y decide cuáles
@@ -738,6 +838,92 @@ const RuleTesterApp = () => {
   const toggleFirst = (code) => patch({ first: (rule.first || []).includes(code) ? rule.first.filter(c => c !== code) : [...(rule.first || []), code] });
   const parts = sequenceParts(rule);
   const liqFrom = info?.liqFrom ? new Date(info.liqFrom).toISOString().slice(0, 10).split('-').reverse().join('/') : null;
+  // Un interruptor con modo (VWAP, EMA, OI, multitud, régimen, canal) vuelve con el modo que tenía al apagarlo
+  const lastModes = useRef({});
+  const toggleMode = (field, off, fallback) => (on) => {
+    if (on) {
+      patch({ [field]: lastModes.current[field] || fallback });
+      return;
+    }
+    if (rule[field] !== off) lastModes.current[field] = rule[field];
+    patch({ [field]: off });
+  };
+  const trailingMode = rule.trail ? 'swing' : rule.trailMode;
+  const toggleTrailing = (on) => {
+    if (on) {
+      const mode = lastModes.current.trailing || 'atr';
+      patch({ trail: mode === 'swing', trailMode: mode === 'swing' ? 'off' : mode });
+      return;
+    }
+    if (trailingMode !== 'off') lastModes.current.trailing = trailingMode;
+    patch({ trail: false, trailMode: 'off' });
+  };
+  const toggleMeasures = (on) => {
+    if (on) {
+      patch({ filters: lastModes.current.filters?.length ? lastModes.current.filters : [{ key: '', op: '>=', value: 0 }] });
+      return;
+    }
+    lastModes.current.filters = rule.filters;
+    patch({ filters: [] });
+  };
+  // La × de una ficha de «Vas a correr»: apaga esa pieza como su interruptor, que la recuerda al volver a encenderla
+  const turnOff = (key) => {
+    if (key === 'trailing') {
+      toggleTrailing(false);
+    } else if (key === 'medidas') {
+      toggleMeasures(false);
+    } else if (OFF_PATCH[key]) {
+      Object.entries(OFF_PATCH[key]).forEach(([field, off]) => { if (typeof off === 'string' && rule[field] !== off) lastModes.current[field] = rule[field]; });
+      patch(OFF_PATCH[key]);
+    }
+  };
+  // Lleva el panel al control de una pieza y lo resalta un momento; abre su sección si estaba plegada
+  const goTo = (key) => {
+    const section = FACETS[key]?.[0] || key;
+    setTab('regla');
+    setOpenSections(previous => (previous[section] ? previous : { ...previous, [section]: true }));
+    setTimeout(() => {
+      const target = document.getElementById(`rt-opt-${key}`) || document.getElementById(`rt-sec-${section}`);
+      if (!target) return;
+      target.scrollIntoView({ block: 'center' }); // Sin animación: el resaltado ya dice dónde quedó
+      target.classList.remove('rt-flash');
+      void target.offsetWidth; // Vuelve a empezar la animación si ya estaba
+      target.classList.add('rt-flash');
+      setTimeout(() => target.classList.remove('rt-flash'), 1700);
+    }, 80);
+  };
+  // Al cargar una regla, sus filtros, entrada, stop y salidas en palabras: lo que no se ve en las fichas de los elementos
+  const showLoaded = (formRule) => {
+    let items = [];
+    try {
+      items = loadedSummary(toBackendRule(formRule), { measures: measureLabels });
+    } catch {
+      // Sin resumen: la regla se carga igual
+    }
+    setLoaded({ name: formRule.name, items });
+  };
+  const loadFormRule = (item) => {
+    const next = { ...defaultRule(), ...item };
+    setRule(next);
+    showLoaded(next);
+  };
+  const loadBackendRule = (saved) => {
+    const next = fromBackendRule(saved);
+    setRule(next);
+    showLoaded(next);
+  };
+  const newRule = () => {
+    if (!window.confirm('¿Empezar una regla nueva? El formulario vuelve a lo de fábrica, sin elementos ni filtros, con el mismo marco. Lo que no hayas guardado se pierde.')) return;
+    setRule({ ...defaultRule(), name: 'Regla nueva', codes: [], first: [], tf: rule.tf });
+    setLoaded(null);
+  };
+  // Lo que va en «Vas a correr»: los elementos en una línea y, en fichas, filtros, entrada, stop y salidas
+  const detectionDefault = defaultRule();
+  const planRecipe = planFacets.filter(f => ['elementos', 'lado'].includes(f.key)).map(f => f.text).join(' · ');
+  // «Una a la vez» y la detección solo salen cuando no son lo de fábrica
+  const planChips = planFacets.filter(f => (f.key === 'deteccion'
+    ? Number(rule.volFilter) !== detectionDefault.volFilter || Number(rule.target) !== detectionDefault.target
+    : ['filtros', 'entrada', 'stop', 'salida'].includes(f.section) && !(f.key === 'unaAlaVez' && rule.oneAtATime)));
   const setFilter = (index, change) => patch({ filters: rule.filters.map((f, i) => (i === index ? { ...f, ...change } : f)) });
   const measureGroups = useMemo(() => {
     const groups = {};
@@ -757,27 +943,33 @@ const RuleTesterApp = () => {
         <div className="rt-row">
           <input type="text" value={rule.name} onChange={(e) => patch({ name: e.target.value })} style={{ flex: 1 }} placeholder="Nombre de la regla" />
           <button type="button" className="rt-btn" onClick={() => setSaved(saveRule(rule))} title="Guardar esta regla con su nombre">Guardar</button>
+          <button type="button" className="rt-btn" onClick={newRule} title="Empezar de cero: sin elementos ni filtros, con la entrada, el stop y la salida de fábrica y el mismo marco">Regla nueva</button>
         </div>
         {saved.length > 0 && (
           <div className="rt-row">
-            <select value="" onChange={(e) => { const item = saved.find(s => s.name === e.target.value); if (item) setRule({ ...defaultRule(), ...item }); }} style={{ flex: 1 }}>
+            <select value="" onChange={(e) => { const item = saved.find(s => s.name === e.target.value); if (item) loadFormRule(item); }} style={{ flex: 1 }}>
               <option value="">Cargar una regla guardada…</option>
               {saved.map(item => <option key={item.name} value={item.name}>{item.name}</option>)}
             </select>
             {saved.some(s => s.name === rule.name) && <button type="button" className="rt-btn" onClick={() => setSaved(deleteRule(rule.name))}>Borrar</button>}
           </div>
         )}
+        {loaded && (
+          <div className="rt-loaded">
+            <button type="button" className="rt-x" onClick={() => setLoaded(null)} title="Cerrar el aviso" aria-label="Cerrar el aviso">×</button>
+            Cargaste «{loaded.name}». {loaded.items.length ? <>Trae: {loaded.items.join(' · ')}.</> : 'No trae filtros ni salidas extra.'} Revísalo en las secciones o en «Vas a correr» antes de correrla.
+          </div>
+        )}
       </div>
 
-      <div className="rt-group">
+      <div className="rt-group" id="rt-opt-tf">
         <h4>Marco de la regla</h4>
         <div className="rt-row">
           {RULE_TIMEFRAMES.map(tf => <button key={tf} type="button" className={`rt-btn${rule.tf === tf ? ' on' : ''}`} onClick={() => patch({ tf })}>{TF_LABEL[tf]}</button>)}
         </div>
       </div>
 
-      <div className="rt-group">
-        <h4>Elementos que disparan ({rule.codes.length} de {MAX_ELEMENTS})</h4>
+      <Section id="elementos" title={`Elementos que disparan (${rule.codes.length} de ${MAX_ELEMENTS})`} summary={summaries.elementos} open={openSections.elementos} onToggle={toggleSection}>
         <div className="rt-chips">
           {(info?.elements || []).map(e => (
             <button key={e.code} type="button" className={`rt-chip${rule.codes.includes(e.code) ? ' on' : ''}`} onClick={() => toggleCode(e.code)}
@@ -852,7 +1044,7 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
-        <div className="rt-row" style={{ marginTop: 6 }}>
+        <div className="rt-row" id="rt-opt-lado" style={{ marginTop: 6 }}>
           <span>Lado</span>
           <select value={rule.side} onChange={(e) => patch({ side: e.target.value })}>
             <option value="both">Alcistas y bajistas</option>
@@ -915,16 +1107,11 @@ const RuleTesterApp = () => {
             </div>
             <div className="rt-row">
               <Check checked={rule.gcTrend} onChange={(gcTrend) => patch({ gcTrend })} title="Largos solo con la línea central subiendo, y cortos solo con ella bajando">Solo con el canal a favor</Check>
-              <span>· sale por el canal</span>
-              <select value={rule.gcExit} onChange={(e) => patch({ gcExit: e.target.value })}>
-                <option value="band">al cerrar de vuelta dentro de la banda</option>
-                <option value="mid">al cerrar al otro lado de la línea central</option>
-                <option value="none">no: solo las salidas de abajo</option>
-              </select>
+              <span className="rt-note">· su salida por el canal está en «Salida»</span>
             </div>
             <div className="rt-note">
               Entra cuando una vela cierra fuera de la banda (arriba, largo; abajo, corto). La estrategia conocida es solo de largos: pon "Lado: solo alcistas".
-              No trae stop: para medir en R usa "Borde lejano de la zona" (queda en la línea central) y sube su "Máximo", o un stop en ATR. Sin "Objetivo" ni "Cerrar a las", sale solo por el canal o por el stop.
+              No trae stop: para medir en R usa "Borde lejano de la zona" (queda en la línea central) y sube su "Máximo", o un stop en ATR. Sin "Objetivo" ni "Cierre por tiempo", sale solo por el canal o por el stop.
             </div>
           </>
         )}
@@ -1030,76 +1217,6 @@ const RuleTesterApp = () => {
             <div className="rt-note">Son las marcas del indicador Volumen de Respuesta, con su regla de fábrica. La flecha se opera hacia el color de su vela. En el estudio del 18/11 se usó stop de 2 ATR y objetivo 2R en 4 horas.</div>
           </>
         )}
-        {[['vwap', 'VWAP móvil de', rule.vwapMode, rule.vwapPeriod, rule.vwapSlope], ['ema', 'EMA de', rule.emaMode, rule.emaPeriod, rule.emaSlope]].map(([kind, label, mode, period, slope]) => (
-          <div className="rt-row" key={kind}>
-            <span title="Filtro sobre la vela que da a conocer la señal, a favor del trade. Vale para cualquier regla">{label}</span>
-            <Num value={period} min={2} max={1000} onChange={(value) => patch({ [`${kind}Period`]: value })} /><span>velas:</span>
-            <select value={mode} onChange={(e) => patch({ [`${kind}Mode`]: e.target.value })}>
-              <option value="off">sin filtro</option>
-              <option value="side">el precio cierra a favor</option>
-              <option value="touch">la mecha la toca y cierra a favor</option>
-            </select>
-            <Check checked={slope} onChange={(value) => patch({ [`${kind}Slope`]: value })} title="La línea sube para un largo o baja para un corto, en las últimas 5 velas">pendiente a favor</Check>
-          </div>
-        ))}
-        {rule.vwapMode !== 'off' && (
-          <div className="rt-row">
-            <Check checked={rule.vwapMaxDevOn} onChange={(vwapMaxDevOn) => patch({ vwapMaxDevOn })} title="No opera si la vela de la señal abrió más allá de esa banda del VWAP, del lado del trade: sobre la banda de arriba en un largo, bajo la de abajo en un corto. La desviación es la de las bandas del indicador VWAP móvil, con las mismas velas">La vela abre a no más de</Check>
-            <Num value={rule.vwapMaxDev} min={0.1} max={10} step={0.1} disabled={!rule.vwapMaxDevOn} onChange={(vwapMaxDev) => patch({ vwapMaxDev })} /><span>desviaciones del VWAP</span>
-          </div>
-        )}
-        <div className="rt-row">
-          <Check checked={rule.useHours} onChange={(useHours) => patch({ useHours })} title="Solo se operan las señales que se conocen entre esas horas, en UTC. La hora es la del cierre de la vela de la señal, que es cuando se entra">Solo señales entre las</Check>
-          <input type="text" value={rule.hoursFrom} disabled={!rule.useHours} onChange={(e) => patch({ hoursFrom: e.target.value })} style={{ width: 56 }} placeholder="17:30" />
-          <span>y las</span>
-          <input type="text" value={rule.hoursTo} disabled={!rule.useHours} onChange={(e) => patch({ hoursTo: e.target.value })} style={{ width: 56 }} placeholder="21:30" />
-          <span>UTC</span>
-          <Check checked={rule.hoursWeekdays} onChange={(hoursWeekdays) => patch({ hoursWeekdays })}>lunes a viernes</Check>
-        </div>
-        <div className="rt-row">
-          <Check checked={rule.cvdOn} onChange={(cvdOn) => patch({ cvdOn })} title="La delta de las últimas velas, con la de la señal, sobre su volumen va a favor del trade. Con almacén de trades es la delta real; sin él, o en 1D, se estima por dónde cerró cada vela. Los controles al azar entran solo donde el filtro deja entrar">CVD de</Check>
-          <Num value={rule.cvdBars} min={2} max={500} disabled={!rule.cvdOn} onChange={(cvdBars) => patch({ cvdBars })} /><span>velas a favor</span>
-          <span title="Open Interest conocido al cierre de la vela de la señal. BTC tiene OI de 5 minutos; las demás monedas, de 4 horas: en ellas el filtro solo vale en 4h y 1D. Una vela sin OI no pasa">· OI</span>
-          <select value={rule.oiMode} onChange={(e) => patch({ oiMode: e.target.value })}>
-            <option value="off">sin filtro</option>
-            <option value="rise">sube</option>
-            <option value="fall">baja</option>
-            <option value="conf">confluencia OI-volumen a favor</option>
-            <option value="noconf">sin confluencia OI-volumen en contra</option>
-          </select>
-          {['rise', 'fall'].includes(rule.oiMode) && <><span>más de</span><Num value={rule.oiPct} min={0} max={50} step={0.5} onChange={(oiPct) => patch({ oiPct })} /><span>% en</span>
-            <Num value={rule.oiBars} min={1} max={100} onChange={(oiBars) => patch({ oiBars })} /><span>velas</span></>}
-        </div>
-        <div className="rt-row">
-          <span title="Funding de los 3 días anteriores de la moneda. Contra la multitud: vender cuando los cargados son los largos (funding sobre 0.01% por 8 h) o comprar cuando son los cortos (funding negativo). Medido en 8 reglas y 50 monedas: ir con la multitud suele ser lo peor (unos 0.10 R por trade menos que ir contra ella)">Multitud (funding)</span>
-          <select value={rule.crowdMode} onChange={(e) => patch({ crowdMode: e.target.value })}>
-            <option value="off">sin filtro</option>
-            <option value="nocon">no ir con la multitud</option>
-            <option value="contra">solo contra la multitud</option>
-          </select>
-          <Check checked={rule.steadyOn} onChange={(steadyOn) => patch({ steadyOn })} title="El interés abierto viene subiendo de forma pareja: en los últimos días, la parte de los pasos de 4 horas en que subió el OI llega a ese mínimo. Medido en 8 reglas: +0.05 R por trade en la mediana, también en la fase 3">OI sostenido: sube en</Check>
-          <Num value={Math.round(rule.steadyMin * 100)} min={30} max={90} disabled={!rule.steadyOn} onChange={(v) => patch({ steadyMin: (Number(v) || 52) / 100 })} /><span>% o más de los pasos en</span>
-          <Num value={rule.steadyDays} min={3} max={60} disabled={!rule.steadyOn} onChange={(steadyDays) => patch({ steadyDays })} /><span>días</span>
-        </div>
-        <div className="rt-row">
-          <span title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">Régimen</span>
-          <select value={rule.regimeMode} onChange={(e) => patch({ regimeMode: e.target.value })}>
-            <option value="any">cualquiera</option>
-            <option value="inside">solo dentro de un rango</option>
-            <option value="outside">solo fuera de los rangos</option>
-            <option value="breakout">solo tras romper un rango</option>
-          </select>
-          {rule.regimeMode === 'breakout' && <><Num value={rule.regimeAfter} min={1} max={200} onChange={(regimeAfter) => patch({ regimeAfter })} /><span>velas</span></>}
-        </div>
-        {rule.regimeMode !== 'any' && (
-          <div className="rt-row">
-            <Check checked={rule.regimeMajor} onChange={(regimeMajor) => patch({ regimeMajor })} title="Sin marcar, valen las cajas chicas del detector">con el rango mayor</Check>
-            {rule.regimeMajor && <><span>que termina tras</span><Num value={rule.regimeMajorOut} min={1} max={50} onChange={(regimeMajorOut) => patch({ regimeMajorOut })} /><span>cierres fuera</span></>}
-            {rule.tf < DAILY_TF && <Check checked={rule.regimeDaily} onChange={(regimeDaily) => patch({ regimeDaily })} title="El régimen se mide en velas diarias (las de la regla unidas por día UTC) y cada vela de la regla usa el del último día cerrado. Medido en 4h, separa peor que en el marco de la regla">medido en 1D</Check>}
-          </div>
-        )}
-        {rule.useHours && (minuteOfDay(rule.hoursFrom) === null || minuteOfDay(rule.hoursTo) === null) && <div className="rt-note">Escribe las horas como 17:30. Mientras no sean válidas, el horario no se aplica.</div>}
-        {rule.useHours && <div className="rt-note">Sesión de Nueva York: de 13:30 a 20:00 UTC en verano y de 14:30 a 21:00 en invierno. Con velas de 4 horas contadas desde las 13:30, las que cierran dentro de la sesión se conocen a las 17:30 y a las 21:30.</div>}
         {usesProfile(rule) && (
           <>
             <div className="rt-row">
@@ -1146,20 +1263,124 @@ const RuleTesterApp = () => {
             <Num value={rule.vaGap} min={0} max={5} step={0.05} onChange={(vaGap) => patch({ vaGap })} /><span>ATR</span>
           </div>
         )}
-        <div className="rt-row">
-          <Check checked={rule.swing} onChange={(swing) => patch({ swing })} title="La señal debe darse en un mínimo (alcista) o máximo (bajista) de N velas">En un extremo de</Check>
-          <Num value={rule.swingBars} min={2} max={20} disabled={!rule.swing} onChange={(swingBars) => patch({ swingBars })} /><span>velas</span>
-          <Check checked={rule.momentum} onChange={(momentum) => patch({ momentum })} title="EMA 14 con pendiente a favor y el precio de su lado">Momentum</Check>
-        </div>
-        <div className="rt-row">
-          <Check checked={rule.confirm} onChange={(confirm) => patch({ confirm })} title="La señal vale cuando el precio avanza a favor">Confirmar con</Check>
-          <Num value={rule.confirmAtr} min={0.05} max={3} step={0.05} disabled={!rule.confirm} onChange={(confirmAtr) => patch({ confirmAtr })} /><span>ATR a favor en</span>
-          <Num value={rule.confirmBars} min={1} max={5} disabled={!rule.confirm} onChange={(confirmBars) => patch({ confirmBars })} /><span>velas</span>
-        </div>
-      </div>
+      </Section>
 
-      <div className="rt-group">
-        <h4>Entrada</h4>
+      <Section id="filtros" title="Filtros" badge={counts.filtros ? `${counts.filtros} ${counts.filtros === 1 ? 'activo' : 'activos'}` : 'ninguno'} hot={counts.filtros > 0}
+        summary={summaries.filtros} open={openSections.filtros} onToggle={toggleSection}>
+        <div className="rt-note" style={{ marginBottom: 4 }}>Todos se miran al cierre de la vela de la señal, a favor del trade. Lo encendido resalta y entra a la regla; lo apagado no cuenta.</div>
+        <div className="rt-sub">Tendencia</div>
+        <Opt id="vwap" label="VWAP móvil" on={rule.vwapMode !== 'off'} onToggle={toggleMode('vwapMode', 'off', 'side')} title="Filtro sobre la vela que da a conocer la señal, a favor del trade. Vale para cualquier regla">
+          <div className="rt-row">
+            <span>de</span><Num value={rule.vwapPeriod} min={2} max={1000} onChange={(vwapPeriod) => patch({ vwapPeriod })} /><span>velas:</span>
+            <select value={rule.vwapMode} onChange={(e) => patch({ vwapMode: e.target.value })}>
+              <option value="side">el precio cierra a favor</option>
+              <option value="touch">la mecha la toca y cierra a favor</option>
+            </select>
+          </div>
+          <div className="rt-row">
+            <Check checked={rule.vwapSlope} onChange={(vwapSlope) => patch({ vwapSlope })} title="La línea sube para un largo o baja para un corto, en las últimas 5 velas">pendiente a favor</Check>
+            <Check checked={rule.vwapMaxDevOn} onChange={(vwapMaxDevOn) => patch({ vwapMaxDevOn })} title="No opera si la vela de la señal abrió más allá de esa banda del VWAP, del lado del trade: sobre la banda de arriba en un largo, bajo la de abajo en un corto. La desviación es la de las bandas del indicador VWAP móvil, con las mismas velas">la vela abre a no más de</Check>
+            {rule.vwapMaxDevOn && <><Num value={rule.vwapMaxDev} min={0.1} max={10} step={0.1} onChange={(vwapMaxDev) => patch({ vwapMaxDev })} /><span>desviaciones</span></>}
+          </div>
+        </Opt>
+        <Opt id="ema" label="EMA" on={rule.emaMode !== 'off'} onToggle={toggleMode('emaMode', 'off', 'side')} title="Filtro sobre la vela que da a conocer la señal, a favor del trade. Vale para cualquier regla">
+          <div className="rt-row">
+            <span>de</span><Num value={rule.emaPeriod} min={2} max={1000} onChange={(emaPeriod) => patch({ emaPeriod })} /><span>velas:</span>
+            <select value={rule.emaMode} onChange={(e) => patch({ emaMode: e.target.value })}>
+              <option value="side">el precio cierra a favor</option>
+              <option value="touch">la mecha la toca y cierra a favor</option>
+            </select>
+            <Check checked={rule.emaSlope} onChange={(emaSlope) => patch({ emaSlope })} title="La línea sube para un largo o baja para un corto, en las últimas 5 velas">pendiente a favor</Check>
+          </div>
+        </Opt>
+        <Opt id="regimen" label="Régimen: rango o fuera de él" on={rule.regimeMode !== 'any'} onToggle={toggleMode('regimeMode', 'any', 'outside')} title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">
+          <div className="rt-row">
+            <select value={rule.regimeMode} onChange={(e) => patch({ regimeMode: e.target.value })}>
+              <option value="inside">solo dentro de un rango</option>
+              <option value="outside">solo fuera de los rangos</option>
+              <option value="breakout">solo tras romper un rango</option>
+            </select>
+            {rule.regimeMode === 'breakout' && <><Num value={rule.regimeAfter} min={1} max={200} onChange={(regimeAfter) => patch({ regimeAfter })} /><span>velas</span></>}
+          </div>
+          <div className="rt-row">
+            <Check checked={rule.regimeMajor} onChange={(regimeMajor) => patch({ regimeMajor })} title="Sin marcar, valen las cajas chicas del detector">con el rango mayor</Check>
+            {rule.regimeMajor && <><span>que termina tras</span><Num value={rule.regimeMajorOut} min={1} max={50} onChange={(regimeMajorOut) => patch({ regimeMajorOut })} /><span>cierres fuera</span></>}
+            {rule.tf < DAILY_TF && <Check checked={rule.regimeDaily} onChange={(regimeDaily) => patch({ regimeDaily })} title="El régimen se mide en velas diarias (las de la regla unidas por día UTC) y cada vela de la regla usa el del último día cerrado. Medido en 4h, separa peor que en el marco de la regla">medido en 1D</Check>}
+          </div>
+        </Opt>
+        <div className="rt-sub">Flujo</div>
+        <Opt id="cvd" label="CVD a favor" on={rule.cvdOn} onToggle={(cvdOn) => patch({ cvdOn })} title="La delta de las últimas velas, con la de la señal, sobre su volumen va a favor del trade. Con almacén de trades es la delta real; sin él, o en 1D, se estima por dónde cerró cada vela. Los controles al azar entran solo donde el filtro deja entrar">
+          <div className="rt-row"><span>de las últimas</span><Num value={rule.cvdBars} min={2} max={500} onChange={(cvdBars) => patch({ cvdBars })} /><span>velas</span></div>
+        </Opt>
+        <Opt id="oi" label="Interés abierto (OI)" on={rule.oiMode !== 'off'} onToggle={toggleMode('oiMode', 'off', 'rise')} title="Open Interest conocido al cierre de la vela de la señal. BTC tiene OI de 5 minutos; las demás monedas, de 4 horas: en ellas el filtro solo vale en 4h y 1D. Una vela sin OI no pasa">
+          <div className="rt-row">
+            <select value={rule.oiMode} onChange={(e) => patch({ oiMode: e.target.value })}>
+              <option value="rise">sube</option>
+              <option value="fall">baja</option>
+              <option value="conf">confluencia OI-volumen a favor</option>
+              <option value="noconf">sin confluencia OI-volumen en contra</option>
+            </select>
+            {['rise', 'fall'].includes(rule.oiMode) && <><span>más de</span><Num value={rule.oiPct} min={0} max={50} step={0.5} onChange={(oiPct) => patch({ oiPct })} /><span>% en</span>
+              <Num value={rule.oiBars} min={1} max={100} onChange={(oiBars) => patch({ oiBars })} /><span>velas</span></>}
+          </div>
+        </Opt>
+        <Opt id="multitud" label="Multitud (funding)" on={rule.crowdMode !== 'off'} onToggle={toggleMode('crowdMode', 'off', 'nocon')} title="Funding de los 3 días anteriores de la moneda. Contra la multitud: vender cuando los cargados son los largos (funding sobre 0.01% por 8 h) o comprar cuando son los cortos (funding negativo). Medido en 8 reglas y 50 monedas: ir con la multitud suele ser lo peor (unos 0.10 R por trade menos que ir contra ella)">
+          <div className="rt-row">
+            <select value={rule.crowdMode} onChange={(e) => patch({ crowdMode: e.target.value })}>
+              <option value="nocon">no ir con la multitud</option>
+              <option value="contra">solo contra la multitud</option>
+            </select>
+          </div>
+        </Opt>
+        <Opt id="oiSostenido" label="OI sostenido" on={rule.steadyOn} onToggle={(steadyOn) => patch({ steadyOn })} title="El interés abierto viene subiendo de forma pareja: en los últimos días, la parte de los pasos de 4 horas en que subió el OI llega a ese mínimo. Medido en 8 reglas: +0.05 R por trade en la mediana, también en la fase 3">
+          <div className="rt-row">
+            <span>sube en</span><Num value={Math.round(rule.steadyMin * 100)} min={30} max={90} onChange={(v) => patch({ steadyMin: (Number(v) || 52) / 100 })} /><span>% o más de los pasos de</span>
+            <Num value={rule.steadyDays} min={3} max={60} onChange={(steadyDays) => patch({ steadyDays })} /><span>días</span>
+          </div>
+        </Opt>
+        <div className="rt-sub">Forma de la señal</div>
+        <Opt id="extremo" label="En un extremo (mínimo o máximo)" on={rule.swing} onToggle={(swing) => patch({ swing })} title="La señal debe darse en un mínimo (alcista) o máximo (bajista) de N velas">
+          <div className="rt-row"><span>de</span><Num value={rule.swingBars} min={2} max={20} onChange={(swingBars) => patch({ swingBars })} /><span>velas</span></div>
+        </Opt>
+        <Opt id="momentum" label="Momentum: EMA 14 a favor" on={rule.momentum} onToggle={(momentum) => patch({ momentum })} title="EMA 14 con pendiente a favor y el precio de su lado" />
+        <Opt id="confirmacion" label="Confirmación a favor" on={rule.confirm} onToggle={(confirm) => patch({ confirm })} title="La señal vale cuando el precio avanza a favor">
+          <div className="rt-row">
+            <Num value={rule.confirmAtr} min={0.05} max={3} step={0.05} onChange={(confirmAtr) => patch({ confirmAtr })} /><span>ATR a favor en</span>
+            <Num value={rule.confirmBars} min={1} max={5} onChange={(confirmBars) => patch({ confirmBars })} /><span>velas</span>
+          </div>
+        </Opt>
+        <div className="rt-sub">Horario y medidas</div>
+        <Opt id="horario" label="Horario (UTC)" on={rule.useHours} onToggle={(useHours) => patch({ useHours })} title="Solo se operan las señales que se conocen entre esas horas, en UTC. La hora es la del cierre de la vela de la señal, que es cuando se entra">
+          <div className="rt-row">
+            <span>entre las</span>
+            <input type="text" value={rule.hoursFrom} onChange={(e) => patch({ hoursFrom: e.target.value })} style={{ width: 56 }} placeholder="17:30" />
+            <span>y las</span>
+            <input type="text" value={rule.hoursTo} onChange={(e) => patch({ hoursTo: e.target.value })} style={{ width: 56 }} placeholder="21:30" />
+            <Check checked={rule.hoursWeekdays} onChange={(hoursWeekdays) => patch({ hoursWeekdays })}>lunes a viernes</Check>
+          </div>
+          {(minuteOfDay(rule.hoursFrom) === null || minuteOfDay(rule.hoursTo) === null) && <div className="rt-note">Escribe las horas como 17:30. Mientras no sean válidas, el horario no se aplica.</div>}
+          <div className="rt-note">Sesión de Nueva York: de 13:30 a 20:00 UTC en verano y de 14:30 a 21:00 en invierno. Con velas de 4 horas contadas desde las 13:30, las que cierran dentro de la sesión se conocen a las 17:30 y a las 21:30.</div>
+        </Opt>
+        <Opt id="medidas" label="Medidas del Observador" on={rule.filters.length > 0} onToggle={toggleMeasures} title="Hasta 3 medidas del Observador, leídas a favor del trade al cierre de la vela de la señal">
+          {rule.filters.map((filter, index) => (
+            <div className="rt-row" key={index}>
+              <select value={filter.key} onChange={(e) => setFilter(index, { key: e.target.value })} style={{ maxWidth: 220 }}>
+                <option value="">Medida…</option>
+                {Object.entries(measureGroups).map(([group, items]) => (
+                  <optgroup key={group} label={group}>{items.map(m => <option key={m.key} value={m.key}>{m.label}</option>)}</optgroup>
+                ))}
+              </select>
+              <select value={filter.op} onChange={(e) => setFilter(index, { op: e.target.value })}><option value=">=">≥</option><option value="<=">≤</option></select>
+              <Num value={filter.value} step={0.1} onChange={(value) => setFilter(index, { value })} />
+              <button type="button" className="rt-btn" onClick={() => patch({ filters: rule.filters.filter((_, i) => i !== index) })}>×</button>
+            </div>
+          ))}
+          {rule.filters.length < MAX_FILTERS && <button type="button" className="rt-btn" onClick={() => patch({ filters: [...rule.filters, { key: '', op: '>=', value: 0 }] })}>+ Filtro</button>}
+          <div className="rt-note" style={{ marginTop: 4 }}>Una fila sin medida elegida no cuenta.</div>
+        </Opt>
+      </Section>
+
+      <Section id="entrada" title="Entrada" summary={summaries.entrada} open={openSections.entrada} onToggle={toggleSection}>
         <div className="rt-row">
           <select value={rule.entryType} onChange={(e) => patch({ entryType: e.target.value })}>
             <option value="market">A mercado, en la apertura de la vela siguiente</option>
@@ -1194,10 +1415,9 @@ const RuleTesterApp = () => {
             <span>vence en</span><Num value={rule.entryExpiry} min={1} max={200} onChange={(entryExpiry) => patch({ entryExpiry })} /><span>velas</span>
           </div>
         )}
-      </div>
+      </Section>
 
-      <div className="rt-group">
-        <h4>Stop</h4>
+      <Section id="stop" title="Stop" summary={summaries.stop} open={openSections.stop} onToggle={toggleSection}>
         <div className="rt-row">
           <select value={rule.stopType} onChange={(e) => patch({ stopType: e.target.value })}>
             <option value="swing">Swing anterior a la señal</option>
@@ -1212,101 +1432,105 @@ const RuleTesterApp = () => {
           {rule.stopType !== 'atr' && <><span>Margen</span><Num value={rule.stopBuffer} min={0} max={5} step={0.05} onChange={(stopBuffer) => patch({ stopBuffer })} /><span>ATR</span></>}
           <span title="Una señal con el stop más lejos no se opera">Máximo</span><Num value={rule.stopMaxAtr} min={0.2} max={100} step={0.5} onChange={(stopMaxAtr) => patch({ stopMaxAtr })} /><span>ATR</span>
         </div>
-      </div>
+      </Section>
 
-      <div className="rt-group">
-        <h4>Salida</h4>
-        <div className="rt-row">
-          <Check checked={rule.useTarget} onChange={(useTarget) => patch({ useTarget })} title="Sin marcar no hay objetivo: se ve hasta dónde llega">Objetivo</Check>
-          {!usesProfile(rule) && rule.codes.includes('BE') && (
-            <select value={rule.targetAt === 'mid' ? 'mid' : 'r'} disabled={!rule.useTarget} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
-              <option value="r">en R</option>
-              <option value="mid">en el centro de la caja</option>
-            </select>
-          )}
-          {usesProfile(rule) && (
-            <select value={rule.targetAt} disabled={!rule.useTarget} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
-              <option value="r">en R</option>
-              <option value="poc">en el POC anterior</option>
-              <option value="edge">en el borde contrario del valor</option>
-              <option value="mid">en el centro del rango anterior</option>
-            </select>
-          )}
-          {!((usesProfile(rule) && rule.targetAt !== 'r') || (!usesProfile(rule) && rule.codes.includes('BE') && rule.targetAt === 'mid')) && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} disabled={!rule.useTarget} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
+      <Section id="salida" title="Salida" badge={`${counts.salida || 0} ${counts.salida === 1 ? 'salida' : 'salidas'} además del stop`} hot={counts.salida > 0}
+        summary={summaries.salida} open={openSections.salida} onToggle={toggleSection}>
+        <div className="rt-note" style={{ marginBottom: 4 }}>El trade sale por lo primero que ocurra entre lo encendido.</div>
+        <div className="rt-opt fixed">
+          <Switch on locked title="Siempre hay un stop: el de la sección Stop">Stop inicial</Switch>
+          <span className="rt-note">siempre, el de la sección Stop</span>
         </div>
-        {targetInR(rule) && <div className="rt-row">
-          <Check checked={rule.tpTrailOn} onChange={(tpTrailOn) => patch({ tpTrailOn, ...(tpTrailOn && !(rule.tpTrailStart <= rule.targetR) ? { tpTrailStart: Math.max(0.25, rule.targetR - 0.5) } : {}) })}
-            title="Como un bot: el objetivo queda fijo hasta que el precio llega al arranque; desde ahí sigue al mejor precio y el trade se cierra cuando el precio vuelve hasta él">Arrastrar el objetivo desde</Check>
-          <Num value={rule.tpTrailStart} min={0.1} max={rule.targetR} step={0.25} disabled={!rule.tpTrailOn} onChange={(tpTrailStart) => patch({ tpTrailStart })} /><span>R, a</span>
-          <Num value={rule.tpTrailDist} min={0.01} max={rule.tpTrailUnit === 'pct' ? 50 : 20} step={rule.tpTrailUnit === 'pct' ? 0.1 : 0.25} disabled={!rule.tpTrailOn} onChange={(tpTrailDist) => patch({ tpTrailDist })} />
-          <select value={rule.tpTrailUnit} disabled={!rule.tpTrailOn} onChange={(e) => patch({ tpTrailUnit: e.target.value })} title="R: del riesgo del trade. ATR: el de la vela de la señal. %: del mejor precio, como el retroceso de un bot">
-            {TP_TRAIL_UNITS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-          </select>
-          <span>del mejor precio</span>
-        </div>}
-        {targetInR(rule) && rule.tpTrailOn && <div className="rt-note">
-          Al llegar a {Math.min(Number(rule.tpTrailStart) || 0, Number(rule.targetR) || 0)} R el objetivo de {rule.targetR} R deja de ser fijo: sigue al mejor precio
-          a {tpTrailText({ dist: rule.tpTrailDist, unit: rule.tpTrailUnit })} y el trade se cierra cuando el precio vuelve hasta él, aunque haya pasado el objetivo.
-          Se mira dentro de cada vela (minuto a minuto o, sin minutos, su recorrido supuesto), como una orden trailing del exchange. Las entradas al azar usan la misma salida.
-        </div>}
-        <div className="rt-row">
-          <span title="El stop se acerca solo a favor, con cada vela cerrada">Trailing</span>
-          <select value={rule.trail ? 'swing' : rule.trailMode} onChange={(e) => patch({ trail: e.target.value === 'swing', trailMode: e.target.value === 'swing' ? 'off' : e.target.value })}>
-            <option value="off">sin trailing</option>
-            <option value="swing">al último swing confirmado de</option>
-            <option value="atr">a una distancia en ATR del mejor precio</option>
-            <option value="pct">a un % del mejor precio</option>
-          </select>
-          {rule.trail && <><Num value={rule.trailBars} min={2} max={20} onChange={(trailBars) => patch({ trailBars })} /><span>velas</span></>}
-          {!rule.trail && rule.trailMode === 'atr' && <><Num value={rule.trailAtr} min={0.2} max={20} step={0.5} onChange={(trailAtr) => patch({ trailAtr })} /><span>ATR</span></>}
-          {!rule.trail && rule.trailMode === 'pct' && <><Num value={rule.trailPct} min={0.05} max={50} step={0.5} onChange={(trailPct) => patch({ trailPct })} /><span>%</span></>}
-        </div>
-        <div className="rt-row">
-          {!rule.trail && rule.trailMode !== 'off' && <>
-            <Check checked={rule.trailStartOn} onChange={(trailStartOn) => patch({ trailStartOn })} title="Hasta llegar a esos R a favor el stop queda en el inicial">El trailing empieza en</Check>
-            <Num value={rule.trailStart} min={0} max={20} step={0.5} disabled={!rule.trailStartOn} onChange={(trailStart) => patch({ trailStart })} /><span>R ·</span>
-          </>}
-          <Check checked={rule.breakEvenOn} onChange={(breakEvenOn) => patch({ breakEvenOn })} title="Al llegar a esos R a favor el stop pasa al precio de entrada (sin contar comisiones)">Stop a la entrada al llegar a</Check>
-          <Num value={rule.breakEven} min={0.1} max={20} step={0.5} disabled={!rule.breakEvenOn} onChange={(breakEven) => patch({ breakEven })} /><span>R</span>
-        </div>
-        {!rule.trail && rule.trailMode !== 'off' && <div className="rt-note">
-          Medido con entradas al azar (fase 1, 4h, siete monedas): un trailing ajustado pierde (1 a 3 ATR, de −0.06 a −0.01 R) y uno amplio gana algo solo, porque en 4h hubo tendencias:
-          stop de 2 ATR y trailing a 4 ATR, +0.10 R antes de 2023 y +0.04 en 2023. Una regla con trailing tiene que superar ese azar, que el informe ya usa como control.
-        </div>}
-        <div className="rt-row">
-          <Check checked={rule.useHorizon} onChange={(useHorizon) => patch({ useHorizon })}>Cerrar a las</Check>
-          <Num value={rule.horizon} min={1} max={2000} disabled={!rule.useHorizon} onChange={(horizon) => patch({ horizon })} /><span>velas</span>
-          <Check checked={rule.opposite} onChange={(opposite) => patch({ opposite })}>Cerrar con la señal contraria</Check>
-        </div>
-        {!rule.useTarget && !rule.trail && rule.trailMode === 'off' && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && <div className="rt-note">Sin objetivo hace falta otra salida: se cerrará a las 96 velas.</div>}
-        <div className="rt-row">
-          <Check checked={rule.oneAtATime} onChange={(oneAtATime) => patch({ oneAtATime })} title="Marcado: lo que operarías. Sin marcar: todas las señales, para medir el elemento">Una posición a la vez</Check>
-          <span title="Velas de espera después de cerrar un trade antes de tomar otra señal. 0 = sin espera">Esperar</span>
-          <Num value={rule.cooldown} min={0} max={500} disabled={!rule.oneAtATime} onChange={(cooldown) => patch({ cooldown })} /><span>velas tras cerrar</span>
-        </div>
-      </div>
-
-      <div className="rt-group">
-        <h4>Filtros de contexto (medidas del Observador)</h4>
-        {rule.filters.map((filter, index) => (
-          <div className="rt-row" key={index}>
-            <select value={filter.key} onChange={(e) => setFilter(index, { key: e.target.value })} style={{ maxWidth: 220 }}>
-              <option value="">Medida…</option>
-              {Object.entries(measureGroups).map(([group, items]) => (
-                <optgroup key={group} label={group}>{items.map(m => <option key={m.key} value={m.key}>{m.label}</option>)}</optgroup>
-              ))}
-            </select>
-            <select value={filter.op} onChange={(e) => setFilter(index, { op: e.target.value })}><option value=">=">≥</option><option value="<=">≤</option></select>
-            <Num value={filter.value} step={0.1} onChange={(value) => setFilter(index, { value })} />
-            <button type="button" className="rt-btn" onClick={() => patch({ filters: rule.filters.filter((_, i) => i !== index) })}>×</button>
+        <Opt id="objetivo" label="Objetivo" on={rule.useTarget} onToggle={(useTarget) => patch({ useTarget })} title="Apagado no hay objetivo: se ve hasta dónde llega">
+          <div className="rt-row">
+            {!usesProfile(rule) && rule.codes.includes('BE') && (
+              <select value={rule.targetAt === 'mid' ? 'mid' : 'r'} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
+                <option value="r">en R</option>
+                <option value="mid">en el centro de la caja</option>
+              </select>
+            )}
+            {usesProfile(rule) && (
+              <select value={rule.targetAt} onChange={(e) => patch({ targetAt: e.target.value })} title="Dónde va el objetivo">
+                <option value="r">en R</option>
+                <option value="poc">en el POC anterior</option>
+                <option value="edge">en el borde contrario del valor</option>
+                <option value="mid">en el centro del rango anterior</option>
+              </select>
+            )}
+            {targetInR(rule) && <><Num value={rule.targetR} min={0.2} max={50} step={0.25} onChange={(targetR) => patch({ targetR })} /><span>R</span></>}
           </div>
-        ))}
-        {rule.filters.length < MAX_FILTERS && <button type="button" className="rt-btn" onClick={() => patch({ filters: [...rule.filters, { key: '', op: '>=', value: 0 }] })}>+ Filtro</button>}
-        <div className="rt-note" style={{ marginTop: 4 }}>Cada medida se lee a favor del trade, al cierre de la vela de la señal.</div>
-      </div>
+          {targetInR(rule) && (
+            <Opt sub id="arrastre" label="Arrastrarlo (trailing take profit)" on={rule.tpTrailOn}
+              onToggle={(tpTrailOn) => patch({ tpTrailOn, ...(tpTrailOn && !(rule.tpTrailStart <= rule.targetR) ? { tpTrailStart: Math.max(0.25, rule.targetR - 0.5) } : {}) })}
+              title="Como un bot: el objetivo queda fijo hasta que el precio llega al arranque; desde ahí sigue al mejor precio y el trade se cierra cuando el precio vuelve hasta él">
+              <div className="rt-row">
+                <span>se activa al llegar a</span><Num value={rule.tpTrailStart} min={0.1} max={rule.targetR} step={0.25} onChange={(tpTrailStart) => patch({ tpTrailStart })} /><span>R y sigue al mejor precio a</span>
+                <Num value={rule.tpTrailDist} min={0.01} max={rule.tpTrailUnit === 'pct' ? 50 : 20} step={rule.tpTrailUnit === 'pct' ? 0.1 : 0.25} onChange={(tpTrailDist) => patch({ tpTrailDist })} />
+                <select value={rule.tpTrailUnit} onChange={(e) => patch({ tpTrailUnit: e.target.value })} title="R: del riesgo del trade. ATR: el de la vela de la señal. %: del mejor precio, como el retroceso de un bot">
+                  {TP_TRAIL_UNITS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </div>
+              <div className="rt-note">
+                Al llegar a {Math.min(Number(rule.tpTrailStart) || 0, Number(rule.targetR) || 0)} R el objetivo de {rule.targetR} R deja de ser fijo: sigue al mejor precio
+                a {tpTrailText({ dist: rule.tpTrailDist, unit: rule.tpTrailUnit })} y el trade se cierra cuando el precio vuelve hasta él, aunque haya pasado el objetivo.
+                Se mira dentro de cada vela (minuto a minuto o, sin minutos, su recorrido supuesto), como una orden trailing del exchange. Las entradas al azar usan la misma salida.
+              </div>
+            </Opt>
+          )}
+        </Opt>
+        <Opt id="trailing" label="Trailing del stop" on={trailingMode !== 'off'} onToggle={toggleTrailing} title="El stop se acerca solo a favor, con cada vela cerrada">
+          <div className="rt-row">
+            <select value={trailingMode} onChange={(e) => patch({ trail: e.target.value === 'swing', trailMode: e.target.value === 'swing' ? 'off' : e.target.value })}>
+              <option value="atr">a N ATR del mejor precio</option>
+              <option value="pct">a un % del mejor precio</option>
+              <option value="swing">al último swing confirmado de</option>
+            </select>
+            {rule.trail && <><Num value={rule.trailBars} min={2} max={20} onChange={(trailBars) => patch({ trailBars })} /><span>velas</span></>}
+            {!rule.trail && rule.trailMode === 'atr' && <><Num value={rule.trailAtr} min={0.2} max={20} step={0.5} onChange={(trailAtr) => patch({ trailAtr })} /><span>ATR</span></>}
+            {!rule.trail && rule.trailMode === 'pct' && <><Num value={rule.trailPct} min={0.05} max={50} step={0.5} onChange={(trailPct) => patch({ trailPct })} /><span>%</span></>}
+          </div>
+          {!rule.trail && (
+            <>
+              <Opt sub id="trailStart" label="Empezar al llegar a una ganancia" on={rule.trailStartOn} onToggle={(trailStartOn) => patch({ trailStartOn })}
+                title="Hasta llegar a esos R a favor el stop queda en el inicial. Apagado, el trailing corre desde la entrada">
+                <div className="rt-row"><span>de</span><Num value={rule.trailStart} min={0} max={20} step={0.5} onChange={(trailStart) => patch({ trailStart })} /><span>R a favor</span></div>
+              </Opt>
+              <div className="rt-note">
+                {!rule.trailStartOn && <><b>Corre desde la entrada.</b> </>}
+                Medido con entradas al azar (fase 1, 4h, siete monedas): un trailing ajustado pierde (1 a 3 ATR, de −0.06 a −0.01 R) y uno amplio gana algo solo, porque en 4h hubo tendencias:
+                stop de 2 ATR y trailing a 4 ATR, +0.10 R antes de 2023 y +0.04 en 2023. Una regla con trailing tiene que superar ese azar, que el informe ya usa como control.
+              </div>
+            </>
+          )}
+        </Opt>
+        <Opt id="aLaEntrada" label="Stop a la entrada" on={rule.breakEvenOn} onToggle={(breakEvenOn) => patch({ breakEvenOn })} title="Al llegar a esos R a favor el stop pasa al precio de entrada (sin contar comisiones)">
+          <div className="rt-row"><span>al llegar a</span><Num value={rule.breakEven} min={0.1} max={20} step={0.5} onChange={(breakEven) => patch({ breakEven })} /><span>R a favor</span></div>
+        </Opt>
+        <Opt id="tiempo" label="Cierre por tiempo" on={rule.useHorizon} onToggle={(useHorizon) => patch({ useHorizon })} title="Cierra al cierre de la vela N del trade">
+          <div className="rt-row"><span>a las</span><Num value={rule.horizon} min={1} max={2000} onChange={(horizon) => patch({ horizon })} /><span>velas</span></div>
+        </Opt>
+        <Opt id="contraria" label="Cierre con la señal contraria" on={rule.opposite} onToggle={(opposite) => patch({ opposite })} title="Sale en la apertura siguiente a una señal de la regla del otro lado" />
+        {rule.codes.includes('GC') && (
+          <Opt id="canal" label="Salida por el canal (Gaussian Channel)" on={rule.gcExit !== 'none'} onToggle={toggleMode('gcExit', 'none', 'band')} title="La salida propia de la estrategia del canal, con la vela cerrada; sale en la apertura siguiente">
+            <div className="rt-row">
+              <select value={rule.gcExit} onChange={(e) => patch({ gcExit: e.target.value })}>
+                <option value="band">al cerrar de vuelta dentro de la banda</option>
+                <option value="mid">al cerrar al otro lado de la línea central</option>
+              </select>
+            </div>
+          </Opt>
+        )}
+        {!rule.useTarget && trailingMode === 'off' && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && (
+          <div className="rt-warn" style={{ marginTop: 4 }}>Sin objetivo, trailing ni cierre por tiempo, el backend cierra cada trade a las 96 velas.</div>
+        )}
+        <ExitScale marks={exitScale(rule)} />
+        <div className="rt-sub">Operación</div>
+        <Opt id="unaAlaVez" label="Una posición a la vez" on={rule.oneAtATime} onToggle={(oneAtATime) => patch({ oneAtATime })} title="Encendido: lo que operarías. Apagado: todas las señales, para medir el elemento">
+          <div className="rt-row"><span title="Velas de espera después de cerrar un trade antes de tomar otra señal. 0 = sin espera">esperar</span><Num value={rule.cooldown} min={0} max={500} onChange={(cooldown) => patch({ cooldown })} /><span>velas tras cerrar</span></div>
+        </Opt>
+      </Section>
 
-      <div className="rt-group">
-        <h4>Detección de los elementos</h4>
+      <Section id="deteccion" title="Detección de los elementos" summary={summaries.deteccion} open={openSections.deteccion} onToggle={toggleSection}>
         <div className="rt-row">
           <span title="Para los elementos marcados 'vol.': volumen de la vela en veces la mediana de las 20 anteriores">Filtro de volumen</span>
           <Num value={rule.volFilter} min={0} max={10} step={0.5} onChange={(volFilter) => patch({ volFilter })} />
@@ -1314,11 +1538,26 @@ const RuleTesterApp = () => {
           <Num value={rule.target} min={0.005} max={0.3} step={0.005} onChange={(target) => patch({ target })} />
         </div>
         <div className="rt-note">Cambiar estos dos obliga a detectar de nuevo los elementos de toda la fase (varios minutos).</div>
-      </div>
+      </Section>
     </>
   );
 
   const s = result?.summary;
+  // El formulario cambió desde esta corrida: lo que usó la corrida, y cómo volver a ella (pedido del usuario, 20/11)
+  const runNote = result && runDiffs.length > 0 ? (
+    <div className="rt-warn">
+      <b>El formulario ya no es la regla de esta corrida.</b> Esta corrida usó:
+      <ul className="rt-diffs">
+        {runDiffs.map(d => (
+          <li key={d.key}>
+            <button type="button" className="rt-link" onClick={() => goTo(d.key)} title="Ir a ese control en la pestaña Regla">{d.label}</button>: {d.run}{' '}
+            <span className="rt-note">(en el formulario: {d.form})</span>
+          </li>
+        ))}
+      </ul>
+      <button type="button" className="rt-btn" onClick={() => loadBackendRule(result.rule)} title="Pone en el formulario la regla exacta de esta corrida">Cargar la de la corrida</button>
+    </div>
+  ) : null;
   // Tras "Correr en todas las monedas" no hay corrida de una moneda abierta: estas pestañas dicen dónde abrirla
   const oneCoinHint = !result && allReport?.phase === phase ? (
     <div className="rt-note">
@@ -1327,6 +1566,7 @@ const RuleTesterApp = () => {
   ) : null;
   const summaryTab = !result ? (oneCoinHint || <div className="rt-note">Todavía no hay una corrida de esta fase. Arma la regla y córrela.</div>) : (
     <>
+      {runNote}
       <div className="rt-group">
         <b>{result.rule.name}</b> · Fase {result.phase} · {result.from} a {result.to}
         <div className="rt-note">{describeRule(result.rule)}</div>
@@ -1337,6 +1577,15 @@ const RuleTesterApp = () => {
           Variantes probadas en la fase 1: {result.gate?.variantsPhase1 ?? '—'}.
         </div>
       )}
+      <div className="rt-group">
+        <h4>Señales</h4>
+        <Funnel steps={signalFunnel(result)} />
+        <div className="rt-note">
+          {Number(result.signals || 0).toLocaleString('es-CO')} señales en {Number(result.bars || 0).toLocaleString('es-CO')} velas.
+          {result.open > 0 && ' Las abiertas al final de la fase no cuentan: su salida cae en la fase siguiente.'}
+          {!result.measuresAvailable && ' Sin tabla de medidas para este símbolo: los trades no llevan medidas.'}
+        </div>
+      </div>
       {!s?.n ? <div className="rt-note">La regla no dejó trades cerrados en esta fase ({result.signals} señales).</div> : (
         <>
           {s.smallSample && <div className="rt-warn">Muestra pequeña ({s.n} trades): con menos de 30 nada se distingue del azar.</div>}
@@ -1421,15 +1670,6 @@ const RuleTesterApp = () => {
           </div>
         </div>
       )}
-      <div className="rt-group">
-        <h4>Señales</h4>
-        <div className="rt-note">
-          {result.signals} señales en {result.bars.toLocaleString('es-CO')} velas. {result.busy > 0 && `${result.busy} con una posición ya abierta. `}
-          {Object.entries(result.skipped || {}).map(([why, count]) => `${count} sin operar por ${why}. `)}
-          {result.open > 0 && `${result.open} seguían abiertas al final de la fase y no cuentan. `}
-          {!result.measuresAvailable && 'Sin tabla de medidas para este símbolo: los trades no llevan medidas.'}
-        </div>
-      </div>
       <div className="rt-row">
         <a className="rt-btn" href={`${API_BASE_URL}/api/tester/result/${result.id}/csv`} style={{ textDecoration: 'none' }}>Descargar CSV</a>
         {result.phase === 1 && <button type="button" className="rt-btn" disabled={sens === 'loading'} onClick={async () => {
@@ -1462,6 +1702,7 @@ const RuleTesterApp = () => {
   const selectedTrade = trades.find(t => t.n === selected);
   const tradesTab = !result ? (oneCoinHint || <div className="rt-note">Sin corrida en esta fase.</div>) : (
     <>
+      {runNote}
       {selectedTrade && (
         <div className="rt-group">
           <b>Trade {selectedTrade.n}</b> · {selectedTrade.dir > 0 ? 'Largo' : 'Corto'} · <R value={selectedTrade.r} /> R · {selectedTrade.reason}
@@ -1603,7 +1844,7 @@ const RuleTesterApp = () => {
               <td>{run.phase}</td><td>{run.summary?.n ?? 0}</td><td><R value={run.summary?.avgR} digits={3} /></td><td><R value={run.edge?.r} digits={3} /></td>
               <td>
                 <button type="button" className="rt-btn" onClick={() => loadRun(run.id)}>Ver</button>{' '}
-                <button type="button" className="rt-btn" onClick={() => { setRule(fromBackendRule(run.rule)); setTab('regla'); }} title="Cargar esta regla en el editor">Regla</button>
+                <button type="button" className="rt-btn" onClick={() => { loadBackendRule(run.rule); setTab('regla'); }} title="Cargar esta regla en el editor">Regla</button>
               </td>
             </tr>
           ))}
@@ -2005,7 +2246,7 @@ const RuleTesterApp = () => {
             {tab === 'revision' && reviewTab}
             {tab === 'regimen' && <RegimeTab symbol={symbol} chartTf={chartTf} onBands={setRegimeBands} onFocus={(time, price) => { setPhase(1); focusLater(time, price); }} />}
             {tab === 'estrategias' && (
-              <StrategiesTab onLoadRule={(saved) => { setRule(fromBackendRule(saved)); setPhase(1); setTab('regla'); }}
+              <StrategiesTab onLoadRule={(saved) => { loadBackendRule(saved); setPhase(1); setTab('regla'); }}
                 onOpenReport={(saved, phaseNumber, group) => {
                   // El informe "Todas" de esas monedas y esa fase, con lo ya corrido: no se recalcula nada
                   coinGroupRef.current = group;
@@ -2014,9 +2255,38 @@ const RuleTesterApp = () => {
                   loadAll(saved, phaseNumber);
                 }} />
             )}
-            {tab === 'busqueda' && <RuleSearchTab onLoadRule={(saved) => { setRule(fromBackendRule(saved)); setPhase(1); setTab('regla'); }} />}
+            {tab === 'busqueda' && <RuleSearchTab onLoadRule={(saved) => { loadBackendRule(saved); setPhase(1); setTab('regla'); }} />}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
+            {tab === 'regla' && (
+              <div className={`rt-plan${planOpen ? '' : ' closed'}`}>
+                <button type="button" className="rt-plan-head" onClick={() => setPlanOpen(open => !open)} aria-expanded={planOpen}
+                  title={planOpen ? 'Plegar: deja más lugar a la regla' : 'Abrir: la regla completa en palabras, con una × para quitar cada filtro o salida'}>
+                  <span className="rt-sec-caret">{planOpen ? '▾' : '▸'}</span>
+                  <span><b>Vas a correr</b> · {symbol} · {TF_LABEL[rule.tf] || rule.tf} · fase {phase}
+                    {!planOpen && <> · {counts.filtros ? `${counts.filtros} ${counts.filtros === 1 ? 'filtro' : 'filtros'}` : 'sin filtros'} · {counts.salida || 0} {counts.salida === 1 ? 'salida' : 'salidas'} además del stop</>}
+                  </span>
+                </button>
+                {planOpen && (
+                  <>
+                    <button type="button" className="rt-plan-recipe" onClick={() => goTo('elementos')} title="Ir a los elementos">
+                      {rule.codes.length ? planRecipe : 'Sin elementos: elige al menos uno'}
+                    </button>
+                    <div className="rt-plan-chips">
+                      {planChips.map(facet => (
+                        <span key={facet.key} className={`rt-pchip${facet.implicit ? ' implicit' : ''}${['entrada', 'stop', 'deteccion', 'unaAlaVez'].includes(facet.key) ? ' base' : ''}`}
+                          title={facet.implicit ? 'Lo pone el backend: sin otra salida, cierra cada trade a las 96 velas' : `${facet.label}: clic para ir a su control`}>
+                          <button type="button" className="rt-pchip-go" onClick={() => goTo(facet.key)}>{facetPhrase(facet)}</button>
+                          {OFF_PATCH[facet.key] && !facet.implicit && (
+                            <button type="button" className="rt-pchip-x" onClick={() => turnOff(facet.key)} title={`Quitar: ${facet.label}`} aria-label={`Quitar ${facet.label}`}>×</button>
+                          )}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
             <button type="button" className="rt-btn primary" style={{ width: '100%', padding: '6px 0' }} disabled={running || !phaseInfo?.available} onClick={() => runPhase(false)}>
               {running ? `${job.stage}… ${job.done}/${job.total}` : `Correr la regla en la fase ${phase}`}
             </button>
