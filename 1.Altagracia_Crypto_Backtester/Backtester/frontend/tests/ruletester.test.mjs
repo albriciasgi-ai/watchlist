@@ -92,6 +92,8 @@ test('el trade elegido lleva su salida con el motivo, y el stop de cada vela con
   assert.equal(exit.label, 'Salida por tiempo · +22.87 R');
   const stopped = tradeBands({ ...trade, reason: 'stop en la entrada', exit: 64319, r: -0.03 }, 240).find(b => b.kind === 'exit');
   assert.deepEqual([stopped.good, stopped.atEdge, stopped.label], [false, false, 'Salida en el stop a la entrada · -0.03 R']);
+  const byVpa = tradeBands({ ...trade, reason: 'VPA: esfuerzo en contra', r: 1.4 }, 240).find(b => b.kind === 'exit');
+  assert.deepEqual([byVpa.atEdge, byVpa.label], [true, 'Salida por el VPA (esfuerzo en contra) · +1.40 R'], 'la salida VPA, en la apertura siguiente');
   const path = [[2 * H, 64589, 'inicial'], [6 * H, 64319, 'entrada'], [10 * H, 63000, 'arrastrado']];
   const steps = contextBands({ success: true, tf: 240, stopPath: path, rows: [], lines: [], elements: [], signals: [] }).find(b => b.kind === 'steps');
   assert.deepEqual([steps.tf, steps.points], [4 * H, path]);

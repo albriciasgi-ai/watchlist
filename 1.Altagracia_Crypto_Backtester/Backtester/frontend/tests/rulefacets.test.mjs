@@ -91,7 +91,8 @@ test('cada × de «Vas a correr» apaga solo su pieza', () => {
     ...user(), vwapMode: 'touch', regimeMode: 'outside', cvdOn: true, crowdMode: 'nocon', steadyOn: true, swing: true, momentum: true, confirm: true,
     useHours: true, filters: [{ key: 'x', op: '>=', value: 1 }], tpTrailOn: true, targetR: 3, breakEvenOn: true, useHorizon: true, opposite: true,
     codes: [...user().codes, 'GC'], gcExit: 'band', bwAlligator: 'awake', bwZone: true, smcPd: true, smcBias: true,
-    bwAo: 'color', bwAc: 'zero', bwGator: 'eating', bwMfi: 'squat', vpaMode: 'favor', vpaThr: 0.5
+    bwAo: 'color', bwAc: 'zero', bwGator: 'eating', bwMfi: 'squat', vpaMode: 'favor', vpaThr: 0.5,
+    vpaExitOn: true, vpaExit: ['absorb', 'meter'], vpaExitThr: 0.8
   };
   const before = keys(on);
   for (const [key, patch] of Object.entries(OFF_PATCH)) {
@@ -188,6 +189,21 @@ test('el lector VPA en palabras, ida y vuelta por el formulario', () => {
   // Sin sus elementos ni su filtro, la regla no lleva nada del lector: conserva su identidad
   const plain = toBackendRule({ ...defaultRule(), codes: ['FV'], vpaFire: 0.9 });
   assert.ok(!('vpa' in plain) && !('vpaf' in plain));
+});
+
+test('la salida VPA en palabras, ida y vuelta, y sin el cierre a las 96 velas', () => {
+  const form = { ...defaultRule(), codes: ['FV'], useTarget: false, useHorizon: false, vpaExitOn: true, vpaExit: ['meter', 'climax'], vpaExitThr: 0.8, vpaExitFrom: 1 };
+  const rule = toBackendRule(form);
+  assert.deepEqual(rule.exit.vpa, { on: ['climax', 'meter'], fromR: 1, thr: 0.8 }, 'en el orden del backend');
+  assert.ok(rule.vpa, 'lleva la configuración del lector');
+  assert.equal(text(form, 'salidaVpa'), 'con clímax o frenado, medidor en contra (medidor ±0.8), desde 1R');
+  assert.ok(!keys(form).includes('tiempo'), 'la salida VPA cuenta como salida');
+  assert.match(describeRule(rule), /salida VPA: clímax o frenado, medidor en contra/);
+  assert.deepEqual(ruleDifferences(toBackendRule(fromBackendRule(rule)), rule), []);
+  assert.ok(exitScale(form).some(m => m.label === 'salida VPA' && m.r === 1));
+  // Sin lecturas marcadas no hay salida VPA, y una regla sin ella conserva su identidad
+  assert.ok(!('vpa' in toBackendRule({ ...form, vpaExit: [] }).exit));
+  assert.ok(!('vpa' in toBackendRule({ ...defaultRule(), codes: ['FV'] }).exit));
 });
 
 let failed = 0;

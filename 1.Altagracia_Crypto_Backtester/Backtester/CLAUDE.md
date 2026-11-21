@@ -1780,9 +1780,45 @@ VPAIndicator.js + VPASettings.jsx               rule_tester (elementos Q*, filtr
 
 `tests/test_vpa.py` (7), `frontend/tests/vpa.parity.test.mjs` (7: paridad al bit en 4h, 15m y 1D, sin futuro, parámetros acotados y el cuadro) y una más en `rulefacets.test.mjs` (11). Probado en pantalla con una copia aislada, en el backtesting global con BTC 4h: el panel, las marcas, el modal y una corrida de QB con su trade elegido. No se vio en pantalla la simulación manual, el 2.º gráfico ni la suite (usan el mismo indicador).
 
+### Fase 3: causa y efecto (21/11, solo estudio)
+
+La idea del libro (y de Wyckoff): cuanto más larga la congestión, más recorre su ruptura. Si se sostenía, el objetivo pasaba a depender de la congestión en vez de ser R fijo. `OrderFlowData/research/vpa/causa_efecto.py` (`CAUSA_EFECTO_240.md`, `CAUSA_EFECTO_60.md`), fase 1, decidido con las monedas de siempre y repetido en las nuevas.
+
+- **Congestiones:** las cajas de la eficiencia con caja (la de BX) y el rango mayor con 6 cierres fuera. Recorrido: lo máximo a favor desde el cierre de la ruptura, en ATR, hasta que un cierre vuelve a la mitad de la congestión (60 velas en 4h, 120 en 1h).
+- **No se sostiene.** El largo y el alto casi no se relacionan con el recorrido: ρ entre −0.08 y +0.08 en los ocho grupos (4h y 1h, cajas y rango mayor, dos grupos de monedas). El recorrido mediano es de unos 3 ATR sea cual sea la congestión, así que una congestión alta llega menos veces a proyectar su altura (77% en el tercio bajo del rango mayor, 13 a 19% en el alto).
+- **El objetivo medido** (un alto de la congestión más allá del borde roto) no gana a un objetivo fijo a la misma distancia mediana: en las monedas nuevas, de −0.015 a +0.007 R por trade, con márgenes de ±0.01 a ±0.04.
+- **Lo único que se repite:** con más volumen dentro de la congestión, la ruptura recorre un poco menos (ρ de −0.05 a −0.09 en las monedas nuevas), al revés de "más causa, más efecto". Explica menos del 1%. En 4h, la ruptura con volumen alto llega más veces a un alto más allá (53 a 60% contra 33 a 37%), sin recorrer más en ATR.
+- **Decisión:** no se agregó un objetivo por la congestión al probador. El objetivo en ATR o en R sigue siendo el que corresponde.
+
+### Fase 4: salida VPA (21/11)
+
+La idea del libro: seguir en el trade mientras los retrocesos vienen con poco volumen y salir ante una anomalía en contra o un clímax.
+
+- **Regla:** `exit.vpa` = `{on, fromR, thr}` (`_vpa_exit`), solo si se pide, así una regla sin ella conserva su identidad. Con ella la regla lleva `vpa` (la configuración del lector) y no se impone el cierre a las 96 velas.
+- **Lecturas** (`VPA_EXITS`, en este orden si caen en la misma vela), todas en contra del lado del trade y sabidas al cierre de su vela (`_vpa_exit_bars`):
+  - `climax`: clímax o frenado (QC, QS);
+  - `absorb`: esfuerzo sin resultado (una vela verde con mucho volumen y poco rango avisa a los largos);
+  - `push`: retroceso con volumen, una vela validada del color contrario;
+  - `meter`: el medidor en contra, a `thr` o más;
+  - `fade`: el esfuerzo se agota en un tramo del lado del trade.
+- **Salida:** en la apertura de la vela siguiente al primer aviso, con motivo «VPA: …» (cada lectura cuenta aparte en los cortes por salida). `fromR` la arma desde tantos R a favor. Los controles al azar (y los rearmados, `_control_context`) usan la misma salida.
+- **Ventana:** «Salida VPA» en Salida, con un chip por lectura (de fábrica solo «clímax o frenado»), el umbral del medidor, «armada desde» y, sin elementos Q, el grado y el tramo del lector. Ficha en «Vas a correr», marca en la escala en R, y en el trade elegido «Salida por el VPA (esfuerzo en contra) · +0.05 R», en el borde de la vela.
+- **Medido** (`OrderFlowData/research/vpa/fase4_salida.py`, `FASE4_SALIDA_240.md`; fase 1, 4h, siete monedas, stop 2 ATR, contra el mejor de los dos controles):
+
+| Entrada | Objetivo 3R | Trailing 4 ATR | VPA, todas | Solo clímax o frenado | Solo esfuerzo en contra |
+|---|---|---|---|---|---|
+| Ruptura con volumen | +0.14 R (+0.12) | +0.30 (+0.12) | +0.04 (+0.02) | +0.21 ±0.19 (+0.18) | +0.27 ±0.26 (+0.18) |
+| FVG nuevo ≥ 0.3 ATR | +0.26 (+0.24) | +0.22 (+0.05) | +0.04 (+0.02) | +0.26 ±0.18 (+0.22) | +0.19 (+0.09) |
+| Impulso ≥ 2 ATR | +0.16 (+0.13) | +0.21 (+0.04) | +0.03 (+0.01) | +0.11 (+0.06) | +0.17 (+0.08) |
+
+  - Con todas las lecturas sale a las 2 o 3 velas (el 80% por el VPA) y la ventaja casi desaparece; juntas al trailing, igual. Armada desde 1R mejora poco (+0.04 a +0.08).
+  - Con una sola lectura queda como el objetivo fijo: «clímax o frenado» y «esfuerzo en contra» le ganan en la ruptura con volumen, dentro del margen, y no en las otras dos entradas. Ninguna supera al trailing en R por trade.
+  - Son 36 combinaciones sobre los mismos datos: no hay una salida VPA candidata.
+- Pruebas: una más en `test_vpa.py` (8), `rulefacets.test.mjs` (12) y `ruletester.test.mjs` (15). Probado en pantalla con una copia aislada: la ruptura con volumen en BTC 4h, fase 1, sin objetivo: 162 trades, el trade 10 con su salida por el VPA.
+
 ### Falta
 
-Las fases 3 a 5 de la propuesta: causa y efecto (el largo de la congestión contra lo que recorre la ruptura), salir con VPA, el "ripple" entre marcos y la etapa del Gimnasio. La fase 2 de QB no se corrió.
+La fase 5 de la propuesta (el "ripple" entre marcos, la etapa del Gimnasio y el Observador contra el lector). La fase 2 de QB no se corrió.
 
 ## RANGOS HORIZONTALES (20/11/2026)
 

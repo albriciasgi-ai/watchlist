@@ -17,7 +17,7 @@ import { ACTION_LABEL, REVIEW_DAYS, boxDecision, gapText, hasBox, reviewBoxes, s
 import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
-  contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa,
+  contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa, VPA_EXITS,
   chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText
 } from './ruleTester.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from '../indicators/williams.js';
@@ -1754,7 +1754,39 @@ const RuleTesterApp = () => {
             </div>
           </Opt>
         )}
-        {!rule.useTarget && trailingMode === 'off' && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && (
+        <Opt id="salidaVpa" label="Salida VPA" on={rule.vpaExitOn} onToggle={(vpaExitOn) => patch({ vpaExitOn })}
+          title="Con el Lector VPA: sigue en el trade mientras el VPA no avise en contra y sale, en la apertura siguiente, con la primera lectura marcada. Las entradas al azar usan la misma salida">
+          <div className="rt-row">
+            <span>sale con:</span>
+            {VPA_EXITS.map(([key, label, hint]) => (
+              <button key={key} type="button" className={`rt-chip${(rule.vpaExit || []).includes(key) ? ' on' : ''}`} title={hint}
+                onClick={() => patch({ vpaExit: (rule.vpaExit || []).includes(key) ? rule.vpaExit.filter(k => k !== key) : [...(rule.vpaExit || []), key] })}>
+                {label}
+              </button>
+            ))}
+          </div>
+          {(rule.vpaExit || []).includes('meter') && (
+            <div className="rt-row"><span>medidor en contra desde ±</span><Num value={rule.vpaExitThr} min={0.2} max={5} step={0.1} onChange={(vpaExitThr) => patch({ vpaExitThr })} /></div>
+          )}
+          <div className="rt-row">
+            <span title="Hasta llegar a esos R a favor el VPA no saca del trade. 0 = desde la entrada">armada desde</span>
+            <Num value={rule.vpaExitFrom} min={0} max={20} step={0.5} onChange={(vpaExitFrom) => patch({ vpaExitFrom })} /><span>R a favor</span>
+          </div>
+          {!usesVpa(rule) && (
+            <div className="rt-row">
+              <span title="Cada lectura del lector es un grado de 0 a 100%: avisa desde este grado">lectura desde</span>
+              <Num value={Math.round(rule.vpaFire * 100)} min={10} max={100} onChange={(v) => patch({ vpaFire: (Number(v) || 50) / 100 })} /><span>% · tramo de</span>
+              <Num value={rule.vpaLeg} min={0.5} max={10} step={0.5} onChange={(vpaLeg) => patch({ vpaLeg })} /><span>ATR</span>
+            </div>
+          )}
+          {!(rule.vpaExit || []).length && <div className="rt-warn">Marca al menos una lectura: sin ninguna no hay salida VPA.</div>}
+          <div className="rt-note">
+            Medido en la fase 1 (4h, siete monedas, stop 2 ATR): con todas las lecturas sale demasiado pronto (a las 2 o 3 velas) y la ventaja sobre el azar cae a +0.01 a +0.03 R.
+            Con una sola lectura queda como un objetivo fijo de 3R: «clímax o frenado» da +0.21 R en la ruptura con volumen y +0.26 en el FVG nuevo, con márgenes de ±0.18 a ±0.19.
+            No supera al trailing de 4 ATR. Las entradas al azar usan la misma salida.
+          </div>
+        </Opt>
+        {!rule.useTarget && trailingMode === 'off' && !rule.useHorizon && !(rule.codes.includes('GC') && rule.gcExit !== 'none') && !(rule.vpaExitOn && (rule.vpaExit || []).length) && (
           <div className="rt-warn" style={{ marginTop: 4 }}>Sin objetivo, trailing ni cierre por tiempo, el backend cierra cada trade a las 96 velas.</div>
         )}
         <ExitScale marks={exitScale(rule)} />

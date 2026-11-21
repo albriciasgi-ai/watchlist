@@ -440,10 +440,11 @@ def clean_rule(raw):
         if extra["smc"]["internal"] >= extra["smc"]["swing"]:
             extra["smc"]["internal"] = max(2, extra["smc"]["swing"] - 1)
     vpf = raw.get("vpaf") or {}
-    if codes_used & set(vpa.CODES) or vpf.get("mode") in vpa.FILTER_MODES:
+    vexit = _vpa_exit(exit_)
+    if codes_used & set(vpa.CODES) or vpf.get("mode") in vpa.FILTER_MODES or vexit:
         q = raw.get("vpa") or {}
         # El lector VPA (vpa.py): tramo en ATR, grado desde el que cuenta un elemento, umbral y memoria del medidor, y
-        # velas del rango que se rompe, su alto máximo y las del retroceso. Solo entra si la regla usa sus elementos o su filtro
+        # velas del rango que se rompe, su alto máximo y las del retroceso. Solo entra si la regla usa sus elementos, su filtro o su salida
         extra["vpa"] = {"legAtr": _num(q.get("legAtr"), 2.0, 0.5, 10.0), "fire": _num(q.get("fire"), 0.5, 0.1, 1.0),
                         "meter": _num(q.get("meter"), 1.0, 0.2, 5.0), "decay": _num(q.get("decay"), 0.75, 0.0, 0.98),
                         "rangeBars": int(_num(q.get("rangeBars"), 20, 5, 200)), "maxRangeAtr": _num(q.get("maxRangeAtr"), 6.0, 1.0, 50.0),
@@ -552,7 +553,7 @@ def clean_rule(raw):
         if int(_num(reg.get("tf"), 0, 0, DAILY)) == DAILY and tf < DAILY:
             extra["regime"]["tf"] = DAILY  # Medido en velas diarias; solo entra si se pide
     leaves_channel = (extra.get("gc") or {}).get("exit") in ("band", "mid")
-    if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra and not leaves_channel:
+    if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra and not leaves_channel and not vexit:
         horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
     return {
         **extra,
@@ -564,7 +565,7 @@ def clean_rule(raw):
                  "maxAtr": _num(stop.get("maxAtr"), 6.0, 0.2, 100.0)},
         "exit": {"targetR": target_r, "trail": trail, "trailBars": int(_num(exit_.get("trailBars"), 5, 2, 20)),
                  "horizon": horizon, "opposite": bool(exit_.get("opposite")), **_trail_extra(exit_, trail),
-                 **_tp_trail(exit_, target_r)},
+                 **_tp_trail(exit_, target_r), **vexit},
         "oneAtATime": raw.get("oneAtATime") is not False,
         # Velas de espera tras cerrar un trade antes de tomar otra señal (solo con una posición a la vez)
         "cooldown": int(_num(raw.get("cooldown"), 0, 0, 500)),
@@ -597,6 +598,62 @@ def _trail_extra(exit_, trail):
 
 
 TP_TRAIL_UNITS = ("r", "atr", "pct")
+
+# Salida con el lector VPA (fase 4, 21/11/2026): seguir mientras el VPA no avise en contra y salir, en la apertura de la
+# vela siguiente, con la primera de estas lecturas en contra del trade. En este orden si caen en la misma vela
+VPA_EXITS = {"climax": "clímax o frenado", "absorb": "esfuerzo en contra", "push": "retroceso con volumen",
+             "meter": "medidor en contra", "fade": "esfuerzo que se agota"}
+
+
+def _vpa_exit(exit_):
+    """La salida VPA, solo si se pide (una regla sin ella conserva su identidad). on: las lecturas que la disparan;
+    thr: el umbral del medidor (solo con meter); fromR: la salida se arma cuando el trade llegó a tantos R a favor
+    (0 = desde la entrada)."""
+    raw = exit_.get("vpa") or {}
+    on = [key for key in VPA_EXITS if key in (raw.get("on") or [])]
+    if not on:
+        return {}
+    out = {"on": on, "fromR": _num(raw.get("fromR"), 0.0, 0.0, 20.0)}
+    if "meter" in on:
+        out["thr"] = _num(raw.get("thr"), 1.0, 0.2, 5.0)
+    return {"vpa": out}
+
+
+def _vpa_exit_bars(rule, ctx):
+    """Por lado del trade, las velas en que el VPA avisa en contra: {1: {vela: motivo}, -1: {...}}. Todo se sabe al cerrar
+    la vela, y la salida es en la apertura de la siguiente.
+      climax  clímax o frenado (QC, QS) contra el lado del trade
+      absorb  esfuerzo sin resultado contra el trade (una vela verde con mucho volumen y poco rango avisa a los largos)
+      push    retroceso con volumen: una vela validada (rango ancho con volumen alto) del color contrario al trade
+      meter   el medidor en contra del trade, a thr o más
+      fade    el esfuerzo se agota en un tramo del lado del trade"""
+    ve = rule["exit"]["vpa"]
+    series = _vpa_series(rule, ctx)
+    fire = rule["vpa"]["fire"]
+    on = set(ve["on"])
+    out = {1: {}, -1: {}}
+    finite = vpa._finite
+    events = []
+    if "climax" in on:
+        events = [e for e in vpa.detect(ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["V"], ctx["tf"], _vpa_cfg(rule), series)
+                  if e["code"] in ("QC", "QS")]
+    for e in events:
+        out[-e["dir"]].setdefault(e["index"], "VPA: " + VPA_EXITS["climax"])
+    for i in range(len(ctx["C"])):
+        d, leg = series["dir"][i], series["leg"][i]
+        if "absorb" in on and finite(series["absorb"][i]) and series["absorb"][i] >= fire:
+            against = -d if d else -leg
+            if against:
+                out[-against].setdefault(i, "VPA: " + VPA_EXITS["absorb"])
+        if "push" in on and d and finite(series["valid"][i]) and series["valid"][i] >= fire:
+            out[-d].setdefault(i, "VPA: " + VPA_EXITS["push"])
+        if "meter" in on and finite(series["meter"][i]) and finite(series["rv"][i]):
+            for side in (1, -1):
+                if series["meter"][i] * side <= -ve["thr"]:
+                    out[side].setdefault(i, "VPA: " + VPA_EXITS["meter"])
+        if "fade" in on and leg and finite(series["fade"][i]) and series["fade"][i] >= fire:
+            out[leg].setdefault(i, "VPA: " + VPA_EXITS["fade"])
+    return out
 
 
 def _tp_trail(exit_, target_r):
@@ -1097,6 +1154,10 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
         leave = (ctx.get("exitAt") or {}).get(side)
         if leave is not None and j > k and j in leave and j + 1 < n:
             exit_price, exit_t, reason = O[j + 1], T[j + 1], "sale del canal"
+            break
+        warn = (ctx.get("vpaExit") or {}).get(side, {}).get(j) if j > k and j + 1 < n else None
+        if warn and mfe >= exit_rule["vpa"]["fromR"]:
+            exit_price, exit_t, reason = O[j + 1], T[j + 1], warn
             break
         if exit_rule["horizon"] and j - entry_i + 1 >= exit_rule["horizon"]:
             exit_price, exit_t, reason = C[j], T[j] + tf_ms, "tiempo"
@@ -1747,6 +1808,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         if leave and warm:
             leave = {side: {i - len(warm) for i in found if i >= len(warm)} for side, found in leave.items()}
         ctx["exitAt"] = {1: leave[-1], -1: leave[1]} if leave and rule["invert"] else leave
+    if rule["exit"].get("vpa"):
+        ctx["vpaExit"] = _vpa_exit_bars(rule, ctx)
     if rule.get("regime"):
         ctx["regimeOK"] = regime_mask(rule["regime"], bars, is_stock(symbol))
     if rule.get("smcf") or rule.get("targetAt") == "weak":
@@ -2284,6 +2347,8 @@ def _control_context(symbol, rule, span):
     """El contexto de los controles como en run(): con las velas (filtros de flujo) y el régimen."""
     ctx = _context(symbol, rule["tf"], span["bars"])
     ctx["bars"] = span["bars"]
+    if rule["exit"].get("vpa"):
+        ctx["vpaExit"] = _vpa_exit_bars(rule, ctx)
     if rule.get("regime"):
         ctx["regimeOK"] = regime_mask(rule["regime"], span["bars"], is_stock(symbol))
     return ctx
