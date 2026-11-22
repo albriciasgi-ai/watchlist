@@ -27,6 +27,11 @@ Las zonas:
 
 Control (`control=True`): cada zona se mueve entre `shiftMin` y `shiftMax` ATR hacia arriba o hacia abajo, al azar pero
 siempre igual (semilla por zona), con el mismo alto y la misma mecánica: dice si importa dónde estuvo el volumen.
+
+DX, apilados desplazados (hipótesis del 22/11, fijada en el plan antes de correrla en las fases 2 y 3): es exactamente el
+control de DS como regla, con su misma semilla. Su control son las mismas zonas ancladas en velas al azar: por cada franja,
+una vela al azar del tramo (semilla por franja), una zona del mismo alto en ATR centrada en su cierre y movida igual. Dice
+si importa el apilado o basta la mecánica.
 """
 import zlib
 
@@ -38,9 +43,10 @@ CODES = {"DS": "Apilados con regreso (Dale): la zona de los desequilibrios apila
          "DN": "Nodo doble con regreso (Dale): el mismo POC en dos velas, en el primer regreso",
          "DG": "Orden grande con regreso (Dale): la franja de la orden grande, en el primer regreso",
          "DA": "Acumulación con regreso (Dale): el POC de la caja tras la ruptura, en el primer regreso",
-         "DC": "Cluster del tramo con regreso (Dale): el nodo de volumen del tramo, en el primer regreso"}
-STORE_CODES = ("DS", "DN", "DG")  # Salen del almacén de trades
-SOURCE = {"DS": "ST", "DN": "AP", "DG": "GR"}
+         "DC": "Cluster del tramo con regreso (Dale): el nodo de volumen del tramo, en el primer regreso",
+         "DX": "Apilados desplazados con regreso (hipótesis del 22/11): la zona de los apilados movida de 1 a 3 ATR, en el primer regreso"}
+STORE_CODES = ("DS", "DN", "DG", "DX")  # Salen del almacén de trades
+SOURCE = {"DS": "ST", "DN": "AP", "DG": "GR", "DX": "ST"}
 DAY_MS = 86400000
 
 # Campo: (por defecto, mínimo, máximo, entero)
@@ -231,8 +237,19 @@ def candidates(bars, tf, cfg, codes, span_events=(), control=False):
             zones = _leg_cluster(t, h, l, c, v, atr, cfg)
         for i, lo, hi, info, extra in zones:
             shift = 0.0
-            if control:
-                rng = np.random.default_rng(zlib.crc32(f"{code}{int(t[i])}{lo:.8g}".encode()))
+            if code == "DX" and control:
+                # Control de DX: la misma zona anclada en una vela al azar del tramo, centrada en su cierre y movida igual
+                rng = np.random.default_rng(zlib.crc32(f"DXa{int(t[i])}{lo:.8g}".encode()))
+                k = int(rng.integers(0, len(c)))
+                if not (atr[i] > 0 and atr[k] > 0):
+                    continue
+                half = (hi - lo) / atr[i] * atr[k] / 2
+                shift = float(rng.choice((-1.0, 1.0)) * rng.uniform(cfg["shiftMin"], cfg["shiftMax"]) * atr[k])
+                i, lo, hi = k, float(c[k] - half + shift), float(c[k] + half + shift)
+                info = {**info, "anchor": True}
+            elif control or code == "DX":
+                # Las zonas desplazadas. DX usa la semilla del control de DS: es exactamente ese control
+                rng = np.random.default_rng(zlib.crc32(f"{'DS' if code == 'DX' else code}{int(t[i])}{lo:.8g}".encode()))
                 shift = float(rng.choice((-1.0, 1.0)) * rng.uniform(cfg["shiftMin"], cfg["shiftMax"]) * atr[i])
                 lo, hi = lo + shift, hi + shift
                 if extra is not None:
@@ -252,7 +269,7 @@ def candidates(bars, tf, cfg, codes, span_events=(), control=False):
             zlo, zhi = (entry - dist, entry) if side > 0 else (entry, entry + dist)
             out.append({"code": code, "dir": int(side), "t": int(t[j]), "known": int(t[j] + step), "lo": float(zlo), "hi": float(zhi),
                         "info": {**info, "zone": [round(lo, 8), round(hi, 8)], "born": int(t[i]), "armedAfter": int(j - i),
-                                 "stopDay": round(float(dist / dayatr[j]), 3), "shiftAtr": round(shift / atr[i], 2) if control else 0.0}})
+                                 "stopDay": round(float(dist / dayatr[j]), 3), "shiftAtr": round(shift / atr[i], 2) if shift else 0.0}})
     return out
 
 

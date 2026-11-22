@@ -191,3 +191,35 @@ def test_una_regla_sin_dale_no_cambia_y_la_corrida_suma_las_zonas_desplazadas():
     assert res["success"] and res["controlKind"] == "dale" and "control" in res
     assert res["trades"] and res["trades"][0]["order"] == "limit" and res["trades"][0]["dale"]["code"] == "DS"
     assert res["trades"][0]["entry"] == pytest.approx(100.2)
+
+
+# ---------------------------------------------------------------- DX, la hipótesis del 22/11
+
+def dx_case():
+    bars = wave(30 * 48)
+    zones = [st_event(bars, bars[k]["c"] - 0.1, bars[k]["c"] + 0.1, k) for k in range(700, 1300, 10)]
+    return bars, zones
+
+
+def test_dx_es_el_control_de_ds_con_su_semilla_y_su_control_ancla_en_velas_al_azar():
+    bars, zones = dx_case()
+    key = lambda e: (e["t"], e["dir"], round(e["lo"], 8), round(e["hi"], 8))
+    dx = dale.candidates(bars, 30, CFG, ("DX",), zones)
+    assert dx and [key(e) for e in dx] == [key(e) for e in dale.candidates(bars, 30, CFG, ("DS",), zones, control=True)]
+    assert all(e["code"] == "DX" and 1 <= abs(e["info"]["shiftAtr"]) <= 3 for e in dx)
+    anchored = dale.candidates(bars, 30, CFG, ("DX",), zones, control=True)
+    assert anchored and anchored == dale.candidates(bars, 30, CFG, ("DX",), zones, control=True)  # Siempre igual
+    assert all(e["info"]["anchor"] and 1 <= abs(e["info"]["shiftAtr"]) <= 3 for e in anchored)
+    assert {e["info"]["born"] for e in anchored} != {e["info"]["born"] for e in dx}  # Nacen en otras velas
+
+
+def test_la_corrida_de_dx_suma_las_anclas_al_azar():
+    bars, zones = dx_case()
+    rule = rt.clean_rule({"name": "DX", "tf": 30, "recipe": {"slots": [{"codes": ["DX"]}]},
+                          "entry": {"type": "limit", "at": "near", "expiry": 200}, "stop": {"type": "zone", "buffer": 0, "maxAtr": 20},
+                          "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0})
+    assert "DX" in rule["recipe"]["slots"][0]["codes"] and rule["dale"]["shiftMax"] == 3.0
+    assert "DX" not in rt.CANDLE_CODES  # Sale del almacén, como DS
+    res = rt.run("TEST", rule, {"bars": bars, "events": zones}, {"phase": 1, "from": "2024-01-01", "to": "2024-01-30"}, None, base=True)
+    assert res["success"] and res["controlKind"] == "daleAnchor" and res["control"]["n"]
+    assert res["trades"] and res["trades"][0]["dale"]["code"] == "DX"

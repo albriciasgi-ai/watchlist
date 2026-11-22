@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Apilados Desplazados (DX), Hipótesis Juzgada en las Fases 2 y 3
+
+El control de los apilados de Dale como regla, DX, fijada antes de correrla. Pasa las fases 2 y 3 por poco: +0.056 y +0.030 R por trade, con margen sobre el azar y el tramo. La ventaja antes de comisiones es estable, pero los stops son cortos: aguanta solo con el objetivo como orden limit y poco deslizamiento, y en BTC pierde. Detalle en `Backtester/CLAUDE.md`, "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)", "Hipótesis DX".
+
 ### Noviembre 2026: Zonas de Trader Dale con el Primer Regreso
 
 Cinco elementos del libro de Trader Dale, con las cifras fijadas antes de correrlos (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, paso 3): apilados (DS), nodo doble (DN), orden grande (DG), acumulación (DA) y cluster del tramo (DC). La zona se arma con dos velas completas de un lado y se entra con una limit en el primer regreso, con el stop entre el 10% y el 20% del ATR diario. El control son las mismas zonas desplazadas de 1 a 3 ATR. En la fase 1 ninguna le gana a sus zonas desplazadas: quedan descartadas. De paso, el probador ya no guarda el tramo de una moneda cuyo almacén se está armando. Detalle en `Backtester/CLAUDE.md`, "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)".

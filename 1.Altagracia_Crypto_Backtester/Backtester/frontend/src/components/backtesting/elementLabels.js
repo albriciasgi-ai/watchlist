@@ -29,7 +29,9 @@ export const ELEMENT_LABELS = {
   FB: 'Falso rompimiento', BA: 'Ruptura tras acumulación', TA: 'Trampa de absorción', PO: 'Purga de OI',
   // Trader Dale: la zona y el primer regreso (21/11)
   DS: 'Apilados con regreso', DN: 'Nodo doble con regreso', DG: 'Orden grande con regreso', DA: 'Acumulación con regreso',
-  DC: 'Cluster del tramo con regreso'
+  DC: 'Cluster del tramo con regreso',
+  // Hipótesis del 22/11: el control de DS como regla
+  DX: 'Apilados desplazados con regreso'
 };
 
 /** Nombre corto de un código; sin nombre conocido, el código o el nombre que se pase. */

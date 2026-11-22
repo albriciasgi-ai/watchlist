@@ -1759,7 +1759,7 @@ LABELS = {"WD": "Barra divergente", "WA": "AO tres barras", "WF": "Ruptura de fr
           "QT": "Prueba de poco volumen", "QS": "Frenado o techo", "QC": "Clímax de volumen", "QE": "Medidor VPA",
           "FB": "Falso rompimiento", "BA": "Ruptura tras acumulación", "TA": "Trampa de absorción", "PO": "Purga de OI",
           "DS": "Apilados con regreso", "DN": "Nodo doble con regreso", "DG": "Orden grande con regreso",
-          "DA": "Acumulación con regreso", "DC": "Cluster del tramo con regreso"}
+          "DA": "Acumulación con regreso", "DC": "Cluster del tramo con regreso", "DX": "Apilados desplazados con regreso"}
 
 
 def _labels(codes):
@@ -2221,7 +2221,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             other = run(symbol, rule, span, phase, table, base=False, control=True)
             c = other.get("summary") or {}
             result["control"] = {key: c.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "smallSample")}
-            result["controlKind"] = "liq" if "liq" in rule else "byko" if _byko_codes(rule) else "dale"
+            result["controlKind"] = ("liq" if "liq" in rule else "byko" if _byko_codes(rule)
+                                     else "daleAnchor" if "DX" in _dale_codes(rule) else "dale")  # DX: anclas al azar
             if s.get("n") and c.get("n"):
                 edge = s["avgR"] - c["avgR"]
                 se = math.sqrt(s["seR"] ** 2 + c["seR"] ** 2)

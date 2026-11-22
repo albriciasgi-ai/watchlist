@@ -54,6 +54,39 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 22 Noviembre 2026: Hipótesis de los Apilados Desplazados (DX), Juzgada en las Fases 2 y 3
+
+**Pedido:** juzgar la curiosidad de la fase 1 de Dale (las zonas desplazadas de los apilados ganaban) como una hipótesis nueva, fijada antes de correrla y juzgada en las fases 2 y 3.
+
+**Cambios:**
+1. **Fijada antes de correrla** en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "Hipótesis nueva: los apilados desplazados (DX)":
+   - la regla, las 7 monedas con almacén juntas y el control;
+   - el criterio: R por trade positivo con margen y ventaja con margen sobre el azar y el tramo;
+   - la fase 3, solo si pasaba la 2.
+2. **DX** en el probador (`backend/dale.py`): el control de DS como regla, con su misma semilla. Su control son las mismas zonas ancladas en velas al azar ("¿Aporta anclar en los apilados?").
+3. **Ventana:** DX va con las zonas de Dale, con su nombre y su control.
+4. **Pruebas:** `test_dale.py` suma 2 (12). Todas las del backend de App 1: 556 pasan y fallan las 2 de siempre. La página compila y sus pruebas pasan.
+
+**IMPORTANTE:**
+- **Pasa la fase 2 y la fase 3**, por poco:
+  - fase 2: 10,747 trades y +0.056 R por trade (de +0.028 a +0.084);
+  - fase 3: 11,416 trades y +0.030 R (de +0.003 a +0.057);
+  - en las dos le gana con margen al azar y al tramo.
+
+  Es la única regla de los PDF de Byko y Dale que pasa.
+- **Lo que la debilita:**
+  - la ventaja se achica: +0.099, +0.056 y +0.030 en las tres fases;
+  - antes de comisiones es estable (+0.18 R), pero los stops son de 0.6% del precio y la comisión se lleva de 0.12 a 0.14 R;
+  - BTC pierde en las dos fases, por la comisión;
+  - en la fase 3 las zonas ancladas en velas al azar casi la igualan.
+- **Con deslizamiento** (medido después, sin cambiar el veredicto) aguanta solo con el objetivo como orden limit y el stop deslizando 0.02% o menos. Con las dos salidas a mercado y 0.02%, se va.
+- Se corrió con `OrderFlowData/research/dale/2026-11-22/dx.py` y `costes.py`, sin guardar corridas en el registro del usuario. Resumen en `resumen.md` de esa carpeta.
+- **Lo que sigue** según el plan es el paso 4: un detector en vivo en la suite, sin enviar nada al bot. Serían los primeros datos frescos de verdad, con el llenado y el deslizamiento reales.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)", "Hipótesis DX"
+
+---
+
 ### App 1 - 22 Noviembre 2026: Zonas de Trader Dale con el Primer Regreso (paso 3 de las estrategias de Byko y Dale)
 
 **Pedido:** "Sigue con Dale", tras cerrar Byko. La idea de *Order Flow Trading Setups*: una zona marcada por el volumen, el precio se aleja una o dos velas completas y se entra en el primer regreso. El probador nunca lo había probado: AP y GR no se habían corrido, y ST solo a mercado en la vela del evento.
@@ -79,7 +112,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
   - **dónde estuvo el volumen no aporta:** ninguna zona le gana con margen a sus zonas desplazadas. Los apilados dan +0.01 R por trade en 16,703 trades, y sus zonas desplazadas, +0.10;
   - **la mecánica le gana al azar, pero pierde:** entrar con una limit en el primer regreso da más que entrar a mercado al azar en 15 de 16 corridas. Aun así, salvo los apilados, todas pierden de −0.07 a −0.19 R;
   - **el proceso del usuario** (el cluster del tramo con el OI sostenido) tampoco: −0.10 y −0.13 R.
-- **Cierre:** las cinco zonas quedan descartadas. Con Byko y Dale cerrados, el paso 4 (la suite) no tiene nada que llevar. Resumen en `OrderFlowData/research/dale/2026-11-21/resumen.md`.
+- **Cierre:** las cinco zonas quedan descartadas. Resumen en `OrderFlowData/research/dale/2026-11-21/resumen.md`. Después, la curiosidad de los apilados desplazados pasó las fases 2 y 3 como hipótesis nueva (entrada de arriba).
 - **SUI:** el panel armó su almacén mientras corría la fase 1. El tramo a medio armar que quedó guardado se borró, y DS, DN y DG se repitieron con SUI: dan lo mismo.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)" y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`

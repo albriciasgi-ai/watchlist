@@ -123,7 +123,7 @@ export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24
 export const PATTERN_CODES = ['HM', 'EN', 'DJ'];
 export const WISE_CODES = ['WD', 'WA', 'WF'];
 export const SMC_CODES = ['BS', 'OB', 'BK', 'EQ'];
-export const DALE_CODES = ['DS', 'DN', 'DG', 'DA', 'DC'];  // Zonas de Trader Dale con el primer regreso (21/11)
+export const DALE_CODES = ['DS', 'DN', 'DG', 'DA', 'DC', 'DX'];  // Zonas de Trader Dale con el primer regreso (21/11); DX, hipótesis del 22/11
 export const VPA_CODES = ['QA', 'QB', 'QF', 'QR', 'QT', 'QS', 'QC', 'QE'];
 export const usesVpa = (rule) => (rule.codes || []).some(code => VPA_CODES.includes(code));
 /** El filtro del medidor VPA en palabras (el mismo de rule_tester en el backend) */

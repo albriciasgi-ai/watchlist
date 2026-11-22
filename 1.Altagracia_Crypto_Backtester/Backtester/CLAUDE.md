@@ -1865,7 +1865,7 @@ en el plan antes de la primera corrida, y solo se corren las variantes declarada
 - **La mecánica le gana al azar, pero pierde.** Alejarse y entrar con una limit en el primer regreso da más que entrar a mercado en velas al azar en 15 de las 16 corridas, hasta +0.25 R por trade y con margen en 9. Parte es la comisión de maker, que con stops de 10 a 20% del ATR diario pesa. Salvo los apilados, todas pierden.
 - **El proceso del usuario** (DC 30m con el OI sostenido): −0.095 R en las de siempre y −0.125 en las nuevas, sin diferencia con las zonas desplazadas.
 - **Curiosidad sin valor de prueba:** las zonas desplazadas de los apilados ganan de +0.09 a +0.10 R. Salió de un control, después de mirar: solo vale como hipótesis nueva, fijada antes y juzgada en las fases 2 y 3.
-- **Cierre del paso 3:** las cinco zonas quedan descartadas en la fase 1, y el paso 4 (la suite) no tiene nada que llevar.
+- **Cierre del paso 3:** las cinco zonas quedan descartadas en la fase 1. Después, la curiosidad se juzgó como hipótesis nueva, DX, y pasó las fases 2 y 3 (abajo).
 
 ### Arreglado: tramos guardados a medio armar (22/11)
 
@@ -1887,9 +1887,42 @@ en el plan antes de la primera corrida, y solo se corren las variantes declarada
 
   DA y DC no cambian: solo usan las velas, y las de SUI estaban completas.
 
+### Hipótesis DX: los apilados desplazados (22/11)
+
+**Pedido del usuario:** juzgar la curiosidad de la fase 1 (las zonas desplazadas de los apilados ganaban) como una hipótesis nueva, fijada antes de correrla y juzgada en las fases 2 y 3. El criterio quedó en el plan, "Hipótesis nueva: los apilados desplazados (DX)".
+
+- **DX, "Apilados desplazados con regreso"** (`dale.py`): es el control de DS como regla. Cada franja ST se mueve con la misma semilla del control (`"DS"` + vela + borde bajo), así que da los mismos trades.
+- **Su control** (`control=True`, `controlKind: "daleAnchor"`), "¿Aporta anclar en los apilados?":
+  - por cada franja, una vela al azar del tramo (semilla `"DXa"` + vela + borde bajo);
+  - una zona del mismo alto en ATR, centrada en su cierre y movida igual de 1 a 3 ATR;
+  - la misma mecánica.
+
+  Dice si importa el apilado o basta la mecánica. El alto sale de la franja ST, aunque la vela al azar sea anterior: es un número al azar para el control, como la distancia mediana del stop del azar.
+- **Dónde vale:** solo las monedas con almacén, como DS. En la ventana va con las demás zonas de Dale.
+- **La corrida:** `OrderFlowData/research/dale/2026-11-22/dx.py`. Antes de la fase 2 comprueba que DX en la fase 1 dé los mismos trades que el control de DS, y la fase 3 solo corre si pasó la 2.
+- **Resultado: pasa la fase 2 y la fase 3**, por poco (7 monedas juntas; `resumen.md` de esa carpeta):
+
+  | Fase | Trades | R por trade | Azar | Tramo | Anclas al azar |
+  |---|---|---|---|---|---|
+  | 1, comprobación | 15,986 | +0.099 (+0.076 a +0.122) | +0.348 ✓ | +0.356 ✓ | +0.046 ✓ |
+  | 2 | 10,747 | +0.056 (+0.028 a +0.084) | +0.262 ✓ | +0.245 ✓ | +0.053 ✓ |
+  | 3 | 11,416 | +0.030 (+0.003 a +0.057) | +0.300 ✓ | +0.287 ✓ | +0.016 |
+
+  - En la fase 1 dio los mismos trades que el control de DS (12,976 en las de siempre, ya con SUI, y 3,010 en XRP).
+  - **Antes de comisiones** da +0.18 R en las fases 2 y 3: lo que se achica es la parte de la comisión (de 0.12 a 0.14 R), porque los stops bajaron de 0.66% a 0.58% del precio.
+  - **BTC** pierde en las dos fases (−0.04 y −0.06), por la comisión sobre stops de 0.32% a 0.38%. XRP queda cerca de cero, y las otras cinco ganan.
+  - **En la fase 3,** las zonas ancladas en velas al azar casi la igualan: lo que queda es, sobre todo, la mecánica.
+- **Comisión y deslizamiento** (`costes.py`, después, sin cambiar el veredicto):
+  - con el objetivo como limit (maker) y el stop deslizando 0.02%, la fase 3 da +0.033 R (de +0.005 a +0.061);
+  - con 0.05% en el stop, −0.002;
+  - con las dos salidas taker y 0.02%, −0.008.
+
+  Aguanta solo si el objetivo va como limit y el stop desliza poco.
+- **Lo que sigue,** según el plan, es el paso 4: un detector en vivo en la suite, sin enviar nada al bot. Las tres fases están usadas, así que un ajuste (dejar fuera BTC, un stop mínimo en % del precio) solo lo podría juzgar el registro en vivo.
+
 ### Pruebas
 
-- `tests/test_dale.py` (10):
+- `tests/test_dale.py` (12):
   - el ATR diario sin el día en curso;
   - el perfil por velas;
   - el armado (velas seguidas, la cuenta que vuelve a empezar, el plazo y el lado);
@@ -1898,10 +1931,12 @@ en el plan antes de la primera corrida, y solo se corren las variantes declarada
   - la acumulación y el cluster con su pausa;
   - el control;
   - que lo sabido no cambie;
-  - la corrida con el control.
+  - la corrida con el control;
+  - DX da los mismos eventos que el control de DS, y su control ancla en otras velas, siempre igual;
+  - la corrida de DX con sus anclas al azar.
 - `tests/test_rule_tester.py` suma 1 (17): un tramo con un día sin flujo no se guarda; con el flujo completo se guarda y se usa; si después se escribe un día, se vuelve a detectar. Sin el candado, falla.
 - `rulefacets.test.mjs` (13) y `ruletester.test.mjs` (15) siguen pasando, y la página compila.
-- Las del probador que pasan por el tramo (13 archivos, 115 pruebas) pasan con el candado. Todas las del backend: 554 pasan y fallan las 2 de siempre (`test_endpoints` por la versión y `test_lru_cache::test_clear`).
+- Las del probador que pasan por el tramo (13 archivos, 115 pruebas) pasan con el candado. Todas las del backend, con DX: 556 pasan y fallan las 2 de siempre (`test_endpoints` por la versión y `test_lru_cache::test_clear`).
 
 ## REVISIÓN DE CANDIDATOS POR SESIONES (18/11/2026)
 

@@ -219,10 +219,47 @@ mecánica de regreso. Después solo se corren las variantes declaradas aquí.
   - Las otras cuatro pierden de −0.07 a −0.19 R, como sus zonas desplazadas.
 - **La mecánica le gana al azar, pero pierde.** Alejarse y entrar con una limit en el primer regreso da más que entrar a mercado en velas al azar en 15 de las 16 corridas, hasta +0.25 R por trade y con margen en 9. Parte es la comisión de maker. Salvo los apilados, todas pierden.
 - **El proceso del usuario** (el cluster del tramo con el OI sostenido) da −0.10 R en las de siempre y −0.13 en las nuevas, sin diferencia con las zonas desplazadas.
-- **Una curiosidad sin valor de prueba:** las zonas desplazadas de los apilados ganan +0.09 a +0.10 R. Salió de un control, después de mirar los datos: solo vale como una hipótesis nueva, fijada antes de correrla y juzgada en las fases 2 y 3.
+- **Una curiosidad sin valor de prueba:** las zonas desplazadas de los apilados ganan +0.09 a +0.10 R. Salió de un control, después de mirar los datos: solo vale como una hipótesis nueva, fijada antes de correrla y juzgada en las fases 2 y 3. Así se hizo: es DX, más abajo.
 - **SUI** pasó a tener almacén mientras corría la fase. DS, DN y DG se repitieron con ella, sin cambiar las reglas, y dan lo mismo.
 
 **Paso 3 cerrado:** las cinco zonas de Dale quedan descartadas en la fase 1.
+
+### Hipótesis nueva: los apilados desplazados (DX)
+
+**Fijada el 22/11/2026, antes de correrla en las fases 2 y 3**, a pedido del usuario. Sale del control de DS en la fase 1, mirado después de correrlo: las zonas desplazadas de los apilados dieron +0.097 R por trade en las monedas de siempre (12,364 trades) y +0.091 en XRP (3,010). Por eso no tiene valor de prueba en la fase 1, y se juzga solo con lo que no se miró.
+
+**La regla, DX, es exactamente ese control:**
+- cada franja de desequilibrios apilados (ST) del almacén, sin el filtro de velas de mucho volumen;
+- movida entre 1 y 3 ATR arriba o abajo, con la misma semilla del control de la fase 1, y con el mismo alto;
+- la mecánica de Dale sin cambios: se arma con 2 velas completas de un lado en 200 velas, limit en el borde cercano válida 200 velas, stop entre el 10% y el 20% del ATR diario (borde lejano más 0.1 ATR; más lejos que el 20%, no se opera), objetivo de 2R;
+- 30 minutos, una posición a la vez, sin espera.
+
+**Monedas:** las 7 con almacén de trades, juntas: BTC, ETH, SOL, ARB, GALA, SUI y XRP.
+
+**Pasa la fase 2** (01/01/2024 a 30/06/2025) si, en las 7 juntas:
+1. el R por trade es positivo con margen: el margen al 95% no toca el cero. Es más exigente que antes porque la hipótesis salió de mirar los datos;
+2. le gana con margen al azar y al tramo.
+
+**Se informa, sin exigirlo:**
+- **el control propio:** las mismas zonas ancladas en velas al azar. Por cada franja, una vela al azar de la fase (semilla por franja), una zona del mismo alto en ATR centrada en su cierre, movida igual de 1 a 3 ATR y con la misma mecánica. Dice si importa el apilado o basta la mecánica;
+- cada moneda, cada año y cada lado.
+
+**Después:**
+- **si pasa la fase 2,** se corre la fase 3 (desde el 01/07/2025) con la misma regla y el mismo criterio;
+- **si no pasa,** queda descartada y la fase 3 no se gasta;
+- en ningún caso se ajusta algo con lo visto en la fase 2.
+
+**Resultado (22/11): pasa la fase 2 y la fase 3** (`OrderFlowData/research/dale/2026-11-22/resumen.md`).
+- **Comprobación:** en la fase 1, DX dio los mismos trades que el control de DS (12,976 en las de siempre, ya con SUI, y 3,010 en XRP).
+- **Fase 2:** 10,747 trades, +0.056 R por trade (de +0.028 a +0.084). Le gana al azar (+0.26) y al tramo (+0.25) con margen. A las zonas ancladas en velas al azar, +0.053, también con margen.
+- **Fase 3:** 11,416 trades, +0.030 R (de +0.003 a +0.057). Le gana al azar (+0.30) y al tramo (+0.29) con margen. A las anclas al azar, +0.016, sin margen.
+- **Lo que la debilita:**
+  - pasa por poco, y la ventaja se achica: +0.099, +0.056 y +0.030 en las tres fases;
+  - antes de comisiones es estable (+0.18 en las fases 2 y 3): lo que crece es la comisión, porque los stops se achicaron en % del precio (0.66% a 0.58%);
+  - BTC pierde en las dos fases, por la comisión: sus stops son de 0.32% a 0.38%;
+  - en la fase 3, las zonas ancladas en velas al azar casi la igualan: lo que queda es, sobre todo, la mecánica;
+  - **con deslizamiento** (medido después, sin cambiar el veredicto) solo aguanta si el objetivo va como orden limit y el stop desliza 0.02% o menos. Con las dos salidas a mercado y 0.02%, se va.
+- **Lo que sigue** es el paso 4. Las tres fases están usadas: un ajuste, como dejar fuera BTC, sería una hipótesis nueva que solo el registro en vivo podría juzgar.
 
 **Lo que se había propuesto** (antes de fijar las cifras):
 
@@ -238,7 +275,7 @@ mecánica de regreso. Después solo se corren las variantes declaradas aquí.
 
 ### Paso 4: en la suite
 
-**Al 22/11 no hay nada que llevar:** ninguna regla de Byko ni de Dale pasó la fase 2.
+**Al 22/11:** ninguna regla de Byko ni de las cinco zonas de Dale pasó la fase 2. Solo la hipótesis DX, los apilados desplazados, pasó las fases 2 y 3, por poco y sensible a la ejecución. Es la única que hay para llevar.
 
 Solo con lo que pase la fase 2:
 - un detector en vivo como el de Williams y SMC, sin enviar nada al bot;

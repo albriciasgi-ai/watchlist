@@ -1418,6 +1418,7 @@ const RuleTesterApp = () => {
               El stop ya viene en la zona, entre el 10% y el 20% del ATR diario: usa "Entrada, stop y objetivo de Dale".
               <b> Apilados</b>, <b>nodo doble</b> y <b>orden grande</b> salen del almacén de trades. <b>Acumulación</b> y <b>cluster del tramo</b> usan un perfil por velas y valen en todas las monedas.
               Cada corrida suma el control de las <b>zonas desplazadas</b>: las mismas zonas movidas de 1 a 3 ATR, con la misma mecánica.
+              <b> Apilados desplazados</b> es ese control de los apilados como regla, la hipótesis del 22/11; su control son las mismas zonas <b>ancladas en velas al azar</b>.
             </div>
           </>
         )}
@@ -2061,16 +2062,18 @@ const RuleTesterApp = () => {
       )}
       {result.control && (
         <div className="rt-group">
-          <h4>{{ byko: '¿Aporta la firma de Byko?', dale: '¿Aporta dónde estuvo el volumen?' }[result.controlKind] || '¿Aportan las liquidaciones?'}</h4>
+          <h4>{{ byko: '¿Aporta la firma de Byko?', dale: '¿Aporta dónde estuvo el volumen?', daleAnchor: '¿Aporta anclar en los apilados?' }[result.controlKind] || '¿Aportan las liquidaciones?'}</h4>
           <div className="rt-note">
             {result.controlKind === 'byko'
               ? <>Los mismos candidatos <b>sin</b> la firma (la llegada y el volumen, o el OI): </>
               : result.controlKind === 'dale'
                 ? <>Las mismas zonas <b>desplazadas</b> de 1 a 3 ATR, con la misma mecánica: </>
-                : <>La misma regla tras barrer un swing <b>sin</b> liquidaciones: </>}
+                : result.controlKind === 'daleAnchor'
+                  ? <>Las mismas zonas <b>ancladas en velas al azar</b>, movidas igual y con la misma mecánica: </>
+                  : <>La misma regla tras barrer un swing <b>sin</b> liquidaciones: </>}
             {result.control.n ?? 0} trades{result.control.n ? <>, acierto {fmtPct(result.control.winRate)}, <R value={result.control.avgR} digits={3} /> R por trade</> : null}.
-            {result.control.edge && <> Diferencia a favor {{ byko: 'de la firma', dale: 'de la zona de volumen' }[result.controlKind] || 'de las liquidaciones'}: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}).{' '}
-              {result.control.edge.clear ? 'Se distingue.' : { byko: 'No se distingue de los candidatos sin la firma.', dale: 'No se distingue de una zona cualquiera.' }[result.controlKind] || 'No se distingue de un barrido cualquiera.'}</>}
+            {result.control.edge && <> Diferencia a favor {{ byko: 'de la firma', dale: 'de la zona de volumen', daleAnchor: 'de los apilados' }[result.controlKind] || 'de las liquidaciones'}: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}).{' '}
+              {result.control.edge.clear ? 'Se distingue.' : { byko: 'No se distingue de los candidatos sin la firma.', dale: 'No se distingue de una zona cualquiera.', daleAnchor: 'No se distingue de una vela cualquiera.' }[result.controlKind] || 'No se distingue de un barrido cualquiera.'}</>}
             {result.liqFrom && <> Liquidaciones desde el {result.liqFrom.split('-').reverse().join('/')}.</>}
           </div>
         </div>
@@ -2329,8 +2332,8 @@ const RuleTesterApp = () => {
               )}
               {allReport.control && (
                 <div className="rt-note" style={{ marginTop: 4 }}>
-                  {{ byko: 'Sin la firma de Byko', dale: 'Zonas desplazadas' }[allReport.control.kind] || 'Barridos sin liquidaciones'}: {allReport.control.n} trades, <R value={allReport.control.avgR} digits={3} /> R por trade.{' '}
-                  {allReport.control.edge && <>Diferencia a favor {{ byko: 'de la firma', dale: 'de la zona de volumen' }[allReport.control.kind] || 'de las liquidaciones'}: <R value={allReport.control.edge.r} digits={3} /> R
+                  {{ byko: 'Sin la firma de Byko', dale: 'Zonas desplazadas', daleAnchor: 'Ancladas en velas al azar' }[allReport.control.kind] || 'Barridos sin liquidaciones'}: {allReport.control.n} trades, <R value={allReport.control.avgR} digits={3} /> R por trade.{' '}
+                  {allReport.control.edge && <>Diferencia a favor {{ byko: 'de la firma', dale: 'de la zona de volumen', daleAnchor: 'de los apilados' }[allReport.control.kind] || 'de las liquidaciones'}: <R value={allReport.control.edge.r} digits={3} /> R
                     (entre {fmtR(allReport.control.edge.low, 3)} y {fmtR(allReport.control.edge.high, 3)}). {allReport.control.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue.'}</>}
                 </div>
               )}
