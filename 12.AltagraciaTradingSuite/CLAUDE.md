@@ -75,7 +75,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40) y hl_checks.py (22), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40) y hl_checks.py (29), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -1029,13 +1029,16 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
 
 - **Solo lee:** usa la API pública `info`, sin clave. Nunca envía órdenes ni nada a Hyperliquid.
 - **Grabador:** `server/hl_recorder.py`. Arranca con el servidor y graba en `OrderFlowData/live/hyperliquid/`:
-  - **`ctx/AAAA-MM-DD.jsonl`, cada 5 minutos:** por moneda de la suite, el interés abierto (en monedas y en USD), el funding, el precio marca y el de oráculo, la prima y el volumen de 24 h (`metaAndAssetCtxs`, un pedido para todas). Unos 270 KB por día.
+  - **`ctx/AAAA-MM-DD.jsonl`, cada minuto** (cada 5 hasta la tarde del 21/11): por moneda de la suite, el interés abierto (en monedas y en USD), el funding, el precio marca y el de oráculo, la prima y el volumen de 24 h (`metaAndAssetCtxs`, un pedido para todas). Unos 4 MB por día.
   - **`wallets.json`, una vez al día:** las cuentas a seguir, sacadas del leaderboard público (`stats-data`, unos 38 MB, de 2.5 a 3.5 minutos). Son las 300 de más capital y las 1,000 de más volumen operado en el mes, sin repetir: unas 1,200.
     - Las de más capital usan poco apalancamiento. Medido el 21/11: el short de BTC más grande, de 32.7 M USD, se liquidaría en 96,110, a +59%.
     - Las muy activas son las que tienen liquidaciones cerca del precio. De 150 por volumen salieron 16 posiciones con la liquidación a menos de 25%, por 124 M USD.
-  - **`positions/AAAA-MM-DD.jsonl`, cada 15 minutos:** una línea por vuelta con las posiciones de esas cuentas en las monedas de la suite (`clearinghouseState`, un pedido por cuenta, 3 a la vez con 0.3 s de pausa). Cada posición es `[billetera, moneda, tamaño con signo, entrada, liquidación, apalancamiento, valor en USD]`. Unos 66 KB por vuelta, unos 6 MB por día.
+  - **`positions/AAAA-MM-DD.jsonl`, cada 15 minutos (la vuelta completa):** una línea por vuelta con las posiciones de esas cuentas en las monedas de la suite (`clearinghouseState`, un pedido por cuenta, 3 a la vez con 0.3 s de pausa). Cada posición es `[billetera, moneda, tamaño con signo, entrada, liquidación, apalancamiento, valor en USD]`. Unos 66 KB por vuelta, unos 6 MB por día.
+  - **`fast/AAAA-MM-DD.jsonl`, cada minuto (la vuelta rápida, 21/11, pedida para el mapa):** solo las cuentas con alguna liquidación a menos de 10% del precio (`FAST_BAND_PCT`), hasta 200 (`FAST_MAX`), de más a menos USD en riesgo. Mismo formato.
+    - **Por qué no todas cada minuto:** la API deja 1,200 de peso por minuto y cada cuenta pesa 2, así que una vuelta completa necesita al menos 2 minutos; hoy tarda 5.
+    - **Lo que se ve** (`latest_positions`, el mapa y el indicador) junta las dos: de cada cuenta, su consulta más reciente. La vuelta completa decide quién queda: una cuenta que salió de la lista o que no respondió se va, salvo que la rápida la haya consultado después.
 - **Monedas:** las de la suite, con el nombre de Hyperliquid (`hl_coin`: BTCUSDT → BTC, 1000PEPEUSDT → kPEPE, SHIB1000USDT → kSHIB). Una moneda agregada a la suite entra en la vuelta siguiente.
-- **Un solo grabador por carpeta** (`live/hyperliquid/recorder.lock`). `SUITE_HL=0` lo apaga; sin esa variable vale `SUITE_RECORD`. Al arrancar retoma la última vuelta del día. Una cuenta que falla no corta la vuelta, y un error de una vuelta reintenta en la siguiente (el leaderboard, a la media hora).
+- **Un solo grabador por carpeta** (`live/hyperliquid/recorder.lock`). `SUITE_HL=0` lo apaga; sin esa variable vale `SUITE_RECORD`. Al arrancar retoma la última vuelta del día. Una cuenta que falla no corta la vuelta, y un error de una vuelta reintenta en la siguiente (el leaderboard, a la media hora). Mientras la lista de cuentas sigue bajando, las vueltas de posiciones reintentan cada 30 s: hasta la tarde del 21/11 dormían la vuelta entera, y la primera llegaba unos 20 minutos después de abrir la suite.
 - **Rutas:**
 
 | Ruta | Qué hace |
@@ -1053,10 +1056,25 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
   - graba solo con la suite abierta. Para semanas seguidas habría que llevarlo al collector de Northflank, como el libro;
   - el precio de liquidación de una cuenta con margen cruzado depende de toda la cuenta y cambia con sus otras posiciones: es un valor del momento de la vuelta;
   - se sigue una parte de las cuentas, no todas.
+- **Indicador "Liquidaciones Hyperliquid"** (21/11, en la lista de indicadores del gráfico principal; apagado de fábrica):
+  - **Dónde está el código:** en App 1 (`HyperliquidLiqIndicator.js`, cuentas en `hlLiquidations.js`), registrado en `IndicatorManager`. App 1 no lo ofrece: no tiene esos datos. La suite lo enciende con su nombre en `DEFAULT_STATES` de `ChartView.jsx`;
+  - **Qué dibuja:** las 3 franjas de 0.5% del precio más cargadas de cada lado, de 500k USD o más. Arriba los cortos (celeste) y abajo los largos (rosa), con los colores del indicador Liquidaciones. Más USD, más firme;
+  - **Etiqueta:** "HL cortos 30M · 2 cuentas · +2.7%";
+  - **Estado:** cuántas posiciones hay a menos de 25% y la antigüedad de la consulta, bajo los otros estados;
+  - **Fuera de la vista:** las franjas que no caben se avisan en el borde de arriba o de abajo;
+  - **Análisis del trade:** cada franja se puede elegir con un clic ("Liquidaciones de cortos (Hyperliquid)"), así entra al Observador y al journal;
+  - **Ritmo:** lo pide a `/api/hyperliquid/liqmap` cada minuto. Una moneda que Hyperliquid no lista (LPT, MUBARAK) dice "moneda que Hyperliquid no lista".
+  - **Probado en pantalla** (21/11, copia aislada en 13300, con carpetas temporales y la API real):
+    - la vuelta completa tardó 4.8 minutos (1,218 cuentas, 1,026 posiciones) y la rápida 22 s (83 cuentas cercanas);
+    - en BTC 4H, 5 franjas, entre ellas 52 M USD de cortos a +13.3% y 15 M de largos a −3.3%, con los avisos de las que no caben;
+    - un clic en una franja ofreció "Liquidaciones de cortos (Hyperliquid)" en "Incluir en el análisis";
+    - la etiqueta de la franja más alta puede quedar bajo los botones del gráfico, como otras etiquetas del borde.
+
+    No se probó en Electron.
 - **Falta (siguientes pasos del plan):**
-  - el indicador del gráfico con el mapa de liquidaciones;
+  - la capa del mapa con la historia minuto a minuto (necesita una ruta que lea `fast` y `positions`);
   - con 4 a 6 semanas grabadas, el estudio: ¿el precio va a buscar esos grupos más que un nivel al azar?
-- **Pruebas:** `server/tests/hl_checks.py` (22), sin conexión:
+- **Pruebas:** `server/tests/hl_checks.py` (29, con la vuelta rápida y el reintento) y, en App 1, `tests/hlliquidations.test.mjs` (6), sin conexión:
   - los nombres de las monedas;
   - el estado y las ballenas elegidas por capital y por volumen;
   - las posiciones y el mapa;

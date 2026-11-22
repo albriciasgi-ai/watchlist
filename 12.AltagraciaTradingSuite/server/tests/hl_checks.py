@@ -120,6 +120,35 @@ async def run():
         check("solo lectura: nada más que pedidos info", all(p["type"] in ("metaAndAssetCtxs", "clearinghouseState") for p in http.posts))
         st = rec.status()
         check("estado del grabador", st["positions"]["wallets_seen"] == len(users) - 1 and st["bytes"] > 0, st)
+        # Vuelta rápida: solo las cuentas con alguna liquidación a menos de 10% del precio
+        near = rec.near_wallets()
+        check("cercanas: el corto de BTC a +10% entra", set(near) == set(rec.by_wallet), near)
+        check("cercanas: con banda de 5% ninguna", rec.near_wallets(5.0) == [])
+        before = len(rec.latest_positions)
+        clock[0] += 60
+        await rec.fast_once()
+        fast = hl.last_line(Path(tmp) / "live" / "hyperliquid" / "fast" / f"{day}.jsonl")
+        check("vuelta rápida anotada aparte", fast and fast["wallets"] == len(near), fast)
+        check("la vista junta las dos sin repetir", len(rec.latest_positions) == before)
+        check("gana la consulta más reciente", all(t == int(clock[0] * 1000) for t, _ in rec.by_wallet.values()))
+        # Una vuelta completa posterior no borra lo que la rápida consultó después de que empezó
+        rec.by_wallet["0xbbb"] = (int(clock[0] * 1000) + 999_999, [["0xbbb", "BTC", 1.0, 1.0, 59000.0, 50.0, 7.0]])
+        await rec.positions_once()
+        check("lo más reciente sobrevive a la vuelta completa", rec.by_wallet["0xbbb"][1][0][6] == 7.0)
+        # Sin lista de cuentas, la vuelta vuelve a mirar en 30 s y no duerme los 15 minutos
+        waits = []
+
+        async def record_sleep(sec):
+            waits.append(sec)
+            if len(waits) >= 2:
+                raise asyncio.CancelledError
+
+        empty = hl.HlRecorder(["BTCUSDT"], Path(tmp) / "otra", http, now=lambda: clock[0], sleep=record_sleep)
+        try:
+            await empty._loop("positions", hl.POS_SECONDS, empty.positions_once)
+        except asyncio.CancelledError:
+            pass
+        check("sin cuentas todavía, reintenta en 30 s", waits[-1] == 30.0, waits)
         rec.add("SOLUSDT")
         check("moneda agregada", "SOL" in rec.coins)
         # Un grabador nuevo retoma la última vuelta del día
