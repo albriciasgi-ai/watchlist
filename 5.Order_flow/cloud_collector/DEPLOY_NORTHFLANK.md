@@ -276,6 +276,14 @@ Ver `12.AltagraciaTradingSuite/CLAUDE.md`, seccion "Nube contra el archivo ofici
 - **En el PC:** `12.AltagraciaTradingSuite/server/hl_cloud.py` baja cada 10 minutos lo nuevo de cada archivo a `OrderFlowData/live/hyperliquid_cloud`.
 - **Despliegue:** copiar a la rama `deploy` de `albriciasgi-ai/footprint-collector` `main.py`, `Dockerfile` y `hl_recorder.py`, y "Deploy" en Builds.
 
+**Desplegado el 22/11:** build `clear-muscle-9783` (commit 0db5b61 de la rama `deploy`), con el botón "Deploy" desde el navegador integrado y la sesión del usuario.
+- **Antes de reiniciar**, tras 8 días encendido sin reinicios: 362 de 512 MB y 19% de la CPU. Al desplegar el 13/11 estaba en 167 MB. Habrá que mirar si la memoria vuelve a subir así.
+- **Después:** 181 MB y 31% de la CPU durante la primera vuelta de Hyperliquid.
+  - la lista de cuentas (46,409 filas, 1,217 cuentas) bajó en segundos desde el datacenter;
+  - la vuelta completa tardó 226 s, con las 1,217 cuentas y 1,009 posiciones;
+  - el libro siguió con sus 20 monedas.
+- **La página de Northflank** tardó unos 3 minutos en cargar, porque su archivo principal baja a unos 25 KB/s. Una dirección escrita a mano la vuelve a cargar entera: conviene moverse con clics dentro de la página.
+
 
 ## Trades sumados al final del día, sin quedarse sin memoria (13/11/2026)
 
