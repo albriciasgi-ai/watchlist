@@ -75,7 +75,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - Basta recargar la página de App 1: el backend no cambió en esta entrada. La suite se reinicia sola al abrirla y arma la página nueva.
 - El Gimnasio publicado ya tiene la etapa nueva. Las sesiones anotadas antes siguen igual.
 - **Probado en pantalla** con una copia aislada en BTC 4h, midiendo los cuerpos de las velas con la opción apagada y encendida. App 1 y la suite compilan. La etapa del Gimnasio no se vio en pantalla: su código es válido.
-- La fase 3 de la ruptura con volumen no se corrió.
+- **Fase 3, corrida después:** en las 43 monedas nuevas pasa (+0.09 R por trade, 2,765 trades, +0.09 sobre el azar y +0.13 sobre el tramo, con margen, 31 de 43 monedas), con la ventaja a la mitad de la fase 2; en las 7 de siempre cae (−0.02 R). Ver `OrderFlowData/research/vpa/FASE3_QB.md`.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA" y `OrderFlowData/research/vpa/FASE2_QB.md`
 
