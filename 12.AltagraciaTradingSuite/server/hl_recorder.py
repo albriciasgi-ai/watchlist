@@ -6,7 +6,7 @@ su precio de liquidación, son públicas. Su historia gratis es corta (desde 202
 libro de Bybit. Solo lee, con la API pública `info` (sin clave): nunca envía órdenes ni nada a Hyperliquid.
 
 Qué graba, en OrderFlowData/live/hyperliquid/:
-- `ctx/AAAA-MM-DD.jsonl`, cada CTX_SECONDS (5 min): por moneda de la suite, interés abierto, funding, precio marca y de
+- `ctx/AAAA-MM-DD.jsonl`, cada CTX_SECONDS (1 min desde el 21/11; antes 5): por moneda de la suite, interés abierto, funding, precio marca y de
   oráculo, prima y volumen de 24 h (`metaAndAssetCtxs`, un pedido para todas).
 - `wallets.json`, una vez al día: del leaderboard público (stats-data, ~38 MB, unos 3 minutos), las BY_VALUE cuentas de
   más capital y las BY_VOLUME de más volumen operado en el mes, sin repetir. Las de más capital usan poco apalancamiento y
@@ -15,6 +15,10 @@ Qué graba, en OrderFlowData/live/hyperliquid/:
 - `positions/AAAA-MM-DD.jsonl`, cada POS_SECONDS (15 min): una línea por vuelta con las posiciones de esas cuentas en
   las monedas de la suite (`clearinghouseState`, un pedido por cuenta, a PACE_SECONDS entre pedidos). Cada posición:
   [billetera, moneda, tamaño con signo, entrada, liquidación, apalancamiento, valor en USD].
+- `fast/AAAA-MM-DD.jsonl`, cada FAST_SECONDS (1 min, 21/11): las posiciones de las cuentas con alguna liquidación a
+  menos de FAST_BAND_PCT % del precio (hasta FAST_MAX), con el mismo formato. Las 1,200 cada minuto no se pueden: la
+  API deja 1,200 de peso por minuto y cada cuenta pesa 2. Lo que se ve (latest_positions) junta las dos: de cada
+  cuenta, su consulta más reciente.
 
 Un solo grabador por carpeta (`recorder.lock`). SUITE_HL=0 lo apaga; sin esa variable vale SUITE_RECORD.
 Rutas: /api/hyperliquid/status, /api/hyperliquid/ctx/{símbolo}, /api/hyperliquid/liqmap/{símbolo}.
@@ -34,7 +38,10 @@ logger = logging.getLogger("hyperliquid")
 
 INFO_URL = "https://api.hyperliquid.xyz/info"
 LEADERBOARD_URL = "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard"
-CTX_SECONDS = 300
+CTX_SECONDS = 60
+FAST_SECONDS = 60
+FAST_BAND_PCT = 10.0
+FAST_MAX = 200
 POS_SECONDS = 900
 WALLETS_SECONDS = 86400
 BY_VALUE = 300
@@ -205,9 +212,35 @@ class HlRecorder:
             self.add(s)
         self.tasks = []
         self.state = {"ctx": {"last": None, "error": None, "count": 0}, "wallets": {"last": None, "error": None, "count": 0},
-                      "positions": {"last": None, "error": None, "count": 0, "wallets_seen": 0, "positions": 0, "seconds": None}}
+                      "positions": {"last": None, "error": None, "count": 0, "wallets_seen": 0, "positions": 0, "seconds": None},
+                      "fast": {"last": None, "error": None, "count": 0, "wallets_seen": 0, "positions": 0, "seconds": None}}
         self.latest_ctx = {}
-        self.latest_positions = []
+        self.by_wallet = {}        # billetera -> (hora de la consulta en ms, [posiciones])
+
+    @property
+    def latest_positions(self):
+        """Las posiciones a la vista: de cada cuenta, su consulta más reciente (vuelta completa o rápida)."""
+        out = [p for _, rows in self.by_wallet.values() for p in rows]
+        out.sort(key=lambda p: (p[1], p[0]))
+        return out
+
+    def _set_wallets(self, fetched):
+        """fetched: {billetera: (hora, posiciones)}. Gana la consulta más reciente de cada cuenta."""
+        for user, (t, rows) in fetched.items():
+            old = self.by_wallet.get(user)
+            if old is None or t >= old[0]:
+                self.by_wallet[user] = (t, rows)
+
+    def near_wallets(self, band_pct=FAST_BAND_PCT, limit=FAST_MAX):
+        """Cuentas con alguna liquidación a menos de band_pct % del precio actual, de más a menos USD en riesgo."""
+        marks = {c: (v or {}).get("mark") for c, v in (self.latest_ctx.get("coins") or {}).items()}
+        risk = {}
+        for user, (_, rows) in self.by_wallet.items():
+            for _, coin, size, entry, liq, lev, value in rows:
+                mark = marks.get(coin)
+                if liq and mark and abs(liq - mark) / mark * 100 <= band_pct:
+                    risk[user] = risk.get(user, 0.0) + abs(value or 0.0)
+        return [u for u, _ in sorted(risk.items(), key=lambda x: -x[1])][:limit]
 
     def add(self, symbol: str):
         symbol = symbol.upper()
@@ -248,13 +281,10 @@ class HlRecorder:
         except (OSError, ValueError):
             return None, []
 
-    async def positions_once(self):
-        _, users = self.wallets()
-        if not users:
-            return
-        started = self.now()
+    async def _fetch(self, users):
+        """Consulta las cuentas (WORKERS a la vez). Devuelve ({billetera: (hora, posiciones)}, fallidas)."""
         coins = set(self.coins)
-        found, counts = [], {"seen": 0, "failed": 0}
+        fetched, counts = {}, {"failed": 0}
         queue = list(users)
 
         async def worker():
@@ -262,8 +292,7 @@ class HlRecorder:
                 user = queue.pop(0)
                 try:
                     state = await self._info({"type": "clearinghouseState", "user": user})
-                    found.extend(parse_positions(user, state, coins))
-                    counts["seen"] += 1
+                    fetched[user] = (int(self.now() * 1000), parse_positions(user, state, coins))
                 except Exception as e:  # Una cuenta que falla no detiene la vuelta
                     counts["failed"] += 1
                     if counts["failed"] in (1, 25, 100):
@@ -271,27 +300,50 @@ class HlRecorder:
                 await self.sleep(PACE_SECONDS)
 
         await asyncio.gather(*(worker() for _ in range(WORKERS)))
-        seen, failed = counts["seen"], counts["failed"]
-        found.sort(key=lambda p: (p[1], p[0]))
+        return fetched, counts["failed"]
+
+    async def _round(self, name, folder, users):
+        started = self.now()
+        fetched, failed = await self._fetch(users)
+        found = sorted((p for _, rows in fetched.values() for p in rows), key=lambda p: (p[1], p[0]))
         t = int(self.now() * 1000)
-        _append(self.base / "positions" / f"{day_of(t)}.jsonl", {"t": t, "wallets": seen, "failed": failed, "positions": found})
-        self.latest_positions = found
-        self.state["positions"].update(last=t, error=None if seen else "ninguna cuenta respondió", count=len(found),
-                                       wallets_seen=seen, positions=len(found), seconds=round(self.now() - started, 1))
+        _append(self.base / folder / f"{day_of(t)}.jsonl", {"t": t, "wallets": len(fetched), "failed": failed, "positions": found})
+        if name == "positions":
+            # La vuelta completa decide quién queda a la vista: una cuenta fuera de la lista o que no respondió sale,
+            # salvo que una vuelta rápida la haya consultado después
+            self.by_wallet = {u: v for u, v in self.by_wallet.items() if u in fetched and v[0] > fetched[u][0]}
+        self._set_wallets(fetched)
+        self.state[name].update(last=t, error=None if fetched or not users else "ninguna cuenta respondió", count=len(found),
+                                wallets_seen=len(fetched), positions=len(found), seconds=round(self.now() - started, 1))
+
+    async def positions_once(self):
+        _, users = self.wallets()
+        if not users:
+            return False
+        await self._round("positions", "positions", users)
+
+    async def fast_once(self):
+        users = self.near_wallets()
+        if not users:
+            return False
+        await self._round("fast", "fast", users)
 
     # ---------- bucles ----------
     async def _loop(self, name, every, fn, first_delay=0):
         await self.sleep(first_delay)
         while True:
             t0 = self.now()
+            done = True
             try:
-                await fn()
+                done = await fn() is not False
             except asyncio.CancelledError:
                 raise
             except Exception as e:
                 self.state[name]["error"] = f"{type(e).__name__}: {e}"[:300]
                 logger.warning(f"[HL] {name}: {e}")
-            await self.sleep(max(5.0, every - (self.now() - t0)))
+            # Sin nada que consultar todavía (la lista de cuentas sigue bajando), vuelve a mirar en 30 s: antes dormía la
+            # vuelta entera, y la primera vuelta de posiciones llegaba unos 20 minutos después de abrir la suite
+            await self.sleep(30.0 if not done else max(5.0, every - (self.now() - t0)))
 
     async def _wallets_loop(self):
         while True:
@@ -315,12 +367,18 @@ class HlRecorder:
         t, users = self.wallets()
         if t:
             self.state["wallets"].update(last=t, count=len(users))
-        last = last_line(self.base / "positions" / f"{day_of(int(self.now() * 1000))}.jsonl")
-        if last:
-            self.latest_positions = last.get("positions") or []
+        today = day_of(int(self.now() * 1000))
+        for folder in ("positions", "fast"):  # Retoma lo de hoy: primero la vuelta completa y encima la rápida
+            last = last_line(self.base / folder / f"{today}.jsonl")
+            if last:
+                grouped = {}
+                for p in last.get("positions") or []:
+                    grouped.setdefault(p[0], []).append(p)
+                self._set_wallets({u: (last["t"], rows) for u, rows in grouped.items()})
         self.tasks = [asyncio.create_task(self._loop("ctx", CTX_SECONDS, self.ctx_once, 5)),
                       asyncio.create_task(self._wallets_loop()),
-                      asyncio.create_task(self._loop("positions", POS_SECONDS, self.positions_once, 60))]
+                      asyncio.create_task(self._loop("positions", POS_SECONDS, self.positions_once, 60)),
+                      asyncio.create_task(self._loop("fast", FAST_SECONDS, self.fast_once, 90))]
 
     async def stop(self):
         for task in self.tasks:
@@ -334,7 +392,7 @@ class HlRecorder:
 
     def status(self):
         size = 0
-        for sub in ("ctx", "positions"):
+        for sub in ("ctx", "positions", "fast"):
             for p in (self.base / sub).glob("*.jsonl"):
                 try:
                     size += p.stat().st_size
@@ -432,7 +490,8 @@ def brief() -> dict:
         return {"enabled": enabled(), "running": False, "other_process_records": _waiting is not None}
     s = _recorder.state
     return {"enabled": True, "running": True, "coins": len(_recorder.coins), "ctx_last": s["ctx"]["last"],
-            "positions_last": s["positions"]["last"], "wallets": s["wallets"]["count"], "positions": s["positions"]["positions"],
+            "positions_last": s["positions"]["last"], "fast_last": s["fast"]["last"], "fast_wallets": s["fast"]["wallets_seen"],
+            "wallets": s["wallets"]["count"], "positions": len(_recorder.latest_positions),
             "errors": {k: v["error"] for k, v in s.items() if v.get("error")}}
 
 
@@ -473,7 +532,9 @@ def make_router() -> APIRouter:
         out = liq_map(mine, price, bucket_pct)
         near = [p for p in mine if p[4] and price and abs(p[4] - price) / price * 100 <= LIQ_BAND_PCT]
         biggest = sorted(near, key=lambda p: -abs(p[6] or 0))[:max(0, min(int(top), 50))]
-        return {"success": True, "coin": coin, "price": price, "t": rec.state["positions"]["last"],
+        updated = max([v[0] for v in rec.by_wallet.values()] or [0]) or None
+        return {"success": True, "coin": coin, "price": price, "t": updated, "full_t": rec.state["positions"]["last"],
+                "fast_t": rec.state["fast"]["last"],
                 "wallets": rec.state["positions"]["wallets_seen"], "positions": len(mine), "near": len(near),
                 "band_pct": LIQ_BAND_PCT, **out,
                 "biggest": [{"wallet": p[0], "side": "long" if p[2] > 0 else "short", "size": p[2], "entry": p[3],

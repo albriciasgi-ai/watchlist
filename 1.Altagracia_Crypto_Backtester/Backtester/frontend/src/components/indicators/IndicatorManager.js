@@ -28,6 +28,7 @@ import LiquidationsIndicator from "./LiquidationsIndicator";
 import OrderFlowElementsIndicator from "./OrderFlowElementsIndicator";
 import LiquidityMapIndicator from "./LiquidityMapIndicator"; // Mapa de liquidez del libro grabado (solo la suite)
 import SustainedLevelsIndicator from "./SustainedLevelsIndicator"; // Niveles de liquidez sostenida (solo la suite)
+import HyperliquidLiqIndicator from "./HyperliquidLiqIndicator"; // Liquidaciones pendientes de las ballenas de Hyperliquid (solo la suite)
 import ZoneDefenseIndicator from "./ZoneDefenseIndicator"; // Defensa de las zonas dibujadas (solo la suite)
 import { WilliamsHub } from "./williams.js"; // Bill Williams (20/11): un cálculo compartido por sus ocho indicadores
 import {
@@ -112,6 +113,9 @@ class IndicatorManager {
     this.sustainedLevelsIndicator.requestRedraw = () => this.requestRedraw?.();
     this.zoneDefenseIndicator = new ZoneDefenseIndicator(this.symbol, this.interval, this.days);
     this.zoneDefenseIndicator.requestRedraw = () => this.requestRedraw?.();
+    // Liquidaciones Hyperliquid (21/11): lo enciende el gráfico principal de la suite; App 1 no tiene esos datos
+    this.hyperliquidLiqIndicator = new HyperliquidLiqIndicator(this.symbol, this.interval, this.days);
+    this.hyperliquidLiqIndicator.requestRedraw = () => this.requestRedraw?.();
     // Bill Williams (20/11): los ocho leen un solo cálculo de la ventana a la vista
     this.williamsHub = new WilliamsHub(this.symbol, this.interval);
     const hub = this.williamsHub;
@@ -133,6 +137,7 @@ class IndicatorManager {
       this.sustainedLevelsIndicator, // También de fondo, encima del mapa y debajo de las velas
       this.zoneDefenseIndicator, // Marcas de las visitas a tus zonas, encima de las velas
       this.liquidationsIndicator, // Primero: sus franjas quedan debajo de los demás dibujos
+      this.hyperliquidLiqIndicator, // Franjas como las de Liquidaciones, también debajo de los demás dibujos
       this.horizontalRangesIndicator, // Cajas de rango horizontal, debajo de los elementos, perfiles y footprints
       this.smcIndicator, // Estructura SMC: order blocks, rupturas, iguales y rango
       this.ofElementsIndicator, // Franjas y marcas de order flow, debajo de los perfiles y footprints

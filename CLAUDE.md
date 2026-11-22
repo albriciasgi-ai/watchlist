@@ -54,6 +54,34 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 21 Noviembre 2026: Indicador "Liquidaciones Hyperliquid" y Grabación Cada Minuto
+
+**Pedido:** tras ver el mapa de liquidaciones de Hyperliquid, el usuario eligió llevarlo como indicador al gráfico principal, y preguntó si se podía grabar minuto a minuto para el mapa.
+
+**Cambios:**
+1. **Indicador "Liquidaciones Hyperliquid"** en la lista del gráfico principal de la suite:
+   - las 3 franjas más cargadas de cada lado: cortos arriba, largos abajo;
+   - cada una con su USD, sus cuentas y a qué % del precio está;
+   - se puede elegir para el análisis del trade;
+   - se actualiza cada minuto.
+
+   El código está en App 1 (`HyperliquidLiqIndicator.js`, `hlLiquidations.js`), que no lo ofrece.
+2. **Grabación más fina:**
+   - el estado de cada moneda pasa de cada 5 minutos a cada minuto;
+   - nueva vuelta rápida cada minuto con las cuentas que tienen liquidaciones a menos de 10% del precio, hasta 200 (`fast/`);
+   - las 1,200 cuentas siguen cada 15 minutos: la API no deja consultarlas todas cada minuto.
+3. **Arreglado:** la primera vuelta de posiciones llegaba unos 20 minutos después de abrir la suite: si la lista de cuentas todavía bajaba, dormía la vuelta entera. Ahora reintenta cada 30 s.
+4. **Pruebas:** `hl_checks.py` (29) y `hlliquidations.test.mjs` de App 1 (6). `liquidations.test.mjs` sigue con su falla de siempre.
+5. **Probado en pantalla** en una copia aislada de la suite (BTC 15m y 4H): las franjas, sus etiquetas, el estado y el menú de análisis. No en Electron.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva. El indicador viene apagado: se enciende en "Indicadores".
+- Las franjas son de cuentas concretas, a veces de una sola. No está validado contra el azar: el estudio necesita semanas de datos.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Hyperliquid (21/11)"
+
+---
+
 ### Altagracia Trading Suite - 21 Noviembre 2026: Grabación de Hyperliquid (paso 2 del plan on-chain)
 
 **Pedido:** grabar Hyperliquid, el paso 2 de `docs/PLAN_INDICADORES_ONCHAIN.md`. Sus posiciones con precio de liquidación son públicas, pero su historia gratis empieza en 2025.
