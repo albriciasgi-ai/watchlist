@@ -31,6 +31,12 @@ DEFAULTS = {
     "alpaca_feed": "sip",
     "alpaca_data_url": "https://data.alpaca.markets",
     "alpaca_trading_url": "https://paper-api.alpaca.markets",
+    # Puerta movil (mobile_gate.py): apagada de fabrica. mobile_host es la direccion por la que entra el celular
+    # (la IP de Tailscale del PC); vacia, no se abre ningun puerto ni corre el vigilante de avisos.
+    # mobile_fcm_credentials: ruta del archivo de la cuenta de servicio de Firebase, para los avisos push
+    "mobile_host": "",
+    "mobile_port": 13002,
+    "mobile_fcm_credentials": "",
 }
 
 

@@ -103,3 +103,30 @@ def test_el_filtro_deja_pasar_solo_las_velas_a_favor(tmp_path, monkeypatch):
     assert longs and not set(longs) & set(shorts)
     first = min(longs)
     assert b[first]["t"] + H4 >= START + 701 * DAY + 6 * 3600000  # El primer largo, ya publicado el día 700
+
+
+def test_el_objetivo_mixto_usa_otro_objetivo_los_dias_a_favor(tmp_path, monkeypatch):
+    # Velas que suben sin parar: con el filtro a favor el largo sale en 5R; sin él, en 3R
+    write(tmp_path, monkeypatch, base(outflow=lambda i: 100.0 + (i % 5) + (400.0 if 700 <= i <= 702 else 0.0)))
+    raw = {"tf": 240, "recipe": {"slots": [{"codes": ["IM"]}]}, "stop": {"type": "atr", "atr": 1.0},
+           "exit": {"targetR": 3, "chainTarget": {"r": 5, "metric": "net", "asset": "btc", "days": 1, "z": 3.0}}}
+    rule = rt.clean_rule(raw)
+    assert rule["exit"]["chainTarget"] == {"r": 5.0, "metric": "net", "days": 1, "z": 3.0, "mode": "favor", "asset": "btc"}
+    # Sin el objetivo mixto, la regla conserva su identidad; con arrastre del objetivo no entra
+    plain = rt.clean_rule({**raw, "exit": {"targetR": 3}})
+    assert "chainTarget" not in plain["exit"]
+    assert "chainTarget" not in rt.clean_rule({**raw, "exit": {**raw["exit"], "tpTrail": {"start": 2, "dist": 0.5}}})["exit"]
+    n = 120
+    b = [{"t": START + 690 * DAY + i * H4, "o": 100.0 + i, "h": 101.5 + i, "l": 99.5 + i, "c": 101.0 + i, "vol": 1.0, "delta": 0.0}
+         for i in range(n)]
+    ctx = rt._context("BTCUSDT", 240, b)
+    ctx["bars"] = b
+    ctx["atr"] = [1.0] * n
+    on_k = next(k for k in range(n) if b[k]["t"] + H4 >= START + 701 * DAY + 6 * 3600000)
+    off_k = 5
+    t_on = rt.simulate(rule, ctx, on_k, 1)
+    t_off = rt.simulate(rule, ctx, off_k, 1)
+    assert t_on["chain_on"] is True and t_off["chain_on"] is False
+    assert (t_on["target"] - t_on["entry"]) / t_on["risk"] == pytest.approx(5.0)
+    assert (t_off["target"] - t_off["entry"]) / t_off["risk"] == pytest.approx(3.0)
+    assert "chain_on" not in rt.simulate(plain, ctx, off_k, 1)

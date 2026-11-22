@@ -24,8 +24,11 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - un día completo de la nube comparado con el archivo oficial (ver "Nube contra el archivo oficial");
   - "Exportar a Excel" en el dashboard (ver "Journal").
 - **Sabios de Williams y estructura SMC (20/11):** los indicadores de App 1 en el gráfico, la detección en el servidor (sin enviar nada), los order blocks en la defensa de zona y sus medidas en el journal. Ver "Sabios de Williams y estructura SMC".
+- **Hyperliquid (21/11):** la suite graba el estado de cada moneda y las posiciones de las ballenas de Hyperliquid, con su precio de liquidación, para el plan on-chain. Ver "Hyperliquid".
 - **Lector VPA (21/11):** el indicador de App 1 en el gráfico y en la Watchlist (lista de livianos), con su modal. Ver `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, "LECTOR VPA". El servidor no lo detecta.
+- **Puerta móvil (21/11):** fase 1 de la app Android: celulares emparejados, vigilante de eventos y avisos push, apagada de fábrica. Ver "Puerta móvil".
 - **Falta:**
+  - la app Android (fases 2 a 4 de "Puerta móvil");
   - las alertas del Swing quedan para la central de alertas de confluencia;
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
 
@@ -57,6 +60,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── book_recorder.py   Graba el libro completo de Bybit (orderbook.full) de las monedas de la suite (ver "Libro completo")
 │   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book, y live/book_cloud de la nube)
 │   ├── book_cloud.py      Baja de la nube (Northflank) los minutos del libro que el PC no tiene completos
+│   ├── hl_recorder.py     Graba Hyperliquid: estado por moneda y posiciones de las ballenas (ver "Hyperliquid")
 │   ├── book_heatmap.py    Mapa de liquidez por vela y precio, para la pestaña "Mapa" (/api/book/heatmap)
 │   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro"); App 1 las usa en su Observador (book_reading.py)
 │   ├── book_study.py      Medición de semanas: qué hace la liquidez al llegar el precio a tus zonas, contra zonas al azar
@@ -68,7 +72,10 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
 │   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18) y wise_smc_checks.py (40), sin conexión
+│   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
+│   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
+│   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40) y hl_checks.py (29), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -952,6 +959,126 @@ Pedido del usuario: un indicador de Smart Money Concepts (con el de LuxAlgo como
 - **Journal** (`wise_smc_measures.py`, medidas versión 3: las guardadas se vuelven a calcular): doce medidas en el grupo "Williams y SMC", en 4h y 1h, con las velas que ya pide `journal_measures` cortadas en la última cerrada antes de decidir y leídas desde el lado del trade: Alligator (1 despierto a favor, −1 en contra, 0 dormido), zona de Williams, AO a favor en ATR, estructura mayor SMC a favor, lugar en el rango mayor (0 en el extremo a favor: discount en un largo) y distancia al order block vivo más cercano del lado del trade, en ATR. Van en el detalle y en el informe de ganadoras contra perdedoras.
 - **Pruebas:** `server/tests/wise_smc_checks.py` (40): `detect()` igual a los eventos de App 1, lo sabido hasta una vela no cambia con las siguientes, cada señal anotada una vez y solo desde el arranque, sin repetir al reiniciar, la pausa, la moneda agregada, el marco retomado, la configuración (también la dañada), las rutas y las medidas del journal. `book_defense_checks.py` suma 6 (21): los order blocks son los de `smc.compute` y los ya sabidos no cambian con menos velas.
 - **Probado** (20/11) en una copia aislada del servidor (13300, datos en una carpeta temporal, sin grabar ni bot) con velas reales de Bybit: las 20 monedas de fábrica en 4h, revisadas en 3.4 s, anotaron las señales de los dos últimos días (por ejemplo un BOS bajista de TRX en 0.3003 y su order block nuevo de 0.3225 a 0.3242). El panel se vio en la Watchlist a 1366 px y un clic en la señal abrió TRX en 4h. Los order blocks de la defensa y las medidas del journal solo con las pruebas. No se probó en Electron.
+
+## Puerta móvil (21/11): fase 1 de la app Android
+
+Pedido del usuario: una app Android para seguir los trades del bot (Bybit y, cuando exista, Alpaca), con aviso al abrirse una posición, las capturas de apertura y cierre, y cerrar una posición desde el celular. Aceptó el concepto y pidió empezar por la fase 1: lo del servidor. La app todavía no existe.
+
+**Plan aceptado:**
+
+| Fase | Qué | Estado |
+|---|---|---|
+| 1 | Puerta móvil, emparejamiento, vigilante de eventos y avisos | Hecha (servidor), sin probar con un celular |
+| 2 | App (React + Capacitor) de solo lectura, pantalla del QR en la suite y "modo directo" | Hecha (`13.AltagraciaMobile`), probada en el navegador; el APK no se armó |
+| 3 | Cerrar posición desde la app (huella y confirmación), probado en Demo | Falta |
+| 4 | Vigía en Northflank, Alpaca cuando tenga trading y mudanza al servidor | Falta |
+
+- **Modo directo (fase 2, pedido del usuario):** con el PC apagado, la app lee las posiciones directo de Bybit con una clave de **solo lectura** guardada en el celular. Nunca las claves del bot, y sin cerrar desde ahí.
+- **Conexión:** por Tailscale (red privada entre el PC y el celular). Nada queda expuesto a internet.
+
+**Apagada de fábrica.** Sin `mobile_host` no se abre ningún puerto ni corre el vigilante. Para encenderla, en `config/suite.json`:
+
+```json
+{ "mobile_host": "100.x.y.z", "mobile_port": 13002, "mobile_fcm_credentials": "C:\\ruta\\firebase-cuenta-de-servicio.json" }
+```
+
+`mobile_host` es la IP de Tailscale del PC. `SUITE_MOBILE=0` la apaga aunque esté configurada. El servidor de la suite (13000) y el bot (5000) siguen en `127.0.0.1`.
+
+- **Dispositivos y firmas** (`server/mobile_devices.py`, `data/mobile/devices.json`):
+  - emparejar crea un celular pendiente con un secreto al azar, que la suite muestra una sola vez (para un QR). El secreto no viaja por la red; vence a los 10 minutos si no se usa. Hasta 10 celulares;
+  - cada pedido va firmado: `X-Device`, `X-Time` (±90 s), `X-Nonce` (no se acepta dos veces) y `X-Sign` = HMAC-SHA256 del método, la ruta con su consulta, la hora, el nonce y el sha256 del cuerpo. Un pedido capturado no se puede repetir ni cambiar;
+  - diez firmas malas en un minuto desde una dirección: 429;
+  - un archivo de dispositivos dañado no se pisa: nadie entra (503).
+- **Puerta** (`server/mobile_gate.py`), otra aplicación en su puerto, sin documentación pública. Fase 1, solo lectura:
+
+| Ruta | Qué da |
+|---|---|
+| `GET /m/hello` | Nombre del celular, hora del servidor y marcas (`brokers`, `can.close_position: false`). Activa el emparejamiento |
+| `GET /m/overview` | Modo, cuenta activa, pausa, posiciones abiertas, P&L sin realizar y cuántas están sin stop |
+| `GET /m/positions` | Posiciones del bot (de su WebSocket privado), cada una con `broker` |
+| `GET /m/trades?days` | Trades del journal con su decisión y sus imágenes |
+| `GET /m/image/{sesión}/{archivo}` | Una imagen del journal |
+| `GET /m/events?after` | Eventos del vigilante |
+| `POST /m/push-token` | El token de avisos del celular (`null` lo quita) |
+
+  No hay rutas de órdenes, cierre, configuración ni claves. Si la dirección todavía no existe (Tailscale sin conectar) o el puerto está ocupado, reintenta cada 30 s sin tumbar la suite.
+- **Rutas del PC** (en el 13000, con palabra): `GET /api/mobile/status`; `POST /api/mobile/pair` (`EMPAREJAR_CELULAR`; responde el contenido del QR: dirección, puerto, id y secreto); `POST /api/mobile/devices/{id}/revoke` (`REVOCAR_CELULAR`); `POST /api/mobile/test-push` (`ENVIAR_AVISO_PRUEBA`).
+- **Vigilante** (`server/mobile_events.py`): cada 5 s lee del bot el journal, el estado y los avisos críticos (solo GET; no consulta Bybit). Eventos: `trade_open`, `trade_close` (con P&L y R), `critical`, `paused`, `resumed`, `bot_down` (30 s sin respuesta) y `bot_up`.
+  - La primera vuelta es la línea de base: lo que ya había no se avisa. El estado queda en `data/mobile/watch_state.json`, así un reinicio no repite nada.
+  - Un cambio visto más de 15 minutos tarde (la suite estaba cerrada) se anota sin aviso.
+  - Los eventos quedan en `data/mobile/events.jsonl`; cada uno lleva `broker` (hoy `bybit`).
+- **Avisos push:** Firebase (FCM HTTP v1). Necesita el archivo de la cuenta de servicio del proyecto de Firebase y el paquete `google-auth` (`pip install google-auth requests`), que **no está instalado**. Sin ellos no envía y `/api/mobile/status` dice por qué; los eventos quedan igual. Un token que Firebase ya no reconoce se quita.
+- **Capturas:** las sigue tomando la página de la suite (pestaña 1): con la suite cerrada no hay capturas, y la de apertura llega unos 10 s después del aviso.
+- **Alpaca:** el bot no opera en Alpaca. Los eventos, las posiciones y los trades llevan `broker` para que entre por la misma puerta cuando exista.
+- **Pruebas:** `server/tests/mobile_checks.py` (90), sin conexión, con bot y Firebase falsos y la puerta levantada de verdad en un puerto libre de `127.0.0.1`. `run_checks.py`, `bot_checks.py` y `journal_checks.py` siguen pasando.
+- **No probado:** con un celular, con Tailscale, con Firebase real, ni dentro de la suite corriendo con el bot real.
+
+**Fase 2 (21/11):**
+- **App:** `13.AltagraciaMobile` (ver su `CLAUDE.md`): inicio, posiciones, trades con su decisión y sus capturas, avisos y ajustes.
+- **Pantalla del QR:** Bot > "Configuración y riesgo" > "Celulares (app Android)" (`web/src/MobileDevices.jsx`): estado de la puerta y de los avisos, celulares con su última vez, "Emparejar celular…" (muestra el QR una sola vez y se cierra sola cuando el celular lo usa), "Revocar…" y "Enviar aviso de prueba". La página suma el paquete `qrcode`.
+- **Reloj del celular:** si la firma es buena pero la hora no coincide, la puerta responde 401 con la hora del servidor (`now`) y la app corrige y repite. No cuenta como intento malo. Una firma mala nunca recibe la hora.
+- **CORS de la puerta:** deja leer a la página local de la app (`https://localhost` de Capacitor, o `localhost` en desarrollo). No es una barrera: no hay cookies y cada pedido va firmado.
+- **Demostración:** `server/tests/mobile_demo.py` levanta la puerta en `127.0.0.1:13092` con datos inventados, para ver la app sin el bot.
+- **Probado:** la app en el navegador a 375×812 contra la demostración (emparejar, las cinco pantallas, las capturas firmadas y el aviso de sin conexión). La página de la suite arma con la pantalla del QR, pero **no se vio en pantalla**.
+
+## Hyperliquid (21/11)
+
+Paso 2 del plan de indicadores on-chain (`docs/PLAN_INDICADORES_ONCHAIN.md` en la raíz del repositorio), pedido por el usuario.
+
+Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de cada billetera, con su apalancamiento y su precio de liquidación, son públicas. Su historia gratis empieza en 2025, así que la grabamos nosotros, como el libro de Bybit.
+
+- **Solo lee:** usa la API pública `info`, sin clave. Nunca envía órdenes ni nada a Hyperliquid.
+- **Grabador:** `server/hl_recorder.py`. Arranca con el servidor y graba en `OrderFlowData/live/hyperliquid/`:
+  - **`ctx/AAAA-MM-DD.jsonl`, cada minuto** (cada 5 hasta la tarde del 21/11): por moneda de la suite, el interés abierto (en monedas y en USD), el funding, el precio marca y el de oráculo, la prima y el volumen de 24 h (`metaAndAssetCtxs`, un pedido para todas). Unos 4 MB por día.
+  - **`wallets.json`, una vez al día:** las cuentas a seguir, sacadas del leaderboard público (`stats-data`, unos 38 MB, de 2.5 a 3.5 minutos). Son las 300 de más capital y las 1,000 de más volumen operado en el mes, sin repetir: unas 1,200.
+    - Las de más capital usan poco apalancamiento. Medido el 21/11: el short de BTC más grande, de 32.7 M USD, se liquidaría en 96,110, a +59%.
+    - Las muy activas son las que tienen liquidaciones cerca del precio. De 150 por volumen salieron 16 posiciones con la liquidación a menos de 25%, por 124 M USD.
+  - **`positions/AAAA-MM-DD.jsonl`, cada 15 minutos (la vuelta completa):** una línea por vuelta con las posiciones de esas cuentas en las monedas de la suite (`clearinghouseState`, un pedido por cuenta, 3 a la vez con 0.3 s de pausa). Cada posición es `[billetera, moneda, tamaño con signo, entrada, liquidación, apalancamiento, valor en USD]`. Unos 66 KB por vuelta, unos 6 MB por día.
+  - **`fast/AAAA-MM-DD.jsonl`, cada minuto (la vuelta rápida, 21/11, pedida para el mapa):** solo las cuentas con alguna liquidación a menos de 10% del precio (`FAST_BAND_PCT`), hasta 200 (`FAST_MAX`), de más a menos USD en riesgo. Mismo formato.
+    - **Por qué no todas cada minuto:** la API deja 1,200 de peso por minuto y cada cuenta pesa 2, así que una vuelta completa necesita al menos 2 minutos; hoy tarda 5.
+    - **Lo que se ve** (`latest_positions`, el mapa y el indicador) junta las dos: de cada cuenta, su consulta más reciente. La vuelta completa decide quién queda: una cuenta que salió de la lista o que no respondió se va, salvo que la rápida la haya consultado después.
+- **Monedas:** las de la suite, con el nombre de Hyperliquid (`hl_coin`: BTCUSDT → BTC, 1000PEPEUSDT → kPEPE, SHIB1000USDT → kSHIB). Una moneda agregada a la suite entra en la vuelta siguiente.
+- **Un solo grabador por carpeta** (`live/hyperliquid/recorder.lock`). `SUITE_HL=0` lo apaga; sin esa variable vale `SUITE_RECORD`. Al arrancar retoma la última vuelta del día. Una cuenta que falla no corta la vuelta, y un error de una vuelta reintenta en la siguiente (el leaderboard, a la media hora). Mientras la lista de cuentas sigue bajando, las vueltas de posiciones reintentan cada 30 s: hasta la tarde del 21/11 dormían la vuelta entera, y la primera llegaba unos 20 minutos después de abrir la suite.
+- **Rutas:**
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/hyperliquid/status` | Si graba, monedas, carpeta, bytes, y por cada vuelta (estado, ballenas, posiciones) la última hora, cuántos y el último error. `/api/suite/status` trae `hyperliquid` |
+| `GET /api/hyperliquid/ctx/{símbolo}` | El último estado de la moneda |
+| `GET /api/hyperliquid/liqmap/{símbolo}?bucket_pct=0.25&top=10` | El mapa de liquidaciones de la última vuelta: en cada franja de precio, el USD de los largos (debajo del precio) y de los cortos (encima) que se liquidarían ahí, solo a menos de 25%. Trae además las posiciones más grandes de esa banda |
+
+- **Medido en vivo el 21/11** (carpeta temporal, 6 monedas, API real):
+  - el estado tardó 1.8 s;
+  - el leaderboard, 150 s, con 1,219 cuentas elegidas;
+  - la vuelta de posiciones tardó 10.8 minutos de uno en uno (664 posiciones) y 5.05 minutos con 3 a la vez (1,218 de 1,219 cuentas respondieron, 662 posiciones);
+  - en BTC (precio 60,332): 281 posiciones; se liquidarían 150 M USD de largos y 170 M de cortos a menos de 25%, en 37 franjas de 1%. La mayor, 31 M USD de largos entre 46,456 y 47,059. En ETH, 32 M de largos y 69 M de cortos.
+- **Limitaciones:**
+  - graba solo con la suite abierta. Para semanas seguidas habría que llevarlo al collector de Northflank, como el libro;
+  - el precio de liquidación de una cuenta con margen cruzado depende de toda la cuenta y cambia con sus otras posiciones: es un valor del momento de la vuelta;
+  - se sigue una parte de las cuentas, no todas.
+- **Indicador "Liquidaciones Hyperliquid"** (21/11, en la lista de indicadores del gráfico principal; apagado de fábrica):
+  - **Dónde está el código:** en App 1 (`HyperliquidLiqIndicator.js`, cuentas en `hlLiquidations.js`), registrado en `IndicatorManager`. App 1 no lo ofrece: no tiene esos datos. La suite lo enciende con su nombre en `DEFAULT_STATES` de `ChartView.jsx`;
+  - **Qué dibuja:** las 3 franjas de 0.5% del precio más cargadas de cada lado, de 500k USD o más. Arriba los cortos (celeste) y abajo los largos (rosa), con los colores del indicador Liquidaciones. Más USD, más firme;
+  - **Etiqueta:** "HL cortos 30M · 2 cuentas · +2.7%";
+  - **Estado:** cuántas posiciones hay a menos de 25% y la antigüedad de la consulta, bajo los otros estados;
+  - **Fuera de la vista:** las franjas que no caben se avisan en el borde de arriba o de abajo;
+  - **Análisis del trade:** cada franja se puede elegir con un clic ("Liquidaciones de cortos (Hyperliquid)"), así entra al Observador y al journal;
+  - **Ritmo:** lo pide a `/api/hyperliquid/liqmap` cada minuto. Una moneda que Hyperliquid no lista (LPT, MUBARAK) dice "moneda que Hyperliquid no lista".
+  - **Probado en pantalla** (21/11, copia aislada en 13300, con carpetas temporales y la API real):
+    - la vuelta completa tardó 4.8 minutos (1,218 cuentas, 1,026 posiciones) y la rápida 22 s (83 cuentas cercanas);
+    - en BTC 4H, 5 franjas, entre ellas 52 M USD de cortos a +13.3% y 15 M de largos a −3.3%, con los avisos de las que no caben;
+    - un clic en una franja ofreció "Liquidaciones de cortos (Hyperliquid)" en "Incluir en el análisis";
+    - la etiqueta de la franja más alta puede quedar bajo los botones del gráfico, como otras etiquetas del borde.
+
+    No se probó en Electron.
+- **Falta (siguientes pasos del plan):**
+  - la capa del mapa con la historia minuto a minuto (necesita una ruta que lea `fast` y `positions`);
+  - con 4 a 6 semanas grabadas, el estudio: ¿el precio va a buscar esos grupos más que un nivel al azar?
+- **Pruebas:** `server/tests/hl_checks.py` (29, con la vuelta rápida y el reintento) y, en App 1, `tests/hlliquidations.test.mjs` (6), sin conexión:
+  - los nombres de las monedas;
+  - el estado y las ballenas elegidas por capital y por volumen;
+  - las posiciones y el mapa;
+  - el grabador con un HTTP falso: anota por día, una cuenta caída no corta la vuelta, solo pide `info` y retoma al arrancar.
 
 ## Escritorio (Electron)
 

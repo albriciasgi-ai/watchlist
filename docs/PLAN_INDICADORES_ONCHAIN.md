@@ -51,13 +51,40 @@ como cualquier regla.
   - la emisión de USDT y USDC a favor sube el R de las dos reglas (Impulso de +0.16 a +0.38) y su ventaja sobre los controles, en las 7 monedas;
   - es candidata, no resultado: son pocos días distintos (137) y lo ponen los cortos de 2022 y los largos de 2023.
 
-**Cómo seguir con el paso 1, en orden:**
-1. **Emisión a favor, 7 y 30 días,** con Impulso, FVG nuevo, la B5 y la Ruptura de caja con EMA 200: en la fase 1, en "todas las monedas", también en el grupo de las nuevas.
-2. **Mirar el informe por año y por lado.** Si todo sale de 2022, no es un filtro: es ese año.
-3. **Fase 2:** una variante que siga separándose de los dos controles pasa a la fase 2. Si no, el filtro queda como dato del trade y no se insiste.
-4. **Búsqueda genética** con la casilla "flujos on-chain": ver si alguna finalista lo usa.
+- **Segundo estudio** (21/11: fase 1, 4 reglas, las 7 de siempre y las 43 nuevas):
+  - la emisión a favor no aumenta la ventaja de ninguna regla sobre sus controles;
+  - sí sube el R de toda entrada, también la del azar (de −0.04 a +0.12/+0.16 R en las monedas nuevas);
+  - se apoya en 2022 y en pocos días distintos.
 
-### Paso 2 — Grabar Hyperliquid desde ya (pendiente)
+**Cómo seguir con el paso 1, en orden:**
+1. ~~Emisión a favor con las cuatro reglas en la fase 1, en las monedas de siempre y las nuevas.~~ Hecho: no suma ventaja a las reglas.
+2. ~~Una prueba del efecto propio del filtro sobre entradas al azar.~~ Reemplazada por la idea del usuario: usarlo para el objetivo, no para entrar.
+3. **Objetivo mixto en la fase 1** (21/11): 5R con la emisión de 30 días a favor y 3R sin ella, en una corrida y con sus controles.
+   - Da el mayor R total en 5 de 6 casos (tres reglas × dos grupos de monedas).
+   - Sube en 2021, 2022 y 2023.
+   - Mejora la salida, no la entrada.
+   - Ya está en el probador como salida "Otro objetivo con los flujos on-chain a favor".
+4. ~~**Fase 2, decidida antes de mirar:** la mixta contra 3R siempre.~~ **No pasó** (21/11):
+   - en las monedas nuevas da menos R total en las tres reglas;
+   - en la fase 2 los días con el filtro son los peores, al revés que en la fase 1.
+5. **También con la ruptura con volumen del VPA** (la regla que pasó las tres fases), en las fases 1 a 3:
+   - con el filtro a favor, como "que no vaya en contra" y con el objetivo mixto: ninguna variante mejora en las tres fases;
+   - la señal cambió de signo en la fase 2.
+6. **Cierre del paso 1:** la emisión de stablecoins y el flujo neto quedan como dato del trade y como opción del probador, sin uso recomendado. **Sigue el paso 2 (Hyperliquid).**
+
+De paso, Impulso, FVG nuevo y la Ruptura de caja con 3R pasaron la fase 2 contra los dos controles: son candidatas a la fase 3. Eso va por el plan de las reglas, no por este.
+
+### Paso 2 — Grabar Hyperliquid desde ya (grabación hecha el 21/11/2026; falta el indicador y el estudio)
+
+**Hecho:**
+- `12.AltagraciaTradingSuite/server/hl_recorder.py` graba, con la suite abierta:
+  - el estado de cada moneda cada 5 minutos;
+  - unas 1,200 cuentas, elegidas una vez al día (300 por capital y 1,000 por volumen del mes);
+  - sus posiciones, con el precio de liquidación, cada 15 minutos.
+- Ruta `/api/hyperliquid/liqmap/{símbolo}`. Detalle en el CLAUDE.md de la suite, sección "Hyperliquid".
+- **Medido el 21/11 en BTC:** 150 M USD de largos y 170 M de cortos se liquidarían a menos de 25% del precio.
+
+**Original:**
 
 Solo hay historia de verdad si la grabamos nosotros, como se hizo con el libro el 13/11.
 
