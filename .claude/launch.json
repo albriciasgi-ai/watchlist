@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "movil-demo-puerta",
+      "runtimeExecutable": "C:\\Python314\\python.exe",
+      "runtimeArgs": ["-B", "12.AltagraciaTradingSuite/server/tests/mobile_demo.py", "13092"],
+      "port": 13092
+    },
+    {
+      "name": "movil-app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "13.AltagraciaMobile", "run", "dev"],
+      "port": 13010
+    }
+  ]
+}
