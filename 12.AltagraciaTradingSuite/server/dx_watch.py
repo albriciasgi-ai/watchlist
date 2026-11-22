@@ -5,7 +5,9 @@
 # Al cierre de cada vela de 30 minutos, cuando el almacen en vivo ya la tiene, pide a of_elements de App 1 (live=True) las
 # velas y los desequilibrios apilados nuevos de cada moneda y los suma a lo ya visto. Cada vela se guarda tal como se vio
 # y no se vuelve a calcular: el registro es lo que se sabia en ese momento. Despues corre rule_tester.run de App 1 con la
-# regla DX de las fases 2 y 3, desde que arranco el registro en esa moneda (since), y anota lo nuevo:
+# regla DX de las fases 2 y 3, desde que arranco el registro en esa moneda (since), y anota lo nuevo. Desde since no se salta
+# ninguna vela: una que todavia no esta completa (toca un hueco de la grabacion, como el que deja un reinicio de la suite, o
+# pasa del ultimo guardado) se espera hasta que la nube o el dia oficial la completen, y las siguientes esperan con ella:
 #   - la orden armada (limit, stop, objetivo y hasta cuando vale);
 #   - su entrada y su salida, con el R de la cuenta del probador (entrada maker, salidas taker);
 #   - las que vencen sin llenarse, las que se llenan con otra posicion abierta y las que no se operan.
@@ -63,6 +65,9 @@ WARM_DAYS = 20             # velas antes del arranque: el ATR diario de 14 dias 
 CHECK_DELAY_MS = 75_000    # tras el cierre: el almacen en vivo se arma cada minuto
 RETRY_MS = 30_000          # si el almacen va detras, se vuelve a mirar
 MAX_WAIT_MS = 10 * 60_000  # y hasta aqui; despues, en la vuelta siguiente
+# Una vela que en dos dias no se completa (ni la nube ni el dia oficial la traen) se salta, con un evento "hueco" en el
+# registro. El 22/11, el reinicio de la suite dejo 65 s sin grabar, y la vela de las 21:00 UTC se salto sin esperar
+MISSING_MAX_MS = 2 * DAY
 CHUNK_DAYS = 60            # of_elements no acepta mas de 70 dias por pedido
 LOG_MEMORY = 2000
 # La orden a mercado: el peor entre el trade del disparo y el promedio de los trades del lado de la salida en los 100 ms
@@ -73,7 +78,7 @@ CROSS_MS = 60_000          # una limit en el objetivo se llena si el precio lo p
 CHECKPOINTS = (3, 6, 12)   # lecturas del plan, en meses
 NEAR_PENDING = 3           # ordenes que esperan que muestra el estado por moneda: las mas cerca del precio
 ZONE_PENDING = 2           # y las que van a la defensa de zona, de cada lado
-FINAL = ("cerrada", "vencida", "no entra", "no se opera")
+FINAL = ("cerrada", "vencida", "no entra", "no se opera", "anulada")
 ARM_FIELDS = ("key", "symbol", "dir", "armed_at", "born", "zone", "stop_day", "shift_atr", "limit", "stop", "risk", "target",
               "expires_at", "order")
 SYMBOL_RE = re.compile(r"^[A-Z0-9]{2,20}USDT$")
@@ -202,14 +207,16 @@ class DxWatch:
             raw = json.load(fh)
         return {"since": int(raw["since"]), "cut": int(raw["cut"]), "first_check": raw.get("first_check"),
                 "bars": [dict(t=int(t), o=o, h=h, l=l, c=c, delta=d, vol=v) for t, o, h, l, c, d, v in raw["bars"]],
-                "events": [dict(code=code, dir=int(d), t=int(t), known=int(k), lo=lo, hi=hi) for code, d, t, k, lo, hi in raw["events"]]}
+                "events": [dict(code=code, dir=int(d), t=int(t), known=int(k), lo=lo, hi=hi) for code, d, t, k, lo, hi in raw["events"]],
+                "skipped": [int(t) for t in raw.get("skipped") or []]}
 
     def _save_span(self, symbol, span):
         path = self._span_path(symbol)
         path.parent.mkdir(parents=True, exist_ok=True)
         raw = {"since": span["since"], "cut": span["cut"], "first_check": span.get("first_check"),
                "bars": [[b["t"], b["o"], b["h"], b["l"], b["c"], b["delta"], b["vol"]] for b in span["bars"]],
-               "events": [[e["code"], e["dir"], e["t"], e["known"], e["lo"], e["hi"]] for e in span["events"]]}
+               "events": [[e["code"], e["dir"], e["t"], e["known"], e["lo"], e["hi"]] for e in span["events"]],
+               "skipped": span.get("skipped") or []}
         tmp = path.with_name(path.name + ".tmp")
         with gzip.open(tmp, "wt", encoding="utf-8") as fh:
             json.dump(raw, fh, separators=(",", ":"))
@@ -294,8 +301,39 @@ class DxWatch:
             a = b
         return bars, events
 
+    @staticmethod
+    def _reach(cut, usable, have, closed_at):
+        """Hasta donde llegan, sin saltar ninguna, las velas desde cut: la primera que falta detiene todo, salvo que en
+        MISSING_MAX_MS no haya llegado (esa se salta). Devuelve el corte nuevo y las velas saltadas."""
+        t, skipped = cut, []
+        while t < usable:
+            if t in have:
+                t += STEP
+            elif closed_at - (t + STEP) >= MISSING_MAX_MS:
+                skipped.append(t)
+                t += STEP
+            else:
+                break
+        return t, skipped
+
+    def _heal(self, symbol, span):
+        """Lo registrado no salta velas. Si falta una (asi quedo la de las 21:00 UTC del 22/11, antes de este arreglo),
+        se vuelve a leer desde ella: lo de despues se calcula otra vez con la vela que faltaba."""
+        if span["cut"] <= span["since"]:
+            return
+        have = {b["t"] for b in span["bars"]} | set(span.get("skipped") or [])
+        t = span["since"]
+        while t < span["cut"] and t in have:
+            t += STEP
+        if t < span["cut"]:
+            logger.warning(f"[DX] {symbol}: faltaba la vela de las {_when(t)} UTC; se vuelve a leer desde ahi")
+            span["bars"] = [b for b in span["bars"] if b["t"] < t]
+            span["events"] = [e for e in span["events"] if e["t"] < t]
+            span["cut"] = t
+            self._save_span(symbol, span)
+
     def check_symbol(self, symbol: str, now: int = None) -> bool:
-        """Suma lo nuevo, corre la regla y anota lo que cambio. Devuelve si el almacen va detras del ultimo cierre."""
+        """Suma lo nuevo, corre la regla y anota lo que cambio. Devuelve si falta alguna vela ya cerrada."""
         now = self._now() if now is None else now
         closed_at = now // STEP * STEP
         with self._lock:
@@ -308,22 +346,43 @@ class DxWatch:
             span = self._span(symbol)
             if span is None:
                 # Arranca el registro de esta moneda: desde este cierre, con WARM_DAYS de velas antes para el ATR
-                span = {"since": usable, "cut": usable - WARM_DAYS * DAY, "first_check": now, "bars": [], "events": []}
+                span = {"since": usable, "cut": usable - WARM_DAYS * DAY, "first_check": now, "bars": [], "events": [],
+                        "skipped": []}
+            else:
+                self._heal(symbol, span)
+            reach, waiting = span["cut"], None
             if usable > span["cut"]:
                 bars, events = self._fetch(symbol, span["cut"], usable)
-                last = span["bars"][-1]["t"] if span["bars"] else None
-                span["bars"] += [b for b in sorted(bars, key=lambda b: b["t"]) if last is None or b["t"] > last]
-                seen = {(e["t"], e["dir"], e["lo"], e["hi"]) for e in span["events"][-500:]}
-                span["events"] += [e for e in events if (e["t"], e["dir"], e["lo"], e["hi"]) not in seen]
-                span["cut"] = usable
-                self._spans[symbol] = span
-                self._save_span(symbol, span)
-                self._evaluate(symbol, span, now)
+                reach, skipped = usable, []
+                if span["cut"] >= span["since"]:
+                    # Desde since, ninguna vela se salta: la que falta se espera, y las siguientes con ella
+                    reach, skipped = self._reach(span["cut"], usable, {b["t"] for b in bars}, closed_at)
+                    if reach < usable:
+                        waiting = reach
+                if reach > span["cut"]:
+                    last = span["bars"][-1]["t"] if span["bars"] else None
+                    span["bars"] += [b for b in sorted(bars, key=lambda b: b["t"])
+                                     if b["t"] < reach and (last is None or b["t"] > last)]
+                    seen = {(e["t"], e["dir"], e["lo"], e["hi"]) for e in span["events"][-500:]}
+                    span["events"] += [e for e in events if e["t"] < reach and e["known"] <= reach
+                                       and (e["t"], e["dir"], e["lo"], e["hi"]) not in seen]
+                    span.setdefault("skipped", []).extend(skipped)
+                    span["cut"] = reach
+                    self._spans[symbol] = span
+                    self._save_span(symbol, span)
+                    for t in skipped:
+                        self._append_log(self._gap_event(symbol, t, now))
+                    self._evaluate(symbol, span, now)
             with self._lock:
+                note = st.get("note")
+                if waiting is not None:
+                    note = f"espera la vela de las {_when(waiting)} UTC: toca un hueco de la grabacion o aun no esta guardada"
+                elif note and note.startswith("espera la vela"):
+                    note = None
                 st.update(checks=st["checks"] + 1, last_check=now, cut=span["cut"], since=span["since"], error=None,
-                          bars=len(span["bars"]), lagging=usable < closed_at,
+                          note=note, waiting_for=waiting, bars=len(span["bars"]), lagging=reach < closed_at,
                           last_close=span["bars"][-1]["c"] if span["bars"] else None)
-            return usable < closed_at
+            return reach < closed_at
         except Exception as e:
             with self._lock:
                 st.update(errors=st["errors"] + 1, error=f"{type(e).__name__}: {e}"[:200], last_check=now)
@@ -445,6 +504,22 @@ class DxWatch:
                 if old["status"] == "abierta":
                     old.update(last=rec.get("last"), open_r=rec.get("open_r"))
                 changed = True
+            # Lo anotado que ya no sale en la corrida. Solo pasa al volver a leer una vela que faltaba (_heal): la orden se
+            # armo con velas incompletas y con la vela completa no existe. La que esperaba o estaba abierta se anula; lo
+            # final se queda, con una revision
+            for key, old in book.items():
+                if key in snap or old["status"] == "anulada" or old.get("gone"):
+                    continue
+                if old["status"] in FINAL:
+                    old["gone"] = now
+                    events.append(self._revision(old, {"status": "sin señal", "r": None, "exit_t": None}, now))
+                else:
+                    old["status"] = "anulada"
+                    old.pop("last", None)
+                    old.pop("open_r", None)
+                    old.setdefault("detected", {})["anulada"] = now
+                    events.append(self._event("anulada", old, now, now))
+                changed = True
             if changed:
                 self._save_orders(symbol)
         for entry in events:
@@ -454,6 +529,11 @@ class DxWatch:
         return {"type": kind, "symbol": rec["symbol"], "key": rec["key"], "dir": rec["dir"], "at": int(at), "detected_at": now,
                 "delay_ms": now - int(at), "status": rec["status"], "text": describe(kind, rec),
                 **{k: rec.get(k) for k in ("limit", "stop", "target", "entry", "exit", "reason", "r", "r_exec", "why") if rec.get(k) is not None}}
+
+    def _gap_event(self, symbol, t, now) -> dict:
+        return {"type": "hueco", "symbol": symbol, "key": f"{symbol}|{t}|hueco", "dir": 0, "at": int(t), "detected_at": now,
+                "delay_ms": now - int(t), "status": "sin datos",
+                "text": f"La vela de las {_when(t)} UTC no se completo en dos dias: se salta"}
 
     def _revision(self, old, rec, now) -> dict:
         return {"type": "revision", "symbol": old["symbol"], "key": old["key"], "dir": old["dir"], "at": now, "detected_at": now,
@@ -675,6 +755,7 @@ class DxWatch:
             waiting = [o for o in mine if o["status"] == "esperando"]
             by_symbol[s] = {"since": st.get("since"), "cut": st.get("cut"), "last_check": st.get("last_check"),
                             "error": st.get("error"), "note": st.get("note"), "lagging": st.get("lagging"),
+                            "waiting_for": st.get("waiting_for"),
                             "bars": st.get("bars"), "lastClose": st.get("last_close"),
                             "closed": sum(1 for o in mine if o["status"] == "cerrada"),
                             # Hay muchas a la vez (en la repeticion del 15 al 22/11, unas 40 por moneda): las mas cerca del precio
@@ -784,6 +865,10 @@ class DxWatch:
         self.round = {"at": self._now(), "seconds": round(time.time() - began, 2), "symbols": len(self.symbols), "behind": waiting}
 
 
+def _when(ms) -> str:
+    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).strftime("%d/%m %H:%M")
+
+
 def describe(kind, o) -> str:
     """El evento o el estado de una orden en una linea, para el panel."""
     up = o["dir"] > 0
@@ -807,6 +892,8 @@ def describe(kind, o) -> str:
         return f"{head} · se lleno con otra posicion abierta: no cuenta"
     if kind == "no se opera":
         return f"{head} · no se opera ({o.get('why')})"
+    if kind == "anulada":
+        return f"{head} · anulada: con la vela que faltaba, esta orden no se arma"
     return head
 
 

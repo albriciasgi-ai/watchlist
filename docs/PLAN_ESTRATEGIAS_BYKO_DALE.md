@@ -291,6 +291,7 @@ Solo con lo que pase la fase 2:
 - **Cómo:**
   - al cierre de cada vela de 30 minutos, con el almacén en vivo al día, la suite corre la función del probador (`rule_tester.run`) sobre lo visto en vivo;
   - cada vela se guarda tal como se vio al cerrar y no se vuelve a calcular: el registro es lo que se sabía en ese momento.
+  - **Corregido el 22/11, en las primeras horas del registro.** El reinicio de la suite dejó 65 s sin grabar a las 21:27 UTC, y el almacén no da una vela que toca un hueco hasta que la nube la completa. El registro avanzaba sin ella: la vela de las 21:00 UTC quedó saltada en las 7 monedas. Ahora ninguna vela se salta: la que falta se espera hasta que la nube o el día oficial la completen, y las siguientes esperan con ella. El registro que ya la había saltado la vuelve a leer: la orden que esperaba o estaba abierta y con la vela completa no existe se anula, y si algo final cambia, queda como revisión. Una vela que en dos días no llega se salta, con un evento "hueco". Es cómo se leen los datos, no la regla ni el juicio.
 - **Qué se anota:**
   - cada orden armada: su limit, su stop, su objetivo y hasta cuándo vale;
   - su entrada, su salida y su R con la cuenta del probador (entrada maker, salidas taker);

@@ -4,6 +4,8 @@
 #   - no mira el futuro: lo anotado hasta una hora es lo mismo con o sin las velas posteriores, y lo visto no se recalcula;
 #   - al reiniciar no repite nada, y cada orden pasa por sus pasos en orden;
 #   - si el almacen va detras, espera la vela que falta;
+#   - una vela que toca un hueco de la grabacion se espera y no se salta; un registro que ya salto una vela la vuelve a
+#     leer; una que en dos dias no llega se salta con su evento, una sola vez;
 #   - la ejecucion con la cinta: cuando se lleno la limit, el disparo del stop o del objetivo, el precio de la orden a
 #     mercado y el R con la ejecucion medida;
 #   - las rutas, la configuracion, las zonas de la defensa y que nada se envia al bot.
@@ -180,6 +182,106 @@ try:
     lagging._store_until = lambda symbol, now: now
     clock[0] = SINCE + 2 * 60_000
     check("cuando el almacen la tiene, la suma", not lagging.check_symbol(SYM) and lagging._spans[SYM]["cut"] == SINCE)
+
+    # --- Una vela que toca un hueco de la grabacion (el reinicio de la suite del 22/11) ---
+    full_detect = fake_detect(DATA)
+
+    def without(t_out):
+        def detect(symbol, start, end, known_until):
+            part = full_detect(symbol, start, end, known_until)
+            return {"bars": [b for b in part["bars"] if b["t"] != t_out], "events": [e for e in part["events"] if e["t"] != t_out]}
+        return detect
+
+    hole = SINCE + 2 * M30
+    clock = [SINCE + 75_000]
+    gapped = watcher(TMP / "j", DATA, clock)
+    gapped._detect = without(hole)
+    for k in range(6):
+        clock[0] = SINCE + k * M30 + 75_000
+        still = gapped.check_symbol(SYM)
+    span_j = gapped._spans[SYM]
+    st_j = gapped.status()["by_symbol"][SYM]
+    check("una vela que toca un hueco se espera: el registro no pasa de ella ni suma las de despues",
+          still and span_j["cut"] == hole and all(b["t"] < hole for b in span_j["bars"]) and st_j["waiting_for"] == hole
+          and "espera la vela" in (st_j["note"] or ""), f"{span_j['cut'] - hole} {st_j['note']}")
+    gapped._detect = full_detect   # la nube tapa el hueco
+    run_schedule(TMP / "j", DATA, SINCE + 6 * M30, END, every=2, w=gapped)
+    check("cuando la vela llega, sigue y da lo mismo que sin hueco, sin revisiones",
+          book(gapped) == book(every_bar) and not any(e["type"] == "revision" for e in log_of(TMP / "j"))
+          and gapped.status()["by_symbol"][SYM]["waiting_for"] is None and not gapped.status()["by_symbol"][SYM]["note"])
+
+    # Un registro que ya salto una vela (asi quedo el del 22/11): se vuelve a leer desde ella
+    old = run_schedule(TMP / "k", DATA, SINCE, SINCE + 4 * M30, every=1)
+    old_span = old._spans[SYM]
+    old_span["bars"] = [b for b in old_span["bars"] if b["t"] != SINCE + M30]
+    old._save_span(SYM, old_span)
+    healed = run_schedule(TMP / "k", DATA, SINCE + 5 * M30, END, every=2, w=watcher(TMP / "k", DATA, [0]))
+    seq = [b["t"] for b in healed._spans[SYM]["bars"] if b["t"] >= SINCE]
+    check("un registro que salto una vela la vuelve a leer y queda como sin el salto",
+          book(healed) == book(every_bar) and seq == list(range(SINCE, healed._spans[SYM]["cut"], M30)))
+
+    # Una vela que en dos dias no llega se salta, con su evento, una sola vez
+    lost = SINCE + 3 * M30
+    clock = [SINCE + 75_000]
+    losing = watcher(TMP / "l", DATA, clock)
+    losing._detect = without(lost)
+    losing.check_symbol(SYM)
+    clock[0] = SINCE + 6 * M30 + 75_000
+    losing.check_symbol(SYM)
+    waited = losing._spans[SYM]["cut"] == lost
+    clock[0] = lost + M30 + dx.MISSING_MAX_MS + 75_000
+    losing.check_symbol(SYM)
+    losing.check_symbol(SYM)
+    again = watcher(TMP / "l", DATA, clock)
+    again._detect = without(lost)
+    again.check_symbol(SYM)
+    gaps = [e for e in log_of(TMP / "l") if e["type"] == "hueco"]
+    check("una vela que en dos dias no llega se salta con su evento, y el registro sigue",
+          waited and losing._spans[SYM]["cut"] > lost + M30 and lost in losing._spans[SYM]["skipped"]
+          and len(gaps) == 1 and gaps[0]["at"] == lost and "se salta" in gaps[0]["text"], f"{waited} {len(gaps)}")
+    check("la vela saltada no se vuelve a pedir, tampoco al reiniciar", again._spans[SYM]["cut"] == losing._spans[SYM]["cut"]
+          and lost in again._spans[SYM]["skipped"])
+
+    # Lo que el registro de antes anoto sin la vela y con la vela completa no existe (el ARB del 22/11): se anula
+    def old_style(folder, t_out, upto):
+        clock = [SINCE + 75_000]
+        w = watcher(folder, DATA, clock)
+        w._detect = without(t_out)
+        w._reach = lambda cut, usable, have, closed_at: (usable, [])   # como antes del arreglo: seguia sin la vela
+        t = SINCE
+        while t <= upto:
+            clock[0] = t + 75_000
+            w.check_symbol(SYM)
+            t += M30
+        return w, clock
+
+    ref_keys = {o["key"] for o in every_bar.orders(SYM)}
+    case = None
+    for k in range(1, 40):
+        w_old, clock_old = old_style(TMP / f"m{k}", SINCE + k * M30, SINCE + (k + 12) * M30)
+        extra = [dict(o) for o in w_old.orders(SYM) if o["key"] not in ref_keys]
+        if any(o["status"] in ("esperando", "abierta") for o in extra):
+            case = (k, w_old, clock_old, extra)
+            break
+    check("hay un caso en que el registro de antes anotaba una orden que con la vela completa no existe", case is not None)
+    if case:
+        k, w_old, clock_old, extra = case
+        del w_old._reach                  # el arreglo
+        w_old._detect = full_detect       # la nube tapo el hueco
+        clock_old[0] += M30
+        w_old.check_symbol(SYM)
+        clean = run_schedule(TMP / f"n{k}", DATA, SINCE, clock_old[0] - 75_000, every=1)
+        now_by_key = {o["key"]: o for o in w_old.orders(SYM)}
+        live_extra = [o for o in extra if o["status"] in ("esperando", "abierta")]
+        anuladas = [e for e in log_of(TMP / f"m{k}") if e["type"] == "anulada"]
+        check("al volver a leer la vela, lo que esperaba o estaba abierto sin existir queda anulado, con su evento",
+              all(now_by_key[o["key"]]["status"] == "anulada" for o in live_extra)
+              and {e["key"] for e in anuladas} == {o["key"] for o in live_extra}, f"{[now_by_key[o['key']]['status'] for o in live_extra]}")
+        check("y la posicion abierta es la del registro sin hueco: no queda una de mas",
+              sorted(o["key"] for o in w_old.orders(SYM) if o["status"] == "abierta")
+              == sorted(o["key"] for o in clean.orders(SYM) if o["status"] == "abierta"))
+        w_old.check_symbol(SYM)
+        check("lo anulado no se vuelve a anotar", len([e for e in log_of(TMP / f"m{k}") if e["type"] == "anulada"]) == len(anuladas))
 
     # --- La ejecucion con la cinta ---
     D = T0 + 4 * DAY

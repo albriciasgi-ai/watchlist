@@ -78,7 +78,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16) y dx_checks.py (39), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16) y dx_checks.py (48), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -1111,6 +1111,7 @@ Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_D
 - **Cómo registra** (`server/dx_watch.py`):
   - 75 s después de cada cierre de 30 minutos, si el almacén en vivo ya tiene la vela (`market_routes._store_until`), pide a `of_elements` de App 1 (`live=True`) las velas y los desequilibrios apilados nuevos. Si el almacén va detrás, vuelve a mirar cada 30 s, hasta 10 minutos;
   - cada vela se guarda tal como se vio y no se vuelve a calcular (`data/dx/span/{moneda}.json.gz`): el registro es lo que se sabía en ese momento;
+  - desde `since` no se salta ninguna vela (22/11). La que todavía no está completa (toca un hueco de la grabación, como el de un reinicio de la suite, o pasa del último guardado) se espera hasta que la nube o el día oficial la completen, y las siguientes esperan con ella; el estado de la moneda dice cuál espera (`waiting_for`). Un registro que ya saltó una vela la vuelve a leer (`_heal`): la orden que esperaba o estaba abierta y con la vela completa no existe se anula (evento "anulada", que el panel muestra), y lo final se queda con una revisión. Una que en dos días no llega se salta, con un evento "hueco". Antes, el reinicio del 22/11 a las 21:27 UTC dejó 65 s sin grabar y la vela de las 21:00 UTC se saltó en las 7 monedas;
   - corre `rule_tester.run` de App 1 desde que arrancó el registro de esa moneda (`since`), con 20 días de velas antes para el ATR diario y las zonas;
   - compara con lo anotado y suma lo nuevo: la orden armada, su entrada, su salida con su R, las que vencen, las que se llenan con otra posición abierta y las que no se operan;
   - lo final no se reescribe: si una corrida posterior dijera otra cosa, queda una "revisión" en el registro;
@@ -1132,8 +1133,9 @@ Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_D
   Un clic abre la moneda en 15m.
 - **Defensa de zona:** la limit de las órdenes, su precio ±0.05%, va a las zonas automáticas de la pestaña Mapa (`book_defense.ZONE_SOURCES`). De las que esperan van las 2 más cerca del precio de cada lado, y además las que se llenaron, hasta una hora después. Así se ve lo que hizo el libro donde esperaba la orden.
 - **Una versión refinada** (por ejemplo, con la tendencia a favor) sería otro registro: `DxWatch` con su regla y su carpeta, y `make_router` con su prefijo. Antes de registrarla, su regla se fija en el plan.
-- **Pruebas:** `server/tests/dx_checks.py` (39), sin conexión:
+- **Pruebas:** `server/tests/dx_checks.py` (48), sin conexión:
   - el registro hecho vela a vela da los mismos trades que una corrida del probador sobre las mismas velas, con revisiones cada 2 o cada 5 velas;
+  - una vela con hueco se espera y no se salta, un registro que ya saltó una la repara (lo que anotó sin ella y no existe se anula, sin dejar una posición abierta de más), y una que en dos días no llega se salta con su evento, una sola vez;
   - lo anotado hasta una hora es igual con o sin las velas posteriores, y una vela ya vista no cambia aunque después cambien los datos;
   - tras reiniciar sigue igual, cada orden pasa por sus pasos en orden y, si el almacén va detrás, espera la vela;
   - la medición con una cinta armada a mano, también una mecha que se da vuelta;
@@ -1148,7 +1150,7 @@ Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_D
   - en cada moneda esperan unas 40 órdenes a la vez, y 759 se llenaron con otra posición abierta, contra 164 que entraron. Un bot que la operara tendría que manejar muchas órdenes en espera;
   - **zonas unidas:** cuando dos zonas se arman en la misma vela y del mismo lado, el probador las une en una sola orden. Entra en el borde de una y pone el stop en el borde lejano de la otra. Así el stop queda lejos de lo que pide Dale (10% a 20% del ATR diario). Pasó en 63 de 1,327 señales y en 17 de los 164 trades, con un riesgo medio del 2.8% del precio (0.7% en los demás) y −0.32 R (+0.34 en los demás). Las fases 2 y 3 se corrieron igual, así que el registro lo conserva. Una orden por zona sería parte de la versión refinada.
 - **Falta:**
-  - el registro de la suite del usuario empieza cuando su suite corra este código, al unir la rama;
+  - el registro de la suite del usuario empezó el 22/11 a las 21:00 UTC (16:00 en Colombia);
   - con la suite cerrada no registra; al abrirla, pone al día lo que grabó la nube;
   - el deslizamiento no mira la profundidad del libro: una orden grande deslizaría más.
 

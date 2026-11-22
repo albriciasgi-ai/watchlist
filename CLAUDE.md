@@ -55,6 +55,31 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 22 Noviembre 2026: DX en Vivo no Salta la Vela que Toca un Hueco
+
+**Pedido:** al reiniciar la suite con DX ya en main, la vela de las 21:00 UTC no entró al registro: cada moneda siguió en 960 velas. El usuario pidió arreglarlo y llevarlo hasta la fusión.
+
+**Causa:** el reinicio dejó 65 s sin grabar (21:27:30 a 21:28:36 UTC) en las 7 monedas. `of_elements` de App 1 no da una vela que toca un hueco hasta que la nube lo tapa. `dx_watch.py` avanzaba hasta donde decía el almacén, sin esa vela, y ya no volvía por ella.
+
+**Cambios** (`12.AltagraciaTradingSuite/server/dx_watch.py`):
+1. **Desde `since` no se salta ninguna vela.** La que falta (toca un hueco o pasa del último guardado) se espera hasta que la nube o el día oficial la completen, y las siguientes esperan con ella. El estado de la moneda dice cuál espera.
+2. **Un registro que ya saltó una vela la vuelve a leer** (`_heal`). Lo anotado después se calcula otra vez:
+   - la orden que esperaba o estaba abierta y con la vela completa no existe se anula, con un evento "anulada";
+   - si algo final cambia, queda como estaba, con una revisión.
+3. **Una vela que en dos días no llega se salta**, una sola vez, con un evento "hueco" en el registro.
+4. **Panel:** las anuladas salen entre las últimas entradas y salidas de DX.
+5. **Pruebas:** `dx_checks.py` suma 9 (48).
+
+**IMPORTANTE:**
+- La nube ya tapó el hueco del 22/11: al correr este código, el registro del usuario vuelve a leer desde la vela de las 21:00 UTC.
+- **Probado en una copia de su registro** (el original no se tocó): en las 7 monedas vuelve a leer esa vela y quedan seguidas. Las órdenes que el hueco había armado una vela tarde (7) se anulan, y se arman en su vela. ARB, que tenía dos posiciones abiertas, queda con una.
+- La suite del usuario corre lo de su carpeta principal: hay que ponerla al día con main y reiniciar la suite.
+- Es cómo se leen los datos, no la regla ni el juicio de DX. Quedó anotado en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo".
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "DX en vivo (22/11)"
+
+---
+
 ### App 1 - 22 Noviembre 2026: Deslizamiento Real de QB con el Libro y Guía del VPA con Imágenes
 
 **Pedido:** medir el deslizamiento real de la ruptura con volumen (QB), y una guía en PDF del VPA con imágenes reales de la app. Debe enseñar a usar lo programado y relacionarlo con el libro de Coulling, con un informe de las reglas corridas y recomendaciones.
