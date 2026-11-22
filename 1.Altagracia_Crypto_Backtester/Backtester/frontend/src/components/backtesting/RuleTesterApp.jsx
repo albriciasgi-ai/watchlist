@@ -18,7 +18,7 @@ import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
   contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa, VPA_EXITS,
-  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText, DALE_CODES
+  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText, DALE_CODES, VPA_FILTER_TFS, vpaFilterTf
 } from './ruleTester.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from '../indicators/williams.js';
 import { loadSmcSettings, mergeSmcConfig } from '../indicators/smcStructure.js';
@@ -1647,8 +1647,16 @@ const RuleTesterApp = () => {
             <select value={rule.vpaMode} onChange={(e) => patch({ vpaMode: e.target.value })}>
               <option value="favor">a favor del trade, desde</option>
               <option value="notAgainst">que no esté en contra más de</option>
+              <option value="notFavor">que no esté a favor más de</option>
             </select>
             <Num value={rule.vpaThr} min={0} max={5} step={0.1} onChange={(vpaThr) => patch({ vpaThr })} />
+          </div>
+          <div className="rt-row" title="El ripple de Coulling: el marco mayor manda. Leído en un marco mayor, el filtro usa su última vela ya cerrada al saberse la señal">
+            <span>leído en</span>
+            <select value={vpaFilterTf(rule.tf, rule.vpaTf)} onChange={(e) => patch({ vpaTf: Number(e.target.value) })}>
+              <option value={0}>el marco de la regla</option>
+              {VPA_FILTER_TFS.filter(([m]) => m > Number(rule.tf) && m % Number(rule.tf) === 0).map(([m, name]) => <option key={m} value={m}>{name} (marco mayor)</option>)}
+            </select>
           </div>
         </Opt>
         <Opt id="premium" label="Premium y discount (SMC)" on={rule.smcPd} onToggle={(smcPd) => patch({ smcPd })} title="Un largo solo bajo la mitad del rango mayor (discount) y un corto solo sobre ella (premium). El rango va entre el último máximo y el último mínimo de la estructura mayor">

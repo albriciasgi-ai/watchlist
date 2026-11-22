@@ -43,6 +43,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 | `10.TradingBotDesktop/` | **Trading Bot Desktop - Version Electron** | 5000 | 5001 |
 | `11.TradingJournalDesktop/` | **Trading Journal Desktop - Version Electron** | 12000 | 12002 |
 | `12.AltagraciaTradingSuite/` | **App nueva en tiempo real (gráfico de App 1 en vivo + bot), en construcción** | 13000 | 13001 (Vite) |
+| `13.AltagraciaMobile/` | **App Android (Capacitor) para seguir los trades del bot, solo lectura** | puerta móvil de la suite, 13002 | 13010 (Vite, desarrollo) |
 
 **Stack comun:**
 - Frontend: React 18 + Vite + uPlot
@@ -157,6 +158,71 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### App 1 - 22 Noviembre 2026: El Ripple entre Marcos del VPA (Estudio y Filtro)
+
+**Pedido:** el «ripple» de Coulling (el marco mayor manda): primero un estudio y, después, el filtro.
+
+**Cambios:**
+1. **Estudio** (fase 1, QB en 1h y 4h, con el medidor de 4h y de 1 día en su última vela cerrada):
+   - va al revés del libro: con el marco mayor fuerte a favor, QB pierde en los cuatro grupos (de −0.14 a −0.48 R);
+   - con el mayor neutro suele rendir más.
+2. **Filtro del medidor en un marco mayor** en el probador: «leído en» 1 hora, 4 horas o 1 día, sin futuro, y el modo nuevo «que no esté a favor más de».
+3. **Por el probador**, sin entrar con el marco mayor fuerte a favor: QB 4h pasa de +0.063 a +0.073 R en las monedas nuevas y de +0.14 a +0.13 en las de siempre. QB 1h pierde con o sin el filtro. No mueve la ventaja: el ripple no se lleva a la fase 2.
+4. **Pruebas:** `test_vpa.py` suma 2 (10) y `rulefacets.test.mjs` 1 (14).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- Las corridas de QB en 1h y con el filtro quedaron en el registro y en el tablero, solo en la fase 1.
+- No se vio en pantalla: la página compila.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA", "El ripple entre marcos" y `OrderFlowData/research/vpa/RIPPLE_QB.md`
+
+---
+
+### App 1 + Altagracia Trading Suite - 22 Noviembre 2026: Deslizamiento de la Ruptura con Volumen, el Observador contra el Lector VPA y Signos en el Modal
+
+**Pedido:** medir el deslizamiento de la ruptura con volumen (QB), que el Observador compare las lecturas del usuario con las del lector VPA, y poner en el modal del lector, junto a cada casilla, el signo que se ve en el gráfico.
+
+**Cambios:**
+1. **Deslizamiento de QB** (`OrderFlowData/research/vpa/deslizamiento_qb.py`, sobre las corridas guardadas):
+   - el stop de 1.5 ATR en 4h es ancho: 0.05% por lado cuesta 0.02 a 0.04 R por trade;
+   - fase 3 en las 43 monedas nuevas: de +0.09 a +0.06 R con 0.05% (el margen apenas toca el cero) y +0.04 con 0.10%;
+   - deja el R en cero con unos 0.18% por lado.
+2. **Observador contra el lector:** cada orden guarda lo que decía el Lector VPA al decidir, en su marco, en 1 hora y en 4 horas: el medidor a favor, neutro o en contra (desde ±0.3) y los elementos Q de las 3 últimas velas. Las órdenes de antes se leen una vez y quedan en `observer/vpa_readings.json`.
+   - En cada orden cerrada, la fila «Lector VPA»;
+   - en el informe, «Tú contra el lector VPA» (acierto y R según el lector) y seis condiciones nuevas.
+3. **Modal del Lector VPA:** cada elemento con su signo entre paréntesis: «Ruptura con volumen (▲)».
+4. **Suite:** su journal muestra la fila del lector en los trades nuevos.
+5. **Pruebas:** `test_observer.py` suma 3 (60), `observer.test.mjs` 1 (45) y `journal_checks.py` de la suite pasa (89).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. La suite se reinicia sola al abrirla y arma la página nueva.
+- La primera vez, el informe del Observador tarda unos 20 s mientras lee el lector de las órdenes anteriores.
+- Con las 32 órdenes cerradas del usuario: con el lector a favor, 8 órdenes, 75% y +1.24 R; neutro, 19, 21% y −0.31 R; en contra, 5, 40% y −0.02 R. Son muy pocas para concluir.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA", "Deslizamiento", "El Observador contra el lector" y "Signos en el modal"
+
+---
+
+### Altagracia Trading Suite + Collector de Northflank - 22 Noviembre 2026: Hyperliquid También en la Nube
+
+**Pedido:** el usuario preguntó por el cupo de Northflank y si convenía una segunda cuenta para guardar Hyperliquid. Como es un prototipo, tiene que ser gratis: va dentro del collector que ya existe.
+
+**Cambios:**
+1. **Lista de cuentas por partes** (`hl_recorder.py`): el leaderboard (~38 MB) se lee a medida que llega, sin tenerlo entero en memoria. Con la lista real da las mismas 1,218 cuentas, con 1 MB de memoria contra 258 MB. Vale también en el PC.
+2. **Collector de Northflank:** corre el mismo grabador (copia exacta) y guarda 14 días (`HL_KEEP_DAYS`), unos 180 MB. Rutas para bajar cada día desde un byte.
+3. **Suite** (`hl_cloud.py`): cada 10 minutos baja lo nuevo a `OrderFlowData/live/hyperliquid_cloud`. `hl_recorder.read_rows` junta PC y nube.
+4. **Pruebas:** `hl_checks.py` (34) y `hl_cloud_checks.py` (16).
+
+**IMPORTANTE:**
+- **Desplegado el 22/11** (build `clear-muscle-9783`, commit 0db5b61 de la rama `deploy`). En la nube: la lista de cuentas (46,409 filas, 1,217 cuentas) bajó en segundos y la primera vuelta completa tardó 226 s, con 1,009 posiciones. El servicio quedó en 181 de 512 MB. Antes de reiniciarlo, tras 8 días encendido, estaba en 362 MB.
+- La suite se reinicia sola al abrirla y desde ahí baja lo de la nube. Probado contra la nube real, en una carpeta temporal: la primera vuelta bajó 126 KB y la segunda, nada.
+- La página de Northflank tardó unos 3 minutos en cargar: su archivo principal baja a unos 25 KB/s.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Hyperliquid (21/11)", "En la nube (22/11)", y `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Hyperliquid (22/11/2026)"
+
+---
+
 ### App 1 - 21 Noviembre 2026: Elementos de Byko en el Probador (paso 2 de las estrategias de Byko y Dale)
 
 **Pedido:** "Sigue con Byko", tras aprobar el concepto y bajar el OI de 5 minutos.
@@ -217,6 +283,82 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - El código está en la rama de esta sesión: la actualización automática llega al backend del usuario cuando se una a main.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "OI DE 5 MINUTOS DE BYBIT Y BINANCE (21/11/2026)" y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`
+
+---
+
+### Altagracia Trading Suite + App 1 - 21 Noviembre 2026: Indicador "Liquidaciones Hyperliquid" y Grabación Cada Minuto
+
+**Pedido:** tras ver el mapa de liquidaciones de Hyperliquid, el usuario eligió llevarlo como indicador al gráfico principal, y preguntó si se podía grabar minuto a minuto para el mapa.
+
+**Cambios:**
+1. **Indicador "Liquidaciones Hyperliquid"** en la lista del gráfico principal de la suite:
+   - las 3 franjas más cargadas de cada lado: cortos arriba, largos abajo;
+   - cada una con su USD, sus cuentas y a qué % del precio está;
+   - se puede elegir para el análisis del trade;
+   - se actualiza cada minuto.
+
+   El código está en App 1 (`HyperliquidLiqIndicator.js`, `hlLiquidations.js`), que no lo ofrece.
+2. **Grabación más fina:**
+   - el estado de cada moneda pasa de cada 5 minutos a cada minuto;
+   - nueva vuelta rápida cada minuto con las cuentas que tienen liquidaciones a menos de 10% del precio, hasta 200 (`fast/`);
+   - las 1,200 cuentas siguen cada 15 minutos: la API no deja consultarlas todas cada minuto.
+3. **Arreglado:** la primera vuelta de posiciones llegaba unos 20 minutos después de abrir la suite: si la lista de cuentas todavía bajaba, dormía la vuelta entera. Ahora reintenta cada 30 s.
+4. **Pruebas:** `hl_checks.py` (29) y `hlliquidations.test.mjs` de App 1 (6). `liquidations.test.mjs` sigue con su falla de siempre.
+5. **Probado en pantalla** en una copia aislada de la suite (BTC 15m y 4H): las franjas, sus etiquetas, el estado y el menú de análisis. No en Electron.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva. El indicador viene apagado: se enciende en "Indicadores".
+- Las franjas son de cuentas concretas, a veces de una sola. No está validado contra el azar: el estudio necesita semanas de datos.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Hyperliquid (21/11)"
+
+---
+
+### App Android (carpeta 13) + Altagracia Trading Suite - 21 Noviembre 2026: App de Solo Lectura y Pantalla del QR (fase 2)
+
+**Pedido:** seguir con la fase 2 de la app Android: la app de solo lectura, la pantalla del QR en la suite y ver las posiciones de Bybit con el PC apagado.
+
+**Cambios:**
+1. **App** (`13.AltagraciaMobile`, React + Vite + Capacitor 7):
+   - inicio con la cuenta activa, el P&L abierto y las posiciones sin stop;
+   - posiciones con P&L, stop, objetivo, "Al SL" y "Al TP";
+   - trades de 30 días con su decisión y sus capturas;
+   - avisos, guardados en el celular;
+   - ajustes: emparejar por QR o pegando el código, avisos y claves del modo directo.
+2. **Modo directo:** sin respuesta de la suite, la app lee posiciones y saldo directo de Bybit con una clave de solo lectura guardada en el celular. Solo hace GET.
+3. **Suite:** Bot > "Configuración y riesgo" > "Celulares (app Android)": emparejar con QR, revocar y aviso de prueba.
+4. **Puerta móvil:** corrige el reloj del celular y deja leer a la página local de la app.
+5. **Pruebas:** `13.AltagraciaMobile/tests/app.test.mjs` (8) y `mobile_checks.py` de la suite (90).
+
+**IMPORTANTE:**
+- **El APK no se armó:** este PC no tiene Java ni el SDK de Android. Los pasos están en `13.AltagraciaMobile/CLAUDE.md`.
+- **Probado en el navegador** a tamaño de celular, contra una puerta de demostración con datos inventados.
+- **No probado:** en un celular, el lector de QR, los avisos push, el modo directo contra Bybit real ni la pantalla del QR de la suite en pantalla.
+- La suite se reinicia sola al abrirla e instala el paquete nuevo de la página (`qrcode`).
+- Falta la fase 3: cerrar una posición desde la app, con huella y confirmación.
+
+**Ver:** `13.AltagraciaMobile/CLAUDE.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Puerta móvil"
+
+---
+
+### Altagracia Trading Suite - 21 Noviembre 2026: Puerta Móvil (fase 1 de la app Android)
+
+**Pedido:** una app Android para seguir los trades que el bot abre en Bybit y, cuando exista, en Alpaca: aviso al abrirse una posición, las capturas de apertura y cierre, y cerrar una posición desde el celular. El usuario aceptó el concepto y pidió la fase 1. También pidió ver las posiciones de Bybit con el PC apagado.
+
+**Cambios** (solo el servidor de la suite; la app todavía no existe):
+1. **Puerta móvil** (`server/mobile_gate.py`): otra aplicación, en su propio puerto (13002), apagada de fábrica. Solo lectura: resumen, posiciones, trades con sus imágenes y eventos. Sin rutas de órdenes ni de claves.
+2. **Celulares emparejados** (`server/mobile_devices.py`): el secreto se muestra una vez en el PC (para un QR) y cada pedido va firmado, con hora y número único.
+3. **Vigilante y avisos** (`server/mobile_events.py`): lee el bot cada 5 s y anota aperturas, cierres con P&L y R, avisos críticos, pausa y bot sin responder. Los envía por Firebase cuando esté configurado.
+4. **Pruebas:** `server/tests/mobile_checks.py` (86).
+
+**IMPORTANTE:**
+- **Nada cambia hasta encenderla:** hace falta `mobile_host` (la IP de Tailscale del PC) en `config/suite.json`.
+- **Avisos push:** faltan el proyecto de Firebase del usuario y el paquete `google-auth`, que no está instalado.
+- **Con el PC apagado** (fase 2): la app leerá las posiciones directo de Bybit con una clave de solo lectura guardada en el celular.
+- **Alpaca:** el bot no opera ahí. Todo lleva el campo `broker` para sumarlo después.
+- **No probado** con un celular, Tailscale, Firebase real ni el bot real.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Puerta móvil (21/11): fase 1 de la app Android"
 
 ---
 
@@ -293,7 +435,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - Basta recargar la página de App 1: el backend no cambió en esta entrada. La suite se reinicia sola al abrirla y arma la página nueva.
 - El Gimnasio publicado ya tiene la etapa nueva. Las sesiones anotadas antes siguen igual.
 - **Probado en pantalla** con una copia aislada en BTC 4h, midiendo los cuerpos de las velas con la opción apagada y encendida. App 1 y la suite compilan. La etapa del Gimnasio no se vio en pantalla: su código es válido.
-- La fase 3 de la ruptura con volumen no se corrió.
+- **Fase 3, corrida después:** en las 43 monedas nuevas pasa (+0.09 R por trade, 2,765 trades, +0.09 sobre el azar y +0.13 sobre el tramo, con margen, 31 de 43 monedas), con la ventaja a la mitad de la fase 2; en las 7 de siempre cae (−0.02 R). Ver `OrderFlowData/research/vpa/FASE3_QB.md`.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA" y `OrderFlowData/research/vpa/FASE2_QB.md`
 

@@ -1,13 +1,13 @@
 import IndicatorBase from './IndicatorBase.js';
 import { candleItemId } from './analysisLevels.js';
-import { VpaReader, VPA_CODES, VPA_NAME, describeVpa, loadVpaSettings, volumeWidthFactor, vpaBar } from './vpa.js';
+import { VpaReader, VPA_CODES, VPA_GLYPHS, VPA_NAME, describeVpa, loadVpaSettings, volumeWidthFactor, vpaBar } from './vpa.js';
 import { alignY, crispWidth } from '../chartPixels.js';
 import { THEME, isNewTheme } from '../uiTheme.js';
 
 const STRONG = '#26A69A'; // Fuerza (alcista)
 const WEAK = '#EF5350'; // Debilidad (bajista)
 const METER_LIMIT = 3; // El panel llega a ±3
-const GLYPH = { QA: '◆', QB: '▲', QF: '✕', QR: '↺', QT: 'T', QS: 'S', QC: 'C', QE: 'E' };
+const GLYPH = VPA_GLYPHS;
 
 /**
  * Lector VPA (21/11/2026): panel con el medidor de fuerza y debilidad (la evidencia que suman las velas y se desvanece)

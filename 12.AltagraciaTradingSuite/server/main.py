@@ -54,6 +54,7 @@ import recorder  # noqa: E402  grabacion propia de trades (live/local), un solo 
 import book_recorder  # noqa: E402  libro completo de Bybit (live/book), un solo proceso a la vez
 import hl_recorder  # noqa: E402  Hyperliquid: estado por moneda y posiciones de las ballenas (live/hyperliquid), solo lectura
 import book_cloud  # noqa: E402  tapa los huecos del libro con lo que graba la nube (live/book_cloud)
+import hl_cloud  # noqa: E402  baja de la nube lo que grabo de Hyperliquid (live/hyperliquid_cloud)
 import book_heatmap  # noqa: E402  mapa de liquidez por vela y precio, para la pestana "Mapa"
 import book_levels  # noqa: E402  niveles de liquidez sostenida, para la pestana "Mapa"
 import book_defense  # noqa: E402  defensa de las zonas dibujadas, para la pestana "Mapa"
@@ -62,6 +63,9 @@ import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca env
 import wise_smc_watch  # noqa: E402  Sabios de Williams y estructura SMC del servidor: detecta y anota, nunca envia
 import dx_watch  # noqa: E402  DX en vivo: la regla del probador de App 1 sobre el almacen en vivo, registra y nunca envia
 import alpaca_data  # noqa: E402  acciones de EE. UU. desde Alpaca: footprints, velas y OI de opciones
+import mobile_devices  # noqa: E402  celulares emparejados y pedidos firmados
+import mobile_events  # noqa: E402  vigilante del bot para el celular y avisos push
+import mobile_gate  # noqa: E402  puerta movil: otro puerto, apagada de fabrica
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -78,6 +82,7 @@ app.include_router(market_routes.router)
 app.include_router(book_recorder.make_router())
 app.include_router(book_cloud.make_router())
 app.include_router(hl_recorder.make_router())
+app.include_router(hl_cloud.make_router())
 app.include_router(book_heatmap.make_router())
 app.include_router(ladder.make_router())
 app.include_router(book_levels.make_router())
@@ -109,20 +114,27 @@ async def _startup():
     await book_recorder.start(coins, DATA, CONFIG["bybit_url"], _http, candles.bybit_turn)
     await hl_recorder.start(coins, DATA, _http)
     book_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _official_symbols, _http)
+    hl_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _http)
     official.start(DATA, _official_symbols)
     await SWING.start()
     await WSMC.start()
     await DX.start()
+    if MOBILE_GATE.host and os.environ.get("SUITE_MOBILE", "1") != "0":
+        MOBILE_EVENTS.start()
+        MOBILE_GATE.start()
     print(f"[SUITE] Servidor en http://{CONFIG['host']}:{CONFIG['port']} | almacen {DATA} | bot {CONFIG['bot_url']}")
 
 
 @app.on_event("shutdown")
 async def _shutdown():
+    await MOBILE_GATE.stop()
+    await MOBILE_EVENTS.stop()
     await SWING.stop()
     await WSMC.stop()
     await DX.stop()
     official.stop()
     await book_cloud.stop()
+    await hl_cloud.stop()
     await hl_recorder.stop()
     await book_recorder.stop()
     await recorder.stop()
@@ -374,6 +386,17 @@ JOURNAL = JournalStore(Path(CONFIG["data_dir"]) / "journal")
 app.include_router(bot_routes.make_router(lambda *a, **kw: _bot(*a, **kw), journal_store=JOURNAL))  # _bot se busca al llamar (las pruebas lo cambian)
 app.include_router(journal_routes.make_router(JOURNAL, lambda *a, **kw: _bot(*a, **kw)))
 
+# ---------- puerta movil (21/11): celulares emparejados, vigilante de eventos y avisos push ----------
+_MOBILE_DIR = Path(CONFIG["data_dir"]) / "mobile"
+MOBILE_DEVICES = mobile_devices.DeviceStore(_MOBILE_DIR)
+MOBILE_EVENTS = mobile_events.EventWatch(
+    _MOBILE_DIR, lambda *a, **kw: _bot(*a, **kw), MOBILE_DEVICES,
+    sender=mobile_events.FcmSender(CONFIG["mobile_fcm_credentials"], lambda: _http))
+MOBILE_GATE = mobile_gate.Gate(
+    mobile_gate.make_app(MOBILE_DEVICES, MOBILE_EVENTS, lambda *a, **kw: _bot(*a, **kw), JOURNAL, app.version),
+    CONFIG["mobile_host"], CONFIG["mobile_port"])
+app.include_router(mobile_gate.make_local_router(MOBILE_DEVICES, MOBILE_GATE, MOBILE_EVENTS))
+
 
 # ---------- monedas y precio ----------
 @app.get("/api/suite/symbols")
@@ -479,7 +502,7 @@ async def suite_status():
     return {"success": True, "version": app.version, "now": int(time.time() * 1000), "store": store,
             "local_tape": tape, "bot": bot_state,
             "recorder": recorder.status(), "book": book_recorder.brief(), "book_cloud": book_cloud.brief(),
-            "hyperliquid": hl_recorder.brief(),
+            "hyperliquid": hl_recorder.brief(), "hyperliquid_cloud": hl_cloud.brief(),
             "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief(), "dx": DX.brief()}
 
 

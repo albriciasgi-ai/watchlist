@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { roleLabel } from '@app1/components/indicators/analysisLevels.js';
+import { vpaRow } from '@app1/components/backtesting/observer.js';
 import { deleteJson, getJson, postJson } from './api.js';
 import { subscribeBook } from './botBook.js';
 import JournalDashboard from './JournalDashboard.jsx';
@@ -108,6 +109,10 @@ function readingRows(rows) {
           : 'Sin zonas del lado del trade',
         note: !z || row.chance === null || row.chance === undefined ? null : `Por azar, el ${share(row.chance)} de los precios cercanos queda igual de cerca de una zona`,
       };
+    }
+    if (row.block === 'vpa') {
+      const vpa = vpaRow({ ...row, you: null });
+      return { label: vpa.label, text: vpa.rule, note: vpa.note };
     }
     if (row.block === 'oi') return { label: 'Interés abierto', text: row.rule ? `${OI_STATES[row.rule]} (${signedPct(row.change)} en 4 horas)` : 'Sin dato de OI' };
     return { label: 'Volumen', text: row.rule === null || row.rule === undefined ? 'Sin dato' : `Última vela de 15m: ${row.rule.toFixed(1)}x su promedio` };

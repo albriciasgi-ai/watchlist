@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './RejectionPatternSettings.css';
-import { VPA_CODES, VPA_LIMITS, cleanVpaConfig, defaultVpaConfig, saveVpaSettings } from './indicators/vpa.js';
+import { VPA_CODES, VPA_GLYPHS, VPA_LIMITS, cleanVpaConfig, defaultVpaConfig, saveVpaSettings } from './indicators/vpa.js';
 
 /** Ajustes del Lector VPA. Aplica a todos los marcos del símbolo. */
 const VPASettings = ({ symbol, indicator, onApply, onClose }) => {
@@ -101,7 +101,7 @@ const VPASettings = ({ symbol, indicator, onApply, onClose }) => {
             {check('marks', 'Elementos sobre las velas (verde: fuerza, rojo: debilidad; más opaco, más grado)')}
             {check('widthByVolume', 'Velas con ancho por volumen (más ancha, más volumen frente a lo normal de su hora; la de siempre es el volumen normal)')}
             <div style={{ columns: 2 }}>
-              {Object.entries(VPA_CODES).map(([code, name]) => <div key={code}>{check(code, name)}</div>)}
+              {Object.entries(VPA_CODES).map(([code, name]) => <div key={code} title={code}>{check(code, `${name} (${VPA_GLYPHS[code]})`)}</div>)}
             </div>
           </div>
 

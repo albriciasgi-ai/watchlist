@@ -103,6 +103,7 @@ function closeFrame(start, end, preferred) {
 const DEFAULT_STATES = {
   'Volume Delta': true, 'Volume Profile': false, 'CVD': false, 'Open Interest': false, 'OI-Volume Confluence': false,
   'Order Flow': true, 'FVG': false, 'VP Periodic': false, 'Volumen de Respuesta': false, 'Lector VPA': false, 'Liquidaciones': false,
+  'Liquidaciones Hyperliquid': false,
   'Elementos OF': false, 'VWAP': false, 'Range Detection': false, 'Rangos horizontales': false, 'Rejection Patterns': false, 'Double Top/Bottom': false,
   'Support & Resistance': false, 'S&R v2': false, 'Swing Detector': false,
   'Estructura SMC': false, 'Alligator': false, 'Fractales': false, 'Tres sabios': false, 'Zonas de Williams': false,

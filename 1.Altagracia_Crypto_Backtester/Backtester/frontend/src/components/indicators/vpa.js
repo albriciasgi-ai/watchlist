@@ -30,6 +30,9 @@ export const VPA_CODES = {
   QT: 'Prueba de poco volumen', QS: 'Volumen de frenado o de techo', QC: 'Clímax de volumen', QE: 'Medidor cruza el umbral'
 };
 
+/** El signo con que cada elemento se dibuja sobre las velas (y que el modal muestra junto a su nombre) */
+export const VPA_GLYPHS = { QA: '◆', QB: '▲', QF: '✕', QR: '↺', QT: 'T', QS: 'S', QC: 'C', QE: 'E' };
+
 export function defaultVpaParams() {
   return {
     days: 30, minDays: 5, legAtr: 2,

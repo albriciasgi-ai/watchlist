@@ -230,7 +230,7 @@ def order(order_id="a", side="long", marks=None, **extra):
 
 
 def with_reading(monkeypatch, reading=None):
-    monkeypatch.setattr(observer, "read_at", lambda *args: reading or READING)
+    monkeypatch.setattr(observer, "read_at", lambda *args, **kw: reading or READING)
 
 
 def close(order_id, pnl, price=102.0):
@@ -365,17 +365,17 @@ def test_comparacion_usa_el_rango_del_usuario(journal, monkeypatch):
 def fill_report(monkeypatch):
     plain = {**READING, "oi": {"dir": "down", "change": -0.01, "rises": 0, "falls": 3}}
     far = {**READING, "entry": {**READING["entry"], "near": False, "gap": 0.01}}
-    monkeypatch.setattr(observer, "read_at", lambda *args: READING)
+    monkeypatch.setattr(observer, "read_at", lambda *args, **kw: READING)
     for index, pnl in enumerate((2, 2, -1)):
         observer.record_order(order(f"w{index}", marks={"reasons": ["profile"]}))
         observer.record_event(f"w{index}", "fill", {"time": 2, "price": 100.0})
         close(f"w{index}", pnl)
-    monkeypatch.setattr(observer, "read_at", lambda *args: plain)
+    monkeypatch.setattr(observer, "read_at", lambda *args, **kw: plain)
     for index in range(3):
         observer.record_order(order(f"l{index}", marks={"reasons": ["oi_up"]}, blind=True))
         observer.record_event(f"l{index}", "fill", {"time": 2, "price": 100.0})
         close(f"l{index}", -1)
-    monkeypatch.setattr(observer, "read_at", lambda *args: far)
+    monkeypatch.setattr(observer, "read_at", lambda *args, **kw: far)
     observer.record_order(order("r", rewound=True))
     close("r", 5)
     observer.record_order(order("p"))
@@ -658,3 +658,60 @@ def test_informe_por_setup_cuenta_los_setups_elegidos(journal, monkeypatch):
     assert rows["S14"]["with"]["n"] == 2 and rows["S14"]["with"]["wins"] == 1, "una orden cuenta una vez cada setup"
     assert rows["S14"]["without"]["n"] == 1
     assert rows["MR"]["with"]["n"] == 1 and rows["MR"]["name"] == "MR"
+
+
+# ==================== LECTOR VPA (22/11/2026) ====================
+
+def vpa_frames(own, h1="neutral", h4="neutral", elements=()):
+    frame = lambda tf, state, els=(): {"tf": tf, "known": True, "time": 1, "meter": {"favor": 0.6, "against": -0.6, "neutral": 0.1}[state],
+                                       "thr": 1.0, "lean": 0.3, "state": state, "strong": False, "elements": list(els), "last": {}, "rv": 1.0}
+    return {"version": observer.VPA_VERSION, "own": "15",
+            "frames": {"15": frame(15, own, elements), "60": frame(60, h1), "240": frame(240, h4)}}
+
+
+READING["vpa"] = vpa_frames("neutral")  # Las pruebas de antes, con el lector neutro: no cambia lo que comprueban
+
+
+def test_informe_tu_contra_el_lector_vpa(journal, monkeypatch):
+    cases = [("a", "favor", 2.0), ("b", "favor", 1.0), ("c", "against", -1.0), ("d", "neutral", -1.0)]
+    for order_id, state, pnl in cases:
+        with_reading(monkeypatch, {**READING, "vpa": vpa_frames(state, elements=[{"code": "QB", "dir": 1, "ago": 0, "grade": 0.8}] if state == "favor" else [])})
+        observer.record_order(order(order_id, levels=[{"kind": "Ruptura con volumen alcista (80%)", "source": "Lector VPA"}] if order_id == "a" else []))
+        observer.record_event(order_id, "fill", {"time": 2, "price": 100.0})
+        close(order_id, pnl)
+    report = observer.report("BTCUSDT")
+    own = report["vpa"]["frames"][0]
+    assert [(row["state"], row["n"], row["wins"]) for row in own["rows"]] == [("favor", 2, 2), ("neutral", 1, 0), ("against", 1, 0)]
+    assert report["vpa"]["cited"]["n"] == 1 and report["vpa"]["notCited"]["n"] == 3
+    conditions = {row["id"]: row for row in report["conditions"]}
+    assert conditions["vpa_el_favor"]["with"]["n"] == 2
+    assert {"block": "vpa", "marked": 3, "agreed": 2} in report["agreement"], "neutro no cuenta"
+
+    row = [r for r in observer.compare(observer.trades()["a"])["rows"] if r["block"] == "vpa"][0]
+    assert row["agree"] is True and row["you"] == ["Ruptura con volumen alcista (80%)"] and row["favor"] == 1
+
+
+def test_lector_vpa_de_una_orden_vieja_se_calcula_una_vez(journal, monkeypatch, real_store):
+    with_reading(monkeypatch, {k: v for k, v in READING.items() if k != "vpa"})  # Como las registradas antes del 22/11
+    observer.record_order(order("viejo", time=1787000000000))
+    observer.record_event("viejo", "fill", {"time": 2, "price": 100.0})
+    close("viejo", 1.0)
+    trade = observer.trades()["viejo"]
+    first = observer._vpa_of(trade)
+    assert set(first["frames"]) == {"15", "60", "240"} and first["frames"]["15"]["known"]
+    assert (journal / observer.VPA_CACHE_NAME).exists()
+    observer._vpa_memory.clear()
+    monkeypatch.setattr(footprint_store, "minutes", lambda *a, **k: (_ for _ in ()).throw(AssertionError("no debía leer")))
+    assert observer._vpa_of(trade) == first, "la segunda vez sale del archivo"
+
+
+def test_lector_vpa_sin_futuro(real_store, monkeypatch):
+    time = 1787000000000 // MINUTE * MINUTE + 7 * MINUTE
+    full = observer.read_at("BTCUSDT", time, -1, tf=15)["vpa"]
+    with monkeypatch.context() as patched:
+        cut_days(patched, time // MINUTE)
+        short = observer.read_at("BTCUSDT", time, -1, tf=15)["vpa"]
+    assert json.dumps(full, sort_keys=True) == json.dumps(short, sort_keys=True)
+    frame = full["frames"]["15"]
+    assert frame["known"] and frame["time"] + 15 * MINUTE <= time, "la última vela leída ya cerró"
+    assert all(e["ago"] < observer.VPA_LOOK for e in frame["elements"])
