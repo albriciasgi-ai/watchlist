@@ -53,6 +53,12 @@ export function defaultRule() {
     bxMaxHeightOn: false, bxMaxHeight: 5.5, beShare: 0.2, beMaxBody: 1, beRejection: 0.6, bePattern: false,
     // FVG nuevo (hueco mínimo en ATR) y swing del detector (velas por lado y volumen mínimo)
     fvMinAtr: 0.3, spBars: 5, spVolume: false, spMinZ: 1,
+    // Elementos de Byko (21/11): las cifras fijadas en docs/PLAN_ESTRATEGIAS_BYKO_DALE.md antes de correrlos
+    fbBack: 3, fbApproachBars: 4, fbApproachAtr: 2, fbVol: 3, baBars: 6, baNear: 1,
+    taRise: 2, taRiseBars: 10, taShare: 0.2, taOiBars: 3, taZ: 2, taAdvance: 0.5, taSource: 'sum',
+    poMove: 3, poBars: 6, poVol: 3, poOiBars: 2, poZ: 2, poSource: 'sum',
+    // Zonas de Dale con el primer regreso (21/11): velas completas para armarse, stop en % del ATR diario, y lo propio de DA y DC
+    daleAway: 2, daleMinDay: 0.1, daleMaxDay: 0.2, daleBuffer: 0.1, daleRun: 3, daleLeg: 3, daleMinLeg: 5, daleBump: 1.5,
     // Filtros de flujo: CVD de N velas a favor y OI (rise, fall, conf, noconf u off)
     cvdOn: false, cvdBars: 20, oiMode: 'off', oiBars: 6, oiPct: 2,
     // Multitud por el funding (off, nocon, contra) y OI sostenido (parte de los pasos de 4 h con el OI al alza)
@@ -117,6 +123,7 @@ export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24
 export const PATTERN_CODES = ['HM', 'EN', 'DJ'];
 export const WISE_CODES = ['WD', 'WA', 'WF'];
 export const SMC_CODES = ['BS', 'OB', 'BK', 'EQ'];
+export const DALE_CODES = ['DS', 'DN', 'DG', 'DA', 'DC', 'DX'];  // Zonas de Trader Dale con el primer regreso (21/11); DX, hipótesis del 22/11
 export const VPA_CODES = ['QA', 'QB', 'QF', 'QR', 'QT', 'QS', 'QC', 'QE'];
 export const usesVpa = (rule) => (rule.codes || []).some(code => VPA_CODES.includes(code));
 /** El filtro del medidor VPA en palabras (el mismo de rule_tester en el backend) */
@@ -208,6 +215,14 @@ export function toBackendRule(rule) {
     ...(codes.includes('IM') ? { im: { bars: number(rule.imBars, 3), atr: number(rule.imAtr, 2), range: rule.imRangeOn ? number(rule.imRange, 1.5) : null } } : {}),
     ...(codes.includes('FV') ? { fv: { minAtr: number(rule.fvMinAtr, 0.3) } } : {}),
     ...(codes.includes('SP') ? { sp: { bars: number(rule.spBars, 5), minZ: rule.spVolume ? number(rule.spMinZ, 1) : null } } : {}),
+    ...(codes.includes('FB') ? { fb: { back: number(rule.fbBack, 3), approachBars: number(rule.fbApproachBars, 4), approachAtr: number(rule.fbApproachAtr, 2), vol: number(rule.fbVol, 3) } } : {}),
+    ...(codes.includes('BA') ? { ba: { bars: number(rule.baBars, 6), near: number(rule.baNear, 1) } } : {}),
+    ...(codes.includes('TA') ? { ta: { rise: number(rule.taRise, 2), riseBars: number(rule.taRiseBars, 10), share: number(rule.taShare, 0.2), oiBars: number(rule.taOiBars, 3),
+      z: number(rule.taZ, 2), advance: number(rule.taAdvance, 0.5), source: rule.taSource || 'sum' } } : {}),
+    ...(codes.includes('PO') ? { po: { move: number(rule.poMove, 3), bars: number(rule.poBars, 6), vol: number(rule.poVol, 3), oiBars: number(rule.poOiBars, 2),
+      z: number(rule.poZ, 2), source: rule.poSource || 'sum' } } : {}),
+    ...(codes.some(code => DALE_CODES.includes(code)) ? { dale: { away: number(rule.daleAway, 2), minDay: number(rule.daleMinDay, 0.1), maxDay: number(rule.daleMaxDay, 0.2),
+      buffer: number(rule.daleBuffer, 0.1), run: number(rule.daleRun, 3), leg: number(rule.daleLeg, 3), minLeg: number(rule.daleMinLeg, 5), bump: number(rule.daleBump, 1.5) } } : {}),
     ...(rule.cvdOn || ['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode) || ['nocon', 'contra'].includes(rule.crowdMode) || rule.steadyOn
       || CHAIN_METRICS.includes(rule.chainMetric)
       ? { flow: { ...(rule.cvdOn ? { cvd: number(rule.cvdBars, 20) } : {}),
@@ -358,6 +373,14 @@ export function fromBackendRule(saved) {
     bxMaxHeightOn: saved.bx?.maxHeight != null, bxMaxHeight: saved.bx?.maxHeight ?? 5.5,
     beShare: saved.be?.share ?? 0.2, beMaxBody: saved.be?.maxBody ?? 1, beRejection: saved.be?.rejection ?? 0.6, bePattern: !!saved.be?.pattern,
     fvMinAtr: saved.fv?.minAtr ?? 0.3, spBars: saved.sp?.bars ?? 5, spVolume: saved.sp?.minZ != null, spMinZ: saved.sp?.minZ ?? 1,
+    fbBack: saved.fb?.back ?? 3, fbApproachBars: saved.fb?.approachBars ?? 4, fbApproachAtr: saved.fb?.approachAtr ?? 2, fbVol: saved.fb?.vol ?? 3,
+    baBars: saved.ba?.bars ?? 6, baNear: saved.ba?.near ?? 1,
+    taRise: saved.ta?.rise ?? 2, taRiseBars: saved.ta?.riseBars ?? 10, taShare: saved.ta?.share ?? 0.2, taOiBars: saved.ta?.oiBars ?? 3,
+    taZ: saved.ta?.z ?? 2, taAdvance: saved.ta?.advance ?? 0.5, taSource: saved.ta?.source || 'sum',
+    poMove: saved.po?.move ?? 3, poBars: saved.po?.bars ?? 6, poVol: saved.po?.vol ?? 3, poOiBars: saved.po?.oiBars ?? 2,
+    poZ: saved.po?.z ?? 2, poSource: saved.po?.source || 'sum',
+    daleAway: saved.dale?.away ?? 2, daleMinDay: saved.dale?.minDay ?? 0.1, daleMaxDay: saved.dale?.maxDay ?? 0.2, daleBuffer: saved.dale?.buffer ?? 0.1,
+    daleRun: saved.dale?.run ?? 3, daleLeg: saved.dale?.leg ?? 3, daleMinLeg: saved.dale?.minLeg ?? 5, daleBump: saved.dale?.bump ?? 1.5,
     cvdOn: !!saved.flow?.cvd, cvdBars: saved.flow?.cvd ?? 20, oiMode: saved.flow?.oi || 'off', oiBars: saved.flow?.oiBars ?? 6, oiPct: saved.flow?.oiPct ?? 2,
     crowdMode: saved.flow?.crowd || 'off', steadyOn: !!saved.flow?.steady, steadyDays: saved.flow?.steadyDays ?? 14, steadyMin: saved.flow?.steadyMin ?? 0.52,
     chainMetric: saved.flow?.chain?.metric || 'off', chainAsset: saved.flow?.chain?.asset || 'auto', chainDays: saved.flow?.chain?.days ?? 7,

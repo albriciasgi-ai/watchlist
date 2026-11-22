@@ -17,6 +17,8 @@
 # Order blocks (20/11): los de la estructura SMC de App 1 (smc.py, interna de 5 velas y mayor de 50) en velas de 1 hora
 # del almacen de trades, desde el cierre de la vela que rompe la estructura hasta que un cierre lo rompe. Los OB_MAX mas
 # recientes que siguen vivos en las horas pedidas. book_study (la medicion de semanas) no los usa.
+# DX en vivo (22/11): la limit de cada orden de DX (dx_watch.py, por ZONE_SOURCES), su precio +-0.05%, desde que se arma
+# hasta que vence o hasta una hora despues de llenarse: lo que hizo el libro donde esperaba la orden.
 # No es una senal ni esta validado contra el azar: eso lo mide book_study con semanas de libro.
 import asyncio
 import json
@@ -45,6 +47,8 @@ OB_MAX = 8
 OB_MAX_PCT = 1.5                # un order block de mas alto que esto no cuenta (como un rectangulo)
 _cache: Dict[tuple, Tuple[float, dict]] = {}
 _trades: Dict[str, book_study.Trades] = {}
+# Otras zonas automaticas: funciones (moneda, desde, hasta) -> zonas. DX en vivo (22/11) suma aqui las limit de sus ordenes
+ZONE_SOURCES: List = []
 
 
 def zones_from_drawings(shapes: List[dict], start: int, end: int) -> List[dict]:
@@ -207,6 +211,11 @@ def auto_zones(symbol: str, start: int, end: int, fs=None) -> List[dict]:
         pass
     for k, z in enumerate(book_study.journal_zones(symbol, start, end)):
         out.append(dict(z, label=f"journal {z['label']}", id=f"journal:{k}:{z['from']}"))
+    for source in ZONE_SOURCES:
+        try:
+            out += source(symbol, start, end)
+        except Exception:
+            pass
     return [dict(z, **{"from": max(z["from"], start), "to": min(z["to"], end)}) for z in out if z["to"] > start and z["from"] < end]
 
 
