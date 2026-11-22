@@ -24,6 +24,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - un día completo de la nube comparado con el archivo oficial (ver "Nube contra el archivo oficial");
   - "Exportar a Excel" en el dashboard (ver "Journal").
 - **Sabios de Williams y estructura SMC (20/11):** los indicadores de App 1 en el gráfico, la detección en el servidor (sin enviar nada), los order blocks en la defensa de zona y sus medidas en el journal. Ver "Sabios de Williams y estructura SMC".
+- **Hyperliquid (21/11):** la suite graba el estado de cada moneda y las posiciones de las ballenas de Hyperliquid, con su precio de liquidación, para el plan on-chain. Ver "Hyperliquid".
 - **Lector VPA (21/11):** el indicador de App 1 en el gráfico y en la Watchlist (lista de livianos), con su modal. Ver `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, "LECTOR VPA". El servidor no lo detecta.
 - **Puerta móvil (21/11):** fase 1 de la app Android: celulares emparejados, vigilante de eventos y avisos push, apagada de fábrica. Ver "Puerta móvil".
 - **Falta:**
@@ -59,6 +60,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── book_recorder.py   Graba el libro completo de Bybit (orderbook.full) de las monedas de la suite (ver "Libro completo")
 │   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book, y live/book_cloud de la nube)
 │   ├── book_cloud.py      Baja de la nube (Northflank) los minutos del libro que el PC no tiene completos
+│   ├── hl_recorder.py     Graba Hyperliquid: estado por moneda y posiciones de las ballenas (ver "Hyperliquid")
 │   ├── book_heatmap.py    Mapa de liquidez por vela y precio, para la pestaña "Mapa" (/api/book/heatmap)
 │   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro"); App 1 las usa en su Observador (book_reading.py)
 │   ├── book_study.py      Medición de semanas: qué hace la liquidez al llegar el precio a tus zonas, contra zonas al azar
@@ -72,8 +74,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
-│   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (86)
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18) y wise_smc_checks.py (40), sin conexión
+│   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40) y hl_checks.py (22), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -1018,6 +1020,47 @@ Pedido del usuario: una app Android para seguir los trades del bot (Bybit y, cua
 - **CORS de la puerta:** deja leer a la página local de la app (`https://localhost` de Capacitor, o `localhost` en desarrollo). No es una barrera: no hay cookies y cada pedido va firmado.
 - **Demostración:** `server/tests/mobile_demo.py` levanta la puerta en `127.0.0.1:13092` con datos inventados, para ver la app sin el bot.
 - **Probado:** la app en el navegador a 375×812 contra la demostración (emparejar, las cinco pantallas, las capturas firmadas y el aviso de sin conexión). La página de la suite arma con la pantalla del QR, pero **no se vio en pantalla**.
+
+## Hyperliquid (21/11)
+
+Paso 2 del plan de indicadores on-chain (`docs/PLAN_INDICADORES_ONCHAIN.md` en la raíz del repositorio), pedido por el usuario.
+
+Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de cada billetera, con su apalancamiento y su precio de liquidación, son públicas. Su historia gratis empieza en 2025, así que la grabamos nosotros, como el libro de Bybit.
+
+- **Solo lee:** usa la API pública `info`, sin clave. Nunca envía órdenes ni nada a Hyperliquid.
+- **Grabador:** `server/hl_recorder.py`. Arranca con el servidor y graba en `OrderFlowData/live/hyperliquid/`:
+  - **`ctx/AAAA-MM-DD.jsonl`, cada 5 minutos:** por moneda de la suite, el interés abierto (en monedas y en USD), el funding, el precio marca y el de oráculo, la prima y el volumen de 24 h (`metaAndAssetCtxs`, un pedido para todas). Unos 270 KB por día.
+  - **`wallets.json`, una vez al día:** las cuentas a seguir, sacadas del leaderboard público (`stats-data`, unos 38 MB, de 2.5 a 3.5 minutos). Son las 300 de más capital y las 1,000 de más volumen operado en el mes, sin repetir: unas 1,200.
+    - Las de más capital usan poco apalancamiento. Medido el 21/11: el short de BTC más grande, de 32.7 M USD, se liquidaría en 96,110, a +59%.
+    - Las muy activas son las que tienen liquidaciones cerca del precio. De 150 por volumen salieron 16 posiciones con la liquidación a menos de 25%, por 124 M USD.
+  - **`positions/AAAA-MM-DD.jsonl`, cada 15 minutos:** una línea por vuelta con las posiciones de esas cuentas en las monedas de la suite (`clearinghouseState`, un pedido por cuenta, 3 a la vez con 0.3 s de pausa). Cada posición es `[billetera, moneda, tamaño con signo, entrada, liquidación, apalancamiento, valor en USD]`. Unos 66 KB por vuelta, unos 6 MB por día.
+- **Monedas:** las de la suite, con el nombre de Hyperliquid (`hl_coin`: BTCUSDT → BTC, 1000PEPEUSDT → kPEPE, SHIB1000USDT → kSHIB). Una moneda agregada a la suite entra en la vuelta siguiente.
+- **Un solo grabador por carpeta** (`live/hyperliquid/recorder.lock`). `SUITE_HL=0` lo apaga; sin esa variable vale `SUITE_RECORD`. Al arrancar retoma la última vuelta del día. Una cuenta que falla no corta la vuelta, y un error de una vuelta reintenta en la siguiente (el leaderboard, a la media hora).
+- **Rutas:**
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/hyperliquid/status` | Si graba, monedas, carpeta, bytes, y por cada vuelta (estado, ballenas, posiciones) la última hora, cuántos y el último error. `/api/suite/status` trae `hyperliquid` |
+| `GET /api/hyperliquid/ctx/{símbolo}` | El último estado de la moneda |
+| `GET /api/hyperliquid/liqmap/{símbolo}?bucket_pct=0.25&top=10` | El mapa de liquidaciones de la última vuelta: en cada franja de precio, el USD de los largos (debajo del precio) y de los cortos (encima) que se liquidarían ahí, solo a menos de 25%. Trae además las posiciones más grandes de esa banda |
+
+- **Medido en vivo el 21/11** (carpeta temporal, 6 monedas, API real):
+  - el estado tardó 1.8 s;
+  - el leaderboard, 150 s, con 1,219 cuentas elegidas;
+  - la vuelta de posiciones tardó 10.8 minutos de uno en uno (664 posiciones) y 5.05 minutos con 3 a la vez (1,218 de 1,219 cuentas respondieron, 662 posiciones);
+  - en BTC (precio 60,332): 281 posiciones; se liquidarían 150 M USD de largos y 170 M de cortos a menos de 25%, en 37 franjas de 1%. La mayor, 31 M USD de largos entre 46,456 y 47,059. En ETH, 32 M de largos y 69 M de cortos.
+- **Limitaciones:**
+  - graba solo con la suite abierta. Para semanas seguidas habría que llevarlo al collector de Northflank, como el libro;
+  - el precio de liquidación de una cuenta con margen cruzado depende de toda la cuenta y cambia con sus otras posiciones: es un valor del momento de la vuelta;
+  - se sigue una parte de las cuentas, no todas.
+- **Falta (siguientes pasos del plan):**
+  - el indicador del gráfico con el mapa de liquidaciones;
+  - con 4 a 6 semanas grabadas, el estudio: ¿el precio va a buscar esos grupos más que un nivel al azar?
+- **Pruebas:** `server/tests/hl_checks.py` (22), sin conexión:
+  - los nombres de las monedas;
+  - el estado y las ballenas elegidas por capital y por volumen;
+  - las posiciones y el mapa;
+  - el grabador con un HTTP falso: anota por día, una cuenta caída no corta la vuelta, solo pide `info` y retoma al arrancar.
 
 ## Escritorio (Electron)
 

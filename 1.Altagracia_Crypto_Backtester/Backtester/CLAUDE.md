@@ -1612,9 +1612,70 @@ Pedido del usuario tras el cuarto estudio. Está en la sección Salida del proba
 - **Pruebas:** `test_onchain_flows.py` suma 1 (7). `rulefacets.test.mjs` suma 1 (13).
 - **No se vio en pantalla.**
 
-**Siguiente:**
-1. ~~Llevar a la app la salida "objetivo distinto cuando pasa el filtro on-chain".~~ Hecho: arriba.
-2. Fase 2, decidida antes de mirar: la mixta (5R con el filtro, 3R sin él) contra 3R siempre, en Impulso, FVG nuevo y Ruptura de caja, en las monedas de siempre y las nuevas. Pasa si da más R total y no menos ventaja sobre los controles en las tres reglas.
+### Fase 2 del objetivo mixto: no pasa (21/11)
+
+**Cómo se corrió:** por la ruta del probador, "todas las monedas" con la fase 2 confirmada. Las corridas quedaron en el registro y en el tablero, y la fase 3 de estas reglas queda habilitada. Los datos van del 01/01/2024 al 30/06/2025, y los resultados están en `OrderFlowData/research/onchain/2026-11-21/fase2_mixta.json`.
+
+| Regla | Monedas | Salida | Trades | R | R total | Vs. azar (margen) | Vs. tramo | Monedas + |
+|---|---|---|---|---|---|---|---|---|
+| Impulso | de siempre | 3R | 583 | +0.22 | **+127** | +0.23 (+0.08 a +0.38) | +0.19 | 7/7 |
+| Impulso | de siempre | mixta | 547 | +0.23 | +124 | +0.25 | +0.22 | 7/7 |
+| Impulso | nuevas | 3R | 3138 | +0.19 | **+608** | +0.20 (+0.14 a +0.27) | +0.15 | 36/43 |
+| Impulso | nuevas | mixta | 2997 | +0.17 | +520 | +0.20 | +0.16 | 35/43 |
+| FVG nuevo | de siempre | 3R | 765 | +0.13 | +96 | +0.13 (0.00 a +0.26) | +0.09 | 6/7 |
+| FVG nuevo | de siempre | mixta | 750 | +0.14 | **+102** | +0.16 | +0.12 | 6/7 |
+| FVG nuevo | nuevas | 3R | 4488 | +0.11 | **+487** | +0.12 (+0.06 a +0.17) | +0.07 | 32/43 |
+| FVG nuevo | nuevas | mixta | 4136 | +0.08 | +348 | +0.11 | +0.08 | 30/43 |
+| Ruptura de caja | de siempre | 3R | 216 | +0.39 | +84 | +0.31 (+0.05 a +0.56) | +0.28 | 6/7 |
+| Ruptura de caja | de siempre | mixta | 216 | +0.40 | **+86** | +0.33 | +0.32 | 6/7 |
+| Ruptura de caja | nuevas | 3R | 1566 | +0.25 | **+387** | +0.23 (+0.14 a +0.32) | +0.22 | 38/43 |
+| Ruptura de caja | nuevas | mixta | 1530 | +0.23 | +346 | +0.23 | +0.23 | 32/43 |
+
+**Los trades de la mixta según el día:**
+- en la fase 2 los días con el filtro son los peores: de −0.15 a −0.01 R por trade, aun con 5R;
+- los días sin el filtro dan de +0.15 a +0.58 R;
+- en la fase 1 era al revés.
+
+**Veredicto:**
+- **No pasa el criterio decidido antes:** en las monedas nuevas da menos R total en las tres reglas (Impulso +520 contra +608), y en las de siempre empata.
+- El efecto de la fase 1 no se repite con datos nuevos. La emisión de stablecoins queda como dato del trade y no se insiste con ella.
+
+**Aparte, una buena noticia:** las tres reglas con 3R siempre pasan la fase 2 contra los dos controles con margen, salvo FVG nuevo en las monedas de siempre, que queda en el borde.
+- Impulso en las monedas nuevas: +0.20 sobre el azar, 36 de 43 monedas positivas.
+- Ruptura de caja en las monedas nuevas: +0.23, 38 de 43.
+- Son candidatas a la fase 3.
+
+### La ruptura con volumen del VPA con los flujos on-chain (21/11)
+
+**Pedido del usuario:** simular con el filtro su regla "VPA: ruptura con volumen, 1.5 ATR, 3R", que pasó las tres fases en la otra sesión:
+- QB en 4h, stop de 1.5 ATR con máximo 8 y 3R;
+- sin cierre por tiempo y con 0 velas de espera.
+
+**Cómo:** tomada del registro, en las tres fases y con las 50 monedas. Lo corrió un script aparte, sin guardar corridas; los resultados están en `OrderFlowData/research/onchain/2026-11-21/vpa_qb_fase*.json`. La regla tal cual da los mismos trades y R total que las corridas guardadas del usuario.
+
+R total, de siempre / nuevas:
+
+| Variante | Fase 1 | Fase 2 | Fase 3 |
+|---|---|---|---|
+| Regla tal cual | +102 / +279 | **+85 / +638** | −10 / +242 |
+| Filtro: emisión de 30 d a favor | +79 / +490 | +23 / **−61** | +42 / +240 |
+| Filtro: que la emisión no vaya en contra | **+135 / +580** | +59 / +428 | **+53 / +340** |
+| Objetivo mixto 5R/3R | +130 / +584 | +50 / +487 | +27 / +160 |
+
+**Los trades de la regla tal cual según el día** (monedas nuevas):
+- fase 1: con el filtro +0.28 R por trade, sin él −0.06;
+- fase 2: con el filtro −0.06, sin él +0.31;
+- fase 3: con el filtro +0.23, sin él +0.01.
+
+**Qué se lee:**
+- La señal cambia de signo en la fase 2 (2024 a mediados de 2025): depende del momento del mercado y no es confiable.
+- "Que no vaya en contra" sube el R total en las fases 1 y 3 y lo baja en la 2. En la fase 3, su ventaja sobre el azar baja a +0.02, porque el filtro también levanta al azar.
+- El objetivo mixto rinde menos que la regla tal cual en las fases 2 y 3.
+- **Conclusión:** a la regla del VPA no le conviene ninguna de las tres variantes; se queda como está.
+
+**Lo que quedaba pendiente de esta sección:**
+1. ~~Llevar a la app la salida "objetivo distinto cuando pasa el filtro on-chain".~~ Hecho. La salida queda en el probador, pero no pasó la fase 2.
+2. ~~Fase 2~~ Corrida arriba, con esta regla: la mixta (5R con el filtro, 3R sin él) contra 3R siempre, en Impulso, FVG nuevo y Ruptura de caja, en las monedas de siempre y las nuevas. Pasa si da más R total y no menos ventaja sobre los controles en las tres reglas.
 
 ### Pruebas
 

@@ -103,6 +103,32 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### Altagracia Trading Suite - 21 Noviembre 2026: Grabación de Hyperliquid (paso 2 del plan on-chain)
+
+**Pedido:** grabar Hyperliquid, el paso 2 de `docs/PLAN_INDICADORES_ONCHAIN.md`. Sus posiciones con precio de liquidación son públicas, pero su historia gratis empieza en 2025.
+
+**Cambios:**
+1. **`server/hl_recorder.py`:** arranca con el servidor de la suite y solo lee la API pública `info`. Graba en `OrderFlowData/live/hyperliquid/`:
+   - el estado de cada moneda de la suite cada 5 minutos: interés abierto, funding, precio marca y de oráculo, prima y volumen;
+   - una vez al día, las cuentas a seguir: 300 por capital y 1,000 por volumen del mes, unas 1,200;
+   - sus posiciones, con su precio de liquidación, cada 15 minutos.
+2. **Rutas:** `/api/hyperliquid/status`, `/ctx/{símbolo}` y `/liqmap/{símbolo}` (el USD que se liquidaría por franja de precio). `/api/suite/status` trae `hyperliquid`.
+3. **Pruebas:** `server/tests/hl_checks.py` (22). Siguen pasando `run_checks.py` (46) y `book_checks.py` (69).
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla, y graba desde entonces. `SUITE_HL=0` lo apaga.
+- Graba solo con la suite abierta: para semanas seguidas habría que llevarlo a Northflank.
+- **Medido en vivo el 21/11:**
+  - las cuentas a seguir tardan 2.5 minutos, una vez al día;
+  - la vuelta de posiciones tarda 5 minutos;
+  - en BTC, 150 M USD de largos y 170 M de cortos se liquidarían a menos de 25% del precio;
+  - ocupa unos 6 MB por día.
+- **Falta:** el indicador del mapa en el gráfico y, con semanas de datos, el estudio contra niveles al azar.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Hyperliquid (21/11)"
+
+---
+
 ### App 1 - 21 Noviembre 2026: Objetivo Mixto con los Flujos On-Chain
 
 **Pedido:** tras ver que el filtro de emisión de stablecoins no mejora la ventaja de las reglas, el usuario propuso usarlo para el objetivo: en los días que pasa, buscar un objetivo más alto porque el mercado da más, y en los demás dejar el de siempre. Después pidió confirmarlo con la regla mixta en la fase 1 y llevarlo a la app.
@@ -122,6 +148,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página.
 - Es un hallazgo de la fase 1, que ya se miró. La prueba de la fase 2 quedó definida antes de mirar en `docs/PLAN_INDICADORES_ONCHAIN.md`.
+- **Fase 2 (corrida el mismo día): no pasa.** En las monedas nuevas da menos R total en las tres reglas: Impulso +520 contra +608 con 3R siempre. Los días con el filtro fueron los peores, al revés que en la fase 1. La emisión queda como dato. Las tres reglas con 3R sí pasan la fase 2 contra los controles.
 - No se vio en pantalla.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "FLUJOS ON-CHAIN (21/11/2026)" y `OrderFlowData/research/onchain/2026-11-21/`
