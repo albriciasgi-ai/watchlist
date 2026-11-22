@@ -2433,9 +2433,53 @@ La idea del libro: una señal del marco rápido es una onda y el marco lento man
 - **Decisión:** el ripple no se lleva a la fase 2. El filtro queda en el probador para otras reglas.
 - Pruebas: dos más en `test_vpa.py` (10) y una en `rulefacets.test.mjs` (14). No se vio en pantalla: la página compila.
 
+### Deslizamiento real con el libro (22/11)
+
+`OrderFlowData/research/vpa/deslizamiento_real_qb.py` (`DESLIZAMIENTO_REAL_QB.md`) usa el libro completo de Bybit que graba la suite (`live/book`, del 13/11 16:00 al 22/11 00:00 UTC, 22 monedas).
+- **Cómo:** simula una orden a mercado de 1k, 10k, 50k y 250k USD recorriendo el libro de cada segundo. El costo es el precio medio del llenado contra el precio medio del libro, por lado. Momentos medidos:
+  - la entrada en el primer segundo de cada vela de 4h;
+  - la salida por el stop en un movimiento rápido (0.15% o más dentro del minuto);
+  - un segundo cualquiera;
+  - las 7 entradas reales de QB en esos días.
+
+  El objetivo es una limit y no desliza.
+- **Costo por trade en R a 10k:**
+  - BTC y ETH: 0;
+  - SOL, XRP y DOGE: menos de 0.01;
+  - AAVE, AVAX, ADA, UNI y ARB: 0.013 a 0.018;
+  - TRX y SHIB: unos 0.03;
+  - GALA: 0.037;
+  - RUNE: 0.119.
+
+  El stop de 1.5 ATR es ancho (2.4 a 4.5% del precio), y por eso el costo es chico.
+- **Fase 3 con el costo medido** (solo las monedas con libro):
+  - las nuevas (8, 546 trades) pasan de +0.134 a +0.120 R con 10k, +0.107 con 50k y +0.069 con 250k (0.05% por lado daba +0.104);
+  - las de siempre (6, 411 trades) bajan de −0.023 a −0.034.
+
+  El supuesto de 0.05% por lado era más duro que lo real hasta 50k.
+- **Límite:** son 9 días de libro, aplicados a trades de otras fechas, y no hubo un desplome fuerte.
+
+### Guía en PDF (22/11)
+
+`GUIA_VPA.pdf` (21 páginas, reemplaza la del 21/11), con imágenes reales de App 1 tomadas en una copia aislada con BTC. Tiene cuatro partes:
+1. **Las ideas:** el VPA en una página y la tabla «del libro al código».
+2. **Tutorial:** el lector, el panel, el cuadro de una vela, el modal, las velas con ancho, el probador (regla, filtro, salida, resumen y trade), el Observador y el Gimnasio.
+3. **Informe de las reglas:**
+   - las 16 de la fase 1;
+   - QB en las fases 2 y 3;
+   - el deslizamiento supuesto y el real;
+   - el delta real;
+   - causa y efecto;
+   - la salida VPA;
+   - el ripple;
+   - las órdenes del usuario contra el lector.
+4. **Qué explorar después**, con el porqué y el cómo.
+
+Se arma con un script de reportlab que quedó en el scratchpad de la sesión, fuera del repositorio.
+
 ### Falta
 
-- Nada de la propuesta original. Lo abierto: medir el deslizamiento de QB con el libro grabado, y seguir el informe «Tú contra el lector VPA» a medida que haya más órdenes.
+- Nada de la propuesta original. Lo abierto: seguir el informe «Tú contra el lector VPA» a medida que haya más órdenes, y repetir el deslizamiento real con más semanas de libro.
 
 ## RANGOS HORIZONTALES (20/11/2026)
 
