@@ -249,7 +249,7 @@ const dxPrice = (x) => {
 const dxR = (x, digits = 3) => (x == null || !Number.isFinite(x) ? '—' : `${x >= 0 ? '+' : ''}${x.toFixed(digits)}`);
 // Nombres cortos: el texto completo de cada evento va al pasar el mouse
 const DX_EVENT = { armada: 'Armada', entrada: 'Entrada', salida: 'Salida', vencida: 'Vencida',
-  'no entra': 'No entra (ocupada)', 'no se opera': 'No se opera', revision: 'Revisión' };
+  'no entra': 'No entra (ocupada)', 'no se opera': 'No se opera', revision: 'Revisión', anulada: 'Anulada' };
 
 /** DX en vivo: la hipótesis de los apilados desplazados, con la regla del probador de App 1 sobre el almacén en vivo.
  *  Registra órdenes, entradas y salidas; nada se envía al bot. Cómo se juzga: docs/PLAN_ESTRATEGIAS_BYKO_DALE.md, «DX en vivo» */
@@ -678,7 +678,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
       const [status, report, log] = await Promise.all([getJson('/api/dx/status'), getJson('/api/dx/report'), getJson('/api/dx/log?limit=400')]);
       // Las armadas, vencidas y llenadas con otra posición abierta son muchas más (unas 40 órdenes esperan por moneda):
       // la lista muestra las entradas, las salidas y las revisiones
-      const trades = (log.events || []).filter(e => e.type === 'entrada' || e.type === 'salida' || e.type === 'revision').slice(0, 20);
+      const trades = (log.events || []).filter(e => e.type === 'entrada' || e.type === 'salida' || e.type === 'revision' || e.type === 'anulada').slice(0, 20);
       setDx(s => ({ ...s, status, report, log: trades, error: null }));
     } catch (e) {
       setDx(s => ({ ...s, error: e.message }));
