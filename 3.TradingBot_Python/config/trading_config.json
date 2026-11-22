@@ -10,8 +10,7 @@
       "step_size": 0.001,
       "tick_size": 0.1,
       "min_qty": 0.001,
-      "max_qty": 119.0,
-      "current_price": 81767.1
+      "max_qty": 150.0
     },
     {
       "symbol": "ETHUSDT",
@@ -23,8 +22,7 @@
       "step_size": 0.01,
       "tick_size": 0.01,
       "min_qty": 0.01,
-      "max_qty": 724.0,
-      "current_price": 2449.45
+      "max_qty": 2000.0
     },
     {
       "symbol": "SOLUSDT",
@@ -36,7 +34,7 @@
       "step_size": 0.1,
       "tick_size": 0.01,
       "min_qty": 0.1,
-      "max_qty": 11740.0
+      "max_qty": 12000.0
     },
     {
       "symbol": "ADAUSDT",
@@ -48,7 +46,7 @@
       "step_size": 1.0,
       "tick_size": 0.0001,
       "min_qty": 1.0,
-      "max_qty": 590000.0
+      "max_qty": 1480000.0
     },
     {
       "symbol": "AVAXUSDT",
@@ -60,7 +58,7 @@
       "step_size": 0.1,
       "tick_size": 0.001,
       "min_qty": 0.1,
-      "max_qty": 10950.0
+      "max_qty": 22000.0
     },
     {
       "symbol": "GALAUSDT",
@@ -84,7 +82,7 @@
       "step_size": 0.1,
       "tick_size": 0.001,
       "min_qty": 0.1,
-      "max_qty": 6020.0
+      "max_qty": 8400.0
     },
     {
       "symbol": "IOTAUSDT",
@@ -106,7 +104,7 @@
       "take_profit_percent": 0.02,
       "leverage": 10,
       "step_size": 1.0,
-      "tick_size": 1e-05,
+      "tick_size": 0.0001,
       "min_qty": 1.0,
       "max_qty": 460000.0
     },
@@ -120,7 +118,7 @@
       "step_size": 0.1,
       "tick_size": 0.001,
       "min_qty": 0.1,
-      "max_qty": 11000.0
+      "max_qty": 15600.0
     },
     {
       "symbol": "XRPUSDT",
@@ -192,7 +190,7 @@
       "step_size": 0.1,
       "tick_size": 1e-05,
       "min_qty": 0.1,
-      "max_qty": 283360.0
+      "max_qty": 4300000.0
     },
     {
       "symbol": "DOGEUSDT",
@@ -214,7 +212,7 @@
       "take_profit_percent": 0.045,
       "leverage": 10,
       "step_size": 0.001,
-      "tick_size": 0.1,
+      "tick_size": 0.01,
       "min_qty": 0.001,
       "max_qty": 17.0
     },
@@ -228,7 +226,7 @@
       "step_size": 10.0,
       "tick_size": 0.0001,
       "min_qty": 10.0,
-      "max_qty": 66000.0
+      "max_qty": 290000.0
     },
     {
       "symbol": "ATOMUSDT",
@@ -238,7 +236,7 @@
       "take_profit_percent": 0.04,
       "leverage": 10,
       "step_size": 0.1,
-      "tick_size": 0.0001,
+      "tick_size": 0.001,
       "min_qty": 0.1,
       "max_qty": 22100.0
     },
