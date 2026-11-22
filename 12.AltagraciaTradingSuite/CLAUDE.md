@@ -1086,7 +1086,13 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
 - **memoria del proceso** al leer la lista de cuentas: de 54 a 58 MB. La forma de antes, en paralelo y con la misma lista, de 52 a 350 MB;
     - **CPU:** 6 s en 21.5 minutos: la lista (46,446 filas, 1,218 cuentas, 4 a 5 minutos de bajada), una vuelta completa (1,218 cuentas, 1,016 posiciones, 14.5 minutos de a un pedido) y tres vueltas rápidas (88 cuentas). En la nube, con 3 pedidos a la vez, la vuelta completa vuelve a tardar unos 5 minutos;
     - no se midió dentro del collector ni en Northflank: falta desplegar.
-  - **Despliegue:** copiar a la rama `deploy` de `albriciasgi-ai/footprint-collector` `main.py`, `Dockerfile` y `hl_recorder.py`, y "Deploy" en Northflank. Ver `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md`, "Hyperliquid (22/11/2026)".
+  - **Desplegado el 22/11** (build `clear-muscle-9783`, commit 0db5b61 de la rama `deploy` de `albriciasgi-ai/footprint-collector`):
+    - en la nube, la lista de cuentas (1,217) bajó en segundos y la primera vuelta completa tardó 226 s, con las 1,217 cuentas y 1,009 posiciones;
+    - el mapa de BTC dio 109 posiciones cercanas, como la suite;
+    - el servicio quedó en 181 de 512 MB y 31% de su CPU durante esa vuelta.
+    - `hl_cloud.py` contra la nube real (carpeta temporal): la primera vuelta bajó 126 KB y la segunda, nada.
+
+    Ver `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md`, "Hyperliquid (22/11/2026)".
 - **Pruebas:** `server/tests/hl_checks.py` (34, con la vuelta rápida, el reintento y la lista por partes), `hl_cloud_checks.py` (16: la copia del collector, sus rutas corriendo en el mismo proceso, la bajada, `read_rows` y la limpieza) y, en App 1, `tests/hlliquidations.test.mjs` (6), sin conexión:
   - los nombres de las monedas;
   - el estado y las ballenas elegidas por capital y por volumen;

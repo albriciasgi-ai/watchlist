@@ -66,8 +66,9 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 4. **Pruebas:** `hl_checks.py` (34) y `hl_cloud_checks.py` (16).
 
 **IMPORTANTE:**
-- **No desplegado:** falta copiar los archivos a la rama `deploy` de `footprint-collector` y pulsar "Deploy" en Northflank, con el visto bueno del usuario.
-- La suite se reinicia sola al abrirla; sin la nube desplegada, la bajada solo anota el error y sigue.
+- **Desplegado el 22/11** (build `clear-muscle-9783`, commit 0db5b61 de la rama `deploy`). En la nube: la lista de cuentas (46,409 filas, 1,217 cuentas) bajó en segundos y la primera vuelta completa tardó 226 s, con 1,009 posiciones. El servicio quedó en 181 de 512 MB. Antes de reiniciarlo, tras 8 días encendido, estaba en 362 MB.
+- La suite se reinicia sola al abrirla y desde ahí baja lo de la nube. Probado contra la nube real, en una carpeta temporal: la primera vuelta bajó 126 KB y la segunda, nada.
+- La página de Northflank tardó unos 3 minutos en cargar: su archivo principal baja a unos 25 KB/s.
 
 **Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Hyperliquid (21/11)", "En la nube (22/11)", y `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Hyperliquid (22/11/2026)"
 
