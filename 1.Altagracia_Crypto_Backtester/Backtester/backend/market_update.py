@@ -1,7 +1,9 @@
 """
 Pone al día, en segundo plano, los datos del probador que no salen del caché de App 1 (21/11):
 velas de las monedas nuevas (1h, 4h, 15m y 5m, candles_update.py), OI de 4 horas (oi_update.py), funding
-(funding_update.py) y, desde el 21/11, los flujos on-chain diarios de Coin Metrics (onchain_flows.py). Lo lanza el backend al arrancar (main.py, start_in_background) en un proceso aparte.
+(funding_update.py) y, desde el 21/11, los flujos on-chain diarios de Coin Metrics (onchain_flows.py) y lo nuevo del OI
+de 5 minutos de Bybit y Binance (oi_history.py; la bajada completa se corre a mano). Lo lanza el backend al arrancar
+(main.py, start_in_background) en un proceso aparte.
 
 - Una vez cada MIN_HOURS horas: con uvicorn --reload el backend arranca otra vez con cada cambio de código.
 - Una a la vez: candado en OrderFlowData/candles/actualizacion.lock (vence a las LOCK_HOURS horas, por si se cortó).
@@ -101,6 +103,17 @@ def run():
         failed += _step("Velas", coins, candles)
     oi = sorted(p.name.split("_")[0] for p in Path(oi_update.oi_store.OI_DIR).glob("*_4h.json"))
     failed += _step("OI de 4 horas", oi, oi_update.update)
+    import oi_history
+    if oi_history.take_lock():  # Con la bajada completa corriendo, lo nuevo espera a la próxima vuelta
+        oi_history.release_lock()
+
+        def oi5(s):
+            bad = oi_history.run([s]) or []
+            if bad:
+                raise RuntimeError("; ".join(f"{name}: {error}" for name, _, error in bad))
+        failed += _step("OI de 5 minutos de Bybit y Binance (lo nuevo)", oi_history.coins(), oi5)
+    else:
+        print("--- OI de 5 minutos: la bajada completa sigue corriendo", flush=True)
     have = {p.stem for p in Path(funding_update.flow_filters.FUNDING_DIR).glob("*.json")}
     funding = sorted(have | set(rule_tester.candle_symbols("all")))
     with funding_update.httpx.Client(timeout=30, headers={"User-Agent": "app1-funding"}) as client:

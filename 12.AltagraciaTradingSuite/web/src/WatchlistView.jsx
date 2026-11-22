@@ -232,6 +232,139 @@ function WiseSmcSections({ wsmc, onChange, onOpenChart }) {
   );
 }
 
+// DX en vivo (dx_watch.py): fechas, precios y R como los da el servidor
+// Día y hora en 24 h ("26/11 02:00"): las tablas del panel no parten las líneas y el panel es angosto
+const colombiaStamp = (ms) => {
+  const d = new Date(ms);
+  const day = d.toLocaleDateString('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit' });
+  return `${day} ${d.toLocaleTimeString('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit', hour12: false })}`;
+};
+const colombiaDay = (ms) => new Date(ms).toLocaleDateString('es-CO', { timeZone: 'America/Bogota', day: '2-digit', month: '2-digit', year: 'numeric' });
+const dxPrice = (x) => {
+  if (x == null || !Number.isFinite(x)) return '—';
+  const size = Math.abs(x);
+  const digits = size >= 1000 ? 1 : size >= 100 ? 2 : size > 0 ? Math.max(2, Math.min(8, 3 - Math.floor(Math.log10(size)))) : 2;
+  return x.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+};
+const dxR = (x, digits = 3) => (x == null || !Number.isFinite(x) ? '—' : `${x >= 0 ? '+' : ''}${x.toFixed(digits)}`);
+// Nombres cortos: el texto completo de cada evento va al pasar el mouse
+const DX_EVENT = { armada: 'Armada', entrada: 'Entrada', salida: 'Salida', vencida: 'Vencida',
+  'no entra': 'No entra (ocupada)', 'no se opera': 'No se opera', revision: 'Revisión' };
+
+/** DX en vivo: la hipótesis de los apilados desplazados, con la regla del probador de App 1 sobre el almacén en vivo.
+ *  Registra órdenes, entradas y salidas; nada se envía al bot. Cómo se juzga: docs/PLAN_ESTRATEGIAS_BYKO_DALE.md, «DX en vivo» */
+function DxSections({ dx, onChange, onOpenChart }) {
+  const status = dx.status;
+  if (!status) {
+    return (
+      <div className="bot-section">
+        <h3>DX en vivo (apilados desplazados)</h3>
+        <div className="bot-empty">{dx.error ? `Sin respuesta del servidor: ${dx.error}` : 'Cargando…'}</div>
+      </div>
+    );
+  }
+  const state = status.detecting ? 'Registra en vivo'
+    : !status.enabled ? 'Apagado'
+      : status.env_off ? 'Apagado en este servidor (SUITE_DX=0)'
+        : status.other_process ? 'Otro proceso registra con esta carpeta de datos' : 'Encendido; empieza en el próximo cierre';
+  const report = dx.report || {};
+  const book = report.book || {};
+  const exec = report.exec || {};
+  const next = (report.checkpoints || []).find(m => !m.due && m.at);
+  const done = (report.checkpoints || []).filter(m => m.due);
+  const rows = [];
+  for (const sym of status.symbols || []) {
+    const s = status.by_symbol?.[sym] || {};
+    for (const o of s.open || []) rows.push({ ...o, kind: 'abierta' });
+    for (const o of s.pending || []) rows.push({ ...o, kind: 'esperando' });
+  }
+  const failing = (status.symbols || []).filter(s => status.by_symbol?.[s]?.error);
+  const waiting = (status.symbols || []).reduce((n, s) => n + (status.by_symbol?.[s]?.pendingCount || 0), 0);
+  return (
+    <>
+      <div className="bot-section">
+        <h3>DX en vivo (apilados desplazados)</h3>
+        <div className="wl-row">
+          <span className={`suite-dot ${status.detecting ? 'ok' : 'bad'}`} />
+          <span>{state}</span>
+        </div>
+        <div className="wl-row">
+          <button type="button" className="suite-btn" disabled={dx.saving} onClick={() => onChange({ enabled: !status.enabled })}>
+            {status.enabled ? 'Apagar el registro' : 'Encender el registro'}
+          </button>
+        </div>
+        <div className="wl-row wl-muted" title="Limit en el borde cercano de la zona movida, válida 200 velas; stop de 10% a 20% del ATR diario; objetivo 2R; una posición a la vez por moneda">
+          {status.since ? `Desde el ${colombiaDay(status.since)}` : 'Empieza con el primer cierre'} · {(status.symbols || []).length} monedas en 30m · la regla de las fases 2 y 3, sin cambios. No envía nada al bot.
+        </div>
+        <div className="wl-row">
+          {book.n ? `${book.n} trades · acierto ${(book.winRate * 100).toFixed(1)}% · ${dxR(book.avgR)} R por trade${book.low != null ? ` (de ${dxR(book.low)} a ${dxR(book.high)})` : ''}` : 'Todavía sin trades cerrados.'}
+        </div>
+        {book.n ? (
+          <div className="wl-row wl-muted" title="La salida al precio de una orden a mercado disparada en el stop o el objetivo, medido en la cinta">
+            Con la ejecución medida: {dxR(exec.avgR)} R por trade ({report.measured ?? 0} de {book.n} medidos).
+            {report.slippage?.stops ? ` Deslizamiento mediano en el stop: ${report.slippage.medianPct.toFixed(3)}%.` : ''}
+          </div>
+        ) : null}
+        {done.map(m => (
+          <div key={m.months} className="wl-row">
+            Lectura de los {m.months} meses: {m.verdict}{m.stats?.n ? ` (${m.stats.n} trades, ${dxR(m.stats.avgR)} R)` : ''}.
+          </div>
+        ))}
+        {next ? <div className="wl-row wl-muted">Próxima lectura del plan: {colombiaDay(next.at)}, a los {next.months} meses.</div> : null}
+        {failing.length > 0 && (
+          <div className="suite-result bad">{failing.map(s => `${s.replace(/USDT$/, '')}: ${status.by_symbol[s].error}`).join(' · ')}</div>
+        )}
+        {dx.error && <div className="suite-result bad">{dx.error}</div>}
+      </div>
+      <div className="bot-section">
+        <h3>Órdenes de DX</h3>
+        {waiting > 0 && (
+          <div className="wl-row wl-muted">{waiting} esperando en total; se ven las 3 más cerca del precio de cada moneda y las posiciones abiertas.</div>
+        )}
+        {rows.length === 0 ? <div className="bot-empty">Ninguna esperando ni abierta.</div> : (
+          <table className="bot-table">
+            <thead><tr><th>Moneda</th><th>Orden</th><th>Vence / R</th></tr></thead>
+            <tbody>
+              {rows.map(o => (
+                <tr key={o.key} className="wl-signal" onClick={() => onOpenChart(o.symbol, '15m')}
+                    title={o.kind === 'abierta'
+                      ? `Posición abierta: ${o.dir > 0 ? 'largo' : 'corto'} en ${dxPrice(o.entry)} · stop ${dxPrice(o.stop)} · objetivo ${dxPrice(o.target)} · ${dxR(o.open_r)} R al último cierre`
+                      : `Limit de ${o.dir > 0 ? 'compra' : 'venta'} en ${dxPrice(o.limit)} · stop ${dxPrice(o.stop)} · objetivo ${dxPrice(o.target)} · armada el ${colombiaStamp(o.armed_at)}, vence el ${colombiaStamp(o.expires_at)}`}>
+                  <td>{o.symbol.replace(/USDT$/, '')}</td>
+                  <td className={o.dir > 0 ? 'pos' : 'neg'}>
+                    {o.kind === 'abierta' ? `${o.dir > 0 ? 'Largo' : 'Corto'} ${dxPrice(o.entry)}` : `${o.dir > 0 ? 'Compra' : 'Venta'} ${dxPrice(o.limit)}`}
+                  </td>
+                  <td>{o.kind === 'abierta' ? `${dxR(o.open_r, 2)} R` : colombiaStamp(o.expires_at)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      <div className="bot-section">
+        <h3>Últimas entradas y salidas de DX</h3>
+        {dx.log.length === 0 ? <div className="bot-empty">Todavía ninguna.</div> : (
+          <table className="bot-table">
+            <thead><tr><th>Hora</th><th>Moneda</th><th>Qué pasó</th></tr></thead>
+            <tbody>
+              {dx.log.map(e => (
+                <tr key={`${e.key}-${e.type}-${e.detected_at}`} className="wl-signal" onClick={() => onOpenChart(e.symbol, '15m')}
+                    title={`${e.text} · anotado a ${Math.round((e.delay_ms || 0) / 1000)} s de ocurrir`}>
+                  <td>{colombiaTime(e.at)}</td>
+                  <td>{e.symbol.replace(/USDT$/, '')}</td>
+                  <td className={e.type === 'salida' ? ((e.r ?? 0) >= 0 ? 'pos' : 'neg') : e.dir > 0 ? 'pos' : 'neg'}>
+                    {DX_EVENT[e.type] || e.type}{e.type === 'salida' && e.r != null ? ` · ${dxR(e.r, 2)} R` : ''}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
 function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide, extra = null }) {
   const status = swing.status;
   if (!status) {
@@ -339,6 +472,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
   const [dragOver, setDragOver] = useState(null);
   const [swing, setSwing] = useState({ status: null, log: [], error: null, saving: false });
   const [wsmc, setWsmc] = useState({ status: null, log: [], error: null, saving: false });
+  const [dxState, setDx] = useState({ status: null, report: null, log: [], error: null, saving: false });
   const days = clampDays(tf, daysByTf[tf]);
 
   const wrapRef = useRef(null);
@@ -538,6 +672,35 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
       setWsmc(s => ({ ...s, saving: false }));
     }
   };
+  // DX en vivo, con el mismo ritmo
+  const readDx = useCallback(async () => {
+    try {
+      const [status, report, log] = await Promise.all([getJson('/api/dx/status'), getJson('/api/dx/report'), getJson('/api/dx/log?limit=400')]);
+      // Las armadas, vencidas y llenadas con otra posición abierta son muchas más (unas 40 órdenes esperan por moneda):
+      // la lista muestra las entradas, las salidas y las revisiones
+      const trades = (log.events || []).filter(e => e.type === 'entrada' || e.type === 'salida' || e.type === 'revision').slice(0, 20);
+      setDx(s => ({ ...s, status, report, log: trades, error: null }));
+    } catch (e) {
+      setDx(s => ({ ...s, error: e.message }));
+    }
+  }, []);
+  useEffect(() => {
+    if (!active || !showPanel) return undefined;
+    readDx();
+    const timer = setInterval(readDx, 30000);
+    return () => clearInterval(timer);
+  }, [active, showPanel, readDx]);
+  const changeDx = async (body) => {
+    setDx(s => ({ ...s, saving: true, error: null }));
+    try {
+      await postJson('/api/dx/config', body);
+      await readDx();
+    } catch (e) {
+      setDx(s => ({ ...s, error: e.message }));
+    } finally {
+      setDx(s => ({ ...s, saving: false }));
+    }
+  };
   const changeSwing = async (body) => {
     setSwing(s => ({ ...s, saving: true, error: null }));
     try {
@@ -685,7 +848,10 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
           </div>
           {showPanel && (
             <SwingPanel swing={swing} symbols={ordered} gridTf={tf} onChange={changeSwing} onOpenChart={onOpenChart} onHide={() => setShowPanel(false)}
-              extra={<WiseSmcSections wsmc={wsmc} onChange={changeWsmc} onOpenChart={onOpenChart} />} />
+              extra={<>
+                <WiseSmcSections wsmc={wsmc} onChange={changeWsmc} onOpenChart={onOpenChart} />
+                <DxSections dx={dxState} onChange={changeDx} onOpenChart={onOpenChart} />
+              </>} />
           )}
         </div>
       </div>

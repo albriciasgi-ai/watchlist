@@ -55,6 +55,109 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 22 Noviembre 2026: DX en Vivo (paso 4 de las estrategias de Byko y Dale)
+
+**Pedido:** seguir con el paso 4 del plan: llevar a la suite DX, la única regla de Byko y Dale que pasó las fases 2 y 3, como un detector en vivo que no envía nada al bot. El usuario pidió además entender la estrategia. Después opinó que le falta mirar la tendencia del mercado, y que podría servir refinando la lógica.
+
+**Cambios:**
+1. **Fijado antes de registrar,** en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo":
+   - la regla de las fases 2 y 3, sin cambiar nada, en las 7 monedas con almacén;
+   - cómo se mide la ejecución con la cinta;
+   - el juicio, con el R por trade de las 7 con la ejecución medida: a los 3 y a los 6 meses se descarta si su margen al 95% queda entero bajo cero; a los 12 meses pasa si queda entero sobre cero.
+2. **Registro en vivo** (`12.AltagraciaTradingSuite/server/dx_watch.py`):
+   - al cierre de cada vela de 30 minutos corre `rule_tester.run` de App 1 sobre lo visto en vivo;
+   - anota las órdenes armadas, las entradas, las salidas con su R, las vencidas y las que se llenan con otra posición abierta;
+   - cada vela se guarda como se vio y no se recalcula.
+3. **La ejecución con la cinta:** en cada salida, el precio de una orden a mercado disparada en el stop o el objetivo, y con él el R con la ejecución medida. Además, si el precio pasó el objetivo.
+   - Ese precio es el peor entre el trade del disparo y el promedio de los 100 ms siguientes.
+   - Antes de registrar nada se corrigió el medio segundo que se había fijado primero: en una mecha de BTC tomaba precios de después de la vuelta.
+4. **En la suite:** un panel en la Watchlist, debajo del Swing y de los sabios. Además, las limit de DX en la defensa de zona de la pestaña Mapa.
+5. **App 1:** `rule_tester.run` suma `since` y `minutes` para el registro. Sin ellos, nada cambia.
+6. **Pruebas:**
+   - `dx_checks.py` de la suite (39): el registro vela a vela da los mismos trades que el probador, sin futuro, y al reiniciar no repite nada;
+   - `test_dale.py` de App 1 suma 1 (13);
+   - todas las del backend de App 1: 557 pasan y fallan las 2 de siempre. También pasan `run_checks.py`, `book_defense_checks.py` y `wise_smc_checks.py`.
+
+**IMPORTANTE:**
+- **El registro empieza cuando la suite corre este código.** La del usuario corre desde main: empieza al unir esta rama.
+- **Probado con datos reales,** como si hubiera arrancado el 15/11, solo leyendo el almacén y la cinta. Esos días ya estaban en la fase 3: prueba el código, no la estrategia.
+  - En las 7 monedas, lo anotado es igual a una corrida del probador.
+  - 164 trades en 7.6 días: +0.27 R con la cuenta del probador y +0.26 con la ejecución medida.
+  - Deslizamiento en los stops: 0.011% en la mediana; el 10% peor, más de 0.048%.
+  - Una copia aislada del servidor registró en vivo, y el panel se vio en la Watchlist.
+- **Zonas unidas:** si dos zonas se arman en la misma vela y del mismo lado, el probador las une. El stop queda lejos del 10% al 20% del ATR diario que pide Dale: 17 de 164 trades, con 2.8% del precio de riesgo y −0.32 R. Las fases 2 y 3 se corrieron así, y el registro lo conserva.
+- **Confirmar la ventaja lleva tiempo:** las 7 monedas dan unos 650 trades por mes. Para confirmar con margen los +0.03 R de la fase 3 hace falta un año.
+- **Una versión refinada** sería otra hipótesis: la tendencia a favor y una orden por zona. Se explora en la fase 1 y se juzga con su propio registro, sin tocar el de DX.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "DX en vivo (22/11)" y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo"
+
+---
+
+### App 1 - 22 Noviembre 2026: Hipótesis de los Apilados Desplazados (DX), Juzgada en las Fases 2 y 3
+
+**Pedido:** juzgar la curiosidad de la fase 1 de Dale (las zonas desplazadas de los apilados ganaban) como una hipótesis nueva, fijada antes de correrla y juzgada en las fases 2 y 3.
+
+**Cambios:**
+1. **Fijada antes de correrla** en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "Hipótesis nueva: los apilados desplazados (DX)":
+   - la regla, las 7 monedas con almacén juntas y el control;
+   - el criterio: R por trade positivo con margen y ventaja con margen sobre el azar y el tramo;
+   - la fase 3, solo si pasaba la 2.
+2. **DX** en el probador (`backend/dale.py`): el control de DS como regla, con su misma semilla. Su control son las mismas zonas ancladas en velas al azar ("¿Aporta anclar en los apilados?").
+3. **Ventana:** DX va con las zonas de Dale, con su nombre y su control.
+4. **Pruebas:** `test_dale.py` suma 2 (12). Todas las del backend de App 1: 556 pasan y fallan las 2 de siempre. La página compila y sus pruebas pasan.
+
+**IMPORTANTE:**
+- **Pasa la fase 2 y la fase 3**, por poco:
+  - fase 2: 10,747 trades y +0.056 R por trade (de +0.028 a +0.084);
+  - fase 3: 11,416 trades y +0.030 R (de +0.003 a +0.057);
+  - en las dos le gana con margen al azar y al tramo.
+
+  Es la única regla de los PDF de Byko y Dale que pasa.
+- **Lo que la debilita:**
+  - la ventaja se achica: +0.099, +0.056 y +0.030 en las tres fases;
+  - antes de comisiones es estable (+0.18 R), pero los stops son de 0.6% del precio y la comisión se lleva de 0.12 a 0.14 R;
+  - BTC pierde en las dos fases, por la comisión;
+  - en la fase 3 las zonas ancladas en velas al azar casi la igualan.
+- **Con deslizamiento** (medido después, sin cambiar el veredicto) aguanta solo con el objetivo como orden limit y el stop deslizando 0.02% o menos. Con las dos salidas a mercado y 0.02%, se va.
+- Se corrió con `OrderFlowData/research/dale/2026-11-22/dx.py` y `costes.py`, sin guardar corridas en el registro del usuario. Resumen en `resumen.md` de esa carpeta.
+- **Lo que sigue** según el plan es el paso 4: un detector en vivo en la suite, sin enviar nada al bot. Serían los primeros datos frescos de verdad, con el llenado y el deslizamiento reales.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)", "Hipótesis DX"
+
+---
+
+### App 1 - 22 Noviembre 2026: Zonas de Trader Dale con el Primer Regreso (paso 3 de las estrategias de Byko y Dale)
+
+**Pedido:** "Sigue con Dale", tras cerrar Byko. La idea de *Order Flow Trading Setups*: una zona marcada por el volumen, el precio se aleja una o dos velas completas y se entra en el primer regreso. El probador nunca lo había probado: AP y GR no se habían corrido, y ST solo a mercado en la vela del evento.
+
+**Cambios:**
+1. **Cifras fijadas antes de correr**, en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` (paso 3):
+   - la zona se arma con 2 velas completas seguidas del mismo lado, sin tocarla, en 200 velas como mucho;
+   - limit en su borde cercano, válida 200 velas, y stop entre el 10% y el 20% del ATR diario, como pide Dale;
+   - 2R, en 30 minutos, y las variantes declaradas;
+   - la condición para ser candidata, la misma de Byko.
+2. **Cinco elementos** en el probador (`backend/dale.py`):
+   - **DS, apilados**, **DN, nodo doble** y **DG, orden grande:** las franjas de ST, AP y GR, en las monedas con almacén;
+   - **DA, acumulación:** el POC de la caja que termina con una ruptura, tras un movimiento de 3 ATR;
+   - **DC, cluster del tramo:** el pico de volumen del tramo, mirado cada 5 ATR que crece. Es también el proceso manual del usuario.
+3. **Control "zonas desplazadas":** las mismas zonas movidas de 1 a 3 ATR, con la misma mecánica. El informe "Todas" lo junta.
+4. **Ventana:** las fichas, sus parámetros, el botón «Entrada, stop y objetivo de Dale» y "¿Aporta dónde estuvo el volumen?".
+5. **Arreglado en el probador:** el tramo de una moneda cuyo almacén se está armando ya no se guarda, y uno guardado antes de que se escribieran sus días se vuelve a detectar (`_store_settled`). Pasó con SUI durante la fase 1.
+6. **Pruebas:** `tests/test_dale.py` (10) y una más en `test_rule_tester.py` (17). Todas las del backend de App 1: 554 pasan y fallan las 2 de siempre.
+
+**IMPORTANTE:**
+- Como con Byko, el backend del usuario corre desde main y no conoce estos elementos hasta que se una esta rama. La fase 1 se corrió con `OrderFlowData/research/dale/2026-11-21/fase1.py`, sin guardar corridas en su registro.
+- **Fase 1: ninguna es candidata** (16 corridas):
+  - **dónde estuvo el volumen no aporta:** ninguna zona le gana con margen a sus zonas desplazadas. Los apilados dan +0.01 R por trade en 16,703 trades, y sus zonas desplazadas, +0.10;
+  - **la mecánica le gana al azar, pero pierde:** entrar con una limit en el primer regreso da más que entrar a mercado al azar en 15 de 16 corridas. Aun así, salvo los apilados, todas pierden de −0.07 a −0.19 R;
+  - **el proceso del usuario** (el cluster del tramo con el OI sostenido) tampoco: −0.10 y −0.13 R.
+- **Cierre:** las cinco zonas quedan descartadas. Resumen en `OrderFlowData/research/dale/2026-11-21/resumen.md`. Después, la curiosidad de los apilados desplazados pasó las fases 2 y 3 como hipótesis nueva (entrada de arriba).
+- **SUI:** el panel armó su almacén mientras corría la fase 1. El tramo a medio armar que quedó guardado se borró, y DS, DN y DG se repitieron con SUI: dan lo mismo.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)" y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`
+
+---
+
 ### App 1 - 22 Noviembre 2026: El Ripple entre Marcos del VPA (Estudio y Filtro)
 
 **Pedido:** el «ripple» de Coulling (el marco mayor manda): primero un estudio y, después, el filtro.
@@ -117,6 +220,69 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - La página de Northflank tardó unos 3 minutos en cargar: su archivo principal baja a unos 25 KB/s.
 
 **Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Hyperliquid (21/11)", "En la nube (22/11)", y `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Hyperliquid (22/11/2026)"
+
+---
+
+### App 1 - 21 Noviembre 2026: Elementos de Byko en el Probador (paso 2 de las estrategias de Byko y Dale)
+
+**Pedido:** "Sigue con Byko", tras aprobar el concepto y bajar el OI de 5 minutos.
+
+**Cambios:**
+1. **Cifras fijadas antes de correr**, en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` (paso 2):
+   - las reglas: 1 hora, las cajas de la pestaña Régimen, entrada a mercado, stop en el borde lejano de la zona con 0.1 ATR y objetivo de 3R;
+   - las variantes declaradas;
+   - la condición para ser candidata a la fase 2: R positivo, ventaja sobre el azar y el tramo, y diferencia positiva contra "sin la firma", las tres con margen.
+2. **Cuatro elementos** en el probador (`backend/byko.py`):
+   - **FB, falso rompimiento:** perfora el borde de una caja y vuelve adentro. Firma: llegada impulsiva y volumen 3 veces o más el de su hora;
+   - **BA, ruptura tras acumulación:** firma, 6 velas pegadas al borde con mínimos crecientes;
+   - **TA, trampa de absorción:** en el borde, el OI salta y el precio no avanza;
+   - **PO, purga de OI:** el OI cae de golpe al final de un movimiento acelerado con volumen.
+3. **Control "sin la firma":** cada corrida repite la regla con los candidatos que no la cumplen (como el barrido sin liquidaciones). El informe "Todas" lo junta para todas las monedas.
+4. **Ventana:** las fichas, sus parámetros con las cifras del plan, «Vas a correr» y "¿Aporta la firma de Byko?".
+5. **Pruebas:** `tests/test_byko.py` (9). `test_stocks.py` se ajustó: las acciones no tienen OI, así que tampoco trampa ni purga. Todas las del backend de App 1: pasan todas, salvo las 2 de siempre.
+
+**IMPORTANTE:**
+- El backend del usuario corre desde main y no conoce estos elementos hasta que se una esta rama. Por eso la fase 1 se corrió con un script aparte que no guarda corridas en su registro: `OrderFlowData/research/byko/2026-11-21/fase1.py`, con los resultados en `resultados.json` y `resumen.md` de esa carpeta.
+- **Fase 1:**
+  - el falso rompimiento no funciona: en 1 hora, con 6,135 trades, pierde como el azar, y en 4 horas la firma empeora;
+  - la ruptura tras acumulación es candidata a la fase 2 solo en 4 horas y en las monedas nuevas: 95 trades, +0.58 R, con margen sobre el azar, el tramo y las rupturas sin la firma. La pone casi toda 2022 y los cortos, y fue una de 10 corridas.
+- **Fase 2 de la ruptura en 4 horas** (aprobada por el usuario, con el criterio fijado antes): **no pasa y queda descartada.** En las monedas nuevas da 74 trades y −0.43 R, y pierde con margen contra los tres controles. En las de siempre, 11 trades y +0.07 R; en las acciones, 33 y −0.59 R.
+- **Trampa y purga** (fase 1, al terminar la bajada del OI):
+  - **trampa:** no es candidata. En 1 hora, en las monedas nuevas, el salto del OI separa algo (+0.29 R contra las llegadas sin él, con margen), pero no le gana al azar ni al tramo, y con el OI de Bybit solo se va;
+  - **purga:** pierde como el azar.
+- **Cierre:** ninguna de las cuatro reglas de Byko da ventaja (22 corridas de la fase 1 y una de la fase 2). Resumen en `OrderFlowData/research/byko/2026-11-21/resumen.md`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ELEMENTOS DE BYKO EN EL PROBADOR (21/11/2026)"
+
+---
+
+### App 1 - 21 Noviembre 2026: OI de 5 Minutos de Bybit y Binance (paso 1 de las estrategias de Byko y Dale)
+
+**Pedido:** leer tres PDF de estrategias aparte y dar un concepto para App 1 y la suite: dos de Byko (Bikotrading: tres firmas del OI, falso rompimiento y ruptura) y *Order Flow Trading Setups*, de Trader Dale. El usuario aprobó el concepto: dos experimentos, cómo llega el precio al borde y la zona con el primer regreso. Después preguntó por qué bajar el OI de 1 hora de Bybit y el de 5 minutos de Binance, en vez de los dos marcos de los dos.
+
+**Cambios:**
+1. **Plan:** `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, con:
+   - las reglas literales de los PDF y lo que falta fijar antes de correrlas;
+   - los controles propios: el mismo borde sin la firma y zonas al azar con la misma mecánica;
+   - cuatro pasos.
+2. **OI de 5 minutos** de Bybit y de Binance, desde que listan cada moneda (`backend/oi_history.py`, en `OrderFlowData/oi/5m/`):
+   - el OI es una foto: 15 minutos, 1 hora y 4 horas salen de tomar el de 5 minutos en su marca;
+   - Binance trae, además, las proporciones de largos y cortos y la de compra contra venta agresiva;
+   - la lectura no mira el futuro: cada dato se usa 5 minutos después de su marca;
+   - da la suma de los dos: Binance + Bybit ÷ 2;
+   - `market_update.py` pone al día lo nuevo al arrancar el backend.
+3. **Pruebas:** `tests/test_oi_history.py` (14). Pasan también las de `test_market_update.py`.
+
+**IMPORTANTE:**
+- La nota "5min ~416 días (límites de Bybit)" era el tope del descargador viejo: Bybit da 5 minutos desde que lista cada moneda. Quedó corregida en `1.Altagracia_Crypto_Backtester/CLAUDE.md`.
+- **Ningún filtro usa todavía esta serie**, así que ninguna regla ya corrida cambia. La usarán los elementos de Byko (paso 2).
+- **La bajada completa de las 50 monedas** se lanzó aparte el 21/11. Si se corta, se retoma con `python -B oi_history.py --backfill`. Registro en `OrderFlowData/oi/5m/descarga.log`.
+- **Comprobado en ARB:**
+  - las 3,333 marcas de 4 horas son iguales a las de `ARBUSDT_4h.json`;
+  - Binance trae ceros sueltos (57) y 4 huecos propios.
+- El código está en la rama de esta sesión: la actualización automática llega al backend del usuario cuando se una a main.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "OI DE 5 MINUTOS DE BYBIT Y BINANCE (21/11/2026)" y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`
 
 ---
 
