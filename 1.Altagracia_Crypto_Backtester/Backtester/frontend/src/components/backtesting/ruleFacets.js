@@ -214,7 +214,12 @@ export function ruleFacets(rule, labels = {}) {
   if (rule.bwf?.ac) add('ac', `AC ${BW_MOMENTUM_TEXT[rule.bwf.ac]}`);
   if (rule.bwf?.gator) add('gator', `Gator ${BW_GATOR_TEXT[rule.bwf.gator]}`);
   if (rule.bwf?.mfi) add('mfi', `MFI: ${BW_MFI_TEXT[rule.bwf.mfi]}`);
-  if (rule.vpaf?.mode) add('vpaMedidor', rule.vpaf.mode === 'favor' ? `medidor VPA a favor (≥ ${n(rule.vpaf.thr)})` : `medidor VPA que no esté en contra (> −${n(rule.vpaf.thr)})`);
+  if (rule.vpaf?.mode) {
+    const frame = { 60: ' de 1 hora', 240: ' de 4 horas', 1440: ' de 1 día' }[rule.vpaf.tf] || '';
+    add('vpaMedidor', rule.vpaf.mode === 'favor' ? `medidor VPA${frame} a favor (≥ ${n(rule.vpaf.thr)})`
+      : rule.vpaf.mode === 'notFavor' ? `medidor VPA${frame} que no esté fuerte a favor (< ${n(rule.vpaf.thr)})`
+        : `medidor VPA${frame} que no esté en contra (> −${n(rule.vpaf.thr)})`);
+  }
   if (rule.smcf?.pd) add('premium', `largos en discount y cortos en premium (rango mayor de ${rule.smcf.swing} velas)`);
   if (rule.smcf?.bias) add('sesgo', `a favor de la estructura mayor de ${rule.smcf.swing} velas`);
   if (flow.steady) add('oiSostenido', `OI sube en ${Math.round(Number(flow.steadyMin) * 100)}% o más de los pasos de ${flow.steadyDays} días`);

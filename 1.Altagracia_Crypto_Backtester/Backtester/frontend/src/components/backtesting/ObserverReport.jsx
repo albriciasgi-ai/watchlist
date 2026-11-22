@@ -12,8 +12,44 @@ const BLOCK_NAMES = {
   context_60: 'Contexto 1 hora',
   move: 'Movimiento con volumen',
   zone: 'Zona',
-  oi: 'OI creciendo'
+  oi: 'OI creciendo',
+  vpa: 'Lector VPA (a favor o en contra de tu orden)'
 };
+
+/** Tus órdenes cerradas según lo que decía el lector VPA al decidir */
+const VpaSection = ({ vpa }) => (
+  <div className="settings-section">
+    <h4>Tú contra el lector VPA</h4>
+    <table className="observer-table">
+      <thead>
+        <tr><th>Marco</th><th>El lector estaba</th><th>Órdenes</th><th>Acierto</th><th>R</th></tr>
+      </thead>
+      <tbody>
+        {vpa.frames.flatMap(frame => frame.rows.map((row, i) => (
+          <tr key={`${frame.frame}-${row.state}`}>
+            {i === 0 && <td rowSpan={frame.rows.length}>{frame.label}</td>}
+            <td>{row.label}</td>
+            <td>{row.n}</td>
+            {row.n === 0
+              ? <td colSpan="2" className="observer-empty-cell">Sin órdenes</td>
+              : <><td>{share(row.win_rate)} <span className="observer-count">({row.wins}/{row.n})</span></td><td>{formatR(row.avg_r)}</td></>}
+          </tr>
+        )))}
+        <tr>
+          <td>Lo citaste</td>
+          <td>Elegiste algo del Lector VPA para el análisis</td>
+          <td>{vpa.cited.n}</td>
+          {vpa.cited.n === 0
+            ? <td colSpan="2" className="observer-empty-cell">Sin órdenes</td>
+            : <><td>{share(vpa.cited.win_rate)}</td><td>{formatR(vpa.cited.avg_r)}</td></>}
+        </tr>
+      </tbody>
+    </table>
+    <p className="observer-report-note">
+      El medidor del lector en la última vela cerrada antes de cada orden, del lado de tu orden: a favor desde +{vpa.lean}, en contra desde −{vpa.lean} y neutro entre medio (fuerte desde ±{vpa.thr}, el umbral del indicador). Si tus órdenes en contra del lector rinden igual o más que a favor, tu criterio ve algo que el lector no; si a favor rinden mucho más, conviene mirarlo antes de entrar. Con pocas órdenes por fila, nada de esto se distingue del azar.
+    </p>
+  </div>
+);
 
 const share = (value) => (value === null || value === undefined ? '—' : `${Math.round(value * 100)}%`);
 
@@ -215,6 +251,8 @@ const ObserverReport = ({ symbol, reached, onClose }) => {
                   </p>
                 </div>
               )}
+
+              {data.vpa && data.overall.n > 0 && <VpaSection vpa={data.vpa} />}
 
               {data.overall.n > 0 && (
                 <div className="settings-section">

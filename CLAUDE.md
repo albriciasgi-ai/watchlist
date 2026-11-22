@@ -55,6 +55,52 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 22 Noviembre 2026: El Ripple entre Marcos del VPA (Estudio y Filtro)
+
+**Pedido:** el «ripple» de Coulling (el marco mayor manda): primero un estudio y, después, el filtro.
+
+**Cambios:**
+1. **Estudio** (fase 1, QB en 1h y 4h, con el medidor de 4h y de 1 día en su última vela cerrada):
+   - va al revés del libro: con el marco mayor fuerte a favor, QB pierde en los cuatro grupos (de −0.14 a −0.48 R);
+   - con el mayor neutro suele rendir más.
+2. **Filtro del medidor en un marco mayor** en el probador: «leído en» 1 hora, 4 horas o 1 día, sin futuro, y el modo nuevo «que no esté a favor más de».
+3. **Por el probador**, sin entrar con el marco mayor fuerte a favor: QB 4h pasa de +0.063 a +0.073 R en las monedas nuevas y de +0.14 a +0.13 en las de siempre. QB 1h pierde con o sin el filtro. No mueve la ventaja: el ripple no se lleva a la fase 2.
+4. **Pruebas:** `test_vpa.py` suma 2 (10) y `rulefacets.test.mjs` 1 (14).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- Las corridas de QB en 1h y con el filtro quedaron en el registro y en el tablero, solo en la fase 1.
+- No se vio en pantalla: la página compila.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA", "El ripple entre marcos" y `OrderFlowData/research/vpa/RIPPLE_QB.md`
+
+---
+
+### App 1 + Altagracia Trading Suite - 22 Noviembre 2026: Deslizamiento de la Ruptura con Volumen, el Observador contra el Lector VPA y Signos en el Modal
+
+**Pedido:** medir el deslizamiento de la ruptura con volumen (QB), que el Observador compare las lecturas del usuario con las del lector VPA, y poner en el modal del lector, junto a cada casilla, el signo que se ve en el gráfico.
+
+**Cambios:**
+1. **Deslizamiento de QB** (`OrderFlowData/research/vpa/deslizamiento_qb.py`, sobre las corridas guardadas):
+   - el stop de 1.5 ATR en 4h es ancho: 0.05% por lado cuesta 0.02 a 0.04 R por trade;
+   - fase 3 en las 43 monedas nuevas: de +0.09 a +0.06 R con 0.05% (el margen apenas toca el cero) y +0.04 con 0.10%;
+   - deja el R en cero con unos 0.18% por lado.
+2. **Observador contra el lector:** cada orden guarda lo que decía el Lector VPA al decidir, en su marco, en 1 hora y en 4 horas: el medidor a favor, neutro o en contra (desde ±0.3) y los elementos Q de las 3 últimas velas. Las órdenes de antes se leen una vez y quedan en `observer/vpa_readings.json`.
+   - En cada orden cerrada, la fila «Lector VPA»;
+   - en el informe, «Tú contra el lector VPA» (acierto y R según el lector) y seis condiciones nuevas.
+3. **Modal del Lector VPA:** cada elemento con su signo entre paréntesis: «Ruptura con volumen (▲)».
+4. **Suite:** su journal muestra la fila del lector en los trades nuevos.
+5. **Pruebas:** `test_observer.py` suma 3 (60), `observer.test.mjs` 1 (45) y `journal_checks.py` de la suite pasa (89).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. La suite se reinicia sola al abrirla y arma la página nueva.
+- La primera vez, el informe del Observador tarda unos 20 s mientras lee el lector de las órdenes anteriores.
+- Con las 32 órdenes cerradas del usuario: con el lector a favor, 8 órdenes, 75% y +1.24 R; neutro, 19, 21% y −0.31 R; en contra, 5, 40% y −0.02 R. Son muy pocas para concluir.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA", "Deslizamiento", "El Observador contra el lector" y "Signos en el modal"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 21 Noviembre 2026: Indicador "Liquidaciones Hyperliquid" y Grabación Cada Minuto
 
 **Pedido:** tras ver el mapa de liquidaciones de Hyperliquid, el usuario eligió llevarlo como indicador al gráfico principal, y preguntó si se podía grabar minuto a minuto para el mapa.
