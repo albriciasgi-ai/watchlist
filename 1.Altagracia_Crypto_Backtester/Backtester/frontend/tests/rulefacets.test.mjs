@@ -217,6 +217,17 @@ test('el objetivo con los flujos on-chain: su ficha, su × y sin arrastre', () =
   assert.deepEqual(ruleDifferences(toBackendRule(fromBackendRule(rule)), rule), [], 'cargarla deja el formulario igual');
 });
 
+test('el medidor VPA leído en un marco mayor: ida y vuelta, en palabras y solo con un marco mayor', () => {
+  const form = { ...defaultRule(), tf: 240, elements: ['QB'], vpaMode: 'favor', vpaThr: 0.5, vpaTf: 1440 };
+  const rule = toBackendRule(form);
+  assert.deepEqual(rule.vpaf, { mode: 'favor', thr: 0.5, tf: 1440 });
+  assert.equal(fromBackendRule(rule).vpaTf, 1440);
+  assert.match(describeRule(rule), /medidor VPA a favor de 1 día \(≥0\.5\)/);
+  assert.match(ruleFacets(rule).map(f => f.text).join(' · '), /medidor VPA de 1 día a favor \(≥ 0\.5\)/);
+  assert.deepEqual(toBackendRule({ ...form, vpaTf: 60 }).vpaf, { mode: 'favor', thr: 0.5 }, 'un marco menor no se envía');
+  assert.deepEqual(toBackendRule({ ...form, vpaTf: 0 }).vpaf, { mode: 'favor', thr: 0.5 }, 'sin pedirlo, la regla no cambia');
+});
+
 let failed = 0;
 for (const [name, run] of tests) {
   try {

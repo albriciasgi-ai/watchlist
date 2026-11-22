@@ -453,6 +453,11 @@ def clean_rule(raw):
     if vpf.get("mode") in vpa.FILTER_MODES:
         # Filtro del medidor VPA en la vela de la señal: a favor (favor) o que no esté en contra (notAgainst), con su umbral
         extra["vpaf"] = {"mode": vpf["mode"], "thr": _num(vpf.get("thr"), 1.0, 0.0, 5.0)}
+        # tf (22/11, el "ripple" de Coulling): el medidor se lee en un marco mayor que el de la regla, en su última vela
+        # cerrada. Solo entra si se pide: una regla sin él conserva su identidad
+        hi = int(_num(vpf.get("tf"), 0, 0, 1440)) if vpf.get("tf") not in (None, "", 0, "0") else 0
+        if hi in VPAF_TFS and hi > tf and hi % tf == 0:
+            extra["vpaf"]["tf"] = hi
     if "BX" in codes_used:
         bx = raw.get("bx") or {}
         # maxHeight: solo rupturas de cajas de hasta tantos ATR de alto (None = todas)
@@ -1569,6 +1574,52 @@ def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
             + _williams_events(rule, span) + _smc_events(rule, span) + _vpa_events(rule, span))
 
 
+VPAF_TFS = (60, 240, 1440)
+
+
+def _vpaf_view(rule, ctx):
+    """
+    La serie del medidor que lee el filtro VPA y, por vela de la regla, cuál de sus velas se lee. En el marco de la regla,
+    la misma vela (None). En un marco mayor (vpaf.tf), las velas de la regla se unen por bloques UTC de ese marco y cada vela
+    lee la última vela mayor ya cerrada: la suya si es la última de un bloque completo, si no la anterior (−1 = ninguna).
+    """
+    hi = rule["vpaf"].get("tf")
+    if not hi:
+        return _vpa_series(rule, ctx), None
+    cache = ctx.setdefault("vpaHigher", {})
+    key = json.dumps([hi, rule.get("vpa") or {}], sort_keys=True)
+    if key not in cache:
+        T, O, H, L, C, V = ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["V"]
+        step, need = hi * 60000, max(1, hi // int(ctx["tf"]))
+        bt, bo, bh, bl, bc, bv, count, last, own = [], [], [], [], [], [], [], [], []
+        for k in range(len(T)):
+            start = T[k] // step * step
+            if bt and bt[-1] == start:
+                bh[-1], bl[-1], bc[-1] = max(bh[-1], H[k]), min(bl[-1], L[k]), C[k]
+                bv[-1] += V[k]
+                count[-1] += 1
+                last[-1] = k
+            else:
+                bt.append(start), bo.append(O[k]), bh.append(H[k]), bl.append(L[k]), bc.append(C[k]), bv.append(V[k])
+                count.append(1), last.append(k)
+            own.append(len(bt) - 1)
+        series = vpa.compute(bt, bo, bh, bl, bc, bv, hi, _vpa_cfg(rule))
+        index = [j if last[j] == k and count[j] >= need else j - 1 for k, j in enumerate(own)]
+        cache[key] = (series, index)
+    return cache[key]
+
+
+def _vpaf_at(rule, ctx, k):
+    """La serie y la vela del medidor que el filtro lee en la vela k de la regla (−1: ninguna cerrada todavía)."""
+    series, index = _vpaf_view(rule, ctx)
+    return series, (k if index is None else index[k])
+
+
+def _vpaf_ok(rule, ctx, k, side):
+    series, j = _vpaf_at(rule, ctx, k)
+    return j >= 0 and vpa.filter_ok(rule["vpaf"], series, j, side)
+
+
 def _vpa_cfg(rule):
     return {**(rule.get("vpa") or {})}
 
@@ -1710,7 +1761,7 @@ def _side_ok(rule, ctx, k, side):
         return False
     if rule.get("smcf") and not smc.filter_ok(rule["smcf"], _smc_range(rule, ctx), ctx["C"], k, side):
         return False
-    if rule.get("vpaf") and not vpa.filter_ok(rule["vpaf"], _vpa_series(rule, ctx), k, side):
+    if rule.get("vpaf") and not _vpaf_ok(rule, ctx, k, side):
         return False
     return True
 
@@ -1950,7 +2001,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                 skip("filtro SMC", k, side)
                 continue
         if rule.get("vpaf"):
-            sides = tuple(sd for sd in sides if vpa.filter_ok(rule["vpaf"], _vpa_series(rule, ctx), k, sd))
+            sides = tuple(sd for sd in sides if _vpaf_ok(rule, ctx, k, sd))
             if not sides:
                 skip("filtro VPA", k, side)
                 continue
@@ -2833,11 +2884,20 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
                                    "tendencia " + ("alcista" if trend == 1 else "bajista" if trend == -1 else "sin ruptura todavía")))
 
     if rule.get("vpaf"):
-        vs, vf = _vpa_series(rule, ctx), rule["vpaf"]
-        label = (f"Medidor VPA a favor (≥ {vf['thr']:g})" if vf["mode"] == "favor" else f"Medidor VPA no en contra (> −{vf['thr']:g})")
-        meter = vs["meter"][k]
-        out["rows"].append(row("vpaf", label, lambda i: vpa.filter_ok(vf, vs, i, side) if vpa.filter_known(vs, i) else None,
-                               f"medidor {meter:+.2f} ({'fuerza' if meter >= 0 else 'debilidad'})" if vpa.filter_known(vs, k) else "sin volumen normal de su hora todavía"))
+        vf = rule["vpaf"]
+        frame = {60: " de 1h", 240: " de 4h", 1440: " de 1 día"}.get(vf.get("tf"), "")
+        label = (f"Medidor VPA{frame} a favor (≥ {vf['thr']:g})" if vf["mode"] == "favor"
+                 else f"Medidor VPA{frame} no fuerte a favor (< {vf['thr']:g})" if vf["mode"] == "notFavor"
+                 else f"Medidor VPA{frame} no en contra (> −{vf['thr']:g})")
+
+        def vpa_known(i):
+            vs, j = _vpaf_at(rule, ctx, i)
+            return j >= 0 and vpa.filter_known(vs, j)
+
+        vs_k, j_k = _vpaf_at(rule, ctx, k)
+        meter = vs_k["meter"][j_k] if vpa_known(k) else None
+        out["rows"].append(row("vpaf", label, lambda i: _vpaf_ok(rule, ctx, i, side) if vpa_known(i) else None,
+                               f"medidor{frame} {meter:+.2f} ({'fuerza' if meter >= 0 else 'debilidad'})" if meter is not None else "sin volumen normal de su hora todavía"))
 
     if rule.get("hours"):
         hours = rule["hours"]

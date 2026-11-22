@@ -79,7 +79,7 @@ export function defaultRule() {
     bwAlligator: 'off', bwZone: false, smcPd: false, smcBias: false, bwAo: 'off', bwAc: 'off', bwGator: 'off', bwMfi: 'off',
     // Lector VPA (21/11): grado desde el que cuenta un elemento, umbral y memoria del medidor, rango que se rompe y retroceso;
     // filtro del medidor (off, favor, notAgainst) con su umbral
-    vpaFire: 0.5, vpaMeter: 1, vpaDecay: 0.75, vpaLeg: 2, vpaRangeBars: 20, vpaMaxRangeAtr: 6, vpaPullBars: 8, vpaMode: 'off', vpaThr: 1,
+    vpaFire: 0.5, vpaMeter: 1, vpaDecay: 0.75, vpaLeg: 2, vpaRangeBars: 20, vpaMaxRangeAtr: 6, vpaPullBars: 8, vpaMode: 'off', vpaThr: 1, vpaTf: 0,
     // Salida VPA (fase 4): sale con la primera lectura en contra; vpaExitFrom = R a favor desde los que se arma (0 = desde la entrada)
     vpaExitOn: false, vpaExit: ['climax'], vpaExitThr: 1, vpaExitFrom: 0
   };
@@ -120,7 +120,14 @@ export const SMC_CODES = ['BS', 'OB', 'BK', 'EQ'];
 export const VPA_CODES = ['QA', 'QB', 'QF', 'QR', 'QT', 'QS', 'QC', 'QE'];
 export const usesVpa = (rule) => (rule.codes || []).some(code => VPA_CODES.includes(code));
 /** El filtro del medidor VPA en palabras (el mismo de rule_tester en el backend) */
-export const VPA_FILTER_TEXT = { favor: 'medidor VPA a favor', notAgainst: 'medidor VPA que no esté en contra' };
+export const VPA_FILTER_TEXT = { favor: 'medidor VPA a favor', notAgainst: 'medidor VPA que no esté en contra', notFavor: 'medidor VPA que no esté fuerte a favor' };
+/** Marcos mayores en que el filtro puede leer el medidor (el "ripple" de Coulling): solo los mayores que el de la regla */
+export const VPA_FILTER_TFS = [[60, '1 hora'], [240, '4 horas'], [1440, '1 día']];
+export const vpaFilterTf = (tf, vpaTf) => {
+  const hi = Number(vpaTf) || 0;
+  return hi > Number(tf) && hi % Number(tf) === 0 && VPA_FILTER_TFS.some(([m]) => m === hi) ? hi : 0;
+};
+export const vpaFrameText = (hi) => (hi ? ` de ${VPA_FILTER_TFS.find(([m]) => m === hi)?.[1]}` : '');
 /** Las lecturas de la salida VPA, en el orden del backend (rule_tester.VPA_EXITS) */
 export const VPA_EXITS = [
   ['climax', 'clímax o frenado', 'Clímax o volumen de frenado (QC, QS) en contra del trade: el movimiento se agota'],
@@ -227,7 +234,7 @@ export function toBackendRule(rule) {
       vpa: { fire: number(rule.vpaFire, 0.5), meter: number(rule.vpaMeter, 1), decay: number(rule.vpaDecay, 0.75), legAtr: number(rule.vpaLeg, 2),
         rangeBars: number(rule.vpaRangeBars, 20), maxRangeAtr: number(rule.vpaMaxRangeAtr, 6), pullBars: number(rule.vpaPullBars, 8) }
     } : {}),
-    ...(VPA_FILTER_TEXT[rule.vpaMode] ? { vpaf: { mode: rule.vpaMode, thr: number(rule.vpaThr, 1) } } : {}),
+    ...(VPA_FILTER_TEXT[rule.vpaMode] ? { vpaf: { mode: rule.vpaMode, thr: number(rule.vpaThr, 1), ...(vpaFilterTf(rule.tf, rule.vpaTf) ? { tf: vpaFilterTf(rule.tf, rule.vpaTf) } : {}) } } : {}),
     ...(rule.smcPd || rule.smcBias ? { smcf: { ...(rule.smcPd ? { pd: true } : {}), ...(rule.smcBias ? { bias: true } : {}), swing: number(rule.smcSwing, 50) } } : {}),
     ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [], veEntry: rule.vpVeEntry === 'resting' ? 'resting' : 'touch' } } : {}),
     recipe: {
@@ -320,7 +327,7 @@ export function fromBackendRule(saved) {
     bwAo: saved.bwf?.ao || 'off', bwAc: saved.bwf?.ac || 'off', bwGator: saved.bwf?.gator || 'off', bwMfi: saved.bwf?.mfi || 'off',
     vpaFire: saved.vpa?.fire ?? 0.5, vpaMeter: saved.vpa?.meter ?? 1, vpaDecay: saved.vpa?.decay ?? 0.75, vpaLeg: saved.vpa?.legAtr ?? 2,
     vpaRangeBars: saved.vpa?.rangeBars ?? 20, vpaMaxRangeAtr: saved.vpa?.maxRangeAtr ?? 6, vpaPullBars: saved.vpa?.pullBars ?? 8,
-    vpaMode: saved.vpaf?.mode || 'off', vpaThr: saved.vpaf?.thr ?? 1,
+    vpaMode: saved.vpaf?.mode || 'off', vpaThr: saved.vpaf?.thr ?? 1, vpaTf: saved.vpaf?.tf || 0,
     vpaExitOn: !!saved.exit?.vpa, vpaExit: saved.exit?.vpa?.on || ['climax'], vpaExitThr: saved.exit?.vpa?.thr ?? 1, vpaExitFrom: saved.exit?.vpa?.fromR ?? 0,
     straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
     trailMode: ['atr', 'pct', 'bars'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
@@ -439,7 +446,7 @@ export function describeRule(saved) {
     + `${saved.bwf?.gator ? ` · Gator ${BW_GATOR_TEXT[saved.bwf.gator]?.split(' (')[0]}` : ''}${saved.bwf?.mfi ? ` · MFI ${BW_MFI_TEXT[saved.bwf.mfi]?.split(' (')[0]}` : ''}`
     + `${saved.smcf?.pd ? ' · largos en discount, cortos en premium' : ''}${saved.smcf?.bias ? ' · a favor de la estructura mayor' : ''}`
     + `${saved.vpa && raw.some(code => VPA_CODES.includes(code)) ? ` · VPA desde ${Math.round(saved.vpa.fire * 100)}%` : ''}`
-    + `${saved.vpaf ? ` · ${VPA_FILTER_TEXT[saved.vpaf.mode]} (${saved.vpaf.mode === 'favor' ? '≥' : '> −'}${saved.vpaf.thr})` : ''}`
+    + `${saved.vpaf ? ` · ${VPA_FILTER_TEXT[saved.vpaf.mode]}${vpaFrameText(saved.vpaf.tf)} (${{ favor: '≥', notFavor: '<' }[saved.vpaf.mode] || '> −'}${saved.vpaf.thr})` : ''}`
     + ` · ${saved.entry?.type === 'limit' ? 'limit' : saved.entry?.type === 'straddle' ? `dos órdenes stop a ${saved.entry.offset} ATR ${saved.entry.from === 'zone' ? 'fuera de la zona' : 'del cierre'}`
       : saved.entry?.type === 'stop' ? `orden stop en el borde de la zona${saved.entry.offset ? ` + ${saved.entry.offset} ATR` : ''}` : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
     + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;

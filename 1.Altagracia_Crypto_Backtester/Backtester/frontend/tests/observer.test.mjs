@@ -419,6 +419,21 @@ test('una orden del registro se dibuja solo si la simulación ya pasó por su fe
   assert.match(blind.problem, /fecha oculta/);
 });
 
+test('lector VPA: la fila dice el medidor, los elementos y los marcos mayores', () => {
+  const { rows } = describeComparison({ available: true, rows: [{
+    block: 'vpa', you: null, rule: 'favor', tf: 15, meter: 1.42, thr: 1, agree: true,
+    elements: [{ code: 'QB', dir: 1, ago: 0, grade: 0.8 }], last: { valid: 0.9 }, higher: { 60: 'neutral', 240: 'against' }
+  }] });
+  assert.equal(rows[0].label, 'Lector VPA');
+  assert.equal(rows[0].verdict, 'Coincide');
+  assert.match(rows[0].rule, /15m: medidor \+1\.42 \(fuerza\), a favor de la orden, fuerte/);
+  assert.match(rows[0].rule, /Ruptura con volumen alcista \(QB, última vela\)/);
+  assert.match(rows[0].rule, /1h neutro · 4h en contra/);
+  const neutral = describeComparison({ available: true, rows: [{ block: 'vpa', rule: 'neutral', tf: 60, meter: 0.1, thr: 1, agree: null, elements: [], last: {}, higher: {} }] }).rows[0];
+  assert.equal(neutral.verdict, null);
+  assert.match(neutral.note, /no se inclina/);
+});
+
 let failed = 0;
 for (const [name, run] of tests) {
   try {

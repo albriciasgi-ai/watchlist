@@ -23,6 +23,7 @@ import numpy as np
 
 import footprint_store
 import oi_store
+import vpa
 
 OBSERVER_DIR = Path(os.environ.get("ORDERFLOW_OBSERVER", r"C:\Users\inven\OrderFlowData\observer"))
 JOURNAL_NAME = "journal.jsonl"
@@ -45,6 +46,16 @@ BLIND_MARGIN_END_DAYS = 14
 BLIND_MIN_SEPARATION_DAYS = 14
 SAME_MOVE_OVERLAP = 0.6
 SMALL_SAMPLE = 30
+
+# Lector VPA en el minuto de la orden (22/11/2026): el medidor y los elementos Q del marco de la orden, de 1 hora y de 4 horas
+VPA_VERSION = 1
+VPA_FRAMES = (60, 240)
+VPA_LOOK = 3  # Elementos de las ultimas 3 velas cerradas
+VPA_LEAN = 0.3  # Desde aqui el medidor se inclina; desde su umbral (1) es fuerte. Con ±1 casi toda orden quedaba neutra
+VPA_CACHE_NAME = "vpa_readings.json"
+VPA_SOURCE = "Lector VPA"
+TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "4h": 240}
+VPA_LAST = ("absorb", "trap", "valid", "star", "hammer", "hang", "doji", "fade")
 
 _lock = threading.Lock()
 
@@ -271,10 +282,46 @@ def _zone_chance(zones, market, side, near):
     return hits / 100
 
 
-def read_at(symbol, time_ms, side, entry=None, live=None, oi=None):
+def _vpa_frame(bars, tf, side):
+    """Lo que dice el lector en la ultima vela cerrada del marco, para el lado de la orden."""
+    n = len(bars["t"])
+    if n < 30:
+        return {"tf": tf, "known": False}
+    t = [int(x) * 60000 for x in bars["t"]]
+    o, h, l, c, v = ([float(x) for x in bars[k]] for k in ("o", "h", "l", "c", "v"))
+    series = vpa.compute(t, o, h, l, c, v, tf)
+    k = n - 1
+    if not vpa.filter_known(series, k):
+        return {"tf": tf, "known": False}
+    thr = vpa.DEFAULTS["meter"]
+    meter = float(series["meter"][k])
+    value = meter * side
+    elements = []
+    for e in vpa.detect(t, o, h, l, c, v, tf, series=series):
+        if e["index"] > k - VPA_LOOK and e["grade"] >= vpa.DEFAULTS["fire"]:
+            elements.append({"code": e["code"], "dir": e["dir"], "ago": k - e["index"], "grade": round(e["grade"], 3)})
+    last = {key: round(float(series[key][k]), 3) for key in VPA_LAST if math.isfinite(series[key][k]) and series[key][k] >= 0.5}
+    return {
+        "tf": tf, "known": True, "time": t[k], "meter": round(meter, 3), "thr": thr, "lean": VPA_LEAN,
+        "state": "favor" if value >= VPA_LEAN else "against" if value <= -VPA_LEAN else "neutral",
+        "strong": abs(value) >= thr,
+        "elements": elements, "last": last, "rv": round(float(series["rv"][k]), 3),
+    }
+
+
+def _vpa_reading(data, side, tf=None):
+    """El lector en cada marco: el de la orden (si es otro) y 1 y 4 horas. Solo velas cerradas antes de la orden."""
+    frames = sorted({*VPA_FRAMES, *([tf] if tf else [])})
+    out = {"version": VPA_VERSION, "own": str(tf) if tf else None, "frames": {}}
+    for frame in frames:
+        out["frames"][str(frame)] = _vpa_frame(_bars(data, frame), frame, side)
+    return out
+
+
+def read_at(symbol, time_ms, side, entry=None, live=None, oi=None, tf=None):
     """
     Lectura de un minuto para una orden: side es 1 para compra y -1 para venta.
-    Solo usa minutos terminados antes de time_ms y velas cerradas.
+    Solo usa minutos terminados antes de time_ms y velas cerradas. tf es el marco de la orden, en minutos, para el lector VPA.
     live y oi son de la suite (trades reales, 13/11/2026): live=True lee tambien los dias de la nube y el PC donde
     falta el oficial, y oi es la serie de 5 minutos que usar en lugar de la local. App 1 no los pasa.
     """
@@ -343,8 +390,15 @@ def read_at(symbol, time_ms, side, entry=None, live=None, oi=None):
         "available": True, "time": int(time_ms), "price": price, "side": side,
         "context": {str(tf): _context(bars[tf], tf, t, count) for tf, count in RULE["ctx_bars"].items()},
         "moves": moves, "zones": zones, "entry": entry_read, "oi": _oi_window(symbol, t, oi),
-        "volume": {"last_15m_ratio": last_ratio},
+        "volume": {"last_15m_ratio": last_ratio}, "vpa": _vpa_safe(data, side, tf),
     }
+
+
+def _vpa_safe(data, side, tf):
+    try:
+        return _vpa_reading(data, side, tf)
+    except Exception as error:  # La lectura de la regla no se pierde por el lector
+        return {"version": VPA_VERSION, "error": str(error), "frames": {}}
 
 
 # ==================== REGISTRO ====================
@@ -382,7 +436,7 @@ def record_order(order):
     """Guarda una orden con la lectura de ese minuto. Quien pregunta solo recibe confirmacion."""
     side = 1 if order["side"] == "long" else -1
     try:
-        reading = read_at(order["symbol"], order["time"], side, order.get("entry"))
+        reading = read_at(order["symbol"], order["time"], side, order.get("entry"), tf=TF_MINUTES.get(order.get("timeframe")))
     except Exception as error:  # La orden se guarda igual: perderla seria peor que no tener lectura
         reading = {"available": False, "missing": "error", "error": str(error), "time": order["time"]}
     _append({**order, "event": "order", "at": _now(), "reading": reading})
@@ -446,6 +500,89 @@ def _overlap(range_start, range_end, move):
     return max(0.0, shared / shortest) if shortest > 0 else 0.0
 
 
+_vpa_memory = {}  # Por archivo de cache: {ruta: {id:version: lectura}}
+
+
+def _vpa_cache_path():
+    return OBSERVER_DIR / VPA_CACHE_NAME
+
+
+def _vpa_of(trade):
+    """
+    La lectura del lector VPA de una orden. Las registradas antes del 22/11/2026 no la traen: se calcula una vez con los
+    minutos anteriores a la orden (lo mismo que se habria leido al registrarla) y queda en vpa_readings.json.
+    Una orden viva no la pide: el informe y la comparacion solo la muestran cuando termino.
+    """
+    reading = trade.get("reading") or {}
+    saved = reading.get("vpa")
+    if saved and saved.get("version") == VPA_VERSION and "error" not in saved:
+        return saved
+    if not reading.get("available") or not all(trade.get(k) for k in ("id", "symbol", "time", "side")):
+        return None  # Los trades del journal de la suite traen la lectura del lector en "reading" o no la tienen
+    key = f"{trade.get('id')}:{VPA_VERSION}"
+    path = _vpa_cache_path()
+    with _lock:
+        memory = _vpa_memory.get(str(path))
+        if memory is None:
+            memory = {}
+            if path.exists():
+                try:
+                    memory = json.loads(path.read_text(encoding="utf-8"))
+                except ValueError:
+                    memory = {}
+            _vpa_memory[str(path)] = memory
+    if key in memory:
+        return memory[key]
+    side = 1 if trade["side"] == "long" else -1
+    t = int(trade["time"]) // 60000
+    try:
+        data = footprint_store.minutes(trade["symbol"], t - LOOKBACK_DAYS * 1440, t)
+        value = _vpa_reading(data, side, TF_MINUTES.get(trade.get("timeframe"))) if data is not None else None
+    except Exception:
+        value = None
+    with _lock:
+        memory[key] = value
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(memory), encoding="utf-8")
+        os.replace(tmp, path)
+    return value
+
+
+def _vpa_frame_of(trade, which):
+    """which: 'own' (el marco de la orden, o 1 hora si la orden no dice el suyo), '60' o '240'."""
+    reading = _vpa_of(trade)
+    if not reading:
+        return None
+    key = (reading.get("own") or "60") if which == "own" else which
+    frame = reading["frames"].get(key)
+    return frame if frame and frame.get("known") else None
+
+
+def _vpa_cited(trade):
+    """Lo que elegiste del Lector VPA para el analisis de la orden."""
+    return [level.get("kind") for level in trade.get("levels") or [] if level.get("source") == VPA_SOURCE]
+
+
+def _vpa_row(trade):
+    own = _vpa_frame_of(trade, "own")
+    side = 1 if trade["side"] == "long" else -1
+    cited = _vpa_cited(trade)
+    if not own:
+        return {"block": "vpa", "you": cited or None, "rule": None, "agree": None}
+    favor = sum(e["dir"] == side for e in own["elements"])
+    against = sum(e["dir"] == -side for e in own["elements"])
+    state = own["state"]
+    # Tu lectura es la orden misma: coincide si el lector estaba a favor, no si estaba en contra; neutro no cuenta
+    agree = True if state == "favor" else False if state == "against" else None
+    return {
+        "block": "vpa", "you": cited or None, "rule": state, "tf": own["tf"], "meter": own["meter"],
+        "thr": own["thr"], "elements": own["elements"], "last": own["last"], "favor": favor, "against": against,
+        "higher": {tf: (_vpa_frame_of(trade, tf) or {}).get("state") for tf in ("60", "240")},
+        "agree": agree,
+    }
+
+
 def compare(trade):
     """Bloque por bloque: que marco quien opero, que leyo la regla y si coinciden."""
     reading = trade.get("reading") or {}
@@ -498,6 +635,7 @@ def compare(trade):
     })
 
     rows.append({"block": "volume", "you": None, "rule": reading["volume"]["last_15m_ratio"], "agree": None})
+    rows.append(_vpa_row(trade))
     return {"available": True, "rows": rows}
 
 
@@ -586,6 +724,23 @@ def _oi_is(direction):
     return check
 
 
+def _vpa_state(which, state):
+    def check(trade):
+        frame = _vpa_frame_of(trade, which)
+        return frame["state"] == state if frame else None
+    return check
+
+
+def _vpa_elements(kind):
+    def check(trade):
+        frame = _vpa_frame_of(trade, "own")
+        if not frame:
+            return None
+        side = 1 if trade["side"] == "long" else -1
+        return any(e["dir"] == (side if kind == "favor" else -side) for e in frame["elements"])
+    return check
+
+
 def _volume_favors(trade):
     reading = _reading(trade)
     context = reading and reading["context"].get("60")
@@ -612,6 +767,12 @@ CONDITIONS = [
     ("oi_mixed", "OI mixto", _oi_is("mixed")),
     ("oi_down", "OI cayendo", _oi_is("down")),
     ("volume_favor", "Más volumen en velas a favor (contexto de 1 hora)", _volume_favors),
+    ("vpa_own_favor", "Lector VPA a favor (marco de la orden)", _vpa_state("own", "favor")),
+    ("vpa_own_against", "Lector VPA en contra (marco de la orden)", _vpa_state("own", "against")),
+    ("vpa60_favor", "Lector VPA a favor en 1 hora", _vpa_state("60", "favor")),
+    ("vpa240_favor", "Lector VPA a favor en 4 horas", _vpa_state("240", "favor")),
+    ("vpa_el_favor", "Elemento VPA a favor en las 3 últimas velas", _vpa_elements("favor")),
+    ("vpa_el_against", "Elemento VPA en contra en las 3 últimas velas", _vpa_elements("against")),
 ]
 
 
@@ -716,6 +877,23 @@ def _by_setup(closed):
     return rows
 
 
+VPA_STATES = (("favor", "A favor"), ("neutral", "Neutro"), ("against", "En contra"))
+
+
+def _by_vpa(closed):
+    """Tus ordenes cerradas segun lo que decia el lector VPA al decidir, por marco, y segun si lo citaste."""
+    frames = []
+    for which, label in (("own", "Marco de la orden"), ("60", "1 hora"), ("240", "4 horas")):
+        rows = []
+        for state, name in VPA_STATES:
+            group = [trade for trade in closed if (_vpa_frame_of(trade, which) or {}).get("state") == state]
+            rows.append({"state": state, "label": name, **_stats(group)})
+        known = sum(row["n"] for row in rows)
+        frames.append({"frame": which, "label": label, "known": known, "rows": rows})
+    cited, plain = _split(closed, lambda trade: bool(_vpa_cited(trade)))
+    return {"frames": frames, "cited": _stats(cited), "notCited": _stats(plain), "thr": vpa.DEFAULTS["meter"], "lean": VPA_LEAN}
+
+
 def report(symbol=None, blind="all", include_rewound=False):
     """Informe de lo registrado: que condiciones se repiten y cuales acompañan los mejores resultados."""
     every = [trade for trade in trades().values() if not symbol or trade.get("symbol") == symbol]
@@ -753,6 +931,7 @@ def report(symbol=None, blind="all", include_rewound=False):
         },
         "best_worst": _best_and_worst(closed),
         "setups": _by_setup(closed),
+        "vpa": _by_vpa(closed),
     }
 
 

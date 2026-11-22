@@ -2,6 +2,7 @@ import { API_BASE_URL } from '../../config.js';
 import { isBlind, maskDate, priceText, pricesHidden } from './blindClock.js';
 import { TF_MS } from './replayClock.js';
 import { EXIT_CAPTURE_CANDLES, exitCaptureTime } from './tradeJournal.js';
+import { VPA_CODES } from '../indicators/vpa.js';
 
 /**
  * Observador: registra en disco cada orden manual con lo que la regla del laboratorio leía en ese
@@ -314,7 +315,7 @@ export async function runRule(symbol, rule) {
 
 const STATES = { up: 'Alcista', down: 'Bajista', range: 'Consolidación' };
 const OI_STATES = { up: 'Creciendo', down: 'Cayendo', mixed: 'Mixto' };
-const FRAME_NAMES = { 240: '4h', 60: '1h', 15: '15m' };
+const FRAME_NAMES = { 240: '4h', 60: '1h', 30: '30m', 15: '15m', 5: '5m', 1: '1m' };
 const STATUS_NAMES = { pending: 'Pendiente', open: 'Abierta', closed: 'Cerrada', cancelled: 'Cancelada' };
 
 const price = (value) => (pricesHidden() ? priceText(value) : Math.round(value).toLocaleString('en-US'));
@@ -386,6 +387,36 @@ function volumeRow(row) {
   return { label: 'Volumen', you: '—', rule: text, verdict: null };
 }
 
+const VPA_STATES = { favor: 'a favor', neutral: 'neutro', against: 'en contra' };
+const VPA_LAST = {
+  absorb: 'esfuerzo sin resultado', trap: 'resultado sin esfuerzo', valid: 'validado', star: 'estrella',
+  hammer: 'martillo', hang: 'hanging man', doji: 'doji', fade: 'el esfuerzo se agota'
+};
+
+/** El lector VPA en el minuto de la orden: el medidor de su marco, los elementos Q de las 3 últimas velas y los marcos mayores */
+export function vpaRow(row) {
+  if (!row.rule) return { label: 'Lector VPA', you: row.you ? row.you.join(', ') : '—', rule: 'Sin lectura (pocos días de velas)', verdict: null };
+  const sign = row.meter >= 0 ? '+' : '';
+  const strong = Math.abs(row.meter) >= row.thr ? ', fuerte' : '';
+  const els = (row.elements || []).map(e => {
+    const side = e.dir > 0 ? 'alcista' : 'bajista';
+    const when = e.ago === 0 ? 'última vela' : `hace ${e.ago} ${e.ago === 1 ? 'vela' : 'velas'}`;
+    return `${VPA_CODES[e.code] || e.code} ${side} (${e.code}, ${when})`;
+  });
+  const last = Object.keys(row.last || {}).map(key => VPA_LAST[key] || key);
+  const higher = ['60', '240'].filter(tf => String(row.tf) !== tf && row.higher?.[tf])
+    .map(tf => `${FRAME_NAMES[tf]} ${VPA_STATES[row.higher[tf]]}`);
+  const mood = row.meter >= 0 ? 'fuerza' : 'debilidad';
+  const parts = [`${FRAME_NAMES[row.tf] || row.tf}: medidor ${sign}${row.meter.toFixed(2)} (${mood}), ${VPA_STATES[row.rule]} de la orden${strong}`];
+  if (els.length) parts.push(els.join('; '));
+  if (last.length) parts.push(`última vela: ${last.join(', ')}`);
+  if (higher.length) parts.push(higher.join(' · '));
+  return {
+    label: 'Lector VPA', you: row.you ? row.you.join(', ') : 'Tu orden', rule: parts.join(' — '), verdict: verdict(row.agree),
+    note: row.agree === null ? 'Medidor entre −0.3 y +0.3: el lector no se inclina' : null
+  };
+}
+
 /** Filas de texto de la comparación entre lo marcado y lo que leyó la regla */
 export function describeComparison(comparison) {
   if (!comparison?.available) {
@@ -399,6 +430,7 @@ export function describeComparison(comparison) {
     if (row.block === 'move') return moveRow(row);
     if (row.block === 'zone') return zoneRow(row);
     if (row.block === 'oi') return oiRow(row);
+    if (row.block === 'vpa') return vpaRow(row);
     return volumeRow(row);
   });
   return { rows };

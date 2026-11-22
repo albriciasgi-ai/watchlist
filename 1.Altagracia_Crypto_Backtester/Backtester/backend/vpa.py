@@ -57,7 +57,7 @@ DEFAULTS = {
     "rangeBars": 20, "maxRangeAtr": 6.0, "pullBars": 8, "testLook": 20, "stopBars": 3, "climaxBars": 6,
 }
 
-FILTER_MODES = ("favor", "notAgainst")
+FILTER_MODES = ("favor", "notAgainst", "notFavor")  # notFavor (22/11): que no esté fuerte a favor (el ripple medido)
 
 # Pesos de cada lectura en el medidor
 W_ABSORB, W_TRAP, W_VALID, W_SHAPE, W_HANG, W_DOJI, W_FADE = 1.0, 0.8, 0.5, 1.0, 0.5, 0.6, 0.8
@@ -401,6 +401,8 @@ def filter_ok(vf, series, k, side):
     thr = vf.get("thr", DEFAULTS["meter"])
     if vf.get("mode") == "favor":
         return value >= thr
+    if vf.get("mode") == "notFavor":
+        return value < thr  # El ripple medido (22/11): con el marco mayor ya fuerte a favor, la ruptura llega tarde
     return value > -thr
 
 

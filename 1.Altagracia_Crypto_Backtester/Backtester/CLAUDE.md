@@ -2122,11 +2122,62 @@ Lo demás:
 - **El entrenador de la página** ya conoce el lector.
 - **`verificar.py`** suma la lectura del Lector VPA de la vela: grados, medidor, tramo y elementos Q, con las velas hasta ella.
 
+### Deslizamiento de la ruptura con volumen (22/11)
+
+`OrderFlowData/research/vpa/deslizamiento_qb.py` (`DESLIZAMIENTO_QB.md`) lee las corridas guardadas de las tres fases, sin volver a correr la regla, y a cada trade le resta el deslizamiento en R: s × precio ÷ riesgo por lado. El supuesto realista desliza la entrada a mercado y el stop; el objetivo es una limit y no desliza.
+
+| Monedas | Fase | Sin deslizamiento | 0.02% por lado | 0.05% | 0.10% | Deja el R en 0 |
+|---|---|---|---|---|---|---|
+| Nuevas (43) | 1 | +0.063 | +0.054 | +0.040 | +0.016 | 0.13% |
+| Nuevas (43) | 2 | +0.214 | +0.206 | +0.193 | +0.172 | 0.52% |
+| Nuevas (43) | 3 | +0.088 ±0.067 | +0.078 | +0.063 ±0.067 | +0.037 | 0.18% |
+| De siempre (7) | 3 | −0.021 | −0.037 | −0.060 | −0.100 | — |
+
+- El stop de 1.5 ATR en 4h es ancho (unos 3 a 4% del precio): 0.05% por lado cuesta solo 0.02 a 0.04 R por trade. Con la B5, de stop corto, el mismo deslizamiento se comía casi toda la ventaja.
+- En la fase 3 de las monedas nuevas, con 0.05% el R queda en +0.06 y su margen apenas toca el cero; con 0.10%, en +0.04. Los controles al azar tienen el mismo stop en ATR y pagan casi lo mismo: la ventaja sobre ellos casi no cambia.
+- Las monedas nuevas son de menos volumen que BTC y ETH: en la apertura de una vela de 4h tras una ruptura el deslizamiento real puede pasar de 0.05%. No se midió con el libro.
+
+### El Observador contra el lector (22/11)
+
+Pedido del usuario: que el Observador compare sus lecturas con las del lector. Su lectura es la orden misma (el lado) y lo que elija del Lector VPA para el análisis.
+
+- **Lectura** (`observer._vpa_reading`): en el minuto de la orden, con las velas cerradas antes de ella, el lector en el marco de la orden, en 1 hora y en 4 horas: el medidor, el estado del lado de la orden (a favor desde +0.3, `VPA_LEAN`; en contra desde −0.3; neutro entre medio; `strong` desde ±1, el umbral del indicador), los elementos Q de las 3 últimas velas (`VPA_LOOK`) y las lecturas de la última vela con grado 0.5 o más. Va en `reading["vpa"]` de cada orden nueva (`read_at(..., tf=)`).
+- **Órdenes de antes:** `_vpa_of()` la calcula una vez con los minutos anteriores a la orden y la guarda en `OrderFlowData/observer/vpa_readings.json`. La primera vez el informe tarda unos 20 s con 39 órdenes; después, centésimas.
+- Con ±1 de umbral, 29 de 32 órdenes del usuario quedaban neutras: por eso la banda de ±0.3.
+- **Comparación de cada orden** (fila «Lector VPA»): medidor, elementos y marcos mayores. Coincide si el lector estaba a favor, no coincide si estaba en contra; neutro no cuenta.
+- **Informe:** sección «Tú contra el lector VPA» con acierto y R por estado en cada marco, y las órdenes donde citaste el lector. Seis condiciones nuevas en «Lo que leía la regla» (lector a favor o en contra en el marco de la orden, a favor en 1h y en 4h, elemento a favor o en contra) y en mejores contra peores.
+- **Suite:** el journal usa estas funciones. Sus trades traen el lector en su lectura; los guardados antes no lo tienen y no se recalculan. La fila se lee con `vpaRow` de App 1.
+- **Lo del usuario al 22/11** (BTC, 32 órdenes cerradas, marco de la orden): lector a favor, 8 órdenes, 75% y +1.24 R; neutro, 19, 21% y −0.31 R; en contra, 5, 40% y −0.02 R. Muestra muy pequeña.
+- Pruebas: tres más en `test_observer.py` (60) y una en `observer.test.mjs` (45); `journal_checks.py` de la suite (89).
+
+### Signos en el modal (22/11)
+
+Cada casilla de los elementos dice entre paréntesis el signo que dibuja sobre las velas (`VPA_GLYPHS` de `vpa.js`, el mismo del indicador): esfuerzo sin resultado (◆), ruptura con volumen (▲), ruptura sin volumen (✕), retroceso (↺), prueba (T), frenado o techo (S), clímax (C) y cruce del medidor (E). El código del probador sale al pasar el mouse.
+
+### El ripple entre marcos (22/11)
+
+La idea del libro: una señal del marco rápido es una onda y el marco lento manda. Primero se midió y después se armó el filtro. Todo en la fase 1.
+
+- **Estudio** (`OrderFlowData/research/vpa/ripple_qb.py`, `RIPPLE_QB.md`): QB en 1h y en 4h, con el medidor del marco mayor (4h y 1 día) en su última vela cerrada al saberse la señal, del lado del trade.
+  - **Va al revés del libro.** Con el marco mayor fuerte a favor (≥ 1), QB pierde en los cuatro grupos: de −0.14 a −0.48 R. Con el mayor a favor (≥ 0.3) rinde menos que neutro en tres de cuatro.
+  - Ejemplo, QB 1h en las 43 monedas nuevas con el medidor de 4h: fuerte a favor 621 trades y −0.23 R ±0.13, neutro 9,565 y 0.00, en contra 5,319 y −0.06.
+  - Lectura: cuando el marco mayor ya muestra fuerza, la ruptura llega tarde.
+- **Filtro:** el medidor del filtro VPA se puede leer en un marco mayor que el de la regla (`vpaf.tf`: 1 hora, 4 horas o 1 día; «leído en» en la ventana).
+  - Las velas de la regla se unen por bloques UTC de ese marco, y cada vela lee la última vela mayor ya cerrada (`_vpaf_view`). Un bloque incompleto, como el día de una acción, se lee cuando empieza el siguiente.
+  - Los controles al azar entran solo donde deja.
+  - Modo nuevo «que no esté a favor más de» (`notFavor`: medidor × lado < umbral), además de a favor y no en contra.
+  - Sin `tf` la regla conserva su identidad.
+- **El filtro, por el probador** (`ripple_filtro.py`, `RIPPLE_FILTRO.md`), sin entrar con el marco mayor fuerte a favor:
+  - QB 4h con el día: en las monedas nuevas, de +0.063 a +0.073 R (sobre el azar de +0.10 a +0.12); en las de siempre, de +0.14 a +0.13;
+  - QB 1h con 4h: de −0.037 a −0.033 R en las nuevas y de −0.046 a −0.033 en las de siempre.
+
+  Con una posición a la vez, cada señal quitada deja entrar a otra, y el filtro quita pocas: no mueve la ventaja. QB en 1h pierde con o sin él.
+- **Decisión:** el ripple no se lleva a la fase 2. El filtro queda en el probador para otras reglas.
+- Pruebas: dos más en `test_vpa.py` (10) y una en `rulefacets.test.mjs` (14). No se vio en pantalla: la página compila.
+
 ### Falta
 
-- El "ripple" entre marcos.
-- Que el Observador compare las lecturas del usuario con las del lector.
-- Medir el deslizamiento de la ruptura con volumen antes de pensar en operarla.
+- Nada de la propuesta original. Lo abierto: medir el deslizamiento de QB con el libro grabado, y seguir el informe «Tú contra el lector VPA» a medida que haya más órdenes.
 
 ## RANGOS HORIZONTALES (20/11/2026)
 
